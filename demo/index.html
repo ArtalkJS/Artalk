@@ -2,8 +2,26 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Artalk DEV</title>
+  <title>Artalk Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      padding: 45px 10px;
+      margin: 0;
+      background: #F4F4F4;
+    }
+
+    .container {
+      margin: 0 auto;
+      max-width: 700px;
+      position: relative;
+      overflow: hidden;
+      background: #FFF;
+      border-radius: 4px;
+      padding: 20px;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="../dist/Artalk.js"></script>
 </head>
 <body>
@@ -12,7 +30,11 @@
   </div>
   <script>
     var artalk = new Artalk({
-      el: '#comments'
+      el: '#comments',
+      placeholder: '来啊，快活啊 (/ω＼)',
+      defaultAvatar: '',
+      pageSize: 50,
+      pageKey: window.location.pathname
     })
   </script>
 </body>

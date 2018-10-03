@@ -1,0 +1,172 @@
+.artalk-editor {
+  border: 1px solid $color-border;
+  border-radius: $block-radius;
+  margin-bottom: $block-margin;
+  overflow: hidden;
+  position: relative;
+}
+
+.artalk-editor-header {
+  display: flex;
+  flex-direction: row;
+  padding: 0 $block-padding;
+  padding-top: $block-padding/2;
+  padding-bottom: 0;
+
+  input {
+    border: 2px solid transparent;
+    transition: color .3s ease;
+    flex: 1;
+    background: transparent;
+    border-radius: $block-radius/2;
+    padding: 6px 5px;
+    resize: none;
+    outline: none;
+
+    &:not(:last-child) {
+      margin-right: 2px;
+    }
+  }
+}
+
+.artalk-editor-wrap {
+}
+
+.artalk-editor-textarea {
+  margin-top: 2px;
+  padding: $block-padding 10px + 5px;
+  display: block;
+  width: 100%;
+  min-height: 8.75rem;
+  font-size: .875rem;
+  max-height: 50vh;
+  word-wrap: break-word;
+  resize: vertical;
+  border: 2px solid transparent;
+  border-radius: $block-radius/2;
+  outline: none;
+}
+
+.artalk-editor-plug-wrap {
+  position: relative;
+  height: 150px;
+  width: 100%;
+  overflow: hidden;
+  border-top: 1px solid $color-border;
+
+  .artalk-editor-plug-emoticons {
+    height: 100%;
+    width: 100%;
+
+    .artalk-emoticons-list-wrap {
+      overflow-y: scroll;
+      overflow-x: hidden;
+      height: calc(100% - 30px);
+      width: 100%;
+
+      .artalk-emoticons-list {
+        padding: 5px 10px;
+
+        .artalk-emoticons-item {
+          display: inline-block;
+          padding: 5px;
+          cursor: pointer;
+          user-select: none;
+          border-radius: 2px;
+          font-size: 16px;
+
+          & > img {}
+
+          &:hover {
+            background: #F4F4F4;
+          }
+        }
+      }
+    }
+
+    .artalk-emoticons-types {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      height: 30px;
+
+      & > span {
+        padding: 0 10px;
+        line-height: 30px;
+        float: left;
+        display: block;
+        cursor: pointer;
+        font-size: $font-size;
+
+        &:hover,
+        &.active {
+          background: #F4F4F4;
+        }
+      }
+    }
+
+  }
+
+  .artalk-editor-plug-preview {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+    padding: $block-padding 10px + 5px;
+  }
+}
+
+.artalk-editor-bottom {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-top: 1px solid $color-border;
+  padding: 0 0 0 $block-padding - 5px;
+}
+
+.artalk-editor-bottom-part {
+  flex: 1;
+}
+
+.artalk-editor-action {
+  padding: 0 8px;
+  cursor: pointer;
+  color: $color-grey;
+  transition: color .3s ease-in-out;
+  font-size: $font-size;
+
+  & > i {
+    color: $color-grey;
+    vertical-align: sub;
+    margin-left: 4px;
+    svg.markdown path {
+      fill: $color-grey;
+    }
+  }
+
+  &:hover, &.active {
+    color: $color-main;
+  }
+
+  &:not(:last-child) {
+    border-right: 1px solid $color-border;
+  }
+}
+
+.artalk-send-btn {
+  float: right;
+  background: $color-main;
+  color: #FFF;
+  border: none;
+  padding: 4px 30px;
+  cursor: pointer;
+  transition: opacity .3s ease-in-out;
+  outline: none;
+  font-size: $font-size;
+
+  &:active {
+    opacity: .9;
+  }
+}

@@ -1,0 +1,90 @@
+.artalk {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+}
+
+.artalk * {
+  box-sizing: border-box;
+  line-height: $line-height;
+  color: $color-default;
+  font-family: $font-family;
+}
+
+.artalk-loading {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: $color-bg;
+  z-index: 999999999;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+  display: flex;
+}
+
+.artalk-loading-spinner {
+  position: relative;
+  width: 50px;
+  height: 50px;
+
+  svg {
+    animation: rotate 2s linear infinite;
+    transform-origin: center center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    circle {
+      stroke-dasharray: 1,200;
+      stroke-dashoffset: 0;
+      animation: dash 1.5s ease-in-out infinite,color 6s ease-in-out infinite;
+      stroke-linecap: round
+    }
+  }
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg)
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1,200;
+    stroke-dashoffset: 0
+  }
+
+  50% {
+    stroke-dasharray: 89,200;
+    stroke-dashoffset: -35px
+  }
+
+  100% {
+    stroke-dasharray: 89,200;
+    stroke-dashoffset: -124px
+  }
+}
+
+@keyframes color {
+  0%,100% {
+    stroke: #ff5652
+  }
+
+  40% {
+    stroke: #2196F3
+  }
+
+  66% {
+    stroke: #32c787
+  }
+
+  80%,90% {
+    stroke: #ffc107
+  }
+}

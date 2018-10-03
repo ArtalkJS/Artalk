@@ -1,0 +1,22 @@
+<div class="artalk-editor">
+  <div class="artalk-editor-header">
+    <input name="nick" placeholder="昵称" class="artalk-nick" type="text" required="required">
+    <input name="mail" placeholder="邮箱" class="artalk-mail" type="email" required="required">
+    <input name="link" placeholder="网址 (https://)" class="artalk-mail" type="text">
+  </div>
+  <div class="artalk-editor-wrap">
+    <textarea id="artalk-editor-textarea" class="artalk-editor-textarea" placeholder="<%= artalk.opts.placeholder %>"></textarea>
+  </div>
+  <div class="artalk-editor-plug-wrap" style="display: none;"></div>
+  <div class="artalk-editor-bottom">
+    <div class="artalk-editor-bottom-part">
+      <% for (var i in plugs) { %>
+        <% var plug = plugs[i] %>
+        <span class="artalk-editor-action artalk-editor-plug-switcher" data-plug-index="<%- i %>"><%- plug.getBtnHtml() %></span>
+      <% } %>
+    </div>
+    <div class="artalk-editor-bottom-part">
+      <button type="button" class="artalk-send-btn">回复</button>
+    </div>
+  </div>
+</div>

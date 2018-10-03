@@ -21,13 +21,15 @@ module.exports = (env, options) => {
 
   let conf = {
     entry: {
-      'Artalk': [`${SRC_PATH}/Artalk.scss`, `${SRC_PATH}/Artalk.js`]
+      'Artalk': [`${SRC_PATH}/Artalk.js`]
     },
     output: {
       path: BUILD_PATH,
       filename: '[name].js',
       library: '[name]',
-      libraryTarget: 'umd'
+      libraryTarget: 'umd',
+      libraryExport: 'default',
+      umdNamedDefine: true
     },
     module: {
       rules: [{
@@ -42,11 +44,7 @@ module.exports = (env, options) => {
         loader: 'babel-loader',
         options: {
           plugins: ['syntax-dynamic-import'],
-          presets: [
-            ['env', {
-              modules: false
-            }]
-          ]
+          presets: ['vue-app']
         }
       }, {
         test: /\.scss$/,
@@ -62,7 +60,8 @@ module.exports = (env, options) => {
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true
+              sourceMap: true,
+              data: '@import "_variables.scss";'
             }
           }
         ],
@@ -71,12 +70,26 @@ module.exports = (env, options) => {
         test: /\.css$/,
         use: [
           'style-loader',
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          },
           'postcss-loader'
         ]
       }, {
         test: /\.(png|jpg|gif|svg)$/,
         use: ['url-loader?limit=1024*10']
+      }, {
+        test: /\.ejs$/,
+        loader: 'ejs-compiled-loader',
+        options: {
+          htmlmin: true,
+          htmlminOptions: {
+            removeComments: true
+          }
+        }
       }]
     },
     devtool: 'cheap-module-source-map',
@@ -92,6 +105,9 @@ module.exports = (env, options) => {
         errors: true,
         warnings: true
       }
+    },
+    externals: {
+      jquery: 'jQuery'
     },
     plugins: []
   }

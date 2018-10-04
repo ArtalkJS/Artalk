@@ -3,20 +3,22 @@
 </p>
 
 # Artalk
-> 一款轻量级的有后端的评论系统。
+> 一款有趣有后端的评论系统
 
 ## 特性
-- 轻量
-- 快速
-- 简便
-- 自管理
-- 轻量
+- 简洁
 - 有趣
+- 自管理
+- Markdown
+- 自定表情 #(滑稽)
+- 评论打分
 
-## 使用
+## 食用
 [查看DEMO](./demo/index.html)
 
-## 构建
+## 开发
+
+### Build
 
 ```bash
 git clone https://github.com/qwqcode/Artalk.git
@@ -25,7 +27,7 @@ yarn install
 yarn run build
 ```
 
-## 开发
+### Dev
 
 ```bash
 git clone https://github.com/qwqcode/Artalk.git

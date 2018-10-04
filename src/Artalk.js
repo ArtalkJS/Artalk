@@ -11,24 +11,11 @@ const defaultOpts = {
   defaultAvatar: '',
   pageSize: 50,
   pageKey: '',
-  emoticons: require('./assets/emoticons.json')
-}
-
-const gravatar = {
-  cdn: 'https://gravatar.loli.net/avatar/'
-}
-
-const defaultComment = {
-  id: null,
-  content: null,
-  nick: null,
-  email: null,
-  link: null,
-  ua: navigator.userAgent,
-  pageUrl: null,
-  like: null,
-  dislike: null,
-  rid: null
+  emoticons: require('./assets/emoticons.json'),
+  serverUrl: '',
+  gravatar: {
+    cdn: 'https://gravatar.loli.net/avatar/'
+  }
 }
 
 class Artalk {
@@ -38,15 +25,13 @@ class Artalk {
     this.opts = Object.assign(this.opts, opts)
     // 默认头像
     if (this.opts.defaultAvatar) {
-      this.opts.defaultAvatar = `${gravatar.cdn}?s=70&d=mp`
+      this.opts.defaultAvatar = `mp`
     }
 
     this.init()
   }
 
   init () {
-    console.log(defaultComment)
-
     this.el = $(this.opts.el)
     if (!this.el.length) {
       throw Error(`Sorry, Target element "${this.opts.el}" was not found.`)

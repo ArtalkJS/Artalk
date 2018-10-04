@@ -3,15 +3,39 @@ import '../css/editor.scss'
 import EmoticonsPlug from './editor-plugs/EmoticonsPlug.js'
 import PreviewPlug from './editor-plugs/PreviewPlug.js'
 
-class Editor {
+export default class Editor {
   constructor (artalk) {
     this.artalk = artalk
 
     this.plugs = [new EmoticonsPlug(this), new PreviewPlug(this)]
     this.el = $(require('./Editor.ejs')(this)).appendTo(this.artalk.el)
 
+    this.initUser()
     this.initTextarea()
     this.initEditorPlug()
+    this.initSubmit()
+  }
+
+  initUser () {
+    const storeUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
+    this.user = {
+      nick: storeUser.nick || null,
+      email: storeUser.email || null,
+      link: storeUser.link || null
+    }
+
+    this.headerEl = this.el.find('.artalk-editor-header')
+    let userFields = Object.keys(this.user)
+    for (let i in userFields) {
+      let field = userFields[i]
+      let inputEl = this.headerEl.find(`[name="${field}"]`)
+      inputEl.val(this.user[field] || '')
+      inputEl.bind('input propertychange', (evt) => {
+        let inputEl = $(evt.currentTarget)
+        this.user[field] = $.trim(inputEl.val())
+        window.localStorage.setItem('ArtalkUser', JSON.stringify(this.user))
+      })
+    }
   }
 
   initTextarea () {
@@ -120,6 +144,32 @@ class Editor {
   getContentMarked () {
     return this.artalk.marked(this.textareaEl.val())
   }
-}
 
-export default Editor
+  initSubmit () {
+    this.submitBtn = this.el.find('.artalk-send-btn')
+    this.submitBtn.click((evt) => {
+      let btnEl = evt.currentTarget
+      this.onSubmit(btnEl)
+    })
+  }
+
+  onSubmit (btnEl) {
+    $.ajax({
+      type: 'POST',
+      url: this.artalk.opts.serverUrl,
+      data: {
+        action: 'CommentAdd',
+        content: this.getContent(),
+        nick: this.user.nick,
+        email: this.user.email,
+        link: this.user.link,
+        rid: 0,
+        page_key: this.artalk.opts.pageKey
+      },
+      success: (obj) => {
+        console.log(obj)
+      },
+      dataType: 'json'
+    })
+  }
+}

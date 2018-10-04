@@ -1,0 +1,22 @@
+<div class="artalk-comment-wrap">
+  <div class="artalk-comment">
+    <div class="artalk-avatar">
+      <img src="<%= getGravatarUrl() %>">
+    </div>
+    <div class="artalk-content">
+      <div class="artalk-header">
+        <span class="artalk-nick"><%= data.nick %></span>
+        <% if (!!data.badge) { %>
+        <span class="artalk-badge"><%= data.badge %></span>
+        <% } %>
+        <span class="artalk-date"><%= timeAgo(data.date) %></span>
+      </div>
+      <div class="artalk-body"><%- getContentMarked() =></div>
+      <div class="artalk-footer">
+        <div class="artalk-comment-actions">
+          <span data-comment-action="reply">回复</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

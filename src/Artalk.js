@@ -3,6 +3,7 @@ import Editor from './components/Editor'
 import List from './components/List'
 import $ from 'jquery'
 import marked from 'marked'
+import hanabi from 'hanabi'
 
 const defaultOpts = {
   el: '',
@@ -65,16 +66,16 @@ class Artalk {
 
     this.marked.setOptions({
       renderer: new marked.Renderer(),
-      /* highlight: (code) => {
-        return require('highlight.js').highlightAuto(code).value
-      }, */
+      highlight: (code) => {
+        return hanabi(code)
+      },
       pedantic: false,
       gfm: true,
       tables: true,
-      breaks: false,
+      breaks: true,
       sanitize: true, // 净化
       smartLists: true,
-      smartypants: false,
+      smartypants: true,
       xhtml: false
     })
   }

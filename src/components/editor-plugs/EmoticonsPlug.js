@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import './EmoticonsPlug.scss'
 
 export default class EmoticonsPlug {
   constructor (editor) {
@@ -33,9 +34,9 @@ export default class EmoticonsPlug {
       let title = elem.attr('title')
       let content = elem.attr('data-content')
       if (inputType === 'image') {
-        this.editor.putContent(`![${title}](${content})`)
+        this.editor.addContent(`![${title}](${content})`)
       } else {
-        this.editor.putContent(content)
+        this.editor.addContent(content)
       }
     })
   }

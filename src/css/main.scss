@@ -2,6 +2,17 @@
   position: relative;
   width: 100%;
   min-height: 200px;
+
+  pre {
+    padding: 10px;
+    line-height: $line-height;
+    background-color: #f6f6f6;
+    color: #555;
+    padding: 5px 10px;
+    border-radius: $block-radius/2;
+    margin: 0;
+    font-family: Source Code Pro,courier new,Input Mono,PT Mono,SFMono-Regular,Consolas,Monaco,Menlo,PingFang SC,Liberation Mono,Microsoft YaHei,Courier，monospace;
+  }
 }
 
 .artalk * {
@@ -9,6 +20,7 @@
   line-height: $line-height;
   color: $color-default;
   font-family: $font-family;
+  word-wrap: break-word;
 }
 
 .artalk-loading {

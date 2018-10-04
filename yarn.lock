@@ -1772,6 +1772,10 @@ commander@~2.17.1:
   version "2.17.1"
   resolved "http://registry.npm.taobao.org/commander/download/commander-2.17.1.tgz#bd77ab7de6de94205ceacc72f1716d29f20a77bf"
 
+comment-regex@^1.0.0:
+  version "1.0.1"
+  resolved "http://registry.npm.taobao.org/comment-regex/download/comment-regex-1.0.1.tgz#e070d2c4db33231955d0979d27c918fcb6f93565"
+
 commondir@^1.0.1:
   version "1.0.1"
   resolved "http://registry.npm.taobao.org/commondir/download/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
@@ -3241,6 +3245,12 @@ grouped-queue@^0.3.3:
 growly@^1.3.0:
   version "1.3.0"
   resolved "http://registry.npm.taobao.org/growly/download/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
+
+hanabi@^0.4.0:
+  version "0.4.0"
+  resolved "http://registry.npm.taobao.org/hanabi/download/hanabi-0.4.0.tgz#ebbb251358c1337db1eabda686c43ff777d30d82"
+  dependencies:
+    comment-regex "^1.0.0"
 
 handle-thing@^1.2.5:
   version "1.2.5"

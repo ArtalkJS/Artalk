@@ -38,11 +38,9 @@
   padding: $block-padding 10px + 5px;
   display: block;
   width: 100%;
-  min-height: 8.75rem;
-  font-size: .875rem;
-  max-height: 50vh;
+  min-height: 130px;
+  resize: none;
   word-wrap: break-word;
-  resize: vertical;
   border: 2px solid transparent;
   border-radius: $block-radius/2;
   outline: none;
@@ -54,70 +52,16 @@
   width: 100%;
   overflow: hidden;
   border-top: 1px solid $color-border;
+  animation: .3s both fadeIn;
 
-  .artalk-editor-plug-emoticons {
-    height: 100%;
-    width: 100%;
-
-    .artalk-emoticons-list-wrap {
-      overflow-y: scroll;
-      overflow-x: hidden;
-      height: calc(100% - 30px);
-      width: 100%;
-
-      .artalk-emoticons-list {
-        padding: 5px 10px;
-
-        .artalk-emoticons-item {
-          display: inline-block;
-          padding: 5px;
-          cursor: pointer;
-          user-select: none;
-          border-radius: 2px;
-          font-size: 16px;
-
-          & > img {}
-
-          &:hover {
-            background: #F4F4F4;
-          }
-        }
-      }
+  @keyframes fadeIn {
+    0% {
+        opacity: 0
     }
 
-    .artalk-emoticons-types {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.95);
-      height: 30px;
-      border-top: 1px solid $color-border;
-
-      & > span {
-        user-select: none;
-        padding: 0 10px;
-        line-height: 30px;
-        float: left;
-        display: block;
-        cursor: pointer;
-        font-size: $font-size;
-
-        &:hover,
-        &.active {
-          background: #F4F4F4;
-        }
-      }
+    to {
+        opacity: 1
     }
-
-  }
-
-  .artalk-editor-plug-preview {
-    overflow-y: scroll;
-    overflow-x: hidden;
-    height: 100%;
-    width: 100%;
-    padding: $block-padding 10px + 5px;
   }
 }
 
@@ -137,7 +81,6 @@
   padding: 0 8px;
   cursor: pointer;
   color: $color-grey;
-  transition: color .3s ease-in-out;
   font-size: $font-size;
   user-select: none;
 
@@ -150,7 +93,7 @@
     }
   }
 
-  &:hover, &.active {
+  &.active {
     color: $color-main;
   }
 

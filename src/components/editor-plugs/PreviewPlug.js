@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import './PreviewPlug.scss'
 
 export default class PreviewPlug {
   constructor (editor) {

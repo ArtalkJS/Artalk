@@ -16,6 +16,28 @@ class Editor {
 
   initTextarea () {
     this.textareaEl = this.el.find('.artalk-editor-textarea')
+
+    /* Textarea Ui Fix */
+    // Tab
+    this.textareaEl.on('keydown', (e) => {
+      var keyCode = e.keyCode || e.which
+
+      if (keyCode === 9) {
+        e.preventDefault()
+        this.addContent('\t')
+      }
+    })
+
+    // Auto Adjust Height
+    let adjustHeight = () => {
+      var diff = this.textareaEl.outerHeight() - this.textareaEl[0].clientHeight
+      this.textareaEl[0].style.height = 0
+      this.textareaEl[0].style.height = this.textareaEl[0].scrollHeight + diff + 'px'
+    }
+
+    this.textareaEl.bind('input propertychange', (evt) => {
+      adjustHeight()
+    })
   }
 
   initEditorPlug () {
@@ -63,8 +85,7 @@ class Editor {
     })
   }
 
-  putContent (val) {
-    console.log(this.textareaEl[0].selectionStart)
+  addContent (val) {
     if (document.selection) {
       this.textareaEl.focus()
       document.selection.createRange().text = val
@@ -85,11 +106,11 @@ class Editor {
   }
 
   setContent (val) {
-    this.textareaEl.text(val)
+    this.textareaEl.val(val)
   }
 
   clearContent () {
-    this.textareaEl.html()
+    this.textareaEl.val('')
   }
 
   getContent () {

@@ -61,7 +61,8 @@ module.exports = (env, options) => {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
-              data: '@import "_variables.scss";'
+              includePaths: [SRC_PATH],
+              data: '@import "css/_variables.scss";'
             }
           }
         ],

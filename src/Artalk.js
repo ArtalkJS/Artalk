@@ -61,7 +61,9 @@ class Artalk {
   }
 
   initMarked () {
-    marked.setOptions({
+    this.marked = marked
+
+    this.marked.setOptions({
       renderer: new marked.Renderer(),
       /* highlight: (code) => {
         return require('highlight.js').highlightAuto(code).value
@@ -75,8 +77,6 @@ class Artalk {
       smartypants: false,
       xhtml: false
     })
-
-    this.marked = marked
   }
 
   showLoding () {

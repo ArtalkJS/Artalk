@@ -22,6 +22,7 @@
     padding: 6px 5px;
     resize: none;
     outline: none;
+    width: 100%;
 
     &:not(:last-child) {
       margin-right: 2px;
@@ -91,8 +92,10 @@
       width: 100%;
       background: rgba(255, 255, 255, 0.95);
       height: 30px;
+      border-top: 1px solid $color-border;
 
       & > span {
+        user-select: none;
         padding: 0 10px;
         line-height: 30px;
         float: left;
@@ -136,6 +139,7 @@
   color: $color-grey;
   transition: color .3s ease-in-out;
   font-size: $font-size;
+  user-select: none;
 
   & > i {
     color: $color-grey;

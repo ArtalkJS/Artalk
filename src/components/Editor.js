@@ -8,7 +8,7 @@ class Editor {
     this.artalk = artalk
 
     this.plugs = [new EmoticonsPlug(this), new PreviewPlug(this)]
-    this.el = $(require('../tpl/editor.ejs')(this)).appendTo(this.artalk.el)
+    this.el = $(require('./Editor.ejs')(this)).appendTo(this.artalk.el)
 
     this.initTextarea()
     this.initEditorPlug()
@@ -64,12 +64,24 @@ class Editor {
   }
 
   putContent (val) {
-    var cursorPos = this.textareaEl.prop('selectionStart')
-    var v = this.textareaEl.val()
-    var textBefore = v.substring(0, cursorPos)
-    var textAfter = v.substring(cursorPos, v.length)
-    this.textareaEl.val(textBefore + val + textAfter)
-    this.textareaEl.focus()
+    console.log(this.textareaEl[0].selectionStart)
+    if (document.selection) {
+      this.textareaEl.focus()
+      document.selection.createRange().text = val
+      this.textareaEl.focus()
+    } else if (this.textareaEl[0].selectionStart || this.textareaEl[0].selectionStart === 0) {
+      let sStart = this.textareaEl[0].selectionStart
+      let sEnd = this.textareaEl[0].selectionEnd
+      let sT = this.textareaEl[0].scrollTop
+      this.textareaEl.val(this.textareaEl.val().substring(0, sStart) + val + this.textareaEl.val().substring(sEnd, this.textareaEl.val().length))
+      this.textareaEl.focus()
+      this.textareaEl[0].selectionStart = sStart + val.length
+      this.textareaEl[0].selectionEnd = sStart + val.length
+      this.textareaEl[0].scrollTop = sT
+    } else {
+      this.textareaEl.focus()
+      this.textareaEl[0].value += val
+    }
   }
 
   setContent (val) {

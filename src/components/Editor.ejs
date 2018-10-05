@@ -4,19 +4,19 @@
     <input name="email" placeholder="邮箱" class="artalk-email" type="email" required="required">
     <input name="link" placeholder="网址 (https://)" class="artalk-link" type="url">
   </div>
-  <div class="artalk-editor-wrap">
+  <div class="artalk-editor-textarea-wrap">
     <textarea id="artalk-editor-textarea" class="artalk-editor-textarea" placeholder="<%= artalk.opts.placeholder %>"></textarea>
   </div>
   <div class="artalk-editor-plug-wrap" style="display: none;"></div>
   <div class="artalk-editor-bottom">
-    <div class="artalk-editor-bottom-part">
+    <div class="artalk-editor-bottom-part artalk-left">
       <% for (var i in plugs) { %>
         <% var plug = plugs[i] %>
         <span class="artalk-editor-action artalk-editor-plug-switcher" data-plug-index="<%- i %>"><%- plug.getBtnHtml() %></span>
       <% } %>
     </div>
-    <div class="artalk-editor-bottom-part">
-      <button type="button" class="artalk-send-btn">回复</button>
+    <div class="artalk-editor-bottom-part artalk-right">
+      <button type="button" class="artalk-send-btn">发送评论</button>
     </div>
   </div>
 </div>

@@ -110,7 +110,11 @@ module.exports = (env, options) => {
     externals: {
       jquery: 'jQuery'
     },
-    plugins: []
+    plugins: [
+      new webpack.DefinePlugin({
+        ARTALK_VERSION: `"${VERSION}"`
+      })
+    ]
   }
 
   if (!dev) {

@@ -1,3 +1,7 @@
+import $ from 'jquery'
+import '../css/comment.scss'
+import UADetect from '../utils/detect.js'
+
 export default class Comment {
   constructor (list, data) {
     this.artalk = list.artalk
@@ -14,7 +18,46 @@ export default class Comment {
     }
 
     this.data = Object.assign(this.data, data)
-    this.elem = require('./Comment.ejs')(this)
+    this.elem = $(require('./Comment.ejs')(this))
+    this.contentEl = this.elem.find('.artalk-content')
+
+    this.parent = null
+    this.nestedNum = 1 // 现在已嵌套 n 层
+    this.maxNestedNo = 3 // 最多嵌套 n 层
+    this.children = []
+    this.childrenEl = null
+
+    // 绑定回复按钮事件
+    this.elem.find('[data-comment-action="reply"]').click(() => {
+      this.artalk.editor.setReply(this)
+    })
+  }
+
+  setChild (comment) {
+    this.children.push(comment)
+    $(comment.getElem()).appendTo(this.getChildrenEl())
+    comment.parent = this
+    comment.nestedNum = this.nestedNum + 1 // 嵌套层数 +1
+  }
+
+  getChildren () {
+    return this.children
+  }
+
+  getChildrenEl () {
+    if (this.childrenEl === null) {
+      console.log(this.nestedNo)
+      if (this.nestedNum < this.maxNestedNo) {
+        this.childrenEl = $('<div class="artalk-comment-children"></div>').appendTo(this.contentEl)
+      } else {
+        this.childrenEl = this.parent.getChildrenEl()
+      }
+    }
+    return this.childrenEl
+  }
+
+  getParent () {
+    return this.parent
   }
 
   getElem () {
@@ -86,5 +129,10 @@ export default class Comment {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  getUserUaInfo () {
+    let info = UADetect(this.data.ua)
+    return `${info.browser} ${info.version} - ${info.os} ${info.osVersion}`
   }
 }

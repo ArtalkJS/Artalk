@@ -1,17 +1,20 @@
-<div class="artalk-comment-wrap">
+<div class="artalk-comment-wrap" data-comment-id="<%= data.id %>">
   <div class="artalk-comment">
     <div class="artalk-avatar">
-      <img src="<%= getGravatarUrl() %>">
+      <a href="<%= data.link %>" target="_blank">
+        <img src="<%= getGravatarUrl() %>">
+      </a>
     </div>
     <div class="artalk-content">
       <div class="artalk-header">
-        <span class="artalk-nick"><%= data.nick %></span>
+        <span class="artalk-nick"><a href="<%= data.link %>" target="_blank"><%= data.nick %></a></span>
         <% if (!!data.badge) { %>
         <span class="artalk-badge"><%= data.badge %></span>
         <% } %>
-        <span class="artalk-date"><%= timeAgo(data.date) %></span>
+        <span class="artalk-date"><%= timeAgo(new Date(data.date)) %></span>
+        <span class="artalk-ua"><%= getUserUaInfo() %></span>
       </div>
-      <div class="artalk-body"><%- getContentMarked() =></div>
+      <div class="artalk-body"><%- getContentMarked() %></div>
       <div class="artalk-footer">
         <div class="artalk-comment-actions">
           <span data-comment-action="reply">回复</span>

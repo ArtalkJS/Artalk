@@ -8,11 +8,11 @@ import hanabi from 'hanabi'
 const defaultOpts = {
   el: '',
   placeholder: '来啊，快活啊 (/ω＼)',
-  defaultAvatar: '',
+  defaultAvatar: 'mp',
   pageSize: 50,
   pageKey: '',
-  emoticons: require('./assets/emoticons.json'),
   serverUrl: '',
+  emoticons: require('./assets/emoticons.json'),
   gravatar: {
     cdn: 'https://gravatar.loli.net/avatar/'
   }
@@ -23,10 +23,6 @@ class Artalk {
     // 配置
     this.opts = defaultOpts
     this.opts = Object.assign(this.opts, opts)
-    // 默认头像
-    if (this.opts.defaultAvatar) {
-      this.opts.defaultAvatar = `mp`
-    }
 
     this.init()
   }
@@ -37,13 +33,10 @@ class Artalk {
       throw Error(`Sorry, Target element "${this.opts.el}" was not found.`)
     }
     this.el.addClass('artalk')
-    this.showLoding()
 
     this.initMarked()
     this.editor = new Editor(this)
     this.list = new List(this)
-
-    this.hideLoading()
   }
 
   initMarked () {
@@ -65,17 +58,45 @@ class Artalk {
     })
   }
 
-  showLoding () {
-    let loadingElem = $('.artalk-loading')
+  showLoading (patentElem) {
+    if (!patentElem) {
+      patentElem = this.el
+    }
+    let loadingElem = $(patentElem).find('.artalk-loading')
     if (!loadingElem.length) {
-      loadingElem = $(`<div class="artalk-loading" style="display: none;"><div class="artalk-loading-spinner"><svg viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle></svg></div></div>`).appendTo(this.el)
+      loadingElem = $(`<div class="artalk-loading" style="display: none;"><div class="artalk-loading-spinner"><svg viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle></svg></div></div>`).appendTo(patentElem)
     }
     loadingElem.css('display', '')
   }
 
-  hideLoading () {
-    let loadingElem = $('.artalk-loading')
+  hideLoading (patentElem) {
+    if (!patentElem) {
+      patentElem = this.el
+    }
+    let loadingElem = $(patentElem).find('.artalk-loading')
     loadingElem.css('display', 'none')
+  }
+
+  scrollToView (elem) {
+    if (this.isScrolledIntoView(elem)) {
+      return
+    }
+
+    console.log(1)
+
+    $('html,body').animate({
+      scrollTop: $(elem).offset().top - $(window).height() / 2
+    }, 500)
+  }
+
+  isScrolledIntoView (elem) {
+    let docViewTop = $(window).scrollTop()
+    let docViewBottom = docViewTop + $(window).height()
+
+    let elemTop = $(elem).offset().top
+    let elemBottom = elemTop + $(elem).height()
+
+    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop))
   }
 }
 

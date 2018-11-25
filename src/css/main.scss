@@ -23,7 +23,7 @@
   }
 }
 
-.artalk-loading {
+@mixin full-layer {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -35,6 +35,10 @@
   justify-content: center;
   flex-flow: column;
   display: flex;
+}
+
+.artalk-loading {
+  @include full-layer;
 }
 
 .artalk-loading-spinner {
@@ -99,4 +103,9 @@
   80%,90% {
     stroke: #ffc107
   }
+}
+
+.artalk-error-layer {
+  @include full-layer;
+  background-color: rgba(255, 255, 255, 0.94);
 }

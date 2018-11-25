@@ -30,7 +30,8 @@ class List {
         this.putAllCommentByObj(obj.data.comments)
       },
       error: () => {
-
+        this.artalk.hideLoading()
+        this.artalk.setError('网络错误，无法获取评论列表数据')
       }
     })
   }
@@ -95,7 +96,17 @@ class List {
   }
 
   updateIndicator () {
-    this.el.find('.artalk-comment-count-num').text(Object.keys(this.comments).length)
+    this.el.find('.artalk-comment-count-num').text(this.comments.length)
+
+    let noCommentElem = this.commentsWrapEl.find('.artalk-no-comment')
+    if (this.comments.length <= 0) {
+      if (!noCommentElem.length) {
+        noCommentElem = $('<div class="artalk-no-comment"></div>').text(this.artalk.opts.noComment)
+        noCommentElem.appendTo(this.commentsWrapEl)
+      }
+    } else {
+      noCommentElem.remove()
+    }
   }
 }
 

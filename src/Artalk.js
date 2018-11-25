@@ -8,6 +8,7 @@ import hanabi from 'hanabi'
 const defaultOpts = {
   el: '',
   placeholder: '来啊，快活啊 (/ω＼)',
+  noComment: '快来成为第一个评论的人吧~',
   defaultAvatar: 'mp',
   pageSize: 50,
   pageKey: '',
@@ -20,6 +21,9 @@ const defaultOpts = {
 
 class Artalk {
   constructor (opts) {
+    // Copyright
+    console.log('\n %c Artalk %c 一款有趣有后端的评论系统 \n\n%c> https://github.com/qwqcode/Artalk\n> https://qwqaq.com \n', 'color: #FFF; background: #1DAAFF; padding:5px 0;', 'color: #FFF; background: #656565; padding:5px 0;', '')
+
     // 配置
     this.opts = defaultOpts
     this.opts = Object.assign(this.opts, opts)
@@ -58,31 +62,41 @@ class Artalk {
     })
   }
 
-  showLoading (patentElem) {
-    if (!patentElem) {
-      patentElem = this.el
+  showLoading (parentElem) {
+    if (!parentElem) {
+      parentElem = this.el
     }
-    let loadingElem = $(patentElem).find('.artalk-loading')
+    let loadingElem = $(parentElem).find('.artalk-loading')
     if (!loadingElem.length) {
-      loadingElem = $(`<div class="artalk-loading" style="display: none;"><div class="artalk-loading-spinner"><svg viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle></svg></div></div>`).appendTo(patentElem)
+      loadingElem = $(`<div class="artalk-loading" style="display: none;"><div class="artalk-loading-spinner"><svg viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle></svg></div></div>`).appendTo(parentElem)
     }
     loadingElem.css('display', '')
   }
 
-  hideLoading (patentElem) {
-    if (!patentElem) {
-      patentElem = this.el
+  hideLoading (parentElem) {
+    if (!parentElem) {
+      parentElem = this.el
     }
-    let loadingElem = $(patentElem).find('.artalk-loading')
+    let loadingElem = $(parentElem).find('.artalk-loading')
     loadingElem.css('display', 'none')
+  }
+
+  setError (msg) {
+    let elem = this.el.find('.artalk-error-layer')
+    if (!elem.length) {
+      elem = $('<div class="artalk-error-layer">Artalk Error<span class="artalk-error-text"></span></div>').appendTo(this.el)
+    } else {
+      if (msg === null) {
+        elem.remove()
+      }
+    }
+    elem.find('.artalk-error-text').text(msg)
   }
 
   scrollToView (elem) {
     if (this.isScrolledIntoView(elem)) {
       return
     }
-
-    console.log(1)
 
     $('html,body').animate({
       scrollTop: $(elem).offset().top - $(window).height() / 2

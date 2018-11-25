@@ -1,7 +1,7 @@
 {
-  "name": "Artalk",
+  "name": "artalk",
   "version": "1.0.0",
-  "description": "Artalk - 一款轻量级的有后端评论系统。",
+  "description": "Artalk - 一款有趣有后端的评论系统",
   "author": "qwqcode <1149527164@qq.com> (https://github.com/qwqcode)",
   "keywords": [
     "Artalk",
@@ -17,7 +17,7 @@
     "url": "https://github.com/qwqcode/Artalk/issues"
   },
   "homepage": "https://github.com/qwqcode/Artalk#readme",
-  "main": "/dist/Artalk.min.js",
+  "main": "/dist/Artalk.js",
   "scripts": {
     "start": "yarn run dev",
     "dev": "webpack-dev-server --mode development --hot --colors",

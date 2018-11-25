@@ -20,7 +20,13 @@
 
   & > .artalk-list-body {
     & > .artalk-list-comments-wrap {
-
+      .artalk-no-comment {
+        text-align: center;
+        height: 150px;
+        line-height: 150px;
+        display: block;
+        font-size: 19px;
+      }
     }
   }
 

@@ -6,7 +6,7 @@ class List {
   constructor (artalk) {
     this.artalk = artalk
 
-    this.el = $(require('./List.ejs')(this)).appendTo(this.artalk.el)
+    this.el = $(require(`../templates/${List.name}.ejs`)(this)).appendTo(this.artalk.el)
     this.initComments()
   }
 

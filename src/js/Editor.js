@@ -9,7 +9,7 @@ export default class Editor {
     this.artalk = artalk
 
     this.plugs = [new EmoticonsPlug(this), new PreviewPlug(this)]
-    this.el = $(require('./Editor.ejs')(this)).appendTo(this.artalk.el)
+    this.el = $(require(`../templates/${Editor.name}.ejs`)(this)).appendTo(this.artalk.el)
 
     this.initUser()
     this.initTextarea()

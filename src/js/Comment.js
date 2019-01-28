@@ -18,7 +18,7 @@ export default class Comment {
     }
 
     this.data = Object.assign(this.data, data)
-    this.elem = $(require('./Comment.ejs')(this))
+    this.elem = $(require(`../templates/${Comment.name}.ejs`)(this))
     this.contentEl = this.elem.find('.artalk-content')
 
     this.parent = null

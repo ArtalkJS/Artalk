@@ -1,6 +1,6 @@
 import './css/main.scss'
-import Editor from './components/Editor'
-import List from './components/List'
+import Editor from './js/Editor'
+import List from './js/List'
 import $ from 'jquery'
 import marked from 'marked'
 import hanabi from 'hanabi'

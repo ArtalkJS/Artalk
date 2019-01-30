@@ -22,10 +22,11 @@
     "start": "yarn run dev",
     "dev": "webpack-dev-server --mode development --hot --colors",
     "build": "webpack --mode production",
-    "test": "eslint src"
+    "test": "eslint src",
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d demo"
   },
   "devDependencies": {
-    "@webpack-cli/init": "^0.1.2",
     "autoprefixer": "^9.1.5",
     "babel-core": "^6.26.3",
     "babel-loader": "7",
@@ -42,6 +43,7 @@
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
+    "gh-pages": "^2.0.1",
     "hanabi": "^0.4.0",
     "marked": "^0.5.1",
     "mini-css-extract-plugin": "^0.4.3",
@@ -51,7 +53,8 @@
     "style-loader": "^0.23.0",
     "url-loader": "^1.1.1",
     "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {}
 }

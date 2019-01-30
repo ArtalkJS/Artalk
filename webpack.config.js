@@ -13,9 +13,9 @@ const BANNER =
   'Link: https://github.com/qwqcode/Artalk'
 
 module.exports = (env, options) => {
-  const dev = options.mode === 'development'
+  const isDev = options.mode === 'development'
   // console.log(`MODE -> ${options.mode}`)
-  /* if (!dev) {
+  /* if (!isDev) {
     BUILD_PATH = path.resolve(ROOT_PATH, `dist/${VERSION}`)
   } */
 
@@ -53,14 +53,14 @@ module.exports = (env, options) => {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true
+              sourceMap: isDev
             }
           },
           'postcss-loader',
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true,
+              sourceMap: isDev,
               includePaths: [SRC_PATH],
               data: '@import "css/_variables.scss";'
             }
@@ -74,7 +74,7 @@ module.exports = (env, options) => {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true
+              sourceMap: isDev
             }
           },
           'postcss-loader'
@@ -86,9 +86,9 @@ module.exports = (env, options) => {
         test: /\.ejs$/,
         loader: 'ejs-compiled-loader',
         options: {
-          htmlmin: true,
+          htmlmin: !isDev,
           htmlminOptions: {
-            removeComments: true
+            removeComments: !isDev
           }
         }
       }]
@@ -117,7 +117,7 @@ module.exports = (env, options) => {
     ]
   }
 
-  if (!dev) {
+  if (!isDev) {
     conf.plugins.push(new webpack.BannerPlugin(BANNER))
     conf.optimization = {
       minimizer: [

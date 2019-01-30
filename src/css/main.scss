@@ -3,7 +3,7 @@
   width: 100%;
   min-height: 200px;
 
-  & * {
+  * {
     box-sizing: border-box;
     line-height: $line-height;
     color: $color-default;
@@ -23,7 +23,7 @@
   }
 }
 
-@mixin full-layer {
+.full-layer {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -38,7 +38,7 @@
 }
 
 .artalk-loading {
-  @include full-layer;
+  @extend .full-layer;
 }
 
 .artalk-loading-spinner {
@@ -106,6 +106,6 @@
 }
 
 .artalk-error-layer {
-  @include full-layer;
+  @extend .full-layer;
   background-color: rgba(255, 255, 255, 0.94);
 }

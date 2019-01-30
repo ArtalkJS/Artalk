@@ -81,7 +81,14 @@ class Artalk {
     loadingElem.css('display', 'none')
   }
 
-  setError (msg) {
+  showErrorDialog () {
+    let elem = this.el.find('.artalk-error-dialog')
+    if (!elem.length) {
+
+    }
+  }
+
+  setGlobalError (msg) {
     let elem = this.el.find('.artalk-error-layer')
     if (!elem.length) {
       elem = $('<div class="artalk-error-layer">Artalk Error<span class="artalk-error-text"></span></div>').appendTo(this.el)

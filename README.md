@@ -5,6 +5,14 @@
 # Artalk
 > 一款简洁有趣的自托管评论系统
 
+[![](https://img.shields.io/npm/v/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
+[![](https://img.shields.io/npm/dt/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
+[![](https://img.shields.io/github/last-commit/qwqcode/Artalk/master.svg?style=flat-square)](https://github.com/qwqcode/Artalk/commits/master)
+[![](https://img.shields.io/github/issues-raw/qwqcode/Artalk.svg?style=flat-square)](https://github.com/qwqcode/Artalk/issues)
+[![](https://img.shields.io/github/issues-pr-raw/qwqcode/Artalk.svg?style=flat-square)](https://github.com/qwqcode/Artalk/pulls)
+[![](https://img.shields.io/github/license/qwqcode/Artalk.svg?style=flat-square)](./LICENSE)
+[![](https://img.shields.io/badge/%24-donate-%23ff69b4.svg?style=flat-square)](#捐助)
+
 ## 特性
 - 简洁 (~25kB gzipped)
 - 有趣
@@ -15,7 +23,7 @@
 - 评论打分
 
 ## 食用
-[查看DEMO](./demo/index.html)
+[查看 DEMO](https://artalk.js.org) / [查看代码](./demo/index.html)
 
 ## 开发
 

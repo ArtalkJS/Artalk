@@ -230,7 +230,6 @@ export default class Editor {
         this.artalk.showLoading(this.el)
       },
       success: (obj) => {
-        console.log(obj)
         this.artalk.hideLoading(this.el)
         if (obj.success) {
           let newComment = new Comment(this.artalk.list, obj.data.comment)

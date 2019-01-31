@@ -128,7 +128,7 @@ module.exports = (env, options) => {
             comments: false,
             mangle: true,
             compress: {
-              drop_console: true,
+              drop_console: false, // console.log
               warnings: false,
               collapse_vars: true,
               reduce_vars: true

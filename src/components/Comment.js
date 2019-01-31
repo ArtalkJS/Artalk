@@ -46,7 +46,7 @@ export default class Comment {
 
   getChildrenEl () {
     if (this.childrenEl === null) {
-      console.log(this.nestedNo)
+      // console.log(this.nestedNo)
       if (this.nestedNum < this.maxNestedNo) {
         this.childrenEl = $('<div class="artalk-comment-children"></div>').appendTo(this.contentEl)
       } else {
@@ -127,7 +127,7 @@ export default class Comment {
         return this.dateFormat(date)
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

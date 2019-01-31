@@ -1,14 +1,14 @@
 <p align="center">
-<img src="./docs/banner.png" alt="ADPlayer" width="200">
+<img src="./docs/banner.png" alt="Altalk" width="200">
 </p>
 
 # Artalk
-> 一款有趣有后端的评论系统
+> 一款简洁有趣的自托管评论系统
 
 ## 特性
 - 简洁
 - 有趣
-- 自管理
+- 自托管
 - Markdown
 - 自定表情 #(滑稽)
 - 评论打分

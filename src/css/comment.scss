@@ -3,6 +3,7 @@
   position: relative;
   margin-bottom: 10px;
   border-bottom: 1px solid $color-border;
+  animation: .3s both artalkFadeIn;
 
   &:last-child {
     border-bottom-color: transparent;
@@ -37,6 +38,13 @@
         overflow: hidden;
         position: relative;
 
+        @mixin badge {
+          background: #F4F4F4;
+          padding: 0 5px;
+          border-radius: 3px;
+        }
+
+
         & > span {
           display: block;
           float: left;
@@ -55,12 +63,12 @@
             }
           }
 
-          &.artalk-badge {}
+          &.artalk-badge {
+            @include badge();
+          }
 
           &.artalk-ua {
-            background: #F4F4F4;
-            padding: 0 5px;
-            border-radius: 3px;
+            @include badge();
           }
         }
       }

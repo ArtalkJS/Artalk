@@ -22,7 +22,7 @@
     }
   </style>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="Artalk.js"></script>
+  <script src="dist/Artalk.js"></script>
 </head>
 <body>
   <div class="container">
@@ -34,8 +34,8 @@
       placeholder: '来啊，快活啊 (/ω＼)',
       defaultAvatar: 'mp',
       pageSize: 50,
-      pageKey: window.location.pathname,
-      serverUrl: (location.host === 'qwqcode.github.io') ? 'https://qwqaq.com/Artalk/index.php' : 'http://localhost:23366/'
+      pageKey: 'artalk_demo',
+      serverUrl: (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:23366/' : 'https://qwqaq.com/Artalk/index.php'
     })
   </script>
 </body>

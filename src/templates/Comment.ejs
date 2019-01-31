@@ -1,13 +1,15 @@
 <div class="artalk-comment-wrap" data-comment-id="<%= data.id %>">
   <div class="artalk-comment">
     <div class="artalk-avatar">
-      <a href="<%= data.link %>" target="_blank">
+      <a target="_blank" <% if(!!data.link){ %>href="<%= data.link %>"<% } %>>
         <img src="<%= getGravatarUrl() %>">
       </a>
     </div>
     <div class="artalk-content">
       <div class="artalk-header">
-        <span class="artalk-nick"><a href="<%= data.link %>" target="_blank"><%= data.nick %></a></span>
+        <span class="artalk-nick">
+          <a target="_blank" <% if(!!data.link){ %>href="<%= data.link %>"<% } %>><%= data.nick %></a>
+        </span>
         <% if (!!data.badge) { %>
         <span class="artalk-badge"><%= data.badge %></span>
         <% } %>

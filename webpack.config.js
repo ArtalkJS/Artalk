@@ -99,7 +99,7 @@ module.exports = (env, options) => {
       open: true,
       hot: true,
       inline: true,
-      publicPath: '/',
+      publicPath: '/dist/',
       compress: true,
       stats: 'errors-only',
       overlay: {

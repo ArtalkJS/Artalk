@@ -6,7 +6,7 @@ class List {
   constructor (artalk) {
     this.artalk = artalk
 
-    this.el = $(require(`../templates/${List.name}.ejs`)(this)).appendTo(this.artalk.el)
+    this.el = $(require('../templates/List.ejs')(this)).appendTo(this.artalk.el)
     this.initComments()
   }
 
@@ -31,7 +31,7 @@ class List {
       },
       error: () => {
         this.artalk.hideLoading()
-        this.artalk.setError('网络错误，无法获取评论列表数据')
+        this.artalk.setGlobalError('网络错误，无法获取评论列表数据')
       }
     })
   }

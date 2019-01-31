@@ -230,6 +230,15 @@ function Detect (userAgent) {
       _this.version = ''
     }
   }
+
+  // 简化版本号
+  if (_this.osVersion.indexOf('.')) {
+    _this.osVersion = _this.osVersion.substring(0, _this.osVersion.indexOf('.'))
+  }
+  if (_this.version.indexOf('.')) {
+    _this.version = _this.version.substring(0, _this.version.indexOf('.'))
+  }
+
   // 修正
   if (_this.browser === 'Edge') {
     _this.engine = 'EdgeHTML'

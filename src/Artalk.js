@@ -1,6 +1,6 @@
 import './css/main.scss'
-import Editor from './js/Editor'
-import List from './js/List'
+import Editor from './components/Editor'
+import List from './components/List'
 import $ from 'jquery'
 import marked from 'marked'
 import hanabi from 'hanabi'
@@ -81,13 +81,6 @@ class Artalk {
     loadingElem.css('display', 'none')
   }
 
-  showErrorDialog () {
-    let elem = this.el.find('.artalk-error-dialog')
-    if (!elem.length) {
-
-    }
-  }
-
   setGlobalError (msg) {
     let elem = this.el.find('.artalk-error-layer')
     if (!elem.length) {
@@ -98,6 +91,30 @@ class Artalk {
       }
     }
     elem.find('.artalk-error-text').text(msg)
+  }
+
+  showLayerDialog (parentElem, html, onConfirm, onCancel) {
+    if (!parentElem) {
+      throw Error('showLayerDialog 未指定 parentElem')
+    }
+    let dialogElem = $(`<div class="artalk-layer-dialog-wrap"><div class="artalk-layer-dialog"><div class="artalk-layer-dialog-content"></div><div class="artalk-layer-dialog-action"><button data-action="confirm">确定</button>${(typeof onCancel === 'function') ? '<button data-action="cancel">取消</button>' : ''}</div></div>`).appendTo(parentElem)
+    $(html).appendTo(dialogElem.find('.artalk-layer-dialog-content'))
+    if (typeof onConfirm === 'function') {
+      dialogElem.find('[data-action="confirm"]').click((evt) => {
+        let returnVal = onConfirm(dialogElem, $(evt.currentTarget))
+        if (returnVal === undefined || returnVal === true) {
+          dialogElem.remove()
+        }
+      })
+    }
+    if (typeof onCancel === 'function') {
+      dialogElem.find('[data-action="cancel"]').click((evt) => {
+        let returnVal = onCancel(dialogElem, $(evt.currentTarget))
+        if (returnVal === undefined || returnVal === true) {
+          dialogElem.remove()
+        }
+      })
+    }
   }
 
   scrollToView (elem) {

@@ -9,7 +9,7 @@ export default class Editor {
     this.artalk = artalk
 
     this.plugs = [new EmoticonsPlug(this), new PreviewPlug(this)]
-    this.el = $(require(`../templates/${Editor.name}.ejs`)(this)).appendTo(this.artalk.el)
+    this.el = $(require('../templates/Editor.ejs')(this)).appendTo(this.artalk.el)
 
     this.initUser()
     this.initTextarea()
@@ -22,7 +22,8 @@ export default class Editor {
     this.user = {
       nick: storeUser.nick || null,
       email: storeUser.email || null,
-      link: storeUser.link || null
+      link: storeUser.link || null,
+      password: storeUser.password || null
     }
 
     this.headerEl = this.el.find('.artalk-editor-header')
@@ -34,9 +35,16 @@ export default class Editor {
       inputEl.bind('input propertychange', (evt) => {
         let inputEl = $(evt.currentTarget)
         this.user[field] = $.trim(inputEl.val())
-        window.localStorage.setItem('ArtalkUser', JSON.stringify(this.user))
+        if (field === 'nick' || field === 'email') {
+          this.user.password = null
+        }
+        this.userLocalStorageSave()
       })
     }
+  }
+
+  userLocalStorageSave () {
+    window.localStorage.setItem('ArtalkUser', JSON.stringify(this.user))
   }
 
   initTextarea () {
@@ -194,11 +202,16 @@ export default class Editor {
     this.submitBtn = this.el.find('.artalk-send-btn')
     this.submitBtn.click((evt) => {
       let btnEl = evt.currentTarget
-      this.onSubmit(btnEl)
+      this.submit(btnEl)
     })
   }
 
-  onSubmit (btnEl) {
+  submit () {
+    if ($.trim(this.getContent()) === '') {
+      this.textareaEl.focus()
+      return
+    }
+
     $.ajax({
       type: 'POST',
       url: this.artalk.opts.serverUrl,
@@ -209,7 +222,8 @@ export default class Editor {
         email: this.user.email,
         link: this.user.link,
         rid: this.getReplyComment() === null ? 0 : this.getReplyComment().data.id,
-        page_key: this.artalk.opts.pageKey
+        page_key: this.artalk.opts.pageKey,
+        password: this.user.password || null
       },
       dataType: 'json',
       beforeSend: () => {
@@ -228,13 +242,105 @@ export default class Editor {
           this.artalk.scrollToView(newComment.getElem())
           this.clearEditor()
         } else {
-          window.alert('评论失败，' + obj.msg)
+          if (typeof obj.data.need_password === 'boolean' && obj.data.need_password === true) {
+            // 管理员密码验证
+            this.showAdminCheck()
+          } else {
+            this.showNotify('评论失败，' + obj.msg, 'e')
+          }
         }
       },
       error: () => {
         this.artalk.hideLoading(this.el)
-        window.alert('评论失败，网络错误')
+        this.showNotify('评论失败，网络错误', 'e')
       }
+    })
+  }
+
+  showAdminCheck () {
+    let formElem = $(`<div>输入密码来验证管理员身份：<input type="password" required placeholder="输入密码..."></div>`)
+    let input = formElem.find('[type="password"]')
+    setTimeout(() => {
+      input.focus() // 延迟保证有效
+    }, 80)
+    this.artalk.showLayerDialog(this.el, formElem, (dialogElem, btnElem) => {
+      let inputVal = $.trim(input.val())
+      let btnRawText = btnElem.text()
+      let btnTextRestore = () => {
+        btnElem.text(btnRawText)
+      }
+      $.ajax({
+        type: 'POST',
+        url: this.artalk.opts.serverUrl,
+        dataType: 'json',
+        data: {
+          action: 'AdminCheck',
+          nick: this.user.nick,
+          email: this.user.email,
+          password: inputVal
+        },
+        beforeSend: () => {
+          btnElem.text('加载中...')
+        },
+        success: (obj) => {
+          if (obj.success) {
+            // 密码验证成功
+            this.user.password = inputVal
+            this.userLocalStorageSave()
+            dialogElem.remove()
+            this.submit()
+          } else {
+            btnElem.text('密码错误')
+            input.focus(() => {
+              btnTextRestore()
+            })
+            setTimeout(() => {
+              btnTextRestore()
+            }, 3000)
+          }
+        },
+        error: () => {
+          btnElem.text('网络错误')
+        }
+      })
+
+      return false
+    }, () => true)
+  }
+
+  showNotify (msg, type) {
+    let colors = { s: '#57d59f', e: '#ff6f6c', w: '#ffc721', i: '#2ebcfc' }
+    if (!colors[type]) {
+      throw Error('showNotify 的 type 有问题！仅支持：' + Object.keys(colors).join(', '))
+    }
+
+    let timeout = 3000 // 持续显示时间 ms
+    let wrapElem = this.el.find('.artalk-editor-notify-wrap')
+    if (!wrapElem.length) {
+      wrapElem = $('<div class="artalk-editor-notify-wrap"></div>').appendTo(this.el)
+    }
+
+    let notifyElem = $(`<div class="artalk-editor-notify-item artalk-fade-in" style="background-color: ${colors[type]}"><span class="artalk-editor-notify-content"></span></div>`)
+    notifyElem.find('.artalk-editor-notify-content').html($('<div/>').text(msg).html().replace('\n', '<br/>'))
+    notifyElem.appendTo(wrapElem)
+
+    let notifyRemove = () => {
+      notifyElem.addClass('artalk-fade-out')
+      setTimeout(() => {
+        notifyElem.remove()
+      }, 200)
+    }
+
+    let timeoutFn
+    if (timeout > 0) {
+      timeoutFn = setTimeout(() => {
+        notifyRemove()
+      }, timeout)
+    }
+
+    notifyElem.click(() => {
+      notifyRemove()
+      clearTimeout(timeoutFn)
     })
   }
 }

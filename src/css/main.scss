@@ -47,7 +47,7 @@
   height: 50px;
 
   svg {
-    animation: rotate 2s linear infinite;
+    animation: artalkRotate 2s linear infinite;
     transform-origin: center center;
     width: 100%;
     height: 100%;
@@ -58,19 +58,19 @@
     circle {
       stroke-dasharray: 1,200;
       stroke-dashoffset: 0;
-      animation: dash 1.5s ease-in-out infinite,color 6s ease-in-out infinite;
+      animation: artalkDash 1.5s ease-in-out infinite, artalkColor 6s ease-in-out infinite;
       stroke-linecap: round
     }
   }
 }
 
-@keyframes rotate {
+@keyframes artalkRotate {
   100% {
     transform: rotate(360deg)
   }
 }
 
-@keyframes dash {
+@keyframes artalkDash {
   0% {
     stroke-dasharray: 1,200;
     stroke-dashoffset: 0
@@ -87,7 +87,7 @@
   }
 }
 
-@keyframes color {
+@keyframes artalkColor {
   0%,100% {
     stroke: #ff5652
   }
@@ -105,7 +105,86 @@
   }
 }
 
+.artalk-fade-in {
+  animation: artalkFadeIn both .3s;
+}
+
+.artalk-fade-out {
+  animation: artalkFadeOut both .2s;
+}
+
+@keyframes artalkFadeIn {
+  0% {
+      opacity: 0
+  }
+
+  to {
+      opacity: 1
+  }
+}
+
+@keyframes artalkFadeOut {
+  100% {
+      opacity: 0;
+  }
+
+  0% {
+  }
+}
+
 .artalk-error-layer {
   @extend .full-layer;
   background-color: rgba(255, 255, 255, 0.94);
+}
+
+.artalk-layer-dialog-wrap {
+  $formInputHeight: 25px;
+  @extend .full-layer;
+  background-color: rgba(255, 255, 255, 0.94);
+
+  & > .artalk-layer-dialog {
+    width: 40%;
+
+    & > .artalk-layer-dialog-content {
+      input {
+        width: 100%;
+        line-height: $formInputHeight + 4px;
+        border: 1px solid $color-grey;
+        border-radius: $block-radius/2;
+        outline: none;
+        padding: 0 6px;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        text-align: center;
+      }
+    }
+
+    & > .artalk-layer-dialog-action {
+      display: flex;
+      flex-direction: row;
+
+      button {
+        flex: 1;
+        display: block;
+        cursor: pointer;
+        border: 1px solid $color-main;
+        background: transparent;
+        color: $color-main;
+        border-radius: $block-radius/2;
+        padding: 0 15px;
+        line-height: $formInputHeight;
+        outline: none;
+
+        &:active {
+          color: #FFF;
+          background: $color-main;
+        }
+
+        &:not(:last-child) {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
 }

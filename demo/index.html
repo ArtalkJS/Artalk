@@ -4,28 +4,23 @@
   <meta charset="UTF-8">
   <title>Artalk Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      padding: 45px 10px;
-      margin: 0;
-      background: #F4F4F4;
-    }
-
-    .container {
-      margin: 0 auto;
-      max-width: 700px;
-      position: relative;
-      overflow: hidden;
-      background: #FFF;
-      border-radius: 4px;
-      padding: 20px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="dist/Artalk.js"></script>
 </head>
 <body>
-  <div class="container">
+  <div class="card">
+    <div class="title"><a href="https://github.com/qwqcode/Artalk" target="_blank"><span>&gt; </span>Artalk<span> &lt;</span></a></div>
+    <div class="desc">一款简洁有趣的自托管评论系统</div>
+    <div class="social">
+      <a href="https://www.npmjs.com/package/artalk" target="_blank"><img src="https://img.shields.io/npm/v/artalk.svg?style=flat-square"></a>
+      <a href="https://www.npmjs.com/package/artalk" target="_blank"><img src="https://img.shields.io/npm/dt/artalk.svg?style=flat-square"></a>
+      <a href="https://github.com/qwqcode/Artalk/blob/master/LICENSE" target="_blank"><img src="https://img.shields.io/github/license/qwqcode/Artalk.svg?style=flat-square"></a>
+      <a href="https://github.com/qwqcode/Artalk#%E6%8D%90%E5%8A%A9" target="_blank"><img src="https://img.shields.io/badge/%24-donate-%23ff69b4.svg?style=flat-square"></a>
+      <a href="https://github.com/qwqcode/Artalk" target="_blank"><img src="https://img.shields.io/github/stars/qwqcode/Artalk.svg?style=social"></a>
+    </div>
+  </div>
+  <div class="card">
     <div id="comments"></div>
   </div>
   <script>

@@ -20,6 +20,7 @@
 - Markdown
 - 自定表情 #(滑稽)
 - 管理员认证，防冒名
+- 通知中心
 - 评论打分
 
 ## 食用
@@ -53,7 +54,7 @@ yarn run dev
 | :------: | :------: | 
 | <img width="150" src="https://raw.githubusercontent.com/qwqcode/donate-qwqaq/master/docs/donate/alipay.png"> | <img width="150" src="https://raw.githubusercontent.com/qwqcode/donate-qwqaq/master/docs/donate/wechat.png"> | 
 
-捐赠者的名字将保存于 [捐赠者列表](https://github.com/qwqcode/donate-qwqaq)
+捐助者的名字将保存于 [捐助者名单](https://github.com/qwqcode/donate-qwqaq)
 
 最后，我再次对您致以诚挚的感谢！
 

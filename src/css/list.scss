@@ -16,6 +16,21 @@
         margin-right: 4px;
       }
     }
+
+    .artalk-right-action {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+
+      & > span {
+        font-size: 14px;
+        color: $color-main;
+        cursor: pointer;
+        user-select: none;
+      }
+    }
   }
 
   & > .artalk-list-body {

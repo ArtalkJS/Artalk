@@ -2,7 +2,9 @@
   position: relative;
   width: 100%;
   min-height: 200px;
+}
 
+.artalk, .artalk-sidebar {
   * {
     box-sizing: border-box;
     line-height: $line-height;
@@ -30,7 +32,7 @@
   top: 0;
   left: 0;
   background: $color-bg;
-  z-index: 999999999;
+  z-index: 10;
   align-items: center;
   justify-content: center;
   flex-flow: column;

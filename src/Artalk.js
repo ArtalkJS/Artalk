@@ -4,6 +4,7 @@ import List from './components/List'
 import $ from 'jquery'
 import marked from 'marked'
 import hanabi from 'hanabi'
+import Sidebar from './components/Sidebar'
 
 const defaultOpts = {
   el: '',
@@ -41,6 +42,7 @@ class Artalk {
     this.initMarked()
     this.editor = new Editor(this)
     this.list = new List(this)
+    this.sidebar = new Sidebar(this)
   }
 
   initMarked () {

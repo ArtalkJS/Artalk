@@ -1,0 +1,54 @@
+body {
+  padding: 45px 10px;
+  margin: 0;
+  background: #F4F4F4;
+}
+
+.card {
+  margin: 0 auto;
+  max-width: 700px;
+  position: relative;
+  overflow: hidden;
+  background: #FFF;
+  border-radius: 4px;
+  padding: 20px;
+}
+
+.card:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.title > a {
+  display: block;
+  text-decoration: none;
+  color: #0083ff;
+  font-size: 35px;
+  margin-top: 0;
+  margin-bottom: 10px;
+  margin-left: -30px;
+}
+
+.title > a:hover {
+  margin-left: 0;
+}
+
+.title > a > span {
+  opacity: 0;
+}
+
+.title > a:hover > span {
+  opacity: 1;
+}
+
+.desc {
+  font-size: 12px;
+  color: #757e91;
+}
+
+.social {
+  margin-top: 20px;
+}
+
+.social > a:not(:last-child) {
+  margin-right: 2px;
+}

@@ -2,12 +2,16 @@ import $ from 'jquery'
 import Comment from './Comment.js'
 import '../css/list.scss'
 
-class List {
+export default class List {
   constructor (artalk) {
     this.artalk = artalk
 
     this.el = $(require('../templates/List.ejs')(this)).appendTo(this.artalk.el)
     this.initComments()
+
+    this.el.find('[data-action="open-sidebar"]').click(() => {
+      this.artalk.sidebar.show()
+    })
   }
 
   initComments () {
@@ -109,5 +113,3 @@ class List {
     }
   }
 }
-
-export default List

@@ -18,13 +18,14 @@
 - 有趣
 - 自托管
 - Markdown
-- 自定表情 #(滑稽)
+- 自定表情
+- 滑稽表情包
 - 管理员认证，防冒名
 - 通知中心
 - 评论打分
 
 ## 食用
-[查看 DEMO](https://artalk.js.org) / [查看代码](./demo/index.html)
+[查看 DEMO](https://artalk.js.org)
 
 ## 开发
 

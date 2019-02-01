@@ -34,9 +34,9 @@ export default class EmoticonsPlug {
       let title = elem.attr('title')
       let content = elem.attr('data-content')
       if (inputType === 'image') {
-        this.editor.addContent(`![${title}](${content})`)
+        this.editor.insertContent(`![${title}](${content})`)
       } else {
-        this.editor.addContent(content)
+        this.editor.insertContent(content)
       }
     })
   }
@@ -69,11 +69,18 @@ export default class EmoticonsPlug {
     return this.elem
   }
 
-  onShow () {
-    this.changeListHeight()
+  changeListHeight () {
+    this.editor.plugWrapEl.css('height', this.listWrapElem.height() > 150 ? this.listWrapElem.height() : 150)
   }
 
-  changeListHeight () {
-    this.elem.parent().css('height', this.listWrapElem.height() > 150 ? this.listWrapElem.height() : 150)
+  onShow () {
+    // 延迟加载，防止无法读取高度
+    setTimeout(() => {
+      this.changeListHeight()
+    }, 30)
+  }
+
+  onHide () {
+    this.elem.parent().css('height', '')
   }
 }

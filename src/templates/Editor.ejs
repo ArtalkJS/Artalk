@@ -9,14 +9,10 @@
   </div>
   <div class="artalk-editor-plug-wrap" style="display: none;"></div>
   <div class="artalk-editor-bottom">
-    <div class="artalk-editor-bottom-part artalk-left">
-      <% for (var i in plugs) { %>
-        <% var plug = plugs[i] %>
-        <span class="artalk-editor-action artalk-editor-plug-switcher" data-plug-index="<%- i %>"><%- plug.getBtnHtml() %></span>
-      <% } %>
-    </div>
+    <div class="artalk-editor-bottom-part artalk-left artalk-editor-plug-switcher-wrap"></div>
     <div class="artalk-editor-bottom-part artalk-right">
       <button type="button" class="artalk-send-btn">发送评论</button>
     </div>
   </div>
+  <div class="artalk-editor-notify-wrap"></div>
 </div>

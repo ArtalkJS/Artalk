@@ -7,6 +7,9 @@ export default class List {
     this.artalk = artalk
 
     this.el = $(require('../templates/List.ejs')(this)).appendTo(this.artalk.el)
+    this.commentsWrapEl = this.el.find('.artalk-list-comments-wrap')
+
+    this.comments = []
     this.initComments()
 
     this.el.find('[data-action="open-sidebar"]').click(() => {
@@ -15,9 +18,6 @@ export default class List {
   }
 
   initComments () {
-    this.comments = []
-    this.commentsWrapEl = this.el.find('.artalk-list-comments-wrap')
-
     $.ajax({
       type: 'POST',
       url: this.artalk.opts.serverUrl,
@@ -27,20 +27,20 @@ export default class List {
       },
       dataType: 'json',
       beforeSend: () => {
-        this.artalk.showLoading()
+        this.artalk.ui.showLoading()
       },
       success: (obj) => {
-        this.artalk.hideLoading()
-        this.putAllCommentByObj(obj.data.comments)
+        this.artalk.ui.hideLoading()
+        this.putCommentsByObj(obj.data.comments)
       },
       error: () => {
-        this.artalk.hideLoading()
-        this.artalk.setGlobalError('网络错误，无法获取评论列表数据')
+        this.artalk.ui.hideLoading()
+        this.artalk.ui.setGlobalError('网络错误，无法获取评论列表数据')
       }
     })
   }
 
-  putAllCommentByObj (rawData) {
+  putCommentsByObj (rawData) {
     let comments = []
     for (let i in rawData) {
       let comment = rawData[i]
@@ -93,7 +93,7 @@ export default class List {
     this.updateIndicator()
   }
 
-  putOneComment (comment) {
+  putComment (comment) {
     $(comment.getElem()).prependTo(this.commentsWrapEl)
     this.comments.unshift(comment)
     this.updateIndicator()

@@ -145,24 +145,5 @@
     width: 225px;
     z-index: 9;
     opacity: .83;
-
-    .artalk-editor-notify-item {
-      display: block;
-      overflow: hidden;
-      background-color: #2c2c2c;
-      color: #FFF;
-      border-radius: 2px;
-      cursor: pointer;
-      font-size: 14px;
-      padding: 4px 15px;
-
-      &:not(:last-child) {
-        margin-bottom: 3px;
-      }
-
-      .artalk-editor-notify-content {
-        color: #FFF;
-      }
-    }
   }
 }

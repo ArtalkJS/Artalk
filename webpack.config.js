@@ -1,5 +1,8 @@
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const path = require('path')
 
 const ROOT_PATH = path.resolve(__dirname)
@@ -13,9 +16,10 @@ const BANNER =
   'Link: https://github.com/qwqcode/Artalk'
 
 module.exports = (env, options) => {
-  const isDev = options.mode === 'development'
+  const isDev = (options.mode === 'development')
+  const isProd = !isDev
   // console.log(`MODE -> ${options.mode}`)
-  /* if (!isDev) {
+  /* if (isProd) {
     BUILD_PATH = path.resolve(ROOT_PATH, `dist/${VERSION}`)
   } */
 
@@ -31,6 +35,21 @@ module.exports = (env, options) => {
       libraryExport: 'default',
       umdNamedDefine: true
     },
+    plugins: [
+      new HtmlWebpackPlugin({
+        title: `Artalk DEMO`,
+        filename: `${ROOT_PATH}/index.html`,
+        template: `${ROOT_PATH}/index-tpl.ejs`,
+        inject: 'head',
+        hash: true
+      }),
+      new webpack.DefinePlugin({
+        ARTALK_VERSION: `"${VERSION}"`
+      }),
+      new MiniCssExtractPlugin({
+        filename: '[name].css'
+      })
+    ],
     module: {
       rules: [{
         test: /\.js$/,
@@ -49,11 +68,12 @@ module.exports = (env, options) => {
       }, {
         test: /\.scss$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
-              sourceMap: isDev
+              sourceMap: isDev,
+              minimize: isProd
             }
           },
           'postcss-loader',
@@ -68,34 +88,24 @@ module.exports = (env, options) => {
         ],
         include: SRC_PATH
       }, {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: isDev
-            }
-          },
-          'postcss-loader'
-        ]
-      }, {
         test: /\.(png|jpg|gif|svg)$/,
         use: ['url-loader?limit=1024*10']
       }, {
         test: /\.ejs$/,
         loader: 'ejs-compiled-loader',
         options: {
-          htmlmin: !isDev,
+          htmlmin: isProd,
           htmlminOptions: {
-            removeComments: !isDev
+            removeComments: true,
+            collapseWhitespace: true,
+            preserveLineBreaks: true,
+            conservativeCollapse: true
           }
         }
       }]
     },
-    devtool: 'cheap-module-source-map',
+    devtool: isDev ? 'cheap-module-source-map' : false,
     devServer: {
-      contentBase: path.resolve(ROOT_PATH, 'demo'),
       open: true,
       hot: true,
       inline: true,
@@ -109,22 +119,17 @@ module.exports = (env, options) => {
     },
     externals: {
       jquery: 'jQuery'
-    },
-    plugins: [
-      new webpack.DefinePlugin({
-        ARTALK_VERSION: `"${VERSION}"`
-      })
-    ]
+    }
   }
 
-  if (!isDev) {
+  if (isProd) {
     conf.plugins.push(new webpack.BannerPlugin(BANNER))
     conf.optimization = {
       minimizer: [
         new UglifyJsPlugin({
           uglifyOptions: {
-            beautify: false,
             sourceMap: false,
+            beautify: false,
             comments: false,
             mangle: true,
             compress: {
@@ -134,7 +139,8 @@ module.exports = (env, options) => {
               reduce_vars: true
             }
           }
-        })
+        }),
+        new OptimizeCSSAssetsPlugin({})
       ]
     }
   } else {

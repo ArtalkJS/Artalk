@@ -8,117 +8,127 @@ export default class Editor {
   constructor (artalk) {
     this.artalk = artalk
 
-    this.plugs = [new EmoticonsPlug(this), new PreviewPlug(this)]
+    this.plugList = [EmoticonsPlug, PreviewPlug]
     this.el = $(require('../templates/Editor.ejs')(this)).appendTo(this.artalk.el)
+    this.headerEl = this.el.find('.artalk-editor-header')
+    this.textareaEl = this.el.find('.artalk-editor-textarea')
+    this.plugWrapEl = this.el.find('.artalk-editor-plug-wrap')
+    this.bottomPartLeftEl = this.el.find('.artalk-editor-bottom-part.artalk-left')
+    this.plugSwitherWrapEl = this.el.find('.artalk-editor-plug-switcher-wrap')
+    this.bottomPartRightEl = this.el.find('.artalk-editor-bottom-part.artalk-right')
+    this.submitBtn = this.el.find('.artalk-send-btn')
+    this.notifyWrapEl = this.el.find('.artalk-editor-notify-wrap')
 
     this.initUser()
+    this.initHeader()
     this.initTextarea()
     this.initEditorPlug()
     this.initBottomPart()
   }
 
   initUser () {
-    const storeUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
+    let localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
     this.user = {
-      nick: storeUser.nick || null,
-      email: storeUser.email || null,
-      link: storeUser.link || null,
-      password: storeUser.password || null
-    }
-
-    this.headerEl = this.el.find('.artalk-editor-header')
-    let userFields = Object.keys(this.user)
-    for (let i in userFields) {
-      let field = userFields[i]
-      let inputEl = this.headerEl.find(`[name="${field}"]`)
-      inputEl.val(this.user[field] || '')
-      inputEl.bind('input propertychange', (evt) => {
-        let inputEl = $(evt.currentTarget)
-        this.user[field] = $.trim(inputEl.val())
-        if (field === 'nick' || field === 'email') {
-          this.user.password = null
-        }
-        this.userLocalStorageSave()
-      })
+      nick: localUser.nick || null,
+      email: localUser.email || null,
+      link: localUser.link || null,
+      password: localUser.password || null
     }
   }
 
-  userLocalStorageSave () {
+  initHeader () {
+    for (let field in this.user) {
+      let inputEl = this.headerEl.find(`[name="${field}"]`)
+      if (inputEl.length) {
+        inputEl.val(this.user[field] || '')
+        // 输入框内容变化事件
+        inputEl.bind('input propertychange', (evt) => {
+          this.user[field] = $.trim(inputEl.val())
+          this.user.password = null
+          this.saveUser()
+        })
+      }
+    }
+  }
+
+  /**
+   * 保存用户到 localStorage 中
+   */
+  saveUser () {
     window.localStorage.setItem('ArtalkUser', JSON.stringify(this.user))
   }
 
   initTextarea () {
-    this.textareaEl = this.el.find('.artalk-editor-textarea')
-
-    /* Textarea Ui Fix */
-    // Tab
+    // 修复按下 Tab 输入的内容
     this.textareaEl.on('keydown', (e) => {
       var keyCode = e.keyCode || e.which
 
       if (keyCode === 9) {
         e.preventDefault()
-        this.addContent('\t')
+        this.insertContent('\t')
       }
     })
 
-    // Auto Adjust Height
-    let adjustHeight = () => {
-      var diff = this.textareaEl.outerHeight() - this.textareaEl[0].clientHeight
-      this.textareaEl[0].style.height = 0
-      this.textareaEl[0].style.height = this.textareaEl[0].scrollHeight + diff + 'px'
-    }
-
+    // 输入框高度随内容而变化
     this.textareaEl.bind('input propertychange', (evt) => {
-      adjustHeight()
+      var diff = this.textareaEl.outerHeight() - this.textareaEl[0].clientHeight
+      this.textareaEl[0].style.height = 0 // 若不加此行，内容减少，高度回不去
+      this.textareaEl[0].style.height = this.textareaEl[0].scrollHeight + diff + 'px'
     })
   }
 
   initEditorPlug () {
-    this.plugWrapEl = this.el.find('.artalk-editor-plug-wrap')
-
+    this.plugs = {}
     let openedPlugName = null
-    this.el.find('.artalk-editor-plug-switcher').click((evt) => {
-      let btnElem = $(evt.currentTarget)
-      let plugIndex = btnElem.attr('data-plug-index')
-      let plug = this.plugs[plugIndex]
-      if (!plug) {
-        throw Error(`Plug index=${plugIndex} was not found`)
-      }
 
-      this.el.find('.artalk-editor-plug-switcher.active').removeClass('active')
+    // 依次实例化 plug
+    for (let i in this.plugList) {
+      let plug = new (this.plugList[i])(this)
+      this.plugs[plug.getName()] = plug
 
-      if (openedPlugName === plug.getName()) {
-        this.plugWrapEl.css('display', 'none')
-        openedPlugName = null
-        return
-      }
+      // 切换按钮
+      let btnElem = $(`<span class="artalk-editor-action artalk-editor-plug-switcher" data-plug-index="${i}">${plug.getBtnHtml()}</span>`)
+      btnElem.appendTo(this.plugSwitherWrapEl)
+      btnElem.click(() => {
+        this.plugSwitherWrapEl.find('.active').removeClass('active')
 
-      if (!this.plugWrapEl.find(`[data-plug-name="${plug.getName()}"]`).length) {
-        // 需要初始化
-        plug.getElem()
-          .attr('data-plug-name', plug.getName())
-          .css('display', 'none')
-          .appendTo(this.plugWrapEl)
-      }
-
-      this.plugWrapEl.children().each((i, plugElem) => {
-        plugElem = $(plugElem)
-        if (plugElem.attr('data-plug-name') !== plug.getName()) {
-          plugElem.css('display', 'none')
-        } else {
-          plugElem.css('display', '')
-          plug.onShow()
+        // 若点击已打开的，则收起
+        if (openedPlugName === plug.getName()) {
+          plug.onHide()
+          this.plugWrapEl.css('display', 'none')
+          openedPlugName = null
+          return
         }
+
+        if (!this.plugWrapEl.find(`[data-plug-name="${plug.getName()}"]`).length) {
+          // 需要初始化
+          plug.getElem()
+            .attr('data-plug-name', plug.getName())
+            .css('display', 'none')
+            .appendTo(this.plugWrapEl)
+        }
+
+        this.plugWrapEl.children().each((i, plugItemEl) => {
+          plugItemEl = $(plugItemEl)
+          let plugItemName = plugItemEl.attr('data-plug-name')
+          if (plugItemName === plug.getName()) {
+            plugItemEl.css('display', '')
+            this.plugs[plugItemName].onShow()
+          } else {
+            plugItemEl.css('display', 'none')
+            this.plugs[plugItemName].onHide()
+          }
+        })
+
+        this.plugWrapEl.css('display', '')
+        openedPlugName = plug.getName()
+
+        btnElem.addClass('active')
       })
-
-      this.plugWrapEl.css('display', '')
-      openedPlugName = plug.getName()
-
-      btnElem.addClass('active')
-    })
+    }
   }
 
-  addContent (val) {
+  insertContent (val) {
     if (document.selection) {
       this.textareaEl.focus()
       document.selection.createRange().text = val
@@ -156,9 +166,6 @@ export default class Editor {
   }
 
   initBottomPart () {
-    this.bottomPartLeftEl = this.el.find('.artalk-editor-bottom-part.artalk-left')
-    this.bottomPartRightEl = this.el.find('.artalk-editor-bottom-part.artalk-right')
-
     this.initReply()
     this.initSubmit()
   }
@@ -182,7 +189,7 @@ export default class Editor {
       this.sendReplyEl.appendTo(this.bottomPartRightEl)
     }
     this.replyComment = comment
-    this.artalk.scrollToView(this.el)
+    this.artalk.ui.scrollIntoView(this.el)
     this.textareaEl.focus()
   }
 
@@ -199,7 +206,6 @@ export default class Editor {
   }
 
   initSubmit () {
-    this.submitBtn = this.el.find('.artalk-send-btn')
     this.submitBtn.click((evt) => {
       let btnEl = evt.currentTarget
       this.submit(btnEl)
@@ -227,21 +233,21 @@ export default class Editor {
       },
       dataType: 'json',
       beforeSend: () => {
-        this.artalk.showLoading(this.el)
+        this.artalk.ui.showLoading(this.el)
       },
       success: (obj) => {
-        this.artalk.hideLoading(this.el)
+        this.artalk.ui.hideLoading(this.el)
         if (obj.success) {
           let newComment = new Comment(this.artalk.list, obj.data.comment)
           if (this.getReplyComment() === null) {
-            this.artalk.list.putOneComment(newComment)
+            this.artalk.list.putComment(newComment)
           } else {
             this.getReplyComment().setChild(newComment)
           }
-          this.artalk.scrollToView(newComment.getElem())
+          this.artalk.ui.scrollIntoView(newComment.getElem())
           this.clearEditor()
         } else {
-          if (typeof obj.data.need_password === 'boolean' && obj.data.need_password === true) {
+          if (obj.data !== null && typeof obj.data.need_password === 'boolean' && obj.data.need_password === true) {
             // 管理员密码验证
             this.showAdminCheck()
           } else {
@@ -250,7 +256,7 @@ export default class Editor {
         }
       },
       error: () => {
-        this.artalk.hideLoading(this.el)
+        this.artalk.ui.hideLoading(this.el)
         this.showNotify('评论失败，网络错误', 'e')
       }
     })
@@ -262,7 +268,7 @@ export default class Editor {
     setTimeout(() => {
       input.focus() // 延迟保证有效
     }, 80)
-    this.artalk.showLayerDialog(this.el, formElem, (dialogElem, btnElem) => {
+    this.artalk.ui.showDialog(this.el, formElem, (dialogElem, btnElem) => {
       let inputVal = $.trim(input.val())
       let btnRawText = btnElem.text()
       let btnTextRestore = () => {
@@ -285,7 +291,7 @@ export default class Editor {
           if (obj.success) {
             // 密码验证成功
             this.user.password = inputVal
-            this.userLocalStorageSave()
+            this.saveUser()
             dialogElem.remove()
             this.submit()
           } else {
@@ -308,38 +314,6 @@ export default class Editor {
   }
 
   showNotify (msg, type) {
-    let colors = { s: '#57d59f', e: '#ff6f6c', w: '#ffc721', i: '#2ebcfc' }
-    if (!colors[type]) {
-      throw Error('showNotify 的 type 有问题！仅支持：' + Object.keys(colors).join(', '))
-    }
-
-    let timeout = 3000 // 持续显示时间 ms
-    let wrapElem = this.el.find('.artalk-editor-notify-wrap')
-    if (!wrapElem.length) {
-      wrapElem = $('<div class="artalk-editor-notify-wrap"></div>').appendTo(this.el)
-    }
-
-    let notifyElem = $(`<div class="artalk-editor-notify-item artalk-fade-in" style="background-color: ${colors[type]}"><span class="artalk-editor-notify-content"></span></div>`)
-    notifyElem.find('.artalk-editor-notify-content').html($('<div/>').text(msg).html().replace('\n', '<br/>'))
-    notifyElem.appendTo(wrapElem)
-
-    let notifyRemove = () => {
-      notifyElem.addClass('artalk-fade-out')
-      setTimeout(() => {
-        notifyElem.remove()
-      }, 200)
-    }
-
-    let timeoutFn
-    if (timeout > 0) {
-      timeoutFn = setTimeout(() => {
-        notifyRemove()
-      }, timeout)
-    }
-
-    notifyElem.click(() => {
-      notifyRemove()
-      clearTimeout(timeoutFn)
-    })
+    this.artalk.ui.showNotify(msg, type, this.notifyWrapEl)
   }
 }

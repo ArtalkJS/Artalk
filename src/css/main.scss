@@ -21,7 +21,7 @@
     padding: 5px 10px;
     border-radius: $block-radius/2;
     margin: 0;
-    font-family: Source Code Pro,courier new,Input Mono,PT Mono,SFMono-Regular,Consolas,Monaco,Menlo,PingFang SC,Liberation Mono,Microsoft YaHei,Courier，monospace;
+    font-family: Source Code Pro,courier new,Input Mono,PT Mono,SFMono-Regular,Consolas,Monaco,Menlo,PingFang SC,Liberation Mono,Microsoft YaHei,Courier,monospace;
   }
 }
 
@@ -188,5 +188,24 @@
         }
       }
     }
+  }
+}
+
+.artalk-notify {
+  display: block;
+  overflow: hidden;
+  background-color: #2c2c2c;
+  color: #FFF;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 15px;
+
+  &:not(:last-child) {
+    margin-bottom: 3px;
+  }
+
+  .artalk-notify-content {
+    color: #FFF;
   }
 }

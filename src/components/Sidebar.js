@@ -35,18 +35,20 @@ export default class Sidebar {
       },
       dataType: 'json',
       beforeSend: () => {
-        this.artalk.showLoading(this.contentEl)
+        this.artalk.ui.showLoading(this.contentEl)
       },
       success: (obj) => {
-        this.artalk.hideLoading(this.contentEl)
+        this.artalk.ui.hideLoading(this.contentEl)
         this.contentEl.html('')
-        for (let i in obj.data.reply_comments) {
-          let item = obj.data.reply_comments[i]
-          this.putComment(item)
+        if (obj.data !== null) {
+          for (let i in obj.data.reply_comments) {
+            let item = obj.data.reply_comments[i]
+            this.putComment(item)
+          }
         }
       },
       error: () => {
-        this.artalk.hideLoading(this.contentEl)
+        this.artalk.ui.hideLoading(this.contentEl)
       }
     })
   }

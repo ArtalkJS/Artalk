@@ -3,13 +3,13 @@
   width: 100%;
 
   .artalk-emoticons-list-wrap {
-    overflow-y: scroll;
+    /* overflow-y: scroll;
     overflow-x: hidden;
-    height: calc(100% - 30px);
+    height: calc(100% - 30px); */
     width: 100%;
 
     .artalk-emoticons-list {
-      padding: 5px 10px;
+      padding: 5px 10px 35px 10px;
 
       .artalk-emoticons-item {
         display: inline-block;
@@ -19,7 +19,10 @@
         border-radius: 2px;
         font-size: 16px;
 
-        & > img {}
+        & > img {
+          max-height: 60px;
+          width: auto;
+        }
 
         &:hover {
           background: #F4F4F4;

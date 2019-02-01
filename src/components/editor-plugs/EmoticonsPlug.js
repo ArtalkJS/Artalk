@@ -53,6 +53,8 @@ export default class EmoticonsPlug {
 
     this.typesElem.find('span.active').removeClass('active')
     this.typesElem.find(`span[data-key="${key}"]`).addClass('active')
+
+    this.changeListHeight()
   }
 
   getName () {
@@ -67,5 +69,11 @@ export default class EmoticonsPlug {
     return this.elem
   }
 
-  onShow () {}
+  onShow () {
+    this.changeListHeight()
+  }
+
+  changeListHeight () {
+    this.elem.parent().css('height', this.listWrapElem.height() > 150 ? this.listWrapElem.height() : 150)
+  }
 }

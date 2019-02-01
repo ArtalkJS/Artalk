@@ -27,6 +27,7 @@ export default class PreviewPlug {
   }
 
   onShow () {
+    this.elem.parent().css('height', '')
     this.elem.html(this.editor.getContentMarked())
     if (!this.binded) {
       $(this.editor.textareaEl).bind('input propertychange', (evt) => {

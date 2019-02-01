@@ -51,6 +51,7 @@
     overflow: hidden;
     border-top: 1px solid $color-border;
     animation: .3s both artalkFadeIn;
+    transition: .2s height ease-in-out;
   }
 
   & > .artalk-editor-bottom {

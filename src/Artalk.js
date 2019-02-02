@@ -47,9 +47,16 @@ class Artalk {
   }
 
   initMarked () {
+    let renderer = new marked.Renderer()
+    const linkRenderer = renderer.link
+    renderer.link = function (href, title, text) {
+      const html = linkRenderer.call(renderer, href, title, text)
+      return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ')
+    }
+
     this.marked = marked
     this.marked.setOptions({
-      renderer: new marked.Renderer(),
+      renderer: renderer,
       highlight: (code) => {
         return hanabi(code)
       },

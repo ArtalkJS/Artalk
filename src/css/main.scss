@@ -40,6 +40,7 @@
 }
 
 .artalk-loading {
+  z-index: 11;
   @extend .full-layer;
 }
 
@@ -137,6 +138,14 @@
 .artalk-error-layer {
   @extend .full-layer;
   background-color: rgba(255, 255, 255, 0.94);
+
+  .artalk-error-title {
+    color: #ff5652;
+  }
+
+  .artalk-error-text {
+    text-align: center;
+  }
 }
 
 .artalk-layer-dialog-wrap {

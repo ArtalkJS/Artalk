@@ -25,31 +25,21 @@ export default class Sidebar {
     this.maskEl.addClass('artalk-fade-in')
     this.el.css('transform', 'translate(0, 0)')
 
-    $.ajax({
-      type: 'POST',
-      url: this.artalk.opts.serverUrl,
-      data: {
-        action: 'CommentReplyGet',
-        nick: this.artalk.editor.user.nick,
-        email: this.artalk.editor.user.email
-      },
-      dataType: 'json',
-      beforeSend: () => {
-        this.artalk.ui.showLoading(this.contentEl)
-      },
-      success: (obj) => {
-        this.artalk.ui.hideLoading(this.contentEl)
-        this.contentEl.html('')
-        if (obj.data !== null) {
-          for (let i in obj.data.reply_comments) {
-            let item = obj.data.reply_comments[i]
-            this.putComment(item)
-          }
-        }
-      },
-      error: () => {
-        this.artalk.ui.hideLoading(this.contentEl)
+    this.artalk.request('CommentReplyGet', {
+      nick: this.artalk.editor.user.nick,
+      email: this.artalk.editor.user.email
+    }, () => {
+      this.artalk.ui.showLoading(this.contentEl)
+    }, () => {
+      this.artalk.ui.hideLoading(this.contentEl)
+    }, (msg, data) => {
+      this.contentEl.html('')
+      for (let i in data.reply_comments) {
+        let item = data.reply_comments[i]
+        this.putComment(item)
       }
+    }, (msg, data) => {
+
     })
   }
 

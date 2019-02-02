@@ -10,33 +10,29 @@ export default class List {
     this.commentsWrapEl = this.el.find('.artalk-list-comments-wrap')
 
     this.comments = []
-    this.initComments()
+    this.loadComments()
 
     this.el.find('[data-action="open-sidebar"]').click(() => {
       this.artalk.sidebar.show()
     })
   }
 
-  initComments () {
-    $.ajax({
-      type: 'POST',
-      url: this.artalk.opts.serverUrl,
-      data: {
-        action: 'CommentGet',
-        page_key: this.artalk.opts.pageKey
-      },
-      dataType: 'json',
-      beforeSend: () => {
-        this.artalk.ui.showLoading()
-      },
-      success: (obj) => {
-        this.artalk.ui.hideLoading()
-        this.putCommentsByObj(obj.data.comments)
-      },
-      error: () => {
-        this.artalk.ui.hideLoading()
-        this.artalk.ui.setGlobalError('网络错误，无法获取评论列表数据')
-      }
+  loadComments () {
+    this.artalk.request('CommentGet', {
+      page_key: this.artalk.opts.pageKey
+    }, () => {
+      this.artalk.ui.showLoading()
+    }, () => {
+      this.artalk.ui.hideLoading()
+    }, (msg, data) => {
+      this.artalk.ui.setGlobalError(null)
+      this.putCommentsByObj(data.comments)
+    }, (msg, data) => {
+      let errEl = $(`<span>${msg}，无法获取评论列表数据<br/></span>`)
+      $('<span style="cursor:pointer">点击重新获取</span>').click(() => {
+        this.loadComments()
+      }).appendTo(errEl)
+      this.artalk.ui.setGlobalError(errEl)
     })
   }
 

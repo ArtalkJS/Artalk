@@ -63,6 +63,30 @@ class Artalk {
       xhtml: false
     })
   }
+
+  request (action, data, before, after, success, error) {
+    $.ajax({
+      type: 'POST',
+      url: this.opts.serverUrl,
+      data: Object.assign({ action: action }, data),
+      dataType: 'json',
+      beforeSend: () => {
+        before()
+      },
+      success: (obj) => {
+        after()
+        if (obj.success) {
+          success(obj.msg, obj.data)
+        } else {
+          error(obj.msg, obj.data)
+        }
+      },
+      error: () => {
+        after()
+        error('网络错误', {})
+      }
+    })
+  }
 }
 
 export default Artalk

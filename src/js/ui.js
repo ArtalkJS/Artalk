@@ -34,16 +34,17 @@ export default class Ui {
   /**
    * 设置全局错误
    */
-  setGlobalError (msg) {
+  setGlobalError (html) {
     let elem = this.el.find('.artalk-error-layer')
-    if (!elem.length) {
-      elem = $('<div class="artalk-error-layer">Artalk Error<span class="artalk-error-text"></span></div>').appendTo(this.el)
-    } else {
-      if (msg === null) {
-        elem.remove()
-      }
+    if (html === null) {
+      elem.remove()
+      return
     }
-    elem.find('.artalk-error-text').text(msg)
+    if (!elem.length) {
+      elem = $('<div class="artalk-error-layer"><span class="artalk-error-title">Artalk Error</span><span class="artalk-error-text"></span></div>').appendTo(this.el)
+    }
+    elem.find('.artalk-error-text').html('')
+    $(html).appendTo(elem.find('.artalk-error-text'))
   }
 
   /**

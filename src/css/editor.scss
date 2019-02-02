@@ -42,6 +42,43 @@
       border-radius: $block-radius/2;
       outline: none;
     }
+
+    .artalk-send-reply {
+      font-size: 14px;
+      height: 30px;
+      line-height: 30px;
+      background: rgba(244, 244, 244, 0.75);
+      padding: 0 30px 0 10px;
+      position: absolute;
+      right: 10px;
+      bottom: 40px;
+      pointer-events: none;
+      max-width: calc(100% - 20px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      .artalk-text {
+      }
+
+      .artalk-cancel {
+        pointer-events: all;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        height: 30px;
+        text-align: center;
+        width: 30px;
+        line-height: 30px;
+        cursor: pointer;
+        user-select: none;
+        font-weight: 700;
+
+        &:hover {
+          color: $color-deep;
+        }
+      }
+    }
   }
 
   & > .artalk-editor-plug-wrap {
@@ -57,12 +94,22 @@
   & > .artalk-editor-bottom {
     display: flex;
     flex-direction: row;
-    align-items: center;
     border-top: 1px solid $color-border;
     padding: 0 0 0 $block-padding - 5px;
 
     .artalk-editor-bottom-part {
+      display: flex;
       flex: 1;
+      flex-direction: row;
+      align-items: center;
+
+      &.artalk-left {
+        flex: inherit;
+      }
+
+      &.artalk-right {
+        justify-content: flex-end;
+      }
     }
 
     .artalk-editor-action {
@@ -91,7 +138,6 @@
     }
 
     .artalk-send-btn {
-      float: right;
       background: $color-main;
       color: #FFF;
       border: none;
@@ -104,36 +150,6 @@
 
       &:active {
         opacity: .9;
-      }
-    }
-
-    .artalk-send-reply {
-      float: right;
-      font-size: 14px;
-      position: relative;
-      height: 30px;
-      background: #F4F4F4;
-      padding: 0 5px 0 10px;
-
-      .artalk-text {
-        display: inline-block;
-        height: 30px;
-        line-height: 30px;
-      }
-
-      .artalk-cancel {
-        display: inline-block;
-        height: 30px;
-        text-align: center;
-        width: 30px;
-        line-height: 30px;
-        cursor: pointer;
-        user-select: none;
-        font-weight: 700;
-
-        &:hover {
-          color: $color-deep;
-        }
       }
     }
   }

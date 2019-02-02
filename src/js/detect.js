@@ -232,9 +232,9 @@ function Detect (userAgent) {
   }
 
   // 简化版本号
-  if (_this.osVersion.indexOf('.')) {
+  /* if (_this.osVersion.indexOf('.')) {
     _this.osVersion = _this.osVersion.substring(0, _this.osVersion.indexOf('.'))
-  }
+  } */
   if (_this.version.indexOf('.')) {
     _this.version = _this.version.substring(0, _this.version.indexOf('.'))
   }

@@ -11,6 +11,7 @@ export default class Editor {
     this.plugList = [EmoticonsPlug, PreviewPlug]
     this.el = $(require('../templates/Editor.ejs')(this)).appendTo(this.artalk.el)
     this.headerEl = this.el.find('.artalk-editor-header')
+    this.textareaWrapEl = this.el.find('.artalk-editor-textarea-wrap')
     this.textareaEl = this.el.find('.artalk-editor-textarea')
     this.plugWrapEl = this.el.find('.artalk-editor-plug-wrap')
     this.bottomPartLeftEl = this.el.find('.artalk-editor-bottom-part.artalk-left')
@@ -19,14 +20,14 @@ export default class Editor {
     this.submitBtn = this.el.find('.artalk-send-btn')
     this.notifyWrapEl = this.el.find('.artalk-editor-notify-wrap')
 
-    this.initUser()
+    this.initLocalStorge()
     this.initHeader()
     this.initTextarea()
     this.initEditorPlug()
     this.initBottomPart()
   }
 
-  initUser () {
+  initLocalStorge () {
     let localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
     this.user = {
       nick: localUser.nick || null,
@@ -34,6 +35,15 @@ export default class Editor {
       link: localUser.link || null,
       password: localUser.password || null
     }
+
+    let localContent = window.localStorage.getItem('ArtalkContent') || ''
+    if ($.trim(localContent) !== '') {
+      this.showNotify('已自动恢复', 'i')
+      this.setContent(localContent)
+    }
+    this.textareaEl.bind('input propertychange', (evt) => {
+      this.saveContent()
+    })
   }
 
   initHeader () {
@@ -56,6 +66,10 @@ export default class Editor {
    */
   saveUser () {
     window.localStorage.setItem('ArtalkUser', JSON.stringify(this.user))
+  }
+
+  saveContent () {
+    window.localStorage.setItem('ArtalkContent', $.trim(this.getContent()))
   }
 
   initTextarea () {
@@ -137,7 +151,7 @@ export default class Editor {
       let sStart = this.textareaEl[0].selectionStart
       let sEnd = this.textareaEl[0].selectionEnd
       let sT = this.textareaEl[0].scrollTop
-      this.textareaEl.val(this.textareaEl.val().substring(0, sStart) + val + this.textareaEl.val().substring(sEnd, this.textareaEl.val().length))
+      this.setContent(this.textareaEl.val().substring(0, sStart) + val + this.textareaEl.val().substring(sEnd, this.textareaEl.val().length))
       this.textareaEl.focus()
       this.textareaEl[0].selectionStart = sStart + val.length
       this.textareaEl[0].selectionEnd = sStart + val.length
@@ -150,10 +164,11 @@ export default class Editor {
 
   setContent (val) {
     this.textareaEl.val(val)
+    this.saveContent()
   }
 
   clearEditor () {
-    this.textareaEl.val('')
+    this.setContent('')
     this.cancelReply()
   }
 
@@ -162,7 +177,7 @@ export default class Editor {
   }
 
   getContentMarked () {
-    return this.artalk.marked(this.textareaEl.val())
+    return this.artalk.marked(this.getContent())
   }
 
   initBottomPart () {
@@ -182,11 +197,11 @@ export default class Editor {
 
     if (this.sendReplyEl === null) {
       this.sendReplyEl = $('<div class="artalk-send-reply"><span class="artalk-text"></span><span class="artalk-cancel" title="取消 AT">×</span></div>')
-      this.sendReplyEl.find('.artalk-text').text(`回复 -> ${comment.data.nick}`)
+      this.sendReplyEl.find('.artalk-text').text(`@${comment.data.nick}`)
       this.sendReplyEl.find('.artalk-cancel').click(() => {
         this.cancelReply()
       })
-      this.sendReplyEl.appendTo(this.bottomPartRightEl)
+      this.sendReplyEl.appendTo(this.textareaWrapEl)
     }
     this.replyComment = comment
     this.artalk.ui.scrollIntoView(this.el)
@@ -218,46 +233,33 @@ export default class Editor {
       return
     }
 
-    $.ajax({
-      type: 'POST',
-      url: this.artalk.opts.serverUrl,
-      data: {
-        action: 'CommentAdd',
-        content: this.getContent(),
-        nick: this.user.nick,
-        email: this.user.email,
-        link: this.user.link,
-        rid: this.getReplyComment() === null ? 0 : this.getReplyComment().data.id,
-        page_key: this.artalk.opts.pageKey,
-        password: this.user.password || null
-      },
-      dataType: 'json',
-      beforeSend: () => {
-        this.artalk.ui.showLoading(this.el)
-      },
-      success: (obj) => {
-        this.artalk.ui.hideLoading(this.el)
-        if (obj.success) {
-          let newComment = new Comment(this.artalk.list, obj.data.comment)
-          if (this.getReplyComment() === null) {
-            this.artalk.list.putComment(newComment)
-          } else {
-            this.getReplyComment().setChild(newComment)
-          }
-          this.artalk.ui.scrollIntoView(newComment.getElem())
-          this.clearEditor()
-        } else {
-          if (obj.data !== null && typeof obj.data.need_password === 'boolean' && obj.data.need_password === true) {
-            // 管理员密码验证
-            this.showAdminCheck()
-          } else {
-            this.showNotify('评论失败，' + obj.msg, 'e')
-          }
-        }
-      },
-      error: () => {
-        this.artalk.ui.hideLoading(this.el)
-        this.showNotify('评论失败，网络错误', 'e')
+    this.artalk.request('CommentAdd', {
+      content: this.getContent(),
+      nick: this.user.nick,
+      email: this.user.email,
+      link: this.user.link,
+      rid: this.getReplyComment() === null ? 0 : this.getReplyComment().data.id,
+      page_key: this.artalk.opts.pageKey,
+      password: this.user.password
+    }, () => {
+      this.artalk.ui.showLoading(this.el)
+    }, () => {
+      this.artalk.ui.hideLoading(this.el)
+    }, (msg, data) => {
+      let newComment = new Comment(this.artalk.list, data.comment)
+      if (this.getReplyComment() !== null) {
+        this.getReplyComment().setChild(newComment)
+      } else {
+        this.artalk.list.putComment(newComment)
+      }
+      this.artalk.ui.scrollIntoView(newComment.getElem())
+      this.clearEditor()
+    }, (msg, data) => {
+      if (data !== null && !$.isEmptyObject(data) && typeof data.need_password === 'boolean' && data.need_password === true) {
+        // 管理员密码验证
+        this.showAdminCheck()
+      } else {
+        this.showNotify(`评论失败，${msg}`, 'e')
       }
     })
   }
@@ -274,39 +276,29 @@ export default class Editor {
       let btnTextRestore = () => {
         btnElem.text(btnRawText)
       }
-      $.ajax({
-        type: 'POST',
-        url: this.artalk.opts.serverUrl,
-        dataType: 'json',
-        data: {
-          action: 'AdminCheck',
-          nick: this.user.nick,
-          email: this.user.email,
-          password: inputVal
-        },
-        beforeSend: () => {
-          btnElem.text('加载中...')
-        },
-        success: (obj) => {
-          if (obj.success) {
-            // 密码验证成功
-            this.user.password = inputVal
-            this.saveUser()
-            dialogElem.remove()
-            this.submit()
-          } else {
-            btnElem.text('密码错误')
-            input.focus(() => {
-              btnTextRestore()
-            })
-            setTimeout(() => {
-              btnTextRestore()
-            }, 3000)
-          }
-        },
-        error: () => {
-          btnElem.text('网络错误')
-        }
+
+      this.artalk.request('AdminCheck', {
+        nick: this.user.nick,
+        email: this.user.email,
+        password: inputVal
+      }, () => {
+        btnElem.text('加载中...')
+      }, () => {
+
+      }, (msg, data) => {
+        // 密码验证成功
+        this.user.password = inputVal
+        this.saveUser()
+        dialogElem.remove()
+        this.submit()
+      }, (msg, data) => {
+        btnElem.text(msg)
+        input.focus(() => {
+          btnTextRestore()
+        })
+        setTimeout(() => {
+          btnTextRestore()
+        }, 3000)
       })
 
       return false

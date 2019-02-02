@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import '../css/comment.scss'
-import UADetect from '../utils/detect.js'
+import UADetect from '../js/detect.js'
 
 export default class Comment {
   constructor (list, data) {

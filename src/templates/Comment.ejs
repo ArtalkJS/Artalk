@@ -14,7 +14,8 @@
         <span class="artalk-badge"><%= data.badge %></span>
         <% } %>
         <span class="artalk-date"><%= timeAgo(new Date(data.date)) %></span>
-        <span class="artalk-ua"><%= getUserUaInfo() %></span>
+        <span class="artalk-ua"><%= getUserUaBrowser() %></span>
+        <span class="artalk-ua"><%= getUserUaOS() %></span>
       </div>
       <div class="artalk-body"><%- getContentMarked() %></div>
       <div class="artalk-footer">

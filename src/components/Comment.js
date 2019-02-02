@@ -131,8 +131,13 @@ export default class Comment {
     }
   }
 
-  getUserUaInfo () {
+  getUserUaBrowser () {
     let info = UADetect(this.data.ua)
-    return `${info.browser} ${info.version} - ${info.os} ${info.osVersion}`
+    return `${info.browser} ${info.version}`
+  }
+
+  getUserUaOS () {
+    let info = UADetect(this.data.ua)
+    return `${info.os} ${info.osVersion}`
   }
 }

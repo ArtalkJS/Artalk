@@ -240,7 +240,8 @@ export default class Editor {
       link: this.user.link,
       rid: this.getReplyComment() === null ? 0 : this.getReplyComment().data.id,
       page_key: this.artalk.opts.pageKey,
-      password: this.user.password
+      password: this.user.password,
+      captcha: this.submitCaptchaVal || null
     }, () => {
       this.artalk.ui.showLoading(this.el)
     }, () => {
@@ -257,48 +258,108 @@ export default class Editor {
     }, (msg, data) => {
       if (data !== null && !$.isEmptyObject(data) && typeof data.need_password === 'boolean' && data.need_password === true) {
         // 管理员密码验证
-        this.showAdminCheck()
+        this.showCheck('密码')
+      } else if (data !== null && !$.isEmptyObject(data) && typeof data.need_captcha === 'boolean' && data.need_captcha === true) {
+        // 验证码验证
+        this.submitCaptchaImgData = data.img_data
+        this.showCheck('验证码')
       } else {
         this.showNotify(`评论失败，${msg}`, 'e')
       }
     })
   }
 
-  showAdminCheck () {
-    let formElem = $(`<div>输入密码来验证管理员身份：<input type="password" required placeholder="输入密码..."></div>`)
-    let input = formElem.find('[type="password"]')
+  showCheck (typeKey) {
+    let typeList = {
+      '密码': {
+        body: () => $('<span>输入密码来验证管理员身份：</span>'),
+        reqAct: 'AdminCheck',
+        reqObj: (inputVal) => {
+          return {
+            nick: this.user.nick,
+            email: this.user.email,
+            password: inputVal
+          }
+        },
+        onSuccess: (msg, data, inputVal) => {
+          this.user.password = inputVal
+          this.saveUser()
+        }
+      },
+      '验证码': {
+        body: () => {
+          let elem = typeList['验证码'].elem = $(`<span><img class="artalk-captcha-img" src="${this.submitCaptchaImgData || ''}" alt="验证码">输入验证码继续：</span>`)
+          elem.find('.artalk-captcha-img').click(() => {
+            typeList['验证码'].refresh()
+          })
+          return elem
+        },
+        reqAct: 'CaptchaCheck',
+        reqObj: (inputVal) => {
+          return {
+            captcha: inputVal
+          }
+        },
+        onSuccess: (msg, data, inputVal) => {
+          this.submitCaptchaVal = inputVal
+        },
+        refresh: (imgData) => {
+          let elem = typeList['验证码'].elem
+          let imgEl = elem.find('.artalk-captcha-img')
+          if (!imgData) {
+            this.artalk.request('CaptchaCheck', { refresh: true }, () => {}, () => {}, (msg, data) => {
+              imgEl.attr('src', data.img_data)
+            }, () => {})
+          } else {
+            imgEl.attr('src', imgData)
+          }
+        }
+      }
+    }
+
+    let type = typeList[typeKey]
+    if (!type) {
+      throw Error('type 有问题，仅支持：' + Object.keys(type).join(', '))
+    }
+
+    let formElem = $(`<div></div>`)
+    $(type.body()).appendTo(formElem)
+    let input = $(`<input id="check" type="${(typeKey === '密码' ? 'password' : 'text')}" required placeholder="输入${typeKey}...">`).appendTo(formElem)
     setTimeout(() => {
       input.focus() // 延迟保证有效
     }, 80)
     this.artalk.ui.showDialog(this.el, formElem, (dialogElem, btnElem) => {
       let inputVal = $.trim(input.val())
       let btnRawText = btnElem.text()
+      let btnTextSet = (btnText) => {
+        btnElem.text(btnText)
+        btnElem.addClass('error')
+      }
       let btnTextRestore = () => {
         btnElem.text(btnRawText)
+        btnElem.removeClass('error')
       }
 
-      this.artalk.request('AdminCheck', {
-        nick: this.user.nick,
-        email: this.user.email,
-        password: inputVal
-      }, () => {
+      this.artalk.request(type.reqAct, type.reqObj(inputVal), () => {
         btnElem.text('加载中...')
       }, () => {
 
       }, (msg, data) => {
-        // 密码验证成功
-        this.user.password = inputVal
-        this.saveUser()
+        type.onSuccess(msg, data, inputVal)
         dialogElem.remove()
         this.submit()
       }, (msg, data) => {
-        btnElem.text(msg)
-        input.focus(() => {
-          btnTextRestore()
-        })
-        setTimeout(() => {
+        btnTextSet(msg)
+        if (typeKey === '验证码') {
+          type.refresh(data.img_data)
+        }
+        let tf = setTimeout(() => {
           btnTextRestore()
         }, 3000)
+        input.focus(() => {
+          btnTextRestore()
+          clearTimeout(tf)
+        })
       })
 
       return false

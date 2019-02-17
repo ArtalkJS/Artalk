@@ -162,6 +162,16 @@
     width: 40%;
 
     & > .artalk-layer-dialog-content {
+      .artalk-captcha-img {
+        cursor: pointer;
+        width: 100px;
+        height: auto;
+        margin-right: 10px;
+        padding-right: 10px;
+        border-right: 1px solid #EEE;
+        vertical-align: bottom;
+      }
+
       input {
         width: 100%;
         line-height: $formInputHeight + 4px;
@@ -199,6 +209,12 @@
 
         &:not(:last-child) {
           margin-right: 5px;
+        }
+
+        &.error {
+          color: #FFF;
+          background: #ff5652;
+          border-color: #ff5652;
         }
       }
     }

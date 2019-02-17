@@ -21,11 +21,47 @@
 - 自定表情
 - 滑稽表情包
 - 管理员认证，防冒名
+- 验证码，提交频率限制
 - 通知中心
 - 评论打分
 
-## 食用
 [查看 DEMO](https://artalk.js.org)
+
+## 食用
+
+1. 部署 Artalk 的后端，[PHP 版传送门](https://github.com/qwqcode/ArtalkServerPhp)
+2. 前端页面配置 Artalk
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- ... -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <link href="dist/Artalk.css" rel="stylesheet">
+  <script type="text/javascript" src="dist/Artalk.js"></script>
+</head>
+<body>
+  <!-- ... -->
+  <div id="ArtalkComments"></div>
+  <!-- ... -->
+  <script>
+  $(document).ready(function () {
+    var artalk = new Artalk({
+      el: '#ArtalkComments',
+      placeholder: '来啊，快活啊 (/ω＼)',
+      defaultAvatar: 'mp',
+      pageSize: 50,
+      pageKey: 'pageKey',
+      serverUrl: '[后端程序URL]'
+    });
+  });
+  </script>
+</body>
+</html>
+```
+
+传送门：[Artalk.js](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.js) / [Artalk.css](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.css)
 
 ## 开发
 

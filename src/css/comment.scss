@@ -34,9 +34,11 @@
         line-height: 1;
         font-size: 12px;
         margin-bottom: 3px;
-        display: block;
         overflow: hidden;
         position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
 
         @mixin badge {
           background: #F4F4F4;
@@ -45,8 +47,8 @@
         }
 
         & > span {
-          display: block;
-          float: left;
+          display: flex;
+          margin-bottom: 2px;
           color: $color-meta;
 
           &:not(:last-child) {
@@ -90,6 +92,9 @@
 
       & > .artalk-footer {
         .artalk-comment-actions {
+          display: block;
+          margin-top: 4px;
+
           & > span {
             color: $color-meta;
             font-size: 13px;

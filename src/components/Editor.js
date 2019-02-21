@@ -165,6 +165,9 @@ export default class Editor {
   setContent (val) {
     this.textareaEl.val(val)
     this.saveContent()
+    if (!!this.plugs && !!this.plugs['preview']) {
+      this.plugs['preview'].updateContent()
+    }
   }
 
   clearEditor () {

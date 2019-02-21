@@ -28,6 +28,22 @@
     color: $color-main;
     text-decoration: none;
   }
+
+  blockquote {
+    position: static;
+    margin: 10px 0 10px 0;
+    padding: 10px 20px 10px 20px;
+    background: #fcfcfc;
+    border-left: 4px solid #eee;
+  }
+
+  p:first-child {
+    margin-top: 0;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .full-layer {

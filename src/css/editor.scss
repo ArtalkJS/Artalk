@@ -57,6 +57,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      z-index: 2;
 
       .artalk-text {
       }
@@ -121,6 +122,7 @@
 
       & > i {
         color: $color-grey;
+        display: inline-flex;
         vertical-align: sub;
         margin-left: 4px;
         svg.markdown path {
@@ -130,6 +132,10 @@
 
       &.active {
         color: $color-main;
+
+        & > i > svg.markdown path {
+          fill: $color-main;
+        }
       }
 
       &:not(:last-child) {

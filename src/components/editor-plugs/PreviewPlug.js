@@ -27,16 +27,20 @@ export default class PreviewPlug {
   }
 
   onShow () {
-    this.elem.html(this.editor.getContentMarked())
+    this.updateContent()
     if (!this.binded) {
-      $(this.editor.textareaEl).bind('input propertychange', (evt) => {
-        if (this.elem.css('display') !== 'none') {
-          this.elem.html(this.editor.getContentMarked())
-        }
+      $(this.editor.textareaEl).bind('input change', (evt) => {
+        this.updateContent()
       })
       this.binded = true
     }
   }
 
   onHide () {}
+
+  updateContent () {
+    if (this.elem.css('display') !== 'none') {
+      this.elem.html(this.editor.getContentMarked())
+    }
+  }
 }

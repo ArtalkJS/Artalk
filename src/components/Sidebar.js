@@ -34,8 +34,8 @@ export default class Sidebar {
       this.artalk.ui.hideLoading(this.contentEl)
     }, (msg, data) => {
       this.contentEl.html('')
-      for (let i in data.reply_comments) {
-        let item = data.reply_comments[i]
+      for (const i in data.reply_comments) {
+        const item = data.reply_comments[i]
         this.putComment(item)
       }
     }, (msg, data) => {
@@ -57,7 +57,7 @@ export default class Sidebar {
   }
 
   putComment (data) {
-    let comment = new Comment(this, data)
+    const comment = new Comment(this, data)
 
     comment.elem.find('[data-comment-action="reply"]').remove()
     comment.elem.css('cursor', 'pointer')

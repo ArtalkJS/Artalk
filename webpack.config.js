@@ -7,7 +7,7 @@ const path = require('path')
 
 const ROOT_PATH = path.resolve(__dirname)
 const SRC_PATH = path.resolve(ROOT_PATH, 'src')
-let BUILD_PATH = path.resolve(ROOT_PATH, 'dist')
+const BUILD_PATH = path.resolve(ROOT_PATH, 'dist')
 
 const VERSION = require('./package.json').version
 const BANNER =
@@ -23,9 +23,9 @@ module.exports = (env, options) => {
     BUILD_PATH = path.resolve(ROOT_PATH, `dist/${VERSION}`)
   } */
 
-  let conf = {
+  const conf = {
     entry: {
-      'Artalk': [`${SRC_PATH}/Artalk.js`]
+      Artalk: [`${SRC_PATH}/Artalk.js`]
     },
     output: {
       path: BUILD_PATH,
@@ -37,7 +37,7 @@ module.exports = (env, options) => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        title: `Artalk DEMO`,
+        title: 'Artalk DEMO',
         filename: `${ROOT_PATH}/index.html`,
         template: `${ROOT_PATH}/index-tpl.ejs`,
         inject: 'head',
@@ -81,8 +81,10 @@ module.exports = (env, options) => {
             loader: 'sass-loader',
             options: {
               sourceMap: isDev,
-              includePaths: [SRC_PATH],
-              data: '@import "css/_variables.scss";'
+              sassOptions: {
+                includePaths: [SRC_PATH]
+              },
+              prependData: '@import "css/_variables.scss";'
             }
           }
         ],

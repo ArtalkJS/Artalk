@@ -47,7 +47,7 @@ class Artalk {
   }
 
   initMarked () {
-    let renderer = new marked.Renderer()
+    const renderer = new marked.Renderer()
     const linkRenderer = renderer.link
     renderer.link = function (href, title, text) {
       const html = linkRenderer.call(renderer, href, title, text)

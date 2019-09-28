@@ -28,7 +28,7 @@ export default class Editor {
   }
 
   initLocalStorge () {
-    let localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
+    const localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
     this.user = {
       nick: localUser.nick || null,
       email: localUser.email || null,
@@ -36,7 +36,7 @@ export default class Editor {
       password: localUser.password || null
     }
 
-    let localContent = window.localStorage.getItem('ArtalkContent') || ''
+    const localContent = window.localStorage.getItem('ArtalkContent') || ''
     if ($.trim(localContent) !== '') {
       this.showNotify('已自动恢复', 'i')
       this.setContent(localContent)
@@ -47,8 +47,8 @@ export default class Editor {
   }
 
   initHeader () {
-    for (let field in this.user) {
-      let inputEl = this.headerEl.find(`[name="${field}"]`)
+    for (const field in this.user) {
+      const inputEl = this.headerEl.find(`[name="${field}"]`)
       if (inputEl.length) {
         inputEl.val(this.user[field] || '')
         // 输入框内容变化事件
@@ -96,12 +96,12 @@ export default class Editor {
     let openedPlugName = null
 
     // 依次实例化 plug
-    for (let i in this.plugList) {
-      let plug = new (this.plugList[i])(this)
+    for (const i in this.plugList) {
+      const plug = new (this.plugList[i])(this)
       this.plugs[plug.getName()] = plug
 
       // 切换按钮
-      let btnElem = $(`<span class="artalk-editor-action artalk-editor-plug-switcher" data-plug-index="${i}">${plug.getBtnHtml()}</span>`)
+      const btnElem = $(`<span class="artalk-editor-action artalk-editor-plug-switcher" data-plug-index="${i}">${plug.getBtnHtml()}</span>`)
       btnElem.appendTo(this.plugSwitherWrapEl)
       btnElem.click(() => {
         this.plugSwitherWrapEl.find('.active').removeClass('active')
@@ -124,7 +124,7 @@ export default class Editor {
 
         this.plugWrapEl.children().each((i, plugItemEl) => {
           plugItemEl = $(plugItemEl)
-          let plugItemName = plugItemEl.attr('data-plug-name')
+          const plugItemName = plugItemEl.attr('data-plug-name')
           if (plugItemName === plug.getName()) {
             plugItemEl.css('display', '')
             this.plugs[plugItemName].onShow()
@@ -148,9 +148,9 @@ export default class Editor {
       document.selection.createRange().text = val
       this.textareaEl.focus()
     } else if (this.textareaEl[0].selectionStart || this.textareaEl[0].selectionStart === 0) {
-      let sStart = this.textareaEl[0].selectionStart
-      let sEnd = this.textareaEl[0].selectionEnd
-      let sT = this.textareaEl[0].scrollTop
+      const sStart = this.textareaEl[0].selectionStart
+      const sEnd = this.textareaEl[0].selectionEnd
+      const sT = this.textareaEl[0].scrollTop
       this.setContent(this.textareaEl.val().substring(0, sStart) + val + this.textareaEl.val().substring(sEnd, this.textareaEl.val().length))
       this.textareaEl.focus()
       this.textareaEl[0].selectionStart = sStart + val.length
@@ -165,8 +165,8 @@ export default class Editor {
   setContent (val) {
     this.textareaEl.val(val)
     this.saveContent()
-    if (!!this.plugs && !!this.plugs['preview']) {
-      this.plugs['preview'].updateContent()
+    if (!!this.plugs && !!this.plugs.preview) {
+      this.plugs.preview.updateContent()
     }
   }
 
@@ -225,7 +225,7 @@ export default class Editor {
 
   initSubmit () {
     this.submitBtn.click((evt) => {
-      let btnEl = evt.currentTarget
+      const btnEl = evt.currentTarget
       this.submit(btnEl)
     })
   }
@@ -250,7 +250,7 @@ export default class Editor {
     }, () => {
       this.artalk.ui.hideLoading(this.el)
     }, (msg, data) => {
-      let newComment = new Comment(this.artalk.list, data.comment)
+      const newComment = new Comment(this.artalk.list, data.comment)
       if (this.getReplyComment() !== null) {
         this.getReplyComment().setChild(newComment)
       } else {
@@ -273,8 +273,8 @@ export default class Editor {
   }
 
   showCheck (typeKey) {
-    let typeList = {
-      '密码': {
+    const typeList = {
+      密码: {
         body: () => $('<span>输入密码来验证管理员身份：</span>'),
         reqAct: 'AdminCheck',
         reqObj: (inputVal) => {
@@ -289,9 +289,9 @@ export default class Editor {
           this.saveUser()
         }
       },
-      '验证码': {
+      验证码: {
         body: () => {
-          let elem = typeList['验证码'].elem = $(`<span><img class="artalk-captcha-img" src="${this.submitCaptchaImgData || ''}" alt="验证码">输入验证码继续：</span>`)
+          const elem = typeList['验证码'].elem = $(`<span><img class="artalk-captcha-img" src="${this.submitCaptchaImgData || ''}" alt="验证码">输入验证码继续：</span>`)
           elem.find('.artalk-captcha-img').click(() => {
             typeList['验证码'].refresh()
           })
@@ -307,8 +307,8 @@ export default class Editor {
           this.submitCaptchaVal = inputVal
         },
         refresh: (imgData) => {
-          let elem = typeList['验证码'].elem
-          let imgEl = elem.find('.artalk-captcha-img')
+          const elem = typeList['验证码'].elem
+          const imgEl = elem.find('.artalk-captcha-img')
           if (!imgData) {
             this.artalk.request('CaptchaCheck', { refresh: true }, () => {}, () => {}, (msg, data) => {
               imgEl.attr('src', data.img_data)
@@ -320,25 +320,25 @@ export default class Editor {
       }
     }
 
-    let type = typeList[typeKey]
+    const type = typeList[typeKey]
     if (!type) {
       throw Error('type 有问题，仅支持：' + Object.keys(type).join(', '))
     }
 
-    let formElem = $(`<div></div>`)
+    const formElem = $('<div></div>')
     $(type.body()).appendTo(formElem)
-    let input = $(`<input id="check" type="${(typeKey === '密码' ? 'password' : 'text')}" required placeholder="输入${typeKey}...">`).appendTo(formElem)
+    const input = $(`<input id="check" type="${(typeKey === '密码' ? 'password' : 'text')}" required placeholder="输入${typeKey}...">`).appendTo(formElem)
     setTimeout(() => {
       input.focus() // 延迟保证有效
     }, 80)
     this.artalk.ui.showDialog(this.el, formElem, (dialogElem, btnElem) => {
-      let inputVal = $.trim(input.val())
-      let btnRawText = btnElem.text()
-      let btnTextSet = (btnText) => {
+      const inputVal = $.trim(input.val())
+      const btnRawText = btnElem.text()
+      const btnTextSet = (btnText) => {
         btnElem.text(btnText)
         btnElem.addClass('error')
       }
-      let btnTextRestore = () => {
+      const btnTextRestore = () => {
         btnElem.text(btnRawText)
         btnElem.removeClass('error')
       }
@@ -356,7 +356,7 @@ export default class Editor {
         if (typeKey === '验证码') {
           type.refresh(data.img_data)
         }
-        let tf = setTimeout(() => {
+        const tf = setTimeout(() => {
           btnTextRestore()
         }, 3000)
         input.focus(() => {

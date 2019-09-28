@@ -18,8 +18,8 @@ export default class EmoticonsPlug {
 
     // 绑定切换类型按钮
     this.typesElem.find('span').click((evt) => {
-      let btnElem = $(evt.currentTarget)
-      let key = btnElem.attr('data-key')
+      const btnElem = $(evt.currentTarget)
+      const key = btnElem.attr('data-key')
       this.openType(key)
     })
 
@@ -28,11 +28,11 @@ export default class EmoticonsPlug {
 
     // 绑定点击表情
     this.listWrapElem.find('.artalk-emoticons-item').click((evt) => {
-      let elem = $(evt.currentTarget)
-      let inputType = elem.parents('.artalk-emoticons-list').attr('data-input-type')
+      const elem = $(evt.currentTarget)
+      const inputType = elem.parents('.artalk-emoticons-list').attr('data-input-type')
 
-      let title = elem.attr('title')
-      let content = elem.attr('data-content')
+      const title = elem.attr('title')
+      const content = elem.attr('data-content')
       if (inputType === 'image') {
         this.editor.insertContent(`![${title}](${content})`)
       } else {

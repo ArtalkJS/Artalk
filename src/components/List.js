@@ -28,7 +28,7 @@ export default class List {
       this.artalk.ui.setGlobalError(null)
       this.putCommentsByObj(data.comments)
     }, (msg, data) => {
-      let errEl = $(`<span>${msg}，无法获取评论列表数据<br/></span>`)
+      const errEl = $(`<span>${msg}，无法获取评论列表数据<br/></span>`)
       $('<span style="cursor:pointer">点击重新获取</span>').click(() => {
         this.loadComments()
       }).appendTo(errEl)
@@ -37,9 +37,9 @@ export default class List {
   }
 
   putCommentsByObj (rawData) {
-    let comments = []
-    for (let i in rawData) {
-      let comment = rawData[i]
+    const comments = []
+    for (const i in rawData) {
+      const comment = rawData[i]
       if (comment.id === 0) {
         throw Error('黑人问号 ??? Comment 的 ID 怎么可能是 0 ?')
       }
@@ -48,8 +48,8 @@ export default class List {
       }
     }
 
-    let isChildExistByParentId = (parentId) => {
-      for (let i in rawData) {
+    const isChildExistByParentId = (parentId) => {
+      for (const i in rawData) {
         if (rawData[i].rid === parentId) {
           return true
         }
@@ -58,15 +58,15 @@ export default class List {
     }
 
     // 导入子评论
-    for (let i in comments) {
-      let comment = comments[i]
+    for (const i in comments) {
+      const comment = comments[i]
 
       // 查找所有子评论
-      let queryChildren = (parentComment) => {
-        for (let cI in rawData) {
-          let cData = rawData[cI]
+      const queryChildren = (parentComment) => {
+        for (const cI in rawData) {
+          const cData = rawData[cI]
           if (cData.rid === parentComment.data.id) {
-            let cComment = new Comment(this, cData)
+            const cComment = new Comment(this, cData)
             parentComment.setChild(cComment)
 
             // 递归查找子评论的子评论
@@ -81,8 +81,8 @@ export default class List {
     }
 
     this.comments = comments
-    for (let i in this.comments) {
-      let comment = this.comments[i]
+    for (const i in this.comments) {
+      const comment = this.comments[i]
       $(comment.getElem()).appendTo(this.commentsWrapEl)
     }
 

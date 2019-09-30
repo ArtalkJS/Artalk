@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use strict'
 
 var Artalk = require('./dist/Artalk.js')

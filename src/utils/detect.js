@@ -1,3 +1,4 @@
+/* eslint-disable */
 var win = window || {}
 var nav = navigator || {}
 function Detect (userAgent) {

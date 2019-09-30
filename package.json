@@ -1,6 +1,6 @@
 {
   "name": "artalk",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "一款简洁有趣的自托管评论系统",
   "author": "qwqcode <1149527164@qq.com> (https://github.com/qwqcode)",
   "keywords": [
@@ -8,7 +8,6 @@
     "comment-system"
   ],
   "license": "GPL-2.0",
-  "private": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/qwqcode/Artalk.git"
@@ -17,33 +16,43 @@
     "url": "https://github.com/qwqcode/Artalk/issues"
   },
   "homepage": "https://github.com/qwqcode/Artalk#readme",
-  "main": "/dist/Artalk.js",
+  "main": "dist/Artalk.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "start": "yarn run dev",
     "dev": "webpack-dev-server --mode development --hot --colors",
     "build": "webpack --mode production",
-    "test": "eslint src",
     "copy:deploy": "mkdir -p deploy && rm -rf deploy/* && cp index.html deploy && cp -r dist deploy && cp -r docs deploy && cp docs/CNAME deploy",
     "predeploy": "yarn run build && yarn run copy:deploy",
-    "deploy": "gh-pages -d deploy"
+    "deploy": "gh-pages -d deploy",
+    "lint": "eslint --ext .js,.ts -f ./node_modules/eslint-friendly-formatter src"
   },
   "devDependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.3.4",
+    "@babel/polyfill": "^7.2.5",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/register": "^7.0.0",
+    "@babel/runtime": "^7.3.4",
+    "@types/marked": "^0.6.5",
+    "@types/webpack-env": "^1.14.0",
+    "@typescript-eslint/eslint-plugin": "^2.3.0",
+    "@typescript-eslint/parser": "^2.3.0",
     "autoprefixer": "^9.6.1",
-    "babel-core": "^6.26.3",
-    "babel-loader": "7",
-    "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-vue-app": "^2.0.0",
+    "babel-loader": "^8.0.5",
+    "babel-plugin-add-module-exports": "^1.0.0",
+    "babel-plugin-class-display-name": "^2.1.0",
     "copy-webpack-plugin": "^5.0.4",
     "css-loader": "^1.0.0",
     "ejs-compiled-loader": "^1.1.0",
     "eslint": "^6.4.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-loader": "^3.0.2",
+    "eslint-config-airbnb-typescript": "^5.0.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-friendly-formatter": "^4.0.1",
+    "eslint-import-resolver-typescript": "^1.1.1",
+    "eslint-loader": "^3.0.0",
     "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^10.0.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-prettier": "^3.1.0",
     "gh-pages": "^2.1.1",
     "hanabi": "^0.4.0",
     "html-webpack-plugin": "^3.2.0",
@@ -52,13 +61,18 @@
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-loader": "^3.0.0",
+    "prettier": "^1.18.2",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.0",
+    "ts-loader": "^6.2.0",
+    "typescript": "^3.6.3",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "url-loader": "^2.1.0",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "core-js": "3"
+  }
 }

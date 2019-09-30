@@ -1,16 +1,20 @@
-import $ from 'jquery'
 import './PreviewPlug.scss'
+import Editor from '../Editor'
+import ArtalkContext from '~/src/ArtalkContext'
+import Utils from '~/src/utils'
 
-export default class PreviewPlug {
-  constructor (editor) {
-    this.editor = editor
-    this.artalk = editor.artalk
+export default class PreviewPlug extends ArtalkContext {
+  public elem: HTMLElement
+  public binded: boolean = false
+
+  constructor (public editor: Editor) {
+    super()
 
     this.initElem()
   }
 
   initElem () {
-    this.elem = $('<div class="artalk-editor-plug-preview"></div>')
+    this.elem = Utils.createElement('<div class="artalk-editor-plug-preview"></div>')
     this.binded = false
   }
 
@@ -29,9 +33,11 @@ export default class PreviewPlug {
   onShow () {
     this.updateContent()
     if (!this.binded) {
-      $(this.editor.textareaEl).bind('input change', (evt) => {
+      const event = () => {
         this.updateContent()
-      })
+      }
+      this.editor.textareaEl.addEventListener('input', event)
+      this.editor.textareaEl.addEventListener('change', event)
       this.binded = true
     }
   }
@@ -39,8 +45,8 @@ export default class PreviewPlug {
   onHide () {}
 
   updateContent () {
-    if (this.elem.css('display') !== 'none') {
-      this.elem.html(this.editor.getContentMarked())
+    if (this.elem.style.display !== 'none') {
+      this.elem.innerHTML = this.editor.getContentMarked()
     }
   }
 }

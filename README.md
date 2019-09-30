@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./docs/banner.png" alt="Altalk" width="200">
+<img src="./docs/banner.png" alt="Artalk" width="200">
 </p>
 
 # Artalk
@@ -14,16 +14,18 @@
 [![](https://img.shields.io/badge/%24-donate-%23ff69b4.svg?style=flat-square)](#捐助)
 
 ## 特性
-- 简洁 (~25kB gzipped)
-- 有趣
+- 轻量简洁 (~23kB gzipped)
+- 有趣有爱
 - 自托管
 - Markdown
-- 自定表情
+- 表情自定
 - 滑稽表情包
-- 管理员认证，防冒名
+- 管理员密码，防冒名
 - 验证码，提交频率限制
-- 通知中心
+- 通知中心，邮件提醒
+- 无限层级回复
 - 评论打分
+- TypeScript
 
 [查看 DEMO](https://artalk.js.org)
 
@@ -37,7 +39,6 @@
 <html>
 <head>
   <!-- ... -->
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
   <link href="dist/Artalk.css" rel="stylesheet">
   <script type="text/javascript" src="dist/Artalk.js"></script>
 </head>
@@ -51,8 +52,7 @@
       el: '#ArtalkComments',
       placeholder: '来啊，快活啊 (/ω＼)',
       defaultAvatar: 'mp',
-      pageSize: 50,
-      pageKey: 'pageKey',
+      pageKey: '[页面唯一标识]',
       serverUrl: '[后端程序URL]'
     });
   });
@@ -61,26 +61,22 @@
 </html>
 ```
 
-传送门：[Artalk.js](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.js) / [Artalk.css](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.css)
+生产环境版下载：[Artalk.js](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.js) | [Artalk.css](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.css)
 
 ## 开发
 
-### Build
+Made with ♥ by QWQAQ
 
 ```bash
 git clone https://github.com/qwqcode/Artalk.git
 cd Artalk
 yarn install
-yarn run build
-```
 
-### Dev
-
-```bash
-git clone https://github.com/qwqcode/Artalk.git
-cd Artalk
-yarn install
+# Dev
 yarn run dev
+
+# Build
+yarn run build
 ```
 
 ## 捐助

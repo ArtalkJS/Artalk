@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
@@ -10,22 +11,23 @@ const SRC_PATH = path.resolve(ROOT_PATH, 'src')
 const BUILD_PATH = path.resolve(ROOT_PATH, 'dist')
 
 const VERSION = require('./package.json').version
-const BANNER =
-  'Artalk v' + VERSION + '\n' +
-  '(c) 2016-' + new Date().getFullYear() + ' qwqaq.com\n' +
-  'Link: https://github.com/qwqcode/Artalk'
 
-module.exports = (env, options) => {
-  const isDev = (options.mode === 'development')
-  const isProd = !isDev
-  // console.log(`MODE -> ${options.mode}`)
-  /* if (isProd) {
+const BANNER =
+  `Artalk v${  VERSION  }\n` +
+  `(c) 2016-${  new Date().getFullYear()  } qwqaq.com\n` +
+  `Link: https://github.com/qwqcode/Artalk`
+
+module.exports = (env, argv) => {
+  const NODE_ENV = argv.mode || 'development'
+  const IS_DEV = NODE_ENV === 'development'
+  const IS_PROD = !IS_DEV
+  /* if (IS_PROD) {
     BUILD_PATH = path.resolve(ROOT_PATH, `dist/${VERSION}`)
   } */
 
   const conf = {
     entry: {
-      Artalk: [`${SRC_PATH}/Artalk.js`]
+      Artalk: [`${SRC_PATH}/Artalk.ts`]
     },
     output: {
       path: BUILD_PATH,
@@ -44,7 +46,8 @@ module.exports = (env, options) => {
         hash: true
       }),
       new webpack.DefinePlugin({
-        ARTALK_VERSION: `"${VERSION}"`
+        ARTALK_VERSION: `"${VERSION}"`,
+        'process.env.NODE_ENV': JSON.stringify(NODE_ENV)
       }),
       new MiniCssExtractPlugin({
         filename: '[name].css'
@@ -52,19 +55,40 @@ module.exports = (env, options) => {
     ],
     module: {
       rules: [{
-        test: /\.js$/,
+        test: /\.(js|ts)$/,
         enforce: 'pre',
-        loader: 'eslint-loader',
-        include: [`${SRC_PATH}`]
+        exclude: /node_modules/,
+        use: {
+          loader: 'eslint-loader',
+          options: {
+            formatter: require('eslint-friendly-formatter')
+          }
+        }
+      }, {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+            }
+          },
+          {
+            loader: 'ts-loader',
+          }
+        ]
       }, {
         test: /\.js$/,
-        include: [SRC_PATH],
         exclude: /node_modules/,
-        loader: 'babel-loader',
-        options: {
-          plugins: ['syntax-dynamic-import'],
-          presets: ['vue-app']
-        }
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+            }
+          }
+        ]
       }, {
         test: /\.scss$/,
         use: [
@@ -72,15 +96,15 @@ module.exports = (env, options) => {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: isDev,
-              minimize: isProd
+              sourceMap: IS_DEV,
+              minimize: IS_PROD
             }
           },
           'postcss-loader',
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: isDev,
+              sourceMap: IS_DEV,
               sassOptions: {
                 includePaths: [SRC_PATH]
               },
@@ -96,7 +120,7 @@ module.exports = (env, options) => {
         test: /\.ejs$/,
         loader: 'ejs-compiled-loader',
         options: {
-          htmlmin: isProd,
+          htmlmin: IS_PROD,
           htmlminOptions: {
             removeComments: true,
             collapseWhitespace: true,
@@ -106,7 +130,14 @@ module.exports = (env, options) => {
         }
       }]
     },
-    devtool: isDev ? 'cheap-module-source-map' : false,
+    resolve: {
+      alias: {
+        '@': path.join(__dirname, './src'),
+        '~': path.join(__dirname, './')
+      },
+      extensions: ['.ts', '.js', '.vue', '.json', '.scss', '.css', '.node']
+    },
+    devtool: IS_DEV ? 'cheap-module-source-map' : false,
     devServer: {
       open: true,
       hot: true,
@@ -118,13 +149,10 @@ module.exports = (env, options) => {
         errors: true,
         warnings: true
       }
-    },
-    externals: {
-      jquery: 'jQuery'
     }
   }
 
-  if (isProd) {
+  if (IS_PROD) {
     conf.plugins.push(new webpack.BannerPlugin(BANNER))
     conf.optimization = {
       minimizer: [
@@ -134,9 +162,9 @@ module.exports = (env, options) => {
             beautify: false,
             comments: false,
             mangle: true,
+            warnings: false,
             compress: {
               drop_console: false, // console.log
-              warnings: false,
               collapse_vars: true,
               reduce_vars: true
             }

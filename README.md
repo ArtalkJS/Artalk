@@ -47,14 +47,12 @@
   <div id="ArtalkComments"></div>
   <!-- ... -->
   <script>
-  $(document).ready(function () {
-    var artalk = new Artalk({
-      el: '#ArtalkComments',
-      placeholder: '来啊，快活啊 (/ω＼)',
-      defaultAvatar: 'mp',
-      pageKey: '[页面唯一标识]',
-      serverUrl: '[后端程序URL]'
-    });
+  new Artalk({
+    el: '#ArtalkComments',
+    placeholder: '来啊，快活啊 (/ω＼)',
+    defaultAvatar: 'mp',
+    pageKey: '[页面唯一标识]',
+    serverUrl: '[后端程序URL]'
   });
   </script>
 </body>

@@ -33,6 +33,10 @@ export default class Comment extends ArtalkContext {
     })
   }
 
+  getIsRoot () {
+    return this.parent === null
+  }
+
   setChild (comment: Comment) {
     this.children.push(comment)
     this.getChildrenEl().appendChild(comment.getElem())

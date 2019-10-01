@@ -70,7 +70,7 @@ export default class Artalk {
 
   public marked: (src: string, callback?: (error: any, parseResult: string) => void) => string
 
-  initMarked () {
+  private initMarked () {
     const renderer = new marked.Renderer()
     const linkRenderer = renderer.link
     renderer.link = (href, title, text) => {
@@ -97,7 +97,7 @@ export default class Artalk {
     this.marked = nMarked
   }
 
-  request (action: string, data: object, before: () => void, after: () => void, success: (msg: string, data: any) => void, error: (msg: string, data: any) => void) {
+  public request (action: string, data: object, before: () => void, after: () => void, success: (msg: string, data: any) => void, error: (msg: string, data: any) => void) {
     before()
 
     data = { action, ...data }

@@ -5,6 +5,19 @@
   border-bottom: 1px solid $color-border;
   animation: .3s both artalkFadeIn;
 
+  &.artalk-flash-once {
+    animation: artalkFlashOnce 1s ease-in-out 0s;
+
+    @keyframes artalkFlashOnce {
+      from {
+        background: rgba(0, 131, 255, 0.2);
+      }
+      to {
+        background: transparent;
+      }
+    }
+  }
+
   &:last-child {
     border-bottom-color: transparent;
   }

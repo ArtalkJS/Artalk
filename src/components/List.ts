@@ -22,6 +22,11 @@ export default class List extends ArtalkContext {
     this.el.querySelector('[data-action="open-sidebar"]').addEventListener('click', () => {
       this.artalk.sidebar.show()
     })
+
+    // 锚点快速跳转评论
+    window.addEventListener('hashchange', () => {
+      this.redirectByLocationHash()
+    })
   }
 
   loadComments () {
@@ -99,6 +104,24 @@ export default class List extends ArtalkContext {
     this.updateIndicator()
   }
 
+  findComment (id: number) {
+    let comment: Comment|null = null
+
+    const findCommentInList = (commentList: Comment[]) => {
+      commentList.every((item) => {
+        if (comment !== null) return false
+        if (item.data.id === id) {
+          comment = item
+        }
+        findCommentInList(item.getChildren())
+        return true
+      })
+    }
+
+    findCommentInList(this.comments)
+    return comment
+  }
+
   /**
    * 更新指示器
    */
@@ -114,5 +137,20 @@ export default class List extends ArtalkContext {
     if (this.comments.length > 0 && noCommentElem !== null) {
         noCommentElem.remove()
     }
+
+    this.redirectByLocationHash()
+  }
+
+  redirectByLocationHash () {
+    const match = window.location.hash.match(/^#artalk-comment-([0-9]+$)/)
+    if (!match || !match[1] || Number.isNaN(Number(match[1]))) return
+
+    const commentId = Number(match[1])
+    const comment = this.findComment(commentId)
+    if (!comment) return
+    this.artalk.ui.scrollIntoView(comment.getElem())
+    setTimeout(() => {
+      comment.getElem().classList.add('artalk-flash-once')
+    }, 800)
   }
 }

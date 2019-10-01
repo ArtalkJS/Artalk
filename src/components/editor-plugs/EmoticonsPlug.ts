@@ -82,7 +82,7 @@ export default class EmoticonsPlug extends ArtalkContext {
   }
 
   changeListHeight () {
-    const listWrapHeight = Utils.getElementHeight(this.listWrapElem)
+    const listWrapHeight = Utils.getHeight(this.listWrapElem)
     this.editor.plugWrapEl.style.height = `${listWrapHeight > 150 ? listWrapHeight : 150}px`
   }
 

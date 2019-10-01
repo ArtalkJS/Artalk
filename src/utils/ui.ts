@@ -126,20 +126,13 @@ export default class Ui extends ArtalkContext {
    */
   scrollIntoView (elem: HTMLElement) {
     if (this.isVisible(elem)) return
+    const top = Utils.getOffset(elem).top + (Utils.getHeight(elem) / 2) - (document.documentElement.clientHeight / 2)
 
-    const scrollDuration = 500
-    const cosParameter = (elem.offsetTop - document.documentElement.clientHeight) / 2
-    let scrollCount = 0
-    let oldTimestamp = performance.now()
-    const step = (newTimestamp: number) => {
-        scrollCount += Math.PI / (scrollDuration / (newTimestamp - oldTimestamp))
-        if (scrollCount >= Math.PI) window.scrollTo(0, 0)
-        if (window.scrollY === 0) return
-        window.scrollTo(0, Math.round(cosParameter + cosParameter * Math.cos(scrollCount)))
-        oldTimestamp = newTimestamp
-        window.requestAnimationFrame(step)
-    }
-    window.requestAnimationFrame(step)
+    window.scroll({
+      top: top > 0 ? top : 0,
+      left: 0,
+      behavior: 'smooth'
+    })
   }
 
   /**

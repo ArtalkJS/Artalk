@@ -25,6 +25,11 @@ export default class Utils {
     return output
   }
 
+  public static getLocationParmByName (name: string) {
+    const match = RegExp(`[?&]${name}=([^&]*)`).exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
   public static getOffset (el: HTMLElement) {
     const rect = el.getBoundingClientRect()
     return {

@@ -39,6 +39,7 @@ export default class List extends ArtalkContext {
     }, (msg, data) => {
       this.artalk.ui.setGlobalError(null)
       this.putCommentsByObj(data.comments)
+      this.redirectByLocationHash()
     }, (msg, data) => {
       const errEl = Utils.createElement(`<span>${msg}，无法获取评论列表数据<br/></span>`)
       const retryBtn = Utils.createElement('<span style="cursor:pointer">点击重新获取</span>')
@@ -137,15 +138,16 @@ export default class List extends ArtalkContext {
     if (this.comments.length > 0 && noCommentElem !== null) {
         noCommentElem.remove()
     }
-
-    this.redirectByLocationHash()
   }
 
   redirectByLocationHash () {
-    const match = window.location.hash.match(/^#artalk-comment-([0-9]+$)/)
-    if (!match || !match[1] || Number.isNaN(Number(match[1]))) return
+    let commentId: number = Number(Utils.getLocationParmByName('artalk_comment'))
+    if (!commentId) {
+      const match = window.location.hash.match(/#artalk-comment-([0-9]+)/)
+      if (!match || !match[1] || Number.isNaN(Number(match[1]))) return
+      commentId = Number(match[1])
+    }
 
-    const commentId = Number(match[1])
     const comment = this.findComment(commentId)
     if (!comment) return
     this.artalk.ui.scrollIntoView(comment.getElem())

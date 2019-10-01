@@ -4,7 +4,7 @@
   min-height: 200px;
 }
 
-.artalk, .artalk-sidebar {
+.artalk, .artalk-layer-wrap {
   * {
     box-sizing: border-box;
     line-height: $line-height;
@@ -43,6 +43,10 @@
 
   p:last-child {
     margin-bottom: 0;
+  }
+
+  * {
+    box-sizing: border-box;
   }
 }
 
@@ -175,7 +179,7 @@
   background-color: rgba(255, 255, 255, 0.94);
 
   & > .artalk-layer-dialog {
-    width: 40%;
+    width: 30%;
 
     & > .artalk-layer-dialog-content {
       .artalk-captcha-img {
@@ -237,6 +241,12 @@
   }
 }
 
+@media only screen and (max-width: 768px) {
+  .artalk-layer-dialog-wrap > .artalk-layer-dialog {
+      width: 90% !important;
+  }
+}
+
 .artalk-notify {
   display: block;
   overflow: hidden;
@@ -253,5 +263,26 @@
 
   .artalk-notify-content {
     color: #FFF;
+  }
+}
+
+.artalk-layer-wrap {
+  .artalk-layer-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99998;
+    background: rgba(0, 0, 0, .3);
+  }
+
+  .artalk-layer-item {
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
   }
 }

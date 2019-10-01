@@ -3,36 +3,30 @@ import '../css/sidebar.scss'
 import ArtalkContext from '../ArtalkContext'
 import Utils from '../utils'
 import { CommentData } from '~/types/artalk-data'
+import Layer from './Layer'
 
 export default class Sidebar extends ArtalkContext {
   public el: HTMLElement
-  public wrapEl: HTMLElement
+  public layer: Layer
   public contentEl: HTMLElement
-  public maskEl: HTMLElement
 
   constructor () {
     super()
 
-    this.wrapEl = Utils.createElement(require('../templates/Sidebar.ejs')(this))
-    document.querySelector('body').appendChild(this.wrapEl)
-
-    this.el = this.wrapEl.querySelector('.artalk-sidebar')
+    this.el = Utils.createElement(require('../templates/Sidebar.ejs')(this))
+    this.layer = new Layer('sidebar', this.el)
     this.contentEl = this.el.querySelector('.artalk-sidebar-content')
-    this.maskEl = this.wrapEl.querySelector('.artalk-layer-mask')
 
-    this.maskEl.addEventListener('click', () => {
-      this.hide()
-    })
     this.el.querySelector('.artalk-sidebar-close').addEventListener('click', () => {
       this.hide()
     })
   }
 
   show () {
-    this.wrapEl.style.display = 'block'
-    this.maskEl.style.display = 'block'
-    this.maskEl.classList.add('artalk-fade-in')
-    this.el.style.transform = 'translate(0, 0)'
+    this.layer.show()
+    setTimeout(() => {
+      this.el.style.transform = 'translate(0, 0)'
+    }, 20)
 
     this.artalk.request('CommentReplyGet', {
       nick: this.artalk.editor.user.nick,
@@ -55,15 +49,7 @@ export default class Sidebar extends ArtalkContext {
 
   hide () {
     this.el.style.transform = ''
-    setTimeout(() => {
-      this.wrapEl.style.display = 'none'
-    }, 450)
-
-    this.maskEl.classList.add('artalk-fade-out')
-    setTimeout(() => {
-      this.maskEl.style.display = 'none'
-      this.maskEl.classList.remove('artalk-fade-out')
-    }, 200)
+    this.layer.hide()
   }
 
   putComment (data: CommentData) {

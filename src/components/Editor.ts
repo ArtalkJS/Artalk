@@ -4,6 +4,8 @@ import EmoticonsPlug from './editor-plugs/EmoticonsPlug'
 import PreviewPlug from './editor-plugs/PreviewPlug'
 import ArtalkContext from '../ArtalkContext'
 import Utils from '../utils'
+import Layer from './Layer'
+import Checker from './Checker'
 
 export default class Editor extends ArtalkContext {
   private readonly LOADABLE_PLUG_LIST = [EmoticonsPlug, PreviewPlug]
@@ -31,13 +33,9 @@ export default class Editor extends ArtalkContext {
   private replyComment: Comment
   private sendReplyEl: HTMLElement
 
-  private submitCaptchaVal: string
-  private submitCaptchaImgData: string
-
   constructor () {
     super()
 
-    this.el = Utils.createElement(require('../templates/Editor.ejs')(this))
     this.el = Utils.createElement(require('../templates/Editor.ejs')(this))
     this.artalk.el.appendChild(this.el)
 
@@ -61,10 +59,10 @@ export default class Editor extends ArtalkContext {
   initLocalStorage () {
     const localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
     this.user = {
-      nick: localUser.nick || null,
-      email: localUser.email || null,
-      link: localUser.link || null,
-      password: localUser.password || null
+      nick: localUser.nick || '',
+      email: localUser.email || '',
+      link: localUser.link || '',
+      password: localUser.password || ''
     }
 
     const localContent = window.localStorage.getItem('ArtalkContent') || ''
@@ -85,7 +83,7 @@ export default class Editor extends ArtalkContext {
         // 输入框内容变化事件
         inputEl.addEventListener('input', (evt) => {
           this.user[field] = inputEl.value.trim()
-          this.user.password = null
+          this.user.password = ''
           this.saveUser()
         })
       }
@@ -274,7 +272,7 @@ export default class Editor extends ArtalkContext {
       rid: this.getReplyComment() === null ? 0 : this.getReplyComment().data.id,
       page_key: this.artalk.conf.pageKey,
       password: this.user.password,
-      captcha: this.submitCaptchaVal || null
+      captcha: Checker.submitCaptchaVal || ''
     }, () => {
       this.artalk.ui.showLoading(this.el)
     }, () => {
@@ -291,115 +289,19 @@ export default class Editor extends ArtalkContext {
     }, (msg, data) => {
       if ((typeof data === 'object') && data !== null && typeof data.need_password === 'boolean' && data.need_password === true) {
         // 管理员密码验证
-        this.showCheck('密码')
+        Checker.checkAction('密码', () => {
+          this.submit()
+        })
       } else if ((typeof data === 'object') && data !== null && typeof data.need_captcha === 'boolean' && data.need_captcha === true) {
         // 验证码验证
-        this.submitCaptchaImgData = data.img_data
-        this.showCheck('验证码')
+        Checker.submitCaptchaImgData = data.img_data
+        Checker.checkAction('验证码', () => {
+          this.submit()
+        })
       } else {
         this.showNotify(`评论失败，${msg}`, 'e')
       }
     })
-  }
-
-  private readonly CHECKER_TYPE_LIST: {[key: string]: Checker} = {
-    '密码': {
-      body: () => Utils.createElement('<span>输入密码来验证管理员身份：</span>'),
-      reqAct: 'AdminCheck',
-      reqObj: (inputVal) => {
-        return {
-          nick: this.user.nick,
-          email: this.user.email,
-          password: inputVal
-        }
-      },
-      onSuccess: (msg, data, inputVal) => {
-        this.user.password = inputVal
-        this.saveUser()
-      }
-    },
-    '验证码': {
-      body: () => {
-        const elem = Utils.createElement(`<span><img class="artalk-captcha-img" src="${this.submitCaptchaImgData || ''}" alt="验证码">输入验证码继续：</span>`)
-        this.CHECKER_TYPE_LIST['验证码'].elem = elem;
-        (elem.querySelector('.artalk-captcha-img') as HTMLElement).onclick = () => {
-          this.CHECKER_TYPE_LIST['验证码'].refresh()
-        }
-        return elem
-      },
-      reqAct: 'CaptchaCheck',
-      reqObj: (inputVal) => {
-        return {
-          captcha: inputVal
-        }
-      },
-      onSuccess: (msg, data, inputVal) => {
-        this.submitCaptchaVal = inputVal
-      },
-      refresh: (imgData?: string) => {
-        const { elem } = this.CHECKER_TYPE_LIST['验证码']
-        const imgEl = elem.querySelector('.artalk-captcha-img')
-        if (!imgData) {
-          this.artalk.request('CaptchaCheck', { refresh: true }, () => {}, () => {}, (msg, data) => {
-            imgEl.setAttribute('src', data.img_data)
-          }, () => {})
-        } else {
-          imgEl.setAttribute('src', imgData)
-        }
-      }
-    }
-  }
-
-  showCheck (typeKey: string) {
-    const type = this.CHECKER_TYPE_LIST[typeKey]
-    if (!type) {
-      throw Error(`type 有问题，仅支持：${Object.keys(type).join(', ')}`)
-    }
-
-    const formElem = Utils.createElement()
-    formElem.appendChild(type.body())
-
-    const input = Utils.createElement(`<input id="check" type="${(typeKey === '密码' ? 'password' : 'text')}" required placeholder="输入${typeKey}...">`) as HTMLInputElement
-    formElem.appendChild(input)
-    setTimeout(() => {
-      input.focus() // 延迟保证有效
-    }, 80)
-    this.artalk.ui.showDialog(this.el, formElem, (dialogElem, btnElem: HTMLElement) => {
-      const inputVal = input.value.trim()
-      const btnRawText = btnElem.innerText
-      const btnTextSet = (btnText: string) => {
-        btnElem.innerText = btnText
-        btnElem.classList.add('error')
-      }
-      const btnTextRestore = () => {
-        btnElem.innerText = btnRawText
-        btnElem.classList.remove('error')
-      }
-
-      this.artalk.request(type.reqAct, type.reqObj(inputVal), () => {
-        btnElem.innerText = '加载中...'
-      }, () => {
-
-      }, (msg, data) => {
-        type.onSuccess(msg, data, inputVal)
-        dialogElem.remove()
-        this.submit()
-      }, (msg, data) => {
-        btnTextSet(msg)
-        if (typeKey === '验证码') {
-          type.refresh(data.img_data)
-        }
-        const tf = setTimeout(() => {
-          btnTextRestore()
-        }, 3000)
-        input.onfocus = () => {
-          btnTextRestore()
-          clearTimeout(tf)
-        }
-      })
-
-      return false
-    }, () => true)
   }
 
   showNotify (msg: string, type) {
@@ -407,11 +309,3 @@ export default class Editor extends ArtalkContext {
   }
 }
 
-interface Checker {
-  elem?: HTMLElement
-  body: () => HTMLElement
-  reqAct: string
-  reqObj: (inputVal: string) => any
-  onSuccess: (msg: string, data: any, inputVal: string) => void
-  refresh?: Function
-}

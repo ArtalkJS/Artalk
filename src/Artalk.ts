@@ -1,4 +1,4 @@
-import './css/main.scss'
+import './css/main.less'
 import marked from 'marked'
 import hanabi from 'hanabi'
 import Editor from './components/Editor'

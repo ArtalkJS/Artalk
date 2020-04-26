@@ -90,7 +90,7 @@ module.exports = (env, argv) => {
           }
         ]
       }, {
-        test: /\.scss$/,
+        test: /\.less$/,
         use: [
           MiniCssExtractPlugin.loader,
           {
@@ -102,13 +102,13 @@ module.exports = (env, argv) => {
           },
           'postcss-loader',
           {
-            loader: 'sass-loader',
+            loader: 'less-loader',
             options: {
               sourceMap: IS_DEV,
-              sassOptions: {
-                includePaths: [SRC_PATH]
+              lessOptions: {
+                paths: [SRC_PATH]
               },
-              prependData: '@import "css/_variables.scss";'
+              prependData: '@import "css/_variables.less";'
             }
           }
         ],
@@ -135,7 +135,7 @@ module.exports = (env, argv) => {
         '@': path.join(__dirname, './src'),
         '~': path.join(__dirname, './')
       },
-      extensions: ['.ts', '.js', '.vue', '.json', '.scss', '.css', '.node']
+      extensions: ['.ts', '.js', '.vue', '.json', '.less', '.css', '.node']
     },
     devtool: IS_DEV ? 'cheap-module-source-map' : false,
     devServer: {

@@ -1,4 +1,4 @@
-import '../css/comment.scss'
+import '../css/comment.less'
 import List from './List'
 import UADetect from '../utils/detect'
 import { CommentData } from '~/types/artalk-data'

@@ -1,5 +1,5 @@
 import Comment from './Comment'
-import '../css/sidebar.scss'
+import '../css/sidebar.less'
 import ArtalkContext from '../ArtalkContext'
 import Utils from '../utils'
 import { CommentData } from '~/types/artalk-data'

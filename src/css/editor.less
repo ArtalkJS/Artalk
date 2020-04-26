@@ -1,15 +1,15 @@
 .artalk > .artalk-editor {
-  border: 1px solid $color-border;
-  border-radius: $block-radius;
-  margin-bottom: $block-margin;
+  border: 1px solid @color-border;
+  border-radius: @block-radius;
+  margin-bottom: @block-margin;
   overflow: hidden;
   position: relative;
 
   & > .artalk-editor-header {
     display: flex;
     flex-direction: row;
-    padding: 0 $block-padding;
-    padding-top: $block-padding/2;
+    padding: 0 @block-padding;
+    padding-top: @block-padding/2;
     padding-bottom: 0;
 
     input {
@@ -17,7 +17,7 @@
       transition: color .3s ease;
       flex: 1;
       background: transparent;
-      border-radius: $block-radius/2;
+      border-radius: @block-radius/2;
       padding: 6px 5px;
       resize: none;
       outline: none;
@@ -32,14 +32,14 @@
   & > .artalk-editor-textarea-wrap {
     .artalk-editor-textarea {
       margin-top: 2px;
-      padding: $block-padding 10px + 5px;
+      padding: @block-padding 10px + 5px;
       display: block;
       width: 100%;
       min-height: 130px;
       resize: none;
       word-wrap: break-word;
       border: 2px solid transparent;
-      border-radius: $block-radius/2;
+      border-radius: @block-radius/2;
       outline: none;
     }
 
@@ -76,7 +76,7 @@
         font-weight: 700;
 
         &:hover {
-          color: $color-deep;
+          color: @color-deep;
         }
       }
     }
@@ -87,7 +87,7 @@
     height: 150px;
     width: 100%;
     overflow: hidden;
-    border-top: 1px solid $color-border;
+    border-top: 1px solid @color-border;
     animation: .3s both artalkFadeIn;
     transition: .2s height ease-in-out;
   }
@@ -95,8 +95,8 @@
   & > .artalk-editor-bottom {
     display: flex;
     flex-direction: row;
-    border-top: 1px solid $color-border;
-    padding: 0 0 0 $block-padding - 5px;
+    border-top: 1px solid @color-border;
+    padding: 0 0 0 @block-padding - 5px;
 
     .artalk-editor-bottom-part {
       display: flex;
@@ -116,35 +116,35 @@
     .artalk-editor-action {
       padding: 0 8px;
       cursor: pointer;
-      color: $color-grey;
-      font-size: $font-size;
+      color: @color-grey;
+      font-size: @font-size;
       user-select: none;
 
       & > i {
-        color: $color-grey;
+        color: @color-grey;
         display: inline-flex;
         vertical-align: sub;
         margin-left: 4px;
         svg.markdown path {
-          fill: $color-grey;
+          fill: @color-grey;
         }
       }
 
       &.active {
-        color: $color-main;
+        color: @color-main;
 
         & > i > svg.markdown path {
-          fill: $color-main;
+          fill: @color-main;
         }
       }
 
       &:not(:last-child) {
-        border-right: 1px solid $color-border;
+        border-right: 1px solid @color-border;
       }
     }
 
     .artalk-send-btn {
-      background: $color-main;
+      background: @color-main;
       color: #FFF;
       border: none;
       padding: 0 30px;
@@ -152,7 +152,7 @@
       cursor: pointer;
       transition: opacity .3s ease-in-out;
       outline: none;
-      font-size: $font-size;
+      font-size: @font-size;
 
       &:active {
         opacity: .9;

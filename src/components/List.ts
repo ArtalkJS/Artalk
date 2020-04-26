@@ -1,4 +1,4 @@
-import '../css/list.scss'
+import '../css/list.less'
 import Comment from './Comment'
 import ArtalkContext from '../ArtalkContext'
 import Utils from '../utils'

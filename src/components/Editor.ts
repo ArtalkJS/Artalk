@@ -1,4 +1,4 @@
-import '../css/editor.scss'
+import '../css/editor.less'
 import Comment from './Comment'
 import EmoticonsPlug from './editor-plugs/EmoticonsPlug'
 import PreviewPlug from './editor-plugs/PreviewPlug'

@@ -2,7 +2,7 @@
   overflow: hidden;
   position: relative;
   margin-bottom: 10px;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid @color-border;
   animation: .3s both artalkFadeIn;
 
   &.artalk-flash-once {
@@ -53,7 +53,7 @@
         flex-wrap: wrap;
         align-items: end;
 
-        @mixin badge {
+        .badge() {
           background: #F4F4F4;
           padding: 0 5px;
           border-radius: 3px;
@@ -62,7 +62,7 @@
         & > span {
           display: flex;
           margin-bottom: 2px;
-          color: $color-meta;
+          color: @color-meta;
 
           &:not(:last-child) {
             margin-right: 5px;
@@ -72,19 +72,19 @@
             font-size: 13px;
 
             & > a {
-              color: $color-main;
+              color: @color-main;
               text-decoration: none;
             }
           }
 
           &.artalk-badge {
-            @include badge();
+            .badge();
             background: #ffa928;
             color: #FFF;
           }
 
           &.artalk-ua {
-            @include badge();
+            .badge();
           }
         }
       }
@@ -109,13 +109,13 @@
           margin-top: 4px;
 
           & > span {
-            color: $color-meta;
+            color: @color-meta;
             font-size: 13px;
             cursor: pointer;
             user-select: none;
 
             &:hover {
-              color: $color-deep;
+              color: @color-deep;
             }
           }
         }

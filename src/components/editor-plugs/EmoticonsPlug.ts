@@ -1,4 +1,4 @@
-import './EmoticonsPlug.scss'
+import './_EmoticonsPlug/EmoticonsPlug.less'
 import Editor from '../Editor'
 import ArtalkContext from '~/src/ArtalkContext'
 import Utils from '~/src/utils'
@@ -19,7 +19,7 @@ export default class EmoticonsPlug extends ArtalkContext {
   }
 
   initElem () {
-    this.elem = Utils.createElement(require('./EmoticonsPlug.ejs')(this))
+    this.elem = Utils.createElement(require('./_EmoticonsPlug/EmoticonsPlug.ejs')(this))
 
     this.listWrapElem = this.elem.querySelector('.artalk-emoticons-list-wrap')
     this.typesElem = this.elem.querySelector('.artalk-emoticons-types')

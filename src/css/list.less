@@ -5,7 +5,7 @@
     display: flex;
     flex-direction: row;
     padding: 10px 10px 5px 10px;
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid @color-border;
 
     .artalk-comment-count {
       flex: 1;
@@ -26,7 +26,7 @@
 
       & > span {
         font-size: 14px;
-        color: $color-main;
+        color: @color-main;
         cursor: pointer;
         user-select: none;
       }
@@ -53,12 +53,12 @@
       display: block;
       font-size: 13px;
       float: right;
-      color: $color-main;
+      color: @color-main;
       padding: 0 10px;
       border-radius: 2px;
 
       a {
-        color: $color-main;
+        color: @color-main;
         text-decoration: none;
       }
     }

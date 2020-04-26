@@ -7,25 +7,25 @@
 .artalk, .artalk-layer-wrap {
   * {
     box-sizing: border-box;
-    line-height: $line-height;
-    color: $color-default;
-    font-family: $font-family;
+    line-height: @line-height;
+    color: @color-default;
+    font-family: @font-family;
     word-wrap: break-word;
   }
 
   pre {
     padding: 10px;
-    line-height: $line-height;
+    line-height: @line-height;
     background-color: #f6f6f6;
     color: #555;
     padding: 5px 10px;
-    border-radius: $block-radius/2;
+    border-radius: @block-radius/2;
     margin: 0;
     font-family: Source Code Pro,courier new,Input Mono,PT Mono,SFMono-Regular,Consolas,Monaco,Menlo,PingFang SC,Liberation Mono,Microsoft YaHei,Courier,monospace;
   }
 
   a {
-    color: $color-main;
+    color: @color-main;
     text-decoration: none;
   }
 
@@ -56,7 +56,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  background: $color-bg;
+  background: @color-bg;
   z-index: 10;
   align-items: center;
   justify-content: center;
@@ -66,7 +66,7 @@
 
 .artalk-loading {
   z-index: 11;
-  @extend .full-layer;
+  &:extend(.full-layer);
 }
 
 .artalk-loading-spinner {
@@ -161,7 +161,7 @@
 }
 
 .artalk-error-layer {
-  @extend .full-layer;
+  &:extend(.full-layer);
   background-color: rgba(255, 255, 255, 0.94);
 
   .artalk-error-title {
@@ -174,8 +174,8 @@
 }
 
 .artalk-layer-dialog-wrap {
-  $formInputHeight: 25px;
-  @extend .full-layer;
+  @formInputHeight: 25px;
+  &:extend(.full-layer);
   background-color: rgba(255, 255, 255, 0.94);
 
   & > .artalk-layer-dialog {
@@ -194,9 +194,9 @@
 
       input {
         width: 100%;
-        line-height: $formInputHeight + 4px;
-        border: 1px solid $color-grey;
-        border-radius: $block-radius/2;
+        line-height: @formInputHeight + 4px;
+        border: 1px solid @color-grey;
+        border-radius: @block-radius/2;
         outline: none;
         padding: 0 6px;
         display: block;
@@ -214,17 +214,17 @@
         flex: 1;
         display: block;
         cursor: pointer;
-        border: 1px solid $color-main;
+        border: 1px solid @color-main;
         background: transparent;
-        color: $color-main;
-        border-radius: $block-radius/2;
+        color: @color-main;
+        border-radius: @block-radius/2;
         padding: 0 15px;
-        line-height: $formInputHeight;
+        line-height: @formInputHeight;
         outline: none;
 
         &:active {
           color: #FFF;
-          background: $color-main;
+          background: @color-main;
         }
 
         &:not(:last-child) {

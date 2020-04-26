@@ -1,4 +1,4 @@
-import './PreviewPlug.scss'
+import './_PreviewPlug/PreviewPlug.less'
 import Editor from '../Editor'
 import ArtalkContext from '~/src/ArtalkContext'
 import Utils from '~/src/utils'

@@ -3,7 +3,6 @@
   position: relative;
   margin-bottom: 10px;
   border-bottom: 1px solid @color-border;
-  animation: .3s both artalkFadeIn;
 
   &.artalk-flash-once {
     animation: artalkFlashOnce 1s ease-in-out 0s;
@@ -128,7 +127,9 @@
 
         .artalk-comment-wrap {
           border-bottom-color: transparent;
-          margin-bottom: 5px;
+          &:not(:last-child) {
+            margin-bottom: 5px;
+          }
 
           & > .artalk-comment {
             padding-top: 4px;

@@ -146,4 +146,15 @@ export default class Comment extends ArtalkContext {
     const info = UADetect(this.data.ua)
     return `${info.os} ${info.osVersion}`
   }
+
+  /** 渐出动画 */
+  playFadeInAnim () {
+    this.elem.classList.add('artalk-fade-in')
+    // 动画结束清除 class
+    const onAnimEnded = () => {
+      this.elem.classList.remove('artalk-fade-in')
+      this.elem.removeEventListener('animationend', onAnimEnded)
+    }
+    this.elem.addEventListener('animationend', onAnimEnded)
+  }
 }

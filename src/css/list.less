@@ -43,6 +43,41 @@
         font-size: 19px;
       }
     }
+
+    & > .artalk-list-read-more {
+      margin-bottom: 12px;
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid @color-border;
+      padding: 0 20px;
+      font-size: @font-size;
+      border-radius: @block-radius;
+      display: flex;
+      height: 30px;
+      flex-direction: row;
+      place-content: center;
+      align-items: center;
+
+      &.artalk-err > .artalk-text {
+        color: @color-error !important;
+      }
+
+      & > .artalk-loading-icon {
+        height: 15px;
+        width: 15px;
+      }
+
+      & > .artalk-text {
+        color: @color-meta;
+      }
+
+      &:hover {
+        background-color: @color-border;
+        & > .artalk-text {
+          color: @color-main;
+        }
+      }
+    }
   }
 
   & > .artalk-list-footer {

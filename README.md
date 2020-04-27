@@ -2,7 +2,7 @@
 <img src="./docs/banner.png" alt="Artalk" width="200">
 </p>
 
-# Artalk
+# [Artalk](https://artalk.js.org)
 > 一款简洁有趣的自托管评论系统
 
 [![](https://img.shields.io/npm/v/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
@@ -32,7 +32,7 @@
 ## 食用
 
 1. 部署 Artalk 的后端，[PHP 版传送门](https://github.com/qwqcode/ArtalkServerPhp)
-2. 前端页面配置 Artalk
+2. 前端页面配置 Artalk 如下：
 
 ```html
 <!DOCTYPE html>
@@ -59,11 +59,9 @@
 </html>
 ```
 
-生产环境版下载：[Artalk.js](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.js) | [Artalk.css](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.css)
+> 生产环境版下载：[Artalk.js](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.js) | [Artalk.css](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.css) (右键保存)
 
 ## 开发
-
-Made with ♥ by QWQAQ
 
 ```bash
 git clone https://github.com/qwqcode/Artalk.git
@@ -77,9 +75,11 @@ yarn run dev
 yarn run build
 ```
 
+Made with ♥ by QWQAQ
+
 ## 捐助
 
-如果您觉得我的项目对您有帮助，并且您愿意给予我一点小小的支持，您可以通过以下方式向我捐助，这样可以维持项目持续地发展，非常感谢！(/ω＼)
+如果您愿意给予我一点点支持与帮助，可以通过下面的方式向我捐助，爱你~~~ (/ω＼)
 
 | Alipay | Wechat | 
 | :------: | :------: | 
@@ -87,7 +87,7 @@ yarn run build
 
 捐助者的名字将保存于 [捐助者名单](https://github.com/qwqcode/donate-qwqaq)
 
-最后，我再次对您致以诚挚的感谢！
+最后，我再次对您致以我最最最最最诚挚的感谢！
 
 ## License
 [GPL-2.0](./LICENSE)

@@ -281,7 +281,9 @@ export default class Editor extends ArtalkContext {
       const newComment = new Comment(this.artalk.list, data.comment)
       if (this.getReplyComment() !== null) {
         this.getReplyComment().setChild(newComment)
+        newComment.playFadeInAnim()
       } else {
+        this.artalk.list.data.total += 1 // 评论总数+1
         this.artalk.list.putComment(newComment)
       }
       this.artalk.ui.scrollIntoView(newComment.getElem())

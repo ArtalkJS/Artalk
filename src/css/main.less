@@ -64,6 +64,7 @@
   display: flex;
 }
 
+/* Loading */
 .artalk-loading {
   z-index: 11;
   &:extend(.full-layer);
@@ -93,9 +94,7 @@
 }
 
 @keyframes artalkRotate {
-  100% {
-    transform: rotate(360deg)
-  }
+  100% { transform: rotate(360deg) }
 }
 
 @keyframes artalkDash {
@@ -116,23 +115,32 @@
 }
 
 @keyframes artalkColor {
-  0%,100% {
-    stroke: #ff5652
-  }
-
-  40% {
-    stroke: #2196F3
-  }
-
-  66% {
-    stroke: #32c787
-  }
-
-  80%,90% {
-    stroke: #ffc107
-  }
+  0%,100% { stroke: #ff5652 }
+  40% { stroke: #2196F3 }
+  66% { stroke: #32c787 }
+  80%,90% { stroke: #ffc107 }
 }
 
+@keyframes artalkLoadingIconRotate {
+  0% { transform: rotate(0) }
+  50% { transform: rotate(180deg) }
+  100% { transform: rotate(360deg) }
+}
+
+.artalk-loading-icon {
+  border-radius: 100%;
+  margin: 0;
+  border: 1px solid @color-main;
+  border-bottom-color: transparent;
+  height: 15px;
+  width: 15px;
+  background: 0 0 !important;
+  display: inline-block;
+  animation: artalkLoadingIconRotate .75s 0s linear infinite;
+  vertical-align: middle;
+}
+
+/* Animations */
 .artalk-fade-in {
   animation: artalkFadeIn both .3s;
 }
@@ -142,30 +150,22 @@
 }
 
 @keyframes artalkFadeIn {
-  0% {
-      opacity: 0
-  }
-
-  to {
-      opacity: 1
-  }
+  0% { opacity: 0 }
+  to { opacity: 1 }
 }
 
 @keyframes artalkFadeOut {
-  100% {
-      opacity: 0;
-  }
-
-  0% {
-  }
+  100% { opacity: 0; }
+  0% {}
 }
 
+/* Layer */
 .artalk-error-layer {
   &:extend(.full-layer);
   background-color: rgba(255, 255, 255, 0.94);
 
   .artalk-error-title {
-    color: #ff5652;
+    color: @color-error;
   }
 
   .artalk-error-text {

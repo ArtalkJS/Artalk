@@ -41,4 +41,14 @@ export interface ArtalkConfig {
     /** CDN 地址 */
     cdn?: string
   }
+
+  /**
+   * 查看更多配置
+   */
+  readMore?: {
+    /** 每次请求获取数量 */
+    pageSize?: number
+    /** 滚动到底部自动加载 */
+    autoLoad?: boolean
+  }
 }

@@ -80,6 +80,13 @@ export default class Checker extends ArtalkContext {
     layer.setMaskClickHide(false)
     layer.show()
 
+    input.onkeyup = (evt) => {
+      if (evt.keyCode === 13) { // 按下回车键
+        evt.preventDefault();
+        (layer.getEl().querySelector('button[data-action="confirm"]') as HTMLButtonElement).click()
+      }
+    }
+
     ArtalkInstance.ui.showDialog(layer.getEl(), formEl, (dialogElem, btnElem: HTMLElement) => {
       const inputVal = input.value.trim()
       const btnRawText = btnElem.innerText

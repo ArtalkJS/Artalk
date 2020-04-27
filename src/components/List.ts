@@ -13,8 +13,10 @@ export default class List extends ArtalkContext {
   public readMoreLoadingEl: HTMLElement
   public readMoreTextEl: HTMLElement
 
-  public data: ListData;
-  public readonly limit = 5; // 每次请求获取量
+  public data: ListData
+  public reqPageSize: number = 15 // 每次请求获取量
+
+  public isLoading: boolean = false
 
   constructor () {
     super()
@@ -23,7 +25,6 @@ export default class List extends ArtalkContext {
     this.artalk.el.appendChild(this.el)
 
     this.commentsWrapEl = this.el.querySelector('.artalk-list-comments-wrap')
-    this.reqComments()
 
     this.el.querySelector('[data-action="open-sidebar"]').addEventListener('click', () => {
       this.artalk.sidebar.show()
@@ -35,6 +36,7 @@ export default class List extends ArtalkContext {
     })
 
     // 查看更多
+    this.reqPageSize = this.artalk.conf.readMore ? (this.artalk.conf.readMore.pageSize || this.reqPageSize) : this.reqPageSize
     this.readMoreEl = this.el.querySelector('.artalk-list-read-more')
     this.readMoreLoadingEl = this.readMoreEl.querySelector('.artalk-loading-icon')
     this.readMoreTextEl = this.readMoreEl.querySelector('.artalk-text')
@@ -42,6 +44,9 @@ export default class List extends ArtalkContext {
     this.readMoreEl.addEventListener('click', () => {
       this.readMore()
     })
+
+    // 请求获取评论
+    this.reqComments()
   }
 
   /** 拉取评论 */
@@ -52,12 +57,14 @@ export default class List extends ArtalkContext {
 
     this.artalk.request('CommentGet', {
       page_key: this.artalk.conf.pageKey,
-      limit: this.limit, // 获取评论数
+      limit: this.reqPageSize, // 获取评论数
       offset, // 偏移量
     }, () => {
+      this.isLoading = true
       if (offset === 0) this.artalk.ui.showLoading()
       else this.readMoreBtnSetLoading(true)
     }, () => {
+      this.isLoading = false
       if (offset === 0) this.artalk.ui.hideLoading()
       else this.readMoreBtnSetLoading(false)
     }, (msg, data: ListData) => {
@@ -67,8 +74,12 @@ export default class List extends ArtalkContext {
       // 查看更多按钮
       if (this.hasMoreComments) this.showReadMoreBtn()
       else this.hideReadMoreBtn()
-
+      // 锚点跳转
       this.checkRedirectByUrlHash()
+      // 滚动到底部自动加载
+      if (offset === 0 && this.hasMoreComments) {
+        this.initScrollBottomAutoLoad()
+      }
     }, (msg, data) => {
       if (offset === 0) {
         const errEl = Utils.createElement(`<span>${msg}，无法获取评论列表数据<br/></span>`)
@@ -202,7 +213,7 @@ export default class List extends ArtalkContext {
     }
     if (!comment) { return }
 
-    this.artalk.ui.scrollIntoView(comment.getElem())
+    this.artalk.ui.scrollIntoView(comment.getElem(), false)
     setTimeout(() => {
       comment.getElem().classList.add('artalk-flash-once')
     }, 800)
@@ -216,7 +227,7 @@ export default class List extends ArtalkContext {
 
   /** 阅读更多操作 */
   readMore () {
-    const offset = this.data.offset + this.limit
+    const offset = this.data.offset + this.reqPageSize
     this.reqComments(offset)
   }
 
@@ -248,5 +259,22 @@ export default class List extends ArtalkContext {
       this.readMoreTextEl.innerText = readMoreTextOrg
       this.readMoreEl.classList.remove('artalk-err')
     }, 2000) // 2s后错误提示复原
+  }
+
+  /** 初始化滚动到底部自动查看更多（若开启） */
+  initScrollBottomAutoLoad () {
+    if (!this.artalk.conf.readMore) return
+    if (!this.artalk.conf.readMore.autoLoad) return
+
+    document.addEventListener('scroll', () => {
+      const targetEl = this.el.querySelector('.artalk-list-comments-wrap > .artalk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
+      if (!targetEl) return
+      if (!this.hasMoreComments) return
+      if (this.isLoading) return
+      if (this.artalk.ui.isVisible(targetEl as HTMLElement)) {
+        // 加载更多
+        this.readMore()
+      }
+    })
   }
 }

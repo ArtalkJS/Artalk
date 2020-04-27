@@ -67,7 +67,7 @@ export default class Sidebar extends ArtalkContext {
 
     comment.elem.addEventListener('click', (evt) => {
       evt.preventDefault()
-      window.location.href = (data as any).page_key
+      window.location.href = `${(data as any).page_key}#artalk-comment-${comment.data.id}`
     })
 
     this.contentEl.appendChild(comment.getElem())

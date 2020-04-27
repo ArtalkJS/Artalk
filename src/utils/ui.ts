@@ -124,15 +124,20 @@ export default class Ui extends ArtalkContext {
   /**
    * 滚动到元素中心
    */
-  scrollIntoView (elem: HTMLElement) {
+  scrollIntoView (elem: HTMLElement, enableAnim: boolean = true) {
     if (this.isVisible(elem)) return
     const top = Utils.getOffset(elem).top + (Utils.getHeight(elem) / 2) - (document.documentElement.clientHeight / 2)
 
-    window.scroll({
-      top: top > 0 ? top : 0,
-      left: 0,
-      behavior: 'smooth'
-    })
+    if (enableAnim) {
+      window.scroll({
+        top: top > 0 ? top : 0,
+        left: 0,
+        behavior: 'smooth'
+      })
+    } else {
+      // 无动画
+      window.scroll(0, (top > 0 ? top : 0))
+    }
   }
 
   /**

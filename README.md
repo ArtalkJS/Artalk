@@ -24,6 +24,7 @@
 - 验证码，提交频率限制
 - 通知中心，邮件提醒
 - 无限层级回复
+- 滚动自动加载
 - 评论打分
 - TypeScript
 
@@ -31,7 +32,9 @@
 
 ## 食用
 
-1. 部署 Artalk 的后端，[PHP 版传送门](https://github.com/qwqcode/ArtalkServerPhp)
+> 生产环境版下载：[Artalk.js](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.js) | [Artalk.css](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.css)
+
+1. 部署 Artalk 的后端，[PHP 版传送门](https://github.com/qwqcode/Artalk-API-PHP)
 2. 前端页面配置 Artalk 如下：
 
 ```html
@@ -43,23 +46,25 @@
   <script type="text/javascript" src="dist/Artalk.js"></script>
 </head>
 <body>
-  <!-- ... -->
   <div id="ArtalkComments"></div>
-  <!-- ... -->
   <script>
   new Artalk({
     el: '#ArtalkComments',
     placeholder: '来啊，快活啊 (/ω＼)',
     defaultAvatar: 'mp',
     pageKey: '[页面唯一标识]',
-    serverUrl: '[后端程序URL]'
+    serverUrl: '[后端程序URL]',
+    readMore: {
+      pageSize: 15, // 每次请求获取评论数
+      autoLoad: true // 滚动到底部自动加载
+    }
   });
   </script>
 </body>
 </html>
 ```
 
-> 生产环境版下载：[Artalk.js](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.js) | [Artalk.css](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.css) (右键保存)
+更多配置项详见 [types/artalk-config.d.ts](./types/artalk-config.d.ts)
 
 ## 开发
 

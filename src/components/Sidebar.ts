@@ -24,13 +24,14 @@ export default class Sidebar extends ArtalkContext {
 
   show () {
     this.layer.show()
+    this.contentEl.scrollTo(0, 0)
     setTimeout(() => {
       this.el.style.transform = 'translate(0, 0)'
     }, 20)
 
     this.artalk.request('CommentReplyGet', {
-      nick: this.artalk.editor.user.nick,
-      email: this.artalk.editor.user.email
+      nick: this.artalk.user.nick,
+      email: this.artalk.user.email
     }, () => {
       this.artalk.ui.showLoading(this.contentEl)
     }, () => {

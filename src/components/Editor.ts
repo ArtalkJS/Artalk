@@ -23,15 +23,12 @@ export default class Editor extends ArtalkContext {
   public submitBtn: HTMLButtonElement
   public notifyWrapEl: HTMLElement
 
-  public user: {
-    nick: string|null,
-    email: string|null,
-    link: string|null,
-    password: string|null
-  }
-
   private replyComment: Comment
   private sendReplyEl: HTMLElement
+
+  private get user () {
+    return this.artalk.user
+  }
 
   constructor () {
     super()
@@ -57,14 +54,6 @@ export default class Editor extends ArtalkContext {
   }
 
   initLocalStorage () {
-    const localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
-    this.user = {
-      nick: localUser.nick || '',
-      email: localUser.email || '',
-      link: localUser.link || '',
-      password: localUser.password || ''
-    }
-
     const localContent = window.localStorage.getItem('ArtalkContent') || ''
     if (localContent.trim() !== '') {
       this.showNotify('已自动恢复', 'i')
@@ -84,17 +73,24 @@ export default class Editor extends ArtalkContext {
         inputEl.addEventListener('input', (evt) => {
           this.user[field] = inputEl.value.trim()
           this.user.password = ''
+          this.user.isAdmin = false
           this.saveUser()
+          this.artalk.list.refreshUI()
+
+          if (this.artalk.checkHasBasicUserInfo()
+              && this.artalk.list.checkNickEmailIsAdmin(this.user.nick, this.user.email)) {
+            // 昵称为管理员，显示管理员密码验证 dialog
+            Checker.checkAction('管理员', () => {
+              this.artalk.list.refreshUI()
+            })
+          }
         })
       }
     })
   }
 
-  /**
-   * 保存用户到 localStorage 中
-   */
   saveUser () {
-    window.localStorage.setItem('ArtalkUser', JSON.stringify(this.user))
+    this.artalk.saveUser()
   }
 
   saveContent () {
@@ -281,9 +277,7 @@ export default class Editor extends ArtalkContext {
       const newComment = new Comment(this.artalk.list, data.comment)
       if (this.getReplyComment() !== null) {
         this.getReplyComment().setChild(newComment)
-        newComment.playFadeInAnim()
       } else {
-        this.artalk.list.data.total += 1 // 评论总数+1
         this.artalk.list.putComment(newComment)
       }
       this.artalk.ui.scrollIntoView(newComment.getElem())
@@ -291,7 +285,7 @@ export default class Editor extends ArtalkContext {
     }, (msg, data) => {
       if ((typeof data === 'object') && data !== null && typeof data.need_password === 'boolean' && data.need_password === true) {
         // 管理员密码验证
-        Checker.checkAction('密码', () => {
+        Checker.checkAction('管理员', () => {
           this.submit()
         })
       } else if ((typeof data === 'object') && data !== null && typeof data.need_captcha === 'boolean' && data.need_captcha === true) {

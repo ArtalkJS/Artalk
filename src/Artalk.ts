@@ -33,6 +33,14 @@ export default class Artalk {
   public list: List
   public sidebar: Sidebar
 
+  public user: {
+    nick: string|null,
+    email: string|null,
+    link: string|null,
+    password: string|null,
+    isAdmin: boolean
+  }
+
   constructor (public conf: ArtalkConfig) {
     // Version Information
     console.log(`\n %c `
@@ -62,10 +70,34 @@ export default class Artalk {
 
     // Components
     this.ui = new Ui()
+    this.initUser()
     this.initMarked()
     this.editor = new Editor()
     this.list = new List()
     this.sidebar = new Sidebar()
+  }
+
+  /** 初始化用户数据 */
+  initUser () {
+    // 从 localStorage 导入
+    const localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
+    this.user = {
+      nick: localUser.nick || '',
+      email: localUser.email || '',
+      link: localUser.link || '',
+      password: localUser.password || '',
+      isAdmin: localUser.isAdmin || false
+    }
+  }
+
+  /** 保存用户到 localStorage 中 */
+  saveUser () {
+    window.localStorage.setItem('ArtalkUser', JSON.stringify(this.user))
+  }
+
+  /** 是否已填写基本用户信息 */
+  checkHasBasicUserInfo () {
+    return !!this.user.nick && !!this.user.email
   }
 
   public marked: (src: string, callback?: (error: any, parseResult: string) => void) => string

@@ -17,18 +17,19 @@ export default class Checker extends ArtalkContext {
   public static submitCaptchaImgData: string
 
   private static readonly LIST: {[key: string]: CheckerItem} = {
-    '密码': {
+    '管理员': {
       body: () => Utils.createElement('<span>敲入密码来验证管理员身份：</span>'),
       reqAct: 'AdminCheck',
       reqObj: (inputVal) => {
         return {
-          nick: ArtalkInstance.editor.user.nick,
-          email: ArtalkInstance.editor.user.email,
+          nick: ArtalkInstance.user.nick,
+          email: ArtalkInstance.user.email,
           password: inputVal
         }
       },
       onSuccess: (msg, data, inputVal) => {
-        ArtalkInstance.editor.user.password = inputVal
+        ArtalkInstance.user.isAdmin = true
+        ArtalkInstance.user.password = inputVal
         ArtalkInstance.editor.saveUser()
       }
     },
@@ -64,13 +65,13 @@ export default class Checker extends ArtalkContext {
     }
   }
 
-  public static checkAction (name: '密码'|'验证码', action: () => void) {
+  public static checkAction (name: '管理员'|'验证码', action: () => void) {
     const checker = Checker.LIST[name]
 
     const formEl = Utils.createElement()
     formEl.appendChild(checker.body())
 
-    const input = Utils.createElement(`<input id="check" type="${(name === '密码' ? 'password' : 'text')}" required placeholder="">`) as HTMLInputElement
+    const input = Utils.createElement(`<input id="check" type="${(name === '管理员' ? 'password' : 'text')}" required placeholder="">`) as HTMLInputElement
     formEl.appendChild(input)
     setTimeout(() => {
       input.focus() // 延迟以保证有效

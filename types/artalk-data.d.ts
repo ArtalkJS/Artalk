@@ -42,4 +42,10 @@ export interface ListData {
 
   /** 评论总数（包括所有子评论） */
   total: number
+
+  /** 管理员昵称 */
+  admin_nicks: string[]
+
+  /** 管理员加密后的邮箱 */
+  admin_encrypted_emails: string[]
 }

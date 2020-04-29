@@ -1,3 +1,4 @@
+import md5 from 'md5'
 import '../css/list.less'
 import Comment from './Comment'
 import { ListData } from '~/types/artalk-data'
@@ -18,6 +19,8 @@ export default class List extends ArtalkContext {
 
   public isLoading: boolean = false
 
+  public openSidebarBtnEl: HTMLElement
+
   constructor () {
     super()
 
@@ -26,7 +29,9 @@ export default class List extends ArtalkContext {
 
     this.commentsWrapEl = this.el.querySelector('.artalk-list-comments-wrap')
 
-    this.el.querySelector('[data-action="open-sidebar"]').addEventListener('click', () => {
+    // 侧边栏呼出按钮
+    this.openSidebarBtnEl = this.el.querySelector('[data-action="open-sidebar"]')
+    this.openSidebarBtnEl.addEventListener('click', () => {
       this.artalk.sidebar.show()
     })
 
@@ -160,19 +165,43 @@ export default class List extends ArtalkContext {
   findComment (id: number) {
     let comment: Comment|null = null
 
-    const findCommentInList = (commentList: Comment[]) => {
-      commentList.every((item) => {
-        if (comment !== null) return false
-        if (item.data.id === id) {
-          comment = item
-        }
-        findCommentInList(item.getChildren())
-        return true
-      })
-    }
+    this.eachComment(this.comments, (item) => {
+      if (item.data.id === id) {
+        comment = item
+        return false
+      }
+      return true
+    })
 
-    findCommentInList(this.comments)
     return comment
+  }
+
+  /** 遍历操作 Comment (包括子评论) */
+  eachComment (commentList: Comment[], action: (comment?: Comment, levelList?: Comment[]) => boolean|void) {
+    if (commentList.length === 0) return
+    commentList.every((item) => {
+      if (action(item, commentList) === false) return false
+      this.eachComment(item.getChildren(), action)
+      return true
+    })
+  }
+
+  /** 删除评论 */
+  deleteComment (comment: number|Comment) {
+    let findComment: Comment
+    if (typeof comment === 'number') {
+      findComment = this.findComment(comment)
+      if (!findComment) throw Error(`未找到评论 ${comment}`)
+    } else findComment = comment
+
+    findComment.getElem().remove()
+    this.eachComment(this.comments, (item, levelList) => {
+      if (item === findComment) {
+        levelList.splice(levelList.indexOf(item), 1)
+        return false
+      }
+      return true
+    })
   }
 
   /** 清空所有评论 */
@@ -184,7 +213,7 @@ export default class List extends ArtalkContext {
 
   /** 刷新界面 */
   refreshUI () {
-    (this.el.querySelector('.artalk-comment-count-num') as HTMLElement).innerText = this.data ? String(this.data.total || 0) : '0'
+    (this.el.querySelector('.artalk-comment-count-num') as HTMLElement).innerText = this.getCommentCount().toString()
 
     let noCommentElem = this.commentsWrapEl.querySelector('.artalk-no-comment') as HTMLElement
     if (this.comments.length <= 0 && !noCommentElem) {
@@ -194,6 +223,24 @@ export default class List extends ArtalkContext {
     }
     if (this.comments.length > 0 && noCommentElem !== null) {
         noCommentElem.remove()
+    }
+
+    // 已输入个人信息
+    if (!!this.artalk.user.nick && !!this.artalk.user.email) {
+      this.openSidebarBtnEl.style.display = ''
+    } else {
+      this.openSidebarBtnEl.style.display = 'none'
+    }
+
+    // 是管理员
+    if (this.artalk.user.isAdmin) {
+      this.el.querySelectorAll('[data-only-admin-show]').forEach((itemEl: HTMLElement) => {
+        itemEl.classList.remove('artalk-hide')
+      })
+    } else {
+      this.el.querySelectorAll('[data-only-admin-show]').forEach((itemEl: HTMLElement) => {
+        itemEl.classList.add('artalk-hide')
+      })
     }
   }
 
@@ -276,5 +323,22 @@ export default class List extends ArtalkContext {
         this.readMore()
       }
     })
+  }
+
+  /** 根据请求数据判断 nick 是否为管理员 */
+  checkNickEmailIsAdmin (nick: string, email: string) {
+    if (!this.data || !this.data.admin_nicks || !this.data.admin_encrypted_emails) return false
+
+    return (this.data.admin_nicks.indexOf(nick) !== -1)
+      && (this.data.admin_encrypted_emails.find(o => String(o).toLowerCase() === String(md5(email)).toLowerCase()))
+  }
+
+  /** 获取评论总数 (包括子评论) */
+  getCommentCount (): number {
+    let count = 0
+    this.eachComment(this.comments, () => {
+      count++
+    })
+    return count
   }
 }

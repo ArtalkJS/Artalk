@@ -9,6 +9,7 @@ export default class Comment extends ArtalkContext {
   public elem: HTMLElement
   public contentEl: HTMLElement
   public childrenEl: HTMLElement
+  public actionsEl: HTMLElement
 
   public parent: Comment|null
   public nestedNum: number
@@ -22,14 +23,21 @@ export default class Comment extends ArtalkContext {
 
     this.elem = Utils.createElement(require('../templates/Comment.ejs')(this))
     this.contentEl = this.elem.querySelector('.artalk-content')
+    this.actionsEl = this.elem.querySelector('.artalk-comment-actions')
 
     this.parent = null
     this.nestedNum = 1 // 现在已嵌套 n 层
     this.childrenEl = null
 
     // 绑定回复按钮事件
-    this.elem.querySelector('[data-comment-action="reply"]').addEventListener('click', () => {
+    this.actionsEl.querySelector('[data-comment-action="reply"]').addEventListener('click', () => {
       this.artalk.editor.setReply(this)
+    })
+
+    // 绑定删除按钮事件
+    const actionDelBtnEl: HTMLElement = this.actionsEl.querySelector('[data-comment-action="delete"]')
+    actionDelBtnEl.addEventListener('click', () => {
+      this.adminDelete(this.data.id, actionDelBtnEl)
     })
   }
 
@@ -42,6 +50,9 @@ export default class Comment extends ArtalkContext {
     this.getChildrenEl().appendChild(comment.getElem())
     comment.parent = this
     comment.nestedNum = this.nestedNum + 1 // 嵌套层数 +1
+
+    comment.playFadeInAnim()
+    this.list.refreshUI()
   }
 
   getChildren () {
@@ -156,5 +167,52 @@ export default class Comment extends ArtalkContext {
       this.elem.removeEventListener('animationend', onAnimEnded)
     }
     this.elem.addEventListener('animationend', onAnimEnded)
+  }
+
+  /** 管理员 - 评论删除 */
+  adminDelete (commentId: number, btnElem: HTMLElement) {
+    const comment = this.list.findComment(commentId)
+    if (!comment) throw Error(`未找到评论 ${commentId}`)
+
+    if (btnElem.classList.contains('artalk-in-process')) return // 若正在删除中
+
+    // 删除确认
+    const btnClicked = Number(btnElem.getAttribute('data-btn-clicked') || 1)
+    if (btnClicked < 2) {
+      if (btnClicked === 1) {
+        const btnTextOrg = btnElem.innerText
+        btnElem.innerText = '确认删除'
+        setTimeout(() => {
+          btnElem.innerText = btnTextOrg
+          btnElem.setAttribute('data-btn-clicked', '')
+        }, 2000)
+        btnElem.setAttribute('data-btn-clicked', String(btnClicked+1))
+      }
+      return
+    }
+    const btnTextOrg = btnElem.innerText
+    this.artalk.request('CommentDel', {
+      id: commentId,
+      nick: this.artalk.user.nick,
+      email: this.artalk.user.email,
+      password: this.artalk.user.password
+    }, () => {
+      btnElem.classList.add('artalk-in-process')
+      btnElem.innerText = '删除中...'
+    }, () => {
+      btnElem.innerText = btnTextOrg
+    }, (msg, data) => {
+      this.list.deleteComment(comment)
+      this.list.refreshUI()
+      btnElem.classList.remove('artalk-in-process')
+    }, (msg, data) => {
+      btnElem.classList.add('artalk-error')
+      btnElem.innerText = '删除失败'
+      setTimeout(() => {
+        btnElem.innerText = btnTextOrg
+        btnElem.classList.remove('artalk-error')
+        btnElem.classList.remove('artalk-in-process')
+      }, 2000)
+    })
   }
 }

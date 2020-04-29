@@ -123,21 +123,18 @@
 
 @keyframes artalkLoadingIconRotate {
   0% { transform: rotate(0) }
-  50% { transform: rotate(180deg) }
   100% { transform: rotate(360deg) }
 }
 
 .artalk-loading-icon {
-  border-radius: 100%;
-  margin: 0;
-  border: 1px solid @color-main;
-  border-bottom-color: transparent;
-  height: 15px;
-  width: 15px;
-  background: 0 0 !important;
-  display: inline-block;
-  animation: artalkLoadingIconRotate .75s 0s linear infinite;
-  vertical-align: middle;
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: solid 2px transparent;
+  border-top-color: #29d;
+  border-left-color: #29d;
+  border-radius: 50%;
+  animation: artalkLoadingIconRotate .4s linear infinite;
 }
 
 /* Animations */

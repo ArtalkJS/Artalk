@@ -339,6 +339,12 @@ export default class List extends ArtalkContext {
     this.eachComment(this.comments, () => {
       count++
     })
+
+    // 尝试从请求数据中获取
+    if (this.data && typeof this.data.total !== 'undefined')
+      if (Number(this.data.total) > count)
+        return Number(this.data.total)
+
     return count
   }
 }

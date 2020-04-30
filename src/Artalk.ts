@@ -11,8 +11,9 @@ import { ArtalkConfig } from '~/types/artalk-config'
 
 const defaultOpts: ArtalkConfig = {
   el: '',
-  placeholder: '来啊，快活啊 (/ω＼)',
+  placeholder: '来啊，快活啊 ( ゜- ゜)',
   noComment: '快来成为第一个评论的人吧~',
+  sendBtn: '发送评论',
   defaultAvatar: 'mp',
   pageKey: '',
   serverUrl: '',

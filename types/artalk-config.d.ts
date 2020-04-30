@@ -15,6 +15,11 @@ export interface ArtalkConfig {
   noComment?: string
 
   /**
+   * 发送按钮文字
+   */
+  sendBtn?: string
+
+  /**
    * 默认头像（URL or Gravatar Type）
    */
   defaultAvatar?: string

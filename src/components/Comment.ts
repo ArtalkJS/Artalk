@@ -50,9 +50,6 @@ export default class Comment extends ArtalkContext {
     this.getChildrenEl().appendChild(comment.getElem())
     comment.parent = this
     comment.nestedNum = this.nestedNum + 1 // 嵌套层数 +1
-
-    comment.playFadeInAnim()
-    this.list.refreshUI()
   }
 
   getChildren () {
@@ -203,7 +200,8 @@ export default class Comment extends ArtalkContext {
       btnElem.innerText = btnTextOrg
     }, (msg, data) => {
       this.list.deleteComment(comment)
-      this.list.refreshUI()
+      this.list.data.total -= 1 // 评论数 -1
+      this.list.refreshUI() // 刷新 list
       btnElem.classList.remove('artalk-in-process')
     }, (msg, data) => {
       btnElem.classList.add('artalk-error')

@@ -72,18 +72,22 @@ export default class Editor extends ArtalkContext {
         // 输入框内容变化事件
         inputEl.addEventListener('input', (evt) => {
           this.user[field] = inputEl.value.trim()
-          this.user.password = ''
-          this.user.isAdmin = false
+
+          // 若修改的是 nick or email
+          if (field !== 'link') {
+            this.user.password = ''
+            this.user.isAdmin = false
+            if (this.artalk.checkHasBasicUserInfo()
+              && this.artalk.list.checkNickEmailIsAdmin(this.user.nick, this.user.email)) {
+              // 昵称为管理员，显示管理员密码验证 dialog
+              Checker.checkAction('管理员', () => {
+                this.artalk.list.refreshUI()
+              })
+            }
+          }
+
           this.saveUser()
           this.artalk.list.refreshUI()
-
-          if (this.artalk.checkHasBasicUserInfo()
-              && this.artalk.list.checkNickEmailIsAdmin(this.user.nick, this.user.email)) {
-            // 昵称为管理员，显示管理员密码验证 dialog
-            Checker.checkAction('管理员', () => {
-              this.artalk.list.refreshUI()
-            })
-          }
         })
       }
     })
@@ -297,8 +301,12 @@ export default class Editor extends ArtalkContext {
       } else {
         this.artalk.list.putComment(newComment)
       }
+      this.clearEditor() // 清空编辑器
+
       this.artalk.ui.scrollIntoView(newComment.getElem())
-      this.clearEditor()
+      newComment.playFadeInAnim() // 播放评论渐出动画
+      this.artalk.list.data.total += 1 // 评论数增加 1
+      this.artalk.list.refreshUI() // 更新 list 界面
     }, (msg, data) => {
       if ((typeof data === 'object') && data !== null && typeof data.need_password === 'boolean' && data.need_password === true) {
         // 管理员密码验证

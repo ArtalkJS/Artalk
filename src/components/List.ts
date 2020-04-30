@@ -156,9 +156,6 @@ export default class List extends ArtalkContext {
   putComment (comment: Comment) {
     this.commentsWrapEl.prepend(comment.getElem())
     this.comments.unshift(comment)
-
-    comment.playFadeInAnim()
-    this.refreshUI()
   }
 
   /** 查找评论项 */
@@ -335,16 +332,14 @@ export default class List extends ArtalkContext {
 
   /** 获取评论总数 (包括子评论) */
   getCommentCount (): number {
+    if (!this.data || !this.data.total) return 0
+    return Number(this.data.total || '0')
+  }
+
+  /** 获取评论总数 - 本地 (包括子评论) */
+  getCommentCountLocal (): number {
     let count = 0
-    this.eachComment(this.comments, () => {
-      count++
-    })
-
-    // 尝试从请求数据中获取
-    if (this.data && typeof this.data.total !== 'undefined')
-      if (Number(this.data.total) > count)
-        return Number(this.data.total)
-
+    this.eachComment(this.comments, () => { count++ })
     return count
   }
 }

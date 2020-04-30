@@ -108,7 +108,7 @@ module.exports = (env, argv) => {
               lessOptions: {
                 paths: [SRC_PATH]
               },
-              prependData: '@import "css/_variables.less";'
+              prependData: '@import "css/_variables.less";@import "css/_extend.less";'
             }
           }
         ],

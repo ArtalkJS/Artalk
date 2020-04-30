@@ -11,7 +11,7 @@
           <a target="_blank" <% if(!!data.link){ %>href="<%= data.link %>"<% } %>><%= data.nick %></a>
         </span>
         <% if (!!data.badge) { %>
-        <span class="artalk-badge"><%= data.badge %></span>
+        <span class="artalk-badge" <% if(!!data.badge.color){ %>style="background-color: <%= data.badge.color %>"<% } %>><%= data.badge.name || '管理员' %></span>
         <% } %>
         <span class="artalk-date"><%= timeAgo(new Date(data.date)) %></span>
         <span class="artalk-ua"><%= getUserUaBrowser() %></span>

@@ -25,6 +25,15 @@ export interface CommentData {
 
   /** 评论日期 */
   date: string
+
+  /** 是否为管理员 */
+  is_admin?: boolean
+
+  /** 徽章 */
+  badge?: {
+    name?: string
+    color?: string
+  }
 }
 
 export interface ListData {

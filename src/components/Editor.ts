@@ -9,7 +9,7 @@ import Checker from './Checker'
 
 export default class Editor extends ArtalkContext {
   private readonly LOADABLE_PLUG_LIST = [EmoticonsPlug, PreviewPlug]
-  public plugList: { [name: string]: any }
+  public plugList: { [name: string]: any } = {}
 
   public el: HTMLElement
 
@@ -94,7 +94,7 @@ export default class Editor extends ArtalkContext {
   }
 
   saveContent () {
-    window.localStorage.setItem('ArtalkContent', this.getContent().trim())
+    window.localStorage.setItem('ArtalkContent', this.getContentOriginal().trim())
   }
 
   initTextarea () {
@@ -110,10 +110,14 @@ export default class Editor extends ArtalkContext {
 
     // 输入框高度随内容而变化
     this.textareaEl.addEventListener('input', (evt) => {
-      const diff = this.textareaEl.offsetHeight - this.textareaEl.clientHeight
-      this.textareaEl.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
-      this.textareaEl.style.height = `${this.textareaEl.scrollHeight + diff}px`
+      this.adjustTextareaHeight()
     })
+  }
+
+  adjustTextareaHeight () {
+    const diff = this.textareaEl.offsetHeight - this.textareaEl.clientHeight
+    this.textareaEl.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
+    this.textareaEl.style.height = `${this.textareaEl.scrollHeight + diff}px`
   }
 
   initEditorPlug () {
@@ -192,6 +196,7 @@ export default class Editor extends ArtalkContext {
     if (!!this.plugList && !!this.plugList.preview) {
       this.plugList.preview.updateContent()
     }
+    this.adjustTextareaHeight()
   }
 
   clearEditor () {
@@ -200,7 +205,19 @@ export default class Editor extends ArtalkContext {
   }
 
   getContent () {
-    return this.textareaEl.value || ''
+    let content = this.getContentOriginal()
+
+    // 表情包处理
+    if (this.plugList && this.plugList.emoticons) {
+      const emoticonsPlug = this.plugList.emoticons as EmoticonsPlug
+      content = emoticonsPlug.transEmoticonImageText(content)
+    }
+
+    return content
+  }
+
+  getContentOriginal () {
+    return this.textareaEl.value || '' // Tip: !!"0" === true
   }
 
   getContentMarked () {

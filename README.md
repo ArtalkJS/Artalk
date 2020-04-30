@@ -34,7 +34,7 @@
 
 > 生产环境版下载：[Artalk.js](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.js) | [Artalk.css](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.css)
 
-1. 部署 Artalk 的后端，[PHP 版传送门](https://github.com/qwqcode/Artalk-API-PHP)
+1. 部署 Artalk 的后端，传送门：[PHP API](https://github.com/qwqcode/Artalk-API-PHP) / Go API / Node API / Python API
 2. 前端页面配置 Artalk 如下：
 
 ```html

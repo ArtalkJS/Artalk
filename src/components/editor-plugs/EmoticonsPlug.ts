@@ -3,9 +3,16 @@ import Editor from '../Editor'
 import ArtalkContext from '~/src/ArtalkContext'
 import Utils from '~/src/utils'
 
+type EmoticonListType = {
+  [grpName: string]: {
+    inputType: 'emoticon'|'image'
+    container: { [name: string]: string }
+  }
+}
+
 export default class EmoticonsPlug extends ArtalkContext {
   public elem: HTMLElement
-  public emoticons: any
+  public emoticons: EmoticonListType
 
   public listWrapElem: HTMLElement
   public typesElem: HTMLElement
@@ -46,7 +53,7 @@ export default class EmoticonsPlug extends ArtalkContext {
         const title = elem.getAttribute('title')
         const content = elem.getAttribute('data-content')
         if (inputType === 'image') {
-          this.editor.insertContent(`![${title}](${content})`)
+          this.editor.insertContent(`:[${title}]`)
         } else {
           this.editor.insertContent(content)
         }
@@ -95,5 +102,16 @@ export default class EmoticonsPlug extends ArtalkContext {
 
   onHide () {
     this.elem.parentElement.style.height = ''
+  }
+
+  public transEmoticonImageText (text: string) {
+    Object.entries(this.emoticons).forEach(([grpName, grp]) => {
+      if (grp.inputType !== 'image') return
+      Object.entries(grp.container).forEach(([name, imgSrc]) => {
+        text = text.split(`:[${name}]`).join(`![${name}](${imgSrc}) `) // replaceAll(...)
+      })
+    })
+
+    return text
   }
 }

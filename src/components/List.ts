@@ -176,8 +176,8 @@ export default class List extends ArtalkContext {
       this.artalk.editor.closeComment()
       this.closeCommentBtnEl.innerHTML = '打开评论'
     } else if (!isFirstUse) {
-        this.artalk.editor.openComment()
-        this.closeCommentBtnEl.innerHTML = '关闭评论'
+      this.artalk.editor.openComment()
+      this.closeCommentBtnEl.innerHTML = '关闭评论'
     }
   }
 

@@ -353,18 +353,18 @@ export default class Editor extends ArtalkContext {
       this.textareaEl.style.display = 'none'
       this.closePlug()
       this.bottomEl.style.display = 'none'
+    } else {
+      // 管理员一直打开评论
+      this.textareaEl.style.display = ''
+      this.bottomEl.style.display = ''
     }
   }
 
   /** 打开评论 */
   openComment () {
     this.closeCommentEl.style.display = 'none'
-
-    if (!this.artalk.user.data.isAdmin) {
-      this.textareaEl.style.display = ''
-      this.closePlug()
-      this.bottomEl.style.display = ''
-    }
+    this.textareaEl.style.display = ''
+    this.bottomEl.style.display = ''
   }
 }
 

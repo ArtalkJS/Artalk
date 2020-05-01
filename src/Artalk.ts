@@ -1,10 +1,13 @@
 import './css/main.less'
 import marked from 'marked'
 import hanabi from 'hanabi'
+import User from './components/User'
 import Editor from './components/Editor'
 import List from './components/List'
+import Comment from './components/Comment'
 import Sidebar from './components/Sidebar'
 import Ui from './utils/ui'
+import Utils from './utils'
 import { ArtalkConfig } from '~/types/artalk-config'
 
 /* global ARTALK_VERSION */
@@ -30,17 +33,12 @@ export default class Artalk {
   public el: HTMLElement
 
   public ui: Ui
+  public user: User
   public editor: Editor
   public list: List
   public sidebar: Sidebar
 
-  public user: {
-    nick: string|null,
-    email: string|null,
-    link: string|null,
-    password: string|null,
-    isAdmin: boolean
-  }
+  public comments: Comment[] = []
 
   constructor (public conf: ArtalkConfig) {
     // Version Information
@@ -71,65 +69,79 @@ export default class Artalk {
 
     // Components
     this.ui = new Ui()
-    this.initUser()
+    this.user = new User()
     this.initMarked()
     this.editor = new Editor()
     this.list = new List()
     this.sidebar = new Sidebar()
+
+    // 请求获取评论
+    this.list.reqComments()
+
+    // 锚点快速跳转评论
+    window.addEventListener('hashchange', () => {
+      this.checkGoToCommentByUrlHash()
+    })
   }
 
-  /** 初始化用户数据 */
-  initUser () {
-    // 从 localStorage 导入
-    const localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
-    this.user = {
-      nick: localUser.nick || '',
-      email: localUser.email || '',
-      link: localUser.link || '',
-      password: localUser.password || '',
-      isAdmin: localUser.isAdmin || false
-    }
+  /** 遍历操作 Comment (包括子评论) */
+  public eachComment (commentList: Comment[], action: (comment?: Comment, levelList?: Comment[]) => boolean|void) {
+    if (commentList.length === 0) return
+    commentList.every((item) => {
+      if (action(item, commentList) === false) return false
+      this.eachComment(item.getChildren(), action)
+      return true
+    })
   }
 
-  /** 保存用户到 localStorage 中 */
-  saveUser () {
-    window.localStorage.setItem('ArtalkUser', JSON.stringify(this.user))
-  }
+  /** 查找评论项 */
+  public findComment (id: number) {
+    let comment: Comment|null = null
 
-  /** 是否已填写基本用户信息 */
-  checkHasBasicUserInfo () {
-    return !!this.user.nick && !!this.user.email
-  }
-
-  public marked: (src: string, callback?: (error: any, parseResult: string) => void) => string
-
-  private initMarked () {
-    const renderer = new marked.Renderer()
-    const linkRenderer = renderer.link
-    renderer.link = (href, title, text) => {
-      const html = linkRenderer.call(renderer, href, title, text)
-      return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ')
-    }
-
-    const nMarked = marked
-    nMarked.setOptions({
-      renderer,
-      highlight: (code) => {
-        return hanabi(code)
-      },
-      pedantic: false,
-      gfm: true,
-      tables: true,
-      breaks: true,
-      sanitize: true, // 净化
-      smartLists: true,
-      smartypants: true,
-      xhtml: false
+    this.eachComment(this.comments, (item) => {
+      if (item.data.id === id) {
+        comment = item
+        return false
+      }
+      return true
     })
 
-    this.marked = nMarked
+    return comment
   }
 
+  /** 获取评论总数 */
+  public getCommentCount (): number {
+    let count = 0
+    this.eachComment(this.comments, () => { count++ })
+    return count
+  }
+
+  /** 删除评论 */
+  public deleteComment (comment: number|Comment) {
+    let findComment: Comment
+    if (typeof comment === 'number') {
+      findComment = this.findComment(comment)
+      if (!findComment) throw Error(`未找到评论 ${comment}`)
+    } else findComment = comment
+
+    findComment.getElem().remove()
+    this.eachComment(this.comments, (item, levelList) => {
+      if (item === findComment) {
+        levelList.splice(levelList.indexOf(item), 1)
+        return false
+      }
+      return true
+    })
+  }
+
+  /** 清空所有评论 */
+  public clearComments () {
+    this.list.commentsWrapEl.innerHTML = ''
+    this.list.data = undefined
+    this.comments = []
+  }
+
+  /** 公共请求 */
   public request (action: string, data: object, before: () => void, after: () => void, success: (msg: string, data: any) => void, error: (msg: string, data: any) => void) {
     before()
 
@@ -161,5 +173,57 @@ export default class Artalk {
     };
 
     xhr.send(formData)
+  }
+
+  /** 跳到评论项位置 - 根据 `location.hash` */
+  public checkGoToCommentByUrlHash () {
+    let commentId: number = Number(Utils.getLocationParmByName('artalk_comment'))
+    if (!commentId) {
+      const match = window.location.hash.match(/#artalk-comment-([0-9]+)/)
+      if (!match || !match[1] || Number.isNaN(Number(match[1]))) return
+      commentId = Number(match[1])
+    }
+
+    const comment = this.findComment(commentId)
+    if (!comment && this.list.hasMoreComments) {
+      this.list.readMore()
+      return
+    }
+    if (!comment) { return }
+
+    this.ui.scrollIntoView(comment.getElem(), false)
+    setTimeout(() => {
+      comment.getElem().classList.add('artalk-flash-once')
+    }, 800)
+  }
+
+  public marked: (src: string, callback?: (error: any, parseResult: string) => void) => string
+
+  /** 初始化 Marked */
+  private initMarked () {
+    const renderer = new marked.Renderer()
+    const linkRenderer = renderer.link
+    renderer.link = (href, title, text) => {
+      const html = linkRenderer.call(renderer, href, title, text)
+      return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ')
+    }
+
+    const nMarked = marked
+    nMarked.setOptions({
+      renderer,
+      highlight: (code) => {
+        return hanabi(code)
+      },
+      pedantic: false,
+      gfm: true,
+      tables: true,
+      breaks: true,
+      sanitize: true, // 净化
+      smartLists: true,
+      smartypants: true,
+      xhtml: false
+    })
+
+    this.marked = nMarked
   }
 }

@@ -7,6 +7,8 @@ import Utils from '../utils'
 
 export default class Comment extends ArtalkContext {
   public elem: HTMLElement
+  public mainEl: HTMLElement
+  public bodyEl: HTMLElement
   public contentEl: HTMLElement
   public childrenEl: HTMLElement
   public actionsEl: HTMLElement
@@ -21,39 +23,94 @@ export default class Comment extends ArtalkContext {
 
     this.data = { ...this.data }
 
-    this.elem = Utils.createElement(require('../templates/Comment.ejs')(this))
-    this.contentEl = this.elem.querySelector('.artalk-content')
-    this.actionsEl = this.elem.querySelector('.artalk-comment-actions')
-
     this.parent = null
     this.nestedNum = 1 // 现在已嵌套 n 层
+
+    this.renderElem()
+  }
+
+  private renderElem () {
+    this.elem = Utils.createElement(require('../templates/Comment.ejs')(this))
+    this.mainEl = this.elem.querySelector('.artalk-comment-main')
+    this.bodyEl = this.elem.querySelector('.artalk-body')
+    this.contentEl = this.bodyEl.querySelector('.artalk-content')
+    this.actionsEl = this.elem.querySelector('.artalk-comment-actions')
     this.childrenEl = null
 
-    // 绑定回复按钮事件
-    this.actionsEl.querySelector('[data-comment-action="reply"]').addEventListener('click', () => {
-      this.artalk.editor.setReply(this)
+    // 已折叠的评论
+    const contentShowBtn = this.mainEl.querySelector('.artalk-collapsed .artalk-show-btn')
+    if (contentShowBtn) {
+      contentShowBtn.addEventListener('click', () => {
+        if (this.contentEl.classList.contains('artalk-hide')) {
+          this.contentEl.classList.remove('artalk-hide')
+          this.artalk.ui.playFadeInAnim(this.contentEl)
+          contentShowBtn.innerHTML = '收起内容'
+        } else {
+          this.contentEl.classList.add('artalk-hide')
+          contentShowBtn.innerHTML = '查看内容'
+        }
+      })
+    }
+
+    this.initActionBtn()
+
+    return this.elem
+  }
+
+  private refreshUI () {
+    const originalEl = this.elem
+    const newEl = this.renderElem()
+    originalEl.replaceWith(newEl) // 替换 document 中的的 elem
+    this.playFadeInAnim()
+
+    // 重建子评论元素
+    this.artalk.eachComment(this.children, (child) => {
+      child.parent.getChildrenEl().appendChild(child.renderElem())
+      child.playFadeInAnim()
     })
+  }
+
+  initActionBtn () {
+    // 绑定回复按钮事件
+    const replyBtn = this.actionsEl.querySelector('[data-comment-action="reply"]') as HTMLElement
+    if (replyBtn) {
+      replyBtn.addEventListener('click', () => {
+        this.artalk.editor.setReply(this)
+      })
+    }
+
+    // 绑定折叠按钮事件
+    const collapseBtn = this.actionsEl.querySelector('[data-comment-action="collapse"]') as HTMLElement
+    if (collapseBtn) {
+      collapseBtn.addEventListener('click', () => {
+        this.adminCollapse(collapseBtn)
+      })
+    }
 
     // 绑定删除按钮事件
-    const actionDelBtnEl: HTMLElement = this.actionsEl.querySelector('[data-comment-action="delete"]')
-    actionDelBtnEl.addEventListener('click', () => {
-      this.adminDelete(this.data.id, actionDelBtnEl)
-    })
+    const delBtn = this.actionsEl.querySelector('[data-comment-action="delete"]') as HTMLElement
+    if (delBtn) {
+      delBtn.addEventListener('click', () => {
+        this.adminDelete(delBtn)
+      })
+    }
   }
 
   getIsRoot () {
     return this.parent === null
   }
 
-  setChild (comment: Comment) {
-    this.children.push(comment)
-    this.getChildrenEl().appendChild(comment.getElem())
-    comment.parent = this
-    comment.nestedNum = this.nestedNum + 1 // 嵌套层数 +1
-  }
-
   getChildren () {
     return this.children
+  }
+
+  putChild (childC: Comment) {
+    childC.parent = this
+    childC.nestedNum = this.nestedNum + 1 // 嵌套层数 +1
+    this.children.push(childC)
+
+    this.getChildrenEl().appendChild(childC.getElem())
+    childC.playFadeInAnim()
   }
 
   getChildrenEl () {
@@ -89,60 +146,8 @@ export default class Comment extends ArtalkContext {
     return this.artalk.marked(this.data.content)
   }
 
-  padWithZeros (vNumber: number, width: number) {
-    let numAsString = vNumber.toString()
-    while (numAsString.length < width) {
-      numAsString = `0${numAsString}`
-    }
-    return numAsString
-  }
-
-  dateFormat (date: Date) {
-    const vDay = this.padWithZeros(date.getDate(), 2)
-    const vMonth = this.padWithZeros(date.getMonth() + 1, 2)
-    const vYear = this.padWithZeros(date.getFullYear(), 2)
-    // var vHour = padWithZeros(date.getHours(), 2);
-    // var vMinute = padWithZeros(date.getMinutes(), 2);
-    // var vSecond = padWithZeros(date.getSeconds(), 2);
-    return `${vYear}-${vMonth}-${vDay}`
-  }
-
-  timeAgo (date: Date) {
-    try {
-      const oldTime = date.getTime()
-      const currTime = new Date().getTime()
-      const diffValue = currTime - oldTime
-
-      const days = Math.floor(diffValue / (24 * 3600 * 1000))
-      if (days === 0) {
-        // 计算相差小时数
-        const leave1 = diffValue % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
-        const hours = Math.floor(leave1 / (3600 * 1000))
-        if (hours === 0) {
-          // 计算相差分钟数
-          const leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
-          const minutes = Math.floor(leave2 / (60 * 1000))
-          if (minutes === 0) {
-            // 计算相差秒数
-            const leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
-            const seconds = Math.round(leave3 / 1000)
-            return `${seconds} 秒前`
-          }
-          return `${minutes} 分钟前`
-        }
-        return `${hours} 小时前`
-      }
-      if (days < 0) return '刚刚'
-
-      if (days < 8) {
-        return `${days} 天前`
-      }
-
-      return this.dateFormat(date)
-    } catch (error) {
-      console.error(error)
-      return ' - '
-    }
+  getDateFormatted () {
+    return Utils.timeAgo(new Date(this.data.date))
   }
 
   getUserUaBrowser () {
@@ -157,20 +162,46 @@ export default class Comment extends ArtalkContext {
 
   /** 渐出动画 */
   playFadeInAnim () {
-    this.elem.classList.add('artalk-fade-in')
-    // 动画结束清除 class
-    const onAnimEnded = () => {
-      this.elem.classList.remove('artalk-fade-in')
-      this.elem.removeEventListener('animationend', onAnimEnded)
-    }
-    this.elem.addEventListener('animationend', onAnimEnded)
+    this.artalk.ui.playFadeInAnim(this.elem)
+  }
+
+  /** 管理员 - 评论折叠 */
+  adminCollapse (btnElem: HTMLElement) {
+    if (btnElem.classList.contains('artalk-in-process')) return // 若正在折叠中
+    const btnTextOrg = btnElem.innerText
+    const isCollapse = !this.data.is_collapsed
+    this.artalk.request('CommentCollapse', {
+      id: this.data.id,
+      nick: this.artalk.user.data.nick,
+      email: this.artalk.user.data.email,
+      password: this.artalk.user.data.password,
+      is_collapsed: Number(isCollapse)
+    }, () => {
+      btnElem.classList.add('artalk-in-process')
+      btnElem.innerText = isCollapse ? '折叠中...' : '展开中...'
+    }, () => {
+    }, (msg, data) => {
+      btnElem.classList.remove('artalk-in-process')
+      this.data.is_collapsed = data.is_collapsed
+      this.artalk.eachComment([this], (item) => {
+        item.data.is_allow_reply = !data.is_collapsed // 禁止回复
+      })
+      this.refreshUI()
+      this.artalk.ui.playFadeInAnim(this.bodyEl)
+      this.list.refreshUI()
+    }, (msg, data) => {
+      btnElem.classList.add('artalk-error')
+      btnElem.innerText = isCollapse ? '折叠失败' : '展开失败'
+      setTimeout(() => {
+        btnElem.innerText = btnTextOrg
+        btnElem.classList.remove('artalk-error')
+        btnElem.classList.remove('artalk-in-process')
+      }, 2000)
+    })
   }
 
   /** 管理员 - 评论删除 */
-  adminDelete (commentId: number, btnElem: HTMLElement) {
-    const comment = this.list.findComment(commentId)
-    if (!comment) throw Error(`未找到评论 ${commentId}`)
-
+  adminDelete (btnElem: HTMLElement) {
     if (btnElem.classList.contains('artalk-in-process')) return // 若正在删除中
 
     // 删除确认
@@ -189,17 +220,17 @@ export default class Comment extends ArtalkContext {
     }
     const btnTextOrg = btnElem.innerText
     this.artalk.request('CommentDel', {
-      id: commentId,
-      nick: this.artalk.user.nick,
-      email: this.artalk.user.email,
-      password: this.artalk.user.password
+      id: this.data.id,
+      nick: this.artalk.user.data.nick,
+      email: this.artalk.user.data.email,
+      password: this.artalk.user.data.password
     }, () => {
       btnElem.classList.add('artalk-in-process')
       btnElem.innerText = '删除中...'
     }, () => {
-      btnElem.innerText = btnTextOrg
     }, (msg, data) => {
-      this.list.deleteComment(comment)
+      btnElem.innerText = btnTextOrg
+      this.artalk.deleteComment(this)
       this.list.data.total -= 1 // 评论数 -1
       this.list.refreshUI() // 刷新 list
       btnElem.classList.remove('artalk-in-process')

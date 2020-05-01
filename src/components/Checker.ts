@@ -22,15 +22,15 @@ export default class Checker extends ArtalkContext {
       reqAct: 'AdminCheck',
       reqObj: (inputVal) => {
         return {
-          nick: ArtalkInstance.user.nick,
-          email: ArtalkInstance.user.email,
+          nick: ArtalkInstance.user.data.nick,
+          email: ArtalkInstance.user.data.email,
           password: inputVal
         }
       },
       onSuccess: (msg, data, inputVal) => {
-        ArtalkInstance.user.isAdmin = true
-        ArtalkInstance.user.password = inputVal
-        ArtalkInstance.editor.saveUser()
+        ArtalkInstance.user.data.isAdmin = true
+        ArtalkInstance.user.data.password = inputVal
+        ArtalkInstance.user.save()
       }
     },
     '验证码': {

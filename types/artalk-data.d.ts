@@ -26,6 +26,9 @@ export interface CommentData {
   /** 评论日期 */
   date: string
 
+  /** 是否折叠 */
+  is_collapsed?: boolean
+
   /** 是否为管理员 */
   is_admin?: boolean
 
@@ -34,6 +37,9 @@ export interface CommentData {
     name?: string
     color?: string
   }
+
+  /** 是否允许回复 */
+  is_allow_reply?: boolean
 }
 
 export interface ListData {

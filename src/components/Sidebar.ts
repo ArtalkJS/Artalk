@@ -30,8 +30,8 @@ export default class Sidebar extends ArtalkContext {
     }, 20)
 
     this.artalk.request('CommentReplyGet', {
-      nick: this.artalk.user.nick,
-      email: this.artalk.user.email
+      nick: this.artalk.user.data.nick,
+      email: this.artalk.user.data.email
     }, () => {
       this.artalk.ui.showLoading(this.contentEl)
     }, () => {

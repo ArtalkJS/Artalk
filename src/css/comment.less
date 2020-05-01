@@ -38,7 +38,7 @@
       }
     }
 
-    & > .artalk-content {
+    & > .artalk-comment-main {
       display: block;
       flex: auto;
 
@@ -53,7 +53,7 @@
         align-items: end;
 
         .badge() {
-          background: #F4F4F4;
+          background: @color-bg-grey;
           padding: 0 5px;
           border-radius: 3px;
         }
@@ -93,16 +93,53 @@
         overflow: hidden;
         position: relative;
 
-        & > *:first-child {
-          margin-top: 0;
-        }
-
-        & > *:last-child {
-          margin-bottom: 0;
-        }
-
         img {
           max-width: 100%;
+        }
+
+        & > .artalk-content {
+          &.artalk-type-collapsed {
+            border: 3px solid @color-bg-grey;
+            border-bottom: 0;
+            padding: 5px 10px;
+            border-radius: @block-radius @block-radius 0 0;
+            margin-bottom: -5px;
+          }
+
+          &.artalk-hide {
+            display: none;
+          }
+
+          & > *:first-child {
+            margin-top: 0;
+          }
+
+          & > *:last-child {
+            margin-bottom: 0;
+          }
+        }
+
+        & > .artalk-collapsed {
+          margin: 3px 0;
+          font-size: 13px;
+          padding: 10px 18px;
+          display: block;
+          background: @color-bg-grey;
+          border-radius: @block-radius;
+
+          & > .artalk-text {
+            color: @color-meta;
+          }
+
+          & > .artalk-show-btn {
+            color: @color-main;
+            cursor: pointer;
+            user-select: none;
+            margin-left: 3px;
+            &:hover {
+              color: @color-main;
+            }
+          }
         }
       }
 
@@ -142,7 +179,7 @@
         }
       }
 
-      & > .artalk-comment-children {
+      .artalk-comment-children {
         margin-top: 10px;
         border-radius: 3px;
         border-left: 1px dashed hsla(0,0%,93%,.5);

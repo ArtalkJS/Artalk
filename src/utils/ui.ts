@@ -152,4 +152,25 @@ export default class Ui extends ArtalkContext {
 
     return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop))
   }
+
+  playFadeAnim (elem: HTMLElement, after?: () => void, type: 'in'|'out' = 'in') {
+    elem.classList.add(`artalk-fade-${type}`)
+    // 动画结束清除 class
+    const onAnimEnded = () => {
+      elem.classList.remove(`artalk-fade-${type}`)
+      elem.removeEventListener('animationend', onAnimEnded)
+      if (after) after()
+    }
+    elem.addEventListener('animationend', onAnimEnded)
+  }
+
+  /** 播放渐入动画 */
+  playFadeInAnim (elem: HTMLElement, after?: () => void) {
+    this.playFadeAnim(elem, after, 'in')
+  }
+
+  /** 播放渐出动画 */
+  playFadeOutAnim (elem: HTMLElement, after?: () => void) {
+    this.playFadeAnim(elem, after, 'out')
+  }
 }

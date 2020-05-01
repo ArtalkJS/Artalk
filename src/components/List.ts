@@ -8,14 +8,13 @@ import Utils from '../utils'
 export default class List extends ArtalkContext {
   public el: HTMLElement
   public commentsWrapEl: HTMLElement
-  public comments: Comment[] = []
+
+  public data: ListData
+  public reqPageSize: number = 15 // 每次请求获取量
 
   public readMoreEl: HTMLElement
   public readMoreLoadingEl: HTMLElement
   public readMoreTextEl: HTMLElement
-
-  public data: ListData
-  public reqPageSize: number = 15 // 每次请求获取量
 
   public isLoading: boolean = false
 
@@ -35,11 +34,6 @@ export default class List extends ArtalkContext {
       this.artalk.sidebar.show()
     })
 
-    // 锚点快速跳转评论
-    window.addEventListener('hashchange', () => {
-      this.checkRedirectByUrlHash()
-    })
-
     // 查看更多
     this.reqPageSize = this.artalk.conf.readMore ? (this.artalk.conf.readMore.pageSize || this.reqPageSize) : this.reqPageSize
     this.readMoreEl = this.el.querySelector('.artalk-list-read-more')
@@ -49,15 +43,12 @@ export default class List extends ArtalkContext {
     this.readMoreEl.addEventListener('click', () => {
       this.readMore()
     })
-
-    // 请求获取评论
-    this.reqComments()
   }
 
   /** 拉取评论 */
-  reqComments (offset: Number = 0) {
+  public reqComments (offset: Number = 0) {
     if (offset === 0) {
-      this.clearComments();
+      this.artalk.clearComments();
     }
 
     this.artalk.request('CommentGet', {
@@ -75,12 +66,12 @@ export default class List extends ArtalkContext {
     }, (msg, data: ListData) => {
       this.data = { ...data }
       this.artalk.ui.setGlobalError(null)
-      this.importCommentsByReqObj(data.comments)
+      this.reqImportComments(data.comments)
       // 查看更多按钮
       if (this.hasMoreComments) this.showReadMoreBtn()
       else this.hideReadMoreBtn()
       // 锚点跳转
-      this.checkRedirectByUrlHash()
+      this.artalk.checkGoToCommentByUrlHash()
       // 滚动到底部自动加载
       if (offset === 0 && this.hasMoreComments) {
         this.initScrollBottomAutoLoad()
@@ -101,166 +92,76 @@ export default class List extends ArtalkContext {
   }
 
   /** 导入评论 - 通过请求数据 */
-  importCommentsByReqObj (rawData: any[]) {
-    if (!Array.isArray(rawData)) { throw new Error('putCommentsByObj 出错：参数非数组') }
-
-    const newCommentList: Comment[] = []
-    rawData.forEach((commentData) => {
-      if (commentData.id === 0) {
-        throw new Error('黑人问号 ??? Comment 的 ID 怎么可能是 0 ?')
-      }
-      if (commentData.rid === 0) {
-        newCommentList.push(new Comment(this, commentData))
-      }
-    })
+  private reqImportComments (rawData: any[]) {
+    if (!Array.isArray(rawData)) { throw new Error('请求响应参数非数组') }
 
     // 查找并导入所有子评论
-    const queryChildren = (parentComment: Comment) => {
-      rawData.forEach((commentData) => {
-        if (commentData.rid === parentComment.data.id) {
-          const cComment = new Comment(this, commentData)
-          parentComment.setChild(cComment)
-          cComment.playFadeInAnim()
+    const queryImportChildren = (parentC: Comment) => {
+      const children = rawData.filter(o => o.rid === parentC.data.id)
+      if (children.length === 0) return
 
-          // 是否存在子评论
-          const hasChild = (parentId: number) => {
-            return rawData.find(o => o.rid === parentId) !== null
-          }
+      children.forEach((itemData) => {
+        const childC = new Comment(this, itemData)
+        parentC.putChild(childC)
 
-          // 继续 递归查找子评论
-          if (hasChild(cComment.data.id)) {
-            queryChildren(cComment)
-          }
-        }
+        queryImportChildren(childC); // 递归查找所有子评论
       })
     }
 
-    // 查找并导入子评论
-    newCommentList.forEach((comment) => {
-      queryChildren(comment)
-    })
+    // 开始处理 rawData
+    rawData.filter((o) => o.rid === 0).forEach((rootCommentData) => {
+      const rootComment = new Comment(this, rootCommentData)
+      this.artalk.comments.push(rootComment) // 将评论导入 comments 总表中
 
-    // 将评论导入 this.comments 总表中
-    this.comments.push(...newCommentList)
+      this.commentsWrapEl.appendChild(rootComment.getElem())
+      rootComment.playFadeInAnim()
 
-    // 装载评论元素
-    newCommentList.forEach((comment) => {
-      this.commentsWrapEl.appendChild(comment.getElem())
-      comment.playFadeInAnim()
+      queryImportChildren(rootComment)
     })
 
     this.refreshUI()
   }
 
   /** 添加评论项 */
-  putComment (comment: Comment) {
+  public putRootComment (comment: Comment) {
     this.commentsWrapEl.prepend(comment.getElem())
-    this.comments.unshift(comment)
-  }
-
-  /** 查找评论项 */
-  findComment (id: number) {
-    let comment: Comment|null = null
-
-    this.eachComment(this.comments, (item) => {
-      if (item.data.id === id) {
-        comment = item
-        return false
-      }
-      return true
-    })
-
-    return comment
-  }
-
-  /** 遍历操作 Comment (包括子评论) */
-  eachComment (commentList: Comment[], action: (comment?: Comment, levelList?: Comment[]) => boolean|void) {
-    if (commentList.length === 0) return
-    commentList.every((item) => {
-      if (action(item, commentList) === false) return false
-      this.eachComment(item.getChildren(), action)
-      return true
-    })
-  }
-
-  /** 删除评论 */
-  deleteComment (comment: number|Comment) {
-    let findComment: Comment
-    if (typeof comment === 'number') {
-      findComment = this.findComment(comment)
-      if (!findComment) throw Error(`未找到评论 ${comment}`)
-    } else findComment = comment
-
-    findComment.getElem().remove()
-    this.eachComment(this.comments, (item, levelList) => {
-      if (item === findComment) {
-        levelList.splice(levelList.indexOf(item), 1)
-        return false
-      }
-      return true
-    })
-  }
-
-  /** 清空所有评论 */
-  clearComments () {
-    this.commentsWrapEl.innerHTML = ''
-    this.comments = []
-    this.data = undefined
+    this.artalk.comments.unshift(comment)
   }
 
   /** 刷新界面 */
-  refreshUI () {
-    (this.el.querySelector('.artalk-comment-count-num') as HTMLElement).innerText = this.getCommentCount().toString()
+  public refreshUI () {
+    (this.el.querySelector('.artalk-comment-count-num') as HTMLElement).innerText = this.getListCommentCount().toString()
 
     let noCommentElem = this.commentsWrapEl.querySelector('.artalk-no-comment') as HTMLElement
-    if (this.comments.length <= 0 && !noCommentElem) {
+    if (this.artalk.comments.length <= 0 && !noCommentElem) {
       noCommentElem = Utils.createElement('<div class="artalk-no-comment"></div>')
       noCommentElem.innerText = this.artalk.conf.noComment
       this.commentsWrapEl.appendChild(noCommentElem)
     }
-    if (this.comments.length > 0 && noCommentElem !== null) {
+    if (this.artalk.comments.length > 0 && noCommentElem !== null) {
         noCommentElem.remove()
     }
 
     // 已输入个人信息
-    if (!!this.artalk.user.nick && !!this.artalk.user.email) {
+    if (!!this.artalk.user.data.nick && !!this.artalk.user.data.email) {
       this.openSidebarBtnEl.style.display = ''
     } else {
       this.openSidebarBtnEl.style.display = 'none'
     }
 
-    // 是管理员
-    if (this.artalk.user.isAdmin) {
-      this.el.querySelectorAll('[data-only-admin-show]').forEach((itemEl: HTMLElement) => {
+    // 仅管理员显示控制
+    this.el.querySelectorAll('[data-list-ui-only-admin]').forEach((itemEl: HTMLElement) => {
+      if (this.artalk.user.data.isAdmin)
         itemEl.classList.remove('artalk-hide')
-      })
-    } else {
-      this.el.querySelectorAll('[data-only-admin-show]').forEach((itemEl: HTMLElement) => {
+      else
         itemEl.classList.add('artalk-hide')
-      })
-    }
+    })
   }
 
-  /** 跳到评论项位置 - 根据 `location.hash` */
-  checkRedirectByUrlHash () {
-    let commentId: number = Number(Utils.getLocationParmByName('artalk_comment'))
-    if (!commentId) {
-      const match = window.location.hash.match(/#artalk-comment-([0-9]+)/)
-      if (!match || !match[1] || Number.isNaN(Number(match[1]))) return
-      commentId = Number(match[1])
-    }
-
-    const comment = this.findComment(commentId)
-    if (!comment && this.hasMoreComments) {
-      this.readMore()
-      return
-    }
-    if (!comment) { return }
-
-    this.artalk.ui.scrollIntoView(comment.getElem(), false)
-    setTimeout(() => {
-      comment.getElem().classList.add('artalk-flash-once')
-    }, 800)
+  /** 获取评论总数 (包括子评论) */
+  public getListCommentCount (): number {
+    if (!this.data || !this.data.total) return 0
+    return Number(this.data.total || '0')
   }
 
   /** 是否还有更多的评论 */
@@ -323,23 +224,10 @@ export default class List extends ArtalkContext {
   }
 
   /** 根据请求数据判断 nick 是否为管理员 */
-  checkNickEmailIsAdmin (nick: string, email: string) {
+  public checkNickEmailIsAdmin (nick: string, email: string) {
     if (!this.data || !this.data.admin_nicks || !this.data.admin_encrypted_emails) return false
 
     return (this.data.admin_nicks.indexOf(nick) !== -1)
       && (this.data.admin_encrypted_emails.find(o => String(o).toLowerCase() === String(md5(email)).toLowerCase()))
-  }
-
-  /** 获取评论总数 (包括子评论) */
-  getCommentCount (): number {
-    if (!this.data || !this.data.total) return 0
-    return Number(this.data.total || '0')
-  }
-
-  /** 获取评论总数 - 本地 (包括子评论) */
-  getCommentCountLocal (): number {
-    let count = 0
-    this.eachComment(this.comments, () => { count++ })
-    return count
   }
 }

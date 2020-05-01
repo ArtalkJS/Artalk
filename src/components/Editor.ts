@@ -65,20 +65,20 @@ export default class Editor extends ArtalkContext {
   }
 
   initHeader () {
-    Object.keys(this.user).forEach((field) => {
+    Object.keys(this.user.data).forEach((field) => {
       const inputEl: HTMLInputElement = this.headerEl.querySelector(`[name="${field}"]`)
       if (inputEl !== null && inputEl instanceof HTMLInputElement) {
-        inputEl.value = this.user[field] || ''
+        inputEl.value = this.user.data[field] || ''
         // 输入框内容变化事件
         inputEl.addEventListener('input', (evt) => {
-          this.user[field] = inputEl.value.trim()
+          this.user.data[field] = inputEl.value.trim()
 
           // 若修改的是 nick or email
           if (field !== 'link') {
-            this.user.password = ''
-            this.user.isAdmin = false
-            if (this.artalk.checkHasBasicUserInfo()
-              && this.artalk.list.checkNickEmailIsAdmin(this.user.nick, this.user.email)) {
+            this.user.data.password = ''
+            this.user.data.isAdmin = false
+            if (this.user.checkHasBasicUserInfo()
+              && this.artalk.list.checkNickEmailIsAdmin(this.user.data.nick, this.user.data.email)) {
               // 昵称为管理员，显示管理员密码验证 dialog
               Checker.checkAction('管理员', () => {
                 this.artalk.list.refreshUI()
@@ -94,7 +94,7 @@ export default class Editor extends ArtalkContext {
   }
 
   saveUser () {
-    this.artalk.saveUser()
+    this.user.save()
   }
 
   saveContent () {
@@ -283,12 +283,12 @@ export default class Editor extends ArtalkContext {
 
     this.artalk.request('CommentAdd', {
       content: this.getContent(),
-      nick: this.user.nick,
-      email: this.user.email,
-      link: this.user.link,
+      nick: this.user.data.nick,
+      email: this.user.data.email,
+      link: this.user.data.link,
       rid: this.getReplyComment() === null ? 0 : this.getReplyComment().data.id,
       page_key: this.artalk.conf.pageKey,
-      password: this.user.password,
+      password: this.user.data.password,
       captcha: Checker.submitCaptchaVal || ''
     }, () => {
       this.artalk.ui.showLoading(this.el)
@@ -297,9 +297,9 @@ export default class Editor extends ArtalkContext {
     }, (msg, data) => {
       const newComment = new Comment(this.artalk.list, data.comment)
       if (this.getReplyComment() !== null) {
-        this.getReplyComment().setChild(newComment)
+        this.getReplyComment().putChild(newComment)
       } else {
-        this.artalk.list.putComment(newComment)
+        this.artalk.list.putRootComment(newComment)
       }
       this.clearEditor() // 清空编辑器
 

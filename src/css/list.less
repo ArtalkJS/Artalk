@@ -26,9 +26,23 @@
 
       & > span {
         font-size: 14px;
-        color: @color-main;
+        color: @color-meta;
         cursor: pointer;
         user-select: none;
+
+        &.artalk-on {
+          color: @color-main;
+        }
+
+        &.artalk-hide {
+          display: none;
+        }
+
+        &:not(:last-child):not(.artalk-hide) {
+          margin-right: 10px;
+          padding-right: 10px;
+          border-right: 1px solid @color-border;
+        }
       }
     }
   }

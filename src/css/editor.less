@@ -4,6 +4,7 @@
   margin-bottom: @block-margin;
   overflow: hidden;
   position: relative;
+  background: #FFF;
 
   & > .artalk-editor-header {
     display: flex;
@@ -42,6 +43,31 @@
       border-radius: @block-radius/2;
       outline: none;
       overflow: hidden;
+    }
+
+    .artalk-close-comment {
+      display: flex;
+      user-select: none;
+      // background: repeating-linear-gradient(145deg, #f2f2f2, #f2f2f2 15px, #fff 0, #fff 30px);
+      padding: 0;
+      position: relative;
+      text-align: center;
+      min-height: 30px;
+      border-top: 1px solid @color-border;
+      margin-top: 4px;
+      font-weight: 100;
+      font-size: 12px;
+      place-items: center;
+      justify-content: center;
+      place-content: flex-end;
+      flex-direction: row;
+      background: #FFF;
+
+      & > span {
+        color: @color-meta;
+        border-radius: 2px;
+        margin-right: 14px;
+      }
     }
 
     .artalk-send-reply {

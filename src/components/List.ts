@@ -18,6 +18,7 @@ export default class List extends ArtalkContext {
 
   public isLoading: boolean = false
 
+  public closeCommentBtnEl: HTMLElement
   public openSidebarBtnEl: HTMLElement
 
   constructor () {
@@ -28,11 +29,8 @@ export default class List extends ArtalkContext {
 
     this.commentsWrapEl = this.el.querySelector('.artalk-list-comments-wrap')
 
-    // 侧边栏呼出按钮
-    this.openSidebarBtnEl = this.el.querySelector('[data-action="open-sidebar"]')
-    this.openSidebarBtnEl.addEventListener('click', () => {
-      this.artalk.sidebar.show()
-    })
+    // 操作按钮
+    this.initListActionBtn()
 
     // 查看更多
     this.reqPageSize = this.artalk.conf.readMore ? (this.artalk.conf.readMore.pageSize || this.reqPageSize) : this.reqPageSize
@@ -119,7 +117,7 @@ export default class List extends ArtalkContext {
       queryImportChildren(rootComment)
     })
 
-    this.refreshUI()
+    this.refreshUI(true)
   }
 
   /** 添加评论项 */
@@ -128,8 +126,24 @@ export default class List extends ArtalkContext {
     this.artalk.comments.unshift(comment)
   }
 
+  private initListActionBtn () {
+    // 侧边栏呼出按钮
+    this.openSidebarBtnEl = this.el.querySelector('[data-action="open-sidebar"]')
+    this.openSidebarBtnEl.addEventListener('click', () => {
+      this.artalk.sidebar.show()
+    })
+
+    // 关闭评论按钮
+    this.closeCommentBtnEl = this.el.querySelector('[data-action="admin-close-comment"]') as HTMLElement
+    this.closeCommentBtnEl.addEventListener('click', () => {
+      this.adminSetPage({
+        is_close_comment: !this.data.page.is_close_comment
+      })
+    })
+  }
+
   /** 刷新界面 */
-  public refreshUI () {
+  public refreshUI (isFirstUse: boolean = false) {
     (this.el.querySelector('.artalk-comment-count-num') as HTMLElement).innerText = this.getListCommentCount().toString()
 
     let noCommentElem = this.commentsWrapEl.querySelector('.artalk-no-comment') as HTMLElement
@@ -144,9 +158,9 @@ export default class List extends ArtalkContext {
 
     // 已输入个人信息
     if (!!this.artalk.user.data.nick && !!this.artalk.user.data.email) {
-      this.openSidebarBtnEl.style.display = ''
+      this.openSidebarBtnEl.classList.remove('artalk-hide')
     } else {
-      this.openSidebarBtnEl.style.display = 'none'
+      this.openSidebarBtnEl.classList.add('artalk-hide')
     }
 
     // 仅管理员显示控制
@@ -156,6 +170,15 @@ export default class List extends ArtalkContext {
       else
         itemEl.classList.add('artalk-hide')
     })
+
+    // 关闭评论
+    if (!!this.data && !!this.data.page && this.data.page.is_close_comment === true) {
+      this.artalk.editor.closeComment()
+      this.closeCommentBtnEl.innerHTML = '打开评论'
+    } else if (!isFirstUse) {
+        this.artalk.editor.openComment()
+        this.closeCommentBtnEl.innerHTML = '关闭评论'
+    }
   }
 
   /** 获取评论总数 (包括子评论) */
@@ -229,5 +252,27 @@ export default class List extends ArtalkContext {
 
     return (this.data.admin_nicks.indexOf(nick) !== -1)
       && (this.data.admin_encrypted_emails.find(o => String(o).toLowerCase() === String(md5(email)).toLowerCase()))
+  }
+
+  /** 管理员设置页面信息 */
+  public adminSetPage (conf: {
+    is_close_comment: boolean
+  }) {
+    this.artalk.request('SetPage', {
+      nick: this.artalk.user.data.nick,
+      email: this.artalk.user.data.email,
+      page_key: this.artalk.conf.pageKey,
+      password: this.artalk.user.data.password,
+      is_close_comment: Number(conf.is_close_comment)
+    }, () => {
+      this.artalk.ui.showLoading(this.artalk.editor.el)
+    }, () => {
+      this.artalk.ui.hideLoading(this.artalk.editor.el)
+    }, (msg, data) => {
+      this.data.page = { ...data }
+      this.refreshUI()
+    }, (msg, data) => {
+      this.artalk.editor.showNotify(`修改页面数据失败：${msg}`, 'e')
+    })
   }
 }

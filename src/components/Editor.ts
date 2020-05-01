@@ -16,7 +16,9 @@ export default class Editor extends ArtalkContext {
   public headerEl: HTMLElement
   public textareaWrapEl: HTMLElement
   public textareaEl: HTMLTextAreaElement
+  public closeCommentEl: HTMLTextAreaElement
   public plugWrapEl: HTMLElement
+  public bottomEl: HTMLElement
   public bottomPartLeftEl: HTMLElement
   public plugSwitcherWrapEl: HTMLElement
   public bottomPartRightEl: HTMLElement
@@ -39,7 +41,9 @@ export default class Editor extends ArtalkContext {
     this.headerEl = this.el.querySelector('.artalk-editor-header')
     this.textareaWrapEl = this.el.querySelector('.artalk-editor-textarea-wrap')
     this.textareaEl = this.el.querySelector('.artalk-editor-textarea')
+    this.closeCommentEl = this.el.querySelector('.artalk-close-comment')
     this.plugWrapEl = this.el.querySelector('.artalk-editor-plug-wrap')
+    this.bottomEl = this.el.querySelector('.artalk-editor-bottom')
     this.bottomPartLeftEl = this.el.querySelector('.artalk-editor-bottom-part.artalk-left')
     this.plugSwitcherWrapEl = this.el.querySelector('.artalk-editor-plug-switcher-wrap')
     this.bottomPartRightEl = this.el.querySelector('.artalk-editor-bottom-part.artalk-right')
@@ -124,9 +128,14 @@ export default class Editor extends ArtalkContext {
     this.textareaEl.style.height = `${this.textareaEl.scrollHeight + diff}px`
   }
 
+  openedPlugName: string = null
+
   initEditorPlug () {
     this.plugList = {}
-    let openedPlugName = null
+    this.plugWrapEl.innerHTML = ''
+    this.plugWrapEl.style.display = 'none'
+    this.openedPlugName = null
+    this.plugSwitcherWrapEl.innerHTML = ''
 
     // 依次实例化 plug
     this.LOADABLE_PLUG_LIST.forEach((PlugObj) => {
@@ -140,10 +149,10 @@ export default class Editor extends ArtalkContext {
         this.plugSwitcherWrapEl.querySelectorAll('.active').forEach(item => item.classList.remove('active'))
 
         // 若点击已打开的，则收起
-        if (plug.getName() === openedPlugName) {
+        if (plug.getName() === this.openedPlugName) {
           plug.onHide()
           this.plugWrapEl.style.display = 'none'
-          openedPlugName = null
+          this.openedPlugName = null
           return
         }
 
@@ -167,11 +176,18 @@ export default class Editor extends ArtalkContext {
         })
 
         this.plugWrapEl.style.display = ''
-        openedPlugName = plug.getName()
+        this.openedPlugName = plug.getName()
 
         btnElem.classList.add('active')
       })
     })
+  }
+
+  /** 关闭编辑器插件 */
+  closePlug () {
+    this.plugWrapEl.innerHTML = ''
+    this.plugWrapEl.style.display = 'none'
+    this.openedPlugName = null
   }
 
   insertContent (val: string) {
@@ -327,6 +343,28 @@ export default class Editor extends ArtalkContext {
 
   showNotify (msg: string, type) {
     this.artalk.ui.showNotify(msg, type, this.notifyWrapEl)
+  }
+
+  /** 关闭评论 */
+  closeComment () {
+    this.closeCommentEl.style.display = ''
+
+    if (!this.artalk.user.data.isAdmin) {
+      this.textareaEl.style.display = 'none'
+      this.closePlug()
+      this.bottomEl.style.display = 'none'
+    }
+  }
+
+  /** 打开评论 */
+  openComment () {
+    this.closeCommentEl.style.display = 'none'
+
+    if (!this.artalk.user.data.isAdmin) {
+      this.textareaEl.style.display = ''
+      this.closePlug()
+      this.bottomEl.style.display = ''
+    }
   }
 }
 

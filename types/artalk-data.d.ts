@@ -63,4 +63,11 @@ export interface ListData {
 
   /** 管理员加密后的邮箱 */
   admin_encrypted_emails: string[]
+
+  /** 页面信息 */
+  page: {
+    id: number
+    page_key: string
+    is_close_comment: boolean
+  }
 }

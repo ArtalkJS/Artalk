@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
@@ -34,8 +35,9 @@ module.exports = (env, argv) => {
       filename: '[name].js',
       library: '[name]',
       libraryTarget: 'umd',
-      libraryExport: 'default',
-      umdNamedDefine: true
+      libraryExport: '',
+      umdNamedDefine: true,
+      globalObject: 'this'
     },
     plugins: [
       new HtmlWebpackPlugin({
@@ -43,8 +45,10 @@ module.exports = (env, argv) => {
         filename: `${ROOT_PATH}/index.html`,
         template: `${ROOT_PATH}/index-tpl.ejs`,
         inject: 'head',
-        hash: true
+        hash: true,
+        alwaysWriteToDisk: true
       }),
+      new HtmlWebpackHarddiskPlugin(),
       new webpack.DefinePlugin({
         ARTALK_VERSION: `"${VERSION}"`,
         'process.env.NODE_ENV': JSON.stringify(NODE_ENV)
@@ -142,8 +146,8 @@ module.exports = (env, argv) => {
       open: true,
       hot: true,
       inline: true,
-      publicPath: '/dist/',
-      compress: true,
+      publicPath: '/dist/', // 打包文件生成路径（内存中）
+      contentBase: path.join(__dirname, '/'),
       stats: 'errors-only',
       overlay: {
         errors: true,

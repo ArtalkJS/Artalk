@@ -32,7 +32,7 @@
 
 ## 食用
 
-> 生产环境版下载：[Artalk.js](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.js) | [Artalk.css](https://raw.githubusercontent.com/qwqcode/Artalk/master/dist/Artalk.css)
+> 前端资源下载：[Artalk.js](./dist/Artalk.js) | [Artalk.css](./dist/Artalk.css)
 
 1. 部署 Artalk 的后端，传送门：[PHP API](https://github.com/qwqcode/Artalk-API-PHP) / Go API / Node API / Python API
 2. 前端页面配置 Artalk 如下：
@@ -43,19 +43,20 @@
 <head>
   <!-- ... -->
   <link href="dist/Artalk.css" rel="stylesheet">
-  <script type="text/javascript" src="dist/Artalk.js"></script>
 </head>
 <body>
   <div id="ArtalkComments"></div>
+  <!-- ... -->
+  <script src="dist/Artalk.js"></script>
   <script>
   new Artalk({
-    el: '#ArtalkComments',
-    placeholder: '来啊，快活啊 (/ω＼)',
-    noComment: '快来成为第一个评论的人吧~',
-    defaultAvatar: 'mp',
+    el: '#ArtalkComments', // 元素选择
+    placeholder: '来啊，快活啊 ( ゜- ゜)', // 占位符
+    noComment: '快来成为第一个评论的人吧~', // 无评论时显示
+    defaultAvatar: 'mp', // 参考 https://cn.gravatar.com/site/implement/images/#default-image
     pageKey: '[页面唯一标识]',
     serverUrl: '[后端程序URL]',
-    readMore: {
+    readMore: { // 阅读更多配置
       pageSize: 15, // 每次请求获取评论数
       autoLoad: true // 滚动到底部自动加载
     }
@@ -65,7 +66,9 @@
 </html>
 ```
 
-更多配置项详见 [types/artalk-config.d.ts](./types/artalk-config.d.ts)
+前端更多栗子，请参考 [/example/](./example/) 目录
+
+前端更多配置项详见 [/types/artalk-config.d.ts](./types/artalk-config.d.ts)
 
 ## 开发
 

@@ -2,6 +2,7 @@ import './css/main.less'
 import marked from 'marked'
 import hanabi from 'hanabi'
 import User from './components/User'
+import Checker from './components/Checker'
 import Editor from './components/Editor'
 import List from './components/List'
 import Comment from './components/Comment'
@@ -26,21 +27,21 @@ const defaultOpts: ArtalkConfig = {
   }
 }
 
-// eslint-disable-next-line
-export let ArtalkInstance: Artalk = null
-
 export default class Artalk {
+  public conf: ArtalkConfig
   public el: HTMLElement
+  public readonly runId: number = new Date().getTime() // 实例唯一 ID
 
   public ui: Ui
   public user: User
+  public checker: Checker
   public editor: Editor
   public list: List
   public sidebar: Sidebar
 
   public comments: Comment[] = []
 
-  constructor (public conf: ArtalkConfig) {
+  constructor (conf: ArtalkConfig) {
     // Version Information
     console.log(`\n %c `
       + `Artalk v${ARTALK_VERSION} %c 一款简洁有趣的自托管评论系统 \n\n%c`
@@ -49,10 +50,8 @@ export default class Artalk {
       + `> https://qwqaq.com\n`,
       'color: #FFF; background: #1DAAFF; padding:5px 0;', 'color: #FFF; background: #656565; padding:5px 0;', '')
 
-    ArtalkInstance = this
-
     // Options
-    this.conf = Object.assign(defaultOpts, this.conf)
+    this.conf = { ...defaultOpts, ...conf }
 
     // Main Element
     try {
@@ -66,14 +65,19 @@ export default class Artalk {
     }
 
     this.el.classList.add('artalk')
+    this.el.setAttribute('artalk-run-id', this.runId.toString())
+
+    // 若该元素中 artalk 已装载
+    if (this.el.innerHTML.trim() !== '') this.el.innerHTML = ''
 
     // Components
-    this.ui = new Ui()
-    this.user = new User()
+    this.ui = new Ui(this)
+    this.user = new User(this)
+    this.checker = new Checker(this)
     this.initMarked()
-    this.editor = new Editor()
-    this.list = new List()
-    this.sidebar = new Sidebar()
+    this.editor = new Editor(this)
+    this.list = new List(this)
+    this.sidebar = new Sidebar(this)
 
     // 请求获取评论
     this.list.reqComments()

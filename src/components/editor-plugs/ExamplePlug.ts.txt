@@ -7,7 +7,7 @@ export default class PreviewPlug extends ArtalkContext {
   public elem: HTMLElement
 
   constructor (public editor: Editor) {
-    super()
+    super(editor.artalk)
 
     this.initElem()
   }

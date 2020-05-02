@@ -2,9 +2,9 @@ import '../css/editor.less'
 import Comment from './Comment'
 import EmoticonsPlug from './editor-plugs/EmoticonsPlug'
 import PreviewPlug from './editor-plugs/PreviewPlug'
+import Artalk from '../Artalk'
 import ArtalkContext from '../ArtalkContext'
 import Utils from '../utils'
-import Layer from './Layer'
 import Checker from './Checker'
 
 export default class Editor extends ArtalkContext {
@@ -32,8 +32,8 @@ export default class Editor extends ArtalkContext {
     return this.artalk.user
   }
 
-  constructor () {
-    super()
+  constructor (artalk: Artalk) {
+    super(artalk)
 
     this.el = Utils.createElement(require('../templates/Editor.ejs')(this))
     this.artalk.el.appendChild(this.el)
@@ -84,7 +84,7 @@ export default class Editor extends ArtalkContext {
             if (this.user.checkHasBasicUserInfo()
               && this.artalk.list.checkNickEmailIsAdmin(this.user.data.nick, this.user.data.email)) {
               // 昵称为管理员，显示管理员密码验证 dialog
-              Checker.checkAction('管理员', () => {
+              this.artalk.checker.action('管理员', () => {
                 this.artalk.list.refreshUI()
               })
             }
@@ -305,13 +305,13 @@ export default class Editor extends ArtalkContext {
       rid: this.getReplyComment() === null ? 0 : this.getReplyComment().data.id,
       page_key: this.artalk.conf.pageKey,
       password: this.user.data.password,
-      captcha: Checker.submitCaptchaVal || ''
+      captcha: this.artalk.checker.submitCaptchaVal || ''
     }, () => {
       this.artalk.ui.showLoading(this.el)
     }, () => {
       this.artalk.ui.hideLoading(this.el)
     }, (msg, data) => {
-      const newComment = new Comment(this.artalk.list, data.comment)
+      const newComment = new Comment(this.artalk, this.artalk.list, data.comment)
       if (this.getReplyComment() !== null) {
         this.getReplyComment().putChild(newComment)
       } else {
@@ -326,13 +326,13 @@ export default class Editor extends ArtalkContext {
     }, (msg, data) => {
       if ((typeof data === 'object') && data !== null && typeof data.need_password === 'boolean' && data.need_password === true) {
         // 管理员密码验证
-        Checker.checkAction('管理员', () => {
+        this.artalk.checker.action('管理员', () => {
           this.submit()
         })
       } else if ((typeof data === 'object') && data !== null && typeof data.need_captcha === 'boolean' && data.need_captcha === true) {
         // 验证码验证
-        Checker.submitCaptchaImgData = data.img_data
-        Checker.checkAction('验证码', () => {
+        this.artalk.checker.submitCaptchaImgData = data.img_data
+        this.artalk.checker.action('验证码', () => {
           this.submit()
         })
       } else {

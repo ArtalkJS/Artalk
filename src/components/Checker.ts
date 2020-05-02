@@ -1,7 +1,6 @@
 import ArtalkContext from '../ArtalkContext'
 import Utils from '../utils'
-import Layer from './Layer'
-import { ArtalkInstance } from '../Artalk'
+import BuildLayer from './Layer'
 
 interface CheckerItem {
   elem?: HTMLElement
@@ -13,32 +12,32 @@ interface CheckerItem {
 }
 
 export default class Checker extends ArtalkContext {
-  public static submitCaptchaVal: string
-  public static submitCaptchaImgData: string
+  public submitCaptchaVal: string
+  public submitCaptchaImgData: string
 
-  private static readonly LIST: {[key: string]: CheckerItem} = {
+  private readonly LIST: {[key: string]: CheckerItem} = {
     '管理员': {
       body: () => Utils.createElement('<span>敲入密码来验证管理员身份：</span>'),
       reqAct: 'AdminCheck',
       reqObj: (inputVal) => {
         return {
-          nick: ArtalkInstance.user.data.nick,
-          email: ArtalkInstance.user.data.email,
+          nick: this.artalk.user.data.nick,
+          email: this.artalk.user.data.email,
           password: inputVal
         }
       },
       onSuccess: (msg, data, inputVal) => {
-        ArtalkInstance.user.data.isAdmin = true
-        ArtalkInstance.user.data.password = inputVal
-        ArtalkInstance.user.save()
+        this.artalk.user.data.isAdmin = true
+        this.artalk.user.data.password = inputVal
+        this.artalk.user.save()
       }
     },
     '验证码': {
       body: () => {
-        const elem = Utils.createElement(`<span><img class="artalk-captcha-img" src="${Checker.submitCaptchaImgData || ''}" alt="验证码">敲入验证码继续：</span>`)
-        Checker.LIST['验证码'].elem = elem;
+        const elem = Utils.createElement(`<span><img class="artalk-captcha-img" src="${this.submitCaptchaImgData || ''}" alt="验证码">敲入验证码继续：</span>`)
+        this.LIST['验证码'].elem = elem;
         (elem.querySelector('.artalk-captcha-img') as HTMLElement).onclick = () => {
-          Checker.LIST['验证码'].refresh()
+          this.LIST['验证码'].refresh()
         }
         return elem
       },
@@ -49,13 +48,13 @@ export default class Checker extends ArtalkContext {
         }
       },
       onSuccess: (msg, data, inputVal) => {
-        Checker.submitCaptchaVal = inputVal
+        this.submitCaptchaVal = inputVal
       },
       refresh: (imgData?: string) => {
-        const { elem } = Checker.LIST['验证码']
+        const { elem } = this.LIST['验证码']
         const imgEl = elem.querySelector('.artalk-captcha-img')
         if (!imgData) {
-          ArtalkInstance.request('CaptchaCheck', { refresh: true }, () => {}, () => {}, (msg, data) => {
+          this.artalk.request('CaptchaCheck', { refresh: true }, () => {}, () => {}, (msg, data) => {
             imgEl.setAttribute('src', data.img_data)
           }, () => {})
         } else {
@@ -65,8 +64,8 @@ export default class Checker extends ArtalkContext {
     }
   }
 
-  public static checkAction (name: '管理员'|'验证码', action: () => void) {
-    const checker = Checker.LIST[name]
+  public action (name: '管理员'|'验证码', action: () => void) {
+    const checker = this.LIST[name]
 
     const formEl = Utils.createElement()
     formEl.appendChild(checker.body())
@@ -77,7 +76,7 @@ export default class Checker extends ArtalkContext {
       input.focus() // 延迟以保证有效
     }, 80)
 
-    const layer = new Layer(`checker-${new Date().getTime()}`)
+    const layer = BuildLayer(this.artalk, `checker-${new Date().getTime()}`)
     layer.setMaskClickHide(false)
     layer.show()
 
@@ -88,7 +87,7 @@ export default class Checker extends ArtalkContext {
       }
     }
 
-    ArtalkInstance.ui.showDialog(layer.getEl(), formEl, (dialogElem, btnElem: HTMLElement) => {
+    this.artalk.ui.showDialog(layer.getEl(), formEl, (dialogElem, btnElem: HTMLElement) => {
       const inputVal = input.value.trim()
       const btnRawText = btnElem.innerText
       const btnTextSet = (btnText: string) => {
@@ -100,7 +99,7 @@ export default class Checker extends ArtalkContext {
         btnElem.classList.remove('error')
       }
 
-      ArtalkInstance.request(checker.reqAct, checker.reqObj(inputVal), () => {
+      this.artalk.request(checker.reqAct, checker.reqObj(inputVal), () => {
         btnElem.innerText = '加载中...'
       }, () => {
 

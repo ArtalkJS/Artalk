@@ -1,5 +1,9 @@
-import Artalk, { ArtalkInstance } from './Artalk'
+import Artalk from './Artalk'
 
 export default class ArtalkContext {
-  protected artalk: Artalk = ArtalkInstance
+  public artalk: Artalk
+
+  public constructor (artalk: Artalk) {
+    this.artalk = artalk
+  }
 }

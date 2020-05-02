@@ -1,11 +1,12 @@
+import Artalk from '../Artalk'
 import ArtalkContext from '../ArtalkContext'
 import Utils from '.'
 
 export default class Ui extends ArtalkContext {
   public el: HTMLElement
 
-  constructor () {
-    super()
+  constructor (artalk: Artalk) {
+    super(artalk)
     this.el = this.artalk.el
   }
 

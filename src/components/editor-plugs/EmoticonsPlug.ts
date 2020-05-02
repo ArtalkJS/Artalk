@@ -19,7 +19,7 @@ export default class EmoticonsPlug extends ArtalkContext {
 
 
   constructor (public editor: Editor) {
-    super()
+    super(editor.artalk)
 
     this.emoticons = this.artalk.conf.emoticons
     this.initElem()

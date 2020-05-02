@@ -1,3 +1,4 @@
+import Artalk from '../Artalk';
 import ArtalkContext from '../ArtalkContext';
 
 export default class User extends ArtalkContext {
@@ -9,8 +10,8 @@ export default class User extends ArtalkContext {
     isAdmin: boolean
   }
 
-  constructor () {
-    super()
+  constructor (artalk: Artalk) {
+    super(artalk)
 
     // 从 localStorage 导入
     const localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')

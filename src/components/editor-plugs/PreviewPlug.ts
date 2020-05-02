@@ -8,7 +8,7 @@ export default class PreviewPlug extends ArtalkContext {
   public binded: boolean = false
 
   constructor (public editor: Editor) {
-    super()
+    super(editor.artalk)
 
     this.initElem()
   }

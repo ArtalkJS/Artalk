@@ -2,6 +2,7 @@ import '../css/comment.less'
 import List from './List'
 import UADetect from '../utils/detect'
 import { CommentData } from '~/types/artalk-data'
+import Artalk from '../Artalk'
 import ArtalkContext from '../ArtalkContext'
 import Utils from '../utils'
 
@@ -18,8 +19,8 @@ export default class Comment extends ArtalkContext {
   private readonly maxNestedNo = 3 // 最多嵌套层数
   public children: Comment[] = []
 
-  constructor (public list: List, public data: CommentData) {
-    super()
+  constructor (artalk: Artalk, public list: List, public data: CommentData) {
+    super(artalk)
 
     this.data = { ...this.data }
 

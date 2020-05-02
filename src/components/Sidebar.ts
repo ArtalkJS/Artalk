@@ -1,20 +1,20 @@
 import Comment from './Comment'
 import '../css/sidebar.less'
+import Artalk from '../Artalk'
 import ArtalkContext from '../ArtalkContext'
 import Utils from '../utils'
 import { CommentData } from '~/types/artalk-data'
-import Layer from './Layer'
+import BuildLayer, { Layer } from './Layer'
 
 export default class Sidebar extends ArtalkContext {
   public el: HTMLElement
   public layer: Layer
   public contentEl: HTMLElement
 
-  constructor () {
-    super()
+  constructor (artalk: Artalk) {
+    super(artalk)
 
     this.el = Utils.createElement(require('../templates/Sidebar.ejs')(this))
-    this.layer = new Layer('sidebar', this.el)
     this.contentEl = this.el.querySelector('.artalk-sidebar-content')
 
     this.el.querySelector('.artalk-sidebar-close').addEventListener('click', () => {
@@ -23,6 +23,7 @@ export default class Sidebar extends ArtalkContext {
   }
 
   show () {
+    this.layer = BuildLayer(this.artalk, 'sidebar', this.el)
     this.layer.show()
     this.contentEl.scrollTo(0, 0)
     setTimeout(() => {
@@ -50,11 +51,11 @@ export default class Sidebar extends ArtalkContext {
 
   hide () {
     this.el.style.transform = ''
-    this.layer.hide()
+    this.layer.dispose() // 用完即销毁
   }
 
   putComment (data: CommentData) {
-    const comment = new Comment(null, data)
+    const comment = new Comment(this.artalk, null, data)
 
     comment.elem.querySelector('[data-comment-action="reply"]').remove()
     comment.elem.style.cursor = 'pointer'

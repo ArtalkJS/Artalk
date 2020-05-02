@@ -2,6 +2,7 @@ import md5 from 'md5'
 import '../css/list.less'
 import Comment from './Comment'
 import { ListData } from '~/types/artalk-data'
+import Artalk from '../Artalk'
 import ArtalkContext from '../ArtalkContext'
 import Utils from '../utils'
 
@@ -21,8 +22,8 @@ export default class List extends ArtalkContext {
   public closeCommentBtnEl: HTMLElement
   public openSidebarBtnEl: HTMLElement
 
-  constructor () {
-    super()
+  constructor (artalk: Artalk) {
+    super(artalk)
 
     this.el = Utils.createElement(require('../templates/List.ejs')(this))
     this.artalk.el.appendChild(this.el)
@@ -99,7 +100,7 @@ export default class List extends ArtalkContext {
       if (children.length === 0) return
 
       children.forEach((itemData) => {
-        const childC = new Comment(this, itemData)
+        const childC = new Comment(this.artalk, this, itemData)
         parentC.putChild(childC)
 
         queryImportChildren(childC); // 递归查找所有子评论
@@ -108,7 +109,7 @@ export default class List extends ArtalkContext {
 
     // 开始处理 rawData
     rawData.filter((o) => o.rid === 0).forEach((rootCommentData) => {
-      const rootComment = new Comment(this, rootCommentData)
+      const rootComment = new Comment(this.artalk, this, rootCommentData)
       this.artalk.comments.push(rootComment) // 将评论导入 comments 总表中
 
       this.commentsWrapEl.appendChild(rootComment.getElem())

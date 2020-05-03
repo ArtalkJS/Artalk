@@ -119,7 +119,7 @@ export default class Comment extends ArtalkContext {
       // console.log(this.nestedNo)
       if (this.nestedNum < this.maxNestedNo) {
         this.childrenEl = Utils.createElement('<div class="artalk-comment-children"></div>')
-        this.contentEl.appendChild(this.childrenEl)
+        this.mainEl.appendChild(this.childrenEl)
       } else {
         this.childrenEl = this.parent.getChildrenEl()
       }

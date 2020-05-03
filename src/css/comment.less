@@ -1,7 +1,6 @@
 .artalk-comment-wrap {
   overflow: hidden;
   position: relative;
-  margin-bottom: 10px;
   border-bottom: 1px solid @color-border;
 
   &.artalk-flash-once {
@@ -141,6 +140,19 @@
             }
           }
         }
+
+        &.artalk-read-more-mask:after {
+          pointer-events: none;
+          position: absolute;
+          z-index: 1;
+          display: block;
+          overflow: hidden;
+          width: 100%;
+          content: " ";
+          bottom: 0;
+          height: 41px;
+          background: linear-gradient(180deg, hsla(0,0%,100%,0), hsla(0,0%,100%,1));
+        }
       }
 
       & > .artalk-footer {
@@ -178,29 +190,33 @@
           }
         }
       }
+    }
+  }
 
-      .artalk-comment-children {
-        margin-top: 10px;
-        border-radius: 3px;
-        border-left: 1px dashed hsla(0,0%,93%,.5);
+  .comment-small-size() {
+    border-bottom-color: transparent;
+    &:not(:last-child) {
+      margin-bottom: 5px;
+    }
 
-        .artalk-comment-wrap {
-          border-bottom-color: transparent;
-          &:not(:last-child) {
-            margin-bottom: 5px;
-          }
+    & > .artalk-comment {
+      padding-top: 4px;
+      padding-bottom: 4px;
 
-          & > .artalk-comment {
-            padding-top: 4px;
-            padding-bottom: 4px;
-
-            & > .artalk-avatar img {
-              width: 36px;
-              height: 36px;
-            }
-          }
-        }
+      & > .artalk-avatar img {
+        width: 36px;
+        height: 36px;
       }
+    }
+  }
+
+  .artalk-comment-children {
+    .artalk-comment-wrap {
+      margin-top: 10px;
+      border-radius: 3px;
+      border-left: 1px dashed hsla(0,0%,93%,.5);
+
+      .comment-small-size()
     }
   }
 }

@@ -6,6 +6,12 @@
   position: relative;
   background: #FFF;
 
+  @media only screen and (max-width: 768px) {
+    & > {
+      margin-bottom: @block-margin-mobile;
+    }
+  }
+
   & > .artalk-editor-header {
     display: flex;
     flex-direction: row;

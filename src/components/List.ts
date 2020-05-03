@@ -1,7 +1,7 @@
 import md5 from 'md5'
 import '../css/list.less'
 import Comment from './Comment'
-import { ListData } from '~/types/artalk-data'
+import { ListData, CommentData } from '~/types/artalk-data'
 import Artalk from '../Artalk'
 import ArtalkContext from '../ArtalkContext'
 import Utils from '../utils'
@@ -99,7 +99,8 @@ export default class List extends ArtalkContext {
       const children = rawData.filter(o => o.rid === parentC.data.id)
       if (children.length === 0) return
 
-      children.forEach((itemData) => {
+      children.forEach((itemData: CommentData) => {
+        itemData.is_allow_reply = parentC.data.is_allow_reply
         const childC = new Comment(this.artalk, this, itemData)
         parentC.putChild(childC)
 
@@ -108,7 +109,8 @@ export default class List extends ArtalkContext {
     }
 
     // 开始处理 rawData
-    rawData.filter((o) => o.rid === 0).forEach((rootCommentData) => {
+    rawData.filter((o) => o.rid === 0).forEach((rootCommentData: CommentData) => {
+      if (rootCommentData.is_collapsed) rootCommentData.is_allow_reply = false
       const rootComment = new Comment(this.artalk, this, rootCommentData)
       this.artalk.comments.push(rootComment) // 将评论导入 comments 总表中
 

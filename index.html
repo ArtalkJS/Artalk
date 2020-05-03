@@ -5,6 +5,7 @@
   <title>Artalk DEMO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * { box-sizing: border-box; }
     body { padding:45px 10px;margin:0;background:#f4f4f4 }
     .card { margin:0 auto;max-width:700px;position:relative;overflow:hidden;background:#FFF;border-radius:4px;padding:20px }
     .card:not(:last-child) { margin-bottom:10px }
@@ -16,8 +17,13 @@
     .desc { font-size:12px;color:#757e91 }
     .social { margin-top:20px }
     .social > a:not(:last-child) { margin-right:2px }
+    @media only screen and (max-width: 768px) {
+      body { padding: 0;background: #FFF; }
+      .card.billboard { padding-top: 20px; }
+      .card { width: 100%;padding: 5px; }
+    }
   </style>
-<link href="dist/Artalk.css?a5ea79944862d0fc7c61" rel="stylesheet"><script type="text/javascript" src="dist/Artalk.js?a5ea79944862d0fc7c61"></script></head>
+<link href="dist/Artalk.css?98f27d36b704e08ccdb6" rel="stylesheet"><script type="text/javascript" src="dist/Artalk.js?98f27d36b704e08ccdb6"></script></head>
 <body>
   <div class="card billboard">
     <div class="title"><a href="https://github.com/qwqcode/Artalk" target="_blank"><span>&gt; </span>Artalk<span> &lt;</span></a></div>

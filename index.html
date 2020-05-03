@@ -22,10 +22,11 @@
       .card.billboard { padding-top: 20px; }
       .card { width: 100%;padding: 5px; }
     }
+    .to-top { right: 25px;bottom: 25px;display: block;cursor: pointer;text-align: center;width: 60px;height: 37px;line-height: 37px;font-size: 13px;color: #757e91;background: #fff;opacity: 0.8;border-radius: 4px;border: 1px solid #eceff2;position: fixed; }
   </style>
-<link href="dist/Artalk.css?98f27d36b704e08ccdb6" rel="stylesheet"><script type="text/javascript" src="dist/Artalk.js?98f27d36b704e08ccdb6"></script></head>
+<link href="dist/Artalk.css?32605c1999ff344cda74" rel="stylesheet"><script type="text/javascript" src="dist/Artalk.js?32605c1999ff344cda74"></script></head>
 <body>
-  <div class="card billboard">
+  <div class="card billboard artalk-fade-in">
     <div class="title"><a href="https://github.com/qwqcode/Artalk" target="_blank"><span>&gt; </span>Artalk<span> &lt;</span></a></div>
     <div class="desc">一款简洁有趣的自托管评论系统</div>
     <div class="social">
@@ -37,9 +38,10 @@
       <a href="https://github.com/qwqcode/Artalk" target="_blank"><img src="https://img.shields.io/github/stars/qwqcode/Artalk.svg?style=social"></a>
     </div>
   </div>
-  <div class="card">
+  <div class="card artalk-fade-in">
     <div id="comments"></div>
   </div>
+  <div class="to-top artalk-fade-in" style="display: none;">TOP</div>
   <script>
     var artalk = new Artalk({
       el: '#comments',
@@ -52,6 +54,31 @@
         autoLoad: true
       }
     })
+  </script>
+  <script>
+    (function () {
+      const toTopElem = document.querySelector('.to-top')
+      toTopElem.addEventListener('click', () => {
+        window.scrollTo(0, 0)
+      })
+
+      checkShowToTop()
+      document.addEventListener('scroll', () => {
+        checkShowToTop()
+      })
+
+      function checkShowToTop() {
+        const scrollTop = window.scrollY
+        const whereShow = window.screen.height
+        const isNeedShow = (scrollTop > 0) && (scrollTop > whereShow)
+
+        if (isNeedShow) {
+          toTopElem.style.display = ''
+        } else {
+          toTopElem.style.display = 'none'
+        }
+      }
+    })()
   </script>
 </body>
 </html>

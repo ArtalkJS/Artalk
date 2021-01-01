@@ -1,0 +1,28 @@
+name: NPM Package
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    if: github.repository == "qwqcode/Artalk"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+        registry-url: 'https://npm.pkg.github.com'
+    - name: Release
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        npx version-from-git --allow-same-version --template 'master.short'
+    - name: Publish
+      run: |
+        npm ci
+        npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

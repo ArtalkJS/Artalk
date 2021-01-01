@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./docs/banner.png" alt="Artalk" width="200">
+<img src="./docs/banner-2021.png" alt="Artalk" width="100%">
 </p>
 
 # [Artalk](https://artalk.js.org)

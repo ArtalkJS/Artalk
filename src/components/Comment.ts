@@ -23,6 +23,7 @@ export default class Comment extends ArtalkContext {
     super(artalk)
 
     this.data = { ...this.data }
+    this.data.date = this.data.date.replace(/-/g, '/') // 解决 Safari 日期解析 NaN 问题
 
     this.parent = null
     this.nestedNum = 1 // 现在已嵌套 n 层

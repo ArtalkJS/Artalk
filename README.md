@@ -11,7 +11,6 @@
 [![](https://img.shields.io/github/issues-raw/qwqcode/Artalk.svg?style=flat-square)](https://github.com/qwqcode/Artalk/issues)
 [![](https://img.shields.io/github/issues-pr-raw/qwqcode/Artalk.svg?style=flat-square)](https://github.com/qwqcode/Artalk/pulls)
 [![](https://img.shields.io/github/license/qwqcode/Artalk.svg?style=flat-square)](./LICENSE)
-[![](https://img.shields.io/badge/%24-donate-%23ff69b4.svg?style=flat-square)](#捐助)
 
 ## 特性
 - 轻量简洁 (~23kB gzipped)
@@ -26,6 +25,7 @@
 - 仅管理员可评论
 - 无限层级回复
 - 滚动加载更多
+- 内容自动保存
 - 评论折叠
 - 一页多个评论
 - TypeScript
@@ -36,7 +36,7 @@
 
 > 前端资源下载：[Artalk.js](./dist/Artalk.js) | [Artalk.css](./dist/Artalk.css)
 
-1. 部署 Artalk 的后端，传送门：[PHP API](https://github.com/qwqcode/Artalk-API-PHP) / Go API / Node API / Python API
+1. 部署 Artalk 的后端，传送门：[PHP API](https://github.com/qwqcode/Artalk-API-PHP) / Go API
 2. 前端页面配置 Artalk 如下：
 
 ```html
@@ -87,18 +87,6 @@ yarn run build
 ```
 
 Made with ♥ by QWQAQ
-
-## 捐助
-
-如果您愿意给予我一点点支持与帮助，可以通过下面的方式向我捐助，爱你~~~ (/ω＼)
-
-| Alipay | Wechat | 
-| :------: | :------: | 
-| <img width="150" src="https://raw.githubusercontent.com/qwqcode/donate-qwqaq/master/docs/donate/alipay.png"> | <img width="150" src="https://raw.githubusercontent.com/qwqcode/donate-qwqaq/master/docs/donate/wechat.png"> | 
-
-捐助者的名字将保存于 [捐助者名单](https://github.com/qwqcode/donate-qwqaq)
-
-最后，我再次对您致以我最最最最最诚挚的感谢！
 
 ## License
 [GPL-2.0](./LICENSE)

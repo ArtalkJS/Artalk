@@ -46,7 +46,7 @@ export default class Artalk {
     console.log(`\n %c `
       + `Artalk v${ARTALK_VERSION} %c 一款简洁有趣的自托管评论系统 \n\n%c`
       + `> https://artalk.js.org\n`
-      + `> https://github.com/qwqcode/Artalk\n`
+      + `> https://github.com/ArtalkJS/Artalk\n`
       + `> https://qwqaq.com\n`,
       'color: #FFF; background: #1DAAFF; padding:5px 0;', 'color: #FFF; background: #656565; padding:5px 0;', '')
 

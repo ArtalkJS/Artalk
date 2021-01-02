@@ -16,7 +16,7 @@ const VERSION = require('./package.json').version
 const BANNER =
   `Artalk v${  VERSION  }\n` +
   `(c) 2016-${  new Date().getFullYear()  } qwqaq.com\n` +
-  `Link: https://github.com/qwqcode/Artalk`
+  `Link: https://github.com/ArtalkJS/Artalk`
 
 module.exports = (env, argv) => {
   const NODE_ENV = argv.mode || 'development'

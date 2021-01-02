@@ -10,12 +10,12 @@
   "license": "GPL-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qwqcode/Artalk.git"
+    "url": "git+https://github.com/ArtalkJS/Artalk.git"
   },
   "bugs": {
-    "url": "https://github.com/qwqcode/Artalk/issues"
+    "url": "https://github.com/ArtalkJS/Artalk/issues"
   },
-  "homepage": "https://github.com/qwqcode/Artalk#readme",
+  "homepage": "https://github.com/ArtalkJS/Artalk#readme",
   "main": "dist/Artalk.js",
   "types": "./types/index.d.ts",
   "scripts": {

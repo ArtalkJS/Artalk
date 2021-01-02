@@ -100,8 +100,7 @@ module.exports = (env, argv) => {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: IS_DEV,
-              minimize: IS_PROD
+              sourceMap: IS_DEV
             }
           },
           'postcss-loader',

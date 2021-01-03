@@ -56,4 +56,9 @@ export interface ArtalkConfig {
     /** 滚动到底部自动加载 */
     autoLoad?: boolean
   }
+
+  /**
+   * 暗黑模式
+   */
+  darkMode?: boolean
 }

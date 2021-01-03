@@ -60,7 +60,7 @@ export default class Sidebar extends ArtalkContext {
     comment.elem.querySelector('[data-comment-action="reply"]').remove()
     comment.elem.style.cursor = 'pointer'
     comment.elem.addEventListener('mouseover', () => {
-      comment.elem.style.backgroundColor = '#F4F4F4'
+      comment.elem.style.backgroundColor = 'var(--at-color-bg-grey)'
     })
 
     comment.elem.addEventListener('mouseout', () => {

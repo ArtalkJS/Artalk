@@ -1,3 +1,5 @@
+@import "./_color.less";
+
 .artalk {
   position: relative;
   width: 100%;
@@ -8,7 +10,7 @@
   * {
     box-sizing: border-box;
     line-height: @line-height;
-    color: @color-default;
+    color: @color-font;
     font-family: @font-family;
     word-wrap: break-word;
     word-break: break-all;
@@ -17,8 +19,8 @@
   pre {
     padding: 10px;
     line-height: @line-height;
-    background-color: #f6f6f6;
-    color: #555;
+    background-color: @color-bg-grey;
+    color: @color-font;
     padding: 5px 10px;
     border-radius: @block-radius/2;
     margin: 0;
@@ -34,8 +36,8 @@
     position: static;
     margin: 10px 0 10px 0;
     padding: 10px 20px 10px 20px;
-    background: #fcfcfc;
-    border-left: 4px solid #eee;
+    background: @color-bg-grey;
+    border-left: 4px solid @color-quote;
   }
 
   p:first-child {
@@ -164,7 +166,7 @@
 /* Layer */
 .artalk-error-layer {
   &:extend(.full-layer);
-  background-color: rgba(255, 255, 255, 0.94);
+  background-color: @color-bg-transl;
 
   .artalk-error-title {
     color: @color-red;
@@ -178,7 +180,7 @@
 .artalk-layer-dialog-wrap {
   @formInputHeight: 30px;
   &:extend(.full-layer);
-  background-color: rgba(255, 255, 255, 0.94);
+  background-color: @color-bg-transl;
 
   & > .artalk-layer-dialog {
     width: 25%;
@@ -190,14 +192,15 @@
         height: auto;
         margin-right: 10px;
         padding-right: 10px;
-        border-right: 1px solid #EEE;
+        border-right: 1px solid @color-border;
         vertical-align: bottom;
       }
 
       input {
         width: 100%;
         line-height: @formInputHeight + 4px;
-        border: 1px solid @color-grey;
+        background-color: @color-bg;
+        border: 1px solid @color-border;
         border-radius: @block-radius/2;
         outline: none;
         padding: 0 6px;

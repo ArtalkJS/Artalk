@@ -1,7 +1,7 @@
 {
   "name": "artalk",
-  "version": "1.0.6",
-  "description": "一款简洁有趣的自托管评论系统",
+  "version": "1.0.7",
+  "description": "一款简洁有趣的可拓展评论系统",
   "author": "qwqcode <1149527164@qq.com> (https://github.com/qwqcode)",
   "keywords": [
     "Artalk",

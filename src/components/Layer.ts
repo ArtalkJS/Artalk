@@ -41,6 +41,7 @@ export class Layer extends ArtalkContext {
     }
 
     this.maskEl = this.wrapEl.querySelector('.artalk-layer-mask')
+    this.artalk.ui.initDarkMode()
   }
 
   getName () {

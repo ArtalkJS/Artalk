@@ -8,6 +8,8 @@ export default class Ui extends ArtalkContext {
   constructor (artalk: Artalk) {
     super(artalk)
     this.el = this.artalk.el
+
+    this.initDarkMode() // 初始化暗黑模式
   }
 
   /**
@@ -173,5 +175,42 @@ export default class Ui extends ArtalkContext {
   /** 播放渐出动画 */
   playFadeOutAnim (elem: HTMLElement, after?: () => void) {
     this.playFadeAnim(elem, after, 'out')
+  }
+
+  /** 暗黑模式 - 初始化 */
+  initDarkMode () {
+    const { el, conf } = this.artalk
+    const className = 'artalk-dark-mode'
+    if (conf.darkMode) {
+      el.classList.add(className)
+    } else {
+      el.classList.remove(className)
+    }
+
+    // for Layer
+    const layerEl = document.querySelector(`.artalk-layer-wrap`)
+    if (layerEl) {
+      if (conf.darkMode) {
+        layerEl.classList.add(className)
+      } else {
+        layerEl.classList.remove(className)
+      }
+    }
+  }
+
+  /** 暗黑模式 - 设定 */
+  setDarkMode (darkMode: boolean) {
+    this.artalk.conf.darkMode = darkMode
+    this.initDarkMode()
+  }
+
+  /** 暗黑模式 - 开启 */
+  openDarkMode () {
+    this.setDarkMode(true)
+  }
+
+  /** 暗黑模式 - 关闭 */
+  closeDarkMode () {
+    this.setDarkMode(false)
   }
 }

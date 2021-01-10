@@ -64,7 +64,7 @@ export default class Ui extends ArtalkContext {
   /**
    * 显示对话框
    */
-  showDialog (parentElem: HTMLElement, html: HTMLElement, onConfirm?: (dialogElem: HTMLElement, btnElem: HTMLElement) => boolean|void, onCancel?: () => boolean|void) {
+  showDialog (parentElem: HTMLElement, html: HTMLElement, onConfirm?: (dialogElem: HTMLElement, btnElem: HTMLElement) => boolean|void, onCancel?: () => boolean|void, onMount?: (dialogEl: HTMLElement) => void) {
     const dialogElem = Utils.createElement('<div class="artalk-layer-dialog-wrap"><div class="artalk-layer-dialog"><div class="artalk-layer-dialog-content"></div><div class="artalk-layer-dialog-action"></div>')
     parentElem.appendChild(dialogElem)
 
@@ -89,6 +89,8 @@ export default class Ui extends ArtalkContext {
 
     // 内容
     dialogElem.querySelector('.artalk-layer-dialog-content').appendChild(html)
+
+    onMount(dialogElem)
   }
 
   /**

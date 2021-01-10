@@ -20,11 +20,16 @@ export default class Checker extends ArtalkContext {
       body: () => Utils.createElement('<span>敲入密码来验证管理员身份：</span>'),
       reqAct: 'AdminCheck',
       reqObj: (inputVal) => {
-        return {
+        let data: any = {
           nick: this.artalk.user.data.nick,
           email: this.artalk.user.data.email,
           password: inputVal
         }
+
+        if (this.submitCaptchaVal) {
+          data = {...data, captcha: this.submitCaptchaVal }
+        }
+        return data
       },
       onSuccess: (msg, data, inputVal) => {
         this.artalk.user.data.isAdmin = true
@@ -64,7 +69,7 @@ export default class Checker extends ArtalkContext {
     }
   }
 
-  public action (name: '管理员'|'验证码', action: () => void) {
+  public action (name: '管理员'|'验证码', action: (inputVal: string, dialogEl: HTMLElement) => void, onMount?: (dialogEl: HTMLElement) => void) {
     const checker = this.LIST[name]
 
     const formEl = Utils.createElement()
@@ -87,9 +92,12 @@ export default class Checker extends ArtalkContext {
       }
     }
 
+    let btnRawText = null
     this.artalk.ui.showDialog(layer.getEl(), formEl, (dialogElem, btnElem: HTMLElement) => {
       const inputVal = input.value.trim()
-      const btnRawText = btnElem.innerText
+      if (!btnRawText) {
+        btnRawText = btnElem.innerText
+      }
       const btnTextSet = (btnText: string) => {
         btnElem.innerText = btnText
         btnElem.classList.add('error')
@@ -106,11 +114,30 @@ export default class Checker extends ArtalkContext {
       }, (msg, data) => {
         // 请求成功
         checker.onSuccess(msg, data, inputVal)
-        layer.dispose()
-        action()
+        layer.disposeNow()
+        action(inputVal, dialogElem)
       }, (msg, data) => {
         // 请求失败
         btnTextSet(msg)
+
+        if (name === '管理员') {
+          if ((typeof data === 'object') && data !== null && typeof data.need_captcha === 'boolean' && data.need_captcha === true) {
+            // 验证码验证
+            this.artalk.checker.submitCaptchaImgData = data.img_data
+            layer.disposeNow()
+            this.artalk.checker.action('验证码', () => { // 密码错误达到上限需输入验证码
+              this.artalk.checker.action('管理员', (a, b) => { // 套娃 XD (虽然有点不优雅，但是懒得改了.... 555)
+                this.submitCaptchaVal = null
+                action(a, b)
+              }, (el) => {
+                // onMount
+                el.querySelector('input').value = inputVal;
+                (el.querySelector('[data-action="confirm"]') as HTMLButtonElement).click()
+              })
+            })
+          }
+        }
+
         if (name === '验证码') {
           checker.refresh(data.img_data)
         }
@@ -125,8 +152,10 @@ export default class Checker extends ArtalkContext {
 
       return false
     }, () => {
-      layer.dispose()
+      layer.disposeNow()
       return false
+    }, (dialogEl) => { // onMount
+      onMount(dialogEl)
     })
   }
 }

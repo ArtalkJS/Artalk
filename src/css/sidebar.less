@@ -20,16 +20,15 @@
     position: relative;
 
     .artalk-sidebar-title {
-      text-align: center;
       font-size: 23px;
-      padding: 20px 0;
+      padding: 15px 35px 10px 20px;
     }
 
     .artalk-sidebar-close {
       position: absolute;
       display: flex;
-      left: 0;
-      top: 0;
+      right: 10px;
+      top: 10px;
       width: 40px;
       height: 40px;
       align-items: center;
@@ -50,9 +49,45 @@
     }
   }
 
+  .artalk-sidebar-actions {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid @color-border;
+
+    .artalk-action-item {
+      display: flex;
+      flex-grow: 1;
+      scroll-snap-align: start;
+      place-content: center;
+      line-height: 40px;
+      cursor: pointer;
+      user-select: none;
+
+      &:hover {
+        background: @color-bg-grey;
+      }
+
+      &.artalk-active {
+        color: @color-main;
+        font-weight: bold;
+      }
+    }
+  }
+
   .artalk-sidebar-content {
     position: relative;
     overflow-y: auto;
     height: calc(100vh - 76px);
+
+    .artalk-sidebar-no-content {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      font-size: 2em;
+      text-align: center;
+      margin-top: 20vh;
+      color: @color-meta;
+    }
   }
 }

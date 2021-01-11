@@ -22,6 +22,12 @@ export default class Sidebar extends ArtalkContext {
     })
   }
 
+  initActionBar() {
+    this.el.querySelector('.artalk-action-item').addEventListener('click', () => {
+
+    })
+  }
+
   show () {
     this.layer = BuildLayer(this.artalk, 'sidebar', this.el)
     this.layer.show()
@@ -73,5 +79,9 @@ export default class Sidebar extends ArtalkContext {
     })
 
     this.contentEl.appendChild(comment.getElem())
+  }
+
+  showNoComment() {
+    this.contentEl.innerHTML = '<div class="artalk-sidebar-no-content">无内容</div>'
   }
 }

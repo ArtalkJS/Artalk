@@ -23,7 +23,7 @@ const defaultOpts: ArtalkConfig = {
   serverUrl: '',
   emoticons: require('./assets/emoticons.json'),
   gravatar: {
-    cdn: 'https://gravatar.loli.net/avatar/'
+    cdn: 'https://cdn.v2ex.com/gravatar/'
   },
   darkMode: false,
 }

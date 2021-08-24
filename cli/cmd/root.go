@@ -21,7 +21,7 @@ var Banner = `
    \ \__\ \__\ \__\\ _\    \ \__\ \ \__\ \__\ \_______\ \__\\ \__\
     \|__|\|__|\|__|\|__|    \|__|  \|__|\|__|\|_______|\|__| \|__|
  
-Artalk: A Fast, Slight & Funny Comment System.
+Artalk: A Fast, Slight & Delightful Comment System.
 More detail on https://github.com/ArtalkJS/Artalk
 (c) 2021 artalk.js.org`
 
@@ -29,7 +29,7 @@ var cfgFile string
 
 var rootCmd = &cobra.Command{
 	Use:   "artalk-go",
-	Short: "Artalk: A Fast, Slight & Funny Comment System",
+	Short: "Artalk: A Fast, Slight & Delightful Comment System",
 	Long:  Banner,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(Banner)
@@ -51,40 +51,50 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "配置文件路径 (defaults are './artalk-go.conf.yaml', './config.yaml')")
 }
 
+// 初始化配置
 func initConfig() {
 	config.Init(cfgFile)
 }
 
+// 初始化日志
 func initLog() {
-	// 初始化日志
+	if !config.Instance.Log.Enabled {
+		return
+	}
+
+	// 命令行输出格式
 	stdFormatter := &prefixed.TextFormatter{
 		DisableTimestamp: true,
 		ForceFormatting:  true,
 		ForceColors:      true,
 		DisableColors:    false,
-	} // 命令行输出格式
+	}
+
+	// 文件输出格式
 	fileFormatter := &prefixed.TextFormatter{
 		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02.15:04:05.000000",
 		ForceFormatting: true,
 		ForceColors:     false,
 		DisableColors:   true,
-	} // 文件输出格式
+	}
 
 	// logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetFormatter(stdFormatter)
 	logrus.SetOutput(os.Stdout)
 
-	// 文件保存
-	pathMap := lfshook.PathMap{
-		logrus.InfoLevel:  config.Instance.LogFile,
-		logrus.DebugLevel: config.Instance.LogFile,
-		logrus.ErrorLevel: config.Instance.LogFile,
+	if config.Instance.Log.Filename != "" {
+		// 文件保存
+		pathMap := lfshook.PathMap{
+			logrus.InfoLevel:  config.Instance.Log.Filename,
+			logrus.DebugLevel: config.Instance.Log.Filename,
+			logrus.ErrorLevel: config.Instance.Log.Filename,
+		}
+		logrus.AddHook(lfshook.NewHook(
+			pathMap,
+			fileFormatter,
+		))
 	}
-	logrus.AddHook(lfshook.NewHook(
-		pathMap,
-		fileFormatter,
-	))
 }
 
 func initDB() {

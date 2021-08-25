@@ -4,6 +4,9 @@ site_name: 'XXX 的博客'
 # HTTP Server 监听地址
 http_addr: ':23366'
 
+# 加密密钥
+app_key: 'QXJ0YWxrLmpz'
+
 # 数据文件
 db:
   type: 'sqlite' # 支持 mysql 和 sqlite
@@ -26,6 +29,9 @@ admin_users:
     password: ''
     badge_name: '管理员'
     badge_color: '#FF6C00'
+
+# 登录超时 (单位：秒)
+login_timeout: 259200
 
 # 评论审核
 moderator:

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/ArtalkJS/Artalk-API-Go/config"
+	"github.com/ArtalkJS/Artalk-API-Go/lib"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -22,7 +23,7 @@ var Banner = `
     \|__|\|__|\|__|\|__|    \|__|  \|__|\|__|\|_______|\|__| \|__|
  
 Artalk: A Fast, Slight & Delightful Comment System.
-More detail on https://github.com/ArtalkJS/Artalk
+More details on https://github.com/ArtalkJS/Artalk
 (c) 2021 artalk.js.org`
 
 var cfgFile string
@@ -98,6 +99,11 @@ func initLog() {
 }
 
 func initDB() {
+	err := lib.OpenDB()
+	if err != nil {
+		logrus.Error("数据库初始化发生错误 ", err)
+		os.Exit(1)
+	}
 }
 
 //// 捷径函数 ////

@@ -15,15 +15,17 @@ var Instance *Config
 // Config 配置
 // @link https://godoc.org/github.com/mitchellh/mapstructure
 type Config struct {
-	SiteName    string        `mapstructure:"site_name"`    // 网站名
-	HttpAddr    string        `mapstructure:"http_addr"`    // HTTP Server 监听地址
-	DB          DBConf        `mapstructure:"db"`           // 数据文件
-	Log         LogConf       `mapstructure:"log"`          // 日志文件
-	AllowOrigin []string      `mapstructure:"allow_origin"` // 允许跨域访问的域名
-	AdminUsers  []model.User  `mapstructure:"admin_users"`
-	Moderator   ModeratorConf `mapstructure:"moderator"`
-	Captcha     CaptchaConf   `mapstructure:"captcha"`
-	Email       EmailConf     `mapstructure:"email"`
+	SiteName     string        `mapstructure:"site_name"`    // 网站名
+	AppKey       string        `mapstructure:"app_key"`      // 加密密钥
+	HttpAddr     string        `mapstructure:"http_addr"`    // HTTP Server 监听地址
+	DB           DBConf        `mapstructure:"db"`           // 数据文件
+	Log          LogConf       `mapstructure:"log"`          // 日志文件
+	AllowOrigin  []string      `mapstructure:"allow_origin"` // 允许跨域访问的域名
+	AdminUsers   []model.User  `mapstructure:"admin_users"`
+	LoginTimeout int           `mapstructure:"login_timeout"`
+	Moderator    ModeratorConf `mapstructure:"moderator"`
+	Captcha      CaptchaConf   `mapstructure:"captcha"`
+	Email        EmailConf     `mapstructure:"email"`
 }
 
 type DBConf struct {
@@ -77,8 +79,8 @@ type AliDMConf struct {
 type DBType string
 
 const (
-	MySql  DBType = "mysql"
-	Sqlite DBType = "sqlite"
+	TypeMySql  DBType = "mysql"
+	TypeSqlite DBType = "sqlite"
 )
 
 type EmailSenderType string

@@ -21,3 +21,7 @@ type User struct {
 	LastUA     string
 	Type       UserType
 }
+
+func (u User) IsEmpty() bool {
+	return u.ID == 0
+}

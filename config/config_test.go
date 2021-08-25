@@ -1,8 +1,11 @@
 package config
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestInit(t *testing.T) {
 	Init("../artalk-go.example.yaml")
+
 	t.Log(Instance)
 }

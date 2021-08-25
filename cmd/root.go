@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ArtalkJS/Artalk-API-Go/config"
-	"github.com/ArtalkJS/Artalk-API-Go/lib"
+	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

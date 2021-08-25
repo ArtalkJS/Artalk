@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk-API-Go/model"
+	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

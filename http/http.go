@@ -3,7 +3,7 @@ package http
 import (
 	"net/http"
 
-	"github.com/ArtalkJS/Artalk-API-Go/config"
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echolog "github.com/onrik/logrus/echo"

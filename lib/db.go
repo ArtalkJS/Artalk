@@ -3,7 +3,7 @@ package lib
 import (
 	"path/filepath"
 
-	"github.com/ArtalkJS/Artalk-API-Go/config"
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

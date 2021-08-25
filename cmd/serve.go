@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/Artalk-API-Go/http"
+	"github.com/ArtalkJS/ArtalkGo/http"
 	"github.com/spf13/cobra"
 )
 

@@ -3,8 +3,8 @@ package http
 import (
 	"net/http"
 
-	"github.com/ArtalkJS/Artalk-API-Go/config"
-	"github.com/ArtalkJS/Artalk-API-Go/model"
+	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"

@@ -15,10 +15,10 @@ update:
 	pkger -include /frontend -o http
 
 build: update
-	go build -ldflags "-X github.com/ArtalkJS/Artalk-API-Go.Version=${VERSION}" -o bin/artalk-go github.com/ArtalkJS/Artalk-API-Go
+	go build -ldflags "-X github.com/ArtalkJS/ArtalkGo.Version=${VERSION}" -o bin/artalk-go github.com/ArtalkJS/ArtalkGo
 
 run: update build
 	./bin/artalk-go
 
 test: update
-	go test -cover github.com/ArtalkJS/Artalk-API-Go/...
+	go test -cover github.com/ArtalkJS/ArtalkGo/...

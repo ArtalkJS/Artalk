@@ -1,6 +1,6 @@
 package main
 
-import "github.com/ArtalkJS/Artalk-API-Go/cmd"
+import "github.com/ArtalkJS/ArtalkGo/cmd"
 
 func main() {
 	cmd.Execute()

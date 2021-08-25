@@ -1,9 +1,9 @@
 package http
 
 import (
-	"github.com/ArtalkJS/Artalk-API-Go/config"
-	"github.com/ArtalkJS/Artalk-API-Go/lib"
-	"github.com/ArtalkJS/Artalk-API-Go/model"
+	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 	"github.com/mitchellh/mapstructure"
 	"github.com/sirupsen/logrus"

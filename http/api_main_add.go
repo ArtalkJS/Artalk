@@ -45,10 +45,13 @@ func ActionAdd(c echo.Context) error {
 	if user.IsEmpty() {
 		user = NewUser(p.Name, p.Email, p.Link) // save a new user
 	}
-	user.Link = p.Link
-	user.LastIP = ip
-	user.LastUA = ua
-	UpdateUser(&user)
+
+	// admin user check
+	if !user.IsEmpty() && user.IsAdmin() {
+		if !CheckIsAdminReq(c) {
+			return RespError(c, "需要验证管理员身份", Map{"need_password": true})
+		}
+	}
 
 	// find page
 	page := FindPage(p.PageKey)
@@ -97,6 +100,12 @@ func ActionAdd(c echo.Context) error {
 		logrus.Error("Save Comment error: ", err)
 		return RespError(c, "评论失败")
 	}
+
+	// update user
+	user.Link = p.Link
+	user.LastIP = ip
+	user.LastUA = ua
+	UpdateUser(&user)
 
 	return RespData(c, ResponseAdd{
 		Comment: comment.ToCooked(),

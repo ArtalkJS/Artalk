@@ -40,7 +40,7 @@ func ActionPermission(conf ActionPermissionConf) echo.MiddlewareFunc {
 				return next(c)
 			}
 
-			if !CheckIsAdmin(c) && IsActionOverLimit(c) {
+			if !CheckIsAdminReq(c) && IsActionOverLimit(c) {
 				if config.Instance.Debug {
 					logrus.Debug("[操作限制] 次数: ", getActionCount(c), ", 最后时间：", getActionLastTime(c))
 				}
@@ -123,7 +123,7 @@ func addActionCount(c echo.Context) {
 	setActionCount(c, getActionCount(c)+1)
 }
 
-func CheckIsAdmin(c echo.Context) bool {
+func CheckIsAdminReq(c echo.Context) bool {
 	isAdmin := false
 	token := c.Param("token")
 	if token == "" {

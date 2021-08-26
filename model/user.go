@@ -27,3 +27,7 @@ type User struct {
 func (u User) IsEmpty() bool {
 	return u.ID == 0
 }
+
+func (u User) IsAdmin() bool {
+	return u.Type == UserAdmin
+}

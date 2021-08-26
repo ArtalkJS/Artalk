@@ -14,7 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-artalk-go.yaml
+artalk-go.yml
+config.yml
 
 local/
 bin/

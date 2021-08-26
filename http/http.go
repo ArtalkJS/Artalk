@@ -61,11 +61,14 @@ func RespSuccess(c echo.Context) error {
 
 // RespError is just response error
 func RespError(c echo.Context, msg string, details ...string) error {
+	extraMap := Map{}
+	if details != nil {
+		extraMap["errDetails"] = details
+	}
+
 	return c.JSON(http.StatusOK, &JSONResult{
 		Success: false,
 		Msg:     msg,
-		Extra: Map{
-			"errDetails": details,
-		},
+		Extra:   extraMap,
 	})
 }

@@ -23,6 +23,10 @@ func ActionCaptchaCheck(c echo.Context) error {
 	ip := c.RealIP()
 	value := c.QueryParam("value")
 
+	if value == "" {
+		return RespError(c, "param `value` is required.")
+	}
+
 	captcha.SetCustomStore(caGlobalStore)
 	if captcha.VerifyString(ip, value) {
 		return RespSuccess(c)

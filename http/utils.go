@@ -1,6 +1,11 @@
 package http
 
 import (
+	"net/mail"
+	"net/url"
+	"reflect"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
@@ -8,10 +13,11 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
+	"github.com/mitchellh/mapstructure"
 	"github.com/sirupsen/logrus"
 )
 
-func LoginUser(user model.User) string {
+func LoginGetUserToken(user model.User) string {
 	// Set custom claims
 	claims := &jwtCustomClaims{
 		UserName:  user.Name,
@@ -34,6 +40,56 @@ func LoginUser(user model.User) string {
 	return t
 }
 
+func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface{}) (isContinue bool, resp error) {
+	refVal := reflect.ValueOf(paramsStruct)
+	for i := 0; i < refVal.Type().NumField(); i++ {
+		field := refVal.Type().Field(i)
+		//fieldName := field.Name
+		paramTagM := field.Tag.Get("mapstructure")
+		paramTagP := field.Tag.Get("param")
+		//fmt.Println(field, paramTagM, paramTagP)
+
+		if paramTagM != "" && paramTagP == "required" {
+			if strings.TrimSpace(c.QueryParam(paramTagM)) == "" {
+				return false, RespError(c, "Param `"+paramTagM+"` is required.")
+			}
+		}
+	}
+
+	// get the first
+	params := make(map[string]interface{})
+	for k, p := range c.QueryParams() {
+		params[k] = p[0]
+	}
+
+	// convet type
+	for i := 0; i < refVal.Type().NumField(); i++ {
+		field := refVal.Type().Field(i)
+		paramName := field.Tag.Get("mapstructure")
+
+		if field.Type.Kind() == reflect.Int {
+			u64, _ := strconv.ParseInt(c.QueryParam(paramName), 10, 32)
+			params[paramName] = int(u64)
+		}
+
+		if field.Type.Kind() == reflect.Uint {
+			u64, _ := strconv.ParseUint(c.QueryParam(paramName), 10, 32)
+			params[paramName] = uint(u64)
+		}
+
+		if field.Type.Kind() == reflect.Array {
+			params[paramName] = c.QueryParams()[paramName]
+		}
+	}
+
+	err := mapstructure.Decode(params, destParams)
+	if err != nil {
+		logrus.Error("Params decode error: ", err)
+		return false, RespError(c, "Params decode error.")
+	}
+	return true, nil
+}
+
 func CheckIsAdmin(c echo.Context) bool {
 	jwt := c.Get("user").(*jwt.Token)
 	claims := jwt.Claims.(*jwtCustomClaims)
@@ -54,7 +110,13 @@ func CheckIsAdmin(c echo.Context) bool {
 }
 
 func CheckIfAllowed(c echo.Context, user model.User, page model.Page) (bool, error) {
-	return false, nil
+	return true, nil
+}
+
+func FindComment(id uint) model.Comment {
+	var comment model.Comment
+	lib.DB.First(&comment, id)
+	return comment
 }
 
 func FindUser(name string, email string) model.User {
@@ -109,4 +171,14 @@ func UpdatePage(page *model.Page) {
 	if err != nil {
 		logrus.Error("Update Page error: ", err)
 	}
+}
+
+func ValidateEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
+}
+
+func ValidateURL(urlStr string) bool {
+	_, err := url.ParseRequestURI(urlStr)
+	return err == nil
 }

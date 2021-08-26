@@ -5,7 +5,7 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	Init("../artalk-go.example.yaml")
+	Init("../artalk-go.example.yml")
 
 	t.Log(Instance)
 }

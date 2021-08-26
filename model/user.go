@@ -1,6 +1,8 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type UserType string
 
@@ -11,15 +13,15 @@ const (
 
 type User struct {
 	gorm.Model
-	Name       string `mapstructure:"name"`
-	Email      string `mapstructure:"email"`
-	Link       string `mapstructure:"link"`
-	Password   string `mapstructure:"password"`
-	BadgeName  string `mapstructure:"badge_name"`
-	BadgeColor string `mapstructure:"badge_color"`
+	Name       string `gorm:"index"`
+	Email      string `gorm:"index"`
+	Link       string
+	Password   string
+	BadgeName  string
+	BadgeColor string
 	LastIP     string
 	LastUA     string
-	Type       UserType
+	Type       UserType `gorm:"index"`
 }
 
 func (u User) IsEmpty() bool {

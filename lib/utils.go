@@ -1,6 +1,8 @@
 package lib
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"os"
 )
@@ -22,4 +24,10 @@ func EnsureDir(dirName string) error {
 		return nil
 	}
 	return err
+}
+
+func GetMD5Hash(text string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(text))
+	return hex.EncodeToString(hasher.Sum(nil))
 }

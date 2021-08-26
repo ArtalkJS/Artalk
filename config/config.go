@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -15,17 +14,17 @@ var Instance *Config
 // Config 配置
 // @link https://godoc.org/github.com/mitchellh/mapstructure
 type Config struct {
-	SiteName     string        `mapstructure:"site_name"`    // 网站名
-	AppKey       string        `mapstructure:"app_key"`      // 加密密钥
-	HttpAddr     string        `mapstructure:"http_addr"`    // HTTP Server 监听地址
-	DB           DBConf        `mapstructure:"db"`           // 数据文件
-	Log          LogConf       `mapstructure:"log"`          // 日志文件
-	AllowOrigin  []string      `mapstructure:"allow_origin"` // 允许跨域访问的域名
-	AdminUsers   []model.User  `mapstructure:"admin_users"`
-	LoginTimeout int           `mapstructure:"login_timeout"`
-	Moderator    ModeratorConf `mapstructure:"moderator"`
-	Captcha      CaptchaConf   `mapstructure:"captcha"`
-	Email        EmailConf     `mapstructure:"email"`
+	SiteName     string          `mapstructure:"site_name"`    // 网站名
+	AppKey       string          `mapstructure:"app_key"`      // 加密密钥
+	HttpAddr     string          `mapstructure:"http_addr"`    // HTTP Server 监听地址
+	DB           DBConf          `mapstructure:"db"`           // 数据文件
+	Log          LogConf         `mapstructure:"log"`          // 日志文件
+	AllowOrigin  []string        `mapstructure:"allow_origin"` // 允许跨域访问的域名
+	AdminUsers   []AdminUserConf `mapstructure:"admin_users"`
+	LoginTimeout int             `mapstructure:"login_timeout"`
+	Moderator    ModeratorConf   `mapstructure:"moderator"`
+	Captcha      CaptchaConf     `mapstructure:"captcha"`
+	Email        EmailConf       `mapstructure:"email"`
 }
 
 type DBConf struct {
@@ -36,6 +35,15 @@ type DBConf struct {
 type LogConf struct {
 	Enabled  bool   `mapstructure:"enabled"`
 	Filename string `mapstructure:"filename"`
+}
+
+type AdminUserConf struct {
+	Name       string `mapstructure:"name"`
+	Email      string `mapstructure:"email"`
+	Link       string `mapstructure:"link"`
+	Password   string `mapstructure:"password"`
+	BadgeName  string `mapstructure:"badge_name"`
+	BadgeColor string `mapstructure:"badge_color"`
 }
 
 type ModeratorConf struct {
@@ -100,7 +108,7 @@ func Init(cfgFile string) {
 	} else {
 		// Find config file in path.
 		viper.AddConfigPath(".")
-		viper.SetConfigName("artalk-go.yaml")
+		viper.SetConfigName("artalk-go.yml")
 	}
 
 	viper.SetEnvPrefix("ATG")

@@ -6,6 +6,7 @@ import (
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -49,7 +50,7 @@ func init() {
 	cobra.OnInitialize(initDB)
 
 	rootCmd.SetVersionTemplate("Artalk-GO {{printf \"version %s\" .Version}}\n")
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "配置文件路径 (defaults are './artalk-go.conf.yaml', './config.yaml')")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "配置文件路径 (defaults are './artalk-go.yml')")
 }
 
 // 初始化配置
@@ -104,6 +105,9 @@ func initDB() {
 		logrus.Error("数据库初始化发生错误 ", err)
 		os.Exit(1)
 	}
+
+	// Migrate the schema
+	lib.DB.AutoMigrate(&model.Comment{}, &model.Page{}, &model.User{})
 }
 
 //// 捷径函数 ////

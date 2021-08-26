@@ -7,14 +7,17 @@ import (
 )
 
 func ActionLogin(c echo.Context) error {
-	username := c.QueryParam("username")
+	username := c.QueryParam("user")
 	password := c.QueryParam("password")
 	if username == "" || password == "" {
 		return RespError(c, "Incomplete parameters.")
 	}
 
+	// record action for limiting action
+	RecordAction(c)
+
 	var user model.User
-	lib.DB.Where("name = ? OR email = ?", username, username).First(user)
+	lib.DB.Where("name = ? OR email = ?", username, username).First(&user)
 	if user.IsEmpty() || user.Password != password {
 		return RespError(c, "验证失败")
 	}
@@ -24,13 +27,13 @@ func ActionLogin(c echo.Context) error {
 	})
 }
 
-func ActionAdminEdit(c echo.Context) error {
+func ActionManagerEdit(c echo.Context) error {
 	// user := c.Get("user").(*jwt.Token)
 	// claims := user.Claims.(*jwtCustomClaims)
 	// name := claims.Name
 	return nil
 }
 
-func ActionAdminDel(c echo.Context) error {
+func ActionManagerDel(c echo.Context) error {
 	return nil
 }

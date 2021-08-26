@@ -48,6 +48,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(initLog)
 	cobra.OnInitialize(initDB)
+	cobra.OnInitialize(initCache)
 
 	rootCmd.SetVersionTemplate("Artalk-GO {{printf \"version %s\" .Version}}\n")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "配置文件路径 (defaults are './artalk-go.yml')")
@@ -85,6 +86,10 @@ func initLog() {
 	logrus.SetFormatter(stdFormatter)
 	logrus.SetOutput(os.Stdout)
 
+	if config.Instance.Debug {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
+
 	if config.Instance.Log.Filename != "" {
 		// 文件保存
 		pathMap := lfshook.PathMap{
@@ -108,6 +113,14 @@ func initDB() {
 
 	// Migrate the schema
 	lib.DB.AutoMigrate(&model.Comment{}, &model.Page{}, &model.User{})
+}
+
+func initCache() {
+	err := lib.OpenCache()
+	if err != nil {
+		logrus.Error("缓存初始化发生错误 ", err)
+		os.Exit(1)
+	}
 }
 
 //// 捷径函数 ////

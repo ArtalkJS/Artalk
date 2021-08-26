@@ -16,6 +16,7 @@ var Instance *Config
 type Config struct {
 	SiteName     string          `mapstructure:"site_name"`    // 网站名
 	AppKey       string          `mapstructure:"app_key"`      // 加密密钥
+	Debug        bool            `mapstructure:"debug"`        // 调试模式
 	HttpAddr     string          `mapstructure:"http_addr"`    // HTTP Server 监听地址
 	DB           DBConf          `mapstructure:"db"`           // 数据文件
 	Log          LogConf         `mapstructure:"log"`          // 日志文件
@@ -51,9 +52,10 @@ type ModeratorConf struct {
 }
 
 type CaptchaConf struct {
-	Enabled      bool `mapstructure:"enabled"`
-	Timeout      uint `mapstructure:"timeout"`
-	CommentLimit uint `mapstructure:"comment_limit"`
+	Enabled       bool `mapstructure:"enabled"`
+	Always        bool `mapstructure:"always"`
+	ActionTimeout int  `mapstructure:"action_timeout"`
+	ActionLimit   int  `mapstructure:"action_limit"`
 }
 
 type EmailConf struct {
@@ -69,7 +71,7 @@ type EmailConf struct {
 
 type SMTPConf struct {
 	Host       string `mapstructure:"host"`
-	Port       uint   `mapstructure:"port"`
+	Port       int    `mapstructure:"port"`
 	SMTPAuth   bool   `mapstructure:"smtp_auth"`
 	Username   string `mapstructure:"username"`
 	Password   string `mapstructure:"password"`

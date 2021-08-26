@@ -7,6 +7,9 @@ http_addr: ':23366'
 # 加密密钥
 app_key: 'QXJ0YWxrLmpz'
 
+# 调试模式
+debug: false
+
 # 数据文件
 db:
   type: 'sqlite' # 支持 mysql 和 sqlite
@@ -40,9 +43,10 @@ moderator:
 # 验证码
 captcha:
   enabled: true # 总开关
-  # ↓↓ 在 {timeout} 秒内，若再次评论超过 {limit} 次则需要验证码
-  timeout: 2400 # 超时：重置评论次数统计（单位：秒）
-  comment_limit: 3 # 激活验证码的评论次数（设置为 0 总是需要验证码）
+  always: false # 总是需要验证码
+  # ↓ 在 {comment_timeout} 秒内，操作次数超过 {comment_limit} 次激活验证码
+  action_timeout: 60
+  action_limit: 3
 
 # 邮件通知
 email:

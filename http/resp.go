@@ -2,30 +2,11 @@ package http
 
 import (
 	"net/http"
+	"strconv"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	echolog "github.com/onrik/logrus/echo"
 	"github.com/sirupsen/logrus"
 )
-
-type Map = map[string]interface{}
-
-func Run() {
-	e := echo.New()
-	e.HideBanner = true
-
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: config.Instance.AllowOrigin,
-	}))
-	e.Logger = echolog.NewLogger(logrus.StandardLogger(), "")
-	e.Use(echolog.Middleware(echolog.DefaultConfig))
-
-	InitRoute(e)
-
-	e.Logger.Fatal(e.Start(config.Instance.HttpAddr))
-}
 
 // JSONResult JSON 响应数据结构
 type JSONResult struct {
@@ -60,15 +41,44 @@ func RespSuccess(c echo.Context) error {
 }
 
 // RespError is just response error
-func RespError(c echo.Context, msg string, details ...string) error {
-	extraMap := Map{}
-	if details != nil {
-		extraMap["errDetails"] = details
+func RespError(c echo.Context, msg string, data ...interface{}) error {
+	// log
+	req := c.Request()
+	path := req.URL.Path
+	if path == "" {
+		path = "/"
 	}
+	LogWithHttpInfo(c).Errorf("[响应] %s %s ==> %s", req.Method, path, strconv.Quote(msg))
 
 	return c.JSON(http.StatusOK, &JSONResult{
 		Success: false,
 		Msg:     msg,
-		Extra:   extraMap,
+		Data:    data,
 	})
+}
+
+func LogWithHttpInfo(c echo.Context) *logrus.Entry {
+	fields := logrus.Fields{}
+
+	req := c.Request()
+	res := c.Response()
+
+	path := req.URL.Path
+	if path == "" {
+		path = "/"
+	}
+
+	id := req.Header.Get(echo.HeaderXRequestID)
+	if id == "" {
+		id = res.Header().Get(echo.HeaderXRequestID)
+	}
+	fields["id"] = id
+	fields["ip"] = c.RealIP()
+	fields["host"] = req.Host
+	fields["referer"] = req.Referer()
+	fields["user_agent"] = req.UserAgent()
+	fields["status"] = res.Status
+	//fields["headers"] = req.Header
+
+	return logrus.WithFields(fields)
 }

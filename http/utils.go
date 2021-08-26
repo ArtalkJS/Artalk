@@ -90,25 +90,6 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 	return true, nil
 }
 
-func CheckIsAdmin(c echo.Context) bool {
-	jwt := c.Get("user").(*jwt.Token)
-	claims := jwt.Claims.(*jwtCustomClaims)
-	name := claims.UserName
-	email := claims.UserEmail
-
-	if claims.UserType != model.UserAdmin {
-		return false
-	}
-
-	// check user from database
-	user := FindUser(name, email)
-	if user.IsEmpty() {
-		return false
-	}
-
-	return user.Type == model.UserAdmin
-}
-
 func CheckIfAllowed(c echo.Context, user model.User, page model.Page) (bool, error) {
 	return true, nil
 }

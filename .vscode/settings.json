@@ -1,8 +1,10 @@
 {
     "cSpell.words": [
         "artalk",
+        "gomail",
         "gorm",
         "lfshook",
+        "sendmail",
         "smpt",
         "sqlite"
     ]

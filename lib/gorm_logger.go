@@ -28,15 +28,15 @@ func (l *gLogger) LogMode(gormlogger.LogLevel) gormlogger.Interface {
 }
 
 func (l *gLogger) Info(ctx context.Context, s string, args ...interface{}) {
-	log.WithContext(ctx).Infof(s, args)
+	log.WithContext(ctx).Infof(s, args...)
 }
 
 func (l *gLogger) Warn(ctx context.Context, s string, args ...interface{}) {
-	log.WithContext(ctx).Warnf(s, args)
+	log.WithContext(ctx).Warnf(s, args...)
 }
 
 func (l *gLogger) Error(ctx context.Context, s string, args ...interface{}) {
-	log.WithContext(ctx).Errorf(s, args)
+	log.WithContext(ctx).Errorf(s, args...)
 }
 
 func (l *gLogger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {

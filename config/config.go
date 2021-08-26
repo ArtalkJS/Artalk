@@ -70,20 +70,19 @@ type EmailConf struct {
 }
 
 type SMTPConf struct {
-	Host       string `mapstructure:"host"`
-	Port       int    `mapstructure:"port"`
-	SMTPAuth   bool   `mapstructure:"smtp_auth"`
-	Username   string `mapstructure:"username"`
-	Password   string `mapstructure:"password"`
-	SMTPSecure string `mapstructure:"smtp_secure"`
-	FromAddr   string `mapstructure:"from_addr"`
-	FromName   string `mapstructure:"from_name"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	FromAddr string `mapstructure:"from_addr"`
+	FromName string `mapstructure:"from_name"`
 }
 
 type AliDMConf struct {
 	AccessKeyId     string `mapstructure:"access_key_id"`
 	AccessKeySecret string `mapstructure:"access_key_secret"`
 	AccountName     string `mapstructure:"account_name"`
+	FromAlias       string `mapstructure:"from_alias"`
 }
 
 type DBType string

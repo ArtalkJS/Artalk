@@ -88,8 +88,10 @@ type AliDMConf struct {
 type DBType string
 
 const (
-	TypeMySql  DBType = "mysql"
-	TypeSqlite DBType = "sqlite"
+	TypeMySql      DBType = "mysql"
+	TypeSQLite     DBType = "sqlite"
+	TypePostgreSQL DBType = "pgsql"
+	TypeSqlServer  DBType = "sqlserver"
 )
 
 type EmailSenderType string

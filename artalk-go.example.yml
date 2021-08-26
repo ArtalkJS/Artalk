@@ -12,7 +12,7 @@ debug: false
 
 # 数据文件
 db:
-  type: 'sqlite' # 支持 mysql 和 sqlite
+  type: 'sqlite' # 支持 mysql, sqlite, pgsql, sqlserver
   dsn: './local/artalk-go.db'
 
 # 日志

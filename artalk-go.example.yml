@@ -52,7 +52,7 @@ captcha:
 email:
   enabled: true # 总开关
   admin_addr: 'example@example.com' # 管理员邮箱地址（文章收到评论时通知）
-  sender_type: 'smtp' # 发送方式（ali_dm, smtp, sendmail）
+  sender_type: 'smtp' # 发送方式 [ali_dm, smtp, sendmail]
   mail_title: '您在 [站名] 收到了新的回复'
   mail_title_to_admin: '您的文章收到了新的回复'
   mail_tpl_name: 'default.html' # 邮件模板文件（/email-tpl 目录下存放）

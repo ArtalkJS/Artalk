@@ -7,6 +7,8 @@ import Editor from './components/Editor'
 import List from './components/List'
 import Comment from './components/Comment'
 import Sidebar from './components/Sidebar'
+import ApiDriver from './api-driver/ApiDriver'
+import ArtalkGo from './api-driver/ArtalkGo'
 import Ui from './utils/ui'
 import Utils from './utils'
 import { ArtalkConfig } from '~/types/artalk-config'
@@ -33,6 +35,7 @@ export default class Artalk {
   public el: HTMLElement
   public readonly runId: number = new Date().getTime() // 实例唯一 ID
 
+  public api: ApiDriver
   public ui: Ui
   public user: User
   public checker: Checker
@@ -71,6 +74,7 @@ export default class Artalk {
     if (this.el.innerHTML.trim() !== '') this.el.innerHTML = ''
 
     // Components
+    this.api = new ArtalkGo(this)
     this.ui = new Ui(this)
     this.user = new User(this)
     this.checker = new Checker(this)

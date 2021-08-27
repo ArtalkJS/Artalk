@@ -14,8 +14,8 @@ const BUILD_PATH = path.resolve(ROOT_PATH, 'dist')
 const VERSION = require('./package.json').version
 
 const BANNER =
-  `Artalk v${  VERSION  }\n` +
-  `(c) 2016-${  new Date().getFullYear()  } qwqaq.com\n` +
+  `Artalk v${VERSION}\n` +
+  `(c) 2016-${new Date().getFullYear()} qwqaq.com\n` +
   `Link: https://github.com/ArtalkJS/Artalk`
 
 module.exports = (env, argv) => {

@@ -297,46 +297,52 @@ export default class Editor extends ArtalkContext {
       return
     }
 
-    this.artalk.request('CommentAdd', {
-      content: this.getContent(),
-      nick: this.user.data.nick,
-      email: this.user.data.email,
-      link: this.user.data.link,
-      rid: this.getReplyComment() === null ? 0 : this.getReplyComment().data.id,
-      page_key: this.artalk.conf.pageKey,
-      password: this.user.data.password,
-      captcha: this.artalk.checker.submitCaptchaVal || ''
-    }, () => {
-      this.artalk.ui.showLoading(this.el)
-    }, () => {
-      this.artalk.ui.hideLoading(this.el)
-    }, (msg, data) => {
-      const newComment = new Comment(this.artalk, this.artalk.list, data.comment)
-      if (this.getReplyComment() !== null) {
-        this.getReplyComment().putChild(newComment)
-      } else {
-        this.artalk.list.putRootComment(newComment)
-      }
-      this.clearEditor() // 清空编辑器
+    this.artalk.api.actionAdd({
+      data: {
+        content: this.getContent(),
+        nick: this.user.data.nick,
+        email: this.user.data.email,
+        link: this.user.data.link,
+        rid: this.getReplyComment() === null ? 0 : this.getReplyComment().data.id,
+        page_key: this.artalk.conf.pageKey,
+        password: this.user.data.password,
+        captcha: this.artalk.checker.submitCaptchaVal || ''
+      },
+      before: () => {
+        this.artalk.ui.showLoading(this.el)
+      },
+      after: () => {
+        this.artalk.ui.hideLoading(this.el)
+      },
+      success: (msg, data) => {
+        const newComment = new Comment(this.artalk, this.artalk.list, data.comment)
+        if (this.getReplyComment() !== null) {
+          this.getReplyComment().putChild(newComment)
+        } else {
+          this.artalk.list.putRootComment(newComment)
+        }
+        this.clearEditor() // 清空编辑器
 
-      this.artalk.ui.scrollIntoView(newComment.getElem())
-      newComment.playFadeInAnim() // 播放评论渐出动画
-      this.artalk.list.data.total += 1 // 评论数增加 1
-      this.artalk.list.refreshUI() // 更新 list 界面
-    }, (msg, data) => {
-      if ((typeof data === 'object') && data !== null && typeof data.need_password === 'boolean' && data.need_password === true) {
-        // 管理员密码验证
-        this.artalk.checker.action('管理员', () => {
-          this.submit()
-        })
-      } else if ((typeof data === 'object') && data !== null && typeof data.need_captcha === 'boolean' && data.need_captcha === true) {
-        // 验证码验证
-        this.artalk.checker.submitCaptchaImgData = data.img_data
-        this.artalk.checker.action('验证码', () => {
-          this.submit()
-        })
-      } else {
-        this.showNotify(`评论失败，${msg}`, 'e')
+        this.artalk.ui.scrollIntoView(newComment.getElem())
+        newComment.playFadeInAnim() // 播放评论渐出动画
+        this.artalk.list.data.total += 1 // 评论数增加 1
+        this.artalk.list.refreshUI() // 更新 list 界面
+      },
+      error: (msg, data) => {
+        if ((typeof data === 'object') && data !== null && typeof data.need_password === 'boolean' && data.need_password === true) {
+          // 管理员密码验证
+          this.artalk.checker.action('管理员', () => {
+            this.submit()
+          })
+        } else if ((typeof data === 'object') && data !== null && typeof data.need_captcha === 'boolean' && data.need_captcha === true) {
+          // 验证码验证
+          this.artalk.checker.submitCaptchaImgData = data.img_data
+          this.artalk.checker.action('验证码', () => {
+            this.submit()
+          })
+        } else {
+          this.showNotify(`评论失败，${msg}`, 'e')
+        }
       }
     })
   }

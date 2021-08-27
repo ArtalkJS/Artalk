@@ -28,7 +28,11 @@ export default class Utils {
   public static getLocationParmByName (name: string) {
     const match = RegExp(`[?&]${name}=([^&]*)`).exec(window.location.search);
     return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
-}
+  }
+
+  public static urlQuerySerialize(obj: any) {
+    return Object.keys(obj).map(k => `${k}=${encodeURIComponent(obj[k])}`).join('&')
+  }
 
   public static getOffset (el: HTMLElement) {
     const rect = el.getBoundingClientRect()

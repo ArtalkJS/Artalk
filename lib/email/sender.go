@@ -1,4 +1,4 @@
-package lib
+package email
 
 import (
 	"bytes"
@@ -19,10 +19,10 @@ type Email struct {
 	Body     string
 }
 
-func SendEmailBySMTP(email Email) bool {
+func SendBySMTP(email Email) bool {
 	smtp := config.Instance.Email.SMTP
 
-	m := GenerateEmailMessage(email)
+	m := GetCookedEmail(email)
 	d := gomail.NewDialer(smtp.Host, smtp.Port, smtp.Username, smtp.Password)
 
 	// 发送邮件
@@ -33,7 +33,7 @@ func SendEmailBySMTP(email Email) bool {
 	return true
 }
 
-func SendEmailByAliDM(email Email) bool {
+func SendByAliDM(email Email) bool {
 	client := ali_dm.NewClient(
 		config.Instance.Email.AliDM.AccessKeyId,
 		config.Instance.Email.AliDM.AccessKeySecret,
@@ -62,9 +62,9 @@ func SendEmailByAliDM(email Email) bool {
 	return true
 }
 
-func SendEmailByUsingSystemCMD(email Email) bool {
+func SendByUsingSystemCMD(email Email) bool {
 	LogTag := "[EMAIL] sendmail"
-	msg := GenerateEmailMineTxt(email)
+	msg := GetEmailMineTxt(email)
 
 	// 调用系统 sendmail
 	sendmail := exec.Command("/usr/sbin/sendmail", "-t", "-oi")
@@ -99,7 +99,7 @@ func SendEmailByUsingSystemCMD(email Email) bool {
 	return true
 }
 
-func GenerateEmailMessage(email Email) *gomail.Message {
+func GetCookedEmail(email Email) *gomail.Message {
 	m := gomail.NewMessage()
 
 	// 发送人
@@ -118,8 +118,8 @@ func GenerateEmailMessage(email Email) *gomail.Message {
 	return m
 }
 
-func GenerateEmailMineTxt(email Email) string {
+func GetEmailMineTxt(email Email) string {
 	emailBuffer := bytes.NewBuffer([]byte{})
-	GenerateEmailMessage(email).WriteTo(emailBuffer)
+	GetCookedEmail(email).WriteTo(emailBuffer)
 	return string(emailBuffer.Bytes()[:])
 }

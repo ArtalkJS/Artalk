@@ -85,9 +85,8 @@ func InitRoute(e *echo.Echo) {
 	ca.GET("/check", ActionCaptchaCheck)
 
 	// api/manager
-	manager := api.Group("/manager")
+	manager := api.Group("/manager", middleware.JWTWithConfig(CommonJwtConfig)) // use jwt
 	manager.GET("/edit", ActionManagerEdit)
 	manager.GET("/del", ActionManagerDel)
-
-	manager.Use(middleware.JWTWithConfig(CommonJwtConfig))
+	manager.GET("/send-mail", ActionManagerSendMail)
 }

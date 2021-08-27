@@ -1,11 +1,11 @@
 # 网站名
-site_name: 'XXX 的博客'
+site_name: 'ArtalkServer'
 
 # HTTP Server 监听地址
 http_addr: ':23366'
 
 # 加密密钥
-app_key: 'QXJ0YWxrLmpz'
+app_key: ''
 
 # 调试模式
 debug: false
@@ -52,19 +52,18 @@ captcha:
 email:
   enabled: true # 总开关
   admin_addr: 'example@example.com' # 管理员邮箱地址（文章收到评论时通知）
-  sender_type: 'smtp' # 发送方式 [ali_dm, smtp, sendmail]
-  mail_title: '您在 [站名] 收到了新的回复'
-  mail_title_to_admin: '您的文章收到了新的回复'
-  mail_tpl_name: 'default.html' # 邮件模板文件（/email-tpl 目录下存放）
+  send_type: 'smtp' # 发送方式 [ali_dm, smtp, sendmail]
+  send_name: 'ArtalkGo' # 发信人昵称
+  mail_subject: '您在 Artalk 收到了新的回复'
+  mail_subject_to_admin: '您的文章收到了新的回复'
+  mail_tpl: 'default' # 邮件模板文件
   smtp:
     host: 'smtp.qq.com'
     port: 587
     username: 'example@qq.com'
     password: ''
-    from_addr: 'example@qq.com' # 发件人邮箱
-    from_name: '站名' # 发件人显示的名称
   ali_dm: # https://help.aliyun.com/document_detail/29444.html
     access_key_id: '' # 阿里云颁发给用户的访问服务所用的密钥 ID
     access_key_secret: '' # 用于加密的密钥
     account_name: 'example@example.com' # 管理控制台中配置的发信地址
-    from_alias: '' # 发信人昵称
+    from_alias: 'ArtalkGo' # 发信人昵称

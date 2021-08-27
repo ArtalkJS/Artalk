@@ -103,3 +103,44 @@ func (c Comment) ToCooked() CookedComment {
 		Rid:            c.Rid,
 	}
 }
+
+type CookedCommentForEmail struct {
+	ID             uint   `json:"id"`
+	ContentRaw     string `json:"content_raw"`
+	Content        string `json:"content"`
+	Nick           string `json:"nick"`
+	Email          string `json:"email"`
+	EmailEncrypted string `json:"email_encrypted"`
+	Link           string `json:"link"`
+	UA             string `json:"ua"`
+	Datetime       string `json:"datetime"`
+	Date           string `json:"date"`
+	Time           string `json:"time"`
+	IsCollapsed    bool   `json:"is_collapsed"`
+	IsPending      bool   `json:"is_pending"`
+	Rid            uint   `json:"rid"`
+	PageKey        string `json:"page_key"`
+}
+
+func (c Comment) ToCookedForEmail() CookedCommentForEmail {
+	user := c.FetchUser()
+	content, _ := lib.Marked(c.Content)
+
+	return CookedCommentForEmail{
+		ID:             c.ID,
+		ContentRaw:     c.Content,
+		Content:        content,
+		Nick:           user.Name,
+		Email:          user.Email,
+		EmailEncrypted: lib.GetMD5Hash(user.Email),
+		Link:           user.Link,
+		UA:             c.UA,
+		Datetime:       c.CreatedAt.Local().Format("2006-01-02 15:04:05"),
+		Date:           c.CreatedAt.Local().Format("2006-01-02"),
+		Time:           c.CreatedAt.Local().Format("15:04:05"),
+		IsCollapsed:    c.Type == CommentCollapsed,
+		IsPending:      c.Type == CommentPending,
+		Rid:            c.Rid,
+		PageKey:        c.PageKey,
+	}
+}

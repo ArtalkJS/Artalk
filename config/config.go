@@ -1,15 +1,19 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
+	"github.com/jeremywohl/flatten"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 // Instance 配置实例
 var Instance *Config
+
+var Flat map[string]interface{}
 
 // Config 配置
 // @link https://godoc.org/github.com/mitchellh/mapstructure
@@ -59,14 +63,15 @@ type CaptchaConf struct {
 }
 
 type EmailConf struct {
-	Enabled          bool            `mapstructure:"enabled"`
-	AdminAddr        string          `mapstructure:"admin_addr"`
-	SenderType       EmailSenderType `mapstructure:"sender_type"`
-	MailTitle        string          `mapstructure:"mail_title"`
-	MailTitleToAdmin string          `mapstructure:"mail_title_to_admin"`
-	MailTplName      string          `mapstructure:"mail_tpl_name"`
-	SMTP             SMTPConf        `mapstructure:"smtp"`
-	AliDM            AliDMConf       `mapstructure:"ali_dm"`
+	Enabled            bool            `mapstructure:"enabled"`               // 总开关
+	AdminAddr          string          `mapstructure:"admin_addr"`            // 管理员邮箱
+	SendType           EmailSenderType `mapstructure:"send_type"`             // 发送方式
+	SendName           string          `mapstructure:"send_name"`             // 发件人名
+	MailSubject        string          `mapstructure:"mail_subject"`          // 邮件标题
+	MailSubjectToAdmin string          `mapstructure:"mail_subject_to_admin"` // 邮件标题 (发送给管理员用)
+	MailTpl            string          `mapstructure:"mail_tpl"`              // 邮件模板
+	SMTP               SMTPConf        `mapstructure:"smtp"`                  // SMTP 配置
+	AliDM              AliDMConf       `mapstructure:"ali_dm"`                // 阿里云邮件配置
 }
 
 type SMTPConf struct {
@@ -74,8 +79,7 @@ type SMTPConf struct {
 	Port     int    `mapstructure:"port"`
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
-	FromAddr string `mapstructure:"from_addr"`
-	FromName string `mapstructure:"from_name"`
+	From     string `mapstructure:"from"`
 }
 
 type AliDMConf struct {
@@ -97,8 +101,9 @@ const (
 type EmailSenderType string
 
 const (
-	SMTP  EmailSenderType = "smpt"
-	AliDM EmailSenderType = "ali_dm"
+	TypeSMTP     EmailSenderType = "smpt"
+	TypeAliDM    EmailSenderType = "ali_dm"
+	TypeSendmail EmailSenderType = "sendmail"
 )
 
 // Init 初始化配置
@@ -127,4 +132,26 @@ func Init(cfgFile string) {
 	if err != nil {
 		logrus.Errorf("unable to decode into struct, %v", err)
 	}
+
+	Flat = StructToFlatDotMap(&Instance)
+
+	if strings.TrimSpace(Instance.AppKey) == "" {
+		logrus.Fatal("请检查配置文件，并设置一个 app_key")
+	}
+}
+
+func StructToMap(s interface{}) map[string]interface{} {
+	b, _ := json.Marshal(s)
+	var m map[string]interface{}
+	_ = json.Unmarshal(b, &m)
+	return m
+}
+
+func StructToFlatDotMap(s interface{}) map[string]interface{} {
+	m := StructToMap(s)
+	mainFlat, err := flatten.Flatten(m, "", flatten.DotStyle)
+	if err != nil {
+		return map[string]interface{}{}
+	}
+	return mainFlat
 }

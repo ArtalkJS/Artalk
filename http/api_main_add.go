@@ -3,6 +3,7 @@ package http
 import (
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/lib/email"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
@@ -70,8 +71,9 @@ func ActionAdd(c echo.Context) error {
 	}
 
 	// check reply comment
+	var parentComment model.Comment
 	if p.Rid != 0 {
-		parentComment := FindComment(p.Rid)
+		parentComment = FindComment(p.Rid)
 		if parentComment.IsEmpty() {
 			return RespError(c, "找不到父评论")
 		}
@@ -106,6 +108,12 @@ func ActionAdd(c echo.Context) error {
 	user.LastIP = ip
 	user.LastUA = ua
 	UpdateUser(&user)
+
+	// send email
+	if comment.Rid != 0 {
+		email.Send(comment.ToCookedForEmail(), parentComment.ToCookedForEmail())
+	}
+	email.SendToAdmin(comment.ToCookedForEmail())
 
 	return RespData(c, ResponseAdd{
 		Comment: comment.ToCooked(),

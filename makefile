@@ -12,7 +12,7 @@ install:
 	go install github.com/markbates/pkger/cmd/pkger
 
 update:
-	pkger -include /frontend -o http
+	pkger -include /frontend -include /email-tpl -o pkged
 
 build: update
 	go build -ldflags "-X github.com/ArtalkJS/ArtalkGo.Version=${VERSION}" -o bin/artalk-go github.com/ArtalkJS/ArtalkGo

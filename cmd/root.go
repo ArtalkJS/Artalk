@@ -6,6 +6,7 @@ import (
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/lib/email"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
@@ -49,6 +50,7 @@ func init() {
 	cobra.OnInitialize(initLog)
 	cobra.OnInitialize(initDB)
 	cobra.OnInitialize(initCache)
+	cobra.OnInitialize(email.InitQueue)
 
 	rootCmd.SetVersionTemplate("Artalk-GO {{printf \"version %s\" .Version}}\n")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "配置文件路径 (defaults are './artalk-go.yml')")

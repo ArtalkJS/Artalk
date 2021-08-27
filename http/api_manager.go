@@ -37,3 +37,7 @@ func ActionManagerEdit(c echo.Context) error {
 func ActionManagerDel(c echo.Context) error {
 	return nil
 }
+
+func ActionManagerSendMail(c echo.Context) error {
+	return RespSuccess(c)
+}

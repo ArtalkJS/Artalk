@@ -86,7 +86,6 @@ type AliDMConf struct {
 	AccessKeyId     string `mapstructure:"access_key_id"`
 	AccessKeySecret string `mapstructure:"access_key_secret"`
 	AccountName     string `mapstructure:"account_name"`
-	FromAlias       string `mapstructure:"from_alias"`
 }
 
 type DBType string

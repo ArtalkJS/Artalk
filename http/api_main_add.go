@@ -16,6 +16,7 @@ type ParamsAdd struct {
 	Content string `mapstructure:"content" param:"required"`
 	Rid     uint   `mapstructure:"rid"`
 	PageKey string `mapstructure:"page_key" param:"required"`
+	Token   string `mapstructure:"token"`
 }
 
 type ResponseAdd struct {

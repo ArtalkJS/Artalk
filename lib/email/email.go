@@ -6,6 +6,10 @@ import (
 )
 
 func Send(from model.CookedCommentForEmail, to model.CookedCommentForEmail) {
+	if !config.Instance.Email.Enabled {
+		return
+	}
+
 	go func() {
 		subject := RenderConfig(config.Instance.Email.MailSubject)
 		body := RenderEmailTpl(from, to)
@@ -21,6 +25,9 @@ func Send(from model.CookedCommentForEmail, to model.CookedCommentForEmail) {
 }
 
 func SendToAdmin(from model.CookedCommentForEmail) {
+	if !config.Instance.Email.Enabled {
+		return
+	}
 	if config.Instance.Email.AdminAddr == "" {
 		return
 	}

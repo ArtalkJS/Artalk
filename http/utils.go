@@ -41,45 +41,54 @@ func LoginGetUserToken(user model.User) string {
 }
 
 func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface{}) (isContinue bool, resp error) {
+	params := make(map[string]interface{})
+
 	refVal := reflect.ValueOf(paramsStruct)
 	for i := 0; i < refVal.Type().NumField(); i++ {
 		field := refVal.Type().Field(i)
 		//fieldName := field.Name
-		paramTagM := field.Tag.Get("mapstructure")
+		paramName := field.Tag.Get("mapstructure")
 		paramTagP := field.Tag.Get("param")
-		//fmt.Println(field, paramTagM, paramTagP)
+		paramMethod := strings.ToUpper(field.Tag.Get("method"))
 
-		if paramTagM != "" && paramTagP == "required" {
-			if strings.TrimSpace(c.QueryParam(paramTagM)) == "" {
-				return false, RespError(c, "Param `"+paramTagM+"` is required.")
+		// get param value
+		paramVal := func() string {
+			if paramMethod == "" {
+				if c.Request().Method == "GET" {
+					return c.QueryParam(paramName)
+				} else if c.Request().Method == "POST" {
+					return c.FormValue(paramName)
+				}
+			}
+
+			if paramMethod == "GET" {
+				return c.QueryParam(paramName)
+			} else if paramMethod == "POST" {
+				return c.FormValue(paramName)
+			}
+			return ""
+		}()
+
+		// check required param
+		if paramName != "" && paramTagP == "required" {
+			if strings.TrimSpace(paramVal) == "" {
+				return false, RespError(c, "Param `"+paramName+"` is required.")
 			}
 		}
-	}
 
-	// get the first
-	params := make(map[string]interface{})
-	for k, p := range c.QueryParams() {
-		params[k] = p[0]
-	}
-
-	// convet type
-	for i := 0; i < refVal.Type().NumField(); i++ {
-		field := refVal.Type().Field(i)
-		paramName := field.Tag.Get("mapstructure")
-
-		if field.Type.Kind() == reflect.Int {
-			u64, _ := strconv.ParseInt(c.QueryParam(paramName), 10, 32)
+		// convert type
+		if field.Type.Kind() == reflect.String {
+			params[paramName] = paramVal
+		} else if field.Type.Kind() == reflect.Int {
+			u64, _ := strconv.ParseInt(paramVal, 10, 32)
 			params[paramName] = int(u64)
-		}
-
-		if field.Type.Kind() == reflect.Uint {
-			u64, _ := strconv.ParseUint(c.QueryParam(paramName), 10, 32)
+		} else if field.Type.Kind() == reflect.Uint {
+			u64, _ := strconv.ParseUint(paramVal, 10, 32)
 			params[paramName] = uint(u64)
 		}
-
-		if field.Type.Kind() == reflect.Array {
-			params[paramName] = c.QueryParams()[paramName]
-		}
+		// } else if field.Type.Kind() == reflect.Array {
+		// 	params[paramName] = c.QueryParams()[paramName]
+		// }
 	}
 
 	err := mapstructure.Decode(params, destParams)

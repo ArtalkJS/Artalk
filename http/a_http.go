@@ -74,7 +74,7 @@ func InitRoute(e *echo.Echo) {
 	// api
 	api := e.Group("/api")
 
-	api.GET("/add", ActionAdd)
+	api.POST("/add", ActionAdd)
 	api.GET("/get", ActionGet)
 	api.GET("/user", ActionUser)
 	api.GET("/login", ActionLogin)

@@ -1,81 +1,60 @@
 {
   "name": "artalk",
-  "version": "1.0.7",
-  "description": "一款简洁有趣的可拓展评论系统",
-  "author": "qwqcode <1149527164@qq.com> (https://github.com/qwqcode)",
+  "version": "2.0.0",
+  "description": "A Fast, Slight & Delightful Comment",
   "keywords": [
-    "Artalk",
-    "comment-system"
+    "comment-system",
+    "comments-widget",
+    "comments",
+    "blog"
   ],
-  "license": "GPL-2.0",
+  "homepage": "https://artalk.js.org",
+  "bugs": "https://github.com/ArtalkJS/Artalk/issue",
+  "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ArtalkJS/Artalk.git"
+    "url": "https://github.com/ArtalkJS/Artalk.git"
   },
-  "bugs": {
-    "url": "https://github.com/ArtalkJS/Artalk/issues"
+  "main": "./dist/Artalk.umd.js",
+  "unpkg": "./dist/Artalk.iife.js",
+  "jsdelivr": "./dist/Artalk.iife.js",
+  "module": "./dist/Artalk.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/Artalk.es.js",
+      "require": "./dist/Artalk.umd.js"
+    }
   },
-  "homepage": "https://github.com/ArtalkJS/Artalk#readme",
-  "main": "dist/Artalk.js",
-  "types": "./types/index.d.ts",
   "scripts": {
-    "start": "yarn run dev",
-    "dev": "webpack-dev-server --mode development --hot --colors",
-    "build": "webpack --mode production",
-    "copy:deploy": "mkdir -p deploy && rm -rf deploy/* && cp index.html deploy && cp -r dist deploy && cp -r docs deploy && cp docs/CNAME deploy",
-    "predeploy": "yarn run build && yarn run copy:deploy",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "build:demo": "vite build --config vite-demo.config.ts",
+    "serve": "vite preview",
     "deploy": "gh-pages -d deploy",
-    "lint": "eslint --ext .js,.ts -f ./node_modules/eslint-friendly-formatter src"
+    "predeploy": "yarn run build && yarn run build:demo && yarn run copy:deploy",
+    "copy:deploy": "cp -r docs deploy && cp docs/CNAME deploy",
+    "lint": "eslint --ext .js,.ts src"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/plugin-transform-runtime": "^7.12.10",
-    "@babel/polyfill": "^7.12.1",
-    "@babel/preset-env": "^7.12.11",
-    "@babel/register": "^7.12.10",
-    "@babel/runtime": "^7.12.5",
-    "@types/marked": "^0.6.5",
-    "@types/node": "^14.14.19",
-    "@types/webpack-env": "^1.16.0",
-    "@typescript-eslint/eslint-plugin": "^2.3.0",
-    "@typescript-eslint/parser": "^2.3.0",
-    "autoprefixer": "^10.1.0",
-    "babel-loader": "^8.2.2",
-    "babel-plugin-add-module-exports": "^1.0.4",
-    "babel-plugin-class-display-name": "^2.1.0",
-    "css-loader": "^5.0.1",
-    "ejs-compiled-loader": "^1.1.0",
-    "eslint": "^6.4.0",
-    "eslint-config-airbnb-typescript": "^5.0.0",
-    "eslint-config-prettier": "^6.3.0",
-    "eslint-friendly-formatter": "^4.0.1",
-    "eslint-import-resolver-typescript": "^1.1.1",
-    "eslint-loader": "^3.0.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-prettier": "^3.1.0",
-    "gh-pages": "^2.1.1",
+    "@types/node": "^16.7.5",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
+    "autoprefixer": "^10.3.3",
+    "eslint": "7.2.0",
+    "eslint-config-airbnb": "18.2.1",
+    "eslint-config-airbnb-typescript": "^14.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-jsx-a11y": "6.4.1",
+    "eslint-plugin-react": "7.21.5",
+    "eslint-plugin-react-hooks": "1.7.0",
     "hanabi": "^0.4.0",
-    "html-webpack-harddisk-plugin": "^1.0.1",
-    "html-webpack-plugin": "^3.2.0",
-    "less": "^3.11.1",
-    "less-loader": "^6.0.0",
-    "marked": "^0.7.0",
-    "md5": "^2.3.0",
-    "mini-css-extract-plugin": "^0.8.0",
-    "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "postcss": "^8.2.2",
-    "postcss-loader": "^4.1.0",
-    "prettier": "^1.18.2",
-    "style-loader": "^2.0.0",
-    "ts-loader": "^6.2.0",
-    "typescript": "^3.6.3",
-    "uglifyjs-webpack-plugin": "^2.2.0",
-    "url-loader": "^2.1.0",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.1"
+    "marked": "^3.0.2",
+    "prettier": "^2.3.2",
+    "sass": "^1.38.2",
+    "typescript": "4.3.2",
+    "vite": "^2.5.1",
+    "vite-plugin-dts": "^0.7.0"
   },
-  "dependencies": {
-    "core-js": "3"
-  }
+  "dependencies": {}
 }

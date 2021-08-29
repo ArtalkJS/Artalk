@@ -29,7 +29,9 @@
     body.dark-mode .to-night { background: #fff;border: 1px solid #2d3235;color: #0083ff; }
     .to-top { right: 25px; }
   </style>
-<link href="dist/Artalk.css?187ce44776198bffcdcb" rel="stylesheet"><script type="text/javascript" src="dist/Artalk.js?187ce44776198bffcdcb"></script></head>
+  <link href="./src/style/main.scss" rel="stylesheet">
+  <script type="module" src="./src/main.ts"></script>
+</head>
 <body>
   <div class="card billboard artalk-fade-in">
     <div class="title"><a href="https://github.com/ArtalkJS/Artalk" target="_blank"><span>『 </span>Artalk<span> 』</span></a></div>
@@ -47,6 +49,7 @@
   </div>
   <div class="float-btn to-night artalk-fade-in">Blink</div>
   <div class="float-btn to-top artalk-fade-in" style="display: none;">TOP</div>
+
   <script>
     var artalk = new Artalk({
       el: '#comments',

@@ -1,26 +1,23 @@
-import Artalk from '../Artalk';
-import ArtalkContext from '../ArtalkContext';
+import { ArtalkConfig } from "~/types/artalk-config"
 
-export default class User extends ArtalkContext {
+export default class User {
   public data: {
     nick: string|null,
     email: string|null,
     link: string|null,
-    password: string|null,
+    token: string|null,
     isAdmin: boolean
   }
 
-  constructor (artalk: Artalk) {
-    super(artalk)
-
+  constructor (conf: ArtalkConfig) {
     // 从 localStorage 导入
     const localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
     this.data = {
       nick: localUser.nick || '',
       email: localUser.email || '',
       link: localUser.link || '',
-      password: localUser.password || '',
-      isAdmin: localUser.isAdmin || false
+      token: localUser.token || '',
+      isAdmin: localUser.data.isAdmin || false
     }
   }
 

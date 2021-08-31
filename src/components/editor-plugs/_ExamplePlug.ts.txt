@@ -24,7 +24,7 @@ export default class PreviewPlug extends ArtalkContext {
     return '栗子'
   }
 
-  getElem () {
+  getEl () {
     return this.elem
   }
 

@@ -1,4 +1,3 @@
-import './style/main.scss'
+import Artalk from "./Artalk"
 
-export default function helloWorld() {
-}
+export default Artalk

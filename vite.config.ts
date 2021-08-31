@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
 import dts from 'vite-plugin-dts'
+import commonConf from './vite-common.config'
 
 export default defineConfig({
   build: {
@@ -30,5 +31,6 @@ export default defineConfig({
       }
     }
   },
-  plugins: [dts()]
+  plugins: [dts()],
+  ...commonConf
 })

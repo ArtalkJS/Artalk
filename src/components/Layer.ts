@@ -1,27 +1,57 @@
-import Artalk from '../Artalk'
-import ArtalkContext from '../ArtalkContext'
-import Utils from '../utils'
+import Context from '@/Context'
+import Component from '@/lib/component'
+import Constant from '@/Constant'
+import * as Utils from '@/lib/utils'
+import * as Ui from '@/lib/ui'
 
-// TODO: for 一页多评论，该实例请用完及时销毁；待优化
-export class Layer extends ArtalkContext {
-  private el: HTMLElement
+export function GetLayerWrap (ctx: Context): { wrapEl: HTMLElement, maskEl: HTMLElement } {
+  let wrapEl = document.querySelector<HTMLElement>(`.artalk-layer-wrap#ctx-${ctx.cid}`)
+  if (!wrapEl) {
+    wrapEl = Utils.createElement(
+      `<div class="artalk-layer-wrap" id="ctx-${ctx.cid}" style="display: none;"><div class="artalk-layer-mask"></div></div>`
+    )
+    document.body.appendChild(wrapEl)
+  }
+
+  const maskEl = wrapEl.querySelector<HTMLElement>('.artalk-layer-mask')!
+
+  // dark mode
+  if (wrapEl) {
+    if (ctx.conf.darkMode) {
+      wrapEl.classList.add(Constant.DARK_MODE_CLASSNAME)
+    } else {
+      wrapEl.classList.remove(Constant.DARK_MODE_CLASSNAME)
+    }
+  }
+
+  return { wrapEl, maskEl }
+}
+
+export default function BuildLayer (ctx: Context, name: string, el?: HTMLElement) {
+  return new Layer(ctx, name, el)
+}
+
+export class Layer extends Component {
   private wrapEl: HTMLElement
   private maskEl: HTMLElement
 
   private maskClickHideEnable: boolean = true
 
-  constructor (artalk: Artalk, private name: string, html?: HTMLElement) {
-    super(artalk)
-    this.initWrap()
+  constructor (ctx: Context, private name: string, el?: HTMLElement) {
+    super(ctx)
 
-    this.el = this.wrapEl.querySelector(`[data-layer-name="${name}"]`)
+    const { wrapEl, maskEl } = GetLayerWrap(ctx)
+    this.wrapEl = wrapEl
+    this.maskEl = maskEl
+
+    this.el = this.wrapEl.querySelector(`[data-layer-name="${name}".artalk-layer-item]`)!
     if (this.el === null) {
-      // 若 layer 元素未创建过
-      if (!html) {
+      // 若传递 layer 元素为空
+      if (!el) {
         this.el = Utils.createElement()
         this.el.classList.add('artalk-layer-item')
       } else {
-        this.el = html
+        this.el = el
       }
     }
     this.el.setAttribute('data-layer-name', name)
@@ -29,19 +59,6 @@ export class Layer extends ArtalkContext {
 
     // 添加到 layers wrap 中
     this.wrapEl.append(this.el)
-  }
-
-  private initWrap () {
-    this.wrapEl = document.querySelector(`.artalk-layer-wrap`)
-    if (!this.wrapEl) {
-      this.wrapEl = Utils.createElement(
-        `<div class="artalk-layer-wrap" style="display: none;"><div class="artalk-layer-mask"></div></div>`
-      )
-      document.body.appendChild(this.wrapEl)
-    }
-
-    this.maskEl = this.wrapEl.querySelector('.artalk-layer-mask')
-    this.artalk.ui.initDarkMode()
   }
 
   getName () {
@@ -77,13 +94,13 @@ export class Layer extends ArtalkContext {
   }
 
   hide () {
-    Layer.hideTimeoutList.push(setTimeout(() => {
+    Layer.hideTimeoutList.push(window.setTimeout(() => {
       this.wrapEl.style.display = 'none'
       document.body.style.overflow = ''
     }, 450))
 
     this.wrapEl.classList.add('artalk-fade-out')
-    Layer.hideTimeoutList.push(setTimeout(() => {
+    Layer.hideTimeoutList.push(window.setTimeout(() => {
       this.wrapEl.style.display = 'none'
       this.wrapEl.classList.remove('artalk-fade-out')
     }, 200))
@@ -100,17 +117,13 @@ export class Layer extends ArtalkContext {
     this.wrapEl.style.display = 'none'
     document.body.style.overflow = ''
     this.el.remove()
-    this.el = null
+    // this.el dispose
   }
 
   /** 销毁 */
   dispose () {
     this.hide()
     this.el.remove()
-    this.el = null
+    // this.el dispose
   }
-}
-
-export default function BuildLayer (artalk: Artalk, name: string, html?: HTMLElement) {
-  return new Layer(artalk, name, html)
 }

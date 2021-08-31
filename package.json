@@ -5,6 +5,7 @@
   "keywords": [
     "comment-system",
     "comments-widget",
+    "comment",
     "comments",
     "blog"
   ],
@@ -36,25 +37,30 @@
     "lint": "eslint --ext .js,.ts src"
   },
   "devDependencies": {
+    "@types/marked": "0.6.5",
     "@types/node": "^16.7.5",
     "@typescript-eslint/eslint-plugin": "^4.29.3",
     "@typescript-eslint/parser": "^4.29.3",
+    "art-template": "^4.13.2",
     "autoprefixer": "^10.3.3",
     "eslint": "7.2.0",
     "eslint-config-airbnb": "18.2.1",
     "eslint-config-airbnb-typescript": "^14.0.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-jsx-a11y": "6.4.1",
     "eslint-plugin-react": "7.21.5",
     "eslint-plugin-react-hooks": "1.7.0",
-    "hanabi": "^0.4.0",
-    "marked": "^3.0.2",
+    "less": "^4.1.1",
     "prettier": "^2.3.2",
     "sass": "^1.38.2",
     "typescript": "4.3.2",
     "vite": "^2.5.1",
     "vite-plugin-dts": "^0.7.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "hanabi": "^0.4.0",
+    "marked": "0.7.0"
+  }
 }

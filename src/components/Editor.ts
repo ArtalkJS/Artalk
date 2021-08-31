@@ -1,13 +1,17 @@
-import '../css/editor.less'
+import '../style/editor.less'
+
+import Context from '@/Context'
+import Component from '@/lib/component'
+import * as Utils from '@/lib/utils'
+import * as Ui from '@/lib/ui'
+import EditorHTML from './html/editor.html?raw'
 import Comment from './Comment'
+
 import EmoticonsPlug from './editor-plugs/EmoticonsPlug'
 import PreviewPlug from './editor-plugs/PreviewPlug'
-import Artalk from '../Artalk'
-import ArtalkContext from '../ArtalkContext'
-import Utils from '../utils'
-import Checker from './Checker'
+import { CommentData } from '~/types/artalk-data'
 
-export default class Editor extends ArtalkContext {
+export default class Editor extends Component {
   private readonly LOADABLE_PLUG_LIST = [EmoticonsPlug, PreviewPlug]
   public plugList: { [name: string]: any } = {}
 
@@ -25,36 +29,39 @@ export default class Editor extends ArtalkContext {
   public submitBtn: HTMLButtonElement
   public notifyWrapEl: HTMLElement
 
-  private replyComment: Comment
-  private sendReplyEl: HTMLElement
+  private replyComment: Comment|null = null
+  private sendReplyEl: HTMLElement|null = null
 
   private get user () {
-    return this.artalk.user
+    return this.ctx.user
   }
 
-  constructor (artalk: Artalk) {
-    super(artalk)
+  constructor (ctx: Context) {
+    super(ctx)
 
-    this.el = Utils.createElement(require('../templates/Editor.ejs')(this))
-    this.artalk.el.appendChild(this.el)
+    this.el = Utils.createElement(EditorHTML)
 
-    this.headerEl = this.el.querySelector('.artalk-editor-header')
-    this.textareaWrapEl = this.el.querySelector('.artalk-editor-textarea-wrap')
-    this.textareaEl = this.el.querySelector('.artalk-editor-textarea')
-    this.closeCommentEl = this.el.querySelector('.artalk-close-comment')
-    this.plugWrapEl = this.el.querySelector('.artalk-editor-plug-wrap')
-    this.bottomEl = this.el.querySelector('.artalk-editor-bottom')
-    this.bottomPartLeftEl = this.el.querySelector('.artalk-editor-bottom-part.artalk-left')
-    this.plugSwitcherWrapEl = this.el.querySelector('.artalk-editor-plug-switcher-wrap')
-    this.bottomPartRightEl = this.el.querySelector('.artalk-editor-bottom-part.artalk-right')
-    this.submitBtn = this.el.querySelector('.artalk-send-btn')
-    this.notifyWrapEl = this.el.querySelector('.artalk-editor-notify-wrap')
+    this.headerEl = this.el.querySelector('.artalk-editor-header')!
+    this.textareaWrapEl = this.el.querySelector('.artalk-editor-textarea-wrap')!
+    this.textareaEl = this.el.querySelector('.artalk-editor-textarea')!
+    this.closeCommentEl = this.el.querySelector('.artalk-close-comment')!
+    this.plugWrapEl = this.el.querySelector('.artalk-editor-plug-wrap')!
+    this.bottomEl = this.el.querySelector('.artalk-editor-bottom')!
+    this.bottomPartLeftEl = this.el.querySelector('.artalk-editor-bottom-part.artalk-left')!
+    this.plugSwitcherWrapEl = this.el.querySelector('.artalk-editor-plug-switcher-wrap')!
+    this.bottomPartRightEl = this.el.querySelector('.artalk-editor-bottom-part.artalk-right')!
+    this.submitBtn = this.el.querySelector('.artalk-send-btn')!
+    this.notifyWrapEl = this.el.querySelector('.artalk-editor-notify-wrap')!
 
     this.initLocalStorage()
     this.initHeader()
     this.initTextarea()
     this.initEditorPlug()
     this.initBottomPart()
+
+    // 监听事件
+    this.ctx.addEventListener('editor-open-comment', () => (this.openComment()))
+    this.ctx.addEventListener('editor-close-comment', () => (this.closeComment()))
   }
 
   initLocalStorage () {
@@ -70,31 +77,34 @@ export default class Editor extends ArtalkContext {
 
   initHeader () {
     Object.keys(this.user.data).forEach((field) => {
-      const inputEl: HTMLInputElement = this.headerEl.querySelector(`[name="${field}"]`)
-      if (inputEl !== null && inputEl instanceof HTMLInputElement) {
+      const inputEl = this.headerEl.querySelector(`[name="${field}"]`)
+      if (inputEl && inputEl instanceof HTMLInputElement) {
         inputEl.value = this.user.data[field] || ''
-        // 输入框内容变化事件
-        inputEl.addEventListener('input', (evt) => {
-          this.user.data[field] = inputEl.value.trim()
-
-          // 若修改的是 nick or email
-          if (field !== 'link') {
-            this.user.data.password = ''
-            this.user.data.isAdmin = false
-            if (this.user.checkHasBasicUserInfo()
-              && this.artalk.list.checkNickEmailIsAdmin(this.user.data.nick, this.user.data.email)) {
-              // 昵称为管理员，显示管理员密码验证 dialog
-              this.artalk.checker.action('管理员', () => {
-                this.artalk.list.refreshUI()
-              })
-            }
-          }
-
-          this.saveUser()
-          this.artalk.list.refreshUI()
-        })
+        // 绑定事件
+        inputEl.addEventListener('input', () => this.onHeaderInputChanged(field, inputEl))
       }
     })
+  }
+
+  /** header 输入框内容变化事件 */
+  onHeaderInputChanged (field: string, inputEl: HTMLInputElement) {
+    this.user.data[field] = inputEl.value.trim()
+
+    // 若修改的是 nick or email
+    if (field === 'nick' || field === 'email') {
+      this.user.data.token = ''
+      this.user.data.isAdmin = false
+      if (this.user.checkHasBasicUserInfo()
+        && this.artalk.list.checkNickEmailIsAdmin(this.user.data.nick, this.user.data.email)) {
+        // 昵称为管理员，显示管理员密码验证 dialog
+        this.artalk.checker.action('管理员', () => {
+          this.ctx.dispatchEvent('list-refresh-ui')
+        })
+      }
+    }
+
+    this.saveUser()
+    this.ctx.dispatchEvent('list-refresh-ui')
   }
 
   saveUser () {
@@ -106,6 +116,9 @@ export default class Editor extends ArtalkContext {
   }
 
   initTextarea () {
+    // 占位符
+    this.textareaEl.placeholder = this.ctx.conf.placeholder || ''
+
     // 修复按下 Tab 输入的内容
     this.textareaEl.addEventListener('keydown', (e) => {
       const keyCode = e.keyCode || e.which
@@ -128,7 +141,7 @@ export default class Editor extends ArtalkContext {
     this.textareaEl.style.height = `${this.textareaEl.scrollHeight + diff}px`
   }
 
-  openedPlugName: string = null
+  openedPlugName: string|null = null
 
   initEditorPlug () {
     this.plugList = {}
@@ -158,14 +171,14 @@ export default class Editor extends ArtalkContext {
 
         if (this.plugWrapEl.querySelector(`[data-plug-name="${plug.getName()}"]`) === null) {
           // 需要初始化
-          const plugEl = plug.getElem()
+          const plugEl = plug.getEl()
           plugEl.setAttribute('data-plug-name', plug.getName())
           plugEl.style.display = 'none'
           this.plugWrapEl.appendChild(plugEl)
         }
 
-        Array.from(this.plugWrapEl.children).forEach((plugItemEl: HTMLElement) => {
-          const plugItemName = plugItemEl.getAttribute('data-plug-name')
+        (Array.from(this.plugWrapEl.children) as HTMLElement[]).forEach((plugItemEl: HTMLElement) => {
+          const plugItemName = plugItemEl.getAttribute('data-plug-name')!
           if (plugItemName === plug.getName()) {
             plugItemEl.style.display = ''
             this.plugList[plugItemName].onShow()
@@ -261,14 +274,14 @@ export default class Editor extends ArtalkContext {
 
     if (this.sendReplyEl === null) {
       this.sendReplyEl = Utils.createElement('<div class="artalk-send-reply"><span class="artalk-text"></span><span class="artalk-cancel" title="取消 AT">×</span></div>');
-      (this.sendReplyEl.querySelector('.artalk-text') as HTMLElement).innerText = `@${comment.data.nick}`
-      this.sendReplyEl.querySelector('.artalk-cancel').addEventListener('click', () => {
+      this.sendReplyEl.querySelector<HTMLElement>('.artalk-text')!.innerText = `@${comment.data.nick}`
+      this.sendReplyEl.querySelector<HTMLElement>('.artalk-cancel')!.addEventListener('click', () => {
         this.cancelReply()
       })
       this.textareaWrapEl.appendChild(this.sendReplyEl)
     }
     this.replyComment = comment
-    this.artalk.ui.scrollIntoView(this.el)
+    Ui.scrollIntoView(this.el)
     this.textareaEl.focus()
   }
 
@@ -280,11 +293,9 @@ export default class Editor extends ArtalkContext {
     this.replyComment = null
   }
 
-  getReplyComment () {
-    return this.replyComment
-  }
-
   initSubmit () {
+    this.submitBtn.innerText = this.ctx.conf.sendBtn || 'Send'
+
     this.submitBtn.addEventListener('click', (evt) => {
       const btnEl = evt.currentTarget
       this.submit()
@@ -302,27 +313,17 @@ export default class Editor extends ArtalkContext {
       nick: this.user.data.nick,
       email: this.user.data.email,
       link: this.user.data.link,
-      rid: this.getReplyComment() === null ? 0 : this.getReplyComment().data.id,
-      page_key: this.artalk.conf.pageKey,
-      password: this.user.data.password,
+      rid: this.replyComment === null ? 0 : this.replyComment.data.id,
+      page_key: this.conf.pageKey,
+      password: this.user.data.token,
       captcha: this.artalk.checker.submitCaptchaVal || ''
     }, () => {
-      this.artalk.ui.showLoading(this.el)
+      Ui.showLoading(this.el)
     }, () => {
-      this.artalk.ui.hideLoading(this.el)
+      Ui.hideLoading(this.el)
     }, (msg, data) => {
-      const newComment = new Comment(this.artalk, this.artalk.list, data.comment)
-      if (this.getReplyComment() !== null) {
-        this.getReplyComment().putChild(newComment)
-      } else {
-        this.artalk.list.putRootComment(newComment)
-      }
+      this.ctx.dispatchEvent('list-insert', data.comment as CommentData)
       this.clearEditor() // 清空编辑器
-
-      this.artalk.ui.scrollIntoView(newComment.getElem())
-      newComment.playFadeInAnim() // 播放评论渐出动画
-      this.artalk.list.data.total += 1 // 评论数增加 1
-      this.artalk.list.refreshUI() // 更新 list 界面
     }, (msg, data) => {
       if ((typeof data === 'object') && data !== null && typeof data.need_password === 'boolean' && data.need_password === true) {
         // 管理员密码验证
@@ -342,14 +343,14 @@ export default class Editor extends ArtalkContext {
   }
 
   showNotify (msg: string, type) {
-    this.artalk.ui.showNotify(msg, type, this.notifyWrapEl)
+    Ui.showNotify(this.notifyWrapEl, msg, type)
   }
 
   /** 关闭评论 */
   closeComment () {
     this.closeCommentEl.style.display = ''
 
-    if (!this.artalk.user.data.isAdmin) {
+    if (!this.user.data.isAdmin) {
       this.textareaEl.style.display = 'none'
       this.closePlug()
       this.bottomEl.style.display = 'none'

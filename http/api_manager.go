@@ -7,9 +7,20 @@ import (
 )
 
 func ActionLogin(c echo.Context) error {
-	username := c.QueryParam("user")
-	password := c.QueryParam("password")
-	if username == "" || password == "" {
+	name := c.FormValue("name")
+	email := c.FormValue("email")
+	password := c.FormValue("password")
+	if name == "" {
+		name = c.QueryParam("name")
+	}
+	if email == "" {
+		email = c.QueryParam("email")
+	}
+	if password == "" {
+		password = c.QueryParam("password")
+	}
+
+	if name == "" || email == "" || password == "" {
 		return RespError(c, "Incomplete parameters.")
 	}
 
@@ -17,7 +28,7 @@ func ActionLogin(c echo.Context) error {
 	RecordAction(c)
 
 	var user model.User
-	lib.DB.Where("name = ? OR email = ?", username, username).First(&user)
+	lib.DB.Where("name = ? AND email = ?", name, email).First(&user) // name = ? OR email = ?
 	if user.IsEmpty() || user.Password != password {
 		return RespError(c, "验证失败")
 	}

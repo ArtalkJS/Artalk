@@ -78,6 +78,7 @@ func InitRoute(e *echo.Echo) {
 	api.GET("/get", ActionGet)
 	api.GET("/user", ActionUser)
 	api.GET("/login", ActionLogin)
+	api.POST("/login", ActionLogin)
 
 	// api/captcha
 	ca := api.Group("/captcha")

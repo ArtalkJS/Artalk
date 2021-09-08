@@ -127,6 +127,9 @@ func CheckIsAdminReq(c echo.Context) bool {
 	isAdmin := false
 	token := c.Param("token")
 	if token == "" {
+		token = c.FormValue("token")
+	}
+	if token == "" {
 		token = c.Request().Header.Get("X-Auth-Token")
 	}
 	if token != "" {

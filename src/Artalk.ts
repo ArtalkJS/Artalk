@@ -1,7 +1,4 @@
 import './style/main.less'
-
-import marked from 'marked'
-import hanabi from 'hanabi'
 import Checker from './lib/checker'
 import Editor from './components/Editor'
 import List from './components/List'
@@ -39,7 +36,6 @@ export default class Artalk {
   public list: List
   public sidebar: Sidebar
   public comments: Comment[] = []
-  public marked!: (src: string, callback: (error: any | undefined, parseResult: string) => (void)) => string
 
   constructor (conf: ArtalkConfig) {
     // Version Information
@@ -77,7 +73,6 @@ export default class Artalk {
     this.initDarkMode()
 
     this.checker = new Checker(this.ctx)
-    this.initMarked()
 
     this.editor = new Editor(this.ctx)
     this.list = new List(this.ctx)
@@ -108,32 +103,6 @@ export default class Artalk {
     this.ctx.addEventListener('user-changed', () => {
       this.ctx.dispatchEvent('check-admin-show-el')
     })
-  }
-
-  /** 初始化 Marked */
-  private initMarked () {
-    const renderer = new marked.Renderer()
-    const linkRenderer = renderer.link
-    renderer.link = (href, title, text) => {
-      const html = linkRenderer.call(renderer, href, title, text)
-      return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ')
-    }
-
-    const nMarked = marked
-    nMarked.setOptions({
-      renderer,
-      highlight: (code) => hanabi(code),
-      pedantic: false,
-      gfm: true,
-      tables: true,
-      breaks: true,
-      sanitize: true, // 净化
-      smartLists: true,
-      smartypants: true,
-      xhtml: false
-    })
-
-    this.marked = nMarked
   }
 
   /** 公共请求 */

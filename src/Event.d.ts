@@ -13,7 +13,8 @@ export interface EventPayloadMap {
   'sidebar-hide': undefined
   'check-admin-show-el': undefined
   'editor-open-comment': undefined
-  'editor-close-comment':  undefined
+  'editor-close-comment': undefined
+  'editor-reply': CommentData
   'user-changed': undefined
 }
 

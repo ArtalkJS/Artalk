@@ -42,17 +42,6 @@ export interface CommentData {
   is_allow_reply?: boolean
 }
 
-export interface ListReqData {
-  /** 页面 Key */
-  page_key: string,
-
-  /** 获取评论数 */
-  limit: number
-
-  /** 偏移量 */
-  offset: number
-}
-
 export interface ListData {
   /** 评论数据 */
   comments: CommentData[]

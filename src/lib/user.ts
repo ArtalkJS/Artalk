@@ -30,4 +30,13 @@ export default class User {
   public checkHasBasicUserInfo () {
     return !!this.data.nick && !!this.data.email
   }
+
+  /** 根据请求数据判断 nick 是否为管理员 */
+  public checkNickEmailIsAdmin (nick: string, email: string) {
+    // TODO: checkNickEmailIsAdmin
+    // if (!this.data || !this.data.admin_nicks || !this.data.admin_encrypted_emails) return false
+
+    // return (this.data.admin_nicks.indexOf(nick) !== -1)
+    //   && (this.data.admin_encrypted_emails.find(o => String(o).toLowerCase() === String(md5(email)).toLowerCase()))
+  }
 }

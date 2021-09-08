@@ -285,14 +285,6 @@ export default class List extends Component {
     })
   }
 
-  /** 根据请求数据判断 nick 是否为管理员 */
-  public checkNickEmailIsAdmin (nick: string, email: string) {
-    if (!this.data || !this.data.admin_nicks || !this.data.admin_encrypted_emails) return false
-
-    return (this.data.admin_nicks.indexOf(nick) !== -1)
-      && (this.data.admin_encrypted_emails.find(o => String(o).toLowerCase() === String(md5(email)).toLowerCase()))
-  }
-
   /** 管理员设置页面信息 */
   public adminSetPage (conf: { is_close_comment: boolean }) {
     // TODO: 管理员设置页面信息

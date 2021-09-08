@@ -3,15 +3,18 @@ import * as Utils from "./utils"
 import User from "./user"
 import * as Ui from './ui'
 import BuildLayer from "../components/Layer"
+import Api from "./api"
 
 interface CheckerConf {
   el?: HTMLElement
   body: (that: Checker) => HTMLElement
+  api: (that: Checker) => Function
   reqData: (that: Checker, inputVal: string) => any
   onSuccess: (that: Checker, msg: string, data: any, inputVal: string) => void
 }
 
 const AdminChecker = {
+  api: (that) => (new Api(that.ctx).login),
   body: () => Utils.createElement('<span>敲入密码来验证管理员身份：</span>'),
   reqData: (that, inputVal) => {
     const data = {
@@ -30,15 +33,20 @@ const AdminChecker = {
 } as CheckerConf
 
 const CaptchaChecker = {
+  api: (that) => (new Api(that.ctx).captchaCheck),
   body: (that) => {
     const elem = Utils.createElement(`<span><img class="artalk-captcha-img" src="${that.submitCaptchaImgData || ''}" alt="验证码">敲入验证码继续：</span>`);
 
     // 刷新验证码
     elem.querySelector<HTMLElement>('.artalk-captcha-img')!.onclick = () => {
       const imgEl = elem.querySelector('.artalk-captcha-img')
-      this.artalk.request('CaptchaCheck', { refresh: true }, () => {}, () => {}, (msg, data) => {
-          imgEl!.setAttribute('src', data.img_data)
-      }, () => {})
+      new Api(that.ctx).captchaGet()
+        .then((imgData) => {
+          imgEl!.setAttribute('src', imgData)
+        })
+        .catch((err) => {
+          console.error('验证码获取失败 ', err)
+        })
     }
     return elem
   },
@@ -64,8 +72,6 @@ export default class Checker {
   constructor (ctx: Context) {
     this.ctx = ctx
     this.user = ctx.user
-
-    this.ctx.addEventListener('user-check', ({ name, onSuccess, onMount }) => this.check(name, onSuccess, onMount))
   }
 
   public check (name: 'admin'|'captcha', onSuccess: (inputVal: string, dialogEl: HTMLElement) => void, onMount?: (dialogEl: HTMLElement) => void) {

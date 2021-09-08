@@ -29,7 +29,7 @@ export default class Editor extends Component {
   public submitBtn: HTMLButtonElement
   public notifyWrapEl: HTMLElement
 
-  private replyComment: Comment|null = null
+  private replyComment: CommentData|null = null
   private sendReplyEl: HTMLElement|null = null
 
   private get user () {
@@ -62,6 +62,7 @@ export default class Editor extends Component {
     // 监听事件
     this.ctx.addEventListener('editor-open-comment', () => (this.openComment()))
     this.ctx.addEventListener('editor-close-comment', () => (this.closeComment()))
+    this.ctx.addEventListener('editor-reply', (commentData) => (this.setReply(commentData)))
   }
 
   initLocalStorage () {
@@ -94,13 +95,14 @@ export default class Editor extends Component {
     if (field === 'nick' || field === 'email') {
       this.user.data.token = ''
       this.user.data.isAdmin = false
-      if (this.user.checkHasBasicUserInfo()
-        && this.artalk.list.checkNickEmailIsAdmin(this.user.data.nick, this.user.data.email)) {
-        // 昵称为管理员，显示管理员密码验证 dialog
-        this.artalk.checker.action('管理员', () => {
-          this.ctx.dispatchEvent('list-refresh-ui')
-        })
-      }
+      // TODO: 输入个人信息判断管理员登录
+      // if (this.user.checkHasBasicUserInfo()
+      //   && this.artalk.list.checkNickEmailIsAdmin(this.user.data.nick, this.user.data.email)) {
+      //   // 昵称为管理员，显示管理员密码验证 dialog
+      //   this.artalk.checker.action('管理员', () => {
+      //     this.ctx.dispatchEvent('list-refresh-ui')
+      //   })
+      // }
     }
 
     this.saveUser()
@@ -254,7 +256,7 @@ export default class Editor extends Component {
   }
 
   getContentMarked () {
-    return this.artalk.marked(this.getContent())
+    return Utils.marked(this.ctx, this.getContent())
   }
 
   initBottomPart () {
@@ -267,20 +269,20 @@ export default class Editor extends Component {
     this.sendReplyEl = null
   }
 
-  setReply (comment: Comment) {
+  setReply (commentData: CommentData) {
     if (this.replyComment !== null) {
       this.cancelReply()
     }
 
     if (this.sendReplyEl === null) {
       this.sendReplyEl = Utils.createElement('<div class="artalk-send-reply"><span class="artalk-text"></span><span class="artalk-cancel" title="取消 AT">×</span></div>');
-      this.sendReplyEl.querySelector<HTMLElement>('.artalk-text')!.innerText = `@${comment.data.nick}`
+      this.sendReplyEl.querySelector<HTMLElement>('.artalk-text')!.innerText = `@${commentData.nick}`
       this.sendReplyEl.querySelector<HTMLElement>('.artalk-cancel')!.addEventListener('click', () => {
         this.cancelReply()
       })
       this.textareaWrapEl.appendChild(this.sendReplyEl)
     }
-    this.replyComment = comment
+    this.replyComment = commentData
     Ui.scrollIntoView(this.el)
     this.textareaEl.focus()
   }
@@ -313,7 +315,7 @@ export default class Editor extends Component {
       nick: this.user.data.nick,
       email: this.user.data.email,
       link: this.user.data.link,
-      rid: this.replyComment === null ? 0 : this.replyComment.data.id,
+      rid: this.replyComment === null ? 0 : this.replyComment.id,
       page_key: this.conf.pageKey,
       password: this.user.data.token,
       captcha: this.artalk.checker.submitCaptchaVal || ''

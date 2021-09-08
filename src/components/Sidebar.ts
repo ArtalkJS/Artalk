@@ -75,7 +75,7 @@ export default class Sidebar extends Component {
       reqData = { token: this.ctx.user.data.token, ...reqData }
     }
 
-    // TODO: sidebar
+    // TODO: sidebar Req
     // this.artalk.request('CommentGetV2', reqData, () => {
     //   Ui.showLoading(this.contentEl)
     // }, () => {

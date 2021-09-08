@@ -125,7 +125,7 @@ export default class Comment extends Component {
       const replyBtn = Utils.createElement(`<span>回复</span>`)
       this.actionsEl.append(replyBtn)
       replyBtn.addEventListener('click', () => {
-        this.artalk.editor.setReply(this)
+        this.ctx.dispatchEvent('editor-reply', this.data)
       })
     }
 
@@ -194,7 +194,7 @@ export default class Comment extends Component {
   }
 
   getContentMarked () {
-    return this.artalk.marked(this.data.content)
+    return Utils.marked(this.ctx, this.data.content)
   }
 
   getDateFormatted () {

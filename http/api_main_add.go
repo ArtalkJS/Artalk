@@ -42,19 +42,6 @@ func ActionAdd(c echo.Context) error {
 	// record action for limiting action
 	RecordAction(c)
 
-	// find user
-	user := FindUser(p.Name, p.Email)
-	if user.IsEmpty() {
-		user = NewUser(p.Name, p.Email, p.Link) // save a new user
-	}
-
-	// admin user check
-	if !user.IsEmpty() && user.IsAdmin() {
-		if !CheckIsAdminReq(c) {
-			return RespError(c, "需要验证管理员身份", Map{"need_password": true})
-		}
-	}
-
 	// find page
 	page := FindPage(p.PageKey)
 	if page.IsEmpty() {
@@ -62,8 +49,14 @@ func ActionAdd(c echo.Context) error {
 	}
 
 	// check if the user is allowed to comment
-	if isAllowed, resp := CheckIfAllowed(c, user, page); !isAllowed {
+	if isAllowed, resp := CheckIfAllowed(c, p.Name, p.Email, page); !isAllowed {
 		return resp
+	}
+
+	// find user
+	user := FindUser(p.Name, p.Email)
+	if user.IsEmpty() {
+		user = NewUser(p.Name, p.Email, p.Link) // save a new user
 	}
 
 	if user.ID == 0 || page.Key == "" {
@@ -112,9 +105,9 @@ func ActionAdd(c echo.Context) error {
 
 	// send email
 	if comment.Rid != 0 {
-		email.Send(comment.ToCookedForEmail(), parentComment.ToCookedForEmail())
+		email.Send(comment.ToCookedForEmail(), parentComment.ToCookedForEmail()) // 发送邮件给回复者
 	}
-	email.SendToAdmin(comment.ToCookedForEmail())
+	email.SendToAdmin(comment.ToCookedForEmail()) // 发送邮件给管理员
 
 	return RespData(c, ResponseAdd{
 		Comment: comment.ToCooked(),

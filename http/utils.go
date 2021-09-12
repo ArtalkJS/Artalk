@@ -99,7 +99,14 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 	return true, nil
 }
 
-func CheckIfAllowed(c echo.Context, user model.User, page model.Page) (bool, error) {
+func CheckIfAllowed(c echo.Context, name string, email string, page model.Page) (bool, error) {
+	// 如果用户是管理员，或者当前页只能管理员评论
+	if IsAdminUser(name, email) || page.Type == model.PageOnlyAdmin {
+		if !CheckIsAdminReq(c) {
+			return false, RespError(c, "需要验证管理员身份", Map{"need_password": true})
+		}
+	}
+
 	return true, nil
 }
 
@@ -109,10 +116,17 @@ func FindComment(id uint) model.Comment {
 	return comment
 }
 
+// 查找用户（返回：精确查找，模糊查找）
 func FindUser(name string, email string) model.User {
-	var user model.User
-	lib.DB.Where(&model.User{Name: name, Email: email}).First(&user)
+	var user model.User // 注：user 查找是 AND
+	lib.DB.Where("name = ? AND email = ?", name, email).First(&user)
 	return user
+}
+
+func IsAdminUser(name string, email string) bool {
+	var user model.User // 注：user 查找是 OR
+	lib.DB.Where("(name = ? OR email = ?) AND type = ?", name, email, model.UserAdmin).First(&user)
+	return !user.IsEmpty()
 }
 
 func NewUser(name string, email string, link string) model.User {

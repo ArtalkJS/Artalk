@@ -6,6 +6,7 @@ type PageType string
 
 const (
 	PageCommentClosed PageType = "comment_closed"
+	PageOnlyAdmin     PageType = "only_admin"
 )
 
 type Page struct {

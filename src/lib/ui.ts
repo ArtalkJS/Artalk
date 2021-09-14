@@ -58,13 +58,11 @@ export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true) {
 }
 
 /** 显示对话框 */
-export function showDialog (
-  parentElem: HTMLElement,
+export function buildDialog (
   html: HTMLElement,
-  onConfirm?: (dialogElem: HTMLElement, btnElem: HTMLElement) => boolean | void,
+  onConfirm?: (btnElem: HTMLElement) => boolean | void,
   onCancel?: () => boolean | void,
-  onMount?: (dialogEl: HTMLElement) => void
-) {
+): HTMLElement {
   const dialogElem = Utils.createElement(
     `<div class="artalk-layer-dialog-wrap">
       <div class="artalk-layer-dialog">
@@ -72,18 +70,18 @@ export function showDialog (
       <div class="artalk-layer-dialog-action">
       </div>`
   )
-  parentElem.appendChild(dialogElem)
 
   // 按钮
   const actionElem = dialogElem.querySelector<HTMLElement>('.artalk-layer-dialog-action')!
   const onclick =
-    (func: (dialogElem: HTMLElement, btnElem: HTMLElement) => boolean | void) =>
+    (f: (btnElem: HTMLElement) => boolean | void) =>
     (evt: Event) => {
-      const returnVal = func(dialogElem, evt.currentTarget as HTMLElement)
+      const returnVal = f(evt.currentTarget as HTMLElement)
       if (returnVal === undefined || returnVal === true) {
         dialogElem.remove()
       }
     }
+
   if (typeof onConfirm === 'function') {
     const btn = Utils.createElement<HTMLButtonElement>(
       '<button data-action="confirm">确定</button>'
@@ -91,6 +89,7 @@ export function showDialog (
     btn.onclick = onclick(onConfirm)
     actionElem.appendChild(btn)
   }
+
   if (typeof onCancel === 'function') {
     const btn = Utils.createElement<HTMLButtonElement>(
       '<button data-action="cancel">取消</button>'
@@ -102,7 +101,7 @@ export function showDialog (
   // 内容
   dialogElem.querySelector('.artalk-layer-dialog-content')!.appendChild(html)
 
-  if (onMount) onMount(dialogElem)
+  return dialogElem
 }
 
 /** 显示消息 */

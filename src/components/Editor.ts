@@ -1,15 +1,16 @@
 import '../style/editor.less'
 
-import Context from '@/Context'
-import Component from '@/lib/component'
-import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
+import Context from '../Context'
+import Component from '../lib/component'
+import * as Utils from '../lib/utils'
+import * as Ui from '../lib/ui'
 import EditorHTML from './html/editor.html?raw'
 import Comment from './Comment'
 
 import EmoticonsPlug from './editor-plugs/EmoticonsPlug'
 import PreviewPlug from './editor-plugs/PreviewPlug'
 import { CommentData } from '~/types/artalk-data'
+import Api from '../lib/api'
 
 export default class Editor extends Component {
   private readonly LOADABLE_PLUG_LIST = [EmoticonsPlug, PreviewPlug]
@@ -96,13 +97,15 @@ export default class Editor extends Component {
       this.user.data.token = ''
       this.user.data.isAdmin = false
       // TODO: 输入个人信息判断管理员登录
-      // if (this.user.checkHasBasicUserInfo()
-      //   && this.artalk.list.checkNickEmailIsAdmin(this.user.data.nick, this.user.data.email)) {
-      //   // 昵称为管理员，显示管理员密码验证 dialog
-      //   this.artalk.checker.action('管理员', () => {
-      //     this.ctx.dispatchEvent('list-refresh-ui')
-      //   })
-      // }
+      if (this.user.checkHasBasicUserInfo()
+        && [this.user.data.nick, this.user.data.email].includes('admin')) {
+        // 昵称为管理员，显示管理员密码验证 dialog
+        this.ctx.dispatchEvent('checker-admin', {
+          onSuccess: () => {
+            this.ctx.dispatchEvent('list-refresh-ui')
+          }
+        })
+      }
     }
 
     this.saveUser()
@@ -304,44 +307,30 @@ export default class Editor extends Component {
     })
   }
 
-  submit () {
+  async submit () {
     if (this.getContent().trim() === '') {
       this.textareaEl.focus()
       return
     }
 
-    this.artalk.request('CommentAdd', {
-      content: this.getContent(),
-      nick: this.user.data.nick,
-      email: this.user.data.email,
-      link: this.user.data.link,
-      rid: this.replyComment === null ? 0 : this.replyComment.id,
-      page_key: this.conf.pageKey,
-      password: this.user.data.token,
-      captcha: this.artalk.checker.submitCaptchaVal || ''
-    }, () => {
-      Ui.showLoading(this.el)
-    }, () => {
+    Ui.showLoading(this.el)
+
+    try {
+      const nComment = await new Api(this.ctx).add({
+        content: this.getContent(),
+        nick: this.user.data.nick || '',
+        email: this.user.data.email || '',
+        link: this.user.data.link || '',
+        rid: this.replyComment === null ? 0 : this.replyComment.id
+      })
+
       Ui.hideLoading(this.el)
-    }, (msg, data) => {
-      this.ctx.dispatchEvent('list-insert', data.comment as CommentData)
+
+      this.ctx.dispatchEvent('list-insert', nComment)
       this.clearEditor() // 清空编辑器
-    }, (msg, data) => {
-      if ((typeof data === 'object') && data !== null && typeof data.need_password === 'boolean' && data.need_password === true) {
-        // 管理员密码验证
-        this.artalk.checker.action('管理员', () => {
-          this.submit()
-        })
-      } else if ((typeof data === 'object') && data !== null && typeof data.need_captcha === 'boolean' && data.need_captcha === true) {
-        // 验证码验证
-        this.artalk.checker.submitCaptchaImgData = data.img_data
-        this.artalk.checker.action('验证码', () => {
-          this.submit()
-        })
-      } else {
-        this.showNotify(`评论失败，${msg}`, 'e')
-      }
-    })
+    } catch (err: any) {
+      this.showNotify(`评论失败，${err.msg || String(err)}`, 'e')
+    }
   }
 
   showNotify (msg: string, type) {

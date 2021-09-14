@@ -21,7 +21,7 @@ const defaultOpts: ArtalkConfig = {
   serverUrl: '',
   emoticons,
   gravatar: {
-    cdn: 'https://cdn.v2ex.com/gravatar/'
+    cdn: 'https://sdn.geekzu.org/avatar/'
   },
   darkMode: false,
 }
@@ -47,6 +47,7 @@ export default class Artalk {
 
     // Options
     this.conf = { ...defaultOpts, ...conf }
+    this.conf.serverUrl = this.conf.serverUrl.replace(/\/$/, '')
 
     // Main Element
     try {
@@ -61,7 +62,7 @@ export default class Artalk {
     }
 
     // Create context
-    this.ctx = new Context(this.el, conf)
+    this.ctx = new Context(this.el, this.conf)
 
     this.el.classList.add('artalk')
     this.el.setAttribute('artalk-run-id', this.contextID.toString())
@@ -103,40 +104,6 @@ export default class Artalk {
     this.ctx.addEventListener('user-changed', () => {
       this.ctx.dispatchEvent('check-admin-show-el')
     })
-  }
-
-  /** 公共请求 */
-  public request (action: string, data: object, before: () => void, after: () => void, success: (msg: string, data: any) => void, error: (msg: string, data: any) => void) {
-    before()
-
-    data = { action, ...data }
-    const formData = new FormData()
-    Object.keys(data).forEach(key => formData.set(key, data[key]))
-
-    const xhr = new XMLHttpRequest()
-    xhr.timeout = 5000
-    xhr.open('POST', this.conf.serverUrl, true)
-
-    xhr.onload = () => {
-      after()
-      if (xhr.status >= 200 && xhr.status < 400) {
-        const respData = JSON.parse(xhr.response)
-        if (respData.success) {
-          success(respData.msg, respData.data)
-        } else {
-          error(respData.msg, respData.data)
-        }
-      } else {
-        error(`服务器响应错误 Code: ${xhr.status}`, {})
-      }
-    };
-
-    xhr.onerror = () => {
-      after()
-      error('网络错误', {})
-    };
-
-    xhr.send(formData)
   }
 
   /** 暗黑模式 - 初始化 */

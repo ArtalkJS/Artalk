@@ -17,7 +17,7 @@ export default class User {
       email: localUser.email || '',
       link: localUser.link || '',
       token: localUser.token || '',
-      isAdmin: localUser.data.isAdmin || false
+      isAdmin: localUser.isAdmin || false
     }
   }
 

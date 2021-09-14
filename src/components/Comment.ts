@@ -1,10 +1,10 @@
-import '@/style/comment.less'
+import '../style/comment.less'
 
-import Context from '@/Context'
-import Component from '@/lib/component'
-import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
-import UADetect from '@/lib/detect'
+import Context from '../Context'
+import Component from '../lib/component'
+import * as Utils from '../lib/utils'
+import * as Ui from '../lib/ui'
+import UADetect from '../lib/detect'
 import { CommentData } from '~/types/artalk-data'
 import CommentHTML from './html/comment.html?raw'
 

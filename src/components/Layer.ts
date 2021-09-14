@@ -1,8 +1,8 @@
-import Context from '@/Context'
-import Component from '@/lib/component'
-import Constant from '@/Constant'
-import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
+import Context from '../Context'
+import Component from '../lib/component'
+import Constant from '../Constant'
+import * as Utils from '../lib/utils'
+import * as Ui from '../lib/ui'
 
 export function GetLayerWrap (ctx: Context): { wrapEl: HTMLElement, maskEl: HTMLElement } {
   let wrapEl = document.querySelector<HTMLElement>(`.artalk-layer-wrap#ctx-${ctx.cid}`)
@@ -44,7 +44,7 @@ export class Layer extends Component {
     this.wrapEl = wrapEl
     this.maskEl = maskEl
 
-    this.el = this.wrapEl.querySelector(`[data-layer-name="${name}".artalk-layer-item]`)!
+    this.el = this.wrapEl.querySelector(`[data-layer-name="${name}"].artalk-layer-item`)!
     if (this.el === null) {
       // 若传递 layer 元素为空
       if (!el) {
@@ -114,10 +114,10 @@ export class Layer extends Component {
 
   /** 销毁 - 无动画 */
   disposeNow () {
-    this.wrapEl.style.display = 'none'
     document.body.style.overflow = ''
     this.el.remove()
     // this.el dispose
+    this.checkCleanLayer()
   }
 
   /** 销毁 */
@@ -125,5 +125,12 @@ export class Layer extends Component {
     this.hide()
     this.el.remove()
     // this.el dispose
+    this.checkCleanLayer()
+  }
+
+  checkCleanLayer () {
+    if (this.getWrapEl().querySelectorAll('.artalk-layer-item').length === 0) {
+      this.wrapEl.style.display = 'none'
+    }
   }
 }

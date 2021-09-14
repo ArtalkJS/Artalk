@@ -100,7 +100,7 @@ export default class EmoticonsPlug extends EditorPlug {
     })
 
     this.typesEl.querySelectorAll('span.active').forEach(item => item.classList.remove('active'))
-    this.typesEl.querySelector(`span[data-key="${key}"]`)!.classList.add('active')
+    this.typesEl.querySelector(`span[data-key="${key}"]`)?.classList.add('active')
 
     this.changeListHeight()
   }

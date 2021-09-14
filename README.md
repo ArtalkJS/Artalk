@@ -125,12 +125,12 @@ var artalk = new Artalk({ // ① 暴露 artalk 变量以供调用
 
 // ③ 动态设置 Artalk 的暗黑模式
 let isDarkMode = false // 读取当前你主题的模式
-artalk.ui.setDarkMode(darkMode)
+artalk.setDarkMode(darkMode)
 
 // ④ 你主题 暗黑模式切换按钮 点击时的触发操作
 function switchDarkMode() {
   let isDarkMode = true // ...
-  artalk.ui.setDarkMode(darkMode)
+  artalk.setDarkMode(darkMode)
 }
 </script>
 ```

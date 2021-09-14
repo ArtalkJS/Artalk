@@ -1,7 +1,6 @@
 import { CommentData, ListData } from '~/types/artalk-data'
 import Context from '../Context'
 
-
 export default class Api {
   private ctx: Context
   private serverURL: string
@@ -18,20 +17,13 @@ export default class Api {
       offset,
     })
 
-    return timeoutPromise(4000, fetch(`${this.serverURL}/api/get`, {
+    return commonFetch(this.ctx, `${this.serverURL}/get`, {
       method: 'POST',
       body: params,
-    })).then(async (resp) => {
-      const json: any = await resp.json()
-      if (!json.success) {
-        throw new Error(json.msg)
-      }
-
-      return json.data as ListData
-    })
+    }).then((json) => (json.data as ListData))
   }
 
-  public async add(comment: CommentData): Promise<CommentData> {
+  public async add(comment: { nick: string, email: string, link: string, content: string, rid: number }): Promise<CommentData> {
     const params = getFormData({
       name: comment.nick,
       email: comment.email,
@@ -42,43 +34,28 @@ export default class Api {
       token: this.ctx.user.data.token,
     })
 
-    return timeoutPromise(4000, fetch(`${this.serverURL}/api/add`, {
+    return commonFetch(this.ctx, `${this.serverURL}/add`, {
       method: 'POST',
       body: params,
-    })).then(async (resp) => {
-      const json: any = await resp.json()
-      if (!json.success) {
-        throw new Error(json.msg)
-      }
-
-      return json.data.comment as CommentData
-    })
+    }).then((json) => (json.data.comment as CommentData))
   }
 
-  public async login(): Promise<string> {
+  public async login(name: string, email: string, password: string): Promise<string> {
     const params = getFormData({
-      user: this, password：
+      name, email, password
     })
 
-    return timeoutPromise(4000, fetch(`${this.serverURL}/login`, {
+    return commonFetch(this.ctx, `${this.serverURL}/login`, {
       method: 'POST',
       body: params,
-    })).then(async (resp) => {
-      const json: any = await resp.json()
-      if (!json.success) {
-        throw new Error(json.msg)
-      }
-
-      return json.data.token
-    })
+    }).then((json) => (json.data.token))
   }
 
   public async captchaGet(): Promise<string> {
-    return timeoutPromise(4000, fetch(`${this.serverURL}/captcha/get`, {
+    return commonFetch(this.ctx, `${this.serverURL}/captcha/refresh`, {
       method: 'GET',
-    })).then(async (resp) => {
-      const json: any = await resp.json()
-      if (!json.success && !!json.data.img_data) {
+    }).then((json) => {
+      if (!!json.success && !!json.data.img_data) {
         return json.data.img_data
       }
 
@@ -87,10 +64,9 @@ export default class Api {
   }
 
   public async captchaCheck(value: string): Promise<string> {
-    return timeoutPromise(4000, fetch(`${this.serverURL}/captcha/get?${new URLSearchParams({ value })}`, {
+    return commonFetch(this.ctx, `${this.serverURL}/captcha/check?${new URLSearchParams({ value })}`, {
       method: 'GET',
-    })).then(async (resp) => {
-      const json: any = await resp.json()
+    }).then((json) => {
       if (!json.success && !!json.data.img_data) {
         return json.data.img_data
       }
@@ -100,11 +76,55 @@ export default class Api {
   }
 }
 
+function commonFetch(ctx: Context, input: RequestInfo, init?: RequestInit | undefined): Promise<any> {
+  return timeoutPromise(4000, fetch(input, init)).then(async (resp) => {
+    let json: any = await resp.json()
+
+    if (json.data && json.data.need_captcha) { // 请求需要验证码
+      const nPromise = new Promise<any>((resolve, reject) => {
+        ctx.dispatchEvent('checker-captcha', {
+          imgData: json.data.img_data,
+          onSuccess: () => {
+            commonFetch(ctx, input, init).then(d => {
+              resolve(d)
+            }).catch(err => {
+              reject(err)
+            })
+          }
+        })
+      })
+
+      json = await nPromise
+    } else if (json.data && json.data.need_login) { // 请求需要管理员权限
+      const nPromise = new Promise<any>((resolve, reject) => {
+        ctx.dispatchEvent('checker-admin', {
+          onSuccess: () => {
+            commonFetch(ctx, input, init).then(d => {
+              resolve(d)
+            }).catch(err => {
+              reject(err)
+            })
+          }
+        })
+      })
+
+      json = await nPromise
+    }
+
+    if (!json.success) {
+      throw json
+    }
+
+    return json
+  })
+}
+
 function getFormData (object: any): FormData {
   const formData = new FormData()
   Object.keys(object).forEach(key => formData.append(key, String(object[key])))
   return formData
 }
+
 
 /** TODO: 我靠，一个 timeout，都要丑陋的实现 */
 function timeoutPromise<T>(ms: number, promise: Promise<T>): Promise<T> {

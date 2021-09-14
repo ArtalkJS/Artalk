@@ -16,8 +16,20 @@ export interface EventPayloadMap {
   'editor-close-comment': undefined
   'editor-reply': CommentData
   'user-changed': undefined
+  'checker-admin': CheckerConf
+  'checker-captcha': CheckerCaptchaConf
 }
 
+export interface CheckerConf {
+  onSuccess?: (inputVal: string, dialogEl?: HTMLElement) => void
+  onMount?: (dialogEl: HTMLElement) => void
+}
+
+export interface CheckerCaptchaConf extends CheckerConf {
+  imgData?: string
+}
+
+// ============================================
 export interface Listener<P> {
   (payload: P): void
 }

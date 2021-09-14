@@ -1,5 +1,3 @@
-import libMarked from 'marked'
-import hanabi from 'hanabi'
 import Context from '../Context'
 
 export function createElement<E extends HTMLElement = HTMLElement> (htmlStr: string = ''): E {
@@ -95,32 +93,34 @@ export function timeAgo (date: Date) {
   }
 }
 
-let markedInstance: any = null
+// let markedInstance: any = null
 export function marked (ctx: Context, src: string): string {
-  if (!markedInstance) {
-    const renderer = new libMarked.Renderer()
-    const linkRenderer = renderer.link
-    renderer.link = (href, title, text) => {
-      const html = linkRenderer.call(renderer, href, title, text)
-      return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ')
-    }
+  // if (!markedInstance) {
+  //   const renderer = new libMarked.Renderer()
+  //   const linkRenderer = renderer.link
+  //   renderer.link = (href, title, text) => {
+  //     const html = linkRenderer.call(renderer, href, title, text)
+  //     return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ')
+  //   }
 
-    const nMarked = libMarked
-    nMarked.setOptions({
-      renderer,
-      highlight: (code) => hanabi(code),
-      pedantic: false,
-      gfm: true,
-      tables: true,
-      breaks: true,
-      sanitize: true, // 净化
-      smartLists: true,
-      smartypants: true,
-      xhtml: false
-    })
+  //   const nMarked = libMarked
+  //   nMarked.setOptions({
+  //     renderer,
+  //     highlight: (code) => hanabi(code),
+  //     pedantic: false,
+  //     gfm: true,
+  //     tables: true,
+  //     breaks: true,
+  //     sanitize: true, // 净化
+  //     smartLists: true,
+  //     smartypants: true,
+  //     xhtml: false
+  //   })
 
-    markedInstance = nMarked
-  }
+  //   markedInstance = nMarked
+  // }
 
-  return markedInstance(src)
+  // return markedInstance(src)
+
+  return ''
 }

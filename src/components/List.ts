@@ -1,9 +1,9 @@
-import '@/style/list.less'
+import '../style/list.less'
 
-import Context from '@/Context'
-import Component from '@/lib/component'
-import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
+import Context from '../Context'
+import Component from '../lib/component'
+import * as Utils from '../lib/utils'
+import * as Ui from '../lib/ui'
 import Api from '../lib/api'
 import Comment from './Comment'
 import { ListData, CommentData } from '~/types/artalk-data'
@@ -76,7 +76,9 @@ export default class List extends Component {
     this.isFirstLoad = false
   }
 
-  public onError (msg: string) {
+  public onError (msg: any) {
+    msg = String(msg)
+    console.error(msg)
     if (this.isFirstLoad) {
       const errEl = Utils.createElement(`<span>${msg}，无法获取评论列表数据<br/></span>`)
       const retryBtn = Utils.createElement('<span style="cursor:pointer">点击重新获取</span>')
@@ -103,18 +105,17 @@ export default class List extends Component {
     else this.readMoreBtnSetLoading(true)
 
     try {
-      const listData = await new Api(this.ctx).Get(offset)
+      const listData = await new Api(this.ctx).get(offset)
 
       // hide loading
       this.isLoading = false
-      if (offset === 0) Ui.showLoading(this.ctx)
+      if (offset === 0) Ui.hideLoading(this.ctx)
       else this.readMoreBtnSetLoading(false)
 
       // load data
       this.onLoad(listData)
-    } catch (err) {
-      console.error(err)
-      this.onError(err)
+    } catch (e: any) {
+      this.onError(e.msg || String(e))
     }
   }
 
@@ -193,10 +194,10 @@ export default class List extends Component {
 
     // 关闭评论
     if (!!this.data && !!this.data.page && this.data.page.is_close_comment === true) {
-      this.ctx.dispatchEvent('editor-open-comment')
+      this.ctx.dispatchEvent('editor-close-comment')
       this.closeCommentBtnEl.innerHTML = '打开评论'
     } else if (!isFirstUse) {
-      this.ctx.dispatchEvent('editor-close-comment')
+      this.ctx.dispatchEvent('editor-open-comment')
       this.closeCommentBtnEl.innerHTML = '关闭评论'
     }
   }

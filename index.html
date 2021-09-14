@@ -29,7 +29,6 @@
     body.dark-mode .to-night { background: #fff;border: 1px solid #2d3235;color: #0083ff; }
     .to-top { right: 25px; }
   </style>
-  <script type="module" src="./src/main.ts"></script>
 </head>
 <body>
   <div class="card billboard artalk-fade-in">
@@ -49,21 +48,21 @@
   <div class="float-btn to-night artalk-fade-in">Blink</div>
   <div class="float-btn to-top artalk-fade-in" style="display: none;">TOP</div>
 
-  <script>
+  <script type="module">
+    import Artalk from './src/main'
     var artalk = new Artalk({
       el: '#comments',
       placeholder: '来啊，快活啊 ( ゜- ゜)',
       defaultAvatar: 'mp',
       pageKey: 'https://artalk.js.org/',
-      serverUrl: (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:23366/' : 'https://qwqaq.com/Artalk/index.php',
+      serverUrl: (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:23366/api' : 'https://qwqaq.com/Artalk/api',
       readMore: {
         pageSize: 15,
         autoLoad: true
       },
     })
-  </script>
-  <script>
-    (function () {
+
+    ;(function () {
       const toTopElem = document.querySelector('.to-top')
       toTopElem.addEventListener('click', () => {
         window.scrollTo(0, 0)
@@ -87,7 +86,7 @@
       }
     })();
 
-    (function () {
+    ;(function () {
       // @Refer: https://stackoverflow.com/questions/50840168/how-to-detect-if-the-os-is-in-dark-mode-in-browsers
       let darkMode = false
 
@@ -110,7 +109,7 @@
       }
 
       function checkAndApplyDarkMode () {
-        artalk.ui.setDarkMode(darkMode)
+        artalk.setDarkMode(darkMode)
         if (darkMode) {
           document.body.classList.add('dark-mode')
         } else {

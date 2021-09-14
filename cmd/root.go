@@ -114,7 +114,7 @@ func initDB() {
 	}
 
 	// Migrate the schema
-	lib.DB.AutoMigrate(&model.Page{}, &model.User{}, &model.Comment{}) // 注意表的创建顺序
+	lib.DB.AutoMigrate(&model.Page{}, &model.User{}, &model.Comment{}) // 注意表的创建顺序，因为有关联字段
 }
 
 func initCache() {

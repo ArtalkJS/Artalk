@@ -41,7 +41,7 @@ func RespSuccess(c echo.Context) error {
 }
 
 // RespError is just response error
-func RespError(c echo.Context, msg string, data ...interface{}) error {
+func RespError(c echo.Context, msg string, data ...Map) error {
 	// log
 	req := c.Request()
 	path := req.URL.Path
@@ -50,10 +50,15 @@ func RespError(c echo.Context, msg string, data ...interface{}) error {
 	}
 	LogWithHttpInfo(c).Errorf("[响应] %s %s ==> %s", req.Method, path, strconv.Quote(msg))
 
+	respData := Map{}
+	if len(data) > 0 {
+		respData = data[0]
+	}
+
 	return c.JSON(http.StatusOK, &JSONResult{
 		Success: false,
 		Msg:     msg,
-		Data:    data,
+		Data:    respData,
 	})
 }
 

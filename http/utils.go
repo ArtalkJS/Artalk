@@ -103,7 +103,7 @@ func CheckIfAllowed(c echo.Context, name string, email string, page model.Page) 
 	// 如果用户是管理员，或者当前页只能管理员评论
 	if IsAdminUser(name, email) || page.Type == model.PageOnlyAdmin {
 		if !CheckIsAdminReq(c) {
-			return false, RespError(c, "需要验证管理员身份", Map{"need_password": true})
+			return false, RespError(c, "需要验证管理员身份", Map{"need_login": true})
 		}
 	}
 

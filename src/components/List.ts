@@ -15,7 +15,8 @@ export default class List extends Component {
   public comments: Comment[] = []
 
   public data?: ListData
-  public reqPageSize: number = 15 // 每次请求获取量
+  public pageSize: number = 15 // 每次请求获取量
+  public offset: number = 0
 
   public readMoreEl: HTMLElement
   public readMoreLoadingEl: HTMLElement
@@ -38,7 +39,7 @@ export default class List extends Component {
     this.initListActionBtn()
 
     // 查看更多
-    this.reqPageSize = this.conf.readMore ? (this.conf.readMore.pageSize || this.reqPageSize) : this.reqPageSize
+    this.pageSize = this.conf.readMore ? (this.conf.readMore.pageSize || this.pageSize) : this.pageSize
     this.readMoreEl = this.el.querySelector('.artalk-list-read-more')!
     this.readMoreLoadingEl = this.readMoreEl.querySelector('.artalk-loading-icon')!
     this.readMoreTextEl = this.readMoreEl.querySelector('.artalk-text')!
@@ -56,14 +57,43 @@ export default class List extends Component {
     this.ctx.addEventListener('list-insert', (data) => (this.insertComment(data)))
   }
 
+  public async reqComments(offset: number = 0) {
+    if (offset === 0) {
+      this.clearComments()
+    }
+
+    // set loading
+    this.isLoading = true
+    if (offset === 0) Ui.showLoading(this.ctx)
+    else this.readMoreBtnSetLoading(true)
+
+    try {
+      const listData = await new Api(this.ctx).get(offset)
+
+      // load data
+      this.offset = offset
+      this.onLoad(listData)
+    } catch (e: any) {
+      this.onError(e.msg || String(e))
+    } finally {
+      // hide loading
+      this.isLoading = false
+      if (offset === 0) Ui.hideLoading(this.ctx)
+      else this.readMoreBtnSetLoading(false)
+    }
+  }
+
   public onLoad (data: ListData) {
     this.data = data
     Ui.setGlobalError(this.ctx, null)
     this.importComments(data.comments)
 
     // 查看更多按钮
-    if (this.hasMoreComments) this.showReadMoreBtn()
-    else this.hideReadMoreBtn()
+    if (this.hasMoreComments) {
+      this.showReadMoreBtn()
+    } else {
+      this.hideReadMoreBtn()
+    }
 
     // 检测锚点跳转
     this.checkGoToCommentByUrlHash()
@@ -87,35 +117,8 @@ export default class List extends Component {
       })
       errEl.appendChild(retryBtn)
       Ui.setGlobalError(this.ctx, errEl)
-
-      this.isFirstLoad = false
     } else {
       this.readMoreBtnShowErr(`${msg} 获取失败`)
-    }
-  }
-
-  public async reqComments(offset: number = 0) {
-    if (offset === 0) {
-      this.clearComments()
-    }
-
-    // set loading
-    this.isLoading = true
-    if (offset === 0) Ui.showLoading(this.ctx)
-    else this.readMoreBtnSetLoading(true)
-
-    try {
-      const listData = await new Api(this.ctx).get(offset)
-
-      // hide loading
-      this.isLoading = false
-      if (offset === 0) Ui.hideLoading(this.ctx)
-      else this.readMoreBtnSetLoading(false)
-
-      // load data
-      this.onLoad(listData)
-    } catch (e: any) {
-      this.onError(e.msg || String(e))
     }
   }
 
@@ -230,12 +233,12 @@ export default class List extends Component {
   /** 是否还有更多的评论 */
   get hasMoreComments (): boolean {
     if (!this.data) return false
-    return this.data.total_parents > (this.data.offset + this.data.limit)
+    return this.data.total_parents > (this.offset + this.pageSize)
   }
 
   /** 阅读更多操作 */
   readMore () {
-    const offset = (this.data?.offset || 0) + this.reqPageSize
+    const offset = this.offset + this.pageSize
     this.reqComments(offset)
   }
 
@@ -251,7 +254,6 @@ export default class List extends Component {
 
   /** 阅读更多按钮 - 显示加载 */
   readMoreBtnSetLoading (isLoading: boolean) {
-    this.showReadMoreBtn()
     this.readMoreLoadingEl.style.display = isLoading ? '' : 'none'
     this.readMoreTextEl.style.display = isLoading ? 'none' : ''
   }

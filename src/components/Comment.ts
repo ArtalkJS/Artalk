@@ -166,7 +166,7 @@ export default class Comment extends Component {
 
   getChildrenEl () {
     if (this.childrenEl === null) {
-      // console.log(this.nestedNo)
+      // console.log(this.nestedNum)
       if (this.nestedNum < this.maxNestingNum) {
         this.childrenEl = Utils.createElement('<div class="artalk-comment-children"></div>')
         this.mainEl.appendChild(this.childrenEl)

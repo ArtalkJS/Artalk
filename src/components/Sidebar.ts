@@ -46,11 +46,14 @@ export default class Sidebar extends Component {
   }
 
   show () {
+    this.el.style.transform = '' // 动画清除，防止二次打开失效
+
     this.layer = BuildLayer(this.ctx, 'sidebar', this.el)
     this.layer.show()
     this.contentEl.scrollTo(0, 0)
+
     setTimeout(() => {
-      this.el.style.transform = 'translate(0, 0)'
+      this.el.style.transform = 'translate(0, 0)' // 执行动画
     }, 20)
 
     this.reqComment('mentions')

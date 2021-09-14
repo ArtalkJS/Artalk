@@ -32,14 +32,16 @@ export default function BuildLayer (ctx: Context, name: string, el?: HTMLElement
 }
 
 export class Layer extends Component {
+  private name: string
   private wrapEl: HTMLElement
   private maskEl: HTMLElement
 
   private maskClickHideEnable: boolean = true
 
-  constructor (ctx: Context, private name: string, el?: HTMLElement) {
+  constructor (ctx: Context, name: string, el?: HTMLElement) {
     super(ctx)
 
+    this.name = name
     const { wrapEl, maskEl } = GetLayerWrap(ctx)
     this.wrapEl = wrapEl
     this.maskEl = maskEl

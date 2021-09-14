@@ -15,7 +15,7 @@ export default class PreviewPlug extends EditorPlug {
   }
 
   initEl () {
-    this.el = Utils.createElement('<div class="artalk-editor-plug-preview"></div>')
+    this.el = Utils.createElement('<div class="atk-editor-plug-preview"></div>')
     this.binded = false
   }
 

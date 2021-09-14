@@ -1,4 +1,4 @@
-.artalk > .artalk-editor {
+.artalk > .atk-editor {
   border: 1px solid @color-border;
   border-radius: @block-radius;
   margin-bottom: @block-margin;
@@ -12,11 +12,11 @@
     }
   }
 
-  & > .artalk-editor-header {
+  & > .atk-editor-header {
     display: flex;
     flex-direction: row;
     padding: 0 @block-padding;
-    padding-top: @block-padding/2;
+    padding-top: calc(@block-padding / 2);
     padding-bottom: 0;
 
     input {
@@ -24,7 +24,7 @@
       transition: color .3s ease;
       flex: 1;
       background: transparent;
-      border-radius: @block-radius/2;
+      border-radius: calc(@block-radius / 2);
       padding: 6px 5px;
       resize: none;
       outline: none;
@@ -36,24 +36,24 @@
     }
   }
 
-  & > .artalk-editor-textarea-wrap {
-    .artalk-editor-textarea {
+  & > .atk-editor-textarea-wrap {
+    .atk-editor-textarea {
       color: @color-font;
       background-color: @color-bg;
       margin-top: 2px;
-      padding: @block-padding 10px + 5px;
+      padding: @block-padding calc(10px + 5px);
       display: block;
       width: 100%;
       min-height: 130px;
       resize: none;
       word-wrap: break-word;
       border: 2px solid transparent;
-      border-radius: @block-radius/2;
+      border-radius: calc(@block-radius / 2);
       outline: none;
       overflow: hidden;
     }
 
-    .artalk-close-comment {
+    .atk-close-comment {
       display: flex;
       user-select: none;
       // background: repeating-linear-gradient(145deg, #f2f2f2, #f2f2f2 15px, #fff 0, #fff 30px);
@@ -78,7 +78,7 @@
       }
     }
 
-    .artalk-send-reply {
+    .atk-send-reply {
       font-size: 14px;
       height: 30px;
       line-height: 30px;
@@ -94,10 +94,10 @@
       white-space: nowrap;
       z-index: 2;
 
-      .artalk-text {
+      .atk-text {
       }
 
-      .artalk-cancel {
+      .atk-cancel {
         pointer-events: all;
         position: absolute;
         right: 0;
@@ -117,38 +117,38 @@
     }
   }
 
-  & > .artalk-editor-plug-wrap {
+  & > .atk-editor-plug-wrap {
     position: relative;
     height: 180px;
     width: 100%;
     overflow: hidden;
     border-top: 1px solid @color-border;
-    animation: .3s both artalkFadeIn;
+    animation: .3s both atkFadeIn;
     transition: .2s height ease-in-out;
   }
 
-  & > .artalk-editor-bottom {
+  & > .atk-editor-bottom {
     display: flex;
     flex-direction: row;
     border-top: 1px solid @color-border;
-    padding: 0 0 0 @block-padding - 5px;
+    padding: 0 0 0 calc(@block-padding - 5px);
 
-    .artalk-editor-bottom-part {
+    .atk-editor-bottom-part {
       display: flex;
       flex: 1;
       flex-direction: row;
       align-items: center;
 
-      &.artalk-left {
+      &.atk-left {
         flex: inherit;
       }
 
-      &.artalk-right {
+      &.atk-right {
         justify-content: flex-end;
       }
     }
 
-    .artalk-editor-action {
+    .atk-editor-action {
       padding: 0 8px;
       cursor: pointer;
       color: @color-grey;
@@ -178,7 +178,7 @@
       }
     }
 
-    .artalk-send-btn {
+    .atk-send-btn {
       background: @color-main;
       color: #FFF;
       border: none;
@@ -195,7 +195,7 @@
     }
   }
 
-  & > .artalk-editor-notify-wrap {
+  & > .atk-editor-notify-wrap {
     position: absolute;
     right: -2px;
     bottom: 36px;

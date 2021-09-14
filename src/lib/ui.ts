@@ -5,11 +5,11 @@ import Context from '../Context'
 export function showLoading(parentElem: HTMLElement|Context) {
   if (parentElem instanceof Context) parentElem = parentElem.rootEl
 
-  let loadingEl = parentElem.querySelector<HTMLElement>('.artalk-loading')
+  let loadingEl = parentElem.querySelector<HTMLElement>('.atk-loading')
   if (!loadingEl) {
     loadingEl = Utils.createElement(`
-        <div class="artalk-loading" style="display: none;">
-          <div class="artalk-loading-spinner">
+        <div class="atk-loading" style="display: none;">
+          <div class="atk-loading-spinner">
           <svg viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle></svg>
           </div>
           </div>`)
@@ -22,7 +22,7 @@ export function showLoading(parentElem: HTMLElement|Context) {
 export function hideLoading(parentElem: HTMLElement|Context) {
   if (parentElem instanceof Context) parentElem = parentElem.rootEl
 
-  const loadingEl = parentElem.querySelector<HTMLElement>('.artalk-loading')
+  const loadingEl = parentElem.querySelector<HTMLElement>('.atk-loading')
   if (loadingEl) loadingEl.style.display = 'none'
 }
 
@@ -64,15 +64,15 @@ export function buildDialog (
   onCancel?: () => boolean | void,
 ): HTMLElement {
   const dialogElem = Utils.createElement(
-    `<div class="artalk-layer-dialog-wrap">
-      <div class="artalk-layer-dialog">
-      <div class="artalk-layer-dialog-content"></div>
-      <div class="artalk-layer-dialog-action">
+    `<div class="atk-layer-dialog-wrap">
+      <div class="atk-layer-dialog">
+      <div class="atk-layer-dialog-content"></div>
+      <div class="atk-layer-dialog-action">
       </div>`
   )
 
   // 按钮
-  const actionElem = dialogElem.querySelector<HTMLElement>('.artalk-layer-dialog-action')!
+  const actionElem = dialogElem.querySelector<HTMLElement>('.atk-layer-dialog-action')!
   const onclick =
     (f: (btnElem: HTMLElement) => boolean | void) =>
     (evt: Event) => {
@@ -99,7 +99,7 @@ export function buildDialog (
   }
 
   // 内容
-  dialogElem.querySelector('.artalk-layer-dialog-content')!.appendChild(html)
+  dialogElem.querySelector('.atk-layer-dialog-content')!.appendChild(html)
 
   return dialogElem
 }
@@ -114,15 +114,15 @@ export function showNotify(
   const timeout = 3000 // 持续显示时间 ms
 
   const notifyElem = Utils.createElement(
-    `<div class="artalk-notify artalk-fade-in" style="background-color: ${colors[type]}"><span class="artalk-notify-content"></span></div>`
+    `<div class="atk-notify atk-fade-in" style="background-color: ${colors[type]}"><span class="atk-notify-content"></span></div>`
   )
-  const notifyContentEl = notifyElem.querySelector<HTMLElement>('.artalk-notify-content')!
+  const notifyContentEl = notifyElem.querySelector<HTMLElement>('.atk-notify-content')!
   notifyContentEl.innerHTML = Utils.htmlEncode(msg).replace('\n', '<br/>')
 
   wrapElem.appendChild(notifyElem)
 
   const notifyRemove = () => {
-    notifyElem.classList.add('artalk-fade-out')
+    notifyElem.classList.add('atk-fade-out')
     setTimeout(() => {
       notifyElem.remove()
     }, 200)
@@ -147,10 +147,10 @@ export function playFadeAnim(
   after?: () => void,
   type: 'in' | 'out' = 'in'
 ) {
-  elem.classList.add(`artalk-fade-${type}`)
+  elem.classList.add(`atk-fade-${type}`)
   // 动画结束清除 class
   const onAnimEnded = () => {
-    elem.classList.remove(`artalk-fade-${type}`)
+    elem.classList.remove(`atk-fade-${type}`)
     elem.removeEventListener('animationend', onAnimEnded)
     if (after) after()
   }
@@ -169,19 +169,19 @@ export function playFadeOutAnim(elem: HTMLElement, after?: () => void) {
 
 /** 设置全局错误 */
 export function setGlobalError(ctx: Context, html: string | HTMLElement | null) {
-  let elem = ctx.rootEl.querySelector<HTMLElement>('.artalk-error-layer')
+  let elem = ctx.rootEl.querySelector<HTMLElement>('.atk-error-layer')
   if (html === null) {
     if (elem !== null) elem.remove()
     return
   }
   if (!elem) {
     elem = Utils.createElement(
-      '<div class="artalk-error-layer"><span class="artalk-error-title">Artalk Error</span><span class="artalk-error-text"></span></div>'
+      '<div class="atk-error-layer"><span class="atk-error-title">Artalk Error</span><span class="atk-error-text"></span></div>'
     )
     ctx.rootEl.appendChild(elem)
   }
 
-  const errorTextEl = elem.querySelector<HTMLElement>('.artalk-error-text')!
+  const errorTextEl = elem.querySelector<HTMLElement>('.atk-error-text')!
   errorTextEl.innerHTML = ''
   if (html === null) return
 

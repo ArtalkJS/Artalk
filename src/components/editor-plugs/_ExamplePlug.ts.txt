@@ -13,7 +13,7 @@ export default class PreviewPlug extends ArtalkContext {
   }
 
   initElem () {
-    this.elem = Utils.createElement('<div class="artalk-editor-plug-example"></div>')
+    this.elem = Utils.createElement('<div class="atk-editor-plug-example"></div>')
   }
 
   getName () {

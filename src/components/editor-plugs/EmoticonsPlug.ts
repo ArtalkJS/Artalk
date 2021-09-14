@@ -26,19 +26,19 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   initEl () {
-    this.el = Utils.createElement(`<div class="artalk-editor-plug-emoticons"></div>`)
+    this.el = Utils.createElement(`<div class="atk-editor-plug-emoticons"></div>`)
 
     // 表情列表
-    this.listWrapEl = Utils.createElement(`<div class="artalk-emoticons-list-wrap"></div>`)
+    this.listWrapEl = Utils.createElement(`<div class="atk-emoticons-list-wrap"></div>`)
     this.el.append(this.listWrapEl)
 
     Object.entries(this.emoticons).forEach(([key, item]) => {
-      const emoticonsEl = Utils.createElement(`<div class="artalk-emoticons-list" style="display: none;"></div>`)
+      const emoticonsEl = Utils.createElement(`<div class="atk-emoticons-list" style="display: none;"></div>`)
       this.listWrapEl.append(emoticonsEl)
       emoticonsEl.setAttribute('data-key', key)
       emoticonsEl.setAttribute('data-input-type', item.inputType)
       Object.entries(item.container).forEach(([name, content]) => {
-        const itemEl = Utils.createElement(`<span class="artalk-emoticons-item"></span>`)
+        const itemEl = Utils.createElement(`<span class="atk-emoticons-item"></span>`)
         emoticonsEl.append(itemEl)
         itemEl.setAttribute('title', name)
         itemEl.setAttribute('data-content', content)
@@ -54,7 +54,7 @@ export default class EmoticonsPlug extends EditorPlug {
     })
 
     // 表情分类
-    this.typesEl = Utils.createElement(`<div class="artalk-emoticons-types"></div>`)
+    this.typesEl = Utils.createElement(`<div class="atk-emoticons-types"></div>`)
     this.el.append(this.typesEl)
     Object.entries(this.emoticons).forEach(([key, item]) => {
       const itemEl = Utils.createElement('<span />')
@@ -77,10 +77,10 @@ export default class EmoticonsPlug extends EditorPlug {
       this.openType(Object.keys(this.emoticons)[0])
 
     // 绑定点击表情
-    this.listWrapEl.querySelectorAll<HTMLElement>('.artalk-emoticons-item').forEach((item: HTMLElement) => {
+    this.listWrapEl.querySelectorAll<HTMLElement>('.atk-emoticons-item').forEach((item: HTMLElement) => {
       item.onclick = (evt) => {
         const elem = evt.currentTarget as HTMLElement
-        const inputType = elem.closest('.artalk-emoticons-list')!.getAttribute('data-input-type')
+        const inputType = elem.closest('.atk-emoticons-list')!.getAttribute('data-input-type')
 
         const title = elem.getAttribute('title')
         const content = elem.getAttribute('data-content')

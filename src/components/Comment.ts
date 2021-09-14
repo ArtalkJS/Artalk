@@ -36,22 +36,22 @@ export default class Comment extends Component {
 
   private renderElem () {
     this.el = Utils.createElement(CommentHTML)
-    this.mainEl = this.el.querySelector('.artalk-comment-main')!
-    this.bodyEl = this.el.querySelector('.artalk-body')!
-    this.contentEl = this.bodyEl.querySelector('.artalk-content')!
-    this.actionsEl = this.el.querySelector('.artalk-comment-actions')!
+    this.mainEl = this.el.querySelector('.atk-comment-main')!
+    this.bodyEl = this.el.querySelector('.atk-body')!
+    this.contentEl = this.bodyEl.querySelector('.atk-content')!
+    this.actionsEl = this.el.querySelector('.atk-comment-actions')!
     this.childrenEl = null
 
     // 填入内容
     this.el.setAttribute('data-comment-id', `${this.data.id}`)
-    this.el.querySelector('.artalk-avatar a')!.setAttribute('href', this.data.link)
-    this.el.querySelector('.artalk-avatar img')!.setAttribute('src', this.getGravatarUrl())
+    this.el.querySelector('.atk-avatar a')!.setAttribute('href', this.data.link)
+    this.el.querySelector('.atk-avatar img')!.setAttribute('src', this.getGravatarUrl())
 
-    const nickEl = this.el.querySelector<HTMLLinkElement>('.artalk-nick > a')!
+    const nickEl = this.el.querySelector<HTMLLinkElement>('.atk-nick > a')!
     nickEl.innerText = this.data.nick
     nickEl.href = this.data.link
 
-    const badgeEl = this.el.querySelector<HTMLElement>('.artalk-badge')!
+    const badgeEl = this.el.querySelector<HTMLElement>('.atk-badge')!
     if (this.data.badge) {
       badgeEl.innerText = this.data.badge.name || '徽章'
       if (this.data.badge.color)
@@ -60,33 +60,33 @@ export default class Comment extends Component {
       badgeEl.remove()
     }
 
-    this.el.querySelector<HTMLElement>('.artalk-date')!.innerText = this.getDateFormatted()
-    this.el.querySelector<HTMLElement>('.artalk-ua.ua-browser')!.innerText = this.getUserUaBrowser()
-    this.el.querySelector<HTMLElement>('.artalk-ua.ua-os')!.innerText = this.getUserUaOS()
+    this.el.querySelector<HTMLElement>('.atk-date')!.innerText = this.getDateFormatted()
+    this.el.querySelector<HTMLElement>('.atk-ua.ua-browser')!.innerText = this.getUserUaBrowser()
+    this.el.querySelector<HTMLElement>('.atk-ua.ua-os')!.innerText = this.getUserUaOS()
 
     // 内容 & 折叠
     if (!this.data.is_collapsed)
       this.contentEl.innerHTML = this.getContentMarked()
 
     if (this.data.is_collapsed) {
-      this.contentEl.classList.add('artalk-hide', 'artalk-type-collapsed')
+      this.contentEl.classList.add('atk-hide', 'atk-type-collapsed')
       const collapsedInfoEl = Utils.createElement(`
-      <div class="artalk-collapsed">
-        <span class="artalk-text">该评论已被系统或管理员折叠</span>
-        <span class="artalk-show-btn">查看内容</span>
+      <div class="atk-collapsed">
+        <span class="atk-text">该评论已被系统或管理员折叠</span>
+        <span class="atk-show-btn">查看内容</span>
       </div>`)
       this.contentEl.insertAdjacentElement('afterbegin', collapsedInfoEl)
 
-      const contentShowBtn = collapsedInfoEl.querySelector('.artalk-show-btn')!
+      const contentShowBtn = collapsedInfoEl.querySelector('.atk-show-btn')!
       contentShowBtn.addEventListener('click', () => {
-        if (this.contentEl.classList.contains('artalk-hide')) {
+        if (this.contentEl.classList.contains('atk-hide')) {
           this.contentEl.innerHTML = this.getContentMarked()
-          this.contentEl.classList.remove('artalk-hide')
+          this.contentEl.classList.remove('atk-hide')
           Ui.playFadeInAnim(this.contentEl)
           contentShowBtn.innerHTML = '收起内容'
         } else {
           this.contentEl.innerHTML = ''
-          this.contentEl.classList.add('artalk-hide')
+          this.contentEl.classList.add('atk-hide')
           contentShowBtn.innerHTML = '查看内容'
         }
       })
@@ -168,7 +168,7 @@ export default class Comment extends Component {
     if (this.childrenEl === null) {
       // console.log(this.nestedNum)
       if (this.nestedNum < this.maxNestingNum) {
-        this.childrenEl = Utils.createElement('<div class="artalk-comment-children"></div>')
+        this.childrenEl = Utils.createElement('<div class="atk-comment-children"></div>')
         this.mainEl.appendChild(this.childrenEl)
       } else if (this.parent) {
           this.childrenEl = this.parent.getChildrenEl()
@@ -218,7 +218,7 @@ export default class Comment extends Component {
 
   /** 管理员 - 评论折叠 */
   adminCollapse (btnElem: HTMLElement) {
-    if (btnElem.classList.contains('artalk-in-process')) return // 若正在折叠中
+    if (btnElem.classList.contains('atk-in-process')) return // 若正在折叠中
     const btnTextOrg = btnElem.innerText
     const isCollapse = !this.data.is_collapsed
 
@@ -230,11 +230,11 @@ export default class Comment extends Component {
     //   token: this.ctx.user.data.token,
     //   is_collapsed: Number(isCollapse)
     // }, () => {
-    //   btnElem.classList.add('artalk-in-process')
+    //   btnElem.classList.add('atk-in-process')
     //   btnElem.innerText = isCollapse ? '折叠中...' : '展开中...'
     // }, () => {
     // }, (msg, data) => {
-    //   btnElem.classList.remove('artalk-in-process')
+    //   btnElem.classList.remove('atk-in-process')
     //   this.data.is_collapsed = data.is_collapsed
     //   this.eachComment([this], (item) => {
     //     item.data.is_allow_reply = !data.is_collapsed // 禁止回复
@@ -243,19 +243,19 @@ export default class Comment extends Component {
     //   Ui.playFadeInAnim(this.bodyEl)
     //   this.list.refreshUI()
     // }, (msg, data) => {
-    //   btnElem.classList.add('artalk-error')
+    //   btnElem.classList.add('atk-error')
     //   btnElem.innerText = isCollapse ? '折叠失败' : '展开失败'
     //   setTimeout(() => {
     //     btnElem.innerText = btnTextOrg
-    //     btnElem.classList.remove('artalk-error')
-    //     btnElem.classList.remove('artalk-in-process')
+    //     btnElem.classList.remove('atk-error')
+    //     btnElem.classList.remove('atk-in-process')
     //   }, 2000)
     // })
   }
 
   /** 管理员 - 评论删除 */
   adminDelete (btnElem: HTMLElement) {
-    if (btnElem.classList.contains('artalk-in-process')) return // 若正在删除中
+    if (btnElem.classList.contains('atk-in-process')) return // 若正在删除中
 
     // 删除确认
     const btnClicked = Number(btnElem.getAttribute('data-btn-clicked') || 1)
@@ -280,7 +280,7 @@ export default class Comment extends Component {
     //   email: this.ctx.user.data.email,
     //   token: this.ctx.user.data.token
     // }, () => {
-    //   btnElem.classList.add('artalk-in-process')
+    //   btnElem.classList.add('atk-in-process')
     //   btnElem.innerText = '删除中...'
     // }, () => {
     // }, (msg, data) => {
@@ -288,14 +288,14 @@ export default class Comment extends Component {
     //   this.artalk.deleteComment(this)
     //   this.list.data.total -= 1 // 评论数 -1
     //   this.list.refreshUI() // 刷新 list
-    //   btnElem.classList.remove('artalk-in-process')
+    //   btnElem.classList.remove('atk-in-process')
     // }, (msg, data) => {
-    //   btnElem.classList.add('artalk-error')
+    //   btnElem.classList.add('atk-error')
     //   btnElem.innerText = '删除失败'
     //   setTimeout(() => {
     //     btnElem.innerText = btnTextOrg
-    //     btnElem.classList.remove('artalk-error')
-    //     btnElem.classList.remove('artalk-in-process')
+    //     btnElem.classList.remove('atk-error')
+    //     btnElem.classList.remove('atk-in-process')
     //   }, 2000)
     // })
   }

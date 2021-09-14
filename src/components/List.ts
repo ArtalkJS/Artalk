@@ -33,21 +33,21 @@ export default class List extends Component {
     super(ctx)
 
     this.el = Utils.createElement(ListHTML)
-    this.commentsWrapEl = this.el.querySelector('.artalk-list-comments-wrap')!
+    this.commentsWrapEl = this.el.querySelector('.atk-list-comments-wrap')!
 
     // 操作按钮
     this.initListActionBtn()
 
     // 查看更多
     this.pageSize = this.conf.readMore ? (this.conf.readMore.pageSize || this.pageSize) : this.pageSize
-    this.readMoreEl = this.el.querySelector('.artalk-list-read-more')!
-    this.readMoreLoadingEl = this.readMoreEl.querySelector('.artalk-loading-icon')!
-    this.readMoreTextEl = this.readMoreEl.querySelector('.artalk-text')!
+    this.readMoreEl = this.el.querySelector('.atk-list-read-more')!
+    this.readMoreLoadingEl = this.readMoreEl.querySelector('.atk-loading-icon')!
+    this.readMoreTextEl = this.readMoreEl.querySelector('.atk-text')!
     this.readMoreEl.addEventListener('click', () => {
       this.readMore()
     })
 
-    this.el.querySelector<HTMLElement>('.artalk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
+    this.el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
 
     this.ctx.addEventListener('list-load', this.onLoad) // 装载事件
     this.ctx.addEventListener('list-error', this.onError) // 错误事件
@@ -170,14 +170,14 @@ export default class List extends Component {
 
   /** 刷新界面 */
   public refreshUI (isFirstUse: boolean = false) {
-    this.el.querySelector<HTMLElement>('.artalk-comment-count-num')!.innerText = String(this.getListCommentCount())
+    this.el.querySelector<HTMLElement>('.atk-comment-count-num')!.innerText = String(this.getListCommentCount())
 
     // 评论为空界面
-    let noCommentElem = this.commentsWrapEl.querySelector<HTMLElement>('.artalk-no-comment')
+    let noCommentElem = this.commentsWrapEl.querySelector<HTMLElement>('.atk-no-comment')
     const isNoComment = this.comments.length <= 0
 
     if (isNoComment && !noCommentElem) {
-      noCommentElem = Utils.createElement('<div class="artalk-no-comment"></div>')
+      noCommentElem = Utils.createElement('<div class="atk-no-comment"></div>')
       this.commentsWrapEl.appendChild(noCommentElem)
       noCommentElem.innerText = this.conf.noComment || '无评论'
     }
@@ -187,9 +187,9 @@ export default class List extends Component {
 
     // 已输入个人信息
     if (!!this.ctx.user.data.nick && !!this.ctx.user.data.email) {
-      this.openSidebarBtnEl.classList.remove('artalk-hide')
+      this.openSidebarBtnEl.classList.remove('atk-hide')
     } else {
-      this.openSidebarBtnEl.classList.add('artalk-hide')
+      this.openSidebarBtnEl.classList.add('atk-hide')
     }
 
     // 仅管理员显示控制
@@ -264,10 +264,10 @@ export default class List extends Component {
 
     const readMoreTextOrg = this.readMoreTextEl.innerText
     this.readMoreTextEl.innerText = errMsg
-    this.readMoreEl.classList.add('artalk-err')
+    this.readMoreEl.classList.add('atk-err')
     setTimeout(() => {
       this.readMoreTextEl.innerText = readMoreTextOrg
-      this.readMoreEl.classList.remove('artalk-err')
+      this.readMoreEl.classList.remove('atk-err')
     }, 2000) // 2s后错误提示复原
   }
 
@@ -277,7 +277,7 @@ export default class List extends Component {
     if (!this.conf.readMore.autoLoad) return
 
     document.addEventListener('scroll', () => {
-      const targetEl = this.el.querySelector<HTMLElement>('.artalk-list-comments-wrap > .artalk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
+      const targetEl = this.el.querySelector<HTMLElement>('.atk-list-comments-wrap > .atk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
       if (!targetEl) return
       if (!this.hasMoreComments) return
       if (this.isLoading) return
@@ -327,7 +327,7 @@ export default class List extends Component {
 
     Ui.scrollIntoView(comment.getEl(), false)
     setTimeout(() => {
-      comment.getEl().classList.add('artalk-flash-once')
+      comment.getEl().classList.add('atk-flash-once')
     }, 800)
   }
 

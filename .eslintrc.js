@@ -8,14 +8,6 @@ module.exports = {
     'plugin:import/recommended',
   ],
   plugins: ['@typescript-eslint', 'import'],
-  overrides: [
-    {
-      files: ['*.ts', '*.tsx'],
-      parserOptions: {
-        project: ['./tsconfig.json'],
-      },
-    },
-  ],
   rules: {
     '@typescript-eslint/lines-between-class-members': 0,
     'no-unused-vars': 'off',
@@ -32,5 +24,8 @@ module.exports = {
     'import/resolver': {
       typescript: {},
     },
+  },
+  parserOptions: {
+    project: './tsconfig.json',
   },
 }

@@ -6,7 +6,7 @@
   min-height: 200px;
 }
 
-.artalk, .artalk-layer-wrap {
+.artalk, .atk-layer-wrap {
   * {
     box-sizing: border-box;
     line-height: @line-height;
@@ -22,7 +22,7 @@
     background-color: @color-bg-grey;
     color: @color-font;
     padding: 5px 10px;
-    border-radius: @block-radius/2;
+    border-radius: calc(@block-radius / 2);
     margin: 0;
     font-family: Source Code Pro,courier new,Input Mono,PT Mono,SFMono-Regular,Consolas,Monaco,Menlo,PingFang SC,Liberation Mono,Microsoft YaHei,Courier,monospace;
   }
@@ -72,18 +72,18 @@
 }
 
 /* Loading */
-.artalk-loading {
+.atk-loading {
   z-index: 11;
   &:extend(.full-layer);
 }
 
-.artalk-loading-spinner {
+.atk-loading-spinner {
   position: relative;
   width: 50px;
   height: 50px;
 
   svg {
-    animation: artalkRotate 2s linear infinite;
+    animation: atkRotate 2s linear infinite;
     transform-origin: center center;
     width: 100%;
     height: 100%;
@@ -94,17 +94,17 @@
     circle {
       stroke-dasharray: 1,200;
       stroke-dashoffset: 0;
-      animation: artalkDash 1.5s ease-in-out infinite, artalkColor 6s ease-in-out infinite;
+      animation: atkDash 1.5s ease-in-out infinite, atkColor 6s ease-in-out infinite;
       stroke-linecap: round
     }
   }
 }
 
-@keyframes artalkRotate {
+@keyframes atkRotate {
   100% { transform: rotate(360deg) }
 }
 
-@keyframes artalkDash {
+@keyframes atkDash {
   0% {
     stroke-dasharray: 1,200;
     stroke-dashoffset: 0
@@ -121,19 +121,19 @@
   }
 }
 
-@keyframes artalkColor {
+@keyframes atkColor {
   0%,100% { stroke: #ff5652 }
   40% { stroke: #2196F3 }
   66% { stroke: #32c787 }
   80%,90% { stroke: #ffc107 }
 }
 
-@keyframes artalkLoadingIconRotate {
+@keyframes atkLoadingIconRotate {
   0% { transform: rotate(0) }
   100% { transform: rotate(360deg) }
 }
 
-.artalk-loading-icon {
+.atk-loading-icon {
   width: 18px;
   height: 18px;
   box-sizing: border-box;
@@ -141,52 +141,52 @@
   border-top-color: #29d;
   border-left-color: #29d;
   border-radius: 50%;
-  animation: artalkLoadingIconRotate .4s linear infinite;
+  animation: atkLoadingIconRotate .4s linear infinite;
 }
 
 /* Animations */
-.artalk-fade-in {
-  animation: artalkFadeIn both .3s;
+.atk-fade-in {
+  animation: atkFadeIn both .3s;
 }
 
-.artalk-fade-out {
-  animation: artalkFadeOut both .2s;
+.atk-fade-out {
+  animation: atkFadeOut both .2s;
 }
 
-@keyframes artalkFadeIn {
+@keyframes atkFadeIn {
   0% { opacity: 0 }
   to { opacity: 1 }
 }
 
-@keyframes artalkFadeOut {
+@keyframes atkFadeOut {
   100% { opacity: 0; }
   0% {}
 }
 
 /* Layer */
-.artalk-error-layer {
+.atk-error-layer {
   &:extend(.full-layer);
   background-color: @color-bg-transl;
 
-  .artalk-error-title {
+  .atk-error-title {
     color: @color-red;
   }
 
-  .artalk-error-text {
+  .atk-error-text {
     text-align: center;
   }
 }
 
-.artalk-layer-dialog-wrap {
+.atk-layer-dialog-wrap {
   @formInputHeight: 30px;
   &:extend(.full-layer);
   background-color: @color-bg-transl;
 
-  & > .artalk-layer-dialog {
+  & > .atk-layer-dialog {
     width: 25%;
 
-    & > .artalk-layer-dialog-content {
-      .artalk-captcha-img {
+    & > .atk-layer-dialog-content {
+      .atk-captcha-img {
         cursor: pointer;
         width: 100px;
         height: auto;
@@ -198,10 +198,10 @@
 
       input {
         width: 100%;
-        line-height: @formInputHeight + 4px;
+        line-height: calc(@formInputHeight + 4px);
         background-color: @color-bg;
         border: 1px solid @color-border;
-        border-radius: @block-radius/2;
+        border-radius: calc(@block-radius / 2);
         outline: none;
         padding: 0 6px;
         display: block;
@@ -211,7 +211,7 @@
       }
     }
 
-    & > .artalk-layer-dialog-action {
+    & > .atk-layer-dialog-action {
       display: flex;
       flex-direction: row;
 
@@ -222,7 +222,7 @@
         border: 1px solid @color-main;
         background: transparent;
         color: @color-main;
-        border-radius: @block-radius/2;
+        border-radius: calc(@block-radius / 2);
         padding: 0 15px;
         line-height: @formInputHeight;
         outline: none;
@@ -247,12 +247,12 @@
 }
 
 @media only screen and (max-width: 768px) {
-  .artalk-layer-dialog-wrap > .artalk-layer-dialog {
+  .atk-layer-dialog-wrap > .atk-layer-dialog {
       width: 90% !important;
   }
 }
 
-.artalk-notify {
+.atk-notify {
   display: block;
   overflow: hidden;
   background-color: #2c2c2c;
@@ -266,13 +266,13 @@
     margin-bottom: 3px;
   }
 
-  .artalk-notify-content {
+  .atk-notify-content {
     color: #FFF;
   }
 }
 
-.artalk-layer-wrap {
-  .artalk-layer-mask {
+.atk-layer-wrap {
+  .atk-layer-mask {
     position: fixed;
     top: 0;
     left: 0;
@@ -282,7 +282,7 @@
     background: rgba(0, 0, 0, .3);
   }
 
-  .artalk-layer-item {
+  .atk-layer-item {
     position: fixed;
     z-index: 99999;
     top: 0;

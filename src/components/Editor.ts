@@ -42,17 +42,17 @@ export default class Editor extends Component {
 
     this.el = Utils.createElement(EditorHTML)
 
-    this.headerEl = this.el.querySelector('.artalk-editor-header')!
-    this.textareaWrapEl = this.el.querySelector('.artalk-editor-textarea-wrap')!
-    this.textareaEl = this.el.querySelector('.artalk-editor-textarea')!
-    this.closeCommentEl = this.el.querySelector('.artalk-close-comment')!
-    this.plugWrapEl = this.el.querySelector('.artalk-editor-plug-wrap')!
-    this.bottomEl = this.el.querySelector('.artalk-editor-bottom')!
-    this.bottomPartLeftEl = this.el.querySelector('.artalk-editor-bottom-part.artalk-left')!
-    this.plugSwitcherWrapEl = this.el.querySelector('.artalk-editor-plug-switcher-wrap')!
-    this.bottomPartRightEl = this.el.querySelector('.artalk-editor-bottom-part.artalk-right')!
-    this.submitBtn = this.el.querySelector('.artalk-send-btn')!
-    this.notifyWrapEl = this.el.querySelector('.artalk-editor-notify-wrap')!
+    this.headerEl = this.el.querySelector('.atk-editor-header')!
+    this.textareaWrapEl = this.el.querySelector('.atk-editor-textarea-wrap')!
+    this.textareaEl = this.el.querySelector('.atk-editor-textarea')!
+    this.closeCommentEl = this.el.querySelector('.atk-close-comment')!
+    this.plugWrapEl = this.el.querySelector('.atk-editor-plug-wrap')!
+    this.bottomEl = this.el.querySelector('.atk-editor-bottom')!
+    this.bottomPartLeftEl = this.el.querySelector('.atk-editor-bottom-part.atk-left')!
+    this.plugSwitcherWrapEl = this.el.querySelector('.atk-editor-plug-switcher-wrap')!
+    this.bottomPartRightEl = this.el.querySelector('.atk-editor-bottom-part.atk-right')!
+    this.submitBtn = this.el.querySelector('.atk-send-btn')!
+    this.notifyWrapEl = this.el.querySelector('.atk-editor-notify-wrap')!
 
     this.initLocalStorage()
     this.initHeader()
@@ -161,7 +161,7 @@ export default class Editor extends Component {
       this.plugList[plug.getName()] = plug
 
       // 切换按钮
-      const btnElem = Utils.createElement(`<span class="artalk-editor-action artalk-editor-plug-switcher">${plug.getBtnHtml()}</span>`)
+      const btnElem = Utils.createElement(`<span class="atk-editor-action atk-editor-plug-switcher">${plug.getBtnHtml()}</span>`)
       this.plugSwitcherWrapEl.appendChild(btnElem)
       btnElem.addEventListener('click', () => {
         this.plugSwitcherWrapEl.querySelectorAll('.active').forEach(item => item.classList.remove('active'))
@@ -278,9 +278,9 @@ export default class Editor extends Component {
     }
 
     if (this.sendReplyEl === null) {
-      this.sendReplyEl = Utils.createElement('<div class="artalk-send-reply"><span class="artalk-text"></span><span class="artalk-cancel" title="取消 AT">×</span></div>');
-      this.sendReplyEl.querySelector<HTMLElement>('.artalk-text')!.innerText = `@${commentData.nick}`
-      this.sendReplyEl.querySelector<HTMLElement>('.artalk-cancel')!.addEventListener('click', () => {
+      this.sendReplyEl = Utils.createElement('<div class="atk-send-reply"><span class="atk-text"></span><span class="atk-cancel" title="取消 AT">×</span></div>');
+      this.sendReplyEl.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
+      this.sendReplyEl.querySelector<HTMLElement>('.atk-cancel')!.addEventListener('click', () => {
         this.cancelReply()
       })
       this.textareaWrapEl.appendChild(this.sendReplyEl)

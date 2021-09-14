@@ -65,7 +65,7 @@ export default class Artalk {
     this.ctx = new Context(this.el, this.conf)
 
     this.el.classList.add('artalk')
-    this.el.setAttribute('artalk-run-id', this.contextID.toString())
+    this.el.setAttribute('atk-run-id', this.contextID.toString())
 
     // 若该元素中 artalk 已装载
     if (this.el.innerHTML.trim() !== '') this.el.innerHTML = ''
@@ -95,9 +95,9 @@ export default class Artalk {
     this.ctx.addEventListener('check-admin-show-el', () => {
       this.el.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach((itemEl: HTMLElement) => {
         if (this.ctx.user.data.isAdmin)
-          itemEl.classList.remove('artalk-hide')
+          itemEl.classList.remove('atk-hide')
         else
-          itemEl.classList.add('artalk-hide')
+          itemEl.classList.add('atk-hide')
       })
     })
 

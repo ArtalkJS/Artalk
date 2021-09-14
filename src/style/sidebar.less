@@ -1,4 +1,4 @@
-.artalk-sidebar {
+.atk-sidebar {
   @width: 430px;
   position: fixed;
   z-index: 99999;
@@ -16,15 +16,15 @@
     }
   }
 
-  .artalk-sidebar-inner {
+  .atk-sidebar-inner {
     position: relative;
 
-    .artalk-sidebar-title {
+    .atk-sidebar-title {
       font-size: 23px;
       padding: 15px 35px 10px 20px;
     }
 
-    .artalk-sidebar-close {
+    .atk-sidebar-close {
       position: absolute;
       display: flex;
       right: 10px;
@@ -49,12 +49,12 @@
     }
   }
 
-  .artalk-sidebar-actions {
+  .atk-sidebar-actions {
     display: flex;
     flex-direction: row;
     border-bottom: 1px solid @color-border;
 
-    .artalk-action-item {
+    .atk-action-item {
       display: flex;
       flex-grow: 1;
       scroll-snap-align: start;
@@ -67,19 +67,19 @@
         background: @color-bg-grey;
       }
 
-      &.artalk-active {
+      &.atk-active {
         color: @color-main;
         font-weight: bold;
       }
     }
   }
 
-  .artalk-sidebar-content {
+  .atk-sidebar-content {
     position: relative;
     overflow-y: auto;
     height: calc(100vh - 102px);
 
-    .artalk-sidebar-no-content {
+    .atk-sidebar-no-content {
       position: absolute;
       left: 0;
       right: 0;

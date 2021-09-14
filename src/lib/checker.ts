@@ -39,11 +39,11 @@ const AdminChecker = {
 const CaptchaChecker = {
   request: (that, inputVal) => (new Api(that.ctx).captchaCheck(inputVal)),
   body: (that) => {
-    const elem = Utils.createElement(`<span><img class="artalk-captcha-img" src="${that.submitCaptchaImgData || ''}" alt="验证码">敲入验证码继续：</span>`);
+    const elem = Utils.createElement(`<span><img class="atk-captcha-img" src="${that.submitCaptchaImgData || ''}" alt="验证码">敲入验证码继续：</span>`);
 
     // 刷新验证码
-    elem.querySelector<HTMLElement>('.artalk-captcha-img')!.onclick = () => {
-      const imgEl = elem.querySelector('.artalk-captcha-img')
+    elem.querySelector<HTMLElement>('.atk-captcha-img')!.onclick = () => {
+      const imgEl = elem.querySelector('.atk-captcha-img')
       new Api(that.ctx).captchaGet()
         .then((imgData) => {
           imgEl!.setAttribute('src', imgData)
@@ -58,7 +58,7 @@ const CaptchaChecker = {
     that.submitCaptchaVal = inputVal
   },
   onError: (that, err, inputVal, formEl) => {
-    formEl.querySelector<HTMLElement>('.artalk-captcha-img')!.click() // 刷新验证码
+    formEl.querySelector<HTMLElement>('.atk-captcha-img')!.click() // 刷新验证码
   }
 } as CheckerConf
 

@@ -1,12 +1,12 @@
-.artalk-comment-wrap {
+.atk-comment-wrap {
   overflow: hidden;
   position: relative;
   border-bottom: 1px solid @color-border;
 
-  &.artalk-flash-once {
-    animation: artalkFlashOnce 1s ease-in-out 0s;
+  &.atk-flash-once {
+    animation: atkFlashOnce 1s ease-in-out 0s;
 
-    @keyframes artalkFlashOnce {
+    @keyframes atkFlashOnce {
       from {
         background: rgba(0, 131, 255, 0.2);
       }
@@ -20,11 +20,11 @@
     border-bottom-color: transparent;
   }
 
-  & > .artalk-comment {
+  & > .atk-comment {
     display: flex;
     padding: 12px 10px;
 
-    & > .artalk-avatar {
+    & > .atk-avatar {
       display: block;
       flex: none;
       margin-right: 12px;
@@ -37,11 +37,11 @@
       }
     }
 
-    & > .artalk-comment-main {
+    & > .atk-comment-main {
       display: block;
       flex: auto;
 
-      & > .artalk-header {
+      & > .atk-header {
         line-height: 1;
         font-size: 12px;
         margin-bottom: 3px;
@@ -49,7 +49,7 @@
         position: relative;
         display: flex;
         flex-wrap: wrap;
-        align-items: end;
+        align-items: flex-end;
 
         .badge() {
           background: @color-bg-grey;
@@ -66,7 +66,7 @@
             margin-right: 5px;
           }
 
-          &.artalk-nick {
+          &.atk-nick {
             font-size: 13px;
 
             & > a {
@@ -75,19 +75,19 @@
             }
           }
 
-          &.artalk-badge {
+          &.atk-badge {
             .badge();
             background: #FF6C00;
             color: #FFF;
           }
 
-          &.artalk-ua {
+          &.atk-ua {
             .badge();
           }
         }
       }
 
-      & > .artalk-body {
+      & > .atk-body {
         display: block;
         overflow: hidden;
         position: relative;
@@ -96,8 +96,8 @@
           max-width: 100%;
         }
 
-        & > .artalk-content {
-          &.artalk-type-collapsed {
+        & > .atk-content {
+          &.atk-type-collapsed {
             border: 3px solid @color-bg-grey;
             border-bottom: 0;
             padding: 5px 10px;
@@ -105,7 +105,7 @@
             margin-bottom: -5px;
           }
 
-          &.artalk-hide {
+          &.atk-hide {
             display: none;
           }
 
@@ -118,7 +118,7 @@
           }
         }
 
-        & > .artalk-collapsed {
+        & > .atk-collapsed {
           margin: 3px 0;
           font-size: 13px;
           padding: 10px 18px;
@@ -126,11 +126,11 @@
           background: @color-bg-grey;
           border-radius: @block-radius;
 
-          & > .artalk-text {
+          & > .atk-text {
             color: @color-meta;
           }
 
-          & > .artalk-show-btn {
+          & > .atk-show-btn {
             color: @color-main;
             cursor: pointer;
             user-select: none;
@@ -141,7 +141,7 @@
           }
         }
 
-        &.artalk-read-more-mask:after {
+        &.atk-read-more-mask:after {
           pointer-events: none;
           position: absolute;
           z-index: 1;
@@ -155,10 +155,10 @@
         }
       }
 
-      & > .artalk-footer {
+      & > .atk-footer {
         margin-top: 4px;
 
-        .artalk-comment-actions {
+        .atk-comment-actions {
           display: flex;
           flex-direction: row;
           align-items: center;
@@ -172,15 +172,15 @@
             cursor: pointer;
             user-select: none;
 
-            &.artalk-hide {
+            &.atk-hide {
               display: none;
             }
 
-            &.artalk-error, &.artalk-error:hover {
+            &.atk-error, &.atk-error:hover {
               color: @color-red;
             }
 
-            &:not(:first-child):not(.artalk-hide) {
+            &:not(:first-child):not(.atk-hide) {
               margin-left: 8px;
               padding-left: 8px;
               border-left: 1px solid @color-border;
@@ -201,19 +201,19 @@
       margin-bottom: 5px;
     }
 
-    & > .artalk-comment {
+    & > .atk-comment {
       padding-top: 4px;
       padding-bottom: 4px;
 
-      & > .artalk-avatar img {
+      & > .atk-avatar img {
         width: 36px;
         height: 36px;
       }
     }
   }
 
-  .artalk-comment-children {
-    .artalk-comment-wrap {
+  .atk-comment-children {
+    .atk-comment-wrap {
       margin-top: 10px;
       border-left: 1px dashed hsla(0,0%,93%,.5);
 

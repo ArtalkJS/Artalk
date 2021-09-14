@@ -18,9 +18,9 @@ export default class Sidebar extends Component {
     super(ctx)
 
     this.el = Utils.createElement(SidebarHTML)
-    this.contentEl = this.el.querySelector('.artalk-sidebar-content')!
+    this.contentEl = this.el.querySelector('.atk-sidebar-content')!
 
-    this.el.querySelector('.artalk-sidebar-close')!.addEventListener('click', () => {
+    this.el.querySelector('.atk-sidebar-close')!.addEventListener('click', () => {
       this.hide()
     })
 
@@ -31,16 +31,16 @@ export default class Sidebar extends Component {
   }
 
   initActionBar() {
-    const actionsEl = this.el.querySelector('.artalk-sidebar-actions')!
+    const actionsEl = this.el.querySelector('.atk-sidebar-actions')!
     actionsEl.addEventListener('click', (evt) => {
       const el = evt.target as HTMLElement
-      const type = el.getAttribute('data-artalk-action')
+      const type = el.getAttribute('data-atk-action')
       if (!type) return
 
-      actionsEl.querySelectorAll('.artalk-active').forEach((item) => {
-        item.classList.remove('artalk-active')
+      actionsEl.querySelectorAll('.atk-active').forEach((item) => {
+        item.classList.remove('atk-active')
       })
-      el.classList.add('artalk-active')
+      el.classList.add('atk-active')
       this.reqComment(type)
     })
   }
@@ -120,6 +120,6 @@ export default class Sidebar extends Component {
   }
 
   showNoComment() {
-    this.contentEl.innerHTML = '<div class="artalk-sidebar-no-content">无内容</div>'
+    this.contentEl.innerHTML = '<div class="atk-sidebar-no-content">无内容</div>'
   }
 }

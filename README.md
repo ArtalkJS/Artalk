@@ -185,4 +185,4 @@ Made with ♥
 [![Stargazers over time](https://starchart.cc/ArtalkJS/Artalk.svg)](https://starchart.cc/ArtalkJS/Artalk)
 
 ## License
-[GPL-2.0](./LICENSE)
+[GPL-3.0](./LICENSE)

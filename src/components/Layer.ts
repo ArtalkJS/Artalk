@@ -5,15 +5,15 @@ import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 
 export function GetLayerWrap (ctx: Context): { wrapEl: HTMLElement, maskEl: HTMLElement } {
-  let wrapEl = document.querySelector<HTMLElement>(`.artalk-layer-wrap#ctx-${ctx.cid}`)
+  let wrapEl = document.querySelector<HTMLElement>(`.atk-layer-wrap#ctx-${ctx.cid}`)
   if (!wrapEl) {
     wrapEl = Utils.createElement(
-      `<div class="artalk-layer-wrap" id="ctx-${ctx.cid}" style="display: none;"><div class="artalk-layer-mask"></div></div>`
+      `<div class="atk-layer-wrap" id="ctx-${ctx.cid}" style="display: none;"><div class="atk-layer-mask"></div></div>`
     )
     document.body.appendChild(wrapEl)
   }
 
-  const maskEl = wrapEl.querySelector<HTMLElement>('.artalk-layer-mask')!
+  const maskEl = wrapEl.querySelector<HTMLElement>('.atk-layer-mask')!
 
   // dark mode
   if (wrapEl) {
@@ -46,12 +46,12 @@ export class Layer extends Component {
     this.wrapEl = wrapEl
     this.maskEl = maskEl
 
-    this.el = this.wrapEl.querySelector(`[data-layer-name="${name}"].artalk-layer-item`)!
+    this.el = this.wrapEl.querySelector(`[data-layer-name="${name}"].atk-layer-item`)!
     if (this.el === null) {
       // 若传递 layer 元素为空
       if (!el) {
         this.el = Utils.createElement()
-        this.el.classList.add('artalk-layer-item')
+        this.el.classList.add('atk-layer-item')
       } else {
         this.el = el
       }
@@ -85,7 +85,7 @@ export class Layer extends Component {
 
     this.wrapEl.style.display = 'block'
     this.maskEl.style.display = 'block'
-    this.maskEl.classList.add('artalk-fade-in')
+    this.maskEl.classList.add('atk-fade-in')
     this.el.style.display = ''
 
     this.maskEl.onclick = () => {
@@ -101,10 +101,10 @@ export class Layer extends Component {
       document.body.style.overflow = ''
     }, 450))
 
-    this.wrapEl.classList.add('artalk-fade-out')
+    this.wrapEl.classList.add('atk-fade-out')
     Layer.hideTimeoutList.push(window.setTimeout(() => {
       this.wrapEl.style.display = 'none'
-      this.wrapEl.classList.remove('artalk-fade-out')
+      this.wrapEl.classList.remove('atk-fade-out')
     }, 200))
 
     this.el.style.display = 'none'
@@ -131,7 +131,7 @@ export class Layer extends Component {
   }
 
   checkCleanLayer () {
-    if (this.getWrapEl().querySelectorAll('.artalk-layer-item').length === 0) {
+    if (this.getWrapEl().querySelectorAll('.atk-layer-item').length === 0) {
       this.wrapEl.style.display = 'none'
     }
   }

@@ -31,3 +31,27 @@ func (u User) IsEmpty() bool {
 func (u User) IsAdmin() bool {
 	return u.Type == UserAdmin
 }
+
+type CookedUser struct {
+	ID         uint     `json:"id"`
+	Name       string   `json:"name"`
+	Email      string   `json:"email"`
+	Link       string   `json:"link"`
+	BadgeName  string   `json:"badge_name"`
+	BadgeColor string   `json:"badge_color"`
+	IsAdmin    bool     `json:"is_admin"`
+	Type       UserType `json:"type"`
+}
+
+func (u User) ToCooked() CookedUser {
+	return CookedUser{
+		ID:         u.ID,
+		Name:       u.Name,
+		Email:      u.Email,
+		Link:       u.Link,
+		BadgeName:  u.BadgeName,
+		BadgeColor: u.BadgeColor,
+		IsAdmin:    u.IsAdmin(),
+		Type:       u.Type,
+	}
+}

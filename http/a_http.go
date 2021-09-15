@@ -76,7 +76,7 @@ func InitRoute(e *echo.Echo) {
 
 	api.POST("/add", ActionAdd)
 	api.POST("/get", ActionGet)
-	api.GET("/user", ActionUser)
+	api.POST("/user-get", ActionUserGet)
 	api.GET("/login", ActionLogin)
 	api.POST("/login", ActionLogin)
 

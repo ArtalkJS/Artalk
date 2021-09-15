@@ -32,6 +32,10 @@ func (c Comment) IsEmpty() bool {
 	return c.ID == 0
 }
 
+func (c Comment) IsAllowReply() bool {
+	return c.Type != CommentCollapsed && c.Type != CommentPending && c.Type != CommentDeleted
+}
+
 func (c *Comment) FetchUser() User {
 	if !c.User.IsEmpty() {
 		return c.User
@@ -83,6 +87,7 @@ type CookedComment struct {
 	Date           string `json:"date"`
 	IsCollapsed    bool   `json:"is_collapsed"`
 	IsPending      bool   `json:"is_pending"`
+	IsAllowReply   bool   `json:"is_allow_reply"`
 	Rid            uint   `json:"rid"`
 }
 
@@ -100,6 +105,7 @@ func (c Comment) ToCooked() CookedComment {
 		Date:           c.CreatedAt.Local().String(),
 		IsCollapsed:    c.Type == CommentCollapsed,
 		IsPending:      c.Type == CommentPending,
+		IsAllowReply:   c.IsAllowReply(),
 		Rid:            c.Rid,
 	}
 }
@@ -118,6 +124,7 @@ type CookedCommentForEmail struct {
 	Time           string `json:"time"`
 	IsCollapsed    bool   `json:"is_collapsed"`
 	IsPending      bool   `json:"is_pending"`
+	IsAllowReply   bool   `json:"is_allow_reply"`
 	Rid            uint   `json:"rid"`
 	PageKey        string `json:"page_key"`
 }
@@ -140,6 +147,7 @@ func (c Comment) ToCookedForEmail() CookedCommentForEmail {
 		Time:           c.CreatedAt.Local().Format("15:04:05"),
 		IsCollapsed:    c.Type == CommentCollapsed,
 		IsPending:      c.Type == CommentPending,
+		IsAllowReply:   c.IsAllowReply(),
 		Rid:            c.Rid,
 		PageKey:        c.PageKey,
 	}

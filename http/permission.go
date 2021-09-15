@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -123,42 +124,34 @@ func addActionCount(c echo.Context) {
 	setActionCount(c, getActionCount(c)+1)
 }
 
-func CheckIsAdminReq(c echo.Context) bool {
-	isAdmin := false
-	token := c.Param("token")
+func GetJwtInstanceByReq(c echo.Context) *jwt.Token {
+	token := c.QueryParam("token")
 	if token == "" {
 		token = c.FormValue("token")
 	}
 	if token == "" {
 		token = c.Request().Header.Get("X-Auth-Token")
 	}
-	if token != "" {
-		jwt, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-			if t.Method.Alg() != CommonJwtConfig.SigningMethod {
-				return nil, fmt.Errorf("unexpected jwt signing method=%v", t.Header["alg"])
-			}
-
-			return []byte(config.Instance.AppKey), nil // 密钥
-		})
-
-		if err == nil {
-			isAdmin = CheckIsAdminByJwt(jwt)
-		}
+	if token == "" {
+		return nil
 	}
-	return isAdmin
+
+	jwt, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		if t.Method.Alg() != CommonJwtConfig.SigningMethod {
+			return nil, fmt.Errorf("unexpected jwt signing method=%v", t.Header["alg"])
+		}
+
+		return []byte(config.Instance.AppKey), nil // 密钥
+	})
+	if err != nil {
+		return nil
+	}
+
+	return jwt
 }
 
 func CheckIsAdminByJwt(jwt *jwt.Token) bool {
-	claims := jwt.Claims.(*jwtCustomClaims)
-	name := claims.UserName
-	email := claims.UserEmail
-
-	if claims.UserType != model.UserAdmin {
-		return false
-	}
-
-	// check user from database
-	user := FindUser(name, email)
+	user := GetUserByJwt(jwt)
 	if user.IsEmpty() {
 		return false
 	}
@@ -166,9 +159,47 @@ func CheckIsAdminByJwt(jwt *jwt.Token) bool {
 	return user.Type == model.UserAdmin
 }
 
+func CheckIsAdminReq(c echo.Context) bool {
+	jwt := GetJwtInstanceByReq(c)
+	if jwt == nil {
+		return false
+	}
+
+	return CheckIsAdminByJwt(jwt)
+}
+
+func GetUserByJwt(jwt *jwt.Token) model.User {
+	if jwt == nil {
+		return model.User{}
+	}
+
+	claims := jwtCustomClaims{}
+	tmp, _ := json.Marshal(jwt.Claims)
+	_ = json.Unmarshal(tmp, &claims)
+
+	name := claims.UserName
+	email := claims.UserEmail
+
+	if claims.UserType != model.UserAdmin {
+		return model.User{}
+	}
+
+	// check user from database
+	user := FindUser(name, email)
+
+	return user
+}
+
 // 中间件会创建一个 user context，通过中间件获取到的 jwt 判断
 func CheckIsAdminByJwtMiddleware(c echo.Context) bool {
 	jwt := c.Get("user").(*jwt.Token)
 
 	return CheckIsAdminByJwt(jwt)
+}
+
+func GetUserByReqToken(c echo.Context) model.User {
+	jwt := GetJwtInstanceByReq(c)
+	user := GetUserByJwt(jwt)
+
+	return user
 }

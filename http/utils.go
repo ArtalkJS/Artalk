@@ -124,8 +124,8 @@ func FindUser(name string, email string) model.User {
 }
 
 func IsAdminUser(name string, email string) bool {
-	var user model.User // 注：user 查找是 OR
-	lib.DB.Where("(name = ? OR email = ?) AND type = ?", name, email, model.UserAdmin).First(&user)
+	var user model.User // 还是用 AND 吧，OR 太混乱了
+	lib.DB.Where("(name = ? AND email = ?) AND type = ?", name, email, model.UserAdmin).First(&user)
 	return !user.IsEmpty()
 }
 

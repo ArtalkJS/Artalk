@@ -89,3 +89,13 @@ func AddQueryToURL(urlStr string, queryMap map[string]string) string {
 	u.RawQuery = q.Encode()
 	return u.String()
 }
+
+// ContainsStr returns true if an str is present in a iteratee.
+func ContainsStr(s []string, v string) bool {
+	for _, vv := range s {
+		if vv == v {
+			return true
+		}
+	}
+	return false
+}

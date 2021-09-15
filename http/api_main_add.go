@@ -74,6 +74,9 @@ func ActionAdd(c echo.Context) error {
 		if parentComment.PageKey != p.PageKey {
 			return RespError(c, "与父评论的 pageKey 不一致")
 		}
+		if !parentComment.IsAllowReply() {
+			return RespError(c, "不允许回复该评论")
+		}
 	}
 
 	comment := model.Comment{

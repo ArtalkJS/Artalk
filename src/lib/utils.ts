@@ -95,6 +95,10 @@ export function timeAgo (date: Date) {
   }
 }
 
+export function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 let markedInstance: any = null
 export function marked (ctx: Context, src: string): string {
   if (!markedInstance) {

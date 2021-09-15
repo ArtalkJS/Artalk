@@ -23,6 +23,7 @@ export interface EventPayloadMap {
 export interface CheckerConf {
   onSuccess?: (inputVal: string, dialogEl?: HTMLElement) => void
   onMount?: (dialogEl: HTMLElement) => void
+  onCancel?: () => void
 }
 
 export interface CheckerCaptchaConf extends CheckerConf {

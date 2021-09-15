@@ -79,7 +79,7 @@ export default class Editor extends Component {
 
   initHeader () {
     Object.keys(this.user.data).forEach((field) => {
-      const inputEl = this.headerEl.querySelector(`[name="${field}"]`)
+      const inputEl = this.getInputEl(field)
       if (inputEl && inputEl instanceof HTMLInputElement) {
         inputEl.value = this.user.data[field] || ''
         // 绑定事件
@@ -88,28 +88,66 @@ export default class Editor extends Component {
     })
   }
 
+  getInputEl (field: string) {
+    const inputEl = this.headerEl.querySelector<HTMLInputElement>(`[name="${field}"]`)
+    return inputEl
+  }
+
+  queryUserInfo = {
+    timeout: <number|null>null,
+    abortFunc: <(() => void)|null>null
+  }
+
   /** header 输入框内容变化事件 */
   onHeaderInputChanged (field: string, inputEl: HTMLInputElement) {
     this.user.data[field] = inputEl.value.trim()
 
     // 若修改的是 nick or email
     if (field === 'nick' || field === 'email') {
-      this.user.data.token = ''
-      this.user.data.isAdmin = false
-      // TODO: 输入个人信息判断管理员登录
-      if (this.user.checkHasBasicUserInfo()
-        && [this.user.data.nick, this.user.data.email].includes('admin')) {
-        // 昵称为管理员，显示管理员密码验证 dialog
-        this.ctx.dispatchEvent('checker-admin', {
-          onSuccess: () => {
-            this.ctx.dispatchEvent('list-refresh-ui')
+      // 获取用户信息
+      if (this.queryUserInfo.timeout !== null) window.clearTimeout(this.queryUserInfo.timeout) // 清除待发出的请求
+      if (this.queryUserInfo.abortFunc !== null) this.queryUserInfo.abortFunc() // 之前发出未完成的请求立刻中止
+
+      this.queryUserInfo.timeout = window.setTimeout(() => {
+        this.queryUserInfo.timeout = null // 清理
+
+        const {req, abort} = new Api(this.ctx).userGet(
+          this.user.data.nick, this.user.data.email, this.user.data.token
+        )
+        this.queryUserInfo.abortFunc = abort
+        req.then(data => {
+          if (!data.is_login) {
+            this.user.data.token = ''
+            this.user.data.isAdmin = false
+          }
+
+          // 若用户为管理员，执行登陆操作
+          if (this.user.checkHasBasicUserInfo() && !data.is_login && data.user && data.user.is_admin) {
+            this.showLoginDialog()
+          }
+
+          // 自动填入 link
+          if (data.user && data.user.link) {
+            this.user.data.link = data.user.link
+            this.getInputEl('link')!.value = data.user.link
           }
         })
-      }
+        .finally(() => {
+          this.queryUserInfo.abortFunc = null // 清理
+        })
+      }, 400) // 延迟执行，减少请求次数
     }
 
     this.saveUser()
     this.ctx.dispatchEvent('list-refresh-ui')
+  }
+
+  showLoginDialog () {
+    this.ctx.dispatchEvent('checker-admin', {
+      onSuccess: () => {
+        this.ctx.dispatchEvent('list-refresh-ui')
+      }
+    })
   }
 
   saveUser () {
@@ -318,18 +356,18 @@ export default class Editor extends Component {
     try {
       const nComment = await new Api(this.ctx).add({
         content: this.getContent(),
-        nick: this.user.data.nick || '',
-        email: this.user.data.email || '',
-        link: this.user.data.link || '',
+        nick: this.user.data.nick,
+        email: this.user.data.email,
+        link: this.user.data.link,
         rid: this.replyComment === null ? 0 : this.replyComment.id
       })
-
-      Ui.hideLoading(this.el)
 
       this.ctx.dispatchEvent('list-insert', nComment)
       this.clearEditor() // 清空编辑器
     } catch (err: any) {
       this.showNotify(`评论失败，${err.msg || String(err)}`, 'e')
+    } finally {
+      Ui.hideLoading(this.el)
     }
   }
 

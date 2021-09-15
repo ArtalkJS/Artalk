@@ -1,4 +1,4 @@
-import { CommentData, ListData } from '~/types/artalk-data'
+import { CommentData, ListData, UserData } from '~/types/artalk-data'
 import Context from '../Context'
 
 export default class Api {
@@ -10,7 +10,7 @@ export default class Api {
     this.serverURL = ctx.conf.serverUrl
   }
 
-  public async get(offset: number): Promise<ListData> {
+  public get(offset: number): Promise<ListData> {
     const params = getFormData({
       page_key: this.ctx.conf.pageKey,
       limit: this.ctx.conf.readMore?.pageSize || 15,
@@ -23,7 +23,7 @@ export default class Api {
     }).then((json) => (json.data as ListData))
   }
 
-  public async add(comment: { nick: string, email: string, link: string, content: string, rid: number }): Promise<CommentData> {
+  public add(comment: { nick: string, email: string, link: string, content: string, rid: number }): Promise<CommentData> {
     const params = getFormData({
       name: comment.nick,
       email: comment.email,
@@ -40,7 +40,7 @@ export default class Api {
     }).then((json) => (json.data.comment as CommentData))
   }
 
-  public async login(name: string, email: string, password: string): Promise<string> {
+  public login(name: string, email: string, password: string): Promise<string> {
     const params = getFormData({
       name, email, password
     })
@@ -51,7 +51,41 @@ export default class Api {
     }).then((json) => (json.data.token))
   }
 
-  public async captchaGet(): Promise<string> {
+  public userGet(name: string, email: string, token: string) {
+    const ctrl = new AbortController()
+    const { signal } = ctrl
+
+    const params = getFormData({
+      name, email, token
+    })
+
+    const req = commonFetch(this.ctx, `${this.serverURL}/user-get`, {
+      method: 'POST',
+      body: params,
+      signal,
+    }).then((json) => ({
+      user: json.data.user as UserData|null,
+      is_login: json.data.is_login as boolean
+    }))
+
+    return {
+      req,
+      abort: () => { ctrl.abort() },
+    }
+  }
+
+  public userVerify(token: string) {
+    const params = getFormData({
+      token
+    })
+
+    return commonFetch(this.ctx, `${this.serverURL}/user-get`, {
+      method: 'POST',
+      body: params,
+    }).then((json) => (json.data.user as UserData))
+  }
+
+  public captchaGet(): Promise<string> {
     return commonFetch(this.ctx, `${this.serverURL}/captcha/refresh`, {
       method: 'GET',
     }).then((json) => {
@@ -63,7 +97,7 @@ export default class Api {
     })
   }
 
-  public async captchaCheck(value: string): Promise<string> {
+  public captchaCheck(value: string): Promise<string> {
     return commonFetch(this.ctx, `${this.serverURL}/captcha/check?${new URLSearchParams({ value })}`, {
       method: 'GET',
     }).then((json) => {
@@ -90,6 +124,9 @@ function commonFetch(ctx: Context, input: RequestInfo, init?: RequestInit | unde
             }).catch(err => {
               reject(err)
             })
+          },
+          onCancel: () => {
+            reject(json)
           }
         })
       })
@@ -104,6 +141,9 @@ function commonFetch(ctx: Context, input: RequestInfo, init?: RequestInit | unde
             }).catch(err => {
               reject(err)
             })
+          },
+          onCancel: () => {
+            reject(json)
           }
         })
       })

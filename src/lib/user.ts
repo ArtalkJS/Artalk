@@ -2,10 +2,10 @@ import { ArtalkConfig } from "~/types/artalk-config"
 
 export default class User {
   public data: {
-    nick: string|null,
-    email: string|null,
-    link: string|null,
-    token: string|null,
+    nick: string,
+    email: string,
+    link: string,
+    token: string,
     isAdmin: boolean
   }
 

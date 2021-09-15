@@ -52,16 +52,36 @@ export interface ListData {
   /** 评论总数（包括所有子评论） */
   total: number
 
-  /** 管理员昵称 */
-  admin_nicks: string[]
-
-  /** 管理员加密后的邮箱 */
-  admin_encrypted_emails: string[]
-
   /** 页面信息 */
   page: {
     id: number
     page_key: string
     is_close_comment: boolean
   }
+}
+
+export interface UserData {
+  /** 用户 ID */
+  id: string
+
+  /** 用户名 */
+  name: string
+
+  /** 邮箱 */
+  email: string
+
+  /** 链接 */
+  link: string
+
+  /** 徽章名称 */
+  badge_name: string
+
+  /** 徽章颜色 */
+  badge_color: string
+
+  /** 是否属于管理员 */
+  is_admin: boolean
+
+  /** 类型 */
+  type: 'banned'|'admin'|''
 }

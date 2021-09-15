@@ -17,8 +17,8 @@ interface CheckerConf {
 const AdminChecker = {
   request: (that, inputVal) => {
     const data = {
-      name: that.user.data.nick || '',
-      email: that.user.data.email || '',
+      name: that.user.data.nick,
+      email: that.user.data.email,
       password: inputVal
     }
 
@@ -151,6 +151,7 @@ export default class Checker {
       return false
     }, () => {
       layer.disposeNow()
+      if (conf.onCancel) conf.onCancel()
       return false
     })
 

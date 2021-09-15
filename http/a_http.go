@@ -51,7 +51,7 @@ func Run() {
 		Claims:        &jwtCustomClaims{},
 		ContextKey:    "user",
 		SigningMethod: "HS256",
-		TokenLookup:   "header:X-Auth-Token,query:token",
+		TokenLookup:   "header:X-Auth-Token,query:token,form:token",
 		SigningKey:    []byte(config.Instance.AppKey),
 	}
 
@@ -87,8 +87,8 @@ func InitRoute(e *echo.Echo) {
 
 	// api/manager
 	manager := api.Group("/manager", middleware.JWTWithConfig(CommonJwtConfig)) // use jwt
-	manager.GET("/edit-page", ActionManagerEditPage)
-	manager.GET("/edit-comment", ActionManagerEditComment)
+	manager.POST("/edit-page", ActionManagerEditPage)
+	manager.POST("/edit-comment", ActionManagerEditComment)
 	manager.GET("/del", ActionManagerDel)
 	manager.GET("/send-mail", ActionManagerSendMail)
 }

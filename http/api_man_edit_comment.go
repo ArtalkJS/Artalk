@@ -12,7 +12,7 @@ type ParamsEditComment struct {
 	ID      string `mapstructure:"id" param:"required"`
 	Content string `mapstructure:"content"`
 	PageKey string `mapstructure:"page_key"`
-	Name    string `mapstructure:"name"`
+	Nick    string `mapstructure:"nick"`
 	Email   string `mapstructure:"email"`
 	Link    string `mapstructure:"link"`
 	Rid     string `mapstructure:"rid"`
@@ -54,8 +54,8 @@ func ActionManagerEditComment(c echo.Context) error {
 	}
 
 	// user
-	if p.Name != "" && p.Email != "" {
-		user := FindCreateUser(p.Name, p.Email)
+	if p.Nick != "" && p.Email != "" {
+		user := FindCreateUser(p.Nick, p.Email)
 		if user.ID != comment.UserID {
 			comment.UserID = user.ID
 		}
@@ -97,5 +97,7 @@ func ActionManagerEditComment(c echo.Context) error {
 		return RespError(c, "comment save error.")
 	}
 
-	return RespSuccess(c)
+	return RespData(c, Map{
+		"comment": comment.ToCooked(),
+	})
 }

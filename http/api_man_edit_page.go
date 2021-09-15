@@ -33,5 +33,7 @@ func ActionManagerEditPage(c echo.Context) error {
 		return RespError(c, "page save error.")
 	}
 
-	return RespSuccess(c)
+	return RespData(c, Map{
+		"page": page.ToCooked(),
+	})
 }

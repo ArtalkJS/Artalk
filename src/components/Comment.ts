@@ -106,7 +106,7 @@ export default class Comment extends Component {
     })
   }
 
-  private refreshUI () {
+  public refreshUI () {
     const originalEl = this.el
     const newEl = this.renderElem()
     originalEl.replaceWith(newEl) // 替换 document 中的的 elem
@@ -130,21 +130,20 @@ export default class Comment extends Component {
     }
 
     // 管理员操作按钮
-    if (this.ctx.user.data.isAdmin) {
-      // 绑定折叠按钮事件
-      const collapseBtn = Utils.createElement(`<span>${this.data.is_collapsed ? '取消折叠' : '折叠'}</span>`)
-      this.actionsEl.append(collapseBtn)
-      collapseBtn.addEventListener('click', () => {
-        this.adminCollapse(collapseBtn)
-      })
 
-      // 绑定删除按钮事件
-      const delBtn = Utils.createElement(`<span>删除</span>`)
-      this.actionsEl.append(delBtn)
-      delBtn.addEventListener('click', () => {
-        this.adminDelete(delBtn)
-      })
-    }
+    // 绑定折叠按钮事件
+    const collapseBtn = Utils.createElement(`<span atk-only-admin-show>${this.data.is_collapsed ? '取消折叠' : '折叠'}</span>`)
+    this.actionsEl.append(collapseBtn)
+    collapseBtn.addEventListener('click', () => {
+      this.adminCollapse(collapseBtn)
+    })
+
+    // 绑定删除按钮事件
+    const delBtn = Utils.createElement(`<span atk-only-admin-show>删除</span>`)
+    this.actionsEl.append(delBtn)
+    delBtn.addEventListener('click', () => {
+      this.adminDelete(delBtn)
+    })
   }
 
   getIsRoot () {

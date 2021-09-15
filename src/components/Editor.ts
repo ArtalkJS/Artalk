@@ -139,19 +139,18 @@ export default class Editor extends Component {
     }
 
     this.saveUser()
-    this.ctx.dispatchEvent('list-refresh-ui')
   }
 
   showLoginDialog () {
     this.ctx.dispatchEvent('checker-admin', {
       onSuccess: () => {
-        this.ctx.dispatchEvent('list-refresh-ui')
       }
     })
   }
 
   saveUser () {
     this.user.save()
+    this.ctx.dispatchEvent('user-changed')
   }
 
   saveContent () {

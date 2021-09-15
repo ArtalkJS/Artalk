@@ -103,6 +103,7 @@ export default class Artalk {
 
     this.ctx.addEventListener('user-changed', () => {
       this.ctx.dispatchEvent('check-admin-show-el')
+      this.ctx.dispatchEvent('list-refresh-ui')
     })
   }
 

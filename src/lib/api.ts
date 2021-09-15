@@ -112,50 +112,49 @@ export default class Api {
 
 function commonFetch(ctx: Context, input: RequestInfo, init?: RequestInit | undefined): Promise<any> {
   return timeoutPromise(4000, fetch(input, init)).then(async (resp) => {
+    // 解析获取响应的 json
     let json: any = await resp.json()
 
-    if (json.data && json.data.need_captcha) { // 请求需要验证码
-      const nPromise = new Promise<any>((resolve, reject) => {
+    // 重新发起请求
+    const recall = (resolve, reject) => {
+      commonFetch(ctx, input, init).then(d => {
+        resolve(d)
+      }).catch(err => {
+        reject(err)
+      })
+    }
+
+    if (json.data && json.data.need_captcha) {
+      // 请求需要验证码
+      json = await (new Promise<any>((resolve, reject) => {
         ctx.dispatchEvent('checker-captcha', {
           imgData: json.data.img_data,
           onSuccess: () => {
-            commonFetch(ctx, input, init).then(d => {
-              resolve(d)
-            }).catch(err => {
-              reject(err)
-            })
+            recall(resolve, reject)
           },
           onCancel: () => {
             reject(json)
           }
         })
-      })
-
-      json = await nPromise
-    } else if (json.data && json.data.need_login) { // 请求需要管理员权限
-      const nPromise = new Promise<any>((resolve, reject) => {
+      }))
+    } else if (json.data && json.data.need_login) {
+      // 请求需要管理员权限
+      json = await (new Promise<any>((resolve, reject) => {
         ctx.dispatchEvent('checker-admin', {
           onSuccess: () => {
-            commonFetch(ctx, input, init).then(d => {
-              resolve(d)
-            }).catch(err => {
-              reject(err)
-            })
+            recall(resolve, reject)
           },
           onCancel: () => {
             reject(json)
           }
         })
-      })
-
-      json = await nPromise
+      }))
     }
 
-    if (!json.success) {
-      throw json
-    }
-
-    return json
+    if (!json.success)
+      throw json // throw 相当于 reject(json)
+    else
+      return json
   })
 }
 
@@ -164,7 +163,6 @@ function getFormData (object: any): FormData {
   Object.keys(object).forEach(key => formData.append(key, String(object[key])))
   return formData
 }
-
 
 /** TODO: 我靠，一个 timeout，都要丑陋的实现 */
 function timeoutPromise<T>(ms: number, promise: Promise<T>): Promise<T> {

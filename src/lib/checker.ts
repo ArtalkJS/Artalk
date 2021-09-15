@@ -29,6 +29,7 @@ const AdminChecker = {
     that.user.data.isAdmin = true
     that.user.data.token = userToken
     that.user.save()
+    that.ctx.dispatchEvent('user-changed')
   },
   onError: (that, err, inputVal, formEl) => {
 

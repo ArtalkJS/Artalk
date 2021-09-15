@@ -169,7 +169,7 @@ export default class List extends Component {
   }
 
   /** 刷新界面 */
-  public refreshUI (isFirstUse: boolean = false) {
+  public refreshUI (isFirstCall: boolean = false) {
     this.el.querySelector<HTMLElement>('.atk-comment-count-num')!.innerText = String(this.getListCommentCount())
 
     // 评论为空界面
@@ -199,7 +199,7 @@ export default class List extends Component {
     if (!!this.data && !!this.data.page && this.data.page.is_close_comment === true) {
       this.ctx.dispatchEvent('editor-close-comment')
       this.closeCommentBtnEl.innerHTML = '打开评论'
-    } else if (!isFirstUse) {
+    } else if (!isFirstCall) {
       this.ctx.dispatchEvent('editor-open-comment')
       this.closeCommentBtnEl.innerHTML = '关闭评论'
     }

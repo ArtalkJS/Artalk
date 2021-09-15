@@ -190,13 +190,6 @@ func GetUserByJwt(jwt *jwt.Token) model.User {
 	return user
 }
 
-// 中间件会创建一个 user context，通过中间件获取到的 jwt 判断
-func CheckIsAdminByJwtMiddleware(c echo.Context) bool {
-	jwt := c.Get("user").(*jwt.Token)
-
-	return CheckIsAdminByJwt(jwt)
-}
-
 func GetUserByReqToken(c echo.Context) model.User {
 	jwt := GetJwtInstanceByReq(c)
 	user := GetUserByJwt(jwt)

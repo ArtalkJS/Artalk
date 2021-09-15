@@ -87,7 +87,8 @@ func InitRoute(e *echo.Echo) {
 
 	// api/manager
 	manager := api.Group("/manager", middleware.JWTWithConfig(CommonJwtConfig)) // use jwt
-	manager.GET("/edit", ActionManagerEdit)
+	manager.GET("/edit-page", ActionManagerEditPage)
+	manager.GET("/edit-comment", ActionManagerEditComment)
 	manager.GET("/del", ActionManagerDel)
 	manager.GET("/send-mail", ActionManagerSendMail)
 }

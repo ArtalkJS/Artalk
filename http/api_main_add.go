@@ -43,10 +43,7 @@ func ActionAdd(c echo.Context) error {
 	RecordAction(c)
 
 	// find page
-	page := FindPage(p.PageKey)
-	if page.IsEmpty() {
-		page = NewPage(p.PageKey)
-	}
+	page := FindCreatePage(p.PageKey)
 
 	// check if the user is allowed to comment
 	if isAllowed, resp := CheckIfAllowed(c, p.Name, p.Email, page); !isAllowed {
@@ -54,13 +51,9 @@ func ActionAdd(c echo.Context) error {
 	}
 
 	// find user
-	user := FindUser(p.Name, p.Email)
-	if user.IsEmpty() {
-		user = NewUser(p.Name, p.Email, p.Link) // save a new user
-	}
-
+	user := FindCreateUser(p.Name, p.Email)
 	if user.ID == 0 || page.Key == "" {
-		logrus.Error("Cannot get real user and page.")
+		logrus.Error("Cannot get user or page.")
 		return RespError(c, "评论失败")
 	}
 

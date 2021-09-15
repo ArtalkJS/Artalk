@@ -15,6 +15,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/mitchellh/mapstructure"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm/clause"
 )
 
 func LoginGetUserToken(user model.User) string {
@@ -101,7 +102,7 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 
 func CheckIfAllowed(c echo.Context, name string, email string, page model.Page) (bool, error) {
 	// 如果用户是管理员，或者当前页只能管理员评论
-	if IsAdminUser(name, email) || page.Type == model.PageOnlyAdmin {
+	if IsAdminUser(name, email) || page.AdminOnly {
 		if !CheckIsAdminReq(c) {
 			return false, RespError(c, "需要验证管理员身份", Map{"need_login": true})
 		}
@@ -112,11 +113,11 @@ func CheckIfAllowed(c echo.Context, name string, email string, page model.Page) 
 
 func FindComment(id uint) model.Comment {
 	var comment model.Comment
-	lib.DB.First(&comment, id)
+	lib.DB.Preload(clause.Associations).First(&comment, id)
 	return comment
 }
 
-// 查找用户（返回：精确查找，模糊查找）
+// 查找用户（返回：精确查找 AND）
 func FindUser(name string, email string) model.User {
 	var user model.User // 注：user 查找是 AND
 	lib.DB.Where("name = ? AND email = ?", name, email).First(&user)
@@ -129,11 +130,34 @@ func IsAdminUser(name string, email string) bool {
 	return !user.IsEmpty()
 }
 
-func NewUser(name string, email string, link string) model.User {
+func UpdateComment(comment *model.Comment) error {
+	err := lib.DB.Save(comment).Error
+	if err != nil {
+		logrus.Error("Update Comment error: ", err)
+	}
+	return err
+}
+
+func FindCreatePage(pageKey string) model.Page {
+	page := FindPage(pageKey)
+	if page.IsEmpty() {
+		page = NewPage(pageKey)
+	}
+	return page
+}
+
+func FindCreateUser(name string, email string) model.User {
+	user := FindUser(name, email)
+	if user.IsEmpty() {
+		user = NewUser(name, email) // save a new user
+	}
+	return user
+}
+
+func NewUser(name string, email string) model.User {
 	user := model.User{
 		Name:  name,
 		Email: email,
-		Link:  link,
 	}
 
 	err := lib.DB.Create(&user).Error
@@ -144,16 +168,24 @@ func NewUser(name string, email string, link string) model.User {
 	return user
 }
 
-func UpdateUser(user *model.User) {
+func UpdateUser(user *model.User) error {
 	err := lib.DB.Save(user).Error
 	if err != nil {
 		logrus.Error("Update User error: ", err)
 	}
+
+	return err
 }
 
 func FindPage(key string) model.Page {
 	var page model.Page
 	lib.DB.Where(&model.Page{Key: key}).First(&page)
+	return page
+}
+
+func FindPageByID(id uint) model.Page {
+	var page model.Page
+	lib.DB.Where("id = ?", id).First(&page)
 	return page
 }
 
@@ -170,11 +202,12 @@ func NewPage(key string) model.Page {
 	return page
 }
 
-func UpdatePage(page *model.Page) {
+func UpdatePage(page *model.Page) error {
 	err := lib.DB.Save(page).Error
 	if err != nil {
 		logrus.Error("Update Page error: ", err)
 	}
+	return err
 }
 
 func ValidateEmail(email string) bool {

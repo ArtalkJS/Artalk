@@ -4,15 +4,13 @@ import "gorm.io/gorm"
 
 type PageType string
 
-const (
-	PageCommentClosed PageType = "comment_closed"
-	PageOnlyAdmin     PageType = "only_admin"
-)
+const ()
 
 type Page struct {
 	gorm.Model
-	Key  string `gorm:"uniqueIndex"`
-	Type PageType
+	Key       string `gorm:"uniqueIndex"`
+	AdminOnly bool
+	Type      PageType
 }
 
 func (p Page) IsEmpty() bool {
@@ -20,15 +18,15 @@ func (p Page) IsEmpty() bool {
 }
 
 type CookedPage struct {
-	ID              uint   `json:"id"`
-	IsCommentClosed bool   `json:"is_comment_closed"`
-	PageKey         string `json:"page_key"`
+	ID        uint   `json:"id"`
+	AdminOnly bool   `json:"admin_only"`
+	PageKey   string `json:"page_key"`
 }
 
 func (p Page) ToCooked() CookedPage {
 	return CookedPage{
-		ID:              p.ID,
-		IsCommentClosed: p.Type == PageCommentClosed,
-		PageKey:         p.Key,
+		ID:        p.ID,
+		AdminOnly: p.AdminOnly,
+		PageKey:   p.Key,
 	}
 }

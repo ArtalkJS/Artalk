@@ -64,6 +64,9 @@ export default class Editor extends Component {
     this.ctx.addEventListener('editor-open-comment', () => (this.openComment()))
     this.ctx.addEventListener('editor-close-comment', () => (this.closeComment()))
     this.ctx.addEventListener('editor-reply', (commentData) => (this.setReply(commentData)))
+    this.ctx.addEventListener('editor-show-loading', () => (Ui.showLoading(this.el)))
+    this.ctx.addEventListener('editor-hide-loading', () => (Ui.hideLoading(this.el)))
+    this.ctx.addEventListener('editor-notify', (f) => (this.showNotify(f.msg, f.type)))
   }
 
   initLocalStorage () {

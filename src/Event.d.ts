@@ -14,6 +14,9 @@ export interface EventPayloadMap {
   'check-admin-show-el': undefined
   'editor-open-comment': undefined
   'editor-close-comment': undefined
+  'editor-show-loading': undefined
+  'editor-hide-loading': undefined
+  'editor-notify': NotifyConf
   'editor-reply': CommentData
   'user-changed': undefined
   'checker-admin': CheckerConf
@@ -24,6 +27,11 @@ export interface CheckerConf {
   onSuccess?: (inputVal: string, dialogEl?: HTMLElement) => void
   onMount?: (dialogEl: HTMLElement) => void
   onCancel?: () => void
+}
+
+export interface NotifyConf {
+  msg: string
+  type: any
 }
 
 export interface CheckerCaptchaConf extends CheckerConf {

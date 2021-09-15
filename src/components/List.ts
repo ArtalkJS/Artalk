@@ -196,7 +196,7 @@ export default class List extends Component {
     this.ctx.dispatchEvent('check-admin-show-el')
 
     // 关闭评论
-    if (!!this.data && !!this.data.page && this.data.page.is_close_comment === true) {
+    if (!!this.data && !!this.data.page && this.data.page.admin_only === true) {
       this.ctx.dispatchEvent('editor-close-comment')
       this.closeCommentBtnEl.innerHTML = '打开评论'
     } else if (!isFirstCall) {
@@ -219,7 +219,7 @@ export default class List extends Component {
       if (!this.data) return
 
       this.adminSetPage({
-        is_close_comment: !this.data.page.is_close_comment
+        admin_only: !this.data.page.admin_only
       })
     })
   }
@@ -289,24 +289,20 @@ export default class List extends Component {
   }
 
   /** 管理员设置页面信息 */
-  public adminSetPage (conf: { is_close_comment: boolean }) {
-    // TODO: 管理员设置页面信息
-    // this.artalk.request('SetPage', {
-    //   nick: this.artalk.user.data.nick,
-    //   email: this.artalk.user.data.email,
-    //   page_key: this.artalk.conf.pageKey,
-    //   password: this.artalk.user.data.password,
-    //   is_close_comment: Number(conf.is_close_comment)
-    // }, () => {
-    //   this.artalk.ui.showLoading(this.artalk.editor.el)
-    // }, () => {
-    //   this.artalk.ui.hideLoading(this.artalk.editor.el)
-    // }, (msg, data) => {
-    //   this.data.page = { ...data }
-    //   this.refreshUI()
-    // }, (msg, data) => {
-    //   this.artalk.editor.showNotify(`修改页面数据失败：${msg}`, 'e')
-    // })
+  public adminSetPage (conf: { admin_only: boolean }) {
+    this.ctx.dispatchEvent('editor-show-loading')
+    new Api(this.ctx).editPage(this.data?.page.page_key || '', conf.admin_only)
+      .then((page) => {
+        if (this.data)
+          this.data.page = { ...page }
+        this.refreshUI()
+      })
+      .catch(err => {
+        this.ctx.dispatchEvent('editor-notify', { msg: `修改页面数据失败：${err.msg || String(err)}`, type: 'e'})
+      })
+      .finally(() => {
+        this.ctx.dispatchEvent('editor-hide-loading')
+      })
   }
 
   /** 跳到评论项位置 - 根据 `location.hash` */

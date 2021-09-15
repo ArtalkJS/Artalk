@@ -53,11 +53,13 @@ export interface ListData {
   total: number
 
   /** 页面信息 */
-  page: {
-    id: number
-    page_key: string
-    is_close_comment: boolean
-  }
+  page: PageData
+}
+
+export interface PageData {
+  id: number
+  page_key: string
+  admin_only: boolean
 }
 
 export interface UserData {

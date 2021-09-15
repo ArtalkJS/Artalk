@@ -1,4 +1,4 @@
-import { CommentData, ListData, UserData } from '~/types/artalk-data'
+import { CommentData, ListData, UserData, PageData } from '~/types/artalk-data'
 import Context from '../Context'
 
 export default class Api {
@@ -107,6 +107,31 @@ export default class Api {
 
       return ''
     })
+  }
+
+  public editComment(comment: CommentData) {
+    const params = getFormData({
+      ...comment,
+      token: this.ctx.user.data.token
+    })
+
+    return commonFetch(this.ctx, `${this.serverURL}/manager/edit-comment`, {
+      method: 'POST',
+      body: params,
+    }).then((json) => (json.data.comment as CommentData))
+  }
+
+  public editPage(key: string, onlyAdmin: boolean) {
+    const params = getFormData({
+      key,
+      only_admin: onlyAdmin ? '1' : '0',
+      token: this.ctx.user.data.token
+    })
+
+    return commonFetch(this.ctx, `${this.serverURL}/manager/edit-page`, {
+      method: 'POST',
+      body: params,
+    }).then((json) => (json.data.page as PageData))
   }
 }
 

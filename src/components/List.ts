@@ -55,6 +55,8 @@ export default class List extends Component {
     this.ctx.addEventListener('list-refresh-ui', () => (this.refreshUI()))
     this.ctx.addEventListener('list-import', (data) => (this.importComments(data)))
     this.ctx.addEventListener('list-insert', (data) => (this.insertComment(data)))
+    this.ctx.addEventListener('list-del-comment', (comment) => (this.deleteComment(comment.id)))
+    this.ctx.addEventListener('list-update-data', (updateData) => { updateData(this.data);this.refreshUI() } )
   }
 
   public async reqComments(offset: number = 0) {

@@ -133,6 +133,18 @@ export default class Api {
       body: params,
     }).then((json) => (json.data.page as PageData))
   }
+
+  public delComment(commentID: number) {
+    const params = getFormData({
+      id: String(commentID),
+      token: this.ctx.user.data.token
+    })
+
+    return commonFetch(this.ctx, `${this.serverURL}/manager/del-comment`, {
+      method: 'POST',
+      body: params,
+    }).then((json) => (json.success))
+  }
 }
 
 function commonFetch(ctx: Context, input: RequestInfo, init?: RequestInit | undefined): Promise<any> {

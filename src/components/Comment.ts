@@ -7,6 +7,7 @@ import * as Ui from '../lib/ui'
 import UADetect from '../lib/detect'
 import { CommentData } from '~/types/artalk-data'
 import CommentHTML from './html/comment.html?raw'
+import Api from '../lib/api'
 
 export default class Comment extends Component {
   public data: CommentData
@@ -272,30 +273,26 @@ export default class Comment extends Component {
     }
     const btnTextOrg = btnElem.innerText
 
-    // TODO: 评论删除
-    // this.artalk.request('CommentDel', {
-    //   id: this.data.id,
-    //   nick: this.ctx.user.data.nick,
-    //   email: this.ctx.user.data.email,
-    //   token: this.ctx.user.data.token
-    // }, () => {
-    //   btnElem.classList.add('atk-in-process')
-    //   btnElem.innerText = '删除中...'
-    // }, () => {
-    // }, (msg, data) => {
-    //   btnElem.innerText = btnTextOrg
-    //   this.artalk.deleteComment(this)
-    //   this.list.data.total -= 1 // 评论数 -1
-    //   this.list.refreshUI() // 刷新 list
-    //   btnElem.classList.remove('atk-in-process')
-    // }, (msg, data) => {
-    //   btnElem.classList.add('atk-error')
-    //   btnElem.innerText = '删除失败'
-    //   setTimeout(() => {
-    //     btnElem.innerText = btnTextOrg
-    //     btnElem.classList.remove('atk-error')
-    //     btnElem.classList.remove('atk-in-process')
-    //   }, 2000)
-    // })
+    btnElem.classList.add('atk-in-process')
+    btnElem.innerText = '删除中...'
+    new Api(this.ctx).delComment(this.data.id)
+      .then(() => {
+        btnElem.innerText = btnTextOrg
+        this.ctx.dispatchEvent('list-del-comment', this.data)
+        this.ctx.dispatchEvent('list-update-data', (data) => {
+          if (!data) return
+          data.total -= 1 // 评论数 -1
+        })
+        btnElem.classList.remove('atk-in-process')
+      })
+      .catch(() => {
+        btnElem.classList.add('atk-error')
+        btnElem.innerText = '删除失败'
+        setTimeout(() => {
+          btnElem.innerText = btnTextOrg
+          btnElem.classList.remove('atk-error')
+          btnElem.classList.remove('atk-in-process')
+        }, 2000)
+      })
   }
 }

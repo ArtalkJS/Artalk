@@ -73,17 +73,19 @@ func ActionAdd(c echo.Context) error {
 	}
 
 	comment := model.Comment{
-		Content: p.Content,
-		Rid:     p.Rid,
-		UserID:  user.ID,
-		PageKey: page.Key,
-		IP:      ip,
-		UA:      ua,
+		Content:     p.Content,
+		Rid:         p.Rid,
+		UserID:      user.ID,
+		PageKey:     page.Key,
+		IP:          ip,
+		UA:          ua,
+		IsPending:   false,
+		IsCollapsed: false,
 	}
 
 	// default comment type
 	if config.Instance.Moderator.PendingDefault {
-		comment.Type = model.CommentPending
+		comment.IsPending = true
 	}
 
 	// save to database

@@ -7,12 +7,6 @@ import (
 
 type CommentType string
 
-const (
-	CommentCollapsed CommentType = "collapsed"
-	CommentPending   CommentType = "pengding"
-	CommentDeleted   CommentType = "deleted"
-)
-
 type Comment struct {
 	gorm.Model
 	Content string
@@ -22,10 +16,12 @@ type Comment struct {
 	User    User   `gorm:"foreignKey:UserID;references:ID"`
 	Page    Page   `gorm:"foreignKey:PageKey;references:Key"`
 
-	Rid  uint `gorm:"index"`
-	UA   string
-	IP   string
-	Type CommentType
+	Rid uint `gorm:"index"`
+	UA  string
+	IP  string
+
+	IsCollapsed bool
+	IsPending   bool
 }
 
 func (c Comment) IsEmpty() bool {
@@ -33,7 +29,7 @@ func (c Comment) IsEmpty() bool {
 }
 
 func (c Comment) IsAllowReply() bool {
-	return c.Type != CommentCollapsed && c.Type != CommentPending && c.Type != CommentDeleted
+	return !c.IsCollapsed && !c.IsPending
 }
 
 func (c *Comment) FetchUser() User {
@@ -103,8 +99,8 @@ func (c Comment) ToCooked() CookedComment {
 		Link:           user.Link,
 		UA:             c.UA,
 		Date:           c.CreatedAt.Local().String(),
-		IsCollapsed:    c.Type == CommentCollapsed,
-		IsPending:      c.Type == CommentPending,
+		IsCollapsed:    c.IsCollapsed,
+		IsPending:      c.IsPending,
 		IsAllowReply:   c.IsAllowReply(),
 		Rid:            c.Rid,
 	}
@@ -145,8 +141,8 @@ func (c Comment) ToCookedForEmail() CookedCommentForEmail {
 		Datetime:       c.CreatedAt.Local().Format("2006-01-02 15:04:05"),
 		Date:           c.CreatedAt.Local().Format("2006-01-02"),
 		Time:           c.CreatedAt.Local().Format("15:04:05"),
-		IsCollapsed:    c.Type == CommentCollapsed,
-		IsPending:      c.Type == CommentPending,
+		IsCollapsed:    c.IsCollapsed,
+		IsPending:      c.IsPending,
 		IsAllowReply:   c.IsAllowReply(),
 		Rid:            c.Rid,
 		PageKey:        c.PageKey,

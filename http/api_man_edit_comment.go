@@ -1,24 +1,23 @@
 package http
 
 import (
-	"encoding/json"
 	"strconv"
 
-	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
 
 type ParamsEditComment struct {
-	ID      string `mapstructure:"id" param:"required"`
-	Content string `mapstructure:"content"`
-	PageKey string `mapstructure:"page_key"`
-	Nick    string `mapstructure:"nick"`
-	Email   string `mapstructure:"email"`
-	Link    string `mapstructure:"link"`
-	Rid     string `mapstructure:"rid"`
-	UA      string `mapstructure:"ua"`
-	IP      string `mapstructure:"ip"`
-	Type    string `mapstructure:"type"`
+	ID          string `mapstructure:"id" param:"required"`
+	Content     string `mapstructure:"content"`
+	PageKey     string `mapstructure:"page_key"`
+	Nick        string `mapstructure:"nick"`
+	Email       string `mapstructure:"email"`
+	Link        string `mapstructure:"link"`
+	Rid         string `mapstructure:"rid"`
+	UA          string `mapstructure:"ua"`
+	IP          string `mapstructure:"ip"`
+	IsCollapsed string `mapstructure:"is_collapsed"`
+	IsPending   string `mapstructure:"is_pending"`
 }
 
 func ActionManagerEditComment(c echo.Context) error {
@@ -83,13 +82,23 @@ func ActionManagerEditComment(c echo.Context) error {
 		comment.IP = p.IP
 	}
 
-	// type
-	if p.Type != "" {
-		tmp, _ := json.Marshal(Map{"Type": p.Type})
-		var tmpComment model.Comment
-		json.Unmarshal(tmp, &tmpComment)
-		if comment.Type != tmpComment.Type {
-			comment.Type = tmpComment.Type
+	// is_collapsed
+	if p.IsCollapsed != "" {
+		switch p.IsCollapsed {
+		case "1":
+			comment.IsCollapsed = true
+		case "0":
+			comment.IsCollapsed = false
+		}
+	}
+
+	// is_pending
+	if p.IsPending != "" {
+		switch p.IsPending {
+		case "1":
+			comment.IsPending = true
+		case "0":
+			comment.IsPending = false
 		}
 	}
 

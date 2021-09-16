@@ -4,7 +4,9 @@ import (
 	"strconv"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 type ParamsDelComment struct {
@@ -31,8 +33,22 @@ func ActionManagerDelComment(c echo.Context) error {
 		return RespError(c, "comment not found.")
 	}
 
-	if err := lib.DB.Delete("id = ?", comment.ID).Error; err != nil {
+	if err := lib.DB.Model(&model.Comment{}).Delete("id = ?", comment.ID).Error; err != nil {
 		return RespError(c, "comment delete error.")
 	}
+
+	// 删除子评论
+	hasErr := false
+	children := comment.FetchChildren(func(db *gorm.DB) *gorm.DB { return db })
+	for _, c := range children {
+		err := lib.DB.Delete(&c)
+		if err != nil {
+			hasErr = true
+		}
+	}
+	if hasErr {
+		return RespError(c, "children comment delete error.")
+	}
+
 	return RespSuccess(c)
 }

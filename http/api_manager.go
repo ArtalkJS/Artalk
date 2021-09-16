@@ -5,14 +5,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ActionManagerDel(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
-	return nil
-}
-
 func ActionManagerSendMail(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp

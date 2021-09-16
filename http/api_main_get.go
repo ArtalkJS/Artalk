@@ -41,7 +41,7 @@ func ActionGet(c echo.Context) error {
 
 	// find children comments
 	for _, c := range comments { // TODO: Read more children, pagination for children comment
-		children := c.FetchChildren(func(db *gorm.DB) *gorm.DB { return db.Where("type != ?", model.CommentPending) })
+		children := c.FetchChildren(func(db *gorm.DB) *gorm.DB { return db.Where("is_pending = 0") })
 		for _, c := range children {
 			cookedComments = append(cookedComments, c.ToCooked())
 		}
@@ -81,7 +81,7 @@ func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
 
 func FilterAllowedComment(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("rid = 0 AND type != ?", model.CommentPending)
+		return db.Where("rid = 0 AND is_pending = 0")
 	}
 }
 

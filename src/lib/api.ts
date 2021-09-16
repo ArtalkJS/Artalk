@@ -109,15 +109,30 @@ export default class Api {
     })
   }
 
-  public editComment(comment: CommentData) {
-    const params = getFormData({
-      ...comment,
+  public editComment(data: {
+    id: number,
+    content?: string,
+    page_key?: string,
+    nick?: string,
+    email?: string,
+    link?: string,
+    rid?: number,
+    ua?: string,
+    ip?: string,
+    is_collapsed?: boolean,
+    is_pending?: boolean,
+  }) {
+    const params: any = {
+      ...data,
       token: this.ctx.user.data.token
-    })
+    }
+
+    if (params.is_collapsed !== undefined) params.is_collapsed = params.is_collapsed ? '1' : '0'
+    if (params.is_pending !== undefined) params.is_pending = params.is_pending ? '1' : '0'
 
     return commonFetch(this.ctx, `${this.serverURL}/manager/edit-comment`, {
       method: 'POST',
-      body: params,
+      body: getFormData(params),
     }).then((json) => (json.data.comment as CommentData))
   }
 

@@ -66,17 +66,16 @@ export default class Comment extends Component {
     this.el.querySelector<HTMLElement>('.atk-ua.ua-os')!.innerText = this.getUserUaOS()
 
     // 内容 & 折叠
-    if (!this.data.is_collapsed)
+    if (!this.data.is_collapsed) {
       this.contentEl.innerHTML = this.getContentMarked()
-
-    if (this.data.is_collapsed) {
+    } else {
       this.contentEl.classList.add('atk-hide', 'atk-type-collapsed')
       const collapsedInfoEl = Utils.createElement(`
       <div class="atk-collapsed">
         <span class="atk-text">该评论已被系统或管理员折叠</span>
         <span class="atk-show-btn">查看内容</span>
       </div>`)
-      this.contentEl.insertAdjacentElement('afterbegin', collapsedInfoEl)
+      this.bodyEl.insertAdjacentElement('beforeend', collapsedInfoEl)
 
       const contentShowBtn = collapsedInfoEl.querySelector('.atk-show-btn')!
       contentShowBtn.addEventListener('click', () => {
@@ -222,35 +221,31 @@ export default class Comment extends Component {
     const btnTextOrg = btnElem.innerText
     const isCollapse = !this.data.is_collapsed
 
-    // TODO: 评论折叠
-    // this.artalk.request('CommentCollapse', {
-    //   id: this.data.id,
-    //   nick: this.ctx.user.data.nick,
-    //   email: this.ctx.user.data.email,
-    //   token: this.ctx.user.data.token,
-    //   is_collapsed: Number(isCollapse)
-    // }, () => {
-    //   btnElem.classList.add('atk-in-process')
-    //   btnElem.innerText = isCollapse ? '折叠中...' : '展开中...'
-    // }, () => {
-    // }, (msg, data) => {
-    //   btnElem.classList.remove('atk-in-process')
-    //   this.data.is_collapsed = data.is_collapsed
-    //   this.eachComment([this], (item) => {
-    //     item.data.is_allow_reply = !data.is_collapsed // 禁止回复
-    //   })
-    //   this.refreshUI()
-    //   Ui.playFadeInAnim(this.bodyEl)
-    //   this.list.refreshUI()
-    // }, (msg, data) => {
-    //   btnElem.classList.add('atk-error')
-    //   btnElem.innerText = isCollapse ? '折叠失败' : '展开失败'
-    //   setTimeout(() => {
-    //     btnElem.innerText = btnTextOrg
-    //     btnElem.classList.remove('atk-error')
-    //     btnElem.classList.remove('atk-in-process')
-    //   }, 2000)
-    // })
+    btnElem.classList.add('atk-in-process')
+    btnElem.innerText = isCollapse ? '折叠中...' : '展开中...'
+
+    new Api(this.ctx).editComment({
+      id: this.data.id,
+      is_collapsed: !this.data.is_collapsed
+    }).then((comment) => {
+      btnElem.classList.remove('atk-in-process')
+      this.data.is_collapsed = comment.is_collapsed
+      this.eachComment([this], (item) => {
+        item.data.is_allow_reply = !comment.is_collapsed // 禁止回复
+      })
+      this.refreshUI()
+      Ui.playFadeInAnim(this.bodyEl)
+      this.ctx.dispatchEvent('list-refresh-ui')
+    }).catch((err) => {
+      console.error(err)
+      btnElem.classList.add('atk-error')
+      btnElem.innerText = isCollapse ? '折叠失败' : '展开失败'
+      setTimeout(() => {
+        btnElem.innerText = btnTextOrg
+        btnElem.classList.remove('atk-error')
+        btnElem.classList.remove('atk-in-process')
+      }, 2000)
+    })
   }
 
   /** 管理员 - 评论删除 */

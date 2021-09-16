@@ -11,6 +11,10 @@ type ParamsGet struct {
 	PageKey string `mapstructure:"page_key" param:"required"`
 	Limit   int    `mapstructure:"limit"`
 	Offset  int    `mapstructure:"offset"`
+
+	Name  string `mapstructure:"name"`
+	Email string `mapstructure:"email"`
+	Type  string `mapstructure:"type"`
 	// TODO: FlatMode string `mapstructure:"flat_mode"`
 }
 
@@ -31,29 +35,27 @@ func ActionGet(c echo.Context) error {
 	page := FindPage(p.PageKey)
 
 	// find comments
+
+	// comment parents
 	var comments []model.Comment
-	lib.DB.Where("page_key = ?", p.PageKey).Scopes(Paginate(p.Offset, p.Limit), FilterAllowedComment(c, p)).Order("created_at DESC").Find(&comments)
+	GetParentCommentQuery(c, p).Find(&comments)
 
 	cookedComments := []model.CookedComment{}
 	for _, c := range comments {
 		cookedComments = append(cookedComments, c.ToCooked())
 	}
 
-	// find children comments
-	for _, c := range comments { // TODO: Read more children, pagination for children comment
-		children := c.FetchChildren(func(db *gorm.DB) *gorm.DB { return db.Where("is_pending = 0") })
-		for _, c := range children {
-			cookedComments = append(cookedComments, c.ToCooked())
+	// comment children
+	for _, parent := range comments { // TODO: Read more children, pagination for children comment
+		children := parent.FetchChildren(AllowedComment(c, p))
+		for _, child := range children {
+			cookedComments = append(cookedComments, child.ToCooked())
 		}
 	}
 
 	// count comments
-	total := CountComments(p.PageKey, func(db *gorm.DB) *gorm.DB {
-		return db.Where("page_key = ?", p.PageKey)
-	})
-	totalParents := CountComments(p.PageKey, func(db *gorm.DB) *gorm.DB {
-		return db.Where("page_key = ? AND rid = 0", p.PageKey)
-	})
+	total := CountComments(GetCommentQuery(c, p))
+	totalParents := CountComments(GetParentCommentQuery(c, p))
 
 	return RespData(c, ResponseGet{
 		Comments:     cookedComments,
@@ -61,6 +63,19 @@ func ActionGet(c echo.Context) error {
 		TotalParents: totalParents,
 		Page:         page.ToCooked(),
 	})
+}
+
+func GetCommentQuery(c echo.Context, p ParamsGet) *gorm.DB {
+	return lib.DB.Scopes(CommonQuery(c, p), Paginate(p.Offset, p.Limit), NotificationCenter(c, p))
+}
+func GetParentCommentQuery(c echo.Context, p ParamsGet) *gorm.DB {
+	return GetCommentQuery(c, p).Scopes(ParentComment())
+}
+
+func CommonQuery(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Model(&model.Comment{}).Where("page_key = ?", p.PageKey).Order("created_at DESC")
+	}
 }
 
 func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
@@ -79,14 +94,57 @@ func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func FilterAllowedComment(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+func AllowedComment(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("rid = 0 AND is_pending = 0")
+		return db.Where("is_pending = 0")
 	}
 }
 
-func CountComments(pageKey string, filter func(db *gorm.DB) *gorm.DB) int64 {
+func ParentComment() func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("rid = 0")
+	}
+}
+
+func NotificationCenter(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if p.Name == "" || p.Email == "" {
+			return db.Scopes(AllowedComment(c, p)) // 不是通知中心
+		}
+		if p.Type == "" {
+			p.Type = "mentions"
+		}
+
+		user := FindUser(p.Name, p.Email)
+
+		myCommentIDs := []int{}
+		if p.Type == "all" || p.Type == "mentions" {
+			var myComments []model.Comment
+			lib.DB.Where("user_id = ?", user.ID).Find(&myComments)
+			for _, comment := range myComments {
+				myCommentIDs = append(myCommentIDs, int(comment.ID))
+			}
+		}
+
+		if p.Type == "all" {
+			db = db.Where("rid IN (?) OR user_id = ?", myCommentIDs, user.ID)
+		}
+		if p.Type == "mentions" {
+			db = db.Where("rid IN (?) AND user_id != ?", myCommentIDs, user.ID)
+		}
+		if p.Type == "mine" {
+			db = db.Where("user_id = ?", user.ID)
+		}
+		if p.Type == "pending" {
+			db = db.Where("user_id = ? AND is_pending = 1", user.ID)
+		}
+
+		return db
+	}
+}
+
+func CountComments(db *gorm.DB) int64 {
 	var count int64
-	lib.DB.Model(&model.Comment{}).Scopes(filter).Count(&count)
+	db.Count(&count)
 	return count
 }

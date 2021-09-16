@@ -8,6 +8,7 @@ import Comment  from './Comment'
 import SidebarHTML from './html/sidebar.html?raw'
 import { ListData, CommentData } from '~/types/artalk-data'
 import BuildLayer, { Layer } from './Layer'
+import Api from '../lib/api'
 
 export default class Sidebar extends Component {
   public el: HTMLElement
@@ -78,30 +79,29 @@ export default class Sidebar extends Component {
       reqData = { token: this.ctx.user.data.token, ...reqData }
     }
 
-    // TODO: sidebar Req
-    // this.artalk.request('CommentGetV2', reqData, () => {
-    //   Ui.showLoading(this.contentEl)
-    // }, () => {
-    //   Ui.hideLoading(this.contentEl)
-    // }, (msg, data) => {
-    //   this.contentEl.innerHTML = ''
-    //   if (Array.isArray(data.comments)) {
-    //     (data.comments as CommentData[]).forEach((item) => {
-    //       this.putComment(item)
-    //     });
-    //   }
-    //   if (!data.comments || !Array.isArray(data.comments) || data.comments.length <= 0) {
-    //     this.showNoComment()
-    //   }
-    // }, (msg, data) => {
+    Ui.showLoading(this.contentEl)
 
-    // })
+    new Api(this.ctx).get(0, type)
+      .then(data => {
+        this.contentEl.innerHTML = ''
+        if (Array.isArray(data.comments)) {
+          (data.comments as CommentData[]).forEach((item) => {
+            this.putComment(item)
+          });
+        }
+        if (!data.comments || !Array.isArray(data.comments) || data.comments.length <= 0) {
+          this.showNoComment()
+        }
+      })
+      .finally(() => {
+        Ui.hideLoading(this.contentEl)
+      })
   }
 
   putComment (data: CommentData) {
     const comment = new Comment(this.ctx, data)
 
-    comment.el.querySelector('[data-comment-action="reply"]')!.remove()
+    // comment.el.querySelector('[data-comment-action="reply"]')!.remove()
     comment.el.style.cursor = 'pointer'
     comment.el.addEventListener('mouseover', () => {
       comment.el.style.backgroundColor = 'var(--at-color-bg-grey)'

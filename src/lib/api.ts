@@ -10,16 +10,22 @@ export default class Api {
     this.serverURL = ctx.conf.serverUrl
   }
 
-  public get(offset: number): Promise<ListData> {
-    const params = getFormData({
+  public get(offset: number, type?: string): Promise<ListData> {
+    const params: any = {
       page_key: this.ctx.conf.pageKey,
       limit: this.ctx.conf.readMore?.pageSize || 15,
       offset,
-    })
+    }
+
+    if (type) {
+      params.name = this.ctx.user.data.nick
+      params.email = this.ctx.user.data.email
+      params.type = type
+    }
 
     return commonFetch(this.ctx, `${this.serverURL}/get`, {
       method: 'POST',
-      body: params,
+      body: getFormData(params),
     }).then((json) => (json.data as ListData))
   }
 

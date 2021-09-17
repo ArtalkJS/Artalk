@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
@@ -130,7 +131,8 @@ func GetJwtInstanceByReq(c echo.Context) *jwt.Token {
 		token = c.FormValue("token")
 	}
 	if token == "" {
-		token = c.Request().Header.Get("X-Auth-Token")
+		token = c.Request().Header.Get("Authorization")
+		token = strings.TrimPrefix(token, "Bearer ")
 	}
 	if token == "" {
 		return nil

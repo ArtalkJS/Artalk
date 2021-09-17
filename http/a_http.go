@@ -51,7 +51,8 @@ func Run() {
 		Claims:        &jwtCustomClaims{},
 		ContextKey:    "user",
 		SigningMethod: "HS256",
-		TokenLookup:   "header:X-Auth-Token,query:token,form:token",
+		TokenLookup:   "header:Authorization,query:token,form:token",
+		AuthScheme:    "Bearer",
 		SigningKey:    []byte(config.Instance.AppKey),
 	}
 

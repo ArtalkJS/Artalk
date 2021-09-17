@@ -85,6 +85,8 @@ type CookedComment struct {
 	IsPending      bool   `json:"is_pending"`
 	IsAllowReply   bool   `json:"is_allow_reply"`
 	Rid            uint   `json:"rid"`
+	PageKey        string `json:"page_key"`
+	Visible        bool   `json:"visible"`
 }
 
 func (c Comment) ToCooked() CookedComment {
@@ -103,6 +105,8 @@ func (c Comment) ToCooked() CookedComment {
 		IsPending:      c.IsPending,
 		IsAllowReply:   c.IsAllowReply(),
 		Rid:            c.Rid,
+		PageKey:        c.PageKey,
+		Visible:        true,
 	}
 }
 

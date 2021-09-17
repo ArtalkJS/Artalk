@@ -12,9 +12,11 @@ type ParamsGet struct {
 	Limit   int    `mapstructure:"limit"`
 	Offset  int    `mapstructure:"offset"`
 
+	// Message Center
 	Name  string `mapstructure:"name"`
 	Email string `mapstructure:"email"`
 	Type  string `mapstructure:"type"`
+
 	// TODO: FlatMode string `mapstructure:"flat_mode"`
 }
 
@@ -30,32 +32,68 @@ func ActionGet(c echo.Context) error {
 	if isOK, resp := ParamsDecode(c, ParamsGet{}, &p); !isOK {
 		return resp
 	}
+	isMsgCenter := IsMsgCenter(p)
 
 	// find page
 	page := FindPage(p.PageKey)
 
-	// find comments
-
 	// comment parents
 	var comments []model.Comment
-	GetParentCommentQuery(c, p).Find(&comments)
 
+	query := GetCommentQuery(c, p).Scopes(Paginate(p.Offset, p.Limit))
 	cookedComments := []model.CookedComment{}
-	for _, c := range comments {
-		cookedComments = append(cookedComments, c.ToCooked())
-	}
 
-	// comment children
-	for _, parent := range comments { // TODO: Read more children, pagination for children comment
-		children := parent.FetchChildren(AllowedComment(c, p))
-		for _, child := range children {
-			cookedComments = append(cookedComments, child.ToCooked())
+	if !isMsgCenter {
+		query = query.Scopes(ParentComment())
+		query.Find(&comments)
+
+		for _, c := range comments {
+			cookedComments = append(cookedComments, c.ToCooked())
+		}
+
+		// comment children
+		for _, parent := range comments { // TODO: Read more children, pagination for children comment
+			children := parent.FetchChildren(AllowedComment())
+			for _, child := range children {
+				cookedComments = append(cookedComments, child.ToCooked())
+			}
+		}
+	} else {
+		// flat mode
+		query.Find(&comments)
+
+		for _, c := range comments {
+			cookedComments = append(cookedComments, c.ToCooked())
+		}
+
+		containsComment := func(cid uint) bool {
+			for _, c := range cookedComments {
+				if c.ID == cid {
+					return true
+				}
+			}
+			return false
+		}
+
+		// find linked comments
+		for _, c := range comments {
+			if c.Rid == 0 || containsComment(c.Rid) {
+				continue
+			}
+
+			rComment := FindComment(c.Rid) // 查找被回复的评论
+			if rComment.IsEmpty() {
+				continue
+			}
+			rCooked := rComment.ToCooked()
+			rCooked.Visible = false // 设置为不可见
+			cookedComments = append(cookedComments, rCooked)
 		}
 	}
 
 	// count comments
 	total := CountComments(GetCommentQuery(c, p))
-	totalParents := CountComments(GetParentCommentQuery(c, p))
+	totalParents := CountComments(GetCommentQuery(c, p).Scopes(ParentComment()))
 
 	return RespData(c, ResponseGet{
 		Comments:     cookedComments,
@@ -66,55 +104,21 @@ func ActionGet(c echo.Context) error {
 }
 
 func GetCommentQuery(c echo.Context, p ParamsGet) *gorm.DB {
-	return lib.DB.Scopes(CommonQuery(c, p), Paginate(p.Offset, p.Limit), NotificationCenter(c, p))
-}
-func GetParentCommentQuery(c echo.Context, p ParamsGet) *gorm.DB {
-	return GetCommentQuery(c, p).Scopes(ParentComment())
+	query := lib.DB.Model(&model.Comment{}).Where("page_key = ?", p.PageKey).Order("created_at DESC")
+	if IsMsgCenter(p) {
+		query = query.Scopes(MsgCenter(c, p))
+	} else {
+		query = query.Scopes(AllowedComment())
+	}
+	return query
 }
 
-func CommonQuery(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+func IsMsgCenter(p ParamsGet) bool {
+	return p.Name != "" && p.Email != ""
+}
+
+func MsgCenter(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		return db.Model(&model.Comment{}).Where("page_key = ?", p.PageKey).Order("created_at DESC")
-	}
-}
-
-func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
-	if offset < 0 {
-		offset = 0
-	}
-
-	if limit > 100 {
-		limit = 100
-	} else if limit <= 0 {
-		limit = 15
-	}
-
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Offset(offset).Limit(limit)
-	}
-}
-
-func AllowedComment(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("is_pending = 0")
-	}
-}
-
-func ParentComment() func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("rid = 0")
-	}
-}
-
-func NotificationCenter(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		if p.Name == "" || p.Email == "" {
-			return db.Scopes(AllowedComment(c, p)) // 不是通知中心
-		}
-		if p.Type == "" {
-			p.Type = "mentions"
-		}
-
 		user := FindUser(p.Name, p.Email)
 
 		myCommentIDs := []int{}
@@ -147,4 +151,32 @@ func CountComments(db *gorm.DB) int64 {
 	var count int64
 	db.Count(&count)
 	return count
+}
+
+func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
+	if offset < 0 {
+		offset = 0
+	}
+
+	if limit > 100 {
+		limit = 100
+	} else if limit <= 0 {
+		limit = 15
+	}
+
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Offset(offset).Limit(limit)
+	}
+}
+
+func AllowedComment() func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("is_pending = 0")
+	}
+}
+
+func ParentComment() func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("rid = 0")
+	}
 }

@@ -40,6 +40,12 @@ export interface CommentData {
 
   /** 是否允许回复 */
   is_allow_reply?: boolean
+
+  /** 评论页面 key */
+  page_key: string
+
+  /** 是否可见 */
+  visible: boolean
 }
 
 export interface ListData {

@@ -2,8 +2,6 @@ import { ListData, CommentData } from '~/types/artalk-data'
 
 /** EventName to EventPayload Type */
 export interface EventPayloadMap {
-  'list-load': ListData
-  'list-error': string
   'list-loading': undefined
   'list-clear': undefined
   'list-refresh-ui': undefined

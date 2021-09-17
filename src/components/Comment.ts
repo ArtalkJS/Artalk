@@ -23,6 +23,10 @@ export default class Comment extends Component {
   private readonly maxNestingNum = 3 // 最多嵌套层数
   public children: Comment[] = []
 
+  public replyTo?: CommentData // 回复对象（flatMode 用）
+
+  public afterRender?: () => void
+
   constructor (ctx: Context, data: CommentData) {
     super(ctx)
 
@@ -31,11 +35,9 @@ export default class Comment extends Component {
 
     this.parent = null
     this.nestedNum = 1 // 现在已嵌套 n 层
-
-    this.renderElem()
   }
 
-  private renderElem () {
+  public renderElem () {
     this.el = Utils.createElement(CommentHTML)
     this.mainEl = this.el.querySelector('.atk-comment-main')!
     this.bodyEl = this.el.querySelector('.atk-body')!
@@ -78,7 +80,7 @@ export default class Comment extends Component {
       this.bodyEl.insertAdjacentElement('beforeend', collapsedInfoEl)
 
       const contentShowBtn = collapsedInfoEl.querySelector('.atk-show-btn')!
-      contentShowBtn.addEventListener('click', () => {
+      contentShowBtn.addEventListener('click', (e) => {
         if (this.contentEl.classList.contains('atk-hide')) {
           this.contentEl.innerHTML = this.getContentMarked()
           this.contentEl.classList.remove('atk-hide')
@@ -89,10 +91,26 @@ export default class Comment extends Component {
           this.contentEl.classList.add('atk-hide')
           contentShowBtn.innerHTML = '查看内容'
         }
+
+        e.stopPropagation() // 防止穿透
       })
     }
 
+    // 显示回复的对象
+    if (this.replyTo) {
+      const replyToEl = Utils.createElement(`
+      <div class="atk-reply-to">
+        <div class="atk-meta">回复 <span class="atk-nick"></span>:</div>
+        <div class="atk-content"></div>
+      </div>`)
+      replyToEl.querySelector<HTMLElement>('.atk-nick')!.innerText = `@${this.replyTo.nick}`
+      replyToEl.querySelector<HTMLElement>('.atk-content')!.innerHTML = Utils.marked(this.ctx, this.replyTo.content)
+      this.bodyEl.prepend(replyToEl)
+    }
+
     this.initActionBtn()
+
+    if (this.afterRender) this.afterRender()
 
     return this.el
   }
@@ -122,10 +140,11 @@ export default class Comment extends Component {
   initActionBtn () {
     // 绑定回复按钮事件
     if (this.data.is_allow_reply) {
-      const replyBtn = Utils.createElement(`<span>回复</span>`)
+      const replyBtn = Utils.createElement(`<span data-atk-action="comment-reply">回复</span>`)
       this.actionsEl.append(replyBtn)
-      replyBtn.addEventListener('click', () => {
+      replyBtn.addEventListener('click', (e) => {
         this.ctx.dispatchEvent('editor-reply', this.data)
+        e.stopPropagation() // 防止穿透
       })
     }
 
@@ -134,15 +153,17 @@ export default class Comment extends Component {
     // 绑定折叠按钮事件
     const collapseBtn = Utils.createElement(`<span atk-only-admin-show>${this.data.is_collapsed ? '取消折叠' : '折叠'}</span>`)
     this.actionsEl.append(collapseBtn)
-    collapseBtn.addEventListener('click', () => {
+    collapseBtn.addEventListener('click', (e) => {
       this.adminCollapse(collapseBtn)
+      e.stopPropagation() // 防止穿透
     })
 
     // 绑定删除按钮事件
     const delBtn = Utils.createElement(`<span atk-only-admin-show>删除</span>`)
     this.actionsEl.append(delBtn)
-    delBtn.addEventListener('click', () => {
+    delBtn.addEventListener('click', (e) => {
       this.adminDelete(delBtn)
+      e.stopPropagation() // 防止穿透
     })
   }
 
@@ -248,6 +269,8 @@ export default class Comment extends Component {
     })
   }
 
+  public onDelete?: (comment: Comment) => void
+
   /** 管理员 - 评论删除 */
   adminDelete (btnElem: HTMLElement) {
     if (btnElem.classList.contains('atk-in-process')) return // 若正在删除中
@@ -273,14 +296,11 @@ export default class Comment extends Component {
     new Api(this.ctx).delComment(this.data.id)
       .then(() => {
         btnElem.innerText = btnTextOrg
-        this.ctx.dispatchEvent('list-del-comment', this.data)
-        this.ctx.dispatchEvent('list-update-data', (data) => {
-          if (!data) return
-          data.total -= 1 // 评论数 -1
-        })
         btnElem.classList.remove('atk-in-process')
+        if (this.onDelete) this.onDelete(this)
       })
-      .catch(() => {
+      .catch((e) => {
+        console.error(e)
         btnElem.classList.add('atk-error')
         btnElem.innerText = '删除失败'
         setTimeout(() => {

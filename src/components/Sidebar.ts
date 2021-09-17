@@ -9,11 +9,14 @@ import SidebarHTML from './html/sidebar.html?raw'
 import { ListData, CommentData } from '~/types/artalk-data'
 import BuildLayer, { Layer } from './Layer'
 import Api from '../lib/api'
+import ListLite from './ListLite'
 
 export default class Sidebar extends Component {
   public el: HTMLElement
   public layer?: Layer
   public contentEl: HTMLElement
+  public list: ListLite
+  public type: string = 'mentions'
 
   constructor (ctx: Context) {
     super(ctx)
@@ -29,6 +32,12 @@ export default class Sidebar extends Component {
 
     this.ctx.addEventListener('sidebar-show', () => (this.show()))
     this.ctx.addEventListener('sidebar-hide', () => (this.hide()))
+
+    this.list = new ListLite(this.ctx)
+    this.list.flatMode = true
+    this.list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
+    this.list.renderComment = this.renderComment
+    this.contentEl.append(this.list.el)
   }
 
   initActionBar() {
@@ -42,7 +51,10 @@ export default class Sidebar extends Component {
         item.classList.remove('atk-active')
       })
       el.classList.add('atk-active')
-      this.reqComment(type)
+      this.type = type
+      this.list.type = (this.type as any);
+      this.list.isFirstLoad = true
+      this.list.reqComments()
     })
   }
 
@@ -57,7 +69,9 @@ export default class Sidebar extends Component {
       this.el.style.transform = 'translate(0, 0)' // 执行动画
     }, 20)
 
-    this.reqComment('mentions')
+    this.list.type = this.type as any
+    this.list.isFirstLoad = true
+    this.list.reqComments()
   }
 
   hide () {
@@ -65,43 +79,9 @@ export default class Sidebar extends Component {
     this.layer?.dispose() // 用完即销毁
   }
 
-  reqComment (type: string) {
-    this.contentEl.innerHTML = ''
+  renderComment (comment: Comment) {
+    // comment.el.querySelector('[data-atk-action="comment-reply"]')!.remove()
 
-    let reqData: any = {
-      nick: this.ctx.user.data.nick,
-      email: this.ctx.user.data.email,
-      type,
-      limit: 999,
-    }
-
-    if (this.ctx.user.data.isAdmin) {
-      reqData = { token: this.ctx.user.data.token, ...reqData }
-    }
-
-    Ui.showLoading(this.contentEl)
-
-    new Api(this.ctx).get(0, type)
-      .then(data => {
-        this.contentEl.innerHTML = ''
-        if (Array.isArray(data.comments)) {
-          (data.comments as CommentData[]).forEach((item) => {
-            this.putComment(item)
-          });
-        }
-        if (!data.comments || !Array.isArray(data.comments) || data.comments.length <= 0) {
-          this.showNoComment()
-        }
-      })
-      .finally(() => {
-        Ui.hideLoading(this.contentEl)
-      })
-  }
-
-  putComment (data: CommentData) {
-    const comment = new Comment(this.ctx, data)
-
-    // comment.el.querySelector('[data-comment-action="reply"]')!.remove()
     comment.el.style.cursor = 'pointer'
     comment.el.addEventListener('mouseover', () => {
       comment.el.style.backgroundColor = 'var(--at-color-bg-grey)'
@@ -113,13 +93,9 @@ export default class Sidebar extends Component {
 
     comment.el.addEventListener('click', (evt) => {
       evt.preventDefault()
-      window.location.href = `${(data as any).page_key}#artalk-comment-${comment.data.id}`
+      window.location.href = `${comment.data.page_key}#artalk-comment-${comment.data.id}`
     })
 
-    this.contentEl.appendChild(comment.getEl())
-  }
-
-  showNoComment() {
-    this.contentEl.innerHTML = '<div class="atk-sidebar-no-content">无内容</div>'
+    // this.contentEl.appendChild(comment.getEl())
   }
 }

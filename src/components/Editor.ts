@@ -115,7 +115,7 @@ export default class Editor extends Component {
         this.queryUserInfo.timeout = null // 清理
 
         const {req, abort} = new Api(this.ctx).userGet(
-          this.user.data.nick, this.user.data.email, this.user.data.token
+          this.user.data.nick, this.user.data.email
         )
         this.queryUserInfo.abortFunc = abort
         req.then(data => {

@@ -168,8 +168,10 @@ export function playFadeOutAnim(elem: HTMLElement, after?: () => void) {
 }
 
 /** 设置全局错误 */
-export function setGlobalError(ctx: Context, html: string | HTMLElement | null) {
-  let elem = ctx.rootEl.querySelector<HTMLElement>('.atk-error-layer')
+export function setError(parentElem: HTMLElement|Context, html: string | HTMLElement | null) {
+  if (parentElem instanceof Context) parentElem = parentElem.rootEl
+
+  let elem = parentElem.querySelector<HTMLElement>('.atk-error-layer')
   if (html === null) {
     if (elem !== null) elem.remove()
     return
@@ -178,7 +180,7 @@ export function setGlobalError(ctx: Context, html: string | HTMLElement | null) 
     elem = Utils.createElement(
       '<div class="atk-error-layer"><span class="atk-error-title">Artalk Error</span><span class="atk-error-text"></span></div>'
     )
-    ctx.rootEl.appendChild(elem)
+    parentElem.appendChild(elem)
   }
 
   const errorTextEl = elem.querySelector<HTMLElement>('.atk-error-text')!

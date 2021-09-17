@@ -37,7 +37,6 @@ export default class Api {
       content: comment.content,
       rid: comment.rid,
       page_key: this.ctx.conf.pageKey,
-      token: this.ctx.user.data.token,
     })
 
     return commonFetch(this.ctx, `${this.serverURL}/add`, {
@@ -57,12 +56,12 @@ export default class Api {
     }).then((json) => (json.data.token))
   }
 
-  public userGet(name: string, email: string, token: string) {
+  public userGet(name: string, email: string) {
     const ctrl = new AbortController()
     const { signal } = ctrl
 
     const params = getFormData({
-      name, email, token
+      name, email
     })
 
     const req = commonFetch(this.ctx, `${this.serverURL}/user-get`, {
@@ -78,17 +77,6 @@ export default class Api {
       req,
       abort: () => { ctrl.abort() },
     }
-  }
-
-  public userVerify(token: string) {
-    const params = getFormData({
-      token
-    })
-
-    return commonFetch(this.ctx, `${this.serverURL}/user-get`, {
-      method: 'POST',
-      body: params,
-    }).then((json) => (json.data.user as UserData))
   }
 
   public captchaGet(): Promise<string> {
@@ -130,7 +118,6 @@ export default class Api {
   }) {
     const params: any = {
       ...data,
-      token: this.ctx.user.data.token
     }
 
     if (params.is_collapsed !== undefined) params.is_collapsed = params.is_collapsed ? '1' : '0'
@@ -146,7 +133,6 @@ export default class Api {
     const params = getFormData({
       key,
       only_admin: onlyAdmin ? '1' : '0',
-      token: this.ctx.user.data.token
     })
 
     return commonFetch(this.ctx, `${this.serverURL}/manager/edit-page`, {
@@ -158,7 +144,6 @@ export default class Api {
   public delComment(commentID: number) {
     const params = getFormData({
       id: String(commentID),
-      token: this.ctx.user.data.token
     })
 
     return commonFetch(this.ctx, `${this.serverURL}/manager/del-comment`, {
@@ -168,7 +153,14 @@ export default class Api {
   }
 }
 
-function commonFetch(ctx: Context, input: RequestInfo, init?: RequestInit | undefined): Promise<any> {
+function commonFetch(ctx: Context, input: RequestInfo, init: RequestInit): Promise<any> {
+  if (ctx.user.data.token) {
+    const requestHeaders: HeadersInit = new Headers();
+    requestHeaders.set('Authorization', `Bearer ${ctx.user.data.token}`);
+
+    init.headers = requestHeaders
+  }
+
   return timeoutPromise(4000, fetch(input, init)).then(async (resp) => {
     // 解析获取响应的 json
     let json: any = await resp.json()

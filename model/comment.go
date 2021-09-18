@@ -100,7 +100,7 @@ func (c Comment) ToCooked() CookedComment {
 		EmailEncrypted: lib.GetMD5Hash(user.Email),
 		Link:           user.Link,
 		UA:             c.UA,
-		Date:           c.CreatedAt.Local().String(),
+		Date:           c.CreatedAt.Local().Format("2006-01-02 15:04:05"),
 		IsCollapsed:    c.IsCollapsed,
 		IsPending:      c.IsPending,
 		IsAllowReply:   c.IsAllowReply(),

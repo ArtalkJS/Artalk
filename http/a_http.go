@@ -34,6 +34,7 @@ func Run() {
 			// 不启用操作限制的 path
 			skipPath := []string{
 				"/api/captcha/",
+				"/api/get", // 获取评论不做限制
 			}
 
 			for _, p := range skipPath {

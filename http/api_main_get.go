@@ -53,7 +53,7 @@ func ActionGet(c echo.Context) error {
 
 		// comment children
 		for _, parent := range comments { // TODO: Read more children, pagination for children comment
-			children := parent.FetchChildren(AllowedComment())
+			children := parent.FetchChildren(AllowedComment(c))
 			for _, child := range children {
 				cookedComments = append(cookedComments, child.ToCooked())
 			}
@@ -108,7 +108,7 @@ func GetCommentQuery(c echo.Context, p ParamsGet) *gorm.DB {
 	if IsMsgCenter(p) {
 		query = query.Scopes(MsgCenter(c, p))
 	} else {
-		query = query.Scopes(AllowedComment())
+		query = query.Scopes(AllowedComment(c))
 	}
 	return query
 }
@@ -169,8 +169,12 @@ func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func AllowedComment() func(db *gorm.DB) *gorm.DB {
+func AllowedComment(c echo.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
+		if CheckIsAdminReq(c) {
+			return db // 管理员显示全部
+		}
+
 		return db.Where("is_pending = 0")
 	}
 }

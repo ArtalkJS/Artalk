@@ -318,12 +318,12 @@ export default class Editor extends Component {
     }
 
     if (this.sendReplyEl === null) {
-      this.sendReplyEl = Utils.createElement('<div class="atk-send-reply"><span class="atk-text"></span><span class="atk-cancel" title="取消 AT">×</span></div>');
+      this.sendReplyEl = Utils.createElement('<div class="atk-send-reply-wrap"><div class="atk-send-reply">回复 <span class="atk-text"></span><span class="atk-cancel" title="取消 AT">×</span></div></div>');
       this.sendReplyEl.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
-      this.sendReplyEl.querySelector<HTMLElement>('.atk-cancel')!.addEventListener('click', () => {
+      this.sendReplyEl.addEventListener('click', () => {
         this.cancelReply()
       })
-      this.textareaWrapEl.appendChild(this.sendReplyEl)
+      this.textareaWrapEl.prepend(this.sendReplyEl)
     }
     this.replyComment = commentData
     Ui.scrollIntoView(this.el)

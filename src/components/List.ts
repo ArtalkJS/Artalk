@@ -24,6 +24,7 @@ export default class List extends ListLite {
 
     this.el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
 
+    this.ctx.addEventListener('list-reload', () => (this.reqComments(0))) // 刷新评论
     this.ctx.addEventListener('list-clear', () => (this.clearComments())) // 清空评论
     this.ctx.addEventListener('list-refresh-ui', () => (this.refreshUI()))
     this.ctx.addEventListener('list-import', (data) => (this.importComments(data)))

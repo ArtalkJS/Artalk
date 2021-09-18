@@ -78,27 +78,27 @@
       }
     }
 
+    .atk-send-reply-wrap {
+      position: relative;
+      padding: 0 10px;
+    }
+
     .atk-send-reply {
+      position: relative;
+      display: inline-block;
       font-size: 14px;
       height: 30px;
       line-height: 30px;
       background: @color-bg-grey-transl;
       padding: 0 30px 0 10px;
-      position: absolute;
-      right: 10px;
-      bottom: 40px;
-      pointer-events: none;
-      max-width: calc(100% - 20px);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       z-index: 2;
+      user-select: none;
+      cursor: pointer;
 
       .atk-text {
       }
 
       .atk-cancel {
-        pointer-events: all;
         position: absolute;
         right: 0;
         bottom: 0;
@@ -106,8 +106,6 @@
         text-align: center;
         width: 30px;
         line-height: 30px;
-        cursor: pointer;
-        user-select: none;
         font-weight: 700;
 
         &:hover {

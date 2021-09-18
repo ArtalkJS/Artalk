@@ -108,6 +108,12 @@ export default class Comment extends Component {
       this.bodyEl.prepend(replyToEl)
     }
 
+    // 显示待审核状态
+    if (this.data.is_pending) {
+      const pendingEl = Utils.createElement(`<div class="atk-pending">审核中，仅本人可见。</div>`)
+      this.bodyEl.prepend(pendingEl)
+    }
+
     this.initActionBtn()
 
     if (this.afterRender) this.afterRender()
@@ -154,7 +160,15 @@ export default class Comment extends Component {
     const collapseBtn = Utils.createElement(`<span atk-only-admin-show>${this.data.is_collapsed ? '取消折叠' : '折叠'}</span>`)
     this.actionsEl.append(collapseBtn)
     collapseBtn.addEventListener('click', (e) => {
-      this.adminCollapse(collapseBtn)
+      this.adminEdit('collapsed', collapseBtn)
+      e.stopPropagation() // 防止穿透
+    })
+
+    // 绑定待审核按钮事件
+    const pendingBtn = Utils.createElement(`<span atk-only-admin-show>${this.data.is_pending ? '待审' : '已审'}</span>`)
+    this.actionsEl.append(pendingBtn)
+    pendingBtn.addEventListener('click', (e) => {
+      this.adminEdit('pending', pendingBtn)
       e.stopPropagation() // 防止穿透
     })
 
@@ -237,30 +251,32 @@ export default class Comment extends Component {
   }
 
   /** 管理员 - 评论折叠 */
-  adminCollapse (btnElem: HTMLElement) {
+  adminEdit (type: 'collapsed'|'pending', btnElem: HTMLElement) {
     if (btnElem.classList.contains('atk-in-process')) return // 若正在折叠中
     const btnTextOrg = btnElem.innerText
-    const isCollapse = !this.data.is_collapsed
 
     btnElem.classList.add('atk-in-process')
-    btnElem.innerText = isCollapse ? '折叠中...' : '展开中...'
+    btnElem.innerText = '修改中...'
 
-    new Api(this.ctx).editComment({
+    const params: any = {
       id: this.data.id,
-      is_collapsed: !this.data.is_collapsed
-    }).then((comment) => {
+    }
+    if (type === 'collapsed') {
+      params.is_collapsed = !this.data.is_collapsed
+    } else if (type === 'pending') {
+      params.is_pending = !this.data.is_pending
+    }
+
+    new Api(this.ctx).editComment(params).then((comment) => {
       btnElem.classList.remove('atk-in-process')
-      this.data.is_collapsed = comment.is_collapsed
-      this.eachComment([this], (item) => {
-        item.data.is_allow_reply = !comment.is_collapsed // 禁止回复
-      })
+      this.data = comment
       this.refreshUI()
       Ui.playFadeInAnim(this.bodyEl)
       this.ctx.dispatchEvent('list-refresh-ui')
     }).catch((err) => {
       console.error(err)
       btnElem.classList.add('atk-error')
-      btnElem.innerText = isCollapse ? '折叠失败' : '展开失败'
+      btnElem.innerText = '修改失败'
       setTimeout(() => {
         btnElem.innerText = btnTextOrg
         btnElem.classList.remove('atk-error')

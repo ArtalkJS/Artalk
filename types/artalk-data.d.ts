@@ -29,6 +29,9 @@ export interface CommentData {
   /** 是否折叠 */
   is_collapsed?: boolean
 
+  /** 是否待审 */
+  is_pending?: boolean
+
   /** 是否为管理员 */
   is_admin?: boolean
 

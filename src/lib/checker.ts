@@ -30,6 +30,7 @@ const AdminChecker = {
     that.user.data.token = userToken
     that.user.save()
     that.ctx.dispatchEvent('user-changed')
+    that.ctx.dispatchEvent('list-reload')
   },
   onError: (that, err, inputVal, formEl) => {
 

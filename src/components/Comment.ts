@@ -63,7 +63,9 @@ export default class Comment extends Component {
       badgeEl.remove()
     }
 
-    this.el.querySelector<HTMLElement>('.atk-date')!.innerText = this.getDateFormatted()
+    const dateEL = this.el.querySelector<HTMLElement>('.atk-date')!
+    dateEL.innerText = this.getDateFormatted()
+    dateEL.setAttribute('data-atk-comment-date', String(+new Date(this.data.date)))
     this.el.querySelector<HTMLElement>('.atk-ua.ua-browser')!.innerText = this.getUserUaBrowser()
     this.el.querySelector<HTMLElement>('.atk-ua.ua-os')!.innerText = this.getUserUaOS()
 

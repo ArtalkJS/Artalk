@@ -53,6 +53,14 @@ export default class ListLite extends Component {
     })
 
     this.noCommentText = this.conf.noComment || '无评论'
+
+    // 评论时间自动更新
+    setInterval(() => {
+      this.el.querySelectorAll<HTMLElement>('[data-atk-comment-date]').forEach(el => {
+        const date = el.getAttribute('data-atk-comment-date')
+        el.innerText = Utils.timeAgo(new Date(Number(date)))
+      })
+    }, 30 * 1000) // 30s 更新一次
   }
 
   public async reqComments(offset: number = 0) {

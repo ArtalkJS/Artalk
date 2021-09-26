@@ -5,7 +5,6 @@ import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import EditorHTML from './html/editor.html?raw'
-import Comment from './Comment'
 
 import EmoticonsPlug from './editor-plugs/EmoticonsPlug'
 import PreviewPlug from './editor-plugs/PreviewPlug'

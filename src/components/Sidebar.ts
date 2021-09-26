@@ -6,9 +6,7 @@ import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import Comment  from './Comment'
 import SidebarHTML from './html/sidebar.html?raw'
-import { ListData, CommentData } from '~/types/artalk-data'
 import BuildLayer, { Layer } from './Layer'
-import Api from '../lib/api'
 import ListLite from './ListLite'
 
 export default class Sidebar extends Component {

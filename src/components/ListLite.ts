@@ -5,7 +5,6 @@ import * as Ui from '../lib/ui'
 import Api from '../lib/api'
 import Comment from './Comment'
 import { ListData, CommentData } from '~/types/artalk-data'
-import ListHTML from './html/list.html?raw'
 
 export default class ListLite extends Component {
   public el: HTMLElement
@@ -73,12 +72,21 @@ export default class ListLite extends Component {
     if (offset === 0) Ui.showLoading(this.el)
     else this.readMoreBtnSetLoading(true)
 
+    const hideLoading = () => {
+      // hide loading
+      this.isLoading = false
+      if (offset === 0) Ui.hideLoading(this.el)
+      else this.readMoreBtnSetLoading(false)
+    }
+
     let listData: ListData
     try {
       listData = await new Api(this.ctx).get(offset, this.type)
     } catch (e: any) {
       this.onError(e.msg || String(e))
       throw e
+    } finally {
+      hideLoading()
     }
 
     // load data
@@ -90,10 +98,7 @@ export default class ListLite extends Component {
       this.onError(String(e))
       throw e
     } finally {
-      // hide loading
-      this.isLoading = false
-      if (offset === 0) Ui.hideLoading(this.el)
-      else this.readMoreBtnSetLoading(false)
+      hideLoading()
     }
   }
 

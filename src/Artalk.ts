@@ -18,7 +18,8 @@ const defaultOpts: ArtalkConfig = {
   sendBtn: '发送评论',
   defaultAvatar: 'mp',
   pageKey: '',
-  serverUrl: '',
+  server: '',
+  site: '',
   emoticons,
   gravatar: {
     cdn: 'https://sdn.geekzu.org/avatar/'
@@ -47,7 +48,7 @@ export default class Artalk {
 
     // Options
     this.conf = { ...defaultOpts, ...conf }
-    this.conf.serverUrl = this.conf.serverUrl.replace(/\/$/, '')
+    this.conf.server = this.conf.server.replace(/\/$/, '')
 
     // Main Element
     try {

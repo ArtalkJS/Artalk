@@ -57,8 +57,11 @@
     el: '#ArtalkComments', // 元素选择
     placeholder: '来啊，快活啊 ( ゜- ゜)', // 占位符
     noComment: '快来成为第一个评论的人吧~', // 无评论时显示
-    pageKey: '[页面唯一标识]',
-    serverUrl: '[后端程序URL]',
+    pageKey: '', // 页面唯一标识
+    pageTitle: '', // 页面标题
+    pageUrl: '', // 页面可访问URL
+    server: '', // 后端程序URL
+    site: '', // 网站名
     readMore: { // 阅读更多配置
       pageSize: 15, // 每次请求获取评论数
       autoLoad: true // 滚动到底部自动加载

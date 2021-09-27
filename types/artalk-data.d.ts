@@ -47,6 +47,12 @@ export interface CommentData {
   /** 评论页面 key */
   page_key: string
 
+  /** 评论页面 url */
+  page_url?: string
+
+  /** 评论页面 title */
+  page_title?: string
+
   /** 是否可见 */
   visible: boolean
 }
@@ -66,8 +72,19 @@ export interface ListData {
 }
 
 export interface PageData {
+  /** 页面 ID */
   id: number
-  page_key: string
+
+  /** 页面唯一标识符 */
+  key: string
+
+  /** 页面标题 */
+  title: string
+
+  /** 页面 url */
+  url: string
+
+  /** 仅管理员可评 */
   admin_only: boolean
 }
 
@@ -92,7 +109,4 @@ export interface UserData {
 
   /** 是否属于管理员 */
   is_admin: boolean
-
-  /** 类型 */
-  type: 'banned'|'admin'|''
 }

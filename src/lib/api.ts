@@ -7,7 +7,7 @@ export default class Api {
 
   constructor (ctx: Context) {
     this.ctx = ctx
-    this.serverURL = ctx.conf.serverUrl
+    this.serverURL = ctx.conf.server
   }
 
   public get(offset: number, type?: string): Promise<ListData> {
@@ -23,6 +23,8 @@ export default class Api {
       params.type = type
     }
 
+    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
+
     return commonFetch(this.ctx, `${this.serverURL}/get`, {
       method: 'POST',
       body: getFormData(params),
@@ -30,29 +32,35 @@ export default class Api {
   }
 
   public add(comment: { nick: string, email: string, link: string, content: string, rid: number }): Promise<CommentData> {
-    const params = getFormData({
+    const params: any = {
       name: comment.nick,
       email: comment.email,
       link: comment.link,
       content: comment.content,
       rid: comment.rid,
       page_key: this.ctx.conf.pageKey,
-    })
+      page_url: this.ctx.conf.pageUrl || '',
+      page_title: this.ctx.conf.pageTitle || '',
+    }
+
+    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
     return commonFetch(this.ctx, `${this.serverURL}/add`, {
       method: 'POST',
-      body: params,
+      body: getFormData(params),
     }).then((json) => (json.data.comment as CommentData))
   }
 
   public login(name: string, email: string, password: string): Promise<string> {
-    const params = getFormData({
+    const params: any = {
       name, email, password
-    })
+    }
+
+    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
     return commonFetch(this.ctx, `${this.serverURL}/login`, {
       method: 'POST',
-      body: params,
+      body: getFormData(params),
     }).then((json) => (json.data.token))
   }
 
@@ -60,13 +68,15 @@ export default class Api {
     const ctrl = new AbortController()
     const { signal } = ctrl
 
-    const params = getFormData({
+    const params: any = {
       name, email
-    })
+    }
+
+    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
     const req = commonFetch(this.ctx, `${this.serverURL}/user-get`, {
       method: 'POST',
-      body: params,
+      body: getFormData(params),
       signal,
     }).then((json) => ({
       user: json.data.user as UserData|null,
@@ -123,32 +133,44 @@ export default class Api {
     if (params.is_collapsed !== undefined) params.is_collapsed = params.is_collapsed ? '1' : '0'
     if (params.is_pending !== undefined) params.is_pending = params.is_pending ? '1' : '0'
 
-    return commonFetch(this.ctx, `${this.serverURL}/manager/edit-comment`, {
+    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
+
+    return commonFetch(this.ctx, `${this.serverURL}/admin/edit-comment`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.data.comment as CommentData))
   }
 
-  public editPage(key: string, onlyAdmin: boolean) {
-    const params = getFormData({
+  public editPage(key: string, data: {
+    url?: string,
+    title?: string,
+    adminOnly?: boolean
+  }) {
+    const params: any = {
       key,
-      only_admin: onlyAdmin ? '1' : '0',
-    })
+      url: data.url || '',
+      title: data.title || '',
+      admin_only: data.adminOnly ? '1' : '0',
+    }
 
-    return commonFetch(this.ctx, `${this.serverURL}/manager/edit-page`, {
+    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
+
+    return commonFetch(this.ctx, `${this.serverURL}/admin/edit-page`, {
       method: 'POST',
-      body: params,
+      body: getFormData(params),
     }).then((json) => (json.data.page as PageData))
   }
 
   public delComment(commentID: number) {
-    const params = getFormData({
+    const params: any = {
       id: String(commentID),
-    })
+    }
 
-    return commonFetch(this.ctx, `${this.serverURL}/manager/del-comment`, {
+    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
+
+    return commonFetch(this.ctx, `${this.serverURL}/admin/del-comment`, {
       method: 'POST',
-      body: params,
+      body: getFormData(params),
     }).then((json) => (json.success))
   }
 }

@@ -23,9 +23,10 @@ var CommonJwtConfig middleware.JWTConfig
 // jwtCustomClaims are custom claims extending default ones.
 // See https://github.com/golang-jwt/jwt for more examples
 type jwtCustomClaims struct {
-	UserName    string `json:"name"`
-	UserEmail   string `json:"email"`
-	UserIsAdmin bool   `json:"is_admin"`
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Site    uint   `json:"site"`
+	IsAdmin bool   `json:"is_admin"`
 	jwt.StandardClaims
 }
 
@@ -179,15 +180,16 @@ func GetUserByJwt(jwt *jwt.Token) model.User {
 	tmp, _ := json.Marshal(jwt.Claims)
 	_ = json.Unmarshal(tmp, &claims)
 
-	name := claims.UserName
-	email := claims.UserEmail
+	name := claims.Name
+	email := claims.Email
+	site := claims.Site
 
-	if !claims.UserIsAdmin {
+	if !claims.IsAdmin {
 		return model.User{}
 	}
 
 	// check user from database
-	user := FindUser(name, email)
+	user := model.FindUser(name, email, site)
 
 	return user
 }

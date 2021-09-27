@@ -1,29 +1,26 @@
 package http
 
 import (
-	"net/mail"
-	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/mitchellh/mapstructure"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm/clause"
 )
 
 func LoginGetUserToken(user model.User) string {
 	// Set custom claims
 	claims := &jwtCustomClaims{
-		UserName:    user.Name,
-		UserEmail:   user.Email,
-		UserIsAdmin: user.IsAdmin,
+		Name:    user.Name,
+		Email:   user.Email,
+		Site:    user.SiteID,
+		IsAdmin: user.IsAdmin,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Second * time.Duration(config.Instance.LoginTimeout)).Unix(), // 过期时间
 		},
@@ -51,6 +48,10 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 		paramName := field.Tag.Get("mapstructure")
 		paramTagP := field.Tag.Get("param")
 		paramMethod := strings.ToUpper(field.Tag.Get("method"))
+
+		if paramName == "" {
+			continue
+		}
 
 		// get param value
 		paramVal := func() string {
@@ -100,9 +101,9 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 	return true, nil
 }
 
-func CheckIfAllowed(c echo.Context, name string, email string, page model.Page) (bool, error) {
+func CheckIfAllowed(c echo.Context, name string, email string, page model.Page, siteID uint) (bool, error) {
 	// 如果用户是管理员，或者当前页只能管理员评论
-	if IsAdminUser(name, email) || page.AdminOnly {
+	if model.IsAdminUser(name, email, siteID) || page.AdminOnly {
 		if !CheckIsAdminReq(c) {
 			return false, RespError(c, "需要验证管理员身份", Map{"need_login": true})
 		}
@@ -111,113 +112,25 @@ func CheckIfAllowed(c echo.Context, name string, email string, page model.Page) 
 	return true, nil
 }
 
-func FindComment(id uint) model.Comment {
-	var comment model.Comment
-	lib.DB.Preload(clause.Associations).First(&comment, id)
-	return comment
-}
-
-// 查找用户（返回：精确查找 AND）
-func FindUser(name string, email string) model.User {
-	var user model.User // 注：user 查找是 AND
-	lib.DB.Where("name = ? AND email = ?", name, email).First(&user)
-	return user
-}
-
-func IsAdminUser(name string, email string) bool {
-	var user model.User // 还是用 AND 吧，OR 太混乱了
-	lib.DB.Where("(name = ? AND email = ?) AND is_admin = 1", name, email).First(&user)
-	return !user.IsEmpty()
-}
-
-func UpdateComment(comment *model.Comment) error {
-	err := lib.DB.Save(comment).Error
-	if err != nil {
-		logrus.Error("Update Comment error: ", err)
-	}
-	return err
-}
-
-func FindCreatePage(pageKey string, pageUrl string, pageTitle string) model.Page {
-	page := FindPage(pageKey)
-	if page.IsEmpty() {
-		page = NewPage(pageKey, pageUrl, pageTitle)
-	}
-	return page
-}
-
-func FindCreateUser(name string, email string) model.User {
-	user := FindUser(name, email)
-	if user.IsEmpty() {
-		user = NewUser(name, email) // save a new user
-	}
-	return user
-}
-
-func NewUser(name string, email string) model.User {
-	user := model.User{
-		Name:  name,
-		Email: email,
+func CheckSite(c echo.Context, siteID uint) (bool, error) {
+	if siteID == 0 {
+		return true, nil
 	}
 
-	err := lib.DB.Create(&user).Error
-	if err != nil {
-		logrus.Error("Save User error: ", err)
+	site := model.FindSite(siteID)
+	if site.IsEmpty() {
+		return false, RespError(c, "site not found.")
 	}
 
-	return user
+	return true, nil
 }
 
-func UpdateUser(user *model.User) error {
-	err := lib.DB.Save(user).Error
-	if err != nil {
-		logrus.Error("Update User error: ", err)
+func HandleSiteParam(str string) uint {
+	site := 0
+	if str != "" {
+		if v, err := strconv.Atoi(str); err == nil {
+			site = v
+		}
 	}
-
-	return err
-}
-
-func FindPage(key string) model.Page {
-	var page model.Page
-	lib.DB.Where(&model.Page{Key: key}).First(&page)
-	return page
-}
-
-func FindPageByID(id uint) model.Page {
-	var page model.Page
-	lib.DB.Where("id = ?", id).First(&page)
-	return page
-}
-
-func NewPage(key string, pageUrl string, pageTitle string) model.Page {
-	page := model.Page{
-		Key:   key,
-		Url:   pageUrl,
-		Title: pageTitle,
-	}
-
-	err := lib.DB.Create(&page).Error
-	if err != nil {
-		logrus.Error("Save Page error: ", err)
-	}
-
-	return page
-}
-
-func UpdatePage(page *model.Page) error {
-	err := lib.DB.Save(page).Error
-	if err != nil {
-		logrus.Error("Update Page error: ", err)
-	}
-	return err
-}
-
-func ValidateEmail(email string) bool {
-	_, err := mail.ParseAddress(email)
-	return err == nil
-}
-
-func ValidateURL(urlStr string) bool {
-	_, err := url.ParseRequestURI(urlStr)
-	return err == nil
+	return uint(site)
 }

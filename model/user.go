@@ -18,6 +18,9 @@ type User struct {
 
 	SiteID uint `gorm:"index"`
 	Site   Site `gorm:"foreignKey:SiteID;references:ID"`
+
+	// 配置文件中添加的
+	IsInConf bool
 }
 
 func (u User) IsEmpty() bool {

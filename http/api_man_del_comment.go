@@ -11,6 +11,9 @@ import (
 
 type ParamsDelComment struct {
 	ID string `mapstructure:"id" param:"required"`
+
+	Site   string `mapstructure:"id"`
+	SiteID uint
 }
 
 func ActionManagerDelComment(c echo.Context) error {
@@ -18,8 +21,8 @@ func ActionManagerDelComment(c echo.Context) error {
 		return resp
 	}
 
-	var p ParamsEditComment
-	if isOK, resp := ParamsDecode(c, ParamsEditComment{}, &p); !isOK {
+	var p ParamsDelComment
+	if isOK, resp := ParamsDecode(c, ParamsDelComment{}, &p); !isOK {
 		return resp
 	}
 
@@ -28,7 +31,13 @@ func ActionManagerDelComment(c echo.Context) error {
 		return RespError(c, "invalid id.")
 	}
 
-	comment := FindComment(uint(id))
+	// find site
+	p.SiteID = HandleSiteParam(p.Site)
+	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
+		return resp
+	}
+
+	comment := model.FindComment(uint(id), p.SiteID)
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found.")
 	}

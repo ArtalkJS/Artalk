@@ -10,7 +10,9 @@ type ParamsLogin struct {
 	Name     string `mapstructure:"name" param:"required"`
 	Email    string `mapstructure:"email" param:"required"`
 	Password string `mapstructure:"password" param:"required"`
-	Site     string `mapstructure:"site"`
+
+	Site   string `mapstructure:"site"`
+	SiteID uint
 }
 
 func ActionLogin(c echo.Context) error {
@@ -22,8 +24,18 @@ func ActionLogin(c echo.Context) error {
 	// record action for limiting action
 	RecordAction(c)
 
+	// find site
+	p.SiteID = HandleSiteParam(p.Site)
+	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
+		return resp
+	}
+
 	var user model.User
-	lib.DB.Where("name = ? AND email = ? AND site = ?", p.Name, p.Email).First(&user) // name = ? OR email = ?
+	lib.DB.Where(&model.User{
+		Name:   p.Name,
+		Email:  p.Email,
+		SiteID: p.SiteID,
+	}).First(&user) // name = ? OR email = ?
 	if user.IsEmpty() || user.Password != p.Password {
 		return RespError(c, "验证失败")
 	}

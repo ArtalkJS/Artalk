@@ -3,11 +3,17 @@ package http
 import (
 	"strconv"
 
+	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
 
 type ParamsEditComment struct {
-	ID          string `mapstructure:"id" param:"required"`
+	// 查询值
+	ID     string `mapstructure:"id" param:"required"`
+	Site   string `mapstructure:"site"`
+	SiteID uint
+
+	// 可修改
 	Content     string `mapstructure:"content"`
 	PageKey     string `mapstructure:"page_key"`
 	Nick        string `mapstructure:"nick"`
@@ -35,7 +41,13 @@ func ActionManagerEditComment(c echo.Context) error {
 		return RespError(c, "invalid id.")
 	}
 
-	comment := FindComment(uint(id))
+	// find site
+	p.SiteID = HandleSiteParam(p.Site)
+	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
+		return resp
+	}
+
+	comment := model.FindComment(uint(id), p.SiteID)
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found.")
 	}
@@ -54,20 +66,20 @@ func ActionManagerEditComment(c echo.Context) error {
 
 	// user
 	if p.Nick != "" && p.Email != "" {
-		user := FindCreateUser(p.Nick, p.Email)
+		user := model.FindCreateUser(p.Nick, p.Email, p.SiteID)
 		if user.ID != comment.UserID {
 			comment.UserID = user.ID
 		}
 	}
 	if p.Link != "" {
 		comment.User.Link = p.Link
-		UpdateUser(&comment.User)
+		model.UpdateUser(&comment.User)
 	}
 
 	// pageKey
 	if p.PageKey != "" {
 		if p.PageKey != comment.PageKey {
-			FindCreatePage(p.PageKey, "", "")
+			model.FindCreatePage(p.PageKey, "", "", p.SiteID)
 			comment.PageKey = p.PageKey
 		}
 	}
@@ -102,7 +114,7 @@ func ActionManagerEditComment(c echo.Context) error {
 		}
 	}
 
-	if err := UpdateComment(&comment); err != nil {
+	if err := model.UpdateComment(&comment); err != nil {
 		return RespError(c, "comment save error.")
 	}
 

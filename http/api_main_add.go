@@ -10,15 +10,19 @@ import (
 )
 
 type ParamsAdd struct {
-	Name      string `mapstructure:"name" param:"required"`
-	Email     string `mapstructure:"email" param:"required"`
-	Link      string `mapstructure:"link"`
-	Content   string `mapstructure:"content" param:"required"`
-	Rid       uint   `mapstructure:"rid"`
+	Name    string `mapstructure:"name" param:"required"`
+	Email   string `mapstructure:"email" param:"required"`
+	Link    string `mapstructure:"link"`
+	Content string `mapstructure:"content" param:"required"`
+	Rid     uint   `mapstructure:"rid"`
+
 	PageKey   string `mapstructure:"page_key" param:"required"`
 	PageUrl   string `mapstructure:"page_url"`
 	PageTitle string `mapstructure:"page_title"`
-	Token     string `mapstructure:"token"`
+
+	Token  string `mapstructure:"token"`
+	Site   string `mapstructure:"site"`
+	SiteID uint
 }
 
 type ResponseAdd struct {
@@ -31,10 +35,10 @@ func ActionAdd(c echo.Context) error {
 		return resp
 	}
 
-	if !ValidateEmail(p.Email) {
+	if !lib.ValidateEmail(p.Email) {
 		return RespError(c, "Invalid email.")
 	}
-	if p.Link != "" && !ValidateURL(p.Link) {
+	if p.Link != "" && !lib.ValidateURL(p.Link) {
 		return RespError(c, "Invalid link.")
 	}
 
@@ -44,16 +48,22 @@ func ActionAdd(c echo.Context) error {
 	// record action for limiting action
 	RecordAction(c)
 
+	// find site
+	p.SiteID = HandleSiteParam(p.Site)
+	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
+		return resp
+	}
+
 	// find page
-	page := FindCreatePage(p.PageKey, p.PageUrl, p.PageTitle)
+	page := model.FindCreatePage(p.PageKey, p.PageUrl, p.PageTitle, p.SiteID)
 
 	// check if the user is allowed to comment
-	if isAllowed, resp := CheckIfAllowed(c, p.Name, p.Email, page); !isAllowed {
+	if isAllowed, resp := CheckIfAllowed(c, p.Name, p.Email, page, p.SiteID); !isAllowed {
 		return resp
 	}
 
 	// find user
-	user := FindCreateUser(p.Name, p.Email)
+	user := model.FindCreateUser(p.Name, p.Email, p.SiteID)
 	if user.ID == 0 || page.Key == "" {
 		logrus.Error("Cannot get user or page.")
 		return RespError(c, "评论失败")
@@ -62,7 +72,7 @@ func ActionAdd(c echo.Context) error {
 	// check reply comment
 	var parentComment model.Comment
 	if p.Rid != 0 {
-		parentComment = FindComment(p.Rid)
+		parentComment = model.FindComment(p.Rid, p.SiteID)
 		if parentComment.IsEmpty() {
 			return RespError(c, "找不到父评论")
 		}
@@ -83,6 +93,7 @@ func ActionAdd(c echo.Context) error {
 		UA:          ua,
 		IsPending:   false,
 		IsCollapsed: false,
+		SiteID:      p.SiteID,
 	}
 
 	// default comment type
@@ -101,7 +112,7 @@ func ActionAdd(c echo.Context) error {
 	user.Link = p.Link
 	user.LastIP = ip
 	user.LastUA = ua
-	UpdateUser(&user)
+	model.UpdateUser(&user)
 
 	// send email
 	if comment.Rid != 0 {

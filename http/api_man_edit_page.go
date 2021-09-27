@@ -1,9 +1,17 @@
 package http
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/labstack/echo/v4"
+)
 
 type ParamsEditPage struct {
-	Key       string `mapstructure:"key" param:"required"`
+	// 查询值
+	Key    string `mapstructure:"key" param:"required"`
+	Site   string `mapstructure:"site"`
+	SiteID uint
+
+	// 修改值
 	Url       string `mapstructure:"url"`
 	Title     string `mapstructure:"title"`
 	AdminOnly string `mapstructure:"admin_only"`
@@ -19,7 +27,13 @@ func ActionManagerEditPage(c echo.Context) error {
 		return resp
 	}
 
-	page := FindPage(p.Key)
+	// find site
+	p.SiteID = HandleSiteParam(p.Site)
+	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
+		return resp
+	}
+
+	page := model.FindPage(p.Key, p.SiteID)
 	if page.IsEmpty() {
 		return RespError(c, "page not found.")
 	}
@@ -42,7 +56,7 @@ func ActionManagerEditPage(c echo.Context) error {
 		page.AdminOnly = false
 	}
 
-	if err := UpdatePage(&page); err != nil {
+	if err := model.UpdatePage(&page); err != nil {
 		return RespError(c, "page save error.")
 	}
 

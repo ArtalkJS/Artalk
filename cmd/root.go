@@ -114,7 +114,60 @@ func initDB() {
 	}
 
 	// Migrate the schema
-	lib.DB.AutoMigrate(&model.Page{}, &model.User{}, &model.Comment{}) // 注意表的创建顺序，因为有关联字段
+	lib.DB.AutoMigrate(&model.Site{}, &model.Page{}, &model.User{}, &model.Comment{}) // 注意表的创建顺序，因为有关联字段
+
+	syncConfWithDB()
+}
+
+// 同步配置文件与数据库
+func syncConfWithDB() {
+	// 导入配置文件的管理员用户
+	for _, admin := range config.Instance.AdminUsers {
+		user := model.FindUser(admin.Name, admin.Email, admin.SiteID)
+		if user.IsEmpty() {
+			// create
+			user = model.User{
+				Name:       admin.Name,
+				Email:      admin.Email,
+				Link:       admin.Link,
+				Password:   admin.Password,
+				BadgeName:  admin.BadgeName,
+				BadgeColor: admin.BadgeColor,
+				SiteID:     admin.SiteID,
+				IsAdmin:    true,
+				IsInConf:   true,
+			}
+			lib.DB.Create(&user)
+		} else {
+			// update
+			user.Link = admin.Link
+			user.Password = admin.Password
+			user.BadgeName = admin.BadgeName
+			user.BadgeColor = admin.BadgeColor
+			user.SiteID = admin.SiteID
+			user.IsAdmin = true
+			user.IsInConf = true
+			lib.DB.Save(&user)
+		}
+	}
+
+	// 清理配置文件中不存在的用户
+	var dbAdminUsers []model.User
+	lib.DB.Where(&model.User{IsInConf: true}).Find(&dbAdminUsers)
+	for _, dbU := range dbAdminUsers {
+		isUserExist := func() bool {
+			for _, confU := range config.Instance.AdminUsers {
+				if confU.Name == dbU.Name && confU.Email == dbU.Email {
+					return true
+				}
+			}
+			return false
+		}
+
+		if !isUserExist() {
+			lib.DB.Delete(&dbU)
+		}
+	}
 }
 
 func initCache() {

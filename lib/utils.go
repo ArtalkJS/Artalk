@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"net/mail"
 	"net/url"
 	"os"
 
@@ -103,4 +104,14 @@ func ContainsStr(s []string, v string) bool {
 func IsUrlValid(urlStr string) bool {
 	_, err := url.ParseRequestURI(urlStr)
 	return err != nil
+}
+
+func ValidateEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
+}
+
+func ValidateURL(urlStr string) bool {
+	_, err := url.ParseRequestURI(urlStr)
+	return err == nil
 }

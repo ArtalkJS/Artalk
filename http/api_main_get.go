@@ -17,7 +17,8 @@ type ParamsGet struct {
 	Email string `mapstructure:"email"`
 	Type  string `mapstructure:"type"`
 
-	// TODO: FlatMode string `mapstructure:"flat_mode"`
+	Site   string `mapstructure:"site"`
+	SiteID uint
 }
 
 type ResponseGet struct {
@@ -34,13 +35,19 @@ func ActionGet(c echo.Context) error {
 	}
 	isMsgCenter := IsMsgCenter(p)
 
+	// find site
+	p.SiteID = HandleSiteParam(p.Site)
+	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
+		return resp
+	}
+
 	// find page
-	page := FindPage(p.PageKey)
+	page := model.FindPage(p.PageKey, p.SiteID)
 
 	// comment parents
 	var comments []model.Comment
 
-	query := GetCommentQuery(c, p).Scopes(Paginate(p.Offset, p.Limit))
+	query := GetCommentQuery(c, p, p.SiteID).Scopes(Paginate(p.Offset, p.Limit))
 	cookedComments := []model.CookedComment{}
 
 	if !isMsgCenter {
@@ -81,7 +88,7 @@ func ActionGet(c echo.Context) error {
 				continue
 			}
 
-			rComment := FindComment(c.Rid) // 查找被回复的评论
+			rComment := model.FindComment(c.Rid, p.SiteID) // 查找被回复的评论
 			if rComment.IsEmpty() {
 				continue
 			}
@@ -92,8 +99,8 @@ func ActionGet(c echo.Context) error {
 	}
 
 	// count comments
-	total := CountComments(GetCommentQuery(c, p))
-	totalParents := CountComments(GetCommentQuery(c, p).Scopes(ParentComment()))
+	total := CountComments(GetCommentQuery(c, p, p.SiteID))
+	totalParents := CountComments(GetCommentQuery(c, p, p.SiteID).Scopes(ParentComment()))
 
 	return RespData(c, ResponseGet{
 		Comments:     cookedComments,
@@ -103,10 +110,10 @@ func ActionGet(c echo.Context) error {
 	})
 }
 
-func GetCommentQuery(c echo.Context, p ParamsGet) *gorm.DB {
+func GetCommentQuery(c echo.Context, p ParamsGet, siteID uint) *gorm.DB {
 	query := lib.DB.Model(&model.Comment{}).Where("page_key = ?", p.PageKey).Order("created_at DESC")
 	if IsMsgCenter(p) {
-		query = query.Scopes(MsgCenter(c, p))
+		query = query.Scopes(MsgCenter(c, p, siteID))
 	} else {
 		query = query.Scopes(AllowedComment(c))
 	}
@@ -117,9 +124,9 @@ func IsMsgCenter(p ParamsGet) bool {
 	return p.Name != "" && p.Email != ""
 }
 
-func MsgCenter(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+func MsgCenter(c echo.Context, p ParamsGet, siteID uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		user := FindUser(p.Name, p.Email)
+		user := model.FindUser(p.Name, p.Email, siteID)
 
 		myCommentIDs := []int{}
 		if p.Type == "all" || p.Type == "mentions" {

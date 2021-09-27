@@ -1,16 +1,24 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"errors"
+	"net/http"
 
-type PageType string
-
-const ()
+	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
+)
 
 type Page struct {
 	gorm.Model
 	Key       string `gorm:"uniqueIndex"`
+	Title     string
+	Url       string
 	AdminOnly bool
-	Type      PageType
+
+	SiteID uint `gorm:"index"`
+	Site   Site `gorm:"foreignKey:SiteID;references:ID"`
 }
 
 func (p Page) IsEmpty() bool {
@@ -20,13 +28,57 @@ func (p Page) IsEmpty() bool {
 type CookedPage struct {
 	ID        uint   `json:"id"`
 	AdminOnly bool   `json:"admin_only"`
-	PageKey   string `json:"page_key"`
+	Key       string `json:"key"`
+	URL       string `json:"url"`
+	Title     string `json:"title"`
+	SiteID    uint   `json:"site_id"`
 }
 
 func (p Page) ToCooked() CookedPage {
 	return CookedPage{
 		ID:        p.ID,
 		AdminOnly: p.AdminOnly,
-		PageKey:   p.Key,
+		Key:       p.Key,
+		URL:       p.Url,
+		Title:     p.Title,
+		SiteID:    p.SiteID,
 	}
+}
+
+func (p *Page) FetchURL() error {
+	if !lib.IsUrlValid(p.Url) {
+		return errors.New("URL is invalid")
+	}
+
+	// Request the HTML page.
+	res, err := http.Get(p.Url)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+	defer res.Body.Close()
+	if res.StatusCode != 200 {
+		logrus.Error("status code error: %d %s", res.StatusCode, res.Status)
+		return errors.New("status code error")
+	}
+
+	// Load the HTML document
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+
+	// 读取页面 title 并保存
+	title := doc.Find("title").Text()
+	if title != "" {
+		p.Title = title
+	}
+
+	if err := lib.DB.Save(p).Error; err != nil {
+		logrus.Error("FetchURL 保存失败")
+		return err
+	}
+
+	return nil
 }

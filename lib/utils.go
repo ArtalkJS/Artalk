@@ -99,3 +99,8 @@ func ContainsStr(s []string, v string) bool {
 	}
 	return false
 }
+
+func IsUrlValid(urlStr string) bool {
+	_, err := url.ParseRequestURI(urlStr)
+	return err != nil
+}

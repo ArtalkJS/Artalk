@@ -67,7 +67,7 @@ func ActionManagerEditComment(c echo.Context) error {
 	// pageKey
 	if p.PageKey != "" {
 		if p.PageKey != comment.PageKey {
-			FindCreatePage(p.PageKey)
+			FindCreatePage(p.PageKey, "", "")
 			comment.PageKey = p.PageKey
 		}
 	}

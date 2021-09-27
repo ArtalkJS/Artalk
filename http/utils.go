@@ -21,9 +21,9 @@ import (
 func LoginGetUserToken(user model.User) string {
 	// Set custom claims
 	claims := &jwtCustomClaims{
-		UserName:  user.Name,
-		UserEmail: user.Email,
-		UserType:  user.Type,
+		UserName:    user.Name,
+		UserEmail:   user.Email,
+		UserIsAdmin: user.IsAdmin,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Second * time.Duration(config.Instance.LoginTimeout)).Unix(), // 过期时间
 		},
@@ -126,7 +126,7 @@ func FindUser(name string, email string) model.User {
 
 func IsAdminUser(name string, email string) bool {
 	var user model.User // 还是用 AND 吧，OR 太混乱了
-	lib.DB.Where("(name = ? AND email = ?) AND type = ?", name, email, model.UserAdmin).First(&user)
+	lib.DB.Where("(name = ? AND email = ?) AND is_admin = 1", name, email).First(&user)
 	return !user.IsEmpty()
 }
 
@@ -138,10 +138,10 @@ func UpdateComment(comment *model.Comment) error {
 	return err
 }
 
-func FindCreatePage(pageKey string) model.Page {
+func FindCreatePage(pageKey string, pageUrl string, pageTitle string) model.Page {
 	page := FindPage(pageKey)
 	if page.IsEmpty() {
-		page = NewPage(pageKey)
+		page = NewPage(pageKey, pageUrl, pageTitle)
 	}
 	return page
 }
@@ -189,9 +189,11 @@ func FindPageByID(id uint) model.Page {
 	return page
 }
 
-func NewPage(key string) model.Page {
+func NewPage(key string, pageUrl string, pageTitle string) model.Page {
 	page := model.Page{
-		Key: key,
+		Key:   key,
+		Url:   pageUrl,
+		Title: pageTitle,
 	}
 
 	err := lib.DB.Create(&page).Error

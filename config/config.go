@@ -64,9 +64,9 @@ type CaptchaConf struct {
 
 type EmailConf struct {
 	Enabled            bool            `mapstructure:"enabled"`               // 总开关
-	AdminAddr          string          `mapstructure:"admin_addr"`            // 管理员邮箱
 	SendType           EmailSenderType `mapstructure:"send_type"`             // 发送方式
 	SendName           string          `mapstructure:"send_name"`             // 发件人名
+	SendAddr           string          `mapstructure:"send_addr"`             // 发件人地址
 	MailSubject        string          `mapstructure:"mail_subject"`          // 邮件标题
 	MailSubjectToAdmin string          `mapstructure:"mail_subject_to_admin"` // 邮件标题 (发送给管理员用)
 	MailTpl            string          `mapstructure:"mail_tpl"`              // 邮件模板

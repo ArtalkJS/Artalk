@@ -10,13 +10,15 @@ import (
 )
 
 type ParamsAdd struct {
-	Name    string `mapstructure:"name" param:"required"`
-	Email   string `mapstructure:"email" param:"required"`
-	Link    string `mapstructure:"link"`
-	Content string `mapstructure:"content" param:"required"`
-	Rid     uint   `mapstructure:"rid"`
-	PageKey string `mapstructure:"page_key" param:"required"`
-	Token   string `mapstructure:"token"`
+	Name      string `mapstructure:"name" param:"required"`
+	Email     string `mapstructure:"email" param:"required"`
+	Link      string `mapstructure:"link"`
+	Content   string `mapstructure:"content" param:"required"`
+	Rid       uint   `mapstructure:"rid"`
+	PageKey   string `mapstructure:"page_key" param:"required"`
+	PageUrl   string `mapstructure:"page_url"`
+	PageTitle string `mapstructure:"page_title"`
+	Token     string `mapstructure:"token"`
 }
 
 type ResponseAdd struct {
@@ -43,7 +45,7 @@ func ActionAdd(c echo.Context) error {
 	RecordAction(c)
 
 	// find page
-	page := FindCreatePage(p.PageKey)
+	page := FindCreatePage(p.PageKey, p.PageUrl, p.PageTitle)
 
 	// check if the user is allowed to comment
 	if isAllowed, resp := CheckIfAllowed(c, p.Name, p.Email, page); !isAllowed {
@@ -106,6 +108,13 @@ func ActionAdd(c echo.Context) error {
 		email.Send(comment.ToCookedForEmail(), parentComment.ToCookedForEmail()) // 发送邮件给回复者
 	}
 	email.SendToAdmin(comment.ToCookedForEmail()) // 发送邮件给管理员
+
+	// fetch page url data
+	if page.Url != "" && page.Title == "" {
+		go func() {
+			page.FetchURL()
+		}()
+	}
 
 	return RespData(c, ResponseAdd{
 		Comment: comment.ToCooked(),

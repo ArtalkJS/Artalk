@@ -2,8 +2,19 @@ package email
 
 import (
 	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 )
+
+func SendTo(subject string, body string, toAddr string) {
+	AddToQueue(Email{
+		FromAddr: config.Instance.Email.SendAddr,
+		FromName: config.Instance.Email.SendName,
+		ToAddr:   toAddr,
+		Subject:  subject,
+		Body:     body,
+	})
+}
 
 func Send(from model.CookedCommentForEmail, to model.CookedCommentForEmail) {
 	if !config.Instance.Email.Enabled {
@@ -15,7 +26,7 @@ func Send(from model.CookedCommentForEmail, to model.CookedCommentForEmail) {
 		body := RenderEmailTpl(from, to)
 
 		AddToQueue(Email{
-			FromAddr: from.Email,
+			FromAddr: config.Instance.Email.SendAddr,
 			FromName: config.Instance.Email.SendName,
 			ToAddr:   to.Email,
 			Subject:  subject,
@@ -28,22 +39,32 @@ func SendToAdmin(from model.CookedCommentForEmail) {
 	if !config.Instance.Email.Enabled {
 		return
 	}
-	if config.Instance.Email.AdminAddr == "" {
+
+	// 查询所有 admin
+	var admins []model.User
+	lib.DB.Where(&model.User{IsAdmin: true}).Find(&admins)
+
+	if len(admins) == 0 {
 		return
 	}
 
-	go func() {
-		subject := RenderConfig(config.Instance.Email.MailSubjectToAdmin)
-		body := RenderEmailTpl(from, model.CookedCommentForEmail{
-			Nick: "Admin",
-		})
+	// 发邮件给每个 admin
+	for _, admin := range admins {
+		email := admin.Email
 
-		AddToQueue(Email{
-			FromAddr: from.Email,
-			FromName: config.Instance.Email.SendName,
-			ToAddr:   config.Instance.Email.AdminAddr,
-			Subject:  subject,
-			Body:     body,
-		})
-	}()
+		go func() {
+			subject := RenderConfig(config.Instance.Email.MailSubjectToAdmin)
+			body := RenderEmailTpl(from, model.CookedCommentForEmail{
+				Nick: "Admin",
+			})
+
+			AddToQueue(Email{
+				FromAddr: config.Instance.Email.SendAddr,
+				FromName: config.Instance.Email.SendName,
+				ToAddr:   email,
+				Subject:  subject,
+				Body:     body,
+			})
+		}()
+	}
 }

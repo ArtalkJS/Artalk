@@ -13,8 +13,10 @@ type Comment struct {
 
 	UserID  uint   `gorm:"index"`
 	PageKey string `gorm:"index"`
+	SiteID  uint   `gorm:"index"`
 	User    User   `gorm:"foreignKey:UserID;references:ID"`
 	Page    Page   `gorm:"foreignKey:PageKey;references:Key"`
+	Site    Site   `gorm:"foreignKey:SiteID;references:ID"`
 
 	Rid uint `gorm:"index"`
 	UA  string

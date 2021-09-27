@@ -53,8 +53,8 @@ email:
   enabled: true # 总开关
   send_type: 'smtp' # 发送方式 [ali_dm, smtp, sendmail]
   send_name: 'ArtalkGo' # 发信人昵称
+  send_addr: 'example@qq.com' # 发信人地址
   mail_subject: '您在 Artalk 收到了新的回复'
-  admin_addr: 'example@example.com' # 管理员邮箱地址（文章收到评论时通知）
   mail_subject_to_admin: '您的文章有新的回复'
   mail_tpl: 'default' # 邮件模板文件
   smtp:

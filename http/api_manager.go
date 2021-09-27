@@ -5,14 +5,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ActionManagerSendMail(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
-	return RespSuccess(c)
-}
-
 func AdminOnly(c echo.Context) (isOK bool, resp error) {
 	if !CheckIsAdminInJwtMiddleware(c) {
 		return false, RespError(c, "需要验证管理员身份", Map{"need_login": true})

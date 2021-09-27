@@ -6,30 +6,25 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ActionLogin(c echo.Context) error {
-	name := c.FormValue("name")
-	email := c.FormValue("email")
-	password := c.FormValue("password")
-	if name == "" {
-		name = c.QueryParam("name")
-	}
-	if email == "" {
-		email = c.QueryParam("email")
-	}
-	if password == "" {
-		password = c.QueryParam("password")
-	}
+type ParamsLogin struct {
+	Name     string `mapstructure:"name" param:"required"`
+	Email    string `mapstructure:"email" param:"required"`
+	Password string `mapstructure:"password" param:"required"`
+	Site     string `mapstructure:"site"`
+}
 
-	if name == "" || email == "" || password == "" {
-		return RespError(c, "Incomplete parameters.")
+func ActionLogin(c echo.Context) error {
+	var p ParamsLogin
+	if isOK, resp := ParamsDecode(c, ParamsLogin{}, &p); !isOK {
+		return resp
 	}
 
 	// record action for limiting action
 	RecordAction(c)
 
 	var user model.User
-	lib.DB.Where("name = ? AND email = ?", name, email).First(&user) // name = ? OR email = ?
-	if user.IsEmpty() || user.Password != password {
+	lib.DB.Where("name = ? AND email = ? AND site = ?", p.Name, p.Email).First(&user) // name = ? OR email = ?
+	if user.IsEmpty() || user.Password != p.Password {
 		return RespError(c, "验证失败")
 	}
 

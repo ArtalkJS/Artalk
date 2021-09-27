@@ -3,6 +3,7 @@ module github.com/ArtalkJS/ArtalkGo
 go 1.16
 
 require (
+	github.com/PuerkitoBio/goquery v1.7.1 // indirect
 	github.com/allegro/bigcache/v3 v3.0.0
 	github.com/eko/gocache/v2 v2.1.0
 	github.com/fsnotify/fsnotify v1.5.1 // indirect

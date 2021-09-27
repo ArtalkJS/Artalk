@@ -92,5 +92,6 @@ func InitRoute(e *echo.Echo) {
 	manager.POST("/edit-page", ActionManagerEditPage)
 	manager.POST("/edit-comment", ActionManagerEditComment)
 	manager.POST("/del-comment", ActionManagerDelComment)
-	manager.GET("/send-mail", ActionManagerSendMail)
+	manager.POST("/page-fetch", ActionManagerPageFetch)
+	manager.POST("/send-mail", ActionManagerSendMail)
 }

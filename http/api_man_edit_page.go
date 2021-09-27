@@ -4,7 +4,9 @@ import "github.com/labstack/echo/v4"
 
 type ParamsEditPage struct {
 	Key       string `mapstructure:"key" param:"required"`
-	OnlyAdmin string `mapstructure:"only_admin"`
+	Url       string `mapstructure:"url"`
+	Title     string `mapstructure:"title"`
+	AdminOnly string `mapstructure:"admin_only"`
 }
 
 func ActionManagerEditPage(c echo.Context) error {
@@ -22,7 +24,18 @@ func ActionManagerEditPage(c echo.Context) error {
 		return RespError(c, "page not found.")
 	}
 
-	switch p.OnlyAdmin {
+	// url
+	if p.Url != "" {
+		page.Url = p.Url
+	}
+
+	// title
+	if p.Title != "" {
+		page.Title = p.Title
+	}
+
+	// only_admin
+	switch p.AdminOnly {
 	case "1":
 		page.AdminOnly = true
 	case "0":

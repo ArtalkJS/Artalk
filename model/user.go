@@ -4,13 +4,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserType string
-
-const (
-	UserBanned UserType = "banned"
-	UserAdmin  UserType = "admin"
-)
-
 type User struct {
 	gorm.Model
 	Name       string `gorm:"index"`
@@ -21,26 +14,25 @@ type User struct {
 	BadgeColor string
 	LastIP     string
 	LastUA     string
-	Type       UserType `gorm:"index"`
+	IsAdmin    bool
+
+	SiteID uint `gorm:"index"`
+	Site   Site `gorm:"foreignKey:SiteID;references:ID"`
 }
 
 func (u User) IsEmpty() bool {
 	return u.ID == 0
 }
 
-func (u User) IsAdmin() bool {
-	return u.Type == UserAdmin
-}
-
 type CookedUser struct {
-	ID         uint     `json:"id"`
-	Name       string   `json:"name"`
-	Email      string   `json:"email"`
-	Link       string   `json:"link"`
-	BadgeName  string   `json:"badge_name"`
-	BadgeColor string   `json:"badge_color"`
-	IsAdmin    bool     `json:"is_admin"`
-	Type       UserType `json:"type"`
+	ID         uint   `json:"id"`
+	Name       string `json:"name"`
+	Email      string `json:"email"`
+	Link       string `json:"link"`
+	BadgeName  string `json:"badge_name"`
+	BadgeColor string `json:"badge_color"`
+	IsAdmin    bool   `json:"is_admin"`
+	SiteID     uint   `json:"site_id"`
 }
 
 func (u User) ToCooked() CookedUser {
@@ -51,7 +43,7 @@ func (u User) ToCooked() CookedUser {
 		Link:       u.Link,
 		BadgeName:  u.BadgeName,
 		BadgeColor: u.BadgeColor,
-		IsAdmin:    u.IsAdmin(),
-		Type:       u.Type,
+		IsAdmin:    u.IsAdmin,
+		SiteID:     u.SiteID,
 	}
 }

@@ -123,7 +123,7 @@ func initDB() {
 func syncConfWithDB() {
 	// 导入配置文件的管理员用户
 	for _, admin := range config.Instance.AdminUsers {
-		user := model.FindUser(admin.Name, admin.Email, admin.SiteID)
+		user := model.FindUser(admin.Name, admin.Email)
 		if user.IsEmpty() {
 			// create
 			user = model.User{
@@ -133,7 +133,6 @@ func syncConfWithDB() {
 				Password:   admin.Password,
 				BadgeName:  admin.BadgeName,
 				BadgeColor: admin.BadgeColor,
-				SiteID:     admin.SiteID,
 				IsAdmin:    true,
 				IsInConf:   true,
 			}
@@ -144,7 +143,6 @@ func syncConfWithDB() {
 			user.Password = admin.Password
 			user.BadgeName = admin.BadgeName
 			user.BadgeColor = admin.BadgeColor
-			user.SiteID = admin.SiteID
 			user.IsAdmin = true
 			user.IsInConf = true
 			lib.DB.Save(&user)

@@ -16,9 +16,6 @@ type User struct {
 	LastUA     string
 	IsAdmin    bool
 
-	SiteID uint `gorm:"index"`
-	Site   Site `gorm:"foreignKey:SiteID;references:ID"`
-
 	// 配置文件中添加的
 	IsInConf bool
 }
@@ -35,7 +32,6 @@ type CookedUser struct {
 	BadgeName  string `json:"badge_name"`
 	BadgeColor string `json:"badge_color"`
 	IsAdmin    bool   `json:"is_admin"`
-	SiteID     uint   `json:"site_id"`
 }
 
 func (u User) ToCooked() CookedUser {
@@ -47,6 +43,5 @@ func (u User) ToCooked() CookedUser {
 		BadgeName:  u.BadgeName,
 		BadgeColor: u.BadgeColor,
 		IsAdmin:    u.IsAdmin,
-		SiteID:     u.SiteID,
 	}
 }

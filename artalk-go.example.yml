@@ -32,7 +32,6 @@ admin_users:
     password: ''
     badge_name: '管理员'
     badge_color: '#FF6C00'
-    site_id: 0
 
 # 登录超时 (单位：秒)
 login_timeout: 259200

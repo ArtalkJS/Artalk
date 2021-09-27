@@ -6,9 +6,8 @@ import (
 
 type Site struct {
 	gorm.Model
-	Name   string
-	Url    string
-	UserID uint
+	Name string `gorm:"uniqueIndex"`
+	Url  string
 }
 
 func (s Site) IsEmpty() bool {
@@ -16,17 +15,15 @@ func (s Site) IsEmpty() bool {
 }
 
 type CookedSite struct {
-	ID     uint   `json:"id"`
-	Name   string `json:"name"`
-	Url    string `json:"url"`
-	UserID uint   `json:"user_id"`
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+	Url  string `json:"url"`
 }
 
 func (s Site) ToCooked() CookedSite {
 	return CookedSite{
-		ID:     s.ID,
-		Name:   s.Name,
-		Url:    s.Url,
-		UserID: s.UserID,
+		ID:   s.ID,
+		Name: s.Name,
+		Url:  s.Url,
 	}
 }

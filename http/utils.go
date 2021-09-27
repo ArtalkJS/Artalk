@@ -19,7 +19,6 @@ func LoginGetUserToken(user model.User) string {
 	claims := &jwtCustomClaims{
 		Name:    user.Name,
 		Email:   user.Email,
-		Site:    user.SiteID,
 		IsAdmin: user.IsAdmin,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Second * time.Duration(config.Instance.LoginTimeout)).Unix(), // 过期时间
@@ -103,7 +102,7 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 
 func CheckIfAllowed(c echo.Context, name string, email string, page model.Page, siteID uint) (bool, error) {
 	// 如果用户是管理员，或者当前页只能管理员评论
-	if model.IsAdminUser(name, email, siteID) || page.AdminOnly {
+	if model.IsAdminUser(name, email) || page.AdminOnly {
 		if !CheckIsAdminReq(c) {
 			return false, RespError(c, "需要验证管理员身份", Map{"need_login": true})
 		}
@@ -112,25 +111,17 @@ func CheckIfAllowed(c echo.Context, name string, email string, page model.Page, 
 	return true, nil
 }
 
-func CheckSite(c echo.Context, siteID uint) (bool, error) {
-	if siteID == 0 {
+func CheckSite(c echo.Context, siteName string, destID *uint) (bool, error) {
+	if siteName == "" {
 		return true, nil
 	}
 
-	site := model.FindSite(siteID)
+	site := model.FindSite(siteName)
 	if site.IsEmpty() {
-		return false, RespError(c, "site not found.")
+		return false, RespError(c, "Site not found")
 	}
+
+	*destID = site.ID
 
 	return true, nil
-}
-
-func HandleSiteParam(str string) uint {
-	site := 0
-	if str != "" {
-		if v, err := strconv.Atoi(str); err == nil {
-			site = v
-		}
-	}
-	return uint(site)
 }

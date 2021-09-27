@@ -32,8 +32,7 @@ func ActionManagerDelComment(c echo.Context) error {
 	}
 
 	// find site
-	p.SiteID = HandleSiteParam(p.Site)
-	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, p.Site, &p.SiteID); !isOK {
 		return resp
 	}
 

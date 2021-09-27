@@ -49,7 +49,6 @@ type AdminUserConf struct {
 	Password   string `mapstructure:"password"`
 	BadgeName  string `mapstructure:"badge_name"`
 	BadgeColor string `mapstructure:"badge_color"`
-	SiteID     uint   `mapstructure:"site_id"`
 }
 
 type ModeratorConf struct {

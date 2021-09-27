@@ -49,8 +49,7 @@ func ActionAdd(c echo.Context) error {
 	RecordAction(c)
 
 	// find site
-	p.SiteID = HandleSiteParam(p.Site)
-	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, p.Site, &p.SiteID); !isOK {
 		return resp
 	}
 
@@ -63,7 +62,7 @@ func ActionAdd(c echo.Context) error {
 	}
 
 	// find user
-	user := model.FindCreateUser(p.Name, p.Email, p.SiteID)
+	user := model.FindCreateUser(p.Name, p.Email)
 	if user.ID == 0 || page.Key == "" {
 		logrus.Error("Cannot get user or page.")
 		return RespError(c, "评论失败")

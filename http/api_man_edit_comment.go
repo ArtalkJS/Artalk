@@ -42,8 +42,7 @@ func ActionManagerEditComment(c echo.Context) error {
 	}
 
 	// find site
-	p.SiteID = HandleSiteParam(p.Site)
-	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, p.Site, &p.SiteID); !isOK {
 		return resp
 	}
 
@@ -66,7 +65,7 @@ func ActionManagerEditComment(c echo.Context) error {
 
 	// user
 	if p.Nick != "" && p.Email != "" {
-		user := model.FindCreateUser(p.Nick, p.Email, p.SiteID)
+		user := model.FindCreateUser(p.Nick, p.Email)
 		if user.ID != comment.UserID {
 			comment.UserID = user.ID
 		}

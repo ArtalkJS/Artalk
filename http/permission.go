@@ -25,7 +25,6 @@ var CommonJwtConfig middleware.JWTConfig
 type jwtCustomClaims struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
-	Site    uint   `json:"site"`
 	IsAdmin bool   `json:"is_admin"`
 	jwt.StandardClaims
 }
@@ -182,14 +181,13 @@ func GetUserByJwt(jwt *jwt.Token) model.User {
 
 	name := claims.Name
 	email := claims.Email
-	site := claims.Site
 
 	if !claims.IsAdmin {
 		return model.User{}
 	}
 
 	// check user from database
-	user := model.FindUser(name, email, site)
+	user := model.FindUser(name, email)
 
 	return user
 }

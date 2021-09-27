@@ -9,9 +9,6 @@ import (
 type ParamsUserGet struct {
 	Name  string `mapstructure:"name" param:"required"`
 	Email string `mapstructure:"email" param:"required"`
-
-	Site   string `mapstructure:"site"`
-	SiteID uint
 }
 
 type ResponseUserGet struct {
@@ -24,17 +21,10 @@ func ActionUserGet(c echo.Context) error {
 		return resp
 	}
 
-	// find site
-	p.SiteID = HandleSiteParam(p.Site)
-	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
-		return resp
-	}
-
 	var user model.User // 注：user 查找是 AND
 	lib.DB.Where(&model.User{
-		Name:   p.Name,
-		Email:  p.Email,
-		SiteID: p.SiteID,
+		Name:  p.Name,
+		Email: p.Email,
 	}).First(&user)
 
 	isLogin := false

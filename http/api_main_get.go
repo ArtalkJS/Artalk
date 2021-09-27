@@ -36,8 +36,7 @@ func ActionGet(c echo.Context) error {
 	isMsgCenter := IsMsgCenter(p)
 
 	// find site
-	p.SiteID = HandleSiteParam(p.Site)
-	if isOK, resp := CheckSite(c, p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, p.Site, &p.SiteID); !isOK {
 		return resp
 	}
 
@@ -126,7 +125,7 @@ func IsMsgCenter(p ParamsGet) bool {
 
 func MsgCenter(c echo.Context, p ParamsGet, siteID uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		user := model.FindUser(p.Name, p.Email, siteID)
+		user := model.FindUser(p.Name, p.Email)
 
 		myCommentIDs := []int{}
 		if p.Type == "all" || p.Type == "mentions" {

@@ -13,15 +13,15 @@ func FindComment(id uint, siteID uint) Comment {
 }
 
 // 查找用户（返回：精确查找 AND）
-func FindUser(name string, email string, siteID uint) User {
+func FindUser(name string, email string) User {
 	var user User
-	lib.DB.Where(&User{Name: name, Email: email, SiteID: siteID}).First(&user)
+	lib.DB.Where(&User{Name: name, Email: email}).First(&user)
 	return user
 }
 
-func IsAdminUser(name string, email string, siteID uint) bool {
+func IsAdminUser(name string, email string) bool {
 	var user User
-	lib.DB.Where(&User{Name: name, Email: email, IsAdmin: true, SiteID: siteID}).First(&user)
+	lib.DB.Where(&User{Name: name, Email: email, IsAdmin: true}).First(&user)
 	return !user.IsEmpty()
 }
 
@@ -33,9 +33,9 @@ func UpdateComment(comment *Comment) error {
 	return err
 }
 
-func FindSite(id uint) Site {
+func FindSite(name string) Site {
 	var site Site
-	lib.DB.Where("id = ?", id).First(&site)
+	lib.DB.Where(&Site{Name: name}).First(&site)
 	return site
 }
 
@@ -47,19 +47,18 @@ func FindCreatePage(pageKey string, pageUrl string, pageTitle string, siteID uin
 	return page
 }
 
-func FindCreateUser(name string, email string, siteID uint) User {
-	user := FindUser(name, email, siteID)
+func FindCreateUser(name string, email string) User {
+	user := FindUser(name, email)
 	if user.IsEmpty() {
-		user = NewUser(name, email, siteID) // save a new user
+		user = NewUser(name, email) // save a new user
 	}
 	return user
 }
 
-func NewUser(name string, email string, siteID uint) User {
+func NewUser(name string, email string) User {
 	user := User{
-		Name:   name,
-		Email:  email,
-		SiteID: siteID,
+		Name:  name,
+		Email: email,
 	}
 
 	err := lib.DB.Create(&user).Error

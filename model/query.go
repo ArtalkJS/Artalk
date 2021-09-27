@@ -6,9 +6,9 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func FindComment(id uint, siteID uint) Comment {
+func FindComment(id uint, siteName string) Comment {
 	var comment Comment
-	lib.DB.Preload(clause.Associations).Where("id = ? AND site_id = ?", id, siteID).First(&comment)
+	lib.DB.Preload(clause.Associations).Where("id = ? AND site_name = ?", id, siteName).First(&comment)
 	return comment
 }
 
@@ -39,10 +39,10 @@ func FindSite(name string) Site {
 	return site
 }
 
-func FindCreatePage(pageKey string, pageUrl string, pageTitle string, siteID uint) Page {
-	page := FindPage(pageKey, siteID)
+func FindCreatePage(pageKey string, pageUrl string, pageTitle string, siteName string) Page {
+	page := FindPage(pageKey, siteName)
 	if page.IsEmpty() {
-		page = NewPage(pageKey, pageUrl, pageTitle, siteID)
+		page = NewPage(pageKey, pageUrl, pageTitle, siteName)
 	}
 	return page
 }
@@ -78,24 +78,24 @@ func UpdateUser(user *User) error {
 	return err
 }
 
-func FindPage(key string, siteID uint) Page {
+func FindPage(key string, siteName string) Page {
 	var page Page
-	lib.DB.Where(&Page{Key: key, SiteID: siteID}).First(&page)
+	lib.DB.Where(&Page{Key: key, SiteName: siteName}).First(&page)
 	return page
 }
 
-func FindPageByID(id uint, siteID uint) Page {
+func FindPageByID(id uint, siteName string) Page {
 	var page Page
-	lib.DB.Where("id = ? AND site_id = ?", id, siteID).First(&page)
+	lib.DB.Where("id = ? AND site_name = ?", id, siteName).First(&page)
 	return page
 }
 
-func NewPage(key string, pageUrl string, pageTitle string, siteID uint) Page {
+func NewPage(key string, pageUrl string, pageTitle string, siteName string) Page {
 	page := Page{
-		Key:    key,
-		Url:    pageUrl,
-		Title:  pageTitle,
-		SiteID: siteID,
+		Key:      key,
+		Url:      pageUrl,
+		Title:    pageTitle,
+		SiteName: siteName,
 	}
 
 	err := lib.DB.Create(&page).Error

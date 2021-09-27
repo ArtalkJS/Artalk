@@ -11,12 +11,12 @@ type Comment struct {
 	gorm.Model
 	Content string
 
-	UserID  uint   `gorm:"index"`
-	PageKey string `gorm:"index"`
-	SiteID  uint   `gorm:"index"`
-	User    User   `gorm:"foreignKey:UserID;references:ID"`
-	Page    Page   `gorm:"foreignKey:PageKey;references:Key"`
-	Site    Site   `gorm:"foreignKey:SiteID;references:ID"`
+	UserID   uint   `gorm:"index"`
+	PageKey  string `gorm:"index"`
+	SiteName string `gorm:"index"`
+	User     User   `gorm:"foreignKey:UserID;references:ID"`
+	Page     Page   `gorm:"foreignKey:PageKey;references:Key"`
+	Site     Site   `gorm:"foreignKey:SiteName;references:Name"`
 
 	Rid uint `gorm:"index"`
 	UA  string
@@ -89,6 +89,7 @@ type CookedComment struct {
 	Rid            uint   `json:"rid"`
 	PageKey        string `json:"page_key"`
 	Visible        bool   `json:"visible"`
+	SiteName       string `json:"site_name"`
 }
 
 func (c Comment) ToCooked() CookedComment {
@@ -109,6 +110,7 @@ func (c Comment) ToCooked() CookedComment {
 		Rid:            c.Rid,
 		PageKey:        c.PageKey,
 		Visible:        true,
+		SiteName:       c.SiteName,
 	}
 }
 
@@ -129,6 +131,7 @@ type CookedCommentForEmail struct {
 	IsAllowReply   bool   `json:"is_allow_reply"`
 	Rid            uint   `json:"rid"`
 	PageKey        string `json:"page_key"`
+	SiteName       string `json:"site_name"`
 }
 
 func (c Comment) ToCookedForEmail() CookedCommentForEmail {
@@ -152,5 +155,6 @@ func (c Comment) ToCookedForEmail() CookedCommentForEmail {
 		IsAllowReply:   c.IsAllowReply(),
 		Rid:            c.Rid,
 		PageKey:        c.PageKey,
+		SiteName:       c.SiteName,
 	}
 }

@@ -12,11 +12,11 @@ import (
 type ParamsDelComment struct {
 	ID string `mapstructure:"id" param:"required"`
 
-	Site   string `mapstructure:"id"`
-	SiteID uint
+	SiteName string `mapstructure:"site_name"`
+	SiteID   uint
 }
 
-func ActionManagerDelComment(c echo.Context) error {
+func ActionAdminDelComment(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -32,11 +32,11 @@ func ActionManagerDelComment(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := CheckSite(c, p.Site, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, p.SiteName, &p.SiteID); !isOK {
 		return resp
 	}
 
-	comment := model.FindComment(uint(id), p.SiteID)
+	comment := model.FindComment(uint(id), p.SiteName)
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found.")
 	}

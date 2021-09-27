@@ -7,9 +7,9 @@ import (
 
 type ParamsEditPage struct {
 	// 查询值
-	Key    string `mapstructure:"key" param:"required"`
-	Site   string `mapstructure:"site"`
-	SiteID uint
+	Key      string `mapstructure:"key" param:"required"`
+	SiteName string `mapstructure:"site_name"`
+	SiteID   uint
 
 	// 修改值
 	Url       string `mapstructure:"url"`
@@ -17,7 +17,7 @@ type ParamsEditPage struct {
 	AdminOnly string `mapstructure:"admin_only"`
 }
 
-func ActionManagerEditPage(c echo.Context) error {
+func ActionAdminEditPage(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -28,11 +28,11 @@ func ActionManagerEditPage(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := CheckSite(c, p.Site, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, p.SiteName, &p.SiteID); !isOK {
 		return resp
 	}
 
-	page := model.FindPage(p.Key, p.SiteID)
+	page := model.FindPage(p.Key, p.SiteName)
 	if page.IsEmpty() {
 		return RespError(c, "page not found.")
 	}

@@ -17,8 +17,8 @@ type Page struct {
 	Url       string
 	AdminOnly bool
 
-	SiteID uint `gorm:"index"`
-	Site   Site `gorm:"foreignKey:SiteID;references:ID"`
+	SiteName string `gorm:"index"`
+	Site     Site   `gorm:"foreignKey:SiteName;references:Name"`
 }
 
 func (p Page) IsEmpty() bool {
@@ -31,7 +31,7 @@ type CookedPage struct {
 	Key       string `json:"key"`
 	URL       string `json:"url"`
 	Title     string `json:"title"`
-	SiteID    uint   `json:"site_id"`
+	SiteName  string `json:"site_name"`
 }
 
 func (p Page) ToCooked() CookedPage {
@@ -41,7 +41,7 @@ func (p Page) ToCooked() CookedPage {
 		Key:       p.Key,
 		URL:       p.Url,
 		Title:     p.Title,
-		SiteID:    p.SiteID,
+		SiteName:  p.SiteName,
 	}
 }
 

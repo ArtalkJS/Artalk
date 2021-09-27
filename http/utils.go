@@ -100,7 +100,7 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 	return true, nil
 }
 
-func CheckIfAllowed(c echo.Context, name string, email string, page model.Page, siteID uint) (bool, error) {
+func CheckIfAllowed(c echo.Context, name string, email string, page model.Page) (bool, error) {
 	// 如果用户是管理员，或者当前页只能管理员评论
 	if model.IsAdminUser(name, email) || page.AdminOnly {
 		if !CheckIsAdminReq(c) {

@@ -20,9 +20,9 @@ type ParamsAdd struct {
 	PageUrl   string `mapstructure:"page_url"`
 	PageTitle string `mapstructure:"page_title"`
 
-	Token  string `mapstructure:"token"`
-	Site   string `mapstructure:"site"`
-	SiteID uint
+	Token    string `mapstructure:"token"`
+	SiteName string `mapstructure:"site_name"`
+	SiteID   uint
 }
 
 type ResponseAdd struct {
@@ -49,15 +49,15 @@ func ActionAdd(c echo.Context) error {
 	RecordAction(c)
 
 	// find site
-	if isOK, resp := CheckSite(c, p.Site, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, p.SiteName, &p.SiteID); !isOK {
 		return resp
 	}
 
 	// find page
-	page := model.FindCreatePage(p.PageKey, p.PageUrl, p.PageTitle, p.SiteID)
+	page := model.FindCreatePage(p.PageKey, p.PageUrl, p.PageTitle, p.SiteName)
 
 	// check if the user is allowed to comment
-	if isAllowed, resp := CheckIfAllowed(c, p.Name, p.Email, page, p.SiteID); !isAllowed {
+	if isAllowed, resp := CheckIfAllowed(c, p.Name, p.Email, page); !isAllowed {
 		return resp
 	}
 
@@ -71,7 +71,7 @@ func ActionAdd(c echo.Context) error {
 	// check reply comment
 	var parentComment model.Comment
 	if p.Rid != 0 {
-		parentComment = model.FindComment(p.Rid, p.SiteID)
+		parentComment = model.FindComment(p.Rid, p.SiteName)
 		if parentComment.IsEmpty() {
 			return RespError(c, "找不到父评论")
 		}
@@ -92,7 +92,7 @@ func ActionAdd(c echo.Context) error {
 		UA:          ua,
 		IsPending:   false,
 		IsCollapsed: false,
-		SiteID:      p.SiteID,
+		SiteName:    p.SiteName,
 	}
 
 	// default comment type

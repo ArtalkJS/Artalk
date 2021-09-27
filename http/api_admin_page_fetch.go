@@ -6,12 +6,12 @@ import (
 )
 
 type ParamsPageFetch struct {
-	Key    string `mapstructure:"key" param:"required"`
-	Site   string `mapstructure:"site"`
-	SiteID uint
+	Key      string `mapstructure:"key" param:"required"`
+	SiteName string `mapstructure:"site_name"`
+	SiteID   uint
 }
 
-func ActionManagerPageFetch(c echo.Context) error {
+func ActionAdminPageFetch(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -22,11 +22,11 @@ func ActionManagerPageFetch(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := CheckSite(c, p.Site, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, p.SiteName, &p.SiteID); !isOK {
 		return resp
 	}
 
-	page := model.FindPage(p.Key, p.SiteID)
+	page := model.FindPage(p.Key, p.SiteName)
 	if page.IsEmpty() {
 		return RespError(c, "page not found.")
 	}

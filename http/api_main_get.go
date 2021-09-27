@@ -17,8 +17,8 @@ type ParamsGet struct {
 	Email string `mapstructure:"email"`
 	Type  string `mapstructure:"type"`
 
-	Site   string `mapstructure:"site"`
-	SiteID uint
+	SiteName string `mapstructure:"site_name"`
+	SiteID   uint
 }
 
 type ResponseGet struct {
@@ -36,12 +36,12 @@ func ActionGet(c echo.Context) error {
 	isMsgCenter := IsMsgCenter(p)
 
 	// find site
-	if isOK, resp := CheckSite(c, p.Site, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, p.SiteName, &p.SiteID); !isOK {
 		return resp
 	}
 
 	// find page
-	page := model.FindPage(p.PageKey, p.SiteID)
+	page := model.FindPage(p.PageKey, p.SiteName)
 
 	// comment parents
 	var comments []model.Comment
@@ -87,7 +87,7 @@ func ActionGet(c echo.Context) error {
 				continue
 			}
 
-			rComment := model.FindComment(c.Rid, p.SiteID) // 查找被回复的评论
+			rComment := model.FindComment(c.Rid, p.SiteName) // 查找被回复的评论
 			if rComment.IsEmpty() {
 				continue
 			}

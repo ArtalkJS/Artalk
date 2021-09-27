@@ -9,9 +9,9 @@ import (
 
 type ParamsEditComment struct {
 	// 查询值
-	ID     string `mapstructure:"id" param:"required"`
-	Site   string `mapstructure:"site"`
-	SiteID uint
+	ID       string `mapstructure:"id" param:"required"`
+	SiteName string `mapstructure:"site_name"`
+	SiteID   uint
 
 	// 可修改
 	Content     string `mapstructure:"content"`
@@ -26,7 +26,7 @@ type ParamsEditComment struct {
 	IsPending   string `mapstructure:"is_pending"`
 }
 
-func ActionManagerEditComment(c echo.Context) error {
+func ActionAdminEditComment(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -42,11 +42,11 @@ func ActionManagerEditComment(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := CheckSite(c, p.Site, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, p.SiteName, &p.SiteID); !isOK {
 		return resp
 	}
 
-	comment := model.FindComment(uint(id), p.SiteID)
+	comment := model.FindComment(uint(id), p.SiteName)
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found.")
 	}
@@ -78,7 +78,7 @@ func ActionManagerEditComment(c echo.Context) error {
 	// pageKey
 	if p.PageKey != "" {
 		if p.PageKey != comment.PageKey {
-			model.FindCreatePage(p.PageKey, "", "", p.SiteID)
+			model.FindCreatePage(p.PageKey, "", "", p.SiteName)
 			comment.PageKey = p.PageKey
 		}
 	}

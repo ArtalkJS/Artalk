@@ -87,11 +87,11 @@ func InitRoute(e *echo.Echo) {
 	ca.GET("/refresh", ActionCaptchaGet)
 	ca.GET("/check", ActionCaptchaCheck)
 
-	// api/manager
-	manager := api.Group("/manager", middleware.JWTWithConfig(CommonJwtConfig)) // use jwt
-	manager.POST("/edit-page", ActionManagerEditPage)
-	manager.POST("/edit-comment", ActionManagerEditComment)
-	manager.POST("/del-comment", ActionManagerDelComment)
-	manager.POST("/page-fetch", ActionManagerPageFetch)
-	manager.POST("/send-mail", ActionManagerSendMail)
+	// api/admin
+	admin := api.Group("/admin", middleware.JWTWithConfig(CommonJwtConfig)) // use jwt
+	admin.POST("/edit-page", ActionAdminEditPage)
+	admin.POST("/edit-comment", ActionAdminEditComment)
+	admin.POST("/del-comment", ActionAdminDelComment)
+	admin.POST("/page-fetch", ActionAdminPageFetch)
+	admin.POST("/send-mail", ActionAdminSendMail)
 }

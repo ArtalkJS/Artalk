@@ -110,7 +110,7 @@ func ActionGet(c echo.Context) error {
 }
 
 func GetCommentQuery(c echo.Context, p ParamsGet, siteID uint) *gorm.DB {
-	query := lib.DB.Model(&model.Comment{}).Where("page_key = ?", p.PageKey).Order("created_at DESC")
+	query := lib.DB.Model(&model.Comment{}).Where("page_key = ? AND site_name = ?", p.PageKey, p.SiteName).Order("created_at DESC")
 	if IsMsgCenter(p) {
 		query = query.Scopes(MsgCenter(c, p, siteID))
 	} else {

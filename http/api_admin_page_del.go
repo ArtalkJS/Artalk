@@ -39,7 +39,7 @@ func ActionAdminPageDel(c echo.Context) error {
 
 	// 删除所有相关内容
 	var comments []model.Comment
-	lib.DB.Where(&model.Comment{PageKey: p.Key, SiteName: p.SiteName}).Find(&comments)
+	lib.DB.Where("page_key = ? AND site_name = ?", p.Key, p.SiteName).Find(&comments)
 
 	tx := lib.DB.Begin()
 	for _, c := range comments {

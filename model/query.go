@@ -15,13 +15,13 @@ func FindComment(id uint, siteName string) Comment {
 // 查找用户（返回：精确查找 AND）
 func FindUser(name string, email string) User {
 	var user User
-	lib.DB.Where(&User{Name: name, Email: email}).First(&user)
+	lib.DB.Where("name = ? AND email = ?", name, email).First(&user)
 	return user
 }
 
 func IsAdminUser(name string, email string) bool {
 	var user User
-	lib.DB.Where(&User{Name: name, Email: email, IsAdmin: true}).First(&user)
+	lib.DB.Where("name = ? AND email = ? AND is_admin = 1", name, email).First(&user)
 	return !user.IsEmpty()
 }
 
@@ -35,7 +35,7 @@ func UpdateComment(comment *Comment) error {
 
 func FindSite(name string) Site {
 	var site Site
-	lib.DB.Where(&Site{Name: name}).First(&site)
+	lib.DB.Where("name = ?", name).First(&site)
 	return site
 }
 
@@ -86,7 +86,7 @@ func UpdateUser(user *User) error {
 
 func FindPage(key string, siteName string) Page {
 	var page Page
-	lib.DB.Where(&Page{Key: key, SiteName: siteName}).First(&page)
+	lib.DB.Where("key = ? AND site_name = ?", key, siteName).First(&page)
 	return page
 }
 

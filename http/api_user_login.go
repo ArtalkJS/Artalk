@@ -22,10 +22,7 @@ func ActionLogin(c echo.Context) error {
 	RecordAction(c)
 
 	var user model.User
-	lib.DB.Where(&model.User{
-		Name:  p.Name,
-		Email: p.Email,
-	}).First(&user) // name = ? OR email = ?
+	lib.DB.Where("name = ? AND email = ?", p.Name, p.Email).First(&user) // name = ? OR email = ?
 	if user.IsEmpty() || user.Password != p.Password {
 		return RespError(c, "验证失败")
 	}

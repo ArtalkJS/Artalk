@@ -34,10 +34,10 @@ func ActionAdminSiteDel(c echo.Context) error {
 	// 删除所有相关内容
 	if p.DelContent {
 		var comments []model.Comment
-		lib.DB.Where(&model.Comment{SiteName: site.Name}).Find(&comments)
+		lib.DB.Where("site_name = ?", site.Name).Find(&comments)
 
 		var pages []model.Page
-		lib.DB.Where(&model.Page{SiteName: site.Name}).Find(&pages)
+		lib.DB.Where("site_name = ?", site.Name).Find(&pages)
 
 		tx := lib.DB.Begin()
 		for _, c := range comments {

@@ -22,10 +22,7 @@ func ActionUserGet(c echo.Context) error {
 	}
 
 	var user model.User
-	lib.DB.Where(&model.User{
-		Name:  p.Name, // 注：user 查找是 AND
-		Email: p.Email,
-	}).First(&user)
+	lib.DB.Where("name = ? AND email = ?", p.Name, p.Email).First(&user)
 
 	if user.IsEmpty() || user.Name != p.Name || user.Email != p.Email {
 		return RespData(c, Map{

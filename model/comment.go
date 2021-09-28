@@ -53,7 +53,7 @@ func (c *Comment) FetchPage() Page {
 	}
 
 	var page Page
-	lib.DB.Where(&Page{Key: c.PageKey}).First(&page)
+	lib.DB.Where("page_key = ?", c.PageKey).First(&page)
 
 	c.Page = page
 	return page

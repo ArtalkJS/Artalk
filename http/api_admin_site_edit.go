@@ -43,10 +43,10 @@ func ActionAdminSiteEdit(c echo.Context) error {
 	// 同步变更 site_name
 	if modifyName {
 		var comments []model.Comment
-		lib.DB.Where(&model.Comment{SiteName: p.Name}).Find(&comments)
+		lib.DB.Where("site_name = ?", p.Name).Find(&comments)
 
 		var pages []model.Page
-		lib.DB.Where(&model.Page{SiteName: p.Name}).Find(&pages)
+		lib.DB.Where("site_name = ?", p.Name).Find(&pages)
 
 		tx := lib.DB.Begin()
 		for _, c := range comments {

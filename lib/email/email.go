@@ -42,7 +42,7 @@ func SendToAdmin(from model.CookedCommentForEmail) {
 
 	// 查询所有 admin
 	var admins []model.User
-	lib.DB.Where(&model.User{IsAdmin: true}).Find(&admins)
+	lib.DB.Where("is_admin = 1").Find(&admins)
 
 	if len(admins) == 0 {
 		return

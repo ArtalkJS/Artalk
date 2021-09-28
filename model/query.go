@@ -39,6 +39,12 @@ func FindSite(name string) Site {
 	return site
 }
 
+func FindSiteByID(id uint) Site {
+	var site Site
+	lib.DB.First(&site, id)
+	return site
+}
+
 func FindCreatePage(pageKey string, pageUrl string, pageTitle string, siteName string) Page {
 	page := FindPage(pageKey, siteName)
 	if page.IsEmpty() {

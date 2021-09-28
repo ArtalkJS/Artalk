@@ -1,6 +1,7 @@
 package http
 
 import (
+	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
@@ -86,6 +87,8 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 		} else if field.Type.Kind() == reflect.Uint {
 			u64, _ := strconv.ParseUint(paramVal, 10, 32)
 			params[paramName] = uint(u64)
+		} else if field.Type.Kind() == reflect.Bool {
+			params[paramName] = (paramVal == "1")
 		}
 		// } else if field.Type.Kind() == reflect.Array {
 		// 	params[paramName] = c.QueryParams()[paramName]
@@ -100,12 +103,54 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 	return true, nil
 }
 
-func CheckIfAllowed(c echo.Context, name string, email string, page model.Page) (bool, error) {
+func CheckIfAllowed(c echo.Context, name string, email string, page model.Page, siteName string) (bool, error) {
+	isAdminUser := model.IsAdminUser(name, email)
+
 	// 如果用户是管理员，或者当前页只能管理员评论
-	if model.IsAdminUser(name, email) || page.AdminOnly {
+	if isAdminUser || page.AdminOnly {
 		if !CheckIsAdminReq(c) {
 			return false, RespError(c, "需要验证管理员身份", Map{"need_login": true})
 		}
+	}
+
+	return true, nil
+}
+
+func CheckReferer(c echo.Context, siteName string) (bool, error) {
+	isAdminReq := CheckIsAdminReq(c)
+	if isAdminReq || siteName == "" {
+		return true, nil
+	}
+
+	// 请求 Referer 合法性判断
+	site := model.FindSite(siteName)
+	allowUrls := strings.Split(site.Url, ",")
+	referer := c.Request().Referer()
+	if referer == "" {
+		return true, nil
+	}
+
+	pr, err := url.Parse(referer)
+	if err != nil {
+		return true, nil
+	}
+
+	allow := false
+	for _, u := range allowUrls {
+		u = strings.TrimSpace(u)
+		if u == "" {
+			continue
+		}
+		pu, err := url.Parse(u)
+		if err != nil {
+			continue
+		}
+		if pu.Hostname() == pr.Hostname() {
+			allow = true
+		}
+	}
+	if !allow {
+		return false, RespError(c, "非法请求：Referer 不被允许")
 	}
 
 	return true, nil
@@ -118,7 +163,12 @@ func CheckSite(c echo.Context, siteName string, destID *uint) (bool, error) {
 
 	site := model.FindSite(siteName)
 	if site.IsEmpty() {
-		return false, RespError(c, "Site not found")
+		return false, RespError(c, "Site 未找到")
+	}
+
+	// 检测 Referer 合法性
+	if isOK, resp := CheckReferer(c, siteName); !isOK {
+		return false, resp
 	}
 
 	*destID = site.ID

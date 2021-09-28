@@ -9,20 +9,20 @@ import (
 	"gorm.io/gorm"
 )
 
-type ParamsDelComment struct {
+type ParamsCommentDel struct {
 	ID string `mapstructure:"id" param:"required"`
 
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
 }
 
-func ActionAdminDelComment(c echo.Context) error {
+func ActionAdminCommentDel(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
 
-	var p ParamsDelComment
-	if isOK, resp := ParamsDecode(c, ParamsDelComment{}, &p); !isOK {
+	var p ParamsCommentDel
+	if isOK, resp := ParamsDecode(c, ParamsCommentDel{}, &p); !isOK {
 		return resp
 	}
 

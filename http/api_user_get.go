@@ -7,8 +7,8 @@ import (
 )
 
 type ParamsUserGet struct {
-	Name  string `mapstructure:"name" param:"required"`
-	Email string `mapstructure:"email" param:"required"`
+	Name  string `mapstructure:"name"`
+	Email string `mapstructure:"email"`
 }
 
 type ResponseUserGet struct {
@@ -21,24 +21,25 @@ func ActionUserGet(c echo.Context) error {
 		return resp
 	}
 
-	var user model.User // 注：user 查找是 AND
+	var user model.User
 	lib.DB.Where(&model.User{
-		Name:  p.Name,
+		Name:  p.Name, // 注：user 查找是 AND
 		Email: p.Email,
 	}).First(&user)
 
+	if user.IsEmpty() || user.Name != p.Name || user.Email != p.Email {
+		return RespData(c, Map{
+			"user":     nil,
+			"is_login": false,
+		})
+	}
+
+	// loginned user check
 	isLogin := false
 	tUser := GetUserByReqToken(c)
 	if !tUser.IsEmpty() && tUser.Name == p.Name && tUser.Email == p.Email {
 		isLogin = true
 		user = tUser
-	}
-
-	if user.IsEmpty() {
-		return RespData(c, Map{
-			"user":     nil,
-			"is_login": false,
-		})
 	}
 
 	return RespData(c, Map{

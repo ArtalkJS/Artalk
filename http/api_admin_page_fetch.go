@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type ParamsPageFetch struct {
+type ParamsAdminPageFetch struct {
 	Key      string `mapstructure:"key" param:"required"`
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
@@ -16,8 +16,8 @@ func ActionAdminPageFetch(c echo.Context) error {
 		return resp
 	}
 
-	var p ParamsPageFetch
-	if isOK, resp := ParamsDecode(c, ParamsPageFetch{}, &p); !isOK {
+	var p ParamsAdminPageFetch
+	if isOK, resp := ParamsDecode(c, ParamsAdminPageFetch{}, &p); !isOK {
 		return resp
 	}
 

@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type ParamsSendMail struct {
+type ParamsAdminSendMail struct {
 	Subject string `mapstructure:"subject" param:"required"`
 	Body    string `mapstructure:"body" param:"required"`
 	ToAddr  string `mapstructure:"to_addr" param:"required"`
@@ -16,8 +16,8 @@ func ActionAdminSendMail(c echo.Context) error {
 		return resp
 	}
 
-	var p ParamsSendMail
-	if isOK, resp := ParamsDecode(c, ParamsSendMail{}, &p); !isOK {
+	var p ParamsAdminSendMail
+	if isOK, resp := ParamsDecode(c, ParamsAdminSendMail{}, &p); !isOK {
 		return resp
 	}
 

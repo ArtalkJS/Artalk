@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type ParamsEditComment struct {
+type ParamsCommentEdit struct {
 	// 查询值
 	ID       string `mapstructure:"id" param:"required"`
 	SiteName string `mapstructure:"site_name"`
@@ -26,13 +26,13 @@ type ParamsEditComment struct {
 	IsPending   string `mapstructure:"is_pending"`
 }
 
-func ActionAdminEditComment(c echo.Context) error {
+func ActionAdminCommentEdit(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
 
-	var p ParamsEditComment
-	if isOK, resp := ParamsDecode(c, ParamsEditComment{}, &p); !isOK {
+	var p ParamsCommentEdit
+	if isOK, resp := ParamsDecode(c, ParamsCommentEdit{}, &p); !isOK {
 		return resp
 	}
 

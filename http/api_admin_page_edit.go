@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type ParamsEditPage struct {
+type ParamsAdminPageEdit struct {
 	// 查询值
 	Key      string `mapstructure:"key" param:"required"`
 	SiteName string `mapstructure:"site_name"`
@@ -17,13 +17,13 @@ type ParamsEditPage struct {
 	AdminOnly string `mapstructure:"admin_only"`
 }
 
-func ActionAdminEditPage(c echo.Context) error {
+func ActionAdminPageEdit(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
 
-	var p ParamsEditPage
-	if isOK, resp := ParamsDecode(c, ParamsEditPage{}, &p); !isOK {
+	var p ParamsAdminPageEdit
+	if isOK, resp := ParamsDecode(c, ParamsAdminPageEdit{}, &p); !isOK {
 		return resp
 	}
 

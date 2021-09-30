@@ -29,7 +29,7 @@ export default class List extends ListLite {
     this.ctx.addEventListener('list-refresh-ui', () => (this.refreshUI()))
     this.ctx.addEventListener('list-import', (data) => (this.importComments(data)))
     this.ctx.addEventListener('list-insert', (data) => (this.insertComment(data)))
-    this.ctx.addEventListener('list-del-comment', (comment) => (this.deleteComment(comment.id)))
+    this.ctx.addEventListener('list-comment-del', (comment) => (this.deleteComment(comment.id)))
     this.ctx.addEventListener('list-update-data', (updateData) => { updateData(this.data);this.refreshUI() } )
   }
 
@@ -109,7 +109,7 @@ export default class List extends ListLite {
   /** 管理员设置页面信息 */
   public adminSetPage (conf: { admin_only: boolean }) {
     this.ctx.dispatchEvent('editor-show-loading')
-    new Api(this.ctx).editPage(this.data?.page.key || '', {
+    new Api(this.ctx).pageEdit(this.data?.page.key || '', {
       adminOnly: conf.admin_only,
     })
       .then((page) => {

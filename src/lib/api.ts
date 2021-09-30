@@ -113,7 +113,7 @@ export default class Api {
     })
   }
 
-  public editComment(data: {
+  public commentEdit(data: {
     id: number,
     content?: string,
     page_key?: string,
@@ -135,13 +135,13 @@ export default class Api {
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    return commonFetch(this.ctx, `${this.serverURL}/admin/edit-comment`, {
+    return commonFetch(this.ctx, `${this.serverURL}/admin/comment-edit`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.data.comment as CommentData))
   }
 
-  public editPage(key: string, data: {
+  public pageEdit(key: string, data: {
     url?: string,
     title?: string,
     adminOnly?: boolean
@@ -155,20 +155,20 @@ export default class Api {
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    return commonFetch(this.ctx, `${this.serverURL}/admin/edit-page`, {
+    return commonFetch(this.ctx, `${this.serverURL}/admin/page-edit`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.data.page as PageData))
   }
 
-  public delComment(commentID: number) {
+  public commentDel(commentID: number) {
     const params: any = {
       id: String(commentID),
     }
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    return commonFetch(this.ctx, `${this.serverURL}/admin/del-comment`, {
+    return commonFetch(this.ctx, `${this.serverURL}/admin/comment-del`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.success))

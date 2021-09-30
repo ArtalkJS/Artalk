@@ -7,7 +7,7 @@ export interface EventPayloadMap {
   'list-refresh-ui': undefined
   'list-import': CommentData[]
   'list-insert': CommentData
-  'list-del-comment': CommentData
+  'list-comment-del': CommentData
   'list-reload': undefined
   'list-update-data': (data: ListData | undefined) => void
   'sidebar-show': undefined

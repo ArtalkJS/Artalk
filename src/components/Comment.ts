@@ -269,7 +269,7 @@ export default class Comment extends Component {
       params.is_pending = !this.data.is_pending
     }
 
-    new Api(this.ctx).editComment(params).then((comment) => {
+    new Api(this.ctx).commentEdit(params).then((comment) => {
       btnElem.classList.remove('atk-in-process')
       this.data = comment
       this.refreshUI()
@@ -311,7 +311,7 @@ export default class Comment extends Component {
 
     btnElem.classList.add('atk-in-process')
     btnElem.innerText = '删除中...'
-    new Api(this.ctx).delComment(this.data.id)
+    new Api(this.ctx).commentDel(this.data.id)
       .then(() => {
         btnElem.innerText = btnTextOrg
         btnElem.classList.remove('atk-in-process')

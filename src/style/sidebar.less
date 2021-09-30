@@ -19,9 +19,33 @@
   .atk-sidebar-inner {
     position: relative;
 
-    .atk-sidebar-title {
-      font-size: 23px;
+    .atk-sidebar-title-wrap {
       padding: 15px 35px 10px 20px;
+
+      .atk-title-item {
+        user-select: none;
+        font-size: 17px;
+        cursor: pointer;
+        color: var(--at-color-font);
+
+        &.atk-active {
+          color: var(--at-color-font) !important;
+          font-size: 23px;
+          cursor: initial;
+        }
+
+        &:hover {
+          color: var(--at-color-main);
+        }
+
+        &:not(:last-child) {
+          margin-right: 20px;
+        }
+
+        &.atk-hide {
+          display: none;
+        }
+      }
     }
 
     .atk-sidebar-close {

@@ -38,8 +38,8 @@
 
 > 前端资源下载：[Artalk.js](./dist/Artalk.js) | [Artalk.css](./dist/Artalk.css)
 
-1. 部署 Artalk 的后端，传送门：[PHP API](https://github.com/ArtalkJS/Artalk-API-PHP) / Go API
-2. 前端页面配置 Artalk 如下：
+1. 部署 Artalk 后端程序，传送门：[Go API](https://github.com/ArtalkJS/ArtalkGo)
+2. 前端页面引入 Artalk：
 
 ```html
 <!DOCTYPE html>

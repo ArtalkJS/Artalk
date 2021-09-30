@@ -7,53 +7,67 @@ import * as Ui from '../lib/ui'
 import Comment  from './Comment'
 import SidebarHTML from './html/sidebar.html?raw'
 import BuildLayer, { Layer } from './Layer'
-import ListLite from './ListLite'
+
+import SidebarView from './sidebar-views/SidebarView'
+import MessageView from './sidebar-views/MessageView'
+import AdminView from './sidebar-views/AdminView'
+
 
 export default class Sidebar extends Component {
   public el: HTMLElement
   public layer?: Layer
+  public actionsEl: HTMLElement
   public contentEl: HTMLElement
-  public list: ListLite
-  public type: string = 'mentions'
+  public titleWrapEl: HTMLElement
+  public adminMode: boolean = false
+
+  public view?: SidebarView
+  public registerViews: (typeof SidebarView)[]
+  public action?: string
 
   constructor (ctx: Context) {
     super(ctx)
 
+    this.registerViews = [
+      MessageView,
+      AdminView,
+    ]
+
     this.el = Utils.createElement(SidebarHTML)
     this.contentEl = this.el.querySelector('.atk-sidebar-content')!
+    this.titleWrapEl = this.el.querySelector('.atk-sidebar-title-wrap')!
+    this.actionsEl = this.el.querySelector('.atk-sidebar-actions')!
 
     this.el.querySelector('.atk-sidebar-close')!.addEventListener('click', () => {
       this.hide()
     })
 
-    this.initActionBar()
-
     this.ctx.addEventListener('sidebar-show', () => (this.show()))
     this.ctx.addEventListener('sidebar-hide', () => (this.hide()))
 
-    this.list = new ListLite(this.ctx)
-    this.list.flatMode = true
-    this.list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
-    this.list.renderComment = this.renderComment
-    this.contentEl.append(this.list.el)
-  }
+    // btn
+    this.registerViews.forEach(View => {
+      const viewInstance = new View(this.ctx)
 
-  initActionBar() {
-    const actionsEl = this.el.querySelector('.atk-sidebar-actions')!
-    actionsEl.addEventListener('click', (evt) => {
-      const el = evt.target as HTMLElement
-      const type = el.getAttribute('data-atk-action')
-      if (!type) return
+      // titles
+      const titleEl = Utils.createElement(`
+      <span class="atk-title-item" data-name="${viewInstance.name}">${viewInstance.title}</span>
+      `)
+      if (viewInstance.adminOnly) titleEl.setAttribute('atk-only-admin-show', '')
+      this.titleWrapEl.append(titleEl)
 
-      actionsEl.querySelectorAll('.atk-active').forEach((item) => {
-        item.classList.remove('atk-active')
+      // title click
+      titleEl.addEventListener('click', () => {
+        this.titleWrapEl.querySelectorAll('.atk-active').forEach((item) => {
+          item.classList.remove('atk-active')
+        })
+        titleEl.classList.add('atk-active')
+
+        this.switchView(viewInstance)
       })
-      el.classList.add('atk-active')
-      this.type = type
-      this.list.type = (this.type as any);
-      this.list.isFirstLoad = true
-      this.list.reqComments()
     })
+
+    ;(this.titleWrapEl.firstChild as HTMLElement).click() // 打开第一个 view
   }
 
   show () {
@@ -67,9 +81,8 @@ export default class Sidebar extends Component {
       this.el.style.transform = 'translate(0, 0)' // 执行动画
     }, 20)
 
-    this.list.type = this.type as any
-    this.list.isFirstLoad = true
-    this.list.reqComments()
+    this.adminMode = this.ctx.user.data.isAdmin
+    if (this.view) this.view.render()
   }
 
   hide () {
@@ -77,23 +90,30 @@ export default class Sidebar extends Component {
     this.layer?.dispose() // 用完即销毁
   }
 
-  renderComment (comment: Comment) {
-    // comment.el.querySelector('[data-atk-action="comment-reply"]')!.remove()
+  switchView (view: SidebarView) {
+    this.view = view
 
-    comment.el.style.cursor = 'pointer'
-    comment.el.addEventListener('mouseover', () => {
-      comment.el.style.backgroundColor = 'var(--at-color-bg-grey)'
+    this.contentEl.innerHTML = ''
+    this.contentEl.append(view.render())
+
+    // actions
+    this.actionsEl.innerHTML = ''
+    Object.entries(view.actions).forEach(([name, label]) => {
+      const actionItemEl = Utils.createElement(`<span class="atk-action-item">${label}</span>`)
+      this.actionsEl.append(actionItemEl)
+
+      if (view.activeAction === name) actionItemEl.classList.add('atk-active')
+
+      // action click
+      actionItemEl.addEventListener('click', () => {
+        view.switch(name)
+        view.activeAction = name
+
+        this.actionsEl.querySelectorAll('.atk-active').forEach((item) => {
+          item.classList.remove('atk-active')
+        })
+        actionItemEl.classList.add('atk-active')
+      })
     })
-
-    comment.el.addEventListener('mouseout', () => {
-      comment.el.style.backgroundColor = ''
-    })
-
-    comment.el.addEventListener('click', (evt) => {
-      evt.preventDefault()
-      window.location.href = `${comment.data.page_key}#artalk-comment-${comment.data.id}`
-    })
-
-    // this.contentEl.appendChild(comment.getEl())
   }
 }

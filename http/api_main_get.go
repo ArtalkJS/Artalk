@@ -1,6 +1,8 @@
 package http
 
 import (
+	"strings"
+
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
@@ -110,46 +112,63 @@ func ActionGet(c echo.Context) error {
 }
 
 func GetCommentQuery(c echo.Context, p ParamsGet, siteID uint) *gorm.DB {
-	query := lib.DB.Model(&model.Comment{}).Where("page_key = ? AND site_name = ?", p.PageKey, p.SiteName).Order("created_at DESC")
+	query := lib.DB.Model(&model.Comment{}).Order("created_at DESC")
+
 	if IsMsgCenter(p) {
-		query = query.Scopes(MsgCenter(c, p, siteID))
-	} else {
-		query = query.Scopes(AllowedComment(c))
+		return query.Scopes(MsgCenter(c, p, siteID))
 	}
-	return query
+
+	return query.Where("page_key = ? AND site_name = ?", p.PageKey, p.SiteName).Scopes(AllowedComment(c))
 }
 
 func IsMsgCenter(p ParamsGet) bool {
-	return p.Name != "" && p.Email != ""
+	return p.Name != "" && p.Email != "" && p.Type != ""
 }
 
+// TODO: 重构 MsgCenter
 func MsgCenter(c echo.Context, p ParamsGet, siteID uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		user := model.FindUser(p.Name, p.Email)
 
-		myCommentIDs := []int{}
-		if p.Type == "all" || p.Type == "mentions" {
+		// 站点隔离
+		isAdminReq := CheckIsAdminReq(c)
+		if !isAdminReq || (isAdminReq && p.SiteName != "") {
+			db = db.Where("site_name = ?", p.SiteName)
+		}
+
+		// admin_only 检测
+		if strings.HasPrefix(p.Type, "admin_") && !CheckIsAdminReq(c) {
+			db = db.Where("id = 0")
+			return db
+		}
+
+		// 获取我的 commentIDs
+		getMyCommentIDs := func() []int {
+			myCommentIDs := []int{}
 			var myComments []model.Comment
 			lib.DB.Where("user_id = ?", user.ID).Find(&myComments)
 			for _, comment := range myComments {
 				myCommentIDs = append(myCommentIDs, int(comment.ID))
 			}
+			return myCommentIDs
 		}
 
-		if p.Type == "all" {
-			db = db.Where("rid IN (?) OR user_id = ?", myCommentIDs, user.ID)
-		}
-		if p.Type == "mentions" {
-			db = db.Where("rid IN (?) AND user_id != ?", myCommentIDs, user.ID)
-		}
-		if p.Type == "mine" {
-			db = db.Where("user_id = ?", user.ID)
-		}
-		if p.Type == "pending" {
-			db = db.Where("user_id = ? AND is_pending = 1", user.ID)
+		switch p.Type {
+		case "all":
+			return db.Where("rid IN (?) OR user_id = ?", getMyCommentIDs(), user.ID)
+		case "mentions":
+			return db.Where("rid IN (?) AND user_id != ?", getMyCommentIDs(), user.ID)
+		case "mine":
+			return db.Where("user_id = ?", user.ID)
+		case "pending":
+			return db.Where("user_id = ? AND is_pending = 1", user.ID)
+		case "admin_all":
+			return db
+		case "admin_pending":
+			return db.Where("is_pending = 1")
 		}
 
-		return db
+		return db.Where("id = 0")
 	}
 }
 

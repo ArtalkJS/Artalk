@@ -89,12 +89,19 @@ func InitRoute(e *echo.Echo) {
 
 	// api/admin
 	admin := api.Group("/admin", middleware.JWTWithConfig(CommonJwtConfig)) // use jwt
-	admin.POST("/page-edit", ActionAdminPageEdit)
-	admin.POST("/page-del", ActionAdminPageDel)
+
 	admin.POST("/comment-edit", ActionAdminCommentEdit)
 	admin.POST("/comment-del", ActionAdminCommentDel)
+
+	admin.POST("/page-get", ActionAdminPageGet)
+	admin.POST("/page-edit", ActionAdminPageEdit)
+	admin.POST("/page-del", ActionAdminPageDel)
 	admin.POST("/page-fetch", ActionAdminPageFetch)
-	admin.POST("/send-mail", ActionAdminSendMail)
+
+	admin.POST("/site-get", ActionAdminSiteGet)
 	admin.POST("/site-add", ActionAdminSiteAdd)
+	admin.POST("/site-edit", ActionAdminSiteEdit)
 	admin.POST("/site-del", ActionAdminSiteDel)
+
+	admin.POST("/send-mail", ActionAdminSendMail)
 }

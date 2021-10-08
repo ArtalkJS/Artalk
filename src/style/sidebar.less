@@ -39,7 +39,7 @@
         }
 
         &:not(:last-child) {
-          margin-right: 20px;
+          margin-right: 25px;
         }
 
         &.atk-hide {
@@ -112,6 +112,25 @@
       text-align: center;
       margin-top: 20vh;
       color: @color-meta;
+    }
+  }
+
+  .atk-filter-bar {
+    padding: 8px 15px;
+
+    .atk-filter-item {
+      display: inline-block;
+      padding: 5px 15px;
+      cursor: pointer;
+      user-select: none;
+
+      &:hover, &.atk-active {
+        background: #f4f4f4;
+      }
+
+      &:not(:last-child) {
+        margin-right: 5px;
+      }
     }
   }
 }

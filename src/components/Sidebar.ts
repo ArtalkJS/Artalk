@@ -12,7 +12,6 @@ import SidebarView from './sidebar-views/SidebarView'
 import MessageView from './sidebar-views/MessageView'
 import AdminView from './sidebar-views/AdminView'
 
-
 export default class Sidebar extends Component {
   public el: HTMLElement
   public layer?: Layer
@@ -22,16 +21,14 @@ export default class Sidebar extends Component {
   public adminMode: boolean = false
 
   public view?: SidebarView
-  public registerViews: (typeof SidebarView)[]
   public action?: string
+
+  public registerViews: (typeof SidebarView)[] = [
+    MessageView, AdminView,
+  ]
 
   constructor (ctx: Context) {
     super(ctx)
-
-    this.registerViews = [
-      MessageView,
-      AdminView,
-    ]
 
     this.el = Utils.createElement(SidebarHTML)
     this.contentEl = this.el.querySelector('.atk-sidebar-content')!
@@ -45,11 +42,11 @@ export default class Sidebar extends Component {
     this.ctx.addEventListener('sidebar-show', () => (this.show()))
     this.ctx.addEventListener('sidebar-hide', () => (this.hide()))
 
-    // btn
+    // titles
     this.registerViews.forEach(View => {
       const viewInstance = new View(this.ctx)
+      viewInstance.el.classList.add(`atk-sidebar-view-${viewInstance.name}`)
 
-      // titles
       const titleEl = Utils.createElement(`
       <span class="atk-title-item" data-name="${viewInstance.name}">${viewInstance.title}</span>
       `)
@@ -82,7 +79,6 @@ export default class Sidebar extends Component {
     }, 20)
 
     this.adminMode = this.ctx.user.data.isAdmin
-    if (this.view) this.view.render()
   }
 
   hide () {

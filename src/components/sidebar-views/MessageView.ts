@@ -1,7 +1,6 @@
 import Context from '../../Context'
 import SidebarView from './SidebarView'
 import * as Utils from '../../lib/utils'
-import Comment from '../Comment'
 import ListLite from '../ListLite'
 
 export default class MessageView extends SidebarView {
@@ -19,10 +18,8 @@ export default class MessageView extends SidebarView {
   activeAction = this.type
 
   render () {
-    this.list = new ListLite(this.ctx)
-    this.list.flatMode = true
-    this.list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
-    this.list.renderComment = this.renderComment
+    this.list = CreateCommentList(this.ctx)
+    this.el.innerHTML = ''
     this.el.append(this.list.el)
 
     this.list.type = this.type as any
@@ -39,8 +36,13 @@ export default class MessageView extends SidebarView {
     this.list.isFirstLoad = true
     this.list.reqComments()
   }
+}
 
-  renderComment (comment: Comment) {
+export function CreateCommentList (ctx: Context) {
+  const list = new ListLite(ctx)
+  list.flatMode = true
+  list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
+  list.renderComment = (comment) => {
     // comment.el.querySelector('[data-atk-action="comment-reply"]')!.remove()
 
     comment.el.style.cursor = 'pointer'
@@ -59,4 +61,6 @@ export default class MessageView extends SidebarView {
 
     // this.contentEl.appendChild(comment.getEl())
   }
+
+  return list
 }

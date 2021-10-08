@@ -43,9 +43,9 @@ export interface ArtalkConfig {
    * 服务器地址
    */
   server: string
-
+ 
   /**
-   * 网站名
+   * 站点名
    */
   site?: string
 

@@ -4,6 +4,7 @@ import * as Utils from '../../lib/utils'
 import Comment from '../Comment'
 import ListLite from '../ListLite'
 import { CreateCommentList } from './MessageView'
+import Api from '~/src/lib/api'
 
 export default class AdminView extends SidebarView {
   name = 'admin'
@@ -11,7 +12,7 @@ export default class AdminView extends SidebarView {
   actions = {
     comment: '评论',
     page: '页面',
-    site: '网站',
+    site: '站点',
     conf: '配置',
   }
   activeAction = 'comment'
@@ -37,16 +38,38 @@ export default class AdminView extends SidebarView {
     if (action === 'comment' && this.cList) {
       this.el.append(this.cList.el)
 
-      const reqComments = (type = 'all') => {
+      const reqComments = (type, siteName) => {
         if (!this.cList) return
         this.cList.type = `admin_${type}` as any
         this.cList.isFirstLoad = true
+        this.cList.paramsEditor = (params) => {
+          params.site_name = siteName
+        }
         this.cList.reqComments()
       }
 
-      this.showFilterBar({ all: '全部', pending: '待审' }, (name) => {
-        reqComments(name)
+      let loaded = false
+      const conf = { typeName: 'all', siteName: '' }
+      this.showFilterBar({ all: '全部', pending: '待审' }, (typeName) => {
+        if (!loaded) return
+        conf.typeName = typeName
+        reqComments(conf.typeName, conf.siteName)
       })
+
+      // 初始化 site 列表
+      new Api(this.ctx).siteGet()
+        .then((sites) => {
+          const items: {[name: string]: string} = {'': '所有站点'}
+          sites.forEach((site) => { items[site.name] = site.name })
+
+          this.showFilterBar(items, (s) => {
+            conf.siteName = s
+            reqComments(conf.typeName, conf.siteName)
+          })
+        })
+        .finally(() => {
+          loaded = true
+        })
     }
   }
 

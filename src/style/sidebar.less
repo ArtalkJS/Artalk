@@ -116,7 +116,8 @@
   }
 
   .atk-filter-bar {
-    padding: 8px 15px;
+    padding: 0 15px;
+    font-size: 15px;
 
     .atk-filter-item {
       display: inline-block;
@@ -129,8 +130,12 @@
       }
 
       &:not(:last-child) {
-        margin-right: 5px;
+        margin-right: 1px;
       }
+    }
+
+    &:not(:last-child) {
+      padding-top: 8px;
     }
   }
 }

@@ -88,6 +88,17 @@ export interface PageData {
   admin_only: boolean
 }
 
+export interface SiteData {
+  /** 站点 ID */
+  id: string
+
+  /** 站点名 */
+  name: string
+
+  /** 站点 URL */
+  url: string
+}
+
 export interface UserData {
   /** 用户 ID */
   id: string

@@ -1,4 +1,4 @@
-import { CommentData, ListData, UserData, PageData } from '~/types/artalk-data'
+import { CommentData, ListData, UserData, PageData, SiteData } from '~/types/artalk-data'
 import Context from '../Context'
 
 export default class Api {
@@ -10,7 +10,7 @@ export default class Api {
     this.serverURL = ctx.conf.server
   }
 
-  public get(offset: number, type?: string): Promise<ListData> {
+  public get(offset: number, type?: string, paramsEditor?: (params: any) => void): Promise<ListData> {
     const params: any = {
       page_key: this.ctx.conf.pageKey,
       limit: this.ctx.conf.readMore?.pageSize || 15,
@@ -25,7 +25,11 @@ export default class Api {
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    return commonFetch(this.ctx, `${this.serverURL}/get`, {
+    if (paramsEditor) {
+      paramsEditor(params)
+    }
+
+    return CommonFetch(this.ctx, `${this.serverURL}/get`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.data as ListData))
@@ -45,7 +49,7 @@ export default class Api {
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    return commonFetch(this.ctx, `${this.serverURL}/add`, {
+    return CommonFetch(this.ctx, `${this.serverURL}/add`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.data.comment as CommentData))
@@ -58,7 +62,7 @@ export default class Api {
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    return commonFetch(this.ctx, `${this.serverURL}/login`, {
+    return CommonFetch(this.ctx, `${this.serverURL}/login`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.data.token))
@@ -74,7 +78,7 @@ export default class Api {
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    const req = commonFetch(this.ctx, `${this.serverURL}/user-get`, {
+    const req = CommonFetch(this.ctx, `${this.serverURL}/user-get`, {
       method: 'POST',
       body: getFormData(params),
       signal,
@@ -90,7 +94,7 @@ export default class Api {
   }
 
   public captchaGet(): Promise<string> {
-    return commonFetch(this.ctx, `${this.serverURL}/captcha/refresh`, {
+    return CommonFetch(this.ctx, `${this.serverURL}/captcha/refresh`, {
       method: 'GET',
     }).then((json) => {
       if (!!json.success && !!json.data.img_data) {
@@ -102,7 +106,7 @@ export default class Api {
   }
 
   public captchaCheck(value: string): Promise<string> {
-    return commonFetch(this.ctx, `${this.serverURL}/captcha/check?${new URLSearchParams({ value })}`, {
+    return CommonFetch(this.ctx, `${this.serverURL}/captcha/check?${new URLSearchParams({ value })}`, {
       method: 'GET',
     }).then((json) => {
       if (!json.success && !!json.data.img_data) {
@@ -135,7 +139,7 @@ export default class Api {
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    return commonFetch(this.ctx, `${this.serverURL}/admin/comment-edit`, {
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/comment-edit`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.data.comment as CommentData))
@@ -155,10 +159,19 @@ export default class Api {
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    return commonFetch(this.ctx, `${this.serverURL}/admin/page-edit`, {
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/page-edit`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.data.page as PageData))
+  }
+
+  public siteGet(): Promise<SiteData[]> {
+    const params: any = {}
+
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/site-get`, {
+      method: 'POST',
+      body: getFormData(params),
+    }).then((json) => (json.data.sites as SiteData[]))
   }
 
   public commentDel(commentID: number) {
@@ -168,14 +181,15 @@ export default class Api {
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    return commonFetch(this.ctx, `${this.serverURL}/admin/comment-del`, {
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/comment-del`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.success))
   }
 }
 
-function commonFetch(ctx: Context, input: RequestInfo, init: RequestInit): Promise<any> {
+/** 公共请求函数 */
+function CommonFetch(ctx: Context, input: RequestInfo, init: RequestInit): Promise<any> {
   if (ctx.user.data.token) {
     const requestHeaders: HeadersInit = new Headers();
     requestHeaders.set('Authorization', `Bearer ${ctx.user.data.token}`);
@@ -189,7 +203,7 @@ function commonFetch(ctx: Context, input: RequestInfo, init: RequestInit): Promi
 
     // 重新发起请求
     const recall = (resolve, reject) => {
-      commonFetch(ctx, input, init).then(d => {
+      CommonFetch(ctx, input, init).then(d => {
         resolve(d)
       }).catch(err => {
         reject(err)

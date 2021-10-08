@@ -22,6 +22,7 @@ export default class ListLite extends Component {
 
   public noCommentText: string
   public renderComment?: (comment: Comment) => void
+  public paramsEditor?: (params: any) => void
 
   private isLoading: boolean = false
   public isFirstLoad = true
@@ -81,7 +82,7 @@ export default class ListLite extends Component {
 
     let listData: ListData
     try {
-      listData = await new Api(this.ctx).get(offset, this.type)
+      listData = await new Api(this.ctx).get(offset, this.type, this.paramsEditor)
     } catch (e: any) {
       this.onError(e.msg || String(e))
       throw e

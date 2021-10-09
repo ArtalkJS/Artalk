@@ -311,7 +311,7 @@ export default class Comment extends Component {
 
     btnElem.classList.add('atk-in-process')
     btnElem.innerText = '删除中...'
-    new Api(this.ctx).commentDel(this.data.id)
+    new Api(this.ctx).commentDel(this.data.id, this.data.site_name)
       .then(() => {
         btnElem.innerText = btnTextOrg
         btnElem.classList.remove('atk-in-process')

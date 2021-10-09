@@ -129,10 +129,18 @@ export default class ListLite extends Component {
     if (this.isFirstLoad) {
       const errEl = Utils.createElement(`<span>${msg}，无法获取评论列表数据<br/></span>`)
       const retryBtn = Utils.createElement('<span style="cursor:pointer;">点击重新获取</span>')
-      retryBtn.addEventListener('click', () => {
+      retryBtn.onclick = () => {
         this.reqComments(0)
-      })
+      }
       errEl.appendChild(retryBtn)
+      const adminBtn = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
+      adminBtn.onclick = () => {
+        this.ctx.dispatchEvent('sidebar-show')
+      }
+      if (!this.ctx.user.data.isAdmin) {
+        adminBtn.classList.add('atk-hide')
+      }
+      errEl.appendChild(adminBtn)
       Ui.setError(this.el, errEl)
     } else {
       this.readMoreBtnShowErr(`${msg} 获取失败`)

@@ -50,7 +50,11 @@ export default class Sidebar extends Component {
       const titleEl = Utils.createElement(`
       <span class="atk-title-item" data-name="${viewInstance.name}">${viewInstance.title}</span>
       `)
-      if (viewInstance.adminOnly) titleEl.setAttribute('atk-only-admin-show', '')
+      if (viewInstance.adminOnly) {
+        titleEl.setAttribute('atk-only-admin-show', '')
+        if (!this.ctx.user.data.isAdmin)
+          titleEl.classList.add('atk-hide')
+      }
       this.titleWrapEl.append(titleEl)
 
       // title click

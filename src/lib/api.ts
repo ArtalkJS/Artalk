@@ -174,8 +174,10 @@ export default class Api {
     }).then((json) => (json.data.sites as SiteData[]))
   }
 
-  public pageGet(): Promise<PageData[]> {
-    const params: any = {}
+  public pageGet(siteName?: string): Promise<PageData[]> {
+    const params: any = {
+      site_name: siteName || ''
+    }
 
     return CommonFetch(this.ctx, `${this.serverURL}/admin/page-get`, {
       method: 'POST',
@@ -186,7 +188,7 @@ export default class Api {
   public pageDel(pageKey: string, siteName?: string) {
     const params: any = {
       key: String(pageKey),
-      site_name: siteName || this.ctx.conf.site,
+      site_name: siteName || '',
     }
 
     return CommonFetch(this.ctx, `${this.serverURL}/admin/page-del`, {
@@ -207,14 +209,53 @@ export default class Api {
     }).then((json) => (json.success as boolean))
   }
 
-  public commentDel(commentID: number) {
+  public siteAdd(name: string, url: string) {
     const params: any = {
-      id: String(commentID),
+      name, url,
     }
 
-    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/site-add`, {
+      method: 'POST',
+      body: getFormData(params),
+    }).then((json) => (json.success as boolean))
+  }
+
+  public siteEdit(id: string, data: {
+    name: string
+    urls: string
+  }) {
+    const params: any = {
+      id,
+      name: data.name,
+      urls: data.urls,
+    }
+
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/site-edit`, {
+      method: 'POST',
+      body: getFormData(params),
+    }).then((json) => (json.site as SiteData))
+  }
+
+  public commentDel(commentID: number, siteName?: string) {
+    const params: any = {
+      id: String(commentID),
+      site_name: siteName || '',
+    }
 
     return CommonFetch(this.ctx, `${this.serverURL}/admin/comment-del`, {
+      method: 'POST',
+      body: getFormData(params),
+    }).then((json) => (json.success as boolean))
+  }
+
+  public importer(data: string, type: string, siteName: string) {
+    const params: any = {
+      data,
+      type,
+      site_name: siteName || '',
+    }
+
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/importer`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.success as boolean))

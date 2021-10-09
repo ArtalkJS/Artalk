@@ -13,9 +13,10 @@ export default class AdminView extends SidebarView {
     comment: '评论',
     page: '页面',
     site: '站点',
-    conf: '配置',
+    setting: '配置',
   }
   activeAction = ''
+  adminOnly = true
 
   cListInstance?: ListLite
   get cList () {
@@ -48,7 +49,7 @@ export default class AdminView extends SidebarView {
     }
   }
 
-  initCommentList() {
+  async initCommentList() {
     this.el.innerHTML = ''
     this.el.append(this.cList.el)
 
@@ -71,19 +72,14 @@ export default class AdminView extends SidebarView {
     })
 
     // 初始化 site 列表
-    new Api(this.ctx).siteGet()
-      .then((sites) => {
-        const items: {[name: string]: string} = {'': '所有站点'}
-        sites.forEach((site) => { items[site.name] = site.name })
-
-        this.showFilterBar(items, (s) => {
-          conf.siteName = s
-          reqComments(conf.typeName, conf.siteName)
-        })
-      })
-      .finally(() => {
-        loaded = true
-      })
+    const sites = await new Api(this.ctx).siteGet()
+    const siteItems: {[name: string]: string} = {'': '所有站点'}
+    if (sites) sites.forEach((site) => { siteItems[site.name] = site.name })
+    this.showFilterBar(siteItems, (s) => {
+      conf.siteName = s
+      reqComments(conf.typeName, conf.siteName)
+    })
+    loaded = true
   }
 
   async initPageList () {
@@ -91,7 +87,29 @@ export default class AdminView extends SidebarView {
 
     const pListEl = Utils.createElement(`<div class="atk-sidebar-list"></div>`)
     this.el.append(pListEl)
-    const pages = await new Api(this.ctx).pageGet()
+
+    // 初始化 site 列表
+    let loaded = false
+    const sitesData = await new Api(this.ctx).siteGet()
+    const siteItems: {[name: string]: string} = {'': '所有站点'}
+    if (sitesData) sitesData.forEach((site) => { siteItems[site.name] = site.name })
+    this.showFilterBar(siteItems, async (s) => {
+      if (!loaded) return
+      await this.reqPages(pListEl, s)
+    })
+    loaded = true
+
+    await this.reqPages(pListEl)
+  }
+
+  async reqPages(pListEl: HTMLElement, siteName?: string) {
+    pListEl.innerHTML = ''
+
+    const pages = await new Api(this.ctx).pageGet(siteName)
+    if (!pages) {
+      return
+    }
+
     pages.forEach(page => {
       const pageItemEl = Utils.createElement(`
       <div class="atk-item">
@@ -147,21 +165,49 @@ export default class AdminView extends SidebarView {
         if (window.confirm(`确认删除页面 "${page.title || page.key}"？将会删除所有相关数据`)) del()
       }
     })
-
   }
 
   async initSiteList () {
     // TODO: 可复用，特别是 actions
     this.el.innerHTML = ''
-    const sListEl = Utils.createElement(`<div class="atk-sidebar-list"></div>`)
+    const sListEl = Utils.createElement(`
+    <div class="atk-sidebar-list">
+      <div class="atk-site-add atk-form-inline-wrap">
+        <input type="text" name="siteAdd_name" placeholder="Name..." />
+        <input type="text" name="siteAdd_url" placeholder="URL..." />
+        <button name="siteAdd_submit">Add</button>
+      </div>
+    </div>
+    `)
     this.el.append(sListEl)
+    const siteAddNameEl = sListEl.querySelector<HTMLInputElement>('[name="siteAdd_name"]')!
+    const siteAddUrlEl = sListEl.querySelector<HTMLInputElement>('[name="siteAdd_url"]')!
+    sListEl.querySelector<HTMLElement>('[name="siteAdd_submit"]')!.onclick = () => {
+      const name = siteAddNameEl.value.trim()
+      const url = siteAddUrlEl.value.trim()
+      if (name === '') {
+        siteAddNameEl.focus()
+        return
+      }
+      new Api(this.ctx).siteAdd(name, url)
+        .then(() => {
+          this.initSiteList()
+        })
+        .catch((err) => {
+          window.alert(`创建失败：${err.msg || ''}`)
+        })
+    }
     const sites = await new Api(this.ctx).siteGet()
+    if (!sites) {
+      return
+    }
     sites.forEach(site => {
       const siteItemEl = Utils.createElement(`
       <div class="atk-item">
       <div class="atk-title"></div>
       <div class="atk-sub"></div>
       <div class="atk-actions">
+        <div class="atk-item" data-action="site-edit">修改 URL</div>
         <div class="atk-item" data-action="site-del">删除</div>
       </div>
       </div>`)
@@ -172,13 +218,13 @@ export default class AdminView extends SidebarView {
       const nameEl = siteItemEl.querySelector<HTMLElement>('.atk-title')!
       const urlEl = siteItemEl.querySelector<HTMLElement>('.atk-sub')!
 
-      nameEl.innerText = site.name || site.url
-      urlEl.innerText = site.url
+      nameEl.innerText = site.name || site.first_url
+      urlEl.innerText = site.urls_raw
       nameEl.onclick = () => {
-        window.open(`${site.url}`)
+        window.open(`${site.first_url}`)
       }
       urlEl.onclick = () => {
-        window.open(`${site.url}`)
+        window.open(`${site.first_url}`)
       }
 
       const delBtn = siteItemEl.querySelector<HTMLElement>('[data-action="site-del"]')!
@@ -189,14 +235,83 @@ export default class AdminView extends SidebarView {
             if (success) siteItemEl.remove()
           })
         }
-        if (window.confirm(`确认删除站点 "${site.name || site.url}"？将会删除所有相关数据`))
+        if (window.confirm(`确认删除站点 "${site.name || site.first_url}"？将会删除所有相关数据`))
           del()
+      }
+
+      const editBtn = siteItemEl.querySelector<HTMLElement>('[data-action="site-edit"]')!
+      editBtn.onclick = () => {
+        const val = window.prompt('修改 URL (多个 URL 用逗号隔开):', site.urls_raw)
+        if (val !== null) {
+          new Api(this.ctx).siteEdit(site.id, { name: site.name, urls: val })
+            .then(() => {
+              this.initSiteList()
+            })
+            .catch((err) => {
+              window.alert(`修改失败：${err.msg || '未知错误'}`)
+            })
+        }
       }
     })
   }
 
   initSetting () {
+    this.el.innerHTML = ''
 
+    const settingEl = Utils.createElement(`
+    <div class="atk-setting">
+    <div class="atk-group atk-importer atk-form-wrap">
+    <div class="atk-title">导入评论数据</div>
+    <input type="file" name="importer_dataFile" accept="text/plain,.json" />
+    <div class="atk-label">数据类型：</div>
+    <select name="importer_dataType">
+      <option value="artalk_v1">Artalk v1 (PHP 旧版)</option>
+    </select>
+    <div class="atk-label">目标站点名：</div>
+    <input type="text" name="importer_siteName" />
+    <button class="atk-btn" name="importer_submit">导入</button>
+    </div>
+    </div>`)
+    this.el.append(settingEl)
+
+    const impDataFileEl = settingEl.querySelector<HTMLInputElement>('[name="importer_dataFile"]')!
+    const impSiteNameEl = settingEl.querySelector<HTMLInputElement>('[name="importer_siteName"]')!
+    const impDataTypeEl = settingEl.querySelector<HTMLSelectElement>('[name="importer_dataType"]')!
+    const impSubmitEl = settingEl.querySelector<HTMLButtonElement>('[name="importer_submit"]')!
+    const impSubmitTextOrg = impSubmitEl.innerText
+    impSubmitEl.onclick = () => {
+      const siteName = impSiteNameEl.value.trim()
+      const dataType = impDataTypeEl.value.trim()
+
+      if (!impDataFileEl.files || impDataFileEl.files.length === 0) {
+        window.alert('请打开文件')
+        return
+      }
+      if (dataType === '') {
+        window.alert('请选择数据类型')
+        return
+      }
+
+      const reader = new FileReader()
+      reader.onload = () => {
+        const data = String(reader.result)
+        if (!data) return
+
+        impSubmitEl.innerText = '请稍后...'
+        new Api(this.ctx).importer(data, dataType, siteName)
+        .then(() => {
+          window.alert(`导入成功`)
+        })
+        .catch((err) => {
+          console.error(err)
+          window.alert(`导入失败：${err.msg || '未知错误'}`)
+        })
+        .finally(() => {
+          impSubmitEl.innerText = impSubmitTextOrg
+        })
+      }
+      reader.readAsText(impDataFileEl.files[0]);
+    }
   }
 
   showFilterBar (items: {[name: string]: string}, clickEvt: (item) => void) {

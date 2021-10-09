@@ -41,10 +41,6 @@
         &:not(:last-child) {
           margin-right: 25px;
         }
-
-        &.atk-hide {
-          display: none;
-        }
       }
     }
 
@@ -128,12 +124,12 @@
 
       &:hover {
         color: #4285f4;
-        background: #f4f4f4;
+        background: @color-bg-grey;
       }
 
       &.atk-active {
-        background: rgba(29,161,242,0.1);
-        color: #4285f4;
+        background: @color-bg-light;
+        color: @color-light;
       }
 
       &:not(:last-child) {
@@ -145,9 +141,73 @@
       padding-top: 8px;
     }
   }
+
+  .atk-form-inline-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 15px 0;
+
+    input, select, button {
+      display: inline !important;
+      min-width: initial !important;
+    }
+  }
+
+  .atk-form-wrap, .atk-form-inline-wrap {
+    input, select {
+      min-width: 200px;
+    }
+
+    input {
+      display: block;
+      line-height: 30px;
+      padding: 0 10px;
+      margin: 0 2px;
+      border: none;
+      border-bottom: 1px solid @color-border;
+      outline: none;
+
+      &:focus {
+        border-bottom-color: @color-main;
+      }
+
+      &[type="file"] {
+        width: 200px;
+        cursor: pointer;
+        position: relative;
+      }
+    }
+
+    select {
+      display: block;
+      outline: none;
+      border: none;
+      border-bottom: 1px solid @color-border;
+      height: 30px;
+      padding: 0 10px;
+    }
+
+    button {
+      &:hover {
+        color: #fff;
+        background: @color-main;
+      }
+
+      color: @color-light;
+      background: @color-bg-light;
+      border: 0;
+      line-height: 30px;
+      cursor: pointer;
+      outline: none;
+      margin-top: 20px;
+      padding: 0 20px;
+      border-radius: 2px;
+      margin: 0 5px;
+    }
+  }
 }
 
-/* Page List */
+/* Sidebar Common List */
 .atk-sidebar .atk-sidebar-list {
   & > .atk-item {
     display: flex;
@@ -163,7 +223,6 @@
       font-size: 20px;
       display: block;
       cursor: pointer;
-      user-select: none;
 
       &:hover {
         color: @color-main;
@@ -174,7 +233,6 @@
       display: block;
       color: @color-meta;
       cursor: pointer;
-      user-select: none;
 
       &:hover {
         color: @color-main;
@@ -203,5 +261,32 @@
         }
       }
     }
+  }
+}
+
+.atk-sidebar .atk-setting {
+  .atk-group {
+    padding: 15px 25px;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid @color-border;
+    }
+  }
+
+  .atk-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .atk-label {
+    font-size: 16px;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    color: @color-meta;
+  }
+
+  .atk-btn {
+    padding: 4px 25px;
+    margin-top: 20px;
   }
 }

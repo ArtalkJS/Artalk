@@ -94,7 +94,15 @@ export default class Artalk {
 
     // 仅管理员显示控制
     this.ctx.addEventListener('check-admin-show-el', () => {
-      this.el.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach((itemEl: HTMLElement) => {
+      const items: HTMLElement[] = []
+
+      this.el.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
+      // for layer
+      const { wrapEl: layerWrapEl } = GetLayerWrap(this.ctx)
+      if (layerWrapEl)
+        layerWrapEl.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
+
+      items.forEach((itemEl: HTMLElement) => {
         if (this.ctx.user.data.isAdmin)
           itemEl.classList.remove('atk-hide')
         else

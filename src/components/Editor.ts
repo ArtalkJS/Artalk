@@ -106,6 +106,9 @@ export default class Editor extends Component {
 
     // 若修改的是 nick or email
     if (field === 'nick' || field === 'email') {
+      this.user.data.token = '' // 清除 token 登陆状态
+      this.user.data.isAdmin = false
+
       // 获取用户信息
       if (this.queryUserInfo.timeout !== null) window.clearTimeout(this.queryUserInfo.timeout) // 清除待发出的请求
       if (this.queryUserInfo.abortFunc !== null) this.queryUserInfo.abortFunc() // 之前发出未完成的请求立刻中止

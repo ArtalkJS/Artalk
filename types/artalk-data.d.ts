@@ -55,6 +55,9 @@ export interface CommentData {
 
   /** 是否可见 */
   visible: boolean
+
+  /** 站点名（用于隔离） */
+  site_name: string
 }
 
 export interface ListData {
@@ -98,8 +101,14 @@ export interface SiteData {
   /** 站点名 */
   name: string
 
-  /** 站点 URL */
-  url: string
+  /** 站点 URLs */
+  urls: string[]
+
+  /** 站点 URLs（原始字符串） */
+  urls_raw: string
+
+  /** 站点主 URL */
+  first_url: string
 }
 
 export interface UserData {

@@ -86,6 +86,7 @@ func UpdateUser(user *User) error {
 
 func FindPage(key string, siteName string) Page {
 	var page Page
+	// TODO: default site_name not null
 	lib.DB.Where("key = ? AND site_name = ?", key, siteName).First(&page)
 	return page
 }

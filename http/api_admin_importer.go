@@ -43,6 +43,16 @@ func ActionAdminImporter(c echo.Context) error {
 		return resp
 	}
 
+	// check create site
+	if model.FindSite(p.SiteName).IsEmpty() {
+		site := model.Site{}
+		site.Name = p.SiteName
+		err := lib.DB.Create(&site).Error
+		if err != nil {
+			return RespError(c, "站点创建失败")
+		}
+	}
+
 	// find site
 	if isOK, resp := CheckSite(c, p.SiteName, &p.SiteID); !isOK {
 		return resp

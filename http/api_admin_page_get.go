@@ -27,7 +27,7 @@ func ActionAdminPageGet(c echo.Context) error {
 	}
 
 	var pages []model.Page
-	lib.DB.Model(&model.Page{}).Find(&pages)
+	lib.DB.Model(&model.Page{}).Where("site_name = ?", p.SiteName).Find(&pages)
 
 	var cookedPages []model.CookedPage
 	for _, p := range pages {

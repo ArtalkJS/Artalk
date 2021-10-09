@@ -124,11 +124,11 @@ func CheckReferer(c echo.Context, siteName string) (bool, error) {
 
 	// 请求 Referer 合法性判断
 	site := model.FindSite(siteName)
-	if strings.TrimSpace(site.Url) == "" {
+	if strings.TrimSpace(site.Urls) == "" {
 		return true, nil // 若 url 字段为空，则取消控制
 	}
 
-	allowUrls := strings.Split(site.Url, ",")
+	allowUrls := site.ToCooked().Urls
 	referer := c.Request().Referer()
 	if referer == "" {
 		return true, nil

@@ -26,7 +26,7 @@ func ActionAdminSiteDel(c echo.Context) error {
 		return RespError(c, "site 不存在")
 	}
 
-	err := lib.DB.Delete(&site).Error
+	err := lib.DB.Unscoped().Delete(&site).Error
 	if err != nil {
 		return RespError(c, "site 删除失败")
 	}
@@ -44,7 +44,7 @@ func ActionAdminSiteDel(c echo.Context) error {
 			tx.Delete(&c)
 		}
 		for _, p := range pages {
-			tx.Delete(&p)
+			tx.Unscoped().Delete(&p)
 		}
 		tx.Commit()
 	}

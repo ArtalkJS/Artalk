@@ -32,7 +32,7 @@ func ActionAdminPageDel(c echo.Context) error {
 		return RespError(c, "page not found")
 	}
 
-	err := lib.DB.Delete(&page).Error
+	err := lib.DB.Unscoped().Delete(&page).Error
 	if err != nil {
 		return RespError(c, "page 删除失败")
 	}

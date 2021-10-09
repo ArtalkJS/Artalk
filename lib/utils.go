@@ -9,6 +9,7 @@ import (
 	"net/mail"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/jeremywohl/flatten"
 	"github.com/yuin/goldmark"
@@ -99,6 +100,16 @@ func ContainsStr(s []string, v string) bool {
 		}
 	}
 	return false
+}
+
+func RemoveBlankStrings(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if strings.TrimSpace(str) != "" {
+			r = append(r, str)
+		}
+	}
+	return r
 }
 
 func IsUrlValid(urlStr string) bool {

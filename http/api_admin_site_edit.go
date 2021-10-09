@@ -1,6 +1,8 @@
 package http
 
 import (
+	"strings"
+
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
@@ -9,7 +11,7 @@ import (
 type ParamsAdminSiteEdit struct {
 	ID   uint   `mapstructure:"id" param:"required"`
 	Name string `mapstructure:"name"`
-	Url  string `mapstructure:"url"`
+	Urls string `mapstructure:"urls"`
 }
 
 func ActionAdminSiteEdit(c echo.Context) error {
@@ -27,13 +29,25 @@ func ActionAdminSiteEdit(c echo.Context) error {
 		return RespError(c, "site 不存在")
 	}
 
+	if strings.TrimSpace(p.Name) == "" {
+		return RespError(c, "site 名称不能为空白字符")
+	}
+
 	modifyName := (p.Name != "" && p.Name != site.Name)
 	if modifyName && !model.FindSite(p.Name).IsEmpty() {
 		return RespError(c, "site 已存在，请换个名称")
 	}
 
 	site.Name = p.Name
-	site.Url = p.Url
+	site.Urls = p.Urls
+
+	if p.Urls != "" {
+		for _, url := range site.ToCooked().Urls {
+			if !lib.ValidateURL(url) {
+				return RespError(c, "Invalid url exist")
+			}
+		}
+	}
 
 	err := lib.DB.Save(&site).Error
 	if err != nil {
@@ -60,5 +74,7 @@ func ActionAdminSiteEdit(c echo.Context) error {
 		tx.Commit()
 	}
 
-	return RespSuccess(c)
+	return RespData(c, Map{
+		"site": site.ToCooked(),
+	})
 }

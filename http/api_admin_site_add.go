@@ -8,7 +8,7 @@ import (
 
 type ParamsAdminSiteAdd struct {
 	Name string `mapstructure:"name" param:"required"`
-	Url  string `mapstructure:"url" param:"required"`
+	Urls string `mapstructure:"urls"`
 }
 
 func ActionAdminSiteAdd(c echo.Context) error {
@@ -21,13 +21,17 @@ func ActionAdminSiteAdd(c echo.Context) error {
 		return resp
 	}
 
+	if p.Urls != "" && !lib.ValidateURL(p.Urls) {
+		return RespError(c, "Invalid url")
+	}
+
 	if !model.FindSite(p.Name).IsEmpty() {
 		return RespError(c, "site 已存在")
 	}
 
 	site := model.Site{}
 	site.Name = p.Name
-	site.Url = p.Url
+	site.Urls = p.Urls
 	err := lib.DB.Create(&site).Error
 	if err != nil {
 		return RespError(c, "site 创建失败")

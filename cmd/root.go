@@ -163,7 +163,7 @@ func syncConfWithDB() {
 		}
 
 		if !isUserExist() {
-			lib.DB.Delete(&dbU)
+			lib.DB.Unscoped().Delete(&dbU)
 		}
 	}
 }

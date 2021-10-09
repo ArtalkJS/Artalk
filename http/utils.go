@@ -74,7 +74,7 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 		// check required param
 		if paramName != "" && paramTagP == "required" {
 			if strings.TrimSpace(paramVal) == "" {
-				return false, RespError(c, "Param `"+paramName+"` is required.")
+				return false, RespError(c, "Param `"+paramName+"` is required")
 			}
 		}
 
@@ -98,7 +98,7 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 	err := mapstructure.Decode(params, destParams)
 	if err != nil {
 		logrus.Error("Params decode error: ", err)
-		return false, RespError(c, "Params decode error.")
+		return false, RespError(c, "Params decode error")
 	}
 	return true, nil
 }

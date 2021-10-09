@@ -28,7 +28,7 @@ func ActionAdminCommentDel(c echo.Context) error {
 
 	id, err := strconv.Atoi(p.ID)
 	if err != nil {
-		return RespError(c, "invalid id.")
+		return RespError(c, "invalid id")
 	}
 
 	// find site
@@ -38,11 +38,11 @@ func ActionAdminCommentDel(c echo.Context) error {
 
 	comment := model.FindComment(uint(id), p.SiteName)
 	if comment.IsEmpty() {
-		return RespError(c, "comment not found.")
+		return RespError(c, "comment not found")
 	}
 
 	if err := lib.DB.Model(&model.Comment{}).Delete("id = ?", comment.ID).Error; err != nil {
-		return RespError(c, "comment delete error.")
+		return RespError(c, "comment delete error")
 	}
 
 	// 删除子评论
@@ -55,7 +55,7 @@ func ActionAdminCommentDel(c echo.Context) error {
 		}
 	}
 	if hasErr {
-		return RespError(c, "children comment delete error.")
+		return RespError(c, "children comment delete error")
 	}
 
 	return RespSuccess(c)

@@ -102,6 +102,9 @@ func InitRoute(e *echo.Echo) {
 	admin.POST("/site-add", ActionAdminSiteAdd)
 	admin.POST("/site-edit", ActionAdminSiteEdit)
 	admin.POST("/site-del", ActionAdminSiteDel)
+	admin.POST("/setting-get", ActionAdminSettingGet)
+	admin.POST("/setting-save", ActionAdminSettingSave)
+	admin.POST("/importer", ActionAdminImporter)
 
 	admin.POST("/send-mail", ActionAdminSendMail)
 }

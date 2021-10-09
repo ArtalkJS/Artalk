@@ -38,7 +38,7 @@ func ActionAdminCommentEdit(c echo.Context) error {
 
 	id, err := strconv.Atoi(p.ID)
 	if err != nil {
-		return RespError(c, "invalid id.")
+		return RespError(c, "invalid id")
 	}
 
 	// find site
@@ -48,7 +48,7 @@ func ActionAdminCommentEdit(c echo.Context) error {
 
 	comment := model.FindComment(uint(id), p.SiteName)
 	if comment.IsEmpty() {
-		return RespError(c, "comment not found.")
+		return RespError(c, "comment not found")
 	}
 
 	// content
@@ -114,7 +114,7 @@ func ActionAdminCommentEdit(c echo.Context) error {
 	}
 
 	if err := model.UpdateComment(&comment); err != nil {
-		return RespError(c, "comment save error.")
+		return RespError(c, "comment save error")
 	}
 
 	return RespData(c, Map{

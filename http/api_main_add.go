@@ -36,10 +36,10 @@ func ActionAdd(c echo.Context) error {
 	}
 
 	if !lib.ValidateEmail(p.Email) {
-		return RespError(c, "Invalid email.")
+		return RespError(c, "Invalid email")
 	}
 	if p.Link != "" && !lib.ValidateURL(p.Link) {
-		return RespError(c, "Invalid link.")
+		return RespError(c, "Invalid link")
 	}
 
 	ip := c.RealIP()
@@ -64,7 +64,7 @@ func ActionAdd(c echo.Context) error {
 	// find user
 	user := model.FindCreateUser(p.Name, p.Email)
 	if user.ID == 0 || page.Key == "" {
-		logrus.Error("Cannot get user or page.")
+		logrus.Error("Cannot get user or page")
 		return RespError(c, "评论失败")
 	}
 

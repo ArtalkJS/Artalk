@@ -34,7 +34,7 @@ func ActionAdminPageEdit(c echo.Context) error {
 
 	page := model.FindPage(p.Key, p.SiteName)
 	if page.IsEmpty() {
-		return RespError(c, "page not found.")
+		return RespError(c, "page not found")
 	}
 
 	// url
@@ -56,7 +56,7 @@ func ActionAdminPageEdit(c echo.Context) error {
 	}
 
 	if err := model.UpdatePage(&page); err != nil {
-		return RespError(c, "page save error.")
+		return RespError(c, "page save error")
 	}
 
 	return RespData(c, Map{

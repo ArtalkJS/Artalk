@@ -25,7 +25,7 @@ func ActionCaptchaCheck(c echo.Context) error {
 
 	inputVal := c.QueryParam("value")
 	if inputVal == "" {
-		return RespError(c, "param `value` is required.")
+		return RespError(c, "param `value` is required")
 	}
 
 	if strings.ToLower(inputVal) == GetCaptchaRealCode(ip) {

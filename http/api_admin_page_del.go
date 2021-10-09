@@ -29,7 +29,7 @@ func ActionAdminPageDel(c echo.Context) error {
 
 	page := model.FindPage(p.Key, p.SiteName)
 	if page.IsEmpty() {
-		return RespError(c, "page not found.")
+		return RespError(c, "page not found")
 	}
 
 	err := lib.DB.Delete(&page).Error

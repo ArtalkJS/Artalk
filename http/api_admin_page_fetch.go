@@ -28,7 +28,7 @@ func ActionAdminPageFetch(c echo.Context) error {
 
 	page := model.FindPage(p.Key, p.SiteName)
 	if page.IsEmpty() {
-		return RespError(c, "page not found.")
+		return RespError(c, "page not found")
 	}
 
 	if err := page.FetchURL(); err != nil {

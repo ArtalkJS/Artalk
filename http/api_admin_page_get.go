@@ -16,8 +16,8 @@ func ActionAdminPageGet(c echo.Context) error {
 		return resp
 	}
 
-	var p ParamsAdminPageFetch
-	if isOK, resp := ParamsDecode(c, ParamsAdminPageFetch{}, &p); !isOK {
+	var p ParamsAdminPageGet
+	if isOK, resp := ParamsDecode(c, ParamsAdminPageGet{}, &p); !isOK {
 		return resp
 	}
 

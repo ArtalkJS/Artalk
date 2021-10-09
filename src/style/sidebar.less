@@ -121,21 +121,87 @@
 
     .atk-filter-item {
       display: inline-block;
-      padding: 5px 15px;
+      padding: 3px 13px;
       cursor: pointer;
       user-select: none;
+      border-radius: 50px;
 
-      &:hover, &.atk-active {
+      &:hover {
+        color: #4285f4;
         background: #f4f4f4;
       }
 
+      &.atk-active {
+        background: rgba(29,161,242,0.1);
+        color: #4285f4;
+      }
+
       &:not(:last-child) {
-        margin-right: 1px;
+        margin-right: 5px;
       }
     }
 
     &:not(:last-child) {
       padding-top: 8px;
+    }
+  }
+}
+
+/* Page List */
+.atk-sidebar .atk-sidebar-list {
+  & > .atk-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 20px;
+    flex-direction: column;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid @color-border;
+    }
+
+    .atk-title {
+      font-size: 20px;
+      display: block;
+      cursor: pointer;
+      user-select: none;
+
+      &:hover {
+        color: @color-main;
+      }
+    }
+
+    .atk-sub {
+      display: block;
+      color: @color-meta;
+      cursor: pointer;
+      user-select: none;
+
+      &:hover {
+        color: @color-main;
+      }
+    }
+
+    .atk-actions {
+      display: flex;
+      margin-top: 10px;
+      flex-direction: row;
+
+      & > .atk-item {
+        font-size: 14px;
+        color: @color-meta;
+        cursor: pointer;
+        user-select: none;
+
+        &:not(:last-child) {
+          margin-right: 10px;
+          padding-right: 10px;
+          border-right: 1px solid @color-border;
+        }
+
+        &:hover {
+          color: @color-main;
+        }
+      }
     }
   }
 }

@@ -17,10 +17,8 @@ export default class SidebarView extends Component {
 
   adminOnly = false
 
-  render(): HTMLElement {
-    return this.el
-  }
+  init (): void {}
 
-  switch(action: string): void {}
+  switch (action: string): void {}
 }
 

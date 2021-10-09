@@ -86,6 +86,9 @@ export interface PageData {
 
   /** 仅管理员可评 */
   admin_only: boolean
+
+  /** 站点名（用于隔离） */
+  site_name: string
 }
 
 export interface SiteData {

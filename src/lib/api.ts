@@ -174,6 +174,39 @@ export default class Api {
     }).then((json) => (json.data.sites as SiteData[]))
   }
 
+  public pageGet(): Promise<PageData[]> {
+    const params: any = {}
+
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/page-get`, {
+      method: 'POST',
+      body: getFormData(params),
+    }).then((json) => (json.data.pages as PageData[]))
+  }
+
+  public pageDel(pageKey: string, siteName?: string) {
+    const params: any = {
+      key: String(pageKey),
+      site_name: siteName || this.ctx.conf.site,
+    }
+
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/page-del`, {
+      method: 'POST',
+      body: getFormData(params),
+    }).then((json) => (json.success as boolean))
+  }
+
+  public siteDel(id: string, delContent = false) {
+    const params: any = {
+      id,
+      del_content: delContent
+    }
+
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/site-del`, {
+      method: 'POST',
+      body: getFormData(params),
+    }).then((json) => (json.success as boolean))
+  }
+
   public commentDel(commentID: number) {
     const params: any = {
       id: String(commentID),
@@ -184,7 +217,7 @@ export default class Api {
     return CommonFetch(this.ctx, `${this.serverURL}/admin/comment-del`, {
       method: 'POST',
       body: getFormData(params),
-    }).then((json) => (json.success))
+    }).then((json) => (json.success as boolean))
   }
 }
 

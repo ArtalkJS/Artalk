@@ -89,8 +89,10 @@ export default class Sidebar extends Component {
   switchView (view: SidebarView) {
     this.view = view
 
+    // init view ui
+    view.init()
     this.contentEl.innerHTML = ''
-    this.contentEl.append(view.render())
+    this.contentEl.append(view.el)
 
     // actions
     this.actionsEl.innerHTML = ''

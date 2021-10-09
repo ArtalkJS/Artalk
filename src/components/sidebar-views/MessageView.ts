@@ -15,18 +15,15 @@ export default class MessageView extends SidebarView {
     mine: '我的',
     pending: '待审',
   }
-  activeAction = this.type
+  activeAction = ''
 
-  render () {
+  init () {
     this.list = CreateCommentList(this.ctx)
     this.el.innerHTML = ''
     this.el.append(this.list.el)
 
-    this.list.type = this.type as any
-    this.list.isFirstLoad = true
-    this.list.reqComments()
-
-    return this.el
+    this.activeAction = this.type
+    this.switch(this.type)
   }
 
   switch (action: string) {

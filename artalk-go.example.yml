@@ -24,6 +24,9 @@ log:
 allow_origin:
   - http://localhost:8080 # 或 '*' 跨域无限制
 
+# 默认站点名
+site_default: '默认站点'
+
 # 管理员账户
 admin_users:
   -

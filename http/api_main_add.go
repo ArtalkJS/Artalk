@@ -49,7 +49,7 @@ func ActionAdd(c echo.Context) error {
 	RecordAction(c)
 
 	// find site
-	if isOK, resp := CheckSite(c, p.SiteName, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID); !isOK {
 		return resp
 	}
 

@@ -45,6 +45,28 @@ func FindSiteByID(id uint) Site {
 	return site
 }
 
+func FindCreateSite(siteName string) Site {
+	site := FindSite(siteName)
+	if site.IsEmpty() {
+		site = NewSite(siteName, "")
+	}
+	return site
+}
+
+func NewSite(name string, urls string) Site {
+	site := Site{
+		Name: name,
+		Urls: urls,
+	}
+
+	err := lib.DB.Create(&site).Error
+	if err != nil {
+		logrus.Error("Create Site error: ", err)
+	}
+
+	return site
+}
+
 func FindCreatePage(pageKey string, pageUrl string, pageTitle string, siteName string) Page {
 	page := FindPage(pageKey, siteName)
 	if page.IsEmpty() {
@@ -69,7 +91,7 @@ func NewUser(name string, email string) User {
 
 	err := lib.DB.Create(&user).Error
 	if err != nil {
-		logrus.Error("Save User error: ", err)
+		logrus.Error("Create User error: ", err)
 	}
 
 	return user
@@ -107,7 +129,7 @@ func NewPage(key string, pageUrl string, pageTitle string, siteName string) Page
 
 	err := lib.DB.Create(&page).Error
 	if err != nil {
-		logrus.Error("Save Page error: ", err)
+		logrus.Error("Create Page error: ", err)
 	}
 
 	return page

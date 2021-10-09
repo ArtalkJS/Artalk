@@ -25,6 +25,7 @@ type Config struct {
 	DB           DBConf          `mapstructure:"db"`           // 数据文件
 	Log          LogConf         `mapstructure:"log"`          // 日志文件
 	AllowOrigin  []string        `mapstructure:"allow_origin"` // 允许跨域访问的域名
+	SiteDefault  string          `mapstructure:"site_default"` // 默认站点名（当请求无指定 site_name 时使用）
 	AdminUsers   []AdminUserConf `mapstructure:"admin_users"`
 	LoginTimeout int             `mapstructure:"login_timeout"`
 	Moderator    ModeratorConf   `mapstructure:"moderator"`
@@ -133,10 +134,6 @@ func Init(cfgFile string) {
 	}
 
 	Flat = StructToFlatDotMap(&Instance)
-
-	if strings.TrimSpace(Instance.AppKey) == "" {
-		logrus.Fatal("请检查配置文件，并设置一个 app_key")
-	}
 }
 
 func StructToMap(s interface{}) map[string]interface{} {

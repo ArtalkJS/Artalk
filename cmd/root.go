@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -11,7 +12,6 @@ import (
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
@@ -49,19 +49,25 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	cobra.OnInitialize(initLog)
 	cobra.OnInitialize(initDB)
+	cobra.OnInitialize(syncConfWithDB)
 	cobra.OnInitialize(initCache)
-	cobra.OnInitialize(email.InitQueue)
+	cobra.OnInitialize(email.InitQueue) // 初始化邮件队列
 
 	rootCmd.SetVersionTemplate("Artalk-GO {{printf \"version %s\" .Version}}\n")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "配置文件路径 (defaults are './artalk-go.yml')")
 }
 
-// 初始化配置
+// 1. 初始化配置
 func initConfig() {
 	config.Init(cfgFile)
+
+	// 检查 app_key 是否设置
+	if strings.TrimSpace(config.Instance.AppKey) == "" {
+		logrus.Fatal("请检查配置文件，并设置一个 app_key (任意字符串) 用于数据加密")
+	}
 }
 
-// 初始化日志
+// 2. 初始化日志
 func initLog() {
 	if !config.Instance.Log.Enabled {
 		return
@@ -106,6 +112,7 @@ func initLog() {
 	}
 }
 
+// 3. 初始化数据库
 func initDB() {
 	err := lib.OpenDB()
 	if err != nil {
@@ -115,12 +122,18 @@ func initDB() {
 
 	// Migrate the schema
 	lib.DB.AutoMigrate(&model.Site{}, &model.Page{}, &model.User{}, &model.Comment{}) // 注意表的创建顺序，因为有关联字段
-
-	syncConfWithDB()
 }
 
-// 同步配置文件与数据库
+// 4. 同步配置文件与数据库
 func syncConfWithDB() {
+	// 初始化默认站点
+	siteDefault := strings.TrimSpace(config.Instance.SiteDefault)
+	if siteDefault == "" {
+		logrus.Error("请设置 SiteDefault 默认站点，不能为空")
+		os.Exit(1)
+	}
+	model.FindCreateSite(siteDefault)
+
 	// 导入配置文件的管理员用户
 	for _, admin := range config.Instance.AdminUsers {
 		user := model.FindUser(admin.Name, admin.Email)
@@ -168,48 +181,11 @@ func syncConfWithDB() {
 	}
 }
 
+// 5. 初始化缓存
 func initCache() {
 	err := lib.OpenCache()
 	if err != nil {
 		logrus.Error("缓存初始化发生错误 ", err)
 		os.Exit(1)
 	}
-}
-
-//// 捷径函数 ////
-
-func flag(cmd *cobra.Command, name string, defaultVal interface{}, usage string) {
-	f := cmd.PersistentFlags()
-	switch y := defaultVal.(type) {
-	case bool:
-		f.Bool(name, y, usage)
-	case int:
-		f.Int(name, y, usage)
-	case string:
-		f.String(name, y, usage)
-	}
-	viper.SetDefault(name, defaultVal)
-}
-
-func flagP(cmd *cobra.Command, name, shorthand string, defaultVal interface{}, usage string) {
-	f := cmd.PersistentFlags()
-	switch y := defaultVal.(type) {
-	case bool:
-		f.BoolP(name, shorthand, y, usage)
-	case int:
-		f.IntP(name, shorthand, y, usage)
-	case string:
-		f.StringP(name, shorthand, y, usage)
-	}
-	viper.SetDefault(name, defaultVal)
-}
-
-func flagV(cmd *cobra.Command, name string, defaultVal interface{}, usage string) {
-	flag(cmd, name, defaultVal, usage)
-	viper.BindPFlag(name, cmd.PersistentFlags().Lookup(name))
-}
-
-func flagPV(cmd *cobra.Command, name, shorthand string, defaultVal interface{}, usage string) {
-	flagP(cmd, name, shorthand, defaultVal, usage)
-	viper.BindPFlag(name, cmd.PersistentFlags().Lookup(name))
 }

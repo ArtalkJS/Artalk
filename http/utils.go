@@ -116,14 +116,13 @@ func CheckIfAllowed(c echo.Context, name string, email string, page model.Page, 
 	return true, nil
 }
 
-func CheckReferer(c echo.Context, siteName string) (bool, error) {
+func CheckReferer(c echo.Context, site model.Site) (bool, error) {
 	isAdminReq := CheckIsAdminReq(c)
-	if isAdminReq || siteName == "" {
+	if isAdminReq || site.IsEmpty() {
 		return true, nil
 	}
 
 	// 请求 Referer 合法性判断
-	site := model.FindSite(siteName)
 	if strings.TrimSpace(site.Urls) == "" {
 		return true, nil // 若 url 字段为空，则取消控制
 	}
@@ -160,22 +159,30 @@ func CheckReferer(c echo.Context, siteName string) (bool, error) {
 	return true, nil
 }
 
-func CheckSite(c echo.Context, siteName string, destID *uint) (bool, error) {
-	if siteName == "" {
+func CheckSite(c echo.Context, siteName *string, destID *uint) (bool, error) {
+	if *siteName == "" {
+		// 传入值为空，使用默认 site
+		siteDefault := strings.TrimSpace(config.Instance.SiteDefault)
+		if siteDefault != "" {
+			// 没有则创建
+			model.FindCreateSite(siteDefault)
+		}
+		*siteName = siteDefault // 更新原 name
+
 		return true, nil
 	}
 
-	site := model.FindSite(siteName)
+	site := model.FindSite(*siteName)
 	if site.IsEmpty() {
 		return false, RespError(c, "Site 未找到")
 	}
 
 	// 检测 Referer 合法性
-	if isOK, resp := CheckReferer(c, siteName); !isOK {
+	if isOK, resp := CheckReferer(c, site); !isOK {
 		return false, resp
 	}
 
-	*destID = site.ID
+	*destID = site.ID // 更新源 id
 
 	return true, nil
 }

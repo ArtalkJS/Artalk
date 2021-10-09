@@ -22,7 +22,7 @@ func ActionAdminPageFetch(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := CheckSite(c, p.SiteName, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID); !isOK {
 		return resp
 	}
 

@@ -33,14 +33,13 @@ func ActionAdminSiteEdit(c echo.Context) error {
 		return RespError(c, "site 名称不能为空白字符")
 	}
 
-	modifyName := (p.Name != "" && p.Name != site.Name)
+	// 重命名合法性检测
+	modifyName := p.Name != site.Name
 	if modifyName && !model.FindSite(p.Name).IsEmpty() {
 		return RespError(c, "site 已存在，请换个名称")
 	}
 
-	site.Name = p.Name
-	site.Urls = p.Urls
-
+	// urls 合法性检测
 	if p.Urls != "" {
 		for _, url := range site.ToCooked().Urls {
 			if !lib.ValidateURL(url) {
@@ -49,29 +48,31 @@ func ActionAdminSiteEdit(c echo.Context) error {
 		}
 	}
 
-	err := lib.DB.Save(&site).Error
-	if err != nil {
-		return RespError(c, "site 保存失败")
-	}
-
 	// 同步变更 site_name
 	if modifyName {
 		var comments []model.Comment
-		lib.DB.Where("site_name = ?", p.Name).Find(&comments)
+		lib.DB.Where("site_name = ?", site.Name).Find(&comments)
 
 		var pages []model.Page
-		lib.DB.Where("site_name = ?", p.Name).Find(&pages)
+		lib.DB.Where("site_name = ?", site.Name).Find(&pages)
 
-		tx := lib.DB.Begin()
-		for _, c := range comments {
-			c.SiteName = site.Name
-			tx.Save(&c)
+		for _, comment := range comments {
+			comment.SiteName = p.Name
+			lib.DB.Save(&comment)
 		}
-		for _, p := range pages {
-			p.SiteName = site.Name
-			tx.Save(&p)
+		for _, page := range pages {
+			page.SiteName = p.Name
+			lib.DB.Save(&page)
 		}
-		tx.Commit()
+	}
+
+	// 修改 site
+	site.Name = p.Name
+	site.Urls = p.Urls
+
+	err := lib.DB.Save(&site).Error
+	if err != nil {
+		return RespError(c, "site 保存失败")
 	}
 
 	return RespData(c, Map{

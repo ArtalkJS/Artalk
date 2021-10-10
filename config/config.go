@@ -21,6 +21,7 @@ type Config struct {
 	SiteName     string          `mapstructure:"site_name"`    // 网站名
 	AppKey       string          `mapstructure:"app_key"`      // 加密密钥
 	Debug        bool            `mapstructure:"debug"`        // 调试模式
+	TimeZone     string          `mapstructure:"timezone"`     // 时区
 	HttpAddr     string          `mapstructure:"http_addr"`    // HTTP Server 监听地址
 	DB           DBConf          `mapstructure:"db"`           // 数据文件
 	Log          LogConf         `mapstructure:"log"`          // 日志文件

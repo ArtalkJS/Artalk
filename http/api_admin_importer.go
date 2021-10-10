@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/araddon/dateparse"
@@ -96,7 +98,9 @@ func ActionAdminImporter(c echo.Context) error {
 			}
 
 			// 日期恢复
-			t, _ := dateparse.ParseAny(oc.Date)
+			denverLoc, _ := time.LoadLocation(config.Instance.TimeZone) // 时区
+			time.Local = denverLoc
+			t, _ := dateparse.ParseIn(oc.Date, denverLoc)
 			nComment.CreatedAt = t
 			nComment.UpdatedAt = t
 

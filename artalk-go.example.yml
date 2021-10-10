@@ -10,6 +10,9 @@ app_key: ''
 # 调试模式
 debug: false
 
+# 时区
+timezone: 'Asia/Shanghai'
+
 # 数据文件
 db:
   type: 'sqlite' # 支持 mysql, sqlite, pgsql, sqlserver

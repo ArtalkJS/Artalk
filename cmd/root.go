@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -61,9 +62,18 @@ func init() {
 func initConfig() {
 	config.Init(cfgFile)
 
+	// 设置时区
+	if strings.TrimSpace(config.Instance.TimeZone) == "" {
+		logrus.Fatal("请检查配置文件，并设置 timezone")
+		os.Exit(1)
+	}
+	denverLoc, _ := time.LoadLocation(config.Instance.TimeZone)
+	time.Local = denverLoc
+
 	// 检查 app_key 是否设置
 	if strings.TrimSpace(config.Instance.AppKey) == "" {
 		logrus.Fatal("请检查配置文件，并设置一个 app_key (任意字符串) 用于数据加密")
+		os.Exit(1)
 	}
 }
 

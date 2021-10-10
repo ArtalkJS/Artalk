@@ -125,6 +125,13 @@ func ActionAdd(c echo.Context) error {
 		}()
 	}
 
+	// 垃圾评论检测
+	if !CheckIsAdminReq(c) {
+		go func() {
+			comment.AntiSpamCheck(c)
+		}()
+	}
+
 	return RespData(c, ResponseAdd{
 		Comment: comment.ToCooked(),
 	})

@@ -1,7 +1,14 @@
 package model
 
 import (
+	"fmt"
+	"net/url"
+	"strings"
+
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -157,4 +164,51 @@ func (c Comment) ToCookedForEmail() CookedCommentForEmail {
 		PageKey:        c.PageKey,
 		SiteName:       c.SiteName,
 	}
+}
+
+func (c *Comment) AntiSpamCheck(echoCtx echo.Context) {
+	setPending := func() {
+		if c.IsPending {
+			return
+		}
+
+		// 改为待审状态
+		c.IsPending = true
+		lib.DB.Save(c)
+	}
+
+	siteURL := ""
+	if c.SiteName != "" {
+		site := FindSite(c.SiteName)
+		siteURL = site.ToCooked().FirstUrl
+	}
+	if siteURL == "" { // 从 referer 中提取网站
+		if pr, err := url.Parse(echoCtx.Request().Referer()); err == nil && pr.Scheme != "" && pr.Host != "" {
+			siteURL = fmt.Sprintf("%s://%s", pr.Scheme, pr.Host)
+		}
+	}
+
+	user := FindUserByID(c.UserID)
+
+	// akismet
+	akismetKey := strings.TrimSpace(config.Instance.Moderator.AkismetKey)
+	if akismetKey != "" {
+		isOK, err := lib.AntiSpamCheck_Akismet(&lib.AkismetParams{
+			Blog:               siteURL,
+			UserIP:             echoCtx.RealIP(),
+			UserAgent:          echoCtx.Request().UserAgent(),
+			CommentType:        "comment",
+			CommentAuthor:      user.Name,
+			CommentAuthorEmail: user.Email,
+			CommentContent:     c.Content,
+		}, akismetKey)
+		if err != nil {
+			logrus.Error("akismet 垃圾检测错误 ", err)
+		}
+		if !isOK {
+			setPending()
+		}
+	}
+
+	// TODO:关键字过滤
 }

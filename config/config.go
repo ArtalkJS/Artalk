@@ -54,7 +54,8 @@ type AdminUserConf struct {
 }
 
 type ModeratorConf struct {
-	PendingDefault bool `mapstructure:"pending_default"`
+	PendingDefault bool   `mapstructure:"pending_default"`
+	AkismetKey     string `mapstructure:"akismet_key"`
 }
 
 type CaptchaConf struct {

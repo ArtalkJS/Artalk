@@ -26,6 +26,12 @@ func FindUser(name string, email string) User {
 	return user
 }
 
+func FindUserByID(id uint) User {
+	var user User
+	lib.DB.First(&user, id)
+	return user
+}
+
 func IsAdminUser(name string, email string) bool {
 	var user User
 	lib.DB.Where("name = ? AND email = ? AND is_admin = 1", name, email).First(&user)

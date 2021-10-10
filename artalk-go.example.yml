@@ -45,6 +45,7 @@ login_timeout: 259200
 # 评论审核
 moderator:
   pending_default: false # 发表新评论默认为 “待审状态”
+  akismet_key: '' # 启用 akismet.com 反垃圾
 
 # 验证码
 captcha:

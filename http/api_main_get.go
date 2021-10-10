@@ -21,6 +21,7 @@ type ParamsGet struct {
 
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
+	SiteAll  bool
 }
 
 type ResponseGet struct {
@@ -28,6 +29,17 @@ type ResponseGet struct {
 	Total        int64                 `json:"total"`
 	TotalParents int64                 `json:"total_parents"`
 	Page         model.CookedPage      `json:"page"`
+}
+
+// 获取评论查询实例
+func GetCommentQuery(c echo.Context, p ParamsGet, siteID uint) *gorm.DB {
+	query := lib.DB.Model(&model.Comment{}).Order("created_at DESC")
+
+	if IsMsgCenter(p) {
+		return query.Scopes(MsgCenter(c, p, siteID), SiteIsolation(c, p))
+	}
+
+	return query.Where("page_key = ?", p.PageKey).Scopes(SiteIsolation(c, p), AllowedComment(c, p))
 }
 
 func ActionGet(c echo.Context) error {
@@ -38,12 +50,15 @@ func ActionGet(c echo.Context) error {
 	isMsgCenter := IsMsgCenter(p)
 
 	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
 		return resp
 	}
 
 	// find page
-	page := model.FindPage(p.PageKey, p.SiteName)
+	var page model.Page
+	if !p.SiteAll {
+		page = model.FindPage(p.PageKey, p.SiteName)
+	}
 
 	// comment parents
 	var comments []model.Comment
@@ -61,7 +76,7 @@ func ActionGet(c echo.Context) error {
 
 		// comment children
 		for _, parent := range comments { // TODO: Read more children, pagination for children comment
-			children := parent.FetchChildren(AllowedComment(c))
+			children := parent.FetchChildren(SiteIsolation(c, p), AllowedComment(c, p))
 			for _, child := range children {
 				cookedComments = append(cookedComments, child.ToCooked())
 			}
@@ -84,12 +99,12 @@ func ActionGet(c echo.Context) error {
 		}
 
 		// find linked comments
-		for _, c := range comments {
-			if c.Rid == 0 || containsComment(c.Rid) {
+		for _, comment := range comments {
+			if comment.Rid == 0 || containsComment(comment.Rid) {
 				continue
 			}
 
-			rComment := model.FindComment(c.Rid, p.SiteName) // 查找被回复的评论
+			rComment := model.FindCommentScopes(comment.Rid, SiteIsolation(c, p)) // 查找被回复的评论
 			if rComment.IsEmpty() {
 				continue
 			}
@@ -111,16 +126,7 @@ func ActionGet(c echo.Context) error {
 	})
 }
 
-func GetCommentQuery(c echo.Context, p ParamsGet, siteID uint) *gorm.DB {
-	query := lib.DB.Model(&model.Comment{}).Order("created_at DESC")
-
-	if IsMsgCenter(p) {
-		return query.Scopes(MsgCenter(c, p, siteID))
-	}
-
-	return query.Where("page_key = ? AND site_name = ?", p.PageKey, p.SiteName).Scopes(AllowedComment(c))
-}
-
+// 请求是否为 通知中心数据
 func IsMsgCenter(p ParamsGet) bool {
 	return p.Name != "" && p.Email != "" && p.Type != ""
 }
@@ -129,15 +135,10 @@ func IsMsgCenter(p ParamsGet) bool {
 func MsgCenter(c echo.Context, p ParamsGet, siteID uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		user := model.FindUser(p.Name, p.Email)
-
-		// 站点隔离
 		isAdminReq := CheckIsAdminReq(c)
-		if !isAdminReq || (isAdminReq && p.SiteName != "") {
-			db = db.Where("site_name = ?", p.SiteName)
-		}
 
 		// admin_only 检测
-		if strings.HasPrefix(p.Type, "admin_") && !CheckIsAdminReq(c) {
+		if strings.HasPrefix(p.Type, "admin_") && !isAdminReq {
 			db = db.Where("id = 0")
 			return db
 		}
@@ -172,12 +173,14 @@ func MsgCenter(c echo.Context, p ParamsGet, siteID uint) func(db *gorm.DB) *gorm
 	}
 }
 
+// 评论计数
 func CountComments(db *gorm.DB) int64 {
 	var count int64
 	db.Count(&count)
 	return count
 }
 
+// 分页
 func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
 	if offset < 0 {
 		offset = 0
@@ -194,13 +197,33 @@ func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func AllowedComment(c echo.Context) func(db *gorm.DB) *gorm.DB {
+// 允许的评论
+func AllowedComment(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if CheckIsAdminReq(c) {
 			return db // 管理员显示全部
 		}
 
-		return db.Where("is_pending = 0")
+		// 显示个人全部评论
+		if p.Name != "" && p.Email != "" {
+			user := model.FindUser(p.Name, p.Email)
+			if !user.IsEmpty() {
+				return db.Where("is_pending = 0 OR (is_pending = 1 AND user_id = ?)", user.ID)
+			}
+		}
+
+		return db.Where("is_pending = 0") // 不允许待审评论
+	}
+}
+
+// 站点隔离
+func SiteIsolation(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if CheckIsAdminReq(c) && p.SiteAll {
+			return db // 仅管理员支持取消站点隔离
+		}
+
+		return db.Where("site_name = ?", p.SiteName)
 	}
 }
 

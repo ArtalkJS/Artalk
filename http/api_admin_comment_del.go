@@ -14,6 +14,7 @@ type ParamsCommentDel struct {
 
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
+	SiteAll  bool
 }
 
 func ActionAdminCommentDel(c echo.Context) error {
@@ -32,7 +33,7 @@ func ActionAdminCommentDel(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
 		return resp
 	}
 

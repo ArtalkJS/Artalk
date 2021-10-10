@@ -112,11 +112,6 @@ func RemoveBlankStrings(s []string) []string {
 	return r
 }
 
-func IsUrlValid(urlStr string) bool {
-	_, err := url.ParseRequestURI(urlStr)
-	return err != nil
-}
-
 func ValidateEmail(email string) bool {
 	_, err := mail.ParseAddress(email)
 	return err == nil

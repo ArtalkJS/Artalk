@@ -9,6 +9,7 @@ import (
 type ParamsAdminPageGet struct {
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
+	SiteAll  bool
 }
 
 func ActionAdminPageGet(c echo.Context) error {
@@ -22,12 +23,16 @@ func ActionAdminPageGet(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
 		return resp
 	}
 
 	var pages []model.Page
-	lib.DB.Model(&model.Page{}).Where("site_name = ?", p.SiteName).Find(&pages)
+	query := lib.DB.Model(&model.Page{})
+	if !p.SiteAll { // 不是查的所有站点
+		query = query.Where("site_name = ?", p.SiteName)
+	}
+	query.Find(&pages)
 
 	var cookedPages []model.CookedPage
 	for _, p := range pages {

@@ -25,6 +25,10 @@ func ActionAdminSiteAdd(c echo.Context) error {
 		return RespError(c, "Invalid url")
 	}
 
+	if p.Name == lib.ATK_SITE_ALL {
+		return RespError(c, "禁止使用保留关键字作为名称")
+	}
+
 	if !model.FindSite(p.Name).IsEmpty() {
 		return RespError(c, "site 已存在")
 	}

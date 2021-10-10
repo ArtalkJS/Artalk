@@ -17,7 +17,6 @@ type ParamsAdd struct {
 	Rid     uint   `mapstructure:"rid"`
 
 	PageKey   string `mapstructure:"page_key" param:"required"`
-	PageUrl   string `mapstructure:"page_url"`
 	PageTitle string `mapstructure:"page_title"`
 
 	Token    string `mapstructure:"token"`
@@ -49,12 +48,12 @@ func ActionAdd(c echo.Context) error {
 	RecordAction(c)
 
 	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
 		return resp
 	}
 
 	// find page
-	page := model.FindCreatePage(p.PageKey, p.PageUrl, p.PageTitle, p.SiteName)
+	page := model.FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
 
 	// check if the user is allowed to comment
 	if isAllowed, resp := CheckIfAllowed(c, p.Name, p.Email, page, p.SiteName); !isAllowed {
@@ -120,7 +119,7 @@ func ActionAdd(c echo.Context) error {
 	email.SendToAdmin(comment.ToCookedForEmail()) // 发送邮件给管理员
 
 	// fetch page url data
-	if page.Url != "" && page.Title == "" {
+	if page.ToCooked().URL != "" && page.Title == "" {
 		go func() {
 			page.FetchURL()
 		}()

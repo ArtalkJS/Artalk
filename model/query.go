@@ -3,12 +3,19 @@ package model
 import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 func FindComment(id uint, siteName string) Comment {
 	var comment Comment
 	lib.DB.Preload(clause.Associations).Where("id = ? AND site_name = ?", id, siteName).First(&comment)
+	return comment
+}
+
+func FindCommentScopes(id uint, filters ...func(db *gorm.DB) *gorm.DB) Comment {
+	var comment Comment
+	lib.DB.Preload(clause.Associations).Where("id = ?", id).Scopes(filters...).First(&comment)
 	return comment
 }
 
@@ -67,10 +74,10 @@ func NewSite(name string, urls string) Site {
 	return site
 }
 
-func FindCreatePage(pageKey string, pageUrl string, pageTitle string, siteName string) Page {
+func FindCreatePage(pageKey string, pageTitle string, siteName string) Page {
 	page := FindPage(pageKey, siteName)
 	if page.IsEmpty() {
-		page = NewPage(pageKey, pageUrl, pageTitle, siteName)
+		page = NewPage(pageKey, pageTitle, siteName)
 	}
 	return page
 }
@@ -119,10 +126,9 @@ func FindPageByID(id uint, siteName string) Page {
 	return page
 }
 
-func NewPage(key string, pageUrl string, pageTitle string, siteName string) Page {
+func NewPage(key string, pageTitle string, siteName string) Page {
 	page := Page{
 		Key:      key,
-		Url:      pageUrl,
 		Title:    pageTitle,
 		SiteName: siteName,
 	}

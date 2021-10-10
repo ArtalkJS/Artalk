@@ -9,7 +9,7 @@ import (
 
 type ParamsCommentEdit struct {
 	// 查询值
-	ID       string `mapstructure:"id" param:"required"`
+	ID       uint   `mapstructure:"id" param:"required"`
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
 
@@ -22,8 +22,8 @@ type ParamsCommentEdit struct {
 	Rid         string `mapstructure:"rid"`
 	UA          string `mapstructure:"ua"`
 	IP          string `mapstructure:"ip"`
-	IsCollapsed string `mapstructure:"is_collapsed"`
-	IsPending   string `mapstructure:"is_pending"`
+	IsCollapsed bool   `mapstructure:"is_collapsed"`
+	IsPending   bool   `mapstructure:"is_pending"`
 }
 
 func ActionAdminCommentEdit(c echo.Context) error {
@@ -36,17 +36,12 @@ func ActionAdminCommentEdit(c echo.Context) error {
 		return resp
 	}
 
-	id, err := strconv.Atoi(p.ID)
-	if err != nil {
-		return RespError(c, "invalid id")
-	}
-
 	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
 		return resp
 	}
 
-	comment := model.FindComment(uint(id), p.SiteName)
+	comment := model.FindComment(p.ID, p.SiteName)
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found")
 	}
@@ -70,48 +65,21 @@ func ActionAdminCommentEdit(c echo.Context) error {
 			comment.UserID = user.ID
 		}
 	}
-	if p.Link != "" {
+	if p.Link != "" && p.Link != comment.User.Link {
 		comment.User.Link = p.Link
 		model.UpdateUser(&comment.User)
 	}
 
 	// pageKey
-	if p.PageKey != "" {
-		if p.PageKey != comment.PageKey {
-			model.FindCreatePage(p.PageKey, "", "", p.SiteName)
-			comment.PageKey = p.PageKey
-		}
+	if p.PageKey != "" && p.PageKey != comment.PageKey {
+		model.FindCreatePage(p.PageKey, "", p.SiteName)
+		comment.PageKey = p.PageKey
 	}
 
-	// ua
-	if p.UA != "" {
-		comment.UA = p.UA
-	}
-
-	// ip
-	if p.IP != "" {
-		comment.IP = p.IP
-	}
-
-	// is_collapsed
-	if p.IsCollapsed != "" {
-		switch p.IsCollapsed {
-		case "1":
-			comment.IsCollapsed = true
-		case "0":
-			comment.IsCollapsed = false
-		}
-	}
-
-	// is_pending
-	if p.IsPending != "" {
-		switch p.IsPending {
-		case "1":
-			comment.IsPending = true
-		case "0":
-			comment.IsPending = false
-		}
-	}
+	comment.UA = p.UA
+	comment.IP = p.IP
+	comment.IsCollapsed = p.IsCollapsed
+	comment.IsPending = p.IsPending
 
 	if err := model.UpdateComment(&comment); err != nil {
 		return RespError(c, "comment save error")

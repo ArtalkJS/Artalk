@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -12,9 +13,8 @@ import (
 
 type Page struct {
 	gorm.Model
-	Key       string `gorm:"uniqueIndex"`
+	Key       string `gorm:"uniqueIndex"` // 页面 Key（一般为不含 hash/query 的完整 url）
 	Title     string
-	Url       string
 	AdminOnly bool
 
 	SiteName string `gorm:"index"`
@@ -35,30 +35,41 @@ type CookedPage struct {
 }
 
 func (p Page) ToCooked() CookedPage {
+	url := ""
+	if lib.ValidateURL(p.Key) {
+		url = p.Key
+	}
+
 	return CookedPage{
 		ID:        p.ID,
 		AdminOnly: p.AdminOnly,
 		Key:       p.Key,
-		URL:       p.Url,
+		URL:       url,
 		Title:     p.Title,
 		SiteName:  p.SiteName,
 	}
 }
 
 func (p *Page) FetchURL() error {
-	if !lib.IsUrlValid(p.Url) {
+	cookedPage := p.ToCooked()
+	url := cookedPage.URL
+
+	if url == "" {
+		return errors.New("URL is null")
+	}
+	if !lib.ValidateURL(url) {
 		return errors.New("URL is invalid")
 	}
 
 	// Request the HTML page.
-	res, err := http.Get(p.Url)
+	res, err := http.Get(url)
 	if err != nil {
 		logrus.Error(err)
 		return err
 	}
 	defer res.Body.Close()
 	if res.StatusCode != 200 {
-		logrus.Error("status code error: %d %s", res.StatusCode, res.Status)
+		logrus.Error(fmt.Sprintf("status code error: %d '%s' '%s'", res.StatusCode, res.Status, url))
 		return errors.New("status code error")
 	}
 

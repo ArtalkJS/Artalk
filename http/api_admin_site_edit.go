@@ -9,7 +9,10 @@ import (
 )
 
 type ParamsAdminSiteEdit struct {
-	ID   uint   `mapstructure:"id" param:"required"`
+	// 查询值
+	ID uint `mapstructure:"id" param:"required"`
+
+	// 修改值
 	Name string `mapstructure:"name"`
 	Urls string `mapstructure:"urls"`
 }

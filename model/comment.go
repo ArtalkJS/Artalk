@@ -59,19 +59,19 @@ func (c *Comment) FetchPage() Page {
 	return page
 }
 
-func (c Comment) FetchChildren(filter func(db *gorm.DB) *gorm.DB) []Comment {
+func (c Comment) FetchChildren(filters ...func(db *gorm.DB) *gorm.DB) []Comment {
 	children := []Comment{}
-	fetchChildrenOnce(&children, c, filter) // TODO: children 数量限制
+	fetchChildrenOnce(&children, c, filters...) // TODO: children 数量限制
 	return children
 }
 
-func fetchChildrenOnce(src *[]Comment, parentComment Comment, filter func(db *gorm.DB) *gorm.DB) {
+func fetchChildrenOnce(src *[]Comment, parentComment Comment, filters ...func(db *gorm.DB) *gorm.DB) {
 	children := []Comment{}
-	lib.DB.Scopes(filter).Where("rid = ?", parentComment.ID).Order("created_at ASC").Find(&children)
+	lib.DB.Scopes(filters...).Where("rid = ?", parentComment.ID).Order("created_at ASC").Find(&children)
 
 	for _, child := range children {
 		*src = append(*src, child)
-		fetchChildrenOnce(src, child, filter) // loop
+		fetchChildrenOnce(src, child, filters...) // loop
 	}
 }
 

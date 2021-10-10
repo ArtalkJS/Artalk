@@ -1,20 +1,23 @@
 package http
 
 import (
+	"strings"
+
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
 
 type ParamsAdminPageEdit struct {
 	// 查询值
-	Key      string `mapstructure:"key" param:"required"`
+	ID       uint   `mapstructure:"id" param:"required"`
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
 
 	// 修改值
-	Url       string `mapstructure:"url"`
+	Key       string `mapstructure:"key"`
 	Title     string `mapstructure:"title"`
-	AdminOnly string `mapstructure:"admin_only"`
+	AdminOnly bool   `mapstructure:"admin_only"`
 }
 
 func ActionAdminPageEdit(c echo.Context) error {
@@ -27,32 +30,39 @@ func ActionAdminPageEdit(c echo.Context) error {
 		return resp
 	}
 
+	if strings.TrimSpace(p.Key) == "" {
+		return RespError(c, "page key 不能为空白字符")
+	}
+
 	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
 		return resp
 	}
 
-	page := model.FindPage(p.Key, p.SiteName)
+	page := model.FindPageByID(p.ID, p.SiteName)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
 	}
 
-	// url
-	if p.Url != "" {
-		page.Url = p.Url
+	// 重命名合法性检测
+	modifyKey := p.Key != page.Key
+	if modifyKey && !model.FindPage(p.Key, p.SiteName).IsEmpty() {
+		return RespError(c, "page 已存在，请换个 key")
 	}
 
-	// title
-	if p.Title != "" {
-		page.Title = p.Title
-	}
+	page.Title = p.Title
+	page.AdminOnly = p.AdminOnly
+	if modifyKey {
+		// 相关性数据修改
+		var comments []model.Comment
+		lib.DB.Where("page_key = ?", page.Key).Find(&comments)
 
-	// only_admin
-	switch p.AdminOnly {
-	case "1":
-		page.AdminOnly = true
-	case "0":
-		page.AdminOnly = false
+		for _, comment := range comments {
+			comment.PageKey = p.Key
+			lib.DB.Save(&comment)
+		}
+
+		page.Key = p.Key
 	}
 
 	if err := model.UpdatePage(&page); err != nil {

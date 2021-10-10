@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/url"
 	"reflect"
 	"strconv"
@@ -8,6 +9,7 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
@@ -72,23 +74,34 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 		}()
 
 		// check required param
-		if paramName != "" && paramTagP == "required" {
+		requiredField := paramName != "" && paramTagP == "required"
+		if requiredField {
 			if strings.TrimSpace(paramVal) == "" {
 				return false, RespError(c, "Param `"+paramName+"` is required")
 			}
 		}
 
+		typeString := field.Type.Kind() == reflect.String
+		typeInt := field.Type.Kind() == reflect.Int
+		typeUint := field.Type.Kind() == reflect.Uint
+		typeBool := field.Type.Kind() == reflect.Bool
+
 		// convert type
-		if field.Type.Kind() == reflect.String {
+		if typeString {
 			params[paramName] = paramVal
-		} else if field.Type.Kind() == reflect.Int {
-			u64, _ := strconv.ParseInt(paramVal, 10, 32)
-			params[paramName] = int(u64)
-		} else if field.Type.Kind() == reflect.Uint {
-			u64, _ := strconv.ParseUint(paramVal, 10, 32)
-			params[paramName] = uint(u64)
-		} else if field.Type.Kind() == reflect.Bool {
+		} else if typeBool {
 			params[paramName] = (paramVal == "1")
+		} else if typeInt || typeUint {
+			u64, err := strconv.ParseInt(paramVal, 10, 32)
+			if requiredField && (err != nil || u64 == 0) {
+				return false, RespError(c, "Param `"+paramName+"` is required")
+			}
+
+			if typeUint {
+				params[paramName] = uint(u64)
+			} else {
+				params[paramName] = int(u64)
+			}
 		}
 		// } else if field.Type.Kind() == reflect.Array {
 		// 	params[paramName] = c.QueryParams()[paramName]
@@ -159,7 +172,21 @@ func CheckReferer(c echo.Context, site model.Site) (bool, error) {
 	return true, nil
 }
 
-func CheckSite(c echo.Context, siteName *string, destID *uint) (bool, error) {
+func CheckSite(c echo.Context, siteName *string, destID *uint, destSiteAll *bool) (bool, error) {
+	// 启用源 SiteAll
+	if destSiteAll != nil {
+		// 传入站点名参数 == "__ATK_SITE_ALL" 时取消站点隔离
+		if *siteName == lib.ATK_SITE_ALL {
+			if !CheckIsAdminReq(c) {
+				return false, RespError(c, "仅管理员查询允许取消站点隔离")
+			}
+			*destSiteAll = true
+			return true, nil
+		} else {
+			*destSiteAll = false
+		}
+	}
+
 	if *siteName == "" {
 		// 传入值为空，使用默认 site
 		siteDefault := strings.TrimSpace(config.Instance.SiteDefault)
@@ -167,14 +194,14 @@ func CheckSite(c echo.Context, siteName *string, destID *uint) (bool, error) {
 			// 没有则创建
 			model.FindCreateSite(siteDefault)
 		}
-		*siteName = siteDefault // 更新原 name
+		*siteName = siteDefault // 更新源 name
 
 		return true, nil
 	}
 
 	site := model.FindSite(*siteName)
 	if site.IsEmpty() {
-		return false, RespError(c, "Site 未找到")
+		return false, RespError(c, fmt.Sprintf("未找到站点：`%s`，请控制台创建站点", *siteName))
 	}
 
 	// 检测 Referer 合法性

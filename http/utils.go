@@ -90,7 +90,7 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 		if typeString {
 			params[paramName] = paramVal
 		} else if typeBool {
-			params[paramName] = (paramVal == "1")
+			params[paramName] = (paramVal == "1" || paramVal == "true")
 		} else if typeInt || typeUint {
 			u64, err := strconv.ParseInt(paramVal, 10, 32)
 			if requiredField && (err != nil || u64 == 0) {

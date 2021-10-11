@@ -26,7 +26,7 @@ func AsyncSend(notify *model.Notify) {
 
 	notify.SetInitial()
 
-	comment := notify.Comment
+	comment := notify.FetchComment()
 	parentComment := notify.GetParentComment()
 
 	from := comment.ToCookedForEmail()
@@ -54,7 +54,7 @@ func AsyncSendToAdmin(notify *model.Notify, admin *model.User) {
 
 	notify.SetInitial()
 
-	comment := notify.Comment
+	comment := notify.FetchComment()
 	from := comment.ToCookedForEmail()
 	to := model.CookedCommentForEmail{
 		Nick:  admin.Name,
@@ -66,11 +66,12 @@ func AsyncSendToAdmin(notify *model.Notify, admin *model.User) {
 		body := RenderEmailTpl(notify, from, to)
 
 		AddToQueue(Email{
-			FromAddr: config.Instance.Email.SendAddr,
-			FromName: config.Instance.Email.SendName,
-			ToAddr:   admin.Email,
-			Subject:  subject,
-			Body:     body,
+			FromAddr:     config.Instance.Email.SendAddr,
+			FromName:     config.Instance.Email.SendName,
+			ToAddr:       admin.Email,
+			Subject:      subject,
+			Body:         body,
+			LinkedNotify: notify,
 		})
 	}()
 }

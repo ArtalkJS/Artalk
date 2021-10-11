@@ -146,6 +146,7 @@ func AsyncSendEmail(comment *model.Comment, parentComment *model.Comment) {
 
 	if !parentComment.IsEmpty() && !comment.IsPending {
 		notify := model.FindCreateNotify(parentComment.UserID, comment.ID)
+		notify.Comment = *comment
 		email.AsyncSend(&notify)
 	}
 
@@ -158,7 +159,8 @@ func AsyncSendEmail(comment *model.Comment, parentComment *model.Comment) {
 	}
 
 	for _, admin := range admins {
-		notify := model.FindCreateNotify(parentComment.UserID, comment.ID)
+		notify := model.FindCreateNotify(admin.ID, comment.ID)
+		notify.Comment = *comment
 		email.AsyncSendToAdmin(&notify, &admin) // 发送邮件给管理员
 	}
 }

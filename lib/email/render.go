@@ -46,7 +46,7 @@ func RenderEmailTpl(notify *model.Notify, from model.CookedCommentForEmail, to m
 	return tpl
 }
 
-func RenderConfig(str string, notify *model.Notify, from, to model.CookedCommentForEmail) string {
+func RenderConfig(str string, notify *model.Notify, from model.CookedCommentForEmail, to model.CookedCommentForEmail) string {
 	for k, v := range config.Flat {
 		str = strings.ReplaceAll(str, fmt.Sprintf("{{config.%s}}", k), fmt.Sprintf("%v", v))
 	}

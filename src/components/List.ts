@@ -100,18 +100,17 @@ export default class List extends ListLite {
     this.closeCommentBtnEl.addEventListener('click', () => {
       if (!this.data) return
 
-      this.adminSetPage({
-        admin_only: !this.data.page.admin_only
-      })
+      this.data.page.admin_only = !this.data.page.admin_only
+      this.adminPageEditSave()
     })
   }
 
   /** 管理员设置页面信息 */
-  public adminSetPage (conf: { admin_only: boolean }) {
+  public adminPageEditSave () {
+    if (!this.data || !this.data.page) return
+
     this.ctx.dispatchEvent('editor-show-loading')
-    new Api(this.ctx).pageEdit(this.data?.page.key || '', {
-      adminOnly: conf.admin_only,
-    })
+    new Api(this.ctx).pageEdit(this.data.page)
       .then((page) => {
         if (this.data)
           this.data.page = { ...page }

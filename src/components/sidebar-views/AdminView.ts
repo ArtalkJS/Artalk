@@ -49,11 +49,26 @@ export default class AdminView extends SidebarView {
     }
   }
 
+  /** site 筛选 · 初始化 */
+  async initSiteFilterBar (clickEvt: (item: FilterBarItem) => void) {
+    const sitesData = await new Api(this.ctx).siteGet()
+    const siteItems: FilterBarItem[] = [
+      {name: '__ATK_SITE_ALL', label: '全部站点'}
+    ]
+    if (sitesData) sitesData.forEach((site) => {
+      siteItems.push({ name: site.name, label: site.name })
+    })
+
+    const filterBarEl = BuildFilterBar(siteItems, (item) => clickEvt(item))
+    this.el.prepend(filterBarEl)
+  }
+
+  /** 评论列表 · 初始化 */
   async initCommentList() {
     this.el.innerHTML = ''
-    this.el.append(this.cList.el)
+    this.el.append(this.cList.el) // TODO: 统一 loading 动画
 
-    const reqComments = (type, siteName) => {
+    const reqComments = (type: string, siteName: string) => {
       if (!this.cList) return
       this.cList.type = `admin_${type}` as any
       this.cList.isFirstLoad = true
@@ -64,42 +79,38 @@ export default class AdminView extends SidebarView {
     }
 
     let loaded = false
-    const conf = { typeName: 'all', siteName: '' }
-    this.showFilterBar({ all: '全部', pending: '待审' }, (typeName) => {
-      if (!loaded) return
-      conf.typeName = typeName
-      reqComments(conf.typeName, conf.siteName)
-    })
+    const curt = { typeName: 'all', siteName: '' }
 
-    // 初始化 site 列表
-    const sites = await new Api(this.ctx).siteGet()
-    const siteItems: {[name: string]: string} = {'': '所有站点'}
-    if (sites) sites.forEach((site) => { siteItems[site.name] = site.name })
-    this.showFilterBar(siteItems, (s) => {
-      conf.siteName = s
-      reqComments(conf.typeName, conf.siteName)
+    // 初始化
+    const typeFilterBarEl = BuildFilterBar([
+      { name: 'all', label: '全部' },
+      { name: 'pending', label: '待审' }
+    ], (item) => {
+      if (!loaded) return
+      curt.typeName = item.name
+      reqComments(curt.typeName, curt.siteName)
+    })
+    this.el.prepend(typeFilterBarEl)
+
+    // 初始化 site 筛选
+    await this.initSiteFilterBar((item) => {
+      curt.siteName = item.name
+      reqComments(curt.typeName, curt.siteName)
     })
     loaded = true
   }
 
+  /** 页面列表 · 初始化 */
   async initPageList () {
     this.el.innerHTML = ''
 
     const pListEl = Utils.createElement(`<div class="atk-sidebar-list"></div>`)
     this.el.append(pListEl)
 
-    // 初始化 site 列表
-    let loaded = false
-    const sitesData = await new Api(this.ctx).siteGet()
-    const siteItems: {[name: string]: string} = {'': '所有站点'}
-    if (sitesData) sitesData.forEach((site) => { siteItems[site.name] = site.name })
-    this.showFilterBar(siteItems, async (s) => {
-      if (!loaded) return
-      await this.reqPages(pListEl, s)
+    // 初始化 site 筛选
+    await this.initSiteFilterBar((item) => {
+      this.reqPages(pListEl, item.name)
     })
-    loaded = true
-
-    await this.reqPages(pListEl)
   }
 
   async reqPages(pListEl: HTMLElement, siteName?: string) {
@@ -107,6 +118,7 @@ export default class AdminView extends SidebarView {
 
     const pages = await new Api(this.ctx).pageGet(siteName)
     if (!pages) {
+      pListEl.innerHTML = '<div class="atk-sidebar-no-content">无内容</div>'
       return
     }
 
@@ -116,6 +128,9 @@ export default class AdminView extends SidebarView {
       <div class="atk-title"></div>
       <div class="atk-sub"></div>
       <div class="atk-actions">
+        <div class="atk-item" data-action="page-edit-title">修改标题</div>
+        <div class="atk-item" data-action="page-fetch">获取标题</div>
+        <div class="atk-item" data-action="page-edit-key">修改 KEY</div>
         <div class="atk-item" data-action="page-admin-only"></div>
         <div class="atk-item" data-action="page-del">删除</div>
       </div>
@@ -145,13 +160,59 @@ export default class AdminView extends SidebarView {
         e.stopPropagation() // 防止穿透
 
         // TODO: loading ui
-        new Api(this.ctx).pageEdit(page.key, {
-          adminOnly: !page.admin_only,
-        })
+        page.admin_only = !page.admin_only
+        new Api(this.ctx).pageEdit(page)
         .then((p) => {
           page = p
           renderAdminOnlyBtn()
         })
+      }
+
+      const editTitleBtn = pageItemEl.querySelector<HTMLElement>('[data-action="page-edit-title"]')!
+      editTitleBtn.onclick = () => {
+        const val = window.prompt('修改标题：', page.title)
+        if (val !== null) {
+          page.title = val
+          new Api(this.ctx).pageEdit(page)
+            .then(() => {
+              this.reqPages(pListEl, siteName)
+            })
+            .catch((err) => {
+              window.alert(`修改失败：${err.msg || '未知错误'}`)
+            })
+        }
+      }
+
+      const fetchBtn = pageItemEl.querySelector<HTMLElement>('[data-action="page-fetch"]')!
+      fetchBtn.onclick = () => {
+        const btnOrgTxt = fetchBtn.innerText
+        fetchBtn.innerText = '获取中...'
+        new Api(this.ctx).pageFetch(page.id)
+        .then((p) => {
+          page = p
+          pageItemEl.querySelector<HTMLElement>('.atk-title')!.innerText = p.title
+        })
+        .catch((err) => {
+          window.alert(`获取失败：${err.msg || '未知错误'}`)
+        })
+        .finally(() => {
+          fetchBtn.innerText = btnOrgTxt
+        })
+      }
+
+      const editKeyBtn = pageItemEl.querySelector<HTMLElement>('[data-action="page-edit-key"]')!
+      editKeyBtn.onclick = () => {
+        const val = window.prompt('修改 Key：', page.key)
+        if (val !== null) {
+          page.key = val
+          new Api(this.ctx).pageEdit(page)
+            .then(() => {
+              this.reqPages(pListEl, siteName)
+            })
+            .catch((err) => {
+              window.alert(`修改失败：${err.msg || '未知错误'}`)
+            })
+        }
       }
 
       const delBtn = pageItemEl.querySelector<HTMLElement>('[data-action="page-del"]')!
@@ -167,6 +228,7 @@ export default class AdminView extends SidebarView {
     })
   }
 
+  /** 站点列表 · 初始化 */
   async initSiteList () {
     // TODO: 可复用，特别是 actions
     this.el.innerHTML = ''
@@ -199,6 +261,7 @@ export default class AdminView extends SidebarView {
     }
     const sites = await new Api(this.ctx).siteGet()
     if (!sites) {
+      this.el.append(Utils.createElement('<div class="atk-sidebar-no-content">无内容</div>'))
       return
     }
     sites.forEach(site => {
@@ -207,7 +270,8 @@ export default class AdminView extends SidebarView {
       <div class="atk-title"></div>
       <div class="atk-sub"></div>
       <div class="atk-actions">
-        <div class="atk-item" data-action="site-edit">修改 URL</div>
+        <div class="atk-item" data-action="site-rename">重命名</div>
+        <div class="atk-item" data-action="site-edit-urls">修改 URL</div>
         <div class="atk-item" data-action="site-del">删除</div>
       </div>
       </div>`)
@@ -216,15 +280,22 @@ export default class AdminView extends SidebarView {
       siteItemEl.setAttribute('data-site-id', String(site.id))
 
       const nameEl = siteItemEl.querySelector<HTMLElement>('.atk-title')!
-      const urlEl = siteItemEl.querySelector<HTMLElement>('.atk-sub')!
+      const urlsEl = siteItemEl.querySelector<HTMLElement>('.atk-sub')!
 
       nameEl.innerText = site.name || site.first_url
-      urlEl.innerText = site.urls_raw
       nameEl.onclick = () => {
         window.open(`${site.first_url}`)
       }
-      urlEl.onclick = () => {
-        window.open(`${site.first_url}`)
+
+      if (site.urls) {
+        site.urls.forEach((u) => {
+          const urlItemEl = Utils.createElement('<span style="margin-right: 10px;" />')
+          urlItemEl.innerText = u
+          urlItemEl.onclick = () => {
+            window.open(`${u}`)
+          }
+          urlsEl.append(urlItemEl)
+        })
       }
 
       const delBtn = siteItemEl.querySelector<HTMLElement>('[data-action="site-del"]')!
@@ -239,8 +310,8 @@ export default class AdminView extends SidebarView {
           del()
       }
 
-      const editBtn = siteItemEl.querySelector<HTMLElement>('[data-action="site-edit"]')!
-      editBtn.onclick = () => {
+      const editUrlsBtn = siteItemEl.querySelector<HTMLElement>('[data-action="site-edit-urls"]')!
+      editUrlsBtn.onclick = () => {
         const val = window.prompt('修改 URL (多个 URL 用逗号隔开):', site.urls_raw)
         if (val !== null) {
           new Api(this.ctx).siteEdit(site.id, { name: site.name, urls: val })
@@ -252,9 +323,24 @@ export default class AdminView extends SidebarView {
             })
         }
       }
+
+      const renameBtn = siteItemEl.querySelector<HTMLElement>('[data-action="site-rename"]')!
+      renameBtn.onclick = () => {
+        const val = window.prompt('编辑站点名称：', site.name)
+        if (val !== null) {
+          new Api(this.ctx).siteEdit(site.id, { name: val, urls: site.urls_raw })
+            .then(() => {
+              this.initSiteList()
+            })
+            .catch((err) => {
+              window.alert(`修改失败：${err.msg || '未知错误'}`)
+            })
+        }
+      }
     })
   }
 
+  /** 配置页面 · 初始化 */
   initSetting () {
     this.el.innerHTML = ''
 
@@ -313,23 +399,31 @@ export default class AdminView extends SidebarView {
       reader.readAsText(impDataFileEl.files[0]);
     }
   }
+}
 
-  showFilterBar (items: {[name: string]: string}, clickEvt: (item) => void) {
-    const filterBarEl = Utils.createElement(`<div class="atk-filter-bar"></div>`)
-    this.el.prepend(filterBarEl)
+/** 通用筛选条 */
+function BuildFilterBar (items: FilterBarItem[], clickEvt: (item: FilterBarItem) => void): HTMLElement {
+  const filterBarEl = Utils.createElement(`<div class="atk-filter-bar"></div>`)
 
-    Object.entries(items).forEach(([name, label]) => {
-      const itemEl = Utils.createElement(`<span class="atk-filter-item"></span>`)
-      itemEl.innerText = label
-      itemEl.addEventListener('click', () => {
-        clickEvt(name)
-        filterBarEl.querySelectorAll('.atk-active')
-          .forEach(item => item.classList.remove('atk-active')) // 删除其他 active
-        itemEl.classList.add('atk-active')
-      })
-      filterBarEl.append(itemEl)
+  items.forEach(item => {
+    const itemEl = Utils.createElement(`<span class="atk-filter-item"></span>`)
+    filterBarEl.append(itemEl)
+    itemEl.innerText = item.label
+    itemEl.addEventListener('click', () => {
+      clickEvt(item)
+      filterBarEl.querySelectorAll('.atk-active')
+        .forEach(el => el.classList.remove('atk-active')) // 删除其他 active
+      itemEl.classList.add('atk-active')
     })
+  })
 
-    ;(filterBarEl.firstChild as HTMLElement).click() // 默认打开第一个项目
-  }
+  ;(filterBarEl.firstChild as HTMLElement).click() // 默认打开第一个项目
+
+  return filterBarEl
+}
+
+/** 筛选条中的项目 */
+interface FilterBarItem {
+  name: string
+  label: string
 }

@@ -135,7 +135,7 @@ export default class ListLite extends Component {
       errEl.appendChild(retryBtn)
       const adminBtn = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
       adminBtn.onclick = () => {
-        this.ctx.dispatchEvent('sidebar-show')
+        this.ctx.dispatchEvent('sidebar-show', { viewName: 'admin' })
       }
       if (!this.ctx.user.data.isAdmin) {
         adminBtn.classList.add('atk-hide')

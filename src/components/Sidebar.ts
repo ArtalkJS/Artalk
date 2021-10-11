@@ -18,11 +18,12 @@ export default class Sidebar extends Component {
   public actionsEl: HTMLElement
   public contentEl: HTMLElement
   public titleWrapEl: HTMLElement
-  public adminMode: boolean = false
 
   public view?: SidebarView
   public action?: string
+  private isFirstShow = true
 
+  public viewInstances: {[name: string]: SidebarView} = {}
   public registerViews: (typeof SidebarView)[] = [
     MessageView, AdminView,
   ]
@@ -30,6 +31,7 @@ export default class Sidebar extends Component {
   constructor (ctx: Context) {
     super(ctx)
 
+    // initial elements
     this.el = Utils.createElement(SidebarHTML)
     this.contentEl = this.el.querySelector('.atk-sidebar-content')!
     this.titleWrapEl = this.el.querySelector('.atk-sidebar-title-wrap')!
@@ -39,12 +41,14 @@ export default class Sidebar extends Component {
       this.hide()
     })
 
-    this.ctx.addEventListener('sidebar-show', () => (this.show()))
+    // event
+    this.ctx.addEventListener('sidebar-show', (payload) => (this.show(payload?.viewName)))
     this.ctx.addEventListener('sidebar-hide', () => (this.hide()))
 
     // titles
     this.registerViews.forEach(View => {
       const viewInstance = new View(this.ctx)
+      this.viewInstances[viewInstance.name] = viewInstance
       viewInstance.el.classList.add(`atk-sidebar-view-${viewInstance.name}`)
 
       const titleEl = Utils.createElement(`
@@ -58,20 +62,11 @@ export default class Sidebar extends Component {
       this.titleWrapEl.append(titleEl)
 
       // title click
-      titleEl.addEventListener('click', () => {
-        this.titleWrapEl.querySelectorAll('.atk-active').forEach((item) => {
-          item.classList.remove('atk-active')
-        })
-        titleEl.classList.add('atk-active')
-
-        this.switchView(viewInstance)
-      })
+      titleEl.addEventListener('click', () => { this.switchView(viewInstance) })
     })
-
-    ;(this.titleWrapEl.firstChild as HTMLElement).click() // 打开第一个 view
   }
 
-  show () {
+  show (viewName?: string) {
     this.el.style.transform = '' // 动画清除，防止二次打开失效
 
     this.layer = BuildLayer(this.ctx, 'sidebar', this.el)
@@ -82,7 +77,14 @@ export default class Sidebar extends Component {
       this.el.style.transform = 'translate(0, 0)' // 执行动画
     }, 20)
 
-    this.adminMode = this.ctx.user.data.isAdmin
+    if (viewName) {
+      this.switchViewByName(viewName) // 打开指定 view
+    }
+
+    if (this.isFirstShow) {
+      if (!viewName) this.switchViewByName('message') // 打开默认 view
+      this.isFirstShow = false
+    }
   }
 
   hide () {
@@ -90,8 +92,26 @@ export default class Sidebar extends Component {
     this.layer?.dispose() // 用完即销毁
   }
 
+  switchViewByName (viewName: string) {
+    if (!this.viewInstances[viewName]) {
+      console.error(`未找到 view: ${viewName}`)
+      return
+    }
+
+    this.switchView(this.viewInstances[viewName])
+  }
+
   switchView (view: SidebarView) {
     this.view = view
+
+    // focus title
+    const titleEl = this.titleWrapEl.querySelector<HTMLElement>(`[data-name=${view.name}]`)!
+    this.titleWrapEl.querySelector<HTMLElement>('.atk-active')!.innerText = view.title
+    this.titleWrapEl.querySelectorAll<HTMLElement>('.atk-title-item').forEach((item) => {
+      if (!item.classList.contains('atk-active'))
+        item.style.display = ''
+    })
+    titleEl.style.display = 'none'
 
     // init view ui
     view.init()

@@ -50,6 +50,12 @@ export default class Artalk {
     this.conf = { ...defaultOpts, ...conf }
     this.conf.server = this.conf.server.replace(/\/$/, '')
 
+    // Default `pageKey` conf
+    if (!this.conf.pageKey) {
+      // eslint-disable-next-line prefer-destructuring
+      this.conf.pageKey = window.location.href.split('#')[0]
+    }
+
     // Main Element
     try {
       const el = document.querySelector<HTMLElement>(this.conf.el)

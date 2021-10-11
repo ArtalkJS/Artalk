@@ -10,7 +10,7 @@ export interface EventPayloadMap {
   'list-comment-del': CommentData
   'list-reload': undefined
   'list-update-data': (data: ListData | undefined) => void
-  'sidebar-show': undefined
+  'sidebar-show'?: SidebarShowPayload
   'sidebar-hide': undefined
   'check-admin-show-el': undefined
   'editor-open-comment': undefined
@@ -37,6 +37,10 @@ export interface NotifyConf {
 
 export interface CheckerCaptchaConf extends CheckerConf {
   imgData?: string
+}
+
+export interface SidebarShowPayload {
+  viewName?: string
 }
 
 // ============================================

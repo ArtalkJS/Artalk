@@ -4,9 +4,6 @@ import * as Utils from '../../lib/utils'
 import ListLite from '../ListLite'
 
 export default class MessageView extends SidebarView {
-  list?: ListLite
-  type: string = 'mentions'
-
   name = 'message'
   title = '通知中心'
   actions = {
@@ -16,6 +13,9 @@ export default class MessageView extends SidebarView {
     pending: '待审',
   }
   activeAction = ''
+
+  list?: ListLite
+  type: string = 'mentions'
 
   init () {
     this.list = CreateCommentList(this.ctx)
@@ -53,7 +53,7 @@ export function CreateCommentList (ctx: Context) {
 
     comment.el.addEventListener('click', (evt) => {
       evt.preventDefault()
-      window.location.href = `${comment.data.page_key}#artalk-comment-${comment.data.id}`
+      window.open(`${comment.data.page_key}#artalk-comment-${comment.data.id}`)
     })
 
     // this.contentEl.appendChild(comment.getEl())

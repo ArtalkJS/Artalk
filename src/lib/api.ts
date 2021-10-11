@@ -25,9 +25,7 @@ export default class Api {
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
-    if (paramsEditor) {
-      paramsEditor(params)
-    }
+    if (paramsEditor) paramsEditor(params)
 
     return CommonFetch(this.ctx, `${this.serverURL}/get`, {
       method: 'POST',
@@ -117,19 +115,7 @@ export default class Api {
     })
   }
 
-  public commentEdit(data: {
-    id: number,
-    content?: string,
-    page_key?: string,
-    nick?: string,
-    email?: string,
-    link?: string,
-    rid?: number,
-    ua?: string,
-    ip?: string,
-    is_collapsed?: boolean,
-    is_pending?: boolean,
-  }) {
+  public commentEdit(data: CommentData) {
     const params: any = {
       ...data,
     }
@@ -145,21 +131,28 @@ export default class Api {
     }).then((json) => (json.data.comment as CommentData))
   }
 
-  public pageEdit(key: string, data: {
-    url?: string,
-    title?: string,
-    adminOnly?: boolean
-  }) {
+  public pageEdit(data: PageData) {
     const params: any = {
-      key,
-      url: data.url || '',
-      title: data.title || '',
-      admin_only: data.adminOnly ? '1' : '0',
+      id: data.id,
+      key: data.key,
+      title: data.title,
+      admin_only: data.admin_only ? '1' : '0',
     }
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
     return CommonFetch(this.ctx, `${this.serverURL}/admin/page-edit`, {
+      method: 'POST',
+      body: getFormData(params),
+    }).then((json) => (json.data.page as PageData))
+  }
+
+  public pageFetch(id: number) {
+    const params: any = {
+      id,
+    }
+
+    return CommonFetch(this.ctx, `${this.serverURL}/admin/page-fetch`, {
       method: 'POST',
       body: getFormData(params),
     }).then((json) => (json.data.page as PageData))
@@ -200,7 +193,7 @@ export default class Api {
   public siteDel(id: string, delContent = false) {
     const params: any = {
       id,
-      del_content: delContent
+      del_content: delContent ? '1' : '0'
     }
 
     return CommonFetch(this.ctx, `${this.serverURL}/admin/site-del`, {

@@ -260,16 +260,13 @@ export default class Comment extends Component {
     btnElem.classList.add('atk-in-process')
     btnElem.innerText = '修改中...'
 
-    const params: any = {
-      id: this.data.id,
-    }
     if (type === 'collapsed') {
-      params.is_collapsed = !this.data.is_collapsed
+      this.data.is_collapsed = !this.data.is_collapsed
     } else if (type === 'pending') {
-      params.is_pending = !this.data.is_pending
+      this.data.is_pending = !this.data.is_pending
     }
 
-    new Api(this.ctx).commentEdit(params).then((comment) => {
+    new Api(this.ctx).commentEdit(this.data).then((comment) => {
       btnElem.classList.remove('atk-in-process')
       this.data = comment
       this.refreshUI()

@@ -41,11 +41,9 @@ func ActionAdminPageDel(c echo.Context) error {
 	var comments []model.Comment
 	lib.DB.Where("page_key = ? AND site_name = ?", p.Key, p.SiteName).Find(&comments)
 
-	tx := lib.DB.Begin()
 	for _, c := range comments {
-		tx.Delete(&c)
+		DelComment(&c)
 	}
-	tx.Commit()
 
 	return RespSuccess(c)
 }

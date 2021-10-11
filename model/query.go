@@ -58,6 +58,24 @@ func FindSiteByID(id uint) Site {
 	return site
 }
 
+func FindNotify(userID uint, commentID uint) Notify {
+	var notify Notify
+	lib.DB.Where("user_id = ? AND comment_id = ?", userID, commentID).First(&notify)
+	return notify
+}
+
+func FindNotifyByKey(key string) Notify {
+	var notify Notify
+	lib.DB.Where("key = ?", key).First(&notify)
+	return notify
+}
+
+func FindNotifyByID(id uint) Notify {
+	var notify Notify
+	lib.DB.First(&notify, id)
+	return notify
+}
+
 func FindCreateSite(siteName string) Site {
 	site := FindSite(siteName)
 	if site.IsEmpty() {
@@ -96,6 +114,14 @@ func FindCreateUser(name string, email string) User {
 	return user
 }
 
+func FindCreateNotify(userID uint, lookCommentID uint) Notify {
+	notify := FindNotify(userID, lookCommentID)
+	if notify.IsEmpty() {
+		notify = NewNotify(userID, lookCommentID)
+	}
+	return notify
+}
+
 func NewUser(name string, email string) User {
 	user := User{
 		Name:  name,
@@ -121,7 +147,6 @@ func UpdateUser(user *User) error {
 
 func FindPage(key string, siteName string) Page {
 	var page Page
-	// TODO: default site_name not null
 	lib.DB.Where("key = ? AND site_name = ?", key, siteName).First(&page)
 	return page
 }
@@ -153,4 +178,21 @@ func UpdatePage(page *Page) error {
 		logrus.Error("Update Page error: ", err)
 	}
 	return err
+}
+
+func NewNotify(userID uint, commentID uint) Notify {
+	notify := Notify{
+		UserID:    userID,
+		CommentID: commentID,
+		IsRead:    false,
+		IsEmailed: false,
+	}
+	notify.GenerateKey()
+
+	err := lib.DB.Create(&notify).Error
+	if err != nil {
+		logrus.Error("Create Notify error: ", err)
+	}
+
+	return notify
 }

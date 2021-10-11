@@ -9,13 +9,21 @@ var emailCh = make(chan Email) // make(chan Email, 5)
 func InitQueue() {
 	go func() {
 		for email := range emailCh {
+			result := false
 			switch config.Instance.Email.SendType {
 			case config.TypeSMTP:
-				SendBySMTP(email)
+				result = SendBySMTP(email)
 			case config.TypeAliDM:
-				SendByAliDM(email)
+				result = SendByAliDM(email)
 			case config.TypeSendmail:
-				SendByUsingSystemCMD(email)
+				result = SendByUsingSystemCMD(email)
+			}
+
+			if result { // 发送成功
+				if email.LinkedNotify != nil {
+					// 标记关联评论邮件发送状态
+					email.LinkedNotify.SetEmailed()
+				}
 			}
 		}
 	}()

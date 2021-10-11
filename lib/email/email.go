@@ -2,11 +2,14 @@ package email
 
 import (
 	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 )
 
-func SendTo(subject string, body string, toAddr string) {
+func AsyncSendTo(subject string, body string, toAddr string) {
+	if !config.Instance.Email.Enabled {
+		return
+	}
+
 	AddToQueue(Email{
 		FromAddr: config.Instance.Email.SendAddr,
 		FromName: config.Instance.Email.SendName,
@@ -16,55 +19,58 @@ func SendTo(subject string, body string, toAddr string) {
 	})
 }
 
-func Send(from model.CookedCommentForEmail, to model.CookedCommentForEmail) {
+func AsyncSend(notify *model.Notify) {
 	if !config.Instance.Email.Enabled {
 		return
 	}
 
+	notify.SetInitial()
+
+	comment := notify.Comment
+	parentComment := notify.GetParentComment()
+
+	from := comment.ToCookedForEmail()
+	to := parentComment.ToCookedForEmail()
+
 	go func() {
-		subject := RenderConfig(config.Instance.Email.MailSubject)
-		body := RenderEmailTpl(from, to)
+		subject := RenderConfig(config.Instance.Email.MailSubject, notify, from, to)
+		body := RenderEmailTpl(notify, from, to)
 
 		AddToQueue(Email{
-			FromAddr: config.Instance.Email.SendAddr,
-			FromName: config.Instance.Email.SendName,
-			ToAddr:   to.Email,
-			Subject:  subject,
-			Body:     body,
+			FromAddr:     config.Instance.Email.SendAddr,
+			FromName:     config.Instance.Email.SendName,
+			ToAddr:       to.Email,
+			Subject:      subject,
+			Body:         body,
+			LinkedNotify: notify,
 		})
 	}()
 }
 
-func SendToAdmin(from model.CookedCommentForEmail) {
+func AsyncSendToAdmin(notify *model.Notify, admin *model.User) {
 	if !config.Instance.Email.Enabled {
 		return
 	}
 
-	// 查询所有 admin
-	var admins []model.User
-	lib.DB.Where("is_admin = 1").Find(&admins)
+	notify.SetInitial()
 
-	if len(admins) == 0 {
-		return
+	comment := notify.Comment
+	from := comment.ToCookedForEmail()
+	to := model.CookedCommentForEmail{
+		Nick:  admin.Name,
+		Email: admin.Email,
 	}
 
-	// 发邮件给每个 admin
-	for _, admin := range admins {
-		email := admin.Email
+	go func() {
+		subject := RenderConfig(config.Instance.Email.MailSubjectToAdmin, notify, from, to)
+		body := RenderEmailTpl(notify, from, to)
 
-		go func() {
-			subject := RenderConfig(config.Instance.Email.MailSubjectToAdmin)
-			body := RenderEmailTpl(from, model.CookedCommentForEmail{
-				Nick: "Admin",
-			})
-
-			AddToQueue(Email{
-				FromAddr: config.Instance.Email.SendAddr,
-				FromName: config.Instance.Email.SendName,
-				ToAddr:   email,
-				Subject:  subject,
-				Body:     body,
-			})
-		}()
-	}
+		AddToQueue(Email{
+			FromAddr: config.Instance.Email.SendAddr,
+			FromName: config.Instance.Email.SendName,
+			ToAddr:   admin.Email,
+			Subject:  subject,
+			Body:     body,
+		})
+	}()
 }

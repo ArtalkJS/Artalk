@@ -11,10 +11,6 @@ type ParamsUserGet struct {
 	Email string `mapstructure:"email"`
 }
 
-type ResponseUserGet struct {
-	IsAdmin bool `json:"is_admin"`
-}
-
 func ActionUserGet(c echo.Context) error {
 	var p ParamsUserGet
 	if isOK, resp := ParamsDecode(c, ParamsUserGet{}, &p); !isOK {
@@ -26,8 +22,10 @@ func ActionUserGet(c echo.Context) error {
 
 	if user.IsEmpty() || user.Name != p.Name || user.Email != p.Email {
 		return RespData(c, Map{
-			"user":     nil,
-			"is_login": false,
+			"user":            nil,
+			"is_login":        false,
+			"unread_msg":      0,
+			"unread_comments": []int{},
 		})
 	}
 
@@ -39,8 +37,18 @@ func ActionUserGet(c echo.Context) error {
 		user = tUser
 	}
 
+	// unread_msg
+	var notifications []model.Notify
+	lib.DB.Where("user_id = ?", user.ID).Find(&notifications)
+	unreadComments := []uint{}
+	for _, notify := range notifications {
+		unreadComments = append(unreadComments, notify.CommentID)
+	}
+
 	return RespData(c, Map{
-		"user":     user.ToCooked(),
-		"is_login": isLogin,
+		"user":            user.ToCooked(),
+		"is_login":        isLogin,
+		"unread_msg":      0,
+		"unread_comments": unreadComments,
 	})
 }

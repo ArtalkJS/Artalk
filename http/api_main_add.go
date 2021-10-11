@@ -83,15 +83,18 @@ func ActionAdd(c echo.Context) error {
 	}
 
 	comment := model.Comment{
-		Content:     p.Content,
-		Rid:         p.Rid,
-		UserID:      user.ID,
-		PageKey:     page.Key,
-		IP:          ip,
-		UA:          ua,
+		Content:  p.Content,
+		PageKey:  page.Key,
+		SiteName: p.SiteName,
+
+		UserID: user.ID,
+		IP:     ip,
+		UA:     ua,
+
+		Rid: p.Rid,
+
 		IsPending:   false,
 		IsCollapsed: false,
-		SiteName:    p.SiteName,
 	}
 
 	// default comment type
@@ -112,27 +115,50 @@ func ActionAdd(c echo.Context) error {
 	user.LastUA = ua
 	model.UpdateUser(&user)
 
-	// send email
-	if comment.Rid != 0 {
-		email.Send(comment.ToCookedForEmail(), parentComment.ToCookedForEmail()) // 发送邮件给回复者
-	}
-	email.SendToAdmin(comment.ToCookedForEmail()) // 发送邮件给管理员
-
-	// fetch page url data
+	// update page
 	if page.ToCooked().URL != "" && page.Title == "" {
 		go func() {
 			page.FetchURL()
 		}()
 	}
 
-	// 垃圾评论检测
-	if !CheckIsAdminReq(c) {
-		go func() {
-			comment.AntiSpamCheck(c)
-		}()
-	}
+	// 异步执行
+	go func() {
+		// 垃圾检测
+		if !CheckIsAdminReq(c) {
+			comment.SpamCheck(c)
+		}
+
+		// 邮件通知发送
+		AsyncSendEmail(&comment, &parentComment)
+	}()
 
 	return RespData(c, ResponseAdd{
 		Comment: comment.ToCooked(),
 	})
+}
+
+// 异步邮件发送
+func AsyncSendEmail(comment *model.Comment, parentComment *model.Comment) {
+	if !config.Instance.Email.Enabled {
+		return
+	}
+
+	if !parentComment.IsEmpty() && !comment.IsPending {
+		notify := model.FindCreateNotify(parentComment.UserID, comment.ID)
+		email.AsyncSend(&notify)
+	}
+
+	// 邮件通知管理员
+	var admins []model.User
+	lib.DB.Where("is_admin = 1").Find(&admins)
+
+	if len(admins) == 0 {
+		return
+	}
+
+	for _, admin := range admins {
+		notify := model.FindCreateNotify(parentComment.UserID, comment.ID)
+		email.AsyncSendToAdmin(&notify, &admin) // 发送邮件给管理员
+	}
 }

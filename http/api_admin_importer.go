@@ -86,15 +86,19 @@ func ActionAdminImporter(c echo.Context) error {
 
 			// 创建新 comment 实例
 			nComment := model.Comment{
-				Content:     oc.Content,
-				Rid:         oc.Rid,
-				UserID:      user.ID,
-				PageKey:     page.Key,
-				IP:          oc.IP,
-				UA:          oc.UA,
-				IsPending:   oc.IsPending,
+				Content: oc.Content,
+
+				PageKey:  page.Key,
+				SiteName: p.SiteName,
+
+				UserID: user.ID,
+				UA:     oc.UA,
+				IP:     oc.IP,
+
+				Rid: oc.Rid,
+
 				IsCollapsed: oc.IsCollapsed,
-				SiteName:    p.SiteName,
+				IsPending:   oc.IsPending,
 			}
 
 			// 日期恢复

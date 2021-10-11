@@ -14,7 +14,7 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/pkged"
 )
 
-func RenderEmailTpl(from model.CookedCommentForEmail, to model.CookedCommentForEmail) string {
+func RenderEmailTpl(notify *model.Notify, from model.CookedCommentForEmail, to model.CookedCommentForEmail) string {
 	tplName := config.Instance.Email.MailTpl
 	tpl := ""
 	if _, err := os.Stat(tplName); os.IsExist(err) {
@@ -40,19 +40,17 @@ func RenderEmailTpl(from model.CookedCommentForEmail, to model.CookedCommentForE
 		tpl = strings.ReplaceAll(tpl, fmt.Sprintf("{{to.%s}}", k), getValue(k, v))
 	}
 
-	tpl = RenderConfig(tpl)
-
-	// TODO: not from.link
-	tpl = strings.ReplaceAll(tpl, "{{reply_link}}", lib.AddQueryToURL(from.Link, map[string]string{"artalk_comment": fmt.Sprintf("%d", from.ID)}))
+	tpl = RenderConfig(tpl, notify, from, to)
+	tpl = strings.ReplaceAll(tpl, "{{reply_link}}", notify.GetReadLink())
 
 	return tpl
 }
 
-func RenderConfig(str string) string {
+func RenderConfig(str string, notify *model.Notify, from, to model.CookedCommentForEmail) string {
 	for k, v := range config.Flat {
 		str = strings.ReplaceAll(str, fmt.Sprintf("{{config.%s}}", k), fmt.Sprintf("%v", v))
 	}
-	str = strings.ReplaceAll(str, "{{site_name}}", config.Instance.SiteName)
+	str = strings.ReplaceAll(str, "{{site_name}}", from.SiteName)
 	return str
 }
 

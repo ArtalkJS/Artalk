@@ -12,25 +12,26 @@ import (
 	"gorm.io/gorm"
 )
 
-type CommentType string
-
 type Comment struct {
 	gorm.Model
+
 	Content string
 
-	UserID   uint   `gorm:"index"`
 	PageKey  string `gorm:"index"`
 	SiteName string `gorm:"index"`
-	User     User   `gorm:"foreignKey:UserID;references:ID"`
-	Page     Page   `gorm:"foreignKey:PageKey;references:Key"`
-	Site     Site   `gorm:"foreignKey:SiteName;references:Name"`
 
-	Rid uint `gorm:"index"`
-	UA  string
-	IP  string
+	UserID uint `gorm:"index"`
+	UA     string
+	IP     string
 
-	IsCollapsed bool
-	IsPending   bool
+	Rid uint `gorm:"index"` // 父评论 ID
+
+	IsCollapsed bool // 折叠
+	IsPending   bool // 待审
+
+	User User `gorm:"foreignKey:UserID;references:ID"`
+	Page Page `gorm:"foreignKey:PageKey;references:Key"`
+	Site Site `gorm:"foreignKey:SiteName;references:Name"`
 }
 
 func (c Comment) IsEmpty() bool {
@@ -66,6 +67,18 @@ func (c *Comment) FetchPage() Page {
 	return page
 }
 
+func (c *Comment) FetchSite() Site {
+	if !c.Site.IsEmpty() {
+		return c.Site
+	}
+
+	var site Site
+	lib.DB.Where("name = ?", c.SiteName).First(&site)
+
+	c.Site = site
+	return site
+}
+
 func (c Comment) FetchChildren(filters ...func(db *gorm.DB) *gorm.DB) []Comment {
 	children := []Comment{}
 	fetchChildrenOnce(&children, c, filters...) // TODO: children 数量限制
@@ -94,12 +107,14 @@ type CookedComment struct {
 	IsPending      bool   `json:"is_pending"`
 	IsAllowReply   bool   `json:"is_allow_reply"`
 	Rid            uint   `json:"rid"`
-	PageKey        string `json:"page_key"`
+	BadgeName      string `json:"badge_name"`
+	BadgeColor     string `json:"badge_color"`
 	Visible        bool   `json:"visible"`
+	PageKey        string `json:"page_key"`
 	SiteName       string `json:"site_name"`
 }
 
-func (c Comment) ToCooked() CookedComment {
+func (c *Comment) ToCooked() CookedComment {
 	user := c.FetchUser()
 	//page := c.FetchPage()
 
@@ -115,8 +130,10 @@ func (c Comment) ToCooked() CookedComment {
 		IsPending:      c.IsPending,
 		IsAllowReply:   c.IsAllowReply(),
 		Rid:            c.Rid,
-		PageKey:        c.PageKey,
+		BadgeName:      user.BadgeName,
+		BadgeColor:     user.BadgeColor,
 		Visible:        true,
+		PageKey:        c.PageKey,
 		SiteName:       c.SiteName,
 	}
 }
@@ -137,11 +154,13 @@ type CookedCommentForEmail struct {
 	IsPending      bool   `json:"is_pending"`
 	IsAllowReply   bool   `json:"is_allow_reply"`
 	Rid            uint   `json:"rid"`
+	BadgeName      string `json:"badge_name"`
+	BadgeColor     string `json:"badge_color"`
 	PageKey        string `json:"page_key"`
 	SiteName       string `json:"site_name"`
 }
 
-func (c Comment) ToCookedForEmail() CookedCommentForEmail {
+func (c *Comment) ToCookedForEmail() CookedCommentForEmail {
 	user := c.FetchUser()
 	content, _ := lib.Marked(c.Content)
 
@@ -161,12 +180,14 @@ func (c Comment) ToCookedForEmail() CookedCommentForEmail {
 		IsPending:      c.IsPending,
 		IsAllowReply:   c.IsAllowReply(),
 		Rid:            c.Rid,
+		BadgeName:      user.BadgeName,
+		BadgeColor:     user.BadgeColor,
 		PageKey:        c.PageKey,
 		SiteName:       c.SiteName,
 	}
 }
 
-func (c *Comment) AntiSpamCheck(echoCtx echo.Context) {
+func (c *Comment) SpamCheck(echoCtx echo.Context) {
 	setPending := func() {
 		if c.IsPending {
 			return

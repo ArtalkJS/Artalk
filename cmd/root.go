@@ -62,6 +62,12 @@ func init() {
 func initConfig() {
 	config.Init(cfgFile)
 
+	// 检查 app_key 是否设置
+	if strings.TrimSpace(config.Instance.AppKey) == "" {
+		logrus.Fatal("请检查配置文件，并设置一个 app_key (任意字符串) 用于数据加密")
+		os.Exit(1)
+	}
+
 	// 设置时区
 	if strings.TrimSpace(config.Instance.TimeZone) == "" {
 		logrus.Fatal("请检查配置文件，并设置 timezone")
@@ -69,12 +75,6 @@ func initConfig() {
 	}
 	denverLoc, _ := time.LoadLocation(config.Instance.TimeZone)
 	time.Local = denverLoc
-
-	// 检查 app_key 是否设置
-	if strings.TrimSpace(config.Instance.AppKey) == "" {
-		logrus.Fatal("请检查配置文件，并设置一个 app_key (任意字符串) 用于数据加密")
-		os.Exit(1)
-	}
 }
 
 // 2. 初始化日志
@@ -131,7 +131,7 @@ func initDB() {
 	}
 
 	// Migrate the schema
-	lib.DB.AutoMigrate(&model.Site{}, &model.Page{}, &model.User{}, &model.Comment{}) // 注意表的创建顺序，因为有关联字段
+	lib.DB.AutoMigrate(&model.Site{}, &model.Page{}, &model.User{}, &model.Comment{}, &model.Notify{}) // 注意表的创建顺序，因为有关联字段
 }
 
 // 4. 同步配置文件与数据库

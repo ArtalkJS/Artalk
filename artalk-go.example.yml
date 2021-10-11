@@ -1,6 +1,3 @@
-# 网站名
-site_name: 'ArtalkServer'
-
 # HTTP Server 监听地址
 http_addr: ':23366'
 

@@ -18,7 +18,6 @@ var Flat map[string]interface{}
 // Config 配置
 // @link https://godoc.org/github.com/mitchellh/mapstructure
 type Config struct {
-	SiteName     string          `mapstructure:"site_name"`    // 网站名
 	AppKey       string          `mapstructure:"app_key"`      // 加密密钥
 	Debug        bool            `mapstructure:"debug"`        // 调试模式
 	TimeZone     string          `mapstructure:"timezone"`     // 时区

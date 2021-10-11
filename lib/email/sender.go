@@ -6,17 +6,19 @@ import (
 	"os/exec"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/model"
 	ali_dm "github.com/qwqcode/go-aliyun-email"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
 type Email struct {
-	FromAddr string
-	FromName string
-	ToAddr   string
-	Subject  string
-	Body     string
+	FromAddr     string
+	FromName     string
+	ToAddr       string
+	Subject      string
+	Body         string
+	LinkedNotify *model.Notify
 }
 
 func SendBySMTP(email Email) bool {

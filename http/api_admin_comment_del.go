@@ -42,7 +42,7 @@ func ActionAdminCommentDel(c echo.Context) error {
 		return RespError(c, "comment not found")
 	}
 
-	if err := lib.DB.Model(&model.Comment{}).Delete("id = ?", comment.ID).Error; err != nil {
+	if err := DelComment(&comment); err != nil {
 		return RespError(c, "comment delete error")
 	}
 
@@ -50,7 +50,7 @@ func ActionAdminCommentDel(c echo.Context) error {
 	hasErr := false
 	children := comment.FetchChildren(func(db *gorm.DB) *gorm.DB { return db })
 	for _, c := range children {
-		err := lib.DB.Delete(&c)
+		err := DelComment(&c)
 		if err != nil {
 			hasErr = true
 		}
@@ -60,4 +60,24 @@ func ActionAdminCommentDel(c echo.Context) error {
 	}
 
 	return RespSuccess(c)
+}
+
+func DelComment(comment *model.Comment) error {
+	// 清除 notify
+	var notifications []model.Notify
+	lib.DB.Where("comment_id = ?", comment.ID).Find(&notifications)
+
+	for _, n := range notifications {
+		if err := lib.DB.Delete(n).Error; err != nil {
+			return err
+		}
+	}
+
+	// 删除 comment
+	err := lib.DB.Delete(comment).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

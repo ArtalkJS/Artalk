@@ -39,10 +39,11 @@ func ActionAdminSiteDel(c echo.Context) error {
 		var pages []model.Page
 		lib.DB.Where("site_name = ?", site.Name).Find(&pages)
 
-		tx := lib.DB.Begin()
 		for _, c := range comments {
-			tx.Delete(&c)
+			DelComment(&c)
 		}
+
+		tx := lib.DB.Begin()
 		for _, p := range pages {
 			tx.Unscoped().Delete(&p)
 		}

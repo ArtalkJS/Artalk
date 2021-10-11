@@ -21,7 +21,7 @@ func ActionAdminSendMail(c echo.Context) error {
 		return resp
 	}
 
-	email.SendTo(p.Subject, p.Body, p.ToAddr)
+	email.AsyncSendTo(p.Subject, p.Body, p.ToAddr)
 
 	return RespSuccess(c)
 }

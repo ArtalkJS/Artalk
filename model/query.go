@@ -126,9 +126,9 @@ func FindPage(key string, siteName string) Page {
 	return page
 }
 
-func FindPageByID(id uint, siteName string) Page {
+func FindPageByID(id uint) Page {
 	var page Page
-	lib.DB.Where("id = ? AND site_name = ?", id, siteName).First(&page)
+	lib.DB.Where("id = ?", id).First(&page)
 	return page
 }
 

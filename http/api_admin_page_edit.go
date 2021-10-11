@@ -39,7 +39,7 @@ func ActionAdminPageEdit(c echo.Context) error {
 		return resp
 	}
 
-	page := model.FindPageByID(p.ID, p.SiteName)
+	page := model.FindPageByID(p.ID)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
 	}

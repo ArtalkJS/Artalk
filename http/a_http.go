@@ -71,7 +71,7 @@ func InitRoute(e *echo.Echo) {
 	}
 
 	fileServer := http.FileServer(f)
-	e.GET("/*", echo.WrapHandler(fileServer))
+	e.Any("/*", echo.WrapHandler(fileServer))
 
 	// api
 	api := e.Group("/api")

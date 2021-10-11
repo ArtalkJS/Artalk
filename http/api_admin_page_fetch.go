@@ -6,9 +6,7 @@ import (
 )
 
 type ParamsAdminPageFetch struct {
-	Key      string `mapstructure:"key" param:"required"`
-	SiteName string `mapstructure:"site_name"`
-	SiteID   uint
+	ID uint `mapstructure:"id" param:"required"`
 }
 
 func ActionAdminPageFetch(c echo.Context) error {
@@ -21,12 +19,7 @@ func ActionAdminPageFetch(c echo.Context) error {
 		return resp
 	}
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
-		return resp
-	}
-
-	page := model.FindPage(p.Key, p.SiteName)
+	page := model.FindPageByID(p.ID)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
 	}

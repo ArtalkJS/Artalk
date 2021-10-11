@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/pkged"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/markbates/pkger"
 	echolog "github.com/onrik/logrus/echo"
 	"github.com/sirupsen/logrus"
 )
@@ -64,7 +64,7 @@ func Run() {
 }
 
 func InitRoute(e *echo.Echo) {
-	f, err := pkger.Open("/frontend")
+	f, err := pkged.Open("/frontend")
 	if err != nil {
 		logrus.Fatal(err)
 		return

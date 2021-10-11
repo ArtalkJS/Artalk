@@ -5,7 +5,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"net/mail"
 	"net/url"
 	"os"
@@ -18,23 +17,9 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 )
 
-func EnsureDir(dirName string) error {
-	err := os.Mkdir(dirName, os.ModeDir)
-	if err == nil {
-		return nil
-	}
-	if os.IsExist(err) {
-		// check that the existing path is a directory
-		info, err := os.Stat(dirName)
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() {
-			return errors.New("path exists but is not a directory")
-		}
-		return nil
-	}
-	return err
+// EnsureDir ensures that a target directory exists (like `mkdir -p`),
+func EnsureDir(dir string) error {
+	return os.MkdirAll(dir, 0700)
 }
 
 func GetMD5Hash(text string) string {

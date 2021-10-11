@@ -11,7 +11,7 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
-	"github.com/markbates/pkger"
+	"github.com/ArtalkJS/ArtalkGo/pkged"
 )
 
 func RenderEmailTpl(from model.CookedCommentForEmail, to model.CookedCommentForEmail) string {
@@ -41,6 +41,8 @@ func RenderEmailTpl(from model.CookedCommentForEmail, to model.CookedCommentForE
 	}
 
 	tpl = RenderConfig(tpl)
+
+	// TODO: not from.link
 	tpl = strings.ReplaceAll(tpl, "{{reply_link}}", lib.AddQueryToURL(from.Link, map[string]string{"artalk_comment": fmt.Sprintf("%d", from.ID)}))
 
 	return tpl
@@ -65,7 +67,7 @@ func GetExternalEmailTpl(filename string) string {
 
 func GetInternalEmailTpl(tplName string) string {
 	filename := fmt.Sprintf("/email-tpl/%s.html", tplName)
-	f, err := pkger.Open(filename)
+	f, err := pkged.Open(filename)
 	if err != nil {
 		return ""
 	}

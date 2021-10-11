@@ -26,7 +26,7 @@ export function htmlDecode (str: string) {
   return output
 }
 
-export function getLocationParmByName (name: string) {
+export function getQueryParam (name: string) {
   const match = RegExp(`[?&]${name}=([^&]*)`).exec(window.location.search);
   return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }

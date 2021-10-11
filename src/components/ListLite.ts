@@ -262,9 +262,9 @@ export default class ListLite extends Component {
   }
 
   /** 阅读更多操作 */
-  readMore () {
+  async readMore () {
     const offset = this.offset + this.pageSize
-    this.reqComments(offset)
+    await this.reqComments(offset)
   }
 
   /** 阅读更多按钮 - 显示 */

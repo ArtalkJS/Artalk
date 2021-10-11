@@ -67,24 +67,35 @@ export default class List extends ListLite {
   }
 
   /** 跳到评论项位置 - 根据 `location.hash` */
-  public checkGoToCommentByUrlHash () {
-    let commentId: number = Number(Utils.getLocationParmByName('artalk_comment'))
+  public async checkGoToCommentByUrlHash () {
+    let commentId = Number(Utils.getQueryParam('atk_comment')) // same as backend GetReplyLink()
     if (!commentId) {
-      const match = window.location.hash.match(/#artalk-comment-([0-9]+)/)
+      const match = window.location.hash.match(/#atk-comment-([0-9]+)/)
       if (!match || !match[1] || Number.isNaN(Number(match[1]))) return
       commentId = Number(match[1])
     }
+    if (!commentId) return
 
     const comment = this.findComment(commentId)
-    if (!comment && this.hasMoreComments) {
-      this.readMore()
+    if (!comment) { // 若找不到评论
+      if (this.hasMoreComments) { // 阅读更多，并重试
+        await this.readMore()
+        this.checkGoToCommentByUrlHash()
+        return
+      }
+
       return
     }
-    if (!comment) { return }
 
     Ui.scrollIntoView(comment.getEl(), false)
     setTimeout(() => {
       comment.getEl().classList.add('atk-flash-once')
+
+      // 已阅 API
+      const notifyKey = Utils.getQueryParam('atk_notify_key')
+      if (notifyKey) {
+        new Api(this.ctx).markRead(notifyKey)
+      }
     }, 800)
   }
 

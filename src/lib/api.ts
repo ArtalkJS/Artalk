@@ -91,6 +91,19 @@ export default class Api {
     }
   }
 
+  public markRead(notifyKey: string) {
+    const params: any = {
+      notify_key: notifyKey,
+    }
+
+    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
+
+    return CommonFetch(this.ctx, `${this.serverURL}/mark-read`, {
+      method: 'POST',
+      body: getFormData(params),
+    }).then((json) => (json.success as boolean))
+  }
+
   public captchaGet(): Promise<string> {
     return CommonFetch(this.ctx, `${this.serverURL}/captcha/refresh`, {
       method: 'GET',

@@ -8,9 +8,6 @@ export interface CommentData {
   /** 用户昵称 */
   nick: string
 
-  /** 用户邮箱 */
-  email: string
-
   /** 用户邮箱（已加密） */
   email_encrypted: string
 
@@ -35,11 +32,11 @@ export interface CommentData {
   /** 是否为管理员 */
   is_admin?: boolean
 
-  /** 徽章 */
-  badge?: {
-    name?: string
-    color?: string
-  }
+  /** 徽章文字 */
+  badge_name?: string
+
+  /** 徽章颜色 */
+  badge_color?: string
 
   /** 是否允许回复 */
   is_allow_reply?: boolean

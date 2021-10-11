@@ -55,10 +55,10 @@ export default class Comment extends Component {
     nickEl.href = this.data.link
 
     const badgeEl = this.el.querySelector<HTMLElement>('.atk-badge')!
-    if (this.data.badge) {
-      badgeEl.innerText = this.data.badge.name || '徽章'
-      if (this.data.badge.color)
-        badgeEl.style.backgroundColor = this.data.badge.color
+    if (this.data.badge_name) {
+      badgeEl.innerText = this.data.badge_name
+      if (this.data.badge_color)
+        badgeEl.style.backgroundColor = this.data.badge_color
     } else {
       badgeEl.remove()
     }

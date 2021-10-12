@@ -29,6 +29,7 @@
         color: @color-meta;
         cursor: pointer;
         user-select: none;
+        position: relative;
 
         &.atk-on, &.atk-on * {
           color: @color-main;
@@ -38,6 +39,21 @@
           margin-right: 10px;
           padding-right: 10px;
           border-right: 1px solid @color-border;
+        }
+
+        .atk-unread-badge {
+          position: absolute;
+          top: -5px;
+          left: -6px;
+          color: #fff;
+          background: @color-pink;
+          text-align: center;
+          min-width: 16px;
+          height: 16px;
+          padding: 0 3px;
+          border-radius: 8px;
+          line-height: 16px;
+          font-size: 12px;
         }
       }
     }

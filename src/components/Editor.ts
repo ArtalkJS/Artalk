@@ -126,6 +126,9 @@ export default class Editor extends Component {
             this.user.data.isAdmin = false
           }
 
+          // 未读消息更新
+          this.ctx.dispatchEvent('unread-update', { notifies: data.unread, })
+
           // 若用户为管理员，执行登陆操作
           if (this.user.checkHasBasicUserInfo() && !data.is_login && data.user && data.user.is_admin) {
             this.showLoginDialog()

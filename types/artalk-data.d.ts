@@ -69,6 +69,10 @@ export interface ListData {
 
   /** 页面信息 */
   page: PageData
+
+  unread: NotifyData[]
+
+  unread_count: number
 }
 
 export interface PageData {
@@ -93,7 +97,7 @@ export interface PageData {
 
 export interface SiteData {
   /** 站点 ID */
-  id: string
+  id: number
 
   /** 站点名 */
   name: string
@@ -110,7 +114,7 @@ export interface SiteData {
 
 export interface UserData {
   /** 用户 ID */
-  id: string
+  id: number
 
   /** 用户名 */
   name: string
@@ -129,4 +133,13 @@ export interface UserData {
 
   /** 是否属于管理员 */
   is_admin: boolean
+}
+
+export interface NotifyData {
+  id: number
+  user_id: number
+  comment_id: number
+  is_read: boolean
+  is_emailed: boolean
+  read_link: string
 }

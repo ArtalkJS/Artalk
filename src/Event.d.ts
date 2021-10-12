@@ -1,4 +1,4 @@
-import { ListData, CommentData } from '~/types/artalk-data'
+import { ListData, CommentData, NotifyData } from '~/types/artalk-data'
 
 /** EventName to EventPayload Type */
 export interface EventPayloadMap {
@@ -20,6 +20,7 @@ export interface EventPayloadMap {
   'editor-notify': NotifyConf
   'editor-reply': CommentData
   'user-changed': undefined
+  'unread-update': UnreadUpdatePayload
   'checker-admin': CheckerConf
   'checker-captcha': CheckerCaptchaConf
 }
@@ -41,6 +42,10 @@ export interface CheckerCaptchaConf extends CheckerConf {
 
 export interface SidebarShowPayload {
   viewName?: string
+}
+
+export interface UnreadUpdatePayload {
+  notifies: NotifyData[]
 }
 
 // ============================================

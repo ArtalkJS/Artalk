@@ -1,4 +1,4 @@
-import { CommentData, ListData, UserData, PageData, SiteData } from '~/types/artalk-data'
+import { CommentData, ListData, UserData, PageData, SiteData, NotifyData } from '~/types/artalk-data'
 import Context from '../Context'
 
 export default class Api {
@@ -18,9 +18,12 @@ export default class Api {
     }
 
     if (type) {
+      params.type = type
+    }
+
+    if (this.ctx.user.checkHasBasicUserInfo()) {
       params.name = this.ctx.user.data.nick
       params.email = this.ctx.user.data.email
-      params.type = type
     }
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
@@ -82,7 +85,9 @@ export default class Api {
       signal,
     }).then((json) => ({
       user: json.data.user as UserData|null,
-      is_login: json.data.is_login as boolean
+      is_login: json.data.is_login as boolean,
+      unread: (json.data.unread || []) as NotifyData[],
+      unread_count: json.data.unread_count || 0,
     }))
 
     return {
@@ -203,7 +208,7 @@ export default class Api {
     }).then((json) => (json.success as boolean))
   }
 
-  public siteDel(id: string, delContent = false) {
+  public siteDel(id: number, delContent = false) {
     const params: any = {
       id,
       del_content: delContent ? '1' : '0'
@@ -226,7 +231,7 @@ export default class Api {
     }).then((json) => (json.success as boolean))
   }
 
-  public siteEdit(id: string, data: {
+  public siteEdit(id: number, data: {
     name: string
     urls: string
   }) {

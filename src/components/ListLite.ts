@@ -4,12 +4,12 @@ import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import Api from '../lib/api'
 import Comment from './Comment'
-import { ListData, CommentData } from '~/types/artalk-data'
+import { ListData, CommentData, NotifyData } from '~/types/artalk-data'
 
 export default class ListLite extends Component {
   public el: HTMLElement
   private commentsWrapEl: HTMLElement
-  private comments: Comment[] = []
+  public comments: Comment[] = []
 
   public data?: ListData
   private pageSize: number = 15 // 每次请求获取量
@@ -28,6 +28,9 @@ export default class ListLite extends Component {
   public isFirstLoad = true
 
   public flatMode = false
+
+  public unread: NotifyData[] = []
+  public unreadHighlight = false
 
   constructor (ctx: Context) {
     super(ctx)
@@ -61,6 +64,8 @@ export default class ListLite extends Component {
         el.innerText = Utils.timeAgo(new Date(Number(date)))
       })
     }, 30 * 1000) // 30s 更新一次
+
+    this.ctx.addEventListener('unread-update', (data) => (this.updateUnread(data.notifies)))
   }
 
   public async reqComments(offset: number = 0) {
@@ -119,6 +124,8 @@ export default class ListLite extends Component {
     if (this.isFirstLoad && this.hasMoreComments) {
       this.initScrollBottomAutoLoad()
     }
+
+    this.ctx.dispatchEvent('unread-update', { notifies: data.unread || [] })
 
     this.isFirstLoad = false
   }
@@ -368,5 +375,28 @@ export default class ListLite extends Component {
     this.commentsWrapEl.innerHTML = ''
     this.data = undefined
     this.comments = []
+  }
+
+  public updateUnread(notifies: NotifyData[]) {
+    this.unread = notifies
+
+    // 高亮评论
+    if (this.unreadHighlight) {
+      this.eachComment(this.comments, (comment) => {
+        const notify = this.unread.find(o => o.comment_id === comment.data.id)
+        if (notify) {
+          comment.setUnread(true)
+          comment.setOpenURL(notify.read_link)
+          comment.openEvt = () => {
+            this.unread = this.unread.filter(o => o.comment_id !== comment.data.id) // remove
+            this.ctx.dispatchEvent('unread-update', {
+              notifies: this.unread
+            })
+          }
+        } else {
+          comment.setUnread(false)
+        }
+      })
+    }
   }
 }

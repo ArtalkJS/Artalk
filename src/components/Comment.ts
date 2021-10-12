@@ -27,6 +27,11 @@ export default class Comment extends Component {
 
   public afterRender?: () => void
 
+  private unread = false
+  private openable = false
+  private openURL?: string
+  public openEvt?: () => void
+
   constructor (ctx: Context, data: CommentData) {
     super(ctx)
 
@@ -44,6 +49,25 @@ export default class Comment extends Component {
     this.contentEl = this.bodyEl.querySelector('.atk-content')!
     this.actionsEl = this.el.querySelector('.atk-comment-actions')!
     this.childrenEl = null
+
+    // class style
+    if (this.unread) this.el.classList.add('atk-unread')
+    else this.el.classList.remove('atk-unread')
+
+    if (this.openable) {
+      this.el.classList.add('atk-openable')
+    } else {
+      this.el.classList.remove('atk-openable')
+    }
+
+    this.el.addEventListener('click', (evt) => {
+      if (this.openable && this.openURL) {
+        evt.preventDefault()
+        window.open(this.openURL)
+      }
+      if (this.openEvt)
+        this.openEvt()
+    })
 
     // 填入内容
     this.el.setAttribute('data-comment-id', `${this.data.id}`)
@@ -324,5 +348,22 @@ export default class Comment extends Component {
           btnElem.classList.remove('atk-in-process')
         }, 2000)
       })
+  }
+
+  public setUnread (val: boolean) {
+    this.unread = val
+    if (this.unread) this.el.classList.add('atk-unread')
+    else this.el.classList.remove('atk-unread')
+  }
+
+  public setOpenURL (url: string) {
+    if (!url) {
+      this.openable = false
+      this.el.classList.remove('atk-openable')
+    }
+
+    this.openable = true
+    this.openURL = url
+    this.el.classList.add('atk-openable')
   }
 }

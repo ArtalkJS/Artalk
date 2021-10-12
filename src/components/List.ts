@@ -11,6 +11,8 @@ import { ListData } from '~/types/artalk-data'
 export default class List extends ListLite {
   private closeCommentBtnEl!: HTMLElement
   private openSidebarBtnEl!: HTMLElement
+  private openAdminPanelBtnEl!: HTMLElement
+  private unreadBadgeEl!: HTMLElement
 
   constructor (ctx: Context) {
     super(ctx)
@@ -31,6 +33,7 @@ export default class List extends ListLite {
     this.ctx.addEventListener('list-insert', (data) => (this.insertComment(data)))
     this.ctx.addEventListener('list-comment-del', (comment) => (this.deleteComment(comment.id)))
     this.ctx.addEventListener('list-update-data', (updateData) => { updateData(this.data);this.refreshUI() } )
+    this.ctx.addEventListener('unread-update', (data) => (this.showUnreadBadge(data.notifies?.length || 0)))
   }
 
   /** 刷新界面 */
@@ -80,12 +83,10 @@ export default class List extends ListLite {
     if (!comment) { // 若找不到评论
       if (this.hasMoreComments) { // 阅读更多，并重试
         await this.readMore()
-        this.checkGoToCommentByUrlHash()
-        return
       }
-
-      return
     }
+
+    if (!comment) return
 
     Ui.scrollIntoView(comment.getEl(), false)
     setTimeout(() => {
@@ -95,6 +96,12 @@ export default class List extends ListLite {
       const notifyKey = Utils.getQueryParam('atk_notify_key')
       if (notifyKey) {
         new Api(this.ctx).markRead(notifyKey)
+          .then(() => {
+            this.unread = this.unread.filter(o => o.comment_id !== comment.data.id)
+            this.ctx.dispatchEvent('unread-update', {
+              notifies: this.unread
+            })
+          })
       }
     }, 800)
   }
@@ -103,8 +110,15 @@ export default class List extends ListLite {
     // 侧边栏呼出按钮
     this.openSidebarBtnEl = this.el.querySelector('[data-action="open-sidebar"]')!
     this.openSidebarBtnEl.addEventListener('click', () => {
-      this.ctx.dispatchEvent('sidebar-show')
+      this.ctx.dispatchEvent('sidebar-show', { viewName: 'message' })
     })
+
+    // 控制台呼出
+    this.openAdminPanelBtnEl = this.el.querySelector('[data-action="open-admin-panel"]')!
+    this.openAdminPanelBtnEl.addEventListener('click', () => {
+      this.ctx.dispatchEvent('sidebar-show', { viewName: 'admin' })
+    })
+
 
     // 关闭评论按钮
     this.closeCommentBtnEl = this.el.querySelector('[data-action="admin-close-comment"]')!
@@ -114,6 +128,8 @@ export default class List extends ListLite {
       this.data.page.admin_only = !this.data.page.admin_only
       this.adminPageEditSave()
     })
+
+    this.unreadBadgeEl = this.el.querySelector('.atk-unread-badge')!
   }
 
   /** 管理员设置页面信息 */
@@ -133,5 +149,14 @@ export default class List extends ListLite {
       .finally(() => {
         this.ctx.dispatchEvent('editor-hide-loading')
       })
+  }
+
+  public showUnreadBadge (count: number) {
+    if (count > 0) {
+      this.unreadBadgeEl.innerText = `${Number(count || 0)}`
+      this.unreadBadgeEl.style.display = 'block'
+    } else {
+      this.unreadBadgeEl.style.display = 'none'
+    }
   }
 }

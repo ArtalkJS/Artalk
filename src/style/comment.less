@@ -16,6 +16,24 @@
     }
   }
 
+  &.atk-unread:before {
+    content: ' ';
+    position: absolute;
+    left: 0;
+    top: 10%;
+    width: 3px;
+    height: 80%;
+    background: @color-main;
+  }
+
+  &.atk-openable {
+    cursor: pointer;
+
+    &:hover {
+      background: @color-bg-grey;
+    }
+  }
+
   &:last-child {
     border-bottom-color: transparent;
   }

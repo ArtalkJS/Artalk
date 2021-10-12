@@ -38,25 +38,10 @@ export default class MessageView extends SidebarView {
 export function CreateCommentList (ctx: Context) {
   const list = new ListLite(ctx)
   list.flatMode = true
+  list.unreadHighlight = true
   list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
   list.renderComment = (comment) => {
-    // comment.el.querySelector('[data-atk-action="comment-reply"]')!.remove()
-
-    comment.el.style.cursor = 'pointer'
-    comment.el.addEventListener('mouseover', () => {
-      comment.el.style.backgroundColor = 'var(--at-color-bg-grey)'
-    })
-
-    comment.el.addEventListener('mouseout', () => {
-      comment.el.style.backgroundColor = ''
-    })
-
-    comment.el.addEventListener('click', (evt) => {
-      evt.preventDefault()
-      window.open(`${comment.data.page_key}#artalk-comment-${comment.data.id}`)
-    })
-
-    // this.contentEl.appendChild(comment.getEl())
+    comment.setOpenURL(`${comment.data.page_key}#atk-comment-${comment.data.id}`)
   }
 
   return list

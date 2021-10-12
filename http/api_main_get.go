@@ -15,9 +15,10 @@ type ParamsGet struct {
 	Offset  int    `mapstructure:"offset"`
 
 	// Message Center
+	Type  string `mapstructure:"type"`
 	Name  string `mapstructure:"name"`
 	Email string `mapstructure:"email"`
-	Type  string `mapstructure:"type"`
+	User  *model.User
 
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
@@ -29,6 +30,8 @@ type ResponseGet struct {
 	Total        int64                 `json:"total"`
 	TotalParents int64                 `json:"total_parents"`
 	Page         model.CookedPage      `json:"page"`
+	Unread       []model.CookedNotify  `json:"unread"`
+	UnreadCount  int                   `json:"unread_count"`
 }
 
 // 获取评论查询实例
@@ -58,6 +61,13 @@ func ActionGet(c echo.Context) error {
 	var page model.Page
 	if !p.SiteAll {
 		page = model.FindPage(p.PageKey, p.SiteName)
+	}
+
+	// find user
+	var user model.User
+	if p.Name != "" && p.Email != "" {
+		user = model.FindUser(p.Name, p.Email)
+		p.User = &user
 	}
 
 	// comment parents
@@ -118,23 +128,31 @@ func ActionGet(c echo.Context) error {
 	total := CountComments(GetCommentQuery(c, p, p.SiteID))
 	totalParents := CountComments(GetCommentQuery(c, p, p.SiteID).Scopes(ParentComment()))
 
+	// unread notifies
+	var unreadNotifies = []model.CookedNotify{}
+	if p.User != nil {
+		unreadNotifies = model.FindUnreadNotifies(p.User.ID)
+	}
+
 	return RespData(c, ResponseGet{
 		Comments:     cookedComments,
 		Total:        total,
 		TotalParents: totalParents,
 		Page:         page.ToCooked(),
+		Unread:       unreadNotifies,
+		UnreadCount:  len(unreadNotifies),
 	})
 }
 
 // 请求是否为 通知中心数据
 func IsMsgCenter(p ParamsGet) bool {
-	return p.Name != "" && p.Email != "" && p.Type != ""
+	return p.Type != "" && p.User != nil && !p.User.IsEmpty()
 }
 
 // TODO: 重构 MsgCenter
 func MsgCenter(c echo.Context, p ParamsGet, siteID uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		user := model.FindUser(p.Name, p.Email)
+		user := p.User
 		isAdminReq := CheckIsAdminReq(c)
 
 		// admin_only 检测

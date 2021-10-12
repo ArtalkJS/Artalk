@@ -196,3 +196,19 @@ func NewNotify(userID uint, commentID uint) Notify {
 
 	return notify
 }
+
+func FindUnreadNotifies(userID uint) []CookedNotify {
+	if userID == 0 {
+		return []CookedNotify{}
+	}
+
+	var notifies []Notify
+	lib.DB.Where("user_id = ? AND is_read = 0", userID).Find(&notifies)
+
+	cookedNotifies := []CookedNotify{}
+	for _, n := range notifies {
+		cookedNotifies = append(cookedNotifies, n.ToCooked())
+	}
+
+	return cookedNotifies
+}

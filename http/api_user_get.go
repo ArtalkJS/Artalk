@@ -22,10 +22,10 @@ func ActionUserGet(c echo.Context) error {
 
 	if user.IsEmpty() || user.Name != p.Name || user.Email != p.Email {
 		return RespData(c, Map{
-			"user":            nil,
-			"is_login":        false,
-			"unread_msg":      0,
-			"unread_comments": []int{},
+			"user":         nil,
+			"is_login":     false,
+			"unread":       []interface{}{},
+			"unread_count": 0,
 		})
 	}
 
@@ -37,18 +37,13 @@ func ActionUserGet(c echo.Context) error {
 		user = tUser
 	}
 
-	// unread_msg
-	var notifications []model.Notify
-	lib.DB.Where("user_id = ?", user.ID).Find(&notifications)
-	unreadComments := []uint{}
-	for _, notify := range notifications {
-		unreadComments = append(unreadComments, notify.CommentID)
-	}
+	// unread notifies
+	unreadNotifies := model.FindUnreadNotifies(user.ID)
 
 	return RespData(c, Map{
-		"user":            user.ToCooked(),
-		"is_login":        isLogin,
-		"unread_msg":      0,
-		"unread_comments": unreadComments,
+		"user":         user.ToCooked(),
+		"is_login":     isLogin,
+		"unread":       unreadNotifies,
+		"unread_count": len(unreadNotifies),
 	})
 }

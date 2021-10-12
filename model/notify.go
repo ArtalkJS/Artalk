@@ -85,3 +85,23 @@ func (n *Notify) SetEmailed() error {
 	n.EmailAt = time.Now()
 	return lib.DB.Save(n).Error
 }
+
+type CookedNotify struct {
+	ID        uint   `json:"id"`
+	UserID    uint   `json:"user_id"`
+	CommentID uint   `json:"comment_id"`
+	IsRead    bool   `json:"is_read"`
+	IsEmailed bool   `json:"is_emailed"`
+	ReadLink  string `json:"read_link"`
+}
+
+func (n *Notify) ToCooked() CookedNotify {
+	return CookedNotify{
+		ID:        n.ID,
+		UserID:    n.UserID,
+		CommentID: n.CommentID,
+		IsRead:    n.IsRead,
+		IsEmailed: n.IsEmailed,
+		ReadLink:  n.GetReadLink(),
+	}
+}

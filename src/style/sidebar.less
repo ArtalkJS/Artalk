@@ -1,5 +1,5 @@
 .atk-sidebar {
-  @width: 430px;
+  @width: 450px;
   position: fixed;
   z-index: 99999;
   top: 0;
@@ -147,12 +147,19 @@
 
   .atk-form-inline-wrap {
     display: flex;
+    align-items: center;
     justify-content: center;
     padding: 15px 0;
 
     input, select, button {
       display: inline !important;
       min-width: initial !important;
+
+      @media only screen and (max-width: 768px) {
+        & {
+          width: 100%;
+        }
+      }
     }
   }
 
@@ -202,7 +209,6 @@
       line-height: 30px;
       cursor: pointer;
       outline: none;
-      margin-top: 20px;
       padding: 0 20px;
       border-radius: 2px;
       margin: 0 5px;
@@ -246,6 +252,7 @@
       display: flex;
       margin-top: 10px;
       flex-direction: row;
+      flex-wrap: wrap;
 
       & > .atk-item {
         font-size: 14px;

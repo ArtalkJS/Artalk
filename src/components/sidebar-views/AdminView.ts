@@ -100,6 +100,7 @@ export default class AdminView extends SidebarView {
     el.prepend(siteFilterBarEl)
     loaded = true
 
+    this.el.innerHTML = ''
     this.el.append(el)
   }
 
@@ -114,8 +115,9 @@ export default class AdminView extends SidebarView {
     const siteFilterBarEl = await this.initSiteFilterBar((item) => {
       this.reqPages(pListEl, item.name)
     })
-    this.el.prepend(siteFilterBarEl)
+    el.prepend(siteFilterBarEl)
 
+    this.el.innerHTML = ''
     this.el.append(el)
   }
 
@@ -345,6 +347,7 @@ export default class AdminView extends SidebarView {
       }
     })
 
+    this.el.innerHTML = ''
     this.el.append(el)
   }
 
@@ -407,6 +410,7 @@ export default class AdminView extends SidebarView {
       reader.readAsText(impDataFileEl.files[0]);
     }
 
+    this.el.innerHTML = ''
     this.el.append(el)
   }
 }

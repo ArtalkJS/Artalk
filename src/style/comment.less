@@ -56,21 +56,22 @@
 
     & > .atk-comment-main {
       display: block;
-      margin-left: 60px;
+      margin-left: 62px;
 
       & > .atk-header {
         line-height: 1;
-        font-size: 12px;
+        font-size: 13px;
         margin-bottom: 3px;
         overflow: hidden;
         position: relative;
         display: flex;
         flex-wrap: wrap;
-        align-items: flex-end;
+        align-items: center;
 
         .badge() {
           background: @color-bg-grey;
-          padding: 0 5px;
+          padding: 0 6px;
+          line-height: 18px;
           border-radius: 3px;
         }
 
@@ -80,11 +81,11 @@
           color: @color-meta;
 
           &:not(:last-child) {
-            margin-right: 5px;
+            margin-right: 6px;
           }
 
           &.atk-nick {
-            font-size: 13px;
+            font-size: 14px;
 
             & > a {
               color: @color-main;
@@ -199,13 +200,12 @@
       }
 
       & > .atk-footer {
-        margin-top: 4px;
+        margin-top: 12px;
 
         .atk-comment-actions {
           display: flex;
           flex-direction: row;
           align-items: center;
-          margin-top: 8px;
 
           & > span {
             display: inline-flex;

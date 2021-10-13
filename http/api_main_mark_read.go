@@ -8,6 +8,10 @@ import (
 type ParamsMarkRead struct {
 	NotifyKey string `mapstructure:"notify_key"`
 
+	Name    string `mapstructure:"name"`
+	Email   string `mapstructure:"email"`
+	AllRead bool   `mapstructure:"all_read"`
+
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
 	SiteAll  bool
@@ -22,6 +26,20 @@ func ActionMarkRead(c echo.Context) error {
 	// find site
 	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
 		return resp
+	}
+
+	// all read
+	if p.AllRead {
+		if p.Name == "" || p.Email == "" {
+			return RespError(c, "need username and email")
+		}
+
+		err := model.NotifyMarkAllAsRead(p.Name, p.Email)
+		if err != nil {
+			return RespError(c, err.Error())
+		}
+
+		return RespSuccess(c)
 	}
 
 	// find notify

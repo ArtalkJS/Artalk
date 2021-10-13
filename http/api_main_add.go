@@ -144,6 +144,7 @@ func AsyncSendEmail(comment *model.Comment, parentComment *model.Comment) {
 		return
 	}
 
+	// TODO 管理员自己评论问题，重复发送，管理员太吵了（别人回复别人都会发提醒）
 	if !parentComment.IsEmpty() && !comment.IsPending {
 		notify := model.FindCreateNotify(parentComment.UserID, comment.ID)
 		notify.Comment = *comment

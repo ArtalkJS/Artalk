@@ -1,6 +1,8 @@
 package model
 
 import (
+	"errors"
+
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -211,4 +213,22 @@ func FindUnreadNotifies(userID uint) []CookedNotify {
 	}
 
 	return cookedNotifies
+}
+
+func NotifyMarkAllAsRead(name string, email string) error {
+	user := FindUser(name, email)
+	if user.IsEmpty() {
+		return errors.New("user not found")
+	}
+
+	// find all
+	var notifies []Notify
+	lib.DB.Where("user_id = ?", user.ID).Find(&notifies)
+
+	// mark as read
+	for _, n := range notifies {
+		n.SetRead()
+	}
+
+	return nil
 }

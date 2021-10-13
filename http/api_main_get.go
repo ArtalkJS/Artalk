@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -50,7 +51,6 @@ func ActionGet(c echo.Context) error {
 	if isOK, resp := ParamsDecode(c, ParamsGet{}, &p); !isOK {
 		return resp
 	}
-	isMsgCenter := IsMsgCenter(p)
 
 	// find site
 	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
@@ -69,6 +69,8 @@ func ActionGet(c echo.Context) error {
 		user = model.FindUser(p.Name, p.Email)
 		p.User = &user
 	}
+
+	isMsgCenter := IsMsgCenter(p)
 
 	// comment parents
 	var comments []model.Comment
@@ -127,6 +129,11 @@ func ActionGet(c echo.Context) error {
 	// count comments
 	total := CountComments(GetCommentQuery(c, p, p.SiteID))
 	totalParents := CountComments(GetCommentQuery(c, p, p.SiteID).Scopes(ParentComment()))
+
+	if isMsgCenter {
+		// mark all as read
+		fmt.Println(model.NotifyMarkAllAsRead(p.Name, p.Email))
+	}
 
 	// unread notifies
 	var unreadNotifies = []model.CookedNotify{}

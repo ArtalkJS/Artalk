@@ -95,6 +95,9 @@ func ActionAdd(c echo.Context) error {
 
 		IsPending:   false,
 		IsCollapsed: false,
+
+		User: user,
+		Page: page,
 	}
 
 	// default comment type
@@ -144,7 +147,12 @@ func AsyncSendEmail(comment *model.Comment, parentComment *model.Comment) {
 		return
 	}
 
-	// TODO 管理员自己评论问题，重复发送，管理员太吵了（别人回复别人都会发提醒）
+	// 自己回复自己，不提醒
+	if comment.UserID == parentComment.UserID {
+		return
+	}
+
+	// 邮件回复对方
 	if !parentComment.IsEmpty() && !comment.IsPending {
 		notify := model.FindCreateNotify(parentComment.UserID, comment.ID)
 		notify.Comment = *comment
@@ -155,13 +163,11 @@ func AsyncSendEmail(comment *model.Comment, parentComment *model.Comment) {
 	var admins []model.User
 	lib.DB.Where("is_admin = 1").Find(&admins)
 
-	if len(admins) == 0 {
-		return
-	}
-
-	for _, admin := range admins {
-		notify := model.FindCreateNotify(admin.ID, comment.ID)
-		notify.Comment = *comment
-		email.AsyncSendToAdmin(&notify, &admin) // 发送邮件给管理员
+	if parentComment.IsEmpty() && len(admins) > 0 {
+		for _, admin := range admins {
+			notify := model.FindCreateNotify(admin.ID, comment.ID)
+			notify.Comment = *comment
+			email.AsyncSendToAdmin(&notify, &admin) // 发送邮件给管理员
+		}
 	}
 }

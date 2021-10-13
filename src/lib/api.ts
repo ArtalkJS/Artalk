@@ -220,15 +220,15 @@ export default class Api {
     }).then((json) => (json.success as boolean))
   }
 
-  public siteAdd(name: string, url: string) {
+  public siteAdd(name: string, urls: string) {
     const params: any = {
-      name, url,
+      name, urls,
     }
 
     return CommonFetch(this.ctx, `${this.serverURL}/admin/site-add`, {
       method: 'POST',
       body: getFormData(params),
-    }).then((json) => (json.success as boolean))
+    }).then((json) => (json.site as SiteData))
   }
 
   public siteEdit(id: number, data: {

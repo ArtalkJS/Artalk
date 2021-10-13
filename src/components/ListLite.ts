@@ -23,6 +23,7 @@ export default class ListLite extends Component {
   public noCommentText: string
   public renderComment?: (comment: Comment) => void
   public paramsEditor?: (params: any) => void
+  public onAfterLoad?: (data: ListData) => void
 
   private isLoading: boolean = false
   public isFirstLoad = true
@@ -100,6 +101,10 @@ export default class ListLite extends Component {
 
     try {
       this.onLoad(listData)
+
+      if (this.onAfterLoad) {
+        this.onAfterLoad(listData)
+      }
     } catch (e: any) {
       this.onError(String(e))
       throw e

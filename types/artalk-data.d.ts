@@ -73,6 +73,8 @@ export interface ListData {
   unread: NotifyData[]
 
   unread_count: number
+
+  sites?: SiteData[]
 }
 
 export interface PageData {

@@ -52,6 +52,7 @@ export default class Artalk {
 
     // Default `pageKey` conf
     if (!this.conf.pageKey) {
+      // TODO 自动获取和 atk_comment query 冲突
       // eslint-disable-next-line prefer-destructuring
       this.conf.pageKey = window.location.href.split('#')[0]
     }

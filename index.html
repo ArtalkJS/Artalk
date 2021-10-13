@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Artalk DEMO</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
   <style>
     * { box-sizing: border-box; }
     body { padding:45px 10px;margin:0;background:#f4f4f4 }
@@ -54,10 +54,9 @@
       el: '#comments',
       placeholder: '来啊，快活啊 ( ゜- ゜)',
       defaultAvatar: 'mp',
-      pageKey: 'https://artalk.js.org/',
+      pageKey: 'https://artalk-cn.qwqaq.com/',
       pageTitle: 'Artalk Home',
-      pageUrl: 'https://artalk.js.org/',
-      server: (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:23366/api' : 'https://qwqaq.com/Artalk/api',
+      server: (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:23366/api' : './api',
       site: 'ArtalkDemo',
       readMore: {
         pageSize: 15,

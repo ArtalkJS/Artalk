@@ -60,13 +60,13 @@ export default class AdminView extends SidebarView {
     })
 
     const filterBarEl = BuildFilterBar(siteItems, (item) => clickEvt(item))
-    this.el.prepend(filterBarEl)
+    return filterBarEl
   }
 
   /** 评论列表 · 初始化 */
   async initCommentList() {
-    this.el.innerHTML = ''
-    this.el.append(this.cList.el) // TODO: 统一 loading 动画
+    const el = Utils.createElement('<div class="atk-admin-comment-list"></div>')
+    el.append(this.cList.el) // TODO: 统一 loading 动画
 
     const reqComments = (type: string, siteName: string) => {
       if (!this.cList) return
@@ -90,27 +90,33 @@ export default class AdminView extends SidebarView {
       curt.typeName = item.name
       reqComments(curt.typeName, curt.siteName)
     })
-    this.el.prepend(typeFilterBarEl)
+    el.prepend(typeFilterBarEl)
 
     // 初始化 site 筛选
-    await this.initSiteFilterBar((item) => {
+    const siteFilterBarEl  = await this.initSiteFilterBar((item) => {
       curt.siteName = item.name
       reqComments(curt.typeName, curt.siteName)
     })
+    el.prepend(siteFilterBarEl)
     loaded = true
+
+    this.el.append(el)
   }
 
   /** 页面列表 · 初始化 */
   async initPageList () {
-    this.el.innerHTML = ''
+    const el = Utils.createElement('<div class="atk-admin-page-list"></div>')
 
     const pListEl = Utils.createElement(`<div class="atk-sidebar-list"></div>`)
-    this.el.append(pListEl)
+    el.append(pListEl)
 
     // 初始化 site 筛选
-    await this.initSiteFilterBar((item) => {
+    const siteFilterBarEl = await this.initSiteFilterBar((item) => {
       this.reqPages(pListEl, item.name)
     })
+    this.el.prepend(siteFilterBarEl)
+
+    this.el.append(el)
   }
 
   async reqPages(pListEl: HTMLElement, siteName?: string) {
@@ -230,28 +236,28 @@ export default class AdminView extends SidebarView {
 
   /** 站点列表 · 初始化 */
   async initSiteList () {
+    const el = Utils.createElement('<div class="atk-site-list"></div>')
     // TODO: 可复用，特别是 actions
-    this.el.innerHTML = ''
     const sListEl = Utils.createElement(`
     <div class="atk-sidebar-list">
       <div class="atk-site-add atk-form-inline-wrap">
         <input type="text" name="siteAdd_name" placeholder="Name..." />
-        <input type="text" name="siteAdd_url" placeholder="URL..." />
+        <input type="text" name="siteAdd_urls" placeholder="URL..." />
         <button name="siteAdd_submit">Add</button>
       </div>
     </div>
     `)
-    this.el.append(sListEl)
+    el.append(sListEl)
     const siteAddNameEl = sListEl.querySelector<HTMLInputElement>('[name="siteAdd_name"]')!
-    const siteAddUrlEl = sListEl.querySelector<HTMLInputElement>('[name="siteAdd_url"]')!
+    const siteAddUrlsEl = sListEl.querySelector<HTMLInputElement>('[name="siteAdd_urls"]')!
     sListEl.querySelector<HTMLElement>('[name="siteAdd_submit"]')!.onclick = () => {
       const name = siteAddNameEl.value.trim()
-      const url = siteAddUrlEl.value.trim()
+      const urls = siteAddUrlsEl.value.trim()
       if (name === '') {
         siteAddNameEl.focus()
         return
       }
-      new Api(this.ctx).siteAdd(name, url)
+      new Api(this.ctx).siteAdd(name, urls)
         .then(() => {
           this.initSiteList()
         })
@@ -261,7 +267,7 @@ export default class AdminView extends SidebarView {
     }
     const sites = await new Api(this.ctx).siteGet()
     if (!sites) {
-      this.el.append(Utils.createElement('<div class="atk-sidebar-no-content">无内容</div>'))
+      el.append(Utils.createElement('<div class="atk-sidebar-no-content">无内容</div>'))
       return
     }
     sites.forEach(site => {
@@ -338,11 +344,13 @@ export default class AdminView extends SidebarView {
         }
       }
     })
+
+    this.el.append(el)
   }
 
   /** 配置页面 · 初始化 */
   initSetting () {
-    this.el.innerHTML = ''
+    const el = Utils.createElement('<div class="atk-admin-setting"></div>')
 
     const settingEl = Utils.createElement(`
     <div class="atk-setting">
@@ -358,7 +366,7 @@ export default class AdminView extends SidebarView {
     <button class="atk-btn" name="importer_submit">导入</button>
     </div>
     </div>`)
-    this.el.append(settingEl)
+    el.append(settingEl)
 
     const impDataFileEl = settingEl.querySelector<HTMLInputElement>('[name="importer_dataFile"]')!
     const impSiteNameEl = settingEl.querySelector<HTMLInputElement>('[name="importer_siteName"]')!
@@ -398,6 +406,8 @@ export default class AdminView extends SidebarView {
       }
       reader.readAsText(impDataFileEl.files[0]);
     }
+
+    this.el.append(el)
   }
 }
 
@@ -406,7 +416,7 @@ function BuildFilterBar (items: FilterBarItem[], clickEvt: (item: FilterBarItem)
   const filterBarEl = Utils.createElement(`<div class="atk-filter-bar"></div>`)
 
   items.forEach(item => {
-    const itemEl = Utils.createElement(`<span class="atk-filter-item"></span>`)
+    const itemEl = Utils.createElement(`<span></span>`)
     filterBarEl.append(itemEl)
     itemEl.innerText = item.label
     itemEl.addEventListener('click', () => {

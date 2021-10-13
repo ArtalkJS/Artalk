@@ -32,9 +32,8 @@ func ActionUserGet(c echo.Context) error {
 	// loginned user check
 	isLogin := false
 	tUser := GetUserByReqToken(c)
-	if !tUser.IsEmpty() && tUser.Name == p.Name && tUser.Email == p.Email {
+	if tUser.Name == p.Name && tUser.Email == p.Email {
 		isLogin = true
-		user = tUser
 	}
 
 	// unread notifies

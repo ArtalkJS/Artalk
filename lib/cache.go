@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"context"
 	"time"
 
 	"github.com/allegro/bigcache/v3"
@@ -9,6 +10,8 @@ import (
 )
 
 var CACHE *cache.Cache
+
+var Ctx = context.Background()
 
 func OpenCache() (err error) {
 	bigcacheClient, err := bigcache.NewBigCache(bigcache.DefaultConfig(30 * time.Minute)) // TODO 过期时间是一样的，只有 Redis 才能设置单个 key 的

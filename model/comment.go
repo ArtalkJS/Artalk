@@ -209,7 +209,7 @@ func (c *Comment) SpamCheck(echoCtx echo.Context) {
 		}
 	}
 
-	user := FindUserByID(c.UserID)
+	user := c.FetchUser()
 
 	// akismet
 	akismetKey := strings.TrimSpace(config.Instance.Moderator.AkismetKey)

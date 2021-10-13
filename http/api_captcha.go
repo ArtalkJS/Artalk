@@ -46,7 +46,7 @@ func ActionCaptchaCheck(c echo.Context) error {
 
 func GetCaptchaRealCode(ip string) string {
 	realVal := ""
-	if val, err := lib.CACHE.Get(permCtx, "captcha:"+ip); err == nil {
+	if val, err := lib.CACHE.Get(lib.Ctx, "captcha:"+ip); err == nil {
 		realVal = string(val.([]byte))
 	}
 	return strings.ToLower(realVal)
@@ -60,11 +60,11 @@ func GetNewCaptchaImageBase64(ip string) string {
 	base64 := "data:image/png;base64," + base64.StdEncoding.EncodeToString(pngBuffer.Bytes())
 
 	// save real code
-	lib.CACHE.Set(permCtx, "captcha:"+ip, []byte(data.Text), &store.Options{Expiration: 5 * time.Minute}) // 5分钟失效
+	lib.CACHE.Set(lib.Ctx, "captcha:"+ip, []byte(data.Text), &store.Options{Expiration: 5 * time.Minute}) // 5分钟失效
 
 	return base64
 }
 
 func DisposeCaptcha(ip string) {
-	lib.CACHE.Delete(permCtx, "captcha:"+ip)
+	lib.CACHE.Delete(lib.Ctx, "captcha:"+ip)
 }

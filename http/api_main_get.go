@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -67,7 +66,7 @@ func ActionGet(c echo.Context) error {
 	var user model.User
 	if p.Name != "" && p.Email != "" {
 		user = model.FindUser(p.Name, p.Email)
-		p.User = &user
+		p.User = &user // init params user field
 	}
 
 	isMsgCenter := IsMsgCenter(p)
@@ -132,7 +131,7 @@ func ActionGet(c echo.Context) error {
 
 	if isMsgCenter {
 		// mark all as read
-		fmt.Println(model.NotifyMarkAllAsRead(p.Name, p.Email))
+		NotifyMarkAllAsRead(p.User.ID)
 	}
 
 	// unread notifies
@@ -231,9 +230,8 @@ func AllowedComment(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 
 		// 显示个人全部评论
 		if p.Name != "" && p.Email != "" {
-			user := model.FindUser(p.Name, p.Email)
-			if !user.IsEmpty() {
-				return db.Where("is_pending = 0 OR (is_pending = 1 AND user_id = ?)", user.ID)
+			if !p.User.IsEmpty() {
+				return db.Where("is_pending = 0 OR (is_pending = 1 AND user_id = ?)", p.User.ID)
 			}
 		}
 

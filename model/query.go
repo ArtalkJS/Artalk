@@ -1,9 +1,10 @@
 package model
 
 import (
-	"errors"
+	"encoding/json"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/eko/gocache/v2/store"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -24,6 +25,7 @@ func FindCommentScopes(id uint, filters ...func(db *gorm.DB) *gorm.DB) Comment {
 // 查找用户（返回：精确查找 AND）
 func FindUser(name string, email string) User {
 	var user User
+
 	lib.DB.Where("name = ? AND email = ?", name, email).First(&user)
 	return user
 }
@@ -32,6 +34,35 @@ func FindUserByID(id uint) User {
 	var user User
 	lib.DB.First(&user, id)
 	return user
+}
+
+func FindCache(name string, destStruct interface{}) error {
+	entry, err := lib.CACHE.Get(lib.Ctx, name)
+	if err != nil {
+		return err
+	}
+
+	str := entry.([]byte)
+	err = json.Unmarshal(str, destStruct)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func StoreCache(name string, srcStruct interface{}) error {
+	str, err := json.Marshal(srcStruct)
+	if err != nil {
+		return err
+	}
+
+	err = lib.CACHE.Set(lib.Ctx, name, []byte(str), &store.Options{})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func IsAdminUser(name string, email string) bool {
@@ -213,22 +244,4 @@ func FindUnreadNotifies(userID uint) []CookedNotify {
 	}
 
 	return cookedNotifies
-}
-
-func NotifyMarkAllAsRead(name string, email string) error {
-	user := FindUser(name, email)
-	if user.IsEmpty() {
-		return errors.New("user not found")
-	}
-
-	// find all
-	var notifies []Notify
-	lib.DB.Where("user_id = ?", user.ID).Find(&notifies)
-
-	// mark as read
-	for _, n := range notifies {
-		n.SetRead()
-	}
-
-	return nil
 }

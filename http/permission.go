@@ -1,7 +1,6 @@
 package http
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -10,14 +9,12 @@ import (
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
 )
 
-var permCtx = context.Background()
 var CommonJwtConfig middleware.JWTConfig
 
 // jwtCustomClaims are custom claims extending default ones.
@@ -85,20 +82,20 @@ func RecordAction(c echo.Context) {
 func ResetActionRecord(c echo.Context) {
 	ip := c.RealIP()
 
-	lib.CACHE.Delete(permCtx, "action-time:"+ip)
-	lib.CACHE.Delete(permCtx, "action-count:"+ip)
+	lib.CACHE.Delete(lib.Ctx, "action-time:"+ip)
+	lib.CACHE.Delete(lib.Ctx, "action-count:"+ip)
 }
 
 // 修改最后操作时间
 func updateActionLastTime(c echo.Context) {
 	curtTime := fmt.Sprintf("%v", time.Now().Unix())
-	lib.CACHE.Set(permCtx, "action-time:"+c.RealIP(), []byte(curtTime), nil)
+	lib.CACHE.Set(lib.Ctx, "action-time:"+c.RealIP(), []byte(curtTime), nil)
 }
 
 // 获取最后操作时间
 func getActionLastTime(c echo.Context) time.Time {
 	var timestamp int64
-	if val, err := lib.CACHE.Get(permCtx, "action-time:"+c.RealIP()); err == nil {
+	if val, err := lib.CACHE.Get(lib.Ctx, "action-time:"+c.RealIP()); err == nil {
 		timestamp, _ = strconv.ParseInt(string(val.([]byte)), 10, 64)
 	}
 	tm := time.Unix(timestamp, 0)
@@ -108,7 +105,7 @@ func getActionLastTime(c echo.Context) time.Time {
 // 获取操作次数
 func getActionCount(c echo.Context) int {
 	count := 0
-	if val, err := lib.CACHE.Get(permCtx, "action-count:"+c.RealIP()); err == nil {
+	if val, err := lib.CACHE.Get(lib.Ctx, "action-count:"+c.RealIP()); err == nil {
 		count, _ = strconv.Atoi(string(val.([]byte)))
 	}
 
@@ -117,7 +114,7 @@ func getActionCount(c echo.Context) int {
 
 // 修改操作次数
 func setActionCount(c echo.Context, num int) {
-	lib.CACHE.Set(permCtx, "action-count:"+c.RealIP(), []byte(fmt.Sprintf("%d", num)), nil)
+	lib.CACHE.Set(lib.Ctx, "action-count:"+c.RealIP(), []byte(fmt.Sprintf("%d", num)), nil)
 }
 
 // 操作次数 +1
@@ -154,9 +151,6 @@ func GetJwtInstanceByReq(c echo.Context) *jwt.Token {
 
 func CheckIsAdminByJwt(jwt *jwt.Token) bool {
 	user := GetUserByJwt(jwt)
-	if user.IsEmpty() {
-		return false
-	}
 
 	return user.IsAdmin
 }
@@ -170,29 +164,19 @@ func CheckIsAdminReq(c echo.Context) bool {
 	return CheckIsAdminByJwt(jwt)
 }
 
-func GetUserByJwt(jwt *jwt.Token) model.User {
+func GetUserByJwt(jwt *jwt.Token) jwtCustomClaims {
 	if jwt == nil {
-		return model.User{}
+		return jwtCustomClaims{}
 	}
 
 	claims := jwtCustomClaims{}
 	tmp, _ := json.Marshal(jwt.Claims)
 	_ = json.Unmarshal(tmp, &claims)
 
-	name := claims.Name
-	email := claims.Email
-
-	if !claims.IsAdmin {
-		return model.User{}
-	}
-
-	// check user from database
-	user := model.FindUser(name, email)
-
-	return user
+	return claims
 }
 
-func GetUserByReqToken(c echo.Context) model.User {
+func GetUserByReqToken(c echo.Context) jwtCustomClaims {
 	jwt := GetJwtInstanceByReq(c)
 	user := GetUserByJwt(jwt)
 

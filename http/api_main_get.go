@@ -23,6 +23,10 @@ type ParamsGet struct {
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
 	SiteAll  bool
+
+	WithSites bool `mapstructure:"with_sites"`
+
+	IsAdminReq bool
 }
 
 type ResponseGet struct {
@@ -32,6 +36,7 @@ type ResponseGet struct {
 	Page         model.CookedPage      `json:"page"`
 	Unread       []model.CookedNotify  `json:"unread"`
 	UnreadCount  int                   `json:"unread_count"`
+	Sites        []model.CookedSite    `json:"sites,omitempty"`
 }
 
 // 获取评论查询实例
@@ -69,6 +74,12 @@ func ActionGet(c echo.Context) error {
 		p.User = &user // init params user field
 	}
 
+	// check if admin
+	if CheckIsAdminReq(c) {
+		p.IsAdminReq = true
+	}
+
+	// check if msg center
 	isMsgCenter := IsMsgCenter(p)
 
 	// comment parents
@@ -134,6 +145,12 @@ func ActionGet(c echo.Context) error {
 		NotifyMarkAllAsRead(p.User.ID)
 	}
 
+	// with sites for admin
+	sites := []model.CookedSite{}
+	if p.IsAdminReq && p.WithSites {
+		sites = GetAllCookedSites()
+	}
+
 	// unread notifies
 	var unreadNotifies = []model.CookedNotify{}
 	if p.User != nil {
@@ -147,6 +164,7 @@ func ActionGet(c echo.Context) error {
 		Page:         page.ToCooked(),
 		Unread:       unreadNotifies,
 		UnreadCount:  len(unreadNotifies),
+		Sites:        sites,
 	})
 }
 

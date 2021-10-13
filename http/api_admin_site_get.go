@@ -19,6 +19,12 @@ func ActionAdminSiteGet(c echo.Context) error {
 		return resp
 	}
 
+	return RespData(c, Map{
+		"sites": GetAllCookedSites(),
+	})
+}
+
+func GetAllCookedSites() []model.CookedSite {
 	var sites []model.Site
 	lib.DB.Model(&model.Site{}).Find(&sites)
 
@@ -27,7 +33,5 @@ func ActionAdminSiteGet(c echo.Context) error {
 		cookedSites = append(cookedSites, s.ToCooked())
 	}
 
-	return RespData(c, Map{
-		"sites": cookedSites,
-	})
+	return cookedSites
 }

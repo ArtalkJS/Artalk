@@ -41,5 +41,6 @@ func ActionAdminPageGet(c echo.Context) error {
 
 	return RespData(c, Map{
 		"pages": cookedPages,
+		"sites": GetAllCookedSites(),
 	})
 }

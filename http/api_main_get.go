@@ -170,13 +170,18 @@ func ActionGet(c echo.Context) error {
 
 // 请求是否为 通知中心数据
 func IsMsgCenter(p ParamsGet) bool {
-	return p.Type != "" && p.User != nil && !p.User.IsEmpty()
+	return p.Type != "" && p.Name != "" && p.Email != ""
 }
 
 // TODO: 重构 MsgCenter
 func MsgCenter(c echo.Context, p ParamsGet, siteID uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		user := p.User
+
+		if user == nil || user.IsEmpty() { // user not found
+			return db.Where("id = 0")
+		}
+
 		isAdminReq := CheckIsAdminReq(c)
 
 		// admin_only 检测

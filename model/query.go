@@ -26,7 +26,8 @@ func FindCommentScopes(id uint, filters ...func(db *gorm.DB) *gorm.DB) Comment {
 func FindUser(name string, email string) User {
 	var user User
 
-	lib.DB.Where("name = ? AND email = ?", name, email).First(&user)
+	// 不区分大小写
+	lib.DB.Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?)", name, email).First(&user)
 	return user
 }
 
@@ -67,7 +68,7 @@ func StoreCache(name string, srcStruct interface{}) error {
 
 func IsAdminUser(name string, email string) bool {
 	var user User
-	lib.DB.Where("name = ? AND email = ? AND is_admin = 1", name, email).First(&user)
+	lib.DB.Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?) AND is_admin = 1", name, email).First(&user)
 	return !user.IsEmpty()
 }
 

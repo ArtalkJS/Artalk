@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -17,10 +16,9 @@ func ActionUserGet(c echo.Context) error {
 		return resp
 	}
 
-	var user model.User
-	lib.DB.Where("name = ? AND email = ?", p.Name, p.Email).First(&user)
+	user := model.FindUser(p.Name, p.Email)
 
-	if user.IsEmpty() || user.Name != p.Name || user.Email != p.Email {
+	if user.IsEmpty() {
 		return RespData(c, Map{
 			"user":         nil,
 			"is_login":     false,

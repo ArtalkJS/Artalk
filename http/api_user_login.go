@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -21,8 +20,7 @@ func ActionLogin(c echo.Context) error {
 	// record action for limiting action
 	RecordAction(c)
 
-	var user model.User
-	lib.DB.Where("name = ? AND email = ?", p.Name, p.Email).First(&user) // name = ? OR email = ?
+	user := model.FindUser(p.Name, p.Email) // name = ? OR email = ?
 	if user.IsEmpty() || user.Password != p.Password {
 		return RespError(c, "验证失败")
 	}

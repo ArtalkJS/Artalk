@@ -60,13 +60,6 @@ func ActionAdd(c echo.Context) error {
 		return resp
 	}
 
-	// find user
-	user := model.FindCreateUser(p.Name, p.Email)
-	if user.ID == 0 || page.Key == "" {
-		logrus.Error("Cannot get user or page")
-		return RespError(c, "评论失败")
-	}
-
 	// check reply comment
 	var parentComment model.Comment
 	if p.Rid != 0 {
@@ -81,6 +74,21 @@ func ActionAdd(c echo.Context) error {
 			return RespError(c, "不允许回复该评论")
 		}
 	}
+
+	// find user
+	user := model.FindCreateUser(p.Name, p.Email)
+	if user.ID == 0 || page.Key == "" {
+		logrus.Error("Cannot get user or page")
+		return RespError(c, "评论失败")
+	}
+
+	// update user
+	user.Link = p.Link
+	user.LastIP = ip
+	user.LastUA = ua
+	user.Name = p.Name // for 若用户修改用户名大小写
+	user.Email = p.Email
+	model.UpdateUser(&user)
 
 	comment := model.Comment{
 		Content:  p.Content,
@@ -111,12 +119,6 @@ func ActionAdd(c echo.Context) error {
 		logrus.Error("Save Comment error: ", err)
 		return RespError(c, "评论失败")
 	}
-
-	// update user
-	user.Link = p.Link
-	user.LastIP = ip
-	user.LastUA = ua
-	model.UpdateUser(&user)
 
 	// update page
 	if page.ToCooked().URL != "" && page.Title == "" {
@@ -164,7 +166,12 @@ func AsyncSendEmail(comment *model.Comment, parentComment *model.Comment) {
 	lib.DB.Where("is_admin = 1").Find(&admins)
 
 	if parentComment.IsEmpty() && len(admins) > 0 {
+		// TODO: 增加用户的站点隔离，指定管理员分配网站
 		for _, admin := range admins {
+			if comment.UserID == admin.ID { // 管理员自己回复自己，不提醒
+				continue
+			}
+
 			notify := model.FindCreateNotify(admin.ID, comment.ID)
 			notify.Comment = *comment
 			email.AsyncSendToAdmin(&notify, &admin) // 发送邮件给管理员

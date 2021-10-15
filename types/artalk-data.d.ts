@@ -55,6 +55,12 @@ export interface CommentData {
 
   /** 站点名（用于隔离） */
   site_name: string
+
+  /** 赞同数 */
+  vote_up: number
+
+  /** 反对数 */
+  vote_down: number
 }
 
 export interface ListData {

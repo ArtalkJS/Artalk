@@ -96,9 +96,34 @@ export default class Api {
     }
   }
 
-  public markRead(notifyKey: string) {
+  public vote(targetID: number, type: string) {
+    const params: any = {
+      target_id: targetID,
+      type,
+    }
+
+    if (this.ctx.user.checkHasBasicUserInfo()) {
+      params.name = this.ctx.user.data.nick
+      params.email = this.ctx.user.data.email
+    }
+    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
+
+    return CommonFetch(this.ctx, `${this.serverURL}/vote`, {
+      method: 'POST',
+      body: getFormData(params),
+    }).then((json) => ((json.data?.vote_num || 0) as number))
+  }
+
+  public markRead(notifyKey: string, readAll = false) {
     const params: any = {
       notify_key: notifyKey,
+    }
+
+    if (readAll) {
+      delete params.notify_key
+      params.read_all = true
+      params.name = this.ctx.user.data.nick
+      params.email = this.ctx.user.data.email
     }
 
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
@@ -282,7 +307,8 @@ function CommonFetch(ctx: Context, input: RequestInfo, init: RequestInit): Promi
     init.headers = requestHeaders
   }
 
-  return timeoutPromise(4000, fetch(input, init)).then(async (resp) => {
+  // 15s timeout
+  return timeoutPromise(15000, fetch(input, init)).then(async (resp) => {
     // 解析获取响应的 json
     let json: any = await resp.json()
 

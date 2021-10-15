@@ -170,6 +170,39 @@ export default class Comment extends Component {
   }
 
   initActionBtn () {
+    // 赞同按钮
+    const voteBtnUp = Utils.createElement(`<span></span>`)
+    const voteBtnDown = Utils.createElement(`<span></span>`)
+    this.actionsEl.append(voteBtnUp)
+    this.actionsEl.append(voteBtnDown)
+
+    const refreshVote = () => {
+      voteBtnUp.innerText = `赞同 (${this.data.vote_up || 0})`
+      voteBtnDown.innerText = `反对 (${this.data.vote_down || 0})`
+    }
+    refreshVote()
+
+    voteBtnUp.onclick = () => {
+      new Api(this.ctx).vote(this.data.id, "comment_up")
+        .then((num) => {
+          this.data.vote_up = num
+          refreshVote()
+        })
+        .catch((err) => {
+          window.alert(`投票失败：${err.msg || String(err)}`)
+        })
+    }
+    voteBtnDown.onclick = () => {
+      new Api(this.ctx).vote(this.data.id, "comment_down")
+        .then((num) => {
+          this.data.vote_down = num
+          refreshVote()
+        })
+        .catch((err) => {
+          window.alert(`投票失败：${err.msg || String(err)}`)
+        })
+    }
+
     // 绑定回复按钮事件
     if (this.data.is_allow_reply) {
       const replyBtn = Utils.createElement(`<span data-atk-action="comment-reply">回复</span>`)

@@ -208,10 +208,13 @@
           align-items: center;
 
           & > span {
+            &, * {
+              color: @color-meta;
+              font-size: 13px;
+              line-height: 15px;
+            }
+
             display: inline-flex;
-            color: @color-meta;
-            font-size: 13px;
-            line-height: 15px;
             cursor: pointer;
             user-select: none;
 

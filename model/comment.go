@@ -32,6 +32,9 @@ type Comment struct {
 	User User `gorm:"foreignKey:UserID;references:ID"`
 	Page Page `gorm:"foreignKey:PageKey;references:Key"`
 	Site Site `gorm:"foreignKey:SiteName;references:Name"`
+
+	VoteUp   int
+	VoteDown int
 }
 
 func (c Comment) IsEmpty() bool {
@@ -110,6 +113,8 @@ type CookedComment struct {
 	BadgeName      string `json:"badge_name"`
 	BadgeColor     string `json:"badge_color"`
 	Visible        bool   `json:"visible"`
+	VoteUp         int    `json:"vote_up"`
+	VoteDown       int    `json:"vote_down"`
 	PageKey        string `json:"page_key"`
 	SiteName       string `json:"site_name"`
 }
@@ -133,6 +138,8 @@ func (c *Comment) ToCooked() CookedComment {
 		BadgeName:      user.BadgeName,
 		BadgeColor:     user.BadgeColor,
 		Visible:        true,
+		VoteUp:         c.VoteUp,
+		VoteDown:       c.VoteDown,
 		PageKey:        c.PageKey,
 		SiteName:       c.SiteName,
 	}

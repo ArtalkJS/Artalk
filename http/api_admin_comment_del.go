@@ -64,13 +64,18 @@ func ActionAdminCommentDel(c echo.Context) error {
 
 func DelComment(comment *model.Comment) error {
 	// 清除 notify
-	var notifications []model.Notify
-	lib.DB.Where("comment_id = ?", comment.ID).Find(&notifications)
+	if err := lib.DB.Model(&model.Notify{}).Unscoped().Delete("comment_id = ?", comment.ID).Error; err != nil {
+		return err
+	}
 
-	for _, n := range notifications {
-		if err := lib.DB.Delete(n).Error; err != nil {
-			return err
-		}
+	// 清除 vote
+	if err := lib.DB.Model(&model.Vote{}).Unscoped().Delete(
+		"target_id = ? AND (type = ? OR type = ?)",
+		comment.ID,
+		string(model.VoteTypeCommentUp),
+		string(model.VoteTypeCommentDown),
+	).Error; err != nil {
+		return err
 	}
 
 	// 删除 comment

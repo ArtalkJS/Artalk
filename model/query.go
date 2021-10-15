@@ -16,6 +16,12 @@ func FindComment(id uint, siteName string) Comment {
 	return comment
 }
 
+func FindCommentBy(id uint) Comment {
+	var comment Comment
+	lib.DB.Preload(clause.Associations).Where("id = ?", id).First(&comment)
+	return comment
+}
+
 func FindCommentScopes(id uint, filters ...func(db *gorm.DB) *gorm.DB) Comment {
 	var comment Comment
 	lib.DB.Preload(clause.Associations).Where("id = ?", id).Scopes(filters...).First(&comment)

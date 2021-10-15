@@ -32,18 +32,35 @@ func ActionAdminPageDel(c echo.Context) error {
 		return RespError(c, "page not found")
 	}
 
-	err := lib.DB.Unscoped().Delete(&page).Error
+	err := DelPage(&page)
 	if err != nil {
-		return RespError(c, "page 删除失败")
+		return RespError(c, "Page 删除失败")
+	}
+
+	return RespSuccess(c)
+}
+
+func DelPage(page *model.Page) error {
+	err := lib.DB.Unscoped().Delete(page).Error
+	if err != nil {
+		return err
 	}
 
 	// 删除所有相关内容
 	var comments []model.Comment
-	lib.DB.Where("page_key = ? AND site_name = ?", p.Key, p.SiteName).Find(&comments)
+	lib.DB.Where("page_key = ? AND site_name = ?", page.Key, page.SiteName).Find(&comments)
 
 	for _, c := range comments {
 		DelComment(&c)
 	}
 
-	return RespSuccess(c)
+	// 删除 vote
+	lib.DB.Model(&model.Vote{}).Unscoped().Delete(
+		"target_id = ? AND (type = ? OR type = ?)",
+		page.ID,
+		string(model.VoteTypePageUp),
+		string(model.VoteTypePageDown),
+	)
+
+	return nil
 }

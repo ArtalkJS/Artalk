@@ -19,6 +19,9 @@ type Page struct {
 
 	SiteName string `gorm:"index"`
 	Site     Site   `gorm:"foreignKey:SiteName;references:Name"`
+
+	VoteUp   int
+	VoteDown int
 }
 
 func (p Page) IsEmpty() bool {
@@ -32,6 +35,8 @@ type CookedPage struct {
 	URL       string `json:"url"`
 	Title     string `json:"title"`
 	SiteName  string `json:"site_name"`
+	VoteUp    int    `json:"vote_up"`
+	VoteDown  int    `json:"vote_down"`
 }
 
 func (p Page) ToCooked() CookedPage {
@@ -47,6 +52,8 @@ func (p Page) ToCooked() CookedPage {
 		URL:       url,
 		Title:     p.Title,
 		SiteName:  p.SiteName,
+		VoteUp:    p.VoteUp,
+		VoteDown:  p.VoteDown,
 	}
 }
 

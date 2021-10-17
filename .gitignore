@@ -13,4 +13,6 @@ yarn-error.log*
 *.sln
 .history
 
-/deploy
+dist
+deploy
+local

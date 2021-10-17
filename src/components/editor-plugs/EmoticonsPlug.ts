@@ -1,7 +1,8 @@
-import './_EmoticonsPlug/EmoticonsPlug.less'
+import './EmoticonsPlug.less'
+
 import Editor from '../Editor'
-import ArtalkContext from '~/src/ArtalkContext'
-import Utils from '~/src/utils'
+import EditorPlug from './EditorPlug'
+import * as Utils from '~/src/lib/utils'
 
 type EmoticonListType = {
   [grpName: string]: {
@@ -10,68 +11,100 @@ type EmoticonListType = {
   }
 }
 
-export default class EmoticonsPlug extends ArtalkContext {
-  public elem: HTMLElement
+export default class EmoticonsPlug extends EditorPlug {
+  public el!: HTMLElement
   public emoticons: EmoticonListType
 
-  public listWrapElem: HTMLElement
-  public typesElem: HTMLElement
-
+  public listWrapEl!: HTMLElement
+  public typesEl!: HTMLElement
 
   constructor (public editor: Editor) {
-    super(editor.artalk)
+    super(editor)
 
-    this.emoticons = this.artalk.conf.emoticons
-    this.initElem()
+    this.emoticons = this.ctx.conf.emoticons
+    this.initEl()
   }
 
-  initElem () {
-    this.elem = Utils.createElement(require('./_EmoticonsPlug/EmoticonsPlug.ejs')(this))
+  initEl () {
+    this.el = Utils.createElement(`<div class="atk-editor-plug-emoticons"></div>`)
 
-    this.listWrapElem = this.elem.querySelector('.artalk-emoticons-list-wrap')
-    this.typesElem = this.elem.querySelector('.artalk-emoticons-types')
+    // 表情列表
+    this.listWrapEl = Utils.createElement(`<div class="atk-emoticons-list-wrap"></div>`)
+    this.el.append(this.listWrapEl)
 
-    // 绑定切换类型按钮
-    this.typesElem.querySelectorAll('span').forEach((btn) => {
+    Object.entries(this.emoticons).forEach(([key, item]) => {
+      const emoticonsEl = Utils.createElement(`<div class="atk-emoticons-list" style="display: none;"></div>`)
+      this.listWrapEl.append(emoticonsEl)
+      emoticonsEl.setAttribute('data-key', key)
+      emoticonsEl.setAttribute('data-input-type', item.inputType)
+      Object.entries(item.container).forEach(([name, content]) => {
+        const itemEl = Utils.createElement(`<span class="atk-emoticons-item"></span>`)
+        emoticonsEl.append(itemEl)
+        itemEl.setAttribute('title', name)
+        itemEl.setAttribute('data-content', content)
+        if (item.inputType === 'image') {
+          const imgEl = document.createElement('img')
+          imgEl.src = content
+          imgEl.alt = name
+          itemEl.append(imgEl)
+        } else {
+          itemEl.innerText = content
+        }
+      })
+    })
+
+    // 表情分类
+    this.typesEl = Utils.createElement(`<div class="atk-emoticons-types"></div>`)
+    this.el.append(this.typesEl)
+    Object.entries(this.emoticons).forEach(([key, item]) => {
+      const itemEl = Utils.createElement('<span />')
+      this.typesEl.append(itemEl)
+      itemEl.setAttribute('data-key', key)
+      itemEl.innerText = key
+    })
+
+    // 绑定切换分类按钮
+    this.typesEl.querySelectorAll('span').forEach((btn) => {
       btn.addEventListener('click', (evt) => {
-        const btnElem = evt.currentTarget as HTMLElement
-        const key = btnElem.getAttribute('data-key')
+        const btnEl = evt.currentTarget as HTMLElement
+        const key = btnEl.getAttribute('data-key')
         if (key) this.openType(key)
       })
     })
 
-    // 默认打开第一个类型
+    // 默认打开第一个分类
     if (Object.keys(this.emoticons).length > 0)
       this.openType(Object.keys(this.emoticons)[0])
 
     // 绑定点击表情
-    this.listWrapElem.querySelectorAll('.artalk-emoticons-item').forEach((item: HTMLElement) => {
+    this.listWrapEl.querySelectorAll<HTMLElement>('.atk-emoticons-item').forEach((item: HTMLElement) => {
       item.onclick = (evt) => {
         const elem = evt.currentTarget as HTMLElement
-        const inputType = elem.closest('.artalk-emoticons-list').getAttribute('data-input-type')
+        const inputType = elem.closest('.atk-emoticons-list')!.getAttribute('data-input-type')
 
         const title = elem.getAttribute('title')
         const content = elem.getAttribute('data-content')
         if (inputType === 'image') {
           this.editor.insertContent(`:[${title}]`)
         } else {
-          this.editor.insertContent(content)
+          this.editor.insertContent(content || '')
         }
       }
     })
   }
 
   openType (key: string) {
-    Array.from(this.listWrapElem.children).forEach((item: HTMLElement) => {
-      if (item.getAttribute('data-key') !== key) {
-        item.style.display = 'none'
+    Array.from(this.listWrapEl.children).forEach((item) => {
+      const el = item as HTMLElement
+      if (el.getAttribute('data-key') !== key) {
+        el.style.display = 'none'
       } else {
-        item.style.display = ''
+        el.style.display = ''
       }
     })
 
-    this.typesElem.querySelectorAll('span.active').forEach(item => item.classList.remove('active'))
-    this.typesElem.querySelector(`span[data-key="${key}"]`).classList.add('active')
+    this.typesEl.querySelectorAll('span.active').forEach(item => item.classList.remove('active'))
+    this.typesEl.querySelector(`span[data-key="${key}"]`)?.classList.add('active')
 
     this.changeListHeight()
   }
@@ -84,8 +117,8 @@ export default class EmoticonsPlug extends ArtalkContext {
     return '表情'
   }
 
-  getElem () {
-    return this.elem
+  getEl () {
+    return this.el
   }
 
   changeListHeight () {
@@ -101,7 +134,7 @@ export default class EmoticonsPlug extends ArtalkContext {
   }
 
   onHide () {
-    this.elem.parentElement.style.height = ''
+    this.el.parentElement!.style.height = ''
   }
 
   public transEmoticonImageText (text: string) {

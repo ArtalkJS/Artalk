@@ -1,17 +1,15 @@
-import './css/main.less'
-import marked from 'marked'
-import hanabi from 'hanabi'
-import User from './components/User'
-import Checker from './components/Checker'
+import './style/main.less'
+import Checker from './lib/checker'
 import Editor from './components/Editor'
 import List from './components/List'
-import Comment from './components/Comment'
 import Sidebar from './components/Sidebar'
-import Ui from './utils/ui'
-import Utils from './utils'
+import { GetLayerWrap } from './components/Layer'
+import * as Ui from './lib/ui'
+import * as Utils from './lib/utils'
 import { ArtalkConfig } from '~/types/artalk-config'
-
-/* global ARTALK_VERSION */
+import Context from './Context'
+import emoticons from './assets/emoticons.json'
+import Constant from './Constant'
 
 const defaultOpts: ArtalkConfig = {
   el: '',
@@ -20,26 +18,24 @@ const defaultOpts: ArtalkConfig = {
   sendBtn: '发送评论',
   defaultAvatar: 'mp',
   pageKey: '',
-  serverUrl: '',
-  emoticons: require('./assets/emoticons.json'),
+  server: '',
+  site: '',
+  emoticons,
   gravatar: {
-    cdn: 'https://cdn.v2ex.com/gravatar/'
+    cdn: 'https://sdn.geekzu.org/avatar/'
   },
   darkMode: false,
 }
 
 export default class Artalk {
   public conf: ArtalkConfig
+  public ctx: Context
   public el: HTMLElement
-  public readonly runId: number = new Date().getTime() // 实例唯一 ID
-
-  public ui: Ui
-  public user: User
+  public readonly contextID: number = new Date().getTime() // 实例唯一 ID
   public checker: Checker
   public editor: Editor
   public list: List
   public sidebar: Sidebar
-
   public comments: Comment[] = []
 
   constructor (conf: ArtalkConfig) {
@@ -52,182 +48,113 @@ export default class Artalk {
 
     // Options
     this.conf = { ...defaultOpts, ...conf }
+    this.conf.server = this.conf.server.replace(/\/$/, '')
+
+    // Default `pageKey` conf
+    if (!this.conf.pageKey) {
+      // TODO 自动获取和 atk_comment query 冲突
+      // eslint-disable-next-line prefer-destructuring
+      this.conf.pageKey = window.location.href.split('#')[0]
+    }
 
     // Main Element
     try {
-      this.el = document.querySelector(this.conf.el)
-      if (this.el === null) {
+      const el = document.querySelector<HTMLElement>(this.conf.el)
+      if (el === null) {
         throw Error(`Sorry, Target element "${this.conf.el}" was not found.`)
       }
+      this.el = el
     } catch (e) {
       console.error(e)
       throw new Error('Artalk config `el` error')
     }
 
+    // Create context
+    this.ctx = new Context(this.el, this.conf)
+
     this.el.classList.add('artalk')
-    this.el.setAttribute('artalk-run-id', this.runId.toString())
+    this.el.setAttribute('atk-run-id', this.contextID.toString())
 
     // 若该元素中 artalk 已装载
     if (this.el.innerHTML.trim() !== '') this.el.innerHTML = ''
 
     // Components
-    this.ui = new Ui(this)
-    this.user = new User(this)
-    this.checker = new Checker(this)
-    this.initMarked()
-    this.editor = new Editor(this)
-    this.list = new List(this)
-    this.sidebar = new Sidebar(this)
+    this.initDarkMode()
+
+    this.checker = new Checker(this.ctx)
+
+    this.editor = new Editor(this.ctx)
+    this.list = new List(this.ctx)
+    this.sidebar = new Sidebar(this.ctx)
+
+    this.el.appendChild(this.editor.el)
+    this.el.appendChild(this.list.el)
+    this.el.appendChild(this.sidebar.el)
 
     // 请求获取评论
     this.list.reqComments()
 
     // 锚点快速跳转评论
     window.addEventListener('hashchange', () => {
-      this.checkGoToCommentByUrlHash()
+      this.list.checkGoToCommentByUrlHash()
+    })
+
+    // 仅管理员显示控制
+    this.ctx.addEventListener('check-admin-show-el', () => {
+      const items: HTMLElement[] = []
+
+      this.el.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
+      // for layer
+      const { wrapEl: layerWrapEl } = GetLayerWrap(this.ctx)
+      if (layerWrapEl)
+        layerWrapEl.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
+
+      items.forEach((itemEl: HTMLElement) => {
+        if (this.ctx.user.data.isAdmin)
+          itemEl.classList.remove('atk-hide')
+        else
+          itemEl.classList.add('atk-hide')
+      })
+    })
+
+    this.ctx.addEventListener('user-changed', () => {
+      this.ctx.dispatchEvent('check-admin-show-el')
+      this.ctx.dispatchEvent('list-refresh-ui')
     })
   }
 
-  /** 遍历操作 Comment (包括子评论) */
-  public eachComment (commentList: Comment[], action: (comment?: Comment, levelList?: Comment[]) => boolean|void) {
-    if (commentList.length === 0) return
-    commentList.every((item) => {
-      if (action(item, commentList) === false) return false
-      this.eachComment(item.getChildren(), action)
-      return true
-    })
-  }
+  /** 暗黑模式 - 初始化 */
+  initDarkMode() {
+    if (this.conf.darkMode) {
+      this.el.classList.add(Constant.DARK_MODE_CLASSNAME)
+    } else {
+      this.el.classList.remove(Constant.DARK_MODE_CLASSNAME)
+    }
 
-  /** 查找评论项 */
-  public findComment (id: number) {
-    let comment: Comment|null = null
-
-    this.eachComment(this.comments, (item) => {
-      if (item.data.id === id) {
-        comment = item
-        return false
-      }
-      return true
-    })
-
-    return comment
-  }
-
-  /** 获取评论总数 */
-  public getCommentCount (): number {
-    let count = 0
-    this.eachComment(this.comments, () => { count++ })
-    return count
-  }
-
-  /** 删除评论 */
-  public deleteComment (comment: number|Comment) {
-    let findComment: Comment
-    if (typeof comment === 'number') {
-      findComment = this.findComment(comment)
-      if (!findComment) throw Error(`未找到评论 ${comment}`)
-    } else findComment = comment
-
-    findComment.getElem().remove()
-    this.eachComment(this.comments, (item, levelList) => {
-      if (item === findComment) {
-        levelList.splice(levelList.indexOf(item), 1)
-        return false
-      }
-      return true
-    })
-  }
-
-  /** 清空所有评论 */
-  public clearComments () {
-    this.list.commentsWrapEl.innerHTML = ''
-    this.list.data = undefined
-    this.comments = []
-  }
-
-  /** 公共请求 */
-  public request (action: string, data: object, before: () => void, after: () => void, success: (msg: string, data: any) => void, error: (msg: string, data: any) => void) {
-    before()
-
-    data = { action, ...data }
-    const formData = new FormData()
-    Object.keys(data).forEach(key => formData.set(key, data[key]))
-
-    const xhr = new XMLHttpRequest()
-    xhr.timeout = 5000
-    xhr.open('POST', this.conf.serverUrl, true)
-
-    xhr.onload = () => {
-      after()
-      if (xhr.status >= 200 && xhr.status < 400) {
-        const respData = JSON.parse(xhr.response)
-        if (respData.success) {
-          success(respData.msg, respData.data)
-        } else {
-          error(respData.msg, respData.data)
-        }
+    // for Layer
+    const { wrapEl: layerWrapEl } = GetLayerWrap(this.ctx)
+    if (layerWrapEl) {
+      if (this.conf.darkMode) {
+        layerWrapEl.classList.add(Constant.DARK_MODE_CLASSNAME)
       } else {
-        error(`服务器响应错误 Code: ${xhr.status}`, {})
+        layerWrapEl.classList.remove(Constant.DARK_MODE_CLASSNAME)
       }
-    };
-
-    xhr.onerror = () => {
-      after()
-      error('网络错误', {})
-    };
-
-    xhr.send(formData)
+    }
   }
 
-  /** 跳到评论项位置 - 根据 `location.hash` */
-  public checkGoToCommentByUrlHash () {
-    let commentId: number = Number(Utils.getLocationParmByName('artalk_comment'))
-    if (!commentId) {
-      const match = window.location.hash.match(/#artalk-comment-([0-9]+)/)
-      if (!match || !match[1] || Number.isNaN(Number(match[1]))) return
-      commentId = Number(match[1])
-    }
-
-    const comment = this.findComment(commentId)
-    if (!comment && this.list.hasMoreComments) {
-      this.list.readMore()
-      return
-    }
-    if (!comment) { return }
-
-    this.ui.scrollIntoView(comment.getElem(), false)
-    setTimeout(() => {
-      comment.getElem().classList.add('artalk-flash-once')
-    }, 800)
+  /** 暗黑模式 - 设定 */
+  setDarkMode(darkMode: boolean) {
+    this.ctx.conf.darkMode = darkMode
+    this.initDarkMode()
   }
 
-  public marked: (src: string, callback?: (error: any, parseResult: string) => void) => string
+  /** 暗黑模式 - 开启 */
+  openDarkMode() {
+    this.setDarkMode(true)
+  }
 
-  /** 初始化 Marked */
-  private initMarked () {
-    const renderer = new marked.Renderer()
-    const linkRenderer = renderer.link
-    renderer.link = (href, title, text) => {
-      const html = linkRenderer.call(renderer, href, title, text)
-      return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ')
-    }
-
-    const nMarked = marked
-    nMarked.setOptions({
-      renderer,
-      highlight: (code) => {
-        return hanabi(code)
-      },
-      pedantic: false,
-      gfm: true,
-      tables: true,
-      breaks: true,
-      sanitize: true, // 净化
-      smartLists: true,
-      smartypants: true,
-      xhtml: false
-    })
-
-    this.marked = nMarked
+  /** 暗黑模式 - 关闭 */
+  closeDarkMode() {
+    this.setDarkMode(false)
   }
 }

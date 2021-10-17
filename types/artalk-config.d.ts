@@ -30,9 +30,24 @@ export interface ArtalkConfig {
   pageKey: string
 
   /**
+   * 页面可访问链接
+   */
+  pageUrl?: string
+
+  /**
+   * 页面标题
+   */
+  pageTitle?: string
+
+  /**
    * 服务器地址
    */
-  serverUrl: string
+  server: string
+ 
+  /**
+   * 站点名
+   */
+  site?: string
 
   /**
    * 表情包

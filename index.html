@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Artalk DEMO</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
   <style>
     * { box-sizing: border-box; }
     body { padding:45px 10px;margin:0;background:#f4f4f4 }
@@ -29,7 +29,7 @@
     body.dark-mode .to-night { background: #fff;border: 1px solid #2d3235;color: #0083ff; }
     .to-top { right: 25px; }
   </style>
-<link href="dist/Artalk.css?187ce44776198bffcdcb" rel="stylesheet"><script type="text/javascript" src="dist/Artalk.js?187ce44776198bffcdcb"></script></head>
+</head>
 <body>
   <div class="card billboard artalk-fade-in">
     <div class="title"><a href="https://github.com/ArtalkJS/Artalk" target="_blank"><span>『 </span>Artalk<span> 』</span></a></div>
@@ -39,7 +39,7 @@
       <a href="https://www.npmjs.com/package/artalk" target="_blank"><img src="https://img.shields.io/npm/dt/artalk.svg?style=flat-square"></a>
       <a href="https://github.com/ArtalkJS/Artalk/commits/master" target="_blank"><img src="https://img.shields.io/github/last-commit/ArtalkJS/Artalk?style=flat-square"></a>
       <a href="https://github.com/ArtalkJS/Artalk/blob/master/LICENSE" target="_blank"><img src="https://img.shields.io/github/license/ArtalkJS/Artalk.svg?style=flat-square"></a>
-      <a href="https://github.com/ArtalkJS/Artalk" target="_blank"><img src="https://img.shields.io/github/stars/ArtalkJS/Artalk.svg?style=social"></a>
+      <a href="https://github.com/ArtalkJS/Artalk" target="_blank"><img src="https://img.shields.io/github/stars/ArtalkJS/Artalk?style=flat-square"></a>
     </div>
   </div>
   <div class="card artalk-fade-in">
@@ -47,21 +47,26 @@
   </div>
   <div class="float-btn to-night artalk-fade-in">Blink</div>
   <div class="float-btn to-top artalk-fade-in" style="display: none;">TOP</div>
-  <script>
+
+  <script type="module">
+    import Artalk from './src/main'
     var artalk = new Artalk({
       el: '#comments',
       placeholder: '来啊，快活啊 ( ゜- ゜)',
       defaultAvatar: 'mp',
-      pageKey: 'https://artalk.js.org/',
-      serverUrl: (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:23366/' : 'https://qwqaq.com/Artalk/index.php',
+      pageKey: 'https://artalk-cn.qwqaq.com/',
+      pageTitle: 'Artalk Home',
+      server: (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:23366/api' : './api',
+      site: 'ArtalkDemo',
       readMore: {
         pageSize: 15,
         autoLoad: true
       },
-    })
-  </script>
-  <script>
-    (function () {
+    });
+
+    window.artalk = artalk;
+
+    ;(function () {
       const toTopElem = document.querySelector('.to-top')
       toTopElem.addEventListener('click', () => {
         window.scrollTo(0, 0)
@@ -85,7 +90,7 @@
       }
     })();
 
-    (function () {
+    ;(function () {
       // @Refer: https://stackoverflow.com/questions/50840168/how-to-detect-if-the-os-is-in-dark-mode-in-browsers
       let darkMode = false
 
@@ -108,7 +113,7 @@
       }
 
       function checkAndApplyDarkMode () {
-        artalk.ui.setDarkMode(darkMode)
+        artalk.setDarkMode(darkMode)
         if (darkMode) {
           document.body.classList.add('dark-mode')
         } else {

@@ -33,7 +33,7 @@
     "serve": "vite preview",
     "deploy": "gh-pages -d deploy",
     "predeploy": "yarn run build && yarn run build:demo && yarn run copy:deploy",
-    "copy:deploy": "cp -r docs deploy && cp docs/CNAME deploy",
+    "copy:deploy": "cp -r dist deploy && cp CNAME deploy",
     "lint": "eslint --ext .js,.ts src"
   },
   "devDependencies": {

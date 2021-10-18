@@ -334,7 +334,7 @@ function CommonFetch(ctx: Context, input: RequestInfo, init: RequestInit): Promi
           }
         })
       }))
-    } else if (json.data && json.data.need_login) {
+    } else if ((json.data && json.data.need_login) || resp.status === 401) {
       // 请求需要管理员权限
       json = await (new Promise<any>((resolve, reject) => {
         ctx.dispatchEvent('checker-admin', {

@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./docs/banner-2021.png" alt="Artalk" width="100%">
+<img src="https://user-images.githubusercontent.com/22412567/137740516-d9e97af0-fb3b-4dab-b331-671a9a2a3a63.png" alt="Artalk" width="100%">
 </p>
 
 # Artalk
@@ -14,7 +14,7 @@
 [![](https://img.shields.io/github/license/ArtalkJS/Artalk.svg?style=flat-square)](./LICENSE)
 
 ## 特性
-- 轻量简洁 (~23kB gzipped)
+- 轻量简洁 (~30kB gzipped)
 - 有趣有爱
 - 自托管
 - Markdown

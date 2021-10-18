@@ -1,0 +1,52 @@
+.DS_Store
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.history
+.editorconfig
+
+# git
+.gitignore
+.gitattributes
+
+# tests
+test
+coverage
+
+# build tools
+.travis.yml
+.jenkins.yml
+.codeclimate.yml
+
+# linters
+.jscsrc
+.jshintrc
+.eslintrc*
+
+# vite configs
+vite*.config*
+
+# develop tool configs
+.prettierrc
+.eslintrc.js
+.eslintignore
+postcss.config.js
+tsconfig.json
+
+yarn.lock
+package-lock.json
+
+# local files
+deploy
+local
+CNAME
+index.html
+#dist

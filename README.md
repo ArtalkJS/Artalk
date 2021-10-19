@@ -4,7 +4,17 @@
 
 # ArtalkGo
 
-> ArtalkGo: the Artalk golang version.
+> ArtalkGo: Golang backend of Artalk.
+
+## QuickStart
+
+1. 前往 Release 页下载已编译二进制文件
+2. 编辑 `artalk-go.yml` 配置程序
+3. 执行 `./artalk-go serve` 运行程序
+4. 反代设定的端口到 80 并套上 CDN (Nginx)
+5. 持久化运行 artalk-go (tmux, sysctl)
+
+(目前部署较为繁琐，将推出 docker 镜像，更新待续...)
 
 ## Features
 

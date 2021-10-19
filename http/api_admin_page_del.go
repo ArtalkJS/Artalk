@@ -55,12 +55,12 @@ func DelPage(page *model.Page) error {
 	}
 
 	// 删除 vote
-	lib.DB.Model(&model.Vote{}).Unscoped().Delete(
+	lib.DB.Unscoped().Where(
 		"target_id = ? AND (type = ? OR type = ?)",
 		page.ID,
 		string(model.VoteTypePageUp),
 		string(model.VoteTypePageDown),
-	)
+	).Delete(&model.Vote{})
 
 	return nil
 }

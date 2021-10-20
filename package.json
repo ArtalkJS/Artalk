@@ -20,6 +20,7 @@
   "unpkg": "./dist/Artalk.iife.js",
   "jsdelivr": "./dist/Artalk.iife.js",
   "module": "./dist/Artalk.es.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/Artalk.es.js",

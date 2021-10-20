@@ -3,7 +3,7 @@ FROM golang:alpine as builder
 ENV ARTALK_VERSION v2.0
 
 RUN apk --no-cache add make git gcc musl-dev
-WORKDIR /app
+WORKDIR /source
 COPY . .
 RUN go mod tidy \
     && go install github.com/markbates/pkger/cmd/pkger \
@@ -12,8 +12,10 @@ RUN go mod tidy \
 
 FROM alpine
 
-COPY --from=builder /app/bin/artalk-go /artalk-go
-COPY --from=builder /app/email-tpl /email-tpl
-COPY --from=builder /app/frontend /frontend
+COPY --from=builder /source/bin/artalk-go /artalk-go
 
-CMD ["/artalk-go", "serve"]
+VOLUME ["/conf.yml", "/local"]
+
+ENTRYPOINT ["/artalk-go", "serve"]
+
+CMD ["--config", "/conf.yml"]

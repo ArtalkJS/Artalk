@@ -3,8 +3,6 @@
 </p>
 
 # ArtalkGo
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_shield)
-
 
 > ArtalkGo: Golang backend of Artalk.
 
@@ -16,7 +14,12 @@
 4. 反代设定的端口到 80 并套上 CDN (Nginx)
 5. 持久化运行 artalk-go (tmux, sysctl)
 
-(目前部署较为繁琐，将推出 docker 镜像，更新待续...)
+## Docker
+
+```sh
+docker pull artalk/artalk-go
+docker run -d --name artalk-go -p 23366:23366 -v <PATH TO config>:/conf.yml -v <PATH TO local>:/local artalk/artalk-go
+```
 
 ## Features
 
@@ -99,6 +102,8 @@
 - 高效缓存：支持 Redis, Memory...
 - 邮件发送：支持 SMTP, 阿里云邮件, 系统调用 sendmail 等发送邮件
 
-
 ## License
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_shield)
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_large)

@@ -110,7 +110,7 @@ const (
 type EmailSenderType string
 
 const (
-	TypeSMTP     EmailSenderType = "smpt"
+	TypeSMTP     EmailSenderType = "smtp"
 	TypeAliDM    EmailSenderType = "ali_dm"
 	TypeSendmail EmailSenderType = "sendmail"
 )

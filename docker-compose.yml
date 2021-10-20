@@ -1,0 +1,13 @@
+version: "3.5"
+services:
+  artalk:
+    container_name: artalk
+    build:
+      context: .
+    ports:
+      - "23366:23366"
+    volumes:
+      - ./email-tpl:/email-tpl
+      - ./frontend:/frontend
+      - ./artalk-go.example.yml:/artalk-go.yml
+      - ./local:/local

@@ -1,50 +1,49 @@
 # HTTP Server
-host: '0.0.0.0'
+host: "0.0.0.0"
 
 # 端口
 port: 23366
 
 # 加密密钥
-app_key: ''
+app_key: ""
 
 # 调试模式
 debug: false
 
 # 时区
-timezone: 'Asia/Shanghai'
+timezone: "Asia/Shanghai"
 
 # 数据文件
 db:
-  type: 'sqlite' # 支持 mysql, sqlite, pgsql, sqlserver
-  dsn: './data/artalk-go.db'
+  type: "sqlite" # 支持 mysql, sqlite, pgsql, sqlserver
+  dsn: "./data/artalk-go.db"
 
 # 日志
 log:
   enabled: true # 总开关
-  filename: './data/artalk-go.log' # 日志文件路径
+  filename: "./data/artalk-go.log" # 日志文件路径
 
 # 允许跨域访问的域名
 allow_origin:
-  - '*' # '*' 跨域无限制
+  - "*" # '*' 跨域无限制
 # - 'http://localhost:8080'
 
 # SSL
 ssl:
   enabled: false
-  cert_path: ''
-  key_path: ''
+  cert_path: ""
+  key_path: ""
 
 # 默认站点名
-site_default: '默认站点'
+site_default: "默认站点"
 
 # 管理员账户
 admin_users:
-  -
-    name: 'admin'
-    email: 'admin@example.com'
-    password: ''
-    badge_name: 'Verified'
-    badge_color: '#FF6C00'
+  - name: "admin"
+    email: "admin@example.com"
+    password: ""
+    badge_name: "Verified"
+    badge_color: "#FF6C00"
 
 # 登录超时 (单位：秒)
 login_timeout: 259200
@@ -52,7 +51,7 @@ login_timeout: 259200
 # 评论审核
 moderator:
   pending_default: false # 发表新评论默认为 “待审状态”
-  akismet_key: '' # 启用 akismet.com 反垃圾
+  akismet_key: "" # 启用 akismet.com 反垃圾
 
 # 验证码
 captcha:
@@ -65,19 +64,19 @@ captcha:
 # 邮件通知
 email:
   enabled: true # 总开关
-  send_type: 'smtp' # 发送方式 [smtp, ali_dm, sendmail]
-  send_name: 'ArtalkGo' # 发信人昵称
-  send_addr: 'example@qq.com' # 发信人地址
-  mail_subject: '您在 Artalk 收到了新的回复'
-  mail_subject_to_admin: '您的文章有新的回复'
-  mail_tpl: 'default' # 邮件模板文件
+  send_type: "smtp" # 发送方式 [smtp, ali_dm, sendmail]
+  send_name: "ArtalkGo" # 发信人昵称
+  send_addr: "example@qq.com" # 发信人地址
+  mail_subject: "您在 Artalk 收到了新的回复"
+  mail_subject_to_admin: "您的文章有新的回复"
+  mail_tpl: "default" # 邮件模板文件
   smtp:
-    host: 'smtp.qq.com'
+    host: "smtp.qq.com"
     port: 587
-    username: 'example@qq.com'
-    password: ''
+    username: "example@qq.com"
+    password: ""
   ali_dm: # https://help.aliyun.com/document_detail/29444.html
-    access_key_id: '' # 阿里云颁发给用户的访问服务所用的密钥 ID
-    access_key_secret: '' # 用于加密的密钥
-    account_name: 'example@example.com' # 管理控制台中配置的发信地址
-    
+    access_key_id: "" # 阿里云颁发给用户的访问服务所用的密钥 ID
+    access_key_secret: "" # 用于加密的密钥
+    account_name: "example@example.com" # 管理控制台中配置的发信地址
+

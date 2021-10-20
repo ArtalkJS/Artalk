@@ -45,15 +45,20 @@ $ docker pull artalk/artalk-go
 # 新建 docker 容器
 $ docker run -d \
    --name artalk-go \
-   -p 23366:23366 \
+   -p 0.0.0.0:8080:23366 \
    -v $(pwd)/conf.yml:/conf.yml \
    -v $(pwd)/data:/data \
    artalk/artalk-go
 ```
 
-- 默认监听 `localhost:23366`
-- 配置文件 `./conf.yml`
-- 数据目录 `./data/`
+- 前端访问地址 `http://localhost:8080/api`
+
+  ```js
+  new Artalk({ server: "http://localhost:8080/api" })
+  ```
+
+- 配置文件路径 `./conf.yml`
+- 数据文件目录 `./data/`
 
 # 编译
 

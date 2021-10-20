@@ -3,6 +3,8 @@
 </p>
 
 # ArtalkGo
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_shield)
+
 
 > ArtalkGo: Golang backend of Artalk.
 
@@ -96,3 +98,7 @@
 - 数据存储：支持 SQLite, MySQL, PostgreSQL, SQL Server...
 - 高效缓存：支持 Redis, Memory...
 - 邮件发送：支持 SMTP, 阿里云邮件, 系统调用 sendmail 等发送邮件
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_large)

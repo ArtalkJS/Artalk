@@ -23,4 +23,7 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
+
+	flagPV(serveCmd, "host", "", "0.0.0.0", "监听 IP")
+	flagPV(serveCmd, "port", "", 23366, "监听端口")
 }

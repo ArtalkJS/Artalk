@@ -15,10 +15,20 @@ update:
 	pkger -include /frontend -include /email-tpl -o pkged
 
 build: update
-	go build -ldflags "-X github.com/ArtalkJS/ArtalkGo.Version=${VERSION}" -o bin/artalk-go github.com/ArtalkJS/ArtalkGo
+	go build \
+    	-ldflags "-X github.com/ArtalkJS/ArtalkGo/lib.Version=${VERSION} \
+        -X github.com/ArtalkJS/ArtalkGo/lib.LastCommit=${COMMIT_SHA}" \
+        -o bin/artalk-go \
+    	github.com/ArtalkJS/ArtalkGo
 
 run: update build
 	./bin/artalk-go
 
 test: update
 	go test -cover github.com/ArtalkJS/ArtalkGo/...
+
+docker-build:
+	./scripts/docker-build.sh
+
+docker-push:
+	./scripts/docker-build.sh --push

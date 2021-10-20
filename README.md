@@ -6,28 +6,81 @@
 
 > ArtalkGo: Golang backend of Artalk.
 
-## QuickStart
-
-1. 前往 Release 页下载已编译二进制文件
-2. 编辑 `artalk-go.yml` 配置程序
-3. 执行 `./artalk-go serve` 运行程序
-4. 反代设定的端口到 80 并套上 CDN (Nginx)
-5. 持久化运行 artalk-go (tmux, sysctl)
-
-## Docker
-
-```sh
-docker pull artalk/artalk-go
-docker run -d --name artalk-go -p 23366:23366 -v <PATH TO config>:/conf.yml -v <PATH TO local>:/local artalk/artalk-go
-```
-
-## Features
-
 - 高效
 - 跨平台
 - 轻松部署
 - 多站点支持
 - 多数据库类型支持
+
+# 部署方针
+
+## 普通方式
+
+1. 前往 [Release](https://github.com/ArtalkJS/ArtalkGo/releases) 下载已编译二进制文件
+2. 编辑配置文件
+   ```sh
+   $ curl -L https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/main/artalk-go.example.yml > artalk-go.yml
+   $ vim artalk-go.yml
+   ```
+3. 运行程序 `./artalk-go serve`
+4. 反代设定的端口到 80 并套上 CDN (Nginx, Apache)
+5. 持久化运作 artalk-go 程序 (tmux, sysctl)
+
+## Docker（推荐）
+
+```sh
+# 为 ArtalkGo 创建一个目录
+$ mkdir ArtalkGo
+$ cd ArtalkGo
+
+# 下载配置文件模版
+$ curl -L https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/main/artalk-go.example.yml > conf.yml
+
+# 编译配置文件
+$ vim conf.yml
+
+# 拉取 docker 镜像
+$ docker pull artalk/artalk-go
+
+# 新建 docker 容器
+$ docker run -d \
+   --name artalk-go \
+   -p 23366:23366 \
+   -v $(pwd)/conf.yml:/conf.yml \
+   -v $(pwd)/data:/data \
+   artalk/artalk-go
+```
+
+- 默认监听 `localhost:23366`
+- 配置文件 `./conf.yml`
+- 数据目录 `./data/`
+
+# 编译
+
+## 编译二进制文件
+
+```sh
+$ make all
+```
+
+编译后二进制文件将输出到 `bin/` 目录下
+
+## Docker 镜像制作
+
+```sh
+## 制作镜像
+$ make docker-docker
+
+# 发布镜像
+$ make docker-push
+```
+
+## Supports
+
+- 跨平台：支持 Linux, Win, Darwin
+- 数据存储：支持 SQLite, MySQL, PostgreSQL, SQL Server...
+- 高效缓存：支持 Redis, Memory...
+- 邮件发送：支持 SMTP, 阿里云邮件, 系统调用 sendmail 等发送邮件
 
 ## TODOs 
 
@@ -94,13 +147,6 @@ docker run -d --name artalk-go -p 23366:23366 -v <PATH TO config>:/conf.yml -v <
 - [ ] 接入第三方登录
 - [ ] 国际化 (i18n)
 - [ ] 在线升级
-
-## Supports
-
-- 跨平台：支持 Linux, Win, Darwin
-- 数据存储：支持 SQLite, MySQL, PostgreSQL, SQL Server...
-- 高效缓存：支持 Redis, Memory...
-- 邮件发送：支持 SMTP, 阿里云邮件, 系统调用 sendmail 等发送邮件
 
 ## License
 

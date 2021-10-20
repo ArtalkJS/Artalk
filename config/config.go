@@ -21,10 +21,12 @@ type Config struct {
 	AppKey       string          `mapstructure:"app_key"`      // 加密密钥
 	Debug        bool            `mapstructure:"debug"`        // 调试模式
 	TimeZone     string          `mapstructure:"timezone"`     // 时区
-	HttpAddr     string          `mapstructure:"http_addr"`    // HTTP Server 监听地址
+	Host         string          `mapstructure:"host"`         // HTTP Server 监听 IP
+	Port         int             `mapstructure:"port"`         // HTTP Server 监听 Port
 	DB           DBConf          `mapstructure:"db"`           // 数据文件
 	Log          LogConf         `mapstructure:"log"`          // 日志文件
 	AllowOrigin  []string        `mapstructure:"allow_origin"` // 允许跨域访问的域名
+	SSL          SSLConf         `mapstructure:"site_default"` // SSL
 	SiteDefault  string          `mapstructure:"site_default"` // 默认站点名（当请求无指定 site_name 时使用）
 	AdminUsers   []AdminUserConf `mapstructure:"admin_users"`
 	LoginTimeout int             `mapstructure:"login_timeout"`
@@ -41,6 +43,12 @@ type DBConf struct {
 type LogConf struct {
 	Enabled  bool   `mapstructure:"enabled"`
 	Filename string `mapstructure:"filename"`
+}
+
+type SSLConf struct {
+	Enabled  bool   `mapstructure:"enabled"`
+	CertPath string `mapstructure:"cert_path"`
+	KeyPath  string `mapstructure:"key_path"`
 }
 
 type AdminUserConf struct {

@@ -10,4 +10,4 @@ services:
       - ./email-tpl:/email-tpl
       - ./frontend:/frontend
       - ./artalk-go.yml:/artalk-go.yml
-      - ./local:/local
+      - ./data:/data

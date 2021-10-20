@@ -1,5 +1,8 @@
-# HTTP Server 监听地址
-http_addr: ':23366'
+# HTTP Server
+host: '0.0.0.0'
+
+# 端口
+port: 23366
 
 # 加密密钥
 app_key: ''
@@ -13,17 +16,23 @@ timezone: 'Asia/Shanghai'
 # 数据文件
 db:
   type: 'sqlite' # 支持 mysql, sqlite, pgsql, sqlserver
-  dsn: './local/artalk-go.db'
+  dsn: './data/artalk-go.db'
 
 # 日志
 log:
   enabled: true # 总开关
-  filename: './local/artalk-go.log' # 日志文件路径
+  filename: './data/artalk-go.log' # 日志文件路径
 
 # 允许跨域访问的域名
 allow_origin:
   - '*' # '*' 跨域无限制
 # - 'http://localhost:8080'
+
+# SSL
+ssl:
+  enabled: false
+  cert_path: ''
+  key_path: ''
 
 # 默认站点名
 site_default: '默认站点'

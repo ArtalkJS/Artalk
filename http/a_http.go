@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -60,7 +61,13 @@ func Run() {
 	// Route
 	InitRoute(e)
 
-	e.Logger.Fatal(e.Start(config.Instance.HttpAddr))
+	listenAddr := fmt.Sprintf("%s:%d", config.Instance.Host, config.Instance.Port)
+
+	if config.Instance.SSL.Enabled {
+		e.Logger.Fatal(e.StartTLS(listenAddr, config.Instance.SSL.CertPath, config.Instance.SSL.KeyPath))
+	} else {
+		e.Logger.Fatal(e.Start(listenAddr))
+	}
 }
 
 func InitRoute(e *echo.Echo) {

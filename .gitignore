@@ -19,5 +19,6 @@ config.yml
 
 local/
 bin/
+data/
 
 dist/

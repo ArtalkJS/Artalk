@@ -8,8 +8,11 @@ RUN set -ex \
     && apk upgrade \
     && apk add make git gcc musl-dev yarn
 
-# 1. build frontend
-RUN git clone https://github.com/ArtalkJS/Artalk.git Artalk
+# 1. build frontend (using latest tag)
+RUN git clone https://github.com/ArtalkJS/Artalk.git Artalk \
+    && cd Artalk \
+    && git fetch --tags \
+    && git checkout $(git describe --tags --abbrev=0)
 
 RUN set -ex \
     && cd ./Artalk \

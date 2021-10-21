@@ -309,6 +309,10 @@ function CommonFetch(ctx: Context, input: RequestInfo, init: RequestInit): Promi
 
   // 15s timeout
   return timeoutPromise(15000, fetch(input, init)).then(async (resp) => {
+    if (!resp.ok) {
+        throw new Error(`请求响应 ${resp.status}`)
+    }
+
     // 解析获取响应的 json
     let json: any = await resp.json()
 
@@ -353,6 +357,14 @@ function CommonFetch(ctx: Context, input: RequestInfo, init: RequestInit): Promi
     else
       return json
   })
+  .catch(err => {
+    console.error(err)
+
+    if (err instanceof TypeError)
+      throw new Error(`网络错误`)
+
+    throw err
+  })
 }
 
 function getFormData (object: any): FormData {
@@ -365,7 +377,7 @@ function getFormData (object: any): FormData {
 function timeoutPromise<T>(ms: number, promise: Promise<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
-      reject(new Error("promise timeout"))
+      reject(new Error("请求超时"))
     }, ms);
     promise.then(
       (res) => {

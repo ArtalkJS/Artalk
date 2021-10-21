@@ -14,16 +14,16 @@ var Instance *Config
 // Config 配置
 // @link https://godoc.org/github.com/mitchellh/mapstructure
 type Config struct {
-	AppKey       string          `mapstructure:"app_key" json:"app_key"`           // 加密密钥
-	Debug        bool            `mapstructure:"debug" json:"debug"`               // 调试模式
-	TimeZone     string          `mapstructure:"timezone" json:"timezone"`         // 时区
-	Host         string          `mapstructure:"host" json:"host"`                 // HTTP Server 监听 IP
-	Port         int             `mapstructure:"port" json:"port"`                 // HTTP Server 监听 Port
-	DB           DBConf          `mapstructure:"db" json:"db"`                     // 数据文件
-	Log          LogConf         `mapstructure:"log" json:"log"`                   // 日志文件
-	AllowOrigin  []string        `mapstructure:"allow_origin" json:"allow_origin"` // 允许跨域访问的域名
-	SSL          SSLConf         `mapstructure:"ssl" json:"ssl"`                   // SSL
-	SiteDefault  string          `mapstructure:"site_default" json:"site_default"` // 默认站点名（当请求无指定 site_name 时使用）
+	AppKey       string          `mapstructure:"app_key" json:"app_key"`             // 加密密钥
+	Debug        bool            `mapstructure:"debug" json:"debug"`                 // 调试模式
+	TimeZone     string          `mapstructure:"timezone" json:"timezone"`           // 时区
+	Host         string          `mapstructure:"host" json:"host"`                   // HTTP Server 监听 IP
+	Port         int             `mapstructure:"port" json:"port"`                   // HTTP Server 监听 Port
+	DB           DBConf          `mapstructure:"db" json:"db"`                       // 数据文件
+	Log          LogConf         `mapstructure:"log" json:"log"`                     // 日志文件
+	AllowOrigins []string        `mapstructure:"allow_origins" json:"allow_origins"` // 允许跨域访问的域名
+	SSL          SSLConf         `mapstructure:"ssl" json:"ssl"`                     // SSL
+	SiteDefault  string          `mapstructure:"site_default" json:"site_default"`   // 默认站点名（当请求无指定 site_name 时使用）
 	AdminUsers   []AdminUserConf `mapstructure:"admin_users" json:"admin_users"`
 	LoginTimeout int             `mapstructure:"login_timeout" json:"login_timeout"`
 	Moderator    ModeratorConf   `mapstructure:"moderator" json:"moderator"`

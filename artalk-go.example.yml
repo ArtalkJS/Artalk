@@ -24,7 +24,7 @@ log:
   filename: "./data/artalk-go.log" # 日志文件路径
 
 # 允许跨域访问的域名
-allow_origin:
+allow_origins:
   - "*" # '*' 跨域无限制
 # - 'http://localhost:8080'
 

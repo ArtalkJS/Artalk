@@ -20,7 +20,7 @@ func Run() {
 	e.HideBanner = true
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: config.Instance.AllowOrigin,
+		AllowOrigins: config.Instance.AllowOrigins,
 	}))
 
 	// Logger

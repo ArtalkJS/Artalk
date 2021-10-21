@@ -27,6 +27,7 @@ RUN cp -r ./Artalk/dist ./ArtalkGo/frontend
 
 RUN set -ex \
     && cd ./ArtalkGo \
+    && git fetch --tags \
     && export VERSION=$(git describe --tags --abbrev=0) \
     && export COMMIT_SHA=$(git rev-parse --short HEAD) \
     && go mod tidy \

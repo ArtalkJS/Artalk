@@ -1,11 +1,9 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
-	"github.com/jeremywohl/flatten"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -13,89 +11,87 @@ import (
 // Instance 配置实例
 var Instance *Config
 
-var Flat map[string]interface{}
-
 // Config 配置
 // @link https://godoc.org/github.com/mitchellh/mapstructure
 type Config struct {
-	AppKey       string          `mapstructure:"app_key"`      // 加密密钥
-	Debug        bool            `mapstructure:"debug"`        // 调试模式
-	TimeZone     string          `mapstructure:"timezone"`     // 时区
-	Host         string          `mapstructure:"host"`         // HTTP Server 监听 IP
-	Port         int             `mapstructure:"port"`         // HTTP Server 监听 Port
-	DB           DBConf          `mapstructure:"db"`           // 数据文件
-	Log          LogConf         `mapstructure:"log"`          // 日志文件
-	AllowOrigin  []string        `mapstructure:"allow_origin"` // 允许跨域访问的域名
-	SSL          SSLConf         `mapstructure:"site_default"` // SSL
-	SiteDefault  string          `mapstructure:"site_default"` // 默认站点名（当请求无指定 site_name 时使用）
-	AdminUsers   []AdminUserConf `mapstructure:"admin_users"`
-	LoginTimeout int             `mapstructure:"login_timeout"`
-	Moderator    ModeratorConf   `mapstructure:"moderator"`
-	Captcha      CaptchaConf     `mapstructure:"captcha"`
-	Email        EmailConf       `mapstructure:"email"`
+	AppKey       string          `mapstructure:"app_key" json:"app_key"`           // 加密密钥
+	Debug        bool            `mapstructure:"debug" json:"debug"`               // 调试模式
+	TimeZone     string          `mapstructure:"timezone" json:"timezone"`         // 时区
+	Host         string          `mapstructure:"host" json:"host"`                 // HTTP Server 监听 IP
+	Port         int             `mapstructure:"port" json:"port"`                 // HTTP Server 监听 Port
+	DB           DBConf          `mapstructure:"db" json:"db"`                     // 数据文件
+	Log          LogConf         `mapstructure:"log" json:"log"`                   // 日志文件
+	AllowOrigin  []string        `mapstructure:"allow_origin" json:"allow_origin"` // 允许跨域访问的域名
+	SSL          SSLConf         `mapstructure:"ssl" json:"ssl"`                   // SSL
+	SiteDefault  string          `mapstructure:"site_default" json:"site_default"` // 默认站点名（当请求无指定 site_name 时使用）
+	AdminUsers   []AdminUserConf `mapstructure:"admin_users" json:"admin_users"`
+	LoginTimeout int             `mapstructure:"login_timeout" json:"login_timeout"`
+	Moderator    ModeratorConf   `mapstructure:"moderator" json:"moderator"`
+	Captcha      CaptchaConf     `mapstructure:"captcha" json:"captcha"`
+	Email        EmailConf       `mapstructure:"email" json:"email"`
 }
 
 type DBConf struct {
-	Type DBType `mapstructure:"type"`
-	Dsn  string `mapstructure:"dsn"`
+	Type DBType `mapstructure:"type" json:"type"`
+	Dsn  string `mapstructure:"dsn" json:"dsn"`
 }
 
 type LogConf struct {
-	Enabled  bool   `mapstructure:"enabled"`
-	Filename string `mapstructure:"filename"`
+	Enabled  bool   `mapstructure:"enabled" json:"enabled"`
+	Filename string `mapstructure:"filename" json:"filename"`
 }
 
 type SSLConf struct {
-	Enabled  bool   `mapstructure:"enabled"`
-	CertPath string `mapstructure:"cert_path"`
-	KeyPath  string `mapstructure:"key_path"`
+	Enabled  bool   `mapstructure:"enabled" json:"enabled"`
+	CertPath string `mapstructure:"cert_path" json:"cert_path"`
+	KeyPath  string `mapstructure:"key_path" json:"key_path"`
 }
 
 type AdminUserConf struct {
-	Name       string `mapstructure:"name"`
-	Email      string `mapstructure:"email"`
-	Link       string `mapstructure:"link"`
-	Password   string `mapstructure:"password"`
-	BadgeName  string `mapstructure:"badge_name"`
-	BadgeColor string `mapstructure:"badge_color"`
+	Name       string `mapstructure:"name" json:"name"`
+	Email      string `mapstructure:"email" json:"email"`
+	Link       string `mapstructure:"link" json:"link"`
+	Password   string `mapstructure:"password" json:"password"`
+	BadgeName  string `mapstructure:"badge_name" json:"badge_name"`
+	BadgeColor string `mapstructure:"badge_color" json:"badge_color"`
 }
 
 type ModeratorConf struct {
-	PendingDefault bool   `mapstructure:"pending_default"`
-	AkismetKey     string `mapstructure:"akismet_key"`
+	PendingDefault bool   `mapstructure:"pending_default" json:"pending_default"`
+	AkismetKey     string `mapstructure:"akismet_key" json:"akismet_key"`
 }
 
 type CaptchaConf struct {
-	Enabled       bool `mapstructure:"enabled"`
-	Always        bool `mapstructure:"always"`
-	ActionTimeout int  `mapstructure:"action_timeout"`
-	ActionLimit   int  `mapstructure:"action_limit"`
+	Enabled       bool `mapstructure:"enabled" json:"enabled"`
+	Always        bool `mapstructure:"always" json:"always"`
+	ActionTimeout int  `mapstructure:"action_timeout" json:"action_timeout"`
+	ActionLimit   int  `mapstructure:"action_limit" json:"action_limit"`
 }
 
 type EmailConf struct {
-	Enabled            bool            `mapstructure:"enabled"`               // 总开关
-	SendType           EmailSenderType `mapstructure:"send_type"`             // 发送方式
-	SendName           string          `mapstructure:"send_name"`             // 发件人名
-	SendAddr           string          `mapstructure:"send_addr"`             // 发件人地址
-	MailSubject        string          `mapstructure:"mail_subject"`          // 邮件标题
-	MailSubjectToAdmin string          `mapstructure:"mail_subject_to_admin"` // 邮件标题 (发送给管理员用)
-	MailTpl            string          `mapstructure:"mail_tpl"`              // 邮件模板
-	SMTP               SMTPConf        `mapstructure:"smtp"`                  // SMTP 配置
-	AliDM              AliDMConf       `mapstructure:"ali_dm"`                // 阿里云邮件配置
+	Enabled            bool            `mapstructure:"enabled" json:"enabled"`                             // 总开关
+	SendType           EmailSenderType `mapstructure:"send_type" json:"send_type"`                         // 发送方式
+	SendName           string          `mapstructure:"send_name" json:"send_name"`                         // 发件人名
+	SendAddr           string          `mapstructure:"send_addr" json:"send_addr"`                         // 发件人地址
+	MailSubject        string          `mapstructure:"mail_subject" json:"mail_subject"`                   // 邮件标题
+	MailSubjectToAdmin string          `mapstructure:"mail_subject_to_admin" json:"mail_subject_to_admin"` // 邮件标题 (发送给管理员用)
+	MailTpl            string          `mapstructure:"mail_tpl" json:"mail_tpl"`                           // 邮件模板
+	SMTP               SMTPConf        `mapstructure:"smtp" json:"smtp"`                                   // SMTP 配置
+	AliDM              AliDMConf       `mapstructure:"ali_dm" json:"ali_dm"`                               // 阿里云邮件配置
 }
 
 type SMTPConf struct {
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	Username string `mapstructure:"username"`
-	Password string `mapstructure:"password"`
-	From     string `mapstructure:"from"`
+	Host     string `mapstructure:"host" json:"host"`
+	Port     int    `mapstructure:"port" json:"port"`
+	Username string `mapstructure:"username" json:"username"`
+	Password string `mapstructure:"password" json:"password"`
+	From     string `mapstructure:"from" json:"from"`
 }
 
 type AliDMConf struct {
-	AccessKeyId     string `mapstructure:"access_key_id"`
-	AccessKeySecret string `mapstructure:"access_key_secret"`
-	AccountName     string `mapstructure:"account_name"`
+	AccessKeyId     string `mapstructure:"access_key_id" json:"access_key_id"`
+	AccessKeySecret string `mapstructure:"access_key_secret" json:"access_key_secret"`
+	AccountName     string `mapstructure:"account_name" json:"account_name"`
 }
 
 type DBType string
@@ -141,22 +137,4 @@ func Init(cfgFile string) {
 	if err != nil {
 		logrus.Errorf("unable to decode into struct, %v", err)
 	}
-
-	Flat = StructToFlatDotMap(&Instance)
-}
-
-func StructToMap(s interface{}) map[string]interface{} {
-	b, _ := json.Marshal(s)
-	var m map[string]interface{}
-	_ = json.Unmarshal(b, &m)
-	return m
-}
-
-func StructToFlatDotMap(s interface{}) map[string]interface{} {
-	m := StructToMap(s)
-	mainFlat, err := flatten.Flatten(m, "", flatten.DotStyle)
-	if err != nil {
-		return map[string]interface{}{}
-	}
-	return mainFlat
 }

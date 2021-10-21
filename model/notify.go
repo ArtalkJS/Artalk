@@ -33,8 +33,7 @@ func (n *Notify) FetchComment() Comment {
 		return n.Comment
 	}
 
-	var comment Comment
-	lib.DB.First(&comment, n.CommentID)
+	comment := FindCommentByID(n.CommentID)
 
 	n.Comment = comment
 	return comment

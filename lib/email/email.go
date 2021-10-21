@@ -32,19 +32,18 @@ func AsyncSend(notify *model.Notify) {
 	from := comment.ToCookedForEmail()
 	to := parentComment.ToCookedForEmail()
 
-	go func() {
-		subject := RenderConfig(config.Instance.Email.MailSubject, notify, from, to)
-		body := RenderEmailTpl(notify, from, to)
+	fromName := RenderCommon(config.Instance.Email.SendName, notify, from, to)
+	subject := RenderCommon(config.Instance.Email.MailSubject, notify, from, to)
+	body := RenderEmailTpl(notify, from, to)
 
-		AddToQueue(Email{
-			FromAddr:     config.Instance.Email.SendAddr,
-			FromName:     config.Instance.Email.SendName,
-			ToAddr:       to.Email,
-			Subject:      subject,
-			Body:         body,
-			LinkedNotify: notify,
-		})
-	}()
+	AddToQueue(Email{
+		FromAddr:     config.Instance.Email.SendAddr,
+		FromName:     fromName,
+		ToAddr:       to.Email,
+		Subject:      subject,
+		Body:         body,
+		LinkedNotify: notify,
+	})
 }
 
 func AsyncSendToAdmin(notify *model.Notify, admin *model.User) {
@@ -61,17 +60,16 @@ func AsyncSendToAdmin(notify *model.Notify, admin *model.User) {
 		Email: admin.Email,
 	}
 
-	go func() {
-		subject := RenderConfig(config.Instance.Email.MailSubjectToAdmin, notify, from, to)
-		body := RenderEmailTpl(notify, from, to)
+	fromName := RenderCommon(config.Instance.Email.SendName, notify, from, to)
+	subject := RenderCommon(config.Instance.Email.MailSubjectToAdmin, notify, from, to)
+	body := RenderEmailTpl(notify, from, to)
 
-		AddToQueue(Email{
-			FromAddr:     config.Instance.Email.SendAddr,
-			FromName:     config.Instance.Email.SendName,
-			ToAddr:       admin.Email,
-			Subject:      subject,
-			Body:         body,
-			LinkedNotify: notify,
-		})
-	}()
+	AddToQueue(Email{
+		FromAddr:     config.Instance.Email.SendAddr,
+		FromName:     fromName,
+		ToAddr:       admin.Email,
+		Subject:      subject,
+		Body:         body,
+		LinkedNotify: notify,
+	})
 }

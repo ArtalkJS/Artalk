@@ -120,22 +120,20 @@ func ActionAdd(c echo.Context) error {
 		return RespError(c, "评论失败")
 	}
 
-	// update page
-	if page.ToCooked().URL != "" && page.Title == "" {
-		go func() {
-			page.FetchURL()
-		}()
-	}
-
 	// 异步执行
 	go func() {
+		// update page
+		if page.ToCooked().URL != "" && page.Title == "" {
+			page.FetchURL()
+		}
+
 		// 垃圾检测
 		if !CheckIsAdminReq(c) {
 			comment.SpamCheck(c)
 		}
 
 		// 邮件通知发送
-		AsyncSendEmail(&comment, &parentComment)
+		EmailSend(&comment, &parentComment)
 	}()
 
 	return RespData(c, ResponseAdd{
@@ -143,8 +141,8 @@ func ActionAdd(c echo.Context) error {
 	})
 }
 
-// 异步邮件发送
-func AsyncSendEmail(comment *model.Comment, parentComment *model.Comment) {
+// 邮件发送 (from comment to parentComment)
+func EmailSend(comment *model.Comment, parentComment *model.Comment) {
 	if !config.Instance.Email.Enabled {
 		return
 	}
@@ -165,10 +163,25 @@ func AsyncSendEmail(comment *model.Comment, parentComment *model.Comment) {
 	var admins []model.User
 	lib.DB.Where("is_admin = 1").Find(&admins)
 
+	isAdmin := func(userID uint) bool {
+		for _, admin := range admins {
+			if admin.ID == userID {
+				return true
+			}
+		}
+		return false
+	}
+
 	if parentComment.IsEmpty() && len(admins) > 0 {
 		// TODO: 增加用户的站点隔离，指定管理员分配网站
 		for _, admin := range admins {
-			if comment.UserID == admin.ID { // 管理员自己回复自己，不提醒
+			// 管理员自己回复自己，不提醒
+			if comment.UserID == admin.ID {
+				continue
+			}
+
+			// 管理员评论不回复给其他管理员
+			if isAdmin(comment.UserID) {
 				continue
 			}
 

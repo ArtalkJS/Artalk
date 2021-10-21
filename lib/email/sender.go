@@ -40,7 +40,7 @@ func SendByAliDM(email Email) bool {
 		config.Instance.Email.AliDM.AccessKeyId,
 		config.Instance.Email.AliDM.AccessKeySecret,
 		config.Instance.Email.AliDM.AccountName,
-		config.Instance.Email.SendName,
+		email.FromName,
 		ali_dm.RegionCNHangZhou,
 	)
 	req := &ali_dm.SingleRequest{

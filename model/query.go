@@ -16,7 +16,7 @@ func FindComment(id uint, siteName string) Comment {
 	return comment
 }
 
-func FindCommentBy(id uint) Comment {
+func FindCommentByID(id uint) Comment {
 	var comment Comment
 	lib.DB.Preload(clause.Associations).Where("id = ?", id).First(&comment)
 	return comment

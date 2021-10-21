@@ -146,51 +146,52 @@ func (c *Comment) ToCooked() CookedComment {
 }
 
 type CookedCommentForEmail struct {
-	ID             uint   `json:"id"`
-	ContentRaw     string `json:"content_raw"`
-	Content        string `json:"content"`
-	Nick           string `json:"nick"`
-	Email          string `json:"email"`
-	EmailEncrypted string `json:"email_encrypted"`
-	Link           string `json:"link"`
-	UA             string `json:"ua"`
-	Datetime       string `json:"datetime"`
-	Date           string `json:"date"`
-	Time           string `json:"time"`
-	IsCollapsed    bool   `json:"is_collapsed"`
-	IsPending      bool   `json:"is_pending"`
-	IsAllowReply   bool   `json:"is_allow_reply"`
-	Rid            uint   `json:"rid"`
-	BadgeName      string `json:"badge_name"`
-	BadgeColor     string `json:"badge_color"`
-	PageKey        string `json:"page_key"`
-	SiteName       string `json:"site_name"`
+	CookedComment
+	Content    string     `json:"content"`
+	ContentRaw string     `json:"content_raw"`
+	Nick       string     `json:"nick"`
+	Email      string     `json:"email"`
+	Datetime   string     `json:"datetime"`
+	Date       string     `json:"date"`
+	Time       string     `json:"time"`
+	PageKey    string     `json:"page_key"`
+	PageTitle  string     `json:"page_title"`
+	Page       CookedPage `json:"page"`
+	SiteName   string     `json:"site_name"`
+	Site       CookedSite `json:"site"`
 }
 
 func (c *Comment) ToCookedForEmail() CookedCommentForEmail {
 	user := c.FetchUser()
+	page := c.FetchPage()
+	site := c.FetchSite()
 	content, _ := lib.Marked(c.Content)
 
 	return CookedCommentForEmail{
-		ID:             c.ID,
-		ContentRaw:     c.Content,
-		Content:        content,
-		Nick:           user.Name,
-		Email:          user.Email,
-		EmailEncrypted: lib.GetMD5Hash(user.Email),
-		Link:           user.Link,
-		UA:             c.UA,
-		Datetime:       c.CreatedAt.Local().Format("2006-01-02 15:04:05"),
-		Date:           c.CreatedAt.Local().Format("2006-01-02"),
-		Time:           c.CreatedAt.Local().Format("15:04:05"),
-		IsCollapsed:    c.IsCollapsed,
-		IsPending:      c.IsPending,
-		IsAllowReply:   c.IsAllowReply(),
-		Rid:            c.Rid,
-		BadgeName:      user.BadgeName,
-		BadgeColor:     user.BadgeColor,
-		PageKey:        c.PageKey,
-		SiteName:       c.SiteName,
+		Content:    content,
+		ContentRaw: c.Content,
+		Nick:       user.Name,
+		Email:      user.Email,
+		Datetime:   c.CreatedAt.Local().Format("2006-01-02 15:04:05"),
+		Date:       c.CreatedAt.Local().Format("2006-01-02"),
+		Time:       c.CreatedAt.Local().Format("15:04:05"),
+		PageKey:    c.PageKey,
+		PageTitle:  page.Title,
+		Page:       page.ToCooked(),
+		SiteName:   c.SiteName,
+		Site:       site.ToCooked(),
+		CookedComment: CookedComment{
+			ID:             c.ID,
+			EmailEncrypted: lib.GetMD5Hash(user.Email),
+			Link:           user.Link,
+			UA:             c.UA,
+			IsCollapsed:    c.IsCollapsed,
+			IsPending:      c.IsPending,
+			IsAllowReply:   c.IsAllowReply(),
+			Rid:            c.Rid,
+			BadgeName:      user.BadgeName,
+			BadgeColor:     user.BadgeColor,
+		},
 	}
 }
 
@@ -221,7 +222,7 @@ func (c *Comment) SpamCheck(echoCtx echo.Context) {
 	// akismet
 	akismetKey := strings.TrimSpace(config.Instance.Moderator.AkismetKey)
 	if akismetKey != "" {
-		isOK, err := lib.AntiSpamCheck_Akismet(&lib.AkismetParams{
+		isOK, err := lib.SpamCheck_Akismet(&lib.AkismetParams{
 			Blog:               siteURL,
 			UserIP:             echoCtx.RealIP(),
 			UserAgent:          echoCtx.Request().UserAgent(),

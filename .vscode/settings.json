@@ -5,8 +5,8 @@
         "gomail",
         "gorm",
         "lfshook",
+        "pgsql",
         "sendmail",
-        "smpt",
         "sqlite"
     ]
 }

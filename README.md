@@ -6,15 +6,20 @@
 
 > ArtalkGo: Golang backend of Artalk.
 
+[![GitHub issues](https://img.shields.io/github/issues/ArtalkJS/ArtalkGo)](https://github.com/ArtalkJS/ArtalkGo/issues)
+[![](https://img.shields.io/github/issues-pr/ArtalkJS/ArtalkGo)](https://github.com/ArtalkJS/ArtalkGo/pulls)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_shield)
+[![CI to Docker Hub](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml)
+
 - 高效
 - 跨平台
 - 轻松部署
 - 多站点支持
 - 多数据库类型支持
 
-# 部署方针
+## 部署方针
 
-## 普通方式
+### 普通方式
 
 1. 前往 [Release](https://github.com/ArtalkJS/ArtalkGo/releases) 下载已编译二进制文件
 2. 编辑配置文件
@@ -26,7 +31,7 @@
 4. 反代设定的端口到 80 并套上 CDN (Nginx, Apache)
 5. 持久化运作 artalk-go 程序 (tmux, sysctl)
 
-## Docker（推荐）
+### Docker（推荐）
 
 ```sh
 # 为 ArtalkGo 创建一个目录
@@ -60,9 +65,9 @@ $ docker run -d \
 - 配置文件路径 `./conf.yml`
 - 数据文件目录 `./data/`
 
-# 编译
+## 编译
 
-## 编译二进制文件
+### 编译二进制文件
 
 ```sh
 $ make all
@@ -70,7 +75,7 @@ $ make all
 
 编译后二进制文件将输出到 `bin/` 目录下
 
-## Docker 镜像制作
+### Docker 镜像制作
 
 ```sh
 ## 制作镜像
@@ -154,7 +159,5 @@ $ make docker-push
 - [ ] 在线升级
 
 ## License
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_shield)
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_large)

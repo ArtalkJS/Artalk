@@ -2,6 +2,7 @@ package email
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"html"
 	"io/ioutil"
@@ -17,10 +18,10 @@ import (
 func RenderEmailTpl(notify *model.Notify, from model.CookedCommentForEmail, to model.CookedCommentForEmail) string {
 	tplName := config.Instance.Email.MailTpl
 	tpl := ""
-	if _, err := os.Stat(tplName); os.IsExist(err) {
-		tpl = GetExternalEmailTpl(tplName)
-	} else {
+	if _, err := os.Stat(tplName); errors.Is(err, os.ErrNotExist) {
 		tpl = GetInternalEmailTpl(tplName)
+	} else {
+		tpl = GetExternalEmailTpl(tplName)
 	}
 
 	getValue := func(k string, v interface{}) string {

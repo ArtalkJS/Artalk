@@ -123,6 +123,7 @@ archives:
     files:
       - README*
       - LICENSE*
+      - artalk-go.yml
 
 checksum:
   name_template: 'checksums.txt'

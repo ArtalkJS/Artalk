@@ -16,10 +16,10 @@
 
 artalk-go.yml
 config.yml
+.release-env
 
 local/
 bin/
 data/
-
 dist/
 pkged/pkged.go

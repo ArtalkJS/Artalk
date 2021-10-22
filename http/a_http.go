@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/pkged"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -117,4 +118,13 @@ func InitRoute(e *echo.Echo) {
 	admin.POST("/vote-sync", ActionAdminVoteSync)
 
 	admin.POST("/send-mail", ActionAdminSendMail)
+
+	// version
+	api.Any("/version", func(c echo.Context) error {
+		return c.JSON(200, Map{
+			"app":         "artalk-go",
+			"version":     lib.Version,
+			"commit_hash": lib.CommitHash,
+		})
+	})
 }

@@ -17,19 +17,28 @@
 - 多站点支持
 - 多数据库类型支持
 
+## Supports
+
+- 跨平台：支持 Linux, Win, Darwin
+- 数据存储：支持 SQLite, MySQL, PostgreSQL, SQL Server
+- 邮件发送：支持 SMTP, 阿里云邮件, 系统调用 sendmail 等发送邮件
+- 高效缓存：支持 Redis, Memory cache
+
 ## 部署方针
 
 ### 普通方式
 
 1. 前往 [Release](https://github.com/ArtalkJS/ArtalkGo/releases) 下载已编译二进制文件
-2. 编辑配置文件
-   ```sh
-   $ curl -L https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/main/artalk-go.example.yml > artalk-go.yml
-   $ vim artalk-go.yml
-   ```
-3. 运行程序 `./artalk-go serve`
-4. 反代设定的端口到 80 并套上 CDN (Nginx, Apache)
-5. 持久化运作 artalk-go 程序 (tmux, sysctl)
+2. 解压程序 `tar -zxvf artalk-go.tar.gz`
+3. 编辑配置 `vim artalk-go.yml`
+4. 运行程序 `./artalk-go serve`
+5. 反代设定的端口到 80 并套上 CDN (Nginx, Apache)
+6. 持久化运作 artalk-go 程序 (tmux, sysctl)
+7. 前端配置
+   
+    ```js
+    new Artalk({ server: "http://your_domain:端口号/api" })
+    ```
 
 ### Docker 容器（推荐）
 
@@ -56,10 +65,10 @@ $ docker run -d \
    artalk/artalk-go
 ```
 
-- 前端访问地址 `http://localhost:8080/api`
+- 前端配置地址 `http://your_domain:8080/api`
 
   ```js
-  new Artalk({ server: "http://localhost:8080/api" })
+  new Artalk({ server: "http://your_domain:8080/api" })
   ```
 
 - 配置文件路径 `./conf.yml`
@@ -95,13 +104,6 @@ $ make docker-docker
 # 发布镜像
 $ make docker-push
 ```
-
-## Supports
-
-- 跨平台：支持 Linux, Win, Darwin
-- 数据存储：支持 SQLite, MySQL, PostgreSQL, SQL Server...
-- 高效缓存：支持 Redis, Memory...
-- 邮件发送：支持 SMTP, 阿里云邮件, 系统调用 sendmail 等发送邮件
 
 ## TODOs 
 

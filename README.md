@@ -31,7 +31,7 @@
 4. 反代设定的端口到 80 并套上 CDN (Nginx, Apache)
 5. 持久化运作 artalk-go 程序 (tmux, sysctl)
 
-### Docker（推荐）
+### Docker 容器（推荐）
 
 ```sh
 # 为 ArtalkGo 创建一个目录
@@ -64,6 +64,17 @@ $ docker run -d \
 
 - 配置文件路径 `./conf.yml`
 - 数据文件目录 `./data/`
+
+### Docker 升级
+
+```sh
+# 暂停并删除正在运行的容器，然后从 DockerHub 拉取最新镜像
+docker stop artalk-go \
+  && docker rm artalk-go \
+  && docker pull artalk/artalk-go
+```
+
+之后，重新执行上面创建 Docker 容器步骤即可。
 
 ## 编译
 

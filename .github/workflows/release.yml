@@ -1,0 +1,47 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - run: git fetch --prune --unshallow --tags -f
+
+      - name: setup go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.6'
+
+      # docker `golang-cross` image cache
+      - run: mkdir -p ~/image-cache
+      - name: docker image cache
+        id: image-cache
+        uses: actions/cache@v1
+        with:
+          path: ~/image-cache
+          # Adjust key to meet your cache time requirements e.g.
+          # ${{ hashFiles(*) }} can be useful here to invalidate
+          # cache on file changes
+          key: image-cache-golang-cross
+
+      - if: steps.image-cache.outputs.cache-hit != 'true'
+        run: |
+          docker pull troian/golang-cross
+          docker save -o ~/image-cache/golang-cross.tar troian/golang-cross
+
+      - if: steps.image-cache.outputs.cache-hit == 'true'
+        run: docker load -i ~/image-cache/golang-cross.tar
+
+      # build
+      - name: setup release environment
+        run: |-
+          echo 'GITHUB_TOKEN=${{secrets.GORELEASER_ACCESS_TOKEN}}' > .release-env
+
+      - name: build and release publish
+        run: make release

@@ -9,34 +9,28 @@ RUN set -ex \
     && apk add make git gcc musl-dev yarn
 
 # 1. build frontend (using latest tag)
-RUN git clone https://github.com/ArtalkJS/Artalk.git Artalk \
-    && cd Artalk \
-    && git fetch --tags \
-    && git checkout $(git describe --tags --abbrev=0)
+# RUN git clone https://github.com/ArtalkJS/Artalk.git Artalk \
+#     && cd Artalk \
+#     && git fetch --tags \
+#     && git checkout $(git describe --tags --abbrev=0)
 
-RUN set -ex \
-    && cd ./Artalk \
-    && yarn install --network-timeout 1000000 \
-    && yarn build
+# RUN set -ex \
+#     && cd ./Artalk \
+#     && yarn install --network-timeout 1000000 \
+#     && yarn build
 
 # 2. build backend
 COPY . ./ArtalkGo
 
 # copy frontend dist folder
-RUN cp -r ./Artalk/dist ./ArtalkGo/frontend
+# RUN cp -r ./Artalk/dist ./ArtalkGo/frontend
 
 RUN set -ex \
     && cd ./ArtalkGo \
-    && git fetch --tags \
+    && git fetch --tags -f \
     && export VERSION=$(git describe --tags --abbrev=0) \
     && export COMMIT_SHA=$(git rev-parse --short HEAD) \
-    && go mod tidy \
-    && go install github.com/markbates/pkger/cmd/pkger \
-    && pkger -include /frontend -include /email-tpl -o pkged \
-    && go build -ldflags "-X github.com/ArtalkJS/ArtalkGo/lib.Version=${VERSION} \
-                          -X github.com/ArtalkJS/ArtalkGo/lib.LastCommit=${COMMIT_SHA}" \
-                          -o bin/artalk-go \
-                          github.com/ArtalkJS/ArtalkGo
+    && make all
 
 ### build final image
 FROM alpine:3.13

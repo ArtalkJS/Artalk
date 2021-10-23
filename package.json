@@ -16,7 +16,7 @@
     "type": "git",
     "url": "https://github.com/ArtalkJS/Artalk.git"
   },
-  "main": "./dist/Artalk.umd.js",
+  "main": "./dist/Artalk.js",
   "unpkg": "./dist/Artalk.iife.js",
   "jsdelivr": "./dist/Artalk.iife.js",
   "module": "./dist/Artalk.es.js",
@@ -24,7 +24,7 @@
   "exports": {
     ".": {
       "import": "./dist/Artalk.es.js",
-      "require": "./dist/Artalk.umd.js"
+      "require": "./dist/Artalk.js"
     }
   },
   "scripts": {

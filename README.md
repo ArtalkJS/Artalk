@@ -68,7 +68,7 @@
   <div id="ArtalkComments"></div>
 
   <!-- 引入 JS -->
-  <script src="https://cdn.jsdelivr.net/npm/artalk@2/dist/Artalk.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/artalk@2/dist/Artalk.js"></script>
 
   <!-- 配置 Artalk -->
   <script>
@@ -98,7 +98,7 @@
 <link href="https://cdn.jsdelivr.net/npm/artalk@2/dist/Artalk.css" rel="stylesheet">
 
 <!-- JS -->
-<script src="https://cdn.jsdelivr.net/npm/artalk@2/dist/Artalk.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/artalk@2/dist/Artalk.js"></script>
 ```
 
 ### NPM 引用

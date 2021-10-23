@@ -12,7 +12,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
       name: 'Artalk',
-      fileName: (format) => `Artalk.${format}.js`,
+      fileName: (format) => ((format == "umd") ? 'Artalk.js' : `Artalk.${format}.js`),
       formats: ["es", "umd", "iife"]
     },
     rollupOptions: {

@@ -4,8 +4,6 @@
 
 # Artalk
 
-> 🌌 一款简洁的自托管评论系统 | A Selfhosted Comment System.
-
 [![](https://img.shields.io/npm/v/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
 [![](https://img.shields.io/npm/dt/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
 [![](https://img.shields.io/github/last-commit/ArtalkJS/Artalk/master.svg?style=flat-square)](https://github.com/ArtalkJS/Artalk/commits/master)
@@ -14,7 +12,11 @@
 [![](https://img.shields.io/travis/com/ArtalkJS/Artalk?style=flat-square)](https://travis-ci.com/ArtalkJS/Artalk)
 [![](https://img.shields.io/github/license/ArtalkJS/Artalk.svg?style=flat-square)](./LICENSE)
 
-## [官网前往](https://artalk.js.org) | [文档细节](https://artalk.js.org/docs)
+> 🌌 一款简洁的自托管评论系统 | A Selfhosted Comment System.
+
+前往：[“**官方文档**”](https://artalk.js.org)
+
+---
 
 - 轻量 (~30kB gzipped)
 - 自托管 (隐私安全)
@@ -22,7 +24,7 @@
 - Markdown 语法 (通用性)
 - Golang 后端 (易部署 / 跨平台)
 
-## 特色功能
+## 特性
 
 - 表 情 包 ：统一管理 / 链接替换
 - 通知中心：红点标记 / 已读记录
@@ -46,11 +48,16 @@
 - TypeScript & Vanilla：纯天然无添加 / 无需依赖
 - [Vite](https://github.com/vitejs/vite)：开发者的极致体验
 
-## 基本食用方针
+## 食用方针
+
+前往：[“**文档 · 部署**”](https://artalk.js.org/guide/deploy.html)
 
 ### 两步抵达
 
-1. 后端程序部署：[ArtalkGo](https://github.com/ArtalkJS/ArtalkGo)
+<details>
+<summary>点击展开</summary>
+
+1. 后端程序部署，前往：[“**文档 · 后端部署**”](https://artalk.js.org/guide/backend/install.html)
 2. 前端页面引入：
 
 ```html
@@ -65,7 +72,7 @@
 <body>
 
   <!-- 给定元素 -->
-  <div id="ArtalkComments"></div>
+  <div id="Comments"></div>
 
   <!-- 引入 JS -->
   <script src="https://cdn.jsdelivr.net/npm/artalk@2/dist/Artalk.js"></script>
@@ -73,21 +80,19 @@
   <!-- 配置 Artalk -->
   <script>
   new Artalk({
-    el:          '#ArtalkComments',
-    placeholder: '说点什么 (づ￣ 3￣)づ',
-    noComment:   '此时无声胜有声',
-    pageKey:     '',   // 页面链接 (填写一个页面的完整 URL)
-    pageTitle:   '',   // 页面标题 (用于后台列表显示)
-    server:      '',   // 后端程序 (填写后端程序完整 URL；例如：https://domain/api)
-    site:        '',   // 站点名称（用于站点隔离，留空使用默认站点）
+    el:        '#Comments',
+    pageKey:   '<页面链接>',
+    pageTitle: '<页面标题>',
+    server:    '<后端地址>',
+    site:      '<站点名称>',
   })
   </script>
 
 </body>
 </html>
 ```
-
-更多细节请 [查阅文档](https://artalk.js.org/docs)
+</details>
+<br/>
 
 ### CDN 资源
 
@@ -111,7 +116,7 @@ $ yarn add artalk
 import Artalk from 'artalk'
 
 new Artalk({
-  // ...your configs
+  // ...your config
 })
 ```
 

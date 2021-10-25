@@ -14,6 +14,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
+	"gorm.io/gorm"
 )
 
 var Banner = `
@@ -65,13 +66,11 @@ func initConfig() {
 	// 检查 app_key 是否设置
 	if strings.TrimSpace(config.Instance.AppKey) == "" {
 		logrus.Fatal("请检查配置文件，并设置一个 app_key (任意字符串) 用于数据加密")
-		os.Exit(1)
 	}
 
 	// 设置时区
 	if strings.TrimSpace(config.Instance.TimeZone) == "" {
 		logrus.Fatal("请检查配置文件，并设置 timezone")
-		os.Exit(1)
 	}
 	denverLoc, _ := time.LoadLocation(config.Instance.TimeZone)
 	time.Local = denverLoc
@@ -124,11 +123,14 @@ func initLog() {
 
 // 3. 初始化数据库
 func initDB() {
-	err := lib.OpenDB()
+	var db *gorm.DB
+	db, err := lib.OpenDB(config.DBType(config.Instance.DB.Type), config.Instance.DB.Dsn)
 	if err != nil {
 		logrus.Error("数据库初始化发生错误 ", err)
 		os.Exit(1)
 	}
+
+	lib.DB = db
 
 	// Migrate the schema
 	lib.DB.AutoMigrate(&model.Site{}, &model.Page{}, &model.User{}, &model.Comment{}, &model.Notify{}, &model.Vote{}) // 注意表的创建顺序，因为有关联字段

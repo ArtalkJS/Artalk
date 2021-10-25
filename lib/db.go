@@ -1,7 +1,10 @@
 package lib
 
 import (
+	"errors"
+	"fmt"
 	"path/filepath"
+	"strconv"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"gorm.io/driver/mysql"
@@ -17,41 +20,54 @@ var gormConfig = &gorm.Config{
 	Logger: NewGormLogger(),
 }
 
-func OpenDB() (err error) {
-	switch config.Instance.DB.Type {
-	case config.TypeMySql:
-		err = OpenMySql()
+func OpenDB(dbType config.DBType, dsn string) (*gorm.DB, error) {
+	switch dbType {
 	case config.TypeSQLite:
-		err = OpenSQLite()
+		return OpenSQLite(dsn)
+	case config.TypeMySql:
+		return OpenMySql(dsn)
 	case config.TypePostgreSQL:
-		err = OpenPostgreSQL()
+		return OpenPostgreSQL(dsn)
 	case config.TypeSqlServer:
-		err = OpenSqlServer()
+		return OpenSqlServer(dsn)
 	}
-	return
+	return nil, errors.New(`不支持的数据库类型 "` + string(dbType) + `"`)
 }
 
-func OpenMySql() (err error) {
-	DB, err = gorm.Open(mysql.Open(config.Instance.DB.Dsn), gormConfig)
-	return
-}
-
-func OpenSQLite() (err error) {
-	filename := config.Instance.DB.Dsn
+func OpenSQLite(filename string) (*gorm.DB, error) {
 	if err := EnsureDir(filepath.Dir(filename)); err != nil {
-		return err
+		return nil, err
 	}
 
-	DB, err = gorm.Open(sqlite.Open(filename), gormConfig)
-	return
+	return gorm.Open(sqlite.Open(filename), gormConfig)
 }
 
-func OpenPostgreSQL() (err error) {
-	DB, err = gorm.Open(postgres.Open(config.Instance.DB.Dsn), &gorm.Config{})
-	return
+func OpenMySql(dsn string) (*gorm.DB, error) {
+	return gorm.Open(mysql.Open(dsn), gormConfig)
 }
 
-func OpenSqlServer() (err error) {
-	DB, err = gorm.Open(sqlserver.Open(config.Instance.DB.Dsn), &gorm.Config{})
-	return
+func OpenPostgreSQL(dsn string) (*gorm.DB, error) {
+	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
+}
+
+func OpenSqlServer(dsn string) (*gorm.DB, error) {
+	return gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
+}
+
+func GetDsn(dbType config.DBType, host string, portStr string, dbName string, user string, password string) (string, error) {
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		return "", errors.New("port 值有误")
+	}
+
+	switch dbType {
+	case config.TypeMySql:
+		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", user, password, host, port, dbName), nil
+	case config.TypePostgreSQL:
+		return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s", host, port, user, password, dbName), nil
+	case config.TypeSqlServer:
+		return fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", user, password, host, port, dbName), nil
+	}
+
+	return "", errors.New(`不支持的数据库类型 "` + string(dbType) + `"`)
 }

@@ -79,9 +79,9 @@ func ActionAdminImporter(c echo.Context) error {
 			page := model.FindCreatePage(oc.PageKey, "", p.SiteName)
 			user := model.FindCreateUser(oc.Nick, oc.Email)
 
-			user.Link = oc.Link
-			user.LastIP = oc.IP
-			user.LastUA = oc.UA
+			if oc.Link != "" {
+				user.Link = oc.Link
+			}
 			model.UpdateUser(&user)
 
 			// 创建新 comment 实例
@@ -116,16 +116,15 @@ func ActionAdminImporter(c echo.Context) error {
 		}
 
 		// reply id 重建
-		for _, oc := range v1Comments {
-			if oc.Rid != 0 {
-				if _, isExist := idChanges[oc.ID]; !isExist {
-					continue
-				}
-
-				nComment := model.FindComment(idChanges[oc.ID], p.SiteName)
-				nComment.Rid = idChanges[oc.Rid]
+		for _, newId := range idChanges {
+			nComment := model.FindComment(newId, p.SiteName)
+			if nComment.Rid == 0 {
+				continue
+			}
+			if newId, isExist := idChanges[nComment.Rid]; isExist {
+				nComment.Rid = newId
 				err := lib.DB.Save(&nComment).Error
-				dbResultLog(fmt.Sprintf("rid 更新 new_id:%d new_rid:%d", nComment.ID, idChanges[oc.Rid]), err)
+				dbResultLog(fmt.Sprintf("rid 更新 new_id:%d new_rid:%d", nComment.ID, newId), err)
 			}
 		}
 	default:

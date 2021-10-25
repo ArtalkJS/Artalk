@@ -79,4 +79,3 @@ email:
     access_key_id: "" # 阿里云颁发给用户的访问服务所用的密钥 ID
     access_key_secret: "" # 用于加密的密钥
     account_name: "example@example.com" # 管理控制台中配置的发信地址
-

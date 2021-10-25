@@ -24,11 +24,11 @@ type Config struct {
 	AllowOrigins []string        `mapstructure:"allow_origins" json:"allow_origins"` // 允许跨域访问的域名
 	SSL          SSLConf         `mapstructure:"ssl" json:"ssl"`                     // SSL
 	SiteDefault  string          `mapstructure:"site_default" json:"site_default"`   // 默认站点名（当请求无指定 site_name 时使用）
-	AdminUsers   []AdminUserConf `mapstructure:"admin_users" json:"admin_users"`
-	LoginTimeout int             `mapstructure:"login_timeout" json:"login_timeout"`
-	Moderator    ModeratorConf   `mapstructure:"moderator" json:"moderator"`
-	Captcha      CaptchaConf     `mapstructure:"captcha" json:"captcha"`
-	Email        EmailConf       `mapstructure:"email" json:"email"`
+	AdminUsers   []AdminUserConf `mapstructure:"admin_users" json:"admin_users"`     // 管理员账户
+	LoginTimeout int             `mapstructure:"login_timeout" json:"login_timeout"` // 登陆超时
+	Moderator    ModeratorConf   `mapstructure:"moderator" json:"moderator"`         // 评论审查
+	Captcha      CaptchaConf     `mapstructure:"captcha" json:"captcha"`             // 验证码
+	Email        EmailConf       `mapstructure:"email" json:"email"`                 // 邮箱提醒
 }
 
 type DBConf struct {

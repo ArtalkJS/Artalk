@@ -2,9 +2,7 @@ package importer
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -24,32 +22,13 @@ var ValineImporter = &_ValineImporter{
 
 type _ValineImporter struct {
 	ImporterInfo
-	TargetSite model.Site
 }
 
 func (imp *_ValineImporter) Run(basic *BasicParams, payload []string) {
 	RequiredBasicTargetSite(basic)
 
-	imp.TargetSite = SiteReady(basic)
-
 	// 读取文件
-	var jsonFile string
-	GetParamsFrom(payload).To(map[string]*string{
-		"json_file": &jsonFile,
-	})
-
-	if jsonFile == "" {
-		logrus.Fatal("请附带参数 `json_file:<Valine 导出的 JSON 文件路径>`")
-	}
-	if _, err := os.Stat(jsonFile); errors.Is(err, os.ErrNotExist) {
-		logrus.Fatal("文件不存在，请检查参数 `json_file` 传入路径是否正确")
-	}
-
-	buf, err := ioutil.ReadFile(jsonFile)
-	if err != nil {
-		logrus.Fatal("json 文件打开失败：", err)
-	}
-	jsonStr := string(buf)
+	jsonStr := JsonFileReady(payload)
 
 	// 解析 JSON
 	comments, err := ParseValineCommentJSON(jsonStr)
@@ -57,6 +36,10 @@ func (imp *_ValineImporter) Run(basic *BasicParams, payload []string) {
 		logrus.Fatal("json 解析失败：", err)
 	}
 
+	ImportValine(basic, payload, comments)
+}
+
+func ImportValine(basic *BasicParams, payload []string, comments []ValineComment) {
 	// 汇总
 	fmt.Print("# 请过目：\n\n")
 
@@ -82,6 +65,7 @@ func (imp *_ValineImporter) Run(basic *BasicParams, payload []string) {
 	// 准备导入评论
 	fmt.Print("\n")
 
+	SiteReady(basic)
 	ImportValineComments(basic, comments)
 }
 

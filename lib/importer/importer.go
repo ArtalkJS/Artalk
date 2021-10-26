@@ -3,7 +3,9 @@ package importer
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
@@ -28,6 +30,7 @@ var Supports = []interface{}{
 	TypechoImporter,
 	WordPressImporter,
 	ValineImporter,
+	TwikooImporter,
 }
 
 func RunByName(dataType string, payload []string) {
@@ -231,6 +234,27 @@ func SiteReady(basic *BasicParams) model.Site {
 	}
 
 	return site
+}
+
+func JsonFileReady(payload []string) string {
+	var jsonFile string
+	GetParamsFrom(payload).To(map[string]*string{
+		"json_file": &jsonFile,
+	})
+
+	if jsonFile == "" {
+		logrus.Fatal("请附带参数 `json_file:<JSON 数据文件路径>`")
+	}
+	if _, err := os.Stat(jsonFile); errors.Is(err, os.ErrNotExist) {
+		logrus.Fatal("文件不存在，请检查参数 `json_file` 传入路径是否正确")
+	}
+
+	buf, err := ioutil.ReadFile(jsonFile)
+	if err != nil {
+		logrus.Fatal("json 文件打开失败：", err)
+	}
+
+	return string(buf)
 }
 
 func ParseVersion(s string) int64 {

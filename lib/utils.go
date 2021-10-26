@@ -8,6 +8,7 @@ import (
 	"net/mail"
 	"net/url"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/jeremywohl/flatten"
@@ -75,6 +76,12 @@ func AddQueryToURL(urlStr string, queryMap map[string]string) string {
 
 	u.RawQuery = q.Encode()
 	return u.String()
+}
+
+// "https://artalk.js.org/guide/describe.html" => "guide/describe.html"
+func GetUrlWithoutDomain(urlStr string) string {
+	r := regexp.MustCompile(`^http[s]?:\/\/.+?\/+`)
+	return r.ReplaceAllString(urlStr, "")
 }
 
 // ContainsStr returns true if an str is present in a iteratee.

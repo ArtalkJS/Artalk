@@ -1,6 +1,6 @@
 package importer
 
-var WordPressImporter = &_TypechoImporter{
+var WordPressImporter = &_WordPressImporter{
 	ImporterInfo: ImporterInfo{
 		Name: "wordpress",
 		Desc: "从 WordPress 导入数据",
@@ -12,5 +12,5 @@ type _WordPressImporter struct {
 	ImporterInfo
 }
 
-func (i _WordPressImporter) Run(basic *BasicParams, payload []string) {
+func (imp *_WordPressImporter) Run(basic *BasicParams, payload []string) {
 }

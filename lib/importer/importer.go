@@ -27,6 +27,7 @@ type Map = map[string]interface{}
 var Supports = []interface{}{
 	TypechoImporter,
 	WordPressImporter,
+	ValineImporter,
 }
 
 func RunByName(dataType string, payload []string) {
@@ -41,12 +42,15 @@ func RunByName(dataType string, payload []string) {
 		}
 
 		fmt.Print("\n")
-		PrintTable([]table.Row{
+		tableData := []table.Row{
 			{"数据搬家 - 导入"},
 			{strings.ToUpper(name)},
 			{desc},
-			{note},
-		})
+		}
+		if note != "" {
+			tableData = append(tableData, table.Row{note})
+		}
+		PrintTable(tableData)
 		fmt.Print("\n")
 
 		//t1 := time.Now()
@@ -120,15 +124,15 @@ func GetArrayParamsFrom(payload []string, key string) []string {
 }
 
 type BasicParams struct {
-	TargetSiteName string `json:"target_site_name"`
-	TargetSiteUrl  string `json:"target_site_url"`
+	TargetSiteName string
+	TargetSiteUrl  string
 }
 
 func GetBasicParamsFrom(payload []string) *BasicParams {
 	basic := BasicParams{}
 	GetParamsFrom(payload).To(map[string]*string{
-		"target_site_name": &basic.TargetSiteName,
-		"target_site_url":  &basic.TargetSiteUrl,
+		"ts_name": &basic.TargetSiteName,
+		"ts_url":  &basic.TargetSiteUrl,
 	})
 
 	return &basic
@@ -136,13 +140,13 @@ func GetBasicParamsFrom(payload []string) *BasicParams {
 
 func RequiredBasicTargetSite(basic *BasicParams) {
 	if basic.TargetSiteName == "" {
-		logrus.Fatal("请附带参数 `target_site_name:<站点名称>`")
+		logrus.Fatal("请附带参数 `ts_name:<目标站点名称>`")
 	}
 	if basic.TargetSiteUrl == "" {
-		logrus.Fatal("请附带参数 `target_site_url:<站点根目录 URL>`")
+		logrus.Fatal("请附带参数 `ts_url:<目标站点根目录 URL>`")
 	}
 	if !lib.ValidateURL(basic.TargetSiteUrl) {
-		logrus.Fatal("参数 `target_site_url:<站点根目录 URL>` 必须为 URL 格式")
+		logrus.Fatal("参数 `ts_url:<目标站点根目录 URL>` 必须为 URL 格式")
 	}
 }
 

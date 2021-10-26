@@ -7,9 +7,11 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -47,14 +49,14 @@ func RunByName(dataType string, payload []string) {
 		})
 		fmt.Print("\n")
 
-		t1 := time.Now()
+		//t1 := time.Now()
 		r.MethodByName("Run").Call([]reflect.Value{
 			reflect.ValueOf(basic),
 			reflect.ValueOf(payload),
 		})
-		elapsed := time.Since(t1)
+		//elapsed := time.Since(t1)
 		fmt.Print("\n")
-		logrus.Info("导入执行结束，耗时: ", elapsed)
+		logrus.Info("导入执行结束") //，耗时: ", elapsed)
 		return
 	}
 
@@ -104,6 +106,17 @@ func GetParamsFrom(payload []string) _getParamsTo {
 		}
 	}
 	return a
+}
+
+func GetArrayParamsFrom(payload []string, key string) []string {
+	arr := []string{}
+	for _, pVal := range payload {
+		if strings.HasPrefix(pVal, key+":") {
+			arr = append(arr, strings.TrimPrefix(pVal, key+":"))
+		}
+	}
+
+	return arr
 }
 
 type BasicParams struct {
@@ -276,4 +289,16 @@ func Confirm(s string) bool {
 			return false
 		}
 	}
+}
+
+func HideJsonLongText(key string, text string) string {
+	r := regexp.MustCompile(key + `:"(.+?)"`)
+	sm := r.FindStringSubmatch(text)
+	postText := ""
+	if len(sm) > 0 {
+		postText = sm[1]
+	}
+
+	text = r.ReplaceAllString(text, fmt.Sprintf(key+": <!-- 省略 %d 个字符 -->", utf8.RuneCountInString(postText)))
+	return text
 }

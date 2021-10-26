@@ -72,7 +72,9 @@ func (imp *_TypechoImporter) Run(basic BasicParams, payload []string) {
 	}
 
 	// Load Options
-	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %soptions", imp.DbPrefix)).Scan(&imp.Options)
+	tbOptions := imp.DbPrefix + "options"
+	typechoDB.Raw("SELECT * FROM " + tbOptions).Scan(&imp.Options)
+	logrus.Info(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbOptions, len(imp.Options)))
 
 	for _, opt := range imp.Options {
 		switch opt.Name {
@@ -92,20 +94,24 @@ func (imp *_TypechoImporter) Run(basic BasicParams, payload []string) {
 	imp.RewriteRuleReady()
 
 	// load Metas
-	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %smetas", imp.DbPrefix)).Scan(&imp.Metas)
-	logrus.Info(fmt.Sprintf("从数据表 `%smetas` 获取 %d 条记录", imp.DbPrefix, len(imp.Metas)))
+	tbMetas := imp.DbPrefix + "metas"
+	typechoDB.Raw("SELECT * FROM " + tbMetas).Scan(&imp.Metas)
+	logrus.Info(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbMetas, len(imp.Metas)))
 
 	// load Relationships
-	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %srelationships", imp.DbPrefix)).Scan(&imp.Relationships)
-	logrus.Info(fmt.Sprintf("从数据表 `%srelationships` 获取 %d 条记录", imp.DbPrefix, len(imp.Relationships)))
+	tbRelationships := imp.DbPrefix + "relationships"
+	typechoDB.Raw("SELECT * FROM " + tbRelationships).Scan(&imp.Relationships)
+	logrus.Info(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbRelationships, len(imp.Relationships)))
 
 	// 获取 contents
-	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %scontents ORDER BY created ASC", imp.DbPrefix)).Scan(&imp.Contents)
-	logrus.Info(fmt.Sprintf("从数据表 `%scontents` 获取 %d 条记录", imp.DbPrefix, len(imp.Contents)))
+	tbContents := imp.DbPrefix + "contents"
+	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %s ORDER BY created ASC", tbContents)).Scan(&imp.Contents)
+	logrus.Info(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbContents, len(imp.Contents)))
 
 	// 获取 comments
-	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %scomments ORDER BY created ASC", imp.DbPrefix)).Scan(&imp.Comments)
-	logrus.Info(fmt.Sprintf("从数据表 `%scomments` 获取 %d 条记录", imp.DbPrefix, len(imp.Comments)))
+	tbComments := imp.DbPrefix + "comments"
+	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %s ORDER BY created ASC", tbComments)).Scan(&imp.Comments)
+	logrus.Info(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbComments, len(imp.Comments)))
 
 	// 导入前参数汇总
 	fmt.Print("\n")
@@ -113,11 +119,23 @@ func (imp *_TypechoImporter) Run(basic BasicParams, payload []string) {
 	fmt.Print("# 请过目：\n\n")
 
 	// 显示第一条数据
+	pageKeyEgPost := ""
+	pageKeyEgPage := ""
 	for _, c := range imp.Contents {
 		if c.Type == "post" {
-			fmt.Printf("[第一篇文章]\n\n"+
+			firstPost := fmt.Sprintf("[第一篇文章]\n\n"+
 				"    %#v\n\n", imp.Contents[0])
-			fmt.Printf(" -> 生成 PageKey: %#v\n\n", imp.GetNewPageKey(c))
+
+			fmt.Print(HideJsonLongText("Text", firstPost))
+			pageKeyEgPost = imp.GetNewPageKey(c)
+			fmt.Printf(" -> 生成 PageKey: %#v\n\n", pageKeyEgPost)
+			break
+		}
+	}
+
+	for _, c := range imp.Contents {
+		if c.Type == "page" {
+			pageKeyEgPage = imp.GetNewPageKey(c)
 			break
 		}
 	}
@@ -136,11 +154,13 @@ func (imp *_TypechoImporter) Run(basic BasicParams, payload []string) {
 	})
 
 	PrintTable([]table.Row{
-		{"[重写规则]", "用于生成 pageKey (评论页面唯一标识)"},
-		{"文章页面", fmt.Sprintf("%#v", imp.RewritePost)},
-		{"独立页面", fmt.Sprintf("%#v", imp.RewritePage)},
+		{"[重写规则]", "用于生成 pageKey (评论页面唯一标识)", "生成示例"},
+		{"文章页面", fmt.Sprintf("%#v", imp.RewritePost), pageKeyEgPost},
+		{"独立页面", fmt.Sprintf("%#v", imp.RewritePage), pageKeyEgPage},
 	})
 
+	fmt.Print("\n")
+	fmt.Println("若以上内容不符合预期，请向我们反馈：https://artalk.js.org/guide/transfer.html")
 	fmt.Print("\n")
 
 	// 确认开始

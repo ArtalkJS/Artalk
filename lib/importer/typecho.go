@@ -1,30 +1,38 @@
 package importer
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/elliotchance/phpserialize"
+	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/mitchellh/mapstructure"
 	"github.com/sirupsen/logrus"
 )
 
 const (
 	// 已测试可用版本
-	TypechoTestedVerMain = "1.1"
-	TypechoTestedVerSub  = "17.10.30"
+	TypechoTestedVerMain      = "1.1"
+	TypechoTestedVerSub       = "17.10.30"
+	TypechoRewritePostDefault = "/archives/{cid}/"
+	TypechoRewritePageDefault = "/{slug}.html"
 )
 
 var TypechoImporter = &_TypechoImporter{
-	Importer: Importer{
-		Name: "Typecho",
-		Desc: fmt.Sprintf("测试兼容：Typecho %s/%s", TypechoTestedVerMain, TypechoTestedVerSub),
+	ImporterInfo: ImporterInfo{
+		Name: "typecho",
+		Desc: "从 Typecho 导入数据",
+		Note: fmt.Sprintf("测试兼容：Typecho %s/%s", TypechoTestedVerMain, TypechoTestedVerSub),
 	},
 }
 
 type _TypechoImporter struct {
-	Importer
+	ImporterInfo
 	TargetSite model.Site
 
 	Basic         BasicParams
@@ -39,22 +47,24 @@ type _TypechoImporter struct {
 
 	DbPrefix string
 
-	RewriteRulePost string
-	RewriteRulePage string
+	RewritePost string
+	RewritePage string
+
+	OptionRoutingTable map[string]TypechoRoute
 }
 
 // Typecho 升级相关的代码 @see https://github.com/typecho/typecho/blob/64b8e686885d8ab4c7f0cdc3d6dc2d99fa48537c/var/Utils/Upgrade.php
 // 路由 @see https://github.com/typecho/typecho/blob/530312443142577509df88ce88cf3274fac9b8c4/var/Widget/Options/Permalink.php#L319
+// DB @see https://github.com/typecho/typecho/blob/6558fd5e030a950335d53038f82728b06ad6c32d/install/Mysql.sql
 func (imp *_TypechoImporter) Run(basic BasicParams, payload []string) {
 	// Ready
 	imp.Basic = basic
 	typechoDB := DbReady(payload)
-	imp.TargetSite = SiteReady(basic)
 
 	GetParamsFrom(payload).To(map[string]*string{
-		"prefix":            &imp.DbPrefix,
-		"rewrite_rule_post": &imp.RewriteRulePost,
-		"rewrite_rule_page": &imp.RewriteRulePage,
+		"prefix":       &imp.DbPrefix,
+		"rewrite_post": &imp.RewritePost,
+		"rewrite_page": &imp.RewritePage,
 	})
 
 	if imp.DbPrefix == "" {
@@ -75,67 +85,102 @@ func (imp *_TypechoImporter) Run(basic BasicParams, payload []string) {
 		}
 	}
 
-	fmt.Printf("- 源版本：%#v\n", imp.SrcVersion)
-	fmt.Printf("- 源站点名：%#v\n", imp.SrcSiteName)
-	fmt.Printf("- 源站点URL：%#v\n", imp.SrcSiteURL)
+	// 检查数据源版本号
+	imp.VersionCheck()
 
-	imp.CheckVersion()
+	// 重写规则
+	imp.RewriteRuleReady()
 
 	// load Metas
 	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %smetas", imp.DbPrefix)).Scan(&imp.Metas)
+	logrus.Info(fmt.Sprintf("从数据表 `%smetas` 获取 %d 条记录", imp.DbPrefix, len(imp.Metas)))
 
 	// load Relationships
 	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %srelationships", imp.DbPrefix)).Scan(&imp.Relationships)
+	logrus.Info(fmt.Sprintf("从数据表 `%srelationships` 获取 %d 条记录", imp.DbPrefix, len(imp.Relationships)))
 
-	// 重写规则
-	imp.CheckRewriteRule()
+	// 获取 contents
+	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %scontents ORDER BY created ASC", imp.DbPrefix)).Scan(&imp.Contents)
+	logrus.Info(fmt.Sprintf("从数据表 `%scontents` 获取 %d 条记录", imp.DbPrefix, len(imp.Contents)))
 
-	// 开始导入评论
+	// 获取 comments
+	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %scomments ORDER BY created ASC", imp.DbPrefix)).Scan(&imp.Comments)
+	logrus.Info(fmt.Sprintf("从数据表 `%scomments` 获取 %d 条记录", imp.DbPrefix, len(imp.Comments)))
+
+	// 导入前参数汇总
+	fmt.Print("\n")
+
+	fmt.Print("# 请过目：\n\n")
+
+	// 显示第一条数据
+	for _, c := range imp.Contents {
+		if c.Type == "post" {
+			fmt.Printf("[第一篇文章]\n\n"+
+				"    %#v\n\n", imp.Contents[0])
+			fmt.Printf(" -> 生成 PageKey: %#v\n\n", imp.GetNewPageKey(c))
+			break
+		}
+	}
+
+	if len(imp.Comments) > 0 {
+		fmt.Printf("[第一条评论]\n\n"+
+			"    %#v\n\n", imp.Comments[0])
+	}
+
+	PrintTable([]table.Row{
+		{"[基本信息]", "读取数据", "导入目标"},
+		{"站点名称", fmt.Sprintf("%#v", imp.SrcSiteName), fmt.Sprintf("%#v", imp.Basic.TargetSiteName)},
+		{"BaseURL", fmt.Sprintf("%#v", imp.SrcSiteURL), fmt.Sprintf("%#v", imp.Basic.TargetSiteUrl)},
+		{"版本号", fmt.Sprintf("%v", imp.SrcVersion), fmt.Sprintf("ArtalkGo %v", lib.Version+"/"+lib.CommitHash+"")},
+		{"数量统计", fmt.Sprintf("评论: %d", len(imp.Comments)), fmt.Sprintf("页面: %d", len(imp.Contents))},
+	})
+
+	PrintTable([]table.Row{
+		{"[重写规则]", "用于生成 pageKey (评论页面唯一标识)"},
+		{"文章页面", fmt.Sprintf("%#v", imp.RewritePost)},
+		{"独立页面", fmt.Sprintf("%#v", imp.RewritePage)},
+	})
+
+	fmt.Print("\n")
+
+	// 确认开始
+	if !Confirm("确认开始导入吗？") {
+		os.Exit(0)
+	}
+
+	// 准备导入评论
 	fmt.Println()
 
-	var contents []TypechoContent
-	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %scontents ORDER BY created ASC", imp.DbPrefix)).Scan(&contents)
-	if len(contents) > 0 {
-		fmt.Printf("[第一篇文章]\n\n"+
-			"    %#v\n\n", contents[0])
-	}
-	imp.Contents = contents
+	// 准备新的 site
+	imp.TargetSite = SiteReady(basic)
 
-	var comments []TypechoComment
-	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %scomments ORDER BY created ASC", imp.DbPrefix)).Scan(&comments)
-	if len(contents) > 0 {
-		fmt.Printf("[第一条评论]\n\n"+
-			"    %#v\n\n", comments[0])
-	}
-	imp.Comments = comments
-
-	// Import Data
+	// 开始执行导入
 	imp.ImportComments()
 }
 
 // 导入评论
 func (imp *_TypechoImporter) ImportComments() {
-	articles := imp.Contents
+	contents := imp.Contents
 	comments := imp.Comments
 
-	fmt.Print("====================================\n\n")
-	logrus.Info(fmt.Sprintf("[开始导入] 共 %d 个页面，%d 条评论", len(articles), len(comments)))
+	fmt.Print("\n====================================\n\n")
+	logrus.Info(fmt.Sprintf("[开始导入] 共 %d 个页面，%d 条评论", len(contents), len(comments)))
 	fmt.Print("\n")
 
 	siteName := imp.Basic.TargetSiteName
 
 	idChanges := map[uint]uint{} // comment_id: old => new
 
-	// 遍历导入文章的评论
-	for _, art := range articles {
+	// 遍历 Contents
+	for _, c := range contents {
 		// 创建页面
-		pageKey := imp.GetNewPageKey(art)
-		page := model.FindCreatePage(pageKey, art.Title, imp.Basic.TargetSiteName)
+		pageKey := imp.GetNewPageKey(c)
+		page := model.FindCreatePage(pageKey, c.Title, imp.Basic.TargetSiteName)
 
 		// 查询评论
 		commentTotal := 0
 		for _, co := range comments {
-			if co.Cid != art.Cid {
+			if co.Cid != c.Cid {
 				continue
 			}
 
@@ -180,7 +225,7 @@ func (imp *_TypechoImporter) ImportComments() {
 			commentTotal++
 		}
 
-		fmt.Printf("+ [%-3d] 条评论 <- [%5d] %-30s | %#v\n", commentTotal, art.Cid, art.Slug, art.Title)
+		fmt.Printf("+ [%-3d] 条评论 <- [%5d] %-30s | %#v\n", commentTotal, c.Cid, c.Slug, c.Title)
 	}
 
 	// reply id 重建
@@ -202,16 +247,50 @@ func (imp *_TypechoImporter) ImportComments() {
 	logrus.Info("RID 重构完毕")
 }
 
+// 获取新的 PageKey (根据重写规则)
 func (imp *_TypechoImporter) GetNewPageKey(content TypechoContent) string {
-	// TODO: page/post 重写规则
+	date := ParseDate(fmt.Sprintf("%v", content.Created))
+
+	// 替换内容制作
+	replaces := map[string]string{
+		"cid":      fmt.Sprintf("%v", content.Cid),
+		"slug":     content.Slug,
+		"category": imp.GetContentCategory(content.Cid),
+		"year":     fmt.Sprintf("%v", date.Local().Year()),
+		"month":    fmt.Sprintf("%v", date.Local().Month()),
+		"day":      fmt.Sprintf("%v", date.Local().Day()),
+	}
 
 	baseUrl := imp.Basic.TargetSiteUrl
-	baseUrl = strings.TrimSuffix(baseUrl, "/") + "/"
-	return baseUrl + content.Slug + ".html"
+	baseUrl = strings.TrimSuffix(baseUrl, "/")
+
+	rewriteRule := imp.RewritePost
+	if strings.HasPrefix(content.Type, "post") {
+		rewriteRule = imp.RewritePost
+	} else if strings.HasPrefix(content.Type, "page") {
+		rewriteRule = imp.RewritePage
+	}
+
+	rewriteRule = "/" + strings.TrimPrefix(rewriteRule, "/")
+	return baseUrl + imp.ReplaceAll(rewriteRule, replaces)
 }
 
-// 版本国旧检测
-func (imp *_TypechoImporter) CheckVersion() {
+// 替换字符串
+func (imp *_TypechoImporter) ReplaceAll(data string, dict map[string]string) string {
+	r := regexp.MustCompile(`(\[|\{)\s*(.*?)\s*(\]|\})`) // 同时支持 {} 和 []
+	return r.ReplaceAllStringFunc(data, func(m string) string {
+		key := r.FindStringSubmatch(m)[2]
+		if val, isExist := dict[key]; isExist {
+			return val
+		} else {
+			logrus.Error(fmt.Sprintf("[重写规则] \"%s\" 变量无效", key))
+		}
+		return m
+	})
+}
+
+// 版本过旧检测
+func (imp *_TypechoImporter) VersionCheck() {
 	r := regexp.MustCompile(`Typecho[\s]*(.+)\/(.+)`)
 	group := r.FindStringSubmatch(imp.SrcVersion)
 	if len(group) < 2 {
@@ -231,31 +310,141 @@ func (imp *_TypechoImporter) CheckVersion() {
 	}
 }
 
-func (imp *_TypechoImporter) GetOptionRoutingTable() string {
+// TypechoRoute 路由
+type TypechoRoute struct {
+	URL    string `json:"url"`
+	Format string `json:"format"`
+	Params string `json:"params"`
+	Regx   string `json:"regx"`
+	Action string `json:"action"`
+	Widget string `json:"widget"`
+}
+
+// 获取 typecho_options 表里面的 name:routingTable option，解析 option.value。
+// option.value 数据为 PHP 序列化后的结果。
+// @see https://www.php.net/manual/en/function.serialize.php
+// @see https://www.php.net/manual/en/function.unserialize.php
+func (imp *_TypechoImporter) GetOptionRoutingTable() (map[string]TypechoRoute, error) {
+	// 仅获取一次
+	if imp.OptionRoutingTable != nil {
+		return imp.OptionRoutingTable, nil
+	}
+
+	dataStr := ""
 	for _, opt := range imp.Options {
 		if opt.Name == "routingTable" {
-			return opt.Value
+			dataStr = opt.Value
+			break
+		}
+	}
+
+	if dataStr == "" {
+		return map[string]TypechoRoute{}, errors.New("`routingTable` Not Found in Options")
+	}
+
+	// Unmarshal
+	var data map[interface{}]interface{}
+	err := phpserialize.Unmarshal([]byte(dataStr), &data)
+	if err != nil {
+		return map[string]TypechoRoute{}, err
+	}
+
+	// interface{} to struct
+	routingTable := map[string]TypechoRoute{}
+	for k, v := range data {
+		var r TypechoRoute
+		mapstructure.Decode(v, &r)
+		routingTable[fmt.Sprintf("%v", k)] = r
+	}
+
+	imp.OptionRoutingTable = routingTable // 就不再反复获取了
+
+	return routingTable, nil
+}
+
+// 获取一个 Route
+func (imp *_TypechoImporter) GetOptionRoute(name string) (TypechoRoute, error) {
+	routingTable, err := imp.GetOptionRoutingTable()
+	if err != nil {
+		return TypechoRoute{}, err
+	}
+
+	for n, route := range routingTable {
+		if n == name {
+			return route, nil
+		}
+	}
+
+	return TypechoRoute{}, errors.New(`Route Name "` + name + `" Not Found`)
+}
+
+// 重写路径获取
+func (imp *_TypechoImporter) RewriteRuleReady() {
+	check := func(nameText string, routeName string, field *string, defaultVal string) {
+		if *field == "" {
+			// 从数据库获取
+			route, err := imp.GetOptionRoute(routeName)
+			if err != nil || route.URL == "" {
+				if err != nil {
+					logrus.Error(err)
+				}
+
+				*field = defaultVal
+				logrus.Error("[重写规则] \"" + nameText + "\" 无法从数据库读取，将使用默认值 \"" + imp.RewritePost + "\"")
+				return
+			}
+
+			*field = route.URL
+			logrus.Info("重写规则 \"" + nameText + "\" 读取成功")
+		} else {
+			logrus.Info("[重写规则] 自定义 \""+nameText+"\" 规则：", fmt.Sprintf("%#v", *field))
+		}
+	}
+
+	check("文章页", "post", &imp.RewritePost, TypechoRewritePostDefault)
+	check("独立页面", "page", &imp.RewritePage, TypechoRewritePageDefault)
+}
+
+// 获取 Content 的 Metas
+func (imp *_TypechoImporter) GetContentMetas(cid int) []TypechoMeta {
+	metaIds := []int{}
+	for _, rela := range imp.Relationships {
+		if rela.Cid == cid {
+			metaIds = append(metaIds, rela.Mid)
+		}
+	}
+
+	metas := []TypechoMeta{}
+	for _, m := range imp.Metas {
+		isNeed := false
+		for _, id := range metaIds {
+			if id == m.Mid {
+				isNeed = true
+				break
+			}
+		}
+
+		if isNeed {
+			metas = append(metas, m)
+		}
+	}
+
+	return metas
+}
+
+// 获取 Content 的分类
+func (imp *_TypechoImporter) GetContentCategory(cid int) string {
+	metas := imp.GetContentMetas(cid)
+	for _, m := range metas {
+		if m.Type == "category" {
+			return m.Slug
 		}
 	}
 
 	return ""
 }
 
-// 重写路径获取
-func (imp *_TypechoImporter) CheckRewriteRule() {
-	if imp.RewriteRulePost == "" {
-
-	} else {
-		logrus.Info("[重写规则] 自定义 “文章” 规则：", fmt.Sprintf("%#v", imp.RewriteRulePost))
-	}
-
-	if imp.RewriteRulePage == "" {
-
-	} else {
-		logrus.Info("[重写规则] 自定义 “独立页面” 规则：", fmt.Sprintf("%#v", imp.RewriteRulePage))
-	}
-}
-
+// Typecho 评论数据表
 type TypechoComment struct {
 	Coid     int    `gorm:"column:coid"` // comment_id
 	Cid      int    `gorm:"column:cid"`  // content_id
@@ -277,6 +466,7 @@ type TypechoComment struct {
 	Dislikes int    `gorm:"column:dislikes"`
 }
 
+// Typecho 内容数据表 (Type: post, page)
 type TypechoContent struct {
 	Cid          int    `gorm:"column:cid"`
 	Title        string `gorm:"column:title"`
@@ -302,17 +492,20 @@ type TypechoContent struct {
 	Likes        int    `gorm:"column:likes"`
 }
 
+// Typecho 配置数据表
 type TypechoOption struct {
 	Name  string `gorm:"column:name"`
 	User  int    `gorm:"column:user"`
 	Value string `gorm:"column:value"`
 }
 
+// Typecho 关联表 (Content => Metas)
 type TypechoRelationship struct {
 	Cid int `gorm:"column:cid"` // content_id
 	Mid int `gorm:"column:mid"` // meta_id
 }
 
+// Typecho 附加字段数据表
 type TypechoMeta struct {
 	Mid         int    `gorm:"column:mid"`
 	Name        string `gorm:"column:name"`

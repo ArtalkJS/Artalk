@@ -102,7 +102,7 @@ func GetExternalEmailTpl(filename string) string {
 
 // 替换 {{ key }} 为 val
 func ReplaceAllMustache(data string, dict map[string]interface{}) string {
-	r := regexp.MustCompile(`{{\s*(\S+)\s*}}`)
+	r := regexp.MustCompile(`{{\s*(.*?)\s*}}`)
 	return r.ReplaceAllStringFunc(data, func(m string) string {
 		key := r.FindStringSubmatch(m)[1]
 		if val, isExist := dict[key]; isExist {

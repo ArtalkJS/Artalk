@@ -7,6 +7,7 @@
         "gorm",
         "ldflags",
         "lfshook",
+        "Metas",
         "pgsql",
         "sendmail",
         "sqlite"

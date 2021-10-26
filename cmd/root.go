@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -17,6 +16,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var Version = lib.Version + `/` + lib.CommitHash
+
 var Banner = `
  ________  ________  _________  ________  ___       ___  __       
 |\   __  \|\   __  \|\___   ___\\   __  \|\  \     |\  \|\  \     
@@ -26,20 +27,24 @@ var Banner = `
    \ \__\ \__\ \__\\ _\    \ \__\ \ \__\ \__\ \_______\ \__\\ \__\
     \|__|\|__|\|__|\|__|    \|__|  \|__|\|__|\|_______|\|__| \|__|
  
-Artalk: A Fast, Slight & Delightful Comment System.
-More details on https://github.com/ArtalkJS/Artalk
-(c) 2021 artalk.js.org`
+Artalk (` + Version + `)
+
+ -> A Selfhosted Comment System.
+ -> https://artalk.js.org
+`
 
 var cfgFile string
 
 var rootCmd = &cobra.Command{
-	Use:   "artalk-go",
-	Short: "Artalk: A Fast, Slight & Delightful Comment System",
-	Long:  Banner,
+	Use:     "artalk-go",
+	Short:   "Artalk: A Fast, Slight & Delightful Comment System",
+	Long:    Banner,
+	Version: Version,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(Banner)
-		fmt.Println()
-		fmt.Println("NOTE: add `-h` flag to show help about any command.")
+		// fmt.Println(Banner)
+		// fmt.Println()
+		// fmt.Println("NOTE: add `-h` flag to show help about any command.")
+		serveCmd.Run(cmd, args)
 	},
 }
 

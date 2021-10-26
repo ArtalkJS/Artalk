@@ -9,13 +9,12 @@ import (
 
 var serveCmd = &cobra.Command{
 	Use:     "serve",
-	Version: rootCmd.Version,
 	Aliases: []string{"server"},
-	Short:   "启动 HTTP 服务",
-	Long:    rootCmd.Long,
+	Short:   "HTTP 服务",
+	Long:    Banner,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(Banner)
-		fmt.Println("----------------------")
+		fmt.Print("-------------------------------\n\n")
 		http.Run()
 	},
 	Args: cobra.NoArgs,

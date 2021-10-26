@@ -1,7 +1,11 @@
 package importer
 
 import (
+	"bufio"
+	"encoding/json"
 	"fmt"
+	"log"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -11,32 +15,16 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/araddon/dateparse"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
 type Map = map[string]interface{}
 
-type Importer struct {
-	Name string
-	Desc string
-	Run  func(basic BasicParams, payload []string)
-}
-
 var Supports = []interface{}{
 	TypechoImporter,
 	WordPressImporter,
-}
-
-func GetSupportTypes() []string {
-	types := []string{}
-	for _, i := range Supports {
-		r := reflect.ValueOf(i)
-		f := reflect.Indirect(r).FieldByName("Name")
-		types = append(types, f.String())
-	}
-
-	return types
 }
 
 func RunByName(dataType string, payload []string) {
@@ -45,22 +33,56 @@ func RunByName(dataType string, payload []string) {
 		r := reflect.ValueOf(i)
 		name := reflect.Indirect(r).FieldByName("Name").String()
 		desc := reflect.Indirect(r).FieldByName("Desc").String()
-		if strings.EqualFold(name, dataType) {
-			fmt.Print("\n* * *\n\n")
-			fmt.Print(" [数据导入] " + name + "\n\n")
-			logrus.Info(desc)
-			fmt.Print("\n* * *\n\n")
-
-			t1 := time.Now()
-			r.MethodByName("Run").Call([]reflect.Value{
-				reflect.ValueOf(basic),
-				reflect.ValueOf(payload),
-			})
-			elapsed := time.Since(t1)
-			fmt.Print("\n")
-			logrus.Info("导出执行结束，耗时: ", elapsed)
+		note := reflect.Indirect(r).FieldByName("Note").String()
+		if !strings.EqualFold(name, dataType) {
+			continue
 		}
+
+		fmt.Print("\n")
+		PrintTable([]table.Row{
+			{"数据搬家 - 导入"},
+			{strings.ToUpper(name)},
+			{desc},
+			{note},
+		})
+		fmt.Print("\n")
+
+		t1 := time.Now()
+		r.MethodByName("Run").Call([]reflect.Value{
+			reflect.ValueOf(basic),
+			reflect.ValueOf(payload),
+		})
+		elapsed := time.Since(t1)
+		fmt.Print("\n")
+		logrus.Info("导入执行结束，耗时: ", elapsed)
+		return
 	}
+
+	logrus.Fatal("不支持该数据类型导入")
+}
+
+type ImporterInfo struct {
+	Name string
+	Desc string
+	Note string
+}
+
+func GetImporterInfo(instance interface{}) ImporterInfo {
+	var info ImporterInfo
+	j, _ := json.Marshal(instance)
+	json.Unmarshal(j, &info)
+	return info
+}
+
+func GetSupportNames() []string {
+	types := []string{}
+	for _, i := range Supports {
+		r := reflect.ValueOf(i)
+		f := reflect.Indirect(r).FieldByName("Name")
+		types = append(types, f.String())
+	}
+
+	return types
 }
 
 type _getParamsTo struct {
@@ -97,10 +119,10 @@ func GetBasicParamsFrom(payload []string) BasicParams {
 	})
 
 	if basic.TargetSiteName == "" {
-		logrus.Fatal("参数 `target_site_name:<站点名称>` 不能为空")
+		logrus.Fatal("请附带参数 `target_site_name:<站点名称>`")
 	}
 	if basic.TargetSiteUrl == "" {
-		logrus.Fatal("参数 `target_site_url:<站点根目录 URL>` 不能为空")
+		logrus.Fatal("请附带参数 `target_site_url:<站点根目录 URL>`")
 	}
 	if !lib.ValidateURL(basic.TargetSiteUrl) {
 		logrus.Fatal("参数 `target_site_url:<站点根目录 URL>` 必须为 URL 格式")
@@ -147,6 +169,9 @@ func DbReady(payload []string) *gorm.DB {
 	if err != nil {
 		logrus.Fatal("数据库连接失败 ", err)
 	}
+
+	logrus.Info("数据库连接成功")
+
 	return db
 }
 
@@ -211,4 +236,44 @@ func ParseDate(s string) time.Time {
 	t, _ := dateparse.ParseIn(s, denverLoc)
 
 	return t
+}
+
+func PrintTable(rows []table.Row) {
+	t := table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+
+	for _, r := range rows {
+		t.AppendRow(r)
+	}
+
+	tStyle := table.StyleLight
+	tStyle.Options.SeparateRows = true
+	t.SetStyle(tStyle)
+
+	t.Render()
+}
+
+func Confirm(s string) bool {
+	r := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Printf("%s [y/n]: ", s)
+
+		res, err := r.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Empty input (i.e. "\n")
+		if len(res) < 2 {
+			continue
+		}
+
+		resp := strings.ToLower(strings.TrimSpace(res))
+		if resp == "y" || resp == "yes" {
+			return true
+		} else if resp == "n" || resp == "no" {
+			return false
+		}
+	}
 }

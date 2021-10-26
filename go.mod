@@ -7,8 +7,10 @@ require (
 	github.com/allegro/bigcache/v3 v3.0.0
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/eko/gocache/v2 v2.1.0
+	github.com/elliotchance/phpserialize v1.3.1
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/kr/text v0.2.0 // indirect
 	github.com/labstack/echo/v4 v4.5.0

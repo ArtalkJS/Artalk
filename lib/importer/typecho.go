@@ -35,7 +35,7 @@ type _TypechoImporter struct {
 	ImporterInfo
 	TargetSite model.Site
 
-	Basic         BasicParams
+	Basic         *BasicParams
 	SrcVersion    string
 	SrcSiteName   string
 	SrcSiteURL    string
@@ -56,7 +56,7 @@ type _TypechoImporter struct {
 // Typecho 升级相关的代码 @see https://github.com/typecho/typecho/blob/64b8e686885d8ab4c7f0cdc3d6dc2d99fa48537c/var/Utils/Upgrade.php
 // 路由 @see https://github.com/typecho/typecho/blob/530312443142577509df88ce88cf3274fac9b8c4/var/Widget/Options/Permalink.php#L319
 // DB @see https://github.com/typecho/typecho/blob/6558fd5e030a950335d53038f82728b06ad6c32d/install/Mysql.sql
-func (imp *_TypechoImporter) Run(basic BasicParams, payload []string) {
+func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	// Ready
 	imp.Basic = basic
 	typechoDB := DbReady(payload)
@@ -86,6 +86,15 @@ func (imp *_TypechoImporter) Run(basic BasicParams, payload []string) {
 			imp.SrcSiteURL = opt.Value
 		}
 	}
+
+	// 若未指定 target site 则使用数据库数据
+	if basic.TargetSiteName == "" && imp.SrcSiteName != "" {
+		basic.TargetSiteName = imp.SrcSiteName
+	}
+	if basic.TargetSiteUrl == "" && imp.SrcSiteURL != "" && lib.ValidateURL(imp.SrcSiteURL) {
+		basic.TargetSiteUrl = imp.SrcSiteURL
+	}
+	RequiredBasicTargetSite(basic)
 
 	// 检查数据源版本号
 	imp.VersionCheck()
@@ -292,15 +301,16 @@ func (imp *_TypechoImporter) GetNewPageKey(content TypechoContent) string {
 	}
 
 	rewriteRule = "/" + strings.TrimPrefix(rewriteRule, "/")
-	return baseUrl + imp.ReplaceAll(rewriteRule, replaces)
+	return baseUrl + imp.ReplaceAllBracketed(rewriteRule, replaces)
 }
 
 // 替换字符串
-func (imp *_TypechoImporter) ReplaceAll(data string, dict map[string]string) string {
+// @note 特别注意：replaces 的 key 外侧无 “[]” 或 “{}”
+func (imp *_TypechoImporter) ReplaceAllBracketed(data string, replaces map[string]string) string {
 	r := regexp.MustCompile(`(\[|\{)\s*(.*?)\s*(\]|\})`) // 同时支持 {} 和 []
 	return r.ReplaceAllStringFunc(data, func(m string) string {
 		key := r.FindStringSubmatch(m)[2]
-		if val, isExist := dict[key]; isExist {
+		if val, isExist := replaces[key]; isExist {
 			return val
 		} else {
 			logrus.Error(fmt.Sprintf("[重写规则] \"%s\" 变量无效", key))
@@ -414,7 +424,27 @@ func (imp *_TypechoImporter) RewriteRuleReady() {
 				return
 			}
 
-			*field = route.URL
+			readRule := route.URL
+
+			// 将 [year:digital:4] 变为 [year]
+			r := regexp.MustCompile(`\[(([a-zA-Z0-9]+):?(.*?))\]`)
+			subMatches := r.FindAllStringSubmatch(readRule, -1)
+			replaces := map[string]string{}
+			for _, m := range subMatches {
+				if len(m) < 1 {
+					continue
+				}
+
+				// 0 => [year:digital:4]
+				// 1 => year:digital:4
+				// 2 => year
+				// 3 => digital:4
+				replaces[m[1]] = "[" + m[2] + "]"
+			}
+			readRule = imp.ReplaceAllBracketed(readRule, replaces) // replaces keys 无括号
+
+			// 保存从数据库读取到的 rule
+			*field = readRule
 			logrus.Info("重写规则 \"" + nameText + "\" 读取成功")
 		} else {
 			logrus.Info("[重写规则] 自定义 \""+nameText+"\" 规则：", fmt.Sprintf("%#v", *field))

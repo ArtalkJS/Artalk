@@ -12,5 +12,5 @@ type _WordPressImporter struct {
 	ImporterInfo
 }
 
-func (i _WordPressImporter) Run(basic BasicParams, payload []string) {
+func (i _WordPressImporter) Run(basic *BasicParams, payload []string) {
 }

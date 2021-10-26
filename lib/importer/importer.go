@@ -124,13 +124,17 @@ type BasicParams struct {
 	TargetSiteUrl  string `json:"target_site_url"`
 }
 
-func GetBasicParamsFrom(payload []string) BasicParams {
+func GetBasicParamsFrom(payload []string) *BasicParams {
 	basic := BasicParams{}
 	GetParamsFrom(payload).To(map[string]*string{
 		"target_site_name": &basic.TargetSiteName,
 		"target_site_url":  &basic.TargetSiteUrl,
 	})
 
+	return &basic
+}
+
+func RequiredBasicTargetSite(basic *BasicParams) {
 	if basic.TargetSiteName == "" {
 		logrus.Fatal("请附带参数 `target_site_name:<站点名称>`")
 	}
@@ -140,8 +144,6 @@ func GetBasicParamsFrom(payload []string) BasicParams {
 	if !lib.ValidateURL(basic.TargetSiteUrl) {
 		logrus.Fatal("参数 `target_site_url:<站点根目录 URL>` 必须为 URL 格式")
 	}
-
-	return basic
 }
 
 func DbReady(payload []string) *gorm.DB {
@@ -189,7 +191,7 @@ func DbReady(payload []string) *gorm.DB {
 }
 
 // 站点准备
-func SiteReady(basic BasicParams) model.Site {
+func SiteReady(basic *BasicParams) model.Site {
 	site := model.FindSite(basic.TargetSiteName)
 	if site.IsEmpty() {
 		// 创建新站点

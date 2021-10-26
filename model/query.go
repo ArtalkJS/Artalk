@@ -10,13 +10,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func FindComment(id uint, siteName string) Comment {
-	var comment Comment
-	lib.DB.Preload(clause.Associations).Where("id = ? AND site_name = ?", id, siteName).First(&comment)
-	return comment
-}
-
-func FindCommentByID(id uint) Comment {
+func FindComment(id uint) Comment {
 	var comment Comment
 	lib.DB.Preload(clause.Associations).Where("id = ?", id).First(&comment)
 	return comment
@@ -146,10 +140,10 @@ func FindCreatePage(pageKey string, pageTitle string, siteName string) Page {
 	return page
 }
 
-func FindCreateUser(name string, email string) User {
+func FindCreateUser(name string, email string, link string) User {
 	user := FindUser(name, email)
 	if user.IsEmpty() {
-		user = NewUser(name, email) // save a new user
+		user = NewUser(name, email, link) // save a new user
 	}
 	return user
 }
@@ -162,10 +156,11 @@ func FindCreateNotify(userID uint, lookCommentID uint) Notify {
 	return notify
 }
 
-func NewUser(name string, email string) User {
+func NewUser(name string, email string, link string) User {
 	user := User{
 		Name:  name,
 		Email: email,
+		Link:  link,
 	}
 
 	err := lib.DB.Create(&user).Error

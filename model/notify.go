@@ -33,7 +33,7 @@ func (n *Notify) FetchComment() Comment {
 		return n.Comment
 	}
 
-	comment := FindCommentByID(n.CommentID)
+	comment := FindComment(n.CommentID)
 
 	n.Comment = comment
 	return comment
@@ -45,7 +45,7 @@ func (n *Notify) GetParentComment() Comment {
 		return Comment{}
 	}
 
-	pComment := FindComment(comment.Rid, comment.SiteName)
+	pComment := FindComment(comment.Rid)
 	return pComment
 }
 

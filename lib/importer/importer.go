@@ -308,3 +308,20 @@ func HideJsonLongText(key string, text string) string {
 	text = r.ReplaceAllString(text, fmt.Sprintf(key+": <!-- 省略 %d 个字符 -->", utf8.RuneCountInString(postText)))
 	return text
 }
+
+// 传入 ID 变更表 (原始ID => 数据库已存在记录的ID) rid 将根据此替换
+func RebuildRid(idChanges map[uint]uint) {
+	for _, newId := range idChanges {
+		nComment := model.FindComment(newId)
+		if nComment.Rid == 0 {
+			continue
+		}
+		if newId, isExist := idChanges[nComment.Rid]; isExist {
+			nComment.Rid = newId
+			err := lib.DB.Save(&nComment).Error
+			if err != nil {
+				logrus.Error(fmt.Sprintf("[rid 更新] new_id:%d new_rid:%d", nComment.ID, newId), err)
+			}
+		}
+	}
+}

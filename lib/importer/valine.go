@@ -95,34 +95,32 @@ func ParseValineCommentJSON(jsonStr string) ([]ValineComment, error) {
 	return list, nil
 }
 
+// PageKey (c.Url 不确定是否为完整 URL 还是一个 path)
+func GetValineNewPageKey(baseUrl string, c ValineComment) string {
+	baseUrl = strings.TrimSuffix(baseUrl, "/") + "/"
+	return baseUrl + strings.TrimPrefix(lib.GetUrlWithoutDomain(c.Url), "/")
+}
+
 func ImportValineComments(basic *BasicParams, comments []ValineComment) {
 	siteName := basic.TargetSiteName
 
-	// 查找父评论
-	idDict := map[string]int{}
+	idMap := map[string]int{}    // ID映射 object_id => id
+	idChanges := map[uint]uint{} // 变更 ID original_id => new_db_id
+
 	id := 1
-
-	idChanges := map[uint]uint{}
-
 	for _, c := range comments {
-		idDict[c.ObjectId] = id
+		idMap[c.ObjectId] = id
 		id++
 	}
 
 	for _, c := range comments {
-		// PageKey
-		tSiteUrl := basic.TargetSiteUrl
-		tSiteUrl = strings.TrimSuffix(tSiteUrl, "/") + "/"
-		pageKey := tSiteUrl + strings.TrimPrefix(lib.GetUrlWithoutDomain(c.Url), "/")
 
 		// 创建 user
-		user := model.FindCreateUser(c.Nick, c.Mail)
-		page := model.FindCreatePage(pageKey, "", siteName)
+		user := model.FindCreateUser(c.Nick, c.Mail, c.Link)
 
-		if c.Link != "" {
-			user.Link = c.Link
-		}
-		model.UpdateUser(&user)
+		// 创建 page
+		pageKey := GetValineNewPageKey(basic.TargetSiteUrl, c)
+		page := model.FindCreatePage(pageKey, "", siteName)
 
 		// 创建新 comment 实例
 		nComment := model.Comment{
@@ -135,7 +133,7 @@ func ImportValineComments(basic *BasicParams, comments []ValineComment) {
 			UA:     c.UA,
 			IP:     c.IP,
 
-			Rid: uint(idDict[c.Rid]),
+			Rid: uint(idMap[c.Rid]),
 
 			IsCollapsed: false,
 			IsPending:   false,
@@ -154,23 +152,11 @@ func ImportValineComments(basic *BasicParams, comments []ValineComment) {
 			continue
 		}
 
-		idChanges[uint(idDict[c.ObjectId])] = nComment.ID
+		idChanges[uint(idMap[c.ObjectId])] = nComment.ID
 	}
 
 	// reply id 重建
-	for _, newId := range idChanges {
-		nComment := model.FindComment(newId, siteName)
-		if nComment.Rid == 0 {
-			continue
-		}
-		if newId, isExist := idChanges[nComment.Rid]; isExist {
-			nComment.Rid = newId
-			err := lib.DB.Save(&nComment).Error
-			if err != nil {
-				logrus.Error(fmt.Sprintf("[rid 更新] new_id:%d new_rid:%d", nComment.ID, newId), err)
-			}
-		}
-	}
+	RebuildRid(idChanges)
 
 	fmt.Print("\n")
 	logrus.Info("RID 重构完毕")

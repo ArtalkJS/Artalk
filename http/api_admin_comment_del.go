@@ -37,7 +37,7 @@ func ActionAdminCommentDel(c echo.Context) error {
 		return resp
 	}
 
-	comment := model.FindComment(uint(id), p.SiteName)
+	comment := model.FindComment(uint(id))
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found")
 	}

@@ -48,7 +48,7 @@ func ActionVote(c echo.Context) error {
 
 	switch {
 	case isVoteComment:
-		comment = model.FindComment(p.TargetID, p.SiteName)
+		comment = model.FindComment(p.TargetID)
 		if comment.IsEmpty() {
 			return RespError(c, "comment not found")
 		}
@@ -98,7 +98,7 @@ func ActionVote(c echo.Context) error {
 	// find user
 	var user model.User
 	if p.Name != "" && p.Email != "" {
-		user = model.FindCreateUser(p.Name, p.Email)
+		user = model.FindCreateUser(p.Name, p.Email, "")
 	}
 
 	// create new vote record

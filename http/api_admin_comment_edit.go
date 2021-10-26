@@ -41,7 +41,7 @@ func ActionAdminCommentEdit(c echo.Context) error {
 		return resp
 	}
 
-	comment := model.FindComment(p.ID, p.SiteName)
+	comment := model.FindComment(p.ID)
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found")
 	}
@@ -60,7 +60,7 @@ func ActionAdminCommentEdit(c echo.Context) error {
 
 	// user
 	if p.Nick != "" && p.Email != "" {
-		user := model.FindCreateUser(p.Nick, p.Email)
+		user := model.FindCreateUser(p.Nick, p.Email, p.Link)
 		if user.ID != comment.UserID {
 			comment.UserID = user.ID
 		}

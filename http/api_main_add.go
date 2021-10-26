@@ -63,7 +63,7 @@ func ActionAdd(c echo.Context) error {
 	// check reply comment
 	var parentComment model.Comment
 	if p.Rid != 0 {
-		parentComment = model.FindComment(p.Rid, p.SiteName)
+		parentComment = model.FindComment(p.Rid)
 		if parentComment.IsEmpty() {
 			return RespError(c, "找不到父评论")
 		}
@@ -76,7 +76,7 @@ func ActionAdd(c echo.Context) error {
 	}
 
 	// find user
-	user := model.FindCreateUser(p.Name, p.Email)
+	user := model.FindCreateUser(p.Name, p.Email, p.Link)
 	if user.ID == 0 || page.Key == "" {
 		logrus.Error("Cannot get user or page")
 		return RespError(c, "评论失败")

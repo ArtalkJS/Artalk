@@ -200,13 +200,13 @@ func (imp *_TypechoImporter) ImportComments() {
 
 	idChanges := map[uint]uint{} // comment_id: old => new
 
-	// 遍历 Contents
+	// 导入页面
 	for _, c := range contents {
 		// 创建页面
 		pageKey := imp.GetNewPageKey(c)
 		page := model.FindCreatePage(pageKey, c.Title, imp.Basic.TargetSiteName)
 
-		// 查询评论
+		// 导入评论
 		commentTotal := 0
 		for _, co := range comments {
 			if co.Cid != c.Cid {
@@ -214,12 +214,7 @@ func (imp *_TypechoImporter) ImportComments() {
 			}
 
 			// 创建 user
-			user := model.FindCreateUser(co.Author, co.Mail)
-
-			if co.Url != "" {
-				user.Link = co.Url
-			}
-			model.UpdateUser(&user)
+			user := model.FindCreateUser(co.Author, co.Mail, co.Url)
 
 			// 创建新 comment 实例
 			nComment := model.Comment{
@@ -258,19 +253,7 @@ func (imp *_TypechoImporter) ImportComments() {
 	}
 
 	// reply id 重建
-	for _, newId := range idChanges {
-		nComment := model.FindComment(newId, siteName)
-		if nComment.Rid == 0 {
-			continue
-		}
-		if newId, isExist := idChanges[nComment.Rid]; isExist {
-			nComment.Rid = newId
-			err := lib.DB.Save(&nComment).Error
-			if err != nil {
-				logrus.Error(fmt.Sprintf("[rid 更新] new_id:%d new_rid:%d", nComment.ID, newId), err)
-			}
-		}
-	}
+	RebuildRid(idChanges)
 
 	fmt.Print("\n")
 	logrus.Info("RID 重构完毕")

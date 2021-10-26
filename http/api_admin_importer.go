@@ -77,12 +77,7 @@ func ActionAdminImporter(c echo.Context) error {
 
 			// 创建 page 和 user
 			page := model.FindCreatePage(oc.PageKey, "", p.SiteName)
-			user := model.FindCreateUser(oc.Nick, oc.Email)
-
-			if oc.Link != "" {
-				user.Link = oc.Link
-			}
-			model.UpdateUser(&user)
+			user := model.FindCreateUser(oc.Nick, oc.Email, oc.Link)
 
 			// 创建新 comment 实例
 			nComment := model.Comment{
@@ -117,7 +112,7 @@ func ActionAdminImporter(c echo.Context) error {
 
 		// reply id 重建
 		for _, newId := range idChanges {
-			nComment := model.FindComment(newId, p.SiteName)
+			nComment := model.FindComment(newId)
 			if nComment.Rid == 0 {
 				continue
 			}

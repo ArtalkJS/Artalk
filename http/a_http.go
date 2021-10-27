@@ -115,7 +115,7 @@ func InitRoute(e *echo.Echo) {
 	admin.POST("/setting-get", ActionAdminSettingGet)
 	admin.POST("/setting-save", ActionAdminSettingSave)
 	admin.POST("/importer", ActionAdminImporter)
-	admin.POST("/vote-sync", ActionAdminVoteSync)
+	// admin.POST("/vote-sync", ActionAdminVoteSync) // 数据导入功能未关注 vote 部分，暂时注释
 
 	admin.POST("/send-mail", ActionAdminSendMail)
 

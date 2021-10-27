@@ -33,6 +33,7 @@ var Supports = []interface{}{
 	WordPressImporter,
 	ValineImporter,
 	TwikooImporter,
+	ArtalkV1Importer,
 }
 
 func RunByName(dataType string, payload []string) {
@@ -258,18 +259,21 @@ func UrlResolverGetPageKey(baseUrl string, commentUrlVal string) string {
 		return commentUrlVal
 	}
 
-	pathIsDir := strings.HasSuffix(u.Path, "/") // path 以 / 结尾
-	abs, absErr := filepath.Abs(u.Path)         // 相对路径转绝对路径
+	// pathIsDir := strings.HasSuffix(u.Path, "/") // path 以 / 结尾
+	abs, absErr := filepath.Abs(u.Path) // 相对路径转绝对路径
 	if absErr != nil {
 		return u.String()
 	}
 
-	if pathIsDir {
-		u.Path = abs + "/" // 加上 "/"
-		// 这是一个 patch: 因为 filepath.Abs() 结果无论是 目录还是文件，都会去掉 /
-	} else {
-		u.Path = abs
-	}
+	// TODO 会导致 "http://aaa.com", "/" => "http://aaa.com//" 暂时搁置
+	// if pathIsDir {
+	// 	u.Path = abs + "/" // 加上 "/"
+	// 	// 这是一个 patch: 因为 filepath.Abs() 结果无论是 目录还是文件，都会去掉 /
+	// } else {
+	// 	u.Path = abs
+	// }
+
+	u.Path = abs
 
 	return u.String()
 }
@@ -313,7 +317,7 @@ func GetParamsFrom(payload []string) _getParamsTo {
 
 				valStr := strings.TrimPrefix(pVal, fromName+":")
 
-				switch toVar.(type) {
+				switch reflect.ValueOf(toVar).Interface().(type) {
 				case *string:
 					*toVar.(*string) = valStr
 				case *bool:

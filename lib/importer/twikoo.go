@@ -3,6 +3,7 @@ package importer
 import (
 	"encoding/json"
 
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/sirupsen/logrus"
 )
@@ -60,7 +61,7 @@ func (imp *_TwikooImporter) Run(basic *BasicParams, payload []string) {
 
 func ParseTwikooCommentJSON(jsonStr string) ([]TwikooComment, error) {
 	var list []TwikooComment
-	err := json.Unmarshal([]byte(jsonStr), &list)
+	err := json.Unmarshal([]byte(lib.JsonArrItemAnyWrapInStr(jsonStr)), &list)
 	if err != nil {
 		return []TwikooComment{}, err
 	}

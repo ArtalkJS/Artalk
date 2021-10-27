@@ -71,7 +71,7 @@ func ImportValine(basic *BasicParams, payload []string, comments []ValineComment
 
 func ParseValineCommentJSON(jsonStr string) ([]ValineComment, error) {
 	var list []ValineComment
-	err := json.Unmarshal([]byte(jsonStr), &list)
+	err := json.Unmarshal([]byte(lib.JsonArrItemAnyWrapInStr(jsonStr)), &list)
 	if err != nil {
 		return []ValineComment{}, err
 	}

@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"net/mail"
 	"net/url"
 	"os"
@@ -102,6 +103,26 @@ func RemoveBlankStrings(s []string) []string {
 		}
 	}
 	return r
+}
+
+func JsonArrItemAnyWrapInStr(jsonStr string) string {
+	var raw []map[string]interface{}
+	json.Unmarshal([]byte(jsonStr), &raw)
+	var dest []interface{}
+	for _, item := range raw {
+		dest = append(dest, JsonAnyWrapInStr(item))
+	}
+	j, _ := json.Marshal(dest)
+	return string(j)
+}
+
+// {"test":233} => {"test": "233"}, {"test": ["233"]} => {"test": "[\"233\"]"}
+func JsonAnyWrapInStr(item map[string]interface{}) map[string]string {
+	dest := map[string]string{}
+	for k, v := range item {
+		dest[k] = fmt.Sprintf("%v", v)
+	}
+	return dest
 }
 
 func ValidateEmail(email string) bool {

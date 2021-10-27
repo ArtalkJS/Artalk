@@ -61,7 +61,7 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	imp.Basic = basic
 	typechoDB := DbReady(payload)
 
-	GetParamsFrom(payload).To(map[string]*string{
+	GetParamsFrom(payload).To(map[string]interface{}{
 		"prefix":       &imp.DbPrefix,
 		"rewrite_post": &imp.RewritePost,
 		"rewrite_page": &imp.RewritePage,
@@ -132,9 +132,7 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	pageKeyEgPage := ""
 	for _, c := range imp.Contents {
 		if c.Type == "post" {
-			firstPost := fmt.Sprintf("[第一篇文章]\n\n"+
-				"    %#v\n\n", imp.Contents[0])
-
+			firstPost := SprintEncodeData("第一篇文章", imp.Contents[0])
 			fmt.Print(HideJsonLongText("Text", firstPost))
 			pageKeyEgPost = imp.GetNewPageKey(c)
 			fmt.Printf(" -> 生成 PageKey: %#v\n\n", pageKeyEgPost)
@@ -150,8 +148,7 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	}
 
 	if len(imp.Comments) > 0 {
-		fmt.Printf("[第一条评论]\n\n"+
-			"    %#v\n\n", imp.Comments[0])
+		PrintEncodeData("第一条评论", imp.Comments[0])
 	}
 
 	PrintTable([]table.Row{
@@ -181,7 +178,7 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	fmt.Println()
 
 	// 准备新的 site
-	imp.TargetSite = SiteReady(basic)
+	imp.TargetSite = SiteReady(basic.TargetSiteName, basic.TargetSiteUrl)
 
 	// 开始执行导入
 	imp.ImportComments()
@@ -254,9 +251,6 @@ func (imp *_TypechoImporter) ImportComments() {
 
 	// reply id 重建
 	RebuildRid(idChanges)
-
-	fmt.Print("\n")
-	logrus.Info("RID 重构完毕")
 }
 
 // 获取新的 PageKey (根据重写规则)

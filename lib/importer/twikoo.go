@@ -1,11 +1,8 @@
 package importer
 
 import (
-	"encoding/json"
-
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
-	"github.com/sirupsen/logrus"
 )
 
 var TwikooImporter = &_TwikooImporter{
@@ -27,48 +24,39 @@ func (imp *_TwikooImporter) Run(basic *BasicParams, payload []string) {
 	// 读取文件
 	jsonStr := JsonFileReady(payload)
 
-	// 解析 JSON
-	tComments, err := ParseTwikooCommentJSON(jsonStr)
-	if err != nil {
-		logrus.Fatal("json 解析失败：", err)
-	}
+	// 解析 Twikoo JSON
+	var tComments []TwikooCommentFAS
+	JsonDecodeFAS(jsonStr, &tComments)
 
-	// twikoo 转 valine
+	// twikoo 转 ArtalkTransferParcel
 	// @see https://github.com/imaegoo/twikoo/blob/c528c94105449c6b10c63bded6f813ceaee4bf74/src/vercel/api/index.js#L1155
 	// rid 对应 _id @see https://github.com/imaegoo/twikoo/blob/c528c94105449c6b10c63bded6f813ceaee4bf74/src/vercel/api/index.js#L343
-	vComments := []ValineComment{}
+	tp := []model.Artran{}
 	for _, tc := range tComments {
-		vComments = append(vComments, ValineComment{
-			ObjectId:  tc.ID,
-			Nick:      tc.Nick,
-			IP:        tc.IP,
-			Mail:      tc.Mail,
-			MailMd5:   tc.MailMd5,
-			IsSpam:    tc.IsSpam,
-			UA:        tc.UA,
-			Link:      tc.Link,
-			Pid:       tc.Pid,
-			Rid:       tc.Rid,
-			Comment:   tc.Comment,
-			Url:       tc.Url,
-			CreatedAt: tc.Created,
-			UpdatedAt: tc.Updated,
+		tp = append(tp, model.Artran{
+			ID:          tc.ID,
+			Rid:         tc.Rid,
+			Content:     tc.Comment,
+			UA:          tc.UA,
+			IP:          tc.IP,
+			IsCollapsed: lib.ToString(false),
+			IsPending:   lib.ToString(tc.IsSpam == "true"),
+			CreatedAt:   tc.Created,
+			UpdatedAt:   tc.Updated,
+			Nick:        tc.Nick,
+			Email:       tc.Mail,
+			Link:        tc.Link,
+			PageKey:     tc.Url,
+			SiteName:    basic.TargetSiteName,
+			SiteUrls:    basic.TargetSiteUrl,
 		})
 	}
 
-	ImportValine(basic, payload, vComments)
+	ImportArtrans(basic, tp)
 }
 
-func ParseTwikooCommentJSON(jsonStr string) ([]TwikooComment, error) {
-	var list []TwikooComment
-	err := json.Unmarshal([]byte(lib.JsonArrItemAnyWrapInStr(jsonStr)), &list)
-	if err != nil {
-		return []TwikooComment{}, err
-	}
-	return list, nil
-}
-
-type TwikooComment struct {
+// TwikooCommentFAS (Fields All String type)
+type TwikooCommentFAS struct {
 	ID      string `json:"_id"`
 	Uid     string `json:"uid"`
 	Nick    string `json:"nick"`

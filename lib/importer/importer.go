@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
+	"path/filepath"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -94,68 +96,46 @@ func GetSupportNames() []string {
 	return types
 }
 
-type _getParamsTo struct {
-	To func(variables map[string]*string)
-}
-
-func GetParamsFrom(payload []string) _getParamsTo {
-	a := _getParamsTo{}
-	a.To = func(variables map[string]*string) {
-		for _, pVal := range payload {
-			for fromName, toVar := range variables {
-				if !strings.HasPrefix(pVal, fromName+":") {
-					continue
-				}
-
-				*toVar = strings.TrimPrefix(pVal, fromName+":")
-				break
-			}
-		}
-	}
-	return a
-}
-
-func GetArrayParamsFrom(payload []string, key string) []string {
-	arr := []string{}
-	for _, pVal := range payload {
-		if strings.HasPrefix(pVal, key+":") {
-			arr = append(arr, strings.TrimPrefix(pVal, key+":"))
-		}
-	}
-
-	return arr
-}
-
 type BasicParams struct {
 	TargetSiteName string
 	TargetSiteUrl  string
+
+	UrlResolver bool
 }
 
 func GetBasicParamsFrom(payload []string) *BasicParams {
 	basic := BasicParams{}
-	GetParamsFrom(payload).To(map[string]*string{
-		"ts_name": &basic.TargetSiteName,
-		"ts_url":  &basic.TargetSiteUrl,
+
+	basic.UrlResolver = true // 默认开启
+
+	GetParamsFrom(payload).To(map[string]interface{}{
+		"t_name":         &basic.TargetSiteName,
+		"t_url":          &basic.TargetSiteUrl,
+		"t_url_resolver": &basic.UrlResolver,
 	})
+
+	if !basic.UrlResolver {
+		logrus.Warn("目标站点 URL 解析器已关闭")
+	}
 
 	return &basic
 }
 
 func RequiredBasicTargetSite(basic *BasicParams) {
 	if basic.TargetSiteName == "" {
-		logrus.Fatal("请附带参数 `ts_name:<目标站点名称>`")
+		logrus.Fatal("请附带参数 `t_name:<目标站点名称>`")
 	}
 	if basic.TargetSiteUrl == "" {
-		logrus.Fatal("请附带参数 `ts_url:<目标站点根目录 URL>`")
+		logrus.Fatal("请附带参数 `t_url:<目标站点根目录 URL>`")
 	}
 	if !lib.ValidateURL(basic.TargetSiteUrl) {
-		logrus.Fatal("参数 `ts_url:<目标站点根目录 URL>` 必须为 URL 格式")
+		logrus.Fatal("参数 `t_url:<目标站点根目录 URL>` 必须为 URL 格式")
 	}
 }
 
 func DbReady(payload []string) *gorm.DB {
 	var host, port, dbName, user, password, dbType, dbFile string
-	GetParamsFrom(payload).To(map[string]*string{
+	GetParamsFrom(payload).To(map[string]interface{}{
 		"host":     &host,
 		"port":     &port,
 		"db_name":  &dbName,
@@ -198,34 +178,43 @@ func DbReady(payload []string) *gorm.DB {
 }
 
 // 站点准备
-func SiteReady(basic *BasicParams) model.Site {
-	site := model.FindSite(basic.TargetSiteName)
+func SiteReady(tSiteName string, tSiteUrls string) model.Site {
+	site := model.FindSite(tSiteName)
 	if site.IsEmpty() {
 		// 创建新站点
 		site = model.Site{}
-		site.Name = basic.TargetSiteName
-		site.Urls = basic.TargetSiteUrl
+		site.Name = tSiteName
+		site.Urls = tSiteUrls
 		err := lib.DB.Create(&site).Error
 		if err != nil {
 			logrus.Fatal("站点创建失败")
 		}
 	} else {
-		sic := site.ToCooked()
+		// 追加 URL
+		siteCooked := site.ToCooked()
 
-		// 加 URL
-		urlExist := false
-		for _, url := range sic.Urls {
-			if url == site.Urls {
-				urlExist = true
-				break
+		urlExist := func(tUrl string) bool {
+			for _, u := range siteCooked.Urls {
+				if u == tUrl {
+					return true
+				}
+			}
+			return false
+		}
+
+		tUrlsSpit := strings.Split(tSiteUrls, ",")
+
+		rUrls := []string{}
+		for _, u := range tUrlsSpit {
+			if !urlExist(u) {
+				rUrls = append(rUrls, u) // prepend 不存在的站点
 			}
 		}
 
-		if !urlExist {
-			urls := []string{}
-			urls = append(urls, basic.TargetSiteUrl) // prepend
-			urls = append(urls, sic.Urls...)
-			site.Urls = strings.Join(urls, ",")
+		if len(rUrls) > 0 {
+			// 保存
+			rUrls = append(rUrls, siteCooked.Urls...)
+			site.Urls = strings.Join(rUrls, ",")
 			err := lib.DB.Save(&site).Error
 			if err != nil {
 				logrus.Fatal("站点数据更新失败")
@@ -238,7 +227,7 @@ func SiteReady(basic *BasicParams) model.Site {
 
 func JsonFileReady(payload []string) string {
 	var jsonFile string
-	GetParamsFrom(payload).To(map[string]*string{
+	GetParamsFrom(payload).To(map[string]interface{}{
 		"json_file": &jsonFile,
 	})
 
@@ -255,6 +244,34 @@ func JsonFileReady(payload []string) string {
 	}
 
 	return string(buf)
+}
+
+// PageKey (commentUrlVal 不确定是否为完整 URL 还是一个 path)
+func UrlResolverGetPageKey(baseUrl string, commentUrlVal string) string {
+	baseUrl = strings.TrimSuffix(baseUrl, "/") + "/"
+	path := strings.TrimPrefix(lib.GetUrlWithoutDomain(commentUrlVal), "/")
+
+	// 解决拼接路径中的相对地址，例如：https://atk.xxx/abc/../artalk => https://atk.xxx/artalk
+	u, err := url.ParseRequestURI(baseUrl + path)
+	if err != nil {
+		logrus.Error("GetNewPageKey Error: ", err)
+		return commentUrlVal
+	}
+
+	pathIsDir := strings.HasSuffix(u.Path, "/") // path 以 / 结尾
+	abs, absErr := filepath.Abs(u.Path)         // 相对路径转绝对路径
+	if absErr != nil {
+		return u.String()
+	}
+
+	if pathIsDir {
+		u.Path = abs + "/" // 加上 "/"
+		// 这是一个 patch: 因为 filepath.Abs() 结果无论是 目录还是文件，都会去掉 /
+	} else {
+		u.Path = abs
+	}
+
+	return u.String()
 }
 
 func ParseVersion(s string) int64 {
@@ -281,6 +298,50 @@ func ParseDate(s string) time.Time {
 	return t
 }
 
+type _getParamsTo struct {
+	To func(variables map[string]interface{})
+}
+
+func GetParamsFrom(payload []string) _getParamsTo {
+	a := _getParamsTo{}
+	a.To = func(variables map[string]interface{}) {
+		for _, pVal := range payload {
+			for fromName, toVar := range variables {
+				if !strings.HasPrefix(pVal, fromName+":") {
+					continue
+				}
+
+				valStr := strings.TrimPrefix(pVal, fromName+":")
+
+				switch toVar.(type) {
+				case *string:
+					*toVar.(*string) = valStr
+				case *bool:
+					*toVar.(*bool) = strings.EqualFold(valStr, "true")
+				case *int:
+					num, err := strconv.Atoi(valStr)
+					if err != nil {
+						*toVar.(*int) = num
+					}
+				}
+				break
+			}
+		}
+	}
+	return a
+}
+
+func GetArrayParamsFrom(payload []string, key string) []string {
+	arr := []string{}
+	for _, pVal := range payload {
+		if strings.HasPrefix(pVal, key+":") {
+			arr = append(arr, strings.TrimPrefix(pVal, key+":"))
+		}
+	}
+
+	return arr
+}
+
 func PrintTable(rows []table.Row) {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
@@ -294,6 +355,14 @@ func PrintTable(rows []table.Row) {
 	t.SetStyle(tStyle)
 
 	t.Render()
+}
+
+func PrintEncodeData(dataType string, val interface{}) {
+	fmt.Print(SprintEncodeData(dataType, val))
+}
+
+func SprintEncodeData(dataType string, val interface{}) string {
+	return fmt.Sprintf("[%s]\n\n   %#v\n\n", dataType, val)
 }
 
 func Confirm(s string) bool {
@@ -318,6 +387,15 @@ func Confirm(s string) bool {
 		} else if resp == "n" || resp == "no" {
 			return false
 		}
+	}
+}
+
+// Json Decode (FAS: Fields All String Type)
+// 解析 json 为字段全部是 string 类型的 struct
+func JsonDecodeFAS(str string, fasStructure interface{}) {
+	err := json.Unmarshal([]byte(lib.JsonObjInArrAnyStr(str)), fasStructure) // lib.ToString()
+	if err != nil {
+		logrus.Fatal("JSON 解析失败 ", err)
 	}
 }
 
@@ -348,4 +426,7 @@ func RebuildRid(idChanges map[uint]uint) {
 			}
 		}
 	}
+
+	fmt.Print("\n")
+	logrus.Info("RID 重构完毕")
 }

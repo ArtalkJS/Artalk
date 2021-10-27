@@ -64,7 +64,7 @@ func (c *Comment) FetchPage() Page {
 	}
 
 	var page Page
-	lib.DB.Where("page_key = ?", c.PageKey).First(&page)
+	lib.DB.Where("key = ?", c.PageKey).First(&page)
 
 	c.Page = page
 	return page
@@ -240,4 +240,35 @@ func (c *Comment) SpamCheck(echoCtx echo.Context) {
 	}
 
 	// TODO:关键字过滤
+}
+
+func (c *Comment) ToArtran() Artran {
+	user := c.FetchUser()
+	page := c.FetchPage()
+	site := c.FetchSite()
+
+	return Artran{
+		ID:            lib.ToString(c.ID),
+		Rid:           lib.ToString(c.Rid),
+		Content:       c.Content,
+		UA:            c.UA,
+		IP:            c.IP,
+		IsCollapsed:   lib.ToString(c.IsCollapsed),
+		IsPending:     lib.ToString(c.IsPending),
+		VoteUp:        lib.ToString(c.VoteUp),
+		VoteDown:      lib.ToString(c.VoteDown),
+		CreatedAt:     c.CreatedAt.String(),
+		UpdatedAt:     c.UpdatedAt.String(),
+		Nick:          user.Name,
+		Email:         user.Email,
+		Link:          user.Link,
+		Password:      user.Password,
+		BadgeName:     user.BadgeName,
+		BadgeColor:    user.BadgeColor,
+		PageKey:       page.Key,
+		PageTitle:     page.Title,
+		PageAdminOnly: lib.ToString(page.AdminOnly),
+		SiteName:      site.Name,
+		SiteUrls:      site.Urls,
+	}
 }

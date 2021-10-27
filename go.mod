@@ -6,6 +6,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.7.1
 	github.com/allegro/bigcache/v3 v3.0.0
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
+	github.com/cheggaaa/pb/v3 v3.0.8
 	github.com/eko/gocache/v2 v2.1.0
 	github.com/elliotchance/phpserialize v1.3.1
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
@@ -15,7 +16,8 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/labstack/echo/v4 v4.5.0
 	github.com/markbates/pkger v0.17.1
-	github.com/mattn/go-isatty v0.0.13 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/mattn/go-sqlite3 v1.14.8 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/mitchellh/mapstructure v1.4.1
@@ -31,10 +33,10 @@ require (
 	github.com/steambap/captcha v1.4.1
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	github.com/yuin/goldmark v1.4.0
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
-	golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf // indirect
-	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b // indirect
+	golang.org/x/sys v0.0.0-20211025201205-69cdffdb9359 // indirect
+	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect

@@ -105,25 +105,46 @@ func RemoveBlankStrings(s []string) []string {
 	return r
 }
 
-func JsonArrItemAnyWrapInStr(jsonStr string) string {
+//#region JSON Any To String (for Transfer)
+//******************************************
+
+// 任何类型转 String
+//	(bool) true => (string) "true"
+//	(int) 0 => (string) "0"
+func ToString(val interface{}) string {
+	return fmt.Sprintf("%v", val)
+}
+
+// 将 JSON "数组中的"对象的 Values 全部转成 String 类型
+// @note Array style is not the same as JSON Array, it uses the ToString() function.
+//	[{"a":233}, {"b":true}, {"c":"233"}]
+//	=> [{"a":"233"}, {"b":"true"}, {"c":"233"}]
+// @relevant ToString()
+func JsonObjInArrAnyStr(jsonStr string) string {
 	var raw []map[string]interface{}
 	json.Unmarshal([]byte(jsonStr), &raw)
 	var dest []interface{}
 	for _, item := range raw {
-		dest = append(dest, JsonAnyWrapInStr(item))
+		dest = append(dest, JsonObjAnyStr(item))
 	}
 	j, _ := json.Marshal(dest)
 	return string(j)
 }
 
-// {"test":233} => {"test": "233"}, {"test": ["233"]} => {"test": "[\"233\"]"}
-func JsonAnyWrapInStr(item map[string]interface{}) map[string]string {
+// 将 JSON 对象的 Values 全部转成 String 类型
+//	{"test":233} => {"test": "233"}, {"test": true} => {"test": "true"}
+func JsonObjAnyStr(item map[string]interface{}) map[string]string {
 	dest := map[string]string{}
 	for k, v := range item {
-		dest[k] = fmt.Sprintf("%v", v)
+		dest[k] = ToString(v)
 	}
 	return dest
 }
+
+//#endregion
+
+//#region Validators
+//******************************************
 
 func ValidateEmail(email string) bool {
 	_, err := mail.ParseAddress(email)
@@ -134,3 +155,5 @@ func ValidateURL(urlStr string) bool {
 	_, err := url.ParseRequestURI(urlStr)
 	return err == nil
 }
+
+//#endregion

@@ -132,6 +132,14 @@ func NewSite(name string, urls string) Site {
 	return site
 }
 
+func UpdateSite(site *Site) error {
+	err := lib.DB.Save(site).Error
+	if err != nil {
+		logrus.Error("Update Site error: ", err)
+	}
+	return err
+}
+
 func FindCreatePage(pageKey string, pageTitle string, siteName string) Page {
 	page := FindPage(pageKey, siteName)
 	if page.IsEmpty() {

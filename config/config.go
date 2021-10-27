@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -129,8 +128,8 @@ func Init(cfgFile string) {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Print("\n")
-		fmt.Println("- Using ArtalkGo config file:", viper.ConfigFileUsed())
+		// fmt.Print("\n")
+		// fmt.Println("- Using ArtalkGo config file:", viper.ConfigFileUsed())
 	}
 
 	Instance = &Config{}

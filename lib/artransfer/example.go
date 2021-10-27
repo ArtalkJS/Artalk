@@ -1,4 +1,4 @@
-package importer
+package artransfer
 
 var ExampleImporter = &_ExampleImporter{
 	ImporterInfo: ImporterInfo{

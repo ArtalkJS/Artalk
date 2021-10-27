@@ -1,4 +1,4 @@
-package importer
+package artransfer
 
 import (
 	"errors"
@@ -12,7 +12,6 @@ import (
 	"github.com/elliotchance/phpserialize"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/mitchellh/mapstructure"
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -59,7 +58,11 @@ type _TypechoImporter struct {
 func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	// Ready
 	imp.Basic = basic
-	typechoDB := DbReady(payload)
+	typechoDB, dErr := DbReady(payload)
+	if dErr != nil {
+		logFatal(dErr)
+		return
+	}
 
 	GetParamsFrom(payload).To(map[string]interface{}{
 		"prefix":       &imp.DbPrefix,
@@ -74,7 +77,7 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	// Load Options
 	tbOptions := imp.DbPrefix + "options"
 	typechoDB.Raw("SELECT * FROM " + tbOptions).Scan(&imp.Options)
-	logrus.Info(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbOptions, len(imp.Options)))
+	logInfo(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbOptions, len(imp.Options)))
 
 	for _, opt := range imp.Options {
 		switch opt.Name {
@@ -94,7 +97,11 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	if basic.TargetSiteUrl == "" && imp.SrcSiteURL != "" && lib.ValidateURL(imp.SrcSiteURL) {
 		basic.TargetSiteUrl = imp.SrcSiteURL
 	}
-	RequiredBasicTargetSite(basic)
+	rErr := RequiredBasicTargetSite(basic)
+	if rErr != nil {
+		logFatal(rErr)
+		return
+	}
 
 	// 检查数据源版本号
 	imp.VersionCheck()
@@ -105,27 +112,27 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	// load Metas
 	tbMetas := imp.DbPrefix + "metas"
 	typechoDB.Raw("SELECT * FROM " + tbMetas).Scan(&imp.Metas)
-	logrus.Info(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbMetas, len(imp.Metas)))
+	logInfo(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbMetas, len(imp.Metas)))
 
 	// load Relationships
 	tbRelationships := imp.DbPrefix + "relationships"
 	typechoDB.Raw("SELECT * FROM " + tbRelationships).Scan(&imp.Relationships)
-	logrus.Info(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbRelationships, len(imp.Relationships)))
+	logInfo(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbRelationships, len(imp.Relationships)))
 
 	// 获取 contents
 	tbContents := imp.DbPrefix + "contents"
 	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %s ORDER BY created ASC", tbContents)).Scan(&imp.Contents)
-	logrus.Info(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbContents, len(imp.Contents)))
+	logInfo(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbContents, len(imp.Contents)))
 
 	// 获取 comments
 	tbComments := imp.DbPrefix + "comments"
 	typechoDB.Raw(fmt.Sprintf("SELECT * FROM %s ORDER BY created ASC", tbComments)).Scan(&imp.Comments)
-	logrus.Info(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbComments, len(imp.Comments)))
+	logInfo(fmt.Sprintf("从数据表 `%s` 获取 %d 条记录", tbComments, len(imp.Comments)))
 
 	// 导入前参数汇总
-	fmt.Print("\n")
+	print("\n")
 
-	fmt.Print("# 请过目：\n\n")
+	print("# 请过目：\n\n")
 
 	// 显示第一条数据
 	pageKeyEgPost := ""
@@ -133,9 +140,9 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	for _, c := range imp.Contents {
 		if c.Type == "post" {
 			firstPost := SprintEncodeData("第一篇文章", imp.Contents[0])
-			fmt.Print(HideJsonLongText("Text", firstPost))
+			print(HideJsonLongText("Text", firstPost))
 			pageKeyEgPost = imp.GetNewPageKey(c)
-			fmt.Printf(" -> 生成 PageKey: %#v\n\n", pageKeyEgPost)
+			printf(" -> 生成 PageKey: %#v\n\n", pageKeyEgPost)
 			break
 		}
 	}
@@ -165,9 +172,9 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 		{"独立页面", fmt.Sprintf("%#v", imp.RewritePage), pageKeyEgPage},
 	})
 
-	fmt.Print("\n")
-	fmt.Println("若以上内容不符合预期，请向我们反馈：https://artalk.js.org/guide/transfer.html")
-	fmt.Print("\n")
+	print("\n")
+	println("若以上内容不符合预期，请向我们反馈：https://artalk.js.org/guide/transfer.html")
+	print("\n")
 
 	// 确认开始
 	if !Confirm("确认开始导入吗？") {
@@ -175,10 +182,15 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	}
 
 	// 准备导入评论
-	fmt.Println()
+	println()
 
 	// 准备新的 site
-	imp.TargetSite = SiteReady(basic.TargetSiteName, basic.TargetSiteUrl)
+	targetSite, sErr := SiteReady(basic.TargetSiteName, basic.TargetSiteUrl)
+	if sErr != nil {
+		logFatal(sErr)
+		return
+	}
+	imp.TargetSite = targetSite
 
 	// 开始执行导入
 	imp.ImportComments()
@@ -189,9 +201,9 @@ func (imp *_TypechoImporter) ImportComments() {
 	contents := imp.Contents
 	comments := imp.Comments
 
-	fmt.Print("\n====================================\n\n")
-	logrus.Info(fmt.Sprintf("[开始导入] 共 %d 个页面，%d 条评论", len(contents), len(comments)))
-	fmt.Print("\n")
+	print("\n====================================\n\n")
+	logInfo(fmt.Sprintf("[开始导入] 共 %d 个页面，%d 条评论", len(contents), len(comments)))
+	print("\n")
 
 	siteName := imp.Basic.TargetSiteName
 
@@ -238,7 +250,7 @@ func (imp *_TypechoImporter) ImportComments() {
 			// 保存到数据库
 			err := lib.DB.Create(&nComment).Error
 			if err != nil {
-				logrus.Error(fmt.Sprintf("评论源 ID:%d 保存失败", co.Coid))
+				logError(fmt.Sprintf("评论源 ID:%d 保存失败", co.Coid))
 				continue
 			}
 
@@ -246,7 +258,7 @@ func (imp *_TypechoImporter) ImportComments() {
 			commentTotal++
 		}
 
-		fmt.Printf("+ [%-3d] 条评论 <- [%5d] %-30s | %#v\n", commentTotal, c.Cid, c.Slug, c.Title)
+		printf("+ [%-3d] 条评论 <- [%5d] %-30s | %#v\n", commentTotal, c.Cid, c.Slug, c.Title)
 	}
 
 	// reply id 重建
@@ -290,7 +302,7 @@ func (imp *_TypechoImporter) ReplaceAllBracketed(data string, replaces map[strin
 		if val, isExist := replaces[key]; isExist {
 			return val
 		} else {
-			logrus.Error(fmt.Sprintf("[重写规则] \"%s\" 变量无效", key))
+			logError(fmt.Sprintf("[重写规则] \"%s\" 变量无效", key))
 		}
 		return m
 	})
@@ -301,7 +313,7 @@ func (imp *_TypechoImporter) VersionCheck() {
 	r := regexp.MustCompile(`Typecho[\s]*(.+)\/(.+)`)
 	group := r.FindStringSubmatch(imp.SrcVersion)
 	if len(group) < 2 {
-		logrus.Warn(`无法确认您的 Typecho 版本号："` + fmt.Sprintf("%#v", imp.SrcVersion) + `"`)
+		logWarn(`无法确认您的 Typecho 版本号："` + fmt.Sprintf("%#v", imp.SrcVersion) + `"`)
 		return
 	}
 
@@ -310,10 +322,10 @@ func (imp *_TypechoImporter) VersionCheck() {
 
 	if verMain < ParseVersion(TypechoTestedVerMain) ||
 		verSub < ParseVersion(TypechoTestedVerSub) {
-		fmt.Print("\n")
-		logrus.Warn(fmt.Sprintf("Typecho 当前版本 \"%s\" 旧于 \"Typecho %s/%s\"",
+		print("\n")
+		logWarn(fmt.Sprintf("Typecho 当前版本 \"%s\" 旧于 \"Typecho %s/%s\"",
 			imp.SrcVersion, TypechoTestedVerMain, TypechoTestedVerSub))
-		logrus.Warn("不确定导入是否能够成功导入，您可以选择升级 Typecho: http://docs.typecho.org/upgrade")
+		logWarn("不确定导入是否能够成功导入，您可以选择升级 Typecho: http://docs.typecho.org/upgrade")
 	}
 }
 
@@ -393,11 +405,11 @@ func (imp *_TypechoImporter) RewriteRuleReady() {
 			route, err := imp.GetOptionRoute(routeName)
 			if err != nil || route.URL == "" {
 				if err != nil {
-					logrus.Error(err)
+					logError(err)
 				}
 
 				*field = defaultVal
-				logrus.Error("[重写规则] \"" + nameText + "\" 无法从数据库读取，将使用默认值 \"" + imp.RewritePost + "\"")
+				logError("[重写规则] \"" + nameText + "\" 无法从数据库读取，将使用默认值 \"" + imp.RewritePost + "\"")
 				return
 			}
 
@@ -422,9 +434,9 @@ func (imp *_TypechoImporter) RewriteRuleReady() {
 
 			// 保存从数据库读取到的 rule
 			*field = readRule
-			logrus.Info("重写规则 \"" + nameText + "\" 读取成功")
+			logInfo("重写规则 \"" + nameText + "\" 读取成功")
 		} else {
-			logrus.Info("[重写规则] 自定义 \""+nameText+"\" 规则：", fmt.Sprintf("%#v", *field))
+			logInfo("[重写规则] 自定义 \""+nameText+"\" 规则：", fmt.Sprintf("%#v", *field))
 		}
 	}
 

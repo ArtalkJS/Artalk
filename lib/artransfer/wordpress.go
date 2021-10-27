@@ -1,4 +1,4 @@
-package importer
+package artransfer
 
 var WordPressImporter = &_WordPressImporter{
 	ImporterInfo: ImporterInfo{

@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/ArtalkJS/ArtalkGo/lib/importer"
+	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -30,29 +30,32 @@ var importCmd = &cobra.Command{
 		}
 
 		content := string(buf)
-		basic := importer.GetBasicParamsFrom(args[1:])
+		basic := artransfer.GetBasicParamsFrom(args[1:])
 		basic.UrlResolver = false // 默认关闭 URL 解析器：因为 pageKey 是完整，且站点隔离开
-		importer.ImportArtransByStr(basic, content)
+		artransfer.ImportArtransByStr(basic, content)
 
 		logrus.Info("导入结束")
 	},
 	Args:       cobra.MinimumNArgs(1),
-	ArgAliases: importer.GetSupportNames(),
+	ArgAliases: artransfer.GetSupportNames(),
 }
 
 func init() {
 	rootCmd.AddCommand(importCmd)
 
-	for _, item := range importer.Supports {
-		imp := importer.GetImporterInfo(item)
+	for _, item := range artransfer.Supports {
+		imp := artransfer.GetImporterInfo(item)
 		subCmd := &cobra.Command{
 			Use:   imp.Name + " [参数]",
 			Short: imp.Desc,
 			Run: func(cmd *cobra.Command, args []string) {
-				importer.RunByName(imp.Name, args)
+				artransfer.Assumeyes, _ = cmd.Flags().GetBool("assumeyes")
+				artransfer.RunByName(imp.Name, args)
 			},
 		}
 
 		importCmd.AddCommand(subCmd)
 	}
+
+	flagPV(importCmd, "assumeyes", "y", false, "Automatically answer yes for all questions.")
 }

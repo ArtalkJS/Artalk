@@ -1,4 +1,4 @@
-package importer
+package artransfer
 
 import (
 	"github.com/ArtalkJS/ArtalkGo/model"
@@ -17,12 +17,20 @@ type _ArtalkV1Importer struct {
 }
 
 func (imp *_ArtalkV1Importer) Run(basic *BasicParams, payload []string) {
-	RequiredBasicTargetSite(basic)
+	err := RequiredBasicTargetSite(basic)
+	if err != nil {
+		logFatal(err)
+		return
+	}
 
 	// 读取文件
-	jsonStr := JsonFileReady(payload)
+	jsonStr, jErr := JsonFileReady(payload)
+	if jErr != nil {
+		logFatal(jErr)
+		return
+	}
 
-	var aComments []ArtalkV1AFS
+	var aComments []ArtalkV1CommentAFS
 	JsonDecodeFAS(jsonStr, &aComments)
 
 	tp := []model.Artran{}
@@ -49,7 +57,7 @@ func (imp *_ArtalkV1Importer) Run(basic *BasicParams, payload []string) {
 	ImportArtrans(basic, tp)
 }
 
-type ArtalkV1AFS struct {
+type ArtalkV1CommentAFS struct {
 	ID          string `json:"id"`
 	Content     string `json:"content"`
 	Nick        string `json:"nick"`

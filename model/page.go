@@ -13,7 +13,7 @@ import (
 
 type Page struct {
 	gorm.Model
-	Key       string `gorm:"uniqueIndex"` // 页面 Key（一般为不含 hash/query 的完整 url）
+	Key       string `gorm:"index"` // 页面 Key（一般为不含 hash/query 的完整 url）
 	Title     string
 	AdminOnly bool
 

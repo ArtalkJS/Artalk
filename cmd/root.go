@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -62,6 +63,16 @@ func init() {
 
 	rootCmd.SetVersionTemplate("Artalk-GO {{printf \"version %s\" .Version}}\n")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "配置文件路径 (defaults are './artalk-go.yml')")
+
+	versionCmd := &cobra.Command{
+		Use:     "version",
+		Short:   "输出 ArtalkGo 版本信息",
+		Version: Version,
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("ArtalkGo (" + lib.Version + "/" + lib.CommitHash + ")")
+		},
+	}
+	rootCmd.AddCommand(versionCmd)
 }
 
 // 1. 初始化配置

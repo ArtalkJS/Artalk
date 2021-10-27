@@ -1,4 +1,4 @@
-package importer
+package artransfer
 
 import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -18,10 +18,18 @@ type _ValineImporter struct {
 }
 
 func (imp *_ValineImporter) Run(basic *BasicParams, payload []string) {
-	RequiredBasicTargetSite(basic)
+	rErr := RequiredBasicTargetSite(basic)
+	if rErr != nil {
+		logFatal(rErr)
+		return
+	}
 
 	// 读取文件
-	jsonStr := JsonFileReady(payload)
+	jsonStr, jErr := JsonFileReady(payload)
+	if jErr != nil {
+		logFatal(jErr)
+		return
+	}
 
 	// 解析 Valine JSON
 	var vComments []ValineCommentFAS

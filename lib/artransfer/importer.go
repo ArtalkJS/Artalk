@@ -1,12 +1,10 @@
-package importer
+package artransfer
 
 import (
-	"bufio"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -22,15 +20,14 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/araddon/dateparse"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
 type Map = map[string]interface{}
 
 var Supports = []interface{}{
+	ArtransImporter,
 	TypechoImporter,
-	WordPressImporter,
 	ValineImporter,
 	TwikooImporter,
 	ArtalkV1Importer,
@@ -47,7 +44,7 @@ func RunByName(dataType string, payload []string) {
 			continue
 		}
 
-		fmt.Print("\n")
+		print("\n")
 		tableData := []table.Row{
 			{"数据搬家 - 导入"},
 			{strings.ToUpper(name)},
@@ -57,7 +54,7 @@ func RunByName(dataType string, payload []string) {
 			tableData = append(tableData, table.Row{note})
 		}
 		PrintTable(tableData)
-		fmt.Print("\n")
+		print("\n")
 
 		//t1 := time.Now()
 		r.MethodByName("Run").Call([]reflect.Value{
@@ -65,12 +62,12 @@ func RunByName(dataType string, payload []string) {
 			reflect.ValueOf(payload),
 		})
 		//elapsed := time.Since(t1)
-		fmt.Print("\n")
-		logrus.Info("导入执行结束") //，耗时: ", elapsed)
+		print("\n")
+		logInfo("导入执行结束") //，耗时: ", elapsed)
 		return
 	}
 
-	logrus.Fatal("不支持该数据类型导入")
+	logFatal("不支持该数据类型导入")
 }
 
 type ImporterInfo struct {
@@ -116,25 +113,27 @@ func GetBasicParamsFrom(payload []string) *BasicParams {
 	})
 
 	if !basic.UrlResolver {
-		logrus.Warn("目标站点 URL 解析器已关闭")
+		logWarn("目标站点 URL 解析器已关闭")
 	}
 
 	return &basic
 }
 
-func RequiredBasicTargetSite(basic *BasicParams) {
+func RequiredBasicTargetSite(basic *BasicParams) error {
 	if basic.TargetSiteName == "" {
-		logrus.Fatal("请附带参数 `t_name:<目标站点名称>`")
+		return errors.New("请附带参数 `t_name:<目标站点名称>`")
 	}
 	if basic.TargetSiteUrl == "" {
-		logrus.Fatal("请附带参数 `t_url:<目标站点根目录 URL>`")
+		return errors.New("请附带参数 `t_url:<目标站点根目录 URL>`")
 	}
 	if !lib.ValidateURL(basic.TargetSiteUrl) {
-		logrus.Fatal("参数 `t_url:<目标站点根目录 URL>` 必须为 URL 格式")
+		return errors.New("参数 `t_url:<目标站点根目录 URL>` 必须为 URL 格式")
 	}
+
+	return nil
 }
 
-func DbReady(payload []string) *gorm.DB {
+func DbReady(payload []string) (*gorm.DB, error) {
 	var host, port, dbName, user, password, dbType, dbFile string
 	GetParamsFrom(payload).To(map[string]interface{}{
 		"host":     &host,
@@ -153,33 +152,33 @@ func DbReady(payload []string) *gorm.DB {
 	// sqlite
 	if strings.EqualFold(dbType, string(config.TypeSQLite)) {
 		if dbFile == "" {
-			logrus.Fatal("SQLite 数据库：请传递参数 `db_file` 指定数据文件路径")
+			return nil, errors.New("SQLite 数据库：请传递参数 `db_file` 指定数据文件路径")
 		}
 
 		db, err := lib.OpenSQLite(dbFile)
 		if err != nil {
-			logrus.Fatal("SQLite 打开失败 ", err)
+			return nil, errors.New("SQLite 打开失败 " + err.Error())
 		}
-		return db
+		return db, nil
 	}
 
 	dsn, err := lib.GetDsn(config.DBType(dbType), host, port, dbName, user, password)
 	if err != nil {
-		logrus.Fatal("数据库连接 DSN 生成错误 ", err)
+		return nil, errors.New("数据库连接 DSN 生成错误 " + err.Error())
 	}
 
 	db, err := lib.OpenDB(config.DBType(dbType), dsn)
 	if err != nil {
-		logrus.Fatal("数据库连接失败 ", err)
+		return nil, errors.New("数据库连接失败 " + err.Error())
 	}
 
-	logrus.Info("数据库连接成功")
+	logInfo("数据库连接成功")
 
-	return db
+	return db, nil
 }
 
 // 站点准备
-func SiteReady(tSiteName string, tSiteUrls string) model.Site {
+func SiteReady(tSiteName string, tSiteUrls string) (model.Site, error) {
 	site := model.FindSite(tSiteName)
 	if site.IsEmpty() {
 		// 创建新站点
@@ -188,7 +187,7 @@ func SiteReady(tSiteName string, tSiteUrls string) model.Site {
 		site.Urls = tSiteUrls
 		err := lib.DB.Create(&site).Error
 		if err != nil {
-			logrus.Fatal("站点创建失败")
+			return model.Site{}, errors.New("站点创建失败")
 		}
 	} else {
 		// 追加 URL
@@ -218,33 +217,39 @@ func SiteReady(tSiteName string, tSiteUrls string) model.Site {
 			site.Urls = strings.Join(rUrls, ",")
 			err := lib.DB.Save(&site).Error
 			if err != nil {
-				logrus.Fatal("站点数据更新失败")
+				return model.Site{}, errors.New("站点数据更新失败")
 			}
 		}
 	}
 
-	return site
+	return site, nil
 }
 
-func JsonFileReady(payload []string) string {
-	var jsonFile string
+func JsonFileReady(payload []string) (string, error) {
+	var jsonFile, jsonData string
 	GetParamsFrom(payload).To(map[string]interface{}{
 		"json_file": &jsonFile,
+		"json_data": &jsonData,
 	})
 
+	// 直接给 JSON 内容，不去读取文件
+	if jsonData != "" {
+		return jsonData, nil
+	}
+
 	if jsonFile == "" {
-		logrus.Fatal("请附带参数 `json_file:<JSON 数据文件路径>`")
+		return "", errors.New("请附带参数 `json_file:<JSON 数据文件路径>`")
 	}
 	if _, err := os.Stat(jsonFile); errors.Is(err, os.ErrNotExist) {
-		logrus.Fatal("文件不存在，请检查参数 `json_file` 传入路径是否正确")
+		return "", errors.New("文件不存在，请检查参数 `json_file` 传入路径是否正确")
 	}
 
 	buf, err := ioutil.ReadFile(jsonFile)
 	if err != nil {
-		logrus.Fatal("json 文件打开失败：", err)
+		return "", errors.New("json 文件打开失败：" + err.Error())
 	}
 
-	return string(buf)
+	return string(buf), nil
 }
 
 // PageKey (commentUrlVal 不确定是否为完整 URL 还是一个 path)
@@ -255,7 +260,7 @@ func UrlResolverGetPageKey(baseUrl string, commentUrlVal string) string {
 	// 解决拼接路径中的相对地址，例如：https://atk.xxx/abc/../artalk => https://atk.xxx/artalk
 	u, err := url.ParseRequestURI(baseUrl + path)
 	if err != nil {
-		logrus.Error("GetNewPageKey Error: ", err)
+		logError("GetNewPageKey Error: ", err)
 		return commentUrlVal
 	}
 
@@ -288,7 +293,7 @@ func ParseVersion(s string) int64 {
 	var result int64
 	var err error
 	if result, err = strconv.ParseInt(v, 10, 64); err != nil {
-		logrus.Error("ugh: parseVersion(%s): error=%s", s, err)
+		logError("ugh: parseVersion(%s): error=%s", s, err)
 		return 0
 	}
 	return result
@@ -346,61 +351,15 @@ func GetArrayParamsFrom(payload []string, key string) []string {
 	return arr
 }
 
-func PrintTable(rows []table.Row) {
-	t := table.NewWriter()
-	t.SetOutputMirror(os.Stdout)
-
-	for _, r := range rows {
-		t.AppendRow(r)
-	}
-
-	tStyle := table.StyleLight
-	tStyle.Options.SeparateRows = true
-	t.SetStyle(tStyle)
-
-	t.Render()
-}
-
-func PrintEncodeData(dataType string, val interface{}) {
-	fmt.Print(SprintEncodeData(dataType, val))
-}
-
-func SprintEncodeData(dataType string, val interface{}) string {
-	return fmt.Sprintf("[%s]\n\n   %#v\n\n", dataType, val)
-}
-
-func Confirm(s string) bool {
-	r := bufio.NewReader(os.Stdin)
-
-	for {
-		fmt.Printf("%s [y/n]: ", s)
-
-		res, err := r.ReadString('\n')
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// Empty input (i.e. "\n")
-		if len(res) < 2 {
-			continue
-		}
-
-		resp := strings.ToLower(strings.TrimSpace(res))
-		if resp == "y" || resp == "yes" {
-			return true
-		} else if resp == "n" || resp == "no" {
-			return false
-		}
-	}
-}
-
 // Json Decode (FAS: Fields All String Type)
 // 解析 json 为字段全部是 string 类型的 struct
-func JsonDecodeFAS(str string, fasStructure interface{}) {
+func JsonDecodeFAS(str string, fasStructure interface{}) error {
 	err := json.Unmarshal([]byte(lib.JsonObjInArrAnyStr(str)), fasStructure) // lib.ToString()
 	if err != nil {
-		logrus.Fatal("JSON 解析失败 ", err)
+		return errors.New("JSON 解析失败 " + err.Error())
 	}
+
+	return nil
 }
 
 func HideJsonLongText(key string, text string) string {
@@ -426,11 +385,11 @@ func RebuildRid(idChanges map[uint]uint) {
 			nComment.Rid = newId
 			err := lib.DB.Save(&nComment).Error
 			if err != nil {
-				logrus.Error(fmt.Sprintf("[rid 更新] new_id:%d new_rid:%d", nComment.ID, newId), err)
+				logError(fmt.Sprintf("[rid 更新] new_id:%d new_rid:%d", nComment.ID, newId), err)
 			}
 		}
 	}
 
-	fmt.Print("\n")
-	logrus.Info("RID 重构完毕")
+	print("\n")
+	logInfo("RID 重构完毕")
 }

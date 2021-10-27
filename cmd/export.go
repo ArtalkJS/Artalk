@@ -1,13 +1,12 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -21,20 +20,10 @@ var exportCmd = &cobra.Command{
 - 文档：https://artalk.js.org/guide/transfer.html
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		comments := []model.Comment{}
-		lib.DB.Find(&comments)
-
-		artrans := []model.Artran{}
-		for _, c := range comments {
-			ct := c.ToArtran()
-			artrans = append(artrans, ct)
-		}
-
-		jsonByte, err := json.Marshal(artrans)
+		jsonStr, err := artransfer.ExportArtransString()
 		if err != nil {
 			logrus.Fatal(err)
 		}
-		jsonStr := string(jsonByte)
 
 		outputFile := cmd.Flag("output").Value.String()
 		if outputFile == "" {

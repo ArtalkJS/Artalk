@@ -1,4 +1,4 @@
-package importer
+package artransfer
 
 import (
 	"fmt"
@@ -8,8 +8,38 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/cheggaaa/pb/v3"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/sirupsen/logrus"
 )
+
+var ArtransImporter = &_ArtransImporter{
+	ImporterInfo: ImporterInfo{
+		Name: "artrans",
+		Desc: "从 Artrans 导入数据",
+		Note: "",
+	},
+}
+
+type _ArtransImporter struct {
+	ImporterInfo
+}
+
+func (imp *_ArtransImporter) Run(basic *BasicParams, payload []string) {
+	err := RequiredBasicTargetSite(basic)
+	if err != nil {
+		logFatal(err)
+		return
+	}
+
+	// 读取文件
+	jsonStr, jErr := JsonFileReady(payload)
+	if jErr != nil {
+		logFatal(jErr)
+		return
+	}
+
+	basic.UrlResolver = false
+
+	ImportArtransByStr(basic, jsonStr)
+}
 
 func ImportArtransByStr(basic *BasicParams, str string) {
 	// 解析内容
@@ -21,7 +51,7 @@ func ImportArtransByStr(basic *BasicParams, str string) {
 
 func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 	// 汇总
-	fmt.Print("# 请过目：\n\n")
+	print("# 请过目：\n\n")
 
 	// 第一条评论
 	PrintEncodeData("第一条评论", comments[0])
@@ -41,7 +71,7 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 		{"评论数量", len(comments)},
 	})
 
-	fmt.Print("\n")
+	print("\n")
 
 	// 确认开始
 	if !Confirm("确认开始导入吗？") {
@@ -49,7 +79,7 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 	}
 
 	// 准备导入评论
-	fmt.Print("\n")
+	print("\n")
 
 	// 执行导入
 	idMap := map[string]int{}    // ID 映射表 object_id => id
@@ -68,7 +98,11 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 	// 遍历导入 comments
 	for _, c := range comments {
 		// 准备 site
-		site := SiteReady(c.SiteName, c.SiteUrls)
+		site, sErr := SiteReady(c.SiteName, c.SiteUrls)
+		if sErr != nil {
+			logFatal(sErr)
+			return
+		}
 
 		// 准备 user
 		user := model.FindCreateUser(c.Nick, c.Email, c.Link)
@@ -115,9 +149,9 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 		nComment.UpdatedAt = ParseDate(c.UpdatedAt)
 
 		// 保存到数据库
-		err := lib.DB.Create(&nComment).Error
-		if err != nil {
-			logrus.Error(fmt.Sprintf("评论源 ID:%s 保存失败", c.ID))
+		dErr := lib.DB.Create(&nComment).Error
+		if dErr != nil {
+			logError(fmt.Sprintf("评论源 ID:%s 保存失败", c.ID))
 			continue
 		}
 
@@ -126,6 +160,7 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 		bar.Increment()
 	}
 	bar.Finish()
+	logInfo(fmt.Sprintf("导入 %d 条数据", len(comments)))
 
 	// reply id 重建
 	RebuildRid(idChanges)

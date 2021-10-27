@@ -1,4 +1,4 @@
-package importer
+package artransfer
 
 import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -19,10 +19,18 @@ type _TwikooImporter struct {
 }
 
 func (imp *_TwikooImporter) Run(basic *BasicParams, payload []string) {
-	RequiredBasicTargetSite(basic)
+	err := RequiredBasicTargetSite(basic)
+	if err != nil {
+		logFatal(err)
+		return
+	}
 
 	// 读取文件
-	jsonStr := JsonFileReady(payload)
+	jsonStr, jErr := JsonFileReady(payload)
+	if jErr != nil {
+		logFatal(jErr)
+		return
+	}
 
 	// 解析 Twikoo JSON
 	var tComments []TwikooCommentFAS

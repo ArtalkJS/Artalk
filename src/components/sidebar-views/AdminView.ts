@@ -368,7 +368,7 @@ export default class AdminView extends SidebarView {
       <option value="artrans">Artrans (数据行囊)</option>
       <option value="artalk_v1">Artalk v1 (PHP 旧版)</option>
       <option value="typecho">Typecho</option>
-      <option value="WordPress">WordPress</option>
+      <option value="wordpress">WordPress</option>
       <option value="disqus">Disqus</option>
       <option value="commento">Commento</option>
       <option value="valine">Valine</option>

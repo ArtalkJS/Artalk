@@ -136,13 +136,13 @@ func RequiredBasicTargetSite(basic *BasicParams) error {
 func DbReady(payload []string) (*gorm.DB, error) {
 	var host, port, dbName, user, password, dbType, dbFile string
 	GetParamsFrom(payload).To(map[string]interface{}{
-		"host":     &host,
-		"port":     &port,
-		"db_name":  &dbName,
-		"user":     &user,
-		"password": &password,
-		"db_type":  &dbType,
-		"db_file":  &dbFile,
+		"db_host":     &host,
+		"db_port":     &port,
+		"db_name":     &dbName,
+		"db_user":     &user,
+		"db_password": &password,
+		"db_type":     &dbType,
+		"db_file":     &dbFile,
 	})
 
 	if dbType == "" {

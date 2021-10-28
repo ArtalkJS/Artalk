@@ -65,7 +65,7 @@ func (imp *_TypechoImporter) Run(basic *BasicParams, payload []string) {
 	}
 
 	GetParamsFrom(payload).To(map[string]interface{}{
-		"prefix":       &imp.DbPrefix,
+		"db_prefix":    &imp.DbPrefix,
 		"rewrite_post": &imp.RewritePost,
 		"rewrite_page": &imp.RewritePage,
 	})

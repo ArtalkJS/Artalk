@@ -25,18 +25,17 @@ var exportCmd = &cobra.Command{
 			logrus.Fatal(err)
 		}
 
-		outputFile := cmd.Flag("output").Value.String()
-		if outputFile == "" {
+		if len(args) < 1 || args[0] == "" {
 			// write to stdout
 			fmt.Println(jsonStr)
 		} else {
 			// mkdir -p
-			if err := lib.EnsureDir(filepath.Dir(outputFile)); err != nil {
+			if err := lib.EnsureDir(filepath.Dir(args[0])); err != nil {
 				logrus.Fatal(err)
 			}
 
 			// touch
-			f, err := os.Create(outputFile)
+			f, err := os.Create(args[0])
 			if err != nil {
 				logrus.Fatal(err)
 			}
@@ -52,6 +51,4 @@ var exportCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(exportCmd)
-
-	flagP(exportCmd, "output", "o", "", "Write to file instead of stdout")
 }

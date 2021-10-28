@@ -161,14 +161,20 @@
         }
       }
     }
+
+    button {
+      width: 200px !important;
+    }
   }
 
   .atk-form-wrap, .atk-form-inline-wrap {
+    padding: 10px 10px;
+
     input, select {
       min-width: 200px;
     }
 
-    input {
+    input, textarea {
       display: block;
       line-height: 30px;
       padding: 0 10px;
@@ -176,6 +182,7 @@
       border: none;
       border-bottom: 1px solid @color-border;
       outline: none;
+      width: 100%;
 
       &:focus {
         border-bottom-color: @color-main;
@@ -185,7 +192,13 @@
         width: 200px;
         cursor: pointer;
         position: relative;
+        border: 0;
+        margin: 17px 0;
       }
+    }
+
+    textarea {
+      min-height: 120px;
     }
 
     select {
@@ -195,6 +208,7 @@
       border-bottom: 1px solid @color-border;
       height: 30px;
       padding: 0 10px;
+      width: 100%;
     }
 
     button {
@@ -212,6 +226,34 @@
       padding: 0 20px;
       border-radius: 2px;
       margin: 0 5px;
+      width: 100%;
+    }
+
+    .atk-desc {
+      font-size: 14px;
+      margin-top: 12px;
+      margin-left: 15px;
+      display: block;
+    }
+  }
+
+  .atk-admin-setting {
+    .atk-log-back-btn {
+      display: inline-block;
+      padding: 5px 30px;
+      cursor: pointer;
+      user-select: none;
+      &:hover {
+        background: #f4f4f4;
+      }
+    }
+
+    .atk-iframe {
+      width: 100%;
+      height: calc(100vh - 150px);
+      border: 0;
+      background: #f4f4f4;
+      border: 5px solid #eee;
     }
   }
 }

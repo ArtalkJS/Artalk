@@ -283,19 +283,6 @@ export default class Api {
       body: getFormData(params),
     }).then((json) => (json.success as boolean))
   }
-
-  public importer(data: string, type: string, siteName: string) {
-    const params: any = {
-      data,
-      type,
-      site_name: siteName || '',
-    }
-
-    return CommonFetch(this.ctx, `${this.serverURL}/admin/importer`, {
-      method: 'POST',
-      body: getFormData(params),
-    }).then((json) => (json.success as boolean))
-  }
 }
 
 /** 公共请求函数 */

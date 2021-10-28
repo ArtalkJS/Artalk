@@ -357,57 +357,137 @@ export default class AdminView extends SidebarView {
 
     const settingEl = Utils.createElement(`
     <div class="atk-setting">
+    <div class="atk-log-wrap" style="display: none;">
+      <div class="atk-log-back-btn">返回</div>
+      <div class="atk-log"></div>
+    </div>
     <div class="atk-group atk-importer atk-form-wrap">
     <div class="atk-title">导入评论数据</div>
-    <input type="file" name="importer_dataFile" accept="text/plain,.json" />
-    <div class="atk-label">数据类型：</div>
+    <div class="atk-label">数据类型</div>
     <select name="importer_dataType">
+      <option value="artrans">Artrans (数据行囊)</option>
       <option value="artalk_v1">Artalk v1 (PHP 旧版)</option>
+      <option value="typecho">Typecho</option>
+      <option value="WordPress">WordPress</option>
+      <option value="disqus">Disqus</option>
+      <option value="commento">Commento</option>
+      <option value="valine">Valine</option>
+      <option value="twikoo">Twikoo</option>
     </select>
-    <div class="atk-label">目标站点名：</div>
+    <input type="file" name="importer_dataFile" accept="text/plain,.json" />
+    <div class="atk-label">目标站点名</div>
     <input type="text" name="importer_siteName" />
+    <div class="atk-label">目标站点 URL</div>
+    <input type="text" name="importer_siteUrl" />
+    <div class="atk-label">启动参数</div>
+    <textarea name="importer_payload"></textarea>
+    <span class="atk-desc">启动参数请查阅：“<a href="https://artalk.js.org/guide/transfer.html" target="_blank">文档 · 数据搬家</a>”</span>
     <button class="atk-btn" name="importer_submit">导入</button>
     </div>
     </div>`)
     el.append(settingEl)
 
+    const formWrapEl = settingEl.querySelector<HTMLElement>('.atk-form-wrap')!
+    const logWrapEl = settingEl.querySelector<HTMLElement>('.atk-log-wrap')!
+    const logEl = logWrapEl.querySelector<HTMLElement>('.atk-log')!
+    const logBackBtnEl = logWrapEl?.querySelector<HTMLElement>('.atk-log-back-btn')!
+    logBackBtnEl.onclick = () => {
+      logWrapEl.style.display = 'none'
+      formWrapEl.style.display = ''
+    }
+
+    const impDataTypeEl = settingEl.querySelector<HTMLSelectElement>('[name="importer_dataType"]')!
     const impDataFileEl = settingEl.querySelector<HTMLInputElement>('[name="importer_dataFile"]')!
     const impSiteNameEl = settingEl.querySelector<HTMLInputElement>('[name="importer_siteName"]')!
-    const impDataTypeEl = settingEl.querySelector<HTMLSelectElement>('[name="importer_dataType"]')!
-    const impSubmitEl = settingEl.querySelector<HTMLButtonElement>('[name="importer_submit"]')!
-    const impSubmitTextOrg = impSubmitEl.innerText
-    impSubmitEl.onclick = () => {
-      const siteName = impSiteNameEl.value.trim()
-      const dataType = impDataTypeEl.value.trim()
+    const impSiteUrlEl = settingEl.querySelector<HTMLInputElement>('[name="importer_siteUrl"]')!
+    const impPayloadEl = settingEl.querySelector<HTMLInputElement>('[name="importer_payload"]')!
 
-      if (!impDataFileEl.files || impDataFileEl.files.length === 0) {
-        window.alert('请打开文件')
-        return
+    impDataTypeEl.onchange = () => {
+      if (['typecho'].includes(impDataTypeEl.value)) {
+        impDataFileEl.style.display = 'none'
+      } else {
+        impDataFileEl.style.display = ''
       }
+    }
+
+    const impSubmitEl = settingEl.querySelector<HTMLButtonElement>('[name="importer_submit"]')!
+    impSubmitEl.onclick = () => {
+      const dataType = impDataTypeEl.value.trim()
+      const siteName = impSiteNameEl.value.trim()
+      const siteUrl = impSiteUrlEl.value.trim()
+      const payload = impPayloadEl.value.trim()
+
       if (dataType === '') {
         window.alert('请选择数据类型')
         return
       }
 
+      const createImportSession = (data?: string) => {
+        logWrapEl.style.display = ''
+        formWrapEl.style.display = 'none'
+
+        // 创建 iframe
+        const frameName = `f_${+new Date()}`
+        const frame = document.createElement('iframe')
+        frame.className = 'atk-iframe'
+        frame.name = frameName
+        logEl.innerHTML = ''
+        logEl.append(frame)
+
+        const formEl = document.createElement('form')
+        formEl.style.display = 'none'
+        formEl.setAttribute('method', 'post')
+        formEl.setAttribute('action', `${this.ctx.conf.server}/admin/artransfer`)
+        formEl.setAttribute("target", frameName)
+
+        let pJSON: string[] = []
+        if (payload) {
+          // JSON 格式检验
+          try {
+            pJSON = JSON.parse(payload)
+          } catch (err) {
+            window.alert(`Payload 的 JSON 格式有误：${String(err)}`)
+          }
+
+          if (!Array.isArray(pJSON)) {
+            window.alert(`Payload 需为 JSON 字符串数组`)
+          }
+        }
+
+        if (siteName) pJSON.push(`t_name:${siteName}`)
+        if (siteUrl) pJSON.push(`t_url:${siteUrl}`)
+        if (data) pJSON.push(`json_data:${data}`)
+
+        const formParams: {[k: string]: string} = {
+          type: dataType,
+          payload: JSON.stringify(pJSON),
+          token: this.ctx.user.data.token || '',
+        }
+
+        Object.entries(formParams).forEach(([key, val]) => {
+          const hiddenField = document.createElement('input')
+          hiddenField.setAttribute('type', 'hidden')
+          hiddenField.setAttribute('name', key)
+          hiddenField.value = val
+          formEl.appendChild(hiddenField)
+        })
+
+        logWrapEl.append(formEl)
+        formEl.submit()
+        formEl.remove()
+      }
+
       const reader = new FileReader()
       reader.onload = () => {
         const data = String(reader.result)
-        if (!data) return
-
-        impSubmitEl.innerText = '请稍后...'
-        new Api(this.ctx).importer(data, dataType, siteName)
-        .then(() => {
-          window.alert(`导入成功`)
-        })
-        .catch((err) => {
-          console.error(err)
-          window.alert(`导入失败：${err.msg || '未知错误'}`)
-        })
-        .finally(() => {
-          impSubmitEl.innerText = impSubmitTextOrg
-        })
+        createImportSession(data)
       }
-      reader.readAsText(impDataFileEl.files[0]);
+      if (impDataFileEl.files?.length) {
+        reader.readAsText(impDataFileEl.files[0])
+        return
+      }
+
+      createImportSession()
     }
 
     this.el.innerHTML = ''

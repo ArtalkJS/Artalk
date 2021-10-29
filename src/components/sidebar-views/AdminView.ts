@@ -440,23 +440,23 @@ export default class AdminView extends SidebarView {
         formEl.setAttribute('action', `${this.ctx.conf.server}/admin/artransfer`)
         formEl.setAttribute("target", frameName)
 
-        let pJSON: string[] = []
+        let pJSON: any = {}
         if (payload) {
           // JSON 格式检验
           try {
             pJSON = JSON.parse(payload)
           } catch (err) {
-            window.alert(`Payload 的 JSON 格式有误：${String(err)}`)
+            window.alert(`Payload JSON 格式有误：${String(err)}`)
           }
 
-          if (!Array.isArray(pJSON)) {
-            window.alert(`Payload 需为 JSON 字符串数组`)
+          if (pJSON !instanceof Object) {
+            window.alert(`Payload 需为 JSON 对象`)
           }
         }
 
-        if (siteName) pJSON.push(`t_name:${siteName}`)
-        if (siteUrl) pJSON.push(`t_url:${siteUrl}`)
-        if (data) pJSON.push(`json_data:${data}`)
+        if (siteName) pJSON.t_name = siteName
+        if (siteUrl) pJSON.t_url = siteUrl
+        if (data) pJSON.json_data = data
 
         const formParams: {[k: string]: string} = {
           type: dataType,

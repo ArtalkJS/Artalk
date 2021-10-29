@@ -29,3 +29,26 @@ jobs:
     - run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # Docs Update
+  docs-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+
+      - name: Checkout ArtalkDocs
+        uses: actions/checkout@v2
+        with:
+          repository: ArtalkJS/Docs
+          token: ${{ secrets.PAT }}
+
+      - name: Update CDN links
+        run: |
+          sed -i 's#artalk@.[^/]*#artalk@${{ steps.get_version.outputs.VERSION }}#g' docs/code/ArtalkCDN.json
+          sed -i 's#artalk@.[^/]*#artalk@${{ steps.get_version.outputs.VERSION }}#g' docs/code/quick-start/cdn.html
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update Artalk CDN link to v${{ steps.get_version.outputs.VERSION }}
+

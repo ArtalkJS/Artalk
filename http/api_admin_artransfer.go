@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
 	"github.com/labstack/echo/v4"
 )
@@ -23,12 +24,16 @@ func ActionAdminArtransfer(c echo.Context) error {
 		return resp
 	}
 
-	var payload []string
-	err := json.Unmarshal([]byte(p.Payload), &payload)
+	var payloadMap map[string]interface{}
+	err := json.Unmarshal([]byte(p.Payload), &payloadMap)
 	if err != nil {
 		return RespError(c, "payload 解析错误", Map{
 			"error": err,
 		})
+	}
+	payload := []string{}
+	for k, v := range payloadMap {
+		payload = append(payload, k+":"+lib.ToString(v))
 	}
 
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextPlainCharsetUTF8)

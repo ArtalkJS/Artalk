@@ -50,3 +50,5 @@ local
 CNAME
 index.html
 #dist
+
+.github

@@ -296,7 +296,7 @@ function CommonFetch(ctx: Context, input: RequestInfo, init: RequestInit): Promi
 
   // 15s timeout
   return timeoutPromise(15000, fetch(input, init)).then(async (resp) => {
-    if (!resp.ok) {
+    if (!resp.ok && resp.status !== 401) {
         throw new Error(`请求响应 ${resp.status}`)
     }
 

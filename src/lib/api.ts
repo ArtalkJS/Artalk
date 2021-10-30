@@ -165,8 +165,6 @@ export default class Api {
     if (params.is_collapsed !== undefined) params.is_collapsed = params.is_collapsed ? '1' : '0'
     if (params.is_pending !== undefined) params.is_pending = params.is_pending ? '1' : '0'
 
-    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
-
     return CommonFetch(this.ctx, `${this.serverURL}/admin/comment-edit`, {
       method: 'POST',
       body: getFormData(params),
@@ -179,9 +177,8 @@ export default class Api {
       key: data.key,
       title: data.title,
       admin_only: data.admin_only ? '1' : '0',
+      site_name: data.site_name || this.ctx.conf.site,
     }
-
-    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
     return CommonFetch(this.ctx, `${this.serverURL}/admin/page-edit`, {
       method: 'POST',

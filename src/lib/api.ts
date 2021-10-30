@@ -44,7 +44,6 @@ export default class Api {
       content: comment.content,
       rid: comment.rid,
       page_key: this.ctx.conf.pageKey,
-      page_url: this.ctx.conf.pageUrl || '',
       page_title: this.ctx.conf.pageTitle || '',
     }
 

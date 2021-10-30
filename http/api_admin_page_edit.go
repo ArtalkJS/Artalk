@@ -10,7 +10,7 @@ import (
 
 type ParamsAdminPageEdit struct {
 	// 查询值
-	ID       uint   `mapstructure:"id" param:"required"`
+	ID       uint   `mapstructure:"id"`
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
 
@@ -39,7 +39,15 @@ func ActionAdminPageEdit(c echo.Context) error {
 		return resp
 	}
 
-	page := model.FindPageByID(p.ID)
+	// check create page
+	var page model.Page
+	if p.ID == 0 {
+		// create new page
+		page = model.FindCreatePage(p.Key, p.Title, p.SiteName)
+	} else {
+		page = model.FindPageByID(p.ID)
+	}
+
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
 	}

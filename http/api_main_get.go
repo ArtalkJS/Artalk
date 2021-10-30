@@ -65,6 +65,12 @@ func ActionGet(c echo.Context) error {
 	var page model.Page
 	if !p.SiteAll {
 		page = model.FindPage(p.PageKey, p.SiteName)
+		if page.IsEmpty() { // if page not found
+			page = model.Page{
+				Key:      p.PageKey,
+				SiteName: p.SiteName,
+			}
+		}
 	}
 
 	// find user

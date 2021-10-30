@@ -4,88 +4,30 @@
 
 # ArtalkGo
 
-> ArtalkGo: Golang backend of Artalk.
-
 [![GitHub issues](https://img.shields.io/github/issues/ArtalkJS/ArtalkGo)](https://github.com/ArtalkJS/ArtalkGo/issues)
 [![](https://img.shields.io/github/issues-pr/ArtalkJS/ArtalkGo)](https://github.com/ArtalkJS/ArtalkGo/pulls)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_shield)
 [![CI to Docker Hub](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml)
 
-- 高效
-- 跨平台
-- 轻松部署
-- 多站点支持
-- 多数据库类型支持
+> ArtalkGo: Golang backend of Artalk.
+
+前往：[“**官方文档 · 后端部分**”](https://artalk.js.org/guide/backend/)
+
+---
+
+- 高效灵快
+- 异步执行
+- 跨平台兼容
+- 轻量级部署
 
 ## Supports
 
-- 跨平台：支持 Linux, Win, Darwin
+- 运行环境：支持 Linux, Windows, Darwin (x86 + ARM)
 - 数据存储：支持 SQLite, MySQL, PostgreSQL, SQL Server
-- 邮件发送：支持 SMTP, 阿里云邮件, 系统调用 sendmail 等发送邮件
+- 邮件发送：支持 SMTP, 阿里云邮件, 调用 sendmail 发送邮件
 - 高效缓存：支持 Redis, Memory cache
 
-## 部署方针
-
-### 普通方式
-
-1. 前往 [Release](https://github.com/ArtalkJS/ArtalkGo/releases) 下载已编译二进制文件
-2. 解压程序 `tar -zxvf artalk-go.tar.gz`
-3. 编辑配置 `vim artalk-go.yml`
-4. 运行程序 `./artalk-go serve`
-5. 反代设定的端口到 80 并套上 CDN (Nginx, Apache)
-6. 持久化运作 artalk-go 程序 (tmux, sysctl)
-7. 前端配置
-   
-    ```js
-    new Artalk({ server: "http://your_domain:端口号/api" })
-    ```
-
-### Docker 容器（推荐）
-
-```sh
-# 为 ArtalkGo 创建一个目录
-$ mkdir ArtalkGo
-$ cd ArtalkGo
-
-# 下载配置文件模版
-$ curl -L https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/main/artalk-go.example.yml > conf.yml
-
-# 编译配置文件
-$ vim conf.yml
-
-# 拉取 docker 镜像
-$ docker pull artalk/artalk-go
-
-# 新建 docker 容器
-$ docker run -d \
-   --name artalk-go \
-   -p 0.0.0.0:8080:23366 \
-   -v $(pwd)/conf.yml:/conf.yml \
-   -v $(pwd)/data:/data \
-   artalk/artalk-go
-```
-
-- 前端配置地址 `http://your_domain:8080/api`
-
-  ```js
-  new Artalk({ server: "http://your_domain:8080/api" })
-  ```
-
-- 配置文件路径 `./conf.yml`
-- 数据文件目录 `./data/`
-
-### Docker 升级
-
-```sh
-# 暂停并删除正在运行的容器，然后从 DockerHub 拉取最新镜像
-docker stop artalk-go \
-  && docker rm artalk-go \
-  && docker pull artalk/artalk-go
-```
-
-之后，重新执行上面创建 Docker 容器步骤即可。
-
-## 编译
+## Build
 
 ### 编译二进制文件
 
@@ -127,10 +69,15 @@ $ make docker-push
   - [ ] 配置 (GUI)
   - [ ] 数据分页
 - [x] 数据导入
+  - [x] Artrans
   - [x] Artalk v1 (PHP)
   - [ ] WordPress
-  - [ ] Typecho
-- [ ] 数据导出
+  - [x] Typecho
+  - [x] Valine
+  - [ ] Disqus
+  - [ ] Commento
+  - [x] Twikoo
+- [x] 数据导出
 - [ ] 数据备份同步
 - [x] 邮件异步队列发送
 - [ ] 邮件队列持久化

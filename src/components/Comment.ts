@@ -167,6 +167,8 @@ export default class Comment extends Component {
       child.parent?.getChildrenEl().appendChild(child.renderElem())
       child.playFadeInAnim()
     })
+
+    this.ctx.trigger('comments-loaded')
   }
 
   initActionBtn () {

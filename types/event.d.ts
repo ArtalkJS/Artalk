@@ -23,6 +23,10 @@ export interface EventPayloadMap {
   'unread-update': UnreadUpdatePayload
   'checker-admin': CheckerConf
   'checker-captcha': CheckerCaptchaConf
+
+  // 外部暴露事件
+  'comments-loaded': undefined
+  'comments-loading': undefined
 }
 
 export interface CheckerConf {

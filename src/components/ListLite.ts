@@ -76,6 +76,7 @@ export default class ListLite extends Component {
 
     // set loading
     this.isLoading = true
+    this.ctx.trigger('comments-loading')
     if (offset === 0) Ui.showLoading(this.el)
     else this.readMoreBtnSetLoading(true)
 
@@ -221,6 +222,7 @@ export default class ListLite extends Component {
     }
 
     this.refreshUI()
+    this.ctx.trigger('comments-loaded')
   }
 
   public insertComment (commentData: CommentData) {
@@ -238,6 +240,7 @@ export default class ListLite extends Component {
     comment.playFadeInAnim() // 播放评论渐出动画
     if (this.data) this.data.total += 1 // 评论数增加 1
     this.refreshUI() // 更新 list 界面
+    this.ctx.trigger('comments-loaded')
   }
 
   /** 刷新界面 */

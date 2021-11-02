@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
-import dts from 'vite-plugin-dts'
 import commonConf from './vite-common.config'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
@@ -32,6 +31,6 @@ export default defineConfig({
       }
     }
   },
-  plugins: [dts(), tsconfigPaths()],
+  plugins: [tsconfigPaths()],
   ...commonConf
 })

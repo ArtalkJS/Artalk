@@ -20,7 +20,7 @@
   "unpkg": "./dist/Artalk.iife.js",
   "jsdelivr": "./dist/Artalk.iife.js",
   "module": "./dist/Artalk.es.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./types/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/Artalk.es.js",
@@ -57,7 +57,6 @@
     "prettier": "^2.3.2",
     "typescript": "4.3.2",
     "vite": "^2.5.1",
-    "vite-plugin-dts": "^0.7.0",
     "vite-tsconfig-paths": "^3.3.14"
   },
   "dependencies": {

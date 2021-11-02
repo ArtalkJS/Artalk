@@ -1,6 +1,6 @@
 import { ArtalkConfig } from '~/types/artalk-config'
 import User from './lib/user'
-import { EventPayloadMap, Listener, Event } from './Event'
+import { EventPayloadMap, Listener, Event } from '~/types/event'
 
 export default class Context {
   public cid: number // Context 唯一标识

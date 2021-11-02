@@ -83,16 +83,6 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@ts-morph/common@~0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@ts-morph/common/-/common-0.10.1.tgz#be15b9ab13a32bbc1f6a6bd7dc056b2247b272eb"
-  integrity sha512-rKN/VtZUUlW4M+6vjLFSaFc1Z9sK+1hh0832ucPtPkXqOw/mSWE80Lau4z2zTPNTqtxAjfZbvKpQcEwJy0KIEg==
-  dependencies:
-    fast-glob "^3.2.5"
-    minimatch "^3.0.4"
-    mkdirp "^1.0.4"
-    path-browserify "^1.0.1"
-
 "@types/estree@0.0.39":
   version "0.0.39"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
@@ -402,11 +392,6 @@ cli-width@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/cli-width/-/cli-width-3.0.0.tgz#a2f48437a2caa9a22436e794bf071ec9e61cedf6"
   integrity sha512-FxqpkPPwu1HjuN93Omfm4h8uIanXofW0RxVEW3k5RKx+mJJYSthzNhp32Kzxxy3YAEZ/Dc/EWN1vZRY0+kOhbw==
-
-code-block-writer@^10.1.1:
-  version "10.1.1"
-  resolved "https://registry.yarnpkg.com/code-block-writer/-/code-block-writer-10.1.1.tgz#ad5684ed4bfb2b0783c8b131281ae84ee640a42f"
-  integrity sha512-67ueh2IRGst/51p0n6FvPrnRjAGHY5F8xdjkgrYE7DDzpJe6qA07RYQ9VcoUeo5ATOjSOiWpSL3SWBRRbempMw==
 
 color-convert@^1.9.0:
   version "1.9.3"
@@ -883,7 +868,7 @@ fast-deep-equal@^3.1.1:
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz#3a7d56b559d6cbc3eb512325244e619a65c6c525"
   integrity sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==
 
-fast-glob@^3.1.1, fast-glob@^3.2.5, fast-glob@^3.2.7:
+fast-glob@^3.1.1:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.2.7.tgz#fd6cb7a2d7e9aa7a7846111e85a196d6b2f766a1"
   integrity sha512-rYGMRwip6lUMvYD3BTScMwT1HtAs2d71SMv66Vrxs0IekGZEjhM0pcMfjQPnknBt2zeCwQMEupiN02ZP4DiT1Q==
@@ -957,15 +942,6 @@ fraction.js@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/fraction.js/-/fraction.js-4.1.1.tgz#ac4e520473dae67012d618aab91eda09bcb400ff"
   integrity sha512-MHOhvvxHTfRFpF1geTK9czMIZ6xclsEor2wkIGYYq+PxcQqT7vStJqjhe6S1TenZrMZzo+wlqOufBDVepUEgPg==
-
-fs-extra@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-10.0.0.tgz#9ff61b655dde53fb34a82df84bb214ce802e17c1"
-  integrity sha512-C5owb14u9eJwizKGdchcDUQeFtlSHHthBk8pbX9Vc1PFZrLombudjDnNns88aYslCyF6IY5SUw3Roz6xShcEIQ==
-  dependencies:
-    graceful-fs "^4.2.0"
-    jsonfile "^6.0.1"
-    universalify "^2.0.0"
 
 fs.realpath@^1.0.0:
   version "1.0.0"
@@ -1052,7 +1028,7 @@ globrex@^0.1.2:
   resolved "https://registry.yarnpkg.com/globrex/-/globrex-0.1.2.tgz#dd5d9ec826232730cd6793a5e33a9302985e6098"
   integrity sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==
 
-graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0:
+graceful-fs@^4.1.2:
   version "4.2.8"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.8.tgz#e412b8d33f5e006593cbd3cee6df9f2cebbe802a"
   integrity sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg==
@@ -1324,15 +1300,6 @@ json5@^1.0.1:
   dependencies:
     minimist "^1.2.0"
 
-jsonfile@^6.0.1:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-6.1.0.tgz#bc55b2634793c679ec6403094eb13698a6ec0aae"
-  integrity sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==
-  dependencies:
-    universalify "^2.0.0"
-  optionalDependencies:
-    graceful-fs "^4.1.6"
-
 "jsx-ast-utils@^2.4.1 || ^3.0.0", jsx-ast-utils@^3.1.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/jsx-ast-utils/-/jsx-ast-utils-3.2.0.tgz#41108d2cec408c3453c1bbe8a4aae9e1e2bd8f82"
@@ -1476,11 +1443,6 @@ mkdirp@^0.5.1:
   integrity sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==
   dependencies:
     minimist "^1.2.5"
-
-mkdirp@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
-  integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
 ms@2.0.0:
   version "2.0.0"
@@ -1662,11 +1624,6 @@ parse-node-version@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/parse-node-version/-/parse-node-version-1.0.1.tgz#e2b5dbede00e7fa9bc363607f53327e8b073189b"
   integrity sha512-3YHlOa/JgH6Mnpr05jP9eDG254US9ek25LyIxZlDItp2iJtwyaXQb57lBYLdT3MowkUFYEV2XXNAYIPlESvJlA==
-
-path-browserify@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/path-browserify/-/path-browserify-1.0.1.tgz#d98454a9c3753d5790860f16f68867b9e46be1fd"
-  integrity sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==
 
 path-exists@^3.0.0:
   version "3.0.0"
@@ -2120,14 +2077,6 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-ts-morph@^11.0.3:
-  version "11.0.3"
-  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-11.0.3.tgz#01a92b3c2b5a48ccdf318ec90864229b8061d056"
-  integrity sha512-ymuPkndv9rzqTLiHWMkVrFXWcN4nBiBGhRP/kTC9F5amAAl7BNLfyrsTzMD1o9A0zishKoF1KQT/0yyFhJnPgA==
-  dependencies:
-    "@ts-morph/common" "~0.10.1"
-    code-block-writer "^10.1.1"
-
 tsconfig-paths@^3.9.0:
   version "3.11.0"
   resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.11.0.tgz#954c1fe973da6339c78e06b03ce2e48810b65f36"
@@ -2182,11 +2131,6 @@ unbox-primitive@^1.0.1:
     has-symbols "^1.0.2"
     which-boxed-primitive "^1.0.2"
 
-universalify@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
-  integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
-
 uri-js@^4.2.2:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/uri-js/-/uri-js-4.4.1.tgz#9b1a52595225859e55f669d928f88c6c57f2a77e"
@@ -2206,15 +2150,6 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
-
-vite-plugin-dts@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/vite-plugin-dts/-/vite-plugin-dts-0.7.0.tgz#5a73d64ee35d74c6efc93d83abb474660e19218a"
-  integrity sha512-L25t5nscMrqvRewl4IARV7fXJTPKny8etIq5LP1WhuVKTBpvkcgAzC3JWK8ZD8MeHUS3qlz7pQ6TSYx7d47m6A==
-  dependencies:
-    fast-glob "^3.2.7"
-    fs-extra "^10.0.0"
-    ts-morph "^11.0.3"
 
 vite-tsconfig-paths@^3.3.14:
   version "3.3.14"

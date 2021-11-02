@@ -24,8 +24,7 @@ type ParamsGet struct {
 	SiteID   uint
 	SiteAll  bool
 
-	WithSites bool `mapstructure:"with_sites"`
-	FlatMode  bool `mapstructure:"flat_mode"`
+	FlatMode bool `mapstructure:"flat_mode"`
 
 	IsAdminReq bool
 }
@@ -37,7 +36,7 @@ type ResponseGet struct {
 	Page         model.CookedPage      `json:"page"`
 	Unread       []model.CookedNotify  `json:"unread"`
 	UnreadCount  int                   `json:"unread_count"`
-	Sites        []model.CookedSite    `json:"sites,omitempty"`
+	ApiVersion   Map                   `json:"api_version"`
 }
 
 // 获取评论查询实例
@@ -155,12 +154,6 @@ func ActionGet(c echo.Context) error {
 		NotifyMarkAllAsRead(p.User.ID)
 	}
 
-	// with sites for admin
-	sites := []model.CookedSite{}
-	if p.IsAdminReq && p.WithSites {
-		sites = GetAllCookedSites()
-	}
-
 	// unread notifies
 	var unreadNotifies = []model.CookedNotify{}
 	if p.User != nil {
@@ -174,7 +167,7 @@ func ActionGet(c echo.Context) error {
 		Page:         page.ToCooked(),
 		Unread:       unreadNotifies,
 		UnreadCount:  len(unreadNotifies),
-		Sites:        sites,
+		ApiVersion:   GetApiVersionDataMap(),
 	})
 }
 

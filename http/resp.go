@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
@@ -86,4 +87,13 @@ func LogWithHttpInfo(c echo.Context) *logrus.Entry {
 	//fields["headers"] = req.Header
 
 	return logrus.WithFields(fields)
+}
+
+func GetApiVersionDataMap() Map {
+	return Map{
+		"app":            "artalk-go",
+		"version":        lib.Version,
+		"commit_hash":    lib.CommitHash,
+		"fe_min_version": lib.FeMinVersion,
+	}
 }

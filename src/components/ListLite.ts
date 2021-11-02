@@ -4,7 +4,7 @@ import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import Api from '../api'
 import Comment from './Comment'
-import { ListData, CommentData, NotifyData } from '~/types/artalk-data'
+import { ListData, CommentData, NotifyData, ApiVersionData } from '~/types/artalk-data'
 
 export default class ListLite extends Component {
   public el: HTMLElement
@@ -95,6 +95,12 @@ export default class ListLite extends Component {
       throw e
     } finally {
       hideLoading()
+    }
+
+    // version check
+    if (this.ctx.conf.versionCheck) {
+      const needUpdate = this.apiVersionCheck(listData.api_version || {})
+      if (needUpdate) return
     }
 
     // load data
@@ -426,5 +432,28 @@ export default class ListLite extends Component {
         }
       })
     }
+  }
+
+  public apiVersionCheck(versionData: ApiVersionData): boolean {
+    const needVersion = versionData?.fe_min_version || '0.0.0'
+    const needUpdate = Utils.versionCompare(needVersion, ARTALK_VERSION) === 1
+    if (needUpdate) {
+      // 需要更新
+      const errEl = Utils.createElement(`<div>前端 Artalk 版本已过时，请更新以获得完整体验<br/>`
+      + `若您是站点管理员，请前往 “<a href="https://artalk.js.org/" target="_blank">官方文档</a>” 获取帮助`
+      + `<br/><br/>`
+      + `<span style="color: var(--at-color-meta);">前端版本 ${ARTALK_VERSION}，需求版本 >= ${needVersion}</span><br/><br/>`
+      + `</div>`)
+      const ignoreBtn = Utils.createElement('<span style="cursor:pointer;">忽略</span>')
+      ignoreBtn.onclick = () => {
+        Ui.setError(this.ctx, null)
+        this.ctx.conf.versionCheck = false
+        this.reqComments(0)
+      }
+      errEl.append(ignoreBtn)
+      Ui.setError(this.ctx, errEl, '<span class="atk-warn-title">Artalk Warn</span>')
+    }
+
+    return needUpdate
   }
 }

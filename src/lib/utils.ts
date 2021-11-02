@@ -99,6 +99,21 @@ export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/** 版本号比较（a < b :-1 | 0 | b < a :1） */
+export function versionCompare(a: string, b: string) {
+  const pa = a.split('.')
+  const pb = b.split('.')
+  for (let i = 0; i < 3; i++) {
+      const na = Number(pa[i])
+      const nb = Number(pb[i])
+      if (na > nb) return 1
+      if (nb > na) return -1
+      if (!Number.isNaN(na) && Number.isNaN(nb)) return 1
+      if (Number.isNaN(na) && !Number.isNaN(nb)) return -1
+  }
+  return 0
+}
+
 let markedInstance: any = null
 export function marked (ctx: Context, src: string): string {
   if (!markedInstance) {

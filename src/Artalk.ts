@@ -29,6 +29,7 @@ const defaultOpts: ArtalkConfig = {
   reqTimeout: 15000,
   flatMode: false,
   maxNesting: 3,
+  versionCheck: true,
 }
 
 export default class Artalk {

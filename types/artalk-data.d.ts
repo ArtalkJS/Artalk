@@ -84,6 +84,9 @@ export interface ListData {
 
   /** 未读计数 */
   unread_count: number
+
+  /** API 版本 */
+  api_version: ApiVersionData
 }
 
 export interface PageData {
@@ -164,4 +167,18 @@ export interface NotifyData {
 
   /** 标为已读地址 */
   read_link: string
+}
+
+export interface ApiVersionData {
+  /** API 程序名 */
+  app: string
+
+  /** API 程序版本号 */
+  version: string
+
+  /** API 程序 CommitHash */
+  commit_hash: string
+
+    /** API 程序要求前端最小版本 */
+  fe_min_version: string
 }

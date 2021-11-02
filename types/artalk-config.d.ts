@@ -54,6 +54,9 @@ export interface ArtalkConfig {
 
   /** 最大嵌套数 */
   maxNesting?: number
+
+  /** 版本检测 */
+  versionCheck?: boolean
 }
 
 export interface LocalUser {

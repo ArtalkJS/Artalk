@@ -168,7 +168,7 @@ export function playFadeOutAnim(elem: HTMLElement, after?: () => void) {
 }
 
 /** 设置全局错误 */
-export function setError(parentElem: HTMLElement|Context, html: string | HTMLElement | null) {
+export function setError(parentElem: HTMLElement|Context, html: string | HTMLElement | null, title: string = '<span class="atk-error-title">Artalk Error</span>') {
   if (parentElem instanceof Context) parentElem = parentElem.rootEl
 
   let elem = parentElem.querySelector<HTMLElement>('.atk-error-layer')
@@ -178,7 +178,7 @@ export function setError(parentElem: HTMLElement|Context, html: string | HTMLEle
   }
   if (!elem) {
     elem = Utils.createElement(
-      '<div class="atk-error-layer"><span class="atk-error-title">Artalk Error</span><span class="atk-error-text"></span></div>'
+      `<div class="atk-error-layer">${title}<span class="atk-error-text"></span></div>`
     )
     parentElem.appendChild(elem)
   }

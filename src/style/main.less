@@ -176,9 +176,29 @@
     color: @color-red;
   }
 
+  .atk-warn-title {
+    color: @color-yellow;
+  }
+
+  .atk-error-title, .atk-warn-title {
+    display: inline-block;
+    padding: 0 15px;
+    margin-bottom: 20px;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+  }
+
   .atk-error-text {
     text-align: center;
     padding: 0 20px;
+
+    * {
+      color: @color-deep;
+    }
+
+    a {
+      color: @color-meta;
+    }
   }
 }
 

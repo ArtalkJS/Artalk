@@ -25,6 +25,7 @@ type ParamsGet struct {
 	SiteAll  bool
 
 	WithSites bool `mapstructure:"with_sites"`
+	FlatMode  bool `mapstructure:"flat_mode"`
 
 	IsAdminReq bool
 }
@@ -87,6 +88,9 @@ func ActionGet(c echo.Context) error {
 
 	// check if msg center
 	isMsgCenter := IsMsgCenter(p)
+	if isMsgCenter {
+		p.FlatMode = true // 通知中心强制平铺模式
+	}
 
 	// comment parents
 	var comments []model.Comment
@@ -94,7 +98,7 @@ func ActionGet(c echo.Context) error {
 	query := GetCommentQuery(c, p, p.SiteID).Scopes(Paginate(p.Offset, p.Limit))
 	cookedComments := []model.CookedComment{}
 
-	if !isMsgCenter {
+	if !p.FlatMode {
 		query = query.Scopes(ParentComment())
 		query.Find(&comments)
 

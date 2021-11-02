@@ -1,5 +1,5 @@
-import { CommentData, ListData, UserData, PageData, SiteData, NotifyData } from '~/types/artalk-data'
 import Context from '../Context'
+import { CommentData, ListData, UserData, PageData, SiteData, NotifyData } from '~/types/artalk-data'
 import { Fetch, ToFormData, POST, GET } from './request'
 
 export default class Api {

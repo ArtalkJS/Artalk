@@ -1,65 +1,41 @@
 export interface ArtalkConfig {
-  /**
-   * 装载元素
-   */
+  /** 装载元素 */
   el: string
 
-  /**
-   * 评论框占位字符
-   */
+  /** 评论框占位字符 */
   placeholder?: string
 
-  /**
-   * 评论为空时显示字符
-   */
+  /** 评论为空时显示字符 */
   noComment?: string
 
-  /**
-   * 发送按钮文字
-   */
+  /** 发送按钮文字 */
   sendBtn?: string
 
-  /**
-   * 默认头像（URL or Gravatar Type）
-   */
+  /** 默认头像（URL or Gravatar Type） */
   defaultAvatar?: string
 
-  /**
-   * 页面唯一标识（完整 URL）
-   */
+  /** 页面唯一标识（完整 URL） */
   pageKey: string
 
-  /**
-   * 页面标题
-   */
+  /** 页面标题 */
   pageTitle?: string
 
-  /**
-   * 服务器地址
-   */
+  /** 服务器地址 */
   server: string
 
-  /**
-   * 站点名
-   */
+  /** 站点名 */
   site?: string
 
-  /**
-   * 表情包
-   */
+  /** 表情包 */
   emoticons?: object|any
 
-  /**
-   * 头像
-   */
+  /** 头像 */
   gravatar?: {
     /** CDN 地址 */
     cdn?: string
   }
 
-  /**
-   * 查看更多配置
-   */
+  /** 查看更多配置 */
   readMore?: {
     /** 每次请求获取数量 */
     pageSize?: number
@@ -67,13 +43,9 @@ export interface ArtalkConfig {
     autoLoad?: boolean
   }
 
-  /**
-   * 暗黑模式
-   */
+  /** 暗黑模式 */
   darkMode?: boolean
 
-  /**
-   * 请求超时（单位：秒）
-   */
+  /** 请求超时（单位：秒） */
   reqTimeout?: number
 }

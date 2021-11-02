@@ -76,11 +76,14 @@ export interface ListData {
   /** 页面信息 */
   page: PageData
 
+  /** 站点信息 */
+  site: SiteData // TODO
+
+  /** 未读的 Notifies */
   unread: NotifyData[]
 
+  /** 未读计数 */
   unread_count: number
-
-  sites?: SiteData[]
 }
 
 export interface PageData {
@@ -144,10 +147,21 @@ export interface UserData {
 }
 
 export interface NotifyData {
+  /** 通知 ID */
   id: number
+
+  /** 用户 ID */
   user_id: number
+
+  /** 评论 ID */
   comment_id: number
+
+  /** 是否已读 */
   is_read: boolean
+
+  /** 是否已发送邮件通知 */
   is_emailed: boolean
+
+  /** 标为已读地址 */
   read_link: string
 }

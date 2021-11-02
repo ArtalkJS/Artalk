@@ -73,7 +73,7 @@ export interface ArtalkConfig {
   darkMode?: boolean
 
   /**
-   * 请求超时
+   * 请求超时（单位：秒）
    */
   reqTimeout?: number
 }

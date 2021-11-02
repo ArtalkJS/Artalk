@@ -4,7 +4,7 @@ import * as Utils from '../../lib/utils'
 import Comment from '../Comment'
 import ListLite from '../ListLite'
 import { CreateCommentList } from './MessageView'
-import Api from '~/src/lib/api'
+import Api from '../../api'
 
 export default class AdminView extends SidebarView {
   name = 'admin'
@@ -227,8 +227,11 @@ export default class AdminView extends SidebarView {
       delBtn.onclick = () => {
         const del = () => {
           new Api(this.ctx).pageDel(page.key, page.site_name)
-          .then(success => {
-            if (success) pageItemEl.remove()
+          .then(() => {
+            pageItemEl.remove()
+          })
+          .catch((err) => {
+            window.alert(`删除失败 ${String(err)}`)
           })
         }
         if (window.confirm(`确认删除页面 "${page.title || page.key}"？将会删除所有相关数据`)) del()
@@ -310,8 +313,11 @@ export default class AdminView extends SidebarView {
       delBtn.onclick = () => {
         const del = () => {
           new Api(this.ctx).siteDel(site.id, true)
-          .then(success => {
-            if (success) siteItemEl.remove()
+          .then(() => {
+            siteItemEl.remove()
+          })
+          .catch((err) => {
+            window.alert(`删除失败 ${String(err)}`)
           })
         }
         if (window.confirm(`确认删除站点 "${site.name || site.first_url}"？将会删除所有相关数据`))

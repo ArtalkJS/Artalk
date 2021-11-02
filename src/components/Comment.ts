@@ -7,7 +7,7 @@ import * as Ui from '../lib/ui'
 import UADetect from '../lib/detect'
 import { CommentData } from '~/types/artalk-data'
 import CommentHTML from './html/comment.html?raw'
-import Api from '../lib/api'
+import Api from '../api'
 
 export default class Comment extends Component {
   public data: CommentData
@@ -182,7 +182,8 @@ export default class Comment extends Component {
     }
     refreshVote()
 
-    voteBtnUp.onclick = () => {
+    voteBtnUp.onclick = (e) => {
+      e.stopPropagation() // 防止穿透
       new Api(this.ctx).vote(this.data.id, "comment_up")
         .then((num) => {
           this.data.vote_up = num
@@ -192,7 +193,8 @@ export default class Comment extends Component {
           window.alert(`投票失败：${err.msg || String(err)}`)
         })
     }
-    voteBtnDown.onclick = () => {
+    voteBtnDown.onclick = (e) => {
+      e.stopPropagation()
       new Api(this.ctx).vote(this.data.id, "comment_down")
         .then((num) => {
           this.data.vote_down = num

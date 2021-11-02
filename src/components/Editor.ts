@@ -9,7 +9,7 @@ import EditorHTML from './html/editor.html?raw'
 import EmoticonsPlug from './editor-plugs/EmoticonsPlug'
 import PreviewPlug from './editor-plugs/PreviewPlug'
 import { CommentData } from '~/types/artalk-data'
-import Api from '../lib/api'
+import Api from '../api'
 
 export default class Editor extends Component {
   private readonly LOADABLE_PLUG_LIST = [EmoticonsPlug, PreviewPlug]
@@ -372,6 +372,7 @@ export default class Editor extends Component {
       this.ctx.dispatchEvent('list-insert', nComment)
       this.clearEditor() // 清空编辑器
     } catch (err: any) {
+      console.error(err)
       this.showNotify(`评论失败，${err.msg || String(err)}`, 'e')
     } finally {
       Ui.hideLoading(this.el)

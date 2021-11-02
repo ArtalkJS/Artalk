@@ -2,7 +2,7 @@ import Context from '../Context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
-import Api from '../lib/api'
+import Api from '../api'
 import Comment from './Comment'
 import { ListData, CommentData, NotifyData } from '~/types/artalk-data'
 

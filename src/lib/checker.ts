@@ -2,8 +2,8 @@ import Context from "../Context"
 import * as Utils from "./utils"
 import User from "./user"
 import * as Ui from './ui'
-import BuildLayer from "../components/Layer"
-import Api from "./api"
+import BuildLayer from '../components/Layer'
+import Api from '../api'
 import { CheckerCaptchaConf } from '~/types/event'
 
 interface CheckerConf {

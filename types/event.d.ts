@@ -49,11 +49,14 @@ export interface UnreadUpdatePayload {
 }
 
 // ============================================
-export interface Listener<P> {
+export interface Handler<P> {
   (payload: P): void
 }
 
+export type EventScopeType = 'internal'|'external'
+
 export interface Event<K extends keyof EventPayloadMap = keyof EventPayloadMap> {
   name: keyof EventPayloadMap
-  listener: Listener<EventPayloadMap[K]>
+  handler: Handler<EventPayloadMap[K]>
+  scope: EventScopeType
 }

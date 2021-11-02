@@ -10,7 +10,7 @@ import { ArtalkConfig } from '~/types/artalk-config'
 import Context from './Context'
 import emoticons from './assets/emoticons.json'
 import Constant from './Constant'
-import { EventPayloadMap, Listener, Event } from '~/types/event'
+import { EventPayloadMap, Handler } from '~/types/event'
 
 const defaultOpts: ArtalkConfig = {
   el: '',
@@ -30,7 +30,7 @@ const defaultOpts: ArtalkConfig = {
 }
 
 export default class Artalk {
-  private ctx: Context
+  public ctx: Context
   public conf: ArtalkConfig
   public el: HTMLElement
   public readonly contextID: number = new Date().getTime() // 实例唯一 ID
@@ -160,15 +160,15 @@ export default class Artalk {
     this.setDarkMode(false)
   }
 
-  public on<K extends keyof EventPayloadMap>(name: K, handler: Listener<EventPayloadMap[K]>): void {
-    this.ctx.on(name, handler)
+  public on<K extends keyof EventPayloadMap>(name: K, handler: Handler<EventPayloadMap[K]>): void {
+    this.ctx.on(name, handler, 'external')
   }
 
-  public off<K extends keyof EventPayloadMap>(name: K, handler: Listener<EventPayloadMap[K]>): void {
-    this.ctx.off(name, handler)
+  public off<K extends keyof EventPayloadMap>(name: K, handler: Handler<EventPayloadMap[K]>): void {
+    this.ctx.off(name, handler, 'external')
   }
 
   public trigger<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K]): void {
-    this.ctx.trigger(name, payload)
+    this.ctx.trigger(name, payload, 'external')
   }
 }

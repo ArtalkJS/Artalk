@@ -40,7 +40,7 @@ $ make all
 ### Docker 镜像制作
 
 ```sh
-## 制作镜像
+# 制作镜像
 $ make docker-docker
 
 # 发布镜像

@@ -16,7 +16,7 @@ export default class Api {
   // ============================
 
   /** 评论 · 获取 */
-  public get(offset: number, type?: string, paramsEditor?: (params: any) => void) {
+  public get(offset: number, type?: string, flatMode?: boolean, paramsEditor?: (params: any) => void) {
     const params: any = {
       page_key: this.ctx.conf.pageKey,
       site_name: this.ctx.conf.site || '',
@@ -25,6 +25,7 @@ export default class Api {
     }
 
     if (type) params.type = type
+    if (flatMode) params.flat_mode = flatMode // 平铺模式
     if (this.ctx.user.checkHasBasicUserInfo()) {
       params.name = this.ctx.user.data.nick
       params.email = this.ctx.user.data.email

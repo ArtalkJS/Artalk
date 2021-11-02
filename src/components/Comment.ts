@@ -20,7 +20,7 @@ export default class Comment extends Component {
 
   public parent: Comment|null
   public nestedNum: number
-  private readonly maxNestingNum = 3 // 最多嵌套层数
+  private maxNestingNum: number // 最多嵌套层数
   public children: Comment[] = []
 
   public replyTo?: CommentData // 回复对象（flatMode 用）
@@ -34,6 +34,9 @@ export default class Comment extends Component {
 
   constructor (ctx: Context, data: CommentData) {
     super(ctx)
+
+    // 最大嵌套数
+    this.maxNestingNum = ctx.conf.maxNesting || 3
 
     this.data = { ...data }
     this.data.date = this.data.date.replace(/-/g, '/') // 解决 Safari 日期解析 NaN 问题
@@ -130,7 +133,9 @@ export default class Comment extends Component {
         <div class="atk-content"></div>
       </div>`)
       replyToEl.querySelector<HTMLElement>('.atk-nick')!.innerText = `@${this.replyTo.nick}`
-      replyToEl.querySelector<HTMLElement>('.atk-content')!.innerHTML = Utils.marked(this.ctx, this.replyTo.content)
+      let replyContent = Utils.marked(this.ctx, this.replyTo.content)
+      if (this.replyTo.is_collapsed) replyContent = '[已折叠]'
+      replyToEl.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
       this.bodyEl.prepend(replyToEl)
     }
 

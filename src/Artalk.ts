@@ -27,6 +27,8 @@ const defaultOpts: ArtalkConfig = {
   },
   darkMode: false,
   reqTimeout: 15000,
+  flatMode: false,
+  maxNesting: 3,
 }
 
 export default class Artalk {

@@ -21,6 +21,9 @@ export default class List extends ListLite {
     el.querySelector('.atk-list-body')!.append(this.el)
     this.el = el
 
+    // 平铺模式
+    this.flatMode = this.ctx.conf.flatMode || false
+
     // 操作按钮
     this.initListActionBtn()
 

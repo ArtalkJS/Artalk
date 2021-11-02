@@ -28,7 +28,7 @@ export default class ListLite extends Component {
   private isLoading: boolean = false
   public isFirstLoad = true
 
-  public flatMode = false
+  public flatMode?: boolean
 
   public unread: NotifyData[] = []
   public unreadHighlight = false
@@ -89,7 +89,7 @@ export default class ListLite extends Component {
 
     let listData: ListData
     try {
-      listData = await new Api(this.ctx).get(offset, this.type, this.paramsEditor)
+      listData = await new Api(this.ctx).get(offset, this.type, this.flatMode, this.paramsEditor)
     } catch (e: any) {
       this.onError(e.msg || String(e))
       throw e
@@ -203,21 +203,9 @@ export default class ListLite extends Component {
         queryImportChildren(rootComment)
       })
     } else {
+      // 平铺模式
       rawData.forEach((commentData: CommentData) => {
-        if (commentData.is_collapsed) commentData.is_allow_reply = false
-        const comment = this.createComment(commentData)
-        if (commentData.rid !== 0) {
-          const rComment = rawData.find(o => o.id === commentData.rid)
-          if (rComment) comment.replyTo = rComment
-        }
-        comment.renderElem()
-
-        this.comments.push(comment) // 将评论导入 comments 总表中
-
-        if (commentData.visible) {
-          this.commentsWrapEl.appendChild(comment.getEl())
-          comment.playFadeInAnim()
-        }
+        this.putCommentFlatMode(commentData, rawData, 'append')
       })
     }
 
@@ -225,19 +213,51 @@ export default class ListLite extends Component {
     this.ctx.trigger('comments-loaded')
   }
 
-  public insertComment (commentData: CommentData) {
-    const comment = this.createComment(commentData)
+  private putCommentFlatMode (commentItem: CommentData, comments: CommentData[], insertMode: 'append'|'prepend') {
+    if (commentItem.is_collapsed) commentItem.is_allow_reply = false
+    const comment = this.createComment(commentItem)
+    if (commentItem.rid !== 0) {
+      const rComment = comments.find(o => o.id === commentItem.rid)
+      if (rComment) comment.replyTo = rComment
+    }
     comment.renderElem()
 
-    if (commentData.rid !== 0) {
-      this.findComment(commentData.rid)?.putChild(comment)
+    // 将评论导入 comments 总表中
+    if (insertMode === 'append') {
+      this.comments.push(comment)
     } else {
-      this.commentsWrapEl.prepend(comment.getEl())
       this.comments.unshift(comment)
     }
 
-    Ui.scrollIntoView(comment.getEl()) // 滚动到可以见
-    comment.playFadeInAnim() // 播放评论渐出动画
+
+    if (commentItem.visible) {
+      if (insertMode === 'append') {
+        this.commentsWrapEl.appendChild(comment.getEl())
+      } else {
+        this.commentsWrapEl.prepend(comment.getEl())
+      }
+      comment.playFadeInAnim()
+    }
+  }
+
+  public insertComment (commentData: CommentData) {
+    if (!this.flatMode) {
+      const comment = this.createComment(commentData)
+      comment.renderElem()
+
+      if (commentData.rid !== 0) {
+        this.findComment(commentData.rid)?.putChild(comment)
+      } else {
+        this.commentsWrapEl.prepend(comment.getEl())
+        this.comments.unshift(comment)
+      }
+
+      Ui.scrollIntoView(comment.getEl()) // 滚动到可以见
+      comment.playFadeInAnim() // 播放评论渐出动画
+    } else {
+      this.putCommentFlatMode(commentData, this.comments.map(c => c.data), 'prepend')
+    }
+
     if (this.data) this.data.total += 1 // 评论数增加 1
     this.refreshUI() // 更新 list 界面
     this.ctx.trigger('comments-loaded')

@@ -48,6 +48,12 @@ export interface ArtalkConfig {
 
   /** 请求超时（单位：秒） */
   reqTimeout?: number
+
+  /** 平铺模式 */
+  flatMode?: boolean
+
+  /** 最大嵌套数 */
+  maxNesting?: number
 }
 
 export interface LocalUser {

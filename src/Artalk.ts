@@ -25,6 +25,7 @@ const defaultOpts: ArtalkConfig = {
     cdn: 'https://sdn.geekzu.org/avatar/'
   },
   darkMode: false,
+  reqTimeout: 15000,
 }
 
 export default class Artalk {

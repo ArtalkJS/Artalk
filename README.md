@@ -52,61 +52,6 @@
 
 前往：[“**文档 · 部署**”](https://artalk.js.org/guide/deploy.html)
 
-### 两步抵达
-
-<details>
-<summary>点击展开</summary>
-
-1. 后端程序部署，前往：[“**文档 · 后端部署**”](https://artalk.js.org/guide/backend/install.html)
-2. 前端页面引入：
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-
-  <!-- 引入 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/artalk@2/dist/Artalk.css" rel="stylesheet">
-
-</head>
-<body>
-
-  <!-- 给定元素 -->
-  <div id="Comments"></div>
-
-  <!-- 引入 JS -->
-  <script src="https://cdn.jsdelivr.net/npm/artalk@2/dist/Artalk.js"></script>
-
-  <!-- 配置 Artalk -->
-  <script>
-  new Artalk({
-    el:        '#Comments',
-    pageKey:   '<页面链接>',
-    pageTitle: '<页面标题>',
-    server:    '<后端地址>',
-    site:      '<站点名称>',
-  })
-  </script>
-
-</body>
-</html>
-```
-</details>
-
-### CDN 资源
-
-在页面合适的位置通过 CDN 资源引入 Artalk：
-
-```html
-<!-- CSS -->
-<link href="https://cdn.jsdelivr.net/npm/artalk@2/dist/Artalk.css" rel="stylesheet">
-
-<!-- JS -->
-<script src="https://cdn.jsdelivr.net/npm/artalk@2/dist/Artalk.js"></script>
-```
-
-### NPM 引用
-
 ```sh
 $ yarn add artalk
 ```
@@ -115,23 +60,25 @@ $ yarn add artalk
 import Artalk from 'artalk'
 
 new Artalk({
-  // ...your config
+  el:        '#Comments',
+  pageKey:   '<页面链接>',
+  pageTitle: '<页面标题>',
+  server:    '<后端地址>',
+  site:      '<站点名称>',
 })
 ```
 
-Artalk 拥有 TypeScript 声明文件，能够在引用时帮助您进行代码提示。
-
 ## 特别致谢
 
-感谢社区提供的帮助与反馈，若有好的建议与意见欢迎前往 [issues](https://github.com/ArtalkJS/Artalk/issues) 随时告知。
+感谢社区提供的帮助与反馈，若有好的建议与意见欢迎前往 [ISSUES](https://github.com/ArtalkJS/Artalk/issues) 随时告知。
 
 ## Stargazers over time
 
 [![Stargazers over time](https://starchart.cc/ArtalkJS/Artalk.svg)](https://starchart.cc/ArtalkJS/Artalk)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk?ref=badge_shield)
 
 ## License
 [GPL-3.0](./LICENSE)
 
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk?ref=badge_shield)
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk?ref=badge_large)

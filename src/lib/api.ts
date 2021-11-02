@@ -290,8 +290,8 @@ function CommonFetch(ctx: Context, input: RequestInfo, init: RequestInit): Promi
     init.headers = requestHeaders
   }
 
-  // 15s timeout
-  return timeoutPromise(15000, fetch(input, init)).then(async (resp) => {
+  // 15s timeout default
+  return timeoutPromise(ctx.conf.reqTimeout || 15000, fetch(input, init)).then(async (resp) => {
     if (!resp.ok && resp.status !== 401) {
         throw new Error(`请求响应 ${resp.status}`)
     }

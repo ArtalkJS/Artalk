@@ -71,4 +71,9 @@ export interface ArtalkConfig {
    * 暗黑模式
    */
   darkMode?: boolean
+
+  /**
+   * 请求超时
+   */
+  reqTimeout?: number
 }

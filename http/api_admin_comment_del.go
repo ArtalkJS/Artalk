@@ -1,8 +1,6 @@
 package http
 
 import (
-	"strconv"
-
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
@@ -10,7 +8,7 @@ import (
 )
 
 type ParamsCommentDel struct {
-	ID string `mapstructure:"id" param:"required"`
+	ID uint `mapstructure:"id" param:"required"`
 
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
@@ -27,17 +25,12 @@ func ActionAdminCommentDel(c echo.Context) error {
 		return resp
 	}
 
-	id, err := strconv.Atoi(p.ID)
-	if err != nil {
-		return RespError(c, "invalid id")
-	}
-
 	// find site
 	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
 		return resp
 	}
 
-	comment := model.FindComment(uint(id))
+	comment := model.FindComment(p.ID)
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found")
 	}

@@ -76,7 +76,7 @@ export default class ListLite extends Component {
 
     // set loading
     this.isLoading = true
-    this.ctx.trigger('comments-loading')
+    this.ctx.trigger('comments-load')
     if (offset === 0) Ui.showLoading(this.el)
     else this.readMoreBtnSetLoading(true)
 

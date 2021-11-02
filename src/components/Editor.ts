@@ -60,8 +60,8 @@ export default class Editor extends Component {
     this.initBottomPart()
 
     // 监听事件
-    this.ctx.on('editor-open-comment', () => (this.openComment()))
-    this.ctx.on('editor-close-comment', () => (this.closeComment()))
+    this.ctx.on('editor-open', () => (this.open()))
+    this.ctx.on('editor-close', () => (this.close()))
     this.ctx.on('editor-reply', (commentData) => (this.setReply(commentData)))
     this.ctx.on('editor-show-loading', () => (Ui.showLoading(this.el)))
     this.ctx.on('editor-hide-loading', () => (Ui.hideLoading(this.el)))
@@ -158,7 +158,7 @@ export default class Editor extends Component {
 
   saveUser () {
     this.user.save()
-    this.ctx.trigger('user-changed')
+    this.ctx.trigger('user-changed', this.ctx.user.data)
   }
 
   saveContent () {
@@ -358,6 +358,8 @@ export default class Editor extends Component {
       return
     }
 
+    this.ctx.trigger('editor-submit')
+
     Ui.showLoading(this.el)
 
     try {
@@ -371,6 +373,7 @@ export default class Editor extends Component {
 
       this.ctx.trigger('list-insert', nComment)
       this.clearEditor() // 清空编辑器
+      this.ctx.trigger('editor-submitted')
     } catch (err: any) {
       console.error(err)
       this.showNotify(`评论失败，${err.msg || String(err)}`, 'e')
@@ -384,7 +387,7 @@ export default class Editor extends Component {
   }
 
   /** 关闭评论 */
-  closeComment () {
+  close () {
     this.closeCommentEl.style.display = ''
 
     if (!this.user.data.isAdmin) {
@@ -399,7 +402,7 @@ export default class Editor extends Component {
   }
 
   /** 打开评论 */
-  openComment () {
+  open () {
     this.closeCommentEl.style.display = 'none'
     this.textareaEl.style.display = ''
     this.bottomEl.style.display = ''

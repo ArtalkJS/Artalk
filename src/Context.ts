@@ -1,5 +1,5 @@
-import { ArtalkConfig } from '~/types/artalk-config'
 import User from './lib/user'
+import { ArtalkConfig } from '~/types/artalk-config'
 import { EventPayloadMap, Event, EventScopeType, Handler } from '~/types/event'
 
 export default class Context {

@@ -29,7 +29,7 @@ const AdminChecker = {
     that.user.data.isAdmin = true
     that.user.data.token = userToken
     that.user.save()
-    that.ctx.trigger('user-changed')
+    that.ctx.trigger('user-changed', that.ctx.user.data)
     that.ctx.trigger('list-reload')
   },
   onError: (that, err, inputVal, formEl) => {

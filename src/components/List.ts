@@ -27,12 +27,11 @@ export default class List extends ListLite {
     this.el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
 
     this.ctx.on('list-reload', () => (this.reqComments(0))) // 刷新评论
-    this.ctx.on('list-clear', () => (this.clearComments())) // 清空评论
     this.ctx.on('list-refresh-ui', () => (this.refreshUI()))
     this.ctx.on('list-import', (data) => (this.importComments(data)))
     this.ctx.on('list-insert', (data) => (this.insertComment(data)))
-    this.ctx.on('list-comment-del', (comment) => (this.deleteComment(comment.id)))
-    this.ctx.on('list-update-data', (updateData) => { updateData(this.data);this.refreshUI() } )
+    this.ctx.on('list-delete', (comment) => (this.deleteComment(comment.id)))
+    this.ctx.on('list-update', (updateData) => { updateData(this.data);this.refreshUI() } )
     this.ctx.on('unread-update', (data) => (this.showUnreadBadge(data.notifies?.length || 0)))
   }
 
@@ -54,10 +53,10 @@ export default class List extends ListLite {
 
     // 关闭评论
     if (!!this.data && !!this.data.page && this.data.page.admin_only === true) {
-      this.ctx.trigger('editor-close-comment')
+      this.ctx.trigger('editor-close')
       this.closeCommentBtnEl.innerHTML = '打开评论'
     } else {
-      this.ctx.trigger('editor-open-comment')
+      this.ctx.trigger('editor-open')
       this.closeCommentBtnEl.innerHTML = '关闭评论'
     }
   }

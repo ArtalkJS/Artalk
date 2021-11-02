@@ -1,13 +1,7 @@
-import { ArtalkConfig } from "~/types/artalk-config"
+import { ArtalkConfig, LocalUser } from "~/types/artalk-config"
 
 export default class User {
-  public data: {
-    nick: string,
-    email: string,
-    link: string,
-    token: string,
-    isAdmin: boolean
-  }
+  public data: LocalUser
 
   constructor (conf: ArtalkConfig) {
     // 从 localStorage 导入

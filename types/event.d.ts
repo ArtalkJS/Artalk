@@ -1,32 +1,41 @@
-import { ListData, CommentData, NotifyData } from '~/types/artalk-data'
+import { ListData, CommentData, NotifyData } from './artalk-data'
+import { LocalUser } from './artalk-config'
 
 /** EventName to EventPayload Type */
 export interface EventPayloadMap {
-  'list-loading': undefined
-  'list-clear': undefined
-  'list-refresh-ui': undefined
-  'list-import': CommentData[]
-  'list-insert': CommentData
-  'list-comment-del': CommentData
-  'list-reload': undefined
-  'list-update-data': (data: ListData | undefined) => void
-  'sidebar-show'?: SidebarShowPayload
-  'sidebar-hide': undefined
-  'check-admin-show-el': undefined
-  'editor-open-comment': undefined
-  'editor-close-comment': undefined
-  'editor-show-loading': undefined
-  'editor-hide-loading': undefined
-  'editor-notify': NotifyConf
-  'editor-reply': CommentData
-  'user-changed': undefined
-  'unread-update': UnreadUpdatePayload
-  'checker-admin': CheckerConf
-  'checker-captcha': CheckerCaptchaConf
+  'comments-load': undefined       // 评论加载时
+  'comments-loaded': undefined     // 评论装载后
+  'editor-submit': undefined       // 编辑器提交时
+  'editor-submitted': undefined    // 编辑器提交后
+  'user-changed': LocalUser        // 本地用户数据变更时
 
-  // 外部暴露事件
-  'comments-loaded': undefined
-  'comments-loading': undefined
+  // List 操作（外部：不建议 listen，仅 trigger）
+  'list-reload': undefined         // 重新加载 List
+  'list-import': CommentData[]     // 评论导入
+  'list-insert': CommentData       // 评论添加
+  'list-delete': CommentData       // 评论删除
+  'list-update': ListUpdatePayload // 更新评论数据
+  'list-refresh-ui': undefined     // 刷新 List UI
+
+  // Sidebar
+  'sidebar-show'?: SidebarShowPayload // 侧边栏显示
+  'sidebar-hide': undefined           // 侧边栏隐藏
+
+  // Editor
+  'editor-open': undefined            // 打开评论
+  'editor-close': undefined           // 关闭评论
+  'editor-show-loading': undefined    // 加载显示
+  'editor-hide-loading': undefined    // 加载隐藏
+  'editor-notify': NotifyConf         // 显示提示
+  'editor-reply': CommentData         // 设置回复
+
+  // Notify
+  'unread-update': UnreadUpdatePayload // 未读数据更新
+
+  // Checker
+  'checker-admin': CheckerConf           // 检查管理员
+  'checker-captcha': CheckerCaptchaConf  // 检查验证码
+  'check-admin-show-el': undefined       // 检查并更新仅管理员显示的元素
 }
 
 export interface CheckerConf {
@@ -51,6 +60,8 @@ export interface SidebarShowPayload {
 export interface UnreadUpdatePayload {
   notifies: NotifyData[]
 }
+
+export type ListUpdatePayload = (data: ListData | undefined) => void
 
 // ============================================
 export interface Handler<P> {

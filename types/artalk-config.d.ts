@@ -49,3 +49,20 @@ export interface ArtalkConfig {
   /** 请求超时（单位：秒） */
   reqTimeout?: number
 }
+
+export interface LocalUser {
+  /** 昵称 */
+  nick: string
+
+  /** 邮箱 */
+  email: string
+
+  /** 链接 */
+  link: string
+
+  /** TOKEN */
+  token: string
+
+  /** 是否为管理员 */
+  isAdmin: boolean
+}

@@ -29,8 +29,8 @@ const AdminChecker = {
     that.user.data.isAdmin = true
     that.user.data.token = userToken
     that.user.save()
-    that.ctx.dispatchEvent('user-changed')
-    that.ctx.dispatchEvent('list-reload')
+    that.ctx.trigger('user-changed')
+    that.ctx.trigger('list-reload')
   },
   onError: (that, err, inputVal, formEl) => {
 
@@ -75,14 +75,14 @@ export default class Checker {
     this.ctx = ctx
     this.user = ctx.user
 
-    this.ctx.addEventListener('checker-captcha', (conf) => {
+    this.ctx.on('checker-captcha', (conf) => {
       if (conf.imgData) {
         this.submitCaptchaImgData = conf.imgData
       }
       this.check('captcha', conf)
     })
 
-    this.ctx.addEventListener('checker-admin', (conf) => {
+    this.ctx.on('checker-admin', (conf) => {
       this.check('admin', conf)
     })
   }

@@ -210,7 +210,7 @@ export default class Comment extends Component {
       const replyBtn = Utils.createElement(`<span data-atk-action="comment-reply">回复</span>`)
       this.actionsEl.append(replyBtn)
       replyBtn.addEventListener('click', (e) => {
-        this.ctx.dispatchEvent('editor-reply', this.data)
+        this.ctx.trigger('editor-reply', this.data)
         e.stopPropagation() // 防止穿透
       })
     }
@@ -330,7 +330,7 @@ export default class Comment extends Component {
       this.data = comment
       this.refreshUI()
       Ui.playFadeInAnim(this.bodyEl)
-      this.ctx.dispatchEvent('list-refresh-ui')
+      this.ctx.trigger('list-refresh-ui')
     }).catch((err) => {
       console.error(err)
       btnElem.classList.add('atk-error')

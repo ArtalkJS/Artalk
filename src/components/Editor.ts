@@ -60,12 +60,12 @@ export default class Editor extends Component {
     this.initBottomPart()
 
     // 监听事件
-    this.ctx.addEventListener('editor-open-comment', () => (this.openComment()))
-    this.ctx.addEventListener('editor-close-comment', () => (this.closeComment()))
-    this.ctx.addEventListener('editor-reply', (commentData) => (this.setReply(commentData)))
-    this.ctx.addEventListener('editor-show-loading', () => (Ui.showLoading(this.el)))
-    this.ctx.addEventListener('editor-hide-loading', () => (Ui.hideLoading(this.el)))
-    this.ctx.addEventListener('editor-notify', (f) => (this.showNotify(f.msg, f.type)))
+    this.ctx.on('editor-open-comment', () => (this.openComment()))
+    this.ctx.on('editor-close-comment', () => (this.closeComment()))
+    this.ctx.on('editor-reply', (commentData) => (this.setReply(commentData)))
+    this.ctx.on('editor-show-loading', () => (Ui.showLoading(this.el)))
+    this.ctx.on('editor-hide-loading', () => (Ui.hideLoading(this.el)))
+    this.ctx.on('editor-notify', (f) => (this.showNotify(f.msg, f.type)))
   }
 
   initLocalStorage () {
@@ -127,7 +127,7 @@ export default class Editor extends Component {
           }
 
           // 未读消息更新
-          this.ctx.dispatchEvent('unread-update', { notifies: data.unread, })
+          this.ctx.trigger('unread-update', { notifies: data.unread, })
 
           // 若用户为管理员，执行登陆操作
           if (this.user.checkHasBasicUserInfo() && !data.is_login && data.user && data.user.is_admin) {
@@ -150,7 +150,7 @@ export default class Editor extends Component {
   }
 
   showLoginDialog () {
-    this.ctx.dispatchEvent('checker-admin', {
+    this.ctx.trigger('checker-admin', {
       onSuccess: () => {
       }
     })
@@ -158,7 +158,7 @@ export default class Editor extends Component {
 
   saveUser () {
     this.user.save()
-    this.ctx.dispatchEvent('user-changed')
+    this.ctx.trigger('user-changed')
   }
 
   saveContent () {
@@ -369,7 +369,7 @@ export default class Editor extends Component {
         rid: this.replyComment === null ? 0 : this.replyComment.id
       })
 
-      this.ctx.dispatchEvent('list-insert', nComment)
+      this.ctx.trigger('list-insert', nComment)
       this.clearEditor() // 清空编辑器
     } catch (err: any) {
       console.error(err)

@@ -26,14 +26,14 @@ export default class List extends ListLite {
 
     this.el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
 
-    this.ctx.addEventListener('list-reload', () => (this.reqComments(0))) // 刷新评论
-    this.ctx.addEventListener('list-clear', () => (this.clearComments())) // 清空评论
-    this.ctx.addEventListener('list-refresh-ui', () => (this.refreshUI()))
-    this.ctx.addEventListener('list-import', (data) => (this.importComments(data)))
-    this.ctx.addEventListener('list-insert', (data) => (this.insertComment(data)))
-    this.ctx.addEventListener('list-comment-del', (comment) => (this.deleteComment(comment.id)))
-    this.ctx.addEventListener('list-update-data', (updateData) => { updateData(this.data);this.refreshUI() } )
-    this.ctx.addEventListener('unread-update', (data) => (this.showUnreadBadge(data.notifies?.length || 0)))
+    this.ctx.on('list-reload', () => (this.reqComments(0))) // 刷新评论
+    this.ctx.on('list-clear', () => (this.clearComments())) // 清空评论
+    this.ctx.on('list-refresh-ui', () => (this.refreshUI()))
+    this.ctx.on('list-import', (data) => (this.importComments(data)))
+    this.ctx.on('list-insert', (data) => (this.insertComment(data)))
+    this.ctx.on('list-comment-del', (comment) => (this.deleteComment(comment.id)))
+    this.ctx.on('list-update-data', (updateData) => { updateData(this.data);this.refreshUI() } )
+    this.ctx.on('unread-update', (data) => (this.showUnreadBadge(data.notifies?.length || 0)))
   }
 
   /** 刷新界面 */
@@ -50,14 +50,14 @@ export default class List extends ListLite {
     }
 
     // 仅管理员显示控制
-    this.ctx.dispatchEvent('check-admin-show-el')
+    this.ctx.trigger('check-admin-show-el')
 
     // 关闭评论
     if (!!this.data && !!this.data.page && this.data.page.admin_only === true) {
-      this.ctx.dispatchEvent('editor-close-comment')
+      this.ctx.trigger('editor-close-comment')
       this.closeCommentBtnEl.innerHTML = '打开评论'
     } else {
-      this.ctx.dispatchEvent('editor-open-comment')
+      this.ctx.trigger('editor-open-comment')
       this.closeCommentBtnEl.innerHTML = '关闭评论'
     }
   }
@@ -98,7 +98,7 @@ export default class List extends ListLite {
         new Api(this.ctx).markRead(notifyKey)
           .then(() => {
             this.unread = this.unread.filter(o => o.comment_id !== comment.data.id)
-            this.ctx.dispatchEvent('unread-update', {
+            this.ctx.trigger('unread-update', {
               notifies: this.unread
             })
           })
@@ -110,13 +110,13 @@ export default class List extends ListLite {
     // 侧边栏呼出按钮
     this.openSidebarBtnEl = this.el.querySelector('[data-action="open-sidebar"]')!
     this.openSidebarBtnEl.addEventListener('click', () => {
-      this.ctx.dispatchEvent('sidebar-show', { viewName: 'message' })
+      this.ctx.trigger('sidebar-show', { viewName: 'message' })
     })
 
     // 控制台呼出
     this.openAdminPanelBtnEl = this.el.querySelector('[data-action="open-admin-panel"]')!
     this.openAdminPanelBtnEl.addEventListener('click', () => {
-      this.ctx.dispatchEvent('sidebar-show', { viewName: 'admin' })
+      this.ctx.trigger('sidebar-show', { viewName: 'admin' })
     })
 
 
@@ -136,7 +136,7 @@ export default class List extends ListLite {
   public adminPageEditSave () {
     if (!this.data || !this.data.page) return
 
-    this.ctx.dispatchEvent('editor-show-loading')
+    this.ctx.trigger('editor-show-loading')
     new Api(this.ctx).pageEdit(this.data.page)
       .then((page) => {
         if (this.data)
@@ -144,10 +144,10 @@ export default class List extends ListLite {
         this.refreshUI()
       })
       .catch(err => {
-        this.ctx.dispatchEvent('editor-notify', { msg: `修改页面数据失败：${err.msg || String(err)}`, type: 'e'})
+        this.ctx.trigger('editor-notify', { msg: `修改页面数据失败：${err.msg || String(err)}`, type: 'e'})
       })
       .finally(() => {
-        this.ctx.dispatchEvent('editor-hide-loading')
+        this.ctx.trigger('editor-hide-loading')
       })
   }
 

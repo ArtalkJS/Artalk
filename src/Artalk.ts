@@ -10,6 +10,7 @@ import { ArtalkConfig } from '~/types/artalk-config'
 import Context from './Context'
 import emoticons from './assets/emoticons.json'
 import Constant from './Constant'
+import { EventPayloadMap, Listener, Event } from '~/types/event'
 
 const defaultOpts: ArtalkConfig = {
   el: '',
@@ -29,8 +30,8 @@ const defaultOpts: ArtalkConfig = {
 }
 
 export default class Artalk {
+  private ctx: Context
   public conf: ArtalkConfig
-  public ctx: Context
   public el: HTMLElement
   public readonly contextID: number = new Date().getTime() // 实例唯一 ID
   public checker: Checker
@@ -101,7 +102,7 @@ export default class Artalk {
     })
 
     // 仅管理员显示控制
-    this.ctx.addEventListener('check-admin-show-el', () => {
+    this.ctx.on('check-admin-show-el', () => {
       const items: HTMLElement[] = []
 
       this.el.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
@@ -118,14 +119,14 @@ export default class Artalk {
       })
     })
 
-    this.ctx.addEventListener('user-changed', () => {
-      this.ctx.dispatchEvent('check-admin-show-el')
-      this.ctx.dispatchEvent('list-refresh-ui')
+    this.ctx.on('user-changed', () => {
+      this.ctx.trigger('check-admin-show-el')
+      this.ctx.trigger('list-refresh-ui')
     })
   }
 
   /** 暗黑模式 - 初始化 */
-  initDarkMode() {
+  public initDarkMode() {
     if (this.conf.darkMode) {
       this.el.classList.add(Constant.DARK_MODE_CLASSNAME)
     } else {
@@ -144,18 +145,30 @@ export default class Artalk {
   }
 
   /** 暗黑模式 - 设定 */
-  setDarkMode(darkMode: boolean) {
+  public setDarkMode(darkMode: boolean) {
     this.ctx.conf.darkMode = darkMode
     this.initDarkMode()
   }
 
   /** 暗黑模式 - 开启 */
-  openDarkMode() {
+  public openDarkMode() {
     this.setDarkMode(true)
   }
 
   /** 暗黑模式 - 关闭 */
-  closeDarkMode() {
+  public closeDarkMode() {
     this.setDarkMode(false)
+  }
+
+  public on<K extends keyof EventPayloadMap>(name: K, handler: Listener<EventPayloadMap[K]>): void {
+    this.ctx.on(name, handler)
+  }
+
+  public off<K extends keyof EventPayloadMap>(name: K, handler: Listener<EventPayloadMap[K]>): void {
+    this.ctx.off(name, handler)
+  }
+
+  public trigger<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K]): void {
+    this.ctx.trigger(name, payload)
   }
 }

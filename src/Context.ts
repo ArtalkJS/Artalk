@@ -17,18 +17,21 @@ export default class Context {
     this.user = new User(this.conf)
   }
 
-  public addEventListener<K extends keyof EventPayloadMap>(name: K, listener: Listener<EventPayloadMap[K]>): void {
+  public on<K extends keyof EventPayloadMap>(name: K, listener: Listener<EventPayloadMap[K]>): void {
     this.eventList.push({ name, listener: listener as any })
   }
 
-  public removeEventListener<K extends keyof EventPayloadMap>(name: K): void {
-    this.eventList = this.eventList.filter((event) => event.name !== name)
+  public off<K extends keyof EventPayloadMap>(name: K, listener?: Listener<EventPayloadMap[K]>): void {
+    this.eventList = this.eventList.filter((evt) => {
+      if (listener) return !(evt.name === name && evt.listener === listener)
+      return !(evt.name === name) // 删除全部相同 name event
+    })
   }
 
-  public dispatchEvent<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K]): void {
+  public trigger<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K]): void {
     this.eventList
-      .filter((event) => event.name === name)
-      .map((event) => event.listener)
+      .filter((evt) => evt.name === name)
+      .map((evt) => evt.listener)
       .forEach((listener) => listener(payload as any))
   }
 }

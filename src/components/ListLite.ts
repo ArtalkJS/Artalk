@@ -66,7 +66,7 @@ export default class ListLite extends Component {
       })
     }, 30 * 1000) // 30s 更新一次
 
-    this.ctx.addEventListener('unread-update', (data) => (this.updateUnread(data.notifies)))
+    this.ctx.on('unread-update', (data) => (this.updateUnread(data.notifies)))
   }
 
   public async reqComments(offset: number = 0) {
@@ -130,7 +130,7 @@ export default class ListLite extends Component {
       this.initScrollBottomAutoLoad()
     }
 
-    this.ctx.dispatchEvent('unread-update', { notifies: data.unread || [] })
+    this.ctx.trigger('unread-update', { notifies: data.unread || [] })
 
     this.isFirstLoad = false
   }
@@ -147,7 +147,7 @@ export default class ListLite extends Component {
       errEl.appendChild(retryBtn)
       const adminBtn = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
       adminBtn.onclick = () => {
-        this.ctx.dispatchEvent('sidebar-show', { viewName: 'admin' })
+        this.ctx.trigger('sidebar-show', { viewName: 'admin' })
       }
       if (!this.ctx.user.data.isAdmin) {
         adminBtn.classList.add('atk-hide')
@@ -258,7 +258,7 @@ export default class ListLite extends Component {
       noCommentEl.remove()
 
     // 仅管理员显示控制
-    this.ctx.dispatchEvent('check-admin-show-el')
+    this.ctx.trigger('check-admin-show-el')
   }
 
   /** 获取评论总数 (包括子评论) */
@@ -394,7 +394,7 @@ export default class ListLite extends Component {
           comment.setOpenURL(notify.read_link)
           comment.openEvt = () => {
             this.unread = this.unread.filter(o => o.comment_id !== comment.data.id) // remove
-            this.ctx.dispatchEvent('unread-update', {
+            this.ctx.trigger('unread-update', {
               notifies: this.unread
             })
           }

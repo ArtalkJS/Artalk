@@ -42,8 +42,8 @@ export default class Sidebar extends Component {
     })
 
     // event
-    this.ctx.addEventListener('sidebar-show', (payload) => (this.show(payload?.viewName)))
-    this.ctx.addEventListener('sidebar-hide', () => (this.hide()))
+    this.ctx.on('sidebar-show', (payload) => (this.show(payload?.viewName)))
+    this.ctx.on('sidebar-hide', () => (this.hide()))
 
     // titles
     this.registerViews.forEach(View => {

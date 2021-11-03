@@ -38,6 +38,9 @@ export class Layer extends Component {
 
   private maskClickHideEnable: boolean = true
 
+  private bodyStyleOrgOverflow = ''
+  private bodyStyleOrgPaddingRight = ''
+
   constructor (ctx: Context, name: string, el?: HTMLElement) {
     super(ctx)
 
@@ -92,13 +95,21 @@ export class Layer extends Component {
       if (this.maskClickHideEnable) this.hide()
     }
 
+    // body style 禁止滚动 + 防抖
+    this.bodyStyleOrgOverflow = document.body.style.overflow
+    this.bodyStyleOrgPaddingRight = document.body.style.paddingRight
     document.body.style.overflow = 'hidden'
+
+    const bpr = parseInt(window.getComputedStyle(document.body, null).getPropertyValue('padding-right'), 10)
+    document.body.style.paddingRight = `${Ui.getScrollBarWidth() + bpr || 0}px`
   }
 
   hide () {
     Layer.hideTimeoutList.push(window.setTimeout(() => {
       this.wrapEl.style.display = 'none'
-      document.body.style.overflow = ''
+      // body style 禁止滚动解除
+      document.body.style.overflow = this.bodyStyleOrgOverflow
+      document.body.style.paddingRight = this.bodyStyleOrgPaddingRight
     }, 450))
 
     this.wrapEl.classList.add('atk-fade-out')

@@ -17,7 +17,7 @@ export default class Sidebar extends Component {
   public layer?: Layer
   public actionsEl: HTMLElement
   public contentEl: HTMLElement
-  public titleWrapEl: HTMLElement
+  public headerEl: HTMLElement
 
   public view?: SidebarView
   public action?: string
@@ -34,7 +34,7 @@ export default class Sidebar extends Component {
     // initial elements
     this.el = Utils.createElement(SidebarHTML)
     this.contentEl = this.el.querySelector('.atk-sidebar-content')!
-    this.titleWrapEl = this.el.querySelector('.atk-sidebar-title-wrap')!
+    this.headerEl = this.el.querySelector('.atk-sidebar-header')!
     this.actionsEl = this.el.querySelector('.atk-sidebar-actions')!
 
     this.el.querySelector('.atk-sidebar-close')!.addEventListener('click', () => {
@@ -46,24 +46,24 @@ export default class Sidebar extends Component {
     this.ctx.on('sidebar-hide', () => (this.hide()))
 
     // titles
-    this.registerViews.forEach(View => {
-      const viewInstance = new View(this.ctx)
-      this.viewInstances[viewInstance.name] = viewInstance
-      viewInstance.el.classList.add(`atk-sidebar-view-${viewInstance.name}`)
+    // this.registerViews.forEach(View => {
+    //   const viewInstance = new View(this.ctx)
+    //   this.viewInstances[viewInstance.name] = viewInstance
+    //   viewInstance.el.classList.add(`atk-sidebar-view-${viewInstance.name}`)
 
-      const titleEl = Utils.createElement(`
-      <span class="atk-title-item" data-name="${viewInstance.name}">${viewInstance.title}</span>
-      `)
-      if (viewInstance.adminOnly) {
-        titleEl.setAttribute('atk-only-admin-show', '')
-        if (!this.ctx.user.data.isAdmin)
-          titleEl.classList.add('atk-hide')
-      }
-      this.titleWrapEl.append(titleEl)
+    //   const titleEl = Utils.createElement(`
+    //   <span class="atk-title-item" data-name="${viewInstance.name}">${viewInstance.title}</span>
+    //   `)
+    //   if (viewInstance.adminOnly) {
+    //     titleEl.setAttribute('atk-only-admin-show', '')
+    //     if (!this.ctx.user.data.isAdmin)
+    //       titleEl.classList.add('atk-hide')
+    //   }
+    //   this.headerEl.append(titleEl)
 
-      // title click
-      titleEl.addEventListener('click', () => { this.switchView(viewInstance) })
-    })
+    //   // title click
+    //   titleEl.addEventListener('click', () => { this.switchView(viewInstance) })
+    // })
   }
 
   show (viewName?: string) {
@@ -105,9 +105,9 @@ export default class Sidebar extends Component {
     this.view = view
 
     // focus title
-    const titleEl = this.titleWrapEl.querySelector<HTMLElement>(`[data-name=${view.name}]`)!
-    this.titleWrapEl.querySelector<HTMLElement>('.atk-active')!.innerText = view.title
-    this.titleWrapEl.querySelectorAll<HTMLElement>('.atk-title-item').forEach((item) => {
+    const titleEl = this.headerEl.querySelector<HTMLElement>(`[data-name=${view.name}]`)!
+    this.headerEl.querySelector<HTMLElement>('.atk-active')!.innerText = view.title
+    this.headerEl.querySelectorAll<HTMLElement>('.atk-title-item').forEach((item) => {
       if (!item.classList.contains('atk-active'))
         item.style.display = ''
     })

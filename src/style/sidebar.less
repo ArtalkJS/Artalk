@@ -1,5 +1,5 @@
 .atk-sidebar {
-  @width: 450px;
+  @width: 430px;
   position: fixed;
   z-index: 99999;
   top: 0;
@@ -18,48 +18,73 @@
 
   .atk-sidebar-inner {
     position: relative;
+  }
 
-    .atk-sidebar-title-wrap {
-      padding: 15px 35px 10px 20px;
+  // Header
+  .atk-sidebar-header {
+    @header-height: 60px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-      .atk-title-item {
-        user-select: none;
-        font-size: 17px;
+    .atk-avatar {
+      display: flex;
+      width: @header-height + 5px;
+      height: @header-height;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        height: @header-height - 30px;
+        width: @header-height - 30px;
+        border-radius: 2px;
+      }
+    }
+
+    .atk-view-switcher {
+      flex: auto;
+      text-align: center;
+
+      .atk-item {
+        position: relative;
+        color: @color-sub;
+        font-size: 18px;
         cursor: pointer;
-        color: var(--at-color-font);
-
-        &.atk-active {
-          color: var(--at-color-font) !important;
-          font-size: 23px;
-          cursor: initial;
-        }
-
-        &:hover {
-          color: var(--at-color-main);
-        }
+        user-select: none;
 
         &:not(:last-child) {
-          margin-right: 25px;
+          margin-right: 20px;
+        }
+
+        &.atk-active {
+          color: @color-font;
+
+          &:after {
+            content: ' ';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: @color-main;
+            opacity: .4;
+          }
         }
       }
     }
 
     .atk-sidebar-close {
-      position: absolute;
       display: flex;
-      right: 10px;
-      top: 10px;
-      width: 40px;
-      height: 40px;
+      padding: 0 20px;
+      height: @header-height;
       align-items: center;
       place-content: center;
       cursor: pointer;
       user-select: none;
 
       &:hover {
-        background: rgba(232, 17, 35, 0.9);
         svg {
-          fill: #fff;
+          fill: rgba(232, 17, 35, 0.9);
         }
       }
 

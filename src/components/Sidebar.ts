@@ -11,16 +11,20 @@ import BuildLayer, { Layer } from './Layer'
 import SidebarView from './sidebar-views/SidebarView'
 import MessageView from './sidebar-views/MessageView'
 import AdminView from './sidebar-views/AdminView'
+import { SiteData } from '~/types/artalk-data'
 
 export default class Sidebar extends Component {
   public el: HTMLElement
   public layer?: Layer
-  public actionsEl: HTMLElement
-  public contentEl: HTMLElement
-  public headerEl: HTMLElement
 
+  public headerEl: HTMLElement
+  public navEl: HTMLElement
+  public viewWrapEl: HTMLElement
+
+  public siteList: SiteData[] = []
+
+  public site?: SiteData
   public view?: SidebarView
-  public action?: string
   private isFirstShow = true
 
   public viewInstances: {[name: string]: SidebarView} = {}
@@ -33,9 +37,9 @@ export default class Sidebar extends Component {
 
     // initial elements
     this.el = Utils.createElement(SidebarHTML)
-    this.contentEl = this.el.querySelector('.atk-sidebar-content')!
     this.headerEl = this.el.querySelector('.atk-sidebar-header')!
-    this.actionsEl = this.el.querySelector('.atk-sidebar-actions')!
+    this.navEl = this.el.querySelector('.atk-sidebar-nav')!
+    this.viewWrapEl = this.el.querySelector('.atk-sidebar-view-wrap')!
 
     this.el.querySelector('.atk-sidebar-close')!.addEventListener('click', () => {
       this.hide()
@@ -44,6 +48,9 @@ export default class Sidebar extends Component {
     // event
     this.ctx.on('sidebar-show', (payload) => (this.show(payload?.viewName)))
     this.ctx.on('sidebar-hide', () => (this.hide()))
+
+    // TODO
+    this.show()
 
     // titles
     // this.registerViews.forEach(View => {
@@ -71,7 +78,7 @@ export default class Sidebar extends Component {
 
     this.layer = BuildLayer(this.ctx, 'sidebar', this.el)
     this.layer.show()
-    this.contentEl.scrollTo(0, 0)
+    this.viewWrapEl.scrollTo(0, 0)
 
     setTimeout(() => {
       this.el.style.transform = 'translate(0, 0)' // 执行动画
@@ -115,27 +122,27 @@ export default class Sidebar extends Component {
 
     // init view ui
     view.init()
-    this.contentEl.innerHTML = ''
-    this.contentEl.append(view.el)
+    this.viewWrapEl.innerHTML = ''
+    this.viewWrapEl.append(view.el)
 
     // actions
-    this.actionsEl.innerHTML = ''
-    Object.entries(view.actions).forEach(([name, label]) => {
-      const actionItemEl = Utils.createElement(`<span class="atk-action-item">${label}</span>`)
-      this.actionsEl.append(actionItemEl)
+    // this.actionsEl.innerHTML = ''
+    // Object.entries(view.actions).forEach(([name, label]) => {
+    //   const actionItemEl = Utils.createElement(`<span class="atk-action-item">${label}</span>`)
+    //   this.actionsEl.append(actionItemEl)
 
-      if (view.activeAction === name) actionItemEl.classList.add('atk-active')
+    //   if (view.activeAction === name) actionItemEl.classList.add('atk-active')
 
-      // action click
-      actionItemEl.addEventListener('click', () => {
-        view.switch(name)
-        view.activeAction = name
+    //   // action click
+    //   actionItemEl.addEventListener('click', () => {
+    //     view.switch(name)
+    //     view.activeAction = name
 
-        this.actionsEl.querySelectorAll('.atk-active').forEach((item) => {
-          item.classList.remove('atk-active')
-        })
-        actionItemEl.classList.add('atk-active')
-      })
-    })
+    //     this.actionsEl.querySelectorAll('.atk-active').forEach((item) => {
+    //       item.classList.remove('atk-active')
+    //     })
+    //     actionItemEl.classList.add('atk-active')
+    //   })
+    // })
   }
 }

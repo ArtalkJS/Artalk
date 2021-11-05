@@ -1,3 +1,6 @@
+@header-height: 60px;
+@nav-height: 40px;
+
 .atk-sidebar {
   @width: 430px;
   position: fixed;
@@ -22,10 +25,10 @@
 
   // Header
   .atk-sidebar-header {
-    @header-height: 60px;
     display: flex;
     flex-direction: row;
     align-items: center;
+    border-bottom: 1px solid @color-border;
 
     .atk-avatar {
       display: flex;
@@ -75,54 +78,107 @@
 
     .atk-sidebar-close {
       display: flex;
-      padding: 0 20px;
+      flex-direction: column;
+      width: @header-height;
       height: @header-height;
       align-items: center;
       place-content: center;
       cursor: pointer;
       user-select: none;
 
-      &:hover {
-        svg {
-          fill: rgba(232, 17, 35, 0.9);
-        }
-      }
-
-      & svg {
-        fill: @color-font;
+      &:hover:before, &:hover:after {
+        background: rgba(232, 17, 35, 0.9);
       }
     }
   }
 
-  .atk-sidebar-actions {
+  // Nav
+  .atk-sidebar-nav {
     display: flex;
     flex-direction: row;
     border-bottom: 1px solid @color-border;
 
-    .atk-action-item {
+    .akt-menu-btn {
       display: flex;
-      flex-grow: 1;
-      scroll-snap-align: start;
-      place-content: center;
-      line-height: 40px;
+      align-items: center;
+      padding: 0 20px;
+      border-right: 1px solid @color-border;
       cursor: pointer;
       user-select: none;
-
+      height: @nav-height;
+      line-height: @nav-height;
       &:hover {
         background: @color-bg-grey;
       }
 
-      &.atk-active {
-        color: @color-main;
-        font-weight: bold;
+      .atk-icon {
+        width: 17px;
+
+        span {
+          position: relative;
+          display: block;
+          width: 14px;
+          height: 1px;
+          margin: 0 auto 4px;
+          background: @color-deep;
+          transform-origin: 20px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+
+        &.atk-arrow span {
+          width: 8px;
+          opacity: 1;
+          transform: rotate(-45deg);
+          transform-origin: 7px;
+
+          &:nth-child(2) {
+            transform: rotate(0deg);
+            width: 0;
+            opacity: 0;
+          }
+
+          &:nth-child(3) {
+            opacity: 1;
+            transform: rotate(45deg);
+          }
+        }
+      }
+
+      .atk-text {
+        margin-left: 10px;
+      }
+    }
+
+    .atk-tabs {
+      display: flex;
+      flex-direction: row;
+
+      .atk-tab-item {
+        line-height: @nav-height;
+        height: @nav-height;
+        color: @color-sub;
+        cursor: pointer;
+        user-select: none;
+        padding: 0 20px;
+
+        &:hover {
+          background: @color-bg-grey;
+        }
+
+        &.atk-active {
+          color: @color-deep;
+        }
       }
     }
   }
 
-  .atk-sidebar-content {
+  .atk-sidebar-view-wrap {
     position: relative;
     overflow-y: auto;
-    height: calc(100vh - 102px);
+    height: calc(100vh - @header-height - @nav-height - 2px);
 
     .atk-sidebar-no-content {
       position: absolute;
@@ -136,38 +192,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-    }
-  }
-
-  .atk-filter-bar {
-    padding: 0 15px;
-    font-size: 15px;
-
-    & > span {
-      display: inline-block;
-      padding: 3px 13px;
-      cursor: pointer;
-      user-select: none;
-      border-radius: 50px;
-      margin-bottom: 5px;
-
-      &:hover {
-        color: #4285f4;
-        background: @color-bg-grey;
-      }
-
-      &.atk-active {
-        background: @color-bg-light;
-        color: @color-light;
-      }
-
-      &:not(:last-child) {
-        margin-right: 5px;
-      }
-    }
-
-    &:not(:last-child) {
-      padding-top: 8px;
     }
   }
 
@@ -366,5 +390,103 @@
   .atk-btn {
     padding: 4px 25px;
     margin-top: 20px;
+  }
+}
+
+.atk-page-list {
+  .atk-page-item {
+    border-bottom: 1px solid @color-border;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    min-height: 120px;
+    align-items: center;
+  }
+
+  .atk-page-main {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    padding: 20px 30px;
+
+    .atk-title {
+      color: @color-font;
+      font-size: 21px;
+      margin-bottom: 10px;
+    }
+
+    .atk-sub {
+      color: @color-sub;
+      font-size: 14px;
+    }
+  }
+
+  .atk-page-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 20px;
+
+    .atk-item {
+      &:hover {
+        background: @color-bg-grey;
+      }
+
+      &:not(:last-child) {
+        margin-right: 15px;
+      }
+
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      width: 35px;
+      height: 35px;
+      border-radius: 2px;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .atk-page-edit-layer {
+    z-index: 999;
+    background: @color-bg;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .atk-page-main-actions {
+      display: flex;
+      flex-direction: column;
+      flex: auto;
+      padding: 0 35px;
+      padding-top: 10px;
+      padding-bottom: 0;
+      flex-wrap: wrap;
+      align-content: flex-start;
+
+      .atk-item {
+        position: relative;
+        font-size: 17px;
+        max-width: 5em;
+        display: inline-flex;
+        margin-right: 15px;
+        margin-bottom: 6px;
+        cursor: pointer;
+        user-select: none;
+
+        &.atk-green:after {
+          position: absolute;
+          content: ' ';
+          height: 5px;
+          width: 100%;
+          left: 0;
+          bottom: 5px;
+          background: rgba(50, 199, 134, 0.39);
+        }
+      }
+    }
   }
 }

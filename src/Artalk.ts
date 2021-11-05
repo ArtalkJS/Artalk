@@ -5,7 +5,7 @@ import Context from './context'
 import ArtalkConfig from '~/types/artalk-config'
 import defaultConf from './default-conf'
 
-import Checker from './lib/checker'
+import CheckerLauncher from './lib/checker'
 import Editor from './components/editor'
 import List from './components/list'
 import Sidebar from './components/sidebar'
@@ -22,7 +22,7 @@ export default class Artalk {
   public conf: ArtalkConfig
   public $root: HTMLElement
 
-  public checker: Checker
+  public checkerLauncher: CheckerLauncher
   public editor: Editor
   public list: List
   public sidebar: Sidebar
@@ -56,7 +56,7 @@ export default class Artalk {
     this.initDarkMode()
 
     // 组件初始化
-    this.checker = new Checker(this.ctx)
+    this.checkerLauncher = new CheckerLauncher(this.ctx)
 
     // 编辑器
     this.editor = new Editor(this.ctx)

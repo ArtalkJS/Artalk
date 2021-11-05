@@ -33,12 +33,12 @@ export interface EventPayloadMap {
   'unread-update': UnreadUpdatePayload // 未读数据更新
 
   // Checker
-  'checker-admin': CheckerConf           // 检查管理员
-  'checker-captcha': CheckerCaptchaConf  // 检查验证码
+  'checker-admin': CheckerPayload           // 检查管理员
+  'checker-captcha': CheckerCaptchaPayload  // 检查验证码
   'check-admin-show-el': undefined       // 检查并更新仅管理员显示的元素
 }
 
-export interface CheckerConf {
+export interface CheckerPayload {
   onSuccess?: (inputVal: string, dialogEl?: HTMLElement) => void
   onMount?: (dialogEl: HTMLElement) => void
   onCancel?: () => void
@@ -49,7 +49,7 @@ export interface NotifyConf {
   type: any
 }
 
-export interface CheckerCaptchaConf extends CheckerConf {
+export interface CheckerCaptchaPayload extends CheckerPayload {
   imgData?: string
 }
 

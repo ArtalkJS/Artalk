@@ -57,53 +57,6 @@ export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true) {
   }
 }
 
-/** 显示对话框 */
-export function buildDialog (
-  html: HTMLElement,
-  onConfirm?: (btnElem: HTMLElement) => boolean | void,
-  onCancel?: () => boolean | void,
-): HTMLElement {
-  const dialogElem = Utils.createElement(
-    `<div class="atk-layer-dialog-wrap">
-      <div class="atk-layer-dialog">
-      <div class="atk-layer-dialog-content"></div>
-      <div class="atk-layer-dialog-action">
-      </div>`
-  )
-
-  // 按钮
-  const actionElem = dialogElem.querySelector<HTMLElement>('.atk-layer-dialog-action')!
-  const onclick =
-    (f: (btnElem: HTMLElement) => boolean | void) =>
-    (evt: Event) => {
-      const returnVal = f(evt.currentTarget as HTMLElement)
-      if (returnVal === undefined || returnVal === true) {
-        dialogElem.remove()
-      }
-    }
-
-  if (typeof onConfirm === 'function') {
-    const btn = Utils.createElement<HTMLButtonElement>(
-      '<button data-action="confirm">确定</button>'
-    )
-    btn.onclick = onclick(onConfirm)
-    actionElem.appendChild(btn)
-  }
-
-  if (typeof onCancel === 'function') {
-    const btn = Utils.createElement<HTMLButtonElement>(
-      '<button data-action="cancel">取消</button>'
-    )
-    btn.onclick = onclick(onCancel)
-    actionElem.appendChild(btn)
-  }
-
-  // 内容
-  dialogElem.querySelector('.atk-layer-dialog-content')!.appendChild(html)
-
-  return dialogElem
-}
-
 /** 显示消息 */
 export function showNotify(
   wrapElem: HTMLElement,

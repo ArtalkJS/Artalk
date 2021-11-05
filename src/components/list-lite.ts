@@ -7,7 +7,6 @@ import Comment from './comment'
 import { ListData, CommentData, NotifyData, ApiVersionData } from '~/types/artalk-data'
 
 export default class ListLite extends Component {
-  public el: HTMLElement
   private commentsWrapEl: HTMLElement
   public comments: Comment[] = []
 
@@ -36,7 +35,7 @@ export default class ListLite extends Component {
   constructor (ctx: Context) {
     super(ctx)
 
-    this.el = Utils.createElement(`
+    this.$el = Utils.createElement(`
     <div class="atk-list-lite">
       <div class="atk-list-comments-wrap"></div>
       <div class="atk-list-read-more" style="display: none;">
@@ -45,11 +44,11 @@ export default class ListLite extends Component {
       </div>
     </div>
     `)
-    this.commentsWrapEl = this.el.querySelector('.atk-list-comments-wrap')!
+    this.commentsWrapEl = this.$el.querySelector('.atk-list-comments-wrap')!
 
     // 查看更多
     this.pageSize = this.conf.readMore ? (this.conf.readMore.pageSize || this.pageSize) : this.pageSize
-    this.readMoreEl = this.el.querySelector('.atk-list-read-more')!
+    this.readMoreEl = this.$el.querySelector('.atk-list-read-more')!
     this.readMoreLoadingEl = this.readMoreEl.querySelector('.atk-loading-icon')!
     this.readMoreTextEl = this.readMoreEl.querySelector('.atk-text')!
     this.readMoreEl.addEventListener('click', () => {
@@ -60,7 +59,7 @@ export default class ListLite extends Component {
 
     // 评论时间自动更新
     setInterval(() => {
-      this.el.querySelectorAll<HTMLElement>('[data-atk-comment-date]').forEach(el => {
+      this.$el.querySelectorAll<HTMLElement>('[data-atk-comment-date]').forEach(el => {
         const date = el.getAttribute('data-atk-comment-date')
         el.innerText = Utils.timeAgo(new Date(Number(date)))
       })
@@ -77,13 +76,13 @@ export default class ListLite extends Component {
     // set loading
     this.isLoading = true
     this.ctx.trigger('comments-load')
-    if (offset === 0) Ui.showLoading(this.el)
+    if (offset === 0) Ui.showLoading(this.$el)
     else this.readMoreBtnSetLoading(true)
 
     const hideLoading = () => {
       // hide loading
       this.isLoading = false
-      if (offset === 0) Ui.hideLoading(this.el)
+      if (offset === 0) Ui.hideLoading(this.$el)
       else this.readMoreBtnSetLoading(false)
     }
 
@@ -122,7 +121,7 @@ export default class ListLite extends Component {
 
   public onLoad (data: ListData) {
     this.data = data
-    Ui.setError(this.el, null)
+    Ui.setError(this.$el, null)
     this.importComments(data.comments)
 
     // 查看更多按钮
@@ -160,7 +159,7 @@ export default class ListLite extends Component {
         adminBtn.classList.add('atk-hide')
       }
       errEl.appendChild(adminBtn)
-      Ui.setError(this.el, errEl)
+      Ui.setError(this.$el, errEl)
     } else {
       this.readMoreBtnShowErr(`${msg} 获取失败`)
     }
@@ -343,7 +342,7 @@ export default class ListLite extends Component {
     if (!this.conf.readMore.autoLoad) return
 
     document.addEventListener('scroll', () => {
-      const targetEl = this.el.querySelector<HTMLElement>('.atk-list-comments-wrap > .atk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
+      const targetEl = this.$el.querySelector<HTMLElement>('.atk-list-comments-wrap > .atk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
       if (!targetEl) return
       if (!this.hasMoreComments) return
       if (this.isLoading) return

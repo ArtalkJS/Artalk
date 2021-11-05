@@ -12,11 +12,11 @@ import Api from '../api'
 export default class Comment extends Component {
   public data: CommentData
 
-  public mainEl!: HTMLElement
-  public bodyEl!: HTMLElement
-  public contentEl!: HTMLElement
-  public childrenEl!: HTMLElement|null
-  public actionsEl!: HTMLElement
+  public $main!: HTMLElement
+  public $body!: HTMLElement
+  public $content!: HTMLElement
+  public $children!: HTMLElement|null
+  public $actions!: HTMLElement
 
   public parent: Comment|null
   public nestedNum: number
@@ -46,24 +46,24 @@ export default class Comment extends Component {
   }
 
   public renderElem () {
-    this.el = Utils.createElement(CommentHTML)
-    this.mainEl = this.el.querySelector('.atk-comment-main')!
-    this.bodyEl = this.el.querySelector('.atk-body')!
-    this.contentEl = this.bodyEl.querySelector('.atk-content')!
-    this.actionsEl = this.el.querySelector('.atk-comment-actions')!
-    this.childrenEl = null
+    this.$el = Utils.createElement(CommentHTML)
+    this.$main = this.$el.querySelector('.atk-comment-main')!
+    this.$body = this.$el.querySelector('.atk-body')!
+    this.$content = this.$body.querySelector('.atk-content')!
+    this.$actions = this.$el.querySelector('.atk-comment-actions')!
+    this.$children = null
 
     // class style
-    if (this.unread) this.el.classList.add('atk-unread')
-    else this.el.classList.remove('atk-unread')
+    if (this.unread) this.$el.classList.add('atk-unread')
+    else this.$el.classList.remove('atk-unread')
 
     if (this.openable) {
-      this.el.classList.add('atk-openable')
+      this.$el.classList.add('atk-openable')
     } else {
-      this.el.classList.remove('atk-openable')
+      this.$el.classList.remove('atk-openable')
     }
 
-    this.el.addEventListener('click', (evt) => {
+    this.$el.addEventListener('click', (evt) => {
       if (this.openable && this.openURL) {
         evt.preventDefault()
         window.open(this.openURL)
@@ -73,15 +73,15 @@ export default class Comment extends Component {
     })
 
     // 填入内容
-    this.el.setAttribute('data-comment-id', `${this.data.id}`)
-    this.el.querySelector('.atk-avatar a')!.setAttribute('href', this.data.link)
-    this.el.querySelector('.atk-avatar img')!.setAttribute('src', this.getGravatarUrl())
+    this.$el.setAttribute('data-comment-id', `${this.data.id}`)
+    this.$el.querySelector('.atk-avatar a')!.setAttribute('href', this.data.link)
+    this.$el.querySelector('.atk-avatar img')!.setAttribute('src', this.getGravatarUrl())
 
-    const nickEl = this.el.querySelector<HTMLLinkElement>('.atk-nick > a')!
+    const nickEl = this.$el.querySelector<HTMLLinkElement>('.atk-nick > a')!
     nickEl.innerText = this.data.nick
     nickEl.href = this.data.link
 
-    const badgeEl = this.el.querySelector<HTMLElement>('.atk-badge')!
+    const badgeEl = this.$el.querySelector<HTMLElement>('.atk-badge')!
     if (this.data.badge_name) {
       badgeEl.innerText = this.data.badge_name
       if (this.data.badge_color)
@@ -90,34 +90,34 @@ export default class Comment extends Component {
       badgeEl.remove()
     }
 
-    const dateEL = this.el.querySelector<HTMLElement>('.atk-date')!
+    const dateEL = this.$el.querySelector<HTMLElement>('.atk-date')!
     dateEL.innerText = this.getDateFormatted()
     dateEL.setAttribute('data-atk-comment-date', String(+new Date(this.data.date)))
-    this.el.querySelector<HTMLElement>('.atk-ua.ua-browser')!.innerText = this.getUserUaBrowser()
-    this.el.querySelector<HTMLElement>('.atk-ua.ua-os')!.innerText = this.getUserUaOS()
+    this.$el.querySelector<HTMLElement>('.atk-ua.ua-browser')!.innerText = this.getUserUaBrowser()
+    this.$el.querySelector<HTMLElement>('.atk-ua.ua-os')!.innerText = this.getUserUaOS()
 
     // 内容 & 折叠
     if (!this.data.is_collapsed) {
-      this.contentEl.innerHTML = this.getContentMarked()
+      this.$content.innerHTML = this.getContentMarked()
     } else {
-      this.contentEl.classList.add('atk-hide', 'atk-type-collapsed')
+      this.$content.classList.add('atk-hide', 'atk-type-collapsed')
       const collapsedInfoEl = Utils.createElement(`
       <div class="atk-collapsed">
         <span class="atk-text">该评论已被系统或管理员折叠</span>
         <span class="atk-show-btn">查看内容</span>
       </div>`)
-      this.bodyEl.insertAdjacentElement('beforeend', collapsedInfoEl)
+      this.$body.insertAdjacentElement('beforeend', collapsedInfoEl)
 
       const contentShowBtn = collapsedInfoEl.querySelector('.atk-show-btn')!
       contentShowBtn.addEventListener('click', (e) => {
-        if (this.contentEl.classList.contains('atk-hide')) {
-          this.contentEl.innerHTML = this.getContentMarked()
-          this.contentEl.classList.remove('atk-hide')
-          Ui.playFadeInAnim(this.contentEl)
+        if (this.$content.classList.contains('atk-hide')) {
+          this.$content.innerHTML = this.getContentMarked()
+          this.$content.classList.remove('atk-hide')
+          Ui.playFadeInAnim(this.$content)
           contentShowBtn.innerHTML = '收起内容'
         } else {
-          this.contentEl.innerHTML = ''
-          this.contentEl.classList.add('atk-hide')
+          this.$content.innerHTML = ''
+          this.$content.classList.add('atk-hide')
           contentShowBtn.innerHTML = '查看内容'
         }
 
@@ -136,20 +136,20 @@ export default class Comment extends Component {
       let replyContent = Utils.marked(this.ctx, this.replyTo.content)
       if (this.replyTo.is_collapsed) replyContent = '[已折叠]'
       replyToEl.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
-      this.bodyEl.prepend(replyToEl)
+      this.$body.prepend(replyToEl)
     }
 
     // 显示待审核状态
     if (this.data.is_pending) {
       const pendingEl = Utils.createElement(`<div class="atk-pending">审核中，仅本人可见。</div>`)
-      this.bodyEl.prepend(pendingEl)
+      this.$body.prepend(pendingEl)
     }
 
     this.initActionBtn()
 
     if (this.afterRender) this.afterRender()
 
-    return this.el
+    return this.$el
   }
 
   private eachComment (commentList: Comment[], action: (comment: Comment, levelList: Comment[]) => boolean|void) {
@@ -162,7 +162,7 @@ export default class Comment extends Component {
   }
 
   public refreshUI () {
-    const originalEl = this.el
+    const originalEl = this.$el
     const newEl = this.renderElem()
     originalEl.replaceWith(newEl) // 替换 document 中的的 elem
     this.playFadeInAnim()
@@ -180,8 +180,8 @@ export default class Comment extends Component {
     // 赞同按钮
     const voteBtnUp = Utils.createElement(`<span></span>`)
     const voteBtnDown = Utils.createElement(`<span></span>`)
-    this.actionsEl.append(voteBtnUp)
-    this.actionsEl.append(voteBtnDown)
+    this.$actions.append(voteBtnUp)
+    this.$actions.append(voteBtnDown)
 
     const refreshVote = () => {
       voteBtnUp.innerText = `赞同 (${this.data.vote_up || 0})`
@@ -215,7 +215,7 @@ export default class Comment extends Component {
     // 绑定回复按钮事件
     if (this.data.is_allow_reply) {
       const replyBtn = Utils.createElement(`<span data-atk-action="comment-reply">回复</span>`)
-      this.actionsEl.append(replyBtn)
+      this.$actions.append(replyBtn)
       replyBtn.addEventListener('click', (e) => {
         this.ctx.trigger('editor-reply', this.data)
         e.stopPropagation() // 防止穿透
@@ -226,7 +226,7 @@ export default class Comment extends Component {
 
     // 绑定折叠按钮事件
     const collapseBtn = Utils.createElement(`<span atk-only-admin-show>${this.data.is_collapsed ? '取消折叠' : '折叠'}</span>`)
-    this.actionsEl.append(collapseBtn)
+    this.$actions.append(collapseBtn)
     collapseBtn.addEventListener('click', (e) => {
       this.adminEdit('collapsed', collapseBtn)
       e.stopPropagation() // 防止穿透
@@ -234,7 +234,7 @@ export default class Comment extends Component {
 
     // 绑定待审核按钮事件
     const pendingBtn = Utils.createElement(`<span atk-only-admin-show>${this.data.is_pending ? '待审' : '已审'}</span>`)
-    this.actionsEl.append(pendingBtn)
+    this.$actions.append(pendingBtn)
     pendingBtn.addEventListener('click', (e) => {
       this.adminEdit('pending', pendingBtn)
       e.stopPropagation() // 防止穿透
@@ -242,7 +242,7 @@ export default class Comment extends Component {
 
     // 绑定删除按钮事件
     const delBtn = Utils.createElement(`<span atk-only-admin-show>删除</span>`)
-    this.actionsEl.append(delBtn)
+    this.$actions.append(delBtn)
     delBtn.addEventListener('click', (e) => {
       this.adminDelete(delBtn)
       e.stopPropagation() // 防止穿透
@@ -267,16 +267,16 @@ export default class Comment extends Component {
   }
 
   getChildrenEl () {
-    if (this.childrenEl === null) {
+    if (this.$children === null) {
       // console.log(this.nestedNum)
       if (this.nestedNum < this.maxNestingNum) {
-        this.childrenEl = Utils.createElement('<div class="atk-comment-children"></div>')
-        this.mainEl.appendChild(this.childrenEl)
+        this.$children = Utils.createElement('<div class="atk-comment-children"></div>')
+        this.$main.appendChild(this.$children)
       } else if (this.parent) {
-          this.childrenEl = this.parent.getChildrenEl()
+          this.$children = this.parent.getChildrenEl()
       }
     }
-    return this.childrenEl
+    return this.$children
   }
 
   getParent () {
@@ -284,7 +284,7 @@ export default class Comment extends Component {
   }
 
   getEl () {
-    return this.el
+    return this.$el
   }
 
   getData () {
@@ -315,7 +315,7 @@ export default class Comment extends Component {
 
   /** 渐出动画 */
   playFadeInAnim () {
-    Ui.playFadeInAnim(this.el)
+    Ui.playFadeInAnim(this.$el)
   }
 
   /** 管理员 - 评论折叠 */
@@ -336,7 +336,7 @@ export default class Comment extends Component {
       btnElem.classList.remove('atk-in-process')
       this.data = comment
       this.refreshUI()
-      Ui.playFadeInAnim(this.bodyEl)
+      Ui.playFadeInAnim(this.$body)
       this.ctx.trigger('list-refresh-ui')
     }).catch((err) => {
       console.error(err)
@@ -394,18 +394,18 @@ export default class Comment extends Component {
 
   public setUnread (val: boolean) {
     this.unread = val
-    if (this.unread) this.el.classList.add('atk-unread')
-    else this.el.classList.remove('atk-unread')
+    if (this.unread) this.$el.classList.add('atk-unread')
+    else this.$el.classList.remove('atk-unread')
   }
 
   public setOpenURL (url: string) {
     if (!url) {
       this.openable = false
-      this.el.classList.remove('atk-openable')
+      this.$el.classList.remove('atk-openable')
     }
 
     this.openable = true
     this.openURL = url
-    this.el.classList.add('atk-openable')
+    this.$el.classList.add('atk-openable')
   }
 }

@@ -10,19 +10,10 @@ export function GetLayerWrap (ctx: Context): { wrapEl: HTMLElement, maskEl: HTML
     wrapEl = Utils.createElement(
       `<div class="atk-layer-wrap" id="ctx-${ctx.cid}" style="display: none;"><div class="atk-layer-mask"></div></div>`
     )
-    document.body.appendChild(wrapEl)
+    ctx.$root.appendChild(wrapEl)
   }
 
   const maskEl = wrapEl.querySelector<HTMLElement>('.atk-layer-mask')!
-
-  // dark mode
-  if (wrapEl) {
-    if (ctx.conf.darkMode) {
-      wrapEl.classList.add(Constant.DARK_MODE_CLASSNAME)
-    } else {
-      wrapEl.classList.remove(Constant.DARK_MODE_CLASSNAME)
-    }
-  }
 
   return { wrapEl, maskEl }
 }
@@ -45,21 +36,21 @@ export default class Layer extends Component {
     this.wrapEl = wrapEl
     this.maskEl = maskEl
 
-    this.el = this.wrapEl.querySelector(`[data-layer-name="${name}"].atk-layer-item`)!
-    if (this.el === null) {
+    this.$el = this.wrapEl.querySelector(`[data-layer-name="${name}"].atk-layer-item`)!
+    if (this.$el === null) {
       // 若传递 layer 元素为空
       if (!el) {
-        this.el = Utils.createElement()
-        this.el.classList.add('atk-layer-item')
+        this.$el = Utils.createElement()
+        this.$el.classList.add('atk-layer-item')
       } else {
-        this.el = el
+        this.$el = el
       }
     }
-    this.el.setAttribute('data-layer-name', name)
-    this.el.style.display = 'none'
+    this.$el.setAttribute('data-layer-name', name)
+    this.$el.style.display = 'none'
 
     // 添加到 layers wrap 中
-    this.wrapEl.append(this.el)
+    this.wrapEl.append(this.$el)
   }
 
   getName () {
@@ -71,7 +62,7 @@ export default class Layer extends Component {
   }
 
   getEl () {
-    return this.el
+    return this.$el
   }
 
   private static hideTimeoutList: number[] = []
@@ -85,7 +76,7 @@ export default class Layer extends Component {
     this.wrapEl.style.display = 'block'
     this.maskEl.style.display = 'block'
     this.maskEl.classList.add('atk-fade-in')
-    this.el.style.display = ''
+    this.$el.style.display = ''
 
     this.maskEl.onclick = () => {
       if (this.maskClickHideEnable) this.hide()
@@ -114,7 +105,7 @@ export default class Layer extends Component {
       this.wrapEl.classList.remove('atk-fade-out')
     }, 200))
 
-    this.el.style.display = 'none'
+    this.$el.style.display = 'none'
   }
 
   setMaskClickHide (enable: boolean) {
@@ -124,16 +115,16 @@ export default class Layer extends Component {
   /** 销毁 - 无动画 */
   disposeNow () {
     document.body.style.overflow = ''
-    this.el.remove()
-    // this.el dispose
+    this.$el.remove()
+    // this.$el dispose
     this.checkCleanLayer()
   }
 
   /** 销毁 */
   dispose () {
     this.hide()
-    this.el.remove()
-    // this.el dispose
+    this.$el.remove()
+    // this.$el dispose
     this.checkCleanLayer()
   }
 

@@ -5,7 +5,7 @@ import EditorPlug from './editor-plug'
 import * as Utils from '~/src/lib/utils'
 
 export default class PreviewPlug extends EditorPlug {
-  el!: HTMLElement
+  $el!: HTMLElement
   binded: boolean = false
 
   constructor (editor: Editor) {
@@ -15,7 +15,7 @@ export default class PreviewPlug extends EditorPlug {
   }
 
   initEl () {
-    this.el = Utils.createElement('<div class="atk-editor-plug-preview"></div>')
+    this.$el = Utils.createElement('<div class="atk-editor-plug-preview"></div>')
     this.binded = false
   }
 
@@ -28,7 +28,7 @@ export default class PreviewPlug extends EditorPlug {
   }
 
   getEl () {
-    return this.el
+    return this.$el
   }
 
   onShow () {
@@ -37,8 +37,8 @@ export default class PreviewPlug extends EditorPlug {
       const event = () => {
         this.updateContent()
       }
-      this.editor.textareaEl.addEventListener('input', event)
-      this.editor.textareaEl.addEventListener('change', event)
+      this.editor.$textarea.addEventListener('input', event)
+      this.editor.$textarea.addEventListener('change', event)
       this.binded = true
     }
   }
@@ -46,8 +46,8 @@ export default class PreviewPlug extends EditorPlug {
   onHide () {}
 
   updateContent () {
-    if (this.el.style.display !== 'none') {
-      this.el.innerHTML = this.editor.getContentMarked()
+    if (this.$el.style.display !== 'none') {
+      this.$el.innerHTML = this.editor.getContentMarked()
     }
   }
 }

@@ -18,16 +18,16 @@ export default class List extends ListLite {
     super(ctx)
 
     const el = Utils.createElement(ListHTML)
-    el.querySelector('.atk-list-body')!.append(this.el)
-    this.el = el
+    el.querySelector('.atk-list-body')!.append(this.$el)
+    this.$el = el
 
     // 平铺模式
-    this.flatMode = this.ctx.conf.flatMode || false
+    this.flatMode = this.ctx.conf.flatMode
 
     // 操作按钮
     this.initListActionBtn()
 
-    this.el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
+    this.$el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
 
     this.ctx.on('list-reload', () => (this.reqComments(0))) // 刷新评论
     this.ctx.on('list-refresh-ui', () => (this.refreshUI()))
@@ -42,7 +42,7 @@ export default class List extends ListLite {
   public refreshUI () {
     super.refreshUI()
 
-    this.el.querySelector<HTMLElement>('.atk-comment-count-num')!.innerText = String(this.getListCommentCount())
+    this.$el.querySelector<HTMLElement>('.atk-comment-count-num')!.innerText = String(this.getListCommentCount())
 
     // 已输入个人信息
     if (!!this.ctx.user.data.nick && !!this.ctx.user.data.email) {
@@ -110,20 +110,20 @@ export default class List extends ListLite {
 
   private initListActionBtn () {
     // 侧边栏呼出按钮
-    this.openSidebarBtnEl = this.el.querySelector('[data-action="open-sidebar"]')!
+    this.openSidebarBtnEl = this.$el.querySelector('[data-action="open-sidebar"]')!
     this.openSidebarBtnEl.addEventListener('click', () => {
       this.ctx.trigger('sidebar-show', { viewName: 'message' })
     })
 
     // 控制台呼出
-    this.openAdminPanelBtnEl = this.el.querySelector('[data-action="open-admin-panel"]')!
+    this.openAdminPanelBtnEl = this.$el.querySelector('[data-action="open-admin-panel"]')!
     this.openAdminPanelBtnEl.addEventListener('click', () => {
       this.ctx.trigger('sidebar-show', { viewName: 'admin' })
     })
 
 
     // 关闭评论按钮
-    this.closeCommentBtnEl = this.el.querySelector('[data-action="admin-close-comment"]')!
+    this.closeCommentBtnEl = this.$el.querySelector('[data-action="admin-close-comment"]')!
     this.closeCommentBtnEl.addEventListener('click', () => {
       if (!this.data) return
 
@@ -131,7 +131,7 @@ export default class List extends ListLite {
       this.adminPageEditSave()
     })
 
-    this.unreadBadgeEl = this.el.querySelector('.atk-unread-badge')!
+    this.unreadBadgeEl = this.$el.querySelector('.atk-unread-badge')!
   }
 
   /** 管理员设置页面信息 */

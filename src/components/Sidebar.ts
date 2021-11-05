@@ -14,7 +14,6 @@ import AdminView from './sidebar-views/admin-view'
 import { SiteData } from '~/types/artalk-data'
 
 export default class Sidebar extends Component {
-  public el: HTMLElement
   public layer?: Layer
 
   public headerEl: HTMLElement
@@ -36,12 +35,12 @@ export default class Sidebar extends Component {
     super(ctx)
 
     // initial elements
-    this.el = Utils.createElement(SidebarHTML)
-    this.headerEl = this.el.querySelector('.atk-sidebar-header')!
-    this.navEl = this.el.querySelector('.atk-sidebar-nav')!
-    this.viewWrapEl = this.el.querySelector('.atk-sidebar-view-wrap')!
+    this.$el = Utils.createElement(SidebarHTML)
+    this.headerEl = this.$el.querySelector('.atk-sidebar-header')!
+    this.navEl = this.$el.querySelector('.atk-sidebar-nav')!
+    this.viewWrapEl = this.$el.querySelector('.atk-sidebar-view-wrap')!
 
-    this.el.querySelector('.atk-sidebar-close')!.addEventListener('click', () => {
+    this.$el.querySelector('.atk-sidebar-close')!.addEventListener('click', () => {
       this.hide()
     })
 
@@ -74,14 +73,14 @@ export default class Sidebar extends Component {
   }
 
   show (viewName?: string) {
-    this.el.style.transform = '' // 动画清除，防止二次打开失效
+    this.$el.style.transform = '' // 动画清除，防止二次打开失效
 
-    this.layer = new Layer(this.ctx, 'sidebar', this.el)
+    this.layer = new Layer(this.ctx, 'sidebar', this.$el)
     this.layer.show()
     this.viewWrapEl.scrollTo(0, 0)
 
     setTimeout(() => {
-      this.el.style.transform = 'translate(0, 0)' // 执行动画
+      this.$el.style.transform = 'translate(0, 0)' // 执行动画
     }, 20)
 
     if (viewName) {
@@ -95,7 +94,7 @@ export default class Sidebar extends Component {
   }
 
   hide () {
-    this.el.style.transform = ''
+    this.$el.style.transform = ''
     this.layer?.dispose() // 用完即销毁
   }
 
@@ -123,7 +122,7 @@ export default class Sidebar extends Component {
     // init view ui
     view.init()
     this.viewWrapEl.innerHTML = ''
-    this.viewWrapEl.append(view.el)
+    this.viewWrapEl.append(view.$el)
 
     // actions
     // this.actionsEl.innerHTML = ''

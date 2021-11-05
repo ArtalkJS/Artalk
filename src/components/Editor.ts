@@ -15,22 +15,20 @@ export default class Editor extends Component {
   private readonly LOADABLE_PLUG_LIST = [EmoticonsPlug, PreviewPlug]
   public plugList: { [name: string]: any } = {}
 
-  public el: HTMLElement
-
-  public headerEl: HTMLElement
-  public textareaWrapEl: HTMLElement
-  public textareaEl: HTMLTextAreaElement
-  public closeCommentEl: HTMLTextAreaElement
-  public plugWrapEl: HTMLElement
-  public bottomEl: HTMLElement
-  public bottomPartLeftEl: HTMLElement
-  public plugSwitcherWrapEl: HTMLElement
-  public bottomPartRightEl: HTMLElement
-  public submitBtn: HTMLButtonElement
-  public notifyWrapEl: HTMLElement
+  public $header: HTMLElement
+  public $textareaWrap: HTMLElement
+  public $textarea: HTMLTextAreaElement
+  public $closeComment: HTMLTextAreaElement
+  public $plugWrap: HTMLElement
+  public $bottom: HTMLElement
+  public $bottomPartLeft: HTMLElement
+  public $plugSwitcherWrap: HTMLElement
+  public $bottomPartRight: HTMLElement
+  public $submitBtn: HTMLButtonElement
+  public $notifyWrap: HTMLElement
 
   private replyComment: CommentData|null = null
-  private sendReplyEl: HTMLElement|null = null
+  private $sendReply: HTMLElement|null = null
 
   private get user () {
     return this.ctx.user
@@ -39,19 +37,19 @@ export default class Editor extends Component {
   constructor (ctx: Context) {
     super(ctx)
 
-    this.el = Utils.createElement(EditorHTML)
+    this.$el = Utils.createElement(EditorHTML)
 
-    this.headerEl = this.el.querySelector('.atk-editor-header')!
-    this.textareaWrapEl = this.el.querySelector('.atk-editor-textarea-wrap')!
-    this.textareaEl = this.el.querySelector('.atk-editor-textarea')!
-    this.closeCommentEl = this.el.querySelector('.atk-close-comment')!
-    this.plugWrapEl = this.el.querySelector('.atk-editor-plug-wrap')!
-    this.bottomEl = this.el.querySelector('.atk-editor-bottom')!
-    this.bottomPartLeftEl = this.el.querySelector('.atk-editor-bottom-part.atk-left')!
-    this.plugSwitcherWrapEl = this.el.querySelector('.atk-editor-plug-switcher-wrap')!
-    this.bottomPartRightEl = this.el.querySelector('.atk-editor-bottom-part.atk-right')!
-    this.submitBtn = this.el.querySelector('.atk-send-btn')!
-    this.notifyWrapEl = this.el.querySelector('.atk-editor-notify-wrap')!
+    this.$header = this.$el.querySelector('.atk-editor-header')!
+    this.$textareaWrap = this.$el.querySelector('.atk-editor-textarea-wrap')!
+    this.$textarea = this.$el.querySelector('.atk-editor-textarea')!
+    this.$closeComment = this.$el.querySelector('.atk-close-comment')!
+    this.$plugWrap = this.$el.querySelector('.atk-editor-plug-wrap')!
+    this.$bottom = this.$el.querySelector('.atk-editor-bottom')!
+    this.$bottomPartLeft = this.$el.querySelector('.atk-editor-bottom-part.atk-left')!
+    this.$plugSwitcherWrap = this.$el.querySelector('.atk-editor-plug-switcher-wrap')!
+    this.$bottomPartRight = this.$el.querySelector('.atk-editor-bottom-part.atk-right')!
+    this.$submitBtn = this.$el.querySelector('.atk-send-btn')!
+    this.$notifyWrap = this.$el.querySelector('.atk-editor-notify-wrap')!
 
     this.initLocalStorage()
     this.initHeader()
@@ -63,8 +61,8 @@ export default class Editor extends Component {
     this.ctx.on('editor-open', () => (this.open()))
     this.ctx.on('editor-close', () => (this.close()))
     this.ctx.on('editor-reply', (commentData) => (this.setReply(commentData)))
-    this.ctx.on('editor-show-loading', () => (Ui.showLoading(this.el)))
-    this.ctx.on('editor-hide-loading', () => (Ui.hideLoading(this.el)))
+    this.ctx.on('editor-show-loading', () => (Ui.showLoading(this.$el)))
+    this.ctx.on('editor-hide-loading', () => (Ui.hideLoading(this.$el)))
     this.ctx.on('editor-notify', (f) => (this.showNotify(f.msg, f.type)))
   }
 
@@ -74,7 +72,7 @@ export default class Editor extends Component {
       this.showNotify('已自动恢复', 'i')
       this.setContent(localContent)
     }
-    this.textareaEl.addEventListener('input', () => {
+    this.$textarea.addEventListener('input', () => {
       this.saveContent()
     })
   }
@@ -91,7 +89,7 @@ export default class Editor extends Component {
   }
 
   getInputEl (field: string) {
-    const inputEl = this.headerEl.querySelector<HTMLInputElement>(`[name="${field}"]`)
+    const inputEl = this.$header.querySelector<HTMLInputElement>(`[name="${field}"]`)
     return inputEl
   }
 
@@ -167,10 +165,10 @@ export default class Editor extends Component {
 
   initTextarea () {
     // 占位符
-    this.textareaEl.placeholder = this.ctx.conf.placeholder || ''
+    this.$textarea.placeholder = this.ctx.conf.placeholder || ''
 
     // 修复按下 Tab 输入的内容
-    this.textareaEl.addEventListener('keydown', (e) => {
+    this.$textarea.addEventListener('keydown', (e) => {
       const keyCode = e.keyCode || e.which
 
       if (keyCode === 9) {
@@ -180,25 +178,25 @@ export default class Editor extends Component {
     })
 
     // 输入框高度随内容而变化
-    this.textareaEl.addEventListener('input', (evt) => {
+    this.$textarea.addEventListener('input', (evt) => {
       this.adjustTextareaHeight()
     })
   }
 
   adjustTextareaHeight () {
-    const diff = this.textareaEl.offsetHeight - this.textareaEl.clientHeight
-    this.textareaEl.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
-    this.textareaEl.style.height = `${this.textareaEl.scrollHeight + diff}px`
+    const diff = this.$textarea.offsetHeight - this.$textarea.clientHeight
+    this.$textarea.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
+    this.$textarea.style.height = `${this.$textarea.scrollHeight + diff}px`
   }
 
   openedPlugName: string|null = null
 
   initEditorPlug () {
     this.plugList = {}
-    this.plugWrapEl.innerHTML = ''
-    this.plugWrapEl.style.display = 'none'
+    this.$plugWrap.innerHTML = ''
+    this.$plugWrap.style.display = 'none'
     this.openedPlugName = null
-    this.plugSwitcherWrapEl.innerHTML = ''
+    this.$plugSwitcherWrap.innerHTML = ''
 
     // 依次实例化 plug
     this.LOADABLE_PLUG_LIST.forEach((PlugObj) => {
@@ -207,27 +205,27 @@ export default class Editor extends Component {
 
       // 切换按钮
       const btnElem = Utils.createElement(`<span class="atk-editor-action atk-editor-plug-switcher">${plug.getBtnHtml()}</span>`)
-      this.plugSwitcherWrapEl.appendChild(btnElem)
+      this.$plugSwitcherWrap.appendChild(btnElem)
       btnElem.addEventListener('click', () => {
-        this.plugSwitcherWrapEl.querySelectorAll('.active').forEach(item => item.classList.remove('active'))
+        this.$plugSwitcherWrap.querySelectorAll('.active').forEach(item => item.classList.remove('active'))
 
         // 若点击已打开的，则收起
         if (plug.getName() === this.openedPlugName) {
           plug.onHide()
-          this.plugWrapEl.style.display = 'none'
+          this.$plugWrap.style.display = 'none'
           this.openedPlugName = null
           return
         }
 
-        if (this.plugWrapEl.querySelector(`[data-plug-name="${plug.getName()}"]`) === null) {
+        if (this.$plugWrap.querySelector(`[data-plug-name="${plug.getName()}"]`) === null) {
           // 需要初始化
           const plugEl = plug.getEl()
           plugEl.setAttribute('data-plug-name', plug.getName())
           plugEl.style.display = 'none'
-          this.plugWrapEl.appendChild(plugEl)
+          this.$plugWrap.appendChild(plugEl)
         }
 
-        (Array.from(this.plugWrapEl.children) as HTMLElement[]).forEach((plugItemEl: HTMLElement) => {
+        (Array.from(this.$plugWrap.children) as HTMLElement[]).forEach((plugItemEl: HTMLElement) => {
           const plugItemName = plugItemEl.getAttribute('data-plug-name')!
           if (plugItemName === plug.getName()) {
             plugItemEl.style.display = ''
@@ -238,7 +236,7 @@ export default class Editor extends Component {
           }
         })
 
-        this.plugWrapEl.style.display = ''
+        this.$plugWrap.style.display = ''
         this.openedPlugName = plug.getName()
 
         btnElem.classList.add('active')
@@ -248,33 +246,33 @@ export default class Editor extends Component {
 
   /** 关闭编辑器插件 */
   closePlug () {
-    this.plugWrapEl.innerHTML = ''
-    this.plugWrapEl.style.display = 'none'
+    this.$plugWrap.innerHTML = ''
+    this.$plugWrap.style.display = 'none'
     this.openedPlugName = null
   }
 
   insertContent (val: string) {
     if ((document as any).selection) {
-      this.textareaEl.focus();
+      this.$textarea.focus();
       (document as any).selection.createRange().text = val
-      this.textareaEl.focus()
-    } else if (this.textareaEl.selectionStart || this.textareaEl.selectionStart === 0) {
-      const sStart = this.textareaEl.selectionStart
-      const sEnd = this.textareaEl.selectionEnd
-      const sT = this.textareaEl.scrollTop
-      this.setContent(this.textareaEl.value.substring(0, sStart) + val + this.textareaEl.value.substring(sEnd, this.textareaEl.value.length))
-      this.textareaEl.focus()
-      this.textareaEl.selectionStart = sStart + val.length
-      this.textareaEl.selectionEnd = sStart + val.length
-      this.textareaEl.scrollTop = sT
+      this.$textarea.focus()
+    } else if (this.$textarea.selectionStart || this.$textarea.selectionStart === 0) {
+      const sStart = this.$textarea.selectionStart
+      const sEnd = this.$textarea.selectionEnd
+      const sT = this.$textarea.scrollTop
+      this.setContent(this.$textarea.value.substring(0, sStart) + val + this.$textarea.value.substring(sEnd, this.$textarea.value.length))
+      this.$textarea.focus()
+      this.$textarea.selectionStart = sStart + val.length
+      this.$textarea.selectionEnd = sStart + val.length
+      this.$textarea.scrollTop = sT
     } else {
-      this.textareaEl.focus()
-      this.textareaEl.value += val
+      this.$textarea.focus()
+      this.$textarea.value += val
     }
   }
 
   setContent (val: string) {
-    this.textareaEl.value = val
+    this.$textarea.value = val
     this.saveContent()
     if (!!this.plugList && !!this.plugList.preview) {
       this.plugList.preview.updateContent()
@@ -300,7 +298,7 @@ export default class Editor extends Component {
   }
 
   getContentOriginal () {
-    return this.textareaEl.value || '' // Tip: !!"0" === true
+    return this.$textarea.value || '' // Tip: !!"0" === true
   }
 
   getContentMarked () {
@@ -314,7 +312,7 @@ export default class Editor extends Component {
 
   initReply () {
     this.replyComment = null
-    this.sendReplyEl = null
+    this.$sendReply = null
   }
 
   setReply (commentData: CommentData) {
@@ -322,31 +320,31 @@ export default class Editor extends Component {
       this.cancelReply()
     }
 
-    if (this.sendReplyEl === null) {
-      this.sendReplyEl = Utils.createElement('<div class="atk-send-reply-wrap"><div class="atk-send-reply">回复 <span class="atk-text"></span><span class="atk-cancel" title="取消 AT">×</span></div></div>');
-      this.sendReplyEl.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
-      this.sendReplyEl.addEventListener('click', () => {
+    if (this.$sendReply === null) {
+      this.$sendReply = Utils.createElement('<div class="atk-send-reply-wrap"><div class="atk-send-reply">回复 <span class="atk-text"></span><span class="atk-cancel" title="取消 AT">×</span></div></div>');
+      this.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
+      this.$sendReply.addEventListener('click', () => {
         this.cancelReply()
       })
-      this.textareaWrapEl.prepend(this.sendReplyEl)
+      this.$textareaWrap.prepend(this.$sendReply)
     }
     this.replyComment = commentData
-    Ui.scrollIntoView(this.el)
-    this.textareaEl.focus()
+    Ui.scrollIntoView(this.$el)
+    this.$textarea.focus()
   }
 
   cancelReply () {
-    if (this.sendReplyEl !== null) {
-      this.sendReplyEl.remove()
-      this.sendReplyEl = null
+    if (this.$sendReply !== null) {
+      this.$sendReply.remove()
+      this.$sendReply = null
     }
     this.replyComment = null
   }
 
   initSubmit () {
-    this.submitBtn.innerText = this.ctx.conf.sendBtn || 'Send'
+    this.$submitBtn.innerText = this.ctx.conf.sendBtn || 'Send'
 
-    this.submitBtn.addEventListener('click', (evt) => {
+    this.$submitBtn.addEventListener('click', (evt) => {
       const btnEl = evt.currentTarget
       this.submit()
     })
@@ -354,13 +352,13 @@ export default class Editor extends Component {
 
   async submit () {
     if (this.getContent().trim() === '') {
-      this.textareaEl.focus()
+      this.$textarea.focus()
       return
     }
 
     this.ctx.trigger('editor-submit')
 
-    Ui.showLoading(this.el)
+    Ui.showLoading(this.$el)
 
     try {
       const nComment = await new Api(this.ctx).add({
@@ -378,34 +376,34 @@ export default class Editor extends Component {
       console.error(err)
       this.showNotify(`评论失败，${err.msg || String(err)}`, 'e')
     } finally {
-      Ui.hideLoading(this.el)
+      Ui.hideLoading(this.$el)
     }
   }
 
   showNotify (msg: string, type) {
-    Ui.showNotify(this.notifyWrapEl, msg, type)
+    Ui.showNotify(this.$notifyWrap, msg, type)
   }
 
   /** 关闭评论 */
   close () {
-    this.closeCommentEl.style.display = ''
+    this.$closeComment.style.display = ''
 
     if (!this.user.data.isAdmin) {
-      this.textareaEl.style.display = 'none'
+      this.$textarea.style.display = 'none'
       this.closePlug()
-      this.bottomEl.style.display = 'none'
+      this.$bottom.style.display = 'none'
     } else {
       // 管理员一直打开评论
-      this.textareaEl.style.display = ''
-      this.bottomEl.style.display = ''
+      this.$textarea.style.display = ''
+      this.$bottom.style.display = ''
     }
   }
 
   /** 打开评论 */
   open () {
-    this.closeCommentEl.style.display = 'none'
-    this.textareaEl.style.display = ''
-    this.bottomEl.style.display = ''
+    this.$closeComment.style.display = 'none'
+    this.$textarea.style.display = ''
+    this.$bottom.style.display = ''
   }
 }
 

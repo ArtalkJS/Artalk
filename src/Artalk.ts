@@ -60,15 +60,15 @@ export default class Artalk {
 
     // 编辑器
     this.editor = new Editor(this.ctx)
-    this.$root.appendChild(this.editor.el)
+    this.$root.appendChild(this.editor.$el)
 
     // 评论列表
     this.list = new List(this.ctx)
-    this.$root.appendChild(this.list.el)
+    this.$root.appendChild(this.list.$el)
 
     // 侧边栏
     this.sidebar = new Sidebar(this.ctx)
-    this.$root.appendChild(this.sidebar.el)
+    this.$root.appendChild(this.sidebar.$el)
 
     // 评论获取
     this.list.reqComments()

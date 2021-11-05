@@ -1,7 +1,7 @@
-import './PreviewPlug.less'
+import './preview-plug.less'
 
-import Editor from '../Editor'
-import EditorPlug from './EditorPlug'
+import Editor from '../editor'
+import EditorPlug from './editor-plug'
 import * as Utils from '~/src/lib/utils'
 
 export default class PreviewPlug extends EditorPlug {

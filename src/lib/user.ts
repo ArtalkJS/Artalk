@@ -1,4 +1,4 @@
-import { ArtalkConfig, LocalUser } from "~/types/artalk-config"
+import ArtalkConfig, { LocalUser } from "~/types/artalk-config"
 
 export default class User {
   public data: LocalUser

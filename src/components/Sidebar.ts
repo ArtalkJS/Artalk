@@ -1,16 +1,16 @@
 import '../style/sidebar.less'
 
-import Context from '../Context'
+import Context from '../context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
-import Comment  from './Comment'
+import Comment  from './comment'
 import SidebarHTML from './html/sidebar.html?raw'
-import BuildLayer, { Layer } from './Layer'
+import Layer from './layer'
 
-import SidebarView from './sidebar-views/SidebarView'
-import MessageView from './sidebar-views/MessageView'
-import AdminView from './sidebar-views/AdminView'
+import SidebarView from './sidebar-views/sidebar-view'
+import MessageView from './sidebar-views/message-view'
+import AdminView from './sidebar-views/admin-view'
 import { SiteData } from '~/types/artalk-data'
 
 export default class Sidebar extends Component {
@@ -76,7 +76,7 @@ export default class Sidebar extends Component {
   show (viewName?: string) {
     this.el.style.transform = '' // 动画清除，防止二次打开失效
 
-    this.layer = BuildLayer(this.ctx, 'sidebar', this.el)
+    this.layer = new Layer(this.ctx, 'sidebar', this.el)
     this.layer.show()
     this.viewWrapEl.scrollTo(0, 0)
 

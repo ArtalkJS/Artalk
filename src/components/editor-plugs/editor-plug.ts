@@ -1,5 +1,5 @@
-import Context from "~/src/Context"
-import Editor from "../Editor"
+import Context from "~/src/context"
+import Editor from "../editor"
 
 export default abstract class EditorPlug {
   protected editor: Editor

@@ -1,9 +1,9 @@
 import * as Utils from './utils'
-import Context from '../Context'
+import Context from '../context'
 
 /** 显示加载 */
 export function showLoading(parentElem: HTMLElement|Context) {
-  if (parentElem instanceof Context) parentElem = parentElem.rootEl
+  if (parentElem instanceof Context) parentElem = parentElem.$root
 
   let loadingEl = parentElem.querySelector<HTMLElement>('.atk-loading')
   if (!loadingEl) {
@@ -20,7 +20,7 @@ export function showLoading(parentElem: HTMLElement|Context) {
 
 /** 隐藏加载 */
 export function hideLoading(parentElem: HTMLElement|Context) {
-  if (parentElem instanceof Context) parentElem = parentElem.rootEl
+  if (parentElem instanceof Context) parentElem = parentElem.$root
 
   const loadingEl = parentElem.querySelector<HTMLElement>('.atk-loading')
   if (loadingEl) loadingEl.style.display = 'none'
@@ -169,7 +169,7 @@ export function playFadeOutAnim(elem: HTMLElement, after?: () => void) {
 
 /** 设置全局错误 */
 export function setError(parentElem: HTMLElement|Context, html: string | HTMLElement | null, title: string = '<span class="atk-error-title">Artalk Error</span>') {
-  if (parentElem instanceof Context) parentElem = parentElem.rootEl
+  if (parentElem instanceof Context) parentElem = parentElem.$root
 
   let elem = parentElem.querySelector<HTMLElement>('.atk-error-layer')
   if (html === null) {

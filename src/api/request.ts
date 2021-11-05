@@ -1,4 +1,4 @@
-import Context from '../Context'
+import Context from '../context'
 
 /** 公共请求函数 */
 export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit): Promise<any> {

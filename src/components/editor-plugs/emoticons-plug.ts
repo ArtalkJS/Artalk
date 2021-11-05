@@ -1,7 +1,7 @@
-import './EmoticonsPlug.less'
+import './emoticons-plug.less'
 
-import Editor from '../Editor'
-import EditorPlug from './EditorPlug'
+import Editor from '../editor'
+import EditorPlug from './editor-plug'
 import * as Utils from '~/src/lib/utils'
 
 type EmoticonListType = {

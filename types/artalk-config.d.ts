@@ -1,4 +1,4 @@
-export interface ArtalkConfig {
+export default interface ArtalkConfig {
   /** 装载元素 */
   el: string
 

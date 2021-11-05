@@ -1,6 +1,6 @@
 import '../style/comment.less'
 
-import Context from '../Context'
+import Context from '../context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'

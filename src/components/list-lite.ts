@@ -1,9 +1,9 @@
-import Context from '../Context'
+import Context from '../context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import Api from '../api'
-import Comment from './Comment'
+import Comment from './comment'
 import { ListData, CommentData, NotifyData, ApiVersionData } from '~/types/artalk-data'
 
 export default class ListLite extends Component {

@@ -1,7 +1,7 @@
-import Context from '../../Context'
+import Context from '../../context'
 import Component from '../../lib/component'
 import * as Utils from '../../lib/utils'
-import Comment from '../Comment'
+import Comment from '../comment'
 
 export default class SidebarView extends Component {
   constructor (ctx: Context) {

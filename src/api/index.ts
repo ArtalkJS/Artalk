@@ -1,4 +1,4 @@
-import Context from '../Context'
+import Context from '../context'
 import { CommentData, ListData, UserData, PageData, SiteData, NotifyData } from '~/types/artalk-data'
 import { Fetch, ToFormData, POST, GET } from './request'
 

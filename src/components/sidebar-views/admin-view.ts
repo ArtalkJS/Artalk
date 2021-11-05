@@ -1,9 +1,9 @@
-import Context from '../../Context'
-import SidebarView from './SidebarView'
+import Context from '../../context'
+import SidebarView from './sidebar-view'
 import * as Utils from '../../lib/utils'
-import Comment from '../Comment'
-import ListLite from '../ListLite'
-import { CreateCommentList } from './MessageView'
+import Comment from '../comment'
+import ListLite from '../list-lite'
+import { CreateCommentList } from './message-view'
 import Api from '../../api'
 
 export default class AdminView extends SidebarView {

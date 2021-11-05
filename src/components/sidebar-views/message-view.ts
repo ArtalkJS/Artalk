@@ -1,7 +1,7 @@
-import Context from '../../Context'
-import SidebarView from './SidebarView'
+import Context from '../../context'
+import SidebarView from './sidebar-view'
 import * as Utils from '../../lib/utils'
-import ListLite from '../ListLite'
+import ListLite from '../list-lite'
 
 export default class MessageView extends SidebarView {
   name = 'message'

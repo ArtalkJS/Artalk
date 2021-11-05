@@ -1,6 +1,6 @@
-import Context from '../Context'
+import Context from '../context'
 import Component from '../lib/component'
-import Constant from '../Constant'
+import Constant from '../constant'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 
@@ -27,11 +27,7 @@ export function GetLayerWrap (ctx: Context): { wrapEl: HTMLElement, maskEl: HTML
   return { wrapEl, maskEl }
 }
 
-export default function BuildLayer (ctx: Context, name: string, el?: HTMLElement) {
-  return new Layer(ctx, name, el)
-}
-
-export class Layer extends Component {
+export default class Layer extends Component {
   private name: string
   private wrapEl: HTMLElement
   private maskEl: HTMLElement

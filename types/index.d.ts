@@ -1,3 +1,3 @@
-import Artalk from '../src/Artalk'
+import Artalk from '../src/artalk'
 
 export default Artalk

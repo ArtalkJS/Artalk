@@ -1,8 +1,8 @@
-import Context from "../Context"
+import Context from "../context"
 import * as Utils from "./utils"
 import User from "./user"
 import * as Ui from './ui'
-import BuildLayer from '../components/Layer'
+import Layer from '../components/layer'
 import Api from '../api'
 import { CheckerCaptchaConf } from '~/types/event'
 
@@ -93,7 +93,7 @@ export default class Checker {
       captcha: CaptchaChecker
     }[name]
 
-    const layer = BuildLayer(this.ctx, `checker-${new Date().getTime()}`)
+    const layer = new Layer(this.ctx, `checker-${new Date().getTime()}`)
     layer.setMaskClickHide(false)
     layer.show()
 

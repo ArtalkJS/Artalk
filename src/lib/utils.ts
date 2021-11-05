@@ -1,6 +1,6 @@
 import libMarked from 'marked'
 import hanabi from 'hanabi'
-import Context from '../Context'
+import Context from '../context'
 
 export function createElement<E extends HTMLElement = HTMLElement> (htmlStr: string = ''): E {
   const div = document.createElement('div')

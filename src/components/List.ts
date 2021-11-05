@@ -1,11 +1,11 @@
 import '../style/list.less'
 
-import Context from '../Context'
+import Context from '../context'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import Api from '../api'
 import ListHTML from './html/list.html?raw'
-import ListLite from './ListLite'
+import ListLite from './list-lite'
 import { ListData } from '~/types/artalk-data'
 
 export default class List extends ListLite {

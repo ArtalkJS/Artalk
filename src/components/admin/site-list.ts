@@ -46,12 +46,13 @@ export default class SiteList extends Component {
   public importSites(sites: SiteData[]) {
     this.sites.push(...sites)
 
+    let $row: HTMLElement
+
     for (let i = 0; i < sites.length; i++) {
       const site = sites[i]
 
-      let $row: HTMLElement
       if (i % 4 === 0) { // 每 4 个 item 为一行
-        $row = Utils.createElement('<div class="atk-site-rows-wrap">')
+        $row = Utils.createElement('<div class="atk-site-row">')
         this.$rowsWrap.append($row)
       }
 
@@ -117,8 +118,8 @@ export default class SiteList extends Component {
     const $renameBtn = $actions.querySelector<HTMLElement>('.atk-rename-btn')!
     const $editUrlBtn = $actions.querySelector<HTMLElement>('.atk-edit-url-btn')!
     const $exportBtn = $actions.querySelector<HTMLElement>('.atk-export-btn')!
-    const $importBtn = $actions.querySelector<HTMLElement>(`atk-import-btn`)!
-    const $delBtn = $site.querySelector<HTMLElement>('.atk-del-btn')!
+    const $importBtn = $actions.querySelector<HTMLElement>(`.atk-import-btn`)!
+    const $delBtn = this.$editor.querySelector<HTMLElement>('.atk-del-btn')!
 
     // 重命名
     $renameBtn.onclick = () => {}

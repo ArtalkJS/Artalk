@@ -34,11 +34,12 @@ export default class PageList extends Component {
             </div>
           </div>
         </div>`)
+      this.$el.append($page)
 
       const $main = $page.querySelector<HTMLElement>('.atk-page-main')!
       const $title = $main.querySelector<HTMLElement>('.atk-title')!
       const $sub = $main.querySelector<HTMLElement>('.atk-sub')!
-      const $editBtn = $main.querySelector<HTMLElement>('.atk-edit-btn')!
+      const $editBtn = $page.querySelector<HTMLElement>('.atk-edit-btn')!
 
       $title.innerText = page.title
       $sub.innerText = page.url || page.key
@@ -65,7 +66,7 @@ export default class PageList extends Component {
         <div class="atk-item atk-del-btn">
           <i class="atk-icon atk-icon-del"></i>
         </div>
-        <div class="atk-item atk-item-close">
+        <div class="atk-item atk-close-btn">
           <i class="atk-icon atk-icon-close"></i>
         </div>
       </div>
@@ -74,7 +75,7 @@ export default class PageList extends Component {
     $page.prepend(this.$editor)
 
     const $titleEditBtn = this.$editor.querySelector<HTMLElement>('.atk-title-edit-btn')!
-    const $keyEditBtn = this.$editor.querySelector<HTMLElement>('.key-edit-btn')!
+    const $keyEditBtn = this.$editor.querySelector<HTMLElement>('.atk-key-edit-btn')!
     const $adminOnlyBtn = this.$editor.querySelector<HTMLElement>('.atk-admin-only-btn')!
     const $syncBtn = this.$editor.querySelector<HTMLElement>('.atk-sync-btn')!
     const $delBtn = this.$editor.querySelector<HTMLElement>('.atk-del-btn')!
@@ -89,7 +90,7 @@ export default class PageList extends Component {
 
     $syncBtn.onclick = () => {}
     $delBtn.onclick = () => {}
-    $closeBtn.onclick = () => {}
+    $closeBtn.onclick = () => { this.closeEditor() }
   }
 
   public closeEditor() {

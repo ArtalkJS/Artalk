@@ -112,15 +112,8 @@ export default class List extends ListLite {
     // 侧边栏呼出按钮
     this.openSidebarBtnEl = this.$el.querySelector('[data-action="open-sidebar"]')!
     this.openSidebarBtnEl.addEventListener('click', () => {
-      this.ctx.trigger('sidebar-show', { viewName: 'message' })
+      this.ctx.trigger('sidebar-show')
     })
-
-    // 控制台呼出
-    this.openAdminPanelBtnEl = this.$el.querySelector('[data-action="open-admin-panel"]')!
-    this.openAdminPanelBtnEl.addEventListener('click', () => {
-      this.ctx.trigger('sidebar-show', { viewName: 'admin' })
-    })
-
 
     // 关闭评论按钮
     this.closeCommentBtnEl = this.$el.querySelector('[data-action="admin-close-comment"]')!

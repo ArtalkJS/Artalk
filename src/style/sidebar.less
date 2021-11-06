@@ -44,7 +44,7 @@
       }
     }
 
-    .atk-view-switcher {
+    .atk-menu {
       flex: auto;
       text-align: center;
 
@@ -98,7 +98,7 @@
     flex-direction: row;
     border-bottom: 1px solid @color-border;
 
-    .akt-menu-btn {
+    .akt-curt-view-btn {
       display: flex;
       align-items: center;
       padding: 0 20px;
@@ -155,6 +155,10 @@
     .atk-tabs {
       display: flex;
       flex-direction: row;
+
+      &.atk-views .atk-active {
+        display: none;
+      }
 
       .atk-tab-item {
         line-height: @nav-height;
@@ -390,280 +394,5 @@
   .atk-btn {
     padding: 4px 25px;
     margin-top: 20px;
-  }
-}
-
-.atk-page-list {
-  .atk-page-item {
-    border-bottom: 1px solid @color-border;
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    min-height: 120px;
-    align-items: center;
-  }
-
-  .atk-page-main {
-    display: flex;
-    flex-direction: column;
-    flex: auto;
-    padding: 20px 30px;
-
-    .atk-title {
-      color: @color-font;
-      font-size: 21px;
-      margin-bottom: 10px;
-    }
-
-    .atk-sub {
-      color: @color-sub;
-      font-size: 14px;
-    }
-  }
-
-  .atk-page-edit-layer {
-    z-index: 999;
-    background: @color-bg;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    .atk-page-edit-form {
-      flex: auto;
-      padding-left: 20px;
-
-      input {
-        font-size: 17px;
-        width: 100%;
-        padding: 3px 5px;
-        border: 0;
-        border-bottom: 1px solid @color-border;
-        outline: none;
-      }
-    }
-  }
-}
-
-.atk-page-main-actions, .atk-site-text-actions {
-  display: flex;
-  flex-direction: column;
-  flex: auto;
-  padding: 0 35px;
-  padding-top: 10px;
-  padding-bottom: 0;
-  flex-wrap: wrap;
-  align-content: flex-start;
-
-  .atk-item {
-    position: relative;
-    font-size: 17px;
-    max-width: 5em;
-    display: inline-flex;
-    margin-right: 15px;
-    margin-bottom: 6px;
-    cursor: pointer;
-    user-select: none;
-
-    &.atk-green:after {
-      position: absolute;
-      content: ' ';
-      height: 5px;
-      width: 100%;
-      left: 0;
-      bottom: 5px;
-      background: rgba(50, 199, 134, 0.39);
-    }
-  }
-}
-
-.atk-page-actions, .atk-site-btn-actions {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0 20px;
-
-  .atk-item {
-    &:hover {
-      background: @color-bg-grey;
-    }
-
-    &:not(:last-child) {
-      margin-right: 15px;
-    }
-
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    width: 35px;
-    height: 35px;
-    border-radius: 2px;
-    align-items: center;
-    justify-content: center;
-
-    &.atk-item-close {
-      margin-left: 10px;
-    }
-  }
-
-  .atk-icon {
-    background-color: @color-meta;
-  }
-
-  .atk-icon-yes {
-    background-color: @color-main;
-  }
-}
-
-.atk-site-list {
-  & > .atk-header {
-    display: flex;
-    flex-direction: row;
-    padding: 15px 30px;
-    padding-bottom: 0;
-    align-items: center;
-
-    .atk-title {
-      flex: auto;
-      padding-right: 10px;
-    }
-
-    .atk-actions {
-      display: flex;
-      flex-direction: row;
-
-      .atk-item {
-        display: flex;
-        height: 30px;
-        width: 30px;
-        justify-content: center;
-        align-items: center;
-        user-select: none;
-        cursor: pointer;
-        border-radius: 2px;
-
-        &:hover {
-          background: @color-bg-grey;
-        }
-      }
-    }
-  }
-
-  .atk-site-row-wrap {
-    position: relative;
-
-    .atk-site-edit {
-      position: relative;
-      min-height: 120px;
-      width: 100%;
-      border-top: 1px solid @color-border;
-      border-bottom: 1px solid @color-border;
-      margin-bottom: -10px;
-
-      .atk-header {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding: 10px 30px 10px 35px;
-        justify-content: space-between;
-
-        .atk-site-name {
-          font-size: 23px;
-          position: relative;
-
-          &:after {
-            content: ' ';
-            position: absolute;
-            width: 100%;
-            height: 6px;
-            background: @color-main;
-            opacity: .4;
-            left: 0;
-            bottom: 6px;
-          }
-        }
-
-        .atk-close-btn {
-          width: 50px;
-          height: 50px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          cursor: pointer;
-
-          &:hover i {
-            background-color: @color-red;
-          }
-        }
-      }
-
-      .atk-main {
-        display: flex;
-        flex-direction: row;
-        padding: 0 30px 0 35px;
-        padding-bottom: 10px;
-
-        .atk-site-text-actions {
-          height: 90px;
-          padding: 0;
-          padding-left: 10px;
-
-          .atk-item {
-            margin-bottom: 17px;
-            margin-right: 25px;
-          }
-        }
-
-        .atk-site-btn-actions {
-          padding-right: 9px;
-        }
-      }
-    }
-
-    .atk-site-row {
-      display: flex;
-      flex-direction: row;
-      padding: 10px 20px;
-      padding-bottom: 0;
-    }
-
-    .atk-site-item {
-      display: flex;
-      flex-basis: 25%;
-      flex-direction: column;
-      align-items: center;
-      padding-bottom: 5px;
-
-      .atk-site-logo {
-        margin: 15px;
-        text-align: center;
-        font-size: 20px;
-        height: 65px;
-        width: 65px;
-        line-height: 65px;
-        background: @color-quote;
-        color: #fff;
-        border-radius: 4px;
-      }
-
-      .atk-site-name {
-        text-align: center;
-        font-size: 16px;
-        color: @color-sub;
-      }
-    }
-
-    .atk-site-item.atk-active {
-      background-color: @color-bg-grey;
-      border: 1px solid @color-border;
-      margin-top: -1px;
-      border-radius: 0 0 4px 4px;
-
-      .atk-site-name {
-        color: @color-deep;
-      }
-    }
   }
 }

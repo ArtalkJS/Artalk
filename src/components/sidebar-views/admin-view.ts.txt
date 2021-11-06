@@ -3,7 +3,6 @@ import SidebarView from './sidebar-view'
 import * as Utils from '../../lib/utils'
 import Comment from '../comment'
 import ListLite from '../list-lite'
-import { CreateCommentList } from './message-view'
 import Api from '../../api'
 
 export default class AdminView extends SidebarView {

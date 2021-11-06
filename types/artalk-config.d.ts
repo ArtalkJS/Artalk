@@ -11,9 +11,6 @@ export default interface ArtalkConfig {
   /** 发送按钮文字 */
   sendBtn?: string
 
-  /** 默认头像（URL or Gravatar Type） */
-  defaultAvatar?: string
-
   /** 页面唯一标识（完整 URL） */
   pageKey: string
 
@@ -29,10 +26,13 @@ export default interface ArtalkConfig {
   /** 表情包 */
   emoticons?: object|any
 
-  /** 头像 */
+  /** Gravatar 头像 */
   gravatar?: {
-    /** CDN 地址 */
-    cdn?: string
+    /** 镜像 */
+    mirror?: string
+
+    /** 默认头像（URL or Gravatar Type） */
+    default?: string
   }
 
   /** 查看更多配置 */
@@ -43,7 +43,10 @@ export default interface ArtalkConfig {
     autoLoad?: boolean
   }
 
-  /** 反对按钮 */
+  /** 评论投票按钮 */
+  vote?: boolean
+
+  /** 评论投票反对按钮 */
   voteDown?: boolean
 
   /** 暗黑模式 */
@@ -57,6 +60,9 @@ export default interface ArtalkConfig {
 
   /** 最大嵌套数 */
   maxNesting?: number
+
+  /** 显示 UA 徽标 */
+  uaBadge?: boolean
 
   /** 版本检测 */
   versionCheck?: boolean

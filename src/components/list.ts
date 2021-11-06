@@ -9,10 +9,9 @@ import ListLite from './list-lite'
 import { ListData } from '~/types/artalk-data'
 
 export default class List extends ListLite {
-  private closeCommentBtnEl!: HTMLElement
-  private openSidebarBtnEl!: HTMLElement
-  private openAdminPanelBtnEl!: HTMLElement
-  private unreadBadgeEl!: HTMLElement
+  private $closeCommentBtn!: HTMLElement
+  private $openSidebarBtn!: HTMLElement
+  private $unreadBadge!: HTMLElement
 
   constructor (ctx: Context) {
     super(ctx)
@@ -27,8 +26,10 @@ export default class List extends ListLite {
     // 操作按钮
     this.initListActionBtn()
 
+    // copyright
     this.$el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
 
+    // event listen
     this.ctx.on('list-reload', () => (this.reqComments(0))) // 刷新评论
     this.ctx.on('list-refresh-ui', () => (this.refreshUI()))
     this.ctx.on('list-import', (data) => (this.importComments(data)))
@@ -36,6 +37,25 @@ export default class List extends ListLite {
     this.ctx.on('list-delete', (comment) => (this.deleteComment(comment.id)))
     this.ctx.on('list-update', (updateData) => { updateData(this.data);this.refreshUI() } )
     this.ctx.on('unread-update', (data) => (this.showUnreadBadge(data.notifies?.length || 0)))
+  }
+
+  private initListActionBtn () {
+    // 侧边栏呼出按钮
+    this.$openSidebarBtn = this.$el.querySelector('[data-action="open-sidebar"]')!
+    this.$closeCommentBtn = this.$el.querySelector('[data-action="admin-close-comment"]')!
+    this.$unreadBadge = this.$el.querySelector('.atk-unread-badge')!
+
+    this.$openSidebarBtn.addEventListener('click', () => {
+      this.ctx.trigger('sidebar-show')
+    })
+
+    // 关闭评论按钮
+    this.$closeCommentBtn.addEventListener('click', () => {
+      if (!this.data) return
+
+      this.data.page.admin_only = !this.data.page.admin_only
+      this.adminPageEditSave()
+    })
   }
 
   /** 刷新界面 */
@@ -46,21 +66,22 @@ export default class List extends ListLite {
 
     // 已输入个人信息
     if (!!this.ctx.user.data.nick && !!this.ctx.user.data.email) {
-      this.openSidebarBtnEl.classList.remove('atk-hide')
+      this.$openSidebarBtn.classList.remove('atk-hide')
     } else {
-      this.openSidebarBtnEl.classList.add('atk-hide')
+      this.$openSidebarBtn.classList.add('atk-hide')
     }
 
     // 仅管理员显示控制
     this.ctx.trigger('check-admin-show-el')
+    this.$openSidebarBtn.innerText = (!this.ctx.user.data.isAdmin) ? '通知中心' : '控制中心'
 
     // 关闭评论
     if (!!this.data && !!this.data.page && this.data.page.admin_only === true) {
       this.ctx.trigger('editor-close')
-      this.closeCommentBtnEl.innerHTML = '打开评论'
+      this.$closeCommentBtn.innerHTML = '打开评论'
     } else {
       this.ctx.trigger('editor-open')
-      this.closeCommentBtnEl.innerHTML = '关闭评论'
+      this.$closeCommentBtn.innerHTML = '关闭评论'
     }
   }
 
@@ -108,25 +129,6 @@ export default class List extends ListLite {
     }, 800)
   }
 
-  private initListActionBtn () {
-    // 侧边栏呼出按钮
-    this.openSidebarBtnEl = this.$el.querySelector('[data-action="open-sidebar"]')!
-    this.openSidebarBtnEl.addEventListener('click', () => {
-      this.ctx.trigger('sidebar-show')
-    })
-
-    // 关闭评论按钮
-    this.closeCommentBtnEl = this.$el.querySelector('[data-action="admin-close-comment"]')!
-    this.closeCommentBtnEl.addEventListener('click', () => {
-      if (!this.data) return
-
-      this.data.page.admin_only = !this.data.page.admin_only
-      this.adminPageEditSave()
-    })
-
-    this.unreadBadgeEl = this.$el.querySelector('.atk-unread-badge')!
-  }
-
   /** 管理员设置页面信息 */
   public adminPageEditSave () {
     if (!this.data || !this.data.page) return
@@ -148,10 +150,10 @@ export default class List extends ListLite {
 
   public showUnreadBadge (count: number) {
     if (count > 0) {
-      this.unreadBadgeEl.innerText = `${Number(count || 0)}`
-      this.unreadBadgeEl.style.display = 'block'
+      this.$unreadBadge.innerText = `${Number(count || 0)}`
+      this.$unreadBadge.style.display = 'block'
     } else {
-      this.unreadBadgeEl.style.display = 'none'
+      this.$unreadBadge.style.display = 'none'
     }
   }
 }

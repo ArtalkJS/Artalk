@@ -14,6 +14,7 @@ export default class Comment extends Component {
   public data: CommentData
 
   public $main!: HTMLElement
+  public $header!: HTMLElement
   public $body!: HTMLElement
   public $content!: HTMLElement
   public $children!: HTMLElement|null
@@ -50,6 +51,7 @@ export default class Comment extends Component {
   public render() {
     this.$el = Utils.createElement(CommentHTML)
     this.$main = this.$el.querySelector('.atk-comment-main')!
+    this.$header = this.$el.querySelector('.atk-header')!
     this.$body = this.$el.querySelector('.atk-body')!
     this.$content = this.$body.querySelector('.atk-content')!
     this.$actions = this.$el.querySelector('.atk-comment-actions')!
@@ -117,8 +119,15 @@ export default class Comment extends Component {
     const dateEL = this.$el.querySelector<HTMLElement>('.atk-date')!
     dateEL.innerText = this.getDateFormatted()
     dateEL.setAttribute('data-atk-comment-date', String(+new Date(this.data.date)))
-    this.$el.querySelector<HTMLElement>('.atk-ua.ua-browser')!.innerText = this.getUserUaBrowser()
-    this.$el.querySelector<HTMLElement>('.atk-ua.ua-os')!.innerText = this.getUserUaOS()
+
+    if (this.conf.uaBadge) {
+      const $uaBrowser = Utils.createElement(`<span class="atk-ua ua-browser"></span>`)
+      const $usOS = Utils.createElement(`<span class="atk-ua ua-os"></span>`)
+      $uaBrowser.innerText = this.getUserUaBrowser()
+      $usOS.innerText = this.getUserUaOS()
+      this.$header.append($uaBrowser)
+      this.$header.append($usOS)
+    }
   }
 
   private renderContent() {
@@ -179,18 +188,21 @@ export default class Comment extends Component {
 
   /** 初始化评论操作按钮 */
   private renderActionBtn() {
-    // 赞同按钮
-    const voteBtnUp = new ActionBtn(() => `赞同 (${this.data.vote_up || 0})`).appendTo(this.$actions)
-    voteBtnUp.setClick(() => {
-      this.vote('up', voteBtnUp)
-    })
-
-    // 反对按钮
-    if (this.ctx.conf.voteDown) {
-      const voteBtnDown = new ActionBtn(() => `反对 (${this.data.vote_up || 0})`).appendTo(this.$actions)
-      voteBtnDown.setClick(() => {
-        this.vote('down', voteBtnDown)
+    // 投票功能
+    if (this.ctx.conf.vote) {
+      // 赞同按钮
+      const voteBtnUp = new ActionBtn(() => `赞同 (${this.data.vote_up || 0})`).appendTo(this.$actions)
+      voteBtnUp.setClick(() => {
+        this.vote('up', voteBtnUp)
       })
+
+      // 反对按钮
+      if (this.ctx.conf.voteDown) {
+        const voteBtnDown = new ActionBtn(() => `反对 (${this.data.vote_up || 0})`).appendTo(this.$actions)
+        voteBtnDown.setClick(() => {
+          this.vote('down', voteBtnDown)
+        })
+      }
     }
 
     // 绑定回复按钮事件
@@ -306,7 +318,7 @@ export default class Comment extends Component {
   }
 
   getGravatarUrl() {
-    return `${this.ctx.conf.gravatar?.cdn || ''}${this.data.email_encrypted}?d=${encodeURIComponent(this.ctx.conf.defaultAvatar || '')}&s=80`
+    return `${(this.ctx.conf.gravatar?.mirror || '').replace(/\/$/, '')}/${this.data.email_encrypted}?d=${encodeURIComponent(this.ctx.conf.gravatar?.default || '')}&s=80`
   }
 
   getContentMarked() {

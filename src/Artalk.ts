@@ -1,6 +1,5 @@
 import './style/main.less'
 
-import Constant from './constant'
 import Context from './context'
 import ArtalkConfig from '~/types/artalk-config'
 import defaultConf from './default-conf'
@@ -91,15 +90,15 @@ export default class Artalk {
       this.$root.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
 
       // for layer
-      const { wrapEl: layerWrapEl } = GetLayerWrap(this.ctx)
-      if (layerWrapEl)
-        layerWrapEl.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
+      const { $wrap: $layerWrap } = GetLayerWrap(this.ctx)
+      if ($layerWrap)
+        $layerWrap.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
 
-      items.forEach((itemEl: HTMLElement) => {
+      items.forEach(($item: HTMLElement) => {
         if (this.ctx.user.data.isAdmin)
-          itemEl.classList.remove('atk-hide')
+          $item.classList.remove('atk-hide')
         else
-          itemEl.classList.add('atk-hide')
+          $item.classList.add('atk-hide')
       })
     })
 
@@ -112,19 +111,21 @@ export default class Artalk {
 
   /** 暗黑模式 · 初始化 */
   public initDarkMode() {
+    const darkModeClassName = 'atk-dark-mode'
+
     if (this.conf.darkMode) {
-      this.$root.classList.add(Constant.DARK_MODE_CLASSNAME)
+      this.$root.classList.add(darkModeClassName)
     } else {
-      this.$root.classList.remove(Constant.DARK_MODE_CLASSNAME)
+      this.$root.classList.remove(darkModeClassName)
     }
 
     // for Layer
-    const { wrapEl: layerWrapEl } = GetLayerWrap(this.ctx)
-    if (layerWrapEl) {
+    const { $wrap: $layerWrap } = GetLayerWrap(this.ctx)
+    if ($layerWrap) {
       if (this.conf.darkMode) {
-        layerWrapEl.classList.add(Constant.DARK_MODE_CLASSNAME)
+        $layerWrap.classList.add(darkModeClassName)
       } else {
-        layerWrapEl.classList.remove(Constant.DARK_MODE_CLASSNAME)
+        $layerWrap.classList.remove(darkModeClassName)
       }
     }
   }

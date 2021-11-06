@@ -19,6 +19,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': 0,
     'class-methods-use-this': 0,
     'import/no-cycle': 0,
+    'spaced-comment': 0,
   },
   settings: {
     'import/resolver': {

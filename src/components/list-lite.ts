@@ -188,7 +188,7 @@ export default class ListLite extends Component {
       children.forEach((itemData: CommentData) => {
         itemData.is_allow_reply = parentC.data.is_allow_reply
         const childC = this.createComment(itemData)
-        childC.renderElem()
+        childC.render()
         parentC.putChild(childC)
         queryImportChildren(childC) // 递归
       })
@@ -199,7 +199,7 @@ export default class ListLite extends Component {
       rawData.filter((o) => o.rid === 0).forEach((rootCommentData: CommentData) => {
         if (rootCommentData.is_collapsed) rootCommentData.is_allow_reply = false
         const rootComment = this.createComment(rootCommentData)
-        rootComment.renderElem()
+        rootComment.render()
         this.comments.push(rootComment) // 将评论导入 comments 总表中
 
         this.commentsWrapEl.appendChild(rootComment.getEl())
@@ -225,7 +225,7 @@ export default class ListLite extends Component {
       const rComment = comments.find(o => o.id === commentItem.rid)
       if (rComment) comment.replyTo = rComment
     }
-    comment.renderElem()
+    comment.render()
 
     // 将评论导入 comments 总表中
     if (insertMode === 'append') {
@@ -248,7 +248,7 @@ export default class ListLite extends Component {
   public insertComment (commentData: CommentData) {
     if (!this.flatMode) {
       const comment = this.createComment(commentData)
-      comment.renderElem()
+      comment.render()
 
       if (commentData.rid !== 0) {
         this.findComment(commentData.rid)?.putChild(comment)

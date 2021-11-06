@@ -1,27 +1,12 @@
 import Context from '../context'
 import Component from '../lib/component'
-import Constant from '../constant'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 
-export function GetLayerWrap (ctx: Context): { wrapEl: HTMLElement, maskEl: HTMLElement } {
-  let wrapEl = document.querySelector<HTMLElement>(`.atk-layer-wrap#ctx-${ctx.cid}`)
-  if (!wrapEl) {
-    wrapEl = Utils.createElement(
-      `<div class="atk-layer-wrap" id="ctx-${ctx.cid}" style="display: none;"><div class="atk-layer-mask"></div></div>`
-    )
-    ctx.$root.appendChild(wrapEl)
-  }
-
-  const maskEl = wrapEl.querySelector<HTMLElement>('.atk-layer-mask')!
-
-  return { wrapEl, maskEl }
-}
-
 export default class Layer extends Component {
   private name: string
-  private wrapEl: HTMLElement
-  private maskEl: HTMLElement
+  private $wrap: HTMLElement
+  private $mask: HTMLElement
 
   private maskClickHideEnable: boolean = true
 
@@ -32,11 +17,11 @@ export default class Layer extends Component {
     super(ctx)
 
     this.name = name
-    const { wrapEl, maskEl } = GetLayerWrap(ctx)
-    this.wrapEl = wrapEl
-    this.maskEl = maskEl
+    const { $wrap, $mask } = GetLayerWrap(ctx)
+    this.$wrap = $wrap
+    this.$mask = $mask
 
-    this.$el = this.wrapEl.querySelector(`[data-layer-name="${name}"].atk-layer-item`)!
+    this.$el = this.$wrap.querySelector(`[data-layer-name="${name}"].atk-layer-item`)!
     if (this.$el === null) {
       // 若传递 layer 元素为空
       if (!el) {
@@ -50,7 +35,7 @@ export default class Layer extends Component {
     this.$el.style.display = 'none'
 
     // 添加到 layers wrap 中
-    this.wrapEl.append(this.$el)
+    this.$wrap.append(this.$el)
   }
 
   getName () {
@@ -58,7 +43,7 @@ export default class Layer extends Component {
   }
 
   getWrapEl () {
-    return this.wrapEl
+    return this.$wrap
   }
 
   getEl () {
@@ -73,12 +58,12 @@ export default class Layer extends Component {
     })
     Layer.hideTimeoutList = []
 
-    this.wrapEl.style.display = 'block'
-    this.maskEl.style.display = 'block'
-    this.maskEl.classList.add('atk-fade-in')
+    this.$wrap.style.display = 'block'
+    this.$mask.style.display = 'block'
+    this.$mask.classList.add('atk-fade-in')
     this.$el.style.display = ''
 
-    this.maskEl.onclick = () => {
+    this.$mask.onclick = () => {
       if (this.maskClickHideEnable) this.hide()
     }
 
@@ -93,16 +78,16 @@ export default class Layer extends Component {
 
   hide () {
     Layer.hideTimeoutList.push(window.setTimeout(() => {
-      this.wrapEl.style.display = 'none'
+      this.$wrap.style.display = 'none'
       // body style 禁止滚动解除
       document.body.style.overflow = this.bodyStyleOrgOverflow
       document.body.style.paddingRight = this.bodyStyleOrgPaddingRight
     }, 450))
 
-    this.wrapEl.classList.add('atk-fade-out')
+    this.$wrap.classList.add('atk-fade-out')
     Layer.hideTimeoutList.push(window.setTimeout(() => {
-      this.wrapEl.style.display = 'none'
-      this.wrapEl.classList.remove('atk-fade-out')
+      this.$wrap.style.display = 'none'
+      this.$wrap.classList.remove('atk-fade-out')
     }, 200))
 
     this.$el.style.display = 'none'
@@ -130,7 +115,21 @@ export default class Layer extends Component {
 
   checkCleanLayer () {
     if (this.getWrapEl().querySelectorAll('.atk-layer-item').length === 0) {
-      this.wrapEl.style.display = 'none'
+      this.$wrap.style.display = 'none'
     }
   }
+}
+
+export function GetLayerWrap (ctx: Context): { $wrap: HTMLElement, $mask: HTMLElement } {
+  let $wrap = document.querySelector<HTMLElement>(`.atk-layer-wrap#ctx-${ctx.cid}`)
+  if (!$wrap) {
+    $wrap = Utils.createElement(
+      `<div class="atk-layer-wrap" id="ctx-${ctx.cid}" style="display: none;"><div class="atk-layer-mask"></div></div>`
+    )
+    document.body.appendChild($wrap)
+  }
+
+  const $mask = $wrap.querySelector<HTMLElement>('.atk-layer-mask')!
+
+  return { $wrap, $mask }
 }

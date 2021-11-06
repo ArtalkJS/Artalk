@@ -43,6 +43,9 @@ export default interface ArtalkConfig {
     autoLoad?: boolean
   }
 
+  /** 反对按钮 */
+  voteDown?: boolean
+
   /** 暗黑模式 */
   darkMode?: boolean
 

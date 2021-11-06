@@ -14,6 +14,7 @@ const defaultConf: ArtalkConfig = {
   gravatar: {
     cdn: 'https://sdn.geekzu.org/avatar/'
   },
+  voteDown: false,
   darkMode: false,
   reqTimeout: 15000,
   flatMode: false,

@@ -1,5 +1,6 @@
 import '../style/sidebar.less'
 
+import md5 from 'md5'
 import Context from '../context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
@@ -25,6 +26,7 @@ export default class Sidebar extends Component {
   public $headerMenu: HTMLElement
   public $title: HTMLElement
   public $avatar: HTMLElement
+  public $siteLogo?: HTMLElement
   public $closeBtn: HTMLElement
   public $nav: HTMLElement
   public $curtViewBtn: HTMLElement
@@ -148,9 +150,9 @@ export default class Sidebar extends Component {
 
     // 第一次加载
     if (this.firstShow) {
-      ////////////////////
-      //// IMPORTANT /////
-      ////////////////////
+      ///////////////////
+      //// IMPORTANT ////
+      ///////////////////
 
       // 用户权限检测
       if (this.isAdmin) {
@@ -168,6 +170,7 @@ export default class Sidebar extends Component {
             if (!this.isAdmin) return
             this.siteSwitcher?.show(evt.target as any)
           }
+
         }
 
         this.curtSite = '__ATK_SITE_ALL'
@@ -176,11 +179,21 @@ export default class Sidebar extends Component {
         await this.siteSwitcher!.load(this.curtSite)
         Ui.hideLoading(this.$el)
 
+        // 站点图像
+        this.$avatar.innerHTML = ''
+        this.$siteLogo = Utils.createElement('<div class="atk-site-logo">_</div>')
+        this.$avatar.append(this.$siteLogo)
       } else {
         // 不是管理员
         this.$title.innerText = '通知中心'
         this.$curtViewBtn.style.display = 'none' // 隐藏 view 切换器
         this.curtSite = this.conf.site // 第一次 show 使用当前站点数据
+
+        // 头像
+        const $avatarImg = document.createElement('img') as HTMLImageElement
+        $avatarImg.src = Utils.getGravatarURL(this.ctx, md5(this.ctx.user.data.email.toLowerCase()))
+        this.$avatar.innerHTML = ''
+        this.$avatar.append($avatarImg)
       }
 
       this.switchView(DEFAULT_VIEW) // 打开默认 view
@@ -254,5 +267,6 @@ export default class Sidebar extends Component {
     this.curtSite = siteName
     const curtView = this.curtViewInstance
     curtView?.switchTab(this.curtTab!, siteName)
+    if (this.$siteLogo) this.$siteLogo.innerText = this.curtSite.substr(0, 1)
   }
 }

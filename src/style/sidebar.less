@@ -37,10 +37,16 @@
       align-items: center;
       justify-content: center;
 
-      img {
-        height: @header-height - 30px;
+      img, .atk-site-logo {
+        @height: @header-height - 30px;
+        height: @height;
         width: @header-height - 30px;
         border-radius: 2px;
+        background: @color-meta;
+        text-align: center;
+        line-height: @height;
+        font-size: 13px;
+        color: @color-bg;
       }
     }
 
@@ -85,6 +91,7 @@
       place-content: center;
       cursor: pointer;
       user-select: none;
+      margin-left: 10px;
 
       &:hover .atk-icon-close {
         background-color: rgba(232, 17, 35, 0.9);

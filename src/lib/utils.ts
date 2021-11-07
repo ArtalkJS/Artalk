@@ -95,6 +95,10 @@ export function timeAgo (date: Date) {
   }
 }
 
+export function getGravatarURL(ctx: Context, emailMD5: string) {
+  return `${(ctx.conf.gravatar?.mirror || '').replace(/\/$/, '')}/${emailMD5}?d=${encodeURIComponent(ctx.conf.gravatar?.default || '')}&s=80`
+}
+
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }

@@ -318,7 +318,7 @@ export default class Comment extends Component {
   }
 
   getGravatarUrl() {
-    return `${(this.ctx.conf.gravatar?.mirror || '').replace(/\/$/, '')}/${this.data.email_encrypted}?d=${encodeURIComponent(this.ctx.conf.gravatar?.default || '')}&s=80`
+    return Utils.getGravatarURL(this.ctx, this.data.email_encrypted)
   }
 
   getContentMarked() {

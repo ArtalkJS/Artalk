@@ -1,0 +1,49 @@
+.atk-pagination {
+  display: flex;
+  flex-direction: row;
+
+  & > .atk-btn,
+  & > .atk-input {
+    border: 1px solid @color-border;
+    border-radius: 3px;
+    padding: 1px 5px;
+    text-align: center;
+  }
+
+  & > .atk-btn {
+    user-select: none;
+    width: 70px;
+    cursor: pointer;
+
+    &:hover {
+      background: @color-bg-grey;
+    }
+
+    &.atk-disabled {
+      color: @color-sub;
+
+      &:hover {
+        cursor: default;
+        background: initial;
+      }
+    }
+  }
+
+  & > .atk-input {
+    background: transparent;
+    color: @color-font;
+    font-size: 18px;
+    width: 60px;
+    outline: none;
+
+    &:focus {
+      border-color: @color-main;
+    }
+  }
+
+  & > * {
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+}

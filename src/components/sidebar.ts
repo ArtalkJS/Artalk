@@ -13,6 +13,7 @@ import CommentsView from './sidebar-views/comments-view'
 import PagesView from './sidebar-views/pages-view'
 import SitesView from './sidebar-views/sites-view'
 import { SiteData } from '~/types/artalk-data'
+import Pagination from './pagination'
 
 export default class Sidebar extends Component {
   public layer?: Layer
@@ -176,6 +177,14 @@ export default class Sidebar extends Component {
     view.mount()
     this.$viewWrap.innerHTML = ''
     this.$viewWrap.append(view.$el)
+
+    const p = new Pagination({
+      total: 20,
+      onChange: (offset) => {
+        console.log(offset)
+      }
+    })
+    this.$viewWrap.append(p.$el)
   }
 
   private initNavTabs() {

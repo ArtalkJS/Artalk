@@ -14,15 +14,16 @@ import PagesView from './sidebar-views/pages-view'
 import SitesView from './sidebar-views/sites-view'
 import { SiteData } from '~/types/artalk-data'
 import Api from '../api'
+import SiteListFloater from './admin/site-list-floater'
 
 const DEFAULT_VIEW = 'comments'
-const SITE_ALL_NAME = '__ATK_SITE_ALL'
 
 export default class Sidebar extends Component {
   public layer?: Layer
 
   public $header: HTMLElement
   public $headerMenu: HTMLElement
+  public $title: HTMLElement
   public $avatar: HTMLElement
   public $closeBtn: HTMLElement
   public $nav: HTMLElement
@@ -31,11 +32,11 @@ export default class Sidebar extends Component {
   public $curtViewBtnText: HTMLElement
   public $navTabs: HTMLElement
   public $navViews: HTMLElement
-  public $siteSwitcher: HTMLElement
-  public $siteSwitcherSites: HTMLElement
   public $viewWrap: HTMLElement
+  public siteSwitcher?: SiteListFloater
 
-  public curtSite: string = SITE_ALL_NAME
+  private get isAdmin() { return this.ctx.user.data.isAdmin }
+  public curtSite?: string
   public curtView: string = DEFAULT_VIEW
   public get curtViewInstance() {
     return this.curtView ? this.viewInstances[this.curtView] : undefined
@@ -56,6 +57,7 @@ export default class Sidebar extends Component {
     this.$el = Utils.createElement(SidebarHTML)
     this.$header = this.$el.querySelector('.atk-sidebar-header')!
     this.$headerMenu = this.$header.querySelector('.atk-menu')!
+    this.$title = this.$header.querySelector('.atk-sidebar-title')!
     this.$avatar = this.$header.querySelector('.atk-avatar')!
     this.$closeBtn = this.$header.querySelector('.atk-sidebar-close')!
 
@@ -65,17 +67,11 @@ export default class Sidebar extends Component {
     this.$curtViewBtnText = this.$curtViewBtn.querySelector('.atk-text')!
     this.$navTabs = this.$nav.querySelector('.atk-tabs')!
     this.$navViews = this.$nav.querySelector('.atk-views')!
-    this.$siteSwitcher = this.$el.querySelector('.atk-site-switcher')!
-    this.$siteSwitcherSites = this.$siteSwitcher.querySelector('.atk-sites')!
 
     this.$viewWrap = this.$el.querySelector('.atk-sidebar-view-wrap')!
 
     // init UI
     this.initViewSwitcher()
-
-    if (this.ctx.user.data.isAdmin) {
-      this.$avatar.onclick = (evt) => this.showSiteSwitcher(evt.target as any)
-    }
 
     this.$closeBtn.onclick = () => {
       this.hide()
@@ -84,6 +80,7 @@ export default class Sidebar extends Component {
     // event
     this.ctx.on('sidebar-show', () => (this.show()))
     this.ctx.on('sidebar-hide', () => (this.hide()))
+    this.ctx.on('user-changed', () => { this.firstShow = true })
 
     // TODO for testing
     this.show()
@@ -91,11 +88,6 @@ export default class Sidebar extends Component {
 
   /** 初始化 view 切换器 */
   private initViewSwitcher() {
-    if (!this.ctx.user.data.isAdmin) {
-      this.$curtViewBtn.remove()
-      return
-    }
-
     this.$curtViewBtn.onclick = () => {
       this.toggleViewSwitcher()
     }
@@ -156,7 +148,41 @@ export default class Sidebar extends Component {
 
     // 第一次加载
     if (this.firstShow) {
-      await this.loadSiteSwitcher()
+      ////////////////////
+      //// IMPORTANT /////
+      ////////////////////
+
+      // 用户权限检测
+      if (this.isAdmin) {
+        // 是管理员
+        this.$title.innerText = '控制中心'
+        this.$curtViewBtn.style.display = ''
+
+        if (!this.siteSwitcher) {
+          // 初始化站点切换器
+          this.siteSwitcher = new SiteListFloater(this.ctx, {
+            onSwitchSite: (siteName) => { this.switchSite(siteName) }
+          })
+          this.$viewWrap.before(this.siteSwitcher.$el)
+          this.$avatar.onclick = (evt) => {
+            if (!this.isAdmin) return
+            this.siteSwitcher?.show(evt.target as any)
+          }
+        }
+
+        this.curtSite = '__ATK_SITE_ALL'
+
+        Ui.showLoading(this.$el)
+        await this.siteSwitcher!.load(this.curtSite)
+        Ui.hideLoading(this.$el)
+
+      } else {
+        // 不是管理员
+        this.$title.innerText = '通知中心'
+        this.$curtViewBtn.style.display = 'none' // 隐藏 view 切换器
+        this.curtSite = this.conf.site // 第一次 show 使用当前站点数据
+      }
+
       this.switchView(DEFAULT_VIEW) // 打开默认 view
       this.firstShow = false
     }
@@ -171,70 +197,6 @@ export default class Sidebar extends Component {
     this.layer?.dispose()
   }
 
-  /** 装载站点切换器 */
-  private async loadSiteSwitcher() {
-    this.$siteSwitcherSites.innerHTML = ''
-
-    const renderSiteItem = (siteName: string, siteLogo: string, siteTarget?: string) => {
-      const $site = Utils.createElement(
-        `<div class="atk-site-item">
-          <div class="atk-site-logo"></div>
-          <div class="atk-site-name"></div>
-        </div>`)
-        $site.onclick = () => this.switchSite(siteTarget || siteName)
-        $site.setAttribute('data-name', siteTarget || siteName)
-        const $siteLogo = $site.querySelector<HTMLElement>('.atk-site-logo')!
-        const $siteName = $site.querySelector<HTMLElement>('.atk-site-name')!
-        $siteLogo.innerText = siteLogo
-        $siteName.innerText = siteName
-        if (this.curtSite === (siteTarget || siteName)) $site.classList.add('atk-active')
-        this.$siteSwitcherSites.append($site)
-    }
-
-    renderSiteItem('所有站点', '', SITE_ALL_NAME)
-
-    const sites = await new Api(this.ctx).siteGet()
-    sites.forEach((site) => {
-      renderSiteItem(site.name, site.name.substr(0, 1))
-    })
-  }
-
-  private switchSite(siteName: string) {
-    this.curtSite = siteName
-    const curtView = this.curtViewInstance
-    curtView?.switchTab(this.curtTab!, siteName)
-    this.hideSiteSwitcher()
-
-    // set active
-    this.$siteSwitcher.querySelectorAll('.atk-site-item').forEach(e => {
-      if (e.getAttribute('data-name') !== siteName) {
-        e.classList.remove('atk-active')
-      } else {
-        e.classList.add('atk-active')
-      }
-    })
-  }
-
-  private siteSwitcherOC?: (evt: MouseEvent) => void // outside checker
-
-  public showSiteSwitcher($trigger?: HTMLElement) {
-    this.$siteSwitcher.style.display = ''
-
-    // 点击外部隐藏
-    if ($trigger) {
-      this.siteSwitcherOC = (evt: MouseEvent) => {
-        const isClickInside = $trigger.contains(evt.target as any)||this.$siteSwitcher.contains(evt.target as any)
-        if (!isClickInside) { this.hideSiteSwitcher() }
-      }
-      document.addEventListener('click', this.siteSwitcherOC)
-    }
-  }
-
-  public hideSiteSwitcher() {
-    this.$siteSwitcher.style.display = 'none'
-    if (this.siteSwitcherOC) document.removeEventListener('click', this.siteSwitcherOC)
-  }
-
   /** 切换 View */
   public switchView(viewName: string) {
     let view = this.viewInstances[viewName]
@@ -245,7 +207,11 @@ export default class Sidebar extends Component {
       this.viewInstances[viewName] = view
     }
 
+    // init view
+    view.mount(this.curtSite!)
+
     this.curtView = viewName
+    this.curtTab = view.viewActiveTab
 
     // update view indicator
     this.$curtViewBtnText.innerText = (view.constructor as typeof SidebarView).viewTitle
@@ -258,15 +224,14 @@ export default class Sidebar extends Component {
     })
 
     // update tabs
-    this.initNavTabs(view)
+    this.loadViewTabs(view)
 
-    // init view ui
-    view.mount(this.curtSite)
+    // load element
     this.$viewWrap.innerHTML = ''
     this.$viewWrap.append(view.$el)
   }
 
-  private initNavTabs(view: SidebarView) {
+  private loadViewTabs(view: SidebarView) {
     this.$navTabs.innerHTML = ''
     Object.entries<string>(view.viewTabs).forEach(([tabName, label]) => {
       const $tab = Utils.createElement(`<div class="atk-tab-item"></div>`)
@@ -276,10 +241,18 @@ export default class Sidebar extends Component {
 
       // 切换 tab
       $tab.onclick = () => {
+        if (view.switchTab(tabName, this.curtSite!) === false) { return }
         this.$navTabs.querySelectorAll('.atk-active').forEach(e => e.classList.remove('atk-active'))
         $tab.classList.add('atk-active')
-        view.switchTab(tabName, this.curtSite)
+        this.curtTab = tabName
       }
     })
+  }
+
+  /** 切换站点 */
+  private switchSite(siteName: string) {
+    this.curtSite = siteName
+    const curtView = this.curtViewInstance
+    curtView?.switchTab(this.curtTab!, siteName)
   }
 }

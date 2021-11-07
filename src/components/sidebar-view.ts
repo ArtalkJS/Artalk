@@ -17,7 +17,7 @@ export default class SidebarView extends Component {
     this.$el = Utils.createElement(`<div class="atk-sidebar-view"></div>`)
   }
 
-  mount() {}
+  mount(siteName: string) {}
 
-  switch(tab: string): boolean|void {}
+  switchTab(tab: string, siteName: string): boolean|void {}
 }

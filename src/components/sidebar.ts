@@ -13,7 +13,10 @@ import CommentsView from './sidebar-views/comments-view'
 import PagesView from './sidebar-views/pages-view'
 import SitesView from './sidebar-views/sites-view'
 import { SiteData } from '~/types/artalk-data'
-import Pagination from './pagination'
+import Api from '../api'
+
+const DEFAULT_VIEW = 'comments'
+const SITE_ALL_NAME = '__ATK_SITE_ALL'
 
 export default class Sidebar extends Component {
   public layer?: Layer
@@ -28,12 +31,16 @@ export default class Sidebar extends Component {
   public $curtViewBtnText: HTMLElement
   public $navTabs: HTMLElement
   public $navViews: HTMLElement
+  public $siteSwitcher: HTMLElement
+  public $siteSwitcherSites: HTMLElement
   public $viewWrap: HTMLElement
 
-  public siteList: SiteData[] = []
-
-  public curtSite?: SiteData
-  public curtView?: string
+  public curtSite: string = SITE_ALL_NAME
+  public curtView: string = DEFAULT_VIEW
+  public get curtViewInstance() {
+    return this.curtView ? this.viewInstances[this.curtView] : undefined
+  }
+  public curtTab?: string
 
   public viewInstances: {[name: string]: SidebarView} = {}
   public registerViews: (typeof SidebarView)[] = [
@@ -58,10 +65,18 @@ export default class Sidebar extends Component {
     this.$curtViewBtnText = this.$curtViewBtn.querySelector('.atk-text')!
     this.$navTabs = this.$nav.querySelector('.atk-tabs')!
     this.$navViews = this.$nav.querySelector('.atk-views')!
+    this.$siteSwitcher = this.$el.querySelector('.atk-site-switcher')!
+    this.$siteSwitcherSites = this.$siteSwitcher.querySelector('.atk-sites')!
 
     this.$viewWrap = this.$el.querySelector('.atk-sidebar-view-wrap')!
 
-    // 关闭按钮
+    // init UI
+    this.initViewSwitcher()
+
+    if (this.ctx.user.data.isAdmin) {
+      this.$avatar.onclick = (evt) => this.showSiteSwitcher(evt.target as any)
+    }
+
     this.$closeBtn.onclick = () => {
       this.hide()
     }
@@ -74,38 +89,13 @@ export default class Sidebar extends Component {
     this.show()
   }
 
-  private isFirstShow = true
-
-  /** 显示 */
-  public show() {
-    this.$el.style.transform = '' // 动画清除，防止二次打开失效
-
-    // 获取 Layer
-    this.layer = new Layer(this.ctx, 'sidebar', this.$el)
-    this.layer.show()
-
-    // viewWrap 滚动条归位
-    this.$viewWrap.scrollTo(0, 0)
-
-    // 执行动画
-    setTimeout(() => {
-      this.$el.style.transform = 'translate(0, 0)'
-    }, 20)
-
-    // 第一次加载
-    if (this.isFirstShow) {
-      this.switchView('comments') // 打开默认 view
-      this.initUI()
-      this.isFirstShow = false
-    }
-  }
-
-  private initUI() {
-    this.initViewSwitcher()
-  }
-
-  /** 初始化页面切换器 */
+  /** 初始化 view 切换器 */
   private initViewSwitcher() {
+    if (!this.ctx.user.data.isAdmin) {
+      this.$curtViewBtn.remove()
+      return
+    }
+
     this.$curtViewBtn.onclick = () => {
       this.toggleViewSwitcher()
     }
@@ -114,6 +104,7 @@ export default class Sidebar extends Component {
     this.registerViews.forEach(view => {
       const $item = Utils.createElement(`<div class="atk-tab-item"></div>`)
       this.$navViews.append($item)
+      $item.setAttribute('data-name', view.viewName)
       $item.innerText = view.viewTitle
       if (view.viewName === this.curtView) {
         $item.classList.add('atk-active')
@@ -123,16 +114,12 @@ export default class Sidebar extends Component {
         // 切换 view
         this.switchView(view.viewName)
 
-        this.$navViews.querySelectorAll('.atk-active').forEach((e) => e.classList.remove('atk-active'))
-        $item.classList.add('atk-active')
-
-        this.$curtViewBtnText.innerText = view.viewTitle
-
         this.toggleViewSwitcher()
       }
     })
   }
 
+  /** 显示/隐藏 view 切换器 */
   private toggleViewSwitcher() {
     if (!this.viewSwitcherShow) {
       // 显示
@@ -149,6 +136,32 @@ export default class Sidebar extends Component {
     this.viewSwitcherShow = !this.viewSwitcherShow
   }
 
+  private firstShow = true
+
+  /** 显示 */
+  public async show() {
+    this.$el.style.transform = '' // 动画清除，防止二次打开失效
+
+    // 获取 Layer
+    this.layer = new Layer(this.ctx, 'sidebar', this.$el)
+    this.layer.show()
+
+    // viewWrap 滚动条归位
+    this.$viewWrap.scrollTo(0, 0)
+
+    // 执行动画
+    setTimeout(() => {
+      this.$el.style.transform = 'translate(0, 0)'
+    }, 20)
+
+    // 第一次加载
+    if (this.firstShow) {
+      await this.loadSiteSwitcher()
+      this.switchView(DEFAULT_VIEW) // 打开默认 view
+      this.firstShow = false
+    }
+  }
+
   /** 隐藏 */
   public hide() {
     // 执行动画
@@ -156,6 +169,70 @@ export default class Sidebar extends Component {
 
     // 用完即销毁
     this.layer?.dispose()
+  }
+
+  /** 装载站点切换器 */
+  private async loadSiteSwitcher() {
+    this.$siteSwitcherSites.innerHTML = ''
+
+    const renderSiteItem = (siteName: string, siteLogo: string, siteTarget?: string) => {
+      const $site = Utils.createElement(
+        `<div class="atk-site-item">
+          <div class="atk-site-logo"></div>
+          <div class="atk-site-name"></div>
+        </div>`)
+        $site.onclick = () => this.switchSite(siteTarget || siteName)
+        $site.setAttribute('data-name', siteTarget || siteName)
+        const $siteLogo = $site.querySelector<HTMLElement>('.atk-site-logo')!
+        const $siteName = $site.querySelector<HTMLElement>('.atk-site-name')!
+        $siteLogo.innerText = siteLogo
+        $siteName.innerText = siteName
+        if (this.curtSite === (siteTarget || siteName)) $site.classList.add('atk-active')
+        this.$siteSwitcherSites.append($site)
+    }
+
+    renderSiteItem('所有站点', '', SITE_ALL_NAME)
+
+    const sites = await new Api(this.ctx).siteGet()
+    sites.forEach((site) => {
+      renderSiteItem(site.name, site.name.substr(0, 1))
+    })
+  }
+
+  private switchSite(siteName: string) {
+    this.curtSite = siteName
+    const curtView = this.curtViewInstance
+    curtView?.switchTab(this.curtTab!, siteName)
+    this.hideSiteSwitcher()
+
+    // set active
+    this.$siteSwitcher.querySelectorAll('.atk-site-item').forEach(e => {
+      if (e.getAttribute('data-name') !== siteName) {
+        e.classList.remove('atk-active')
+      } else {
+        e.classList.add('atk-active')
+      }
+    })
+  }
+
+  private siteSwitcherOC?: (evt: MouseEvent) => void // outside checker
+
+  public showSiteSwitcher($trigger?: HTMLElement) {
+    this.$siteSwitcher.style.display = ''
+
+    // 点击外部隐藏
+    if ($trigger) {
+      this.siteSwitcherOC = (evt: MouseEvent) => {
+        const isClickInside = $trigger.contains(evt.target as any)||this.$siteSwitcher.contains(evt.target as any)
+        if (!isClickInside) { this.hideSiteSwitcher() }
+      }
+      document.addEventListener('click', this.siteSwitcherOC)
+    }
+  }
+
+  public hideSiteSwitcher() {
+    this.$siteSwitcher.style.display = 'none'
+    if (this.siteSwitcherOC) document.removeEventListener('click', this.siteSwitcherOC)
   }
 
   /** 切换 View */
@@ -170,29 +247,26 @@ export default class Sidebar extends Component {
 
     this.curtView = viewName
 
-    // update tabs
-    this.initNavTabs()
-
-    // init view ui
-    view.mount()
-    this.$viewWrap.innerHTML = ''
-    this.$viewWrap.append(view.$el)
-
-    const p = new Pagination({
-      total: 20,
-      onChange: (offset) => {
-        console.log(offset)
+    // update view indicator
+    this.$curtViewBtnText.innerText = (view.constructor as typeof SidebarView).viewTitle
+    this.$navViews.querySelectorAll('.atk-tab-item').forEach((e) => {
+      if (e.getAttribute('data-name') === viewName) {
+        e.classList.add('atk-active')
+      } else {
+        e.classList.remove('atk-active')
       }
     })
-    this.$viewWrap.append(p.$el)
+
+    // update tabs
+    this.initNavTabs(view)
+
+    // init view ui
+    view.mount(this.curtSite)
+    this.$viewWrap.innerHTML = ''
+    this.$viewWrap.append(view.$el)
   }
 
-  private initNavTabs() {
-    if (!this.curtView) return
-
-    const view = this.viewInstances[this.curtView]
-    if (!view) return
-
+  private initNavTabs(view: SidebarView) {
     this.$navTabs.innerHTML = ''
     Object.entries<string>(view.viewTabs).forEach(([tabName, label]) => {
       const $tab = Utils.createElement(`<div class="atk-tab-item"></div>`)
@@ -204,7 +278,7 @@ export default class Sidebar extends Component {
       $tab.onclick = () => {
         this.$navTabs.querySelectorAll('.atk-active').forEach(e => e.classList.remove('atk-active'))
         $tab.classList.add('atk-active')
-        view.switch(tabName)
+        view.switchTab(tabName, this.curtSite)
       }
     })
   }

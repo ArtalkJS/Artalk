@@ -17,7 +17,7 @@ export default class MessageView extends SidebarView {
 
   list?: ListLite
 
-  mount() {
+  mount(siteName: string) {
     this.list = new ListLite(this.ctx)
     this.list.flatMode = true
     this.list.unreadHighlight = true
@@ -29,10 +29,10 @@ export default class MessageView extends SidebarView {
     this.$el.innerHTML = ''
     this.$el.append(this.list.$el)
 
-    this.switch(this.viewActiveTab)
+    this.switchTab(this.viewActiveTab, siteName)
   }
 
-  switch(tab: string): boolean|void {
+  switchTab(tab: string, siteName: string): boolean|void {
     if (!this.list) return false
     this.viewActiveTab = tab
     this.list.type = tab as any;

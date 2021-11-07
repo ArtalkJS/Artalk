@@ -22,7 +22,7 @@ export default class SitesView extends SidebarView {
     this.$el = Utils.createElement(`<div class="atk-sidebar-view"></div>`)
   }
 
-  async mount() {
+  async mount(siteName: string) {
     // TODO 多次重复import issue
     if (!this.siteList) {
       this.siteList = new SiteList(this.ctx)
@@ -34,5 +34,5 @@ export default class SitesView extends SidebarView {
     this.siteList.importSites(sites)
   }
 
-  switch(tab: string): boolean|void {}
+  switchTab(tab: string, siteName: string): boolean|void {}
 }

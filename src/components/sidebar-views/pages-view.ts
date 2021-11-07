@@ -4,6 +4,7 @@ import Component from '../../lib/component'
 import * as Utils from '../../lib/utils'
 import PageList from '../admin/page-list'
 import Comment from '../comment'
+import Pagination from '../pagination'
 import SidebarView from '../sidebar-view'
 
 export default class PagesView extends SidebarView {
@@ -22,7 +23,7 @@ export default class PagesView extends SidebarView {
     this.$el = Utils.createElement(`<div class="atk-sidebar-view"></div>`)
   }
 
-  async mount() {
+  async mount(siteName: string) {
     if (!this.pageList) {
       this.pageList = new PageList(this.ctx)
       this.$el.append(this.pageList.$el)
@@ -32,7 +33,15 @@ export default class PagesView extends SidebarView {
     const pages = await new Api(this.ctx).pageGet('ArtalkDemo')
     console.log(pages)
     this.pageList.importPages(pages)
+
+    const p = new Pagination({
+      total: 20,
+      onChange: (offset) => {
+        console.log(offset)
+      }
+    })
+    this.$el.append(p.$el)
   }
 
-  switch(tab: string): boolean|void {}
+  switchTab(tab: string, siteName: string): boolean|void {}
 }

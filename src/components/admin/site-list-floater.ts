@@ -8,6 +8,7 @@ import Api from '~/src/api'
 
 interface SiteListFloaterConf {
   onSwitchSite: (siteName: string) => boolean|void
+  onClickSitesViewBtn: () => void
 }
 
 export default class SiteListFloater {
@@ -31,13 +32,13 @@ export default class SiteListFloater {
   public async load(selectedSite?: string) {
     this.$sites.innerHTML = ''
 
-    const renderSiteItem = (siteName: string, siteLogo: string, siteTarget?: string) => {
+    const renderSiteItem = (siteName: string, siteLogo: string, siteTarget?: string, onclick?: Function) => {
       const $site = Utils.createElement(
         `<div class="atk-site-item">
           <div class="atk-site-logo"></div>
           <div class="atk-site-name"></div>
         </div>`)
-        $site.onclick = () => this.switch(siteTarget || siteName)
+        $site.onclick = !onclick ? () => this.switch(siteTarget || siteName) : () => onclick()
         $site.setAttribute('data-name', siteTarget || siteName)
         const $siteLogo = $site.querySelector<HTMLElement>('.atk-site-logo')!
         const $siteName = $site.querySelector<HTMLElement>('.atk-site-name')!
@@ -47,12 +48,14 @@ export default class SiteListFloater {
         this.$sites.append($site)
     }
 
-    renderSiteItem('所有站点', '', '__ATK_SITE_ALL')
+    renderSiteItem('所有站点', '_', '__ATK_SITE_ALL')
 
     const sites = await new Api(this.ctx).siteGet()
     sites.forEach((site) => {
       renderSiteItem(site.name, site.name.substr(0, 1))
     })
+
+    renderSiteItem('站点管理', '+', '', () => { this.conf.onClickSitesViewBtn();this.hide() })
   }
 
   /** 切换站点 */

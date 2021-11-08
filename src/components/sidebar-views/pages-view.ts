@@ -21,12 +21,6 @@ export default class PagesView extends SidebarView {
   pageList!: PageList
   pagination!: Pagination
 
-  constructor(ctx: Context) {
-    super(ctx)
-
-    this.$el = Utils.createElement(`<div class="atk-sidebar-view"></div>`)
-  }
-
   mount(siteName: string) {
     if (!this.pageList) {
       this.pageList = new PageList(this.ctx)

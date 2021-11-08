@@ -118,6 +118,9 @@
       flex-direction: column;
       align-items: center;
       padding-bottom: 5px;
+      user-select: none;
+      cursor: pointer;
+      border: 1px solid transparent;
 
       .atk-site-logo {
         margin: 15px;
@@ -136,16 +139,22 @@
         font-size: 16px;
         color: @color-sub;
       }
-    }
 
-    .atk-site-item.atk-active {
-      background-color: @color-bg-grey;
-      border: 1px solid @color-border;
-      margin-top: -1px;
-      border-radius: 0 0 4px 4px;
+      &.atk-active {
+        background-color: @color-bg-grey;
+        border: 1px solid @color-border;
+        margin-top: -1px;
+        border-radius: 0 0 4px 4px;
 
-      .atk-site-name {
-        color: @color-deep;
+        .atk-site-name {
+          color: @color-deep;
+        }
+      }
+
+      &:hover {
+        .atk-site-name {
+          color: @color-font;
+        }
       }
     }
   }

@@ -22,17 +22,21 @@ export default class SitesView extends SidebarView {
     this.$el = Utils.createElement(`<div class="atk-sidebar-view"></div>`)
   }
 
-  async mount(siteName: string) {
-    // TODO 多次重复import issue
+  mount(siteName: string) {
     if (!this.siteList) {
       this.siteList = new SiteList(this.ctx)
       this.$el.append(this.siteList.$el)
     }
 
-    const sites = await new Api(this.ctx).siteGet()
-    console.log(sites)
-    this.siteList.importSites(sites)
+    this.reqSites()
   }
 
-  switchTab(tab: string, siteName: string): boolean|void {}
+  switchTab(tab: string, siteName: string) {
+    this.reqSites()
+  }
+
+  async reqSites() {
+    const sites = await new Api(this.ctx).siteGet()
+    this.siteList.loadSites(sites)
+  }
 }

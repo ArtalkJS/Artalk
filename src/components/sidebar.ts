@@ -16,6 +16,7 @@ import SitesView from './sidebar-views/sites-view'
 import { SiteData } from '~/types/artalk-data'
 import Api from '../api'
 import SiteListFloater from './admin/site-list-floater'
+import SettingView from './sidebar-views/setting-view'
 
 const DEFAULT_VIEW = 'comments'
 
@@ -47,7 +48,7 @@ export default class Sidebar extends Component {
 
   public viewInstances: {[name: string]: SidebarView} = {}
   public registerViews: (typeof SidebarView)[] = [
-    CommentsView, PagesView, SitesView
+    CommentsView, PagesView, SitesView, SettingView
   ]
 
   private viewSwitcherShow = false
@@ -120,11 +121,13 @@ export default class Sidebar extends Component {
       this.$navViews.style.display = ''
       this.$navTabs.style.display = 'none'
       this.$curtViewBtnIcon.classList.add('atk-arrow')
+      // this.$curtViewBtnText.style.display = 'none'
     } else {
       // 隐藏
       this.$navViews.style.display = 'none'
       this.$navTabs.style.display = ''
       this.$curtViewBtnIcon.classList.remove('atk-arrow')
+      // this.$curtViewBtnText.style.display = ''
     }
 
     this.viewSwitcherShow = !this.viewSwitcherShow
@@ -163,7 +166,8 @@ export default class Sidebar extends Component {
         if (!this.siteSwitcher) {
           // 初始化站点切换器
           this.siteSwitcher = new SiteListFloater(this.ctx, {
-            onSwitchSite: (siteName) => { this.switchSite(siteName) }
+            onSwitchSite: (siteName) => { this.switchSite(siteName) },
+            onClickSitesViewBtn: () => { this.switchView('sites') }
           })
           this.$viewWrap.before(this.siteSwitcher.$el)
           this.$avatar.onclick = (evt) => {

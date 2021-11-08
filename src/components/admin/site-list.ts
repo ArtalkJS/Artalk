@@ -36,15 +36,17 @@ export default class SiteList extends Component {
     this.$rowsWrap = this.$el.querySelector('.atk-site-rows-wrap')!
 
     // 标题
-    this.$headerTitle.innerText = `共 ${8} 个站点`
+    this.$headerTitle.innerText = `共 0 个站点`
 
     // 新建站点按钮
     const $addBtn = this.$headerActions.querySelector<HTMLElement>('.atk-site-add-btn')!
     $addBtn.onclick = () => {}
   }
 
-  public importSites(sites: SiteData[]) {
-    this.sites.push(...sites)
+  public loadSites(sites: SiteData[]) {
+    this.sites = sites
+    this.$rowsWrap.innerHTML = ''
+    this.$headerTitle.innerText = `共 0 个站点`
 
     let $row: HTMLElement
 
@@ -72,14 +74,16 @@ export default class SiteList extends Component {
 
       // click
       $site.onclick = () => {
+        this.closeEditor()
+        $site.classList.add('atk-active')
         this.editSite(site, $site)
       }
     }
+
+    this.$headerTitle.innerText = `共 ${sites.length} 个站点`
   }
 
   public editSite(site: SiteData, $site: HTMLElement) {
-    this.closeEditor()
-
     this.$editor = Utils.createElement(`
     <div class="atk-site-edit">
     <div class="atk-header">
@@ -141,5 +145,6 @@ export default class SiteList extends Component {
     if (!this.$editor) return
 
     this.$editor.remove()
+    this.$rowsWrap.querySelectorAll('.atk-site-item').forEach((e) => e.classList.remove('atk-active'))
   }
 }

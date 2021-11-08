@@ -121,13 +121,15 @@ export default class Api {
   // ============================
 
   /** 页面 · 获取 */
-  public async pageGet(siteName?: string) {
+  public async pageGet(siteName?: string, offset?: number, limit?: number) {
     const params: any = {
-      site_name: siteName || ''
+      site_name: siteName || '',
+      offset: offset || 0,
+      limit: limit || 15,
     }
 
     const d = await POST<any>(this.ctx, `${this.baseURL}/admin/page-get`, params)
-    return (d.pages as PageData[])
+    return (d as { pages: PageData[], total: number })
   }
 
   /** 页面 · 修改 */

@@ -4,8 +4,10 @@ import Component from '../../lib/component'
 import * as Utils from '../../lib/utils'
 import PageList from '../admin/page-list'
 import Comment from '../comment'
-import Pagination from '../pagination'
+import Pagination, { PaginationConf } from '../pagination'
 import SidebarView from '../sidebar-view'
+
+const PAGE_SIZE = 20
 
 export default class PagesView extends SidebarView {
   static viewName = 'pages'
@@ -16,6 +18,7 @@ export default class PagesView extends SidebarView {
   viewActiveTab = ''
 
   pageList!: PageList
+  pagination!: Pagination
 
   constructor(ctx: Context) {
     super(ctx)
@@ -23,25 +26,39 @@ export default class PagesView extends SidebarView {
     this.$el = Utils.createElement(`<div class="atk-sidebar-view"></div>`)
   }
 
-  async mount(siteName: string) {
+  mount(siteName: string) {
     if (!this.pageList) {
       this.pageList = new PageList(this.ctx)
       this.$el.append(this.pageList.$el)
     }
 
-    // TODO for testing
-    const pages = await new Api(this.ctx).pageGet('ArtalkDemo')
-    console.log(pages)
-    this.pageList.importPages(pages)
-
-    const p = new Pagination({
-      total: 20,
-      onChange: (offset) => {
-        console.log(offset)
-      }
-    })
-    this.$el.append(p.$el)
+    this.switchTab(this.viewActiveTab, siteName)
   }
 
-  switchTab(tab: string, siteName: string): boolean|void {}
+  switchTab(tab: string, siteName: string): boolean|void {
+    this.reqPages(siteName, 0)
+  }
+
+  async reqPages(siteName: string, offset: number) {
+    this.pageList.clearAll()
+    ;(this.$el.parentNode as any)?.scrollTo(0, 0)
+
+    const data = await new Api(this.ctx).pageGet(siteName, offset, PAGE_SIZE)
+    this.pageList.importPages(data.pages || [])
+
+    const pConf: PaginationConf = {
+      total: data.total,
+      pageSize: PAGE_SIZE,
+      onChange: (o: number) => {
+        this.reqPages(siteName, o)
+      }
+    }
+
+    if (!this.pagination) {
+      this.pagination = new Pagination(pConf)
+      this.$el.append(this.pagination.$el)
+    }
+    if (this.pagination && offset === 0)
+      this.pagination.update(pConf)
+  }
 }

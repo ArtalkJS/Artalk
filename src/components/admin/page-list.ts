@@ -49,6 +49,11 @@ export default class PageList extends Component {
     })
   }
 
+  clearAll() {
+    this.pages = []
+    this.$el.innerHTML = ''
+  }
+
   editPage(page: PageData, $page: HTMLElement) {
     this.closeEditor()
 

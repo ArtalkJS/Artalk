@@ -1,7 +1,7 @@
 import '../style/pagination.less'
 import * as Utils from '../lib/utils'
 
-interface PaginationConf {
+export interface PaginationConf {
   /** 每页条数 */
   pageSize?: number
 
@@ -54,39 +54,34 @@ export default class Pagination {
     this.checkDisabled()
   }
 
+  public update(conf: PaginationConf) {
+    this.conf = conf
+    this.page = 1
+    this.setInput(1)
+    this.checkDisabled()
+  }
+
+  public setInput(page: number) {
+    this.$input.value = `${page}`
+  }
+
   public input(now: boolean = false) {
     window.clearTimeout(this.inputTimer)
 
     const value = this.$input.value.trim()
-    if (value === '') { return }
 
-    const reset = (p: number) => { this.$input.value = `${p}` }
     const modify = () => {
-      const page = Number(value)
-      if (Number.isNaN(page)) { reset(this.page);return }
-      if (page < 1) { reset(1);return }
-      if (page > this.maxPage) { reset(this.maxPage);return }
+      if (value === '') { this.setInput(this.page);return }
+      let page = Number(value)
+      if (Number.isNaN(page)) { this.setInput(this.page);return }
+      if (page < 1) { this.setInput(this.page);return }
+      if (page > this.maxPage) { this.setInput(this.maxPage);page = this.maxPage }
       this.change(page)
     }
 
     // 延迟 800ms 执行
     if (!now) this.inputTimer = window.setTimeout(() => modify(), 800)
     else modify()
-  }
-
-  public keydown(e: KeyboardEvent) {
-    const keyCode = e.keyCode || e.which
-
-    if (keyCode === 38) {
-      // 上键
-      this.next()
-    } else if (keyCode === 40) {
-      // 下键
-      this.prev()
-    } else if (keyCode === 13) {
-      // 回车
-      this.input(true)
-    }
   }
 
   public prev() {
@@ -104,7 +99,7 @@ export default class Pagination {
   public change(page: number) {
     this.page = page
     this.conf.onChange(this.offset)
-    this.$input.value = String(page)
+    this.setInput(page)
     this.checkDisabled()
   }
 
@@ -119,6 +114,27 @@ export default class Pagination {
       this.$prevBtn.classList.add('atk-disabled')
     } else {
       this.$prevBtn.classList.remove('atk-disabled')
+    }
+  }
+
+  public keydown(e: KeyboardEvent) {
+    const keyCode = e.keyCode || e.which
+
+    if (keyCode === 38) {
+      // 上键
+      const page = Number(this.$input.value) + 1
+      if (page > this.maxPage) { return }
+      this.setInput(page);
+      this.input()
+    } else if (keyCode === 40) {
+      // 下键
+      const page = Number(this.$input.value) - 1
+      if (page < 1) { return }
+      this.setInput(page)
+      this.input()
+    } else if (keyCode === 13) {
+      // 回车
+      this.input(true)
     }
   }
 }

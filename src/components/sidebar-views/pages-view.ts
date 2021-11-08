@@ -2,6 +2,7 @@ import Api from '~/src/api'
 import Context from '../../context'
 import Component from '../../lib/component'
 import * as Utils from '../../lib/utils'
+import * as Ui from '../../lib/ui'
 import PageList from '../admin/page-list'
 import Comment from '../comment'
 import Pagination, { PaginationConf } from '../pagination'
@@ -43,8 +44,12 @@ export default class PagesView extends SidebarView {
     this.pageList.clearAll()
     ;(this.$el.parentNode as any)?.scrollTo(0, 0)
 
+    Ui.showLoading(this.$el)
+
     const data = await new Api(this.ctx).pageGet(siteName, offset, PAGE_SIZE)
     this.pageList.importPages(data.pages || [])
+
+    Ui.hideLoading(this.$el)
 
     const pConf: PaginationConf = {
       total: data.total,

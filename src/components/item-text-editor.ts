@@ -5,8 +5,8 @@ import * as Utils from '../lib/utils'
 interface ItemTextEditorConf {
   initValue?: string
   validator?: (value: string) => boolean
-  onYes?: (value: string) => boolean|undefined
-  onNo?: () => boolean|undefined
+  onYes?: (value: string) => boolean|void|Promise<boolean|void>
+  onNo?: () => boolean|void|Promise<boolean|void>
   placeholder?: string
 }
 
@@ -49,7 +49,7 @@ export default class ItemTextEditor {
     this.$input.value = conf.initValue || ''
     if (this.conf.placeholder) this.$input.placeholder = this.conf.placeholder
 
-    this.$input.oninput = this.onInput
+    this.$input.oninput = () => this.onInput()
     this.$input.onkeyup = (evt) => {
       if (evt.key === 'Enter' || evt.keyCode === 13) { // 按下回车键
         evt.preventDefault()
@@ -93,23 +93,39 @@ export default class ItemTextEditor {
     }
   }
 
-  public submit() {
+  public async submit() {
     if (!this.allowSubmit) return
 
     if (this.conf.onYes) {
-      const isContinue = this.conf.onYes(this.value)
+      let isContinue: any
+      if (this.conf.onYes instanceof (async () => {}).constructor) {
+        isContinue = await this.conf.onYes(this.value)
+      } else {
+        isContinue = this.conf.onYes(this.value)
+      }
+
       if (isContinue === undefined || isContinue === true) {
         this.closeEditor()
       }
+    } else {
+      this.closeEditor()
     }
   }
 
-  public cancel() {
+  public async cancel() {
     if (this.conf.onNo) {
-      const isContinue = this.conf.onNo()
+      let isContinue: any
+      if (this.conf.onNo instanceof (async () => {}).constructor) {
+        isContinue = await this.conf.onNo()
+      } else {
+        isContinue = this.conf.onNo()
+      }
+
       if (isContinue === undefined || isContinue === true) {
         this.closeEditor()
       }
+    } else {
+      this.closeEditor()
     }
   }
 

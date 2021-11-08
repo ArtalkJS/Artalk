@@ -5,6 +5,8 @@ import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import { PageData } from '~/types/artalk-data'
+import ItemTextEditor from '../item-text-editor'
+import Api from '~/src/api'
 
 export default class PageList extends Component {
   pages: PageData[] = []
@@ -86,7 +88,29 @@ export default class PageList extends Component {
     const $delBtn = this.$editor.querySelector<HTMLElement>('.atk-del-btn')!
     const $closeBtn = this.$editor.querySelector<HTMLElement>('.atk-close-btn')!
 
-    $titleEditBtn.onclick = () => {}
+    $titleEditBtn.onclick = () => {
+      const textEditor = new ItemTextEditor({
+        initValue: page.title,
+        onYes: async (val) => {
+          const copy = { ...page }
+          copy.title = val
+          Ui.showLoading(textEditor.$el)
+          try {
+            await new Api(this.ctx).pageEdit(copy)
+          } catch (err: any) {
+            window.alert(`修改失败：${err.msg || '未知错误'}`)
+            console.error(err)
+            return
+          } finally {
+            Ui.hideLoading(textEditor.$el)
+          }
+
+          page.title = val
+          $page.querySelector<HTMLElement>('.atk-title')!.innerText = val
+        }
+      })
+      textEditor.appendTo(this.$editor!)
+    }
     $keyEditBtn.onclick = () => {}
 
     $adminOnlyBtn.classList.add(!page.admin_only ? 'atk-green' : 'atk-yellow')

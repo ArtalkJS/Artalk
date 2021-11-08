@@ -27,8 +27,8 @@ export default class PageList extends Component {
       const $page = Utils.createElement(
         `<div class="atk-page-item">
           <div class="atk-page-main">
-            <div class="atk-title"></div>
-            <div class="atk-sub"></div>
+            <div class="atk-title" data-key="title"></div>
+            <div class="atk-sub" data-key="key"></div>
           </div>
           <div class="atk-page-actions">
             <div class="atk-item atk-edit-btn">
@@ -88,30 +88,37 @@ export default class PageList extends Component {
     const $delBtn = this.$editor.querySelector<HTMLElement>('.atk-del-btn')!
     const $closeBtn = this.$editor.querySelector<HTMLElement>('.atk-close-btn')!
 
-    $titleEditBtn.onclick = () => {
+    const openTextEditor = (key: string) => {
       const textEditor = new ItemTextEditor({
-        initValue: page.title,
-        onYes: async (val) => {
+        initValue: page[key],
+        onYes: async (val: string) => {
           const copy = { ...page }
-          copy.title = val
+          copy[key] = val
           Ui.showLoading(textEditor.$el)
           try {
             await new Api(this.ctx).pageEdit(copy)
           } catch (err: any) {
             window.alert(`修改失败：${err.msg || '未知错误'}`)
             console.error(err)
-            return
+            return false
           } finally {
             Ui.hideLoading(textEditor.$el)
           }
 
-          page.title = val
-          $page.querySelector<HTMLElement>('.atk-title')!.innerText = val
+          page[key] = val
+          $page.querySelector<HTMLElement>(`[data-key="${key}"]`)!.innerText = val
+          return true
         }
       })
       textEditor.appendTo(this.$editor!)
     }
-    $keyEditBtn.onclick = () => {}
+
+    $titleEditBtn.onclick = () => {
+      openTextEditor('title')
+    }
+    $keyEditBtn.onclick = () => {
+      openTextEditor('key')
+    }
 
     $adminOnlyBtn.classList.add(!page.admin_only ? 'atk-green' : 'atk-yellow')
     $adminOnlyBtn.innerText = (!page.admin_only) ? '所有人可评' : '仅管理员可评'

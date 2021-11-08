@@ -47,6 +47,7 @@ export default class ItemTextEditor {
     this.$noBtn = this.$el.querySelector('.atk-no-btn')!
 
     this.$input.value = conf.initValue || ''
+    this.value = conf.initValue || ''
     if (this.conf.placeholder) this.$input.placeholder = this.conf.placeholder
 
     this.$input.oninput = () => this.onInput()

@@ -35,7 +35,7 @@ func ActionAdminPageGet(c echo.Context) error {
 	}
 
 	// 准备 query
-	query := lib.DB.Model(&model.Page{})
+	query := lib.DB.Model(&model.Page{}).Order("created_at DESC")
 	if !p.SiteAll { // 不是查的所有站点
 		query = query.Where("site_name = ?", p.SiteName)
 	}

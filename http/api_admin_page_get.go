@@ -10,6 +10,13 @@ type ParamsAdminPageGet struct {
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
 	SiteAll  bool
+	Limit    int `mapstructure:"limit"`
+	Offset   int `mapstructure:"offset"`
+}
+
+type ResponseAdminPageGet struct {
+	Total int64              `json:"total"`
+	Pages []model.CookedPage `json:"pages"`
 }
 
 func ActionAdminPageGet(c echo.Context) error {
@@ -27,11 +34,21 @@ func ActionAdminPageGet(c echo.Context) error {
 		return resp
 	}
 
-	var pages []model.Page
+	// 准备 query
 	query := lib.DB.Model(&model.Page{})
 	if !p.SiteAll { // 不是查的所有站点
 		query = query.Where("site_name = ?", p.SiteName)
 	}
+
+	// 总共条数
+	var total int64
+	query.Count(&total)
+
+	// 数据分页
+	query = query.Scopes(Paginate(p.Offset, p.Limit))
+
+	// 查找
+	var pages []model.Page
 	query.Find(&pages)
 
 	var cookedPages []model.CookedPage
@@ -39,8 +56,8 @@ func ActionAdminPageGet(c echo.Context) error {
 		cookedPages = append(cookedPages, p.ToCooked())
 	}
 
-	return RespData(c, Map{
-		"pages": cookedPages,
-		"sites": GetAllCookedSites(),
+	return RespData(c, ResponseAdminPageGet{
+		Pages: cookedPages,
+		Total: total,
 	})
 }

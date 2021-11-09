@@ -10,7 +10,7 @@ import (
 
 type ParamsVote struct {
 	TargetID uint   `mapstructure:"target_id" param:"required"`
-	Type     string `mapstructure:"type"`
+	FullType string `mapstructure:"type"`
 
 	Name  string `mapstructure:"name"`
 	Email string `mapstructure:"email"`
@@ -31,13 +31,21 @@ func ActionVote(c echo.Context) error {
 		return resp
 	}
 
+	// find user
+	var user model.User
+	if p.Name != "" && p.Email != "" {
+		user = model.FindCreateUser(p.Name, p.Email, "")
+	}
+
 	ip := c.RealIP()
 
 	// check type
-	isVoteComment := strings.HasPrefix(p.Type, "comment_")
-	isVotePage := strings.HasPrefix(p.Type, "page_")
-	isUp := strings.HasSuffix(p.Type, "_up")
-	isDown := strings.HasSuffix(p.Type, "_down")
+	isVoteComment := strings.HasPrefix(p.FullType, "comment_")
+	isVotePage := strings.HasPrefix(p.FullType, "page_")
+	isUp := strings.HasSuffix(p.FullType, "_up")
+	isDown := strings.HasSuffix(p.FullType, "_down")
+	voteTo := strings.TrimSuffix(strings.TrimSuffix(p.FullType, "_up"), "_down")
+	voteType := strings.TrimPrefix(strings.TrimPrefix(p.FullType, "comment_"), "page_")
 
 	if !isUp && !isDown {
 		return RespError(c, "unknown type")
@@ -62,63 +70,61 @@ func ActionVote(c echo.Context) error {
 	}
 
 	// sync target model field value
-	sync := func(voteNum int) {
+	save := func(up int, down int) {
 		switch {
 		case isVoteComment:
-			if isUp {
-				comment.VoteUp = voteNum
-			} else {
-				comment.VoteDown = voteNum
-			}
+			comment.VoteUp = up
+			comment.VoteDown = down
 			lib.DB.Save(&comment)
 		case isVotePage:
-			if isUp {
-				page.VoteUp = voteNum
-			} else {
-				page.VoteDown = voteNum
-			}
+			page.VoteUp = up
+			page.VoteDown = down
 			lib.DB.Save(&page)
 		}
 	}
 
-	// un-vote
-	var avaliableVote model.Vote
-	lib.DB.Where("target_id = ? AND type = ? AND ip = ?", p.TargetID, p.Type, ip).Find(&avaliableVote)
-	if !avaliableVote.IsEmpty() {
-		lib.DB.Unscoped().Delete(&avaliableVote)
+	createNew := func(t string) error {
+		// create new vote record
+		vote := model.Vote{
+			TargetID: p.TargetID,
+			Type:     model.VoteType(t),
+			UserID:   user.ID,
+			UA:       c.Request().UserAgent(),
+			IP:       ip,
+		}
+		return lib.DB.Create(&vote).Error
+	}
 
-		voteNum := GetVoteNum(p.TargetID, p.Type)
-		sync(voteNum)
+	// un-vote
+	var avaliableVotes []model.Vote
+	lib.DB.Where("target_id = ? AND type LIKE ? AND ip = ?", p.TargetID, voteTo+"%", ip).Find(&avaliableVotes)
+	if len(avaliableVotes) > 0 {
+		for _, v := range avaliableVotes {
+			lib.DB.Unscoped().Delete(&v)
+		}
+
+		avaVoteType := strings.TrimPrefix(strings.TrimPrefix(string(avaliableVotes[0].Type), "comment_"), "page_")
+		if voteType != avaVoteType {
+			createNew(p.FullType)
+		}
+
+		up, down := GetVoteNumUpDown(p.TargetID, voteTo)
+		save(up, down)
 
 		return RespData(c, Map{
-			"vote_num": voteNum,
+			"up":   up,
+			"down": down,
 		})
 	}
 
-	// find user
-	var user model.User
-	if p.Name != "" && p.Email != "" {
-		user = model.FindCreateUser(p.Name, p.Email, "")
-	}
-
-	// create new vote record
-	vote := model.Vote{
-		TargetID: p.TargetID,
-		Type:     model.VoteType(p.Type),
-		UserID:   user.ID,
-		UA:       c.Request().UserAgent(),
-		IP:       ip,
-	}
-	err := lib.DB.Create(&vote).Error
-	if err != nil {
-		return RespError(c, "vote create error")
-	}
+	createNew(p.FullType)
 
 	// sync
-	voteNum := GetVoteNum(p.TargetID, p.Type)
-	sync(voteNum)
+	up, down := GetVoteNumUpDown(p.TargetID, voteTo)
+	save(up, down)
 
 	return RespData(c, Map{
-		"vote_num": voteNum,
+		"up":   up,
+		"down": down,
 	})
 }

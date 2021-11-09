@@ -53,3 +53,11 @@ func GetVoteNum(targetID uint, voteType string) int {
 	lib.DB.Model(&model.Vote{}).Where("target_id = ? AND type = ?", targetID, voteType).Count(&num)
 	return int(num)
 }
+
+func GetVoteNumUpDown(targetID uint, voteTo string) (int, int) {
+	var up int64
+	var down int64
+	lib.DB.Model(&model.Vote{}).Where("target_id = ? AND type = ?", targetID, voteTo+"_up").Count(&up)
+	lib.DB.Model(&model.Vote{}).Where("target_id = ? AND type = ?", targetID, voteTo+"_down").Count(&down)
+	return int(up), int(down)
+}

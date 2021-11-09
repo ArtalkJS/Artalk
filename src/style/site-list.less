@@ -46,22 +46,42 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        padding: 10px 30px 10px 35px;
+        padding: 10px 30px 0 35px;
         justify-content: space-between;
 
-        .atk-site-name {
-          font-size: 23px;
-          position: relative;
+        .atk-site-info {
+          .atk-site-name {
+            display: inline-block;
+            font-size: 23px;
+            position: relative;
 
-          &:after {
-            content: ' ';
-            position: absolute;
+            &:after {
+              content: ' ';
+              position: absolute;
+              width: 100%;
+              height: 6px;
+              background: @color-main;
+              opacity: .4;
+              left: 0;
+              bottom: 6px;
+            }
+          }
+
+          .atk-site-urls {
+            display: flex;
             width: 100%;
-            height: 6px;
-            background: @color-main;
-            opacity: .4;
-            left: 0;
-            bottom: 6px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+            min-height: 23px;
+
+            .atk-url-item {
+              background: @color-bg-grey;
+              border-radius: 2px;
+              padding: 0 8px;
+              font-size: 13px;
+              margin-bottom: 3px;
+              margin-right: 3px;
+            }
           }
         }
 
@@ -80,9 +100,10 @@
       }
 
       .atk-main {
+        position: relative;
         display: flex;
         flex-direction: row;
-        padding: 0 30px 0 35px;
+        padding: 20px 30px 6px 35px;
         padding-bottom: 10px;
 
         .atk-site-text-actions {
@@ -101,6 +122,10 @@
           .atk-list-btn-actions();
 
           padding-right: 9px;
+        }
+
+        .atk-item-text-editor-layer {
+          padding: 10px 20px;
         }
       }
     }
@@ -138,6 +163,8 @@
         text-align: center;
         font-size: 16px;
         color: @color-sub;
+        padding: 0 20px;
+        word-break: break-word;
       }
 
       &.atk-active {

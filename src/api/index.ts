@@ -189,12 +189,9 @@ export default class Api {
   }
 
   /** 站点 · 修改 */
-  public async siteEdit(id: number, data: {
-    name: string
-    urls: string
-  }) {
+  public async siteEdit(data: SiteData) {
     const params: any = {
-      id,
+      id: data.id,
       name: data.name,
       urls: data.urls,
     }

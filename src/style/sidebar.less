@@ -167,6 +167,8 @@
     }
 
     .atk-tabs {
+      .atk-slim-scrollbar();
+
       display: flex;
       flex-direction: row;
       overflow-y: auto;
@@ -196,6 +198,8 @@
   }
 
   .atk-site-list-floater {
+    .atk-slim-scrollbar();
+
     position: absolute;
     z-index: 1;
     left: 50%;
@@ -253,6 +257,7 @@
     position: relative;
     overflow-y: auto;
     height: calc(100vh - @header-height - @nav-height - 2px);
+    .atk-slim-scrollbar();
 
     .atk-sidebar-no-content {
       position: absolute;

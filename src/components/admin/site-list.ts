@@ -5,6 +5,8 @@ import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import { SiteData } from '~/types/artalk-data'
+import ItemTextEditor from '../item-text-editor'
+import Api from '~/src/api'
 
 export default class SiteList extends Component {
   sites: SiteData[] = []
@@ -15,6 +17,7 @@ export default class SiteList extends Component {
   $rowsWrap: HTMLElement
 
   $editor?: HTMLElement
+  activeSite: string = ''
 
   constructor(ctx: Context) {
     super(ctx)
@@ -45,6 +48,7 @@ export default class SiteList extends Component {
 
   public loadSites(sites: SiteData[]) {
     this.sites = sites
+    this.activeSite = ''
     this.$rowsWrap.innerHTML = ''
     this.$headerTitle.innerText = `共 0 个站点`
 
@@ -59,35 +63,48 @@ export default class SiteList extends Component {
       }
 
       // 创建 site item
-      const $site = Utils.createElement(
-        `<div class="atk-site-item">
-          <div class="atk-site-logo"></div>
-          <div class="atk-site-name"></div>
-        </div>`)
+      const $site = this.renderSite(site, $row!)
       $row!.append($site)
-
-      const $siteLogo = $site.querySelector<HTMLElement>('.atk-site-logo')!
-      const $siteName = $site.querySelector<HTMLElement>('.atk-site-name')!
-
-      $siteLogo.innerText = site.name.substr(0, 1)
-      $siteName.innerText = site.name
-
-      // click
-      $site.onclick = () => {
-        this.closeEditor()
-        $site.classList.add('atk-active')
-        this.editSite(site, $site)
-      }
     }
 
     this.$headerTitle.innerText = `共 ${sites.length} 个站点`
   }
 
-  public editSite(site: SiteData, $site: HTMLElement) {
+  public renderSite(site: SiteData, $row: HTMLElement) {
+    const $site = Utils.createElement(
+      `<div class="atk-site-item">
+        <div class="atk-site-logo"></div>
+        <div class="atk-site-name"></div>
+      </div>`)
+
+    const $siteLogo = $site.querySelector<HTMLElement>('.atk-site-logo')!
+    const $siteName = $site.querySelector<HTMLElement>('.atk-site-name')!
+    const setActive = () => { $site.classList.add('atk-active') }
+
+    $siteLogo.innerText = site.name.substr(0, 1)
+    $siteName.innerText = site.name
+
+    // click
+    $site.onclick = () => {
+      this.closeEditor()
+      setActive()
+      this.showEditor(site, $site, $row)
+    }
+
+    if (this.activeSite === site.name) { setActive() }
+
+    return $site
+  }
+
+  public showEditor(site: SiteData, $site: HTMLElement, $row: HTMLElement) {
+    this.activeSite = site.name
     this.$editor = Utils.createElement(`
     <div class="atk-site-edit">
     <div class="atk-header">
-      <div class="atk-site-name">Site</div>
+      <div class="atk-site-info">
+        <span class="atk-site-name"></span>
+        <span class="atk-site-urls"></span>
+      </div>
       <div class="atk-close-btn">
         <i class="atk-icon atk-icon-close"></i>
       </div>
@@ -108,28 +125,69 @@ export default class SiteList extends Component {
     </div>`)
 
     // 插入
-    const $row = $site.parentElement!
     $row.before(this.$editor)
 
     // header
-    this.$editor.querySelector<HTMLElement>('.atk-site-name')!.innerText = site.name
-    this.$editor.querySelector<HTMLElement>('.atk-close-btn')!.onclick = () => {
-      this.closeEditor()
+    const $siteName = this.$editor.querySelector<HTMLElement>('.atk-site-name')!
+    const $siteUrls = this.$editor.querySelector<HTMLElement>('.atk-site-urls')!
+    const $closeBtn = this.$editor.querySelector<HTMLElement>('.atk-close-btn')!
+    $closeBtn.onclick = () => this.closeEditor()
+
+    const update = (s: SiteData) => {
+      site = s
+      $siteName.innerText = site.name
+      $siteName.onclick = () => {}
+      $siteUrls.innerHTML = ''
+      site.urls?.forEach(u => {
+        const $item = Utils.createElement('<span class="atk-url-item"></span>')
+        $siteUrls.append($item)
+        $item.innerText = (u || '').replace(/\/$/, '')
+        $item.onclick = () => {}
+      })
     }
+    update(site)
 
     // actions
+    const $main = this.$editor.querySelector<HTMLElement>('.atk-main')!
     const $actions = this.$editor.querySelector<HTMLElement>('.atk-site-text-actions')!
     const $renameBtn = $actions.querySelector<HTMLElement>('.atk-rename-btn')!
     const $editUrlBtn = $actions.querySelector<HTMLElement>('.atk-edit-url-btn')!
     const $exportBtn = $actions.querySelector<HTMLElement>('.atk-export-btn')!
     const $importBtn = $actions.querySelector<HTMLElement>(`.atk-import-btn`)!
     const $delBtn = this.$editor.querySelector<HTMLElement>('.atk-del-btn')!
+    const showLoading = () => { Ui.showLoading(this.$editor!) }
+    const hideLoading = () => { Ui.hideLoading(this.$editor!) }
+    const showError = (msg: string) => { window.alert(msg) }
+
+    // 文本编辑
+    const openTextEditor = (key: string) => {
+      let initValue = site[key] || ''
+      if (key === 'urls') initValue = site.urls_raw || ''
+      const textEditor = new ItemTextEditor({
+        initValue,
+        onYes: async (val: string) => {
+          Ui.showLoading(textEditor.$el)
+          let s: SiteData
+          try {
+            s = await new Api(this.ctx).siteEdit({ ...site, [key]: val })
+          } catch (err: any) {
+            showError(`修改失败：${err.msg || '未知错误'}`)
+            console.error(err)
+            return false
+          } finally { Ui.hideLoading(textEditor.$el) }
+          $site.replaceWith(this.renderSite(s, $row))
+          update(s)
+          return true
+        }
+      })
+      textEditor.appendTo($main)
+    }
 
     // 重命名
-    $renameBtn.onclick = () => {}
+    $renameBtn.onclick = () => openTextEditor('name')
 
     // 修改 URL
-    $editUrlBtn.onclick = () => {}
+    $editUrlBtn.onclick = () => openTextEditor('urls')
 
     // 导出
     $exportBtn.onclick = () => {}
@@ -138,7 +196,23 @@ export default class SiteList extends Component {
     $importBtn.onclick = () => {}
 
     // 删除
-    $delBtn.onclick = () => {}
+    $delBtn.onclick = () => {
+      const del = async () => {
+        showLoading()
+        try {
+          await new Api(this.ctx).siteDel(site.id, true)
+        } catch (err: any) {
+          console.log(err)
+          showError(`删除失败 ${String(err)}`)
+          return
+        } finally { hideLoading() }
+        this.closeEditor()
+        $site.remove()
+      }
+      if (window.confirm(
+        `确认删除站点 "${site.name}"？将会删除所有相关数据`
+      )) del()
+    }
   }
 
   public closeEditor() {
@@ -146,5 +220,6 @@ export default class SiteList extends Component {
 
     this.$editor.remove()
     this.$rowsWrap.querySelectorAll('.atk-site-item').forEach((e) => e.classList.remove('atk-active'))
+    this.activeSite = ''
   }
 }

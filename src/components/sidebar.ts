@@ -13,12 +13,16 @@ import SidebarView from './sidebar-view'
 import CommentsView from './sidebar-views/comments-view'
 import PagesView from './sidebar-views/pages-view'
 import SitesView from './sidebar-views/sites-view'
+import TransferView from './sidebar-views/transfer-view'
 import { SiteData } from '~/types/artalk-data'
 import Api from '../api'
 import SiteListFloater from './admin/site-list-floater'
 import SettingView from './sidebar-views/setting-view'
 
 const DEFAULT_VIEW = 'comments'
+const REGISTER_VIEWS: (typeof SidebarView)[] = [
+  CommentsView, PagesView, SitesView, TransferView, // SettingView
+]
 
 export default class Sidebar extends Component {
   public layer?: Layer
@@ -47,9 +51,6 @@ export default class Sidebar extends Component {
   public curtTab?: string
 
   public viewInstances: {[name: string]: SidebarView} = {}
-  public registerViews: (typeof SidebarView)[] = [
-    CommentsView, PagesView, SitesView, SettingView
-  ]
 
   private viewSwitcherShow = false
 
@@ -84,9 +85,6 @@ export default class Sidebar extends Component {
     this.ctx.on('sidebar-show', () => (this.show()))
     this.ctx.on('sidebar-hide', () => (this.hide()))
     this.ctx.on('user-changed', () => { this.firstShow = true })
-
-    // TODO for testing
-    this.show()
   }
 
   /** 初始化 view 切换器 */
@@ -96,7 +94,7 @@ export default class Sidebar extends Component {
     }
 
     this.$navViews.innerHTML = ''
-    this.registerViews.forEach(view => {
+    REGISTER_VIEWS.forEach(view => {
       const $item = Utils.createElement(`<div class="atk-tab-item"></div>`)
       this.$navViews.append($item)
       $item.setAttribute('data-name', view.viewName)
@@ -180,8 +178,16 @@ export default class Sidebar extends Component {
         this.curtSite = '__ATK_SITE_ALL'
 
         Ui.showLoading(this.$el)
-        await this.siteSwitcher!.load(this.curtSite)
-        Ui.hideLoading(this.$el)
+        try {
+          await this.siteSwitcher!.load(this.curtSite)
+        } catch (err: any) {
+          const $err = Utils.createElement(`<span>加载失败：${err.msg || '网络错误'}<br/></span>`)
+          const $retryBtn = Utils.createElement('<span style="cursor:pointer;">点击重新获取</span>')
+          $err.appendChild($retryBtn)
+          $retryBtn.onclick = () => { Ui.setError(this.$el, null); this.show() }
+          Ui.setError(this.$el, $err)
+          return
+        } finally { Ui.hideLoading(this.$el) }
 
         // 站点图像
         this.$avatar.innerHTML = ''
@@ -219,7 +225,7 @@ export default class Sidebar extends Component {
     let view = this.viewInstances[viewName]
     if (!view) {
       // 初始化 View
-      const View = this.registerViews.find(o => o.viewName === viewName)!
+      const View = REGISTER_VIEWS.find(o => o.viewName === viewName)!
       view = new View(this.ctx)
       this.viewInstances[viewName] = view
     }

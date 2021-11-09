@@ -192,8 +192,8 @@ export default class Api {
   public async siteEdit(data: SiteData) {
     const params: any = {
       id: data.id,
-      name: data.name,
-      urls: data.urls,
+      name: data.name || '',
+      urls: data.urls || '',
     }
 
     const d = await POST<any>(this.ctx, `${this.baseURL}/admin/site-edit`, params)
@@ -205,6 +205,12 @@ export default class Api {
     const params: any = { id, del_content: delContent }
 
     return POST(this.ctx, `${this.baseURL}/admin/site-del`, params)
+  }
+
+  /** 导出 */
+  public async export() {
+    const d = await Fetch(this.ctx, `${this.baseURL}/admin/export`, { method: 'POST' }, 0)
+    return (d.data?.data || '' as string)
   }
 
   // ============================

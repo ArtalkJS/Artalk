@@ -19,6 +19,8 @@ export default class SiteList extends Component {
   $editor?: HTMLElement
   activeSite: string = ''
 
+  $add?: HTMLElement
+
   constructor(ctx: Context) {
     super(ctx)
 
@@ -43,7 +45,10 @@ export default class SiteList extends Component {
 
     // 新建站点按钮
     const $addBtn = this.$headerActions.querySelector<HTMLElement>('.atk-site-add-btn')!
-    $addBtn.onclick = () => {}
+    $addBtn.onclick = () => {
+      this.closeEditor()
+      this.showAdd()
+    }
   }
 
   public loadSites(sites: SiteData[]) {
@@ -87,6 +92,7 @@ export default class SiteList extends Component {
     // click
     $site.onclick = () => {
       this.closeEditor()
+      this.closeAdd()
       setActive()
       this.showEditor(site, $site, $row)
     }
@@ -113,8 +119,8 @@ export default class SiteList extends Component {
       <div class="atk-site-text-actions">
         <div class="atk-item atk-rename-btn">重命名</div>
         <div class="atk-item atk-edit-url-btn">修改 URL</div>
-        <div class="atk-item atk-export-btn">导出</div>
-        <div class="atk-item atk-import-btn">导入</div>
+        <!--<div class="atk-item atk-export-btn">导出</div>
+        <div class="atk-item atk-import-btn">导入</div>-->
       </div>
       <div class="atk-site-btn-actions">
         <div class="atk-item atk-del-btn">
@@ -136,13 +142,13 @@ export default class SiteList extends Component {
     const update = (s: SiteData) => {
       site = s
       $siteName.innerText = site.name
-      $siteName.onclick = () => {}
+      $siteName.onclick = () => { if (site.first_url) window.open(site.first_url) }
       $siteUrls.innerHTML = ''
       site.urls?.forEach(u => {
         const $item = Utils.createElement('<span class="atk-url-item"></span>')
         $siteUrls.append($item)
         $item.innerText = (u || '').replace(/\/$/, '')
-        $item.onclick = () => {}
+        $item.onclick = () => { window.open(u) }
       })
     }
     update(site)
@@ -152,8 +158,8 @@ export default class SiteList extends Component {
     const $actions = this.$editor.querySelector<HTMLElement>('.atk-site-text-actions')!
     const $renameBtn = $actions.querySelector<HTMLElement>('.atk-rename-btn')!
     const $editUrlBtn = $actions.querySelector<HTMLElement>('.atk-edit-url-btn')!
-    const $exportBtn = $actions.querySelector<HTMLElement>('.atk-export-btn')!
-    const $importBtn = $actions.querySelector<HTMLElement>(`.atk-import-btn`)!
+    // const $exportBtn = $actions.querySelector<HTMLElement>('.atk-export-btn')!
+    // const $importBtn = $actions.querySelector<HTMLElement>(`.atk-import-btn`)!
     const $delBtn = this.$editor.querySelector<HTMLElement>('.atk-del-btn')!
     const showLoading = () => { Ui.showLoading(this.$editor!) }
     const hideLoading = () => { Ui.hideLoading(this.$editor!) }
@@ -190,10 +196,10 @@ export default class SiteList extends Component {
     $editUrlBtn.onclick = () => openTextEditor('urls')
 
     // 导出
-    $exportBtn.onclick = () => {}
+    // $exportBtn.onclick = () => {}
 
-    // 导入
-    $importBtn.onclick = () => {}
+    // // 导入
+    // $importBtn.onclick = () => {}
 
     // 删除
     $delBtn.onclick = () => {
@@ -208,6 +214,7 @@ export default class SiteList extends Component {
         } finally { hideLoading() }
         this.closeEditor()
         $site.remove()
+        this.sites = this.sites.filter(s => s.name !== site.name)
       }
       if (window.confirm(
         `确认删除站点 "${site.name}"？将会删除所有相关数据`
@@ -221,5 +228,62 @@ export default class SiteList extends Component {
     this.$editor.remove()
     this.$rowsWrap.querySelectorAll('.atk-site-item').forEach((e) => e.classList.remove('atk-active'))
     this.activeSite = ''
+  }
+
+  public showAdd() {
+    this.closeAdd()
+
+    this.$add = Utils.createElement(`
+    <div class="atk-site-add">
+    <div class="atk-header">
+      <div class="atk-title">新增站点</div>
+      <div class="atk-close-btn">
+        <i class="atk-icon atk-icon-close"></i>
+      </div>
+    </div>
+    <div class="atk-form">
+      <input type="text" name="AtkSiteName" placeholder="站点名称" autocomplete="off">
+      <input type="text" name="AtkSiteUrls" placeholder="站点 URL（多个用逗号隔开）" autocomplete="off">
+      <button class="atk-btn" name="AtkSubmit">创建</button>
+    </div>
+    </div>`)
+    this.$header.after(this.$add)
+
+    const $closeBtn = this.$add.querySelector<HTMLElement>('.atk-close-btn')!
+    $closeBtn.onclick = () => this.closeAdd()
+
+    const $siteName = this.$add.querySelector<HTMLInputElement>('[name="AtkSiteName"]')!
+    const $siteUrls = this.$add.querySelector<HTMLInputElement>('[name="AtkSiteUrls"]')!
+    const $submitBtn = this.$add.querySelector<HTMLButtonElement>('[name="AtkSubmit"]')!
+
+    $submitBtn.onclick = async () => {
+      const siteName = $siteName.value.trim()
+      const siteUrls = $siteUrls.value.trim()
+
+      if (siteName === '') { $siteName.focus(); return }
+
+      Ui.showLoading(this.$add!)
+      let s: SiteData
+      try {
+        s = await new Api(this.ctx).siteAdd(siteName, siteUrls)
+      } catch (err: any) {
+        window.alert(`创建失败：${err.msg || ''}`)
+        console.error(err)
+        return
+      } finally {  Ui.hideLoading(this.$add!) }
+
+      this.sites.push(s)
+      this.loadSites(this.sites)
+      this.closeAdd()
+    }
+
+    // 回车键提交
+    const keyDown = (evt: KeyboardEvent) => { if (evt.key === 'Enter') { $submitBtn.click() } }
+    $siteName.onkeyup = (evt) => keyDown(evt)
+    $siteUrls.onkeyup = (evt) => keyDown(evt)
+  }
+
+  public closeAdd() {
+    this.$add?.remove()
   }
 }

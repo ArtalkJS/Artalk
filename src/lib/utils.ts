@@ -2,36 +2,36 @@ import libMarked from 'marked'
 import hanabi from 'hanabi'
 import Context from '../context'
 
-export function createElement<E extends HTMLElement = HTMLElement> (htmlStr: string = ''): E {
+export function createElement<E extends HTMLElement = HTMLElement>(htmlStr: string = ''): E {
   const div = document.createElement('div')
   div.innerHTML = htmlStr.trim()
   return (div.firstElementChild || div) as E
 }
 
-export function getHeight (el: HTMLElement) {
+export function getHeight(el: HTMLElement) {
   return parseFloat(getComputedStyle(el, null).height.replace('px', ''))
 }
 
-export function htmlEncode (str: string) {
+export function htmlEncode(str: string) {
   const temp = document.createElement('div')
   temp.innerText = str
   const output = temp.innerHTML
   return output
 }
 
-export function htmlDecode (str: string) {
+export function htmlDecode(str: string) {
   const temp = document.createElement('div')
   temp.innerHTML = str
   const output = temp.innerText
   return output
 }
 
-export function getQueryParam (name: string) {
+export function getQueryParam(name: string) {
   const match = RegExp(`[?&]${name}=([^&]*)`).exec(window.location.search);
   return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }
 
-export function getOffset (el: HTMLElement) {
+export function getOffset(el: HTMLElement) {
   const rect = el.getBoundingClientRect()
   return {
     top: rect.top + window.scrollY,
@@ -39,7 +39,7 @@ export function getOffset (el: HTMLElement) {
   }
 }
 
-export function padWithZeros (vNumber: number, width: number) {
+export function padWithZeros(vNumber: number, width: number) {
   let numAsString = vNumber.toString()
   while (numAsString.length < width) {
     numAsString = `0${numAsString}`
@@ -47,7 +47,7 @@ export function padWithZeros (vNumber: number, width: number) {
   return numAsString
 }
 
-export function dateFormat (date: Date) {
+export function dateFormat(date: Date) {
   const vDay = padWithZeros(date.getDate(), 2)
   const vMonth = padWithZeros(date.getMonth() + 1, 2)
   const vYear = padWithZeros(date.getFullYear(), 2)
@@ -57,7 +57,7 @@ export function dateFormat (date: Date) {
   return `${vYear}-${vMonth}-${vDay}`
 }
 
-export function timeAgo (date: Date) {
+export function timeAgo(date: Date) {
   try {
     const oldTime = date.getTime()
     const currTime = new Date().getTime()
@@ -119,7 +119,7 @@ export function versionCompare(a: string, b: string) {
 }
 
 let markedInstance: any = null
-export function marked (ctx: Context, src: string): string {
+export function marked(ctx: Context, src: string): string {
   if (!markedInstance) {
     const renderer = new libMarked.Renderer()
     const linkRenderer = renderer.link

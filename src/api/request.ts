@@ -1,7 +1,7 @@
 import Context from '../context'
 
 /** 公共请求函数 */
-export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit): Promise<any> {
+export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit, timeout?: number): Promise<any> {
   // JWT
   if (ctx.user.data.token) {
     const requestHeaders: HeadersInit = new Headers()
@@ -14,11 +14,11 @@ export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit)
   try {
 
     let resp: Response
-    if (ctx.conf.reqTimeout === 0) {
+    if ((typeof timeout !== 'number' && ctx.conf.reqTimeout === 0) || timeout === 0) {
       resp = await fetch(input, init)
     } else {
       // 请求超时检测
-      resp = await timeoutPromise(ctx.conf.reqTimeout || 15000, fetch(input, init))
+      resp = await timeoutPromise(timeout || ctx.conf.reqTimeout || 15000, fetch(input, init))
     }
 
     if (!resp.ok && resp.status !== 401) throw new Error(`请求响应 ${resp.status}`)

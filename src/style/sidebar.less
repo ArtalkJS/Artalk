@@ -201,11 +201,10 @@
     .atk-slim-scrollbar();
 
     position: absolute;
-    z-index: 1;
+    z-index: 9999;
     left: 50%;
     top: 70px;
     transform: translateX(-50%);
-    z-index: 1;
     pointer-events: all;
     background: @color-bg;
     width: 80%;
@@ -297,120 +296,120 @@
     }
   }
 
-  .atk-form-wrap, .atk-form-inline-wrap {
-    padding: 10px 10px;
+  .atk-form {
+    @form-height: 35px;
 
-    input, select {
-      min-width: 200px;
-    }
+    padding: 20px 30px;
 
-    input, textarea {
-      display: block;
-      line-height: 30px;
-      padding: 0 10px;
-      margin: 0 2px;
-      border: none;
-      border-bottom: 1px solid @color-border;
-      outline: none;
-      width: 100%;
-
-      &:focus {
-        border-bottom-color: @color-main;
-      }
-
-      &[type="file"] {
-        width: 200px;
-        cursor: pointer;
-        position: relative;
-        border: 0;
-        margin: 17px 0;
-      }
-    }
-
-    textarea {
-      min-height: 120px;
-    }
-
-    select {
-      display: block;
-      outline: none;
-      border: none;
-      border-bottom: 1px solid @color-border;
-      height: 30px;
-      padding: 0 10px;
-      width: 100%;
-    }
-
-    button {
-      &:hover {
-        color: #fff;
-        background: @color-main;
-      }
-
-      color: @color-light;
-      background: @color-bg-light;
-      border: 0;
-      line-height: 30px;
-      cursor: pointer;
-      outline: none;
-      padding: 0 20px;
-      border-radius: 2px;
-      margin: 0 5px;
-      width: 100%;
+    .atk-label {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: @color-font;
     }
 
     .atk-desc {
       font-size: 14px;
       margin-top: 12px;
       margin-left: 15px;
+      margin-bottom: 20px;
       display: block;
+      color: @color-meta;
+
+      a {
+        opacity: 0.8;
+      }
+    }
+
+    input, textarea {
+      display: block;
+      line-height: @form-height;
+      padding: 0 10px;
+      margin: 0;
+      border: none;
+      border-bottom: 2px solid @color-border;
+      outline: none;
+      width: 100%;
+      margin-bottom: 25px;
+
+      &:focus {
+        border-bottom-color: @color-bg-light;
+      }
+
+      &[type="file"] {
+        border-radius: 2px;
+        background: transparent;
+        border-bottom: 2px solid @color-border;
+        cursor: pointer;
+        position: relative;
+        padding: 0 15px;
+        margin-bottom: 30px;
+      }
+    }
+
+    textarea {
+      font-size: 13px;
+      line-height: 20px;
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    select {
+      display: block;
+      outline: none;
+      height: @form-height;
+      padding: 5px 10px;
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid @color-border;
+      margin-bottom: 25px;
+    }
+
+    button {
+      &:hover {
+        background: @color-bg-light;
+      }
+
+      text-align: center;
+      color: @color-light;
+      background: transparent;
+      border: 2px solid @color-bg-light;
+      line-height: @form-height;
+      letter-spacing: 2em;
+      text-indent: 2em; // center
+      cursor: pointer;
+      outline: none;
+      padding: 0 20px;
+      border-radius: 4px;
+      margin: 0 5px;
+      width: 100%;
+    }
+
+    input, select, button {
+      font-size: 15px;
     }
   }
 
-  .atk-admin-setting {
+  .atk-log-wrap {
     .atk-log-back-btn {
       display: inline-block;
-      padding: 5px 30px;
+      padding: 5px 33px;
       cursor: pointer;
       user-select: none;
+      border-right: 1px solid @color-border;
+      border-left: 1px solid transparent;
       &:hover {
         background: #f4f4f4;
       }
     }
+
+    .atk-log {}
 
     .atk-iframe {
       width: 100%;
       height: calc(100vh - 150px);
       border: 0;
       background: #f4f4f4;
-      border: 5px solid #eee;
+      border: 3px solid #eee;
     }
-  }
-}
-
-.atk-sidebar .atk-setting {
-  .atk-group {
-    padding: 15px 25px;
-
-    &:not(:last-child) {
-      border-bottom: 1px solid @color-border;
-    }
-  }
-
-  .atk-title {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-
-  .atk-label {
-    font-size: 16px;
-    margin-top: 10px;
-    margin-bottom: 2px;
-    color: @color-meta;
-  }
-
-  .atk-btn {
-    padding: 4px 25px;
-    margin-top: 20px;
   }
 }

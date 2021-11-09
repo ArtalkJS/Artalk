@@ -231,7 +231,7 @@ export default class Api {
     }
 
     const data = await POST<any>(this.ctx, `${this.baseURL}/vote`, params)
-    return ((data?.vote_num || 0) as number)
+    return (data as {up: number, down: number})
   }
 
   /** 已读标记 */

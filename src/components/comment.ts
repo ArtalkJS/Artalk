@@ -19,6 +19,8 @@ export default class Comment extends Component {
   public $content!: HTMLElement
   public $children!: HTMLElement|null
   public $actions!: HTMLElement
+  public voteBtnUp?: ActionBtn
+  public voteBtnDown?: ActionBtn
 
   public parent: Comment|null
   public nestedNum: number
@@ -191,16 +193,16 @@ export default class Comment extends Component {
     // 投票功能
     if (this.ctx.conf.vote) {
       // 赞同按钮
-      const voteBtnUp = new ActionBtn(() => `赞同 (${this.data.vote_up || 0})`).appendTo(this.$actions)
-      voteBtnUp.setClick(() => {
-        this.vote('up', voteBtnUp)
+      this.voteBtnUp = new ActionBtn(() => `赞同 (${this.data.vote_up || 0})`).appendTo(this.$actions)
+      this.voteBtnUp.setClick(() => {
+        this.vote('up')
       })
 
       // 反对按钮
       if (this.ctx.conf.voteDown) {
-        const voteBtnDown = new ActionBtn(() => `反对 (${this.data.vote_up || 0})`).appendTo(this.$actions)
-        voteBtnDown.setClick(() => {
-          this.vote('down', voteBtnDown)
+        this.voteBtnDown = new ActionBtn(() => `反对 (${this.data.vote_down || 0})`).appendTo(this.$actions)
+        this.voteBtnDown.setClick(() => {
+          this.vote('down')
         })
       }
     }
@@ -345,14 +347,18 @@ export default class Comment extends Component {
   }
 
   /** 投票操作 */
-  vote(type: 'up'|'down', actionBtn: ActionBtn) {
+  vote(type: 'up'|'down') {
+    const actionBtn = type === 'up' ? this.voteBtnUp : this.voteBtnDown
+
     new Api(this.ctx).vote(this.data.id, `comment_${type}`)
-    .then((num) => {
-      this.data[`vote_${type}`] = num
-      actionBtn.updateText()
+    .then((v) => {
+      this.data.vote_up = v.up
+      this.data.vote_down = v.down
+      this.voteBtnUp?.updateText()
+      this.voteBtnDown?.updateText()
     })
     .catch((err) => {
-      actionBtn.setError(`投票失败`)
+      actionBtn?.setError(`投票失败`)
       console.log(err)
     })
   }

@@ -61,7 +61,6 @@
   },
   "dependencies": {
     "hanabi": "^0.4.0",
-    "marked": "0.7.0",
-    "md5": "^2.3.0"
+    "marked": "0.7.0"
   }
 }

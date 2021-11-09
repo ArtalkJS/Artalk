@@ -1,6 +1,6 @@
 import '../style/sidebar.less'
 
-import md5 from 'md5'
+import MD5 from '../lib/md5'
 import Context from '../context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
@@ -201,7 +201,7 @@ export default class Sidebar extends Component {
 
         // 头像
         const $avatarImg = document.createElement('img') as HTMLImageElement
-        $avatarImg.src = Utils.getGravatarURL(this.ctx, md5(this.ctx.user.data.email.toLowerCase()))
+        $avatarImg.src = Utils.getGravatarURL(this.ctx, MD5(this.ctx.user.data.email.toLowerCase()))
         this.$avatar.innerHTML = ''
         this.$avatar.append($avatarImg)
       }

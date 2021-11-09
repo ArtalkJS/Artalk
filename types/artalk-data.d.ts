@@ -77,7 +77,7 @@ export interface ListData {
   page: PageData
 
   /** 站点信息 */
-  site: SiteData // TODO
+  site: SiteData
 
   /** 未读的 Notifies */
   unread: NotifyData[]

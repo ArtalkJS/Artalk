@@ -28,6 +28,7 @@ export default class Comment extends Component {
   public children: Comment[] = []
 
   public replyTo?: CommentData // 回复对象（flatMode 用）
+  public $replyTo?: HTMLElement
 
   public afterRender?: () => void
 
@@ -170,16 +171,16 @@ export default class Comment extends Component {
   private renderReplyTo() {
     if (!this.replyTo) return
 
-    const replyToEl = Utils.createElement(`
+    this.$replyTo = Utils.createElement(`
       <div class="atk-reply-to">
         <div class="atk-meta">回复 <span class="atk-nick"></span>:</div>
         <div class="atk-content"></div>
       </div>`)
-    replyToEl.querySelector<HTMLElement>('.atk-nick')!.innerText = `@${this.replyTo.nick}`
+    this.$replyTo.querySelector<HTMLElement>('.atk-nick')!.innerText = `@${this.replyTo.nick}`
     let replyContent = Utils.marked(this.ctx, this.replyTo.content)
     if (this.replyTo.is_collapsed) replyContent = '[已折叠]'
-    replyToEl.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
-    this.$body.prepend(replyToEl)
+    this.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
+    this.$body.prepend(this.$replyTo)
   }
 
   // 待审核状态
@@ -306,6 +307,7 @@ export default class Comment extends Component {
           this.$children = this.parent.getChildrenEl()
       }
     }
+
     return this.$children
   }
 
@@ -428,5 +430,34 @@ export default class Comment extends Component {
     this.openable = true
     this.openURL = url
     this.$el.classList.add('atk-openable')
+  }
+
+  /** 内容过多，折叠显示 */
+  public checkMoreHide($target: HTMLElement|null, allowHeight = 300) {
+    if (!$target) return
+
+    let $hideMoreOpenBtn = $target?.querySelector<HTMLElement>('.atk-more-hide-open-btn')
+
+    const removeHideMore = () => {
+      $target.classList.remove('atk-comment-more-hide')
+      if ($hideMoreOpenBtn) $hideMoreOpenBtn.remove()
+      $target.style.height = ''
+      $target.style.overflow = ''
+    }
+
+    if (Utils.getHeight($target) > allowHeight) {
+      //console.log('内容过多，需要折叠', $target)
+      $target.classList.add('atk-comment-more-hide')
+      $target.style.height = `${allowHeight}px`
+      $target.style.overflow = 'hidden'
+      if (!$hideMoreOpenBtn) {
+        $hideMoreOpenBtn = Utils.createElement(`<div class="atk-more-hide-open-btn">阅读更多</span>`)
+        $hideMoreOpenBtn.onclick = (e) => {
+          e.stopPropagation()
+          removeHideMore()
+        }
+        $target.append($hideMoreOpenBtn)
+      }
+    }
   }
 }

@@ -44,6 +44,15 @@ export default interface ArtalkConfig {
     autoLoad?: boolean
   }
 
+  /** 内容限高 */
+  heightLimit: {
+    /** 评论内容限高 */
+    content?: number
+
+    /** 子评论区域限高 */
+    children?: number
+  }
+
   /** 评论投票按钮 */
   vote?: boolean
 

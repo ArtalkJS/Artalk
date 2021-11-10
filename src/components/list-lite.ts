@@ -304,6 +304,10 @@ export default class ListLite extends Component {
       })
     }
 
+    this.eachComment(this.comments, (c) => {
+      this.checkMoreHide(c)
+    })
+
     this.refreshUI()
     this.ctx.trigger('comments-loaded')
   }
@@ -325,7 +329,6 @@ export default class ListLite extends Component {
       this.comments.unshift(comment)
     }
 
-
     if (commentItem.visible) {
       if (insertMode === 'append') {
         this.$commentsWrap.appendChild(comment.getEl())
@@ -334,6 +337,8 @@ export default class ListLite extends Component {
       }
       comment.playFadeInAnim()
     }
+
+    this.checkMoreHide(comment)
   }
 
   /** 插入评论 · 首部添加 */
@@ -351,6 +356,8 @@ export default class ListLite extends Component {
 
       Ui.scrollIntoView(comment.getEl()) // 滚动到可以见
       comment.playFadeInAnim() // 播放评论渐出动画
+
+      this.checkMoreHide(comment)
     } else {
       this.putCommentFlatMode(commentData, this.comments.map(c => c.data), 'prepend')
     }
@@ -358,6 +365,24 @@ export default class ListLite extends Component {
     if (this.data) this.data.total += 1 // 评论数增加 1
     this.refreshUI() // 更新 list 界面
     this.ctx.trigger('comments-loaded')
+  }
+
+  checkMoreHide(c: Comment) {
+    const childrenH = this.ctx.conf.heightLimit?.children
+    const contentH = this.ctx.conf.heightLimit?.content
+    const isChildrenLimit = typeof childrenH === 'number' && childrenH > 0
+    const isContentLimit = typeof contentH === 'number' && contentH > 0
+
+    // 子评论内容过多隐藏
+    if (isChildrenLimit && c.getIsRoot()) {
+      c.checkMoreHide(c.$children, childrenH || 300)
+    }
+
+    // 评论内容过多隐藏
+    if (isContentLimit) {
+      c.checkMoreHide(c.$content, contentH || 200)
+      if (c.$replyTo) c.checkMoreHide(c.$replyTo, contentH || 200) // 平铺模式回复内容
+    }
   }
 
   /** 获取评论总数 (包括子评论) */

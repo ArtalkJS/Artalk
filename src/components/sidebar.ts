@@ -175,7 +175,7 @@ export default class Sidebar extends Component {
 
         }
 
-        this.curtSite = '__ATK_SITE_ALL'
+        this.curtSite = this.conf.site
 
         Ui.showLoading(this.$el)
         try {
@@ -191,7 +191,8 @@ export default class Sidebar extends Component {
 
         // 站点图像
         this.$avatar.innerHTML = ''
-        this.$siteLogo = Utils.createElement('<div class="atk-site-logo">_</div>')
+        this.$siteLogo = Utils.createElement('<div class="atk-site-logo"></div>')
+        this.$siteLogo.innerText = (this.curtSite || '').substr(0, 1)
         this.$avatar.append(this.$siteLogo)
       } else {
         // 不是管理员

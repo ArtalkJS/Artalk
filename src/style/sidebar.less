@@ -278,29 +278,6 @@
     }
   }
 
-  /* Form */
-  .atk-form-inline-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 15px 0;
-
-    input, select, button {
-      display: inline !important;
-      min-width: initial !important;
-
-      @media only screen and (max-width: 768px) {
-        & {
-          width: 100%;
-        }
-      }
-    }
-
-    button {
-      width: 200px !important;
-    }
-  }
-
   .atk-form {
     @form-height: 35px;
 
@@ -335,6 +312,7 @@
       outline: none;
       width: 100%;
       margin-bottom: 25px;
+      background: @color-bg;
 
       &:focus {
         border-bottom-color: @color-bg-light;
@@ -369,6 +347,7 @@
       margin-bottom: 25px;
       -webkit-appearance: none;
       border-radius: 0;
+      background: @color-bg;
     }
 
     button {

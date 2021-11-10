@@ -252,6 +252,11 @@ export default class Sidebar extends Component {
     // load element
     this.$viewWrap.innerHTML = ''
     this.$viewWrap.append(view.$el)
+    this.$viewWrap.classList.forEach((c) => {
+      if (c.startsWith('atk-view-name-'))
+        this.$viewWrap.classList.remove(c)
+    })
+    this.$viewWrap.classList.add(`atk-view-name-${(view.constructor as typeof SidebarView).viewName}`)
   }
 
   private loadViewTabs(view: SidebarView) {

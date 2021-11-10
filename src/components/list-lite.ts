@@ -39,8 +39,10 @@ export default class ListLite extends Component {
     <div class="atk-list-lite">
       <div class="atk-list-comments-wrap"></div>
       <div class="atk-list-read-more" style="display: none;">
-        <div class="atk-loading-icon" style="display: none;"></div>
-        <span class="atk-text">查看更多</span>
+        <div class="atk-list-read-more-inner">
+          <div class="atk-loading-icon" style="display: none;"></div>
+          <span class="atk-text">查看更多</span>
+        </div>
       </div>
     </div>
     `)

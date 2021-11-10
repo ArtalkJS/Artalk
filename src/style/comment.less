@@ -69,10 +69,15 @@
         align-items: center;
 
         .badge() {
+          color: @color-meta;
           background: @color-bg-grey;
           padding: 0 6px;
           line-height: 18px;
           border-radius: 3px;
+
+          &:not(:last-child) {
+            margin-right: 6px;
+          }
         }
 
         & > span {
@@ -92,14 +97,20 @@
               text-decoration: none;
             }
           }
+        }
 
-          &.atk-badge {
-            .badge();
-            background: #FF6C00;
-            color: #FFF;
+        .atk-badge {
+          .badge();
+          background: #FF6C00;
+          color: #FFF;
+        }
+
+        .atk-ua-wrap {
+          @media only screen and (max-width: 768px) {
+            display: block;
           }
 
-          &.atk-ua {
+          .atk-ua {
             .badge();
           }
         }

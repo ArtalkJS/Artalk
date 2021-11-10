@@ -123,12 +123,14 @@ export default class Comment extends Component {
     dateEL.setAttribute('data-atk-comment-date', String(+new Date(this.data.date)))
 
     if (this.conf.uaBadge) {
+      const $uaWrap = Utils.createElement(`<span class="atk-ua-wrap"></span>`)
       const $uaBrowser = Utils.createElement(`<span class="atk-ua ua-browser"></span>`)
       const $usOS = Utils.createElement(`<span class="atk-ua ua-os"></span>`)
       $uaBrowser.innerText = this.getUserUaBrowser()
       $usOS.innerText = this.getUserUaOS()
-      this.$header.append($uaBrowser)
-      this.$header.append($usOS)
+      $uaWrap.append($uaBrowser)
+      $uaWrap.append($usOS)
+      this.$header.append($uaWrap)
     }
   }
 

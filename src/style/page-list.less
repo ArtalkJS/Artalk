@@ -1,11 +1,14 @@
 .atk-page-list {
   .atk-page-item {
-    border-bottom: 1px solid @color-border;
     display: flex;
     flex-direction: row;
     position: relative;
     min-height: 120px;
     align-items: center;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid @color-border;
+    }
   }
 
   .atk-page-main {

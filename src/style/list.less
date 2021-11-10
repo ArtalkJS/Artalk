@@ -66,16 +66,22 @@
   }
 
   & > .atk-list-footer {
-    position: relative;
-    overflow: hidden;
+    position: absolute;
+    bottom: 5px;
+    right: 0;
+
+    @media only screen and (max-width: 768px) {
+      position: relative;
+      margin-top: 10px;
+      text-align: center;
+    }
 
     .atk-copyright {
       display: block;
-      font-size: 13px;
-      float: right;
-      color: @color-main;
-      padding: 0 10px;
-      border-radius: 2px;
+      font-size: 12px;
+      color: @color-meta;
+      padding-right: 15px;
+      margin-top: 5px;
 
       a {
         color: @color-main;
@@ -94,36 +100,49 @@
 }
 
 .atk-list-read-more {
-  margin-bottom: 12px;
-  cursor: pointer;
-  user-select: none;
-  border: 1px solid @color-border;
-  padding: 0 20px;
-  font-size: @font-size;
-  border-radius: @block-radius;
-  display: flex;
-  height: 30px;
-  flex-direction: row;
-  place-content: center;
-  align-items: center;
+  border-top: 1px dashed @color-border;
+  margin-top: 20px;
+  padding-bottom: 20px;
 
-  &.atk-err > .atk-text {
-    color: @color-red !important;
+  @media only screen and (max-width: 768px) {
+    padding-bottom: 10px;
   }
 
-  & > .atk-loading-icon {
-    height: 15px;
-    width: 15px;
-  }
+  .atk-list-read-more-inner {
+    cursor: pointer;
+    user-select: none;
+    padding: 0 15px;
+    font-size: @font-size;
+    border-radius: @block-radius;
+    border: 1px solid transparent;
+    display: flex;
+    height: 30px;
+    flex-direction: row;
+    place-content: center;
+    align-items: center;
+    width: 120px;
+    margin: 0 auto;
+    margin-top: -15px;
+    background: @color-bg;
+    border-color: @color-border;
 
-  & > .atk-text {
-    color: @color-meta;
-  }
+    &.atk-err > .atk-text {
+      color: @color-red !important;
+    }
 
-  &:hover {
-    background-color: @color-border;
+    & > .atk-loading-icon {
+      height: 15px;
+      width: 15px;
+    }
+
     & > .atk-text {
-      color: @color-main;
+      color: @color-meta;
+    }
+
+    &:hover {
+      & > .atk-text {
+        color: @color-main;
+      }
     }
   }
 }

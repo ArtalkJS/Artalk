@@ -13,6 +13,7 @@ import AdminChecker from './admin-checker'
 export default class CheckerLauncher {
   public ctx: Context
 
+  public launched: Checker[] = []
   public submitCaptchaVal?: string
   public submitCaptchaImgData?: string
 
@@ -37,6 +38,9 @@ export default class CheckerLauncher {
   }
 
   public fire(checker: Checker, payload: CheckerPayload) {
+    if (this.launched.includes(checker)) return // 阻止同时 fire 相同的 checker
+    this.launched.push(checker)
+
     const layer = new Layer(this.ctx, `checker-${new Date().getTime()}`)
     layer.setMaskClickHide(false)
     layer.show()
@@ -83,7 +87,7 @@ export default class CheckerLauncher {
         .request(this, inputVal)
         .then((data) => {
           // 请求成功
-          layer.disposeNow()
+          this.done(checker, layer)
           if (checker.onSuccess) checker.onSuccess(this, data, inputVal, formEl)
           if (payload.onSuccess) payload.onSuccess(inputVal, dialog.$el)
         })
@@ -104,7 +108,7 @@ export default class CheckerLauncher {
 
     // 取消按钮
     dialog.setNo(() => {
-      layer.disposeNow()
+      this.done(checker, layer)
       if (payload.onCancel) payload.onCancel()
       return false
     })
@@ -112,6 +116,11 @@ export default class CheckerLauncher {
     layer.getEl().append(dialog.$el)
 
     if (payload.onMount) payload.onMount(dialog.$el) // onMount
+  }
+
+  private done(checker: Checker, layer: Layer) {
+    layer.disposeNow()
+    this.launched = this.launched.filter(c => c !== checker)
   }
 }
 

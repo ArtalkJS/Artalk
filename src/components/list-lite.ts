@@ -1,24 +1,23 @@
-import Context from '../Context'
+import Context from '../context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import Api from '../api'
-import Comment from './Comment'
+import Comment from './comment'
 import { ListData, CommentData, NotifyData, ApiVersionData } from '~/types/artalk-data'
+import Pagination from './pagination'
+import ReadMoreBtn from './read-more-btn'
 
 export default class ListLite extends Component {
-  public el: HTMLElement
-  private commentsWrapEl: HTMLElement
+  private $parent: HTMLElement
+
+  private $commentsWrap: HTMLElement
   public comments: Comment[] = []
 
   public data?: ListData
   private pageSize: number = 15 // 每次请求获取量
   private offset: number = 0
   public type?: 'all'|'mentions'|'mine'|'pending'
-
-  private readMoreEl: HTMLElement
-  private readMoreLoadingEl: HTMLElement
-  private readMoreTextEl: HTMLElement
 
   public noCommentText: string
   public renderComment?: (comment: Comment) => void
@@ -30,37 +29,33 @@ export default class ListLite extends Component {
 
   public flatMode?: boolean
 
+  public pageMode: 'pagination'|'read-more' = 'pagination'
+  public pagination?: Pagination
+  public readMoreBtn?: ReadMoreBtn
+  public autoLoadScrollEvent?: any
+  public autoLoadListenerAt?: HTMLElement
+
   public unread: NotifyData[] = []
   public unreadHighlight = false
 
-  constructor (ctx: Context) {
+  constructor (ctx: Context, $parent: HTMLElement) {
     super(ctx)
 
-    this.el = Utils.createElement(`
-    <div class="atk-list-lite">
+    this.$parent = $parent
+    this.$el = Utils.createElement(
+    `<div class="atk-list-lite">
       <div class="atk-list-comments-wrap"></div>
-      <div class="atk-list-read-more" style="display: none;">
-        <div class="atk-loading-icon" style="display: none;"></div>
-        <span class="atk-text">查看更多</span>
-      </div>
-    </div>
-    `)
-    this.commentsWrapEl = this.el.querySelector('.atk-list-comments-wrap')!
+    </div>`)
+    this.$commentsWrap = this.$el.querySelector('.atk-list-comments-wrap')!
 
     // 查看更多
-    this.pageSize = this.conf.readMore ? (this.conf.readMore.pageSize || this.pageSize) : this.pageSize
-    this.readMoreEl = this.el.querySelector('.atk-list-read-more')!
-    this.readMoreLoadingEl = this.readMoreEl.querySelector('.atk-loading-icon')!
-    this.readMoreTextEl = this.readMoreEl.querySelector('.atk-text')!
-    this.readMoreEl.addEventListener('click', () => {
-      this.readMore()
-    })
+    this.pageSize = this.conf.pagination ? (this.conf.pagination.pageSize || this.pageSize) : this.pageSize
 
     this.noCommentText = this.conf.noComment || '无评论'
 
     // 评论时间自动更新
-    setInterval(() => {
-      this.el.querySelectorAll<HTMLElement>('[data-atk-comment-date]').forEach(el => {
+    window.setInterval(() => {
+      this.$el.querySelectorAll<HTMLElement>('[data-atk-comment-date]').forEach(el => {
         const date = el.getAttribute('data-atk-comment-date')
         el.innerText = Utils.timeAgo(new Date(Number(date)))
       })
@@ -70,22 +65,24 @@ export default class ListLite extends Component {
   }
 
   public async reqComments(offset: number = 0) {
-    if (offset === 0) {
-      this.clearComments()
-    }
+    if (offset === 0 && this.pageMode !== 'pagination') { this.clearAllComments() }
 
     // set loading
-    this.isLoading = true
-    this.ctx.trigger('comments-load')
-    if (offset === 0) Ui.showLoading(this.el)
-    else this.readMoreBtnSetLoading(true)
-
-    const hideLoading = () => {
-      // hide loading
-      this.isLoading = false
-      if (offset === 0) Ui.hideLoading(this.el)
-      else this.readMoreBtnSetLoading(false)
+    const showLoading = () => {
+      this.isLoading = true
+      if (offset === 0) Ui.showLoading(this.$el)
+      else if (this.pageMode === 'read-more') this.readMoreBtn!.setLoading(true)
+      else if (this.pageMode === 'pagination') this.pagination!.setLoading(true)
     }
+    const hideLoading = () => {
+      this.isLoading = false
+      if (offset === 0) Ui.hideLoading(this.$el)
+      else if (this.pageMode === 'read-more') this.readMoreBtn!.setLoading(false)
+      else if (this.pageMode === 'pagination') this.pagination!.setLoading(false)
+    }
+
+    showLoading()
+    this.ctx.trigger('comments-load')
 
     let listData: ListData
     try {
@@ -107,7 +104,7 @@ export default class ListLite extends Component {
     this.offset = offset
 
     try {
-      this.onLoad(listData)
+      this.onLoad(listData, offset)
 
       if (this.onAfterLoad) {
         this.onAfterLoad(listData)
@@ -120,21 +117,27 @@ export default class ListLite extends Component {
     }
   }
 
-  public onLoad (data: ListData) {
-    this.data = data
-    Ui.setError(this.el, null)
-    this.importComments(data.comments)
+  public onLoad(data: ListData, offset: number) {
+    Ui.setError(this.$el, null)
 
-    // 查看更多按钮
-    if (this.hasMoreComments) {
-      this.showReadMoreBtn()
-    } else {
-      this.hideReadMoreBtn()
+    if (this.pageMode === 'pagination') {
+      this.clearAllComments()
     }
 
-    // 滚动到底部自动加载
-    if (this.isFirstLoad && this.hasMoreComments) {
-      this.initScrollBottomAutoLoad()
+    this.data = data
+    this.importComments(data.comments)
+
+    // onLoad 时初始化
+    if (this.isFirstLoad) {
+      this.onLoadInit()
+    }
+
+    if (this.pageMode === 'pagination') {
+      this.pagination!.update(offset, this.data?.total_parents || 0)
+    }
+    if (this.pageMode === 'read-more') {
+      if (this.hasMoreComments) this.readMoreBtn!.show()
+      else this.readMoreBtn!.hide()
     }
 
     this.ctx.trigger('unread-update', { notifies: data.unread || [] })
@@ -142,30 +145,116 @@ export default class ListLite extends Component {
     this.isFirstLoad = false
   }
 
-  public onError (msg: any) {
+  /** 初始化加载更多 */
+  onLoadInit() {
+    if (this.autoLoadScrollEvent) {
+      const at = this.autoLoadListenerAt || document
+      at.removeEventListener('scroll', this.autoLoadScrollEvent)
+    }
+
+    if (this.pageMode === 'read-more') {
+      // 阅读更多按钮
+      const readMoreBtn = new ReadMoreBtn({
+        pageSize: this.pageSize,
+        total: 0,
+        onClick: async () => {
+          const offset = this.offset + this.pageSize
+          await this.reqComments(offset)
+        },
+      })
+      if (this.readMoreBtn) this.readMoreBtn.$el.replaceWith(readMoreBtn.$el)
+      else this.$el.append(readMoreBtn.$el)
+      this.readMoreBtn = readMoreBtn
+
+      // 滚动到底部自动加载
+      if (this.conf.pagination?.autoLoad) {
+        this.autoLoadScrollEvent = () => {
+          if (this.pageMode !== 'read-more') return
+          if (!this.hasMoreComments) return
+          if (this.isLoading) return
+
+          const $target = this.$el.querySelector<HTMLElement>('.atk-list-comments-wrap > .atk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
+          if (!$target) return
+          if (Ui.isVisible($target, this.autoLoadListenerAt)) {
+            // 加载更多
+            this.readMoreBtn!.click()
+          }
+        }
+        const at = this.autoLoadListenerAt || document
+        at.addEventListener('scroll', this.autoLoadScrollEvent)
+      }
+    } else if (this.pageMode === 'pagination') {
+      // 分页条
+      const pagination = new Pagination(this.parentCommentsCount, {
+        pageSize: this.pageSize,
+        onChange: async (offset) => {
+          await this.reqComments(offset)
+          // 滚动到第一个评论的位置
+          if (this.$parent) {
+            let topPos = 0
+            if (!this.autoLoadListenerAt && this.$parent) {
+              topPos = Utils.getOffset(this.$parent).top
+            }
+            const at = this.autoLoadListenerAt || window
+            at.scroll({
+              top: topPos,
+              left: 0,
+            })
+          }
+        }
+      })
+      if (this.pagination) this.pagination.$el.replaceWith(pagination.$el)
+      else this.$el.append(pagination.$el)
+      this.pagination = pagination
+    }
+  }
+
+  public onError(msg: any) {
     msg = String(msg)
     console.error(msg)
-    if (this.isFirstLoad) {
+    if (this.isFirstLoad || this.pageMode === 'pagination') {
       const errEl = Utils.createElement(`<span>${msg}，无法获取评论列表数据<br/></span>`)
       const retryBtn = Utils.createElement('<span style="cursor:pointer;">点击重新获取</span>')
       retryBtn.onclick = () => {
-        this.reqComments(0)
+        this.reqComments(this.offset)
       }
       errEl.appendChild(retryBtn)
       const adminBtn = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
       adminBtn.onclick = () => {
-        this.ctx.trigger('sidebar-show', { viewName: 'admin' })
+        this.ctx.trigger('sidebar-show')
       }
       if (!this.ctx.user.data.isAdmin) {
         adminBtn.classList.add('atk-hide')
       }
       errEl.appendChild(adminBtn)
-      Ui.setError(this.el, errEl)
+      Ui.setError(this.$el, errEl)
     } else {
-      this.readMoreBtnShowErr(`${msg} 获取失败`)
+      this.readMoreBtn?.showErr(`获取失败`)
     }
   }
 
+  /** 刷新界面 */
+  public refreshUI() {
+    // 评论为空界面
+    const noComment = this.comments.length <= 0
+    let noCommentEl = this.$commentsWrap.querySelector<HTMLElement>('.atk-list-no-comment')
+
+    if (noComment) {
+      if (!noCommentEl) {
+        noCommentEl = Utils.createElement('<div class="atk-list-no-comment"></div>')
+        this.$commentsWrap.appendChild(noCommentEl)
+        noCommentEl.innerHTML = this.noCommentText
+      }
+    }
+
+    if (!noComment && noCommentEl)
+      noCommentEl.remove()
+
+    // 仅管理员显示控制
+    this.ctx.trigger('check-admin-show-el')
+  }
+
+  /** 创建新评论 */
   public createComment(data: CommentData) {
     const comment = new Comment(this.ctx, data)
     comment.afterRender = () => {
@@ -179,8 +268,8 @@ export default class ListLite extends Component {
     return comment
   }
 
-  /** 导入评论 - 通过请求数据 */
-  public importComments (rawData: CommentData[]) {
+  /** 导入评论 · 通过请求数据 */
+  public importComments(rawData: CommentData[]) {
     // 查找并导入所有子评论
     const queryImportChildren = (parentC: Comment) => {
       const children = rawData.filter(o => o.rid === parentC.data.id)
@@ -189,7 +278,7 @@ export default class ListLite extends Component {
       children.forEach((itemData: CommentData) => {
         itemData.is_allow_reply = parentC.data.is_allow_reply
         const childC = this.createComment(itemData)
-        childC.renderElem()
+        childC.render()
         parentC.putChild(childC)
         queryImportChildren(childC) // 递归
       })
@@ -200,10 +289,10 @@ export default class ListLite extends Component {
       rawData.filter((o) => o.rid === 0).forEach((rootCommentData: CommentData) => {
         if (rootCommentData.is_collapsed) rootCommentData.is_allow_reply = false
         const rootComment = this.createComment(rootCommentData)
-        rootComment.renderElem()
+        rootComment.render()
         this.comments.push(rootComment) // 将评论导入 comments 总表中
 
-        this.commentsWrapEl.appendChild(rootComment.getEl())
+        this.$commentsWrap.appendChild(rootComment.getEl())
         rootComment.playFadeInAnim()
 
         queryImportChildren(rootComment)
@@ -215,18 +304,23 @@ export default class ListLite extends Component {
       })
     }
 
+    this.eachComment(this.comments, (c) => {
+      this.checkMoreHide(c)
+    })
+
     this.refreshUI()
     this.ctx.trigger('comments-loaded')
   }
 
-  private putCommentFlatMode (commentItem: CommentData, comments: CommentData[], insertMode: 'append'|'prepend') {
+  /** 导入评论 · 平铺模式 */
+  private putCommentFlatMode(commentItem: CommentData, comments: CommentData[], insertMode: 'append'|'prepend') {
     if (commentItem.is_collapsed) commentItem.is_allow_reply = false
     const comment = this.createComment(commentItem)
     if (commentItem.rid !== 0) {
       const rComment = comments.find(o => o.id === commentItem.rid)
       if (rComment) comment.replyTo = rComment
     }
-    comment.renderElem()
+    comment.render()
 
     // 将评论导入 comments 总表中
     if (insertMode === 'append') {
@@ -235,31 +329,35 @@ export default class ListLite extends Component {
       this.comments.unshift(comment)
     }
 
-
     if (commentItem.visible) {
       if (insertMode === 'append') {
-        this.commentsWrapEl.appendChild(comment.getEl())
+        this.$commentsWrap.appendChild(comment.getEl())
       } else {
-        this.commentsWrapEl.prepend(comment.getEl())
+        this.$commentsWrap.prepend(comment.getEl())
       }
       comment.playFadeInAnim()
     }
+
+    this.checkMoreHide(comment)
   }
 
-  public insertComment (commentData: CommentData) {
+  /** 插入评论 · 首部添加 */
+  public insertComment(commentData: CommentData) {
     if (!this.flatMode) {
       const comment = this.createComment(commentData)
-      comment.renderElem()
+      comment.render()
 
       if (commentData.rid !== 0) {
         this.findComment(commentData.rid)?.putChild(comment)
       } else {
-        this.commentsWrapEl.prepend(comment.getEl())
+        this.$commentsWrap.prepend(comment.getEl())
         this.comments.unshift(comment)
       }
 
       Ui.scrollIntoView(comment.getEl()) // 滚动到可以见
       comment.playFadeInAnim() // 播放评论渐出动画
+
+      this.checkMoreHide(comment)
     } else {
       this.putCommentFlatMode(commentData, this.comments.map(c => c.data), 'prepend')
     }
@@ -269,93 +367,43 @@ export default class ListLite extends Component {
     this.ctx.trigger('comments-loaded')
   }
 
-  /** 刷新界面 */
-  public refreshUI () {
-    // 评论为空界面
-    const noComment = this.comments.length <= 0
-    let noCommentEl = this.commentsWrapEl.querySelector<HTMLElement>('.atk-list-no-comment')
+  checkMoreHide(c: Comment) {
+    const childrenH = this.ctx.conf.heightLimit?.children
+    const contentH = this.ctx.conf.heightLimit?.content
+    const isChildrenLimit = typeof childrenH === 'number' && childrenH > 0
+    const isContentLimit = typeof contentH === 'number' && contentH > 0
 
-    if (noComment) {
-      if (!noCommentEl) {
-        noCommentEl = Utils.createElement('<div class="atk-list-no-comment"></div>')
-        this.commentsWrapEl.appendChild(noCommentEl)
-        noCommentEl.innerHTML = this.noCommentText
-      }
+    // 子评论内容过多隐藏
+    if (isChildrenLimit && c.getIsRoot()) {
+      c.checkMoreHide(c.$children, childrenH || 300)
     }
 
-    if (!noComment && noCommentEl)
-      noCommentEl.remove()
-
-    // 仅管理员显示控制
-    this.ctx.trigger('check-admin-show-el')
+    // 评论内容过多隐藏
+    if (isContentLimit) {
+      c.checkMoreHide(c.$content, contentH || 200)
+      if (c.$replyTo) c.checkMoreHide(c.$replyTo, contentH || 200) // 平铺模式回复内容
+    }
   }
 
   /** 获取评论总数 (包括子评论) */
-  public getListCommentCount (): number {
-    if (!this.data || !this.data.total) return 0
-    return Number(this.data.total || '0')
+  get commentsCount(): number {
+    let count = 0
+    this.eachComment(this.comments, () => { count++ })
+    return count
   }
 
   /** 是否还有更多的评论 */
-  get hasMoreComments (): boolean {
+  get hasMoreComments(): boolean {
     if (!this.data) return false
     return this.data.total_parents > (this.offset + this.pageSize)
   }
 
-  /** 阅读更多操作 */
-  async readMore () {
-    const offset = this.offset + this.pageSize
-    await this.reqComments(offset)
-  }
-
-  /** 阅读更多按钮 - 显示 */
-  showReadMoreBtn () {
-    this.readMoreEl.style.display = ''
-  }
-
-  /** 阅读更多按钮 - 隐藏 */
-  hideReadMoreBtn () {
-    this.readMoreEl.style.display = 'none'
-  }
-
-  /** 阅读更多按钮 - 显示加载 */
-  readMoreBtnSetLoading (isLoading: boolean) {
-    this.readMoreLoadingEl.style.display = isLoading ? '' : 'none'
-    this.readMoreTextEl.style.display = isLoading ? 'none' : ''
-  }
-
-  /** 阅读更多按钮 - 显示错误 */
-  readMoreBtnShowErr (errMsg: string) {
-    this.readMoreBtnSetLoading(false)
-
-    const readMoreTextOrg = this.readMoreTextEl.innerText
-    this.readMoreTextEl.innerText = errMsg
-    this.readMoreEl.classList.add('atk-err')
-    setTimeout(() => {
-      this.readMoreTextEl.innerText = readMoreTextOrg
-      this.readMoreEl.classList.remove('atk-err')
-    }, 2000) // 2s后错误提示复原
-  }
-
-  /** 初始化滚动到底部自动查看更多（若开启） */
-  initScrollBottomAutoLoad () {
-    if (!this.conf.readMore) return
-    if (!this.conf.readMore.autoLoad) return
-
-    document.addEventListener('scroll', () => {
-      const targetEl = this.el.querySelector<HTMLElement>('.atk-list-comments-wrap > .atk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
-      if (!targetEl) return
-      if (!this.hasMoreComments) return
-      if (this.isLoading) return
-      if (Ui.isVisible(targetEl)) {
-        // 加载更多
-        this.readMore()
-      }
-    })
+  get parentCommentsCount() {
+    return this.comments.length
   }
 
   /** 遍历操作 Comment (包括子评论) */
-  public eachComment (commentList: Comment[], action: (comment: Comment, levelList: Comment[]) => boolean|void) {
+  public eachComment(commentList: Comment[], action: (comment: Comment, levelList: Comment[]) => boolean|void) {
     if (commentList.length === 0) return
     commentList.every((item) => {
       if (action(item, commentList) === false) return false
@@ -365,7 +413,7 @@ export default class ListLite extends Component {
   }
 
   /** 查找评论项 */
-  public findComment (id: number, src?: Comment[]): Comment|null {
+  public findComment(id: number, src?: Comment[]): Comment|null {
     if (!src) src = this.comments
     let comment: Comment|null = null
     this.eachComment(src, (item) => {
@@ -380,14 +428,14 @@ export default class ListLite extends Component {
   }
 
   /** 获取评论总数 */
-  public getCommentCount (): number {
+  public getCommentCount(): number {
     let count = 0
     this.eachComment(this.comments, () => { count++ })
     return count
   }
 
   /** 删除评论 */
-  public deleteComment (comment: number|Comment) {
+  public deleteComment(comment: number|Comment) {
     let findComment: Comment|null
     if (typeof comment === 'number') {
       findComment = this.findComment(comment)
@@ -402,11 +450,13 @@ export default class ListLite extends Component {
       }
       return true
     })
+
+    this.refreshUI()
   }
 
   /** 清空所有评论 */
-  public clearComments () {
-    this.commentsWrapEl.innerHTML = ''
+  public clearAllComments() {
+    this.$commentsWrap.innerHTML = ''
     this.data = undefined
     this.comments = []
   }

@@ -18,7 +18,7 @@ export interface EventPayloadMap {
   'list-refresh-ui': undefined     // 刷新 List UI
 
   // Sidebar
-  'sidebar-show'?: SidebarShowPayload // 侧边栏显示
+  'sidebar-show': undefined           // 侧边栏显示
   'sidebar-hide': undefined           // 侧边栏隐藏
 
   // Editor
@@ -33,12 +33,12 @@ export interface EventPayloadMap {
   'unread-update': UnreadUpdatePayload // 未读数据更新
 
   // Checker
-  'checker-admin': CheckerConf           // 检查管理员
-  'checker-captcha': CheckerCaptchaConf  // 检查验证码
-  'check-admin-show-el': undefined       // 检查并更新仅管理员显示的元素
+  'checker-admin': CheckerPayload           // 检查管理员
+  'checker-captcha': CheckerCaptchaPayload  // 检查验证码
+  'check-admin-show-el': undefined          // 检查并更新仅管理员显示的元素
 }
 
-export interface CheckerConf {
+export interface CheckerPayload {
   onSuccess?: (inputVal: string, dialogEl?: HTMLElement) => void
   onMount?: (dialogEl: HTMLElement) => void
   onCancel?: () => void
@@ -49,12 +49,8 @@ export interface NotifyConf {
   type: any
 }
 
-export interface CheckerCaptchaConf extends CheckerConf {
+export interface CheckerCaptchaPayload extends CheckerPayload {
   imgData?: string
-}
-
-export interface SidebarShowPayload {
-  viewName?: string
 }
 
 export interface UnreadUpdatePayload {

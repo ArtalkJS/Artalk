@@ -77,7 +77,7 @@ export interface ListData {
   page: PageData
 
   /** 站点信息 */
-  site: SiteData // TODO
+  site: SiteData
 
   /** 未读的 Notifies */
   unread: NotifyData[]
@@ -107,6 +107,12 @@ export interface PageData {
 
   /** 站点名（用于隔离） */
   site_name: string
+
+  /** 赞同数 */
+  vote_up: number
+
+  /** 反对数 */
+  vote_down: number
 }
 
 export interface SiteData {

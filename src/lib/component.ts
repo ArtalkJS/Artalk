@@ -1,8 +1,8 @@
-import { ArtalkConfig } from '~/types/artalk-config'
-import Context from '../Context'
+import ArtalkConfig from '~/types/artalk-config'
+import Context from '../context'
 
 export default class Component {
-  public el!: HTMLElement
+  public $el!: HTMLElement
 
   public ctx: Context
   public readonly conf: ArtalkConfig

@@ -18,7 +18,9 @@ module.exports = {
     'react/sort-comp': 0,
     '@typescript-eslint/no-use-before-define': 0,
     'class-methods-use-this': 0,
-    'import/no-cycle': 'warn',
+    'import/no-cycle': 0,
+    'spaced-comment': 0,
+    'no-lonely-if': 0,
   },
   settings: {
     'import/resolver': {

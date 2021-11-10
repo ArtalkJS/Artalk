@@ -1,10 +1,10 @@
-import Context from "~/src/Context"
-import Editor from "../Editor"
+import Context from "~/src/context"
+import Editor from "../editor"
 
 export default abstract class EditorPlug {
   protected editor: Editor
   protected ctx: Context
-  public abstract el: HTMLElement
+  public abstract $el: HTMLElement
 
   constructor (editor: Editor) {
     this.editor = editor

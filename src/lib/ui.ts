@@ -1,45 +1,56 @@
 import * as Utils from './utils'
-import Context from '../Context'
+import Context from '../context'
 
 /** 显示加载 */
 export function showLoading(parentElem: HTMLElement|Context) {
-  if (parentElem instanceof Context) parentElem = parentElem.rootEl
+  if (parentElem instanceof Context) parentElem = parentElem.$root
 
-  let loadingEl = parentElem.querySelector<HTMLElement>('.atk-loading')
-  if (!loadingEl) {
-    loadingEl = Utils.createElement(`
-        <div class="atk-loading" style="display: none;">
-          <div class="atk-loading-spinner">
-          <svg viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle></svg>
-          </div>
-          </div>`)
-    parentElem.appendChild(loadingEl)
+  let $loading = parentElem.querySelector<HTMLElement>('.atk-loading')
+  if (!$loading) {
+    $loading = Utils.createElement(
+    `<div class="atk-loading atk-fade-in" style="display: none;">
+      <div class="atk-loading-spinner">
+        <svg viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle></svg>
+      </div>
+    </div>`)
+    parentElem.appendChild($loading)
   }
-  loadingEl.style.display = ''
+  $loading.style.display = ''
+
+  // spinner 延迟显示，若加载等待时间太短，没必要显示（闪一下即可）
+  const $spinner = $loading.querySelector<HTMLElement>('.atk-loading-spinner')
+  if ($spinner) {
+    $spinner.style.display = 'none'
+    window.setTimeout(() => {
+      $spinner.style.display = ''
+    }, 500)
+  }
 }
 
 /** 隐藏加载 */
 export function hideLoading(parentElem: HTMLElement|Context) {
-  if (parentElem instanceof Context) parentElem = parentElem.rootEl
+  if (parentElem instanceof Context) parentElem = parentElem.$root
 
-  const loadingEl = parentElem.querySelector<HTMLElement>('.atk-loading')
-  if (loadingEl) loadingEl.style.display = 'none'
+  const $loading = parentElem.querySelector<HTMLElement>('.atk-loading')
+  if ($loading) $loading.style.display = 'none'
 }
 
 /** 元素是否用户可见 */
-export function isVisible(elem: HTMLElement) {
-  const docViewTop = window.scrollY
-  const docViewBottom = docViewTop + document.documentElement.clientHeight
+export function isVisible(el: HTMLElement, viewport: HTMLElement = document.documentElement) {
+  const viewportHeight = viewport.clientHeight
 
-  const elemTop = Utils.getOffset(elem).top
-  const elemBottom = elemTop + elem.offsetHeight
+  const docViewTop = viewport.scrollTop
+  const docViewBottom = docViewTop + viewportHeight
 
-  return elemBottom <= docViewBottom && elemTop >= docViewTop
+  const rect = el.getBoundingClientRect()
+  const elemTop = rect.top + docViewTop
+  const elemBottom = elemTop + rect.height
+
+  return (elemBottom <= docViewBottom) //&& (elemTop >= docViewTop) 注释因为假如 el 比 viewport 还高就会失效
 }
 
 /** 滚动到元素中心 */
 export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true) {
-  if (isVisible(elem)) return
   const top =
     Utils.getOffset(elem).top +
     Utils.getHeight(elem) / 2 -
@@ -49,59 +60,12 @@ export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true) {
     window.scroll({
       top: top > 0 ? top : 0,
       left: 0,
-      behavior: 'smooth',
+      // behavior: 'smooth',
     })
   } else {
     // 无动画
     window.scroll(0, top > 0 ? top : 0)
   }
-}
-
-/** 显示对话框 */
-export function buildDialog (
-  html: HTMLElement,
-  onConfirm?: (btnElem: HTMLElement) => boolean | void,
-  onCancel?: () => boolean | void,
-): HTMLElement {
-  const dialogElem = Utils.createElement(
-    `<div class="atk-layer-dialog-wrap">
-      <div class="atk-layer-dialog">
-      <div class="atk-layer-dialog-content"></div>
-      <div class="atk-layer-dialog-action">
-      </div>`
-  )
-
-  // 按钮
-  const actionElem = dialogElem.querySelector<HTMLElement>('.atk-layer-dialog-action')!
-  const onclick =
-    (f: (btnElem: HTMLElement) => boolean | void) =>
-    (evt: Event) => {
-      const returnVal = f(evt.currentTarget as HTMLElement)
-      if (returnVal === undefined || returnVal === true) {
-        dialogElem.remove()
-      }
-    }
-
-  if (typeof onConfirm === 'function') {
-    const btn = Utils.createElement<HTMLButtonElement>(
-      '<button data-action="confirm">确定</button>'
-    )
-    btn.onclick = onclick(onConfirm)
-    actionElem.appendChild(btn)
-  }
-
-  if (typeof onCancel === 'function') {
-    const btn = Utils.createElement<HTMLButtonElement>(
-      '<button data-action="cancel">取消</button>'
-    )
-    btn.onclick = onclick(onCancel)
-    actionElem.appendChild(btn)
-  }
-
-  // 内容
-  dialogElem.querySelector('.atk-layer-dialog-content')!.appendChild(html)
-
-  return dialogElem
 }
 
 /** 显示消息 */
@@ -169,7 +133,7 @@ export function playFadeOutAnim(elem: HTMLElement, after?: () => void) {
 
 /** 设置全局错误 */
 export function setError(parentElem: HTMLElement|Context, html: string | HTMLElement | null, title: string = '<span class="atk-error-title">Artalk Error</span>') {
-  if (parentElem instanceof Context) parentElem = parentElem.rootEl
+  if (parentElem instanceof Context) parentElem = parentElem.$root
 
   let elem = parentElem.querySelector<HTMLElement>('.atk-error-layer')
   if (html === null) {

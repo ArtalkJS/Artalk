@@ -1,7 +1,7 @@
-import './EmoticonsPlug.less'
+import './emoticons-plug.less'
 
-import Editor from '../Editor'
-import EditorPlug from './EditorPlug'
+import Editor from '../editor'
+import EditorPlug from './editor-plug'
 import * as Utils from '~/src/lib/utils'
 
 type EmoticonListType = {
@@ -12,7 +12,7 @@ type EmoticonListType = {
 }
 
 export default class EmoticonsPlug extends EditorPlug {
-  public el!: HTMLElement
+  public $el!: HTMLElement
   public emoticons: EmoticonListType
 
   public listWrapEl!: HTMLElement
@@ -26,11 +26,11 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   initEl () {
-    this.el = Utils.createElement(`<div class="atk-editor-plug-emoticons"></div>`)
+    this.$el = Utils.createElement(`<div class="atk-editor-plug-emoticons"></div>`)
 
     // 表情列表
     this.listWrapEl = Utils.createElement(`<div class="atk-emoticons-list-wrap"></div>`)
-    this.el.append(this.listWrapEl)
+    this.$el.append(this.listWrapEl)
 
     Object.entries(this.emoticons).forEach(([key, item]) => {
       const emoticonsEl = Utils.createElement(`<div class="atk-emoticons-list" style="display: none;"></div>`)
@@ -55,7 +55,7 @@ export default class EmoticonsPlug extends EditorPlug {
 
     // 表情分类
     this.typesEl = Utils.createElement(`<div class="atk-emoticons-types"></div>`)
-    this.el.append(this.typesEl)
+    this.$el.append(this.typesEl)
     Object.entries(this.emoticons).forEach(([key, item]) => {
       const itemEl = Utils.createElement('<span />')
       this.typesEl.append(itemEl)
@@ -118,7 +118,7 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   getEl () {
-    return this.el
+    return this.$el
   }
 
   changeListHeight () {
@@ -134,7 +134,7 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   onHide () {
-    this.el.parentElement!.style.height = ''
+    this.$el.parentElement!.style.height = ''
   }
 
   public transEmoticonImageText (text: string) {

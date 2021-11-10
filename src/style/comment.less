@@ -32,6 +32,10 @@
     &:hover {
       background: @color-bg-grey;
     }
+
+    .atk-comment-more-hide:after {
+      background: transparent !important;
+    }
   }
 
   &:last-child {
@@ -69,10 +73,15 @@
         align-items: center;
 
         .badge() {
+          color: @color-meta;
           background: @color-bg-grey;
           padding: 0 6px;
           line-height: 18px;
           border-radius: 3px;
+
+          &:not(:last-child) {
+            margin-right: 6px;
+          }
         }
 
         & > span {
@@ -84,22 +93,25 @@
             margin-right: 6px;
           }
 
-          &.atk-nick {
+          &.atk-nick, &.atk-nick > a {
             font-size: 14px;
+            color: @color-main;
+            text-decoration: none;
+          }
+        }
 
-            & > a {
-              color: @color-main;
-              text-decoration: none;
-            }
+        .atk-badge {
+          .badge();
+          background: #FF6C00;
+          color: #FFF;
+        }
+
+        .atk-ua-wrap {
+          @media only screen and (max-width: 768px) {
+            display: block;
           }
 
-          &.atk-badge {
-            .badge();
-            background: #FF6C00;
-            color: #FFF;
-          }
-
-          &.atk-ua {
+          .atk-ua {
             .badge();
           }
         }
@@ -132,6 +144,10 @@
           & > *:last-child {
             margin-bottom: 0;
           }
+
+          .atk-more-hide-open-btn {
+            bottom: 5px;
+          }
         }
 
         & > .atk-pending {
@@ -148,6 +164,7 @@
           padding: 5px 15px;
           border-left: 3px solid #eee;
           margin-bottom: 10px;
+          position: relative;
 
           & > .atk-meta {
             font-size: 15px;
@@ -183,19 +200,6 @@
               color: @color-main;
             }
           }
-        }
-
-        &.atk-read-more-mask:after {
-          pointer-events: none;
-          position: absolute;
-          z-index: 1;
-          display: block;
-          overflow: hidden;
-          width: 100%;
-          content: " ";
-          bottom: 0;
-          height: 41px;
-          background: linear-gradient(180deg, hsla(0,0%,100%,0), hsla(0,0%,100%,1));
         }
       }
 
@@ -265,5 +269,33 @@
 
       .comment-small-size()
     }
+  }
+
+  .atk-comment-more-hide:after {
+    position: absolute;
+    z-index: 1;
+    display: block;
+    overflow: hidden;
+    width: 100%;
+    content: " ";
+    bottom: 0;
+    height: 80px;
+    background: @color-gradient;
+  }
+
+  .atk-more-hide-open-btn {
+    z-index: 10;
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    cursor: pointer;
+    border: 1px solid @color-border;
+    border-radius: @block-radius;
+    background: @color-bg;
+    padding: 1px 20px;
+    font-size: 15px;
+    color: @color-meta;
+    user-select: none;
   }
 }

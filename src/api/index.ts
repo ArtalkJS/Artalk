@@ -1,4 +1,4 @@
-import Context from '../Context'
+import Context from '../context'
 import { CommentData, ListData, UserData, PageData, SiteData, NotifyData } from '~/types/artalk-data'
 import { Fetch, ToFormData, POST, GET } from './request'
 
@@ -20,7 +20,7 @@ export default class Api {
     const params: any = {
       page_key: this.ctx.conf.pageKey,
       site_name: this.ctx.conf.site || '',
-      limit: this.ctx.conf.readMore?.pageSize || 15,
+      limit: this.ctx.conf.pagination?.pageSize || 15,
       offset,
     }
 
@@ -121,13 +121,15 @@ export default class Api {
   // ============================
 
   /** 页面 · 获取 */
-  public async pageGet(siteName?: string) {
+  public async pageGet(siteName?: string, offset?: number, limit?: number) {
     const params: any = {
-      site_name: siteName || ''
+      site_name: siteName || '',
+      offset: offset || 0,
+      limit: limit || 15,
     }
 
     const d = await POST<any>(this.ctx, `${this.baseURL}/admin/page-get`, params)
-    return (d.pages as PageData[])
+    return (d as { pages: PageData[], total: number })
   }
 
   /** 页面 · 修改 */
@@ -187,14 +189,11 @@ export default class Api {
   }
 
   /** 站点 · 修改 */
-  public async siteEdit(id: number, data: {
-    name: string
-    urls: string
-  }) {
+  public async siteEdit(data: SiteData) {
     const params: any = {
-      id,
-      name: data.name,
-      urls: data.urls,
+      id: data.id,
+      name: data.name || '',
+      urls: data.urls || '',
     }
 
     const d = await POST<any>(this.ctx, `${this.baseURL}/admin/site-edit`, params)
@@ -206,6 +205,12 @@ export default class Api {
     const params: any = { id, del_content: delContent }
 
     return POST(this.ctx, `${this.baseURL}/admin/site-del`, params)
+  }
+
+  /** 导出 */
+  public async export() {
+    const d = await Fetch(this.ctx, `${this.baseURL}/admin/export`, { method: 'POST' }, 0)
+    return (d.data?.data || '' as string)
   }
 
   // ============================
@@ -226,7 +231,7 @@ export default class Api {
     }
 
     const data = await POST<any>(this.ctx, `${this.baseURL}/vote`, params)
-    return ((data?.vote_num || 0) as number)
+    return (data as {up: number, down: number})
   }
 
   /** 已读标记 */

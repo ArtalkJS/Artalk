@@ -20,7 +20,7 @@ export default class Api {
     const params: any = {
       page_key: this.ctx.conf.pageKey,
       site_name: this.ctx.conf.site || '',
-      limit: this.ctx.conf.readMore?.pageSize || 15,
+      limit: this.ctx.conf.pagination?.pageSize || 15,
       offset,
     }
 

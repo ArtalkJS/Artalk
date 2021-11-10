@@ -45,19 +45,17 @@ export default class PagesView extends SidebarView {
 
     Ui.hideLoading(this.$el)
 
-    const pConf: PaginationConf = {
-      total: data.total,
-      pageSize: PAGE_SIZE,
-      onChange: (o: number) => {
-        this.reqPages(siteName, o)
-      }
-    }
-
     if (!this.pagination) {
-      this.pagination = new Pagination(pConf)
+      this.pagination = new Pagination(data.total, {
+        pageSize: PAGE_SIZE,
+        onChange: (o: number) => {
+          this.reqPages(siteName, o)
+        }
+      })
+
       this.$el.append(this.pagination.$el)
     }
     if (this.pagination && offset === 0)
-      this.pagination.update(pConf)
+      this.pagination.update(offset, data.total)
   }
 }

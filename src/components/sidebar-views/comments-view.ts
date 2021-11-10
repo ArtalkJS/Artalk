@@ -31,9 +31,11 @@ export default class MessageView extends SidebarView {
       this.viewActiveTab = 'mentions'
     }
 
-    this.list = new ListLite(this.ctx)
+    this.list = new ListLite(this.ctx, this.$el)
     this.list.flatMode = true
     this.list.unreadHighlight = true
+    this.list.autoLoadListenerAt = this.$parent
+    this.list.pageMode = 'pagination'
     this.list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
     this.list.renderComment = (comment) => {
       comment.setOpenURL(`${comment.data.page_key}#atk-comment-${comment.data.id}`)

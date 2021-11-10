@@ -1,12 +1,10 @@
 import '../style/pagination.less'
 import * as Utils from '../lib/utils'
+import * as Ui from '../lib/ui'
 
 export interface PaginationConf {
   /** 每页条数 */
   pageSize?: number
-
-  /** 数据总数 */
-  total: number
 
   /** 回调函数 */
   onChange: (offset: number) => void
@@ -14,6 +12,7 @@ export interface PaginationConf {
 
 export default class Pagination {
   private conf: PaginationConf
+  public total: number
   public $el: HTMLElement
   public $input: HTMLInputElement
   public inputTimer?: number
@@ -28,16 +27,20 @@ export default class Pagination {
     return this.pageSize * (this.page - 1)
   }
   get maxPage(): number {
-    return Math.ceil(this.conf.total / this.pageSize)
+    return Math.ceil(this.total / this.pageSize)
   }
 
-  public constructor(conf: PaginationConf) {
+  public constructor(total: number, conf: PaginationConf) {
+    this.total = total
     this.conf = conf
+
     this.$el = Utils.createElement(
-      `<div class="atk-pagination">
-        <div class="atk-btn atk-btn-prev">Prev</div>
-        <input type="text" class="atk-input" />
-        <div class="atk-btn atk-btn-next">Next</div>
+      `<div class="atk-pagination-wrap">
+        <div class="atk-pagination">
+          <div class="atk-btn atk-btn-prev">Prev</div>
+          <input type="text" class="atk-input" />
+          <div class="atk-btn atk-btn-next">Next</div>
+        </div>
       </div>`)
     this.$input = this.$el.querySelector('.atk-input')!
     this.$input.value = `${this.page}`
@@ -54,10 +57,11 @@ export default class Pagination {
     this.checkDisabled()
   }
 
-  public update(conf: PaginationConf) {
-    this.conf = conf
-    this.page = 1
-    this.setInput(1)
+  public update(offset: number, total: number) {
+    this.page = Math.ceil(offset / this.pageSize) + 1
+    this.total = total
+
+    this.setInput(this.page)
     this.checkDisabled()
   }
 
@@ -136,5 +140,11 @@ export default class Pagination {
       // 回车
       this.input(true)
     }
+  }
+
+  /** 加载 */
+  setLoading (isLoading: boolean) {
+    if (isLoading) Ui.showLoading(this.$el)
+    else Ui.hideLoading(this.$el)
   }
 }

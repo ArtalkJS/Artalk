@@ -226,7 +226,7 @@ export default class Sidebar extends Component {
     if (!view) {
       // 初始化 View
       const View = REGISTER_VIEWS.find(o => o.viewName === viewName)!
-      view = new View(this.ctx)
+      view = new View(this.ctx, this.$viewWrap)
       this.viewInstances[viewName] = view
     }
 

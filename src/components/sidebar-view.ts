@@ -11,9 +11,12 @@ export default class SidebarView extends Component {
   viewTabs = {}
   viewActiveTab = ''
 
-  constructor(ctx: Context) {
+  protected $parent: HTMLElement
+
+  constructor(ctx: Context, $parent: HTMLElement) {
     super(ctx)
 
+    this.$parent = $parent
     this.$el = Utils.createElement(`<div class="atk-sidebar-view"></div>`)
   }
 

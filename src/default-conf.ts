@@ -24,8 +24,9 @@ const defaultConf: ArtalkConfig = {
     mirror: 'https://sdn.geekzu.org/avatar/',
   },
 
-  readMore: {
+  pagination: {
     pageSize: 15,
+    readMore: true,
     autoLoad: true,
   },
 

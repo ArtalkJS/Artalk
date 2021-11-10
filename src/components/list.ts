@@ -14,14 +14,17 @@ export default class List extends ListLite {
   private $unreadBadge!: HTMLElement
 
   constructor (ctx: Context) {
-    super(ctx)
-
     const el = Utils.createElement(ListHTML)
+
+    super(ctx, el)
+
+    // 把 listLite $el 变为子元素
     el.querySelector('.atk-list-body')!.append(this.$el)
     this.$el = el
 
     // 平铺模式
     this.flatMode = this.ctx.conf.flatMode
+    this.pageMode = this.conf.pagination?.readMore ? 'read-more' : 'pagination'
 
     // 操作按钮
     this.initListActionBtn()
@@ -62,7 +65,7 @@ export default class List extends ListLite {
   public refreshUI () {
     super.refreshUI()
 
-    this.$el.querySelector<HTMLElement>('.atk-comment-count-num')!.innerText = String(this.getListCommentCount())
+    this.$el.querySelector<HTMLElement>('.atk-comment-count-num')!.innerText = String(this.commentsCount)
 
     // 已输入个人信息
     if (!!this.ctx.user.data.nick && !!this.ctx.user.data.email) {
@@ -85,8 +88,8 @@ export default class List extends ListLite {
     }
   }
 
-  public onLoad(data: ListData) {
-    super.onLoad(data)
+  public onLoad(data: ListData, offset: number) {
+    super.onLoad(data, offset)
 
     // 检测锚点跳转
     this.checkGoToCommentByUrlHash()
@@ -102,30 +105,31 @@ export default class List extends ListLite {
     }
     if (!commentId) return
 
-    const comment = this.findComment(commentId)
-    if (!comment) { // 若找不到评论
-      if (this.hasMoreComments) { // 阅读更多，并重试
-        await this.readMore()
-      }
+    // 已阅 API
+    const notifyKey = Utils.getQueryParam('atk_notify_key')
+    if (notifyKey) {
+      new Api(this.ctx).markRead(notifyKey)
+        .then(() => {
+          this.unread = this.unread.filter(o => o.comment_id !== commentId)
+          this.ctx.trigger('unread-update', {
+            notifies: this.unread
+          })
+        })
     }
+
+    const comment = this.findComment(commentId)
+    // TODO 若找不到评论的情况
+    // if (!comment) { // 若找不到评论
+    //   if (this.hasMoreComments) { // 阅读更多，并重试
+    //     await this.reqComments()
+    //   }
+    // }
 
     if (!comment) return
 
     Ui.scrollIntoView(comment.getEl(), false)
-    setTimeout(() => {
+    window.setTimeout(() => {
       comment.getEl().classList.add('atk-flash-once')
-
-      // 已阅 API
-      const notifyKey = Utils.getQueryParam('atk_notify_key')
-      if (notifyKey) {
-        new Api(this.ctx).markRead(notifyKey)
-          .then(() => {
-            this.unread = this.unread.filter(o => o.comment_id !== comment.data.id)
-            this.ctx.trigger('unread-update', {
-              notifies: this.unread
-            })
-          })
-      }
     }, 800)
   }
 

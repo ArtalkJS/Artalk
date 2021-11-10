@@ -30,15 +30,16 @@ export default interface ArtalkConfig {
   gravatar?: {
     /** 镜像 */
     mirror?: string
-
     /** 默认头像（URL or Gravatar Type） */
     default?: string
   }
 
-  /** 查看更多配置 */
-  readMore?: {
+  /** 分页配置 */
+  pagination?: {
     /** 每次请求获取数量 */
     pageSize?: number
+    /** 阅读更多模式 */
+    readMore?: boolean
     /** 滚动到底部自动加载 */
     autoLoad?: boolean
   }

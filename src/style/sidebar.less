@@ -168,7 +168,11 @@
     }
 
     .atk-tabs {
-      .atk-slim-scrollbar();
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        background: transparent;
+      }
 
       display: flex;
       flex-direction: row;

@@ -101,8 +101,17 @@ export default class Comment extends Component {
   }
 
   private renderAvatar() {
-    this.$el.querySelector('.atk-avatar a')!.setAttribute('href', this.data.link)
-    this.$el.querySelector('.atk-avatar img')!.setAttribute('src', this.getGravatarUrl())
+    const $avatar = this.$el.querySelector<HTMLElement>('.atk-avatar')!
+    const $avatarImg = Utils.createElement<HTMLImageElement>('<img />')
+    $avatarImg.src = this.getGravatarUrl()
+    if (this.data.link) {
+      const $avatarA = Utils.createElement<HTMLLinkElement>('<a target="_blank"></a>')
+      $avatarA.href = this.data.link
+      $avatarA.append($avatarImg)
+      $avatar.append($avatarA)
+    } else {
+      $avatar.append($avatarImg)
+    }
   }
 
   private renderHeader() {

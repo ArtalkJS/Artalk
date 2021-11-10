@@ -106,22 +106,28 @@ export default class Comment extends Component {
   }
 
   private renderHeader() {
-    const nickEl = this.$el.querySelector<HTMLLinkElement>('.atk-nick > a')!
-    nickEl.innerText = this.data.nick
-    nickEl.href = this.data.link
-
-    const badgeEl = this.$el.querySelector<HTMLElement>('.atk-badge')!
-    if (this.data.badge_name) {
-      badgeEl.innerText = this.data.badge_name
-      if (this.data.badge_color)
-        badgeEl.style.backgroundColor = this.data.badge_color
+    const $nick = this.$el.querySelector<HTMLElement>('.atk-nick')!
+    if (this.data.link) {
+      const $nickA = Utils.createElement<HTMLLinkElement>('<a target="_blank"></a>')
+      $nickA.innerText = this.data.nick
+      $nickA.href = this.data.link
+      $nick.append($nickA)
     } else {
-      badgeEl.remove()
+      $nick.innerText = this.data.nick
     }
 
-    const dateEL = this.$el.querySelector<HTMLElement>('.atk-date')!
-    dateEL.innerText = this.getDateFormatted()
-    dateEL.setAttribute('data-atk-comment-date', String(+new Date(this.data.date)))
+    const $badge = this.$el.querySelector<HTMLElement>('.atk-badge')!
+    if (this.data.badge_name) {
+      $badge.innerText = this.data.badge_name
+      if (this.data.badge_color)
+        $badge.style.backgroundColor = this.data.badge_color
+    } else {
+      $badge.remove()
+    }
+
+    const $date = this.$el.querySelector<HTMLElement>('.atk-date')!
+    $date.innerText = this.getDateFormatted()
+    $date.setAttribute('data-atk-comment-date', String(+new Date(this.data.date)))
 
     if (this.conf.uaBadge) {
       const $uaWrap = Utils.createElement(`<span class="atk-ua-wrap"></span>`)

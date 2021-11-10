@@ -362,8 +362,9 @@ export default class ListLite extends Component {
 
   /** 获取评论总数 (包括子评论) */
   get commentsCount(): number {
-    if (!this.data || !this.data.total) return 0
-    return Number(this.data.total || '0')
+    let count = 0
+    this.eachComment(this.comments, () => { count++ })
+    return count
   }
 
   /** 是否还有更多的评论 */
@@ -373,7 +374,7 @@ export default class ListLite extends Component {
   }
 
   get parentCommentsCount() {
-    return this.data?.total_parents || 0
+    return this.comments.length
   }
 
   /** 遍历操作 Comment (包括子评论) */
@@ -424,6 +425,8 @@ export default class ListLite extends Component {
       }
       return true
     })
+
+    this.refreshUI()
   }
 
   /** 清空所有评论 */

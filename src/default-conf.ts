@@ -17,7 +17,7 @@ const defaultConf: ArtalkConfig = {
   vote: true,
   voteDown: false,
   uaBadge: true,
-  flatMode: false,
+  flatMode: 'auto',
   maxNesting: 3,
   gravatar: {
     default: 'mp',

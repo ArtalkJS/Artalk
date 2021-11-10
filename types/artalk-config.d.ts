@@ -66,7 +66,7 @@ export default interface ArtalkConfig {
   reqTimeout?: number
 
   /** 平铺模式 */
-  flatMode?: boolean
+  flatMode?: boolean|'auto'
 
   /** 最大嵌套数 */
   maxNesting?: number

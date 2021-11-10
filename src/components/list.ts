@@ -23,7 +23,16 @@ export default class List extends ListLite {
     this.$el = el
 
     // 平铺模式
-    this.flatMode = this.ctx.conf.flatMode
+    let flatMode = false
+    if (this.ctx.conf.flatMode === 'auto') {
+      if (window.matchMedia("(max-width: 768px)").matches)
+        flatMode = true
+    } else if (this.ctx.conf.flatMode === true) {
+      flatMode = true
+    }
+    this.flatMode = flatMode
+
+    // 分页模式
     this.pageMode = this.conf.pagination?.readMore ? 'read-more' : 'pagination'
 
     // 操作按钮

@@ -387,19 +387,17 @@ export default class ListLite extends Component {
 
   /** 获取评论总数 (包括子评论) */
   get commentsCount(): number {
-    let count = 0
-    this.eachComment(this.comments, () => { count++ })
-    return count
+    return Number(this.data?.total) || 0
+  }
+
+  get parentCommentsCount() {
+    return Number(this.data?.total_parents) || 0
   }
 
   /** 是否还有更多的评论 */
   get hasMoreComments(): boolean {
     if (!this.data) return false
     return this.data.total_parents > (this.offset + this.pageSize)
-  }
-
-  get parentCommentsCount() {
-    return this.comments.length
   }
 
   /** 遍历操作 Comment (包括子评论) */

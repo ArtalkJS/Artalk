@@ -44,12 +44,21 @@ func (imp *_ArtransImporter) Run(basic *BasicParams, payload []string) {
 func ImportArtransByStr(basic *BasicParams, str string) {
 	// 解析内容
 	comments := []model.Artran{}
-	JsonDecodeFAS(str, &comments)
+	dErr := JsonDecodeFAS(str, &comments)
+	if dErr != nil {
+		logFatal(dErr)
+		return
+	}
 
 	ImportArtrans(basic, comments)
 }
 
 func ImportArtrans(basic *BasicParams, comments []model.Artran) {
+	if len(comments) == 0 {
+		logFatal("未读取到任何一条评论")
+		return
+	}
+
 	// 汇总
 	print("# 请过目：\n\n")
 

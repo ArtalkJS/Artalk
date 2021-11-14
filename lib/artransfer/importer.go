@@ -1,6 +1,7 @@
 package artransfer
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -351,9 +352,45 @@ func GetArrayParamsFrom(payload []string, key string) []string {
 	return arr
 }
 
+func CheckIfJsonArr(str string) bool {
+	x := bytes.TrimLeft([]byte(str), " \t\r\n")
+	return len(x) > 0 && x[0] == '['
+}
+
+func CheckIfJsonObj(str string) bool {
+	x := bytes.TrimLeft([]byte(str), " \t\r\n")
+	return len(x) > 0 && x[0] == '{'
+}
+
+func TryConvertLineJsonToArr(str string) (string, error) {
+	// 尝试将一行一行的 Obj 转成 Arr
+	arrTmp := []map[string]interface{}{}
+	for _, line := range strings.Split(str, "\n") {
+		var tmp map[string]interface{}
+		err := json.Unmarshal([]byte(line), &tmp)
+		if err != nil {
+			return "", err
+		}
+		arrTmp = append(arrTmp, tmp)
+	}
+	r, err := json.Marshal(arrTmp)
+	if err != nil {
+		return "", err
+	}
+	return string(r), nil
+}
+
 // Json Decode (FAS: Fields All String Type)
 // 解析 json 为字段全部是 string 类型的 struct
 func JsonDecodeFAS(str string, fasStructure interface{}) error {
+	if !CheckIfJsonArr(str) {
+		var err error
+		str, err = TryConvertLineJsonToArr(str)
+		if err != nil {
+			return errors.New("JSON 不是 Array 类型，" + err.Error())
+		}
+	}
+
 	err := json.Unmarshal([]byte(lib.JsonObjInArrAnyStr(str)), fasStructure) // lib.ToString()
 	if err != nil {
 		return errors.New("JSON 解析失败 " + err.Error())

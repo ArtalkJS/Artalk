@@ -33,7 +33,11 @@ func (imp *_ValineImporter) Run(basic *BasicParams, payload []string) {
 
 	// 解析 Valine JSON
 	var vComments []ValineCommentFAS
-	JsonDecodeFAS(jsonStr, &vComments)
+	dErr := JsonDecodeFAS(jsonStr, &vComments)
+	if dErr != nil {
+		logFatal(dErr)
+		return
+	}
 
 	// Valine 数据格式转 Artrans
 	tp := []model.Artran{}

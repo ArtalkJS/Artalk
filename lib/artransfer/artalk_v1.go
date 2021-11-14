@@ -31,7 +31,11 @@ func (imp *_ArtalkV1Importer) Run(basic *BasicParams, payload []string) {
 	}
 
 	var aComments []ArtalkV1CommentAFS
-	JsonDecodeFAS(jsonStr, &aComments)
+	dErr := JsonDecodeFAS(jsonStr, &aComments)
+	if dErr != nil {
+		logFatal(dErr)
+		return
+	}
 
 	tp := []model.Artran{}
 	for _, tc := range aComments {

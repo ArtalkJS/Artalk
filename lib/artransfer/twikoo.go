@@ -34,7 +34,11 @@ func (imp *_TwikooImporter) Run(basic *BasicParams, payload []string) {
 
 	// 解析 Twikoo JSON
 	var tComments []TwikooCommentFAS
-	JsonDecodeFAS(jsonStr, &tComments)
+	dErr := JsonDecodeFAS(jsonStr, &tComments)
+	if dErr != nil {
+		logFatal(dErr)
+		return
+	}
 
 	// twikoo 转 ArtalkTransferParcel
 	// @see https://github.com/imaegoo/twikoo/blob/c528c94105449c6b10c63bded6f813ceaee4bf74/src/vercel/api/index.js#L1155

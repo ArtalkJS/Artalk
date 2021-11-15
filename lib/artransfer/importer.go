@@ -353,19 +353,19 @@ func GetArrayParamsFrom(payload []string, key string) []string {
 }
 
 func CheckIfJsonArr(str string) bool {
-	x := bytes.TrimLeft([]byte(str), " \t\r\n")
+	x := bytes.TrimSpace([]byte(str))
 	return len(x) > 0 && x[0] == '['
 }
 
 func CheckIfJsonObj(str string) bool {
-	x := bytes.TrimLeft([]byte(str), " \t\r\n")
+	x := bytes.TrimSpace([]byte(str))
 	return len(x) > 0 && x[0] == '{'
 }
 
 func TryConvertLineJsonToArr(str string) (string, error) {
 	// 尝试将一行一行的 Obj 转成 Arr
 	arrTmp := []map[string]interface{}{}
-	for _, line := range strings.Split(str, "\n") {
+	for _, line := range strings.Split(strings.TrimSpace(str), "\n") {
 		var tmp map[string]interface{}
 		err := json.Unmarshal([]byte(line), &tmp)
 		if err != nil {

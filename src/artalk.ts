@@ -33,7 +33,7 @@ export default class Artalk {
 
     // 默认 pageKey
     if (!this.conf.pageKey) {
-      this.conf.pageKey = `${window.location.protocol}//'${window.location.host}/${window.location.pathname}`
+      this.conf.pageKey = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
     }
 
     // 装载元素

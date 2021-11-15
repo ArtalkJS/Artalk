@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/jeremywohl/flatten"
+	"github.com/tidwall/gjson"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
@@ -121,24 +122,17 @@ func ToString(val interface{}) string {
 //	=> [{"a":"233"}, {"b":"true"}, {"c":"233"}]
 // @relevant ToString()
 func JsonObjInArrAnyStr(jsonStr string) string {
-	var raw []map[string]interface{}
-	json.Unmarshal([]byte(jsonStr), &raw)
-	var dest []interface{}
-	for _, item := range raw {
-		dest = append(dest, JsonObjAnyStr(item))
+	var dest []map[string]string
+	for _, item := range gjson.Parse(jsonStr).Array() {
+		dItem := map[string]string{}
+		item.ForEach(func(key, value gjson.Result) bool {
+			dItem[key.String()] = value.String()
+			return true
+		})
+		dest = append(dest, dItem)
 	}
 	j, _ := json.Marshal(dest)
 	return string(j)
-}
-
-// 将 JSON 对象的 Values 全部转成 String 类型
-//	{"test":233} => {"test": "233"}, {"test": true} => {"test": "true"}
-func JsonObjAnyStr(item map[string]interface{}) map[string]string {
-	dest := map[string]string{}
-	for k, v := range item {
-		dest[k] = ToString(v)
-	}
-	return dest
 }
 
 //#endregion

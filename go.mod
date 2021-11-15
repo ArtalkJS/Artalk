@@ -31,6 +31,7 @@ require (
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
 	github.com/steambap/captcha v1.4.1
+	github.com/tidwall/gjson v1.11.0 // indirect
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	github.com/yuin/goldmark v1.4.0
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect

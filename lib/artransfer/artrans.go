@@ -153,16 +153,17 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 			SiteName: site.Name,
 		}
 
-		// 日期恢复
-		nComment.CreatedAt = ParseDate(c.CreatedAt)
-		nComment.UpdatedAt = ParseDate(c.UpdatedAt)
-
 		// 保存到数据库
 		dErr := lib.DB.Create(&nComment).Error
 		if dErr != nil {
 			logError(fmt.Sprintf("评论源 ID:%s 保存失败", c.ID))
 			continue
 		}
+
+		// 日期恢复
+		// @see https://gorm.io/zh_CN/docs/conventions.html#CreatedAt
+		lib.DB.Model(&nComment).Update("CreatedAt", ParseDate(c.CreatedAt))
+		lib.DB.Model(&nComment).Update("UpdatedAt", ParseDate(c.UpdatedAt))
 
 		idChanges[uint(idMap[c.ID])] = nComment.ID
 

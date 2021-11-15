@@ -244,8 +244,8 @@ func (imp *_TypechoImporter) ImportComments() {
 
 			// 日期恢复
 			createdVal := fmt.Sprintf("%v", co.Created)
-			nComment.CreatedAt = ParseDate(createdVal)
-			nComment.UpdatedAt = ParseDate(createdVal)
+			lib.DB.Model(&nComment).Update("CreatedAt", ParseDate(createdVal))
+			lib.DB.Model(&nComment).Update("UpdatedAt", ParseDate(createdVal))
 
 			// 保存到数据库
 			err := lib.DB.Create(&nComment).Error

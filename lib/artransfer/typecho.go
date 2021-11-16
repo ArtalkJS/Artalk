@@ -242,17 +242,17 @@ func (imp *_TypechoImporter) ImportComments() {
 				IsPending:   co.Status != "approved",
 			}
 
-			// 日期恢复
-			createdVal := fmt.Sprintf("%v", co.Created)
-			lib.DB.Model(&nComment).Update("CreatedAt", ParseDate(createdVal))
-			lib.DB.Model(&nComment).Update("UpdatedAt", ParseDate(createdVal))
-
 			// 保存到数据库
 			err := lib.DB.Create(&nComment).Error
 			if err != nil {
 				logError(fmt.Sprintf("评论源 ID:%d 保存失败", co.Coid))
 				continue
 			}
+
+			// 日期恢复
+			createdVal := fmt.Sprintf("%v", co.Created)
+			lib.DB.Model(&nComment).Update("CreatedAt", ParseDate(createdVal))
+			lib.DB.Model(&nComment).Update("UpdatedAt", ParseDate(createdVal))
 
 			idChanges[uint(co.Coid)] = nComment.ID
 			commentTotal++

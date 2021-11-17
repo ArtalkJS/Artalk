@@ -109,6 +109,11 @@ export default class Artalk {
     })
   }
 
+  /** 重新加载 */
+  public reload() {
+    this.list.reqComments()
+  }
+
   /** 暗黑模式 · 初始化 */
   public initDarkMode() {
     const darkModeClassName = 'atk-dark-mode'

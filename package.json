@@ -39,7 +39,6 @@
   },
   "devDependencies": {
     "@rollup/plugin-dynamic-import-vars": "^1.4.0",
-    "@types/marked": "0.6.5",
     "@types/node": "^16.7.5",
     "@typescript-eslint/eslint-plugin": "^4.29.3",
     "@typescript-eslint/parser": "^4.31.1",
@@ -60,7 +59,9 @@
     "vite-tsconfig-paths": "^3.3.14"
   },
   "dependencies": {
+    "@types/marked": "^4.0.0",
     "hanabi": "^0.4.0",
-    "marked": "0.7.0"
+    "insane": "^2.6.2",
+    "marked": "^4.0.3"
   }
 }

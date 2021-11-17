@@ -105,7 +105,7 @@ export default class Comment extends Component {
     const $avatarImg = Utils.createElement<HTMLImageElement>('<img />')
     $avatarImg.src = this.getGravatarUrl()
     if (this.data.link) {
-      const $avatarA = Utils.createElement<HTMLLinkElement>('<a target="_blank"></a>')
+      const $avatarA = Utils.createElement<HTMLLinkElement>('<a target="_blank" rel="noreferrer noopener nofollow"></a>')
       $avatarA.href = this.data.link
       $avatarA.append($avatarImg)
       $avatar.append($avatarA)
@@ -117,7 +117,7 @@ export default class Comment extends Component {
   private renderHeader() {
     const $nick = this.$el.querySelector<HTMLElement>('.atk-nick')!
     if (this.data.link) {
-      const $nickA = Utils.createElement<HTMLLinkElement>('<a target="_blank"></a>')
+      const $nickA = Utils.createElement<HTMLLinkElement>('<a target="_blank" rel="noreferrer noopener nofollow"></a>')
       $nickA.innerText = this.data.nick
       $nickA.href = this.data.link
       $nick.append($nickA)

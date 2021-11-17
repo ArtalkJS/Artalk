@@ -1,4 +1,5 @@
-import libMarked from 'marked'
+import { marked as libMarked } from 'marked'
+import insane from 'insane'
 import hanabi from 'hanabi'
 import Context from '../context'
 
@@ -118,25 +119,26 @@ export function versionCompare(a: string, b: string) {
   return 0
 }
 
-let markedInstance: any = null
+let markedInstance: typeof libMarked
 export function marked(ctx: Context, src: string): string {
   if (!markedInstance) {
     const renderer = new libMarked.Renderer()
     const linkRenderer = renderer.link
     renderer.link = (href, title, text) => {
-      const html = linkRenderer.call(renderer, href, title, text)
-      return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ')
+      const localLink = href?.startsWith(`${window.location.protocol}//${window.location.hostname}`);
+      const html = linkRenderer.call(renderer as any, href, title, text);
+      return html.replace(/^<a /, `<a target="_blank" ${!localLink ? `rel="noreferrer noopener nofollow"` : ''} `);
     }
 
     const nMarked = libMarked
-    nMarked.setOptions({
+    libMarked.setOptions({
       renderer,
       highlight: (code) => hanabi(code),
       pedantic: false,
       gfm: true,
-      tables: true,
       breaks: true,
-      sanitize: true, // 净化
+      sanitize: true,
+      sanitizer: (html) => insane(html),
       smartLists: true,
       smartypants: true,
       xhtml: false
@@ -145,7 +147,5 @@ export function marked(ctx: Context, src: string): string {
     markedInstance = nMarked
   }
 
-  return markedInstance(src)
-
-  return ''
+  return markedInstance.parse(src)
 }

@@ -175,6 +175,14 @@ export interface NotifyData {
   read_link: string
 }
 
+export type EmoticonGrpData = {
+  name: string,
+  type: 'emoticon'|'image'|'emoji'
+  items: {key: string, val: string}[]
+}
+
+export type EmoticonListData = EmoticonGrpData[]
+
 export interface ApiVersionData {
   /** API 程序名 */
   app: string

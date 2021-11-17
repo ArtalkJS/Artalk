@@ -16,13 +16,8 @@ export default class PreviewPlug extends ArtalkContext {
     this.elem = Utils.createElement('<div class="atk-editor-plug-example"></div>')
   }
 
-  getName () {
-    return 'example'
-  }
-
-  getBtnHtml () {
-    return '栗子'
-  }
+  static Name = 'example'
+  static BtnHTML = '栗子'
 
   getEl () {
     return this.elem

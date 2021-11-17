@@ -21,6 +21,7 @@ module.exports = {
     'import/no-cycle': 0,
     'spaced-comment': 0,
     'no-lonely-if': 0,
+    'prefer-destructuring': 0,
   },
   settings: {
     'import/resolver': {

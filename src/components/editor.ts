@@ -200,34 +200,37 @@ export default class Editor extends Component {
 
     // 依次实例化 plug
     this.LOADABLE_PLUG_LIST.forEach((PlugObj) => {
-      const plug = new PlugObj(this)
-      this.plugList[plug.getName()] = plug
-
       // 切换按钮
-      const btnElem = Utils.createElement(`<span class="atk-editor-action atk-editor-plug-switcher">${plug.getBtnHtml()}</span>`)
+      const btnElem = Utils.createElement(`<span class="atk-editor-action atk-editor-plug-switcher">${PlugObj.BtnHTML}</span>`)
       this.$plugSwitcherWrap.appendChild(btnElem)
       btnElem.addEventListener('click', () => {
+        let plug = this.plugList[PlugObj.Name]
+        if (!plug) {
+          plug = new PlugObj(this)
+          this.plugList[PlugObj.Name] = plug
+        }
+
         this.$plugSwitcherWrap.querySelectorAll('.active').forEach(item => item.classList.remove('active'))
 
         // 若点击已打开的，则收起
-        if (plug.getName() === this.openedPlugName) {
+        if (PlugObj.Name === this.openedPlugName) {
           plug.onHide()
           this.$plugWrap.style.display = 'none'
           this.openedPlugName = null
           return
         }
 
-        if (this.$plugWrap.querySelector(`[data-plug-name="${plug.getName()}"]`) === null) {
+        if (this.$plugWrap.querySelector(`[data-plug-name="${PlugObj.Name}"]`) === null) {
           // 需要初始化
           const plugEl = plug.getEl()
-          plugEl.setAttribute('data-plug-name', plug.getName())
+          plugEl.setAttribute('data-plug-name', PlugObj.Name)
           plugEl.style.display = 'none'
           this.$plugWrap.appendChild(plugEl)
         }
 
         (Array.from(this.$plugWrap.children) as HTMLElement[]).forEach((plugItemEl: HTMLElement) => {
           const plugItemName = plugItemEl.getAttribute('data-plug-name')!
-          if (plugItemName === plug.getName()) {
+          if (plugItemName === PlugObj.Name) {
             plugItemEl.style.display = ''
             this.plugList[plugItemName].onShow()
           } else {
@@ -237,7 +240,7 @@ export default class Editor extends Component {
         })
 
         this.$plugWrap.style.display = ''
-        this.openedPlugName = plug.getName()
+        this.openedPlugName = PlugObj.Name
 
         btnElem.classList.add('active')
       })
@@ -321,12 +324,12 @@ export default class Editor extends Component {
     }
 
     if (this.$sendReply === null) {
-      this.$sendReply = Utils.createElement('<div class="atk-send-reply-wrap"><div class="atk-send-reply">回复 <span class="atk-text"></span><span class="atk-cancel" title="取消 AT">×</span></div></div>');
+      this.$sendReply = Utils.createElement('<div class="atk-send-reply">回复 <span class="atk-text"></span><span class="atk-cancel" title="取消 AT">×</span></div>');
       this.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
       this.$sendReply.addEventListener('click', () => {
         this.cancelReply()
       })
-      this.$textareaWrap.prepend(this.$sendReply)
+      this.$textareaWrap.append(this.$sendReply)
     }
     this.replyComment = commentData
     Ui.scrollIntoView(this.$el)

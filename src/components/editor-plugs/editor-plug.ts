@@ -11,10 +11,10 @@ export default abstract class EditorPlug {
     this.ctx = editor.ctx
   }
 
-  public abstract initEl(): void
+  public static Name: string
+  public static BtnHTML: string
+
   public abstract getEl(): HTMLElement
-  public abstract getName(): string
-  public abstract getBtnHtml(): string
   public abstract onShow(): void
   public abstract onHide(): void
 }

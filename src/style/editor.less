@@ -80,21 +80,20 @@
       }
     }
 
-    .atk-send-reply-wrap {
-      position: relative;
-      padding: 0 10px;
-    }
-
     .atk-send-reply {
-      position: relative;
-      display: inline-block;
-      font-size: 14px;
+      z-index: 2;
+      position: absolute;
+      right: 10px;
+      bottom: 40px;
+      max-width: calc(100% - 20px);
       height: 30px;
       line-height: 30px;
+      font-size: 14px;
       background: @color-bg-grey-transl;
       padding: 0 30px 0 10px;
-      z-index: 2;
-      user-select: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       cursor: pointer;
 
       .atk-text {

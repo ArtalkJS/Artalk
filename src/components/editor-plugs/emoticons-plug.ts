@@ -3,126 +3,195 @@ import './emoticons-plug.less'
 import Editor from '../editor'
 import EditorPlug from './editor-plug'
 import * as Utils from '~/src/lib/utils'
+import * as Ui from '~/src/lib/ui'
+import { EmoticonListData, EmoticonGrpData } from '~/types/artalk-data'
 
-type EmoticonListType = {
-  [grpName: string]: {
-    inputType: 'emoticon'|'image'
-    container: { [name: string]: string }
+type OwOFormatType = {
+  [key: string] : {
+    type: 'emoticon'|'emoji'|'image',
+    container: {icon: string, text: string}[]
   }
 }
 
 export default class EmoticonsPlug extends EditorPlug {
   public $el!: HTMLElement
-  public emoticons: EmoticonListType
+  public emoticons: EmoticonListData = []
 
-  public listWrapEl!: HTMLElement
-  public typesEl!: HTMLElement
+  public $listWrap!: HTMLElement
+  public $types!: HTMLElement
 
   constructor (public editor: Editor) {
     super(editor)
 
-    this.emoticons = this.ctx.conf.emoticons
-    this.initEl()
-  }
-
-  initEl () {
     this.$el = Utils.createElement(`<div class="atk-editor-plug-emoticons"></div>`)
 
-    // 表情列表
-    this.listWrapEl = Utils.createElement(`<div class="atk-emoticons-list-wrap"></div>`)
-    this.$el.append(this.listWrapEl)
+    this.init()
+  }
 
-    Object.entries(this.emoticons).forEach(([key, item]) => {
+  async init() {
+    // 数据处理
+    if (typeof this.ctx.conf.emoticons === 'string') {
+      await this.remoteLoad()
+    } else {
+      if (!Array.isArray(this.ctx.conf.emoticons))
+        throw new Error("表情包数据必须为 Array 类型")
+
+      this.emoticons = this.ctx.conf.emoticons
+    }
+
+    this.checkConvertOwO()
+    this.solveNullKey()
+    this.solveSameKey()
+
+    // 初始化元素
+    this.initEmoticonsList()
+  }
+
+  async remoteLoad() {
+    Ui.showLoading(this.$el)
+    try {
+      const resp = await fetch(this.ctx.conf.emoticons)
+      const json = await resp.json()
+      this.emoticons = json
+    } catch (err) {
+      Ui.setError(this.$el, `表情加载失败 ${String(err)}`)
+      return
+    } finally {
+      Ui.hideLoading(this.$el)
+    }
+  }
+
+  solveNullKey() {
+    this.emoticons.forEach((grp) => {
+      grp.items.forEach((item, index) => {
+        if (!item.key) item.key = `${grp.name} ${index+1}`
+      })
+    })
+  }
+
+  solveSameKey() {
+    const tmp: {[key: string]: number} = {}
+    this.emoticons.forEach((grp) => {
+      grp.items.forEach(item => {
+        if (!item.key || String(item.key).trim() === "") return
+        if (!tmp[item.key]) tmp[item.key] = 1
+        else tmp[item.key]++
+
+        if (tmp[item.key] > 1) item.key = `${item.key} ${tmp[item.key]}`
+      })
+    })
+  }
+
+  checkConvertOwO() {
+    if (this.isOwOFormat(this.emoticons)) {
+      this.emoticons = this.convertOwO(this.emoticons as any)
+    }
+  }
+
+  isOwOFormat(data: any) {
+    try {
+      return (typeof data === 'object') && !!Object.values(data).length
+        && Array.isArray(Object.keys(Object.values<any>(data)[0].container))
+        && Object.keys(Object.values<any>(data)[0].container[0]).includes('icon')
+    } catch { return false }
+  }
+
+  convertOwO(owoData: OwOFormatType): EmoticonListData {
+    const dest: EmoticonListData = []
+    Object.entries(owoData).forEach(([grpName, grp]) => {
+      const nGrp: EmoticonGrpData = { name: grpName, type: grp.type, items: [] }
+      grp.container.forEach((item, index) => {
+        // 图片标签提取 src 属性值
+        const iconStr = item.icon
+        if (/<(img|IMG)/.test(iconStr)) {
+          const find = /src=["'](.*)["']/.exec(iconStr)
+          if (find && find.length > 1) item.icon = find[1]
+        }
+        nGrp.items.push({ key: item.text || `${grpName} ${index+1}`, val: item.icon })
+      })
+      dest.push(nGrp)
+    })
+    return dest
+  }
+
+  initEmoticonsList () {
+    // 表情列表
+    this.$listWrap = Utils.createElement(`<div class="atk-emoticons-list-wrap"></div>`)
+    this.$el.append(this.$listWrap)
+
+    this.emoticons.forEach((grp, index) => {
       const emoticonsEl = Utils.createElement(`<div class="atk-emoticons-list" style="display: none;"></div>`)
-      this.listWrapEl.append(emoticonsEl)
-      emoticonsEl.setAttribute('data-key', key)
-      emoticonsEl.setAttribute('data-input-type', item.inputType)
-      Object.entries(item.container).forEach(([name, content]) => {
-        const itemEl = Utils.createElement(`<span class="atk-emoticons-item"></span>`)
-        emoticonsEl.append(itemEl)
-        itemEl.setAttribute('title', name)
-        itemEl.setAttribute('data-content', content)
-        if (item.inputType === 'image') {
+      this.$listWrap.append(emoticonsEl)
+      emoticonsEl.setAttribute('data-index', String(index))
+      emoticonsEl.setAttribute('data-grp-name', grp.name)
+      emoticonsEl.setAttribute('data-type', grp.type)
+      grp.items.forEach((item) => {
+        const $item = Utils.createElement(`<span class="atk-emoticons-item"></span>`)
+        emoticonsEl.append($item)
+
+        if (!!item.key && !(new RegExp(`^(${grp.name})?\\s?[0-9]+$`).test(item.key)))
+          $item.setAttribute('title', item.key)
+
+        if (grp.type === 'image') {
           const imgEl = document.createElement('img')
-          imgEl.src = content
-          imgEl.alt = name
-          itemEl.append(imgEl)
+          imgEl.src = item.val
+          imgEl.alt = item.key
+          $item.append(imgEl)
         } else {
-          itemEl.innerText = content
+          $item.innerText = item.val
+        }
+
+        $item.onclick = () => {
+          if (grp.type === 'image') {
+            this.editor.insertContent(`:[${item.key}]`)
+          } else {
+            this.editor.insertContent(item.val || '')
+          }
         }
       })
     })
 
     // 表情分类
-    this.typesEl = Utils.createElement(`<div class="atk-emoticons-types"></div>`)
-    this.$el.append(this.typesEl)
-    Object.entries(this.emoticons).forEach(([key, item]) => {
-      const itemEl = Utils.createElement('<span />')
-      this.typesEl.append(itemEl)
-      itemEl.setAttribute('data-key', key)
-      itemEl.innerText = key
-    })
-
-    // 绑定切换分类按钮
-    this.typesEl.querySelectorAll('span').forEach((btn) => {
-      btn.addEventListener('click', (evt) => {
-        const btnEl = evt.currentTarget as HTMLElement
-        const key = btnEl.getAttribute('data-key')
-        if (key) this.openType(key)
-      })
+    this.$types = Utils.createElement(`<div class="atk-emoticons-types"></div>`)
+    this.$el.append(this.$types)
+    this.emoticons.forEach((grp, index) => {
+      const $item = Utils.createElement('<span />')
+      $item.innerText = grp.name
+      $item.setAttribute('data-index', String(index))
+      $item.onclick = () => (this.openType(index))
+      this.$types.append($item)
     })
 
     // 默认打开第一个分类
-    if (Object.keys(this.emoticons).length > 0)
-      this.openType(Object.keys(this.emoticons)[0])
-
-    // 绑定点击表情
-    this.listWrapEl.querySelectorAll<HTMLElement>('.atk-emoticons-item').forEach((item: HTMLElement) => {
-      item.onclick = (evt) => {
-        const elem = evt.currentTarget as HTMLElement
-        const inputType = elem.closest('.atk-emoticons-list')!.getAttribute('data-input-type')
-
-        const title = elem.getAttribute('title')
-        const content = elem.getAttribute('data-content')
-        if (inputType === 'image') {
-          this.editor.insertContent(`:[${title}]`)
-        } else {
-          this.editor.insertContent(content || '')
-        }
-      }
-    })
+    if (this.emoticons.length > 0)
+      this.openType(0)
   }
 
-  openType (key: string) {
-    Array.from(this.listWrapEl.children).forEach((item) => {
+  openType (index: number) {
+    Array.from(this.$listWrap.children).forEach((item) => {
       const el = item as HTMLElement
-      if (el.getAttribute('data-key') !== key) {
+      if (el.getAttribute('data-index') !== String(index)) {
         el.style.display = 'none'
       } else {
         el.style.display = ''
       }
     })
 
-    this.typesEl.querySelectorAll('span.active').forEach(item => item.classList.remove('active'))
-    this.typesEl.querySelector(`span[data-key="${key}"]`)?.classList.add('active')
+    this.$types.querySelectorAll('span.active').forEach(item => item.classList.remove('active'))
+    this.$types.querySelector(`span[data-index="${index}"]`)?.classList.add('active')
 
     this.changeListHeight()
   }
 
-  getName () {
-    return 'emoticons'
-  }
-
-  getBtnHtml () {
-    return '表情'
-  }
+  static Name = 'emoticons'
+  static BtnHTML = '表情'
 
   getEl () {
     return this.$el
   }
 
   changeListHeight () {
-    /* const listWrapHeight = Utils.getHeight(this.listWrapElem)
+    /* const listWrapHeight = Utils.getHeight(this.$listWrapem)
     this.editor.plugWrapEl.style.height = `${listWrapHeight > 150 ? listWrapHeight : 150}px` */
   }
 
@@ -138,10 +207,13 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   public transEmoticonImageText (text: string) {
-    Object.entries(this.emoticons).forEach(([grpName, grp]) => {
-      if (grp.inputType !== 'image') return
-      Object.entries(grp.container).forEach(([name, imgSrc]) => {
-        text = text.split(`:[${name}]`).join(`![${name}](${imgSrc}) `) // replaceAll(...)
+    if (!this.emoticons || !Array.isArray(this.emoticons))
+      return text
+
+    this.emoticons.forEach((grp) => {
+      if (grp.type !== 'image') return
+      Object.entries(grp.items).forEach(([index, item]) => {
+        text = text.split(`:[${item.key}]`).join(`![${item.key}](${item.val}) `) // replaceAll(...)
       })
     })
 

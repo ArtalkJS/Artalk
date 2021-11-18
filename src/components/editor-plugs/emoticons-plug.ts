@@ -30,16 +30,37 @@ export default class EmoticonsPlug extends EditorPlug {
 
   async init() {
     // 数据处理
-    if (typeof this.ctx.conf.emoticons === 'string') {
-      await this.remoteLoad()
-    } else {
-      if (!Array.isArray(this.ctx.conf.emoticons))
-        throw new Error("表情包数据必须为 Array 类型")
+    Ui.showLoading(this.$el)
 
+    if (typeof this.ctx.conf.emoticons === 'string') {
+      this.emoticons = await this.remoteLoad(this.ctx.conf.emoticons)
+    } else {
       this.emoticons = this.ctx.conf.emoticons
     }
 
     this.checkConvertOwO()
+
+    if (!Array.isArray(this.emoticons)) {
+      Ui.setError(this.$el, "表情包数据必须为 Array 类型")
+      Ui.hideLoading(this.$el)
+      return
+    }
+
+    // 加载子内容
+    await Promise.all(this.emoticons.map(async (grp, index) => {
+      if (typeof grp === "string") {
+        const grpData = await this.remoteLoad(grp)
+        if (grpData) {
+          this.emoticons[index] = grpData
+        }
+      }
+    }))
+
+    Ui.hideLoading(this.$el)
+
+
+
+
     this.solveNullKey()
     this.solveSameKey()
 
@@ -47,17 +68,17 @@ export default class EmoticonsPlug extends EditorPlug {
     this.initEmoticonsList()
   }
 
-  async remoteLoad() {
-    Ui.showLoading(this.$el)
+  async remoteLoad(url: string): Promise<any> {
+    if (!url) return []
+
     try {
-      const resp = await fetch(this.ctx.conf.emoticons)
+      const resp = await fetch(url)
       const json = await resp.json()
-      this.emoticons = json
+      return json
     } catch (err) {
-      Ui.setError(this.$el, `表情加载失败 ${String(err)}`)
-      return
-    } finally {
       Ui.hideLoading(this.$el)
+      Ui.setError(this.$el, `表情加载失败 ${String(err)}`)
+      return []
     }
   }
 

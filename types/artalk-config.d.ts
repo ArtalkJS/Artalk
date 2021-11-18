@@ -24,7 +24,7 @@ export default interface ArtalkConfig {
   site?: string
 
   /** 表情包 */
-  emoticons?: object|any
+  emoticons?: any
 
   /** Gravatar 头像 */
   gravatar?: {

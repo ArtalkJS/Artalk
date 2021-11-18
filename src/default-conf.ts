@@ -1,5 +1,4 @@
 import ArtalkConfig from "~/types/artalk-config";
-import emoticons from './assets/emoticons.json'
 
 const defaultConf: ArtalkConfig = {
   el: '',
@@ -12,7 +11,7 @@ const defaultConf: ArtalkConfig = {
   sendBtn: '发送评论',
   darkMode: false,
 
-  emoticons,
+  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/default.json",
 
   vote: true,
   voteDown: false,

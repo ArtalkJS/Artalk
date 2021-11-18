@@ -137,8 +137,6 @@ export function marked(ctx: Context, src: string): string {
       pedantic: false,
       gfm: true,
       breaks: true,
-      sanitize: true,
-      sanitizer: (html) => insane(html),
       smartLists: true,
       smartypants: true,
       xhtml: false
@@ -146,6 +144,15 @@ export function marked(ctx: Context, src: string): string {
 
     markedInstance = nMarked
   }
+
+  // 净化
+  src = insane(src, {
+    ...insane.defaults,
+    allowedAttributes: {
+      ...insane.defaults.allowedAttributes,
+      img: ['src', 'atk-emoticon']
+    },
+  })
 
   return markedInstance.parse(src)
 }

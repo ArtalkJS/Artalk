@@ -1,6 +1,6 @@
 import ArtalkConfig from "~/types/artalk-config";
 
-const defaultConf: ArtalkConfig = {
+const defaults: ArtalkConfig = {
   el: '',
   pageKey: '',
   server: '',
@@ -11,7 +11,7 @@ const defaultConf: ArtalkConfig = {
   sendBtn: '发送评论',
   darkMode: false,
 
-  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/default.json",
+  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json",
 
   vote: true,
   voteDown: false,
@@ -38,4 +38,4 @@ const defaultConf: ArtalkConfig = {
   versionCheck: true,
 }
 
-export default defaultConf
+export default defaults

@@ -330,6 +330,19 @@ export default class Comment extends Component {
     return this.parent
   }
 
+  getParents() {
+    const parents: Comment[] = []
+    const once = (c: Comment) => {
+      if (c.parent) {
+        parents.push(c.parent)
+        once(c.parent)
+      }
+    }
+
+    once(this)
+    return parents
+  }
+
   getEl() {
     return this.$el
   }

@@ -30,8 +30,8 @@ const defaults: ArtalkConfig = {
   },
 
   heightLimit: {
-    content: 200,
-    children: 300,
+    content: 300,
+    children: 400,
   },
 
   reqTimeout: 15000,

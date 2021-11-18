@@ -347,17 +347,24 @@ export default class ListLite extends Component {
       const comment = this.createComment(commentData)
       comment.render()
 
-      if (commentData.rid !== 0) {
-        this.findComment(commentData.rid)?.putChild(comment)
-      } else {
+      if (commentData.rid === 0) {
         this.$commentsWrap.prepend(comment.getEl())
         this.comments.unshift(comment)
+        this.checkMoreHide(comment)
+      } else {
+        // 子评论
+        const parent = this.findComment(commentData.rid)
+        if (parent) {
+          parent.putChild(comment)
+          if (parent.$children) this.removeHideMore(parent.$children)
+          this.eachComment(parent.children, (c) => {
+            this.checkMoreHide(c)
+          })
+        }
       }
 
       Ui.scrollIntoView(comment.getEl()) // 滚动到可以见
       comment.playFadeInAnim() // 播放评论渐出动画
-
-      this.checkMoreHide(comment)
     } else {
       this.putCommentFlatMode(commentData, this.comments.map(c => c.data), 'prepend')
     }
@@ -369,14 +376,13 @@ export default class ListLite extends Component {
 
   checkMoreHide(c: Comment) {
     // 子评论内容过多隐藏
-    if (c.getIsRoot()) {
-      this.checkMoreHideEl(c, 'children')
-    }
+    this.checkMoreHideEl(c, 'children')
 
     // 评论内容过多隐藏
     this.checkMoreHideEl(c, 'content')
-    if (c.$replyTo)
-      this.checkMoreHideEl(c, 'replyTo') // 平铺模式回复内容
+
+    // 平铺模式回复内容
+    if (c.$replyTo) this.checkMoreHideEl(c, 'replyTo')
   }
 
   /** 内容过多，折叠显示 */
@@ -421,7 +427,7 @@ export default class ListLite extends Component {
           // 阅读更多过后，再检查隐藏
           if (comment.getIsRoot()) {
             const children = comment.getChildren()
-            if (children.length >= 1) {
+            if (children.length > 1) {
               this.eachComment(children, (c) => {
                 this.checkMoreHideEl(c, 'content', contentH || 200)
               })
@@ -431,6 +437,14 @@ export default class ListLite extends Component {
         $target.append($hideMoreOpenBtn)
       }
     }
+  }
+
+  public removeHideMore($target: HTMLElement) {
+    const $hideMoreOpenBtn = $target.querySelector<HTMLElement>('.atk-more-hide-open-btn')
+    $target.classList.remove('atk-comment-more-hide')
+    if ($hideMoreOpenBtn) $hideMoreOpenBtn.remove()
+    $target.style.height = ''
+    $target.style.overflow = ''
   }
 
   /** 获取评论总数 (包括子评论) */

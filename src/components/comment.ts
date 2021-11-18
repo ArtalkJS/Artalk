@@ -446,33 +446,4 @@ export default class Comment extends Component {
     this.openURL = url
     this.$el.classList.add('atk-openable')
   }
-
-  /** 内容过多，折叠显示 */
-  public checkMoreHide($target: HTMLElement|null, allowHeight = 300) {
-    if (!$target) return
-
-    let $hideMoreOpenBtn = $target?.querySelector<HTMLElement>('.atk-more-hide-open-btn')
-
-    const removeHideMore = () => {
-      $target.classList.remove('atk-comment-more-hide')
-      if ($hideMoreOpenBtn) $hideMoreOpenBtn.remove()
-      $target.style.height = ''
-      $target.style.overflow = ''
-    }
-
-    if (Utils.getHeight($target) > allowHeight) {
-      //console.log('内容过多，需要折叠', $target)
-      $target.classList.add('atk-comment-more-hide')
-      $target.style.height = `${allowHeight}px`
-      $target.style.overflow = 'hidden'
-      if (!$hideMoreOpenBtn) {
-        $hideMoreOpenBtn = Utils.createElement(`<div class="atk-more-hide-open-btn">阅读更多</span>`)
-        $hideMoreOpenBtn.onclick = (e) => {
-          e.stopPropagation()
-          removeHideMore()
-        }
-        $target.append($hideMoreOpenBtn)
-      }
-    }
-  }
 }

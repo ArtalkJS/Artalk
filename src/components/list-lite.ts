@@ -305,7 +305,7 @@ export default class ListLite extends Component {
     }
 
     this.eachComment(this.comments, (c) => {
-      this.checkMoreHide(c)
+      if (c.getIsRoot()) this.checkMoreHide(c)
     })
 
     this.refreshUI()
@@ -368,20 +368,68 @@ export default class ListLite extends Component {
   }
 
   checkMoreHide(c: Comment) {
-    const childrenH = this.ctx.conf.heightLimit?.children
-    const contentH = this.ctx.conf.heightLimit?.content
-    const isChildrenLimit = typeof childrenH === 'number' && childrenH > 0
-    const isContentLimit = typeof contentH === 'number' && contentH > 0
-
     // 子评论内容过多隐藏
-    if (isChildrenLimit && c.getIsRoot()) {
-      c.checkMoreHide(c.$children, childrenH || 300)
+    if (c.getIsRoot()) {
+      this.checkMoreHideEl(c, 'children')
     }
 
     // 评论内容过多隐藏
-    if (isContentLimit) {
-      c.checkMoreHide(c.$content, contentH || 200)
-      if (c.$replyTo) c.checkMoreHide(c.$replyTo, contentH || 200) // 平铺模式回复内容
+    this.checkMoreHideEl(c, 'content')
+    if (c.$replyTo)
+      this.checkMoreHideEl(c, 'replyTo') // 平铺模式回复内容
+  }
+
+  /** 内容过多，折叠显示 */
+  public checkMoreHideEl(comment: Comment, area: 'children'|'content'|'replyTo', allowHeight = 300) {
+    const childrenH = this.ctx.conf.heightLimit?.children
+    const contentH = this.ctx.conf.heightLimit?.content
+
+    if (area === 'children' && (!childrenH)) return
+    if ((area === 'content' || area === 'replyTo') && (!contentH)) return
+
+    // 限高
+    if (area === 'children') allowHeight = childrenH || 300
+    else allowHeight = contentH || 200
+
+    // target 准备
+    let $target!: HTMLElement
+    if (area === 'children') $target = comment.$children!
+    else if (area === 'content') $target = comment.$content!
+    else if (area === 'replyTo') $target = comment.$replyTo!
+    if (!$target) return
+
+    // 阅读更多按钮
+    let $hideMoreOpenBtn = $target.querySelector<HTMLElement>('.atk-more-hide-open-btn')
+
+    const removeHideMore = () => {
+      $target.classList.remove('atk-comment-more-hide')
+      if ($hideMoreOpenBtn) $hideMoreOpenBtn.remove()
+      $target.style.height = ''
+      $target.style.overflow = ''
+    }
+
+    if (Utils.getHeight($target) > allowHeight) {
+      //console.log('内容过多，需要折叠', $target)
+      $target.classList.add('atk-comment-more-hide')
+      $target.style.height = `${allowHeight}px`
+      $target.style.overflow = 'hidden'
+      if (!$hideMoreOpenBtn) {
+        $hideMoreOpenBtn = Utils.createElement(`<div class="atk-more-hide-open-btn">阅读更多</span>`)
+        $hideMoreOpenBtn.onclick = (e) => {
+          e.stopPropagation()
+          removeHideMore()
+          // 阅读更多过后，再检查隐藏
+          if (comment.getIsRoot()) {
+            const children = comment.getChildren()
+            if (children.length >= 1) {
+              this.eachComment(children, (c) => {
+                this.checkMoreHideEl(c, 'content', contentH || 200)
+              })
+            }
+          }
+        }
+        $target.append($hideMoreOpenBtn)
+      }
     }
   }
 

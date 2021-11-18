@@ -39,6 +39,9 @@ export default class MessageView extends SidebarView {
     this.list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
     this.list.renderComment = (comment) => {
       comment.setOpenURL(`${comment.data.page_key}#atk-comment-${comment.data.id}`)
+      comment.$actions.querySelector('[data-atk-action="comment-reply"]')?.addEventListener('click', () => {
+        this.ctx.trigger('sidebar-hide')
+      })
     }
     this.list.paramsEditor = (params) => {
       params.site_name = siteName

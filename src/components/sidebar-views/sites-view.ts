@@ -16,12 +16,6 @@ export default class SitesView extends SidebarView {
 
   siteList!: SiteList
 
-  constructor(ctx: Context) {
-    super(ctx)
-
-    this.$el = Utils.createElement(`<div class="atk-sidebar-view"></div>`)
-  }
-
   mount(siteName: string) {
     if (!this.siteList) {
       this.siteList = new SiteList(this.ctx)

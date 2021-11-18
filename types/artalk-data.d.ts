@@ -47,9 +47,6 @@ export interface CommentData {
   /** 评论页面 url */
   page_url?: string
 
-  /** 评论页面 title */
-  page_title?: string
-
   /** 是否可见 */
   visible: boolean
 

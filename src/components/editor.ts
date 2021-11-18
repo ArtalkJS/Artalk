@@ -369,8 +369,16 @@ export default class Editor extends Component {
         nick: this.user.data.nick,
         email: this.user.data.email,
         link: this.user.data.link,
-        rid: this.replyComment === null ? 0 : this.replyComment.id
+        rid: (this.replyComment === null) ? 0 : this.replyComment.id,
+        page_key: (this.replyComment === null) ? this.ctx.conf.pageKey : this.replyComment.page_key,
+        page_title: (this.replyComment === null) ? this.ctx.conf.pageTitle : undefined,
+        site_name: (this.replyComment === null) ? this.ctx.conf.site : this.replyComment.site_name
       })
+
+      // 回复不同页面的评论
+      if (this.replyComment !== null && this.replyComment.page_key !== this.ctx.conf.pageKey) {
+        window.open(`${this.replyComment.page_key}#atk-comment-${nComment.id}`)
+      }
 
       this.ctx.trigger('list-insert', nComment)
       this.clearEditor() // 清空编辑器
@@ -378,6 +386,7 @@ export default class Editor extends Component {
     } catch (err: any) {
       console.error(err)
       this.showNotify(`评论失败，${err.msg || String(err)}`, 'e')
+      return
     } finally {
       Ui.hideLoading(this.$el)
     }

@@ -380,17 +380,29 @@ export default class ListLite extends Component {
   }
 
   checkMoreHide(c: Comment) {
-    // 子评论内容过多隐藏
-    this.checkMoreHideEl(c, 'children')
+    const check = () => {
+      // 子评论内容过多隐藏
+      this.checkMoreHideEl(c, 'children')
 
-    // 评论内容过多隐藏
-    this.checkMoreHideEl(c, 'content')
+      // 评论内容过多隐藏
+      this.checkMoreHideEl(c, 'content')
 
-    // 平铺模式回复内容
-    if (c.$replyTo) this.checkMoreHideEl(c, 'replyTo')
+      // 平铺模式回复内容
+      if (c.$replyTo) this.checkMoreHideEl(c, 'replyTo')
+    }
+
+    // 执行检测
+    check()
+
+    // 图片加载完后再检测一次
+    if (c.$content.querySelectorAll('img').length) {
+      Utils.onImagesLoaded(c.$content, () => {
+        check()
+      })
+    }
   }
 
-  /** 内容过多，折叠显示 */
+  /** 内容过多，限高显示 */
   public checkMoreHideEl(comment: Comment, area: 'children'|'content'|'replyTo', allowHeight = 300) {
     const childrenH = this.ctx.conf.heightLimit?.children
     const contentH = this.ctx.conf.heightLimit?.content

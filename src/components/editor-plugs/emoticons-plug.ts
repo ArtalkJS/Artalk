@@ -125,7 +125,7 @@ export default class EmoticonsPlug extends EditorPlug {
         // 图片标签提取 src 属性值
         const iconStr = item.icon
         if (/<(img|IMG)/.test(iconStr)) {
-          const find = /src=["'](.*)["']/.exec(iconStr)
+          const find = /src=["'](.*?)["']/.exec(iconStr)
           if (find && find.length > 1) item.icon = find[1]
         }
         nGrp.items.push({ key: item.text || `${grpName} ${index+1}`, val: item.icon })

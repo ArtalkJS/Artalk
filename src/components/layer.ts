@@ -13,6 +13,8 @@ export default class Layer extends Component {
   private bodyStyleOrgOverflow = ''
   private bodyStyleOrgPaddingRight = ''
 
+  public afterHide?: Function
+
   constructor (ctx: Context, name: string, el?: HTMLElement) {
     super(ctx)
 
@@ -72,6 +74,7 @@ export default class Layer extends Component {
   }
 
   hide () {
+    if (this.afterHide) this.afterHide()
     this.$wrap.classList.add('atk-fade-out')
     this.$el.style.display = 'none'
 
@@ -80,6 +83,7 @@ export default class Layer extends Component {
       // body style 禁止滚动解除
       document.body.style.overflow = this.bodyStyleOrgOverflow
       document.body.style.paddingRight = this.bodyStyleOrgPaddingRight
+      this.checkCleanLayer()
     }, 450)
     this.newActionTimer(() => {
       this.$wrap.style.display = 'none'

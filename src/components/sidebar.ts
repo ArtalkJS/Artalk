@@ -139,6 +139,12 @@ export default class Sidebar extends Component {
 
     // 获取 Layer
     this.layer = new Layer(this.ctx, 'sidebar', this.$el)
+    this.layer.afterHide = () => {
+      // 防止评论框被吞
+      if (this.ctx.conf.editorTravel === true) {
+        this.ctx.trigger('editor-travel-back')
+      }
+    }
     this.layer.show()
 
     // viewWrap 滚动条归位
@@ -217,8 +223,7 @@ export default class Sidebar extends Component {
     // 执行动画
     this.$el.style.transform = ''
 
-    // 用完即销毁
-    this.layer?.dispose()
+    this.layer?.hide()
   }
 
   /** 切换 View */

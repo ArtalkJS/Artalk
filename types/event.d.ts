@@ -28,6 +28,7 @@ export interface EventPayloadMap {
   'editor-hide-loading': undefined    // 加载隐藏
   'editor-notify': NotifyConf         // 显示提示
   'editor-reply': EditorReplyPayload  // 设置回复
+  'editor-reply-cancel': undefined    // 取消回复
   'editor-travel': HTMLElement
   'editor-travel-back': undefined
 
@@ -64,6 +65,7 @@ export type ListUpdatePayload = (data: ListData | undefined) => void
 export interface EditorReplyPayload {
   data: CommentData
   $el: HTMLElement
+  scrollToCenter?: boolean
 }
 
 // ============================================

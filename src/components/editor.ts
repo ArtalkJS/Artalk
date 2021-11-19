@@ -63,6 +63,7 @@ export default class Editor extends Component {
     this.ctx.on('editor-open', () => (this.open()))
     this.ctx.on('editor-close', () => (this.close()))
     this.ctx.on('editor-reply', (p) => (this.setReply(p.data, p.$el)))
+    this.ctx.on('editor-reply-cancel', () => (this.cancelReply()))
     this.ctx.on('editor-show-loading', () => (Ui.showLoading(this.$el)))
     this.ctx.on('editor-hide-loading', () => (Ui.hideLoading(this.$el)))
     this.ctx.on('editor-notify', (f) => (this.showNotify(f.msg, f.type)))
@@ -327,8 +328,6 @@ export default class Editor extends Component {
       this.cancelReply()
     }
 
-    this.ctx.trigger('editor-travel', this.$el)
-
     if (this.$sendReply === null) {
       this.$sendReply = Utils.createElement('<div class="atk-send-reply">回复 <span class="atk-text"></span><span class="atk-cancel" title="取消 AT">×</span></div>');
       this.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
@@ -434,6 +433,7 @@ export default class Editor extends Component {
   }
 
   travel ($afterEl: HTMLElement) {
+    if (this.isTraveling) return
     this.isTraveling = true
     this.$el.after(Utils.createElement('<div class="atk-editor-travel-placeholder"></div>'))
 
@@ -443,8 +443,12 @@ export default class Editor extends Component {
   }
 
   travelBack () {
+    if (!this.isTraveling) return
     this.isTraveling = false
     this.ctx.$root.querySelector('.atk-editor-travel-placeholder')?.replaceWith(this.$el)
+
+    // 取消回复
+    if (this.replyComment !== null) this.cancelReply()
   }
 }
 

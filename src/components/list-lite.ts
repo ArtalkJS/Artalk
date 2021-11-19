@@ -341,6 +341,8 @@ export default class ListLite extends Component {
     }
 
     this.checkMoreHide(comment)
+
+    return comment
   }
 
   /** 插入评论 · 首部添加 */
@@ -368,7 +370,8 @@ export default class ListLite extends Component {
       Ui.scrollIntoView(comment.getEl()) // 滚动到可以见
       comment.playFadeInAnim() // 播放评论渐出动画
     } else {
-      this.putCommentFlatMode(commentData, this.comments.map(c => c.data), 'prepend')
+      const comment = this.putCommentFlatMode(commentData, this.comments.map(c => c.data), 'prepend')
+      Ui.scrollIntoView(comment.getEl()) // 滚动到可以见
     }
 
     if (this.data) this.data.total += 1 // 评论数增加 1

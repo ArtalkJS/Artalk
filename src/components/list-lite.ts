@@ -155,8 +155,6 @@ export default class ListLite extends Component {
     if (this.pageMode === 'read-more') {
       // 阅读更多按钮
       const readMoreBtn = new ReadMoreBtn({
-        pageSize: this.pageSize,
-        total: 0,
         onClick: async () => {
           const offset = this.offset + this.pageSize
           await this.reqComments(offset)

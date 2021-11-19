@@ -1,12 +1,6 @@
 import * as Utils from '../lib/utils'
 
 export interface ReadMoreBtnConf {
-  /** 每页条数 */
-  pageSize?: number
-
-  /** 数据总数 */
-  total: number
-
   /** 回调函数 */
   onClick: () => void
 }

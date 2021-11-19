@@ -459,7 +459,7 @@ export default class ListLite extends Component {
   /** 是否还有更多的评论 */
   get hasMoreComments(): boolean {
     if (!this.data) return false
-    return this.data.total_parents > (this.offset + this.pageSize)
+    return (!this.flatMode ? this.data.total_parents : this.data.total) > (this.offset + this.pageSize)
   }
 
   /** 遍历操作 Comment (包括子评论) */

@@ -130,6 +130,7 @@ export function marked(ctx: Context, src: string): string {
       return html.replace(/^<a /, `<a target="_blank" ${!localLink ? `rel="noreferrer noopener nofollow"` : ''} `);
     }
 
+    // @see https://github.com/markedjs/marked/blob/4afb228d956a415624c4e5554bb8f25d047676fe/src/Tokenizer.js#L329
     const nMarked = libMarked
     libMarked.setOptions({
       renderer,
@@ -139,20 +140,20 @@ export function marked(ctx: Context, src: string): string {
       breaks: true,
       smartLists: true,
       smartypants: true,
-      xhtml: false
+      xhtml: false,
+      sanitize: true,
+      sanitizer: (html) => insane(html, {
+        ...insane.defaults,
+        allowedAttributes: {
+          ...insane.defaults.allowedAttributes,
+          img: ['src', 'atk-emoticon']
+        },
+      }),
+      silent: true,
     })
 
     markedInstance = nMarked
   }
-
-  // 净化
-  src = insane(src, {
-    ...insane.defaults,
-    allowedAttributes: {
-      ...insane.defaults.allowedAttributes,
-      img: ['src', 'atk-emoticon']
-    },
-  })
 
   return markedInstance.parse(src)
 }

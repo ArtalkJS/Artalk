@@ -186,6 +186,10 @@ export default class ListLite extends Component {
       const pagination = new Pagination(this.parentCommentsCount, {
         pageSize: this.pageSize,
         onChange: async (offset) => {
+          if (this.ctx.conf.editorTravel === true) {
+            this.ctx.trigger('editor-travel-back') // 防止评论框被吞
+          }
+
           await this.reqComments(offset)
           // 滚动到第一个评论的位置
           if (this.$parent) {

@@ -231,7 +231,7 @@ export default class Comment extends Component {
       this.$actions.append(replyBtn)
       replyBtn.addEventListener('click', (e) => {
         e.stopPropagation() // 防止穿透
-        this.ctx.trigger('editor-reply', this.data)
+        this.ctx.trigger('editor-reply', {data: this.data, $el: this.$el})
       })
     }
 

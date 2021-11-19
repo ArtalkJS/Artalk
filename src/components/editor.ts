@@ -30,6 +30,8 @@ export default class Editor extends Component {
   private replyComment: CommentData|null = null
   private $sendReply: HTMLElement|null = null
 
+  private isTraveling = false
+
   private get user () {
     return this.ctx.user
   }
@@ -60,10 +62,12 @@ export default class Editor extends Component {
     // 监听事件
     this.ctx.on('editor-open', () => (this.open()))
     this.ctx.on('editor-close', () => (this.close()))
-    this.ctx.on('editor-reply', (commentData) => (this.setReply(commentData)))
+    this.ctx.on('editor-reply', (p) => (this.setReply(p.data, p.$el)))
     this.ctx.on('editor-show-loading', () => (Ui.showLoading(this.$el)))
     this.ctx.on('editor-hide-loading', () => (Ui.hideLoading(this.$el)))
     this.ctx.on('editor-notify', (f) => (this.showNotify(f.msg, f.type)))
+    this.ctx.on('editor-travel', ($el) => (this.travel($el)))
+    this.ctx.on('editor-travel-back', () => (this.travelBack()))
   }
 
   initLocalStorage () {
@@ -318,10 +322,12 @@ export default class Editor extends Component {
     this.$sendReply = null
   }
 
-  setReply (commentData: CommentData) {
+  setReply (commentData: CommentData, $comment: HTMLElement) {
     if (this.replyComment !== null) {
       this.cancelReply()
     }
+
+    this.ctx.trigger('editor-travel', this.$el)
 
     if (this.$sendReply === null) {
       this.$sendReply = Utils.createElement('<div class="atk-send-reply">回复 <span class="atk-text"></span><span class="atk-cancel" title="取消 AT">×</span></div>');
@@ -332,6 +338,11 @@ export default class Editor extends Component {
       this.$textareaWrap.append(this.$sendReply)
     }
     this.replyComment = commentData
+
+    if (this.ctx.conf.editorTravel === true) {
+      this.travel($comment)
+    }
+
     Ui.scrollIntoView(this.$el)
     this.$textarea.focus()
   }
@@ -342,6 +353,10 @@ export default class Editor extends Component {
       this.$sendReply = null
     }
     this.replyComment = null
+
+    if (this.ctx.conf.editorTravel === true) {
+      this.travelBack()
+    }
   }
 
   initSubmit () {
@@ -416,6 +431,20 @@ export default class Editor extends Component {
     this.$closeComment.style.display = 'none'
     this.$textarea.style.display = ''
     this.$bottom.style.display = ''
+  }
+
+  travel ($afterEl: HTMLElement) {
+    this.isTraveling = true
+    this.$el.after(Utils.createElement('<div class="atk-editor-travel-placeholder"></div>'))
+
+    const $travelPlace = Utils.createElement('<div></div>')
+    $afterEl.after($travelPlace)
+    $travelPlace.replaceWith(this.$el)
+  }
+
+  travelBack () {
+    this.isTraveling = false
+    this.ctx.$root.querySelector('.atk-editor-travel-placeholder')?.replaceWith(this.$el)
   }
 }
 

@@ -10,6 +10,7 @@ const defaults: ArtalkConfig = {
   noComment: '「此时无声胜有声」',
   sendBtn: '发送评论',
   darkMode: false,
+  editorTravel: true,
 
   emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json",
 

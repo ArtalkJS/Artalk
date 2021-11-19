@@ -2,15 +2,6 @@ export default interface ArtalkConfig {
   /** 装载元素 */
   el: string
 
-  /** 评论框占位字符 */
-  placeholder?: string
-
-  /** 评论为空时显示字符 */
-  noComment?: string
-
-  /** 发送按钮文字 */
-  sendBtn?: string
-
   /** 页面唯一标识（完整 URL） */
   pageKey: string
 
@@ -22,6 +13,18 @@ export default interface ArtalkConfig {
 
   /** 站点名 */
   site?: string
+
+  /** 评论框占位字符 */
+  placeholder?: string
+
+  /** 评论为空时显示字符 */
+  noComment?: string
+
+  /** 发送按钮文字 */
+  sendBtn?: string
+
+  /** 评论框旅行（显示在待回复评论后面） */
+  editorTravel?: boolean
 
   /** 表情包 */
   emoticons?: any

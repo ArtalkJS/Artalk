@@ -65,7 +65,7 @@ export type ListUpdatePayload = (data: ListData | undefined) => void
 export interface EditorReplyPayload {
   data: CommentData
   $el: HTMLElement
-  scrollToCenter?: boolean
+  scroll?: boolean
 }
 
 // ============================================

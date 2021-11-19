@@ -62,7 +62,7 @@ export default class Editor extends Component {
     // 监听事件
     this.ctx.on('editor-open', () => (this.open()))
     this.ctx.on('editor-close', () => (this.close()))
-    this.ctx.on('editor-reply', (p) => (this.setReply(p.data, p.$el)))
+    this.ctx.on('editor-reply', (p) => (this.setReply(p.data, p.$el, p.scroll)))
     this.ctx.on('editor-reply-cancel', () => (this.cancelReply()))
     this.ctx.on('editor-show-loading', () => (Ui.showLoading(this.$el)))
     this.ctx.on('editor-hide-loading', () => (Ui.hideLoading(this.$el)))
@@ -323,7 +323,7 @@ export default class Editor extends Component {
     this.$sendReply = null
   }
 
-  setReply (commentData: CommentData, $comment: HTMLElement) {
+  setReply (commentData: CommentData, $comment: HTMLElement, scroll = true) {
     if (this.replyComment !== null) {
       this.cancelReply()
     }
@@ -342,7 +342,8 @@ export default class Editor extends Component {
       this.travel($comment)
     }
 
-    Ui.scrollIntoView(this.$el)
+    if (scroll) Ui.scrollIntoView(this.$el)
+
     this.$textarea.focus()
   }
 

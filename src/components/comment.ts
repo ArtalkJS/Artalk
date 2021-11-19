@@ -37,6 +37,8 @@ export default class Comment extends Component {
   private openURL?: string
   public openEvt?: () => void
 
+  public onReplyBtnClick?: Function
+
   constructor(ctx: Context, data: CommentData) {
     super(ctx)
 
@@ -231,7 +233,11 @@ export default class Comment extends Component {
       this.$actions.append(replyBtn)
       replyBtn.addEventListener('click', (e) => {
         e.stopPropagation() // 防止穿透
-        this.ctx.trigger('editor-reply', {data: this.data, $el: this.$el})
+        if (!this.onReplyBtnClick) {
+          this.ctx.trigger('editor-reply', {data: this.data, $el: this.$el})
+        } else {
+          this.onReplyBtnClick()
+        }
       })
     }
 

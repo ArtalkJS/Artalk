@@ -50,13 +50,8 @@ export default class Layer extends Component {
     return this.$el
   }
 
-  private static hideTimeoutList: number[] = []
-
   show () {
-    Layer.hideTimeoutList.forEach(item => {
-      clearTimeout(item)
-    })
-    Layer.hideTimeoutList = []
+    this.fireAllActionTimer()
 
     this.$wrap.style.display = 'block'
     this.$mask.style.display = 'block'
@@ -77,24 +72,44 @@ export default class Layer extends Component {
   }
 
   hide () {
-    Layer.hideTimeoutList.push(window.setTimeout(() => {
+    this.$wrap.classList.add('atk-fade-out')
+    this.$el.style.display = 'none'
+
+    this.newActionTimer(() => {
       this.$wrap.style.display = 'none'
       // body style 禁止滚动解除
       document.body.style.overflow = this.bodyStyleOrgOverflow
       document.body.style.paddingRight = this.bodyStyleOrgPaddingRight
-    }, 450))
-
-    this.$wrap.classList.add('atk-fade-out')
-    Layer.hideTimeoutList.push(window.setTimeout(() => {
+    }, 450)
+    this.newActionTimer(() => {
       this.$wrap.style.display = 'none'
       this.$wrap.classList.remove('atk-fade-out')
-    }, 200))
-
-    this.$el.style.display = 'none'
+    }, 200)
   }
 
   setMaskClickHide (enable: boolean) {
     this.maskClickHideEnable = enable
+  }
+
+  // Timers
+  private static actionTimers: {act: Function, tid: number}[] = []
+
+  private newActionTimer(func: Function, delay: number) {
+    const act = () => {
+      func() // 执行
+      Layer.actionTimers = Layer.actionTimers.filter(o => o.act !== act) // 删除
+    }
+
+    const tid = window.setTimeout(() => act(), delay)
+
+    Layer.actionTimers.push({ act, tid })
+  }
+
+  private fireAllActionTimer() {
+    Layer.actionTimers.forEach(item => {
+      clearTimeout(item.tid)
+      item.act() // 立即执行
+    })
   }
 
   /** 销毁 - 无动画 */

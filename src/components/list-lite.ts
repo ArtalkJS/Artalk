@@ -183,7 +183,7 @@ export default class ListLite extends Component {
       }
     } else if (this.pageMode === 'pagination') {
       // 分页条
-      const pagination = new Pagination(this.parentCommentsCount, {
+      const pagination = new Pagination((!this.flatMode ? this.data!.total_parents : this.data!.total), {
         pageSize: this.pageSize,
         onChange: async (offset) => {
           if (this.ctx.conf.editorTravel === true) {

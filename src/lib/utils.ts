@@ -98,6 +98,7 @@ export function timeAgo(date: Date) {
 
 /** 所有图片加载完毕后执行 */
 export function onImagesLoaded($container: HTMLElement, event: Function) {
+  if (!$container) return
   const images = $container.getElementsByTagName('img')
   if (!images.length) return
   let loaded = images.length

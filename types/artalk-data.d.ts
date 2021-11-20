@@ -64,8 +64,8 @@ export interface ListData {
   /** 评论数据 */
   comments: CommentData[]
 
-  /** 父级评论总数 */
-  total_parents: number
+  /** 根评论总数 */
+  total_roots: number
 
   /** 评论总数（包括所有子评论） */
   total: number

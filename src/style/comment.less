@@ -33,7 +33,7 @@
       background: @color-bg-grey;
     }
 
-    .atk-comment-more-hide:after {
+    .atk-height-limit:after {
       background: transparent !important;
     }
   }
@@ -145,7 +145,7 @@
             margin-bottom: 0;
           }
 
-          .atk-more-hide-open-btn {
+          .atk-height-limit-btn {
             bottom: 5px;
           }
         }
@@ -271,7 +271,12 @@
     }
   }
 
-  .atk-comment-more-hide:after {
+  // 避免重复显示按钮
+  .atk-height-limit .atk-height-limit .atk-height-limit-btn {
+    display: none;
+  }
+
+  .atk-height-limit:after {
     position: absolute;
     z-index: 1;
     display: block;
@@ -283,7 +288,7 @@
     background: @color-gradient;
   }
 
-  .atk-more-hide-open-btn {
+  .atk-height-limit-btn {
     z-index: 10;
     position: absolute;
     left: 50%;

@@ -61,9 +61,9 @@ export default class MessageView extends SidebarView {
   switchTab(tab: string, siteName: string): boolean|void {
     //console.log(tab, siteName)
     this.viewActiveTab = tab
-    this.list.type = tab as any;
     this.list.isFirstLoad = true
     this.list.paramsEditor = (params) => {
+      params.type = tab as any
       params.site_name = siteName
     }
     this.list.reqComments()

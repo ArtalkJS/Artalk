@@ -316,6 +316,9 @@ export default class Comment extends Component {
 
     this.getChildrenEl().appendChild(childC.getEl())
     childC.playFadeInAnim()
+
+    // 内容限高
+    childC.checkHeightLimitArea('content')
   }
 
   getChildrenEl() {
@@ -464,5 +467,87 @@ export default class Comment extends Component {
     this.openable = true
     this.openURL = url
     this.$el.classList.add('atk-openable')
+  }
+
+  /** 内容限高检测 */
+  checkHeightLimit() {
+    this.checkHeightLimitArea('content') // 评论内容限高
+    this.checkHeightLimitArea('children') // 子评论部分限高（嵌套模式）
+  }
+
+  /** 目标内容限高检测 */
+  checkHeightLimitArea(area: 'children'|'content') {
+    // 参数准备
+    const childrenMaxH = this.ctx.conf.heightLimit?.children
+    const contentMaxH = this.ctx.conf.heightLimit?.content
+
+    if (area === 'children' && !childrenMaxH) return
+    if (area === 'content' && !contentMaxH) return
+
+    // 限高
+    let maxHeight: number
+    if (area === 'children') maxHeight = childrenMaxH!
+    if (area === 'content') maxHeight = contentMaxH!
+
+    // 检测指定元素
+    const checkEl = ($el?: HTMLElement|null) => {
+      if (!$el) return
+
+      // 是否超过高度
+      if (Utils.getHeight($el) > maxHeight) {
+        this.heightLimitAdd($el, maxHeight)
+      }
+    }
+
+    // 执行限高检测
+    if (area === 'children') {
+      checkEl(this.$children)
+    } else if (area === 'content') {
+      checkEl(this.$content)
+      checkEl(this.$replyTo)
+
+      // 若有图片 · 图片加载完后再检测一次
+      Utils.onImagesLoaded(this.$content, () => {
+        checkEl(this.$content)
+      })
+      if (this.$replyTo) {
+        Utils.onImagesLoaded(this.$replyTo, () => {
+          checkEl(this.$replyTo)
+        })
+      }
+    }
+  }
+
+  // 操作 · 取消限高
+  heightLimitRemove($el: HTMLElement) {
+    if (!$el) return
+    if (!$el.classList.contains('atk-height-limit')) return
+
+    $el.classList.remove('atk-height-limit')
+    Array.from($el.children).forEach((e) => {
+      if (e.classList.contains('atk-height-limit-btn')) e.remove()
+    })
+    $el.style.height = ''
+    $el.style.overflow = ''
+  }
+
+  // 操作 · 内容限高
+  heightLimitAdd($el: HTMLElement, maxHeight: number) {
+    if (!$el) return
+    if ($el.classList.contains('atk-height-limit')) return
+
+    $el.classList.add('atk-height-limit')
+    $el.style.height = `${maxHeight}px`
+    $el.style.overflow = 'hidden'
+    const $hideMoreOpenBtn = Utils.createElement(`<div class="atk-height-limit-btn">阅读更多</span>`)
+    $hideMoreOpenBtn.onclick = (e) => {
+      e.stopPropagation()
+      this.heightLimitRemove($el)
+
+      // 子评论数等于 1，直接取消限高
+      const children = this.getChildren()
+      if (children.length === 1) children[0].heightLimitRemove(children[0].$content)
+    }
+    $el.append($hideMoreOpenBtn)
   }
 }

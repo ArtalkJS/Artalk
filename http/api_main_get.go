@@ -30,13 +30,13 @@ type ParamsGet struct {
 }
 
 type ResponseGet struct {
-	Comments     []model.CookedComment `json:"comments"`
-	Total        int64                 `json:"total"`
-	TotalParents int64                 `json:"total_parents"`
-	Page         model.CookedPage      `json:"page"`
-	Unread       []model.CookedNotify  `json:"unread"`
-	UnreadCount  int                   `json:"unread_count"`
-	ApiVersion   Map                   `json:"api_version"`
+	Comments    []model.CookedComment `json:"comments"`
+	Total       int64                 `json:"total"`
+	TotalRoots  int64                 `json:"total_roots"`
+	Page        model.CookedPage      `json:"page"`
+	Unread      []model.CookedNotify  `json:"unread"`
+	UnreadCount int                   `json:"unread_count"`
+	ApiVersion  Map                   `json:"api_version"`
 }
 
 // 获取评论查询实例
@@ -98,7 +98,7 @@ func ActionGet(c echo.Context) error {
 	cookedComments := []model.CookedComment{}
 
 	if !p.FlatMode {
-		query = query.Scopes(ParentComment())
+		query = query.Scopes(RootComments())
 		query.Find(&comments)
 
 		for _, c := range comments {
@@ -147,7 +147,7 @@ func ActionGet(c echo.Context) error {
 
 	// count comments
 	total := CountComments(GetCommentQuery(c, p, p.SiteID))
-	totalParents := CountComments(GetCommentQuery(c, p, p.SiteID).Scopes(ParentComment()))
+	totalRoots := CountComments(GetCommentQuery(c, p, p.SiteID).Scopes(RootComments()))
 
 	if isMsgCenter {
 		// mark all as read
@@ -161,13 +161,13 @@ func ActionGet(c echo.Context) error {
 	}
 
 	return RespData(c, ResponseGet{
-		Comments:     cookedComments,
-		Total:        total,
-		TotalParents: totalParents,
-		Page:         page.ToCooked(),
-		Unread:       unreadNotifies,
-		UnreadCount:  len(unreadNotifies),
-		ApiVersion:   GetApiVersionDataMap(),
+		Comments:    cookedComments,
+		Total:       total,
+		TotalRoots:  totalRoots,
+		Page:        page.ToCooked(),
+		Unread:      unreadNotifies,
+		UnreadCount: len(unreadNotifies),
+		ApiVersion:  GetApiVersionDataMap(),
 	})
 }
 
@@ -276,7 +276,7 @@ func SiteIsolation(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func ParentComment() func(db *gorm.DB) *gorm.DB {
+func RootComments() func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("rid = 0")
 	}

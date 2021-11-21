@@ -16,7 +16,6 @@ export default class ListLite extends Component {
 
   public data?: ListData
   private pageSize: number = 15 // 每次请求获取量
-  private offset: number = 0
 
   public noCommentText: string
   public renderComment?: (comment: Comment) => void
@@ -68,8 +67,8 @@ export default class ListLite extends Component {
     this.ctx.on('unread-update', (data) => (this.updateUnread(data.notifies)))
   }
 
-  /** 评论请求 */
-  public async reqComments(offset: number = 0) {
+  /** 评论获取 */
+  public async fetchComments(offset: number = 0) {
     // 清空评论（加载按钮）
     if (this.pageMode === 'read-more' && offset === 0) { this.clearAllComments() }
 
@@ -103,15 +102,10 @@ export default class ListLite extends Component {
       hideLoading()
     }
 
-    // 版本检测
-    if (this.ctx.conf.versionCheck) {
-      const needUpdate = this.apiVersionCheck(listData.api_version || {})
-      if (needUpdate) return
-    }
+    // 清除原有错误
+    Ui.setError(this.$el, null)
 
-    // 装载评论数据
-    this.offset = offset
-
+    // 装载数据
     try {
       this.onLoad(listData, offset)
     } catch (e: any) {
@@ -128,23 +122,18 @@ export default class ListLite extends Component {
     // 清空评论（分页条）
     if (this.pageMode === 'pagination') { this.clearAllComments() }
 
-    Ui.setError(this.$el, null)
-
     this.data = data
+
+    // 版本检测
+    if (this.ctx.conf.versionCheck && this.versionCheck(data.api_version)) return
+
+    // 导入数据
     this.importComments(data.comments)
 
-    // onLoad 时初始化
-    if (this.isFirstLoad) {
-      this.initPageMode()
-    }
-
-    if (this.pageMode === 'pagination') {
-      this.pagination!.update(offset, this.data?.total_roots || 0)
-    }
-    if (this.pageMode === 'read-more') {
-      if (this.hasMoreComments) this.readMoreBtn!.show()
-      else this.readMoreBtn!.hide()
-    }
+    // 分页方式
+    if (this.isFirstLoad) this.initPageMode() // 初始化
+    if (this.pageMode === 'pagination') this.pagination!.update(offset, (!this.flatMode ? data.total_roots : data.total) || 0)
+    if (this.pageMode === 'read-more') this.readMoreBtn!.update(offset, (!this.flatMode ? data.total_roots : data.total) || 0)
 
     // 加载后事件
     this.refreshUI()
@@ -166,9 +155,9 @@ export default class ListLite extends Component {
     // 加载更多按钮
     if (this.pageMode === 'read-more') {
       const readMoreBtn = new ReadMoreBtn({
-        onClick: async () => {
-          const offset = this.offset + this.pageSize
-          await this.reqComments(offset)
+        pageSize: this.pageSize,
+        onClick: async (offset) => {
+          await this.fetchComments(offset)
         },
       })
       if (this.readMoreBtn) this.readMoreBtn.$el.replaceWith(readMoreBtn.$el)
@@ -179,14 +168,15 @@ export default class ListLite extends Component {
       if (this.conf.pagination?.autoLoad) {
         this.autoLoadScrollEvent = () => {
           if (this.pageMode !== 'read-more') return
-          if (!this.hasMoreComments) return
+          if (!this.readMoreBtn) return
+
+          if (!this.readMoreBtn.hasMore) return
           if (this.isLoading) return
 
           const $target = this.$el.querySelector<HTMLElement>('.atk-list-comments-wrap > .atk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
           if (!$target) return
           if (Ui.isVisible($target, this.autoLoadListenerAt)) {
-            // 加载更多
-            this.readMoreBtn!.click()
+            this.readMoreBtn.click() // 自动点击加载更多按钮
           }
         }
         const at = this.autoLoadListenerAt || document
@@ -203,16 +193,13 @@ export default class ListLite extends Component {
             this.ctx.trigger('editor-travel-back') // 防止评论框被吞
           }
 
-          await this.reqComments(offset)
+          await this.fetchComments(offset)
+
           // 滚动到第一个评论的位置
           if (this.$parent) {
-            let topPos = 0
-            if (!this.autoLoadListenerAt && this.$parent) {
-              topPos = Utils.getOffset(this.$parent).top
-            }
             const at = this.autoLoadListenerAt || window
             at.scroll({
-              top: topPos,
+              top: (at === window && this.$parent) ? Utils.getOffset(this.$parent).top : 0,
               left: 0,
             })
           }
@@ -225,6 +212,7 @@ export default class ListLite extends Component {
     }
   }
 
+  /** 错误处理 */
   public onError(msg: any) {
     msg = String(msg)
     console.error(msg)
@@ -239,7 +227,7 @@ export default class ListLite extends Component {
     const $err = Utils.createElement(`<span>${msg}，无法获取评论列表数据<br/></span>`)
 
     const $retryBtn = Utils.createElement('<span style="cursor:pointer;">点击重新获取</span>')
-    $retryBtn.onclick = () => (this.reqComments(this.offset))
+    $retryBtn.onclick = () => (this.fetchComments())
     $err.appendChild($retryBtn)
 
     const adminBtn = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
@@ -392,7 +380,7 @@ export default class ListLite extends Component {
     } else {
       // 平铺模式
       const comment = this.putCommentFlatMode(commentData, this.comments.map(c => c.data), 'prepend')
-      Ui.scrollIntoView(comment.getEl()) // 滚动到可以见
+      Ui.scrollIntoView(comment.getEl()) // 滚动到可见
     }
 
     // 评论数增加 1
@@ -401,17 +389,6 @@ export default class ListLite extends Component {
     // 评论新增后
     this.refreshUI()
     this.ctx.trigger('comments-loaded')
-  }
-
-  /** 获取评论总数 (包括子评论) */
-  get commentsCount(): number {
-    return Number(this.data?.total) || 0
-  }
-
-  /** 是否还有更多的评论 */
-  get hasMoreComments(): boolean {
-    if (!this.data) return false
-    return (!this.flatMode ? this.data.total_roots : this.data.total) > (this.offset + this.pageSize)
   }
 
   /** 遍历操作 Comment (包括子评论) */
@@ -468,6 +445,7 @@ export default class ListLite extends Component {
     this.comments = []
   }
 
+  /** 更新未读数据 */
   public updateUnread(notifies: NotifyData[]) {
     this.unread = notifies
 
@@ -491,7 +469,8 @@ export default class ListLite extends Component {
     }
   }
 
-  public apiVersionCheck(versionData: ApiVersionData): boolean {
+  /** 前端版本检测 */
+  public versionCheck(versionData: ApiVersionData): boolean {
     const needVersion = versionData?.fe_min_version || '0.0.0'
     const needUpdate = Utils.versionCompare(needVersion, ARTALK_VERSION) === 1
     if (needUpdate) {
@@ -505,7 +484,7 @@ export default class ListLite extends Component {
       ignoreBtn.onclick = () => {
         Ui.setError(this.ctx, null)
         this.ctx.conf.versionCheck = false
-        this.reqComments(0)
+        this.fetchComments(0)
       }
       errEl.append(ignoreBtn)
       Ui.setError(this.ctx, errEl, '<span class="atk-warn-title">Artalk Warn</span>')

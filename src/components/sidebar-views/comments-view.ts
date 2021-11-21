@@ -66,7 +66,7 @@ export default class MessageView extends SidebarView {
       params.type = tab as any
       params.site_name = siteName
     }
-    this.list.reqComments()
+    this.list.fetchComments()
 
     return true
   }

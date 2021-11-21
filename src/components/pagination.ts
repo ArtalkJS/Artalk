@@ -4,7 +4,7 @@ import * as Ui from '../lib/ui'
 
 export interface PaginationConf {
   /** 每页条数 */
-  pageSize?: number
+  pageSize: number
 
   /** 回调函数 */
   onChange: (offset: number) => void
@@ -21,7 +21,7 @@ export default class Pagination {
 
   public page: number = 1
   get pageSize(): number {
-    return this.conf.pageSize || 15
+    return this.conf.pageSize
   }
   get offset(): number {
     return this.pageSize * (this.page - 1)

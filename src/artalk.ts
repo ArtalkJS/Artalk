@@ -72,7 +72,7 @@ export default class Artalk {
     this.$root.appendChild(this.sidebar.$el)
 
     // 评论获取
-    this.list.reqComments()
+    this.list.fetchComments()
 
     // 事件绑定初始化
     this.initEventBind()
@@ -113,7 +113,7 @@ export default class Artalk {
 
   /** 重新加载 */
   public reload() {
-    this.list.reqComments()
+    this.list.fetchComments()
   }
 
   /** 暗黑模式 · 初始化 */

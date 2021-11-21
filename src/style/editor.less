@@ -3,8 +3,8 @@
   z-index: 5;
   position: relative;
   overflow: hidden;
-  background: @color-bg;
-  border: 1px solid @color-border;
+  background: var(--at-color-bg);
+  border: 1px solid var(--at-color-border);
   border-radius: @block-radius;
   margin-bottom: 15px;
 
@@ -15,7 +15,7 @@
   & > .atk-header {
     display: flex;
     flex-direction: row;
-    padding: (@editor-padding / 2) @editor-padding 0;
+    padding: calc(@editor-padding / 2) @editor-padding 0;
 
     input {
       flex: 1;
@@ -23,7 +23,7 @@
       font-size: 14px;
       background: transparent;
       border: 2px solid transparent;
-      border-radius: (@block-radius / 2);
+      border-radius: calc(@block-radius / 2);
       padding: 6px 5px;
       resize: none;
       outline: none;
@@ -40,15 +40,15 @@
     & > .atk-textarea {
       display: block;
       overflow: hidden;
-      color: @color-font;
+      color: var(--at-color-font);
       font-size: 15px;
-      background-color: @color-bg;
+      background-color: var(--at-color-bg);
       border: 2px solid transparent;
-      border-radius: (@block-radius / 2);
+      border-radius: calc(@block-radius / 2);
       width: 100%;
       min-height: 130px;
       margin-top: 2px;
-      padding: @editor-padding (10px + 5px);
+      padding: @editor-padding calc(10px + 5px);
       resize: none;
       word-wrap: break-word;
       outline: none;
@@ -56,10 +56,10 @@
 
     & > .atk-comment-closed {
       pointer-events: none;
-      color: @color-meta;
+      color: var(--at-color-meta);
       font-size: 12px;
-      background-color: @color-bg;
-      border-top: 1px solid @color-border;
+      background-color: var(--at-color-bg);
+      border-top: 1px solid var(--at-color-border);
       padding: 5px 15px;
       // background: repeating-linear-gradient(145deg, #f2f2f2, #f2f2f2 15px, #fff 0, #fff 30px);
     }
@@ -69,11 +69,11 @@
       position: absolute;
       right: 10px;
       bottom: 8px;
-      max-width: (100% - 20px);
+      max-width: calc(100% - 20px);
       height: 30px;
       line-height: 30px;
       font-size: 14px;
-      background: @color-bg-grey-transl;
+      background: var(--at-color-bg-grey-transl);
       padding: 0 30px 0 10px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -94,7 +94,7 @@
         font-weight: 700;
 
         &:hover {
-          color: @color-deep;
+          color: var(--at-color-deep);
         }
       }
     }
@@ -105,7 +105,7 @@
     height: 180px;
     width: 100%;
     overflow: hidden;
-    border-top: 1px solid @color-border;
+    border-top: 1px solid var(--at-color-border);
     animation: 0.3s both atkFadeIn;
     transition: 0.2s height ease-in-out;
   }
@@ -114,8 +114,8 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    border-top: 1px solid @color-border;
-    padding: 0 0 0 (@editor-padding - 5px);
+    border-top: 1px solid var(--at-color-border);
+    padding: 0 0 0 calc(@editor-padding - 5px);
 
     & > .atk-item {
       display: flex;
@@ -126,35 +126,35 @@
     .atk-plug-btn {
       padding: 0 8px;
       cursor: pointer;
-      color: @color-grey;
+      color: var(--at-color-grey);
       font-size: @font-size;
       user-select: none;
 
       &:not(:last-child) {
-        border-right: 1px solid @color-border;
+        border-right: 1px solid var(--at-color-border);
       }
 
       &.active {
-        color: @color-main;
+        color: var(--at-color-main);
 
         svg.markdown path {
-          fill: @color-main;
+          fill: var(--at-color-main);
         }
       }
 
       i {
-        color: @color-grey;
+        color: var(--at-color-grey);
         display: inline-flex;
         vertical-align: sub;
         margin-left: 4px;
         svg.markdown path {
-          fill: @color-grey;
+          fill: var(--at-color-grey);
         }
       }
     }
 
     .atk-send-btn {
-      background: @color-main;
+      background: var(--at-color-main);
       color: #fff;
       font-size: @font-size;
       border: none;

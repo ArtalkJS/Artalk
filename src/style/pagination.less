@@ -9,11 +9,11 @@
   & > .atk-input {
     font-size: 15px;
     height: 32px;
-    border: 1px solid @color-border;
+    border: 1px solid var(--at-color-border);
     border-radius: 3px;
     padding: 0 5px;
     text-align: center;
-    background: @color-bg;
+    background: var(--at-color-bg);
   }
 
   & > .atk-btn {
@@ -25,11 +25,11 @@
     align-items: center;
 
     &:hover {
-      background: @color-bg-grey;
+      background: var(--at-color-bg-grey);
     }
 
     &.atk-disabled {
-      color: @color-sub;
+      color: var(--at-color-sub);
 
       &:hover {
         cursor: default;
@@ -40,13 +40,13 @@
 
   & > .atk-input {
     background: transparent;
-    color: @color-font;
+    color: var(--at-color-font);
     font-size: 18px;
     width: 60px;
     outline: none;
 
     &:focus {
-      border-color: @color-main;
+      border-color: var(--at-color-main);
     }
   }
 

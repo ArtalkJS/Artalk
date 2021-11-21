@@ -25,7 +25,7 @@
         border-radius: 2px;
 
         &:hover {
-          background: @color-bg-grey;
+          background: var(--at-color-bg-grey);
         }
       }
     }
@@ -58,7 +58,7 @@
         height: 65px;
         width: 65px;
         line-height: 65px;
-        background: @color-quote;
+        background: #687a86;
         color: #fff;
         border-radius: 4px;
       }
@@ -66,25 +66,25 @@
       .atk-site-name {
         text-align: center;
         font-size: 15px;
-        color: @color-sub;
+        color: var(--at-color-sub);
         padding: 0 17px;
         word-break: break-word;
       }
 
       &.atk-active {
-        background-color: @color-bg-grey;
-        border: 1px solid @color-border;
+        background-color: var(--at-color-bg-grey);
+        border: 1px solid var(--at-color-border);
         margin-top: -1px;
         border-radius: 0 0 4px 4px;
 
         .atk-site-name {
-          color: @color-deep;
+          color: var(--at-color-deep);
         }
       }
 
       &:hover {
         .atk-site-name {
-          color: @color-font;
+          color: var(--at-color-font);
         }
       }
     }
@@ -94,8 +94,8 @@
     position: relative;
     min-height: 120px;
     width: 100%;
-    border-top: 1px solid @color-border;
-    border-bottom: 1px solid @color-border;
+    border-top: 1px solid var(--at-color-border);
+    border-bottom: 1px solid var(--at-color-border);
     margin-bottom: -10px;
 
     .atk-header {
@@ -117,7 +117,7 @@
             position: absolute;
             width: 100%;
             height: 6px;
-            background: @color-main;
+            background: var(--at-color-main);
             opacity: .4;
             left: 0;
             bottom: 6px;
@@ -132,8 +132,8 @@
           min-height: 23px;
 
           .atk-url-item {
-            background: @color-bg-grey;
-            color: @color-font;
+            background: var(--at-color-bg-grey);
+            color: var(--at-color-font);
             border-radius: 2px;
             padding: 0 8px;
             font-size: 13px;
@@ -156,7 +156,7 @@
         cursor: pointer;
 
         &:hover i {
-          background-color: @color-red;
+          background-color: var(--at-color-red);
         }
       }
     }

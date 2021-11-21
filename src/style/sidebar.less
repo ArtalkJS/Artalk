@@ -9,7 +9,7 @@
   right: 0;
   width: @width;
   height: 100%;
-  background: @color-bg;
+  background: var(--at-color-bg);
   transition: transform 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
   transform: translate(@width, 0px);
 
@@ -28,7 +28,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-bottom: 1px solid @color-border;
+    border-bottom: 1px solid var(--at-color-border);
 
     .atk-avatar {
       display: flex;
@@ -42,11 +42,11 @@
         height: @height;
         width: @header-height - 30px;
         border-radius: 2px;
-        background: @color-meta;
+        background: var(--at-color-meta);
         text-align: center;
         line-height: @height;
         font-size: 13px;
-        color: @color-bg;
+        color: var(--at-color-bg);
       }
 
       .atk-site-logo {
@@ -61,7 +61,7 @@
 
       .atk-item {
         position: relative;
-        color: @color-sub;
+        color: var(--at-color-sub);
         font-size: 20px;
         // cursor: pointer;
         user-select: none;
@@ -71,7 +71,7 @@
         }
 
         &.atk-active {
-          color: @color-font;
+          color: var(--at-color-font);
 
           &:after {
             content: ' ';
@@ -80,7 +80,7 @@
             left: 0;
             width: 100%;
             height: 6px;
-            background: @color-main;
+            background: var(--at-color-main);
             opacity: .4;
           }
         }
@@ -108,14 +108,14 @@
   .atk-sidebar-nav {
     display: flex;
     flex-direction: row;
-    border-bottom: 1px solid @color-border;
+    border-bottom: 1px solid var(--at-color-border);
     height: @nav-height + 1px;
 
     .akt-curt-view-btn {
       display: flex;
       align-items: center;
       padding: 0 20px;
-      border-right: 1px solid @color-border;
+      border-right: 1px solid var(--at-color-border);
       cursor: pointer;
       user-select: none;
       height: @nav-height;
@@ -123,7 +123,7 @@
       white-space: nowrap;
 
       &:hover {
-        background: @color-bg-grey;
+        background: var(--at-color-bg-grey);
       }
 
       .atk-icon {
@@ -135,7 +135,7 @@
           width: 14px;
           height: 1px;
           margin: 0 auto 4px;
-          background: @color-deep;
+          background: var(--at-color-deep);
           transform-origin: 20px;
 
           &:last-child {
@@ -185,18 +185,18 @@
       .atk-tab-item {
         line-height: @nav-height;
         height: @nav-height;
-        color: @color-sub;
+        color: var(--at-color-sub);
         cursor: pointer;
         user-select: none;
         padding: 0 20px;
         white-space: nowrap;
 
         &:hover {
-          background: @color-bg-grey;
+          background: var(--at-color-bg-grey);
         }
 
         &.atk-active {
-          color: @color-deep;
+          color: var(--at-color-deep);
         }
       }
     }
@@ -211,11 +211,11 @@
     top: 70px;
     transform: translateX(-50%);
     pointer-events: all;
-    background: @color-bg;
+    background: var(--at-color-bg);
     width: 80%;
     max-height: 40%;
     margin: 0 auto;
-    border: 1px solid @color-border;
+    border: 1px solid var(--at-color-border);
     border-radius: 4px;
     overflow-y: auto;
 
@@ -236,22 +236,22 @@
           width: 20px;
           height: 20px;
           line-height: 20px;
-          background: @color-meta;
+          background: var(--at-color-meta);
           margin: 10px;
           border-radius: 3px;
           text-align: center;
-          color: @color-bg;
+          color: var(--at-color-bg);
           font-size: 12px;
         }
 
         .atk-site-name {
-          color: @color-font;
+          color: var(--at-color-font);
           font-size: 17px;
           margin-left: 7px;
         }
 
         &.atk-active, &:hover {
-          background: @color-bg-grey;
+          background: var(--at-color-bg-grey);
         }
       }
     }
@@ -269,7 +269,7 @@
       right: 0;
       top: 0;
       font-size: 35px;
-      color: @color-meta;
+      color: var(--at-color-meta);
       pointer-events: none;
       height: 100%;
       display: flex;
@@ -286,7 +286,7 @@
     .atk-label {
       font-size: 16px;
       margin-bottom: 12px;
-      color: @color-font;
+      color: var(--at-color-font);
     }
 
     .atk-desc {
@@ -295,7 +295,7 @@
       margin-left: 15px;
       margin-bottom: 20px;
       display: block;
-      color: @color-meta;
+      color: var(--at-color-meta);
 
       a {
         opacity: 0.8;
@@ -308,20 +308,20 @@
       padding: 0 10px;
       margin: 0;
       border: none;
-      border-bottom: 2px solid @color-border;
+      border-bottom: 2px solid var(--at-color-border);
       outline: none;
       width: 100%;
       margin-bottom: 25px;
-      background: @color-bg;
+      background: var(--at-color-bg);
 
       &:focus {
-        border-bottom-color: @color-bg-light;
+        border-bottom-color: var(--at-color-bg-light);
       }
 
       &[type="file"] {
         border-radius: 2px;
         background: transparent;
-        border-bottom: 2px solid @color-border;
+        border-bottom: 2px solid var(--at-color-border);
         cursor: pointer;
         position: relative;
         padding: 0 15px;
@@ -343,22 +343,22 @@
       padding: 5px 10px;
       width: 100%;
       border: none;
-      border-bottom: 2px solid @color-border;
+      border-bottom: 2px solid var(--at-color-border);
       margin-bottom: 25px;
       -webkit-appearance: none;
       border-radius: 0;
-      background: @color-bg;
+      background: var(--at-color-bg);
     }
 
     button {
       &:hover {
-        background: @color-bg-light;
+        background: var(--at-color-bg-light);
       }
 
       text-align: center;
-      color: @color-light;
+      color: var(--at-color-light);
       background: transparent;
-      border: 2px solid @color-bg-light;
+      border: 2px solid var(--at-color-bg-light);
       line-height: @form-height;
       letter-spacing: 2em;
       text-indent: 2em; // center
@@ -381,7 +381,7 @@
       padding: 5px 33px;
       cursor: pointer;
       user-select: none;
-      border-right: 1px solid @color-border;
+      border-right: 1px solid var(--at-color-border);
       border-left: 1px solid transparent;
       &:hover {
         background: #f4f4f4;
@@ -409,8 +409,8 @@
     width: 100%;
     bottom: 0;
     left: 0;
-    background: @color-bg;
-    border-top: 1px solid @color-border;
+    background: var(--at-color-bg);
+    border-top: 1px solid var(--at-color-border);
   }
 
   .atk-list-read-more {

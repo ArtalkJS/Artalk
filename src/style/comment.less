@@ -1,7 +1,7 @@
 .atk-comment-wrap {
   overflow: hidden;
   position: relative;
-  border-bottom: 1px solid @color-border;
+  border-bottom: 1px solid var(--at-color-border);
 
   &.atk-flash-once {
     animation: atkFlashOnce 1s ease-in-out 0s;
@@ -19,14 +19,14 @@
     top: 10%;
     width: 3px;
     height: 80%;
-    background: @color-main;
+    background: var(--at-color-main);
   }
 
   &.atk-openable {
     cursor: pointer;
 
     &:hover {
-      background: @color-bg-grey;
+      background: var(--at-color-bg-grey);
     }
 
     .atk-height-limit:after {
@@ -72,7 +72,7 @@
       .atk-item {
         display: flex;
         margin-bottom: 2px;
-        color: @color-meta;
+        color: var(--at-color-meta);
 
         &:not(:last-child) {
           margin-right: 6px;
@@ -80,14 +80,14 @@
 
         &.atk-nick, &.atk-nick a {
           font-size: 14px;
-          color: @color-main;
+          color: var(--at-color-main);
           text-decoration: none;
         }
       }
 
       .badge() {
-        color: @color-meta;
-        background: @color-bg-grey;
+        color: var(--at-color-meta);
+        background: var(--at-color-bg-grey);
         padding: 0 6px;
         line-height: 18px;
         border-radius: 3px;
@@ -126,7 +126,7 @@
         word-break: break-all;
 
         &.atk-type-collapsed {
-          border: 3px solid @color-bg-grey;
+          border: 3px solid var(--at-color-bg-grey);
           border-bottom: 0;
           padding: 5px 10px;
           border-radius: @block-radius @block-radius 0 0;
@@ -152,7 +152,7 @@
         font-size: 13px;
         padding: 10px 18px;
         display: block;
-        background: @color-bg-grey;
+        background: var(--at-color-bg-grey);
         border-left: 4px solid #f44336;
       }
 
@@ -180,20 +180,20 @@
         font-size: 13px;
         padding: 10px 18px;
         display: block;
-        background: @color-bg-grey;
+        background: var(--at-color-bg-grey);
         border-radius: @block-radius;
 
         .atk-text {
-          color: @color-meta;
+          color: var(--at-color-meta);
         }
 
         .atk-show-btn {
-          color: @color-main;
+          color: var(--at-color-main);
           cursor: pointer;
           user-select: none;
           margin-left: 3px;
           &:hover {
-            color: @color-main;
+            color: var(--at-color-main);
           }
         }
       }
@@ -208,7 +208,7 @@
         align-items: center;
 
         & > span {
-          color: @color-meta;
+          color: var(--at-color-meta);
           font-size: 13px;
           line-height: 15px;
           display: inline-flex;
@@ -216,17 +216,17 @@
           user-select: none;
 
           &.atk-error, &.atk-error:hover {
-            color: @color-red;
+            color: var(--at-color-red);
           }
 
           &:not(:first-child):not(.atk-hide) {
             margin-left: 8px;
             padding-left: 8px;
-            border-left: 1px solid @color-border;
+            border-left: 1px solid var(--at-color-border);
           }
 
           &:hover {
-            color: @color-deep;
+            color: var(--at-color-deep);
           }
         }
       }
@@ -243,7 +243,7 @@
     content: " ";
     bottom: 0;
     height: 80px;
-    background: @color-gradient;
+    background: var(--at-color-gradient);
   }
 
   .atk-height-limit-btn {
@@ -253,12 +253,12 @@
     bottom: 10px;
     transform: translateX(-50%);
     cursor: pointer;
-    border: 1px solid @color-border;
+    border: 1px solid var(--at-color-border);
     border-radius: @block-radius;
-    background: @color-bg;
+    background: var(--at-color-bg);
     padding: 1px 20px;
     font-size: 15px;
-    color: @color-meta;
+    color: var(--at-color-meta);
     user-select: none;
   }
 

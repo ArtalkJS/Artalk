@@ -10,7 +10,7 @@
   * {
     box-sizing: border-box;
     line-height: @line-height;
-    color: @color-font;
+    color: var(--at-color-font);
     font-family: @font-family;
     word-wrap: break-word;
     word-break: break-all;
@@ -19,8 +19,8 @@
   pre {
     padding: 10px;
     line-height: @line-height;
-    background-color: @color-bg-grey;
-    color: @color-font;
+    background-color: var(--at-color-bg-grey);
+    color: var(--at-color-font);
     padding: 10px 15px;
     border-radius: @block-radius;
     margin: 0;
@@ -32,7 +32,7 @@
   }
 
   a {
-    color: @color-main;
+    color: var(--at-color-main);
     text-decoration: none;
   }
 
@@ -40,8 +40,8 @@
     position: static;
     margin: 10px 0 10px 0;
     padding: 10px 20px 10px 20px;
-    background: @color-bg-grey;
-    border-left: 4px solid @color-quote;
+    background: var(--at-color-bg-grey);
+    border-left: 4px solid #687a86;
   }
 
   p:first-child {
@@ -50,10 +50,6 @@
 
   p:last-child {
     margin-bottom: 0;
-  }
-
-  * {
-    box-sizing: border-box;
   }
 
   img {
@@ -71,7 +67,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  background: @color-bg;
+  background: var(--at-color-bg);
   z-index: 10;
   align-items: center;
   justify-content: center;
@@ -174,7 +170,7 @@
 i.atk-icon {
   width: 20px;
   height: 20px;
-  background-color: @color-deep;
+  background-color: var(--at-color-deep);
   background-size: contain;
   background-repeat: no-repeat;
   mask-repeat: no-repeat;
@@ -186,7 +182,7 @@ i.atk-icon {
 }
 
 .atk-icon-del {
-  background-color: @color-red !important;
+  background-color: var(--at-color-red) !important;
   mask-image: url("data:image/svg+xml,%3Csvg width='22' height='22' viewBox='0 0 22 22' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.29167 5.04166L4.81251 5.04166M4.81251 5.04166L4.81251 18.3333C4.81251 18.5865 5.01771 18.7917 5.27084 18.7917L16.7292 18.7917C16.9823 18.7917 17.1875 18.5865 17.1875 18.3333V5.04166M4.81251 5.04166L7.33334 5.04166M17.1875 5.04166L19.7083 5.04166M17.1875 5.04166L14.6667 5.04166M7.33334 5.04166V3.20833L14.6667 3.20833V5.04166M7.33334 5.04166L14.6667 5.04166' stroke='%23D06565' stroke-width='2'/%3E%3Cpath d='M9.16667 8.25V15.125M12.8333 8.25V15.125' stroke='%23D06565' stroke-width='2'/%3E%3C/svg%3E");
 }
 
@@ -209,14 +205,14 @@ i.atk-icon {
 /* Layer */
 .atk-error-layer {
   &:extend(.atk-full-layer);
-  background-color: @color-bg-transl;
+  background-color: var(--at-color-bg-transl);
 
   .atk-error-title {
-    color: @color-red;
+    color: var(--at-color-red);
   }
 
   .atk-warn-title {
-    color: @color-yellow;
+    color: var(--at-color-yellow);
   }
 
   .atk-error-title, .atk-warn-title {
@@ -232,11 +228,11 @@ i.atk-icon {
     padding: 0 20px;
 
     * {
-      color: @color-deep;
+      color: var(--at-color-deep);
     }
 
     a {
-      color: @color-meta;
+      color: var(--at-color-meta);
     }
   }
 }
@@ -244,7 +240,7 @@ i.atk-icon {
 .atk-layer-dialog-wrap {
   @formInputHeight: 30px;
   &:extend(.atk-full-layer);
-  background-color: @color-bg-transl;
+  background-color: var(--at-color-bg-transl);
 
   & > .atk-layer-dialog {
     width: 25%;
@@ -256,15 +252,15 @@ i.atk-icon {
         height: auto;
         margin-right: 10px;
         padding-right: 10px;
-        border-right: 1px solid @color-border;
+        border-right: 1px solid var(--at-color-border);
         vertical-align: bottom;
       }
 
       input {
         width: 100%;
         line-height: calc(@formInputHeight + 4px);
-        background-color: @color-bg;
-        border: 1px solid @color-border;
+        background-color: var(--at-color-bg);
+        border: 1px solid var(--at-color-border);
         border-radius: calc(@block-radius / 2);
         outline: none;
         padding: 0 6px;
@@ -283,9 +279,9 @@ i.atk-icon {
         flex: 1;
         display: block;
         cursor: pointer;
-        border: 1px solid @color-main;
+        border: 1px solid var(--at-color-main);
         background: transparent;
-        color: @color-main;
+        color: var(--at-color-main);
         border-radius: calc(@block-radius / 2);
         padding: 0 15px;
         line-height: @formInputHeight;
@@ -293,7 +289,7 @@ i.atk-icon {
 
         &:active {
           color: #FFF;
-          background: @color-main;
+          background: var(--at-color-main);
         }
 
         &:not(:last-child) {
@@ -359,19 +355,19 @@ i.atk-icon {
 /* Common Action Btn */
 .atk-common-action-btn {
   &.atk-btn-confirm {
-    color: @color-yellow !important;
+    color: var(--at-color-yellow) !important;
   }
 
   &.atk-btn-warn {
-    color: @color-yellow !important;
+    color: var(--at-color-yellow) !important;
   }
 
   &.atk-btn-error {
-    color: @color-red !important;
+    color: var(--at-color-red) !important;
   }
 
   &.atk-btn-success {
-    color: @color-green !important;
+    color: var(--at-color-green) !important;
   }
 }
 

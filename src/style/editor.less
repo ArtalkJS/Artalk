@@ -1,36 +1,34 @@
 .atk-main-editor {
+  @editor-padding: 10px;
+  z-index: 5;
+  position: relative;
+  overflow: hidden;
+  background: @color-bg;
   border: 1px solid @color-border;
   border-radius: @block-radius;
-  margin-bottom: @block-margin;
-  overflow: hidden;
-  position: relative;
-  background: @color-bg;
-  z-index: 5;
+  margin-bottom: 15px;
 
   @media only screen and (max-width: 768px) {
-    & > {
-      margin-bottom: @block-margin-mobile;
+    & {
+      margin-bottom: 7px;
     }
   }
 
-  & > .atk-editor-header {
+  .atk-header {
     display: flex;
     flex-direction: row;
-    padding: 0 @block-padding;
-    padding-top: calc(@block-padding / 2);
-    padding-bottom: 0;
+    padding: (@editor-padding / 2) @editor-padding 0;
 
     input {
-      font-size: 14px;
-      border: 2px solid transparent;
-      transition: color .3s ease;
       flex: 1;
+      width: 100%;
+      font-size: 14px;
       background: transparent;
-      border-radius: calc(@block-radius / 2);
+      border: 2px solid transparent;
+      border-radius: (@block-radius / 2);
       padding: 6px 5px;
       resize: none;
       outline: none;
-      width: 100%;
 
       &:not(:last-child) {
         margin-right: 2px;
@@ -38,55 +36,42 @@
     }
   }
 
-  & > .atk-editor-textarea-wrap {
-    .atk-editor-textarea {
-      font-size: 15px;
-      color: @color-font;
-      background-color: @color-bg;
-      margin-top: 2px;
-      padding: @block-padding calc(10px + 5px);
+  .atk-textarea-wrap {
+    position: relative;
+
+    .atk-textarea {
       display: block;
+      overflow: hidden;
+      color: @color-font;
+      font-size: 15px;
+      background-color: @color-bg;
+      border: 2px solid transparent;
+      border-radius: (@block-radius / 2);
       width: 100%;
       min-height: 130px;
+      margin-top: 2px;
+      padding: @editor-padding (10px + 5px);
       resize: none;
       word-wrap: break-word;
-      border: 2px solid transparent;
-      border-radius: calc(@block-radius / 2);
       outline: none;
-      overflow: hidden;
     }
 
-    .atk-close-comment {
-      display: flex;
-      user-select: none;
-      // background: repeating-linear-gradient(145deg, #f2f2f2, #f2f2f2 15px, #fff 0, #fff 30px);
-      padding: 0;
-      position: relative;
-      text-align: center;
-      min-height: 30px;
-      border-top: 1px solid @color-border;
-      margin-top: 4px;
-      font-weight: 100;
+    .atk-comment-closed {
+      pointer-events: none;
+      color: @color-meta;
       font-size: 12px;
-      place-items: center;
-      justify-content: center;
-      place-content: flex-end;
-      flex-direction: row;
-      background: @color-bg;
-
-      & > span {
-        color: @color-meta;
-        border-radius: 2px;
-        margin-right: 14px;
-      }
+      background-color: @color-bg;
+      border-top: 1px solid @color-border;
+      padding: 5px 15px;
+      // background: repeating-linear-gradient(145deg, #f2f2f2, #f2f2f2 15px, #fff 0, #fff 30px);
     }
 
     .atk-send-reply {
       z-index: 2;
       position: absolute;
       right: 10px;
-      bottom: 40px;
-      max-width: calc(100% - 20px);
+      bottom: 8px;
+      max-width: (100% - 20px);
       height: 30px;
       line-height: 30px;
       font-size: 14px;
@@ -117,38 +102,30 @@
     }
   }
 
-  & > .atk-editor-plug-wrap {
+  .atk-plug-wrap {
     position: relative;
     height: 180px;
     width: 100%;
     overflow: hidden;
     border-top: 1px solid @color-border;
-    animation: .3s both atkFadeIn;
-    transition: .2s height ease-in-out;
+    animation: 0.3s both atkFadeIn;
+    transition: 0.2s height ease-in-out;
   }
 
-  & > .atk-editor-bottom {
+  .atk-bottom {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     border-top: 1px solid @color-border;
-    padding: 0 0 0 calc(@block-padding - 5px);
+    padding: 0 0 0 (@editor-padding - 5px);
 
-    .atk-editor-bottom-part {
+    .atk-item {
       display: flex;
-      flex: 1;
       flex-direction: row;
       align-items: center;
-
-      &.atk-left {
-        flex: inherit;
-      }
-
-      &.atk-right {
-        justify-content: flex-end;
-      }
     }
 
-    .atk-editor-action {
+    .atk-plug-btn {
       padding: 0 8px;
       cursor: pointer;
       color: @color-grey;
@@ -180,28 +157,28 @@
 
     .atk-send-btn {
       background: @color-main;
-      color: #FFF;
+      color: #fff;
+      font-size: @font-size;
       border: none;
       padding: 0 30px;
+      margin: 0;
       height: 30px;
       cursor: pointer;
-      transition: opacity .3s ease-in-out;
+      transition: opacity 0.3s ease-in-out;
       outline: none;
-      font-size: @font-size;
-      margin: 0;
 
       &:active {
-        opacity: .9;
+        opacity: 0.9;
       }
     }
   }
 
-  & > .atk-editor-notify-wrap {
+  .atk-notify-wrap {
+    z-index: 9;
     position: absolute;
     right: -2px;
     bottom: 36px;
     width: 225px;
-    z-index: 9;
-    opacity: .83;
+    opacity: 0.83;
   }
 }

@@ -85,7 +85,7 @@ export default class List extends ListLite {
 
     // 仅管理员显示控制
     this.ctx.trigger('check-admin-show-el')
-    this.$openSidebarBtn.innerText = (!this.ctx.user.data.isAdmin) ? '通知中心' : '控制中心'
+    this.$openSidebarBtn.querySelector<HTMLElement>('.atk-text')!.innerText = (!this.ctx.user.data.isAdmin) ? '通知中心' : '控制中心'
 
     // 关闭评论
     if (!!this.data && !!this.data.page && this.data.page.admin_only === true) {
@@ -161,7 +161,7 @@ export default class List extends ListLite {
       })
   }
 
-  public showUnreadBadge (count: number) {
+  public showUnreadBadge(count: number) {
     if (count > 0) {
       this.$unreadBadge.innerText = `${Number(count || 0)}`
       this.$unreadBadge.style.display = 'block'

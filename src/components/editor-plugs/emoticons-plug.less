@@ -2,25 +2,25 @@
   height: 100%;
   width: 100%;
 
-  .atk-emoticons-list-wrap {
+  & > .atk-grp-wrap {
     .atk-slim-scrollbar();
     overflow-y: scroll;
     overflow-x: hidden;
     height: 100%; // calc(100% - 30px);
     width: 100%;
 
-    .atk-emoticons-list {
+    & > .atk-grp {
       display: flex;
       flex-wrap: wrap;
       flex-direction: row;
       padding: 5px 10px 35px 10px;
 
-      &[data-type="image"] .atk-emoticons-item {
+      &[data-type="image"] > .atk-item {
         height: 63px;
         width: 63px;
       }
 
-      .atk-emoticons-item {
+      & > .atk-item {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -43,7 +43,7 @@
     }
   }
 
-  .atk-emoticons-types {
+  & > .atk-grp-switcher {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -67,5 +67,4 @@
       }
     }
   }
-
 }

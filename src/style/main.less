@@ -21,10 +21,14 @@
     line-height: @line-height;
     background-color: @color-bg-grey;
     color: @color-font;
-    padding: 5px 10px;
-    border-radius: calc(@block-radius / 2);
+    padding: 10px 15px;
+    border-radius: @block-radius;
     margin: 0;
     font-family: Source Code Pro,courier new,Input Mono,PT Mono,SFMono-Regular,Consolas,Monaco,Menlo,PingFang SC,Liberation Mono,Microsoft YaHei,Courier,monospace;
+
+    code {
+      white-space: pre-wrap;
+    }
   }
 
   a {

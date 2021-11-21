@@ -9,12 +9,10 @@
   margin-bottom: 15px;
 
   @media only screen and (max-width: 768px) {
-    & {
-      margin-bottom: 7px;
-    }
+    margin-bottom: 7px;
   }
 
-  .atk-header {
+  & > .atk-header {
     display: flex;
     flex-direction: row;
     padding: (@editor-padding / 2) @editor-padding 0;
@@ -36,10 +34,10 @@
     }
   }
 
-  .atk-textarea-wrap {
+  & > .atk-textarea-wrap {
     position: relative;
 
-    .atk-textarea {
+    & > .atk-textarea {
       display: block;
       overflow: hidden;
       color: @color-font;
@@ -56,7 +54,7 @@
       outline: none;
     }
 
-    .atk-comment-closed {
+    & > .atk-comment-closed {
       pointer-events: none;
       color: @color-meta;
       font-size: 12px;
@@ -66,7 +64,7 @@
       // background: repeating-linear-gradient(145deg, #f2f2f2, #f2f2f2 15px, #fff 0, #fff 30px);
     }
 
-    .atk-send-reply {
+    & > .atk-send-reply {
       z-index: 2;
       position: absolute;
       right: 10px;
@@ -102,7 +100,7 @@
     }
   }
 
-  .atk-plug-wrap {
+  & > .atk-plug-wrap {
     position: relative;
     height: 180px;
     width: 100%;
@@ -112,14 +110,14 @@
     transition: 0.2s height ease-in-out;
   }
 
-  .atk-bottom {
+  & > .atk-bottom {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     border-top: 1px solid @color-border;
     padding: 0 0 0 (@editor-padding - 5px);
 
-    .atk-item {
+    & > .atk-item {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -132,7 +130,19 @@
       font-size: @font-size;
       user-select: none;
 
-      & > i {
+      &:not(:last-child) {
+        border-right: 1px solid @color-border;
+      }
+
+      &.active {
+        color: @color-main;
+
+        svg.markdown path {
+          fill: @color-main;
+        }
+      }
+
+      i {
         color: @color-grey;
         display: inline-flex;
         vertical-align: sub;
@@ -140,18 +150,6 @@
         svg.markdown path {
           fill: @color-grey;
         }
-      }
-
-      &.active {
-        color: @color-main;
-
-        & > i > svg.markdown path {
-          fill: @color-main;
-        }
-      }
-
-      &:not(:last-child) {
-        border-right: 1px solid @color-border;
       }
     }
 
@@ -173,7 +171,7 @@
     }
   }
 
-  .atk-notify-wrap {
+  & > .atk-notify-wrap {
     z-index: 9;
     position: absolute;
     right: -2px;

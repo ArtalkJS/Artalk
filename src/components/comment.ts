@@ -55,11 +55,11 @@ export default class Comment extends Component {
   /** 渲染 UI */
   public render() {
     this.$el = Utils.createElement(CommentHTML)
-    this.$main = this.$el.querySelector('.atk-comment-main')!
+    this.$main = this.$el.querySelector('.atk-main')!
     this.$header = this.$el.querySelector('.atk-header')!
     this.$body = this.$el.querySelector('.atk-body')!
     this.$content = this.$body.querySelector('.atk-content')!
-    this.$actions = this.$el.querySelector('.atk-comment-actions')!
+    this.$actions = this.$el.querySelector('.atk-actions')!
     this.$children = null
 
     this.$el.setAttribute('data-comment-id', `${this.data.id}`)
@@ -229,7 +229,7 @@ export default class Comment extends Component {
 
     // 绑定回复按钮事件
     if (this.data.is_allow_reply) {
-      const replyBtn = Utils.createElement(`<span data-atk-action="comment-reply">回复</span>`)
+      const replyBtn = Utils.createElement(`<span>回复</span>`)
       this.$actions.append(replyBtn)
       replyBtn.addEventListener('click', (e) => {
         e.stopPropagation() // 防止穿透

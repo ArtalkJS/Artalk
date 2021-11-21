@@ -7,12 +7,8 @@
     animation: atkFlashOnce 1s ease-in-out 0s;
 
     @keyframes atkFlashOnce {
-      from {
-        background: rgba(0, 131, 255, 0.2);
-      }
-      to {
-        background: transparent;
-      }
+      from { background: rgba(0, 131, 255, 0.2); }
+      to { background: transparent; }
     }
   }
 
@@ -39,243 +35,205 @@
   }
 
   &:last-child {
-    border-bottom-color: transparent;
+    border-bottom: none;
+  }
+}
+
+.atk-comment {
+  display: block;
+  padding: 12px 10px;
+
+  & > .atk-avatar {
+    display: block;
+    padding: 2px 0;
+    float: left;
+
+    img {
+      width: 48px;
+      height: 48px;
+      border-radius: 3px;
+    }
   }
 
-  & > .atk-comment {
+  & > .atk-main {
     display: block;
-    padding: 12px 10px;
+    margin-left: 62px;
 
-    & > .atk-avatar {
+    & > .atk-header {
+      line-height: 1;
+      font-size: 13px;
+      margin-bottom: 3px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+
+      .atk-item {
+        display: flex;
+        margin-bottom: 2px;
+        color: @color-meta;
+
+        &:not(:last-child) {
+          margin-right: 6px;
+        }
+
+        &.atk-nick, &.atk-nick a {
+          font-size: 14px;
+          color: @color-main;
+          text-decoration: none;
+        }
+      }
+
+      .badge() {
+        color: @color-meta;
+        background: @color-bg-grey;
+        padding: 0 6px;
+        line-height: 18px;
+        border-radius: 3px;
+
+        &:not(:last-child) {
+          margin-right: 6px;
+        }
+      }
+
+      .atk-badge {
+        .badge();
+        color: #fff;
+      }
+
+      .atk-ua {
+        .badge()
+      }
+
+      .atk-ua-wrap {
+        @media only screen and (max-width: 768px) {
+          display: block;
+        }
+      }
+    }
+
+    & > .atk-body {
       display: block;
-      padding: 2px 0;
-      float: left;
+      overflow: hidden;
+      position: relative;
 
       img {
-        width: 48px;
-        height: 48px;
-        border-radius: 3px;
+        max-width: 100%;
+      }
+
+      & > .atk-content {
+        word-break: break-all;
+
+        &.atk-type-collapsed {
+          border: 3px solid @color-bg-grey;
+          border-bottom: 0;
+          padding: 5px 10px;
+          border-radius: @block-radius @block-radius 0 0;
+          margin-bottom: -5px;
+        }
+
+        & > *:first-child {
+          margin-top: 0;
+        }
+
+        & > *:last-child {
+          margin-bottom: 0;
+        }
+
+        .atk-height-limit-btn {
+          bottom: 5px;
+        }
+      }
+
+      & > .atk-pending {
+        color: var(--at-color-meta);
+        margin: 3px 0;
+        font-size: 13px;
+        padding: 10px 18px;
+        display: block;
+        background: @color-bg-grey;
+        border-left: 4px solid #f44336;
+      }
+
+      & > .atk-reply-to {
+        padding: 5px 15px;
+        border-left: 3px solid #eee;
+        margin-bottom: 10px;
+        position: relative;
+
+        .atk-meta {
+          font-size: 15px;
+
+          .atk-nick {
+            color: var(--at-color-main)
+          }
+        }
+
+        .atk-content {
+          margin-top: 5px;
+        }
+      }
+
+      & > .atk-collapsed {
+        margin: 3px 0;
+        font-size: 13px;
+        padding: 10px 18px;
+        display: block;
+        background: @color-bg-grey;
+        border-radius: @block-radius;
+
+        .atk-text {
+          color: @color-meta;
+        }
+
+        .atk-show-btn {
+          color: @color-main;
+          cursor: pointer;
+          user-select: none;
+          margin-left: 3px;
+          &:hover {
+            color: @color-main;
+          }
+        }
       }
     }
 
-    & > .atk-comment-main {
-      display: block;
-      margin-left: 62px;
+    & > .atk-footer {
+      margin-top: 12px;
 
-      & > .atk-header {
-        line-height: 1;
-        font-size: 13px;
-        margin-bottom: 3px;
-        overflow: hidden;
-        position: relative;
+      .atk-actions {
         display: flex;
-        flex-wrap: wrap;
+        flex-direction: row;
         align-items: center;
 
-        .badge() {
-          color: @color-meta;
-          background: @color-bg-grey;
-          padding: 0 6px;
-          line-height: 18px;
-          border-radius: 3px;
-
-          &:not(:last-child) {
-            margin-right: 6px;
-          }
-        }
-
         & > span {
-          display: flex;
-          margin-bottom: 2px;
           color: @color-meta;
-
-          &:not(:last-child) {
-            margin-right: 6px;
-          }
-
-          &.atk-nick, &.atk-nick > a {
-            font-size: 14px;
-            color: @color-main;
-            text-decoration: none;
-          }
-        }
-
-        .atk-badge {
-          .badge();
-          background: #FF6C00;
-          color: #FFF;
-        }
-
-        .atk-ua-wrap {
-          @media only screen and (max-width: 768px) {
-            display: block;
-          }
-
-          .atk-ua {
-            .badge();
-          }
-        }
-      }
-
-      & > .atk-body {
-        display: block;
-        overflow: hidden;
-        position: relative;
-
-        img {
-          max-width: 100%;
-        }
-
-        & > .atk-content {
-          word-break: break-all;
-
-          &.atk-type-collapsed {
-            border: 3px solid @color-bg-grey;
-            border-bottom: 0;
-            padding: 5px 10px;
-            border-radius: @block-radius @block-radius 0 0;
-            margin-bottom: -5px;
-          }
-
-          & > *:first-child {
-            margin-top: 0;
-          }
-
-          & > *:last-child {
-            margin-bottom: 0;
-          }
-
-          .atk-height-limit-btn {
-            bottom: 5px;
-          }
-        }
-
-        & > .atk-pending {
-          color: var(--at-color-meta);
-          margin: 3px 0;
           font-size: 13px;
-          padding: 10px 18px;
-          display: block;
-          background: @color-bg-grey;
-          border-left: 4px solid #f44336;
-        }
+          line-height: 15px;
+          display: inline-flex;
+          cursor: pointer;
+          user-select: none;
 
-        & > .atk-reply-to {
-          padding: 5px 15px;
-          border-left: 3px solid #eee;
-          margin-bottom: 10px;
-          position: relative;
-
-          & > .atk-meta {
-            font-size: 15px;
-
-            & > .atk-nick {
-              color: var(--at-color-main)
-            }
+          &.atk-error, &.atk-error:hover {
+            color: @color-red;
           }
 
-          & > .atk-content {
-            margin-top: 5px;
-          }
-        }
-
-        & > .atk-collapsed {
-          margin: 3px 0;
-          font-size: 13px;
-          padding: 10px 18px;
-          display: block;
-          background: @color-bg-grey;
-          border-radius: @block-radius;
-
-          & > .atk-text {
-            color: @color-meta;
+          &:not(:first-child):not(.atk-hide) {
+            margin-left: 8px;
+            padding-left: 8px;
+            border-left: 1px solid @color-border;
           }
 
-          & > .atk-show-btn {
-            color: @color-main;
-            cursor: pointer;
-            user-select: none;
-            margin-left: 3px;
-            &:hover {
-              color: @color-main;
-            }
-          }
-        }
-      }
-
-      & > .atk-footer {
-        margin-top: 12px;
-
-        .atk-comment-actions {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-
-          & > span {
-            &, * {
-              color: @color-meta;
-              font-size: 13px;
-              line-height: 15px;
-            }
-
-            display: inline-flex;
-            cursor: pointer;
-            user-select: none;
-
-            &.atk-error, &.atk-error:hover {
-              color: @color-red;
-            }
-
-            &:not(:first-child):not(.atk-hide) {
-              margin-left: 8px;
-              padding-left: 8px;
-              border-left: 1px solid @color-border;
-            }
-
-            &:hover {
-              color: @color-deep;
-            }
+          &:hover {
+            color: @color-deep;
           }
         }
       }
     }
   }
 
-  .comment-small-size() {
-    border-bottom-color: transparent;
-    &:not(:last-child) {
-      margin-bottom: 5px;
-    }
-
-    & > .atk-comment {
-      padding-top: 4px;
-      padding-bottom: 4px;
-
-      & > .atk-avatar img {
-        width: 36px;
-        height: 36px;
-      }
-
-      & > .atk-comment-main {
-        margin-left: 47px;
-      }
-    }
-  }
-
-  .atk-comment-children {
-    .atk-comment-wrap {
-      margin-top: 10px;
-      border-left: 1px dashed var(--at-color-border);
-
-      .comment-small-size()
-    }
-  }
-
-  // 避免重复显示按钮
-  .atk-height-limit .atk-height-limit .atk-height-limit-btn {
-    display: none;
-  }
-
+  /** 内容限高 **/
   .atk-height-limit:after {
     position: absolute;
     z-index: 1;
@@ -302,5 +260,36 @@
     font-size: 15px;
     color: @color-meta;
     user-select: none;
+  }
+
+  // 避免重复显示按钮
+  .atk-height-limit .atk-height-limit .atk-height-limit-btn {
+    display: none;
+  }
+}
+
+/** 子评论区域 **/
+.atk-comment-children {
+  & > .atk-comment-wrap {
+    margin-top: 10px;
+    border-left: 1px dashed var(--at-color-border);
+    border-bottom-color: transparent;
+    &:not(:last-child) {
+      margin-bottom: 5px;
+    }
+
+    & > .atk-comment {
+      padding-top: 4px;
+      padding-bottom: 4px;
+
+      & > .atk-avatar img {
+        width: 36px;
+        height: 36px;
+      }
+
+      & > .atk-main {
+        margin-left: 47px;
+      }
+    }
   }
 }

@@ -17,8 +17,8 @@ export default class EmoticonsPlug extends EditorPlug {
   public $el!: HTMLElement
   public emoticons: EmoticonListData = []
 
-  public $listWrap!: HTMLElement
-  public $types!: HTMLElement
+  public $grpWrap!: HTMLElement
+  public $grpSwitcher!: HTMLElement
 
   constructor (public editor: Editor) {
     super(editor)
@@ -162,18 +162,18 @@ export default class EmoticonsPlug extends EditorPlug {
   /** 初始化表情列表界面 */
   initEmoticonsList () {
     // 表情列表
-    this.$listWrap = Utils.createElement(`<div class="atk-emoticons-list-wrap"></div>`)
-    this.$el.append(this.$listWrap)
+    this.$grpWrap = Utils.createElement(`<div class="atk-grp-wrap"></div>`)
+    this.$el.append(this.$grpWrap)
 
     this.emoticons.forEach((grp, index) => {
-      const emoticonsEl = Utils.createElement(`<div class="atk-emoticons-list" style="display: none;"></div>`)
-      this.$listWrap.append(emoticonsEl)
-      emoticonsEl.setAttribute('data-index', String(index))
-      emoticonsEl.setAttribute('data-grp-name', grp.name)
-      emoticonsEl.setAttribute('data-type', grp.type)
+      const $grp = Utils.createElement(`<div class="atk-grp" style="display: none;"></div>`)
+      this.$grpWrap.append($grp)
+      $grp.setAttribute('data-index', String(index))
+      $grp.setAttribute('data-grp-name', grp.name)
+      $grp.setAttribute('data-type', grp.type)
       grp.items.forEach((item) => {
-        const $item = Utils.createElement(`<span class="atk-emoticons-item"></span>`)
-        emoticonsEl.append($item)
+        const $item = Utils.createElement(`<span class="atk-item"></span>`)
+        $grp.append($item)
 
         if (!!item.key && !(new RegExp(`^(${grp.name})?\\s?[0-9]+$`).test(item.key)))
           $item.setAttribute('title', item.key)
@@ -198,14 +198,14 @@ export default class EmoticonsPlug extends EditorPlug {
     })
 
     // 表情分类
-    this.$types = Utils.createElement(`<div class="atk-emoticons-types"></div>`)
-    this.$el.append(this.$types)
+    this.$grpSwitcher = Utils.createElement(`<div class="atk-grp-switcher"></div>`)
+    this.$el.append(this.$grpSwitcher)
     this.emoticons.forEach((grp, index) => {
       const $item = Utils.createElement('<span />')
       $item.innerText = grp.name
       $item.setAttribute('data-index', String(index))
       $item.onclick = () => (this.openGrp(index))
-      this.$types.append($item)
+      this.$grpSwitcher.append($item)
     })
 
     // 默认打开第一个分类
@@ -215,7 +215,7 @@ export default class EmoticonsPlug extends EditorPlug {
 
   /** 打开一个表情组 */
   openGrp (index: number) {
-    Array.from(this.$listWrap.children).forEach((item) => {
+    Array.from(this.$grpWrap.children).forEach((item) => {
       const el = item as HTMLElement
       if (el.getAttribute('data-index') !== String(index)) {
         el.style.display = 'none'
@@ -224,8 +224,8 @@ export default class EmoticonsPlug extends EditorPlug {
       }
     })
 
-    this.$types.querySelectorAll('span.active').forEach(item => item.classList.remove('active'))
-    this.$types.querySelector(`span[data-index="${index}"]`)?.classList.add('active')
+    this.$grpSwitcher.querySelectorAll('span.active').forEach(item => item.classList.remove('active'))
+    this.$grpSwitcher.querySelector(`span[data-index="${index}"]`)?.classList.add('active')
 
     this.changeListHeight()
   }
@@ -238,7 +238,7 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   changeListHeight () {
-    /* const listWrapHeight = Utils.getHeight(this.$listWrapem)
+    /* const listWrapHeight = Utils.getHeight(this.$grpWrapem)
     this.editor.plugWrapEl.style.height = `${listWrapHeight > 150 ? listWrapHeight : 150}px` */
   }
 

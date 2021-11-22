@@ -9,51 +9,44 @@ import Pagination from './pagination'
 import ReadMoreBtn from './read-more-btn'
 
 export default class ListLite extends Component {
-  private $parent: HTMLElement
+  protected $commentsWrap: HTMLElement
+  protected comments: Comment[] = []
 
-  private $commentsWrap: HTMLElement
-  public comments: Comment[] = []
+  protected data?: ListData
+  protected isLoading: boolean = false
 
-  public data?: ListData
-  private pageSize: number = 15 // 每次请求获取量
+  public noCommentText = '无内容' // 无评论时显示
 
-  public noCommentText: string
+  /** 平铺模式 */
+  public flatMode = false
+
+  /** 分页 */
+  public pageMode: 'pagination'|'read-more' = 'pagination'
+  public pageSize: number = 20 // 每次请求获取量
+  public scrollListenerAt?: HTMLElement // 监听指定元素上的滚动
+  public repositionAt?: HTMLElement // 翻页归位到指定元素
+
+  protected pagination?: Pagination   // 分页条
+  protected readMoreBtn?: ReadMoreBtn // 阅读更多
+  protected autoLoadScrollEvent?: any // 自动加载滚动事件
+
   public renderComment?: (comment: Comment) => void
   public paramsEditor?: (params: any) => void
   public onAfterLoad?: (data: ListData) => void
 
-  // 状态标识
-  private isLoading: boolean = false
-  public isFirstLoad = true
-
-  // 平铺模式
-  public flatMode?: boolean
-
-  // 分页方式
-  public pageMode: 'pagination'|'read-more' = 'pagination'
-  public pagination?: Pagination   // 分页条
-  public readMoreBtn?: ReadMoreBtn // 阅读更多
-  public autoLoadScrollEvent?: any // 自动加载滚动事件
-  public autoLoadListenerAt?: HTMLElement // 监听指定元素上的滚动
-
   // 未读标记
-  public unread: NotifyData[] = []
-  public unreadHighlight = false
+  protected unread: NotifyData[] = []
+  public unreadHighlight?: boolean // 高亮未读
 
-  constructor (ctx: Context, $parent: HTMLElement) {
+  constructor (ctx: Context) {
     super(ctx)
 
     // 初始化元素
-    this.$parent = $parent
     this.$el = Utils.createElement(
     `<div class="atk-list-lite">
       <div class="atk-list-comments-wrap"></div>
     </div>`)
     this.$commentsWrap = this.$el.querySelector('.atk-list-comments-wrap')!
-
-    // 初始化配置
-    this.pageSize = this.conf.pagination?.pageSize || this.pageSize
-    this.noCommentText = this.conf.noComment || '无评论'
 
     // 评论时间自动更新
     window.setInterval(() => {
@@ -68,9 +61,8 @@ export default class ListLite extends Component {
   }
 
   /** 评论获取 */
-  public async fetchComments(offset: number = 0) {
-    // 清空评论（加载按钮）
-    if (this.pageMode === 'read-more' && offset === 0) { this.clearAllComments() }
+  public async fetchComments(offset: number) {
+    if (this.isLoading) return
 
     // 加载动画
     const showLoading = () => {
@@ -85,18 +77,20 @@ export default class ListLite extends Component {
       else if (this.pageMode === 'read-more') this.readMoreBtn!.setLoading(false)
       else if (this.pageMode === 'pagination') this.pagination!.setLoading(false)
     }
-
     showLoading()
 
     // 事件通知（开始加载评论）
     this.ctx.trigger('comments-load')
 
+    // 清空评论（加载按钮）
+    if (this.pageMode === 'read-more' && offset === 0) { this.clearAllComments() }
+
     // 请求评论数据
     let listData: ListData
     try {
-      listData = await new Api(this.ctx).get(offset, this.flatMode, this.paramsEditor)
+      listData = await new Api(this.ctx).get(offset, this.pageSize, this.flatMode, this.paramsEditor)
     } catch (e: any) {
-      this.onError(e.msg || String(e))
+      this.onError(e.msg || String(e), offset)
       throw e
     } finally {
       hideLoading()
@@ -109,16 +103,14 @@ export default class ListLite extends Component {
     try {
       this.onLoad(listData, offset)
     } catch (e: any) {
-      this.onError(String(e))
+      this.onError(String(e), offset)
       throw e
     } finally {
       hideLoading()
     }
-
-    this.isFirstLoad = false
   }
 
-  public onLoad(data: ListData, offset: number) {
+  protected onLoad(data: ListData, offset: number) {
     // 清空评论（分页条）
     if (this.pageMode === 'pagination') { this.clearAllComments() }
 
@@ -131,9 +123,7 @@ export default class ListLite extends Component {
     this.importComments(data.comments)
 
     // 分页方式
-    if (this.isFirstLoad) this.initPageMode() // 初始化
-    if (this.pageMode === 'pagination') this.pagination!.update(offset, (!this.flatMode ? data.total_roots : data.total) || 0)
-    if (this.pageMode === 'read-more') this.readMoreBtn!.update(offset, (!this.flatMode ? data.total_roots : data.total) || 0)
+    this.refreshPagination(offset, (this.flatMode ? data.total : data.total_roots)) // 初始化
 
     // 加载后事件
     this.refreshUI()
@@ -144,28 +134,38 @@ export default class ListLite extends Component {
     if (this.onAfterLoad) this.onAfterLoad(data)
   }
 
-  /** 初始化分页模式 */
-  initPageMode() {
-    // 解除滚动事件监听
-    if (this.autoLoadScrollEvent) {
-      const at = this.autoLoadListenerAt || document
-      at.removeEventListener('scroll', this.autoLoadScrollEvent)
+  /** 分页模式 */
+  private refreshPagination(offset: number, total: number) {
+    const modePagination = (this.pageMode === 'pagination')
+    const modeReadMoreBtn = (this.pageMode === 'read-more')
+    const initialized = (modePagination) ? !!this.pagination : !!this.readMoreBtn
+
+    // 初始化
+    if (!initialized) {
+      this.initPagination()
     }
 
+    // 更新
+    if (modePagination) this.pagination!.update(offset, total)
+    if (modeReadMoreBtn) this.readMoreBtn!.update(offset, total)
+  }
+
+  private initPagination() {
     // 加载更多按钮
     if (this.pageMode === 'read-more') {
-      const readMoreBtn = new ReadMoreBtn({
+      this.readMoreBtn = new ReadMoreBtn({
         pageSize: this.pageSize,
-        onClick: async (offset) => {
-          await this.fetchComments(offset)
+        onClick: async (o) => {
+          await this.fetchComments(o)
         },
       })
-      if (this.readMoreBtn) this.readMoreBtn.$el.replaceWith(readMoreBtn.$el)
-      else this.$el.append(readMoreBtn.$el)
-      this.readMoreBtn = readMoreBtn
+      this.$el.append(this.readMoreBtn.$el)
 
       // 滚动到底部自动加载
       if (this.conf.pagination?.autoLoad) {
+        // 添加滚动事件监听
+        const at = this.scrollListenerAt || document
+        if (this.autoLoadScrollEvent) at.removeEventListener('scroll', this.autoLoadScrollEvent) // 解除原有
         this.autoLoadScrollEvent = () => {
           if (this.pageMode !== 'read-more') return
           if (!this.readMoreBtn) return
@@ -175,50 +175,47 @@ export default class ListLite extends Component {
 
           const $target = this.$el.querySelector<HTMLElement>('.atk-list-comments-wrap > .atk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
           if (!$target) return
-          if (Ui.isVisible($target, this.autoLoadListenerAt)) {
+          if (Ui.isVisible($target, this.scrollListenerAt)) {
             this.readMoreBtn.click() // 自动点击加载更多按钮
           }
         }
-        const at = this.autoLoadListenerAt || document
         at.addEventListener('scroll', this.autoLoadScrollEvent)
       }
     }
 
     // 分页条
     if (this.pageMode === 'pagination') {
-      const pagination = new Pagination((!this.flatMode ? this.data!.total_roots : this.data!.total), {
+      this.pagination = new Pagination((!this.flatMode ? this.data!.total_roots : this.data!.total), {
         pageSize: this.pageSize,
-        onChange: async (offset) => {
+        onChange: async (o) => {
           if (this.ctx.conf.editorTravel === true) {
             this.ctx.trigger('editor-travel-back') // 防止评论框被吞
           }
 
-          await this.fetchComments(offset)
+          await this.fetchComments(o)
 
           // 滚动到第一个评论的位置
-          if (this.$parent) {
-            const at = this.autoLoadListenerAt || window
+          if (this.repositionAt) {
+            const at = this.scrollListenerAt || window
             at.scroll({
-              top: (at === window && this.$parent) ? Utils.getOffset(this.$parent).top : 0,
+              top: this.repositionAt ? Utils.getOffset(this.repositionAt).top : 0,
               left: 0,
             })
           }
         }
       })
 
-      if (this.pagination) this.pagination.$el.replaceWith(pagination.$el)
-      else this.$el.append(pagination.$el)
-      this.pagination = pagination
+      this.$el.append(this.pagination.$el)
     }
   }
 
   /** 错误处理 */
-  public onError(msg: any) {
+  protected onError(msg: any, offset: number) {
     msg = String(msg)
     console.error(msg)
 
     // 加载更多按钮显示错误
-    if (!this.isFirstLoad && this.pageMode === 'read-more') {
+    if (offset !== 0 && this.pageMode === 'read-more') {
       this.readMoreBtn?.showErr(`获取失败`)
       return
     }
@@ -227,7 +224,7 @@ export default class ListLite extends Component {
     const $err = Utils.createElement(`<span>${msg}，无法获取评论列表数据<br/></span>`)
 
     const $retryBtn = Utils.createElement('<span style="cursor:pointer;">点击重新获取</span>')
-    $retryBtn.onclick = () => (this.fetchComments())
+    $retryBtn.onclick = () => (this.fetchComments(0))
     $err.appendChild($retryBtn)
 
     const adminBtn = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
@@ -259,7 +256,7 @@ export default class ListLite extends Component {
   }
 
   /** 创建新评论 */
-  public createComment(data: CommentData) {
+  protected createComment(data: CommentData) {
     const comment = new Comment(this.ctx, data)
     comment.afterRender = () => {
       if (this.renderComment) this.renderComment(comment)
@@ -392,7 +389,7 @@ export default class ListLite extends Component {
   }
 
   /** 遍历操作 Comment (包括子评论) */
-  public eachComment(commentList: Comment[], action: (comment: Comment, levelList: Comment[]) => boolean|void) {
+  protected eachComment(commentList: Comment[], action: (comment: Comment, levelList: Comment[]) => boolean|void) {
     if (commentList.length === 0) return
     commentList.every((item) => {
       if (action(item, commentList) === false) return false
@@ -402,7 +399,7 @@ export default class ListLite extends Component {
   }
 
   /** 查找评论项 */
-  public findComment(id: number, src?: Comment[]): Comment|null {
+  protected findComment(id: number, src?: Comment[]): Comment|null {
     if (!src) src = this.comments
     let comment: Comment|null = null
     this.eachComment(src, (item) => {
@@ -450,7 +447,7 @@ export default class ListLite extends Component {
     this.unread = notifies
 
     // 高亮评论
-    if (this.unreadHighlight) {
+    if (this.unreadHighlight === true) {
       this.eachComment(this.comments, (comment) => {
         const notify = this.unread.find(o => o.comment_id === comment.data.id)
         if (notify) {

@@ -16,11 +16,11 @@ export default class Api {
   // ============================
 
   /** 评论 · 获取 */
-  public get(offset: number, flatMode?: boolean, paramsEditor?: (params: any) => void) {
+  public get(offset: number, pageSize: number, flatMode?: boolean, paramsEditor?: (params: any) => void) {
     const params: any = {
       page_key: this.ctx.conf.pageKey,
       site_name: this.ctx.conf.site || '',
-      limit: this.ctx.conf.pagination?.pageSize || 15,
+      limit: pageSize,
       offset,
     }
 

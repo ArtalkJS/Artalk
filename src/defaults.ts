@@ -25,7 +25,7 @@ const defaults: ArtalkConfig = {
   },
 
   pagination: {
-    pageSize: 15,
+    pageSize: 20,
     readMore: true,
     autoLoad: true,
   },

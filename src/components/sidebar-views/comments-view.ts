@@ -31,10 +31,10 @@ export default class MessageView extends SidebarView {
       this.viewActiveTab = 'mentions'
     }
 
-    this.list = new ListLite(this.ctx, this.$el)
+    this.list = new ListLite(this.ctx)
     this.list.flatMode = true
     this.list.unreadHighlight = true
-    this.list.autoLoadListenerAt = this.$parent
+    this.list.scrollListenerAt = this.$parent
     this.list.pageMode = 'pagination'
     this.list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
     this.list.renderComment = (comment) => {
@@ -61,12 +61,11 @@ export default class MessageView extends SidebarView {
   switchTab(tab: string, siteName: string): boolean|void {
     //console.log(tab, siteName)
     this.viewActiveTab = tab
-    this.list.isFirstLoad = true
     this.list.paramsEditor = (params) => {
       params.type = tab as any
       params.site_name = siteName
     }
-    this.list.fetchComments()
+    this.list.fetchComments(0)
 
     return true
   }

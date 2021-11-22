@@ -16,7 +16,7 @@ export default class List extends ListLite {
   constructor (ctx: Context) {
     const el = Utils.createElement(ListHTML)
 
-    super(ctx, el)
+    super(ctx)
 
     // 把 listLite $el 变为子元素
     el.querySelector('.atk-list-body')!.append(this.$el)
@@ -34,6 +34,8 @@ export default class List extends ListLite {
 
     // 分页模式
     this.pageMode = this.conf.pagination?.readMore ? 'read-more' : 'pagination'
+    this.pageSize = this.conf.pagination?.pageSize || 20
+    this.repositionAt = this.$el
 
     // 操作按钮
     this.initListActionBtn()
@@ -51,7 +53,7 @@ export default class List extends ListLite {
     this.ctx.on('unread-update', (data) => (this.showUnreadBadge(data.notifies?.length || 0)))
   }
 
-  private initListActionBtn () {
+  private initListActionBtn() {
     // 侧边栏呼出按钮
     this.$openSidebarBtn = this.$el.querySelector('[data-action="open-sidebar"]')!
     this.$closeCommentBtn = this.$el.querySelector('[data-action="admin-close-comment"]')!
@@ -71,7 +73,7 @@ export default class List extends ListLite {
   }
 
   /** 刷新界面 */
-  public refreshUI () {
+  public refreshUI() {
     super.refreshUI()
 
     this.$el.querySelector<HTMLElement>('.atk-comment-count-num')!.innerText = String(Number(this.data?.total) || 0)
@@ -97,7 +99,7 @@ export default class List extends ListLite {
     }
   }
 
-  public onLoad(data: ListData, offset: number) {
+  protected onLoad(data: ListData, offset: number) {
     super.onLoad(data, offset)
 
     // 检测锚点跳转

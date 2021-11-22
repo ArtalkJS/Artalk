@@ -102,7 +102,7 @@ export default class ActionBtn {
   }
 
   /** 设置加载状态 */
-  public setLoading(value = true, loadingText?: string) {
+  public setLoading(value: boolean, loadingText?: string) {
     if (this.isLoading === value) return
     this.isLoading = value
     if (value) {

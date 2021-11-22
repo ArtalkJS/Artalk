@@ -122,7 +122,7 @@ export function getGravatarURL(ctx: Context, emailMD5: string) {
 }
 
 export function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => { setTimeout(resolve, ms) });
 }
 
 /** 版本号比较（a < b :-1 | 0 | b < a :1） */

@@ -57,7 +57,12 @@ func ActionPermission(conf ActionPermissionConf) echo.MiddlewareFunc {
 // 操作是否超过限制
 func IsActionOverLimit(c echo.Context) bool {
 	if config.Instance.Captcha.Always { // 总是需要验证码
-		return true
+		if getActionCount(c) <= 1 {
+			RecordAction(c)
+			return false
+		} else {
+			return true
+		}
 	}
 
 	if time.Since(getActionLastTime(c)).Seconds() <= float64(config.Instance.Captcha.ActionTimeout) { // 在时间内

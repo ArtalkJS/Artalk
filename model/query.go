@@ -68,8 +68,8 @@ func StoreCache(name string, srcStruct interface{}) error {
 
 func IsAdminUser(name string, email string) bool {
 	var user User
-	lib.DB.Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?) AND is_admin = 1", name, email).First(&user)
-	return !user.IsEmpty()
+	lib.DB.Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?)", name, email).First(&user)
+	return !user.IsEmpty() && user.IsAdmin
 }
 
 func UpdateComment(comment *Comment) error {

@@ -161,7 +161,7 @@ func EmailSend(comment *model.Comment, parentComment *model.Comment) {
 
 	// 邮件通知管理员
 	var admins []model.User
-	lib.DB.Where("is_admin = 1").Find(&admins)
+	lib.DB.Where(&model.User{IsAdmin: true}).Find(&admins)
 
 	isAdmin := func(userID uint) bool {
 		for _, admin := range admins {

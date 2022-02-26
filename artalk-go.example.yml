@@ -41,7 +41,7 @@ site_default: "默认站点"
 admin_users:
   - name: "admin"
     email: "admin@example.com"
-    password: ""
+    password: "" # 密码支持 bcrypt 或 md5 加密，例如填写："(md5)50c21190c6e4e5418c6a90d2b5031119"
     badge_name: "管理员"
     badge_color: "#FF6C00"
 

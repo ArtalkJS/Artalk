@@ -6,8 +6,8 @@ import (
 
 type User struct {
 	gorm.Model
-	Name       string `gorm:"index"`
-	Email      string `gorm:"index"`
+	Name       string `gorm:"index;size:255"`
+	Email      string `gorm:"index;size:255"`
 	Link       string
 	Password   string
 	BadgeName  string

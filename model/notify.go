@@ -19,7 +19,7 @@ type Notify struct {
 	IsEmailed bool
 	EmailAt   time.Time
 
-	Key string `gorm:"index"`
+	Key string `gorm:"index;size:255"`
 
 	Comment Comment `gorm:"foreignKey:CommentID;references:ID"`
 }

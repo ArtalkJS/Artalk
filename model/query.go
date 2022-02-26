@@ -100,7 +100,7 @@ func FindNotify(userID uint, commentID uint) Notify {
 
 func FindNotifyByKey(key string) Notify {
 	var notify Notify
-	lib.DB.Where("key = ?", key).First(&notify)
+	lib.DB.Where("`key` = ?", key).First(&notify)
 	return notify
 }
 
@@ -190,7 +190,7 @@ func UpdateUser(user *User) error {
 
 func FindPage(key string, siteName string) Page {
 	var page Page
-	lib.DB.Where("key = ? AND site_name = ?", key, siteName).First(&page)
+	lib.DB.Where("`key` = ? AND `site_name` = ?", key, siteName).First(&page)
 	return page
 }
 

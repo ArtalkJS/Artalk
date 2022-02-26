@@ -13,11 +13,11 @@ import (
 
 type Page struct {
 	gorm.Model
-	Key       string `gorm:"index"` // 页面 Key（一般为不含 hash/query 的完整 url）
+	Key       string `gorm:"index;size:255"` // 页面 Key（一般为不含 hash/query 的完整 url）
 	Title     string
 	AdminOnly bool
 
-	SiteName string `gorm:"index"`
+	SiteName string `gorm:"index;size:255"`
 	Site     Site   `gorm:"foreignKey:SiteName;references:Name"`
 
 	VoteUp   int

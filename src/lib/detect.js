@@ -94,8 +94,18 @@ function Detect (userAgent) {
   }
   // 系统版本信息
   var osVersion = {
-    Windows: function () {
+    Windows: async function () {
       var v = u.replace(/^.*Windows NT ([\d.]+);.*$/, '$1')
+      if (v==10){
+        return await nav.userAgentData.getHighEntropyValues(["platformVersion"]).then(ua => {
+          const majorPlatformVersion = parseInt(ua.platformVersion.split('.')[0])
+          if (majorPlatformVersion >= 13) {
+            return '11'
+           }else{
+             return '10'
+           }
+        })
+      }
       var hash = {
         6.4: '10',
         6.3: '8.1',

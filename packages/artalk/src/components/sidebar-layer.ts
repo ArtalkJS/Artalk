@@ -59,9 +59,10 @@ export default class SidebarLayer extends Component {
 
     // 第一次加载
     if (this.firstShow) {
+      this.$iframeWrap.innerHTML = ''
       const $iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
       const userData = encodeURIComponent(JSON.stringify(this.ctx.user.data))
-      const baseURL = import.meta.env.MODE === 'development' ? 'http://localhost:23367/' : this.conf.server
+      const baseURL = (import.meta.env.MODE === 'development') ? 'http://localhost:23367/' : this.conf.server
       $iframe.src = `${baseURL}?pageKey=${this.conf.pageKey}&site=${this.conf.site}&user=${userData}`
       this.$iframeWrap.append($iframe)
       this.firstShow = false

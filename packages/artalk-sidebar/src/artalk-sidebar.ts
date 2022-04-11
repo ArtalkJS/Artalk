@@ -8,8 +8,12 @@ class ArtalkSidebar extends Artalk {
     super(customConf)
 
     this.$root.style.display = 'none'
-    user.isAdmin = true
-    this.ctx.user.data = user
+
+    user = user || {}
+    this.ctx.user.data = {
+      ...this.ctx.user.data,
+      ...user
+    }
     this.ctx.user.save()
 
     const sidebar = new Sidebar(this.ctx)

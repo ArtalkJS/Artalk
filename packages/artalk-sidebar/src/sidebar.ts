@@ -18,11 +18,7 @@ import TransferView from './sidebar-views/transfer-view'
 import SiteListFloater from './admin/site-list-floater'
 import SettingView from './sidebar-views/setting-view'
 
-function MD5(str) {
-  return str
-}
-
-// import MD5 from 'artalk/src/lib/md5'
+import MD5 from './lib/md5'
 
 const DEFAULT_VIEW = 'comments'
 const REGISTER_VIEWS: (typeof SidebarView)[] = [

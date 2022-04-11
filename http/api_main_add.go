@@ -1,6 +1,8 @@
 package http
 
 import (
+	"regexp"
+
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/lib/email"
@@ -15,6 +17,7 @@ type ParamsAdd struct {
 	Link    string `mapstructure:"link"`
 	Content string `mapstructure:"content" param:"required"`
 	Rid     uint   `mapstructure:"rid"`
+	UA      string `mapstructure:"ua"`
 
 	PageKey   string `mapstructure:"page_key" param:"required"`
 	PageTitle string `mapstructure:"page_title"`
@@ -43,6 +46,13 @@ func ActionAdd(c echo.Context) error {
 
 	ip := c.RealIP()
 	ua := c.Request().UserAgent()
+
+	// 仅允许针对 Win11 的 UA 修正
+	if p.UA != "" {
+		if matchWin11, _ := regexp.MatchString(`Windows\W+NT\W+11.0`, p.UA); matchWin11 {
+			ua = p.UA
+		}
+	}
 
 	// record action for limiting action
 	RecordAction(c)

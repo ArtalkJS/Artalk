@@ -33,11 +33,11 @@
     "lint": "eslint --ext .js,.ts src"
   },
   "devDependencies": {
-    "@types/marked": "^4.0.1"
+    "@types/marked": "^4.0.3"
   },
   "dependencies": {
     "hanabi": "^0.4.0",
     "insane": "^2.6.2",
-    "marked": "^4.0.3"
+    "marked": "^4.0.14"
   }
 }

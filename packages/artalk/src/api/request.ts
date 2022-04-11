@@ -21,7 +21,9 @@ export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit,
       resp = await timeoutPromise(timeout || ctx.conf.reqTimeout || 15000, fetch(input, init))
     }
 
-    if (!resp.ok && resp.status !== 401) throw new Error(`请求响应 ${resp.status}`)
+    const noAccessCodes = [401, 400]
+
+    if (!resp.ok && !noAccessCodes.includes(resp.status)) throw new Error(`请求响应 ${resp.status}`)
 
     // 解析获取响应的 json
     let json: any = await resp.json()
@@ -49,7 +51,7 @@ export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit,
           }
         })
       }))
-    } else if ((json.data && json.data.need_login) || resp.status === 401) {
+    } else if ((json.data && json.data.need_login) || noAccessCodes.includes(resp.status)) {
       // 请求需要管理员权限
       json = await (new Promise<any>((resolve, reject) => {
         ctx.trigger('checker-admin', {

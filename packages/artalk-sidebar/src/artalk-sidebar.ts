@@ -1,14 +1,14 @@
 import Artalk from 'artalk'
-import ArtalkConfig from 'artalk/types/artalk-config'
-import { UserData } from 'artalk/types/artalk-data'
+import ArtalkConfig, { LocalUser } from 'artalk/types/artalk-config'
 import 'artalk/dist/Artalk.css'
 import Sidebar from './sidebar'
 
 class ArtalkSidebar extends Artalk {
-  constructor(customConf: ArtalkConfig, user: UserData) {
+  constructor(customConf: ArtalkConfig, user: LocalUser) {
     super(customConf)
 
     this.$root.style.display = 'none'
+    user.isAdmin = true
     this.ctx.user.data = user
     this.ctx.user.save()
 

@@ -61,7 +61,8 @@ export default class SidebarLayer extends Component {
     if (this.firstShow) {
       const $iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
       const userData = encodeURIComponent(JSON.stringify(this.ctx.user.data))
-      $iframe.src = `http://localhost:23367/?pageKey=${this.conf.pageKey}&site=${this.conf.site}&user=${userData}`
+      const baseURL = import.meta.env.MODE === 'development' ? 'http://localhost:23367/' : this.conf.server
+      $iframe.src = `${baseURL}?pageKey=${this.conf.pageKey}&site=${this.conf.site}&user=${userData}`
       this.$iframeWrap.append($iframe)
       this.firstShow = false
     }

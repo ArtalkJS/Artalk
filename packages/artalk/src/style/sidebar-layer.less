@@ -21,71 +21,18 @@
 
   .atk-sidebar-inner {
     position: relative;
+    height: 100%;
   }
 
   // Header
   .atk-sidebar-header {
+    position: absolute;
+    top: 0;
+    right: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
     border-bottom: 1px solid var(--at-color-border);
-
-    .atk-avatar {
-      display: flex;
-      width: @header-height + 5px;
-      height: @header-height;
-      align-items: center;
-      justify-content: center;
-
-      img, .atk-site-logo {
-        @height: @header-height - 30px;
-        height: @height;
-        width: @header-height - 30px;
-        border-radius: 2px;
-        background: var(--at-color-meta);
-        text-align: center;
-        line-height: @height;
-        font-size: 13px;
-        color: var(--at-color-bg);
-      }
-
-      .atk-site-logo {
-        user-select: none;
-        cursor: pointer;
-      }
-    }
-
-    .atk-menu {
-      flex: auto;
-      text-align: center;
-
-      .atk-item {
-        position: relative;
-        color: var(--at-color-sub);
-        font-size: 20px;
-        // cursor: pointer;
-        user-select: none;
-
-        &:not(:last-child) {
-          margin-right: 20px;
-        }
-
-        &.atk-active {
-          color: var(--at-color-font);
-
-          &:after {
-            content: ' ';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: var(--at-color-main);
-            opacity: .4;
-          }
-        }
-      }
-    }
 
     .atk-sidebar-close {
       display: flex;
@@ -101,6 +48,16 @@
       &:hover .atk-icon-close {
         background-color: rgba(232, 17, 35, 0.9);
       }
+    }
+  }
+
+  .atk-sidebar-iframe-wrap {
+    height: 100%;
+
+    iframe {
+      border: 0;
+      width: 100%;
+      height: 100%;
     }
   }
 }

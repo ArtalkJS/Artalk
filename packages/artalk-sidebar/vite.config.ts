@@ -1,11 +1,13 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import { version } from './package.json'
+import { version as artalkVersion } from 'artalk/package.json'
+import { version as sidebarVersion } from './package.json'
 
 export default defineConfig({
   define: {
-    ARTALK_SIDEBAR_VERSION: JSON.stringify(version)
+    ARTALK_VERSION: JSON.stringify(artalkVersion),
+    ARTALK_SIDEBAR_VERSION: JSON.stringify(sidebarVersion)
   },
   build: {
     target: 'es2015',

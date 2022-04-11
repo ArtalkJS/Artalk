@@ -15,14 +15,14 @@
 
 ---
 
-- 高效灵快
+- 高效快速
 - 异步执行
 - 跨平台兼容
 - 轻量级部署
 
 ## Supports
 
-- 运行环境：支持 Linux, Windows, Darwin (x86 + ARM)
+- 运行环境：支持 Linux, Windows, Darwin (x64 + ARM)
 - 数据存储：支持 SQLite, MySQL, PostgreSQL, SQL Server
 - 邮件发送：支持 SMTP, 阿里云邮件, 调用 sendmail 发送邮件
 - 高效缓存：支持 Redis, Memory cache
@@ -66,16 +66,16 @@ $ make docker-push
   - [x] 评论 (增/删/改)
   - [x] 页面 (增/删/改)
   - [x] 站点 (增/删/改)
+  - [x] 数据分页
   - [ ] 配置 (GUI)
-  - [ ] 数据分页
-- [x] 数据导入
+- [x] 数据导入 ([Artransfer](https://github.com/ArtalkJS/Artransfer))
   - [x] Artrans
   - [x] Artalk v1 (PHP)
-  - [ ] WordPress
+  - [x] WordPress
   - [x] Typecho
   - [x] Valine
-  - [ ] Disqus
-  - [ ] Commento
+  - [x] Disqus
+  - [x] Commento
   - [x] Twikoo
 - [x] 数据导出
 - [ ] 数据备份同步

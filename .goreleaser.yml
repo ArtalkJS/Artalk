@@ -16,6 +16,7 @@ before:
   hooks:
   # install dependencies
   - make install
+  - make build-frontend
   - make update
 
 # build multi-platform

@@ -25,3 +25,7 @@ bin/
 data/
 dist/
 pkged/pkged.go
+
+# always pull latest code and compile
+frontend/sidebar
+frontend/dist

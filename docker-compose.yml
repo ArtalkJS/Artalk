@@ -8,6 +8,5 @@ services:
       - "23366:23366"
     volumes:
       - ./email-tpl:/email-tpl
-      - ./frontend:/frontend
       - ./artalk-go.yml:/artalk-go.yml
       - ./data:/data

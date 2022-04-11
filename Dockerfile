@@ -6,25 +6,11 @@ WORKDIR /source
 # install tools
 RUN set -ex \
     && apk upgrade \
-    && apk add make git gcc musl-dev yarn
+    && apk add make git gcc musl-dev nodejs yarn
 
-# 1. build frontend (using latest tag)
-# RUN git clone https://github.com/ArtalkJS/Artalk.git Artalk \
-#     && cd Artalk \
-#     && git fetch --tags \
-#     && git checkout $(git describe --tags --abbrev=0)
-
-# RUN set -ex \
-#     && cd ./Artalk \
-#     && yarn install --network-timeout 1000000 \
-#     && yarn build
-
-# 2. build backend
 COPY . ./ArtalkGo
 
-# copy frontend dist folder
-# RUN cp -r ./Artalk/dist ./ArtalkGo/frontend
-
+# build
 RUN set -ex \
     && cd ./ArtalkGo \
     && git fetch --tags -f \

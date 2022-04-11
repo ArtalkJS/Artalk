@@ -4,27 +4,31 @@ COMMIT_HASH  := $(shell git rev-parse --short HEAD)
 DEV_VERSION  := dev-${COMMIT_HASH}
 GO_VERSION   ?= 1.16.6
 
-all: install update build
+all: install build
 
 .PHONY: install
 install:
 	go mod tidy
 	go install github.com/markbates/pkger/cmd/pkger
 
-.PHONY: update
-update:
-	pkger -include /frontend -include /email-tpl -o pkged
-
 .PHONY: build
-build: update
+build: build-frontend update
 	go build \
     	-ldflags "-s -w -X github.com/ArtalkJS/ArtalkGo/lib.Version=${VERSION} \
         -X github.com/ArtalkJS/ArtalkGo/lib.CommitHash=${COMMIT_HASH}" \
         -o bin/artalk-go \
     	github.com/ArtalkJS/ArtalkGo
 
+.PHONY: build-frontend
+build-frontend:
+	./scripts/build-frontend.sh
+
+.PHONY: update
+update:
+	pkger -include /frontend -include /email-tpl -o pkged
+
 .PHONY: run
-run: update build
+run: all
 	./bin/artalk-go serve $(ARGS)
 
 .PHONY: dev

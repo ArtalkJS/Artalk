@@ -133,7 +133,7 @@ export default class SidebarLayer extends Component {
           this.iframeLoad(url)
           $errAlert.remove()
         }
-        $cancelBtn.onclick = () => {
+        $cancelBtn.onclick = () => { // 提供取消按钮，防止误判
           $errAlert.remove()
         }
         this.$iframeWrap.append($errAlert)

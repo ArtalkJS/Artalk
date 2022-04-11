@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/jeremywohl/flatten"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/tidwall/gjson"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
@@ -48,6 +49,11 @@ func StructToFlatDotMap(s interface{}) map[string]interface{} {
 }
 
 func Marked(markdownStr string) (string, error) {
+	bmPolicy := bluemonday.UGCPolicy()
+	bmPolicy.RequireNoReferrerOnLinks(true)
+	bmPolicy.AllowAttrs("width", "height", "align").OnElements("img")
+	bmPolicy.AllowAttrs("style", "class", "align").OnElements("span", "p", "div", "a")
+
 	// https://github.com/yuin/goldmark#security
 	md := goldmark.New(
 		goldmark.WithExtensions(extension.GFM),
@@ -57,6 +63,7 @@ func Marked(markdownStr string) (string, error) {
 		goldmark.WithRendererOptions(
 			html.WithHardWraps(),
 			html.WithXHTML(),
+			html.WithUnsafe(),
 		),
 	)
 
@@ -65,7 +72,7 @@ func Marked(markdownStr string) (string, error) {
 		return "", err
 	}
 
-	return buf.String(), nil
+	return bmPolicy.SanitizeReader(&buf).String(), nil
 }
 
 func AddQueryToURL(urlStr string, queryMap map[string]string) string {

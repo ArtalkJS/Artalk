@@ -94,18 +94,8 @@ function Detect (userAgent) {
   }
   // 系统版本信息
   var osVersion = {
-    Windows: async function () {
+    Windows: function () {
       var v = u.replace(/^.*Windows NT ([\d.]+);.*$/, '$1')
-      if (v==10){
-        return await nav.userAgentData.getHighEntropyValues(["platformVersion"]).then(ua => {
-          const majorPlatformVersion = parseInt(ua.platformVersion.split('.')[0])
-          if (majorPlatformVersion >= 13) {
-            return '11'
-           }else{
-             return '10'
-           }
-        })
-      }
       var hash = {
         6.4: '10',
         6.3: '8.1',
@@ -114,7 +104,9 @@ function Detect (userAgent) {
         '6.0': 'Vista',
         5.2: 'XP',
         5.1: 'XP',
-        '5.0': '2000'
+        '5.0': '2000',
+        '10.0': '10',
+        '11.0': '11' // 自定的，不是微软官方的判断方法
       }
       return hash[v] || v
     },

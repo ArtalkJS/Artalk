@@ -7,7 +7,7 @@ const user = JSON.parse(searchParams.get('user') || '{}')
 
 const artalkSidebar = new ArtalkSidebar({
   el: '#ArtalkSidebar',
-  server: (['localhost', '127.0.0.1'].includes(window.location.hostname)) ? 'http://localhost:23366/api' : '/api',
+  server: (import.meta.env.MODE === 'development') ? 'http://localhost:23366/api' : '../api',
   pageKey,
   site
 }, user)

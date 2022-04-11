@@ -2,8 +2,7 @@ module.exports = {
   root: true,
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    sourceType: 'module',
-    ecmaVersion: 2021
+    project: 'tsconfig.json'
   },
   extends: [
     'airbnb-base',

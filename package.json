@@ -1,45 +1,16 @@
 {
-  "name": "artalk",
-  "version": "2.1.4",
-  "description": "A Selfhosted Comment System",
-  "keywords": [
-    "comment-system",
-    "comments-widget",
-    "comment",
-    "comments",
-    "blog"
+  "name": "artalk-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
   "homepage": "https://artalk.js.org",
-  "bugs": "https://github.com/ArtalkJS/Artalk/issue",
-  "license": "GPL-3.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ArtalkJS/Artalk.git"
-  },
-  "main": "./dist/Artalk.js",
-  "unpkg": "./dist/Artalk.iife.js",
-  "jsdelivr": "./dist/Artalk.iife.js",
-  "module": "./dist/Artalk.es.js",
-  "types": "./types/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/Artalk.es.js",
-      "require": "./dist/Artalk.js"
-    }
-  },
   "scripts": {
-    "dev": "vite",
-    "build": "yarn lint && vite build",
-    "build:demo": "vite build --config vite-demo.config.ts",
-    "serve": "vite preview",
-    "deploy": "gh-pages -d deploy",
-    "predeploy": "yarn run build && yarn run build:demo && yarn run copy:deploy",
-    "copy:deploy": "cp -r dist deploy && cp CNAME deploy",
-    "lint": "eslint --ext .js,.ts src"
+    "build": "yarn --cwd packages/artalk run build",
+    "dev": "yarn --cwd packages/artalk run dev"
   },
   "devDependencies": {
     "@rollup/plugin-dynamic-import-vars": "^1.4.1",
-    "@types/marked": "^4.0.1",
     "@types/node": "^16.11.7",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
@@ -56,9 +27,5 @@
     "vite": "^2.6.14",
     "vite-tsconfig-paths": "^3.3.17"
   },
-  "dependencies": {
-    "hanabi": "^0.4.0",
-    "insane": "^2.6.2",
-    "marked": "^4.0.3"
-  }
+  "dependencies": {}
 }

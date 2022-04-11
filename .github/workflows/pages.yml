@@ -12,19 +12,23 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
     - name: Setup
       uses: actions/setup-node@v1
       with:
         node-version: '12.x'
+
     - name: Install
       run: yarn install
+
     - name: Build
-      run: yarn predeploy
+      run: cd packages/artalk && yarn predeploy
+
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_branch: gh-pages
-        publish_dir: ./deploy
+        publish_dir: ./packages/artalk/deploy
         user_name: 'github-actions[bot]'
         user_email: 'github-actions[bot]@users.noreply.github.com'

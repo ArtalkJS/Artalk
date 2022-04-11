@@ -1,11 +1,12 @@
-import Api from '~/src/api'
-import Context from '../../context'
-import Component from '../../lib/component'
-import * as Utils from '../../lib/utils'
-import * as Ui from '../../lib/ui'
+import Api from 'artalk/src/api'
+import Context from 'artalk/src/context'
+import Component from 'artalk/src/lib/component'
+import * as Utils from 'artalk/src/lib/utils'
+import * as Ui from 'artalk/src/lib/ui'
+import Comment from 'artalk/src/components/comment'
+import Pagination, { PaginationConf } from 'artalk/src/components/pagination'
+
 import PageList from '../admin/page-list'
-import Comment from '../comment'
-import Pagination, { PaginationConf } from '../pagination'
 import SidebarView from '../sidebar-view'
 
 const PAGE_SIZE = 20

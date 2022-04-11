@@ -1,7 +1,7 @@
-import Context from '../context'
-import Component from '../lib/component'
-import * as Utils from '../lib/utils'
-import Comment from './comment'
+import Context from 'artalk/src/context'
+import Component from 'artalk/src/lib/component'
+import * as Utils from 'artalk/src/lib/utils'
+import Comment from 'artalk/src/components/comment'
 
 export default class SidebarView extends Component {
   static viewName = ''

@@ -7,7 +7,7 @@ import defaults from './defaults'
 import CheckerLauncher from './lib/checker'
 import Editor from './components/editor'
 import List from './components/list'
-import Sidebar from './components/sidebar'
+import SidebarLayer from './components/sidebar-layer'
 
 import { GetLayerWrap } from './components/layer'
 import { EventPayloadMap, Handler } from '~/types/event'
@@ -26,7 +26,7 @@ export default class Artalk {
   public checkerLauncher: CheckerLauncher
   public editor: Editor
   public list: List
-  public sidebar: Sidebar
+  public sidebarLayer: SidebarLayer
 
   constructor (customConf: ArtalkConfig) {
     // 配置
@@ -68,8 +68,8 @@ export default class Artalk {
     this.$root.appendChild(this.list.$el)
 
     // 侧边栏
-    this.sidebar = new Sidebar(this.ctx)
-    this.$root.appendChild(this.sidebar.$el)
+    this.sidebarLayer = new SidebarLayer(this.ctx)
+    this.$root.appendChild(this.sidebarLayer.$el)
 
     // 评论获取
     this.list.fetchComments(0)

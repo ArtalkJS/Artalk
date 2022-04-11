@@ -1,6 +1,7 @@
 import Context from '../context'
 import { CommentData, ListData, UserData, PageData, SiteData, NotifyData } from '~/types/artalk-data'
 import { Fetch, ToFormData, POST, GET } from './request'
+import * as Utils from '../lib/utils'
 
 export default class Api {
   private ctx: Context
@@ -44,6 +45,7 @@ export default class Api {
       content: comment.content,
       rid: comment.rid,
       page_key: comment.page_key,
+      ua: await Utils.getCorrectUserAgent(), // 需要后端支持，获取修正后的 UA (针对 Win11)
     }
 
     if (comment.page_title) params.page_title = comment.page_title

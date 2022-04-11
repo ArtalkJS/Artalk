@@ -1,9 +1,10 @@
-import Api from '~/src/api'
-import Context from '../../context'
-import Component from '../../lib/component'
-import * as Utils from '../../lib/utils'
+import Api from 'artalk/src/api'
+import Context from 'artalk/src/context'
+import Component from 'artalk/src/lib/component'
+import * as Utils from 'artalk/src/lib/utils'
+import Comment from 'artalk/src/components/comment'
+
 import SiteList from '../admin/site-list'
-import Comment from '../comment'
 import SidebarView from '../sidebar-view'
 
 export default class SettingView extends SidebarView {

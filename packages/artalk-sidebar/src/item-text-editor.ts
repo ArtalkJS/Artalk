@@ -1,6 +1,6 @@
-import '../style/item-text-editor.less'
+import './style/item-text-editor.less'
 
-import * as Utils from '../lib/utils'
+import * as Utils from 'artalk/src/lib/utils'
 
 interface ItemTextEditorConf {
   initValue?: string

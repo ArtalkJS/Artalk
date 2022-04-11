@@ -1,10 +1,10 @@
-import '@/style/site-list.less'
+import '../style/site-list.less'
 
-import Context from '@/context'
-import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
-import { SiteData } from '~/types/artalk-data'
-import Api from '~/src/api'
+import Context from 'artalk/src/context'
+import * as Utils from 'artalk/src/lib/utils'
+import * as Ui from 'artalk/src/lib/ui'
+import { SiteData } from 'artalk/types/artalk-data'
+import Api from 'artalk/src/api'
 
 interface SiteListFloaterConf {
   onSwitchSite: (siteName: string) => boolean|void

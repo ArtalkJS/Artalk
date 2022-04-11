@@ -7,7 +7,8 @@
   "homepage": "https://artalk.js.org",
   "scripts": {
     "build": "yarn --cwd packages/artalk run build",
-    "dev": "yarn --cwd packages/artalk run dev"
+    "dev": "yarn --cwd packages/artalk run dev",
+    "build:sidebar": "yarn run build && yarn --cwd packages/artalk-sidebar run build"
   },
   "devDependencies": {
     "@rollup/plugin-dynamic-import-vars": "^1.4.1",

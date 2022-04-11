@@ -1,13 +1,13 @@
-import '@/style/page-list.less'
+import '../style/page-list.less'
 
-import Context from '@/context'
-import Component from '@/lib/component'
-import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
-import { PageData } from '~/types/artalk-data'
+import Context from 'artalk/src/context'
+import Component from 'artalk/src/lib/component'
+import * as Utils from 'artalk/src/lib/utils'
+import * as Ui from 'artalk/src/lib/ui'
+import { PageData } from 'artalk/types/artalk-data'
+import Api from 'artalk/src/api'
+import ActionBtn from 'artalk/src/components/action-btn'
 import ItemTextEditor from '../item-text-editor'
-import Api from '~/src/api'
-import ActionBtn from '../action-btn'
 
 export default class PageList extends Component {
   $editor?: HTMLElement

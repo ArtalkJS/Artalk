@@ -1,23 +1,24 @@
-import '../style/sidebar.less'
+import './style/sidebar.less'
 
-import MD5 from '../lib/md5'
-import Context from '../context'
-import Component from '../lib/component'
-import * as Utils from '../lib/utils'
-import * as Ui from '../lib/ui'
-import Comment  from './comment'
-import SidebarHTML from './html/sidebar.html?raw'
-import Layer from './layer'
+import Context from 'artalk/src/context'
+import Component from 'artalk/src/lib/component'
+import * as Utils from 'artalk/src/lib/utils'
+import * as Ui from 'artalk/src/lib/ui'
+import Comment  from 'artalk/src/components/comment'
+import { SiteData } from 'artalk/types/artalk-data'
+import Api from 'artalk/src/api'
+
+import SidebarHTML from './sidebar.html?raw'
 
 import SidebarView from './sidebar-view'
 import CommentsView from './sidebar-views/comments-view'
 import PagesView from './sidebar-views/pages-view'
 import SitesView from './sidebar-views/sites-view'
 import TransferView from './sidebar-views/transfer-view'
-import { SiteData } from '~/types/artalk-data'
-import Api from '../api'
 import SiteListFloater from './admin/site-list-floater'
 import SettingView from './sidebar-views/setting-view'
+
+import MD5 from './lib/md5'
 
 const DEFAULT_VIEW = 'comments'
 const REGISTER_VIEWS: (typeof SidebarView)[] = [
@@ -25,8 +26,6 @@ const REGISTER_VIEWS: (typeof SidebarView)[] = [
 ]
 
 export default class Sidebar extends Component {
-  public layer?: Layer
-
   public $header: HTMLElement
   public $headerMenu: HTMLElement
   public $title: HTMLElement
@@ -135,26 +134,6 @@ export default class Sidebar extends Component {
 
   /** 显示 */
   public async show() {
-    this.$el.style.transform = '' // 动画清除，防止二次打开失效
-
-    // 获取 Layer
-    this.layer = new Layer(this.ctx, 'sidebar', this.$el)
-    this.layer.afterHide = () => {
-      // 防止评论框被吞
-      if (this.ctx.conf.editorTravel === true) {
-        this.ctx.trigger('editor-travel-back')
-      }
-    }
-    this.layer.show()
-
-    // viewWrap 滚动条归位
-    this.$viewWrap.scrollTo(0, 0)
-
-    // 执行动画
-    setTimeout(() => {
-      this.$el.style.transform = 'translate(0, 0)'
-    }, 20)
-
     // 第一次加载
     if (this.firstShow) {
       ///////////////////
@@ -218,12 +197,8 @@ export default class Sidebar extends Component {
     }
   }
 
-  /** 隐藏 */
-  public hide() {
-    // 执行动画
-    this.$el.style.transform = ''
-
-    this.layer?.hide()
+  public async hide() {
+    console.log("hide")
   }
 
   /** 切换 View */

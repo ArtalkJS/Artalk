@@ -1,10 +1,11 @@
-import Api from '~/src/api'
-import Context from '../../context'
-import Component from '../../lib/component'
-import * as Utils from '../../lib/utils'
-import * as Ui from '../../lib/ui'
+import Api from 'artalk/src/api'
+import Context from 'artalk/src/context'
+import Component from 'artalk/src/lib/component'
+import * as Utils from 'artalk/src/lib/utils'
+import * as Ui from 'artalk/src/lib/ui'
+import Comment from 'artalk/src/components/comment'
+
 import SiteList from '../admin/site-list'
-import Comment from '../comment'
 import SidebarView from '../sidebar-view'
 
 export default class TransferView extends SidebarView {ß
@@ -40,31 +41,20 @@ export default class TransferView extends SidebarView {ß
       <div class="atk-log"></div>
     </div>
     <div class="atk-form">
-    <div class="atk-label">数据类型</div>
-    <select name="AtkDataType">
-      <option value="artrans">Artrans (数据行囊)</option>
-      <option value="artalk_v1">Artalk v1 (PHP 旧版)</option>
-      <option value="typecho">Typecho</option>
-      <option value="wordpress">WordPress</option>
-      <option value="disqus">Disqus</option>
-      <option value="commento">Commento</option>
-      <option value="valine">Valine</option>
-      <option value="twikoo">Twikoo</option>
-    </select>
-    <div class="atk-label atk-data-file-label">数据文件</div>
-    <input type="file" name="AtkDataFile" accept="text/plain,.json">
+    <div class="atk-label atk-data-file-label">Artrans 数据文件</div>
+    <input type="file" name="AtkDataFile" accept="text/plain,.json,.artrans">
+    <span class="atk-desc">使用「<a href="https://artalk.js.org/guide/transfer.html" target="_blank">转换工具</a>」将评论数据转为 Artrans 格式</span>
     <div class="atk-label">目标站点名</div>
     <input type="text" name="AtkSiteName" placeholder="输入内容..." autocomplete="off">
     <div class="atk-label">目标站点 URL</div>
     <input type="text" name="AtkSiteURL" placeholder="输入内容..." autocomplete="off">
     <div class="atk-label">启动参数（可选）</div>
     <textarea name="AtkPayload"></textarea>
-    <span class="atk-desc">启动参数查阅：“<a href="https://artalk.js.org/guide/transfer.html" target="_blank">文档 · 数据搬家</a>”</span>
+    <span class="atk-desc">参考「<a href="https://artalk.js.org/guide/transfer.html" target="_blank">文档 · 数据迁移</a>」</span>
     <button class="atk-btn" name="AtkSubmit">导入</button>
     </div>`
 
     const $form = this.$el.querySelector<HTMLSelectElement>('.atk-form')!
-    const $dataType = $form.querySelector<HTMLSelectElement>('[name="AtkDataType"]')!
     const $dataFile = $form.querySelector<HTMLInputElement>('[name="AtkDataFile"]')!
     const $dataFileLabel = $form.querySelector<HTMLInputElement>('.atk-data-file-label')!
     const $siteName = $form.querySelector<HTMLInputElement>('[name="AtkSiteName"]')!
@@ -73,26 +63,11 @@ export default class TransferView extends SidebarView {ß
     const $submitBtn = $form.querySelector<HTMLButtonElement>('[name="AtkSubmit"]')!
     const setError = (msg: string) => window.alert(msg)
 
-    $dataType.onchange = () => {
-      if (['typecho'].includes($dataType.value)) {
-        $dataFile.style.display = 'none'
-        $dataFileLabel.style.display = 'none'
-      } else {
-        $dataFile.style.display = ''
-        $dataFileLabel.style.display = ''
-      }
-    }
-
     $submitBtn.onclick = () => {
-      const dataType = $dataType.value.trim()
+      const dataType = 'artrans'
       const siteName = $siteName.value.trim()
       const siteURL = $siteURL.value.trim()
       const payload = $payload.value.trim()
-
-      if (dataType === '') {
-        setError('请选择数据类型')
-        return
-      }
 
       // 请求 payload 参数制备
       let rData: any = {}

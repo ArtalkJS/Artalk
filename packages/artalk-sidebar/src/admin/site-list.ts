@@ -1,12 +1,12 @@
-import '@/style/site-list.less'
+import '../style/site-list.less'
 
-import Context from '@/context'
-import Component from '@/lib/component'
-import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
-import { SiteData } from '~/types/artalk-data'
+import Context from 'artalk/src/context'
+import Component from 'artalk/src/lib/component'
+import * as Utils from 'artalk/src/lib/utils'
+import * as Ui from 'artalk/src/lib/ui'
+import { SiteData } from 'artalk/types/artalk-data'
+import Api from 'artalk/src/api'
 import ItemTextEditor from '../item-text-editor'
-import Api from '~/src/api'
 
 export default class SiteList extends Component {
   sites: SiteData[] = []

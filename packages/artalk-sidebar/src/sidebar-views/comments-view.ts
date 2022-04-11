@@ -1,7 +1,8 @@
-import Context from '../../context'
+import Context from 'artalk/src/context'
+import * as Utils from 'artalk/src/lib/utils'
+import ListLite from 'artalk/src/components/list-lite'
+
 import SidebarView from '../sidebar-view'
-import * as Utils from '../../lib/utils'
-import ListLite from '../list-lite'
 
 export default class MessageView extends SidebarView {
   static viewName = 'comments'

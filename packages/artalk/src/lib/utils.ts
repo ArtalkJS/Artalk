@@ -178,3 +178,28 @@ export function marked(ctx: Context, src: string): string {
 
   return markedInstance.parse(src)
 }
+
+/** 获取修正后的 UserAgent */
+export async function getCorrectUserAgent() {
+  const uaRaw = navigator.userAgent
+  const uaData = (navigator as any).userAgentData // @link https://web.dev/migrate-to-ua-ch/
+  if (!uaData || !uaData.getHighEntropyValues) {
+    return uaRaw
+  }
+
+  // microsoft f******k you!!!!!
+  // @link https://docs.microsoft.com/en-us/microsoft-edge/web-platform/how-to-detect-win11
+  let uaGot: any = null
+  try {
+    uaGot = await uaData.getHighEntropyValues(["platformVersion"])
+  } catch (err) { console.error(err); return uaRaw }
+
+  if (uaData.platform !== "Windows") { return uaRaw }
+  const majorPlatformVersion = Number(uaGot.platformVersion.split('.')[0])
+  if (majorPlatformVersion >= 13) {
+    // Win11 样本："Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+    return uaRaw.replace(/Windows\W+NT\W+10.0/, 'Windows NT 11.0')
+  }
+
+  return uaRaw
+}

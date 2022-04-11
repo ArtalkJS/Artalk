@@ -54,7 +54,7 @@
       el: '#comments',
       pageKey: 'https://artalk.js.org/',
       pageTitle: 'Artalk Home',
-      server: (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://localhost:23366/api' : 'https://artalk.qwqaq.com/api',
+      server: (import.meta.env.MODE === 'development') ? 'http://localhost:23366/api' : 'https://artalk.qwqaq.com/api',
       site: 'ArtalkDemo',
     });
 

@@ -67,24 +67,23 @@ export default class SidebarLayer extends Component {
         : `${this.conf.server.replace(/\/$/, '')}/../sidebar/`
       const userData = encodeURIComponent(JSON.stringify(this.ctx.user.data))
 
-      this.$iframe.src = `${baseURL}`
+      this.iframeLoad(`${baseURL}`
         + `?pageKey=${encodeURIComponent(this.conf.pageKey)}`
         + `&site=${encodeURIComponent(this.conf.site || '')}`
         + `&user=${userData}`
+        + `${((this.conf.darkMode) ? `&darkMode=1` : ``)}`)
 
       this.$iframeWrap.append(this.$iframe)
       this.firstShow = false
+    } else {
+      // 暗黑模式
+      if (this.conf.darkMode && !this.$iframe!.src.match(/darkMode=1$/)) {
+        this.iframeLoad(`${this.$iframe!.src}&darkMode=1`)
+      }
+      if (!this.conf.darkMode && this.$iframe!.src.match(/darkMode=1$/)) {
+        this.iframeLoad(this.$iframe!.src.replace(/&darkMode=1$/, ''))
+      }
     }
-
-    // 暗黑模式
-    if (this.conf.darkMode && !this.$iframe!.src.match(/darkMode=1$/)) {
-      this.$iframe!.src = `${this.$iframe!.src}&darkMode=1`
-    }
-    if (!this.conf.darkMode && this.$iframe!.src.match(/darkMode=1$/)) {
-      this.$iframe!.src = this.$iframe!.src.replace(/&darkMode=1$/, '')
-    }
-
-
   }
 
   /** 隐藏 */
@@ -93,5 +92,17 @@ export default class SidebarLayer extends Component {
     this.$el.style.transform = ''
 
     this.layer?.hide()
+  }
+
+  public iframeLoad(src: string) {
+    if (!this.$iframe) return
+
+    this.$iframe.src = src
+
+    // 加载动画
+    Ui.showLoading(this.$iframeWrap)
+    this.$iframe.onload = () => {
+      Ui.hideLoading(this.$iframeWrap)
+    }
   }
 }

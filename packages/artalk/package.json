@@ -26,6 +26,10 @@
     ".": {
       "import": "./dist/Artalk.es.js",
       "require": "./dist/Artalk.js"
+    },
+    "./dist/Artalk.css": {
+      "import": "./dist/Artalk.css",
+      "require": "./dist/Artalk.css"
     }
   },
   "scripts": {

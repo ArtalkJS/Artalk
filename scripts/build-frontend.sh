@@ -4,7 +4,15 @@ set -e
 
 if ! command -v yarn &> /dev/null
 then
-    apt-get update && apt-get install --no-install-recommends -y -q nodejs yarn
+    apt-get update && apt-get install --no-install-recommends -y -q curl ca-certificates
+    
+    # Install volta
+    export VOLTA_HOME="${HOME}/.volta"
+    export PATH="${VOLTA_HOME}/bin:${PATH}"
+    bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
+
+    volta install node
+    volta install yarn
 fi
 
 mkdir -p ./local/

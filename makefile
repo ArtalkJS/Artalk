@@ -71,6 +71,7 @@ release-dry-run:
 
 .PHONY: release
 # https://hub.docker.com/r/troian/golang-cross
+# https://github.com/troian/golang-cross
 # https://goreleaser.com/cmd/goreleaser_release/
 # --skip-validate 参数跳过 git checks (由于 pkger 和 .release-env 文件生成)
 release:

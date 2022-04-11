@@ -1,0 +1,35 @@
+{
+  "name": "@artalkjs/artalk-sidebar",
+  "version": "0.1.0",
+  "license": "GPL-2.0",
+  "description": "The sidebar of artalk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArtalkJS/Artalk.git",
+    "directory": "packages/artalk-sidebar"
+  },
+  "homepage": "https://artalk.js.org",
+  "bugs": "https://github.com/ArtalkJS/Artalk/issue",
+  "main": "./dist/ArtalkSidebar.js",
+  "unpkg": "./dist/ArtalkSidebar.iife.js",
+  "jsdelivr": "./dist/ArtalkSidebar.iife.js",
+  "module": "./dist/ArtalkSidebar.es.js",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/ArtalkSidebar.es.js",
+      "require": "./dist/ArtalkSidebar.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "yarn lint && vite build",
+    "serve": "vite preview",
+    "lint": "eslint --ext .js,.ts src"
+  },
+  "devDependencies": {
+  },
+  "dependencies": {
+    "artalk": "*"
+  }
+}

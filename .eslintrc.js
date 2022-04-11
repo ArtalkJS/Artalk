@@ -2,7 +2,8 @@ module.exports = {
   root: true,
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: 'tsconfig.json'
+    project: ['./packages/*/tsconfig.json'],
+    tsconfigRootDir: __dirname,
   },
   extends: [
     'airbnb-base',
@@ -29,7 +30,9 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
-      typescript: {},
+      typescript: {
+        "project": ['./packages/*/tsconfig.json']
+      },
     },
   },
 }

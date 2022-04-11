@@ -6,7 +6,7 @@ WORKDIR /source
 # install tools
 RUN set -ex \
     && apk upgrade \
-    && apk add make git gcc musl-dev nodejs yarn
+    && apk add make git gcc musl-dev nodejs yarn bash
 
 COPY . ./ArtalkGo
 

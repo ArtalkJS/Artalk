@@ -1,13 +1,13 @@
-import '../style/sidebar.less'
+import '../style/sidebar-layer.less'
 
 import Context from '@/context'
 import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
-import SidebarHTML from './html/sidebar.html?raw'
+import SidebarHTML from './html/sidebar-layer.html?raw'
 import * as Ui from '@/lib/ui'
 import Layer from './layer'
 
-export default class Sidebar extends Component {
+export default class SidebarLayer extends Component {
   public layer?: Layer
   public $header: HTMLElement
   public $closeBtn: HTMLElement

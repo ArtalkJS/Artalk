@@ -1,0 +1,50 @@
+.atk-page-list {
+  .atk-page-item {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    min-height: 120px;
+    align-items: center;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--at-color-border);
+    }
+  }
+
+  .atk-page-main {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    padding: 20px 30px;
+
+    .atk-title {
+      color: var(--at-color-font);
+      font-size: 21px;
+      margin-bottom: 10px;
+    }
+
+    .atk-sub {
+      color: var(--at-color-sub);
+      font-size: 14px;
+    }
+  }
+
+  .atk-page-main-actions {
+    .atk-list-text-actions();
+  }
+
+  .atk-page-actions {
+    .atk-list-btn-actions();
+  }
+
+  .atk-page-edit-layer {
+    z-index: 999;
+    background: var(--at-color-bg);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+}

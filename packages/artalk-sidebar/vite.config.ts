@@ -35,4 +35,11 @@ export default defineConfig({
     }
   },
   plugins: [tsconfigPaths()],
+  css: {
+    preprocessorOptions: {
+      less: {
+         additionalData: `@import "./src/style/_variables.less";@import "./src/style/_extend.less";`
+     },
+    },
+  },
 })

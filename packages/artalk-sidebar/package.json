@@ -22,7 +22,7 @@
     }
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 23367",
     "build": "yarn lint && vite build",
     "serve": "vite preview",
     "lint": "eslint --ext .js,.ts src"

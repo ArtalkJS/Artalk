@@ -29,9 +29,6 @@ type Map = map[string]interface{}
 var Supports = []interface{}{
 	ArtransImporter,
 	TypechoImporter,
-	ValineImporter,
-	TwikooImporter,
-	ArtalkV1Importer,
 }
 
 func RunByName(dataType string, payload []string) {
@@ -47,7 +44,7 @@ func RunByName(dataType string, payload []string) {
 
 		print("\n")
 		tableData := []table.Row{
-			{"数据搬家 - 导入"},
+			{"数据迁移 - 导入"},
 			{strings.ToUpper(name)},
 			{desc},
 		}

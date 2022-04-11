@@ -4,10 +4,12 @@ const searchParams = new URLSearchParams(document.location.search)
 const pageKey = searchParams.get('pageKey') || ''
 const site = searchParams.get('site') || ''
 const user = JSON.parse(searchParams.get('user') || '{}')
+const darkMode = searchParams.get('darkMode') === '1'
 
 const artalkSidebar = new ArtalkSidebar({
   el: '#ArtalkSidebar',
   server: (import.meta.env.MODE === 'development') ? 'http://localhost:23366/api' : '../api',
   pageKey,
-  site
+  site,
+  darkMode,
 }, user)

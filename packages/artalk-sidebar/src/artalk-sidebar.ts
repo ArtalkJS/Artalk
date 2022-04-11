@@ -19,6 +19,10 @@ class ArtalkSidebar extends Artalk {
     const sidebar = new Sidebar(this.ctx)
     document.body.appendChild(sidebar.$el)
 
+    if (customConf.darkMode) {
+      sidebar.$el.classList.add('atk-dark-mode')
+    }
+
     sidebar.show()
     console.log('hello artalk-sidebar')
   }

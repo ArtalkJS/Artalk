@@ -11,7 +11,8 @@ export default class SidebarLayer extends Component {
   public layer?: Layer
   public $header: HTMLElement
   public $closeBtn: HTMLElement
-  public $iframeWrap: HTMLIFrameElement
+  public $iframeWrap: HTMLElement
+  public $iframe?: HTMLIFrameElement
 
   constructor(ctx: Context) {
     super(ctx)
@@ -29,8 +30,6 @@ export default class SidebarLayer extends Component {
     this.ctx.on('sidebar-show', () => (this.show()))
     this.ctx.on('sidebar-hide', () => (this.hide()))
     this.ctx.on('user-changed', () => { this.firstShow = true })
-
-    console.log('hello Sidebar')
   }
 
   private firstShow = true
@@ -40,11 +39,13 @@ export default class SidebarLayer extends Component {
     this.$el.style.transform = '' // 动画清除，防止二次打开失效
 
     // 获取 Layer
-    this.layer = new Layer(this.ctx, 'sidebar', this.$el)
-    this.layer.afterHide = () => {
-      // 防止评论框被吞
-      if (this.ctx.conf.editorTravel === true) {
-        this.ctx.trigger('editor-travel-back')
+    if (this.layer == null) {
+      this.layer = new Layer(this.ctx, 'sidebar', this.$el)
+      this.layer.afterHide = () => {
+        // 防止评论框被吞
+        if (this.ctx.conf.editorTravel === true) {
+          this.ctx.trigger('editor-travel-back')
+        }
       }
     }
     this.layer.show()
@@ -60,13 +61,30 @@ export default class SidebarLayer extends Component {
     // 第一次加载
     if (this.firstShow) {
       this.$iframeWrap.innerHTML = ''
-      const $iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
+      this.$iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
+
+      const baseURL = (import.meta.env.MODE === 'development')  ? 'http://localhost:23367/'
+        : `${this.conf.server.replace(/\/$/, '')}/../sidebar/`
       const userData = encodeURIComponent(JSON.stringify(this.ctx.user.data))
-      const baseURL = (import.meta.env.MODE === 'development') ? 'http://localhost:23367/' : this.conf.server
-      $iframe.src = `${baseURL}?pageKey=${this.conf.pageKey}&site=${this.conf.site}&user=${userData}`
-      this.$iframeWrap.append($iframe)
+
+      this.$iframe.src = `${baseURL}`
+        + `?pageKey=${encodeURIComponent(this.conf.pageKey)}`
+        + `&site=${encodeURIComponent(this.conf.site || '')}`
+        + `&user=${userData}`
+
+      this.$iframeWrap.append(this.$iframe)
       this.firstShow = false
     }
+
+    // 暗黑模式
+    if (this.conf.darkMode && !this.$iframe!.src.match(/darkMode=1$/)) {
+      this.$iframe!.src = `${this.$iframe!.src}&darkMode=1`
+    }
+    if (!this.conf.darkMode && this.$iframe!.src.match(/darkMode=1$/)) {
+      this.$iframe!.src = this.$iframe!.src.replace(/&darkMode=1$/, '')
+    }
+
+
   }
 
   /** 隐藏 */

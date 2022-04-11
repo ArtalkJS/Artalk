@@ -5,6 +5,7 @@ import { version as artalkVersion } from 'artalk/package.json'
 import { version as sidebarVersion } from './package.json'
 
 export default defineConfig({
+  base: './',
   define: {
     ARTALK_VERSION: JSON.stringify(artalkVersion),
     ARTALK_SIDEBAR_VERSION: JSON.stringify(sidebarVersion)
@@ -13,15 +14,15 @@ export default defineConfig({
     target: 'es2015',
     outDir: resolve(__dirname, "dist"),
     minify: 'terser',
-    lib: {
-      entry: resolve(__dirname, 'src/main.ts'),
-      name: 'ArtalkSidebar',
-      fileName: (format) => ((format == "umd") ? 'ArtalkSidebar.js' : `ArtalkSidebar.${format}.js`),
-      formats: ["es", "umd", "iife"]
-    },
+    // lib: {
+    //   entry: resolve(__dirname, 'src/main.ts'),
+    //   name: 'ArtalkSidebar',
+    //   fileName: (format) => ((format == "umd") ? 'ArtalkSidebar.js' : `ArtalkSidebar.${format}.js`),
+    //   formats: ["es", "umd", "iife"]
+    // },
     rollupOptions: {
       // 确保外部化处理那些你不想打包进库的依赖
-      external: ['artalk'],
+      // external: ['artalk'],
       output: {
         assetFileNames: assetInfo => {
           if (/\.css$/.test(assetInfo.name)) {

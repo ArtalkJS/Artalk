@@ -48,7 +48,7 @@ export default interface ArtalkConfig {
   }
 
   /** 内容限高 */
-  heightLimit: {
+  heightLimit?: {
     /** 评论内容限高 */
     content?: number
 

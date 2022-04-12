@@ -26,12 +26,8 @@ log:
 
 # 可信域名
 trusted_domains:
+  # - "*" # 无限制
   - "https://artalk.你的域名:23366"
-
-# 允许跨域访问的域名
-allow_origins:
-  - "*" # '*' 跨域无限制
-# - 'http://localhost:8080'
 
 # SSL
 ssl:

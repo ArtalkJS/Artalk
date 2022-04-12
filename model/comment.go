@@ -28,6 +28,7 @@ type Comment struct {
 
 	IsCollapsed bool // 折叠
 	IsPending   bool // 待审
+	IsPinned    bool // 置顶
 
 	User User `gorm:"foreignKey:UserID;references:ID"`
 	Page Page `gorm:"foreignKey:PageKey;references:Key"`
@@ -108,6 +109,7 @@ type CookedComment struct {
 	Date           string `json:"date"`
 	IsCollapsed    bool   `json:"is_collapsed"`
 	IsPending      bool   `json:"is_pending"`
+	IsPinned       bool   `json:"is_pinned"`
 	IsAllowReply   bool   `json:"is_allow_reply"`
 	Rid            uint   `json:"rid"`
 	BadgeName      string `json:"badge_name"`
@@ -133,6 +135,7 @@ func (c *Comment) ToCooked() CookedComment {
 		Date:           c.CreatedAt.Local().Format("2006-01-02 15:04:05"),
 		IsCollapsed:    c.IsCollapsed,
 		IsPending:      c.IsPending,
+		IsPinned:       c.IsPinned,
 		IsAllowReply:   c.IsAllowReply(),
 		Rid:            c.Rid,
 		BadgeName:      user.BadgeName,
@@ -187,6 +190,7 @@ func (c *Comment) ToCookedForEmail() CookedCommentForEmail {
 			UA:             c.UA,
 			IsCollapsed:    c.IsCollapsed,
 			IsPending:      c.IsPending,
+			IsPinned:       c.IsPinned,
 			IsAllowReply:   c.IsAllowReply(),
 			Rid:            c.Rid,
 			BadgeName:      user.BadgeName,
@@ -255,6 +259,7 @@ func (c *Comment) ToArtran() Artran {
 		IP:            c.IP,
 		IsCollapsed:   lib.ToString(c.IsCollapsed),
 		IsPending:     lib.ToString(c.IsPending),
+		IsPinned:      lib.ToString(c.IsPinned),
 		VoteUp:        lib.ToString(c.VoteUp),
 		VoteDown:      lib.ToString(c.VoteDown),
 		CreatedAt:     c.CreatedAt.String(),

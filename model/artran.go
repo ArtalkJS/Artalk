@@ -12,6 +12,7 @@ type Artran struct {
 	IP          string `json:"ip"`
 	IsCollapsed string `json:"is_collapsed"` // bool => string "true" or "false"
 	IsPending   string `json:"is_pending"`   // bool
+	IsPinned    string `json:"is_pinned"`    // bool
 
 	// vote
 	VoteUp   string `json:"vote_up"`

@@ -97,8 +97,12 @@ export default class Artalk {
 
       // for layer
       const { $wrap: $layerWrap } = GetLayerWrap(this.ctx)
-      if ($layerWrap)
-        $layerWrap.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
+      if ($layerWrap) $layerWrap.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
+
+      // for sidebar
+      // TODO: 这个其实应该写在 packages/artalk-sidebar 里面的
+      const $sidebarEl = document.querySelector<HTMLElement>('.atk-sidebar')
+      if ($sidebarEl) $sidebarEl.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
 
       items.forEach(($item: HTMLElement) => {
         if (this.ctx.user.data.isAdmin)

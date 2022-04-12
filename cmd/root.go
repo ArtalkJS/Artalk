@@ -149,7 +149,8 @@ func initDB() {
 	lib.DB = db
 
 	// Migrate the schema
-	lib.DB.AutoMigrate(&model.Site{}, &model.Page{}, &model.User{}, &model.Comment{}, &model.Notify{}, &model.Vote{}) // 注意表的创建顺序，因为有关联字段
+	lib.DB.AutoMigrate(&model.Site{}, &model.Page{}, &model.User{},
+		&model.Comment{}, &model.Notify{}, &model.Vote{}, &model.PV{}) // 注意表的创建顺序，因为有关联字段
 }
 
 // 4. 同步配置文件与数据库

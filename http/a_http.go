@@ -103,6 +103,7 @@ func InitRoute(e *echo.Echo) {
 	api.POST("/login", ActionLogin)
 	api.POST("/mark-read", ActionMarkRead)
 	api.POST("/vote", ActionVote)
+	api.POST("/pv", ActionPV)
 
 	// api/captcha
 	ca := api.Group("/captcha")

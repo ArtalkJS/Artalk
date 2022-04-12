@@ -184,7 +184,7 @@ export default class List extends ListLite {
     this.$commentCount.classList.add('atk-dropdown-wrap')
 
     // 插入图标
-    this.$commentsWrap.append(Utils.createElement(`<span class="atk-arrow-down-icon"></span>`))
+    this.$dropdownWrap.append(Utils.createElement(`<span class="atk-arrow-down-icon"></span>`))
 
     const reloadUseParamsEditor = (func: (p: any) => void) => {
       this.paramsEditor = (p) => { func(p) }

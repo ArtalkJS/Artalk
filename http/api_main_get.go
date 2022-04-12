@@ -27,6 +27,12 @@ type ParamsGet struct {
 	FlatMode bool `mapstructure:"flat_mode"`
 
 	IsAdminReq bool
+
+	// Sort By
+	SortBy string `mapstructure:"sort_by"` // date_asc, date_desc, vote
+
+	// 只看 admin
+	ViewOnlyAdmin bool `mapstructure:"view_only_admin"`
 }
 
 type ResponseGet struct {
@@ -41,7 +47,7 @@ type ResponseGet struct {
 
 // 获取评论查询实例
 func GetCommentQuery(c echo.Context, p ParamsGet, siteID uint) *gorm.DB {
-	query := lib.DB.Model(&model.Comment{}).Order("created_at DESC")
+	query := lib.DB.Model(&model.Comment{}).Order(GetSortRuleSQL(p.SortBy, "created_at DESC"))
 
 	if IsMsgCenter(p) {
 		return query.Scopes(MsgCenter(c, p, siteID), SiteIsolation(c, p))
@@ -95,9 +101,11 @@ func ActionGet(c echo.Context) error {
 	var comments []model.Comment
 
 	query := GetCommentQuery(c, p, p.SiteID).Scopes(Paginate(p.Offset, p.Limit))
+	query = query.Scopes(ViewOnlyAdmin(c, p)) // 装载只看管理员功能
 	cookedComments := []model.CookedComment{}
 
 	if !p.FlatMode {
+		// 层级嵌套模式
 		query = query.Scopes(RootComments())
 		query.Find(&comments)
 
@@ -113,7 +121,7 @@ func ActionGet(c echo.Context) error {
 			}
 		}
 	} else {
-		// flat mode
+		// 平铺模式
 		query.Find(&comments)
 
 		for _, c := range comments {
@@ -129,7 +137,7 @@ func ActionGet(c echo.Context) error {
 			return false
 		}
 
-		// find linked comments
+		// find linked comments (被引用的评论，不单独显示)
 		for _, comment := range comments {
 			if comment.Rid == 0 || containsComment(comment.Rid) {
 				continue
@@ -274,6 +282,36 @@ func SiteIsolation(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 
 		return db.Where("site_name = ?", p.SiteName)
 	}
+}
+
+// 只看管理员功能
+func ViewOnlyAdmin(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		// 是否启用
+		if !p.ViewOnlyAdmin {
+			return db
+		}
+
+		// 获取管理员列表
+		adminIDs := model.GetAllAdminIDs()
+
+		// 只允许管理员 user_id
+		return db.Where("user_id IN ?", adminIDs)
+	}
+}
+
+// 排序规则
+func GetSortRuleSQL(sortBy string, defaultSQL string) string {
+	switch sortBy {
+	case "date_desc":
+		return "created_at DESC"
+	case "date_asc":
+		return "created_at ASC"
+	case "vote":
+		return "vote_up DESC, created_at DESC"
+	}
+
+	return defaultSQL
 }
 
 func RootComments() func(db *gorm.DB) *gorm.DB {

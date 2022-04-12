@@ -261,3 +261,18 @@ func FindPV(pageKey string, siteName string) PV {
 	lib.DB.Where("page_key = ? AND site_name = ?", pageKey, siteName).First(&pv)
 	return pv
 }
+
+func GetAllAdmins() []User {
+	var admins []User
+	lib.DB.Where(&User{IsAdmin: true}).Find(&admins)
+	return admins
+}
+
+func GetAllAdminIDs() []uint {
+	admins := GetAllAdmins()
+	ids := []uint{}
+	for _, a := range admins {
+		ids = append(ids, a.ID)
+	}
+	return ids
+}

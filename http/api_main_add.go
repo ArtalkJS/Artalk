@@ -170,10 +170,8 @@ func EmailSend(comment *model.Comment, parentComment *model.Comment) {
 	}
 
 	// 邮件通知管理员
-	var admins []model.User
-	lib.DB.Where(&model.User{IsAdmin: true}).Find(&admins)
-
-	isAdmin := func(userID uint) bool {
+	admins := model.GetAllAdmins()
+	userIsAdmin := func(userID uint) bool {
 		for _, admin := range admins {
 			if admin.ID == userID {
 				return true
@@ -191,7 +189,7 @@ func EmailSend(comment *model.Comment, parentComment *model.Comment) {
 			}
 
 			// 管理员评论不回复给其他管理员
-			if isAdmin(comment.UserID) {
+			if userIsAdmin(comment.UserID) {
 				continue
 			}
 

@@ -24,6 +24,10 @@ log:
   enabled: true # 总开关
   filename: "./data/artalk-go.log" # 日志文件路径
 
+# 可信域名
+trusted_domains:
+  - "https://artalk.你的域名:23366"
+
 # 允许跨域访问的域名
 allow_origins:
   - "*" # '*' 跨域无限制

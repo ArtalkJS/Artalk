@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/pkged"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -19,8 +20,20 @@ func Run() {
 	e := echo.New()
 	e.HideBanner = true
 
+	// 跨域控制
+	allowOrigins := []string{}
+	allowOrigins = append(allowOrigins, config.Instance.AllowOrigins...) // 跨域独立配置
+	for _, v := range config.Instance.TrustedDomains {                   // 可信域名配置
+		if !lib.ContainsStr(allowOrigins, v) {
+			allowOrigins = append(allowOrigins, v)
+		}
+	}
+	if lib.ContainsStr(allowOrigins, "*") { // 通配符关闭跨域控制
+		allowOrigins = []string{"*"}
+	}
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: config.Instance.AllowOrigins,
+		AllowOrigins: allowOrigins,
 	}))
 
 	// Logger

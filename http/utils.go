@@ -135,12 +135,19 @@ func CheckReferer(c echo.Context, site model.Site) (bool, error) {
 		return true, nil
 	}
 
+	// 可信域名配置
+	confTrustedDomains := config.Instance.TrustedDomains
+
 	// 请求 Referer 合法性判断
-	if strings.TrimSpace(site.Urls) == "" {
+	if strings.TrimSpace(site.Urls) == "" && len(confTrustedDomains) == 0 {
 		return true, nil // 若 url 字段为空，则取消控制
 	}
 
 	allowUrls := site.ToCooked().Urls
+	if len(confTrustedDomains) != 0 {
+		allowUrls = append(allowUrls, confTrustedDomains...)
+	}
+
 	referer := c.Request().Referer()
 	if referer == "" {
 		return true, nil
@@ -163,6 +170,7 @@ func CheckReferer(c echo.Context, site model.Site) (bool, error) {
 		}
 		if pu.Hostname() == pr.Hostname() {
 			allow = true
+			break
 		}
 	}
 	if !allow {

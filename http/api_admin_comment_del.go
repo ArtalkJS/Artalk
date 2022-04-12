@@ -35,15 +35,17 @@ func ActionAdminCommentDel(c echo.Context) error {
 		return RespError(c, "comment not found")
 	}
 
-	if err := DelComment(&comment); err != nil {
+	if err := DelComment(comment.ID); err != nil {
 		return RespError(c, "comment delete error")
 	}
 
+	commentCooked := comment.ToCooked()
+
 	// 删除子评论
 	hasErr := false
-	children := comment.FetchChildren(func(db *gorm.DB) *gorm.DB { return db })
+	children := commentCooked.FetchChildren(func(db *gorm.DB) *gorm.DB { return db })
 	for _, c := range children {
-		err := DelComment(&c)
+		err := DelComment(c.ID)
 		if err != nil {
 			hasErr = true
 		}
@@ -55,16 +57,16 @@ func ActionAdminCommentDel(c echo.Context) error {
 	return RespSuccess(c)
 }
 
-func DelComment(comment *model.Comment) error {
+func DelComment(commentID uint) error {
 	// 清除 notify
-	if err := lib.DB.Unscoped().Where("comment_id = ?", comment.ID).Delete(&model.Notify{}).Error; err != nil {
+	if err := lib.DB.Unscoped().Where("comment_id = ?", commentID).Delete(&model.Notify{}).Error; err != nil {
 		return err
 	}
 
 	// 清除 vote
 	if err := lib.DB.Unscoped().Where(
 		"target_id = ? AND (type = ? OR type = ?)",
-		comment.ID,
+		commentID,
 		string(model.VoteTypeCommentUp),
 		string(model.VoteTypeCommentDown),
 	).Delete(&model.Vote{}).Error; err != nil {
@@ -72,7 +74,7 @@ func DelComment(comment *model.Comment) error {
 	}
 
 	// 删除 comment
-	err := lib.DB.Delete(comment).Error
+	err := lib.DB.Delete(&model.Comment{}, commentID).Error
 	if err != nil {
 		return err
 	}

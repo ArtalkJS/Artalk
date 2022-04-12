@@ -101,7 +101,8 @@ func ActionGet(c echo.Context) error {
 	var comments []model.Comment
 
 	query := GetCommentQuery(c, p, p.SiteID).Scopes(Paginate(p.Offset, p.Limit))
-	query = query.Scopes(ViewOnlyAdmin(c, p)) // 装载只看管理员功能
+	query = query.Scopes(ViewOnlyAdmin(c, p))       // 装载只看管理员功能
+	query = query.Scopes(PinnedCommentsScope(c, p)) // 评论置顶功能总控制
 	cookedComments := []model.CookedComment{}
 
 	if !p.FlatMode {
@@ -113,11 +114,13 @@ func ActionGet(c echo.Context) error {
 			cookedComments = append(cookedComments, c.ToCooked())
 		}
 
-		// comment children
-		for _, parent := range comments { // TODO: Read more children, pagination for children comment
+		pinnedCommentsFunction(c, p, &cookedComments) // 插入置顶评论
+
+		// 获取 comment 子评论
+		for _, parent := range cookedComments { // TODO: Read more children, pagination for children comment
 			children := parent.FetchChildren(SiteIsolation(c, p), AllowedComment(c, p))
 			for _, child := range children {
-				cookedComments = append(cookedComments, child.ToCooked())
+				cookedComments = append(cookedComments, child)
 			}
 		}
 	} else {
@@ -127,6 +130,8 @@ func ActionGet(c echo.Context) error {
 		for _, c := range comments {
 			cookedComments = append(cookedComments, c.ToCooked())
 		}
+
+		pinnedCommentsFunction(c, p, &cookedComments) // 插入置顶评论
 
 		containsComment := func(cid uint) bool {
 			for _, c := range cookedComments {
@@ -298,6 +303,55 @@ func ViewOnlyAdmin(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 		// 只允许管理员 user_id
 		return db.Where("user_id IN ?", adminIDs)
 	}
+}
+
+func PinnedCommentsScope(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if p.Offset == 0 {
+			return db
+		} else {
+			// 其他页面不再显示置顶内容
+			return db.Where("is_pinned = 0")
+		}
+	}
+}
+
+func pinnedCommentsFunction(c echo.Context, p ParamsGet, cookedComments *[]model.CookedComment) {
+	// 仅在分页的首页加入置顶评论
+	if p.Offset != 0 {
+		return
+	}
+
+	pinnedComments := []model.Comment{}
+	GetCommentQuery(c, p, p.SiteID).Where("is_pinned = 1").Find(&pinnedComments)
+
+	if len(pinnedComments) == 0 {
+		return // 没有置顶评论
+	}
+
+	// cook
+	pinnedCookedComments := []model.CookedComment{}
+	for _, pCo := range pinnedComments {
+		pinnedCookedComments = append(pinnedCookedComments, pCo.ToCooked())
+	}
+
+	// 去掉已 pinned 且重复存在于原列表中的评论
+	filteredCookedComments := []model.CookedComment{}
+	for _, co := range *cookedComments {
+		isExistInPinnedList := false
+		for _, pCo := range pinnedComments {
+			if co.ID == pCo.ID {
+				isExistInPinnedList = true
+				break
+			}
+		}
+		if !isExistInPinnedList {
+			filteredCookedComments = append(filteredCookedComments, co)
+		}
+	}
+
+	// prepend
+	*cookedComments = append(pinnedCookedComments, filteredCookedComments...)
 }
 
 // 排序规则

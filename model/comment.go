@@ -26,9 +26,9 @@ type Comment struct {
 
 	Rid uint `gorm:"index"` // 父评论 ID
 
-	IsCollapsed bool // 折叠
-	IsPending   bool // 待审
-	IsPinned    bool // 置顶
+	IsCollapsed bool `gorm:"default:false"` // 折叠
+	IsPending   bool `gorm:"default:false"` // 待审
+	IsPinned    bool `gorm:"default:false"` // 置顶
 
 	User User `gorm:"foreignKey:UserID;references:ID"`
 	Page Page `gorm:"foreignKey:PageKey;references:Key"`
@@ -83,22 +83,6 @@ func (c *Comment) FetchSite() Site {
 	return site
 }
 
-func (c Comment) FetchChildren(filters ...func(db *gorm.DB) *gorm.DB) []Comment {
-	children := []Comment{}
-	fetchChildrenOnce(&children, c, filters...) // TODO: children 数量限制
-	return children
-}
-
-func fetchChildrenOnce(src *[]Comment, parentComment Comment, filters ...func(db *gorm.DB) *gorm.DB) {
-	children := []Comment{}
-	lib.DB.Scopes(filters...).Where("rid = ?", parentComment.ID).Order("created_at ASC").Find(&children)
-
-	for _, child := range children {
-		*src = append(*src, child)
-		fetchChildrenOnce(src, child, filters...) // loop
-	}
-}
-
 type CookedComment struct {
 	ID             uint   `json:"id"`
 	Content        string `json:"content"`
@@ -145,6 +129,22 @@ func (c *Comment) ToCooked() CookedComment {
 		VoteDown:       c.VoteDown,
 		PageKey:        c.PageKey,
 		SiteName:       c.SiteName,
+	}
+}
+
+func (c CookedComment) FetchChildren(filters ...func(db *gorm.DB) *gorm.DB) []CookedComment {
+	children := []CookedComment{}
+	fetchChildrenOnce(&children, c, filters...) // TODO: children 数量限制
+	return children
+}
+
+func fetchChildrenOnce(src *[]CookedComment, parentComment CookedComment, filters ...func(db *gorm.DB) *gorm.DB) {
+	children := []Comment{}
+	lib.DB.Scopes(filters...).Where("rid = ?", parentComment.ID).Order("created_at ASC").Find(&children)
+
+	for _, child := range children {
+		*src = append(*src, child.ToCooked())
+		fetchChildrenOnce(src, child.ToCooked(), filters...) // loop
 	}
 }
 

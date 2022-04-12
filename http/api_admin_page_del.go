@@ -51,7 +51,7 @@ func DelPage(page *model.Page) error {
 	lib.DB.Where("page_key = ? AND site_name = ?", page.Key, page.SiteName).Find(&comments)
 
 	for _, c := range comments {
-		DelComment(&c)
+		DelComment(c.ID)
 	}
 
 	// 删除 vote

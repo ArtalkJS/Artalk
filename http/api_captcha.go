@@ -35,16 +35,16 @@ func ActionCaptchaCheck(c echo.Context) error {
 
 	if strings.ToLower(inputVal) == GetCaptchaRealCode(ip) {
 		// 验证码正确
-		ResetActionRecord(c)         // 重置操作记录
-		DisposeCaptcha(ip)           // 销毁验证码
-		SetCaptchaIsCheked(ip, true) // 记录该 IP 已经成功验证
+		ResetActionRecord(c)          // 重置操作记录
+		DisposeCaptcha(ip)            // 销毁验证码
+		SetCaptchaIsChecked(ip, true) // 记录该 IP 已经成功验证
 
 		return RespSuccess(c)
 	} else {
 		// 验证码错误
-		RecordAction(c)               // 记录操作
-		DisposeCaptcha(ip)            // 销毁验证码
-		SetCaptchaIsCheked(ip, false) // 记录该 IP 验证码验证失败
+		RecordAction(c)                // 记录操作
+		DisposeCaptcha(ip)             // 销毁验证码
+		SetCaptchaIsChecked(ip, false) // 记录该 IP 验证码验证失败
 
 		return RespError(c, "验证码错误", Map{
 			"img_data": GetNewCaptchaImageBase64(ip),
@@ -87,15 +87,15 @@ func DisposeCaptcha(ip string) {
 }
 
 // 获取 IP 是否验证码检测通过，已经有一次
-func GetCaptchaIsCheked(ip string) bool {
+func GetCaptchaIsChecked(ip string) bool {
 	val, err := lib.CACHE.Get(lib.Ctx, "captcha-checked:"+ip)
 	return err == nil && string(val.([]byte)) == "1"
 }
 
 // 设置该 IP 验证码成功验证，已经有一次
-func SetCaptchaIsCheked(ip string, isCheked bool) {
+func SetCaptchaIsChecked(ip string, isChecked bool) {
 	val := "0"
-	if isCheked {
+	if isChecked {
 		val = "1"
 	}
 

@@ -73,8 +73,8 @@ func IsActionOverLimit(c echo.Context) bool {
 	userIP := c.RealIP()
 	// 总是需要验证码
 	if config.Instance.Captcha.Always {
-		if GetCaptchaIsCheked(userIP) { // 只有验证码成功才放行
-			SetCaptchaIsCheked(userIP, false) // 总是需要验证码，只允许放行一次
+		if GetCaptchaIsChecked(userIP) { // 只有验证码成功才放行
+			SetCaptchaIsChecked(userIP, false) // 总是需要验证码，只允许放行一次
 			return false
 		}
 

@@ -136,6 +136,11 @@ export default class Comment extends Component {
       $badge.remove()
     }
 
+    if (this.data.is_pinned) {
+      const $pinnedBadge = Utils.createElement(`<span class="atk-item atk-pinned-badge">置顶</span>`) // 置顶徽章
+      $nick.insertAdjacentElement('afterend', $pinnedBadge)
+    }
+
     const $date = this.$el.querySelector<HTMLElement>('.atk-date')!
     $date.innerText = this.getDateFormatted()
     $date.setAttribute('data-atk-comment-date', String(+new Date(this.data.date)))

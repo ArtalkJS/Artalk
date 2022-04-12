@@ -106,7 +106,7 @@ export default class SidebarLayer extends Component {
       Ui.hideLoading(this.$iframeWrap)
     }
 
-    this.checkReqStatus(src)
+    // this.checkReqStatus(src) // 判不准，删了，没啥用
   }
 
   loadingTimer: number|null = null

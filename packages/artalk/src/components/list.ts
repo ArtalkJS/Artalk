@@ -12,6 +12,8 @@ export default class List extends ListLite {
   private $closeCommentBtn!: HTMLElement
   private $openSidebarBtn!: HTMLElement
   private $unreadBadge!: HTMLElement
+  private $commentCount!: HTMLElement
+  private $dropdownWrap?: HTMLElement
 
   constructor (ctx: Context) {
     const el = Utils.createElement(ListHTML)
@@ -39,6 +41,10 @@ export default class List extends ListLite {
 
     // 操作按钮
     this.initListActionBtn()
+
+    // 下拉选择层
+    this.$commentCount = this.$el.querySelector('.atk-comment-count')!
+    this.initDropdown()
 
     // copyright
     this.$el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
@@ -170,5 +176,59 @@ export default class List extends ListLite {
     } else {
       this.$unreadBadge.style.display = 'none'
     }
+  }
+
+  /** 初始化选择下拉层 */
+  protected initDropdown() {
+    this.$dropdownWrap = this.$commentCount
+    this.$commentCount.classList.add('atk-dropdown-wrap')
+
+    // 插入图标
+    this.$commentsWrap.append(Utils.createElement(`<span class="atk-arrow-down-icon"></span>`))
+
+    const reloadUseParamsEditor = (func: (p: any) => void) => {
+      this.paramsEditor = (p) => { func(p) }
+      this.fetchComments(0)
+    }
+
+    // 下拉列表
+    const dropdownList = [
+      ['最新', () => { reloadUseParamsEditor(p => { p.sort_by = 'date_desc' }) }],
+      ['最热', () => { reloadUseParamsEditor(p => { p.sort_by = 'vote' }) }],
+      ['最早', () => { reloadUseParamsEditor(p => { p.sort_by = 'date_asc' }) }],
+      ['作者', () => { reloadUseParamsEditor(p => { p.view_only_admin = true }) }],
+    ]
+
+    // 列表项点击事件
+    let curtActive = 0 // 当前选中
+    const onItemClick = (i: number, $item: HTMLElement, name: string, action: Function) => {
+      action()
+
+      // set active
+      curtActive = i
+      $dropdown.querySelectorAll('.active').forEach((e) => { e.classList.remove('active') })
+      $item.classList.add('active')
+
+      // 关闭层 (临时消失，取消 :hover)
+      $dropdown.style.display = 'none'
+      setTimeout(() => { $dropdown.style.display = '' }, 80)
+    }
+
+    // 生成列表元素
+    const $dropdown = Utils.createElement(`<ul class="atk-dropdown atk-fade-in"></ul>`)
+    dropdownList.forEach((item, i) => {
+      const name = item[0] as string
+      const action = item[1] as Function
+
+      const $item = Utils.createElement(`<li class="atk-dropdown-item"><span></span></li>`)
+      const $link = $item.querySelector<HTMLElement>('span')!
+      $link.innerText = name
+      $link.onclick = () => { onItemClick(i, $item, name, action) }
+      $dropdown.append($item)
+
+      if (i === curtActive) $item.classList.add('active') // 默认选中项
+    })
+
+    this.$dropdownWrap.append($dropdown)
   }
 }

@@ -7,6 +7,72 @@
     padding: 10px 10px 5px 10px;
     border-bottom: 1px solid var(--at-color-border);
 
+    .atk-text {
+      display: inline-block;
+    }
+
+    /* 下拉选择层 */
+    .atk-dropdown-wrap {
+      position: relative;
+      cursor: pointer;
+
+      .atk-arrow-down-icon {
+        cursor: pointer;
+        vertical-align: middle;
+        border-top: 6px solid var(--at-color-grey);
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        margin-top: -1px;
+        margin-left: 0.4rem;
+        display: inline-block;
+      }
+
+      &:hover {
+        .atk-dropdown {
+          display: block;
+        }
+      }
+
+      .atk-dropdown {
+        z-index: 888;
+        display: none;
+        height: auto !important;
+        max-height: calc(100vh - 2.7rem);
+        overflow-y: auto;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 100%;
+        background-color: var(--at-color-bg);
+        padding: 0.6rem 0;
+        border: 1px solid var(--at-color-border);
+        text-align: center;
+        border-radius: 0.25rem;
+        white-space: nowrap;
+        margin: 0;
+        list-style: none;
+      }
+
+      .atk-dropdown-item {
+        span, a {
+          display: block;
+          line-height: 2rem;
+          position: relative;
+          border-bottom: none;
+          font-weight: 400;
+          padding: 0 1.5rem;
+
+          &:hover {
+            color: var(--at-color-main);
+          }
+        }
+
+        &.active span, a {
+          color: var(--at-color-main);
+        }
+      }
+    }
+
     .atk-comment-count {
       font-size: 15px;
 

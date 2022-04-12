@@ -3,7 +3,6 @@ package http
 import (
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -43,24 +42,15 @@ func Run() {
 	e.Use(echolog.Middleware(logConf))
 
 	// Action Limit
-	ActionPermissionConf := ActionPermissionConf{
-		Skipper: func(c echo.Context) bool {
-			// 不启用操作限制的 path
-			skipPath := []string{
-				"/api/captcha/",
-				"/api/get", // 获取评论不做限制
-			}
-
-			for _, p := range skipPath {
-				if strings.HasPrefix(c.Request().URL.Path, p) {
-					return true
-				}
-			}
-
-			return false
+	ActionLimitConf := ActionLimitConf{
+		// 启用操作限制路径白名单
+		ProtectPaths: []string{
+			"/api/add",
+			"/api/login",
+			"/api/vote",
 		},
 	}
-	e.Use(ActionPermission(ActionPermissionConf))
+	e.Use(ActionLimitMiddleware(ActionLimitConf))
 
 	CommonJwtConfig = middleware.JWTConfig{
 		Claims:        &jwtCustomClaims{},

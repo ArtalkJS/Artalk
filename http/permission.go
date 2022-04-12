@@ -27,19 +27,33 @@ type jwtCustomClaims struct {
 }
 
 type Skipper func(echo.Context) bool
-type ActionPermissionConf struct {
-	Skipper Skipper
+type ActionLimitConf struct {
+	ProtectPaths []string
 }
 
 // 操作限制 中间件
-func ActionPermission(conf ActionPermissionConf) echo.MiddlewareFunc {
+func ActionLimitMiddleware(conf ActionLimitConf) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if conf.Skipper(c) {
+			// 路径是否启用操作限制
+			pathInList := false
+			for _, p := range conf.ProtectPaths {
+				if strings.HasPrefix(c.Request().URL.Path, p) {
+					pathInList = true
+					break
+				}
+			}
+			if !pathInList {
 				return next(c)
 			}
 
-			if !CheckIsAdminReq(c) && IsActionOverLimit(c) {
+			// 管理员直接忽略
+			if CheckIsAdminReq(c) {
+				return next(c)
+			}
+
+			// 操作限制，响应需要验证码
+			if IsActionOverLimit(c) {
 				if config.Instance.Debug {
 					logrus.Debug("[操作限制] 次数: ", getActionCount(c), ", 最后时间：", getActionLastTime(c))
 				}
@@ -47,34 +61,37 @@ func ActionPermission(conf ActionPermissionConf) echo.MiddlewareFunc {
 					"need_captcha": true,
 					"img_data":     GetNewCaptchaImageBase64(c.RealIP()),
 				})
-			} else {
-				return next(c)
 			}
+
+			return next(c)
 		}
 	}
 }
 
 // 操作是否超过限制
 func IsActionOverLimit(c echo.Context) bool {
-	if config.Instance.Captcha.Always { // 总是需要验证码
-		if getActionCount(c) <= 1 {
-			RecordAction(c)
+	userIP := c.RealIP()
+	// 总是需要验证码
+	if config.Instance.Captcha.Always {
+		if GetCaptchaIsCheked(userIP) { // 只有验证码成功才放行
+			SetCaptchaIsCheked(userIP, false) // 总是需要验证码，只允许放行一次
 			return false
-		} else {
-			return true
 		}
+
+		return true
 	}
 
+	// 一段时间内操作次数限制
 	if time.Since(getActionLastTime(c)).Seconds() <= float64(config.Instance.Captcha.ActionTimeout) { // 在时间内
 		if getActionCount(c) >= config.Instance.Captcha.ActionLimit { // 操作次数超过
 			RecordAction(c) // 记录操作
-			return true
+			return true     // 需要验证码
 		}
 	} else { // 不在时间内，超时
 		ResetActionRecord(c) // 重置操作记录
 	}
 
-	return false
+	return false // 放行
 }
 
 // 记录操作

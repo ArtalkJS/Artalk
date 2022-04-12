@@ -17,6 +17,7 @@ const defaults: ArtalkConfig = {
   vote: true,
   voteDown: false,
   uaBadge: true,
+  pvEl: '#ArtalkPV',
   flatMode: 'auto',
   maxNesting: 3,
   gravatar: {

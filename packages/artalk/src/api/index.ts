@@ -252,6 +252,18 @@ export default class Api {
     return POST(this.ctx, `${this.baseURL}/mark-read`, params)
   }
 
+  /** PV */
+  public async pv() {
+    const params: any = {
+      site_name: this.ctx.conf.site || '',
+      page_key: this.ctx.conf.pageKey || '',
+      page_title: this.ctx.conf.pageTitle || ''
+    }
+
+    const p = await POST<any>(this.ctx, `${this.baseURL}/pv`, params)
+    return p.pv as number
+  }
+
   // ============================
   //  验证码
   // ============================

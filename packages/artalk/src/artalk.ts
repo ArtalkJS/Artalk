@@ -11,6 +11,7 @@ import SidebarLayer from './components/sidebar-layer'
 
 import { GetLayerWrap } from './components/layer'
 import { EventPayloadMap, Handler } from '~/types/event'
+import Api from './api'
 
 /**
  * Artalk
@@ -76,6 +77,9 @@ export default class Artalk {
 
     // 事件绑定初始化
     this.initEventBind()
+
+    // 其他
+    this.initPV()
   }
 
   /** 事件绑定 · 初始化 */
@@ -141,6 +145,20 @@ export default class Artalk {
   public setDarkMode(darkMode: boolean) {
     this.ctx.conf.darkMode = darkMode
     this.initDarkMode()
+  }
+
+  /** PV */
+  public async initPV() {
+    if (!this.conf.pvEl || !document.querySelector(this.conf.pvEl))
+      return
+
+    const $pv = document.querySelector<HTMLElement>(this.conf.pvEl)!
+    // $pv.innerText = '-' // 默认占位符
+    const pvNum = await new Api(this.ctx).pv()
+    if (Number.isNaN(Number(pvNum)))
+      return
+
+    $pv.innerText = String(pvNum)
   }
 
   /** 监听事件 */

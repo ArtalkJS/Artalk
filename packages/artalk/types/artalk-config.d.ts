@@ -62,6 +62,9 @@ export default interface ArtalkConfig {
   /** 评论投票反对按钮 */
   voteDown?: boolean
 
+  /** PV 元素 Selector */
+  pvEl?: string
+
   /** 暗黑模式 */
   darkMode?: boolean
 

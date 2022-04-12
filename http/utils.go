@@ -143,6 +143,11 @@ func CheckReferer(c echo.Context, site model.Site) (bool, error) {
 		return true, nil // 若 url 字段为空，则取消控制
 	}
 
+	// 可信域名出现通配符关闭 Referer 控制
+	if lib.ContainsStr(confTrustedDomains, "*") {
+		return true, nil
+	}
+
 	allowUrls := site.ToCooked().Urls
 	if len(confTrustedDomains) != 0 {
 		allowUrls = append(allowUrls, confTrustedDomains...)

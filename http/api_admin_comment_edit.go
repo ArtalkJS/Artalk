@@ -24,6 +24,7 @@ type ParamsCommentEdit struct {
 	IP          string `mapstructure:"ip"`
 	IsCollapsed bool   `mapstructure:"is_collapsed"`
 	IsPending   bool   `mapstructure:"is_pending"`
+	IsPinned    bool   `mapstructure:"is_pinned"`
 }
 
 func ActionAdminCommentEdit(c echo.Context) error {
@@ -80,6 +81,7 @@ func ActionAdminCommentEdit(c echo.Context) error {
 	comment.IP = p.IP
 	comment.IsCollapsed = p.IsCollapsed
 	comment.IsPending = p.IsPending
+	comment.IsPinned = p.IsPinned
 
 	if err := model.UpdateComment(&comment); err != nil {
 		return RespError(c, "comment save error")

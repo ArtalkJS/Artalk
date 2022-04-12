@@ -272,6 +272,16 @@ export default class Comment extends Component {
     delBtn.setClick(() => {
       this.adminDelete(delBtn)
     })
+
+    // 绑定置顶按钮事件
+    const pinnedBtn = new ActionBtn({
+      text: () => (this.data.is_pinned ? '取消置顶' : '置顶'),
+      adminOnly: true
+    })
+    pinnedBtn.appendTo(this.$actions)
+    pinnedBtn.setClick(() => {
+      this.adminEdit('pinned', pendingBtn)
+    })
   }
   //#endregion
 
@@ -404,9 +414,9 @@ export default class Comment extends Component {
     })
   }
 
-  /** 管理员 - 评论折叠 */
-  adminEdit(type: 'collapsed'|'pending', btnElem: ActionBtn) {
-    if (btnElem.isLoading) return // 若正在折叠中
+  /** 管理员 - 评论状态修改 */
+  adminEdit(type: 'collapsed'|'pending'|'pinned', btnElem: ActionBtn) {
+    if (btnElem.isLoading) return // 若正在修改中
 
     btnElem.setLoading(true, '修改中...')
 
@@ -416,6 +426,8 @@ export default class Comment extends Component {
       modify.is_collapsed = !modify.is_collapsed
     } else if (type === 'pending') {
       modify.is_pending = !modify.is_pending
+    } else if (type === 'pinned') {
+      modify.is_pinned = !modify.is_pinned
     }
 
     new Api(this.ctx).commentEdit(modify).then((comment) => {

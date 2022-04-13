@@ -119,6 +119,11 @@ export default class ListLite extends Component {
     // 版本检测
     if (this.ctx.conf.versionCheck && this.versionCheck(data.api_version)) return
 
+    // 图片上传功能
+    if (data.conf && typeof data.conf.img_upload === "boolean") {
+      this.ctx.conf.imgUpload = data.conf.img_upload
+    }
+
     // 导入数据
     this.importComments(data.comments)
 
@@ -130,6 +135,7 @@ export default class ListLite extends Component {
 
     this.ctx.trigger('unread-update', { notifies: data.unread || [] })
     this.ctx.trigger('comments-loaded')
+    this.ctx.trigger('conf-updated')
 
     if (this.onAfterLoad) this.onAfterLoad(data)
   }
@@ -481,6 +487,7 @@ export default class ListLite extends Component {
       ignoreBtn.onclick = () => {
         Ui.setError(this.ctx, null)
         this.ctx.conf.versionCheck = false
+        this.ctx.trigger('conf-updated')
         this.fetchComments(0)
       }
       errEl.append(ignoreBtn)

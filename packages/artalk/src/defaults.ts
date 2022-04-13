@@ -36,6 +36,7 @@ const defaults: ArtalkConfig = {
     children: 400,
   },
 
+  imgUpload: true,
   reqTimeout: 15000,
   versionCheck: true,
 }

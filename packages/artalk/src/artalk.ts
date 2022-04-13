@@ -148,6 +148,7 @@ export default class Artalk {
   /** 暗黑模式 · 设定 */
   public setDarkMode(darkMode: boolean) {
     this.ctx.conf.darkMode = darkMode
+    this.ctx.trigger('conf-updated')
     this.initDarkMode()
   }
 

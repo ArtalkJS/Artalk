@@ -21,6 +21,7 @@ export default class Editor extends Component {
   public $plugWrap: HTMLElement
   public $bottom: HTMLElement
   public $plugBtnWrap: HTMLElement
+  public $imgUploadBtn?: HTMLElement
   public $submitBtn: HTMLButtonElement
   public $notifyWrap: HTMLElement
 
@@ -63,6 +64,7 @@ export default class Editor extends Component {
     this.ctx.on('editor-notify', (f) => (this.showNotify(f.msg, f.type)))
     this.ctx.on('editor-travel', ($el) => (this.travel($el)))
     this.ctx.on('editor-travel-back', () => (this.travelBack()))
+    this.ctx.on('conf-updated', () => (this.refreshUploadBtn()))
   }
 
   initLocalStorage () {
@@ -200,7 +202,7 @@ export default class Editor extends Component {
     // 依次实例化 plug
     this.LOADABLE_PLUG_LIST.forEach((PlugObj) => {
       // 切换按钮
-      const btnElem = Utils.createElement(`<span class="atk-plug-btn">${PlugObj.BtnHTML}</span>`)
+      const btnElem = Utils.createElement(`<span class="atk-plug-btn" data-plug-name="${PlugObj.Name}">${PlugObj.BtnHTML}</span>`)
       this.$plugBtnWrap.appendChild(btnElem)
       btnElem.addEventListener('click', () => {
         let plug = this.plugList[PlugObj.Name]
@@ -244,6 +246,8 @@ export default class Editor extends Component {
         btnElem.classList.add('active')
       })
     })
+
+    this.initImgUploadBtn()
   }
 
   /** 关闭编辑器插件 */
@@ -251,6 +255,91 @@ export default class Editor extends Component {
     this.$plugWrap.innerHTML = ''
     this.$plugWrap.style.display = 'none'
     this.openedPlugName = null
+  }
+
+  /** 允许的图片格式 */
+  allowImgExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']
+
+  /** 初始化图片上传按钮 */
+  initImgUploadBtn() {
+    this.$imgUploadBtn = Utils.createElement(`<span class="atk-plug-btn">图片</span>`)
+    this.$plugBtnWrap.querySelector('[data-plug-name="preview"]')!.before(this.$imgUploadBtn) // 显示在预览图标之前
+
+    this.$imgUploadBtn.onclick = () => {
+      // 选择图片
+      const $input = document.createElement('input')
+      $input.type = 'file'
+      $input.accept = this.allowImgExts.map(o => `.${o}`).join(',')
+      $input.onchange = () => {
+        (async () => { // 解决阻塞 UI 问题
+          if (!$input.files || $input.files.length === 0) return
+          const file = $input.files[0]
+          this.uploadImg(file)
+        })()
+      }
+      $input.click() // 显示选择图片对话框
+    }
+
+    // @link https://developer.mozilla.org/zh-CN/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
+    // 阻止浏览器的默认释放行为
+    this.$textarea.addEventListener('dragover', (evt) => {
+      evt.stopPropagation()
+      evt.preventDefault()
+    })
+
+    this.$textarea.addEventListener('drop', (evt) => {
+      if (evt.dataTransfer?.files) {
+        evt.preventDefault()
+        for (let i = 0; i < evt.dataTransfer.files.length; i++) {
+          const file = evt.dataTransfer.files[i]
+          this.uploadImg(file)
+        }
+      }
+    })
+  }
+
+  /** 刷新图片上传按钮 */
+  refreshUploadBtn() {
+    if (!this.$imgUploadBtn) return
+
+    if (!this.ctx.conf.imgUpload) {
+      this.$imgUploadBtn.setAttribute('atk-only-admin-show', '')
+      this.ctx.trigger('check-admin-show-el')
+    }
+  }
+
+  async uploadImg(file: File) {
+    const fileExt = /[^.]+$/.exec(file.name)
+    if (!fileExt || !this.allowImgExts.includes(fileExt[0])) return
+
+    // 插入占位加载文字
+    const uploadPlaceholderTxt = `\n![](Uploading ${file.name}...)`
+    this.insertContent(uploadPlaceholderTxt)
+
+    // 上传图片
+    let resp: any
+    try {
+      resp = await new Api(this.ctx).imgUpload(file)
+    } catch (err: any) {
+      console.error(err)
+      this.showNotify(`图片上传失败，${err.msg}`, 'e')
+    }
+    if (!!resp && resp.img_url) {
+      let imgURL = resp.img_url as string
+      if (imgURL.startsWith('.') || (imgURL.startsWith('/') && !imgURL.startsWith('//'))) {
+        // 若为相对路径，加上 artalk server
+        imgURL = `${this.ctx.conf.server.replace(/\/api\/?$/, '')}/${imgURL.replace(/^\//, '')}`
+      }
+
+      // 上传成功插入图片
+      this.$textarea.value = this.$textarea.value.replace(uploadPlaceholderTxt, `\n![](${imgURL})`)
+    } else {
+      // 上传失败删除加载文字
+      this.$textarea.value = this.$textarea.value.replace(uploadPlaceholderTxt, '')
+    }
+
+    // 更新内容保存到 localStorage
+    this.saveContent()
   }
 
   insertContent (val: string) {

@@ -95,6 +95,16 @@ func InitRoute(e *echo.Echo) {
 	api.POST("/vote", ActionVote)
 	api.POST("/pv", ActionPV)
 
+	// api/upload-img
+	api.POST("/img-upload", ActionImgUpload)
+	if config.Instance.ImgUpload.Enabled {
+		if config.Instance.ImgUpload.Path == "" {
+			logrus.Fatal("图片上传功能需配置 img_upload.path")
+		}
+		// 静态可访问图片存放目录
+		e.Static(ImgUpload_RoutePath, config.Instance.ImgUpload.Path)
+	}
+
 	// api/captcha
 	ca := api.Group("/captcha")
 	ca.GET("/refresh", ActionCaptchaGet)

@@ -113,11 +113,12 @@ const (
 )
 
 type ImgUploadConf struct {
-	Enabled bool      `mapstructure:"enabled" json:"enabled"`   // 总开关
-	Path    string    `mapstructure:"path" json:"path"`         // 图片存放路径
-	MaxSize string    `mapstructure:"max_size" json:"max_size"` // 图片大小限制
-	Quality string    `mapstructure:"quality" json:"quality"`   // 图片质量
-	Upgit   UpgitConf `mapstructure:"upgit" json:"upgit"`       // upgit
+	Enabled    bool      `mapstructure:"enabled" json:"enabled"`         // 总开关
+	Path       string    `mapstructure:"path" json:"path"`               // 图片存放路径
+	MaxSize    int64     `mapstructure:"max_size" json:"max_size"`       // 图片大小限制
+	Quality    string    `mapstructure:"quality" json:"quality"`         // 图片质量
+	PublicPath string    `mapstructure:"public_path" json:"public_path"` // 图片 URL 基础路径
+	Upgit      UpgitConf `mapstructure:"upgit" json:"upgit"`             // upgit
 }
 
 type UpgitConf struct {

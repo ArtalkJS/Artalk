@@ -98,7 +98,8 @@ func InitRoute(e *echo.Echo) {
 
 	// api/upload-img
 	if config.Instance.ImgUpload.Path == "" {
-		logrus.Fatal("图片上传功能需配置 img_upload.path")
+		config.Instance.ImgUpload.Path = "./data/artalk-img/"
+		logrus.Warn("图片上传功能 img_upload.path 未配置，使用默认值：" + config.Instance.ImgUpload.Path)
 	}
 	api.POST("/img-upload", ActionImgUpload)
 	e.Static(ImgUpload_RoutePath, config.Instance.ImgUpload.Path) // 静态可访问图片存放目录

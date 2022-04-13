@@ -85,7 +85,7 @@ email:
 img_upload:
   enabled: true # 总开关
   path: "./data/artalk-img/" # 图片存放路径
-  max_size: 10 # 图片大小限制 (单位：MB)
+  max_size: 5 # 图片大小限制 (单位：MB)
   public_path: null # 指定图片链接基础路径 (默认为 "/static/images/")
   # 使用 upgit 将图片上传到 GitHub 或图床 (https://github.com/pluveto/upgit)
   upgit:

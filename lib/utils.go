@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"net/mail"
 	"net/url"
 	"os"
 	"regexp"
@@ -19,6 +18,8 @@ import (
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
+
+	"github.com/asaskevich/govalidator"
 )
 
 // EnsureDir ensures that a target directory exists (like `mkdir -p`),
@@ -148,13 +149,11 @@ func JsonObjInArrAnyStr(jsonStr string) string {
 //******************************************
 
 func ValidateEmail(email string) bool {
-	_, err := mail.ParseAddress(email)
-	return err == nil
+	return govalidator.IsEmail(email)
 }
 
-func ValidateURL(urlStr string) bool {
-	_, err := url.ParseRequestURI(urlStr)
-	return err == nil
+func ValidateURL(url string) bool {
+	return govalidator.IsURL(url)
 }
 
 //#endregion

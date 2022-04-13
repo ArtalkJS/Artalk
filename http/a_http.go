@@ -48,6 +48,7 @@ func Run() {
 			"/api/add",
 			"/api/login",
 			"/api/vote",
+			"/api/img-upload",
 		},
 	}
 	e.Use(ActionLimitMiddleware(ActionLimitConf))
@@ -95,6 +96,14 @@ func InitRoute(e *echo.Echo) {
 	api.POST("/vote", ActionVote)
 	api.POST("/pv", ActionPV)
 
+	// api/upload-img
+	if config.Instance.ImgUpload.Path == "" {
+		config.Instance.ImgUpload.Path = "./data/artalk-img/"
+		logrus.Warn("图片上传功能 img_upload.path 未配置，使用默认值：" + config.Instance.ImgUpload.Path)
+	}
+	api.POST("/img-upload", ActionImgUpload)
+	e.Static(ImgUpload_RoutePath, config.Instance.ImgUpload.Path) // 静态可访问图片存放目录
+
 	// api/captcha
 	ca := api.Group("/captcha")
 	ca.GET("/refresh", ActionCaptchaGet)
@@ -122,6 +131,11 @@ func InitRoute(e *echo.Echo) {
 	// admin.POST("/vote-sync", ActionAdminVoteSync) // 数据导入功能未关注 vote 部分，暂时注释
 
 	admin.POST("/send-mail", ActionAdminSendMail)
+
+	// conf
+	api.Any("/conf", func(c echo.Context) error {
+		return c.JSON(200, GetApiPublicConfDataMap(c))
+	})
 
 	// version
 	api.Any("/version", func(c echo.Context) error {

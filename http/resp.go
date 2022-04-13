@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
@@ -95,5 +96,17 @@ func GetApiVersionDataMap() Map {
 		"version":        lib.Version,
 		"commit_hash":    lib.CommitHash,
 		"fe_min_version": lib.FeMinVersion,
+	}
+}
+
+func GetApiPublicConfDataMap(c echo.Context) Map {
+	isAdmin := CheckIsAdminReq(c)
+	imgUpload := config.Instance.ImgUpload.Enabled
+	if isAdmin {
+		imgUpload = true // 管理员始终允许上传图片
+	}
+
+	return Map{
+		"img_upload": imgUpload,
 	}
 }

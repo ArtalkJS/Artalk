@@ -29,6 +29,7 @@ type Config struct {
 	Moderator      ModeratorConf   `mapstructure:"moderator" json:"moderator"`             // 评论审查
 	Captcha        CaptchaConf     `mapstructure:"captcha" json:"captcha"`                 // 验证码
 	Email          EmailConf       `mapstructure:"email" json:"email"`                     // 邮箱提醒
+	ImgUpload      ImgUploadConf   `mapstructure:"img_upload" json:"img_upload"`           // 图片上传
 }
 
 type DBConf struct {
@@ -110,6 +111,20 @@ const (
 	TypeAliDM    EmailSenderType = "ali_dm"
 	TypeSendmail EmailSenderType = "sendmail"
 )
+
+type ImgUploadConf struct {
+	Enabled    bool      `mapstructure:"enabled" json:"enabled"`         // 总开关
+	Path       string    `mapstructure:"path" json:"path"`               // 图片存放路径
+	MaxSize    int64     `mapstructure:"max_size" json:"max_size"`       // 图片大小限制
+	Quality    string    `mapstructure:"quality" json:"quality"`         // 图片质量
+	PublicPath string    `mapstructure:"public_path" json:"public_path"` // 图片 URL 基础路径
+	Upgit      UpgitConf `mapstructure:"upgit" json:"upgit"`             // upgit
+}
+
+type UpgitConf struct {
+	Enabled bool   `mapstructure:"enabled" json:"enabled"` // 启用 upgit
+	Exec    string `mapstructure:"exec" json:"exec"`       // 启动命令
+}
 
 // Init 初始化配置
 func Init(cfgFile string) {

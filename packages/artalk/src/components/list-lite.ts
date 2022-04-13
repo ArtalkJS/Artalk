@@ -119,6 +119,11 @@ export default class ListLite extends Component {
     // 版本检测
     if (this.ctx.conf.versionCheck && this.versionCheck(data.api_version)) return
 
+    // 图片上传功能
+    if (data.conf && typeof data.conf.img_upload === "boolean") {
+      this.ctx.conf.imgUpload = data.conf.img_upload
+    }
+
     // 导入数据
     this.importComments(data.comments)
 

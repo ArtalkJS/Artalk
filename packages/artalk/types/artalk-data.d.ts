@@ -87,6 +87,9 @@ export interface ListData {
 
   /** API 版本 */
   api_version: ApiVersionData
+
+  /** 后端配置 */
+  conf: any // TODO
 }
 
 export interface PageData {

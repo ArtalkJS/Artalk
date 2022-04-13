@@ -80,6 +80,9 @@ export default interface ArtalkConfig {
   /** 显示 UA 徽标 */
   uaBadge?: boolean
 
+  /** 图片上传功能 */
+  imgUpload?: boolean
+
   /** 版本检测 */
   versionCheck?: boolean
 }

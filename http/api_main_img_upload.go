@@ -54,15 +54,19 @@ func ActionImgUpload(c echo.Context) error {
 		return resp
 	}
 
+	// 记录请求次数 (for 请求频率限制)
+	RecordAction(c)
+
 	// find page
 	// page := model.FindPage(p.PageKey, p.PageTitle)
 	// ip := c.RealIP()
 	// ua := c.Request().UserAgent()
 
 	// 图片大小限制 (Based on content length)
-	maxUploadSize := config.Instance.ImgUpload.MaxSize * 1024 * 1024
-	if c.Request().ContentLength > maxUploadSize {
-		return RespError(c, fmt.Sprintf("图片大小超过限制 %dMB", config.Instance.ImgUpload.MaxSize))
+	if config.Instance.ImgUpload.MaxSize != 0 {
+		if c.Request().ContentLength > config.Instance.ImgUpload.MaxSize*1024*1024 {
+			return RespError(c, fmt.Sprintf("图片大小超过限制 %dMB", config.Instance.ImgUpload.MaxSize))
+		}
 	}
 
 	// 获取 Form
@@ -88,8 +92,10 @@ func ActionImgUpload(c echo.Context) error {
 	}
 
 	// 大小限制 (Based on content read)
-	if int64(len(buf)) > maxUploadSize {
-		return RespError(c, fmt.Sprintf("图片大小超过限制 %dMB", config.Instance.ImgUpload.MaxSize))
+	if config.Instance.ImgUpload.MaxSize != 0 {
+		if int64(len(buf)) > config.Instance.ImgUpload.MaxSize*1024*1024 {
+			return RespError(c, fmt.Sprintf("图片大小超过限制 %dMB", config.Instance.ImgUpload.MaxSize))
+		}
 	}
 
 	// 文件格式判断

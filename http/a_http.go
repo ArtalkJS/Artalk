@@ -48,6 +48,7 @@ func Run() {
 			"/api/add",
 			"/api/login",
 			"/api/vote",
+			"/api/img-upload",
 		},
 	}
 	e.Use(ActionLimitMiddleware(ActionLimitConf))

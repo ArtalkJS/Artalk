@@ -65,7 +65,7 @@ func SendByAliDM(email Email) bool {
 }
 
 func SendByUsingSystemCMD(email Email) bool {
-	LogTag := "[EMAIL] sendmail"
+	LogTag := "[EMAIL] [sendmail] "
 	msg := GetEmailMineTxt(email)
 
 	// 调用系统 sendmail

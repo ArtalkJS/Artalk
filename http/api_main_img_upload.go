@@ -5,8 +5,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
@@ -132,13 +134,15 @@ func ActionImgUpload(c echo.Context) error {
 	fileFullPath := strings.TrimSuffix(config.Instance.ImgUpload.Path, "/") + "/" + filename
 	dst, err := os.Create(fileFullPath)
 	if err != nil {
-		return err
+		logrus.Error(err)
+		return RespError(c, "图片文件创建失败")
 	}
 	defer dst.Close()
 
 	// 写入图片文件
 	if _, err = dst.Write(buf); err != nil {
-		return err
+		logrus.Error(err)
+		return RespError(c, "图片文件写入失败")
 	}
 
 	// 生成外部可访问链接
@@ -146,10 +150,69 @@ func ActionImgUpload(c echo.Context) error {
 	if baseURL == "" {
 		baseURL = ImgUpload_RoutePath
 	}
+	imgURL := path.Join(baseURL, filename)
+
+	// 使用 upgit
+	if config.Instance.ImgUpload.Upgit.Enabled {
+		upgitURL := execUpgitUpload(fileFullPath)
+		if upgitURL == "" || !lib.ValidateURL(upgitURL) {
+			// 上传失败，删除源图片文件
+			var err = os.Remove(fileFullPath)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			logrus.Error("[IMG_UPLOAD] [upgit] upgit output: ", upgitURL)
+			return RespError(c, "图片通过 upgit 上传失败")
+		}
+
+		// 使用从 upgit 获取的图片 URL
+		imgURL = upgitURL
+	}
 
 	// 响应数据
 	return RespData(c, Map{
 		"img_file": filename,
-		"img_url":  path.Join(baseURL, filename),
+		"img_url":  imgURL,
 	})
+}
+
+// 调用 upgit 上传图片获得 URL
+func execUpgitUpload(filename string) string {
+	LogTag := "[IMG_UPLOAD] [upgit] "
+
+	// 处理参数
+	cmdStrSplitted := strings.Split(config.Instance.ImgUpload.Upgit.Exec, " ")
+	execApp := cmdStrSplitted[0]
+	execArgs := []string{}
+	for i, arg := range cmdStrSplitted {
+		if i > 0 {
+			execArgs = append(execArgs, arg)
+		}
+	}
+	execArgs = append(execArgs, filename)
+
+	// 执行命令
+	cmd := exec.Command(execApp, execArgs...)
+	stdout, _ := cmd.StdoutPipe()
+
+	if err := cmd.Start(); err != nil {
+		logrus.Error(LogTag, "cmd.Start: ", err)
+		return ""
+	}
+
+	result, _ := ioutil.ReadAll(stdout)
+	if err := cmd.Wait(); err != nil {
+		if exiterr, ok := err.(*exec.ExitError); ok {
+			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+				logrus.Error(LogTag, "Exit Status: ", status.ExitStatus())
+			}
+		} else {
+			logrus.Error(LogTag, "cmd.Wait: ", err)
+		}
+
+		return ""
+	}
+
+	return strings.TrimSpace(string(result))
 }

@@ -135,6 +135,7 @@ export default class ListLite extends Component {
 
     this.ctx.trigger('unread-update', { notifies: data.unread || [] })
     this.ctx.trigger('comments-loaded')
+    this.ctx.trigger('conf-updated')
 
     if (this.onAfterLoad) this.onAfterLoad(data)
   }
@@ -486,6 +487,7 @@ export default class ListLite extends Component {
       ignoreBtn.onclick = () => {
         Ui.setError(this.ctx, null)
         this.ctx.conf.versionCheck = false
+        this.ctx.trigger('conf-updated')
         this.fetchComments(0)
       }
       errEl.append(ignoreBtn)

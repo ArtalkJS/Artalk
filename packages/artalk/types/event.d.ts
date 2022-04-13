@@ -8,6 +8,7 @@ export interface EventPayloadMap {
   'editor-submit': undefined       // 编辑器提交时
   'editor-submitted': undefined    // 编辑器提交后
   'user-changed': LocalUser        // 本地用户数据变更时
+  'conf-updated': undefined        // Artalk 配置变更时
 
   // List 操作（外部：不建议 listen，仅 trigger）
   'list-reload': undefined         // 重新加载 List

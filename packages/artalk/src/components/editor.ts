@@ -21,6 +21,7 @@ export default class Editor extends Component {
   public $plugWrap: HTMLElement
   public $bottom: HTMLElement
   public $plugBtnWrap: HTMLElement
+  public $imgUploadBtn?: HTMLElement
   public $submitBtn: HTMLButtonElement
   public $notifyWrap: HTMLElement
 
@@ -63,6 +64,7 @@ export default class Editor extends Component {
     this.ctx.on('editor-notify', (f) => (this.showNotify(f.msg, f.type)))
     this.ctx.on('editor-travel', ($el) => (this.travel($el)))
     this.ctx.on('editor-travel-back', () => (this.travelBack()))
+    this.ctx.on('conf-updated', () => (this.refreshUploadBtn()))
   }
 
   initLocalStorage () {
@@ -200,7 +202,7 @@ export default class Editor extends Component {
     // 依次实例化 plug
     this.LOADABLE_PLUG_LIST.forEach((PlugObj) => {
       // 切换按钮
-      const btnElem = Utils.createElement(`<span class="atk-plug-btn">${PlugObj.BtnHTML}</span>`)
+      const btnElem = Utils.createElement(`<span class="atk-plug-btn" data-plug-name="${PlugObj.Name}">${PlugObj.BtnHTML}</span>`)
       this.$plugBtnWrap.appendChild(btnElem)
       btnElem.addEventListener('click', () => {
         let plug = this.plugList[PlugObj.Name]
@@ -244,6 +246,8 @@ export default class Editor extends Component {
         btnElem.classList.add('active')
       })
     })
+
+    this.initImgUploadBtn()
   }
 
   /** 关闭编辑器插件 */
@@ -251,6 +255,22 @@ export default class Editor extends Component {
     this.$plugWrap.innerHTML = ''
     this.$plugWrap.style.display = 'none'
     this.openedPlugName = null
+  }
+
+  /** 初始化图片上传按钮 */
+  initImgUploadBtn() {
+    this.$imgUploadBtn = Utils.createElement(`<span class="atk-plug-btn">图片</span>`)
+    this.$plugBtnWrap.querySelector('[data-plug-name="preview"]')!.before(this.$imgUploadBtn) // 显示在预览图标之前
+  }
+
+  /** 刷新图片上传按钮 */
+  refreshUploadBtn() {
+    if (!this.$imgUploadBtn) return
+
+    if (!this.ctx.conf.imgUpload) {
+      this.$imgUploadBtn.setAttribute('atk-only-admin-show', '')
+      this.ctx.trigger('check-admin-show-el')
+    }
   }
 
   insertContent (val: string) {

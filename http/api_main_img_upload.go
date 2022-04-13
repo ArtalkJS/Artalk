@@ -34,9 +34,9 @@ type ParamsImgUpload struct {
 }
 
 func ActionImgUpload(c echo.Context) error {
-	// 功能开关
-	if !config.Instance.ImgUpload.Enabled {
-		return RespError(c, "图片上传功能已禁用", Map{
+	// 功能开关 (管理员始终开启)
+	if !config.Instance.ImgUpload.Enabled && !CheckIsAdminReq(c) {
+		return RespError(c, "禁止图片上传", Map{
 			"img_upload_enabled": false,
 		})
 	}

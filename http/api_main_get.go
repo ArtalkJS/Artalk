@@ -43,6 +43,7 @@ type ResponseGet struct {
 	Unread      []model.CookedNotify  `json:"unread"`
 	UnreadCount int                   `json:"unread_count"`
 	ApiVersion  Map                   `json:"api_version"`
+	Conf        Map                   `json:"conf"`
 }
 
 // 获取评论查询实例
@@ -181,6 +182,7 @@ func ActionGet(c echo.Context) error {
 		Unread:      unreadNotifies,
 		UnreadCount: len(unreadNotifies),
 		ApiVersion:  GetApiVersionDataMap(),
+		Conf:        GetApiPublicConfDataMap(c),
 	})
 }
 

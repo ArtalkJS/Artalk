@@ -97,14 +97,11 @@ func InitRoute(e *echo.Echo) {
 	api.POST("/pv", ActionPV)
 
 	// api/upload-img
-	api.POST("/img-upload", ActionImgUpload)
-	if config.Instance.ImgUpload.Enabled {
-		if config.Instance.ImgUpload.Path == "" {
-			logrus.Fatal("图片上传功能需配置 img_upload.path")
-		}
-		// 静态可访问图片存放目录
-		e.Static(ImgUpload_RoutePath, config.Instance.ImgUpload.Path)
+	if config.Instance.ImgUpload.Path == "" {
+		logrus.Fatal("图片上传功能需配置 img_upload.path")
 	}
+	api.POST("/img-upload", ActionImgUpload)
+	e.Static(ImgUpload_RoutePath, config.Instance.ImgUpload.Path) // 静态可访问图片存放目录
 
 	// api/captcha
 	ca := api.Group("/captcha")
@@ -133,6 +130,11 @@ func InitRoute(e *echo.Echo) {
 	// admin.POST("/vote-sync", ActionAdminVoteSync) // 数据导入功能未关注 vote 部分，暂时注释
 
 	admin.POST("/send-mail", ActionAdminSendMail)
+
+	// conf
+	api.Any("/conf", func(c echo.Context) error {
+		return c.JSON(200, GetApiPublicConfDataMap(c))
+	})
 
 	// version
 	api.Any("/version", func(c echo.Context) error {

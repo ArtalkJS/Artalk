@@ -204,3 +204,23 @@ export async function getCorrectUserAgent() {
 
   return uaRaw
 }
+
+/** 是否为完整的 URL */
+export function isValidURL(urlRaw: string) {
+  // @link https://www.rfc-editor.org/rfc/rfc3986
+  let url: URL
+  try {
+    url = new URL(urlRaw)
+  } catch (_) { return false }
+  return url.protocol === "http:" || url.protocol === "https:"
+}
+
+/** 获取基于 conf.server 的 URL */
+export function getURLBasedOnApi(ctx: Context, path: string) {
+  return `${ctx.conf.server.replace(/\/api\/?$/, '')}/${path.replace(/^\//, '')}`
+}
+
+/** 获取基于某个 baseURL 的 URL */
+export function getURLBasedOn(baseURL: string, path: string) {
+  return `${baseURL.replace(/\/$/, '')}/${path.replace(/^\//, '')}`
+}

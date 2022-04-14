@@ -64,14 +64,15 @@ export default class SidebarLayer extends Component {
       this.$iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
 
       const baseURL = (import.meta.env.MODE === 'development')  ? 'http://localhost:23367/'
-        : `${this.conf.server.replace(/\/$/, '')}/../sidebar/`
+        : Utils.getURLBasedOnApi(this.ctx, 'sidebar/')
       const userData = encodeURIComponent(JSON.stringify(this.ctx.user.data))
 
-      // 测试是否能访问
+      const location = window.location
       this.iframeLoad(`${baseURL}`
         + `?pageKey=${encodeURIComponent(this.conf.pageKey)}`
         + `&site=${encodeURIComponent(this.conf.site || '')}`
         + `&user=${userData}`
+        + `&referer=${encodeURIComponent(`${location.protocol}//${location.host}${location.pathname}`)}`
         + `${((this.conf.darkMode) ? `&darkMode=1` : ``)}`)
 
       this.$iframeWrap.append(this.$iframe)

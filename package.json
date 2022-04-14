@@ -4,6 +4,7 @@
   "homepage": "https://artalk.js.org",
   "scripts": {
     "dev": "pnpm -F artalk dev",
+    "dev:sidebar": "pnpm -F @artalkjs/artalk-sidebar dev",
     "build": "pnpm -F artalk build",
     "build:sidebar": "pnpm -F @artalkjs/artalk-sidebar build",
     "build:all": "pnpm build && pnpm build:sidebar"

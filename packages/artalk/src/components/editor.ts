@@ -326,10 +326,9 @@ export default class Editor extends Component {
     }
     if (!!resp && resp.img_url) {
       let imgURL = resp.img_url as string
-      if (imgURL.startsWith('.') || (imgURL.startsWith('/') && !imgURL.startsWith('//'))) {
-        // 若为相对路径，加上 artalk server
-        imgURL = `${this.ctx.conf.server.replace(/\/api\/?$/, '')}/${imgURL.replace(/^\//, '')}`
-      }
+
+      // 若为相对路径，加上 artalk server
+      if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi(this.ctx, imgURL)
 
       // 上传成功插入图片
       this.$textarea.value = this.$textarea.value.replace(uploadPlaceholderTxt, `\n![](${imgURL})`)

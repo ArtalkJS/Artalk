@@ -39,7 +39,9 @@ export default class MessageView extends SidebarView {
     this.list.pageMode = 'pagination'
     this.list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
     this.list.renderComment = (comment) => {
-      comment.setOpenURL(`${comment.data.page_key}#atk-comment-${comment.data.id}`)
+      let pageKey = comment.data.page_key
+      if (!Utils.isValidURL(pageKey)) pageKey = Utils.getURLBasedOn((window as any).referer || '', pageKey)
+      comment.setOpenURL(`${pageKey}#atk-comment-${comment.data.id}`)
       comment.onReplyBtnClick = () => {
         if (this.ctx.conf.editorTravel === true) {
           this.ctx.trigger('editor-reply', {data: comment.data, $el: comment.$el, scroll: false})

@@ -9,20 +9,29 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12, 14, 16, 17]
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Setup
-      uses: actions/setup-node@v1
+    - name: Use pnpm
+      uses: pnpm/action-setup@v2.0.1
       with:
-        node-version: '12.x'
+        version: 7.0.0-rc.3
 
-    - name: Install
-      run: yarn install
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install
 
     - name: Build
-      run: cd packages/artalk && yarn predeploy
+      run: cd packages/artalk && pnpm predeploy
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3

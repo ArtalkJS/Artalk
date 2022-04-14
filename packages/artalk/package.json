@@ -24,11 +24,11 @@
   "types": "./types/index.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "yarn lint && vite build",
+    "build": "pnpm lint && vite build",
     "build:demo": "vite build --config vite-demo.config.ts",
     "serve": "vite preview",
     "deploy": "gh-pages -d deploy",
-    "predeploy": "yarn run build && yarn run build:demo && yarn run copy:deploy",
+    "predeploy": "pnpm build && pnpm build:demo && pnpm copy:deploy",
     "copy:deploy": "cp -r dist deploy && cp CNAME deploy",
     "lint": "eslint --ext .js,.ts src"
   },
@@ -36,8 +36,10 @@
     "@types/marked": "^4.0.3"
   },
   "dependencies": {
+    "build": "^0.1.4",
     "hanabi": "^0.4.0",
     "insane": "^2.6.2",
-    "marked": "^4.0.14"
+    "marked": "^4.0.14",
+    "run": "^1.4.0"
   }
 }

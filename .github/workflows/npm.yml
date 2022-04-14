@@ -11,24 +11,32 @@ jobs:
     # prevents this action from running on forks
     if: github.repository == 'ArtalkJS/Artalk'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12, 14, 16, 17]
     steps:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Set node version to 12.x
+    - name: Use pnpm
+      uses: pnpm/action-setup@v2.0.1
+      with:
+        version: 7.0.0-rc.3
+
+    - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
-        node-version: '12.x'
-        registry-url: 'https://registry.npmjs.org'
+        node-version: ${{ matrix.node-version }}
+        cache: 'pnpm'
 
     - name: Install dependencies
-      run: yarn install
+      run: pnpm install
 
     - name: Build
-      run: yarn build
+      run: pnpm build
 
     - name: Publish
-      run: cd packages/artalk && yarn publish
+      run: cd packages/artalk && pnpm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

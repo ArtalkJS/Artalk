@@ -1,15 +1,12 @@
 {
   "name": "artalk-monorepo",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "homepage": "https://artalk.js.org",
   "scripts": {
-    "build": "yarn --cwd packages/artalk run build",
-    "dev": "yarn --cwd packages/artalk run dev",
-    "build:sidebar": "yarn run build && yarn --cwd packages/artalk-sidebar run build",
-    "build:all": "yarn --cwd packages/artalk run build && yarn --cwd packages/artalk-sidebar run build"
+    "build": "pnpm --filter artalk build",
+    "dev": "pnpm --filter artalk dev",
+    "build:sidebar": "pnpm -r build",
+    "build:all": "pnpm -r build"
   },
   "devDependencies": {
     "@rollup/plugin-dynamic-import-vars": "^1.4.1",
@@ -28,6 +25,5 @@
     "typescript": "^4.5.2",
     "vite": "^2.6.14",
     "vite-tsconfig-paths": "^3.3.17"
-  },
-  "dependencies": {}
+  }
 }

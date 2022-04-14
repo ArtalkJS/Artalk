@@ -23,13 +23,13 @@
   },
   "scripts": {
     "dev": "vite --port 23367",
-    "build": "yarn lint && vite build",
+    "build": "pnpm lint && vite build",
     "serve": "vite preview",
     "lint": "eslint --ext .js,.ts src"
   },
-  "devDependencies": {
-  },
   "dependencies": {
-    "artalk": "*"
+    "artalk": "workspace: *",
+    "build": "^0.1.4",
+    "run": "^1.4.0"
   }
 }

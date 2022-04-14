@@ -61,7 +61,7 @@ importers:
     dependencies:
       artalk: link:../artalk
 
-  packages/plugin-latex:
+  packages/plugin-katex:
     specifiers:
       '@types/katex': ^0.14.0
       artalk: 'workspace: *'

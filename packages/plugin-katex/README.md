@@ -20,7 +20,7 @@
   <script src="https://cdn.jsdelivr.net/npm/artalk/dist/Artalk.js"></script>
 
   <!-- 引入 @artalkjs/plugin-katex -->
-  <script defer src="https://cdn.jsdelivr.net/npm/@artalkjs/plugin-katex/dist/artalk-plugin-latex.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@artalkjs/plugin-katex/dist/artalk-plugin-katex.js"></script>
 </head>
 <body>
   

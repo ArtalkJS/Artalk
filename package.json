@@ -3,10 +3,10 @@
   "private": true,
   "homepage": "https://artalk.js.org",
   "scripts": {
-    "build": "pnpm --filter artalk build",
-    "dev": "pnpm --filter artalk dev",
-    "build:sidebar": "pnpm -r build",
-    "build:all": "pnpm -r build"
+    "dev": "pnpm -F artalk dev",
+    "build": "pnpm -F artalk build",
+    "build:sidebar": "pnpm -F @artalkjs/artalk-sidebar build",
+    "build:all": "pnpm build && pnpm build:sidebar"
   },
   "devDependencies": {
     "@rollup/plugin-dynamic-import-vars": "^1.4.1",

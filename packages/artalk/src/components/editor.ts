@@ -312,8 +312,12 @@ export default class Editor extends Component {
     const fileExt = /[^.]+$/.exec(file.name)
     if (!fileExt || !this.allowImgExts.includes(fileExt[0])) return
 
+    // 插入图片前换一行
+    let insertPrefix = '\n'
+    if (this.$textarea.value.trim() === '') insertPrefix = ''
+
     // 插入占位加载文字
-    const uploadPlaceholderTxt = `\n![](Uploading ${file.name}...)`
+    const uploadPlaceholderTxt = `${insertPrefix}![](Uploading ${file.name}...)`
     this.insertContent(uploadPlaceholderTxt)
 
     // 上传图片
@@ -331,14 +335,11 @@ export default class Editor extends Component {
       if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi(this.ctx, imgURL)
 
       // 上传成功插入图片
-      this.$textarea.value = this.$textarea.value.replace(uploadPlaceholderTxt, `\n![](${imgURL})`)
+      this.setContent(this.$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`))
     } else {
       // 上传失败删除加载文字
-      this.$textarea.value = this.$textarea.value.replace(uploadPlaceholderTxt, '')
+      this.setContent(this.$textarea.value.replace(uploadPlaceholderTxt, ''))
     }
-
-    // 更新内容保存到 localStorage
-    this.saveContent()
   }
 
   insertContent (val: string) {
@@ -375,7 +376,8 @@ export default class Editor extends Component {
     this.cancelReply()
   }
 
-  getContent () {
+  /** 获取最终用于 submit 的数据 */
+  getFinalContent () {
     let content = this.getContentOriginal()
 
     // 表情包处理
@@ -392,7 +394,7 @@ export default class Editor extends Component {
   }
 
   getContentMarked () {
-    return Utils.marked(this.ctx, this.getContent())
+    return Utils.marked(this.ctx, this.getFinalContent())
   }
 
   initBottomPart () {
@@ -451,7 +453,7 @@ export default class Editor extends Component {
   }
 
   async submit () {
-    if (this.getContent().trim() === '') {
+    if (this.getFinalContent().trim() === '') {
       this.$textarea.focus()
       return
     }
@@ -462,7 +464,7 @@ export default class Editor extends Component {
 
     try {
       const nComment = await new Api(this.ctx).add({
-        content: this.getContent(),
+        content: this.getFinalContent(),
         nick: this.user.data.nick,
         email: this.user.data.email,
         link: this.user.data.link,

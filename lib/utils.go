@@ -104,6 +104,15 @@ func ContainsStr(s []string, v string) bool {
 	return false
 }
 
+func SplitAndTrimSpace(s string, sep string) []string {
+	splitted := strings.Split(s, sep)
+	arr := []string{}
+	for _, v := range splitted {
+		arr = append(arr, strings.TrimSpace(v))
+	}
+	return arr
+}
+
 func RemoveBlankStrings(s []string) []string {
 	var r []string
 	for _, str := range s {

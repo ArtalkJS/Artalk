@@ -1,8 +1,6 @@
 package http
 
 import (
-	"strings"
-
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
@@ -24,7 +22,7 @@ func ActionAdminSiteAdd(c echo.Context) error {
 	}
 
 	if p.Urls != "" {
-		urls := strings.Split(p.Urls, ",")
+		urls := lib.SplitAndTrimSpace(p.Urls, ",")
 		for _, url := range urls {
 			if !lib.ValidateURL(url) {
 				return RespError(c, "Invalid url exist")

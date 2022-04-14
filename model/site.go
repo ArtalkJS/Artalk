@@ -1,8 +1,6 @@
 package model
 
 import (
-	"strings"
-
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"gorm.io/gorm"
 )
@@ -28,7 +26,7 @@ type CookedSite struct {
 }
 
 func (s Site) ToCooked() CookedSite {
-	splitUrls := lib.RemoveBlankStrings(strings.Split(s.Urls, ","))
+	splitUrls := lib.RemoveBlankStrings(lib.SplitAndTrimSpace(s.Urls, ","))
 	firstUrl := ""
 	if len(splitUrls) > 0 {
 		firstUrl = splitUrls[0]

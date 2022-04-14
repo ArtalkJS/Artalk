@@ -44,7 +44,7 @@ func ActionAdminSiteEdit(c echo.Context) error {
 
 	// urls 合法性检测
 	if p.Urls != "" {
-		for _, url := range strings.Split(p.Urls, ",") {
+		for _, url := range lib.SplitAndTrimSpace(p.Urls, ",") {
 			if !lib.ValidateURL(url) {
 				return RespError(c, "Invalid url exist")
 			}

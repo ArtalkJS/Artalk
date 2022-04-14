@@ -200,7 +200,7 @@ func SiteReady(tSiteName string, tSiteUrls string) (model.Site, error) {
 			return false
 		}
 
-		tUrlsSpit := strings.Split(tSiteUrls, ",")
+		tUrlsSpit := lib.SplitAndTrimSpace(tSiteUrls, ",")
 
 		rUrls := []string{}
 		for _, u := range tUrlsSpit {

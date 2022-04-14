@@ -2,17 +2,17 @@
 
 set -e
 
-if ! command -v yarn &> /dev/null
+if ! command -v pnpm &> /dev/null
 then
     apt-get update && apt-get install --no-install-recommends -y -q curl ca-certificates
     
     # Install volta
+    bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
     export VOLTA_HOME="${HOME}/.volta"
     export PATH="${VOLTA_HOME}/bin:${PATH}"
-    bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
 
     volta install node
-    volta install yarn
+    volta install pnpm
 fi
 
 mkdir -p ./local/
@@ -27,8 +27,8 @@ cd Artalk
 git fetch --tags
 git checkout $(git describe --tags --abbrev=0)
 
-yarn install --network-timeout 1000000
-yarn build:all
+pnpm install
+pnpm build:all
 
 cd ../../
 

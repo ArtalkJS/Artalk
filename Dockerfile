@@ -6,7 +6,8 @@ WORKDIR /source
 # install tools
 RUN set -ex \
     && apk upgrade \
-    && apk add make git gcc musl-dev nodejs yarn bash
+    && apk add make git gcc musl-dev nodejs bash npm\
+    && npm install -g pnpm@7.0.0-rc.3
 
 COPY . ./ArtalkGo
 

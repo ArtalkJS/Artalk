@@ -93,7 +93,7 @@ $ make docker-push
   - [ ] 阿里云服务
   - [ ] 腾讯云服务
   - [ ] 关键字 / 正则表达式过滤
-- [x] 评论通知管理员
+- [x] 评论通知管理员 ([notify](https://github.com/nikoksr/notify))
   - [x] Telegram Bot
   - [x] 飞书 WebHook Bot
   - [x] 钉钉

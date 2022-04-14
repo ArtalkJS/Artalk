@@ -42,9 +42,12 @@ export default class List extends ListLite {
     // 操作按钮
     this.initListActionBtn()
 
-    // 下拉选择层
     this.$commentCount = this.$el.querySelector('.atk-comment-count')!
-    this.initDropdown()
+
+    // 评论列表排序 Dropdown 下拉选择层
+    if (this.ctx.conf.listSort) {
+      this.initDropdown()
+    }
 
     // copyright
     this.$el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`

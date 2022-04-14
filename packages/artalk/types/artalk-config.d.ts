@@ -80,6 +80,9 @@ export default interface ArtalkConfig {
   /** 显示 UA 徽标 */
   uaBadge?: boolean
 
+  /** 评论列表排序功能 (显示 Dropdown) */
+  listSort?: boolean
+
   /** 图片上传功能 */
   imgUpload?: boolean
 

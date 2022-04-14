@@ -6,7 +6,8 @@ require (
 	github.com/PuerkitoBio/goquery v1.7.1
 	github.com/allegro/bigcache/v3 v3.0.0
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
-	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
+	github.com/blang/semver v3.5.1+incompatible
 	github.com/cheggaaa/pb/v3 v3.0.8
 	github.com/eko/gocache/v2 v2.1.0
 	github.com/elliotchance/phpserialize v1.3.1
@@ -27,8 +28,10 @@ require (
 	github.com/onrik/logrus v0.9.0
 	github.com/onsi/gomega v1.16.0 // indirect
 	github.com/qwqcode/go-aliyun-email v0.0.0-20180120030821-cb6e7b1382bf
+	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.8.1
+	github.com/smartystreets/assertions v1.0.1 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1

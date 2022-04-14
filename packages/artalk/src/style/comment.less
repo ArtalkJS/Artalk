@@ -212,6 +212,8 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: -15px;
 
         & > span {
           color: var(--at-color-meta);
@@ -220,6 +222,7 @@
           display: inline-flex;
           cursor: pointer;
           user-select: none;
+          margin-bottom: 15px;
 
           &.atk-error, &.atk-error:hover {
             color: var(--at-color-red);

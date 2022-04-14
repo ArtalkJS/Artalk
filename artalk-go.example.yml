@@ -91,3 +91,39 @@ img_upload:
   upgit:
     enabled: false # 启用 upgit
     exec: "./upgit -c <upgit配置文件路径> -t /artalk-img"
+
+# 其他通知方式
+notify:
+  # Telegram
+  telegram:
+    enabled: false
+    api_token: ""
+    receivers:
+      - 7777777
+  # 飞书
+  lark:
+    enabled: false
+    webhook_url: ""
+  # 钉钉
+  ding_talk:
+    enabled: false
+    token: ""
+    secret: ""
+  # Bark
+  bark:
+    enabled: false
+    server: "http://day.app/xxxxxxx/"
+  # Slack
+  slack:
+    enabled: false
+    oauth_token: ""
+    receivers:
+      - "CHANNEL_ID"
+  # LINE
+  line:
+    enabled: false
+    channel_secret: ""
+    channel_access_token: ""
+    receivers:
+      - "USER_ID_1"
+      - "GROUP_ID_1"

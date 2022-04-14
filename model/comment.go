@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"net/url"
+	"path"
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
@@ -81,6 +82,28 @@ func (c *Comment) FetchSite() Site {
 
 	c.Site = site
 	return site
+}
+
+// 获取评论回复链接
+func (c *Comment) GetLinkToReply(notifyKey ...string) string {
+	url := c.PageKey
+
+	// 若 pageKey 为相对路径，生成相对于站点 URL 配置的 URL
+	if !lib.ValidateURL(url) {
+		url = path.Join(c.FetchSite().ToCooked().FirstUrl, c.PageKey)
+	}
+
+	// 请求 query
+	queryMap := map[string]string{
+		"atk_comment": fmt.Sprintf("%d", c.ID),
+	}
+
+	// atk_notify_key
+	if len(notifyKey) > 0 {
+		queryMap["atk_notify_key"] = notifyKey[0]
+	}
+
+	return lib.AddQueryToURL(url, queryMap)
 }
 
 type CookedComment struct {

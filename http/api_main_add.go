@@ -1,13 +1,20 @@
 package http
 
 import (
+	"context"
+	"fmt"
+	"net/http"
+	"net/url"
 	"regexp"
+	"strconv"
+	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/lib/email"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
+	"github.com/nikoksr/notify"
 	"github.com/sirupsen/logrus"
 )
 
@@ -145,6 +152,9 @@ func ActionAdd(c echo.Context) error {
 
 		// 邮件通知发送
 		EmailSend(&comment, &parentComment)
+
+		// 其他通知
+		UseNotify(&comment, &parentComment)
 	}()
 
 	return RespData(c, ResponseAdd{
@@ -199,4 +209,76 @@ func EmailSend(comment *model.Comment, parentComment *model.Comment) {
 			email.AsyncSendToAdmin(&notify, &admin) // 发送邮件给管理员
 		}
 	}
+}
+
+var NotifyCtx = context.Background()
+
+// 其他通知方式
+func UseNotify(comment *model.Comment, parentComment *model.Comment) {
+	// 忽略管理员回复
+	coUser := comment.FetchUser()
+	if coUser.IsAdmin {
+		return
+	}
+
+	// 如果不是 root 评论，并且回复的不是管理员，直接忽略
+	if !parentComment.IsEmpty() && !parentComment.FetchUser().IsAdmin {
+		return
+	}
+
+	// 评论内容
+	coContent := comment.Content
+	if len(coContent) > 280 {
+		coContent = string([]rune(coContent)[0:280]) + "..." // 截取文字
+	}
+
+	// 消息内容
+	title := fmt.Sprintf("来自 @%s 的回复", coUser.Name)
+	msg := fmt.Sprintf("%s\n\n%s", coContent, comment.GetLinkToReply())
+
+	// 使用 notify 发送
+	go func() {
+		_ = notify.Send(NotifyCtx, title, msg)
+	}()
+
+	// 飞书
+	go func() {
+		sendLark(title + "\n\n" + msg)
+	}()
+
+	// Bark
+	go func() {
+		sendBark(title, msg)
+	}()
+}
+
+func sendLark(msg string) {
+	larkConf := config.Instance.Notify.Lark
+	if !larkConf.Enabled {
+		return
+	}
+
+	sendData := fmt.Sprintf(`{"msg_type":"text","content":{"text":%s}}`, strconv.Quote(msg))
+	result, err := http.Post(larkConf.WebhookURL, "application/json", strings.NewReader(sendData))
+	if err != nil {
+		logrus.Error("[飞书]", " 消息发送失败：", err)
+		return
+	}
+
+	defer result.Body.Close()
+}
+
+func sendBark(title string, msg string) {
+	barkConf := config.Instance.Notify.Bark
+	if !barkConf.Enabled {
+		return
+	}
+
+	result, err := http.Get(fmt.Sprintf("%s/%s/%s", strings.TrimSuffix(barkConf.Server, "/"), url.QueryEscape(title), url.QueryEscape(msg)))
+	if err != nil {
+		logrus.Error("[Bark]", " 消息发送失败：", err)
+		return
+	}
+
+	defer result.Body.Close()
 }

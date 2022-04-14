@@ -10,6 +10,11 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/lib/email"
 	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/nikoksr/notify"
+	"github.com/nikoksr/notify/service/dingding"
+	"github.com/nikoksr/notify/service/line"
+	"github.com/nikoksr/notify/service/slack"
+	"github.com/nikoksr/notify/service/telegram"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -60,6 +65,7 @@ func init() {
 	cobra.OnInitialize(syncConfWithDB)
 	cobra.OnInitialize(initCache)
 	cobra.OnInitialize(email.InitQueue) // 初始化邮件队列
+	cobra.OnInitialize(initNotify)
 
 	rootCmd.SetVersionTemplate("Artalk-GO {{printf \"version %s\" .Version}}\n")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "配置文件路径 (defaults are './artalk-go.yml')")
@@ -219,5 +225,39 @@ func initCache() {
 	if err != nil {
 		logrus.Error("缓存初始化发生错误 ", err)
 		os.Exit(1)
+	}
+}
+
+// 6. 初始化 Notify
+func initNotify() {
+	// Telegram
+	tgConf := config.Instance.Notify.Telegram
+	if tgConf.Enabled {
+		telegramService, _ := telegram.New(tgConf.ApiToken)
+		telegramService.AddReceivers(tgConf.Receivers...)
+		notify.UseServices(telegramService)
+	}
+
+	// 钉钉
+	dingTalkConf := config.Instance.Notify.DingTalk
+	if dingTalkConf.Enabled {
+		dingTalkService := dingding.New(&dingding.Config{Token: dingTalkConf.Token, Secret: dingTalkConf.Secret})
+		notify.UseServices(dingTalkService)
+	}
+
+	// Slack
+	slackConf := config.Instance.Notify.Slack
+	if slackConf.Enabled {
+		slackService := slack.New(slackConf.OauthToken)
+		slackService.AddReceivers(slackConf.Receivers...)
+		notify.UseServices(slackService)
+	}
+
+	// LINE
+	LINEConf := config.Instance.Notify.LINE
+	if LINEConf.Enabled {
+		lineService, _ := line.New(config.Instance.Notify.LINE.ChannelSecret, config.Instance.Notify.LINE.ChannelAccessToken)
+		lineService.AddReceivers(LINEConf.Receivers...)
+		notify.UseServices(lineService)
 	}
 }

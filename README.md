@@ -93,8 +93,13 @@ $ make docker-push
   - [ ] 阿里云服务
   - [ ] 腾讯云服务
   - [ ] 关键字 / 正则表达式过滤
-- [ ] 评论通知 WebHook
-  - [ ] Telegram Bot
+- [x] 评论通知管理员
+  - [x] Telegram Bot
+  - [x] 飞书 WebHook Bot
+  - [x] 钉钉
+  - [x] Bark
+  - [x] Slack
+  - [x] LINE
   - [ ] 自定义 HTTP 回调
 - [ ] 博客邮件订阅
 - [x] 用户鉴权机制

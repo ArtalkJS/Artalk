@@ -30,6 +30,7 @@ type Config struct {
 	Captcha        CaptchaConf     `mapstructure:"captcha" json:"captcha"`                 // 验证码
 	Email          EmailConf       `mapstructure:"email" json:"email"`                     // 邮箱提醒
 	ImgUpload      ImgUploadConf   `mapstructure:"img_upload" json:"img_upload"`           // 图片上传
+	Notify         NotifyConf      `mapstructure:"notify" json:"notify"`                   // 其他通知方式
 }
 
 type DBConf struct {
@@ -124,6 +125,51 @@ type ImgUploadConf struct {
 type UpgitConf struct {
 	Enabled bool   `mapstructure:"enabled" json:"enabled"` // 启用 upgit
 	Exec    string `mapstructure:"exec" json:"exec"`       // 启动命令
+}
+
+// 其他通知方式
+type NotifyConf struct {
+	Telegram NotifyTelegramConf `mapstructure:"telegram" json:"telegram"`   // TG
+	Lark     NotifyLarkConf     `mapstructure:"lark" json:"lark"`           // 飞书
+	DingTalk NotifyDingTalkConf `mapstructure:"ding_talk" json:"ding_talk"` // 钉钉
+	Bark     NotifyBarkConf     `mapstructure:"bark" json:"bark"`           // bark
+	Slack    NotifySlackConf    `mapstructure:"slack" json:"slack"`         // slack
+	LINE     NotifyLINEConf     `mapstructure:"line" json:"line"`           // LINE
+}
+
+type NotifyTelegramConf struct {
+	Enabled   bool    `mapstructure:"enabled" json:"enabled"`
+	ApiToken  string  `mapstructure:"api_token" json:"api_token"`
+	Receivers []int64 `mapstructure:"receivers" json:"receivers"`
+}
+
+type NotifyDingTalkConf struct {
+	Enabled bool   `mapstructure:"enabled" json:"enabled"`
+	Token   string `mapstructure:"token" json:"token"`
+	Secret  string `mapstructure:"secret" json:"secret"`
+}
+
+type NotifyLarkConf struct {
+	Enabled    bool   `mapstructure:"enabled" json:"enabled"`
+	WebhookURL string `mapstructure:"webhook_url" json:"webhook_url"`
+}
+
+type NotifyBarkConf struct {
+	Enabled bool   `mapstructure:"enabled" json:"enabled"`
+	Server  string `mapstructure:"server" json:"server"`
+}
+
+type NotifySlackConf struct {
+	Enabled    bool     `mapstructure:"enabled" json:"enabled"`
+	OauthToken string   `mapstructure:"oauth_token" json:"oauth_token"`
+	Receivers  []string `mapstructure:"receivers" json:"receivers"`
+}
+
+type NotifyLINEConf struct {
+	Enabled            bool     `mapstructure:"enabled" json:"enabled"`
+	ChannelSecret      string   `mapstructure:"channel_secret" json:"channel_secret"`
+	ChannelAccessToken string   `mapstructure:"channel_access_token" json:"channel_access_token"`
+	Receivers          []string `mapstructure:"receivers" json:"receivers"`
 }
 
 // Init 初始化配置

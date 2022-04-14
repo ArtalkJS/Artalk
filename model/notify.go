@@ -57,14 +57,7 @@ func (n *Notify) GenerateKey() {
 func (n *Notify) GetReadLink() string {
 	c := n.FetchComment()
 
-	if !lib.ValidateURL(c.PageKey) {
-		return ""
-	}
-
-	return lib.AddQueryToURL(c.PageKey, map[string]string{
-		"atk_comment":    fmt.Sprintf("%d", c.ID),
-		"atk_notify_key": n.Key,
-	})
+	return c.GetLinkToReply(n.Key)
 }
 
 func (n *Notify) SetInitial() error {

@@ -4,10 +4,15 @@ node_js:
   - lts/*
 
 script:
-  - yarn run lint
-  - yarn run build
+  - pnpm run lint
+  - pnpm run build
 
 cache:
-  yarn: true
+  npm: false
   directories:
-    - node_modules
+    - "~/.pnpm-store"
+before_install:
+  - curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@7.0.0-rc.3
+  - pnpm config set store-dir ~/.pnpm-store
+install:
+  - pnpm install

@@ -53,7 +53,7 @@
 前往：[“**文档 · 部署**”](https://artalk.js.org/guide/deploy.html)
 
 ```sh
-$ yarn add artalk
+$ pnpm add artalk
 ```
 
 ```ts
@@ -77,6 +77,7 @@ new Artalk({
 [![Stargazers over time](https://starchart.cc/ArtalkJS/Artalk.svg)](https://starchart.cc/ArtalkJS/Artalk)
 
 ## License
+
 [GPL-3.0](./LICENSE)
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk?ref=badge_shield)

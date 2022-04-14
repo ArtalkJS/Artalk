@@ -312,6 +312,12 @@ export default class Editor extends Component {
     const fileExt = /[^.]+$/.exec(file.name)
     if (!fileExt || !this.allowImgExts.includes(fileExt[0])) return
 
+    // 未登录提示
+    if (!this.ctx.user.checkHasBasicUserInfo()) {
+      this.showNotify('填入你的名字邮箱才能上传哦', 'w')
+      return
+    }
+
     // 插入图片前换一行
     let insertPrefix = '\n'
     if (this.$textarea.value.trim() === '') insertPrefix = ''

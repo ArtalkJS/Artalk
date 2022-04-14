@@ -247,7 +247,7 @@ export default class Editor extends Component {
       })
     })
 
-    this.initImgUploadBtn()
+    this.initImgUpload()
   }
 
   /** 关闭编辑器插件 */
@@ -260,11 +260,12 @@ export default class Editor extends Component {
   /** 允许的图片格式 */
   allowImgExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']
 
-  /** 初始化图片上传按钮 */
-  initImgUploadBtn() {
+  /** 初始化图片上传功能 */
+  initImgUpload() {
     this.$imgUploadBtn = Utils.createElement(`<span class="atk-plug-btn">图片</span>`)
     this.$plugBtnWrap.querySelector('[data-plug-name="preview"]')!.before(this.$imgUploadBtn) // 显示在预览图标之前
 
+    // 按钮点击
     this.$imgUploadBtn.onclick = () => {
       // 选择图片
       const $input = document.createElement('input')
@@ -280,6 +281,17 @@ export default class Editor extends Component {
       $input.click() // 显示选择图片对话框
     }
 
+    // 统一从 FileList 获取文件并上传图片方法
+    const uploadFromFileList = (files?: FileList) => {
+      if (!files) return
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        this.uploadImg(file)
+      }
+    }
+
+    // 拖拽图片
     // @link https://developer.mozilla.org/zh-CN/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
     // 阻止浏览器的默认释放行为
     this.$textarea.addEventListener('dragover', (evt) => {
@@ -288,12 +300,19 @@ export default class Editor extends Component {
     })
 
     this.$textarea.addEventListener('drop', (evt) => {
-      if (evt.dataTransfer?.files) {
+      const files = evt.dataTransfer?.files
+      if (files?.length) {
         evt.preventDefault()
-        for (let i = 0; i < evt.dataTransfer.files.length; i++) {
-          const file = evt.dataTransfer.files[i]
-          this.uploadImg(file)
-        }
+        uploadFromFileList(files)
+      }
+    })
+
+    // 粘贴图片
+    this.$textarea.addEventListener('paste', (evt) => {
+      const files = evt.clipboardData?.files
+      if (files?.length) {
+        evt.preventDefault()
+        uploadFromFileList(files)
       }
     })
   }

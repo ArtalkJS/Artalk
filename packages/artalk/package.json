@@ -36,10 +36,8 @@
     "@types/marked": "^4.0.3"
   },
   "dependencies": {
-    "build": "^0.1.4",
     "hanabi": "^0.4.0",
     "insane": "^2.6.2",
-    "marked": "^4.0.14",
-    "run": "^1.4.0"
+    "marked": "^4.0.14"
   }
 }

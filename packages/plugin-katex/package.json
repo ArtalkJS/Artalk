@@ -1,0 +1,30 @@
+{
+  "name": "@artalkjs/plugin-katex",
+  "version": "0.1.0",
+  "license": "GPL-3.0",
+  "description": "The katex plugin of artalk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArtalkJS/Artalk.git",
+    "directory": "packages/plugin-katex"
+  },
+  "homepage": "https://artalk.js.org",
+  "bugs": "https://github.com/ArtalkJS/Artalk/issue",
+  "main": "./dist/artalk-plugin-katex.js",
+  "unpkg": "./dist/artalk-plugin-katex.iife.js",
+  "jsdelivr": "./dist/artalk-plugin-katex.iife.js",
+  "module": "./dist/artalk-plugin-katex.es.js",
+  "types": "./index.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "artalk": "workspace: *",
+    "katex": "^0.15.3"
+  },
+  "devDependencies": {
+    "@types/katex": "^0.14.0"
+  }
+}

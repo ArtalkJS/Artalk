@@ -12,6 +12,7 @@ import SidebarLayer from './components/sidebar-layer'
 import { GetLayerWrap } from './components/layer'
 import { EventPayloadMap, Handler } from '~/types/event'
 import Api from './api'
+import * as Utils from './lib/utils'
 
 /**
  * Artalk
@@ -59,6 +60,7 @@ export default class Artalk {
 
     // 组件初始化
     this.checkerLauncher = new CheckerLauncher(this.ctx)
+    Utils.initMarked(this.ctx) // 初始化 marked
 
     // 编辑器
     this.editor = new Editor(this.ctx)
@@ -80,6 +82,13 @@ export default class Artalk {
 
     // 其他
     this.initPV()
+
+    // 插件初始化
+    Artalk.Plugins.forEach(plugin => {
+      if (typeof plugin === 'function') {
+        plugin(this.ctx)
+      }
+    })
   }
 
   /** 事件绑定 · 初始化 */
@@ -179,5 +188,13 @@ export default class Artalk {
   /** 触发事件 */
   public trigger<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K]) {
     this.ctx.trigger(name, payload, 'external')
+  }
+
+  /** Plugins */
+  protected static Plugins: ((ctx: Context) => void)[] = []
+
+  /** Enable Plugin */
+  public static Use(plugin: ((ctx: Context) => void)) {
+    this.Plugins.push(plugin)
   }
 }

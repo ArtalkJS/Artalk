@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/url"
 	"path"
 	"strconv"
@@ -224,6 +225,8 @@ func (c *Comment) ToCookedForEmail() CookedCommentForEmail {
 	}
 }
 
+var AntiSpamReplaceKeywords *[]string
+
 func (c *Comment) SpamCheck(echoCtx echo.Context) {
 	// 拦截评论
 	BlockCommentBy := func(blocker string) {
@@ -321,7 +324,49 @@ func (c *Comment) SpamCheck(echoCtx echo.Context) {
 		ApiCommonHandle("阿里云", isPass, err)
 	}
 
-	// TODO:关键字过滤
+	// 关键字过滤
+	keywordsConf := config.Instance.Moderator.Keywords
+	if keywordsConf.Enabled {
+		// 懒加载，初始化
+		if AntiSpamReplaceKeywords == nil {
+			AntiSpamReplaceKeywords = &[]string{}
+			// 加载文件
+			for _, f := range keywordsConf.Files {
+				buf, err := ioutil.ReadFile(f)
+				if err != nil {
+					logrus.Error("关键词词库文件 " + f + " 加载失败")
+				} else {
+					fileContent := string(buf)
+					*AntiSpamReplaceKeywords = append(*AntiSpamReplaceKeywords, lib.RemoveBlankStrings(lib.SplitAndTrimSpace(fileContent, keywordsConf.FileSep))...)
+				}
+			}
+		}
+
+		// 关键词过滤
+		handleContent := c.Content
+		replaced := false
+		for _, keyword := range *AntiSpamReplaceKeywords {
+			if strings.Contains(handleContent, keyword) {
+				if (keywordsConf.Pending) {
+					BlockCommentBy("关键词")
+					break
+				}
+
+				if (keywordsConf.ReplacTo != "") {
+					handleContent = strings.Replace(handleContent, keyword, strings.Repeat(keywordsConf.ReplacTo, len(keyword)), -1)
+					replaced = true
+				}
+			}
+		}
+
+		if (!keywordsConf.Pending && replaced && keywordsConf.ReplacTo != "") {
+			logrus.Info(fmt.Sprintf("[垃圾拦截] 关键词替换评论 ID=%d 原始内容=%s 替换内容=%s", c.ID, strconv.Quote(c.Content), strconv.Quote(handleContent)))
+			
+			// 保存评论
+			c.Content = handleContent
+			lib.DB.Save(c)
+		}
+	}
 }
 
 func (c *Comment) ToArtran() Artran {

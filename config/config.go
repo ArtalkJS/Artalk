@@ -60,11 +60,12 @@ type AdminUserConf struct {
 }
 
 type ModeratorConf struct {
-	PendingDefault bool                `mapstructure:"pending_default" json:"pending_default"`
-	ApiFailBlock   bool                `mapstructure:"api_fail_block" json:"api_fail_block"` // API 请求错误仍然拦截
-	AkismetKey     string              `mapstructure:"akismet_key" json:"akismet_key"`
-	Tencent        TencentAntispamConf `mapstructure:"tencent" json:"tencent"`
-	Aliyun         AliyunAntispamConf  `mapstructure:"aliyun" json:"aliyun"`
+	PendingDefault bool                 `mapstructure:"pending_default" json:"pending_default"`
+	ApiFailBlock   bool                 `mapstructure:"api_fail_block" json:"api_fail_block"` // API 请求错误仍然拦截
+	AkismetKey     string               `mapstructure:"akismet_key" json:"akismet_key"`
+	Tencent        TencentAntispamConf  `mapstructure:"tencent" json:"tencent"`
+	Aliyun         AliyunAntispamConf   `mapstructure:"aliyun" json:"aliyun"`
+	Keywords       KeyWordsAntispamConf `mapstructure:"keywords" json:"keywords"`
 }
 
 // 腾讯云反垃圾
@@ -81,6 +82,15 @@ type AliyunAntispamConf struct {
 	AccessKeyID     string `mapstructure:"access_key_id" json:"access_key_id"`
 	AccessKeySecret string `mapstructure:"access_key_secret" json:"access_key_secret"`
 	Region          string `mapstructure:"region" json:"region"`
+}
+
+// 关键词词库过滤
+type KeyWordsAntispamConf struct {
+	Enabled  bool     `mapstructure:"enabled" json:"enabled"`
+	Pending  bool     `mapstructure:"pending" json:"pending"`
+	Files    []string `mapstructure:"files" json:"files"`
+	FileSep  string   `mapstructure:"file_sep" json:"file_sep"`
+	ReplacTo string   `mapstructure:"replac_to" json:"replac_to"`
 }
 
 type CaptchaConf struct {

@@ -67,6 +67,14 @@ moderator:
     access_key_id: ""
     access_key_secret: ""
     region: "cn-shanghai"
+  # 关键词词库过滤
+  keywords:
+    enabled: false
+    pending: false # 匹配成功设为待审状态
+    files: # 支持多个词库文件
+      - "./data/词库_1.txt"
+    file_sep: "\n" # 词库文件内容分割符
+    replac_to: "*" # 替换字符
 
 # 验证码
 captcha:

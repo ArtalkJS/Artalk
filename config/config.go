@@ -60,17 +60,27 @@ type AdminUserConf struct {
 }
 
 type ModeratorConf struct {
-	PendingDefault bool           `mapstructure:"pending_default" json:"pending_default"`
-	AkismetKey     string         `mapstructure:"akismet_key" json:"akismet_key"`
-	TencentTMS     TencentTMSConf `mapstructure:"tencent_tms" json:"tencent_tms"`
+	PendingDefault bool                `mapstructure:"pending_default" json:"pending_default"`
+	ApiFailBlock   bool                `mapstructure:"api_fail_block" json:"api_fail_block"` // API 请求错误仍然拦截
+	AkismetKey     string              `mapstructure:"akismet_key" json:"akismet_key"`
+	Tencent        TencentAntispamConf `mapstructure:"tencent" json:"tencent"`
+	Aliyun         AliyunAntispamConf  `mapstructure:"aliyun" json:"aliyun"`
 }
 
-// 腾讯云文本内容安全
-type TencentTMSConf struct {
+// 腾讯云反垃圾
+type TencentAntispamConf struct {
 	Enabled   bool   `mapstructure:"enabled" json:"enabled"`
 	SecretID  string `mapstructure:"secret_id" json:"secret_id"`
 	SecretKey string `mapstructure:"secret_key" json:"secret_key"`
 	Region    string `mapstructure:"region" json:"region"`
+}
+
+// 阿里云反垃圾
+type AliyunAntispamConf struct {
+	Enabled         bool   `mapstructure:"enabled" json:"enabled"`
+	AccessKeyID     string `mapstructure:"access_key_id" json:"access_key_id"`
+	AccessKeySecret string `mapstructure:"access_key_secret" json:"access_key_secret"`
+	Region          string `mapstructure:"region" json:"region"`
 }
 
 type CaptchaConf struct {

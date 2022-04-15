@@ -1,4 +1,4 @@
-package lib
+package anti_spam
 
 import (
 	"errors"
@@ -32,7 +32,7 @@ type AkismetParams struct {
 }
 
 // @link https://akismet.com/development/api/#comment-check
-func SpamCheck_Akismet(params *AkismetParams, key string) (isOK bool, err error) {
+func Akismet(params *AkismetParams, key string) (isPass bool, err error) {
 	form := url.Values{}
 
 	v := reflect.ValueOf(*params)
@@ -49,20 +49,20 @@ func SpamCheck_Akismet(params *AkismetParams, key string) (isOK bool, err error)
 	api := fmt.Sprintf("https://%s.rest.akismet.com/1.1/comment-check", key)
 	req, err := http.NewRequest("POST", api, reqBody)
 	if err != nil {
-		return true, err
+		return false, err
 	}
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return true, err
+		return false, err
 	}
 
 	defer resp.Body.Close()
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return true, err
+		return false, err
 	}
 
 	respStr := string(respBody)
@@ -71,11 +71,16 @@ func SpamCheck_Akismet(params *AkismetParams, key string) (isOK bool, err error)
 		logrus.Info("akismet 垃圾检测响应 ", respStr)
 	}
 
-	if respStr == "true" {
-		return false, nil // 不是垃圾评论
-	} else if respStr == "false" {
-		return true, nil
+	switch respStr {
+	case "true":
+		// 是垃圾评论
+		isPass = false
+		return isPass, nil
+	case "false":
+		// 不是垃圾评论
+		isPass = true
+		return isPass, nil
 	}
 
-	return true, errors.New(respStr)
+	return false, errors.New(respStr)
 }

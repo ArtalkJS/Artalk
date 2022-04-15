@@ -89,9 +89,9 @@ $ make docker-push
 - [x] 邮件多模板自定义
 - [x] 用户已读标记
 - [x] 反垃圾
-  - [x] Akismet
-  - [ ] 阿里云服务
-  - [ ] 腾讯云服务
+  - [x] [Akismet](https://akismet.com/)
+  - [x] [阿里云内容安全](https://help.aliyun.com/document_detail/28417.html)
+  - [x] [腾讯云内容安全](https://cloud.tencent.com/document/product/1124/64508)
   - [ ] 关键字 / 正则表达式过滤
 - [x] 评论通知管理员 ([notify](https://github.com/nikoksr/notify))
   - [x] Telegram Bot

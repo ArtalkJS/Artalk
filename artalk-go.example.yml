@@ -52,14 +52,21 @@ login_timeout: 259200
 # 评论审核
 moderator:
   pending_default: false # 发表新评论默认为 “待审状态”
+  api_fail_block: false # 垃圾检测 API 请求错误仍然拦截
   # akismet.com 反垃圾
   akismet_key: ""
   # 腾讯云文本内容安全 (tms)
-  tencent_tms: # https://cloud.tencent.com/document/product/1124/64508
+  tencent: # https://cloud.tencent.com/document/product/1124/64508
     enabled: false
     secret_id: ""
     secret_key: ""
     region: "ap-guangzhou"
+  # 阿里云内容安全
+  aliyun: # https://help.aliyun.com/document_detail/28417.html
+    enabled: false
+    access_key_id: ""
+    access_key_secret: ""
+    region: "cn-shanghai"
 
 # 验证码
 captcha:

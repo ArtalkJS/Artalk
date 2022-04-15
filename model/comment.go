@@ -266,6 +266,26 @@ func (c *Comment) SpamCheck(echoCtx echo.Context) {
 		}
 	}
 
+	// 腾讯云 TMS
+	if config.Instance.Moderator.TencentTMS.Enabled {
+		secretID := config.Instance.Moderator.TencentTMS.SecretID
+		secretKey := config.Instance.Moderator.TencentTMS.SecretKey
+		region := config.Instance.Moderator.TencentTMS.Region
+		isOK, err := lib.SpamCheck_TencentTMS(lib.TMSRequest{
+			ID:       c.ID,
+			Content:  c.Content,
+			UserID:   c.UserID,
+			UserName: user.Name,
+			IP:       c.IP,
+		}, secretID, secretKey, region)
+		if err != nil {
+			logrus.Error("腾讯云 TMS 垃圾检测错误 ", err)
+		}
+		if !isOK {
+			setPending()
+		}
+	}
+
 	// TODO:关键字过滤
 }
 

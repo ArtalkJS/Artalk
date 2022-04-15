@@ -32,7 +32,7 @@ type AkismetParams struct {
 }
 
 // @link https://akismet.com/development/api/#comment-check
-func SpamCheck_Akismet(params *AkismetParams, key string) (bool, error) {
+func SpamCheck_Akismet(params *AkismetParams, key string) (isOK bool, err error) {
 	form := url.Values{}
 
 	v := reflect.ValueOf(*params)

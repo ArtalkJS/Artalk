@@ -52,7 +52,14 @@ login_timeout: 259200
 # 评论审核
 moderator:
   pending_default: false # 发表新评论默认为 “待审状态”
-  akismet_key: "" # 启用 akismet.com 反垃圾
+  # akismet.com 反垃圾
+  akismet_key: ""
+  # 腾讯云文本内容安全 (tms)
+  tencent_tms: # https://cloud.tencent.com/document/product/1124/64508
+    enabled: false
+    secret_id: ""
+    secret_key: ""
+    region: "ap-guangzhou"
 
 # 验证码
 captcha:

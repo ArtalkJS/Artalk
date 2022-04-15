@@ -60,8 +60,17 @@ type AdminUserConf struct {
 }
 
 type ModeratorConf struct {
-	PendingDefault bool   `mapstructure:"pending_default" json:"pending_default"`
-	AkismetKey     string `mapstructure:"akismet_key" json:"akismet_key"`
+	PendingDefault bool           `mapstructure:"pending_default" json:"pending_default"`
+	AkismetKey     string         `mapstructure:"akismet_key" json:"akismet_key"`
+	TencentTMS     TencentTMSConf `mapstructure:"tencent_tms" json:"tencent_tms"`
+}
+
+// 腾讯云文本内容安全
+type TencentTMSConf struct {
+	Enabled   bool   `mapstructure:"enabled" json:"enabled"`
+	SecretID  string `mapstructure:"secret_id" json:"secret_id"`
+	SecretKey string `mapstructure:"secret_key" json:"secret_key"`
+	Region    string `mapstructure:"region" json:"region"`
 }
 
 type CaptchaConf struct {

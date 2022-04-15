@@ -29,7 +29,7 @@ update:
 
 .PHONY: run
 run: all
-	./bin/artalk-go serve $(ARGS)
+	./bin/artalk-go server $(ARGS)
 
 .PHONY: dev
 dev:
@@ -42,7 +42,7 @@ dev:
         -X github.com/ArtalkJS/ArtalkGo/lib.CommitHash=${COMMIT_HASH}" \
         -o bin/artalk-go \
     	github.com/ArtalkJS/ArtalkGo
-	./bin/artalk-go $(ARGS)
+	./bin/artalk-go server $(ARGS)
 
 .PHONY: test
 test: update

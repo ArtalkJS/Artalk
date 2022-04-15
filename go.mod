@@ -33,6 +33,8 @@ require (
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
 	github.com/steambap/captcha v1.4.1
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.385
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tms v1.0.385
 	github.com/tidwall/gjson v1.11.0
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	github.com/yuin/goldmark v1.4.0

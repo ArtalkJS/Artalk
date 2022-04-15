@@ -32,15 +32,19 @@ COPY --from=builder /source/ArtalkGo/bin/artalk-go /artalk-go
 
 RUN apk upgrade \
     && apk add bash tzdata \
-    && ln -s /artalk-go /usr/bin/artalk-go \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo ${TZ} > /etc/timezone
 
+# add alias
+RUN echo -e '#!/bin/bash\n/artalk-go -w / -c /conf.yml "$@"' > /usr/bin/artalk-go \
+    && chmod +x /usr/bin/artalk-go \
+    && cp -p /usr/bin/artalk-go /usr/bin/artalk
+
 VOLUME ["/conf.yml", "/data"]
 
-ENTRYPOINT ["/artalk-go"]
+ENTRYPOINT ["/usr/bin/artalk-go"]
 
 # expose ArtalkGo default port
 EXPOSE 23366
 
-CMD ["serve", "--config", "/conf.yml", "--host", "0.0.0.0", "--port", "23366"]
+CMD ["server", "--host", "0.0.0.0", "--port", "23366"]

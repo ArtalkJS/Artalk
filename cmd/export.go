@@ -20,6 +20,8 @@ var exportCmd = &cobra.Command{
 - 文档：https://artalk.js.org/guide/transfer.html
 `,
 	Run: func(cmd *cobra.Command, args []string) {
+		loadCore() // 装载核心
+
 		jsonStr, err := artransfer.ExportArtransString()
 		if err != nil {
 			logrus.Fatal(err)

@@ -25,7 +25,7 @@ build-frontend:
 
 .PHONY: update
 update:
-	pkger -include /frontend -include /email-tpl -o pkged
+	pkger -include /frontend -include /email-tpl -include /artalk-go.example.yml -o pkged
 
 .PHONY: run
 run: all

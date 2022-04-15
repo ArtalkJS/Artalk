@@ -18,7 +18,11 @@ var importCmd = &cobra.Command{
 - 例如：artalk-go import typecho [参数]
 - 文档：https://artalk.js.org/guide/transfer.html
 `,
+	Args:       cobra.MinimumNArgs(1),
+	ArgAliases: artransfer.GetSupportNames(),
 	Run: func(cmd *cobra.Command, args []string) {
+		loadCore() // 装载核心
+
 		parcelFile := args[0]
 		if _, err := os.Stat(parcelFile); errors.Is(err, os.ErrNotExist) {
 			logrus.Fatal("`数据行囊` 文件不存在，请检查路径是否正确")
@@ -36,8 +40,6 @@ var importCmd = &cobra.Command{
 
 		logrus.Info("导入结束")
 	},
-	Args:       cobra.MinimumNArgs(1),
-	ArgAliases: artransfer.GetSupportNames(),
 }
 
 func init() {

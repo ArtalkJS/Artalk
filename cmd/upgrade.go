@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/blang/semver"
@@ -14,9 +15,12 @@ import (
 var upgradeCmd = &cobra.Command{
 	Use:     "upgrade",
 	Aliases: []string{"update"},
-	Short:   "升级 ArtalkGo 到最新版本",
+	Short:   "升级到最新版",
 	Long:    "将 ArtalkGo 升级到最新版本，\n更新源为 GitHub Releases，\n更新需要重启 ArtalkGo 才能生效。",
+	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		// loadCore() // 装载核心
+
 		logrus.Info("从 GitHub Release 检索更新中...")
 
 		latest, found, err := selfupdate.DetectLatest("ArtalkJS/ArtalkGo")
@@ -24,7 +28,7 @@ var upgradeCmd = &cobra.Command{
 			logrus.Fatal("Error occurred while detecting version: ", err)
 		}
 
-		v := semver.MustParse(lib.Version[1:])
+		v := semver.MustParse(strings.TrimPrefix(lib.Version, "v"))
 		if !found || latest.Version.LTE(v) {
 			logrus.Println("当前已是最新版本 v" + v.String() + " 无需升级")
 			return
@@ -49,7 +53,6 @@ var upgradeCmd = &cobra.Command{
 			"-------------------------------\n\n" +
 			latest.ReleaseNotes)
 	},
-	Args: cobra.NoArgs,
 }
 
 func init() {

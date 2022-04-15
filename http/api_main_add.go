@@ -229,7 +229,7 @@ func UseNotify(comment *model.Comment, parentComment *model.Comment) {
 	// 评论内容
 	coContent := comment.Content
 	if len(coContent) > 280 {
-		coContent = string([]rune(coContent)[0:280]) + "..." // 截取文字
+		coContent = lib.TruncateString(coContent, 280) + "..." // 截取文字
 	}
 
 	// 消息内容

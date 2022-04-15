@@ -92,7 +92,7 @@ $ make docker-push
   - [x] [Akismet](https://akismet.com/)
   - [x] [阿里云内容安全](https://help.aliyun.com/document_detail/28417.html)
   - [x] [腾讯云内容安全](https://cloud.tencent.com/document/product/1124/64508)
-  - [ ] 关键字 / 正则表达式过滤
+  - [x] 关键字过滤
 - [x] 评论通知管理员 ([notify](https://github.com/nikoksr/notify))
   - [x] Telegram Bot
   - [x] 飞书 WebHook Bot

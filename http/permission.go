@@ -44,28 +44,51 @@ func ActionLimitMiddleware(conf ActionLimitConf) echo.MiddlewareFunc {
 				}
 			}
 			if !pathInList {
+				// 不启用的 path 直接放行
 				return next(c)
 			}
 
-			// 管理员直接忽略
-			if CheckIsAdminReq(c) {
-				return next(c)
-			}
-
-			// 操作限制，响应需要验证码
-			if IsActionOverLimit(c) {
-				if config.Instance.Debug {
-					logrus.Debug("[操作限制] 次数: ", getActionCount(c), ", 最后时间：", getActionLastTime(c))
-				}
-				return RespError(c, "需要验证码", Map{
+			// 是否需要验证
+			if IsReqNeedCaptchaCheck(c) {
+				respData := Map{
 					"need_captcha": true,
-					"img_data":     GetNewCaptchaImageBase64(c.RealIP()),
-				})
+				}
+
+				if config.Instance.Captcha.Geetest.Enabled {
+					// iframe 验证模式
+					respData["iframe"] = true
+					// 前端新版不会再用到 img_data，给旧版响应 ArtalkFrontent out-of-date 图片
+					respData["img_data"] = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 40'%3E%3Cdefs%3E%3Cstyle%3E.a%7Bfill:%23328ce6%3B%7D.b%7Bfont-size:12px%3Bfill:%23fff%3Bfont-family:sans-serif%3B%7D%3C/style%3E%3C/defs%3E%3Crect class='a' width='160' height='40'/%3E%3Ctext class='b' transform='translate(18.37 16.67)'%3EArtalk Frontend%3Ctspan x='0' y='14.4'%3EOut-Of-Date.%3C/tspan%3E%3C/text%3E%3C/svg%3E"
+				} else {
+					respData["img_data"] = GetNewImageCaptchaBase64(c.RealIP())
+				}
+
+				return RespError(c, "需要验证码", respData)
 			}
 
+			// 放行
 			return next(c)
 		}
 	}
+}
+
+// 请求是否需要验证码
+func IsReqNeedCaptchaCheck(c echo.Context) bool {
+	// 管理员直接忽略
+	if CheckIsAdminReq(c) {
+		return false
+	}
+
+	// 操作超过限制，需要验证码
+	if IsActionOverLimit(c) {
+		if config.Instance.Debug {
+			logrus.Debug("[操作限制] 次数: ", getActionCount(c), ", 最后时间：", getActionLastTime(c))
+		}
+
+		return true
+	}
+
+	return false
 }
 
 // 操作是否超过限制
@@ -74,7 +97,7 @@ func IsActionOverLimit(c echo.Context) bool {
 	// 总是需要验证码
 	if config.Instance.Captcha.Always {
 		if GetCaptchaIsChecked(userIP) { // 只有验证码成功才放行
-			SetCaptchaIsChecked(userIP, false) // 总是需要验证码，只允许放行一次
+			SetCaptchaIsChecked(userIP, false) // 总是需要验证码，放行一次后再次需要验证码
 			return false
 		}
 

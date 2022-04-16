@@ -34,6 +34,8 @@ type GeetestParams struct {
 }
 
 func GeetestCheck(paramsJSON string) (isPass bool, reason string, err error) {
+	geetestConf := config.Instance.Captcha.Geetest
+
 	var p GeetestParams
 	err = json.Unmarshal([]byte(paramsJSON), &p)
 	if err != nil {
@@ -41,7 +43,7 @@ func GeetestCheck(paramsJSON string) (isPass bool, reason string, err error) {
 	}
 
 	// 生成签名
-	signToken := hmac_encode(config.Instance.Captcha.Geetest.CaptchaKey, p.LotNumber)
+	signToken := hmac_encode(geetestConf.CaptchaKey, p.LotNumber)
 
 	// 向极验转发前端数据 + sign_token 签名
 	form_data := make(url.Values)
@@ -52,7 +54,7 @@ func GeetestCheck(paramsJSON string) (isPass bool, reason string, err error) {
 	form_data["sign_token"] = []string{signToken}
 
 	// 发起 POST 请求
-	url := GEETEST_API_SERVER + "/validate" + "?captcha_id=" + config.Instance.Captcha.Geetest.CaptchaID
+	url := GEETEST_API_SERVER + "/validate" + "?captcha_id=" + geetestConf.CaptchaID
 	cli := http.Client{Timeout: time.Second * 5} // 5s 超时
 	resp, err := cli.PostForm(url, form_data)
 	if err != nil || resp.StatusCode != 200 {

@@ -107,7 +107,9 @@ func InitRoute(e *echo.Echo) {
 	// api/captcha
 	ca := api.Group("/captcha")
 	ca.GET("/refresh", ActionCaptchaGet)
+	ca.GET("/get", ActionCaptchaGet)
 	ca.GET("/check", ActionCaptchaCheck)
+	ca.GET("/ping", ActionCaptchaPing)
 
 	// api/admin
 	admin := api.Group("/admin", middleware.JWTWithConfig(CommonJwtConfig)) // use jwt

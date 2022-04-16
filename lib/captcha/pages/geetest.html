@@ -18,7 +18,7 @@
     var params = new URLSearchParams(document.location.search)
     var captchaId = params.get('captcha_id')
 
-    var captchaId = "647f5ed2ed8acb4be36784e01556bb71"   // gt_id
+    var captchaId = "{{.gt_id}}" // gt_id
 
     // @link https://docs.geetest.com/gt4/apirefer/api/web
     initGeetest4({
@@ -30,8 +30,22 @@
         gt.appendTo("#captcha")
             .onSuccess(function (e) {
                 var result = gt.getValidate();
-                   
-                console.log("[验证结果] ", result)
+                console.log("[极验验证结果] ", result)
+                fetch("./check?value="+encodeURIComponent(JSON.stringify(result)))
+                .then(function (resp) {
+                    resp.json().then(function (json) {
+                        if (json.success) {
+                            console.log("验证成功：" + json)
+                        }
+                    }).catch(function (err) {
+                        console.error(err)
+                        alert("验证失败：" + err)
+                    })
+                })
+                .catch(function (err) {
+                    console.error(err)
+                    alert("后端 API 请求失败：" + err)
+                });
             })
     
         gt.showCaptcha();

@@ -4,27 +4,64 @@ import (
 	"bytes"
 	"encoding/base64"
 	"image/color"
+	"io/ioutil"
+	"net/http"
 	"strings"
+	"text/template"
 	"time"
 
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/lib/captcha"
+	"github.com/ArtalkJS/ArtalkGo/pkged"
 	"github.com/eko/gocache/v2/store"
 	"github.com/labstack/echo/v4"
-	"github.com/steambap/captcha"
+	"github.com/sirupsen/logrus"
+	imgCaptcha "github.com/steambap/captcha"
 )
 
 var (
 	CaptchaExpiration = 5 * time.Minute // 验证码 5 分钟内有效
 )
 
+// 获取当前状态，是否需要验证
+func ActionCaptchaPing(c echo.Context) error {
+	if IsReqNeedCaptchaCheck(c) {
+		return RespData(c, Map{"need_captcha": true})
+	} else {
+		return RespData(c, Map{"need_captcha": false})
+	}
+}
+
+// 获取验证码
 func ActionCaptchaGet(c echo.Context) error {
 	ip := c.RealIP()
 
+	// ===========
+	//  Geetest
+	// ===========
+	if config.Instance.Captcha.Geetest.Enabled {
+		pageFile, _ := pkged.Open("/lib/captcha/pages/geetest.html")
+		buf, _ := ioutil.ReadAll(pageFile)
+
+		var page bytes.Buffer
+
+		t := template.New("")
+		t.Parse(string(buf))
+		t.Execute(&page, map[string]interface{}{"gt_id": config.Instance.Captcha.Geetest.CaptchaID})
+
+		return c.HTML(http.StatusOK, page.String())
+	}
+
+	// ===========
+	//  图片验证码
+	// ===========
 	return RespData(c, Map{
-		"img_data": GetNewCaptchaImageBase64(ip),
+		"img_data": GetNewImageCaptchaBase64(ip),
 	})
 }
 
+// 验证
 func ActionCaptchaCheck(c echo.Context) error {
 	ip := c.RealIP()
 
@@ -33,27 +70,66 @@ func ActionCaptchaCheck(c echo.Context) error {
 		return RespError(c, "param `value` is required")
 	}
 
-	if strings.ToLower(inputVal) == GetCaptchaRealCode(ip) {
-		// 验证码正确
-		ResetActionRecord(c)          // 重置操作记录
-		DisposeCaptcha(ip)            // 销毁验证码
-		SetCaptchaIsChecked(ip, true) // 记录该 IP 已经成功验证
+	// ===========
+	//  Geetest
+	// ===========
+	if config.Instance.Captcha.Geetest.Enabled {
+		isPass, reason, err := captcha.GeetestCheck(inputVal)
+		if err != nil {
+			logrus.Error("[Geetest] 验证发生错误 ", err)
+			return RespError(c, "Geetest API 错误")
+		}
 
+		if isPass {
+			// 验证成功
+			onCaptchaPass(c)
+			return RespSuccess(c)
+		} else {
+			// 验证失败
+			onCaptchaFail(c)
+			return RespError(c, "验证失败", Map{
+				"reason": reason,
+			})
+		}
+	}
+
+	// ===========
+	//  图片验证码
+	// ===========
+	isPass := strings.ToLower(inputVal) == GetImageCaptchaRealCode(ip)
+	if isPass {
+		// 验证码正确
+		DisposeImageCaptcha(ip) // 销毁图片验证码
+		onCaptchaPass(c)
 		return RespSuccess(c)
 	} else {
 		// 验证码错误
-		RecordAction(c)                // 记录操作
-		DisposeCaptcha(ip)             // 销毁验证码
-		SetCaptchaIsChecked(ip, false) // 记录该 IP 验证码验证失败
-
+		DisposeImageCaptcha(ip)
+		onCaptchaFail(c)
 		return RespError(c, "验证码错误", Map{
-			"img_data": GetNewCaptchaImageBase64(ip),
+			"img_data": GetNewImageCaptchaBase64(ip),
 		})
 	}
 }
 
-// 获取 IP 验证码正确的值
-func GetCaptchaRealCode(ip string) string {
+// 验证成功操作
+func onCaptchaPass(c echo.Context) {
+	ip := c.RealIP()
+	ResetActionRecord(c) // 重置操作记录
+
+	SetCaptchaIsChecked(ip, true) // 记录该 IP 已经成功验证
+}
+
+// 验证失败操作
+func onCaptchaFail(c echo.Context) {
+	ip := c.RealIP()
+	RecordAction(c)                // 记录操作
+	SetCaptchaIsChecked(ip, false) // 记录该 IP 验证码验证失败
+}
+
+//#region 图片验证码
+// 获取对应 IP 图片验证码正确的值
+func GetImageCaptchaRealCode(ip string) string {
 	realVal := ""
 	if val, err := lib.CACHE.Get(lib.Ctx, "captcha:"+ip); err == nil {
 		realVal = string(val.([]byte))
@@ -62,10 +138,10 @@ func GetCaptchaRealCode(ip string) string {
 }
 
 // 获取新验证码 base64 格式图片
-func GetNewCaptchaImageBase64(ip string) string {
+func GetNewImageCaptchaBase64(ip string) string {
 	// generate a image
 	pngBuffer := bytes.NewBuffer([]byte{})
-	data, _ := captcha.New(160, 40, func(o *captcha.Options) {
+	data, _ := imgCaptcha.New(160, 40, func(o *imgCaptcha.Options) {
 		o.FontScale = 1
 		o.CurveNumber = 2
 		o.FontDPI = 85.0
@@ -81,18 +157,20 @@ func GetNewCaptchaImageBase64(ip string) string {
 	return base64
 }
 
-// 销毁验证码
-func DisposeCaptcha(ip string) {
+// 销毁图片验证码
+func DisposeImageCaptcha(ip string) {
 	lib.CACHE.Delete(lib.Ctx, "captcha:"+ip)
 }
 
-// 获取 IP 是否验证码检测通过，已经有一次
+//#endregion
+
+// 获取 IP 是否验证通过，已经有一次 (for 总是需要验证码的选项)
 func GetCaptchaIsChecked(ip string) bool {
 	val, err := lib.CACHE.Get(lib.Ctx, "captcha-checked:"+ip)
 	return err == nil && string(val.([]byte)) == "1"
 }
 
-// 设置该 IP 验证码成功验证，已经有一次
+// 设置该 IP 通过验证，已经有一次 (for 总是需要验证码的选项)
 func SetCaptchaIsChecked(ip string, isChecked bool) {
 	val := "0"
 	if isChecked {

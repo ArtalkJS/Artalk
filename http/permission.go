@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -34,10 +35,12 @@ type ActionLimitConf struct {
 func ActionLimitMiddleware(conf ActionLimitConf) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			// 关闭验证码功能
+
 			// 路径是否启用操作限制
 			pathInList := false
 			for _, p := range conf.ProtectPaths {
-				if strings.HasPrefix(c.Request().URL.Path, p) {
+				if path.Clean(c.Request().URL.Path) == path.Clean(p) {
 					pathInList = true
 					break
 				}

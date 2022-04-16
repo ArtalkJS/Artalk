@@ -51,7 +51,10 @@ func Run() {
 			"/api/img-upload",
 		},
 	}
-	e.Use(ActionLimitMiddleware(ActionLimitConf))
+
+	if config.Instance.Captcha.Enabled {
+		e.Use(ActionLimitMiddleware(ActionLimitConf))
+	}
 
 	CommonJwtConfig = middleware.JWTConfig{
 		Claims:        &jwtCustomClaims{},
@@ -106,11 +109,13 @@ func InitRoute(e *echo.Echo) {
 	e.Static(ImgUpload_RoutePath, config.Instance.ImgUpload.Path) // 静态可访问图片存放目录
 
 	// api/captcha
-	ca := api.Group("/captcha")
-	ca.GET("/refresh", ActionCaptchaGet)
-	ca.GET("/get", ActionCaptchaGet)
-	ca.GET("/check", ActionCaptchaCheck)
-	ca.GET("/status", ActionCaptchaStatus)
+	if config.Instance.Captcha.Enabled {
+		ca := api.Group("/captcha")
+		ca.GET("/refresh", ActionCaptchaGet)
+		ca.GET("/get", ActionCaptchaGet)
+		ca.GET("/check", ActionCaptchaCheck)
+		ca.GET("/status", ActionCaptchaStatus)
+	}
 
 	// api/admin
 	admin := api.Group("/admin", middleware.JWTWithConfig(CommonJwtConfig)) // use jwt

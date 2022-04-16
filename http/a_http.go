@@ -21,8 +21,7 @@ func Run() {
 
 	// 跨域控制
 	allowOrigins := []string{}
-	allowOrigins = append(allowOrigins, config.Instance.AllowOrigins...) // 跨域独立配置
-	for _, v := range config.Instance.TrustedDomains {                   // 可信域名配置
+	for _, v := range config.Instance.TrustedDomains { // 可信域名配置
 		if !lib.ContainsStr(allowOrigins, v) {
 			allowOrigins = append(allowOrigins, v)
 		}

@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/spf13/cobra"
 )
@@ -58,6 +60,18 @@ func init() {
 			fmt.Println("ArtalkGo (" + Version + ")")
 		},
 	}
-
 	rootCmd.AddCommand(versionCmd)
+
+	// Config Command
+	configCmd := &cobra.Command{
+		Use:   "config",
+		Short: "输出配置信息",
+		Run: func(cmd *cobra.Command, args []string) {
+			loadCore()
+			buf, _ := json.MarshalIndent(config.Instance, "", "    ")
+			fmt.Println(string(buf))
+		},
+	}
+	rootCmd.AddCommand(configCmd)
+
 }

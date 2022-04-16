@@ -92,6 +92,7 @@ func InitRoute(e *echo.Echo) {
 	api.POST("/user-get", ActionUserGet)
 	api.GET("/login", ActionLogin)
 	api.POST("/login", ActionLogin)
+	api.GET("/login-status", ActionLoginStatus)
 	api.POST("/mark-read", ActionMarkRead)
 	api.POST("/vote", ActionVote)
 	api.POST("/pv", ActionPV)

@@ -69,3 +69,10 @@ func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
+
+// 获取当前登录状态
+func ActionLoginStatus(c echo.Context) error {
+	return RespData(c, Map{
+		"is_login": CheckIsAdminReq(c),
+	})
+}

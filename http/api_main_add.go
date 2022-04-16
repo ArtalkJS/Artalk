@@ -2,6 +2,7 @@ package http
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -14,8 +15,8 @@ import (
 )
 
 type ParamsAdd struct {
-	Name    string `mapstructure:"name" param:"required"`
-	Email   string `mapstructure:"email" param:"required"`
+	Name    string `mapstructure:"name"`
+	Email   string `mapstructure:"email"`
 	Link    string `mapstructure:"link"`
 	Content string `mapstructure:"content" param:"required"`
 	Rid     uint   `mapstructure:"rid"`
@@ -37,6 +38,13 @@ func ActionAdd(c echo.Context) error {
 	var p ParamsAdd
 	if isOK, resp := ParamsDecode(c, ParamsAdd{}, &p); !isOK {
 		return resp
+	}
+
+	if strings.TrimSpace(p.Name) == "" {
+		return RespError(c, "昵称不能为空")
+	}
+	if strings.TrimSpace(p.Email) == "" {
+		return RespError(c, "邮箱不能为空")
 	}
 
 	if !lib.ValidateEmail(p.Email) {

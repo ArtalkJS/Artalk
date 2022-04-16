@@ -41,6 +41,25 @@ func initConfig() {
 	}
 	denverLoc, _ := time.LoadLocation(config.Instance.TimeZone)
 	time.Local = denverLoc
+
+	// 配置文件 alias 处理
+	if config.Instance.Captcha.ActionLimit == 0 {
+		config.Instance.Captcha.Always = true
+	}
+
+	// 检查废弃需更新配置
+	if config.Instance.Captcha.ActionTimeout != 0 {
+		logrus.Warn("captcha.action_timeout 配置项已废弃，请使用 captcha.action_reset 代替")
+		if config.Instance.Captcha.ActionReset == 0 {
+			config.Instance.Captcha.ActionReset = config.Instance.Captcha.ActionTimeout
+		}
+	}
+	if len(config.Instance.AllowOrigins) != 0 {
+		logrus.Warn("allow_origins 配置项已废弃，请使用 trusted_domains 代替")
+		if len(config.Instance.TrustedDomains) == 0 {
+			config.Instance.TrustedDomains = config.Instance.AllowOrigins
+		}
+	}
 }
 
 // 2. 初始化日志

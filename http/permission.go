@@ -12,7 +12,6 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/sirupsen/logrus"
 )
 
 var CommonJwtConfig middleware.JWTConfig
@@ -48,8 +47,34 @@ func ActionLimitMiddleware(conf ActionLimitConf) echo.MiddlewareFunc {
 				return next(c)
 			}
 
+			// 管理员直接放行
+			if CheckIsAdminReq(c) {
+				return next(c)
+			}
+
+			userIP := c.RealIP()
+			isNeedCheck := IsReqNeedCaptchaCheck(c)
+
+			// 总是需要验证码模式
+			if config.Instance.Captcha.Always {
+				if GetAlwaysCaptchaMode_Pass(userIP) {
+					SetAlwaysCaptchaMode_Pass(userIP, false) // 总是需要验证码，放行一次后再次需要验证码
+					isNeedCheck = false
+				} else {
+					isNeedCheck = true
+				}
+			} else {
+				// 超时模式：重置计数
+				if config.Instance.Captcha.ActionReset != -1 {
+					if !IsActionInTimeFrame(c) { // 超时
+						ResetActionRecord(c) // 重置计数
+						isNeedCheck = false  // 放行
+					}
+				}
+			}
+
 			// 是否需要验证
-			if IsReqNeedCaptchaCheck(c) {
+			if isNeedCheck {
 				respData := Map{
 					"need_captcha": true,
 				}
@@ -74,47 +99,33 @@ func ActionLimitMiddleware(conf ActionLimitConf) echo.MiddlewareFunc {
 
 // 请求是否需要验证码
 func IsReqNeedCaptchaCheck(c echo.Context) bool {
+	captchaConf := config.Instance.Captcha
+
 	// 管理员直接忽略
 	if CheckIsAdminReq(c) {
 		return false
 	}
 
-	// 操作超过限制，需要验证码
-	if IsActionOverLimit(c) {
-		if config.Instance.Debug {
-			logrus.Debug("[操作限制] 次数: ", getActionCount(c), ", 最后时间：", getActionLastTime(c))
-		}
-
-		return true
-	}
-
-	return false
-}
-
-// 操作是否超过限制
-func IsActionOverLimit(c echo.Context) bool {
-	userIP := c.RealIP()
-	// 总是需要验证码
+	// 总是需要验证码模式
 	if config.Instance.Captcha.Always {
-		if GetCaptchaIsChecked(userIP) { // 只有验证码成功才放行
-			SetCaptchaIsChecked(userIP, false) // 总是需要验证码，放行一次后再次需要验证码
-			return false
-		}
-
-		return true
+		return !GetAlwaysCaptchaMode_Pass(c.RealIP())
 	}
 
-	// 一段时间内操作次数限制
-	if time.Since(getActionLastTime(c)).Seconds() <= float64(config.Instance.Captcha.ActionTimeout) { // 在时间内
-		if getActionCount(c) >= config.Instance.Captcha.ActionLimit { // 操作次数超过
-			RecordAction(c) // 记录操作
-			return true     // 需要验证码
+	// 不重置计数器模式
+	if captchaConf.ActionReset == -1 {
+		if getActionCount(c) >= captchaConf.ActionLimit { // 只要操作次数超过
+			return true // 就过限
+		} else {
+			return false // 放行
 		}
-	} else { // 不在时间内，超时
-		ResetActionRecord(c) // 重置操作记录
 	}
 
-	return false // 放行
+	// 开启重置计数器功能的情况：在时间范围内，操作次数超过
+	if IsActionInTimeFrame(c) && getActionCount(c) >= captchaConf.ActionLimit {
+		return true // 过限
+	} else {
+		return false // 放行
+	}
 }
 
 // 记录操作
@@ -129,6 +140,11 @@ func ResetActionRecord(c echo.Context) {
 
 	lib.CACHE.Delete(lib.Ctx, "action-time:"+ip)
 	lib.CACHE.Delete(lib.Ctx, "action-count:"+ip)
+}
+
+// 操作计数是否应该被重置
+func IsActionInTimeFrame(c echo.Context) bool {
+	return time.Since(getActionLastTime(c)).Seconds() <= float64(config.Instance.Captcha.ActionReset)
 }
 
 // 修改最后操作时间

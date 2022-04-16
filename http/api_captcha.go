@@ -25,11 +25,11 @@ var (
 )
 
 // 获取当前状态，是否需要验证
-func ActionCaptchaPing(c echo.Context) error {
+func ActionCaptchaStatus(c echo.Context) error {
 	if IsReqNeedCaptchaCheck(c) {
-		return RespData(c, Map{"need_captcha": true})
+		return RespData(c, Map{"is_pass": false})
 	} else {
-		return RespData(c, Map{"need_captcha": false})
+		return RespData(c, Map{"is_pass": true})
 	}
 }
 
@@ -115,16 +115,17 @@ func ActionCaptchaCheck(c echo.Context) error {
 // 验证成功操作
 func onCaptchaPass(c echo.Context) {
 	ip := c.RealIP()
-	ResetActionRecord(c) // 重置操作记录
 
-	SetCaptchaIsChecked(ip, true) // 记录该 IP 已经成功验证
+	setActionCount(c, config.Instance.Captcha.ActionLimit-1)
+	SetAlwaysCaptchaMode_Pass(ip, true) // 允许 always mode pass
 }
 
 // 验证失败操作
 func onCaptchaFail(c echo.Context) {
 	ip := c.RealIP()
-	RecordAction(c)                // 记录操作
-	SetCaptchaIsChecked(ip, false) // 记录该 IP 验证码验证失败
+
+	RecordAction(c)                      // 记录操作
+	SetAlwaysCaptchaMode_Pass(ip, false) // 取消 always mode pass
 }
 
 //#region 图片验证码
@@ -164,18 +165,18 @@ func DisposeImageCaptcha(ip string) {
 
 //#endregion
 
-// 获取 IP 是否验证通过，已经有一次 (for 总是需要验证码的选项)
-func GetCaptchaIsChecked(ip string) bool {
-	val, err := lib.CACHE.Get(lib.Ctx, "captcha-checked:"+ip)
+// AlwaysMode 是否能 Pass (for 总是需要验证码的选项)
+func GetAlwaysCaptchaMode_Pass(ip string) bool {
+	val, err := lib.CACHE.Get(lib.Ctx, "captcha-am-pass:"+ip)
 	return err == nil && string(val.([]byte)) == "1"
 }
 
-// 设置该 IP 通过验证，已经有一次 (for 总是需要验证码的选项)
-func SetCaptchaIsChecked(ip string, isChecked bool) {
+// 设置 AlwaysMode 允许 Pass (for 总是需要验证码的选项)
+func SetAlwaysCaptchaMode_Pass(ip string, pass bool) {
 	val := "0"
-	if isChecked {
+	if pass {
 		val = "1"
 	}
 
-	lib.CACHE.Set(lib.Ctx, "captcha-checked:"+ip, []byte(val), &store.Options{Expiration: CaptchaExpiration})
+	lib.CACHE.Set(lib.Ctx, "captcha-am-pass:"+ip, []byte(val), &store.Options{Expiration: CaptchaExpiration})
 }

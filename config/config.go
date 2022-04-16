@@ -21,7 +21,7 @@ type Config struct {
 	Port           int             `mapstructure:"port" json:"port"`                       // HTTP Server 监听 Port
 	DB             DBConf          `mapstructure:"db" json:"db"`                           // 数据文件
 	Log            LogConf         `mapstructure:"log" json:"log"`                         // 日志文件
-	AllowOrigins   []string        `mapstructure:"allow_origins" json:"allow_origins"`     // 允许跨域访问的域名
+	AllowOrigins   []string        `mapstructure:"allow_origins" json:"allow_origins"`     // @deprecated 已废弃 (请使用 TrustedDomains)
 	TrustedDomains []string        `mapstructure:"trusted_domains" json:"trusted_domains"` // 可信任的域名 (新)
 	SSL            SSLConf         `mapstructure:"ssl" json:"ssl"`                         // SSL
 	SiteDefault    string          `mapstructure:"site_default" json:"site_default"`       // 默认站点名（当请求无指定 site_name 时使用）
@@ -96,7 +96,8 @@ type KeyWordsAntispamConf struct {
 type CaptchaConf struct {
 	Enabled       bool        `mapstructure:"enabled" json:"enabled"`
 	Always        bool        `mapstructure:"always" json:"always"`
-	ActionTimeout int         `mapstructure:"action_timeout" json:"action_timeout"`
+	ActionTimeout int         `mapstructure:"action_timeout" json:"action_timeout"` // @deprecated 已废弃 (请使用 ActionReset)
+	ActionReset   int         `mapstructure:"action_reset" json:"action_reset"`
 	ActionLimit   int         `mapstructure:"action_limit" json:"action_limit"`
 	Geetest       GeetestConf `mapstructure:"geetest" json:"geetest"`
 }

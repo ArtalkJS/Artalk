@@ -80,9 +80,9 @@ moderator:
 captcha:
   enabled: true # 总开关
   always: false # 总是需要验证码
-  # ↓ 在 {comment_timeout} 秒内，操作次数超过 {comment_limit} 次激活验证码
-  action_timeout: 60
-  action_limit: 3
+  action_limit: 3 # 激活验证码所需操作次数
+  action_reset: 60 # 重置操作计数器超时 (单位：s, 设为 -1 不重置)
+  # Geetest 极验
   geetest: # https://www.geetest.com
     enabled: false
     captcha_id: ""

@@ -111,6 +111,8 @@ func ActionVote(c echo.Context) error {
 		up, down := GetVoteNumUpDown(p.TargetID, voteTo)
 		save(up, down)
 
+		RecordAction(c)
+
 		return RespData(c, Map{
 			"up":   up,
 			"down": down,
@@ -122,6 +124,8 @@ func ActionVote(c echo.Context) error {
 	// sync
 	up, down := GetVoteNumUpDown(p.TargetID, voteTo)
 	save(up, down)
+
+	RecordAction(c)
 
 	return RespData(c, Map{
 		"up":   up,

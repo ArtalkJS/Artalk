@@ -95,6 +95,7 @@ func InitRoute(e *echo.Echo) {
 	api.GET("/login", ActionLogin)
 	api.POST("/login", ActionLogin)
 	api.GET("/login-status", ActionLoginStatus)
+	api.POST("/login-status", ActionLoginStatus)
 	api.POST("/mark-read", ActionMarkRead)
 	api.POST("/vote", ActionVote)
 	api.POST("/pv", ActionPV)
@@ -111,9 +112,13 @@ func InitRoute(e *echo.Echo) {
 	if config.Instance.Captcha.Enabled {
 		ca := api.Group("/captcha")
 		ca.GET("/refresh", ActionCaptchaGet)
+		ca.POST("/refresh", ActionCaptchaGet)
 		ca.GET("/get", ActionCaptchaGet)
+		ca.POST("/get", ActionCaptchaGet)
 		ca.GET("/check", ActionCaptchaCheck)
+		ca.POST("/check", ActionCaptchaCheck)
 		ca.GET("/status", ActionCaptchaStatus)
+		ca.POST("/status", ActionCaptchaStatus)
 	}
 
 	// api/admin

@@ -61,14 +61,19 @@ func ActionCaptchaGet(c echo.Context) error {
 	})
 }
 
+type ParamsCaptchaCheck struct {
+	Value string `mapstructure:"value" param:"required"`
+}
+
 // 验证
 func ActionCaptchaCheck(c echo.Context) error {
 	ip := c.RealIP()
 
-	inputVal := c.QueryParam("value")
-	if inputVal == "" {
-		return RespError(c, "param `value` is required")
+	var p ParamsCaptchaCheck
+	if isOK, resp := ParamsDecode(c, ParamsCaptchaCheck{}, &p); !isOK {
+		return resp
 	}
+	inputVal := p.Value
 
 	// ===========
 	//  Geetest

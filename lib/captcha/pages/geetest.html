@@ -30,12 +30,21 @@
         gt.appendTo("#captcha")
             .onSuccess(function (e) {
                 var result = gt.getValidate();
+                var form = new FormData()
+                form.append("value", JSON.stringify(result))
                 console.log("[极验验证结果] ", result)
-                fetch("./check?value="+encodeURIComponent(JSON.stringify(result)))
+                fetch("./check", {
+                    method: 'POST',
+                    body: form,
+                })
                 .then(function (resp) {
                     resp.json().then(function (json) {
                         if (json.success) {
                             console.log("验证成功：" + json)
+                        } else {
+                            if (json.msg) {
+                                alert("验证失败：" + json.msg)
+                            }
                         }
                     }).catch(function (err) {
                         console.error(err)

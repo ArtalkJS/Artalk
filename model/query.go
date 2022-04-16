@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/eko/gocache/v2/store"
@@ -64,12 +65,6 @@ func StoreCache(name string, srcStruct interface{}) error {
 	}
 
 	return nil
-}
-
-func IsAdminUser(name string, email string) bool {
-	var user User
-	lib.DB.Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?)", name, email).First(&user)
-	return !user.IsEmpty() && user.IsAdmin
 }
 
 func UpdateComment(comment *Comment) error {
@@ -262,10 +257,17 @@ func FindPV(pageKey string, siteName string) PV {
 	return pv
 }
 
+//#region 管理员账号检测
+var allAdmins *[]User = nil
+
 func GetAllAdmins() []User {
-	var admins []User
-	lib.DB.Where(&User{IsAdmin: true}).Find(&admins)
-	return admins
+	if allAdmins == nil {
+		var admins []User
+		lib.DB.Where(&User{IsAdmin: true}).Find(&admins)
+		allAdmins = &admins
+	}
+
+	return *allAdmins
 }
 
 func GetAllAdminIDs() []uint {
@@ -276,3 +278,29 @@ func GetAllAdminIDs() []uint {
 	}
 	return ids
 }
+
+func IsAdminUser(userID uint) bool {
+	admins := GetAllAdmins()
+	for _, admin := range admins {
+		if admin.ID == userID {
+			return true
+		}
+	}
+
+	return false
+}
+
+func IsAdminUserByNameEmail(name string, email string) bool {
+	admins := GetAllAdmins()
+	for _, admin := range admins {
+		// Name 和 Email 都匹配才是管理员
+		if strings.EqualFold(admin.Name, name) &&
+			strings.EqualFold(admin.Email, email) {
+			return true
+		}
+	}
+
+	return false
+}
+
+//#endregion

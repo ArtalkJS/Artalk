@@ -24,8 +24,6 @@ func AsyncSend(notify *model.Notify) {
 		return
 	}
 
-	notify.SetInitial()
-
 	comment := notify.FetchComment()
 	parentComment := notify.GetParentComment()
 
@@ -50,8 +48,6 @@ func AsyncSendToAdmin(notify *model.Notify, admin *model.User) {
 	if !config.Instance.Email.Enabled {
 		return
 	}
-
-	notify.SetInitial()
 
 	comment := notify.FetchComment()
 	from := comment.ToCookedForEmail()

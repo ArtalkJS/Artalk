@@ -117,7 +117,7 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 }
 
 func CheckIfAllowed(c echo.Context, name string, email string, page model.Page, siteName string) (bool, error) {
-	isAdminUser := model.IsAdminUser(name, email)
+	isAdminUser := model.IsAdminUserByNameEmail(name, email)
 
 	// 如果用户是管理员，或者当前页只能管理员评论
 	if isAdminUser || page.AdminOnly {

@@ -2,17 +2,9 @@ package model
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/url"
 	"path"
-	"strconv"
-	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/lib/anti_spam"
-	"github.com/labstack/echo/v4"
-	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -222,150 +214,6 @@ func (c *Comment) ToCookedForEmail() CookedCommentForEmail {
 			BadgeName:      user.BadgeName,
 			BadgeColor:     user.BadgeColor,
 		},
-	}
-}
-
-var AntiSpamReplaceKeywords *[]string
-
-func (c *Comment) SpamCheck(echoCtx echo.Context) {
-	// 拦截评论
-	BlockCommentBy := func(blocker string) {
-		logrus.Info(fmt.Sprintf("[垃圾拦截] %s 成功拦截评论 ID=%d 内容=%s", blocker, c.ID, strconv.Quote(c.Content)))
-		if c.IsPending {
-			return
-		}
-		c.IsPending = true // 改为待审状态
-		lib.DB.Save(c)
-	}
-
-	// 拦截失败处理
-	BlockFailBy := func(blocker string, err error) {
-		logrus.Error(fmt.Sprintf("[垃圾拦截] %s 拦截发生错误 ID=%d 错误信息: %s", blocker, c.ID, strconv.Quote(c.Content)), err)
-	}
-
-	// 统一拦截处理
-	ApiCommonHandle := func(blocker string, isPass bool, err error) {
-		// ApiFailBlock mode
-		isApiFailBlock := config.Instance.Moderator.ApiFailBlock
-
-		if err != nil {
-			// Api 发生错误
-			BlockFailBy(blocker, err) // 报告错误
-			if isApiFailBlock {
-				BlockCommentBy(blocker) // 仍然拦截
-			}
-		} else if !isPass {
-			// Api 未发生错误，并且 not pass
-			BlockCommentBy(blocker) // 拦截评论
-		}
-	}
-
-	// Prepare data for Spam-Check
-	user := c.FetchUser()
-	siteURL := ""
-	if c.SiteName != "" {
-		site := FindSite(c.SiteName)
-		siteURL = site.ToCooked().FirstUrl
-	}
-	if siteURL == "" { // 从 referer 中提取网站
-		if pr, err := url.Parse(echoCtx.Request().Referer()); err == nil && pr.Scheme != "" && pr.Host != "" {
-			siteURL = fmt.Sprintf("%s://%s", pr.Scheme, pr.Host)
-		}
-	}
-
-	// Akismet
-	akismetKey := strings.TrimSpace(config.Instance.Moderator.AkismetKey)
-	if akismetKey != "" {
-		isPass, err := anti_spam.Akismet(&anti_spam.AkismetParams{
-			Blog: siteURL,
-
-			UserIP:    echoCtx.RealIP(),
-			UserAgent: echoCtx.Request().UserAgent(),
-
-			CommentType:        "comment",
-			CommentAuthor:      user.Name,
-			CommentAuthorEmail: user.Email,
-			CommentContent:     c.Content,
-		}, akismetKey)
-
-		ApiCommonHandle("Akismet", isPass, err)
-	}
-
-	// 腾讯云
-	tencentConf := config.Instance.Moderator.Tencent
-	if tencentConf.Enabled {
-		isPass, err := anti_spam.Tencent(anti_spam.TencentParams{
-			SecretID:  tencentConf.SecretID,
-			SecretKey: tencentConf.SecretKey,
-			Region:    tencentConf.Region,
-
-			Content:   c.Content,
-			CommentID: c.ID,
-			UserID:    c.UserID,
-			UserIP:    c.IP,
-			UserName:  user.Name,
-		})
-
-		ApiCommonHandle("腾讯云", isPass, err)
-	}
-
-	// 阿里云
-	aliyunConf := config.Instance.Moderator.Aliyun
-	if aliyunConf.Enabled {
-		isPass, err := anti_spam.Aliyun(anti_spam.AliyunParams{
-			AccessKeyID:     aliyunConf.AccessKeyID,
-			AccessKeySecret: aliyunConf.AccessKeySecret,
-			Region:          aliyunConf.Region,
-
-			Content:   c.Content,
-			CommentID: c.ID,
-		})
-
-		ApiCommonHandle("阿里云", isPass, err)
-	}
-
-	// 关键字过滤
-	keywordsConf := config.Instance.Moderator.Keywords
-	if keywordsConf.Enabled {
-		// 懒加载，初始化
-		if AntiSpamReplaceKeywords == nil {
-			AntiSpamReplaceKeywords = &[]string{}
-			// 加载文件
-			for _, f := range keywordsConf.Files {
-				buf, err := ioutil.ReadFile(f)
-				if err != nil {
-					logrus.Error("关键词词库文件 " + f + " 加载失败")
-				} else {
-					fileContent := string(buf)
-					*AntiSpamReplaceKeywords = append(*AntiSpamReplaceKeywords, lib.RemoveBlankStrings(lib.SplitAndTrimSpace(fileContent, keywordsConf.FileSep))...)
-				}
-			}
-		}
-
-		// 关键词过滤
-		handleContent := c.Content
-		replaced := false
-		for _, keyword := range *AntiSpamReplaceKeywords {
-			if strings.Contains(handleContent, keyword) {
-				if (keywordsConf.Pending) {
-					BlockCommentBy("关键词")
-					break
-				}
-
-				if (keywordsConf.ReplacTo != "") {
-					handleContent = strings.Replace(handleContent, keyword, strings.Repeat(keywordsConf.ReplacTo, len(keyword)), -1)
-					replaced = true
-				}
-			}
-		}
-
-		if (!keywordsConf.Pending && replaced && keywordsConf.ReplacTo != "") {
-			logrus.Info(fmt.Sprintf("[垃圾拦截] 关键词替换评论 ID=%d 原始内容=%s 替换内容=%s", c.ID, strconv.Quote(c.Content), strconv.Quote(handleContent)))
-			
-			// 保存评论
-			c.Content = handleContent
-			lib.DB.Save(c)
-		}
 	}
 }
 

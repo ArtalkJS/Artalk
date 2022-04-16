@@ -74,7 +74,7 @@ moderator:
     files: # 支持多个词库文件
       - "./data/词库_1.txt"
     file_sep: "\n" # 词库文件内容分割符
-    replac_to: "*" # 替换字符
+    replac_to: "x" # 替换字符
 
 # 验证码
 captcha:

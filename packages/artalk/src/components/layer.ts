@@ -65,12 +65,7 @@ export default class Layer extends Component {
     }
 
     // body style 禁止滚动 + 防抖
-    this.bodyStyleOrgOverflow = document.body.style.overflow
-    this.bodyStyleOrgPaddingRight = document.body.style.paddingRight
-    document.body.style.overflow = 'hidden'
-
-    const bpr = parseInt(window.getComputedStyle(document.body, null).getPropertyValue('padding-right'), 10)
-    document.body.style.paddingRight = `${Ui.getScrollBarWidth() + bpr || 0}px`
+    this.pageBodyScrollBarHide()
   }
 
   hide () {
@@ -81,8 +76,7 @@ export default class Layer extends Component {
     this.newActionTimer(() => {
       this.$wrap.style.display = 'none'
       // body style 禁止滚动解除
-      document.body.style.overflow = this.bodyStyleOrgOverflow
-      document.body.style.paddingRight = this.bodyStyleOrgPaddingRight
+      this.pageBodyScrollBarShow()
       this.checkCleanLayer()
     }, 450)
     this.newActionTimer(() => {
@@ -93,6 +87,22 @@ export default class Layer extends Component {
 
   setMaskClickHide (enable: boolean) {
     this.maskClickHideEnable = enable
+  }
+
+  // 页面滚动条隐藏
+  pageBodyScrollBarHide() {
+    this.bodyStyleOrgOverflow = document.body.style.overflow
+    this.bodyStyleOrgPaddingRight = document.body.style.paddingRight
+    document.body.style.overflow = 'hidden'
+
+    const bpr = parseInt(window.getComputedStyle(document.body, null).getPropertyValue('padding-right'), 10)
+    document.body.style.paddingRight = `${Ui.getScrollBarWidth() + bpr || 0}px`
+  }
+
+  // 页面滚动条显示
+  pageBodyScrollBarShow() {
+    document.body.style.overflow = this.bodyStyleOrgOverflow
+    document.body.style.paddingRight = this.bodyStyleOrgPaddingRight
   }
 
   // Timers
@@ -120,6 +130,7 @@ export default class Layer extends Component {
   disposeNow () {
     document.body.style.overflow = ''
     this.$el.remove()
+    this.pageBodyScrollBarShow()
     // this.$el dispose
     this.checkCleanLayer()
   }

@@ -43,6 +43,7 @@ export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit,
       json = await (new Promise<any>((resolve, reject) => {
         ctx.trigger('checker-captcha', {
           imgData: json.data.img_data,
+          iframe: json.data.iframe,
           onSuccess: () => {
             recall(resolve, reject)
           },

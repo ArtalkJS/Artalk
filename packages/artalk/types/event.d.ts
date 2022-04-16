@@ -55,6 +55,7 @@ export interface NotifyConf {
 
 export interface CheckerCaptchaPayload extends CheckerPayload {
   imgData?: string
+  iframe?: string
 }
 
 export interface UnreadUpdatePayload {

@@ -302,4 +302,10 @@ export default class Api {
     const data = await GET<any>(this.ctx, `${this.baseURL}/captcha/check`, { value })
     return (data.img_data || '') as string
   }
+
+  /** 验证码 · 状态 */
+  public async captchaStatus() {
+    const data = await GET<any>(this.ctx, `${this.baseURL}/captcha/status`)
+    return (data || { is_pass: false }) as { is_pass: boolean }
+  }
 }

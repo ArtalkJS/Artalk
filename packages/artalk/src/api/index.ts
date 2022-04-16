@@ -119,7 +119,7 @@ export default class Api {
 
   /** 用户 · 登录状态 */
   public async loginStatus() {
-    const data = await GET<any>(this.ctx, `${this.baseURL}/login-status`)
+    const data = await POST<any>(this.ctx, `${this.baseURL}/login-status`)
     return (data || { is_login: false }) as { is_login: boolean }
   }
 
@@ -299,19 +299,19 @@ export default class Api {
 
   /** 验证码 · 获取 */
   public async captchaGet() {
-    const data = await GET<any>(this.ctx, `${this.baseURL}/captcha/refresh`)
+    const data = await POST<any>(this.ctx, `${this.baseURL}/captcha/refresh`)
     return (data.img_data || '') as string
   }
 
   /** 验证码 · 检验 */
   public async captchaCheck(value: string) {
-    const data = await GET<any>(this.ctx, `${this.baseURL}/captcha/check`, { value })
+    const data = await POST<any>(this.ctx, `${this.baseURL}/captcha/check`, { value })
     return (data.img_data || '') as string
   }
 
   /** 验证码 · 状态 */
   public async captchaStatus() {
-    const data = await GET<any>(this.ctx, `${this.baseURL}/captcha/status`)
+    const data = await POST<any>(this.ctx, `${this.baseURL}/captcha/status`)
     return (data || { is_pass: false }) as { is_pass: boolean }
   }
 }

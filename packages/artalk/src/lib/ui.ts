@@ -2,7 +2,7 @@ import * as Utils from './utils'
 import Context from '../context'
 
 /** 显示加载 */
-export function showLoading(parentElem: HTMLElement|Context) {
+export function showLoading(parentElem: HTMLElement|Context, conf?: { transparentBg?: boolean }) {
   if (parentElem instanceof Context) parentElem = parentElem.$root
 
   let $loading = parentElem.querySelector<HTMLElement>('.atk-loading')
@@ -13,6 +13,7 @@ export function showLoading(parentElem: HTMLElement|Context) {
         <svg viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle></svg>
       </div>
     </div>`)
+    if (conf?.transparentBg) $loading.style.background = 'transparent'
     parentElem.appendChild($loading)
   }
   $loading.style.display = ''

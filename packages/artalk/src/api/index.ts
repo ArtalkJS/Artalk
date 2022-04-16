@@ -117,6 +117,12 @@ export default class Api {
     }
   }
 
+  /** 用户 · 登录状态 */
+  public async loginStatus() {
+    const data = await GET<any>(this.ctx, `${this.baseURL}/login-status`)
+    return (data || { is_login: false }) as { is_login: boolean }
+  }
+
   // ============================
   //  页面 Page
   // ============================
@@ -301,5 +307,11 @@ export default class Api {
   public async captchaCheck(value: string) {
     const data = await GET<any>(this.ctx, `${this.baseURL}/captcha/check`, { value })
     return (data.img_data || '') as string
+  }
+
+  /** 验证码 · 状态 */
+  public async captchaStatus() {
+    const data = await GET<any>(this.ctx, `${this.baseURL}/captcha/status`)
+    return (data || { is_pass: false }) as { is_pass: boolean }
   }
 }

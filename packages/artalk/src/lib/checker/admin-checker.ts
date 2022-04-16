@@ -5,7 +5,7 @@ import { Checker } from '.'
 const AdminChecker: Checker = {
   inputType: 'password',
 
-  request(that, inputVal) {
+  request(that, ctx, inputVal) {
     const data = {
       name: that.ctx.user.data.nick,
       email: that.ctx.user.data.email,
@@ -15,11 +15,11 @@ const AdminChecker: Checker = {
     return new Api(that.ctx).login(data.name, data.email, data.password)
   },
 
-  body() {
+  body(that, ctx) {
     return Utils.createElement('<span>敲入密码来验证管理员身份：</span>')
   },
 
-  onSuccess(that, userToken, inputVal, formEl) {
+  onSuccess(that, ctx, userToken, inputVal, formEl) {
     that.ctx.user.data.isAdmin = true
     that.ctx.user.data.token = userToken
     that.ctx.user.save()
@@ -27,7 +27,7 @@ const AdminChecker: Checker = {
     that.ctx.trigger('list-reload')
   },
 
-  onError(that, err, inputVal, formEl) {}
+  onError(that, ctx, err, inputVal, formEl) {}
 }
 
 export default AdminChecker

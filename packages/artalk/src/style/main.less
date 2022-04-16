@@ -303,6 +303,41 @@ i.atk-icon {
         }
       }
     }
+
+    .atk-checker-iframe-wrap {
+      position: fixed;
+      z-index: 999998;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      width: 100vw;
+
+      & > iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .atk-close-btn {
+        z-index: 999999;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        width: 50px;
+        height: 50px;
+        align-items: center;
+        place-content: center;
+        cursor: pointer;
+        user-select: none;
+        margin-left: 10px;
+
+        &:hover .atk-icon-close {
+          background-color: rgba(232, 17, 35, 0.9);
+        }
+      }
+    }
   }
 }
 

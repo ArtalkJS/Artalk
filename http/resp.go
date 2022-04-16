@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -93,9 +94,9 @@ func LogWithHttpInfo(c echo.Context) *logrus.Entry {
 func GetApiVersionDataMap() Map {
 	return Map{
 		"app":            "artalk-go",
-		"version":        lib.Version,
+		"version":        strings.TrimPrefix(lib.Version, "v"),
 		"commit_hash":    lib.CommitHash,
-		"fe_min_version": lib.FeMinVersion,
+		"fe_min_version": strings.TrimPrefix(lib.FeMinVersion, "v"),
 	}
 }
 

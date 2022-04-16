@@ -309,6 +309,11 @@ func ViewOnlyAdmin(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 
 func PinnedCommentsScope(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
+		if IsMsgCenter(p) {
+			// 通知中心关闭置顶
+			return db
+		}
+
 		if p.Offset == 0 {
 			return db
 		} else {
@@ -319,6 +324,11 @@ func PinnedCommentsScope(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB
 }
 
 func pinnedCommentsFunction(c echo.Context, p ParamsGet, cookedComments *[]model.CookedComment) {
+	if IsMsgCenter(p) {
+		// 通知中心关闭置顶
+		return
+	}
+
 	// 仅在分页的首页加入置顶评论
 	if p.Offset != 0 {
 		return

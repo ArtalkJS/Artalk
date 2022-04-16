@@ -83,6 +83,10 @@ captcha:
   # ↓ 在 {comment_timeout} 秒内，操作次数超过 {comment_limit} 次激活验证码
   action_timeout: 60
   action_limit: 3
+  geetest: # https://www.geetest.com
+    enabled: false
+    captcha_id: ""
+    captcha_key: ""
 
 # 邮件通知
 email:

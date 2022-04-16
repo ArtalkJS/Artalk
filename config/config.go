@@ -94,10 +94,17 @@ type KeyWordsAntispamConf struct {
 }
 
 type CaptchaConf struct {
-	Enabled       bool `mapstructure:"enabled" json:"enabled"`
-	Always        bool `mapstructure:"always" json:"always"`
-	ActionTimeout int  `mapstructure:"action_timeout" json:"action_timeout"`
-	ActionLimit   int  `mapstructure:"action_limit" json:"action_limit"`
+	Enabled       bool        `mapstructure:"enabled" json:"enabled"`
+	Always        bool        `mapstructure:"always" json:"always"`
+	ActionTimeout int         `mapstructure:"action_timeout" json:"action_timeout"`
+	ActionLimit   int         `mapstructure:"action_limit" json:"action_limit"`
+	Geetest       GeetestConf `mapstructure:"geetest" json:"geetest"`
+}
+
+type GeetestConf struct {
+	Enabled    bool   `mapstructure:"enabled" json:"enabled"`
+	CaptchaID  string `mapstructure:"captcha_id" json:"captcha_id"`
+	CaptchaKey string `mapstructure:"captcha_key" json:"captcha_key"`
 }
 
 type EmailConf struct {

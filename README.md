@@ -88,6 +88,9 @@ $ make docker-push
   - [x] 系统调用 sendmail
 - [x] 邮件多模板自定义
 - [x] 用户已读标记
+- [x] 验证码
+  - [x] 图片验证码
+  - [x] [极验](https://www.geetest.com/)滑动验证码
 - [x] 反垃圾
   - [x] [Akismet](https://akismet.com/)
   - [x] [阿里云内容安全](https://help.aliyun.com/document_detail/28417.html)

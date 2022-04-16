@@ -475,7 +475,7 @@ export default class ListLite extends Component {
     }
   }
 
-  /** 前端版本检测 */
+  /** 版本检测 */
   public versionCheck(name: '前端'|'后端', needVersion: string, curtVersion: string): boolean {
     const needUpdate = Utils.versionCompare(needVersion, curtVersion) === 1
     if (needUpdate) {

@@ -6,6 +6,7 @@ import * as Utils from '@/lib/utils'
 import SidebarHTML from './html/sidebar-layer.html?raw'
 import * as Ui from '@/lib/ui'
 import Layer from './layer'
+import Api from '../api'
 
 export default class SidebarLayer extends Component {
   public layer?: Layer
@@ -60,6 +61,26 @@ export default class SidebarLayer extends Component {
 
     // 第一次加载
     if (this.firstShow) {
+      // 管理员身份验证
+      if (this.ctx.user.data.isAdmin) {
+        const resp = await new Api(this.ctx).loginStatus()
+        if (!resp.is_login) {
+          await (new Promise<any>((resolve, reject) => {
+            this.ctx.trigger('checker-admin', {
+              onSuccess: () => {
+                resolve(null)
+                setTimeout(() => {
+                  this.show()
+                }, 500)
+              },
+              onCancel: () => {
+                this.layer?.hide()
+              }
+            })
+          }))
+        }
+      }
+
       this.$iframeWrap.innerHTML = ''
       this.$iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
 

@@ -7,7 +7,6 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/cheggaaa/pb/v3"
-	"github.com/jedib0t/go-pretty/v6/table"
 )
 
 var ArtransImporter = &_ArtransImporter{
@@ -79,10 +78,10 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 		showUrlResolver = "on"
 	}
 
-	PrintTable([]table.Row{
+	PrintTable([][]interface{}{
 		{"目标站点名", showTSiteName},
 		{"目标站点 URL", showTSiteUrl},
-		{"评论数量", len(comments)},
+		{"评论数量", fmt.Sprintf("%d", len(comments))},
 		{"URL 解析器", showUrlResolver},
 	})
 
@@ -108,10 +107,15 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 	}
 
 	// 进度条
-	bar := pb.StartNew(len(comments))
+	var bar *pb.ProgressBar
+	if HttpOutput == nil {
+		bar = pb.StartNew(len(comments))
+	}
+
+	total := len(comments)
 
 	// 遍历导入 comments
-	for _, c := range comments {
+	for i, c := range comments {
 		siteName := c.SiteName
 		siteUrls := c.SiteUrls
 
@@ -184,9 +188,19 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 
 		idChanges[uint(idMap[c.ID])] = nComment.ID
 
-		bar.Increment()
+		if bar != nil {
+			bar.Increment()
+		}
+		if HttpOutput != nil && i%50 == 0 {
+			print(fmt.Sprintf("%.0f%%... ", float64(i)/float64(total)*100))
+		}
 	}
-	bar.Finish()
+	if bar != nil {
+		bar.Finish()
+	}
+	if HttpOutput != nil {
+		println()
+	}
 	logInfo(fmt.Sprintf("导入 %d 条数据", len(comments)))
 
 	// reply id 重建

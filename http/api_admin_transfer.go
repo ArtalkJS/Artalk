@@ -2,12 +2,54 @@ package http
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
 	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 )
+
+func ActionAdminImportUpload(c echo.Context) error {
+	if isOK, resp := AdminOnly(c); !isOK {
+		return resp
+	}
+
+	// 获取 Form
+	file, err := c.FormFile("file")
+	if err != nil {
+		logrus.Error(err)
+		return RespError(c, "文件获取失败")
+	}
+
+	// 打开文件
+	src, err := file.Open()
+	if err != nil {
+		logrus.Error(err)
+		return RespError(c, "文件打开失败")
+	}
+	defer src.Close()
+
+	// 读取文件
+	buf, err := ioutil.ReadAll(src)
+	if err != nil {
+		logrus.Error(err)
+		return RespError(c, "文件读取失败")
+	}
+
+	tmpFile, err := ioutil.TempFile("", "artalk-import-file-")
+	if err != nil {
+		logrus.Error(err)
+		return RespError(c, "临时文件创建失败")
+	}
+
+	tmpFile.Write(buf)
+
+	return RespData(c, Map{
+		"filename": tmpFile.Name(),
+	})
+}
 
 type ParamsAdminImport struct {
 	Payload string `mapstructure:"payload"`
@@ -40,7 +82,7 @@ func ActionAdminImport(c echo.Context) error {
 
 	c.Response().Write([]byte(
 		`<style>* { font-family: Menlo, Consolas, Monaco, monospace;word-wrap: break-word;white-space: pre-wrap;font-size: 13px; }</style>
-		<script>function scroll() { document.body.scrollTo(0, 999999999999); }</script>`))
+		<script>function scroll() { if (!!document.body) { document.body.scrollTo(0, 999999999999); } }</script>`))
 	c.Response().Flush()
 
 	artransfer.Assumeyes = true

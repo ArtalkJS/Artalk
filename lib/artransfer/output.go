@@ -69,7 +69,24 @@ func println(a ...interface{}) {
 	print(fmt.Sprintln(a...))
 }
 
-func PrintTable(rows []table.Row) {
+func PrintTable(rows [][]interface{}) {
+	if HttpOutput != nil {
+		println("-------------------------")
+		for _, row := range rows {
+			l := len(row)
+			print(" + ")
+			for i, col := range row {
+				print(col)
+				if i < l-1 {
+					print(": ")
+				}
+			}
+			println()
+		}
+		println("-------------------------")
+		return
+	}
+
 	t := table.NewWriter()
 
 	for _, r := range rows {

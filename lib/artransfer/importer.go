@@ -20,7 +20,6 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/araddon/dateparse"
-	"github.com/jedib0t/go-pretty/v6/table"
 )
 
 func RunImportArtrans(payload []string) {
@@ -31,13 +30,13 @@ func RunImportArtrans(payload []string) {
 	note := ArtransImporter.ImporterInfo.Note
 
 	print("\n")
-	tableData := []table.Row{
+	tableData := [][]interface{}{
 		{"数据迁移 - 导入"},
 		{strings.ToUpper(name)},
 		{desc},
 	}
 	if note != "" {
-		tableData = append(tableData, table.Row{note})
+		tableData = append(tableData, []interface{}{note})
 	}
 	PrintTable(tableData)
 	print("\n")

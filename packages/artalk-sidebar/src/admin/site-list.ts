@@ -1,12 +1,13 @@
 import '../style/site-list.less'
 
 import Context from 'artalk/src/context'
-import Component from 'artalk/src/lib/component'
 import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
 import { SiteData } from 'artalk/types/artalk-data'
 import Api from 'artalk/src/api'
-import ItemTextEditor from '../item-text-editor'
+import Component from '../sidebar-component'
+import { SidebarCtx } from '../main'
+import ItemTextEditor from '../lib/item-text-editor'
 
 export default class SiteList extends Component {
   sites: SiteData[] = []
@@ -21,8 +22,8 @@ export default class SiteList extends Component {
 
   $add?: HTMLElement
 
-  constructor(ctx: Context) {
-    super(ctx)
+  constructor(ctx: Context, sidebar: SidebarCtx) {
+    super(ctx, sidebar)
 
     this.$el = Utils.createElement(
     `<div class="atk-site-list">

@@ -14,6 +14,7 @@ module.exports = {
   ],
   plugins: ['@typescript-eslint', 'import'],
   rules: {
+    'no-alert': 'off',
     'no-unused-vars': 'off',
     'no-plusplus': 0,
     'no-param-reassign': 0,

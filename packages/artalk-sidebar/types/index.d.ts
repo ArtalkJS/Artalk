@@ -1,3 +1,3 @@
-import ArtalkSidebar from '../src/artalk-sidebar'
+import ArtalkSidebar from '../src/main'
 
 export default ArtalkSidebar

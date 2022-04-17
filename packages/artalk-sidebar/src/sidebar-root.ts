@@ -1,13 +1,14 @@
 import './style/sidebar.less'
 
 import Context from 'artalk/src/context'
-import Component from 'artalk/src/lib/component'
 import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
 import Comment  from 'artalk/src/components/comment'
 import { SiteData } from 'artalk/types/artalk-data'
 import Api from 'artalk/src/api'
 
+import Component from './sidebar-component'
+import { SidebarCtx } from './main'
 import SidebarHTML from './sidebar.html?raw'
 
 import SidebarView from './sidebar-view'
@@ -25,13 +26,12 @@ const REGISTER_VIEWS: (typeof SidebarView)[] = [
   CommentsView, PagesView, SitesView, TransferView, // SettingView
 ]
 
-export default class Sidebar extends Component {
+export default class SidebarRoot extends Component {
   public $header: HTMLElement
   public $headerMenu: HTMLElement
   public $title: HTMLElement
   public $avatar: HTMLElement
   public $siteLogo?: HTMLElement
-  public $closeBtn: HTMLElement
   public $nav: HTMLElement
   public $curtViewBtn: HTMLElement
   public $curtViewBtnIcon: HTMLElement
@@ -53,8 +53,8 @@ export default class Sidebar extends Component {
 
   private viewSwitcherShow = false
 
-  constructor(ctx: Context) {
-    super(ctx)
+  constructor(ctx: Context, sidebar: SidebarCtx) {
+    super(ctx, sidebar)
 
     // initial elements
     this.$el = Utils.createElement(SidebarHTML)
@@ -62,7 +62,6 @@ export default class Sidebar extends Component {
     this.$headerMenu = this.$header.querySelector('.atk-menu')!
     this.$title = this.$header.querySelector('.atk-sidebar-title')!
     this.$avatar = this.$header.querySelector('.atk-avatar')!
-    this.$closeBtn = this.$header.querySelector('.atk-sidebar-close')!
 
     this.$nav = this.$el.querySelector('.atk-sidebar-nav')!
     this.$curtViewBtn = this.$nav.querySelector('.akt-curt-view-btn')!
@@ -76,14 +75,10 @@ export default class Sidebar extends Component {
     // init UI
     this.initViewSwitcher()
 
-    this.$closeBtn.onclick = () => {
-      this.hide()
+    // 重载操作
+    this.sidebar.reload = () => {
+      this.init()
     }
-
-    // event
-    this.ctx.on('sidebar-show', () => (this.show()))
-    this.ctx.on('sidebar-hide', () => (this.hide()))
-    this.ctx.on('user-changed', () => { this.firstShow = true })
   }
 
   /** 初始化 view 切换器 */
@@ -130,75 +125,76 @@ export default class Sidebar extends Component {
     this.viewSwitcherShow = !this.viewSwitcherShow
   }
 
-  private firstShow = true
+  /** 初始化 */
+  public async init() {
+     // 用户权限检测
+     if (this.isAdmin) {
+      // 是管理员
+      this.$title.innerText = '控制中心'
+      this.$curtViewBtn.style.display = ''
 
-  /** 显示 */
-  public async show() {
-    // 第一次加载
-    if (this.firstShow) {
-      ///////////////////
-      //// IMPORTANT ////
-      ///////////////////
-
-      // 用户权限检测
-      if (this.isAdmin) {
-        // 是管理员
-        this.$title.innerText = '控制中心'
-        this.$curtViewBtn.style.display = ''
-
-        if (!this.siteSwitcher) {
-          // 初始化站点切换器
-          this.siteSwitcher = new SiteListFloater(this.ctx, {
-            onSwitchSite: (siteName) => { this.switchSite(siteName) },
-            onClickSitesViewBtn: () => { this.switchView('sites') }
-          })
-          this.$viewWrap.before(this.siteSwitcher.$el)
-          this.$avatar.onclick = (evt) => {
-            if (!this.isAdmin) return
-            this.siteSwitcher?.show(evt.target as any)
-          }
-
+      if (!this.siteSwitcher) {
+        // 初始化站点切换器
+        this.siteSwitcher = new SiteListFloater(this.ctx, {
+          onSwitchSite: (siteName) => {
+            this.switchSite(siteName)
+          },
+          onClickSitesViewBtn: () => {
+            this.switchView('sites')
+          },
+        })
+        this.$viewWrap.before(this.siteSwitcher.$el)
+        this.$avatar.onclick = (evt) => {
+          if (!this.isAdmin) return
+          this.siteSwitcher?.show(evt.target as any)
         }
-
-        this.curtSite = this.conf.site
-
-        Ui.showLoading(this.$el)
-        try {
-          await this.siteSwitcher!.load(this.curtSite)
-        } catch (err: any) {
-          const $err = Utils.createElement(`<span>加载失败：${err.msg || '网络错误'}<br/></span>`)
-          const $retryBtn = Utils.createElement('<span style="cursor:pointer;">点击重新获取</span>')
-          $err.appendChild($retryBtn)
-          $retryBtn.onclick = () => { Ui.setError(this.$el, null); this.show() }
-          Ui.setError(this.$el, $err)
-          return
-        } finally { Ui.hideLoading(this.$el) }
-
-        // 站点图像
-        this.$avatar.innerHTML = ''
-        this.$siteLogo = Utils.createElement('<div class="atk-site-logo"></div>')
-        this.$siteLogo.innerText = (this.curtSite || '').substr(0, 1)
-        this.$avatar.append(this.$siteLogo)
-      } else {
-        // 不是管理员
-        this.$title.innerText = '通知中心'
-        this.$curtViewBtn.style.display = 'none' // 隐藏 view 切换器
-        this.curtSite = this.conf.site // 第一次 show 使用当前站点数据
-
-        // 头像
-        const $avatarImg = document.createElement('img') as HTMLImageElement
-        $avatarImg.src = Utils.getGravatarURL(this.ctx, MD5(this.ctx.user.data.email.toLowerCase()))
-        this.$avatar.innerHTML = ''
-        this.$avatar.append($avatarImg)
       }
 
-      this.switchView(DEFAULT_VIEW) // 打开默认 view
-      this.firstShow = false
-    }
-  }
+      this.curtSite = this.conf.site
 
-  public async hide() {
-    console.log("hide")
+      Ui.showLoading(this.$el)
+      try {
+        await this.siteSwitcher!.load(this.curtSite)
+      } catch (err: any) {
+        const $err = Utils.createElement(
+          `<span>加载失败：${err.msg || '网络错误'}<br/></span>`
+        )
+        const $retryBtn = Utils.createElement(
+          '<span style="cursor:pointer;">点击重新获取</span>'
+        )
+        $err.appendChild($retryBtn)
+        $retryBtn.onclick = () => {
+          Ui.setError(this.$el, null)
+          this.init()
+        }
+        Ui.setError(this.$el, $err)
+        return
+      } finally {
+        Ui.hideLoading(this.$el)
+      }
+
+      // 站点图像
+      this.$avatar.innerHTML = ''
+      this.$siteLogo = Utils.createElement('<div class="atk-site-logo"></div>')
+      this.$siteLogo.innerText = (this.curtSite || '').substr(0, 1)
+      this.$avatar.append(this.$siteLogo)
+    } else {
+      // 不是管理员
+      this.$title.innerText = '通知中心'
+      this.$curtViewBtn.style.display = 'none' // 隐藏 view 切换器
+      this.curtSite = this.conf.site // 第一次 show 使用当前站点数据
+
+      // 头像
+      const $avatarImg = document.createElement('img') as HTMLImageElement
+      $avatarImg.src = Utils.getGravatarURL(
+        this.ctx,
+        MD5(this.ctx.user.data.email.toLowerCase())
+      )
+      this.$avatar.innerHTML = ''
+      this.$avatar.append($avatarImg)
+    }
+
+    this.switchView(DEFAULT_VIEW) // 打开默认 view
   }
 
   /** 切换 View */
@@ -207,7 +203,7 @@ export default class Sidebar extends Component {
     if (!view) {
       // 初始化 View
       const View = REGISTER_VIEWS.find(o => o.viewName === viewName)!
-      view = new View(this.ctx, this.$viewWrap)
+      view = new View(this.ctx, this.sidebar, this.$viewWrap)
       this.viewInstances[viewName] = view
     }
 

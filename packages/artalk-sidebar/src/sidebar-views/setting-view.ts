@@ -1,6 +1,5 @@
 import Api from 'artalk/src/api'
 import Context from 'artalk/src/context'
-import Component from 'artalk/src/lib/component'
 import * as Utils from 'artalk/src/lib/utils'
 import Comment from 'artalk/src/components/comment'
 

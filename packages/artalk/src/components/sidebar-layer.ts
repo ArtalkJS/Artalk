@@ -93,6 +93,7 @@ export default class SidebarLayer extends Component {
         + `?pageKey=${encodeURIComponent(this.conf.pageKey)}`
         + `&site=${encodeURIComponent(this.conf.site || '')}`
         + `&user=${userData}`
+        + `&time=${+new Date()}`
         + `&referer=${encodeURIComponent(`${location.protocol}//${location.host}${location.pathname}`)}`
         + `${((this.conf.darkMode) ? `&darkMode=1` : ``)}`)
 

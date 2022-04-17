@@ -1,13 +1,14 @@
 import '../style/page-list.less'
 
 import Context from 'artalk/src/context'
-import Component from 'artalk/src/lib/component'
 import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
 import { PageData } from 'artalk/types/artalk-data'
 import Api from 'artalk/src/api'
 import ActionBtn from 'artalk/src/components/action-btn'
-import ItemTextEditor from '../item-text-editor'
+import Component from '../sidebar-component'
+import { SidebarCtx } from '../main'
+import ItemTextEditor from '../lib/item-text-editor'
 
 export default class PageList extends Component {
   $editor?: HTMLElement
@@ -15,8 +16,8 @@ export default class PageList extends Component {
 
   pages: PageData[] = []
 
-  constructor(ctx: Context) {
-    super(ctx)
+  constructor(ctx: Context, sidebar: SidebarCtx) {
+    super(ctx, sidebar)
 
     this.$el = Utils.createElement(`<div class="atk-page-list"></div>`)
   }

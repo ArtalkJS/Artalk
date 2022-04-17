@@ -1,6 +1,6 @@
 {
   "name": "@artalkjs/artalk-sidebar",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "LGPL-3.0",
   "description": "The sidebar of artalk",
   "repository": {
@@ -10,11 +10,6 @@
   },
   "homepage": "https://artalk.js.org",
   "bugs": "https://github.com/ArtalkJS/Artalk/issue",
-  "main": "./dist/ArtalkSidebar.js",
-  "unpkg": "./dist/ArtalkSidebar.iife.js",
-  "jsdelivr": "./dist/ArtalkSidebar.iife.js",
-  "module": "./dist/ArtalkSidebar.es.js",
-  "types": "./types/index.d.ts",
   "scripts": {
     "dev": "vite --port 23367",
     "build": "pnpm -F artalk build && pnpm lint && vite build",

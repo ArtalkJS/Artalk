@@ -1,6 +1,5 @@
 import Api from 'artalk/src/api'
 import Context from 'artalk/src/context'
-import Component from 'artalk/src/lib/component'
 import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
 import Comment from 'artalk/src/components/comment'
@@ -24,7 +23,7 @@ export default class PagesView extends SidebarView {
 
   mount(siteName: string) {
     if (!this.pageList) {
-      this.pageList = new PageList(this.ctx)
+      this.pageList = new PageList(this.ctx, this.sidebar)
       this.$el.append(this.pageList.$el)
     }
 

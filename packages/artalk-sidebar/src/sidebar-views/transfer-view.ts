@@ -1,6 +1,5 @@
 import Api from 'artalk/src/api'
 import Context from 'artalk/src/context'
-import Component from 'artalk/src/lib/component'
 import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
 import Comment from 'artalk/src/components/comment'
@@ -8,7 +7,7 @@ import Comment from 'artalk/src/components/comment'
 import SiteList from '../admin/site-list'
 import SidebarView from '../sidebar-view'
 
-export default class TransferView extends SidebarView {ß
+export default class TransferView extends SidebarView {
   static viewName = 'transfer'
   static viewTitle = '迁移'
   static viewAdminOnly = true
@@ -42,8 +41,18 @@ export default class TransferView extends SidebarView {ß
     </div>
     <div class="atk-form">
     <div class="atk-label atk-data-file-label">Artrans 数据文件</div>
-    <input type="file" name="AtkDataFile" accept="text/plain,.json,.artrans">
-    <span class="atk-desc">使用「<a href="https://artalk.js.org/guide/transfer.html" target="_blank">转换工具</a>」将评论数据转为 Artrans 格式</span>
+    <div class="atk-file-upload-group">
+      <div class="atk-file-input-wrap atk-fade-in">
+        <input type="file" name="AtkDataFile" accept=".artrans">
+        <span class="atk-desc">使用「<a href="https://artalk.js.org/guide/transfer.html" target="_blank">转换工具</a>」将评论数据转为 Artrans 格式</span>
+      </div>
+      <div class="atk-uploading-wrap atk-fade-in">
+        <div class="atk-progress">
+          <div class="atk-bar"></div>
+        </div>
+        <div class="atk-status">上传中 <span class="atk-curt">0%</span>... <span class="atk-abort">取消</span></div>
+      </div>
+    </div>
     <div class="atk-label">目标站点名</div>
     <input type="text" name="AtkSiteName" placeholder="输入内容..." autocomplete="off">
     <div class="atk-label">目标站点 URL</div>
@@ -55,16 +64,130 @@ export default class TransferView extends SidebarView {ß
     </div>`
 
     const $form = this.$el.querySelector<HTMLSelectElement>('.atk-form')!
-    const $dataFile = $form.querySelector<HTMLInputElement>('[name="AtkDataFile"]')!
-    const $dataFileLabel = $form.querySelector<HTMLInputElement>('.atk-data-file-label')!
+
+    const $fileWrap = $form.querySelector<HTMLElement>('.atk-file-input-wrap')!
+    const $file = $fileWrap.querySelector<HTMLInputElement>('[name="AtkDataFile"]')!
+    const $fileDesc = $fileWrap.querySelector<HTMLElement>('.atk-desc')!
+    const fileDescOrgHTML = $fileDesc.innerHTML
+    const restoreFileInput = () => {
+      $fileDesc.innerHTML = fileDescOrgHTML
+      $file.value = ''
+    }
+
+    // 文件上传
+    const $uploadingWrap = $form.querySelector<HTMLElement>('.atk-uploading-wrap')!
+    const $uploadProgress = $uploadingWrap.querySelector<HTMLElement>('.atk-progress')!
+    const $uploadProgressBar = $uploadProgress.querySelector<HTMLElement>('.atk-bar')!
+    const $uploadStatus = $uploadingWrap.querySelector<HTMLElement>('.atk-status')!
+    const $uploadStatusCurt = $uploadStatus.querySelector<HTMLElement>('.atk-curt')!
+    const $uploadAbortBtn = $uploadStatus.querySelector<HTMLElement>('.atk-abort')!
+
     const $siteName = $form.querySelector<HTMLInputElement>('[name="AtkSiteName"]')!
     const $siteURL = $form.querySelector<HTMLInputElement>('[name="AtkSiteURL"]')!
     const $payload = $form.querySelector<HTMLTextAreaElement>('[name="AtkPayload"]')!
     const $submitBtn = $form.querySelector<HTMLButtonElement>('[name="AtkSubmit"]')!
     const setError = (msg: string) => window.alert(msg)
 
+    const showUploading = () => {
+      $fileWrap.style.display = 'none'
+      $uploadingWrap.style.display = ''
+      setUploading(0)
+    }
+
+    const hideUploading = () => {
+      $fileWrap.style.display = ''
+      $uploadingWrap.style.display = 'none'
+    }
+
+    const setUploading = (progress: number) => {
+      $uploadProgressBar.style.width = `${progress}%`
+      $uploadStatusCurt.innerText = `${progress}%`
+    }
+
+    let UploadedFilename: string = ''
+
+    // 文件上传操作
+    $file.onchange = () => {
+      if (!$file.files || $file.files.length < 0) return
+
+      showUploading()
+      UploadedFilename = ''
+
+      const xhr = new XMLHttpRequest()
+
+      // 进度条
+      xhr.upload.addEventListener('progress', (evt) => {
+        if (evt.loaded === evt.total) {
+          // 上传完毕
+          setUploading(100)
+          return
+        }
+
+        const fileSize = $file.files![0].size
+        if (evt.loaded <= fileSize) {
+          // 正在上传
+          const percent = Math.round(evt.loaded / fileSize * 100)
+          setUploading(percent)
+        }
+      })
+
+      // 创建上传参数
+      const formData = new FormData()
+      formData.append('file', $file.files[0])
+      formData.append('token', this.ctx.user.data.token)
+
+      // 开始上传
+      xhr.open('post', `${this.ctx.conf.server}/admin/import-upload`)
+      xhr.timeout = 2*60*1000 // 2min
+      xhr.send(formData)
+
+      // 上传成功事件
+      xhr.onload = () => {
+        const setErr = (msg: string): void => {
+          restoreFileInput()
+          hideUploading()
+          alert(`文件上传失败，${msg}`)
+        }
+
+        if (xhr.status !== 200) {
+          setErr(`响应状态码：${xhr.status}`)
+          return
+        }
+
+        let json: any
+        try {
+          json = JSON.parse(xhr.response)
+        } catch (err) {
+          console.error(err)
+          setErr(`JSON 解析失败：${err}`)
+          return
+        }
+
+        if (!json.success || !json.data.filename) {
+          setErr(`响应：${xhr.response}`)
+          return
+        }
+
+        $fileDesc.innerHTML = '文件已成功上传，可以开始导入'
+        UploadedFilename = json.data.filename
+        hideUploading()
+      }
+
+      // 中止上传
+      $uploadAbortBtn.onclick = () => {
+        xhr.abort()
+        restoreFileInput()
+        hideUploading()
+      }
+    }
+
+    // 开始导入按钮
     $submitBtn.onclick = () => {
-      const dataType = 'artrans'
+      if (!UploadedFilename) {
+        setError(`请先上传 Artrans 数据文件`)
+        return
+      }
+
       const siteName = $siteName.value.trim()
       const siteURL = $siteURL.value.trim()
       const payload = $payload.value.trim()
@@ -80,7 +203,7 @@ export default class TransferView extends SidebarView {ß
           return
         }
 
-        if (rData !instanceof Object) {
+        if (typeof rData !== 'object' || Array.isArray(rData)) {
           setError(`Payload 需为 JSON 对象`)
           return
         }
@@ -89,7 +212,7 @@ export default class TransferView extends SidebarView {ß
       if (siteURL) rData.t_url = siteURL
 
       // 创建导入会话
-      const createSession = (dataStr?: string) => {
+      const createSession = (filename?: string) => {
         const $logWrap = this.$el.querySelector<HTMLElement>('.atk-log-wrap')!
         const $log = $logWrap.querySelector<HTMLElement>('.atk-log')!
         const $backBtn = this.$el.querySelector<HTMLElement>('.atk-log-back-btn')!
@@ -100,9 +223,12 @@ export default class TransferView extends SidebarView {ß
         $backBtn.onclick = () => {
           $logWrap.style.display = 'none'
           $form.style.display = ''
+          restoreFileInput()
+          UploadedFilename = ''
+          this.sidebar.reload()
         }
 
-        if (dataStr) rData.json_data = dataStr
+        if (filename) rData.json_file = filename
 
         // 创建 iframe
         const frameName = `f_${+new Date()}`
@@ -113,7 +239,6 @@ export default class TransferView extends SidebarView {ß
         $log.append($frame)
 
         const formParams: {[k: string]: string} = {
-          type: dataType,
           payload: JSON.stringify(rData),
           token: this.ctx.user.data.token || '',
         }
@@ -138,20 +263,8 @@ export default class TransferView extends SidebarView {ß
         $formTmp.remove()
       }
 
-      const reader = new FileReader()
-      reader.onload = () => {
-        const data = String(reader.result)
-        createSession(data)
-      }
-
-      // 是否已选择文件
-      if ($dataFile.files?.length) {
-        // 先读取文件
-        reader.readAsText($dataFile.files[0])
-      } else {
-        // 直接开始会话
-        createSession()
-      }
+      // 直接开始会话
+      createSession(UploadedFilename)
     }
   }
 
@@ -160,7 +273,7 @@ export default class TransferView extends SidebarView {ß
 
     try {
       const d = await new Api(this.ctx).export()
-      this.download(`artrans-${this.getYmdHisFilename()}.json`, d)
+      this.download(`backup-${this.getYmdHisFilename()}.artrans`, d)
     } catch (err: any) {
       console.log(err)
       window.alert(`${String(err)}`)

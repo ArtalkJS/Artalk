@@ -106,6 +106,8 @@ export default class TransferView extends SidebarView {
 
     let UploadedFilename: string = ''
 
+    hideUploading()
+
     // 文件上传操作
     $file.onchange = () => {
       if (!$file.files || $file.files.length < 0) return

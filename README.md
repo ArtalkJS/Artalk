@@ -14,7 +14,9 @@
 
 > 🌌 一款简洁的自托管评论系统 | A Selfhosted Comment System.
 
-前往：[“**官方文档**”](https://artalk.js.org)
+可参考：[“官方文档”](https://artalk.js.org)
+
+最新版：[“Releases”](https://github.com/ArtalkJS/ArtalkGo/releases)
 
 ---
 
@@ -69,11 +71,55 @@ import Artalk from 'artalk'
 
 new Artalk({
   el:        '#Comments',
-  pageKey:   '<页面链接>',
-  pageTitle: '<页面标题>',
-  server:    '<后端地址>',
-  site:      '<站点名称>',
+  pageKey:   'http://your_domain/post/1', // 页面链接
+  pageTitle: '关于如何引入 Artalk 这档子事', // 页面标题
+  server:    'http://localhost:8080/api', // 后端地址
+  site:      'Artalk 的博客 (你的站点名)',
 })
+```
+
+### Docker
+
+```sh
+# 为 Artalk 创建一个目录
+mkdir Artalk
+cd Artalk
+
+# 下载配置文件模版
+curl -L https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/master/artalk-go.example.yml > conf.yml
+
+docker run -d \
+  --name artalk \
+  -p 0.0.0.0:8080:23366 \
+  -v $(pwd)/conf.yml:/conf.yml \
+  -v $(pwd)/data:/data \
+  artalk/artalk-go
+```
+
+### Docker Compose
+
+```sh
+mkdir Artalk
+cd Artalk
+
+vim docker-compose.yaml
+```
+
+```yaml
+version: "3.5"
+services:
+  artalk:
+    container_name: artalk
+    image: artalk/artalk-go
+    ports:
+      - 8080:23366
+    volumes:
+      - ./conf.yml:/conf.yml
+      - ./data:/data
+```
+
+```sh
+docker-compose up -d
 ```
 
 ## TODOs 

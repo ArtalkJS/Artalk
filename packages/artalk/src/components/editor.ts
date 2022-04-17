@@ -551,6 +551,8 @@ export default class Editor extends Component {
     const $travelPlace = Utils.createElement('<div></div>')
     $afterEl.after($travelPlace)
     $travelPlace.replaceWith(this.$el)
+
+    this.$el.classList.add('atk-fade-in') // 添加渐入动画
   }
 
   travelBack () {

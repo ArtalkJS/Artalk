@@ -10,7 +10,6 @@ import (
 )
 
 type ParamsAdminImport struct {
-	Type    string `mapstructure:"type" param:"required"`
 	Payload string `mapstructure:"payload"`
 }
 
@@ -50,7 +49,7 @@ func ActionAdminImport(c echo.Context) error {
 		c.Response().Write([]byte("<script>scroll();</script>"))
 		c.Response().Flush()
 	}
-	artransfer.RunByName(p.Type, payload)
+	artransfer.RunImportArtrans(payload)
 
 	return nil
 }

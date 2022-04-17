@@ -21,51 +21,33 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/araddon/dateparse"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"gorm.io/gorm"
 )
 
-type Map = map[string]interface{}
-
-var Supports = []interface{}{
-	ArtransImporter,
-	TypechoImporter,
-}
-
-func RunByName(dataType string, payload []string) {
+func RunImportArtrans(payload []string) {
 	basic := GetBasicParamsFrom(payload)
-	for _, i := range Supports {
-		r := reflect.ValueOf(i)
-		name := reflect.Indirect(r).FieldByName("Name").String()
-		desc := reflect.Indirect(r).FieldByName("Desc").String()
-		note := reflect.Indirect(r).FieldByName("Note").String()
-		if !strings.EqualFold(name, dataType) {
-			continue
-		}
 
-		print("\n")
-		tableData := []table.Row{
-			{"数据迁移 - 导入"},
-			{strings.ToUpper(name)},
-			{desc},
-		}
-		if note != "" {
-			tableData = append(tableData, table.Row{note})
-		}
-		PrintTable(tableData)
-		print("\n")
+	name := ArtransImporter.ImporterInfo.Name
+	desc := ArtransImporter.ImporterInfo.Desc
+	note := ArtransImporter.ImporterInfo.Note
 
-		//t1 := time.Now()
-		r.MethodByName("Run").Call([]reflect.Value{
-			reflect.ValueOf(basic),
-			reflect.ValueOf(payload),
-		})
-		//elapsed := time.Since(t1)
-		print("\n")
-		logInfo("导入执行结束") //，耗时: ", elapsed)
-		return
+	print("\n")
+	tableData := []table.Row{
+		{"数据迁移 - 导入"},
+		{strings.ToUpper(name)},
+		{desc},
 	}
+	if note != "" {
+		tableData = append(tableData, table.Row{note})
+	}
+	PrintTable(tableData)
+	print("\n")
 
-	logFatal("不支持该数据类型导入")
+	//t1 := time.Now()
+	ArtransImporter.Run(basic, payload)
+	//elapsed := time.Since(t1)
+
+	print("\n")
+	logInfo("导入执行结束") //，耗时: ", elapsed)
 }
 
 type ImporterInfo struct {
@@ -79,17 +61,6 @@ func GetImporterInfo(instance interface{}) ImporterInfo {
 	j, _ := json.Marshal(instance)
 	json.Unmarshal(j, &info)
 	return info
-}
-
-func GetSupportNames() []string {
-	types := []string{}
-	for _, i := range Supports {
-		r := reflect.ValueOf(i)
-		f := reflect.Indirect(r).FieldByName("Name")
-		types = append(types, f.String())
-	}
-
-	return types
 }
 
 type BasicParams struct {
@@ -129,50 +100,6 @@ func RequiredBasicTargetSite(basic *BasicParams) error {
 	}
 
 	return nil
-}
-
-func DbReady(payload []string) (*gorm.DB, error) {
-	var host, port, dbName, user, password, dbType, dbFile string
-	GetParamsFrom(payload).To(map[string]interface{}{
-		"db_host":     &host,
-		"db_port":     &port,
-		"db_name":     &dbName,
-		"db_user":     &user,
-		"db_password": &password,
-		"db_type":     &dbType,
-		"db_file":     &dbFile,
-	})
-
-	if dbType == "" {
-		dbType = string(config.TypeMySql)
-	}
-
-	// sqlite
-	if strings.EqualFold(dbType, string(config.TypeSQLite)) {
-		if dbFile == "" {
-			return nil, errors.New("SQLite 数据库：请传递参数 `db_file` 指定数据文件路径")
-		}
-
-		db, err := lib.OpenSQLite(dbFile)
-		if err != nil {
-			return nil, errors.New("SQLite 打开失败 " + err.Error())
-		}
-		return db, nil
-	}
-
-	dsn, err := lib.GetDsn(config.DBType(dbType), host, port, dbName, user, password)
-	if err != nil {
-		return nil, errors.New("数据库连接 DSN 生成错误 " + err.Error())
-	}
-
-	db, err := lib.OpenDB(config.DBType(dbType), dsn)
-	if err != nil {
-		return nil, errors.New("数据库连接失败 " + err.Error())
-	}
-
-	logInfo("数据库连接成功")
-
-	return db, nil
 }
 
 // 站点准备
@@ -279,22 +206,6 @@ func UrlResolverGetPageKey(baseUrl string, commentUrlVal string) string {
 	u.Path = abs
 
 	return u.String()
-}
-
-func ParseVersion(s string) int64 {
-	strList := strings.Split(s, ".")
-	format := fmt.Sprintf("%%s%%0%ds", len(strList))
-	v := ""
-	for _, value := range strList {
-		v = fmt.Sprintf(format, v, value)
-	}
-	var result int64
-	var err error
-	if result, err = strconv.ParseInt(v, 10, 64); err != nil {
-		logError("ugh: parseVersion(%s): error=%s", s, err)
-		return 0
-	}
-	return result
 }
 
 func ParseDate(s string) time.Time {

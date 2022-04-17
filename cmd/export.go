@@ -3,7 +3,9 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
+	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
@@ -31,13 +33,29 @@ var exportCmd = &cobra.Command{
 			// write to stdout
 			fmt.Println(jsonStr)
 		} else {
+			filename := args[0]
+
+			// make sure is abs path
+			filename, err := filepath.Abs(filename)
+			if err != nil {
+				logrus.Fatal(err)
+			}
+
+			// check dir
+			stat, err := os.Stat(filename)
+			if err == nil {
+				if stat.IsDir() {
+					filename = path.Join(filename, "backup-"+time.Now().Format("20060102-150405")+".artrans")
+				}
+			}
+
 			// mkdir -p
-			if err := lib.EnsureDir(filepath.Dir(args[0])); err != nil {
+			if err := lib.EnsureDir(filepath.Dir(filename)); err != nil {
 				logrus.Fatal(err)
 			}
 
 			// touch
-			f, err := os.Create(args[0])
+			f, err := os.Create(filename)
 			if err != nil {
 				logrus.Fatal(err)
 			}
@@ -47,6 +65,8 @@ var exportCmd = &cobra.Command{
 			if err2 != nil {
 				logrus.Fatal(err2)
 			}
+
+			logrus.Info("已导出 Artrans 文件：" + filename)
 		}
 	},
 }

@@ -23,20 +23,12 @@ type _ArtransImporter struct {
 }
 
 func (imp *_ArtransImporter) Run(basic *BasicParams, payload []string) {
-	err := RequiredBasicTargetSite(basic)
-	if err != nil {
-		logFatal(err)
-		return
-	}
-
 	// 读取文件
 	jsonStr, jErr := JsonFileReady(payload)
 	if jErr != nil {
 		logFatal(jErr)
 		return
 	}
-
-	basic.UrlResolver = false
 
 	ImportArtransByStr(basic, jsonStr)
 }
@@ -59,6 +51,11 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 		return
 	}
 
+	if basic.TargetSiteUrl != "" && !lib.ValidateURL(basic.TargetSiteUrl) {
+		logFatal("目标站点 URL 无效")
+		return
+	}
+
 	// 汇总
 	print("# 请过目：\n\n")
 
@@ -69,15 +66,24 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 	showTSiteUrl := basic.TargetSiteUrl
 	if showTSiteName == "" {
 		showTSiteName = "未指定"
+
 	}
 	if showTSiteUrl == "" {
 		showTSiteUrl = "未指定"
+	}
+
+	// 目标站点名和目标站点URL都不为空，才开启 URL 解析器
+	showUrlResolver := "off"
+	if basic.TargetSiteName != "" && basic.TargetSiteUrl != "" {
+		basic.UrlResolver = true
+		showUrlResolver = "on"
 	}
 
 	PrintTable([]table.Row{
 		{"目标站点名", showTSiteName},
 		{"目标站点 URL", showTSiteUrl},
 		{"评论数量", len(comments)},
+		{"URL 解析器", showUrlResolver},
 	})
 
 	print("\n")
@@ -106,8 +112,18 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 
 	// 遍历导入 comments
 	for _, c := range comments {
+		siteName := c.SiteName
+		siteUrls := c.SiteUrls
+
+		if basic.TargetSiteName != "" {
+			siteName = basic.TargetSiteName
+		}
+		if basic.TargetSiteUrl != "" {
+			siteUrls = basic.TargetSiteUrl
+		}
+
 		// 准备 site
-		site, sErr := SiteReady(c.SiteName, c.SiteUrls)
+		site, sErr := SiteReady(siteName, siteUrls)
 		if sErr != nil {
 			logFatal(sErr)
 			return
@@ -132,7 +148,7 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 			nPageKey = UrlResolverGetPageKey(basic.TargetSiteUrl, c.PageKey)
 		}
 
-		page := model.FindCreatePage(nPageKey, c.PageTitle, c.SiteName)
+		page := model.FindCreatePage(nPageKey, c.PageTitle, site.Name)
 		page.AdminOnly = c.PageAdminOnly == lib.ToString(true)
 		model.UpdatePage(&page)
 
@@ -147,6 +163,7 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 
 			IsCollapsed: c.IsCollapsed == lib.ToString(true),
 			IsPending:   c.IsPending == lib.ToString(true),
+			IsPinned:    c.IsPending == lib.ToString(true),
 
 			UserID:   user.ID,
 			PageKey:  page.Key,

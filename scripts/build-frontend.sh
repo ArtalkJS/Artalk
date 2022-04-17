@@ -23,9 +23,9 @@ rm -rf ./Artalk
 git clone https://github.com/ArtalkJS/Artalk.git Artalk
 cd Artalk
 
-# using latest tag soruce code
-git fetch --tags
-git checkout $(git describe --tags --abbrev=0)
+# # using latest tag soruce code
+# git fetch --tags
+# git checkout $(git describe --tags --abbrev=0)
 
 pnpm install
 pnpm build:all

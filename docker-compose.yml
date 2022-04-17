@@ -2,11 +2,9 @@ version: "3.5"
 services:
   artalk:
     container_name: artalk
-    build:
-      context: .
+    image: artalk/artalk-go
     ports:
-      - "23366:23366"
+      - 8080:23366
     volumes:
-      - ./email-tpl:/email-tpl
-      - ./artalk-go.yml:/artalk-go.yml
+      - ./conf.yml:/conf.yml
       - ./data:/data

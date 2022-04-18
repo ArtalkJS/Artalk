@@ -214,7 +214,9 @@ func CheckSite(c echo.Context, siteName *string, destID *uint, destSiteAll *bool
 
 	site := model.FindSite(*siteName)
 	if site.IsEmpty() {
-		return false, RespError(c, fmt.Sprintf("未找到站点：`%s`，请控制台创建站点", *siteName))
+		return false, RespError(c, fmt.Sprintf("未找到站点：`%s`，请控制台创建站点", *siteName), Map{
+			"err_no_site": true,
+		})
 	}
 
 	// 检测 Referer 合法性

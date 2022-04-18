@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/jeremywohl/flatten"
@@ -88,12 +87,6 @@ func AddQueryToURL(urlStr string, queryMap map[string]string) string {
 	return u.String()
 }
 
-// "https://artalk.js.org/guide/describe.html" => "guide/describe.html"
-func GetUrlWithoutDomain(urlStr string) string {
-	r := regexp.MustCompile(`^http[s]?:\/\/.+?\/+`)
-	return r.ReplaceAllString(urlStr, "")
-}
-
 // ContainsStr returns true if an str is present in a iteratee.
 func ContainsStr(s []string, v string) bool {
 	for _, vv := range s {
@@ -124,28 +117,28 @@ func RemoveBlankStrings(s []string) []string {
 }
 
 func TruncateString(str string, length int) string {
-    if length <= 0 {
-        return ""
-    }
+	if length <= 0 {
+		return ""
+	}
 
-    // This code cannot support Chinese
-    // orgLen := len(str)
-    // if orgLen <= length {
-    //     return str
-    // }
-    // return str[:length]
+	// This code cannot support Chinese
+	// orgLen := len(str)
+	// if orgLen <= length {
+	//     return str
+	// }
+	// return str[:length]
 
-    // Support Chinese
-    truncated := ""
-    count := 0
-    for _, char := range str {
-    truncated += string(char)
-        count++
-        if count >= length {
-            break
-        }
-    }
-    return truncated
+	// Support Chinese
+	truncated := ""
+	count := 0
+	for _, char := range str {
+		truncated += string(char)
+		count++
+		if count >= length {
+			break
+		}
+	}
+	return truncated
 }
 
 //#region JSON Any To String (for Transfer)

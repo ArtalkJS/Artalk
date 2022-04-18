@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/url"
 	"os"
-	"path/filepath"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -177,34 +176,37 @@ func JsonFileReady(payload []string) (string, error) {
 }
 
 // PageKey (commentUrlVal 不确定是否为完整 URL 还是一个 path)
-func UrlResolverGetPageKey(baseUrl string, commentUrlVal string) string {
-	baseUrl = strings.TrimSuffix(baseUrl, "/") + "/"
-	path := strings.TrimPrefix(lib.GetUrlWithoutDomain(commentUrlVal), "/")
+//
+// @examples
+// ("https://github.com", "/1.html")                => "https://github.com/1.html"
+// ("https://github.com", "https://xxx.com/1.html") => "https://github.com/1.html"
+// ("https://github.com/", "/1.html")               => "https://github.com/1.html"
+// ("", "/1.html")                                  => "/1.html"
+// ("", "https://xxx.com/1.html")                   => "https://xxx.com/1.html"
+// ("https://github.com/233", "/1/")                => "https://github.com/1/"
+func UrlResolverGetPageKey(baseUrlRaw string, commentUrlRaw string) string {
+	if baseUrlRaw == "" {
+		return commentUrlRaw
+	}
+
+	baseUrl, err := url.Parse(baseUrlRaw)
+	if err != nil {
+		return commentUrlRaw
+	}
+
+	commentUrl, err := url.Parse(commentUrlRaw)
+	if err != nil {
+		return commentUrlRaw
+	}
+
+	// "https://artalk.js.org/guide/describe.html?233" => "/guide/describe.html?233"
+	commentUrl.Scheme = ""
+	commentUrl.Host = ""
 
 	// 解决拼接路径中的相对地址，例如：https://atk.xxx/abc/../artalk => https://atk.xxx/artalk
-	u, err := url.ParseRequestURI(baseUrl + path)
-	if err != nil {
-		logError("GetNewPageKey Error: ", err)
-		return commentUrlVal
-	}
+	url := baseUrl.ResolveReference(commentUrl)
 
-	// pathIsDir := strings.HasSuffix(u.Path, "/") // path 以 / 结尾
-	abs, absErr := filepath.Abs(u.Path) // 相对路径转绝对路径
-	if absErr != nil {
-		return u.String()
-	}
-
-	// TODO 会导致 "http://aaa.com", "/" => "http://aaa.com//" 暂时搁置
-	// if pathIsDir {
-	// 	u.Path = abs + "/" // 加上 "/"
-	// 	// 这是一个 patch: 因为 filepath.Abs() 结果无论是 目录还是文件，都会去掉 /
-	// } else {
-	// 	u.Path = abs
-	// }
-
-	u.Path = abs
-
-	return u.String()
+	return url.String()
 }
 
 func ParseDate(s string) time.Time {

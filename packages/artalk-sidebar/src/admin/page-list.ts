@@ -72,6 +72,9 @@ export default class PageList extends Component {
     $sub.innerText = page.url || page.key
     $editBtn.onclick = () => this.showEditor(page, $page)
 
+    $title.onclick = () => { if (page.url) window.open(page.url) }
+    $sub.onclick = () => { if (page.url) window.open(page.url) }
+
     return $page
   }
 

@@ -88,13 +88,11 @@ export default class SidebarLayer extends Component {
         : Utils.getURLBasedOnApi(this.ctx, 'sidebar/')
       const userData = encodeURIComponent(JSON.stringify(this.ctx.user.data))
 
-      const location = window.location
       this.iframeLoad(`${baseURL}`
         + `?pageKey=${encodeURIComponent(this.conf.pageKey)}`
         + `&site=${encodeURIComponent(this.conf.site || '')}`
         + `&user=${userData}`
         + `&time=${+new Date()}`
-        + `&referer=${encodeURIComponent(`${location.protocol}//${location.host}${location.pathname}`)}`
         + `${((this.conf.darkMode) ? `&darkMode=1` : ``)}`)
 
       this.$iframeWrap.append(this.$iframe)

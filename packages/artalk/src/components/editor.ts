@@ -501,7 +501,7 @@ export default class Editor extends Component {
 
       // 回复不同页面的评论
       if (this.replyComment !== null && this.replyComment.page_key !== this.ctx.conf.pageKey) {
-        window.open(`${this.replyComment.page_key}#atk-comment-${nComment.id}`)
+        window.open(`${this.replyComment.page_url}#atk-comment-${nComment.id}`)
       }
 
       this.ctx.trigger('list-insert', nComment)

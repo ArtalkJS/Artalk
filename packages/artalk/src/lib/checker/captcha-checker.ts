@@ -15,7 +15,7 @@ const CaptchaChecker: Checker = {
       const $iframe = Utils.createElement<HTMLIFrameElement>(`<iframe class="atk-fade-in"></iframe>`)
       $iframe.style.display = 'none'
       Ui.showLoading($iframeWrap, { transparentBg: true })
-      $iframe.src = `${that.ctx.conf.server}/captcha/get`
+      $iframe.src = `${that.ctx.conf.server}/captcha/get?t=${+new Date()}`
       $iframe.onload = () => {
         $iframe.style.display = ''
         Ui.hideLoading($iframeWrap)

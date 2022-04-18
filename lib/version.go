@@ -7,4 +7,4 @@ var (
 )
 
 // 前端最小要求版本号
-var FeMinVersion string = "2.2.2"
+var FeMinVersion string = "2.2.4"

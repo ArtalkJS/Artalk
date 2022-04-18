@@ -70,9 +70,25 @@ func HashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
+type ParamsLoginStatus struct {
+	Name  string `mapstructure:"name"`
+	Email string `mapstructure:"email"`
+}
+
 // 获取当前登录状态
 func ActionLoginStatus(c echo.Context) error {
+	var p ParamsLoginStatus
+	if isOK, resp := ParamsDecode(c, ParamsLoginStatus{}, &p); !isOK {
+		return resp
+	}
+
+	isAdmin := false
+	if p.Email != "" && p.Name != "" {
+		isAdmin = model.IsAdminUserByNameEmail(p.Name, p.Email)
+	}
+
 	return RespData(c, Map{
+		"is_admin": isAdmin,
 		"is_login": CheckIsAdminReq(c),
 	})
 }

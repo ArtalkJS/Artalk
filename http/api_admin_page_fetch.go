@@ -12,6 +12,8 @@ import (
 type ParamsAdminPageFetch struct {
 	ID       uint   `mapstructure:"id"`
 	SiteName string `mapstructure:"site_name"`
+
+	GetStatus bool `mapstructure:"get_status"`
 }
 
 var allPageFetching = false
@@ -28,10 +30,25 @@ func ActionAdminPageFetch(c echo.Context) error {
 		return resp
 	}
 
+	// 状态获取
+	if p.GetStatus {
+		if allPageFetching {
+			return RespData(c, Map{
+				"msg":         fmt.Sprintf("已完成 %d 共 %d 个", allPageFetchDone, allPageFetchTotal),
+				"is_progress": true,
+			})
+		} else {
+			return RespData(c, Map{
+				"msg":         "",
+				"is_progress": false,
+			})
+		}
+	}
+
 	// 更新全部站点
 	if p.SiteName != "" {
 		if allPageFetching {
-			return RespError(c, fmt.Sprintf("页面更新正在执行中，已完成 %d 共 %d 个", allPageFetchDone, allPageFetchTotal))
+			return RespError(c, "任务正在进行中，请稍等片刻")
 		}
 
 		// 异步执行

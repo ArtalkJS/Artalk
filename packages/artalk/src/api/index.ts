@@ -119,8 +119,11 @@ export default class Api {
 
   /** 用户 · 登录状态 */
   public async loginStatus() {
-    const data = await POST<any>(this.ctx, `${this.baseURL}/login-status`)
-    return (data || { is_login: false }) as { is_login: boolean }
+    const data = await POST<any>(this.ctx, `${this.baseURL}/login-status`, {
+      name: this.ctx.user.data.nick,
+      email: this.ctx.user.data.email
+    })
+    return (data || { is_login: false, is_admin: false }) as { is_login: boolean, is_admin: boolean }
   }
 
   // ============================

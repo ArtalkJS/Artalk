@@ -9,7 +9,7 @@ import Editor from './components/editor'
 import List from './components/list'
 import SidebarLayer from './components/sidebar-layer'
 
-import { GetLayerWrap } from './components/layer'
+import Layer, { GetLayerWrap } from './components/layer'
 import { EventPayloadMap, Handler } from '~/types/event'
 import Api from './api'
 import * as Utils from './lib/utils'
@@ -56,6 +56,7 @@ export default class Artalk {
     // 界面初始化
     this.$root.classList.add('artalk')
     this.$root.innerHTML = ''
+    this.initLayer()
     this.initDarkMode()
 
     // 组件初始化
@@ -131,6 +132,13 @@ export default class Artalk {
   /** 重新加载 */
   public reload() {
     this.list.fetchComments(0)
+  }
+
+  /** Layer 初始化 */
+  initLayer() {
+    // 记录页面原始 Styles
+    Layer.BodyOrgOverflow = document.body.style.overflow
+    Layer.BodyOrgPaddingRight = document.body.style.paddingRight
   }
 
   /** 暗黑模式 · 初始化 */

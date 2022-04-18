@@ -59,28 +59,29 @@ export default class SidebarLayer extends Component {
       this.$el.style.transform = 'translate(0, 0)'
     }, 20)
 
+    // 管理员身份验证 (若身份失效，弹出验证窗口)
+    ;(async () => {
+      const resp = await new Api(this.ctx).loginStatus()
+      if (resp.is_admin && !resp.is_login) {
+        this.layer?.hide()
+        this.firstShow = true
+
+        this.ctx.trigger('checker-admin', {
+          onSuccess: () => {
+            setTimeout(() => {
+              this.show()
+            }, 500)
+          },
+          onCancel: () => {}
+        })
+      }
+    })()
+
+    // 清空 unread
+    this.ctx.trigger('unread-update', { notifies: [] })
+
     // 第一次加载
     if (this.firstShow) {
-      // 管理员身份验证
-      if (this.ctx.user.data.isAdmin) {
-        const resp = await new Api(this.ctx).loginStatus()
-        if (!resp.is_login) {
-          await (new Promise<any>((resolve, reject) => {
-            this.ctx.trigger('checker-admin', {
-              onSuccess: () => {
-                resolve(null)
-                setTimeout(() => {
-                  this.show()
-                }, 500)
-              },
-              onCancel: () => {
-                this.layer?.hide()
-              }
-            })
-          }))
-        }
-      }
-
       this.$iframeWrap.innerHTML = ''
       this.$iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
 

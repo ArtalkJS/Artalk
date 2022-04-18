@@ -22,10 +22,20 @@ export default class PageList extends Component {
     this.$el = Utils.createElement(`<div class="atk-page-list"></div>`)
   }
 
-  /** 清空所有 Pages */
-  clearAll() {
+  /** 初始化 PageList (清空列表) */
+  initPageList(siteName: string) {
     this.pages = []
-    this.$el.innerHTML = ''
+    this.$el.innerHTML = '<div class="atk-header-action-bar"><span class="update-all-title-btn"><i class="atk-icon atk-icon-sync"></i> 更新标题</span></div>'
+    // 更新页面全部标题按钮
+    this.$el.querySelector<HTMLElement>('.update-all-title-btn')!.onclick = () => {
+      try {
+        new Api(this.ctx).pageFetch(undefined, siteName)
+      } catch (err: any) {
+        alert(err.msg)
+        return
+      }
+      alert('已开始在后台执行，稍等片刻手动刷新列表即可')
+    }
   }
 
   /** 导入 Page 数据 */
@@ -158,7 +168,7 @@ export default class PageList extends Component {
       showLoading()
       let p: PageData
       try {
-        p = await new Api(this.ctx).pageFetch(page.id)
+        p = (await new Api(this.ctx).pageFetch(page.id)).page
       } catch (err: any) {
         showError(`同步失败：${err.msg || '未知错误'}`)
         console.log(err)

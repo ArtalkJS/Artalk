@@ -164,13 +164,13 @@ export default class Api {
   }
 
   /** 页面 · 数据更新 */
-  public async pageFetch(id: number) {
-    const params: any = {
-      id,
-    }
+  public async pageFetch(id?: number, siteName?: string) {
+    const params: any = {}
+    if (id) params.id = id
+    if (siteName) params.site_name = siteName
 
     const d = await POST<any>(this.ctx, `${this.baseURL}/admin/page-fetch`, params)
-    return (d.page as PageData)
+    return (d as any)
   }
 
   // ============================

@@ -5,8 +5,8 @@ import * as Ui from 'artalk/src/lib/ui'
 import Comment from 'artalk/src/components/comment'
 import Pagination, { PaginationConf } from 'artalk/src/components/pagination'
 
-import PageList from '../admin/page-list'
 import SidebarView from '../sidebar-view'
+import PageList from '../admin/page-list'
 
 const PAGE_SIZE = 20
 
@@ -35,7 +35,7 @@ export default class PagesView extends SidebarView {
   }
 
   async reqPages(siteName: string, offset: number) {
-    this.pageList.clearAll()
+    this.pageList.initPageList(siteName)
     ;(this.$el.parentNode as any)?.scrollTo(0, 0)
 
     Ui.showLoading(this.$el)

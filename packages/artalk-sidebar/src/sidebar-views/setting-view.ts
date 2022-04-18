@@ -14,8 +14,8 @@ export default class SettingView extends SidebarView {
   viewTabs = {}
   viewActiveTab = ''
 
-  mount(siteName: string) {
+  mount() {
   }
 
-  switchTab(tab: string, siteName: string) {}
+  switchTab(tab: string) {}
 }

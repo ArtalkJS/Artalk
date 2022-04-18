@@ -108,10 +108,7 @@ export default class TransferView extends SidebarView {
 
     hideUploading()
 
-    const onFileChanged = async () => {
-      if (!$file.files || $file.files.length < 0) return
-
-      showUploading()
+    const startUploadFile = async () => {
       UploadedFilename = ''
 
       const xhr = new XMLHttpRequest()
@@ -134,7 +131,7 @@ export default class TransferView extends SidebarView {
 
       // 创建上传参数
       const formData = new FormData()
-      formData.append('file', $file.files[0])
+      formData.append('file', $file.files![0])
       formData.append('token', this.ctx.user.data.token)
 
       // 开始上传
@@ -184,7 +181,13 @@ export default class TransferView extends SidebarView {
 
     // 文件上传操作
     $file.onchange = () => {
-      onFileChanged()
+      if (!$file.files || $file.files.length === 0) return
+
+      showUploading()
+      setTimeout(async () => {
+        await startUploadFile()
+        hideUploading()
+      }, 80)
     }
 
     // 开始导入按钮

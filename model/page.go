@@ -26,6 +26,8 @@ type Page struct {
 
 	VoteUp   int
 	VoteDown int
+
+	PV int
 }
 
 func (p Page) IsEmpty() bool {
@@ -41,6 +43,7 @@ type CookedPage struct {
 	SiteName  string `json:"site_name"`
 	VoteUp    int    `json:"vote_up"`
 	VoteDown  int    `json:"vote_down"`
+	PV        int    `json:"pv"`
 }
 
 func (p Page) ToCooked() CookedPage {
@@ -53,6 +56,7 @@ func (p Page) ToCooked() CookedPage {
 		SiteName:  p.SiteName,
 		VoteUp:    p.VoteUp,
 		VoteDown:  p.VoteDown,
+		PV:        p.PV,
 	}
 }
 

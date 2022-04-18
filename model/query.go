@@ -251,12 +251,6 @@ func FindUnreadNotifies(userID uint) []CookedNotify {
 	return cookedNotifies
 }
 
-func FindPV(pageKey string, siteName string) PV {
-	var pv PV
-	lib.DB.Where("page_key = ? AND site_name = ?", pageKey, siteName).First(&pv)
-	return pv
-}
-
 //#region 管理员账号检测
 var allAdmins *[]User = nil
 

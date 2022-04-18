@@ -33,23 +33,10 @@ func ActionPV(c echo.Context) error {
 	// ip := c.RealIP()
 	// ua := c.Request().UserAgent()
 
-	pv := model.FindPV(p.PageKey, p.SiteName)
-	if pv.IsEmpty() {
-		// create new pv record of page
-		pv = model.PV{
-			PageKey:  page.Key,
-			SiteName: p.SiteName,
-			Num:      1,
-		}
-
-		lib.DB.Create(&pv)
-	} else {
-		// +1s
-		pv.Num++
-		lib.DB.Save(&pv)
-	}
+	page.PV++
+	lib.DB.Save(&page)
 
 	return RespData(c, Map{
-		"pv": pv.Num,
+		"pv": page.PV,
 	})
 }

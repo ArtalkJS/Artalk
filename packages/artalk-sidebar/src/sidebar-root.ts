@@ -21,12 +21,13 @@ import SettingView from './sidebar-views/setting-view'
 
 import MD5 from './lib/md5'
 
-const DEFAULT_VIEW = 'comments'
 const REGISTER_VIEWS: (typeof SidebarView)[] = [
   CommentsView, PagesView, SitesView, TransferView, // SettingView
 ]
 
 export default class SidebarRoot extends Component {
+  public static DEFAULT_VIEW = 'comments'
+
   public $header: HTMLElement
   public $headerMenu: HTMLElement
   public $title: HTMLElement
@@ -42,8 +43,7 @@ export default class SidebarRoot extends Component {
   public siteSwitcher?: SiteListFloater
 
   private get isAdmin() { return this.ctx.user.data.isAdmin }
-  public curtSite?: string
-  public curtView: string = DEFAULT_VIEW
+  public curtView?: string
   public get curtViewInstance() {
     return this.curtView ? this.viewInstances[this.curtView] : undefined
   }
@@ -150,11 +150,9 @@ export default class SidebarRoot extends Component {
         }
       }
 
-      this.curtSite = this.conf.site
-
       Ui.showLoading(this.$el)
       try {
-        await this.siteSwitcher!.load(this.curtSite)
+        await this.siteSwitcher!.load(this.sidebar.curtSite)
       } catch (err: any) {
         const $err = Utils.createElement(
           `<span>加载失败：${err.msg || '网络错误'}<br/></span>`
@@ -176,13 +174,13 @@ export default class SidebarRoot extends Component {
       // 站点图像
       this.$avatar.innerHTML = ''
       this.$siteLogo = Utils.createElement('<div class="atk-site-logo"></div>')
-      this.$siteLogo.innerText = (this.curtSite || '').substr(0, 1)
+      this.$siteLogo.innerText = (this.sidebar.curtSite || '').substring(0, 1)
       this.$avatar.append(this.$siteLogo)
     } else {
       // 不是管理员
       this.$title.innerText = '通知中心'
       this.$curtViewBtn.style.display = 'none' // 隐藏 view 切换器
-      this.curtSite = this.conf.site // 第一次 show 使用当前站点数据
+      this.sidebar.curtSite = this.conf.site // 第一次 show 使用当前站点数据
 
       // 头像
       const $avatarImg = document.createElement('img') as HTMLImageElement
@@ -193,12 +191,13 @@ export default class SidebarRoot extends Component {
       this.$avatar.innerHTML = ''
       this.$avatar.append($avatarImg)
     }
-
-    this.switchView(DEFAULT_VIEW) // 打开默认 view
   }
 
   /** 切换 View */
   public switchView(viewName: string) {
+    if (!REGISTER_VIEWS.find(o => o.viewName === viewName))
+      throw new Error(`Sidebar View "${viewName}" not found`)
+
     let view = this.viewInstances[viewName]
     if (!view) {
       // 初始化 View
@@ -208,7 +207,7 @@ export default class SidebarRoot extends Component {
     }
 
     // init view
-    view.mount(this.curtSite!)
+    view.mount()
 
     this.curtView = viewName
     this.curtTab = view.viewActiveTab
@@ -246,7 +245,7 @@ export default class SidebarRoot extends Component {
 
       // 切换 tab
       $tab.onclick = () => {
-        if (view.switchTab(tabName, this.curtSite!) === false) { return }
+        if (view.switchTab(tabName) === false) { return }
         this.$navTabs.querySelectorAll('.atk-active').forEach(e => e.classList.remove('atk-active'))
         $tab.classList.add('atk-active')
         this.curtTab = tabName
@@ -256,9 +255,9 @@ export default class SidebarRoot extends Component {
 
   /** 切换站点 */
   private switchSite(siteName: string) {
-    this.curtSite = siteName
+    this.sidebar.curtSite = siteName
     const curtView = this.curtViewInstance
-    curtView?.switchTab(this.curtTab!, siteName)
-    if (this.$siteLogo) this.$siteLogo.innerText = this.curtSite.substr(0, 1)
+    curtView?.switchTab(this.curtTab!)
+    if (this.$siteLogo) this.$siteLogo.innerText = this.sidebar.curtSite.substring(0, 1)
   }
 }

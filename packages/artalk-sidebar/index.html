@@ -16,6 +16,7 @@
     const pageKey  = p.get('pageKey') || ''
     const site     = p.get('site') || ''
     const user     = JSON.parse(p.get('user') || '{}')
+    const view     = p.get('view') || ''
     const darkMode = p.get('darkMode') === '1'
 
     InitSidebar({
@@ -24,7 +25,7 @@
       pageKey,
       site,
       darkMode,
-    }, user)
+    }, user, view)
   </script>
 </body>
 </html>

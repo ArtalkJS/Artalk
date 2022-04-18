@@ -37,6 +37,7 @@ export default class Artalk {
 
     // 默认 pageKey
     if (!this.conf.pageKey) {
+      // @link http://bl.ocks.org/abernier/3070589
       this.conf.pageKey = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
     }
 

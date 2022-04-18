@@ -50,6 +50,11 @@ export default class SiteList extends Component {
       this.closeEditor()
       this.showAdd()
     }
+
+    // TODO 这个太 magic 了
+    this.ctx.on('sidebar-sites-create-form', (p: any) => {
+      this.showAdd(p.create_name, p.create_urls)
+    })
   }
 
   public loadSites(sites: SiteData[]) {
@@ -231,7 +236,8 @@ export default class SiteList extends Component {
     this.activeSite = ''
   }
 
-  public showAdd() {
+  public showAdd(defaultName?: string, defaultUrls?: string) {
+    console.log(defaultName, defaultUrls)
     this.closeAdd()
 
     this.$add = Utils.createElement(`
@@ -256,6 +262,9 @@ export default class SiteList extends Component {
     const $siteName = this.$add.querySelector<HTMLInputElement>('[name="AtkSiteName"]')!
     const $siteUrls = this.$add.querySelector<HTMLInputElement>('[name="AtkSiteUrls"]')!
     const $submitBtn = this.$add.querySelector<HTMLButtonElement>('[name="AtkSubmit"]')!
+
+    if (defaultName) $siteName.value = defaultName
+    if (defaultUrls) $siteUrls.value = defaultUrls
 
     $submitBtn.onclick = async () => {
       const siteName = $siteName.value.trim()

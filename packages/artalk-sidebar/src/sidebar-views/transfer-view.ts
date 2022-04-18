@@ -18,11 +18,11 @@ export default class TransferView extends SidebarView {
   }
   viewActiveTab = 'import'
 
-  mount(siteName: string) {
-    this.switchTab('import', siteName)
+  mount() {
+    this.switchTab('import')
   }
 
-  switchTab(tab: string, siteName: string) {
+  switchTab(tab: string) {
     if (tab === 'import') {
       this.initImport()
     } else if (tab === 'export') {
@@ -108,8 +108,7 @@ export default class TransferView extends SidebarView {
 
     hideUploading()
 
-    // 文件上传操作
-    $file.onchange = () => {
+    const onFileChanged = async () => {
       if (!$file.files || $file.files.length < 0) return
 
       showUploading()
@@ -181,6 +180,11 @@ export default class TransferView extends SidebarView {
         restoreFileInput()
         hideUploading()
       }
+    }
+
+    // 文件上传操作
+    $file.onchange = () => {
+      onFileChanged()
     }
 
     // 开始导入按钮

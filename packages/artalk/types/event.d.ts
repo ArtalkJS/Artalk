@@ -19,7 +19,7 @@ export interface EventPayloadMap {
   'list-refresh-ui': undefined     // 刷新 List UI
 
   // Sidebar
-  'sidebar-show': undefined           // 侧边栏显示
+  'sidebar-show': SidebarShowPayload  // 侧边栏显示
   'sidebar-hide': undefined           // 侧边栏隐藏
 
   // Editor
@@ -68,6 +68,10 @@ export interface EditorReplyPayload {
   data: CommentData
   $el: HTMLElement
   scroll?: boolean
+}
+
+export interface SidebarShowPayload {
+  view?: 'comments'|'sites'|'pages'|'transfer'|string
 }
 
 // ============================================

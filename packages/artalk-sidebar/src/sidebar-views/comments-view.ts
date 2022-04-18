@@ -13,7 +13,7 @@ export default class MessageView extends SidebarView {
 
   list!: ListLite
 
-  mount(siteName: string) {
+  mount() {
     // tabs
     if (this.ctx.user.data.isAdmin) {
       this.viewTabs = {
@@ -51,21 +51,21 @@ export default class MessageView extends SidebarView {
       }
     }
     this.list.paramsEditor = (params) => {
-      params.site_name = siteName
+      params.site_name = this.sidebar.curtSite
     }
 
     this.$el.innerHTML = ''
     this.$el.append(this.list.$el)
 
-    this.switchTab(this.viewActiveTab, siteName)
+    this.switchTab(this.viewActiveTab)
   }
 
-  switchTab(tab: string, siteName: string): boolean|void {
+  switchTab(tab: string): boolean|void {
     //console.log(tab, siteName)
     this.viewActiveTab = tab
     this.list.paramsEditor = (params) => {
       params.type = tab as any
-      params.site_name = siteName
+      params.site_name = this.sidebar.curtSite
     }
     this.list.fetchComments(0)
 

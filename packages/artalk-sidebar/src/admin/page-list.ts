@@ -23,13 +23,13 @@ export default class PageList extends Component {
   }
 
   /** 初始化 PageList (清空列表) */
-  initPageList(siteName: string) {
+  initPageList() {
     this.pages = []
     this.$el.innerHTML = '<div class="atk-header-action-bar"><span class="update-all-title-btn"><i class="atk-icon atk-icon-sync"></i> 更新标题</span></div>'
     // 更新页面全部标题按钮
-    this.$el.querySelector<HTMLElement>('.update-all-title-btn')!.onclick = () => {
+    this.$el.querySelector<HTMLElement>('.update-all-title-btn')!.onclick = async () => {
       try {
-        new Api(this.ctx).pageFetch(undefined, siteName)
+        await new Api(this.ctx).pageFetch(undefined, this.sidebar.curtSite)
       } catch (err: any) {
         alert(err.msg)
         return

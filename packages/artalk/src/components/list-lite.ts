@@ -91,7 +91,7 @@ export default class ListLite extends Component {
     try {
       listData = await new Api(this.ctx).get(offset, this.pageSize, this.flatMode, this.paramsEditor)
     } catch (e: any) {
-      this.onError(e.msg || String(e), offset)
+      this.onError(e.msg || String(e), offset, e.data)
       throw e
     } finally {
       hideLoading()
@@ -219,7 +219,7 @@ export default class ListLite extends Component {
   }
 
   /** 错误处理 */
-  protected onError(msg: any, offset: number) {
+  protected onError(msg: any, offset: number, errData?: any) {
     msg = String(msg)
     console.error(msg)
 
@@ -237,9 +237,24 @@ export default class ListLite extends Component {
     $err.appendChild($retryBtn)
 
     const adminBtn = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
-    adminBtn.onclick = () => (this.ctx.trigger('sidebar-show'))
-    if (!this.ctx.user.data.isAdmin) adminBtn.classList.add('atk-hide')
     $err.appendChild(adminBtn)
+    if (!this.ctx.user.data.isAdmin) adminBtn.classList.add('atk-hide')
+
+    let sidebarView = ''
+
+    // 找不到站点错误，打开侧边栏并填入创建站点表单
+    if (errData?.err_no_site) {
+      const viewLoadParam = {
+        create_name: this.ctx.conf.site,
+        create_urls: `${window.location.protocol}//${window.location.host}`
+      }
+      // TODO 真的是飞鸽传书啊
+      sidebarView = `sites|${JSON.stringify(viewLoadParam)}`
+    }
+
+    adminBtn.onclick = () => (this.ctx.trigger('sidebar-show', {
+      view: sidebarView
+    }))
 
     Ui.setError(this.$el, $err)
   }

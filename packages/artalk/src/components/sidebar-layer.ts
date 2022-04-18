@@ -7,6 +7,7 @@ import SidebarHTML from './html/sidebar-layer.html?raw'
 import * as Ui from '@/lib/ui'
 import Layer from './layer'
 import Api from '../api'
+import { SidebarShowPayload } from '~/types/event'
 
 export default class SidebarLayer extends Component {
   public layer?: Layer
@@ -28,7 +29,7 @@ export default class SidebarLayer extends Component {
     }
 
     // event
-    this.ctx.on('sidebar-show', () => (this.show()))
+    this.ctx.on('sidebar-show', (conf) => (this.show(conf || {})))
     this.ctx.on('sidebar-hide', () => (this.hide()))
     this.ctx.on('user-changed', () => { this.firstShow = true })
   }
@@ -36,7 +37,7 @@ export default class SidebarLayer extends Component {
   private firstShow = true
 
   /** 显示 */
-  public async show() {
+  public async show(conf: SidebarShowPayload) {
     this.$el.style.transform = '' // 动画清除，防止二次打开失效
 
     // 获取 Layer
@@ -69,7 +70,7 @@ export default class SidebarLayer extends Component {
         this.ctx.trigger('checker-admin', {
           onSuccess: () => {
             setTimeout(() => {
-              this.show()
+              this.show(conf)
             }, 500)
           },
           onCancel: () => {}
@@ -85,27 +86,34 @@ export default class SidebarLayer extends Component {
       this.$iframeWrap.innerHTML = ''
       this.$iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
 
+      // 准备 Iframe 参数
       const baseURL = (import.meta.env.MODE === 'development')  ? 'http://localhost:23367/'
         : Utils.getURLBasedOnApi(this.ctx, 'sidebar/')
-      const userData = encodeURIComponent(JSON.stringify(this.ctx.user.data))
 
-      this.iframeLoad(`${baseURL}`
-        + `?pageKey=${encodeURIComponent(this.conf.pageKey)}`
-        + `&site=${encodeURIComponent(this.conf.site || '')}`
-        + `&user=${userData}`
-        + `&time=${+new Date()}`
-        + `${((this.conf.darkMode) ? `&darkMode=1` : ``)}`)
+      const query: any = {
+        pageKey: this.conf.pageKey,
+        site: this.conf.site || '',
+        user: JSON.stringify(this.ctx.user.data),
+        time: +new Date()
+      }
+
+      if (conf.view) query.view = conf.view
+      if (this.conf.darkMode) query.darkMode = '1'
+
+      const urlParams = new URLSearchParams(query);
+      this.iframeLoad(`${baseURL}?${urlParams.toString()}`)
 
       this.$iframeWrap.append(this.$iframe)
       this.firstShow = false
     } else {
       // 暗黑模式
-      if (this.conf.darkMode && !this.$iframe!.src.match(/darkMode=1$/)) {
+      const isIframeSrcDarkMode = this.$iframe!.src.includes('darkMode=1')
+
+      if (this.conf.darkMode && !isIframeSrcDarkMode)
         this.iframeLoad(`${this.$iframe!.src}&darkMode=1`)
-      }
-      if (!this.conf.darkMode && this.$iframe!.src.match(/darkMode=1$/)) {
-        this.iframeLoad(this.$iframe!.src.replace(/&darkMode=1$/, ''))
-      }
+
+      if (!this.conf.darkMode && isIframeSrcDarkMode)
+        this.iframeLoad(this.$iframe!.src.replace('&darkMode=1', ''))
     }
   }
 

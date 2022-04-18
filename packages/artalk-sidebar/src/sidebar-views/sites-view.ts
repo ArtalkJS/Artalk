@@ -16,7 +16,7 @@ export default class SitesView extends SidebarView {
 
   siteList!: SiteList
 
-  mount(siteName: string) {
+  mount() {
     if (!this.siteList) {
       this.siteList = new SiteList(this.ctx, this.sidebar)
       this.$el.append(this.siteList.$el)
@@ -25,7 +25,7 @@ export default class SitesView extends SidebarView {
     this.reqSites()
   }
 
-  switchTab(tab: string, siteName: string) {
+  switchTab(tab: string) {
     this.reqSites()
   }
 

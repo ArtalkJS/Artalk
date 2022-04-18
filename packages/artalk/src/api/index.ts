@@ -167,10 +167,11 @@ export default class Api {
   }
 
   /** 页面 · 数据更新 */
-  public async pageFetch(id?: number, siteName?: string) {
+  public async pageFetch(id?: number, siteName?: string, getStatus?: boolean) {
     const params: any = {}
     if (id) params.id = id
     if (siteName) params.site_name = siteName
+    if (getStatus) params.get_status = getStatus
 
     const d = await POST<any>(this.ctx, `${this.baseURL}/admin/page-fetch`, params)
     return (d as any)

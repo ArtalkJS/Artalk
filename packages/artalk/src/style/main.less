@@ -198,6 +198,9 @@
 .atk-fade-out {
   animation: atkFadeOut both .2s;
 }
+.atk-rotate {
+  animation: atkRotate 2s linear infinite;
+}
 
 @keyframes atkFadeIn {
   0% { opacity: 0 }
@@ -207,6 +210,11 @@
 @keyframes atkFadeOut {
   100% { opacity: 0; }
   0% {}
+}
+
+@keyframes atkRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 i.atk-icon {

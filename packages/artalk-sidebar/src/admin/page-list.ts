@@ -25,17 +25,70 @@ export default class PageList extends Component {
   /** 初始化 PageList (清空列表) */
   initPageList() {
     this.pages = []
-    this.$el.innerHTML = '<div class="atk-header-action-bar"><span class="update-all-title-btn"><i class="atk-icon atk-icon-sync"></i> 更新标题</span></div>'
-    // 更新页面全部标题按钮
-    this.$el.querySelector<HTMLElement>('.update-all-title-btn')!.onclick = async () => {
-      try {
-        await new Api(this.ctx).pageFetch(undefined, this.sidebar.curtSite)
-      } catch (err: any) {
-        alert(err.msg)
-        return
+
+    // 更新全部页面标题按钮
+    ;(async () => {
+      this.$el.innerHTML = `<div class="atk-header-action-bar">
+      <span class="atk-update-all-title-btn">
+        <i class="atk-icon atk-icon-sync"></i> <span class="atk-text">更新标题</span>
+      </span>
+      </div>`
+
+      const $updateAllTitleBtn = this.$el.querySelector<HTMLElement>('.atk-update-all-title-btn')!
+      const $updateAllTitleIcon = $updateAllTitleBtn.querySelector<HTMLElement>('i')!
+      const $updateAllTitleText = $updateAllTitleBtn.querySelector<HTMLElement>('.atk-text')!
+      const btnTextOrg = $updateAllTitleText.innerText
+
+      const done = () => {
+        $updateAllTitleText.innerText = '更新完毕'
+        $updateAllTitleIcon.classList.remove('atk-rotate')
+        window.setTimeout(() => {
+          $updateAllTitleText.innerText = btnTextOrg
+        }, 1500)
       }
-      alert('已开始在后台执行，稍等片刻手动刷新列表即可')
-    }
+      const checkStatus = async () => {
+        const status = await new Api(this.ctx).pageFetch(undefined, undefined, true)
+        return status
+      }
+      const startWatchdog = () => {
+        $updateAllTitleIcon.classList.add('atk-rotate')
+
+        // 不完美的轮询更新状态
+        const timerID = window.setInterval(async () => {
+          const d = await new Api(this.ctx).pageFetch(undefined, undefined, true)
+
+          if (d.is_progress === false) {
+            clearInterval(timerID)
+            done()
+            return
+          }
+
+          $updateAllTitleText.innerText = d.msg
+        }, 1000)
+      }
+
+      // 图标恢复
+      const status = await checkStatus()
+      if (status.is_progress === true) {
+        startWatchdog()
+        $updateAllTitleText.innerText = status.msg
+      }
+
+      // 点击发起任务
+      $updateAllTitleBtn.onclick = async () => {
+        if ($updateAllTitleIcon.classList.contains('atk-rotate')) return
+        startWatchdog()
+        $updateAllTitleText.innerText = '开始更新...'
+
+        // 发起任务
+        try {
+          await new Api(this.ctx).pageFetch(undefined, this.sidebar.curtSite)
+        } catch (err: any) {
+          alert(err.msg)
+          done()
+        }
+      }
+    })()
   }
 
   /** 导入 Page 数据 */

@@ -172,14 +172,15 @@ export default class Artalk {
 
   /** PV */
   public async initPV() {
+    const pvNum = await new Api(this.ctx).pv()
+    if (Number.isNaN(Number(pvNum)))
+      return
+
     if (!this.conf.pvEl || !document.querySelector(this.conf.pvEl))
       return
 
     const $pv = document.querySelector<HTMLElement>(this.conf.pvEl)!
     // $pv.innerText = '-' // 默认占位符
-    const pvNum = await new Api(this.ctx).pv()
-    if (Number.isNaN(Number(pvNum)))
-      return
 
     $pv.innerText = String(pvNum)
   }

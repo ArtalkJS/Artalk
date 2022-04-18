@@ -21,7 +21,7 @@ type Notify struct {
 
 	Key string `gorm:"index;size:255"`
 
-	Comment Comment `gorm:"foreignKey:CommentID;references:ID"`
+	_Comment Comment
 }
 
 func (n Notify) IsEmpty() bool {
@@ -29,14 +29,18 @@ func (n Notify) IsEmpty() bool {
 }
 
 func (n *Notify) FetchComment() Comment {
-	if !n.Comment.IsEmpty() {
-		return n.Comment
+	if !n._Comment.IsEmpty() {
+		return n._Comment
 	}
 
 	comment := FindComment(n.CommentID)
 
-	n.Comment = comment
+	n._Comment = comment
 	return comment
+}
+
+func (n *Notify) SetComment(comment Comment) {
+	n._Comment = comment
 }
 
 func (n *Notify) GetParentComment() Comment {

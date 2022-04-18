@@ -124,9 +124,6 @@ func ActionAdd(c echo.Context) error {
 		IsPending:   false,
 		IsCollapsed: false,
 		IsPinned:    false,
-
-		User: user,
-		Page: page,
 	}
 
 	// default comment type

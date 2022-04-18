@@ -66,9 +66,10 @@ func ActionAdminCommentEdit(c echo.Context) error {
 			comment.UserID = user.ID
 		}
 	}
-	if p.Link != "" && p.Link != comment.User.Link {
-		comment.User.Link = p.Link
-		model.UpdateUser(&comment.User)
+	user := comment.FetchUser()
+	if p.Link != "" && p.Link != user.Link {
+		user.Link = p.Link
+		model.UpdateUser(&user)
 	}
 
 	// pageKey

@@ -31,7 +31,7 @@ func SendNotify(comment *model.Comment, pComment *model.Comment) {
 		// ==============
 		if !comment.IsPending { // 待审状态评论禁止回复对方
 			notify := model.FindCreateNotify(pComment.UserID, comment.ID)
-			notify.Comment = *comment
+			notify.SetComment(*comment)
 			notify.SetInitial()
 
 			// 邮件通知
@@ -54,7 +54,7 @@ func SendNotify(comment *model.Comment, pComment *model.Comment) {
 			}
 
 			notify := model.FindCreateNotify(admin.ID, comment.ID)
-			notify.Comment = *comment
+			notify.SetComment(*comment)
 			notify.SetInitial()
 
 			// 发送邮件给管理员

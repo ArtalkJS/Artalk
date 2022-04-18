@@ -18,7 +18,7 @@ type Page struct {
 	AdminOnly bool
 
 	SiteName string `gorm:"index;size:255"`
-	Site     Site   `gorm:"foreignKey:SiteName;references:Name"`
+	_Site     Site
 
 	VoteUp   int
 	VoteDown int

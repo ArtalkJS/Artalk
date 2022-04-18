@@ -26,9 +26,9 @@ type Comment struct {
 	IsPending   bool `gorm:"default:false"` // 待审
 	IsPinned    bool `gorm:"default:false"` // 置顶
 
-	User User `gorm:"foreignKey:UserID;references:ID"`
-	Page Page `gorm:"foreignKey:PageKey;references:Key"`
-	Site Site `gorm:"foreignKey:SiteName;references:Name"`
+	_User User
+	_Page Page
+	_Site Site
 
 	VoteUp   int
 	VoteDown int
@@ -43,39 +43,39 @@ func (c Comment) IsAllowReply() bool {
 }
 
 func (c *Comment) FetchUser() User {
-	if !c.User.IsEmpty() {
-		return c.User
+	if !c._User.IsEmpty() {
+		return c._User
 	}
 
 	// TODO: 先从 Redis 查询
 	var user User
 	lib.DB.First(&user, c.UserID)
 
-	c.User = user
+	c._User = user
 	return user
 }
 
 func (c *Comment) FetchPage() Page {
-	if !c.Page.IsEmpty() {
-		return c.Page
+	if !c._Page.IsEmpty() {
+		return c._Page
 	}
 
 	var page Page
 	lib.DB.Where("`key` = ?", c.PageKey).First(&page)
 
-	c.Page = page
+	c._Page = page
 	return page
 }
 
 func (c *Comment) FetchSite() Site {
-	if !c.Site.IsEmpty() {
-		return c.Site
+	if !c._Site.IsEmpty() {
+		return c._Site
 	}
 
 	var site Site
 	lib.DB.Where("name = ?", c.SiteName).First(&site)
 
-	c.Site = site
+	c._Site = site
 	return site
 }
 

@@ -150,25 +150,34 @@ export function initMarked(ctx: Context) {
     return html.replace(/^<a /, `<a target="_blank" ${!localLink ? `rel="noreferrer noopener nofollow"` : ''} `);
   }
 
+  renderer.code = (block, lang) => {
+    // Colorize the block only if the language is known to highlight.js
+    const realLang = (!lang ? 'plaintext' : lang)
+    let colorized = block
+    if ((window as any).hljs) {
+      if (realLang && (window as any).hljs.getLanguage(realLang)) {
+        colorized = (window as any).hljs.highlight(realLang, block).value
+      }
+    } else {
+      colorized = hanabi(block)
+    }
+
+    return `<pre rel="${realLang}">\n`
+      + `<code class="hljs language-${realLang}">${colorized.replace(/&amp;/g, '&')}</code>\n`
+      + `</pre>`
+  }
+
   // @see https://github.com/markedjs/marked/blob/4afb228d956a415624c4e5554bb8f25d047676fe/src/Tokenizer.js#L329
   const nMarked = libMarked
   libMarked.setOptions({
     renderer,
-    highlight: (code) => hanabi(code),
     pedantic: false,
     gfm: true,
     breaks: true,
     smartLists: true,
     smartypants: true,
     xhtml: false,
-    sanitize: true,
-    sanitizer: (html) => insane(html, {
-      ...insane.defaults,
-      allowedAttributes: {
-        ...insane.defaults.allowedAttributes,
-        img: ['src', 'atk-emoticon']
-      },
-    }),
+    sanitize: false,
     silent: true,
   })
 
@@ -177,7 +186,49 @@ export function initMarked(ctx: Context) {
 
 /** 解析 markdown */
 export function marked(ctx: Context, src: string): string {
-  return ctx.markedInstance.parse(src)
+  // @link https://gist.github.com/lionel-rowe/bb384465ba4e4c81a9c8dada84167225
+  return insane(ctx.markedInstance.parse(src), {
+    allowedClasses: {},
+    allowedSchemes: ['http', 'https', 'mailto'],
+    allowedTags: [
+      'a', 'abbr', 'article', 'b', 'blockquote', 'br', 'caption', 'code', 'del', 'details', 'div', 'em',
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'ins', 'kbd', 'li', 'main', 'mark',
+      'ol', 'p', 'pre', 'section', 'span', 'strike', 'strong', 'sub', 'summary', 'sup', 'table',
+      'tbody', 'td', 'th', 'thead', 'tr', 'u', 'ul'
+    ],
+    allowedAttributes: {
+      '*': ['title', 'accesskey'],
+      a: ['href', 'name', 'target', 'aria-label'],
+      img: ['src', 'alt', 'title', 'atk-emoticon', 'aria-label'],
+      // for code highlight
+      code: ['class'],
+      span: ['class', 'style'],
+    },
+    filter: node => {
+      // allow hljs style
+      const allowed = [
+        [ 'code', /^hljs\W+language-(.*)$/ ],
+        [ 'span', /^(hljs-.*)$/ ]
+      ]
+      allowed.forEach(([ tag, reg ]) => {
+        if (
+          node.tag === tag
+          && !!node.attrs.class
+          && !(reg as RegExp).test(node.attrs.class)
+        ) {
+          delete node.attrs.class
+        }
+      })
+
+      // allow <span> set color sty
+      if (node.tag === 'span' && !!node.attrs.style
+          && !/^color:(\W+)?#[0-9a-f]{3,6};?$/i.test(node.attrs.style)) {
+        delete node.attrs.style
+      }
+
+      return true
+    }
+  })
 }
 
 /** 获取修正后的 UserAgent */

@@ -20,6 +20,7 @@ var upgradeCmd = &cobra.Command{
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		// loadCore() // 装载核心
+		initConfig()
 
 		logrus.Info("从 GitHub Release 检索更新中...")
 

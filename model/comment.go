@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	"path"
+	"net/url"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"gorm.io/gorm"
@@ -81,11 +81,15 @@ func (c *Comment) FetchSite() Site {
 
 // 获取评论回复链接
 func (c *Comment) GetLinkToReply(notifyKey ...string) string {
-	url := c.PageKey
+	rawURL := c.PageKey
 
 	// 若 pageKey 为相对路径，生成相对于站点 URL 配置的 URL
-	if !lib.ValidateURL(url) {
-		url = path.Join(c.FetchSite().ToCooked().FirstUrl, c.PageKey)
+	if !lib.ValidateURL(c.PageKey) {
+		u1, e1 := url.Parse(c.FetchSite().ToCooked().FirstUrl)
+		u2, e2 := url.Parse(c.PageKey)
+		if e1 == nil && e2 == nil {
+			rawURL = u1.ResolveReference(u2).String()
+		}
 	}
 
 	// 请求 query
@@ -98,7 +102,7 @@ func (c *Comment) GetLinkToReply(notifyKey ...string) string {
 		queryMap["atk_notify_key"] = notifyKey[0]
 	}
 
-	return lib.AddQueryToURL(url, queryMap)
+	return lib.AddQueryToURL(rawURL, queryMap)
 }
 
 type CookedComment struct {

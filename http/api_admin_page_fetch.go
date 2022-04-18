@@ -40,7 +40,7 @@ func ActionAdminPageFetch(c echo.Context) error {
 			allPageFetchDone = 0
 			allPageFetchTotal = 0
 			var pages []model.Page
-			query := lib.DB
+			query := lib.DB.Model(&model.Page{})
 			if p.SiteName != lib.ATK_SITE_ALL {
 				query = query.Where(&model.Page{SiteName: p.SiteName})
 			}

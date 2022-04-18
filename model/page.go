@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/PuerkitoBio/goquery"
@@ -18,7 +19,9 @@ type Page struct {
 	AdminOnly bool
 
 	SiteName string `gorm:"index;size:255"`
-	_Site     Site
+	_Site    Site
+
+	_AccessibleURL string
 
 	VoteUp   int
 	VoteDown int
@@ -40,21 +43,48 @@ type CookedPage struct {
 }
 
 func (p Page) ToCooked() CookedPage {
-	url := ""
-	if lib.ValidateURL(p.Key) {
-		url = p.Key
-	}
-
 	return CookedPage{
 		ID:        p.ID,
 		AdminOnly: p.AdminOnly,
 		Key:       p.Key,
-		URL:       url,
+		URL:       p.GetAccessibleURL(),
 		Title:     p.Title,
 		SiteName:  p.SiteName,
 		VoteUp:    p.VoteUp,
 		VoteDown:  p.VoteDown,
 	}
+}
+
+func (p *Page) FetchSite() Site {
+	if !p._Site.IsEmpty() {
+		return p._Site
+	}
+
+	var site Site
+	lib.DB.Where("name = ?", p.SiteName).First(&site)
+
+	p._Site = site
+	return site
+}
+
+// 获取可访问链接
+func (p *Page) GetAccessibleURL() string {
+	if p._AccessibleURL == "" {
+		acURL := p.Key
+
+		// 若 pageKey 为相对路径，生成相对于 site.FirstUrl 配置的 URL
+		if !lib.ValidateURL(p.Key) {
+			u1, e1 := url.Parse(p.FetchSite().ToCooked().FirstUrl)
+			u2, e2 := url.Parse(p.Key)
+			if e1 == nil && e2 == nil {
+				acURL = u1.ResolveReference(u2).String()
+			}
+		}
+
+		p._AccessibleURL = acURL
+	}
+
+	return p._AccessibleURL
 }
 
 func (p *Page) FetchURL() error {

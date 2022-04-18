@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-	"net/url"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"gorm.io/gorm"
@@ -81,16 +80,8 @@ func (c *Comment) FetchSite() Site {
 
 // 获取评论回复链接
 func (c *Comment) GetLinkToReply(notifyKey ...string) string {
-	rawURL := c.PageKey
-
-	// 若 pageKey 为相对路径，生成相对于站点 URL 配置的 URL
-	if !lib.ValidateURL(c.PageKey) {
-		u1, e1 := url.Parse(c.FetchSite().ToCooked().FirstUrl)
-		u2, e2 := url.Parse(c.PageKey)
-		if e1 == nil && e2 == nil {
-			rawURL = u1.ResolveReference(u2).String()
-		}
-	}
+	page := c.FetchPage()
+	rawURL := page.GetAccessibleURL()
 
 	// 请求 query
 	queryMap := map[string]string{
@@ -124,12 +115,13 @@ type CookedComment struct {
 	VoteUp         int    `json:"vote_up"`
 	VoteDown       int    `json:"vote_down"`
 	PageKey        string `json:"page_key"`
+	PageURL        string `json:"page_url"`
 	SiteName       string `json:"site_name"`
 }
 
 func (c *Comment) ToCooked() CookedComment {
 	user := c.FetchUser()
-	//page := c.FetchPage()
+	page := c.FetchPage()
 
 	return CookedComment{
 		ID:             c.ID,
@@ -150,6 +142,7 @@ func (c *Comment) ToCooked() CookedComment {
 		VoteUp:         c.VoteUp,
 		VoteDown:       c.VoteDown,
 		PageKey:        c.PageKey,
+		PageURL:        page.GetAccessibleURL(),
 		SiteName:       c.SiteName,
 	}
 }

@@ -22,6 +22,7 @@ export default class Editor extends Component {
   public $bottom: HTMLElement
   public $plugBtnWrap: HTMLElement
   public $imgUploadBtn?: HTMLElement
+  public $imgUploadInput?: HTMLInputElement
   public $submitBtn: HTMLButtonElement
   public $notifyWrap: HTMLElement
 
@@ -265,12 +266,16 @@ export default class Editor extends Component {
     this.$imgUploadBtn = Utils.createElement(`<span class="atk-plug-btn">图片</span>`)
     this.$plugBtnWrap.querySelector('[data-plug-name="preview"]')!.before(this.$imgUploadBtn) // 显示在预览图标之前
 
+    this.$imgUploadInput = document.createElement('input')
+    this.$imgUploadInput.type = 'file'
+    this.$imgUploadInput.style.display = 'none'
+    this.$imgUploadInput.accept = this.allowImgExts.map(o => `.${o}`).join(',')
+    this.$imgUploadBtn.after(this.$imgUploadInput)
+
     // 按钮点击
     this.$imgUploadBtn.onclick = () => {
       // 选择图片
-      const $input = document.createElement('input')
-      $input.type = 'file'
-      $input.accept = this.allowImgExts.map(o => `.${o}`).join(',')
+      const $input = this.$imgUploadInput!
       $input.onchange = () => {
         (async () => { // 解决阻塞 UI 问题
           if (!$input.files || $input.files.length === 0) return

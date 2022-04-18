@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"regexp"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/PuerkitoBio/goquery"
@@ -94,32 +95,11 @@ func (p *Page) FetchURL() error {
 	if url == "" {
 		return errors.New("URL is null")
 	}
-	if !lib.ValidateURL(url) {
-		return errors.New("URL is invalid")
-	}
 
-	// Request the HTML page.
-	res, err := http.Get(url)
-	if err != nil {
-		logrus.Error(err)
-		return err
-	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		logrus.Error(fmt.Sprintf("status code error: %d '%s' '%s'", res.StatusCode, res.Status, url))
-		return errors.New("status code error")
-	}
+	// 获取 URL 页面 title
+	title, err := GetTitleByURL(url)
 
-	// Load the HTML document
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		logrus.Error(err)
-		return err
-	}
-
-	// 读取页面 title 并保存
-	title := doc.Find("title").Text()
-	if title != "" {
+	if err == nil && title != "" {
 		p.Title = title
 	}
 
@@ -129,4 +109,46 @@ func (p *Page) FetchURL() error {
 	}
 
 	return nil
+}
+
+func GetTitleByURL(url string) (string, error) {
+	if !lib.ValidateURL(url) {
+		logrus.Error("URL " + url + " is invalid")
+		return "", errors.New("URL is invalid")
+	}
+
+	// Request the HTML page.
+	res, err := http.Get(url)
+	if err != nil {
+		logrus.Error(err)
+		return "", err
+	}
+	defer res.Body.Close()
+	if res.StatusCode != 200 {
+		logrus.Error(fmt.Sprintf("status code error: %d '%s' '%s'", res.StatusCode, res.Status, url))
+		return "", errors.New("status code error")
+	}
+
+	// Load the HTML document
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		logrus.Error(err)
+		return "", err
+	}
+
+	// 读取页面 title
+	title := doc.Find("title").Text()
+
+	// 如果页面有跳转
+	val, exists := doc.Find(`meta[http-equiv="refresh"]`).Attr("content")
+	if exists {
+		urlReg := regexp.MustCompile(`https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`)
+		match := urlReg.FindStringSubmatch(val)
+		if len(match) > 0 {
+			redirectURL := match[0]
+			return GetTitleByURL(redirectURL)
+		}
+	}
+
+	return title, nil
 }

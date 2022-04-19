@@ -1,7 +1,6 @@
 package http
 
 import (
-	"regexp"
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
@@ -57,11 +56,9 @@ func ActionAdd(c echo.Context) error {
 	ip := c.RealIP()
 	ua := c.Request().UserAgent()
 
-	// 仅允许针对 Win11 的 UA 修正
+	// 允许传入修正后的 UA
 	if p.UA != "" {
-		if matchWin11, _ := regexp.MatchString(`Windows\W+NT\W+11.0`, p.UA); matchWin11 {
-			ua = p.UA
-		}
+		ua = p.UA
 	}
 
 	// record action for limiting action

@@ -3,52 +3,61 @@
 import Artalk from 'artalk'
 import katex from 'katex'
 
+// @link https://github.com/markedjs/marked/issues/1538#issuecomment-575838181
 Artalk.Use((ctx) => {
-  const renderer: any = {}
+  let i = 0
+  const nextID = () => `__atk_katext_id_${i++}__`
+  const mathExpressions: { [key: string]: { type: 'block' | 'inline', expression: string } } = {}
 
-  function renderMathsExpression(expr) {
-    if (expr[0] === '$' && expr[expr.length - 1] === '$') {
-      let displayStyle = false
-      expr = expr.substr(1, expr.length - 2)
-      if (expr[0] === '$' && expr[expr.length - 1] === '$') {
-        displayStyle = true
-        expr = expr.substr(1, expr.length - 2)
-      }
-      let html: any = null
-      try {
-        html = katex.renderToString(expr)
-      } catch (e) {
-        console.error(e)
-      }
-      if (displayStyle && html) {
-        html = html.replace(/class="katex"/g, 'class="katex katex-block" style="display: block;"')
-      }
-      return html
-    }
+  function replaceMathWithIds(text: string) {
+    // Allowing newlines inside of `$$...$$`
+    text = text.replace(/\$\$([\s\S]+?)\$\$/g, (_match, expression) => {
+      const id = nextID()
+      mathExpressions[id] = { type: 'block', expression }
+      return id
+    })
 
-    return null
-  }
-
-  renderer.paragraph = (text) => {
-    const blockRegex = /\$\$[^$]*\$\$/g
-    const inlineRegex = /\$[^$]*\$/g
-    const blockExprArray = text.match(blockRegex)
-    const inlineExprArray = text.match(inlineRegex)
-
-    for (const i in blockExprArray) {
-      const expr = blockExprArray[i]
-      const result = renderMathsExpression(expr)
-      text = text.replace(expr, result)
-    }
-
-    for (const i in inlineExprArray) {
-      const expr = inlineExprArray[i]
-      const result = renderMathsExpression(expr)
-      text = text.replace(expr, result)
-    }
+    // Not allowing newlines or space inside of `$...$`
+    text = text.replace(/\$([^\n]+?)\$/g, (_match, expression) => {
+      const id = nextID()
+      mathExpressions[id] = { type: 'inline', expression }
+      return id
+    })
 
     return text
   }
 
-  ctx.markedInstance.use({ renderer });
+  // Marked render
+  const renderer = new ctx.markedInstance.Renderer() as any
+
+  const orgListitem = renderer.listitem
+  const orgParagraph = renderer.paragraph
+  const orgTablecell = renderer.tablecell
+  const orgCodespan = renderer.codespan
+  const orgText = renderer.text
+
+  renderer.listitem = (text: string, task: boolean, checked: boolean) => orgListitem(replaceMathWithIds(text), task, checked)
+  renderer.paragraph = (text: string) => orgParagraph(replaceMathWithIds(text))
+  renderer.tablecell = (content: string, flags: any) => orgTablecell(replaceMathWithIds(content), flags)
+  renderer.codespan = (code: string) => orgCodespan(replaceMathWithIds(code))
+  renderer.text = (text: string) => orgText(replaceMathWithIds(text)) // Inline level, maybe unneded
+
+  ctx.markedReplacers.push((text) => {
+    text = text.replace(/(__atk_katext_id_\d+__)/g, (_match, capture) => {
+      const v = mathExpressions[capture]
+      const type = v.type
+      let expression = v.expression
+
+      // replace <br/> tag to \n
+      expression = expression.replace(/<br\s*\/?>/mg, "\n")
+
+      return katex.renderToString(expression, { displayMode: type === 'block' })
+    })
+
+    return text
+  })
+
+  ctx.markedInstance.use({
+    renderer
+  })
 })

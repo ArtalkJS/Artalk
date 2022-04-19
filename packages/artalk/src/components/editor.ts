@@ -409,7 +409,11 @@ export default class Editor extends Component {
     if (!!this.plugList && !!this.plugList.preview) {
       this.plugList.preview.updateContent()
     }
-    this.adjustTextareaHeight()
+
+    // 延迟执行防止无效
+    window.setTimeout(() => {
+      this.adjustTextareaHeight()
+    }, 80)
   }
 
   clearEditor () {

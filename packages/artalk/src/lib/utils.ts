@@ -143,10 +143,10 @@ export function versionCompare(a: string, b: string) {
 /** 初始化 marked */
 export function initMarked(ctx: Context) {
   const renderer = new libMarked.Renderer()
-  const linkRenderer = renderer.link
+  const orgLinkRenderer = renderer.link
   renderer.link = (href, title, text) => {
     const localLink = href?.startsWith(`${window.location.protocol}//${window.location.hostname}`);
-    const html = linkRenderer.call(renderer as any, href, title, text);
+    const html = orgLinkRenderer.call(renderer as any, href, title, text);
     return html.replace(/^<a /, `<a target="_blank" ${!localLink ? `rel="noreferrer noopener nofollow"` : ''} `);
   }
 
@@ -186,8 +186,9 @@ export function initMarked(ctx: Context) {
 
 /** 解析 markdown */
 export function marked(ctx: Context, src: string): string {
+  // @link https://github.com/markedjs/marked/discussions/1232
   // @link https://gist.github.com/lionel-rowe/bb384465ba4e4c81a9c8dada84167225
-  return insane(ctx.markedInstance.parse(src), {
+  let dest = insane(ctx.markedInstance.parse(src), {
     allowedClasses: {},
     allowedSchemes: ['http', 'https', 'mailto'],
     allowedTags: [
@@ -198,7 +199,7 @@ export function marked(ctx: Context, src: string): string {
     ],
     allowedAttributes: {
       '*': ['title', 'accesskey'],
-      a: ['href', 'name', 'target', 'aria-label'],
+      a: ['href', 'name', 'target', 'aria-label', 'rel'],
       img: ['src', 'alt', 'title', 'atk-emoticon', 'aria-label'],
       // for code highlight
       code: ['class'],
@@ -229,6 +230,13 @@ export function marked(ctx: Context, src: string): string {
       return true
     }
   })
+
+  // 内容替换器
+  ctx.markedReplacers.forEach((replacer) => {
+    if (typeof replacer === 'function') dest = replacer(dest)
+  })
+
+  return dest
 }
 
 /** 获取修正后的 UserAgent */

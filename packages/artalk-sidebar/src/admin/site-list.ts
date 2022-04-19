@@ -92,7 +92,7 @@ export default class SiteList extends Component {
     const $siteName = $site.querySelector<HTMLElement>('.atk-site-name')!
     const setActive = () => { $site.classList.add('atk-active') }
 
-    $siteLogo.innerText = site.name.substr(0, 1)
+    $siteLogo.innerText = site.name.substring(0, 1)
     $siteName.innerText = site.name
 
     // click
@@ -237,7 +237,6 @@ export default class SiteList extends Component {
   }
 
   public showAdd(defaultName?: string, defaultUrls?: string) {
-    console.log(defaultName, defaultUrls)
     this.closeAdd()
 
     this.$add = Utils.createElement(`

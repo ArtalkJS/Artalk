@@ -52,7 +52,7 @@ export default class SiteListFloater {
 
     const sites = await new Api(this.ctx).siteGet()
     sites.forEach((site) => {
-      renderSiteItem(site.name, site.name.substr(0, 1))
+      renderSiteItem(site.name, site.name.substring(0, 1))
     })
 
     renderSiteItem('站点管理', '+', '', () => { this.conf.onClickSitesViewBtn();this.hide() })

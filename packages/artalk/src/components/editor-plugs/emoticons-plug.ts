@@ -96,7 +96,7 @@ export default class EmoticonsPlug extends EditorPlug {
     // 剔除非法数据
     data = data.filter((item: any) => (typeof item === 'object' && !Array.isArray(item) && !!item && !!item.name))
 
-    console.log(data)
+    // console.log(data)
 
     this.solveNullKey(data)
     this.solveSameKey(data)

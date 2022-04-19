@@ -42,4 +42,5 @@ export default class Context {
   }
 
   public markedInstance!: typeof libMarked
+  public markedReplacers: ((raw: string) => string)[] = []
 }

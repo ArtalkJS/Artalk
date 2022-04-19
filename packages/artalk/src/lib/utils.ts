@@ -286,7 +286,7 @@ export function isValidURL(urlRaw: string) {
 
 /** 获取基于 conf.server 的 URL */
 export function getURLBasedOnApi(ctx: Context, path: string) {
-  return `${ctx.conf.server.replace(/\/api\/?$/, '')}/${path.replace(/^\//, '')}`
+  return getURLBasedOn(ctx.conf.server, path)
 }
 
 /** 获取基于某个 baseURL 的 URL */

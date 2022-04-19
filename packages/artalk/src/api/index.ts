@@ -9,7 +9,7 @@ export default class Api {
 
   constructor (ctx: Context) {
     this.ctx = ctx
-    this.baseURL = ctx.conf.server
+    this.baseURL = `${ctx.conf.server}/api`
   }
 
   // ============================

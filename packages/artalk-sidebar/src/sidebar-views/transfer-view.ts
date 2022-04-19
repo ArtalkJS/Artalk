@@ -135,7 +135,7 @@ export default class TransferView extends SidebarView {
       formData.append('token', this.ctx.user.data.token)
 
       // 开始上传
-      xhr.open('post', `${this.ctx.conf.server}/admin/import-upload`)
+      xhr.open('post', `${this.ctx.conf.server}/api/admin/import-upload`)
       xhr.timeout = 2*60*1000 // 2min
       xhr.send(formData)
 
@@ -256,7 +256,7 @@ export default class TransferView extends SidebarView {
         const $formTmp = document.createElement('form')
         $formTmp.style.display = 'none'
         $formTmp.setAttribute('method', 'post')
-        $formTmp.setAttribute('action', `${this.ctx.conf.server}/admin/import`)
+        $formTmp.setAttribute('action', `${this.ctx.conf.server}/api/admin/import`)
         $formTmp.setAttribute("target", frameName)
 
         Object.entries(formParams).forEach(([key, val]) => {

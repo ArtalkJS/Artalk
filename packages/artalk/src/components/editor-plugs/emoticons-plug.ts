@@ -20,22 +20,33 @@ export default class EmoticonsPlug extends EditorPlug {
   public $grpWrap!: HTMLElement
   public $grpSwitcher!: HTMLElement
 
+  public loadingTask: Promise<void>|null = null
+
   constructor (public editor: Editor) {
     super(editor)
 
     this.$el = Utils.createElement(`<div class="atk-editor-plug-emoticons"></div>`)
-
-    this.init()
   }
 
-  async init() {
-    // 数据处理
-    Ui.showLoading(this.$el)
-    this.emoticons = await this.handleData(this.ctx.conf.emoticons)
-    Ui.hideLoading(this.$el)
+  isListLoaded = false
+  isImgLoaded = false
 
-    // 初始化元素
-    this.initEmoticonsList()
+  async loadEmoticonsData() {
+    if (this.isListLoaded) return
+    if (this.loadingTask !== null) {
+      await this.loadingTask
+      return
+    }
+
+    // 数据处理
+    this.loadingTask = (async () => {
+      Ui.showLoading(this.$el)
+      this.emoticons = await this.handleData(this.ctx.conf.emoticons)
+      Ui.hideLoading(this.$el)
+      this.loadingTask = null
+      this.isListLoaded = true
+    })()
+    await this.loadingTask
   }
 
   async handleData(data: any): Promise<any[]> {
@@ -243,10 +254,20 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   onShow () {
-    // 延迟执行，防止无法读取高度
-    setTimeout(() => {
-      this.changeListHeight()
-    }, 30)
+    ;(async () => {
+      await this.loadEmoticonsData()
+
+      // 初始化元素
+      if (!this.isImgLoaded) {
+        this.initEmoticonsList()
+        this.isImgLoaded = true
+      }
+
+      // 延迟执行，防止无法读取高度
+      setTimeout(() => {
+        this.changeListHeight()
+      }, 30)
+    })()
   }
 
   onHide () {

@@ -205,6 +205,17 @@ export default class Editor extends Component {
       // 切换按钮
       const btnElem = Utils.createElement(`<span class="atk-plug-btn" data-plug-name="${PlugObj.Name}">${PlugObj.BtnHTML}</span>`)
       this.$plugBtnWrap.appendChild(btnElem)
+
+      // 表情包插件预加载
+      if (PlugObj.Name === 'emoticons') {
+        const emoPlug = new PlugObj(this) as EmoticonsPlug
+        this.plugList[PlugObj.Name] = emoPlug
+
+        window.setTimeout(() => {
+          emoPlug.loadEmoticonsData()
+        }, 1000) // 延迟 1s 加载
+      }
+
       btnElem.addEventListener('click', () => {
         let plug = this.plugList[PlugObj.Name]
         if (!plug) {
@@ -567,6 +578,10 @@ export default class Editor extends Component {
 
     // 取消回复
     if (this.replyComment !== null) this.cancelReply()
+  }
+
+  initRemoteEmoticons () {
+
   }
 }
 

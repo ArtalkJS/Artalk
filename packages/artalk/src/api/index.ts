@@ -45,7 +45,7 @@ export default class Api {
       content: comment.content,
       rid: comment.rid,
       page_key: comment.page_key,
-      ua: await Utils.getCorrectUserAgent(), // 需要后端支持，获取修正后的 UA (针对 Win11)
+      ua: await Utils.getCorrectUserAgent(), // 需要后端支持，获取修正后的 UA
     }
 
     if (comment.page_title) params.page_title = comment.page_title

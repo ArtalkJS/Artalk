@@ -234,23 +234,33 @@ export function marked(ctx: Context, src: string): string {
 /** 获取修正后的 UserAgent */
 export async function getCorrectUserAgent() {
   const uaRaw = navigator.userAgent
-  const uaData = (navigator as any).userAgentData // @link https://web.dev/migrate-to-ua-ch/
-  if (!uaData || !uaData.getHighEntropyValues) {
+  if (!(navigator as any).userAgentData || !(navigator as any).userAgentData.getHighEntropyValues) {
     return uaRaw
   }
 
-  // microsoft f******k you!!!!!
-  // @link https://docs.microsoft.com/en-us/microsoft-edge/web-platform/how-to-detect-win11
+  // @link https://web.dev/migrate-to-ua-ch/
+  // @link https://web.dev/user-agent-client-hints/
+  const uaData = (navigator as any).userAgentData
   let uaGot: any = null
   try {
     uaGot = await uaData.getHighEntropyValues(["platformVersion"])
   } catch (err) { console.error(err); return uaRaw }
-
-  if (uaData.platform !== "Windows") { return uaRaw }
   const majorPlatformVersion = Number(uaGot.platformVersion.split('.')[0])
-  if (majorPlatformVersion >= 13) {
-    // Win11 样本："Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
-    return uaRaw.replace(/Windows\W+NT\W+10.0/, 'Windows NT 11.0')
+
+  if (uaData.platform === "Windows") {
+    if (majorPlatformVersion >= 13) { // @link https://docs.microsoft.com/en-us/microsoft-edge/web-platform/how-to-detect-win11
+      // @date 2022-4-29
+      // Win 11 样本："Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
+      return uaRaw.replace(/Windows NT 10.0/, 'Windows NT 11.0')
+    }
+  }
+  if (uaData.platform === "macOS") {
+    if (majorPlatformVersion >= 11) { // 11 => BigSur
+      // @date 2022-4-29
+      // (Intel Chip) macOS 12.3 样本："Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36"
+      // (Arm Chip) macOS 样本："Mozilla/5.0 (Macintosh; ARM Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Safari/605.1.15"
+      return uaRaw.replace(/(Mac OS X \d+_\d+_\d+|Mac OS X)/, `Mac OS X ${uaGot.platformVersion.replace(/\./g, '_')}`)
+    }
   }
 
   return uaRaw

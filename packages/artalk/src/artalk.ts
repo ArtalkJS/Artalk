@@ -41,6 +41,11 @@ export default class Artalk {
       this.conf.pageKey = `${window.location.pathname}`
     }
 
+    // 默认 pageTitle
+    if (!this.conf.pageTitle) {
+      this.conf.pageTitle = `${document.title}`
+    }
+
     // 装载元素
     try {
       const $root = document.querySelector<HTMLElement>(this.conf.el)

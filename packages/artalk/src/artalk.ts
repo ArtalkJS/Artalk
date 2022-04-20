@@ -33,7 +33,7 @@ export default class Artalk {
   constructor (customConf: ArtalkConfig) {
     // 配置
     this.conf = { ...Artalk.defaults, ...customConf }
-    this.conf.server = this.conf.server.replace(/\/$/, '')
+    this.conf.server = this.conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
 
     // 默认 pageKey
     if (!this.conf.pageKey) {

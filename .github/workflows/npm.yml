@@ -66,6 +66,7 @@ jobs:
       - name: Update CDN links
         run: |
           sed -i 's#artalk@.[^/]*#artalk@${{ steps.get_version.outputs.VERSION }}#g' docs/code/ArtalkCDN.json
+          perl -pi -e 's#"Artalk"(\W+)?:(\W+)?".*?"#"Artalk": "${{ steps.get_version.outputs.VERSION }}"#g' docs/code/ArtalkVersion.json
           sed -i 's#artalk@.[^/]*#artalk@${{ steps.get_version.outputs.VERSION }}#g' docs/code/quick-start/cdn.html
 
       - uses: stefanzweifel/git-auto-commit-action@v4

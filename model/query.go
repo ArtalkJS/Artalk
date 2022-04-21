@@ -10,18 +10,17 @@ import (
 	"github.com/eko/gocache/v2/store"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 func FindComment(id uint) Comment {
 	var comment Comment
-	lib.DB.Preload(clause.Associations).Where("id = ?", id).First(&comment)
+	lib.DB.Where("id = ?", id).First(&comment)
 	return comment
 }
 
 func FindCommentScopes(id uint, filters ...func(db *gorm.DB) *gorm.DB) Comment {
 	var comment Comment
-	lib.DB.Preload(clause.Associations).Where("id = ?", id).Scopes(filters...).First(&comment)
+	lib.DB.Where("id = ?", id).Scopes(filters...).First(&comment)
 	return comment
 }
 

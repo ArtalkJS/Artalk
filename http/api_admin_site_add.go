@@ -11,7 +11,7 @@ type ParamsAdminSiteAdd struct {
 	Urls string `mapstructure:"urls"`
 }
 
-func ActionAdminSiteAdd(c echo.Context) error {
+func (a *action) AdminSiteAdd(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -41,7 +41,7 @@ func ActionAdminSiteAdd(c echo.Context) error {
 	site := model.Site{}
 	site.Name = p.Name
 	site.Urls = p.Urls
-	err := lib.DB.Create(&site).Error
+	err := a.db.Create(&site).Error
 	if err != nil {
 		return RespError(c, "site 创建失败")
 	}

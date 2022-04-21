@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -12,7 +11,7 @@ type ParamsAdminPageDel struct {
 	SiteID   uint
 }
 
-func ActionAdminPageDel(c echo.Context) error {
+func (a *action) AdminPageDel(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -32,35 +31,10 @@ func ActionAdminPageDel(c echo.Context) error {
 		return RespError(c, "page not found")
 	}
 
-	err := DelPage(&page)
+	err := model.DelPage(&page)
 	if err != nil {
 		return RespError(c, "Page 删除失败")
 	}
 
 	return RespSuccess(c)
-}
-
-func DelPage(page *model.Page) error {
-	err := lib.DB.Unscoped().Delete(page).Error
-	if err != nil {
-		return err
-	}
-
-	// 删除所有相关内容
-	var comments []model.Comment
-	lib.DB.Where("page_key = ? AND site_name = ?", page.Key, page.SiteName).Find(&comments)
-
-	for _, c := range comments {
-		DelComment(c.ID)
-	}
-
-	// 删除 vote
-	lib.DB.Unscoped().Where(
-		"target_id = ? AND (type = ? OR type = ?)",
-		page.ID,
-		string(model.VoteTypePageUp),
-		string(model.VoteTypePageDown),
-	).Delete(&model.Vote{})
-
-	return nil
 }

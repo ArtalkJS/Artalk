@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -19,7 +18,7 @@ type ResponseAdminPageGet struct {
 	Pages []model.CookedPage `json:"pages"`
 }
 
-func ActionAdminPageGet(c echo.Context) error {
+func (a *action) AdminPageGet(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -35,7 +34,7 @@ func ActionAdminPageGet(c echo.Context) error {
 	}
 
 	// 准备 query
-	query := lib.DB.Model(&model.Page{}).Order("created_at DESC")
+	query := a.db.Model(&model.Page{}).Order("created_at DESC")
 	if !p.SiteAll { // 不是查的所有站点
 		query = query.Where("site_name = ?", p.SiteName)
 	}

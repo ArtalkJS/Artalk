@@ -25,7 +25,7 @@ var (
 )
 
 // 获取当前状态，是否需要验证
-func ActionCaptchaStatus(c echo.Context) error {
+func (a *action) CaptchaStatus(c echo.Context) error {
 	if IsReqNeedCaptchaCheck(c) {
 		return RespData(c, Map{"is_pass": false})
 	} else {
@@ -34,7 +34,7 @@ func ActionCaptchaStatus(c echo.Context) error {
 }
 
 // 获取验证码
-func ActionCaptchaGet(c echo.Context) error {
+func (a *action) CaptchaGet(c echo.Context) error {
 	ip := c.RealIP()
 
 	// ===========
@@ -66,7 +66,7 @@ type ParamsCaptchaCheck struct {
 }
 
 // 验证
-func ActionCaptchaCheck(c echo.Context) error {
+func (a *action) CaptchaCheck(c echo.Context) error {
 	ip := c.RealIP()
 
 	var p ParamsCaptchaCheck

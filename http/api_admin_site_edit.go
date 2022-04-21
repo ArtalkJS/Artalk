@@ -17,7 +17,7 @@ type ParamsAdminSiteEdit struct {
 	Urls string `mapstructure:"urls"`
 }
 
-func ActionAdminSiteEdit(c echo.Context) error {
+func (a *action) AdminSiteEdit(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -54,18 +54,18 @@ func ActionAdminSiteEdit(c echo.Context) error {
 	// 同步变更 site_name
 	if modifyName {
 		var comments []model.Comment
-		lib.DB.Where("site_name = ?", site.Name).Find(&comments)
+		a.db.Where("site_name = ?", site.Name).Find(&comments)
 
 		var pages []model.Page
-		lib.DB.Where("site_name = ?", site.Name).Find(&pages)
+		a.db.Where("site_name = ?", site.Name).Find(&pages)
 
 		for _, comment := range comments {
 			comment.SiteName = p.Name
-			lib.DB.Save(&comment)
+			a.db.Save(&comment)
 		}
 		for _, page := range pages {
 			page.SiteName = p.Name
-			lib.DB.Save(&page)
+			a.db.Save(&page)
 		}
 	}
 
@@ -73,7 +73,7 @@ func ActionAdminSiteEdit(c echo.Context) error {
 	site.Name = p.Name
 	site.Urls = p.Urls
 
-	err := lib.DB.Save(&site).Error
+	err := a.db.Save(&site).Error
 	if err != nil {
 		return RespError(c, "site 保存失败")
 	}

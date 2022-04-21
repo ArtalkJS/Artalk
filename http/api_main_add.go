@@ -33,7 +33,7 @@ type ResponseAdd struct {
 	Comment model.CookedComment `json:"comment"`
 }
 
-func ActionAdd(c echo.Context) error {
+func (a *action) Add(c echo.Context) error {
 	var p ParamsAdd
 	if isOK, resp := ParamsDecode(c, ParamsAdd{}, &p); !isOK {
 		return resp
@@ -129,7 +129,7 @@ func ActionAdd(c echo.Context) error {
 	}
 
 	// save to database
-	err := lib.DB.Create(&comment).Error
+	err := a.db.Create(&comment).Error
 	if err != nil {
 		logrus.Error("Save Comment error: ", err)
 		return RespError(c, "评论失败")

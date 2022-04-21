@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -16,7 +15,7 @@ type ParamsPV struct {
 	SiteAll bool
 }
 
-func ActionPV(c echo.Context) error {
+func (a *action) PV(c echo.Context) error {
 	var p ParamsPV
 	if isOK, resp := ParamsDecode(c, ParamsPV{}, &p); !isOK {
 		return resp
@@ -34,7 +33,7 @@ func ActionPV(c echo.Context) error {
 	// ua := c.Request().UserAgent()
 
 	page.PV++
-	lib.DB.Save(&page)
+	a.db.Save(&page)
 
 	return RespData(c, Map{
 		"pv": page.PV,

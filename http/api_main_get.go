@@ -3,7 +3,6 @@ package http
 import (
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -47,17 +46,17 @@ type ResponseGet struct {
 }
 
 // 获取评论查询实例
-func GetCommentQuery(c echo.Context, p ParamsGet, siteID uint) *gorm.DB {
-	query := lib.DB.Model(&model.Comment{}).Order(GetSortRuleSQL(p.SortBy, "created_at DESC"))
+func GetCommentQuery(a *action, c echo.Context, p ParamsGet, siteID uint) *gorm.DB {
+	query := a.db.Model(&model.Comment{}).Order(GetSortRuleSQL(p.SortBy, "created_at DESC"))
 
 	if IsMsgCenter(p) {
-		return query.Scopes(MsgCenter(c, p, siteID), SiteIsolation(c, p))
+		return query.Scopes(MsgCenter(a, c, p, siteID), SiteIsolation(c, p))
 	}
 
 	return query.Where("page_key = ?", p.PageKey).Scopes(SiteIsolation(c, p), AllowedComment(c, p))
 }
 
-func ActionGet(c echo.Context) error {
+func (a *action) Get(c echo.Context) error {
 	var p ParamsGet
 	if isOK, resp := ParamsDecode(c, ParamsGet{}, &p); !isOK {
 		return resp
@@ -101,7 +100,7 @@ func ActionGet(c echo.Context) error {
 	// comment parents
 	var comments []model.Comment
 
-	query := GetCommentQuery(c, p, p.SiteID).Scopes(Paginate(p.Offset, p.Limit))
+	query := GetCommentQuery(a, c, p, p.SiteID).Scopes(Paginate(p.Offset, p.Limit))
 	query = query.Scopes(ViewOnlyAdmin(c, p))       // 装载只看管理员功能
 	query = query.Scopes(PinnedCommentsScope(c, p)) // 评论置顶功能总控制
 	cookedComments := []model.CookedComment{}
@@ -115,7 +114,7 @@ func ActionGet(c echo.Context) error {
 			cookedComments = append(cookedComments, c.ToCooked())
 		}
 
-		pinnedCommentsFunction(c, p, &cookedComments) // 插入置顶评论
+		pinnedCommentsFunction(a, c, p, &cookedComments) // 插入置顶评论
 
 		// 获取 comment 子评论
 		for _, parent := range cookedComments { // TODO: Read more children, pagination for children comment
@@ -132,7 +131,7 @@ func ActionGet(c echo.Context) error {
 			cookedComments = append(cookedComments, c.ToCooked())
 		}
 
-		pinnedCommentsFunction(c, p, &cookedComments) // 插入置顶评论
+		pinnedCommentsFunction(a, c, p, &cookedComments) // 插入置顶评论
 
 		containsComment := func(cid uint) bool {
 			for _, c := range cookedComments {
@@ -160,12 +159,12 @@ func ActionGet(c echo.Context) error {
 	}
 
 	// count comments
-	total := CountComments(GetCommentQuery(c, p, p.SiteID))
-	totalRoots := CountComments(GetCommentQuery(c, p, p.SiteID).Scopes(RootComments()))
+	total := CountComments(GetCommentQuery(a, c, p, p.SiteID))
+	totalRoots := CountComments(GetCommentQuery(a, c, p, p.SiteID).Scopes(RootComments()))
 
 	if isMsgCenter {
 		// mark all as read
-		NotifyMarkAllAsRead(p.User.ID)
+		model.UserNotifyMarkAllAsRead(p.User.ID)
 	}
 
 	// unread notifies
@@ -192,7 +191,7 @@ func IsMsgCenter(p ParamsGet) bool {
 }
 
 // TODO: 重构 MsgCenter
-func MsgCenter(c echo.Context, p ParamsGet, siteID uint) func(db *gorm.DB) *gorm.DB {
+func MsgCenter(a *action, c echo.Context, p ParamsGet, siteID uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		user := p.User
 
@@ -212,7 +211,7 @@ func MsgCenter(c echo.Context, p ParamsGet, siteID uint) func(db *gorm.DB) *gorm
 		getMyCommentIDs := func() []int {
 			myCommentIDs := []int{}
 			var myComments []model.Comment
-			lib.DB.Where("user_id = ?", user.ID).Find(&myComments)
+			a.db.Where("user_id = ?", user.ID).Find(&myComments)
 			for _, comment := range myComments {
 				myCommentIDs = append(myCommentIDs, int(comment.ID))
 			}
@@ -323,7 +322,7 @@ func PinnedCommentsScope(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB
 	}
 }
 
-func pinnedCommentsFunction(c echo.Context, p ParamsGet, cookedComments *[]model.CookedComment) {
+func pinnedCommentsFunction(a *action, c echo.Context, p ParamsGet, cookedComments *[]model.CookedComment) {
 	if IsMsgCenter(p) {
 		// 通知中心关闭置顶
 		return
@@ -335,7 +334,7 @@ func pinnedCommentsFunction(c echo.Context, p ParamsGet, cookedComments *[]model
 	}
 
 	pinnedComments := []model.Comment{}
-	GetCommentQuery(c, p, p.SiteID).Where("is_pinned = 1").Find(&pinnedComments)
+	GetCommentQuery(a, c, p, p.SiteID).Where("is_pinned = 1").Find(&pinnedComments)
 
 	if len(pinnedComments) == 0 {
 		return // 没有置顶评论

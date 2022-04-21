@@ -33,7 +33,7 @@ type ParamsImgUpload struct {
 	SiteAll bool
 }
 
-func ActionImgUpload(c echo.Context) error {
+func (a *action) ImgUpload(c echo.Context) error {
 	// 功能开关 (管理员始终开启)
 	if !config.Instance.ImgUpload.Enabled && !CheckIsAdminReq(c) {
 		return RespError(c, "禁止图片上传", Map{

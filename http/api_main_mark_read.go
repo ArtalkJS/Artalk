@@ -1,10 +1,6 @@
 package http
 
 import (
-	"errors"
-	"time"
-
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -21,7 +17,7 @@ type ParamsMarkRead struct {
 	SiteAll  bool
 }
 
-func ActionMarkRead(c echo.Context) error {
+func (a *action) MarkRead(c echo.Context) error {
 	var p ParamsMarkRead
 	if isOK, resp := ParamsDecode(c, ParamsMarkRead{}, &p); !isOK {
 		return resp
@@ -39,7 +35,7 @@ func ActionMarkRead(c echo.Context) error {
 		}
 
 		user := model.FindUser(p.Name, p.Email)
-		err := NotifyMarkAllAsRead(user.ID)
+		err := model.UserNotifyMarkAllAsRead(user.ID)
 		if err != nil {
 			return RespError(c, err.Error())
 		}
@@ -64,17 +60,4 @@ func ActionMarkRead(c echo.Context) error {
 	}
 
 	return RespSuccess(c)
-}
-
-func NotifyMarkAllAsRead(userID uint) error {
-	if userID == 0 {
-		return errors.New("user not found")
-	}
-
-	lib.DB.Model(&model.Notify{}).Where("user_id = ?", userID).Updates(&model.Notify{
-		IsRead: true,
-		ReadAt: time.Now(),
-	})
-
-	return nil
 }

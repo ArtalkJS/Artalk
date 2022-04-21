@@ -16,7 +16,7 @@ type ParamsLogin struct {
 	Password string `mapstructure:"password" param:"required"`
 }
 
-func ActionLogin(c echo.Context) error {
+func (a *action) Login(c echo.Context) error {
 	var p ParamsLogin
 	if isOK, resp := ParamsDecode(c, ParamsLogin{}, &p); !isOK {
 		return resp
@@ -76,7 +76,7 @@ type ParamsLoginStatus struct {
 }
 
 // 获取当前登录状态
-func ActionLoginStatus(c echo.Context) error {
+func (a *action) LoginStatus(c echo.Context) error {
 	var p ParamsLoginStatus
 	if isOK, resp := ParamsDecode(c, ParamsLoginStatus{}, &p); !isOK {
 		return resp

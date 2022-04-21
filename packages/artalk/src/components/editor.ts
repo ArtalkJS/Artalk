@@ -1,5 +1,6 @@
 import '../style/editor.less'
 
+import { CommentData } from '~/types/artalk-data'
 import Context from '../context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
@@ -8,7 +9,6 @@ import EditorHTML from './html/editor.html?raw'
 
 import EmoticonsPlug from './editor-plugs/emoticons-plug'
 import PreviewPlug from './editor-plugs/preview-plug'
-import { CommentData } from '~/types/artalk-data'
 import Api from '../api'
 
 export default class Editor extends Component {

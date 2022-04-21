@@ -1,7 +1,7 @@
 import { marked as libMarked } from 'marked'
-import User from './lib/user'
 import ArtalkConfig from '~/types/artalk-config'
 import { EventPayloadMap, Event, EventScopeType, Handler } from '~/types/event'
+import User from './lib/user'
 
 /**
  * Artalk Context

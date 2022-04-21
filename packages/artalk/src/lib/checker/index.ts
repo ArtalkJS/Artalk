@@ -1,9 +1,9 @@
 import Context from '@/context'
 import Layer from '@/components/layer'
 import Dialog from '@/components/dialog'
+import { CheckerPayload } from '~/types/event'
 import * as Utils from '../utils'
 import * as Ui from '../ui'
-import { CheckerPayload } from '~/types/event'
 import CaptchaChecker from './captcha-checker'
 import AdminChecker from './admin-checker'
 

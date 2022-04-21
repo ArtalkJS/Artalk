@@ -1,10 +1,10 @@
 import './emoticons-plug.less'
 
-import Editor from '../editor'
-import EditorPlug from './editor-plug'
 import * as Utils from '~/src/lib/utils'
 import * as Ui from '~/src/lib/ui'
 import { EmoticonListData, EmoticonGrpData } from '~/types/artalk-data'
+import EditorPlug from './editor-plug'
+import Editor from '../editor'
 
 type OwOFormatType = {
   [key: string] : {

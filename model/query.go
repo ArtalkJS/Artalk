@@ -2,7 +2,9 @@ package model
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
+	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/eko/gocache/v2/store"
@@ -298,3 +300,92 @@ func IsAdminUserByNameEmail(name string, email string) bool {
 }
 
 //#endregion
+
+func DelComment(commentID uint) error {
+	// 清除 notify
+	if err := lib.DB.Unscoped().Where("comment_id = ?", commentID).Delete(&Notify{}).Error; err != nil {
+		return err
+	}
+
+	// 清除 vote
+	if err := lib.DB.Unscoped().Where(
+		"target_id = ? AND (type = ? OR type = ?)",
+		commentID,
+		string(VoteTypeCommentUp),
+		string(VoteTypeCommentDown),
+	).Delete(&Vote{}).Error; err != nil {
+		return err
+	}
+
+	// 删除 comment
+	err := lib.DB.Delete(&Comment{}, commentID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DelPage(page *Page) error {
+	err := lib.DB.Unscoped().Delete(page).Error
+	if err != nil {
+		return err
+	}
+
+	// 删除所有相关内容
+	var comments []Comment
+	lib.DB.Where("page_key = ? AND site_name = ?", page.Key, page.SiteName).Find(&comments)
+
+	for _, c := range comments {
+		DelComment(c.ID)
+	}
+
+	// 删除 vote
+	lib.DB.Unscoped().Where(
+		"target_id = ? AND (type = ? OR type = ?)",
+		page.ID,
+		string(VoteTypePageUp),
+		string(VoteTypePageDown),
+	).Delete(&Vote{})
+
+	return nil
+}
+
+func GetAllCookedSites() []CookedSite {
+	var sites []Site
+	lib.DB.Model(&Site{}).Find(&sites)
+
+	var cookedSites []CookedSite
+	for _, s := range sites {
+		cookedSites = append(cookedSites, s.ToCooked())
+	}
+
+	return cookedSites
+}
+
+func GetVoteNum(targetID uint, voteType string) int {
+	var num int64
+	lib.DB.Model(&Vote{}).Where("target_id = ? AND type = ?", targetID, voteType).Count(&num)
+	return int(num)
+}
+
+func GetVoteNumUpDown(targetID uint, voteTo string) (int, int) {
+	var up int64
+	var down int64
+	lib.DB.Model(&Vote{}).Where("target_id = ? AND type = ?", targetID, voteTo+"_up").Count(&up)
+	lib.DB.Model(&Vote{}).Where("target_id = ? AND type = ?", targetID, voteTo+"_down").Count(&down)
+	return int(up), int(down)
+}
+
+func UserNotifyMarkAllAsRead(userID uint) error {
+	if userID == 0 {
+		return errors.New("user not found")
+	}
+
+	lib.DB.Model(&Notify{}).Where("user_id = ?", userID).Updates(&Notify{
+		IsRead: true,
+		ReadAt: time.Now(),
+	})
+
+	return nil
+}

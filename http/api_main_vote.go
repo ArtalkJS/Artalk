@@ -3,7 +3,6 @@ package http
 import (
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -75,11 +74,11 @@ func (a *action) Vote(c echo.Context) error {
 		case isVoteComment:
 			comment.VoteUp = up
 			comment.VoteDown = down
-			lib.DB.Save(&comment)
+			a.db.Save(&comment)
 		case isVotePage:
 			page.VoteUp = up
 			page.VoteDown = down
-			lib.DB.Save(&page)
+			a.db.Save(&page)
 		}
 	}
 
@@ -92,15 +91,15 @@ func (a *action) Vote(c echo.Context) error {
 			UA:       c.Request().UserAgent(),
 			IP:       ip,
 		}
-		return lib.DB.Create(&vote).Error
+		return a.db.Create(&vote).Error
 	}
 
 	// un-vote
 	var avaliableVotes []model.Vote
-	lib.DB.Where("target_id = ? AND type LIKE ? AND ip = ?", p.TargetID, voteTo+"%", ip).Find(&avaliableVotes)
+	a.db.Where("target_id = ? AND type LIKE ? AND ip = ?", p.TargetID, voteTo+"%", ip).Find(&avaliableVotes)
 	if len(avaliableVotes) > 0 {
 		for _, v := range avaliableVotes {
-			lib.DB.Unscoped().Delete(&v)
+			a.db.Unscoped().Delete(&v)
 		}
 
 		avaVoteType := strings.TrimPrefix(strings.TrimPrefix(string(avaliableVotes[0].Type), "comment_"), "page_")
@@ -108,7 +107,7 @@ func (a *action) Vote(c echo.Context) error {
 			createNew(p.FullType)
 		}
 
-		up, down := GetVoteNumUpDown(p.TargetID, voteTo)
+		up, down := model.GetVoteNumUpDown(p.TargetID, voteTo)
 		save(up, down)
 
 		RecordAction(c)
@@ -122,7 +121,7 @@ func (a *action) Vote(c echo.Context) error {
 	createNew(p.FullType)
 
 	// sync
-	up, down := GetVoteNumUpDown(p.TargetID, voteTo)
+	up, down := model.GetVoteNumUpDown(p.TargetID, voteTo)
 	save(up, down)
 
 	RecordAction(c)

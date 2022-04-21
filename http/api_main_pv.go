@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -34,7 +33,7 @@ func (a *action) PV(c echo.Context) error {
 	// ua := c.Request().UserAgent()
 
 	page.PV++
-	lib.DB.Save(&page)
+	a.db.Save(&page)
 
 	return RespData(c, Map{
 		"pv": page.PV,

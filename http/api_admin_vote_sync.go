@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -19,45 +18,31 @@ func (a *action) AdminVoteSync(c echo.Context) error {
 		return resp
 	}
 
-	VoteSync()
+	VoteSync(a)
 
 	return RespSuccess(c)
 }
 
-func VoteSync() {
+func VoteSync(a *action) {
 	var comments []model.Comment
-	lib.DB.Find(&comments)
+	a.db.Find(&comments)
 
 	for _, c := range comments {
-		voteUp := GetVoteNum(c.ID, string(model.VoteTypeCommentUp))
-		voteDown := GetVoteNum(c.ID, string(model.VoteTypeCommentDown))
+		voteUp := model.GetVoteNum(c.ID, string(model.VoteTypeCommentUp))
+		voteDown := model.GetVoteNum(c.ID, string(model.VoteTypeCommentDown))
 		c.VoteUp = int(voteUp)
 		c.VoteDown = int(voteDown)
-		lib.DB.Save(&c)
+		a.db.Save(&c)
 	}
 
 	var pages []model.Page
-	lib.DB.Find(&pages)
+	a.db.Find(&pages)
 
 	for _, p := range pages {
-		voteUp := GetVoteNum(p.ID, string(model.VoteTypePageUp))
-		voteDown := GetVoteNum(p.ID, string(model.VoteTypePageDown))
+		voteUp := model.GetVoteNum(p.ID, string(model.VoteTypePageUp))
+		voteDown := model.GetVoteNum(p.ID, string(model.VoteTypePageDown))
 		p.VoteUp = voteUp
 		p.VoteDown = voteDown
-		lib.DB.Save(&p)
+		a.db.Save(&p)
 	}
-}
-
-func GetVoteNum(targetID uint, voteType string) int {
-	var num int64
-	lib.DB.Model(&model.Vote{}).Where("target_id = ? AND type = ?", targetID, voteType).Count(&num)
-	return int(num)
-}
-
-func GetVoteNumUpDown(targetID uint, voteTo string) (int, int) {
-	var up int64
-	var down int64
-	lib.DB.Model(&model.Vote{}).Where("target_id = ? AND type = ?", targetID, voteTo+"_up").Count(&up)
-	lib.DB.Model(&model.Vote{}).Where("target_id = ? AND type = ?", targetID, voteTo+"_down").Count(&down)
-	return int(up), int(down)
 }

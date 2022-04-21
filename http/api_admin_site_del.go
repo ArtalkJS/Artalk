@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -26,7 +25,7 @@ func (a *action) AdminSiteDel(c echo.Context) error {
 		return RespError(c, "site 不存在")
 	}
 
-	err := lib.DB.Unscoped().Delete(&site).Error
+	err := a.db.Unscoped().Delete(&site).Error
 	if err != nil {
 		return RespError(c, "site 删除失败")
 	}
@@ -34,10 +33,10 @@ func (a *action) AdminSiteDel(c echo.Context) error {
 	// 删除所有相关内容
 	if p.DelContent {
 		var pages []model.Page
-		lib.DB.Where("site_name = ?", site.Name).Find(&pages)
+		a.db.Where("site_name = ?", site.Name).Find(&pages)
 
 		for _, p := range pages {
-			DelPage(&p)
+			model.DelPage(&p)
 		}
 	}
 

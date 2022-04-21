@@ -3,7 +3,6 @@ package http
 import (
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -63,11 +62,11 @@ func (a *action) AdminPageEdit(c echo.Context) error {
 	if modifyKey {
 		// 相关性数据修改
 		var comments []model.Comment
-		lib.DB.Where("page_key = ?", page.Key).Find(&comments)
+		a.db.Where("page_key = ?", page.Key).Find(&comments)
 
 		for _, comment := range comments {
 			comment.PageKey = p.Key
-			lib.DB.Save(&comment)
+			a.db.Save(&comment)
 		}
 
 		page.Key = p.Key

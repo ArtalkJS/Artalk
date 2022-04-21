@@ -14,7 +14,6 @@
   "unpkg": "./dist/artalk-plugin-katex.iife.js",
   "jsdelivr": "./dist/artalk-plugin-katex.iife.js",
   "module": "./dist/artalk-plugin-katex.es.js",
-  "types": "./index.d.ts",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

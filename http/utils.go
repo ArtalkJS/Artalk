@@ -17,6 +17,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type Map = map[string]interface{}
+
 func LoginGetUserToken(user model.User) string {
 	// Set custom claims
 	claims := &jwtCustomClaims{

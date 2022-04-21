@@ -16,7 +16,7 @@ type ParamsPV struct {
 	SiteAll bool
 }
 
-func ActionPV(c echo.Context) error {
+func (a *action) PV(c echo.Context) error {
 	var p ParamsPV
 	if isOK, resp := ParamsDecode(c, ParamsPV{}, &p); !isOK {
 		return resp

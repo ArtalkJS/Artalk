@@ -15,7 +15,7 @@ type ParamsCommentDel struct {
 	SiteAll  bool
 }
 
-func ActionAdminCommentDel(c echo.Context) error {
+func (a *action) AdminCommentDel(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

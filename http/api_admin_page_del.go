@@ -12,7 +12,7 @@ type ParamsAdminPageDel struct {
 	SiteID   uint
 }
 
-func ActionAdminPageDel(c echo.Context) error {
+func (a *action) AdminPageDel(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

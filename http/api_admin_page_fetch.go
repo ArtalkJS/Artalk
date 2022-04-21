@@ -20,7 +20,7 @@ var allPageFetching = false
 var allPageFetchDone = 0
 var allPageFetchTotal = 0
 
-func ActionAdminPageFetch(c echo.Context) error {
+func (a *action) AdminPageFetch(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

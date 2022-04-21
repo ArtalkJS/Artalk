@@ -9,7 +9,7 @@ import (
 type ParamsAdminSiteGet struct {
 }
 
-func ActionAdminSiteGet(c echo.Context) error {
+func (a *action) AdminSiteGet(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

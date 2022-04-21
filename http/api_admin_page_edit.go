@@ -20,7 +20,7 @@ type ParamsAdminPageEdit struct {
 	AdminOnly bool   `mapstructure:"admin_only"`
 }
 
-func ActionAdminPageEdit(c echo.Context) error {
+func (a *action) AdminPageEdit(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

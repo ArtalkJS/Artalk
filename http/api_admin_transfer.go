@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func ActionAdminImportUpload(c echo.Context) error {
+func (a *action) AdminImportUpload(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -55,7 +55,7 @@ type ParamsAdminImport struct {
 	Payload string `mapstructure:"payload"`
 }
 
-func ActionAdminImport(c echo.Context) error {
+func (a *action) AdminImport(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -96,7 +96,7 @@ func ActionAdminImport(c echo.Context) error {
 	return nil
 }
 
-func ActionAdminExport(c echo.Context) error {
+func (a *action) AdminExport(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

@@ -11,7 +11,7 @@ type ParamsAdminSendMail struct {
 	ToAddr  string `mapstructure:"to_addr" param:"required"`
 }
 
-func ActionAdminSendMail(c echo.Context) error {
+func (a *action) AdminSendMail(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

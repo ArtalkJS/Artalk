@@ -11,7 +11,7 @@ type ParamsAdminSiteDel struct {
 	DelContent bool `mapstructure:"del_content"`
 }
 
-func ActionAdminSiteDel(c echo.Context) error {
+func (a *action) AdminSiteDel(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

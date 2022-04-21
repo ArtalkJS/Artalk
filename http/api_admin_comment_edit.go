@@ -27,7 +27,7 @@ type ParamsCommentEdit struct {
 	IsPinned    bool   `mapstructure:"is_pinned"`
 }
 
-func ActionAdminCommentEdit(c echo.Context) error {
+func (a *action) AdminCommentEdit(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

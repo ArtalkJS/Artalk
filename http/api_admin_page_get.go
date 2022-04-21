@@ -19,7 +19,7 @@ type ResponseAdminPageGet struct {
 	Pages []model.CookedPage `json:"pages"`
 }
 
-func ActionAdminPageGet(c echo.Context) error {
+func (a *action) AdminPageGet(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

@@ -33,7 +33,7 @@ type ResponseAdd struct {
 	Comment model.CookedComment `json:"comment"`
 }
 
-func ActionAdd(c echo.Context) error {
+func (a *action) Add(c echo.Context) error {
 	var p ParamsAdd
 	if isOK, resp := ParamsDecode(c, ParamsAdd{}, &p); !isOK {
 		return resp

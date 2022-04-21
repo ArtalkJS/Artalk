@@ -86,64 +86,69 @@ func InitRoute(e *echo.Echo) {
 	fileServer := http.FileServer(f)
 	e.Any("/*", echo.WrapHandler(fileServer))
 
+	// action
+	action := &action{
+		db: lib.DB,
+	}
+
 	// api
 	api := e.Group("/api")
 
-	api.POST("/add", ActionAdd)
-	api.POST("/get", ActionGet)
-	api.POST("/user-get", ActionUserGet)
-	api.GET("/login", ActionLogin)
-	api.POST("/login", ActionLogin)
-	api.GET("/login-status", ActionLoginStatus)
-	api.POST("/login-status", ActionLoginStatus)
-	api.POST("/mark-read", ActionMarkRead)
-	api.POST("/vote", ActionVote)
-	api.POST("/pv", ActionPV)
+	api.POST("/add", action.Add)
+	api.POST("/get", action.Get)
+	api.POST("/user-get", action.UserGet)
+	api.GET("/login", action.Login)
+	api.POST("/login", action.Login)
+	api.GET("/login-status", action.LoginStatus)
+	api.POST("/login-status", action.LoginStatus)
+	api.POST("/mark-read", action.MarkRead)
+	api.POST("/vote", action.Vote)
+	api.POST("/pv", action.PV)
 
 	// api/upload-img
 	if config.Instance.ImgUpload.Path == "" {
 		config.Instance.ImgUpload.Path = "./data/artalk-img/"
 		logrus.Warn("图片上传功能 img_upload.path 未配置，使用默认值：" + config.Instance.ImgUpload.Path)
 	}
-	api.POST("/img-upload", ActionImgUpload)
+	api.POST("/img-upload", action.ImgUpload)
 	e.Static(ImgUpload_RoutePath, config.Instance.ImgUpload.Path) // 静态可访问图片存放目录
 
 	// api/captcha
 	if config.Instance.Captcha.Enabled {
 		ca := api.Group("/captcha")
-		ca.GET("/refresh", ActionCaptchaGet)
-		ca.POST("/refresh", ActionCaptchaGet)
-		ca.GET("/get", ActionCaptchaGet)
-		ca.POST("/get", ActionCaptchaGet)
-		ca.GET("/check", ActionCaptchaCheck)
-		ca.POST("/check", ActionCaptchaCheck)
-		ca.GET("/status", ActionCaptchaStatus)
-		ca.POST("/status", ActionCaptchaStatus)
+		ca.GET("/refresh", action.CaptchaGet)
+		ca.POST("/refresh", action.CaptchaGet)
+		ca.GET("/get", action.CaptchaGet)
+		ca.POST("/get", action.CaptchaGet)
+		ca.GET("/check", action.CaptchaCheck)
+		ca.POST("/check", action.CaptchaCheck)
+		ca.GET("/status", action.CaptchaStatus)
+		ca.POST("/status", action.CaptchaStatus)
 	}
 
 	// api/admin
 	admin := api.Group("/admin", middleware.JWTWithConfig(CommonJwtConfig)) // use jwt
 
-	admin.POST("/comment-edit", ActionAdminCommentEdit)
-	admin.POST("/comment-del", ActionAdminCommentDel)
+	admin.POST("/comment-edit", action.AdminCommentEdit)
+	admin.POST("/comment-del", action.AdminCommentDel)
 
-	admin.POST("/page-get", ActionAdminPageGet)
-	admin.POST("/page-edit", ActionAdminPageEdit)
-	admin.POST("/page-del", ActionAdminPageDel)
-	admin.POST("/page-fetch", ActionAdminPageFetch)
+	admin.POST("/page-get", action.AdminPageGet)
+	admin.POST("/page-edit", action.AdminPageEdit)
+	admin.POST("/page-del", action.AdminPageDel)
+	admin.POST("/page-fetch", action.AdminPageFetch)
 
-	admin.POST("/site-get", ActionAdminSiteGet)
-	admin.POST("/site-add", ActionAdminSiteAdd)
-	admin.POST("/site-edit", ActionAdminSiteEdit)
-	admin.POST("/site-del", ActionAdminSiteDel)
-	admin.POST("/setting-get", ActionAdminSettingGet)
-	admin.POST("/setting-save", ActionAdminSettingSave)
-	admin.POST("/import", ActionAdminImport)
-	admin.POST("/import-upload", ActionAdminImportUpload)
-	admin.POST("/export", ActionAdminExport)
-	// admin.POST("/vote-sync", ActionAdminVoteSync) // 数据导入功能未关注 vote 部分，暂时注释
+	admin.POST("/site-get", action.AdminSiteGet)
+	admin.POST("/site-add", action.AdminSiteAdd)
+	admin.POST("/site-edit", action.AdminSiteEdit)
+	admin.POST("/site-del", action.AdminSiteDel)
+	admin.POST("/setting-get", action.AdminSettingGet)
+	admin.POST("/setting-save", action.AdminSettingSave)
+	admin.POST("/import", action.AdminImport)
+	admin.POST("/import-upload", action.AdminImportUpload)
+	admin.POST("/export", action.AdminExport)
+	// admin.POST("/vote-sync", action.AdminVoteSync) // 数据导入功能未关注 vote 部分，暂时注释
 
-	admin.POST("/send-mail", ActionAdminSendMail)
+	admin.POST("/send-mail", action.AdminSendMail)
 
 	// conf
 	api.Any("/conf", func(c echo.Context) error {

@@ -20,7 +20,7 @@ type ParamsVote struct {
 	SiteAll  bool
 }
 
-func ActionVote(c echo.Context) error {
+func (a *action) Vote(c echo.Context) error {
 	var p ParamsVote
 	if isOK, resp := ParamsDecode(c, ParamsVote{}, &p); !isOK {
 		return resp

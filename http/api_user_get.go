@@ -10,7 +10,7 @@ type ParamsUserGet struct {
 	Email string `mapstructure:"email"`
 }
 
-func ActionUserGet(c echo.Context) error {
+func (a *action) UserGet(c echo.Context) error {
 	var p ParamsUserGet
 	if isOK, resp := ParamsDecode(c, ParamsUserGet{}, &p); !isOK {
 		return resp

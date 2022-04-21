@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ActionAdminSettingGet(c echo.Context) error {
+func (a *action) AdminSettingGet(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}
@@ -18,7 +18,7 @@ type ParamsAdminSettingSave struct {
 	Url  string `mapstructure:"url"`
 }
 
-func ActionAdminSettingSave(c echo.Context) error {
+func (a *action) AdminSettingSave(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

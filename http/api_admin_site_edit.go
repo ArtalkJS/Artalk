@@ -17,7 +17,7 @@ type ParamsAdminSiteEdit struct {
 	Urls string `mapstructure:"urls"`
 }
 
-func ActionAdminSiteEdit(c echo.Context) error {
+func (a *action) AdminSiteEdit(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

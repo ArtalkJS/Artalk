@@ -57,7 +57,7 @@ func GetCommentQuery(c echo.Context, p ParamsGet, siteID uint) *gorm.DB {
 	return query.Where("page_key = ?", p.PageKey).Scopes(SiteIsolation(c, p), AllowedComment(c, p))
 }
 
-func ActionGet(c echo.Context) error {
+func (a *action) Get(c echo.Context) error {
 	var p ParamsGet
 	if isOK, resp := ParamsDecode(c, ParamsGet{}, &p); !isOK {
 		return resp

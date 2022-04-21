@@ -21,7 +21,7 @@ type ParamsMarkRead struct {
 	SiteAll  bool
 }
 
-func ActionMarkRead(c echo.Context) error {
+func (a *action) MarkRead(c echo.Context) error {
 	var p ParamsMarkRead
 	if isOK, resp := ParamsDecode(c, ParamsMarkRead{}, &p); !isOK {
 		return resp

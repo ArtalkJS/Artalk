@@ -9,7 +9,7 @@ import (
 type ParamsAdminVoteSync struct {
 }
 
-func ActionAdminVoteSync(c echo.Context) error {
+func (a *action) AdminVoteSync(c echo.Context) error {
 	if isOK, resp := AdminOnly(c); !isOK {
 		return resp
 	}

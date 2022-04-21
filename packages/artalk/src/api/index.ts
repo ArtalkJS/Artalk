@@ -1,5 +1,5 @@
-import Context from '../context'
 import { CommentData, ListData, UserData, PageData, SiteData, NotifyData } from '~/types/artalk-data'
+import Context from '../context'
 import { Fetch, ToFormData, POST, GET } from './request'
 import * as Utils from '../lib/utils'
 

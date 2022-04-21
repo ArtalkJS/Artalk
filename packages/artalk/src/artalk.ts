@@ -1,7 +1,8 @@
 import './style/main.less'
 
-import Context from './context'
 import ArtalkConfig from '~/types/artalk-config'
+import { EventPayloadMap, Handler } from '~/types/event'
+import Context from './context'
 import defaults from './defaults'
 
 import CheckerLauncher from './lib/checker'
@@ -10,7 +11,6 @@ import List from './components/list'
 import SidebarLayer from './components/sidebar-layer'
 
 import Layer, { GetLayerWrap } from './components/layer'
-import { EventPayloadMap, Handler } from '~/types/event'
 import Api from './api'
 import * as Utils from './lib/utils'
 

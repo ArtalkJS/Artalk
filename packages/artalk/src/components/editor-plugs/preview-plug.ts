@@ -1,8 +1,8 @@
 import './preview-plug.less'
 
+import * as Utils from '~/src/lib/utils'
 import Editor from '../editor'
 import EditorPlug from './editor-plug'
-import * as Utils from '~/src/lib/utils'
 
 export default class PreviewPlug extends EditorPlug {
   $el!: HTMLElement

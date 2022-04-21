@@ -49,6 +49,9 @@ export default class ListLite extends Component {
     </div>`)
     this.$commentsWrap = this.$el.querySelector('.atk-list-comments-wrap')!
 
+    // 评论为空时显示字符
+    if (ctx.conf.noComment) this.noCommentText = ctx.conf.noComment
+
     // 评论时间自动更新
     window.setInterval(() => {
       this.$el.querySelectorAll<HTMLElement>('[data-atk-comment-date]').forEach(el => {

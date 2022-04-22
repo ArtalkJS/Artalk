@@ -66,7 +66,7 @@ func (a *action) AdminPageEdit(c echo.Context) error {
 
 		for _, comment := range comments {
 			comment.PageKey = p.Key
-			a.db.Save(&comment)
+			model.UpdateComment(&comment)
 		}
 
 		page.Key = p.Key

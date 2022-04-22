@@ -108,7 +108,7 @@ func SiteReady(tSiteName string, tSiteUrls string) (model.Site, error) {
 		site = model.Site{}
 		site.Name = tSiteName
 		site.Urls = tSiteUrls
-		err := lib.DB.Create(&site).Error
+		err := model.CreateSite(&site)
 		if err != nil {
 			return model.Site{}, errors.New("站点创建失败")
 		}
@@ -138,7 +138,7 @@ func SiteReady(tSiteName string, tSiteUrls string) (model.Site, error) {
 			// 保存
 			rUrls = append(rUrls, siteCooked.Urls...)
 			site.Urls = strings.Join(rUrls, ",")
-			err := lib.DB.Save(&site).Error
+			err := model.UpdateSite(&site)
 			if err != nil {
 				return model.Site{}, errors.New("站点数据更新失败")
 			}
@@ -329,7 +329,7 @@ func RebuildRid(idChanges map[uint]uint) {
 		}
 		if newId, isExist := idChanges[nComment.Rid]; isExist {
 			nComment.Rid = newId
-			err := lib.DB.Save(&nComment).Error
+			err := model.UpdateComment(&nComment)
 			if err != nil {
 				logError(fmt.Sprintf("[rid 更新] new_id:%d new_rid:%d", nComment.ID, newId), err)
 			}

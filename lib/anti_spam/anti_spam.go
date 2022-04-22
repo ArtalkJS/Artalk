@@ -24,7 +24,7 @@ func SyncSpamCheck(comment *model.Comment, echoCtx echo.Context) {
 			return
 		}
 		comment.IsPending = true // 改为待审状态
-		lib.DB.Save(comment)
+		model.UpdateComment(comment)
 	}
 
 	// 拦截失败处理
@@ -153,7 +153,7 @@ func SyncSpamCheck(comment *model.Comment, echoCtx echo.Context) {
 
 			// 保存评论
 			comment.Content = handleContent
-			lib.DB.Save(comment)
+			model.UpdateComment(comment)
 		}
 	}
 }

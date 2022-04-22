@@ -46,9 +46,7 @@ func (c *Comment) FetchUser() User {
 		return c._User
 	}
 
-	// TODO: 先从 Redis 查询
-	var user User
-	lib.DB.First(&user, c.UserID)
+	user := FindUserByID(c.UserID)
 
 	c._User = user
 	return user
@@ -59,8 +57,7 @@ func (c *Comment) FetchPage() Page {
 		return c._Page
 	}
 
-	var page Page
-	lib.DB.Where("`key` = ?", c.PageKey).First(&page)
+	page := FindPage(c.PageKey, c.SiteName)
 
 	c._Page = page
 	return page
@@ -71,8 +68,7 @@ func (c *Comment) FetchSite() Site {
 		return c._Site
 	}
 
-	var site Site
-	lib.DB.Where("name = ?", c.SiteName).First(&site)
+	site := FindSite(c.SiteName)
 
 	c._Site = site
 	return site
@@ -99,6 +95,7 @@ func (c *Comment) GetLinkToReply(notifyKey ...string) string {
 type CookedComment struct {
 	ID             uint   `json:"id"`
 	Content        string `json:"content"`
+	UserID         uint   `json:"user_id"`
 	Nick           string `json:"nick"`
 	EmailEncrypted string `json:"email_encrypted"`
 	Link           string `json:"link"`
@@ -126,6 +123,7 @@ func (c *Comment) ToCooked() CookedComment {
 	return CookedComment{
 		ID:             c.ID,
 		Content:        c.Content,
+		UserID:         c.UserID,
 		Nick:           user.Name,
 		EmailEncrypted: lib.GetMD5Hash(user.Email),
 		Link:           user.Link,
@@ -147,6 +145,23 @@ func (c *Comment) ToCooked() CookedComment {
 	}
 }
 
+func (c CookedComment) FetchChildrenWithRules(rules ...func(*Comment) bool) []CookedComment {
+	children := []CookedComment{}
+	fetchChildrenOnceWithRules(&children, c, rules...) // TODO: children 数量限制
+	return children
+}
+
+func fetchChildrenOnceWithRules(src *[]CookedComment, parentComment CookedComment, rules ...func(*Comment) bool) {
+	// TODO 子评论排序问题
+	children := FindCommentChildren(parentComment.ID, rules...)
+
+	for _, child := range children {
+		*src = append(*src, child.ToCooked())
+		fetchChildrenOnceWithRules(src, child.ToCooked(), rules...) // loop
+	}
+}
+
+// TODO 已弃用 (原因：不容易做缓存)
 func (c CookedComment) FetchChildren(filters ...func(db *gorm.DB) *gorm.DB) []CookedComment {
 	children := []CookedComment{}
 	fetchChildrenOnce(&children, c, filters...) // TODO: children 数量限制

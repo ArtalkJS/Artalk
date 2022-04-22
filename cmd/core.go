@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -20,9 +21,15 @@ func loadCore() {
 	initConfig()
 	initLog()
 	initDB()
-	syncConfWithDB()
 	initCache()
+	syncConfWithDB()
 	notify_launcher.Init() // 初始化 Notify 发射台
+
+	makeCache()
+	// TODO 异步加载开关
+	// go func() {
+	// 	makeCache()
+	// }()
 }
 
 // 1. 初始化配置
@@ -111,7 +118,16 @@ func initDB() {
 	model.InitDB()
 }
 
-// 4. 同步配置文件与数据库
+// 4. 初始化缓存
+func initCache() {
+	err := lib.OpenCache()
+	if err != nil {
+		logrus.Error("缓存初始化发生错误 ", err)
+		os.Exit(1)
+	}
+}
+
+// 5. 同步配置文件与数据库
 func syncConfWithDB() {
 	// 初始化默认站点
 	siteDefault := strings.TrimSpace(config.Instance.SiteDefault)
@@ -136,7 +152,7 @@ func syncConfWithDB() {
 				IsAdmin:    true,
 				IsInConf:   true,
 			}
-			lib.DB.Create(&user)
+			model.CreateUser(&user)
 		} else {
 			// update
 			user.Name = admin.Name
@@ -147,7 +163,7 @@ func syncConfWithDB() {
 			user.BadgeColor = admin.BadgeColor
 			user.IsAdmin = true
 			user.IsInConf = true
-			lib.DB.Save(&user)
+			model.UpdateUser(&user)
 		}
 	}
 
@@ -166,16 +182,66 @@ func syncConfWithDB() {
 		}
 
 		if !isUserExist() {
-			lib.DB.Unscoped().Delete(&dbU)
+			model.DelUser(&dbU)
 		}
 	}
 }
 
-// 5. 初始化缓存
-func initCache() {
-	err := lib.OpenCache()
-	if err != nil {
-		logrus.Error("缓存初始化发生错误 ", err)
-		os.Exit(1)
+// 制备缓存
+func makeCache() {
+	// Users
+	{
+		start := time.Now()
+
+		var items []model.User
+		lib.DB.Find(&items)
+
+		for _, item := range items {
+			model.UserCacheSave(&item)
+		}
+
+		logrus.Debug(fmt.Sprintf("[Users] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
+	}
+
+	// Sites
+	{
+		start := time.Now()
+
+		var items []model.Site
+		lib.DB.Find(&items)
+
+		for _, item := range items {
+			model.SiteCacheSave(&item)
+		}
+
+		logrus.Debug(fmt.Sprintf("[Sites] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
+	}
+
+	// Pages
+	{
+		start := time.Now()
+
+		var items []model.Page
+		lib.DB.Find(&items)
+
+		for _, item := range items {
+			model.PageCacheSave(&item)
+		}
+
+		logrus.Debug(fmt.Sprintf("[Pages] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
+	}
+
+	// Comments
+	{
+		start := time.Now()
+
+		var items []model.Comment
+		lib.DB.Find(&items)
+
+		for _, item := range items {
+			model.CommentCacheSave(&item)
+		}
+
+		logrus.Debug(fmt.Sprintf("[Comments] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
 	}
 }

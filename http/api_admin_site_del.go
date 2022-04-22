@@ -25,19 +25,9 @@ func (a *action) AdminSiteDel(c echo.Context) error {
 		return RespError(c, "site 不存在")
 	}
 
-	err := a.db.Unscoped().Delete(&site).Error
+	err := model.DelSite(&site, !p.DelContent)
 	if err != nil {
 		return RespError(c, "site 删除失败")
-	}
-
-	// 删除所有相关内容
-	if p.DelContent {
-		var pages []model.Page
-		a.db.Where("site_name = ?", site.Name).Find(&pages)
-
-		for _, p := range pages {
-			model.DelPage(&p)
-		}
 	}
 
 	return RespSuccess(c)

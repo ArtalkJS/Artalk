@@ -175,7 +175,7 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 		}
 
 		// 保存到数据库
-		dErr := lib.DB.Create(&nComment).Error
+		dErr := model.CreateComment(&nComment)
 		if dErr != nil {
 			logError(fmt.Sprintf("评论源 ID:%s 保存失败", c.ID))
 			continue
@@ -185,6 +185,7 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 		// @see https://gorm.io/zh_CN/docs/conventions.html#CreatedAt
 		lib.DB.Model(&nComment).Update("CreatedAt", ParseDate(c.CreatedAt))
 		lib.DB.Model(&nComment).Update("UpdatedAt", ParseDate(c.UpdatedAt))
+		model.CommentCacheSave(&nComment)
 
 		idChanges[uint(idMap[c.ID])] = nComment.ID
 

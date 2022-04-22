@@ -61,11 +61,11 @@ func (a *action) AdminSiteEdit(c echo.Context) error {
 
 		for _, comment := range comments {
 			comment.SiteName = p.Name
-			a.db.Save(&comment)
+			model.UpdateComment(&comment)
 		}
 		for _, page := range pages {
 			page.SiteName = p.Name
-			a.db.Save(&page)
+			model.UpdatePage(&page)
 		}
 	}
 
@@ -73,7 +73,7 @@ func (a *action) AdminSiteEdit(c echo.Context) error {
 	site.Name = p.Name
 	site.Urls = p.Urls
 
-	err := a.db.Save(&site).Error
+	err := model.UpdateSite(&site)
 	if err != nil {
 		return RespError(c, "site 保存失败")
 	}

@@ -41,7 +41,7 @@ func (a *action) AdminSiteAdd(c echo.Context) error {
 	site := model.Site{}
 	site.Name = p.Name
 	site.Urls = p.Urls
-	err := a.db.Create(&site).Error
+	err := model.CreateSite(&site)
 	if err != nil {
 		return RespError(c, "site 创建失败")
 	}

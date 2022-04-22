@@ -74,11 +74,11 @@ func (a *action) Vote(c echo.Context) error {
 		case isVoteComment:
 			comment.VoteUp = up
 			comment.VoteDown = down
-			a.db.Save(&comment)
+			model.UpdateComment(&comment)
 		case isVotePage:
 			page.VoteUp = up
 			page.VoteDown = down
-			a.db.Save(&page)
+			model.UpdatePage(&page)
 		}
 	}
 

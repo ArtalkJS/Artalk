@@ -118,7 +118,7 @@ func (a *action) Get(c echo.Context) error {
 
 		// 获取 comment 子评论
 		for _, parent := range cookedComments { // TODO: Read more children, pagination for children comment
-			children := parent.FetchChildren(SiteIsolation(c, p), AllowedComment(c, p))
+			children := parent.FetchChildrenWithRules(SiteIsolationRule(c, p), AllowedCommentRule(c, p))
 			for _, child := range children {
 				cookedComments = append(cookedComments, child)
 			}
@@ -148,7 +148,7 @@ func (a *action) Get(c echo.Context) error {
 				continue
 			}
 
-			rComment := model.FindCommentScopes(comment.Rid, SiteIsolation(c, p)) // 查找被回复的评论
+			rComment := model.FindCommentRules(comment.Rid, SiteIsolationRule(c, p)) // 查找被回复的评论
 			if rComment.IsEmpty() {
 				continue
 			}
@@ -287,6 +287,44 @@ func SiteIsolation(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 		}
 
 		return db.Where("site_name = ?", p.SiteName)
+	}
+}
+
+// TODO 实验，以后全部 Scopes 方法换成 Rules 方法
+func AllowedCommentRule(c echo.Context, p ParamsGet) func(*model.Comment) bool {
+	return func(comment *model.Comment) bool {
+		if CheckIsAdminReq(c) {
+			return true // 管理员显示全部
+		}
+
+		// 显示个人全部评论
+		if (p.Name != "" && p.Email != "") && !p.User.IsEmpty() {
+			if !comment.IsPending || (comment.IsPending && comment.UserID == p.User.ID) {
+				return true
+			}
+		}
+
+		// 不允许待审评论
+		if comment.IsPending {
+			return false
+		}
+
+		return true
+	}
+}
+
+// TODO
+func SiteIsolationRule(c echo.Context, p ParamsGet) func(*model.Comment) bool {
+	return func(comment *model.Comment) bool {
+		if CheckIsAdminReq(c) && p.SiteAll {
+			return true // 仅管理员支持取消站点隔离
+		}
+
+		if comment.SiteName != p.SiteName {
+			return false
+		}
+
+		return true
 	}
 }
 

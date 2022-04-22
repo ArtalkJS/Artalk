@@ -33,7 +33,7 @@ func (a *action) PV(c echo.Context) error {
 	// ua := c.Request().UserAgent()
 
 	page.PV++
-	a.db.Save(&page)
+	model.UpdatePage(&page)
 
 	return RespData(c, Map{
 		"pv": page.PV,

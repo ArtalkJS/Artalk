@@ -129,7 +129,7 @@ func (a *action) Add(c echo.Context) error {
 	}
 
 	// save to database
-	err := a.db.Create(&comment).Error
+	err := model.CreateComment(&comment)
 	if err != nil {
 		logrus.Error("Save Comment error: ", err)
 		return RespError(c, "评论失败")

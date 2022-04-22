@@ -65,8 +65,7 @@ func (p *Page) FetchSite() Site {
 		return p._Site
 	}
 
-	var site Site
-	lib.DB.Where("name = ?", p.SiteName).First(&site)
+	site := FindSite(p.SiteName)
 
 	p._Site = site
 	return site
@@ -107,7 +106,7 @@ func (p *Page) FetchURL() error {
 		p.Title = title
 	}
 
-	if err := lib.DB.Save(p).Error; err != nil {
+	if err := UpdatePage(p); err != nil {
 		logrus.Error("FetchURL 保存失败")
 		return err
 	}

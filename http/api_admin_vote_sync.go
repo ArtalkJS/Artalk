@@ -32,7 +32,7 @@ func VoteSync(a *action) {
 		voteDown := model.GetVoteNum(c.ID, string(model.VoteTypeCommentDown))
 		c.VoteUp = int(voteUp)
 		c.VoteDown = int(voteDown)
-		a.db.Save(&c)
+		model.UpdateComment(&c)
 	}
 
 	var pages []model.Page
@@ -43,6 +43,6 @@ func VoteSync(a *action) {
 		voteDown := model.GetVoteNum(p.ID, string(model.VoteTypePageDown))
 		p.VoteUp = voteUp
 		p.VoteDown = voteDown
-		a.db.Save(&p)
+		model.UpdatePage(&p)
 	}
 }

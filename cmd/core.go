@@ -13,7 +13,6 @@ import (
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
-	"gorm.io/gorm"
 )
 
 // 装载核心功能
@@ -109,18 +108,7 @@ func initLog() {
 
 // 3. 初始化数据库
 func initDB() {
-	var db *gorm.DB
-	db, err := lib.OpenDB(config.DBType(config.Instance.DB.Type), config.Instance.DB.Dsn)
-	if err != nil {
-		logrus.Error("数据库初始化发生错误 ", err)
-		os.Exit(1)
-	}
-
-	lib.DB = db
-
-	// Migrate the schema
-	lib.DB.AutoMigrate(&model.Site{}, &model.Page{}, &model.User{},
-		&model.Comment{}, &model.Notify{}, &model.Vote{}) // 注意表的创建顺序，因为有关联字段
+	model.InitDB()
 }
 
 // 4. 同步配置文件与数据库

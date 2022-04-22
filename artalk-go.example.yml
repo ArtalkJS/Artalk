@@ -117,6 +117,7 @@ img_upload:
   upgit:
     enabled: false # 启用 upgit
     exec: "./upgit -c <upgit配置文件路径> -t /artalk-img"
+    del_local: true # 上传后删除本地的图片
 
 # 其他通知方式
 notify:

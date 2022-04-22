@@ -161,8 +161,9 @@ type ImgUploadConf struct {
 }
 
 type UpgitConf struct {
-	Enabled bool   `mapstructure:"enabled" json:"enabled"` // 启用 upgit
-	Exec    string `mapstructure:"exec" json:"exec"`       // 启动命令
+	Enabled  bool   `mapstructure:"enabled" json:"enabled"`     // 启用 upgit
+	Exec     string `mapstructure:"exec" json:"exec"`           // 启动命令
+	DelLocal bool   `mapstructure:"del_local" json:"del_local"` // 上传后删除本地的图片
 }
 
 // 其他通知方式

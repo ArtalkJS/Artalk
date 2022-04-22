@@ -166,6 +166,14 @@ func (a *action) ImgUpload(c echo.Context) error {
 			return RespError(c, "图片通过 upgit 上传失败")
 		}
 
+		// 上传成功，删除本地文件
+		if config.Instance.ImgUpload.Upgit.DelLocal {
+			var err = os.Remove(fileFullPath)
+			if err != nil {
+				logrus.Error(err)
+			}
+		}
+
 		// 使用从 upgit 获取的图片 URL
 		imgURL = upgitURL
 	}

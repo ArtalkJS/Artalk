@@ -125,8 +125,14 @@ docker-compose up -d
 ## TODOs 
 
 - [x] [Golang 后端](https://github.com/ArtalkJS/ArtalkGo)
-- [x] 多站点支持
 - [x] 多数据库支持
+  - [x] SQLite
+  - [X] MySQL
+- [x] 多缓存支持
+  - [x] In-memory (内建缓存)
+  - [x] Redis
+  - [x] Memcache
+- [x] 多站点支持
 - [x] 评论获取分页
 - [x] 评论点赞投票
 - [x] 浏览量统计

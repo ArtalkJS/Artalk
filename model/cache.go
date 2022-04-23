@@ -36,8 +36,8 @@ func FindCache(name string, destStruct interface{}) (cacher, error) {
 		return cacher, err
 	}
 
-	str := entry.([]byte)
-	err = json.Unmarshal(str, destStruct)
+	str := fmt.Sprintf("%s", entry)
+	err = json.Unmarshal([]byte(str), destStruct)
 	if err != nil {
 		logrus.Debug("[缓存反序列化错误] ", name, " ", err)
 
@@ -211,7 +211,19 @@ func ChildCommentCacheSave(parentID uint, childID uint) {
 			// 初始化
 			childIDs = []uint{}
 		}
-		childIDs = append(childIDs, childID)
+
+		isExist := false
+		for _, i := range childIDs {
+			if i == childID {
+				isExist = true
+				break
+			}
+		}
+
+		// append if Not exist
+		if !isExist {
+			childIDs = append(childIDs, childID)
+		}
 
 		return &childIDs
 	})

@@ -186,34 +186,37 @@ func CommentCacheClear(comment *Comment) error {
 
 // 缓存 父ID=>子ID 评论数据
 func _ChildCommentCacheSave(parentID uint, childID uint) {
+	var cacheKey = fmt.Sprintf("parent-comments#pid=%d", parentID)
 	var childIDs []uint
-	cacher, err := FindCache(fmt.Sprintf("parent-comments#pid=%d", parentID), &childIDs)
-	if err != nil {
-		// 初始化
-		childIDs = []uint{}
-	}
-	childIDs = append(childIDs, childID)
-	cacher.StoreCache(func() interface{} {
+	StoreCache(cacheKey, nil, func() interface{} {
+		_, err := FindCache(cacheKey, &childIDs)
+		if err != nil {
+			// 初始化
+			childIDs = []uint{}
+		}
+		childIDs = append(childIDs, childID)
+
 		return &childIDs
 	})
 }
 
 func _ChildCommentCacheClear(parentID uint, childID uint) {
+	cacheKey := fmt.Sprintf("parent-comments#pid=%d", parentID)
 	var childIDs []uint
-	cacher, err := FindCache(fmt.Sprintf("parent-comments#pid=%d", parentID), &childIDs)
-	if err != nil {
-		return
-	}
-
-	// remove
-	var nArr []uint
-	for _, id := range childIDs {
-		if id != childID {
-			nArr = append(nArr, id)
+	StoreCache(cacheKey, nil, func() interface{} {
+		_, err := FindCache(cacheKey, &childIDs)
+		if err != nil {
+			return []uint{}
 		}
-	}
 
-	cacher.StoreCache(func() interface{} {
+		// remove item
+		var nArr []uint
+		for _, id := range childIDs {
+			if id != childID {
+				nArr = append(nArr, id)
+			}
+		}
+
 		return &nArr
 	})
 }

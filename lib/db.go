@@ -12,16 +12,22 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 var DB *gorm.DB
 
-var gormConfig = &gorm.Config{
-	Logger: NewGormLogger(),
-}
+var gormConfig *gorm.Config
 
 func OpenDB(dbType config.DBType, dsn string) (*gorm.DB, error) {
 	dbConf := config.Instance.DB
+
+	gormConfig = &gorm.Config{
+		Logger: NewGormLogger(),
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix: config.Instance.DB.TablePrefix,
+		},
+	}
 
 	if dsn == "" {
 		switch dbType {

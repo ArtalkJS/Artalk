@@ -26,14 +26,20 @@ export default class PageList extends Component {
   initPageList() {
     this.pages = []
 
+    this.$el.innerHTML = `<div class="atk-header-action-bar">
+    <span class="atk-update-all-title-btn"><i class="atk-icon atk-icon-sync"></i> <span class="atk-text">更新标题</span></span>
+    <span class="atk-cache-flush-all-btn"><span class="atk-text">缓存清除</span></span>
+    <span class="atk-cache-warm-up-btn"><span class="atk-text">缓存预热</span></span>
+    </div>`
+
+    // 缓存操作按钮
+    const $cacheFlushBtn = this.$el.querySelector<HTMLElement>('.atk-cache-flush-all-btn')!
+    $cacheFlushBtn.onclick = () => { new Api(this.ctx).cacheFlushAll().then((d: any) => alert(d.msg)).catch(() => alert('操作失败')) }
+    const $cacheWarmBtn = this.$el.querySelector<HTMLElement>('.atk-cache-warm-up-btn')!
+    $cacheWarmBtn.onclick = () => { new Api(this.ctx).cacheWarmUp().then((d: any) => alert(d.msg)).catch(() => alert('操作失败')) }
+
     // 更新全部页面标题按钮
     ;(async () => {
-      this.$el.innerHTML = `<div class="atk-header-action-bar">
-      <span class="atk-update-all-title-btn">
-        <i class="atk-icon atk-icon-sync"></i> <span class="atk-text">更新标题</span>
-      </span>
-      </div>`
-
       const $updateAllTitleBtn = this.$el.querySelector<HTMLElement>('.atk-update-all-title-btn')!
       const $updateAllTitleIcon = $updateAllTitleBtn.querySelector<HTMLElement>('i')!
       const $updateAllTitleText = $updateAllTitleBtn.querySelector<HTMLElement>('.atk-text')!

@@ -318,4 +318,20 @@ export default class Api {
     const data = await POST<any>(this.ctx, `${this.baseURL}/captcha/status`)
     return (data || { is_pass: false }) as { is_pass: boolean }
   }
+
+  // ============================
+  //  管理员缓存操作
+  // ============================
+
+  /** 缓存清除 */
+  public cacheFlushAll() {
+    const params: any = { flush_all: true }
+    return POST(this.ctx, `${this.baseURL}/admin/cache-flush`, params)
+  }
+
+  /** 缓存预热 */
+  public cacheWarmUp() {
+    const params: any = {}
+    return POST(this.ctx, `${this.baseURL}/admin/cache-warm`, params)
+  }
 }

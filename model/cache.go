@@ -4,10 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/eko/gocache/v2/store"
 	"github.com/sirupsen/logrus"
+)
+
+var (
+	MutexCache = sync.Mutex{}
 )
 
 type cacher struct{ cacheKey string }
@@ -38,6 +43,9 @@ func FindCache(name string, destStruct interface{}) (cacher, error) {
 }
 
 func StoreCache(name string, srcStruct interface{}) error {
+	MutexCache.Lock()
+	defer MutexCache.Unlock()
+
 	str, err := json.Marshal(srcStruct)
 	if err != nil {
 		return err
@@ -48,10 +56,15 @@ func StoreCache(name string, srcStruct interface{}) error {
 		return err
 	}
 
+	logrus.Debug("[写入缓存] " + name)
+
 	return nil
 }
 
 func ClearCache(name string) error {
+	MutexCache.Lock()
+	defer MutexCache.Unlock()
+
 	return lib.CACHE.Delete(lib.Ctx, name)
 }
 

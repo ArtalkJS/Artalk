@@ -51,12 +51,15 @@ func (a *action) AdminSiteEdit(c echo.Context) error {
 		}
 	}
 
+	// 预先删除缓存，防止修改主键原有 site_name 占用问题
+	model.SiteCacheDel(&site)
+
 	// 同步变更 site_name
 	if modifyName {
 		var comments []model.Comment
-		a.db.Where("site_name = ?", site.Name).Find(&comments)
-
 		var pages []model.Page
+
+		a.db.Where("site_name = ?", site.Name).Find(&comments)
 		a.db.Where("site_name = ?", site.Name).Find(&pages)
 
 		for _, comment := range comments {

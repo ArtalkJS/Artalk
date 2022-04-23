@@ -57,6 +57,9 @@ func (a *action) AdminPageEdit(c echo.Context) error {
 		return RespError(c, "page 已存在，请换个 key")
 	}
 
+	// 预先删除缓存，防止修改主键原有 page_key 占用问题
+	model.PageCacheDel(&page)
+
 	page.Title = p.Title
 	page.AdminOnly = p.AdminOnly
 	if modifyKey {

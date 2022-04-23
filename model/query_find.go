@@ -107,7 +107,7 @@ func FindPage(key string, siteName string) Page {
 
 	if cacher, err := FindCache(fmt.Sprintf("page#key=%s;site_name=%s", key, siteName), &page); err != nil {
 		cacher.StoreCache(func() interface{} {
-			lib.DB.Where("key = ? AND site_name = ?", key, siteName).First(&page)
+			lib.DB.Where(&Page{Key: key, SiteName: siteName}).First(&page)
 			return &page
 		})
 	}
@@ -176,7 +176,7 @@ func FindNotify(userID uint, commentID uint) Notify {
 
 func FindNotifyByKey(key string) Notify {
 	var notify Notify
-	lib.DB.Where("key = ?", key).First(&notify)
+	lib.DB.Where(Notify{Key: key}).First(&notify)
 	return notify
 }
 

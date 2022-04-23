@@ -3,6 +3,7 @@ package artransfer
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -157,6 +158,9 @@ func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
 			model.UpdatePage(&page)
 		}
 
+		voteUp, _ := strconv.Atoi(c.VoteUp)
+		voteDown, _ := strconv.Atoi(c.VoteDown)
+
 		// 创建新 comment 实例
 		nComment := model.Comment{
 			Rid: srcIdToIndexMap[c.Rid], // [-1-] rid => index+1
@@ -169,6 +173,9 @@ func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
 			IsCollapsed: c.IsCollapsed == lib.ToString(true),
 			IsPending:   c.IsPending == lib.ToString(true),
 			IsPinned:    c.IsPending == lib.ToString(true),
+
+			VoteUp:   voteUp,
+			VoteDown: voteDown,
 
 			UserID:   user.ID,
 			PageKey:  page.Key,
@@ -225,6 +232,18 @@ func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
 		}
 
 		lib.DB.Model(&savedComment).Updates(updateData)
+
+		// Vote 重建 (伪投票)
+		if savedComment.VoteUp > 0 {
+			for i := 0; i < savedComment.VoteUp; i++ {
+				model.NewVote(savedComment.ID, model.VoteTypeCommentUp, 0, "", "")
+			}
+		}
+		if savedComment.VoteDown > 0 {
+			for i := 0; i < savedComment.VoteDown; i++ {
+				model.NewVote(savedComment.ID, model.VoteTypeCommentDown, 0, "", "")
+			}
+		}
 
 		if bar != nil {
 			bar.Increment()

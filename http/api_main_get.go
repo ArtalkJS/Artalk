@@ -355,7 +355,7 @@ func PinnedCommentsScope(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB
 			return db
 		} else {
 			// 其他页面不再显示置顶内容
-			return db.Where("is_pinned = ", false)
+			return db.Where("is_pinned = ?", false)
 		}
 	}
 }

@@ -84,14 +84,9 @@ func (a *action) Vote(c echo.Context) error {
 
 	createNew := func(t string) error {
 		// create new vote record
-		vote := model.Vote{
-			TargetID: p.TargetID,
-			Type:     model.VoteType(t),
-			UserID:   user.ID,
-			UA:       c.Request().UserAgent(),
-			IP:       ip,
-		}
-		return a.db.Create(&vote).Error
+		_, err := model.NewVote(p.TargetID, model.VoteType(t), user.ID, c.Request().UserAgent(), ip)
+
+		return err
 	}
 
 	// un-vote

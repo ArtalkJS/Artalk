@@ -113,3 +113,20 @@ func NewNotify(userID uint, commentID uint) Notify {
 
 	return notify
 }
+
+func NewVote(targetID uint, voteType VoteType, userID uint, ua string, ip string) (Vote, error) {
+	vote := Vote{
+		TargetID: targetID,
+		Type:     voteType,
+		UserID:   userID,
+		UA:       ua,
+		IP:       ip,
+	}
+
+	err := lib.DB.Create(&vote).Error
+	if err != nil {
+		logrus.Error("Create Vote error: ", err)
+	}
+
+	return vote, err
+}

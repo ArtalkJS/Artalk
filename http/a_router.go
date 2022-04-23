@@ -82,8 +82,7 @@ func InitRouter(e *echo.Echo) {
 	admin.POST("/import", action.AdminImport)
 	admin.POST("/import-upload", action.AdminImportUpload)
 	admin.POST("/export", action.AdminExport)
-	// admin.POST("/vote-sync", action.AdminVoteSync) // 数据导入功能未关注 vote 部分，暂时注释
-
+	admin.POST("/vote-sync", action.AdminVoteSync)
 	admin.POST("/send-mail", action.AdminSendMail)
 
 	// conf

@@ -181,23 +181,23 @@ func syncConfWithDB() {
 	}
 
 	// 清理配置文件中不存在的用户
-	var dbAdminUsers []model.User
-	lib.DB.Model(&model.User{}).Where(&model.User{IsInConf: true}).Find(&dbAdminUsers)
-	for _, dbU := range dbAdminUsers {
-		isUserExist := func() bool {
-			for _, confU := range config.Instance.AdminUsers {
-				// 忽略大小写比较
-				if strings.EqualFold(confU.Name, dbU.Name) && strings.EqualFold(confU.Email, dbU.Email) {
-					return true
-				}
-			}
-			return false
-		}
+	// var dbAdminUsers []model.User
+	// lib.DB.Model(&model.User{}).Where(&model.User{IsInConf: true}).Find(&dbAdminUsers)
+	// for _, dbU := range dbAdminUsers {
+	// 	isUserExist := func() bool {
+	// 		for _, confU := range config.Instance.AdminUsers {
+	// 			// 忽略大小写比较
+	// 			if strings.EqualFold(confU.Name, dbU.Name) && strings.EqualFold(confU.Email, dbU.Email) {
+	// 				return true
+	// 			}
+	// 		}
+	// 		return false
+	// 	}
 
-		if !isUserExist() {
-			model.DelUser(&dbU)
-		}
-	}
+	// 	if !isUserExist() {
+	// 		model.DelUser(&dbU)
+	// 	}
+	// }
 }
 
 // 制备缓存

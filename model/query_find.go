@@ -38,14 +38,16 @@ func FindCommentRules(id uint, rules ...func(*Comment) bool) Comment {
 	return comment
 }
 
-// (Cached：parent-comments 不会去查数据库，纯缓存)
+// (Cached：parent-comments)
 func FindCommentChildren(parentID uint, rules ...func(*Comment) bool) []Comment {
 	var children []Comment
 	var childIDs []uint
 
-	if _, err := FindCache(fmt.Sprintf("parent-comments#pid=%d", parentID), &childIDs); err != nil {
-		// 找不到缓存直接返回空切片，不再去查数据库更新了
-		return []Comment{}
+	if cacher, err := FindCache(fmt.Sprintf("parent-comments#pid=%d", parentID), &childIDs); err != nil {
+		cacher.StoreCache(func() interface{} {
+			lib.DB.Model(&Comment{}).Where(&Comment{Rid: parentID}).Select("id").Find(&childIDs)
+			return &childIDs
+		})
 	}
 
 	for _, childID := range childIDs {

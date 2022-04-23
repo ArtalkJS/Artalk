@@ -165,7 +165,7 @@ func CommentCacheSave(comment *Comment) error {
 
 	// 缓存 Rid
 	if comment.Rid != 0 {
-		_ChildCommentCacheSave(comment.Rid, comment.ID)
+		ChildCommentCacheSave(comment.Rid, comment.ID)
 	}
 
 	return err
@@ -178,14 +178,14 @@ func CommentCacheClear(comment *Comment) error {
 
 	// 清除 Rid 缓存
 	if comment.Rid != 0 {
-		_ChildCommentCacheClear(comment.Rid, comment.ID)
+		ChildCommentCacheClear(comment.Rid, comment.ID)
 	}
 
 	return nil
 }
 
 // 缓存 父ID=>子ID 评论数据
-func _ChildCommentCacheSave(parentID uint, childID uint) {
+func ChildCommentCacheSave(parentID uint, childID uint) {
 	var cacheKey = fmt.Sprintf("parent-comments#pid=%d", parentID)
 	var childIDs []uint
 	StoreCache(cacheKey, nil, func() interface{} {
@@ -200,7 +200,7 @@ func _ChildCommentCacheSave(parentID uint, childID uint) {
 	})
 }
 
-func _ChildCommentCacheClear(parentID uint, childID uint) {
+func ChildCommentCacheClear(parentID uint, childID uint) {
 	cacheKey := fmt.Sprintf("parent-comments#pid=%d", parentID)
 	var childIDs []uint
 	StoreCache(cacheKey, nil, func() interface{} {

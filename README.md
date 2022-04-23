@@ -25,7 +25,7 @@
 - 运行环境：支持 Linux, Windows, Darwin (x64 + ARM)
 - 数据存储：支持 SQLite, MySQL, PostgreSQL, SQL Server
 - 邮件发送：支持 SMTP, 阿里云邮件, 调用 sendmail 发送邮件
-- 高效缓存：支持 Redis, Memory cache
+- 高效缓存：支持 Redis, Memcache, In-Memory (BigCache)
 
 ## Build
 

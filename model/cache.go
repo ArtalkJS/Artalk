@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -31,16 +30,8 @@ func FindCache(name string, destStruct interface{}) (cacher, error) {
 		return cacher, errors.New("缓存功能禁用")
 	}
 
-	entry, err := lib.CACHE.Get(lib.Ctx, name)
+	_, err := lib.CACHE_marshal.Get(lib.Ctx, name, destStruct)
 	if err != nil {
-		return cacher, err
-	}
-
-	str := fmt.Sprintf("%s", entry)
-	err = json.Unmarshal([]byte(str), destStruct)
-	if err != nil {
-		logrus.Debug("[缓存反序列化错误] ", name, " ", err)
-
 		return cacher, err
 	}
 
@@ -61,12 +52,7 @@ func StoreCache(name string, srcStruct interface{}, getSrcStruct ...func() inter
 		return nil
 	}
 
-	str, err := json.Marshal(srcStruct)
-	if err != nil {
-		return err
-	}
-
-	err = lib.CACHE.Set(lib.Ctx, name, []byte(str), &store.Options{
+	err := lib.CACHE_marshal.Set(lib.Ctx, name, srcStruct, &store.Options{
 		Expiration: time.Duration(config.Instance.Cache.GetExpiresTime()),
 	})
 	if err != nil {

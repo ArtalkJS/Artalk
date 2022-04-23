@@ -9,12 +9,16 @@ import (
 	"github.com/allegro/bigcache/v3"
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/eko/gocache/v2/cache"
+	"github.com/eko/gocache/v2/marshaler"
 	"github.com/eko/gocache/v2/store"
 	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
 )
 
-var CACHE *cache.Cache
+var (
+	CACHE         *cache.Cache
+	CACHE_marshal *marshaler.Marshaler
+)
 
 var Ctx = context.Background()
 
@@ -67,5 +71,13 @@ func OpenCache() (err error) {
 	}
 
 	CACHE = cache.New(cacheStore)
+
+	// marshaler wrapper
+	// marshaler using VmihailencoMsgpack
+	// @link https://github.com/vmihailenco/msgpack
+	// Benchmarks
+	// @link https://github.com/alecthomas/go_serialization_benchmarks
+	CACHE_marshal = marshaler.New(CACHE)
+
 	return
 }

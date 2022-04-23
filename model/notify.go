@@ -15,9 +15,9 @@ type Notify struct {
 	CommentID uint `gorm:"index"` // 待查看的评论
 
 	IsRead    bool
-	ReadAt    time.Time
+	ReadAt    *time.Time
 	IsEmailed bool
-	EmailAt   time.Time
+	EmailAt   *time.Time
 
 	Key string `gorm:"index;size:255"`
 
@@ -72,13 +72,15 @@ func (n *Notify) SetInitial() error {
 
 func (n *Notify) SetRead() error {
 	n.IsRead = true
-	n.ReadAt = time.Now()
+	nowTime := time.Now()
+	n.ReadAt = &nowTime
 	return lib.DB.Save(n).Error
 }
 
 func (n *Notify) SetEmailed() error {
 	n.IsEmailed = true
-	n.EmailAt = time.Now()
+	nowTime := time.Now()
+	n.EmailAt = &nowTime
 	return lib.DB.Save(n).Error
 }
 

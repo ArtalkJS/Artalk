@@ -51,9 +51,11 @@ func UserNotifyMarkAllAsRead(userID uint) error {
 		return errors.New("user not found")
 	}
 
+	nowTime := time.Now()
+
 	lib.DB.Model(&Notify{}).Where("user_id = ?", userID).Updates(&Notify{
 		IsRead: true,
-		ReadAt: time.Now(),
+		ReadAt: &nowTime,
 	})
 
 	return nil

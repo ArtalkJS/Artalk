@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <title>Artalk DEMO</title>
@@ -16,7 +16,8 @@
     .title > a:hover { margin-left:0 }
     .title > a > span { opacity:0 }
     .title > a:hover>span { opacity:1 }
-    .desc { font-size:12px;color:#757e91 }
+    .desc { font-size:12px;color:#697182 }
+    body.dark-mode .desc { color:#848da3 }
     .social { margin-top:20px }
     .social > a:not(:last-child) { margin-right:2px }
     @media only screen and (max-width: 768px) {
@@ -26,7 +27,7 @@
     }
     .float-btn { user-select: none;bottom: 25px;display: block;cursor: pointer;text-align: center;width: 60px;height: 37px;line-height: 37px;font-size: 13px;color: #757e91;background: #fff;opacity: 0.8;border-radius: 4px;border: 1px solid #eceff2;position: fixed; }
     .to-night { z-index: 99999;left: 25px;background: #1e2223;color: #fff; }
-    body.dark-mode .to-night { background: #fff;border: 1px solid #2d3235;color: #0083ff; }
+    body.dark-mode .to-night { background: #006fd9;border: 1px solid #2d3235;color: #fff; }
     .to-top { right: 25px; }
   </style>
   <!--<link rel="stylesheet"
@@ -45,11 +46,11 @@
     <div class="title"><a href="https://github.com/ArtalkJS/Artalk" target="_blank"><span>『 </span>Artalk<span> 』</span></a></div>
     <div class="desc">一款简洁的自托管评论系统 <span id="ArtalkPV"></span></div>
     <div class="social">
-      <a href="https://www.npmjs.com/package/artalk" target="_blank"><img src="https://img.shields.io/npm/v/artalk.svg?style=flat-square"></a>
-      <a href="https://www.npmjs.com/package/artalk" target="_blank"><img src="https://img.shields.io/npm/dt/artalk.svg?style=flat-square"></a>
-      <a href="https://github.com/ArtalkJS/Artalk/commits/master" target="_blank"><img src="https://img.shields.io/github/last-commit/ArtalkJS/Artalk?style=flat-square"></a>
-      <a href="https://github.com/ArtalkJS/Artalk/blob/master/LICENSE" target="_blank"><img src="https://img.shields.io/github/license/ArtalkJS/Artalk.svg?style=flat-square"></a>
-      <a href="https://github.com/ArtalkJS/Artalk" target="_blank"><img src="https://img.shields.io/github/stars/ArtalkJS/Artalk?style=flat-square"></a>
+      <a href="https://www.npmjs.com/package/artalk" aria-label="npm package version" target="_blank"><img src="https://img.shields.io/npm/v/artalk.svg?style=flat-square"></a>
+      <a href="https://www.npmjs.com/package/artalk" aria-label="npm package download number" target="_blank"><img src="https://img.shields.io/npm/dt/artalk.svg?style=flat-square"></a>
+      <a href="https://github.com/ArtalkJS/Artalk/commits/master" aria-label="last commit" target="_blank"><img src="https://img.shields.io/github/last-commit/ArtalkJS/Artalk?style=flat-square"></a>
+      <a href="https://github.com/ArtalkJS/Artalk/blob/master/LICENSE" aria-label="open source license" target="_blank"><img src="https://img.shields.io/github/license/ArtalkJS/Artalk.svg?style=flat-square"></a>
+      <a href="https://github.com/ArtalkJS/Artalk" aria-label="GitHub star number" target="_blank"><img src="https://img.shields.io/github/stars/ArtalkJS/Artalk?style=flat-square"></a>
     </div>
   </div>
   <div class="card atk-fade-in">

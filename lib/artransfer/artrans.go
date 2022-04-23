@@ -3,6 +3,7 @@ package artransfer
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
@@ -44,8 +45,8 @@ func ImportArtransByStr(basic *BasicParams, str string) {
 	ImportArtrans(basic, comments)
 }
 
-func ImportArtrans(basic *BasicParams, comments []model.Artran) {
-	if len(comments) == 0 {
+func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
+	if len(srcComments) == 0 {
 		logFatal("未读取到任何一条评论")
 		return
 	}
@@ -59,7 +60,7 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 	print("# 请过目：\n\n")
 
 	// 第一条评论
-	PrintEncodeData("第一条评论", comments[0])
+	PrintEncodeData("第一条评论", srcComments[0])
 
 	showTSiteName := basic.TargetSiteName
 	showTSiteUrl := basic.TargetSiteUrl
@@ -81,7 +82,7 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 	PrintTable([][]interface{}{
 		{"目标站点名", showTSiteName},
 		{"目标站点 URL", showTSiteUrl},
-		{"评论数量", fmt.Sprintf("%d", len(comments))},
+		{"评论数量", fmt.Sprintf("%d", len(srcComments))},
 		{"URL 解析器", showUrlResolver},
 	})
 
@@ -95,27 +96,17 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 	// 准备导入评论
 	print("\n")
 
-	// 执行导入
-	idMap := map[string]int{}    // ID 映射表 object_id => id
-	idChanges := map[uint]uint{} // ID 变更表 original_id => new_db_id
+	importComments := []model.Comment{}
+	srcIdToIndexMap := map[string]uint{} // 源 ID 映射表 srcID => index
+	createdDates := map[int]time.Time{}
+	updatedDates := map[int]time.Time{}
 
-	// 生成 ID 映射表
-	id := 1
-	for _, c := range comments {
-		idMap[c.ID] = id
-		id++
+	// 解析 comments
+	for i, c := range srcComments {
+		srcIdToIndexMap[c.ID] = uint(i + 1) // 防 0 出没
 	}
 
-	// 进度条
-	var bar *pb.ProgressBar
-	if HttpOutput == nil {
-		bar = pb.StartNew(len(comments))
-	}
-
-	total := len(comments)
-
-	// 遍历导入 comments
-	for i, c := range comments {
+	for i, c := range srcComments {
 		siteName := c.SiteName
 		siteUrls := c.SiteUrls
 
@@ -135,16 +126,22 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 
 		// 准备 user
 		user := model.FindCreateUser(c.Nick, c.Email, c.Link)
-		if c.Password != "" {
+		userModified := false
+		if c.Password != "" && c.Password != user.Password {
 			user.Password = c.Password
+			userModified = true
 		}
-		if c.BadgeName != "" {
+		if c.BadgeName != "" && c.BadgeName != user.BadgeName {
 			user.BadgeName = c.BadgeName
+			userModified = true
 		}
-		if c.BadgeColor != "" {
+		if c.BadgeColor != "" && c.BadgeColor != user.BadgeColor {
 			user.BadgeColor = c.BadgeColor
+			userModified = true
 		}
-		model.UpdateUser(&user)
+		if userModified {
+			model.UpdateUser(&user)
+		}
 
 		// 准备 page
 		nPageKey := c.PageKey
@@ -153,12 +150,16 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 		}
 
 		page := model.FindCreatePage(nPageKey, c.PageTitle, site.Name)
-		page.AdminOnly = c.PageAdminOnly == lib.ToString(true)
-		model.UpdatePage(&page)
+
+		adminOnlyVal := c.PageAdminOnly == lib.ToString(true)
+		if page.AdminOnly != adminOnlyVal {
+			page.AdminOnly = adminOnlyVal
+			model.UpdatePage(&page)
+		}
 
 		// 创建新 comment 实例
 		nComment := model.Comment{
-			Rid: uint(idMap[c.Rid]),
+			Rid: srcIdToIndexMap[c.Rid], // [-1-] rid => index+1
 
 			Content: c.Content,
 
@@ -174,20 +175,54 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 			SiteName: site.Name,
 		}
 
-		// 保存到数据库
-		dErr := model.CreateComment(&nComment)
-		if dErr != nil {
-			logError(fmt.Sprintf("评论源 ID:%s 保存失败", c.ID))
-			continue
+		// 时间还原
+		createdDates[i] = ParseDate(c.CreatedAt)
+		if c.UpdatedAt != "" {
+			updatedDates[i] = ParseDate(c.UpdatedAt)
+		} else {
+			updatedDates[i] = ParseDate(c.CreatedAt)
 		}
 
+		importComments = append(importComments, nComment)
+	}
+
+	println("数据保存中...")
+
+	// Batch Insert
+	// @link https://gorm.io/docs/create.html#Batch-Insert
+	lib.DB.Create(&importComments)
+
+	// ID 变更映射表 index => new_db_id
+	indexToDbIdMap := map[uint]uint{}
+	for i, savedComment := range importComments {
+		indexToDbIdMap[uint(i+1)] = savedComment.ID
+	}
+
+	// 进度条
+	var bar *pb.ProgressBar
+	if HttpOutput == nil {
+		bar = pb.StartNew(len(srcComments))
+	}
+
+	total := len(srcComments)
+
+	for i, savedComment := range importComments {
 		// 日期恢复
 		// @see https://gorm.io/zh_CN/docs/conventions.html#CreatedAt
-		lib.DB.Model(&nComment).Update("CreatedAt", ParseDate(c.CreatedAt))
-		lib.DB.Model(&nComment).Update("UpdatedAt", ParseDate(c.UpdatedAt))
-		model.CommentCacheSave(&nComment)
+		// @see https://github.com/go-gorm/gorm/issues/4827#issuecomment-960480148 无语...
+		// TODO
+		// savedComment.CreatedAt = createdDates[i] // 无效
+		// savedComment.UpdatedAt = updatedDates[i]
+		lib.DB.Model(&savedComment).Updates(map[string]interface{}{
+			"CreatedAt": createdDates[i],
+			"UpdatedAt": updatedDates[i],
+		})
 
-		idChanges[uint(idMap[c.ID])] = nComment.ID
+		// Rid 重建
+		if savedComment.Rid != 0 {
+			savedComment.Rid = indexToDbIdMap[savedComment.Rid]
+			// lib.DB.Model(&savedComment).Update("Rid", indexToDbIdMap[savedComment.Rid]) // [-2-] index+1 => db_new_id
+		}
 
 		if bar != nil {
 			bar.Increment()
@@ -196,14 +231,18 @@ func ImportArtrans(basic *BasicParams, comments []model.Artran) {
 			print(fmt.Sprintf("%.0f%%... ", float64(i)/float64(total)*100))
 		}
 	}
+
 	if bar != nil {
 		bar.Finish()
 	}
 	if HttpOutput != nil {
 		println()
 	}
-	logInfo(fmt.Sprintf("导入 %d 条数据", len(comments)))
 
-	// reply id 重建
-	RebuildRid(idChanges)
+	println("后续处理中...")
+
+	// 批量更新
+	lib.DB.Updates(&importComments)
+
+	logInfo(fmt.Sprintf("完成导入 %d 条数据", len(srcComments)))
 }

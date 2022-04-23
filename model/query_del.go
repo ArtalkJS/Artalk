@@ -30,7 +30,7 @@ func DelComment(commentID uint) error {
 	}
 
 	// 删除缓存
-	CommentCacheClear(&comment)
+	CommentCacheDel(&comment)
 
 	return nil
 }
@@ -58,7 +58,7 @@ func DelPage(page *Page) error {
 	).Delete(&Vote{})
 
 	// 删除缓存
-	PageCacheClear(page)
+	PageCacheDel(page)
 
 	return nil
 }
@@ -80,7 +80,7 @@ func DelSite(site *Site, softDel bool) error {
 	}
 
 	// 删除缓存
-	SiteCacheClear(site)
+	SiteCacheDel(site)
 
 	return nil
 }
@@ -92,7 +92,7 @@ func DelUser(user *User) error {
 	}
 
 	// 删除缓存
-	UserCacheClear(user)
+	UserCacheDel(user)
 
 	return nil
 }

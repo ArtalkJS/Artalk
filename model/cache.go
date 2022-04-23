@@ -64,7 +64,7 @@ func StoreCache(name string, srcStruct interface{}, getSrcStruct ...func() inter
 	return nil
 }
 
-func ClearCache(name string) error {
+func DelCache(name string) error {
 	if !config.Instance.Cache.Enabled {
 		return nil
 	}
@@ -91,16 +91,9 @@ func UserCacheSave(user *User) error {
 	return err
 }
 
-func UserCacheClear(user *User) error {
-	if err := ClearCache(fmt.Sprintf("user#id=%d", user.ID)); err != nil {
-		return err
-	}
-
-	if err := ClearCache(fmt.Sprintf("user#name=%s;email=%s", strings.ToLower(user.Name), strings.ToLower(user.Email))); err != nil {
-		return err
-	}
-
-	return nil
+func UserCacheDel(user *User) {
+	DelCache(fmt.Sprintf("user#id=%d", user.ID))
+	DelCache(fmt.Sprintf("user#name=%s;email=%s", strings.ToLower(user.Name), strings.ToLower(user.Email)))
 }
 
 func SiteCacheSave(site *Site) error {
@@ -119,16 +112,9 @@ func SiteCacheSave(site *Site) error {
 	return err
 }
 
-func SiteCacheClear(site *Site) error {
-	if err := ClearCache(fmt.Sprintf("site#id=%d", site.ID)); err != nil {
-		return err
-	}
-
-	if err := ClearCache(fmt.Sprintf("site#name=%s", site.Name)); err != nil {
-		return err
-	}
-
-	return nil
+func SiteCacheDel(site *Site) {
+	DelCache(fmt.Sprintf("site#id=%d", site.ID))
+	DelCache(fmt.Sprintf("site#name=%s", site.Name))
 }
 
 func PageCacheSave(page *Page) error {
@@ -147,16 +133,9 @@ func PageCacheSave(page *Page) error {
 	return err
 }
 
-func PageCacheClear(page *Page) error {
-	if err := ClearCache(fmt.Sprintf("page#id=%d", page.ID)); err != nil {
-		return err
-	}
-
-	if err := ClearCache(fmt.Sprintf("page#key=%s;site_name=%s", page.Key, page.SiteName)); err != nil {
-		return err
-	}
-
-	return nil
+func PageCacheDel(page *Page) {
+	DelCache(fmt.Sprintf("page#id=%d", page.ID))
+	DelCache(fmt.Sprintf("page#key=%s;site_name=%s", page.Key, page.SiteName))
 }
 
 func CommentCacheSave(comment *Comment) error {
@@ -174,17 +153,11 @@ func CommentCacheSave(comment *Comment) error {
 	return err
 }
 
-func CommentCacheClear(comment *Comment) error {
-	if err := ClearCache(fmt.Sprintf("comment#id=%d", comment.ID)); err != nil {
-		return err
-	}
+func CommentCacheDel(comment *Comment) {
+	DelCache(fmt.Sprintf("comment#id=%d", comment.ID))
 
 	// 清除 Rid 缓存
-	if comment.Rid != 0 {
-		ChildCommentCacheClear(comment.Rid, comment.ID)
-	}
-
-	return nil
+	ChildCommentCacheDel(comment.ID)
 }
 
 // 缓存 父ID=>子ID 评论数据
@@ -215,7 +188,13 @@ func ChildCommentCacheSave(parentID uint, childID uint) {
 	})
 }
 
-func ChildCommentCacheClear(parentID uint, childID uint) {
+func ChildCommentCacheDel(parentID uint) {
+	DelCache(fmt.Sprintf("parent-comments#pid=%d", parentID))
+}
+
+// 仅从 pid => child_ids 切片中删除一项，
+// 最后结果可能出现：这个切片为空，但缓存存在 (可命中) 的情况
+func ChildCommentCacheSplice(parentID uint, childID uint) {
 	cacheKey := fmt.Sprintf("parent-comments#pid=%d", parentID)
 	var childIDs []uint
 	StoreCache(cacheKey, nil, func() interface{} {

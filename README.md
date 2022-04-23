@@ -127,7 +127,9 @@ docker-compose up -d
 - [x] [Golang 后端](https://github.com/ArtalkJS/ArtalkGo)
 - [x] 多数据库支持
   - [x] SQLite
-  - [X] MySQL
+  - [x] MySQL
+  - [x] Postgres
+  - [x] SQLServer
 - [x] 多缓存支持
   - [x] In-memory (内建缓存)
   - [x] Redis

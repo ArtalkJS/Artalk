@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -27,11 +26,11 @@ func loadCore() {
 
 	// 缓存预热
 	if config.Instance.Cache.Enabled && config.Instance.Cache.WarmUp {
-		makeCache()
+		model.CacheWarmUp()
 	}
-	// TODO 异步加载开关
+	// 异步加载
 	// go func() {
-	// 	makeCache()
+	// 	model.CacheWarmUp()
 	// }()
 }
 
@@ -198,63 +197,4 @@ func syncConfWithDB() {
 	// 		model.DelUser(&dbU)
 	// 	}
 	// }
-}
-
-// 制备缓存
-func makeCache() {
-	// Users
-	{
-		start := time.Now()
-
-		var items []model.User
-		lib.DB.Find(&items)
-
-		for _, item := range items {
-			model.UserCacheSave(&item)
-		}
-
-		logrus.Debug(fmt.Sprintf("[Users] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
-	}
-
-	// Sites
-	{
-		start := time.Now()
-
-		var items []model.Site
-		lib.DB.Find(&items)
-
-		for _, item := range items {
-			model.SiteCacheSave(&item)
-		}
-
-		logrus.Debug(fmt.Sprintf("[Sites] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
-	}
-
-	// Pages
-	{
-		start := time.Now()
-
-		var items []model.Page
-		lib.DB.Find(&items)
-
-		for _, item := range items {
-			model.PageCacheSave(&item)
-		}
-
-		logrus.Debug(fmt.Sprintf("[Pages] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
-	}
-
-	// Comments
-	{
-		start := time.Now()
-
-		var items []model.Comment
-		lib.DB.Find(&items)
-
-		for _, item := range items {
-			model.CommentCacheSave(&item)
-		}
-
-		logrus.Debug(fmt.Sprintf("[Comments] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
-	}
 }

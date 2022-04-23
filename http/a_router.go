@@ -85,6 +85,9 @@ func InitRouter(e *echo.Echo) {
 	admin.POST("/vote-sync", action.AdminVoteSync)
 	admin.POST("/send-mail", action.AdminSendMail)
 
+	admin.POST("/cache-flush", action.AdminCacheFlush)
+	admin.POST("/cache-warm", action.AdminCacheWarm)
+
 	// conf
 	api.Any("/conf", func(c echo.Context) error {
 		return c.JSON(200, GetApiPublicConfDataMap(c))

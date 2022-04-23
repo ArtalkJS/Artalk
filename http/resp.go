@@ -37,10 +37,17 @@ func RespData(c echo.Context, data interface{}) error {
 }
 
 // RespSuccess is just response success
-func RespSuccess(c echo.Context) error {
-	return c.JSON(http.StatusOK, &JSONResult{
+func RespSuccess(c echo.Context, msg ...string) error {
+	respData := &JSONResult{
 		Success: true,
-	})
+	}
+
+	// 可选参数 msg
+	if len(msg) > 0 {
+		respData.Msg = msg[0]
+	}
+
+	return c.JSON(http.StatusOK, respData)
 }
 
 // RespError is just response error

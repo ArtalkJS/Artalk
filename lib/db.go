@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"strconv"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -21,6 +21,34 @@ var gormConfig = &gorm.Config{
 }
 
 func OpenDB(dbType config.DBType, dsn string) (*gorm.DB, error) {
+	dbConf := config.Instance.DB
+
+	if dsn == "" {
+		switch dbType {
+		case config.TypeSQLite:
+			if dbConf.File == "" {
+				logrus.Fatal("请配置 db.file 指定一个 sqlite 数据库路径")
+			}
+			dsn = dbConf.File
+		case config.TypePostgreSQL:
+			dsn = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
+				dbConf.Host,
+				dbConf.User,
+				dbConf.Password,
+				dbConf.Name,
+				dbConf.Port)
+		case config.TypeMySql, config.TypeMSSQL:
+			dsn = fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
+				dbConf.User,
+				dbConf.Password,
+				dbConf.Host,
+				dbConf.Port,
+				dbConf.Name,
+				dbConf.Charset,
+			)
+		}
+	}
+
 	switch dbType {
 	case config.TypeSQLite:
 		return OpenSQLite(dsn)
@@ -28,9 +56,10 @@ func OpenDB(dbType config.DBType, dsn string) (*gorm.DB, error) {
 		return OpenMySql(dsn)
 	case config.TypePostgreSQL:
 		return OpenPostgreSQL(dsn)
-	case config.TypeSqlServer:
+	case config.TypeMSSQL:
 		return OpenSqlServer(dsn)
 	}
+
 	return nil, errors.New(`不支持的数据库类型 "` + string(dbType) + `"`)
 }
 
@@ -52,22 +81,4 @@ func OpenPostgreSQL(dsn string) (*gorm.DB, error) {
 
 func OpenSqlServer(dsn string) (*gorm.DB, error) {
 	return gorm.Open(sqlserver.Open(dsn), gormConfig)
-}
-
-func GetDsn(dbType config.DBType, host string, portStr string, dbName string, user string, password string) (string, error) {
-	port, err := strconv.Atoi(portStr)
-	if err != nil {
-		return "", errors.New("port 值有误")
-	}
-
-	switch dbType {
-	case config.TypeMySql:
-		return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", user, password, host, port, dbName), nil
-	case config.TypePostgreSQL:
-		return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s", host, port, user, password, dbName), nil
-	case config.TypeSqlServer:
-		return fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", user, password, host, port, dbName), nil
-	}
-
-	return "", errors.New(`不支持的数据库类型 "` + string(dbType) + `"`)
 }

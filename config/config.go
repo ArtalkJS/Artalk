@@ -28,7 +28,18 @@ type Config struct {
 
 type DBConf struct {
 	Type DBType `mapstructure:"type" json:"type"`
-	Dsn  string `mapstructure:"dsn" json:"dsn"`
+	Dsn  string `mapstructure:"dsn" json:"dsn"` // 最高优先级
+
+	File string `mapstructure:"file" json:"file"`
+	Name string `mapstructure:"name" json:"name"`
+
+	Host     string `mapstructure:"host" json:"host"`
+	Port     int    `mapstructure:"port" json:"port"`
+	User     string `mapstructure:"user" json:"user"`
+	Password string `mapstructure:"password" json:"password"`
+
+	TablePrefix string `mapstructure:"table_prefix" json:"table_prefix"`
+	Charset     string `mapstructure:"charset" json:"charset"`
 }
 
 type CacheConf struct {
@@ -153,7 +164,7 @@ const (
 	TypeMySql      DBType = "mysql"
 	TypeSQLite     DBType = "sqlite"
 	TypePostgreSQL DBType = "pgsql"
-	TypeSqlServer  DBType = "sqlserver"
+	TypeMSSQL      DBType = "mssql"
 )
 
 type CacheType string

@@ -13,11 +13,17 @@ debug: false
 # 时区
 timezone: "Asia/Shanghai"
 
-# 数据文件
+# 数据库
 db:
-  type: "sqlite" # 支持 sqlite, mysql, pgsql
-  dsn: "./data/artalk-go.db"
-  #dsn: '用户名:密码@tcp(127.0.0.1:3306)/数据库?charset=utf8mb4&parseTime=true' # MySQL 连接配置
+  type: "sqlite" # 支持 sqlite, mysql, pgsql, mssql
+  file: "./data/artalk-go.db" # sqlite 数据库文件
+  name: "artalk"     # 数据库名
+  host: "localhost"  # 地址
+  port: "3306"       # 端口
+  user: "root"       # 账号
+  password: ""       # 密码
+  charset: "utf8mb4" # 编码格式
+  table_prefix: ""   # 表前缀
 
 # 日志
 log:

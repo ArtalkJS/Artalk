@@ -15,7 +15,7 @@ timezone: "Asia/Shanghai"
 
 # 数据文件
 db:
-  type: "sqlite" # 支持 sqlite, mysql
+  type: "sqlite" # 支持 sqlite, mysql, pgsql
   dsn: "./data/artalk-go.db"
   #dsn: '用户名:密码@tcp(127.0.0.1:3306)/数据库?charset=utf8mb4&parseTime=true' # MySQL 连接配置
 

@@ -213,16 +213,18 @@ func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
 		// TODO
 		// savedComment.CreatedAt = createdDates[i] // 无效
 		// savedComment.UpdatedAt = updatedDates[i]
-		lib.DB.Model(&savedComment).Updates(map[string]interface{}{
+
+		updateData := map[string]interface{}{
 			"CreatedAt": createdDates[i],
 			"UpdatedAt": updatedDates[i],
-		})
+		}
 
 		// Rid 重建
 		if savedComment.Rid != 0 {
-			savedComment.Rid = indexToDbIdMap[savedComment.Rid]
-			// lib.DB.Model(&savedComment).Update("Rid", indexToDbIdMap[savedComment.Rid]) // [-2-] index+1 => db_new_id
+			updateData["Rid"] = indexToDbIdMap[savedComment.Rid] // [-2-] index+1 => db_new_id
 		}
+
+		lib.DB.Model(&savedComment).Updates(updateData)
 
 		if bar != nil {
 			bar.Increment()
@@ -238,11 +240,6 @@ func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
 	if HttpOutput != nil {
 		println()
 	}
-
-	println("后续处理中...")
-
-	// 批量更新
-	lib.DB.Updates(&importComments)
 
 	logInfo(fmt.Sprintf("完成导入 %d 条数据", len(srcComments)))
 }

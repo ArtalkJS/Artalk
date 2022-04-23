@@ -47,11 +47,11 @@ func OpenMySql(dsn string) (*gorm.DB, error) {
 }
 
 func OpenPostgreSQL(dsn string) (*gorm.DB, error) {
-	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	return gorm.Open(postgres.Open(dsn), gormConfig)
 }
 
 func OpenSqlServer(dsn string) (*gorm.DB, error) {
-	return gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
+	return gorm.Open(sqlserver.Open(dsn), gormConfig)
 }
 
 func GetDsn(dbType config.DBType, host string, portStr string, dbName string, user string, password string) (string, error) {

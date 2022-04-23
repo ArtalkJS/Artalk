@@ -226,11 +226,11 @@ func MsgCenter(a *action, c echo.Context, p ParamsGet, siteID uint) func(db *gor
 		case "mine":
 			return db.Where("user_id = ?", user.ID)
 		case "pending":
-			return db.Where("user_id = ? AND is_pending = 1", user.ID)
+			return db.Where("user_id = ? AND is_pending = ?", user.ID, true)
 		case "admin_all":
 			return db
 		case "admin_pending":
-			return db.Where("is_pending = 1")
+			return db.Where("is_pending = ?", true)
 		}
 
 		return db.Where("id = 0")
@@ -271,11 +271,11 @@ func AllowedComment(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 		// 显示个人全部评论
 		if p.Name != "" && p.Email != "" {
 			if !p.User.IsEmpty() {
-				return db.Where("is_pending = 0 OR (is_pending = 1 AND user_id = ?)", p.User.ID)
+				return db.Where("is_pending = ? OR (is_pending = ? AND user_id = ?)", false, true, p.User.ID)
 			}
 		}
 
-		return db.Where("is_pending = 0") // 不允许待审评论
+		return db.Where("is_pending = ?", false) // 不允许待审评论
 	}
 }
 
@@ -355,7 +355,7 @@ func PinnedCommentsScope(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB
 			return db
 		} else {
 			// 其他页面不再显示置顶内容
-			return db.Where("is_pinned = 0")
+			return db.Where("is_pinned = ", false)
 		}
 	}
 }
@@ -372,7 +372,7 @@ func pinnedCommentsFunction(a *action, c echo.Context, p ParamsGet, cookedCommen
 	}
 
 	pinnedComments := []model.Comment{}
-	GetCommentQuery(a, c, p, p.SiteID).Where("is_pinned = 1").Find(&pinnedComments)
+	GetCommentQuery(a, c, p, p.SiteID).Where("is_pinned = ?", true).Find(&pinnedComments)
 
 	if len(pinnedComments) == 0 {
 		return // 没有置顶评论

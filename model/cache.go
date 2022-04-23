@@ -17,8 +17,8 @@ var (
 
 type cacher struct{ cacheKey string }
 
-func (c *cacher) StoreCache(srcStruct interface{}) error {
-	return StoreCache(c.cacheKey, srcStruct)
+func (c *cacher) StoreCache(getSrcStruct func() interface{}) error {
+	return StoreCache(c.cacheKey, nil, getSrcStruct)
 }
 
 func FindCache(name string, destStruct interface{}) (cacher, error) {
@@ -42,9 +42,13 @@ func FindCache(name string, destStruct interface{}) (cacher, error) {
 	return cacher, nil
 }
 
-func StoreCache(name string, srcStruct interface{}) error {
+func StoreCache(name string, srcStruct interface{}, getSrcStruct ...func() interface{}) error {
 	MutexCache.Lock()
 	defer MutexCache.Unlock()
+
+	if len(getSrcStruct) > 0 { // getSrcStruct 为可选参数，当存在时会覆盖 srcStruct 参数
+		srcStruct = getSrcStruct[0]() // 这个 func 内再执行 db 查询，加锁防止反复查询
+	}
 
 	str, err := json.Marshal(srcStruct)
 	if err != nil {
@@ -189,7 +193,9 @@ func _ChildCommentCacheSave(parentID uint, childID uint) {
 		childIDs = []uint{}
 	}
 	childIDs = append(childIDs, childID)
-	cacher.StoreCache(&childIDs)
+	cacher.StoreCache(func() interface{} {
+		return &childIDs
+	})
 }
 
 func _ChildCommentCacheClear(parentID uint, childID uint) {
@@ -207,5 +213,7 @@ func _ChildCommentCacheClear(parentID uint, childID uint) {
 		}
 	}
 
-	cacher.StoreCache(&nArr)
+	cacher.StoreCache(func() interface{} {
+		return &nArr
+	})
 }

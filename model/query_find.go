@@ -12,8 +12,10 @@ func FindComment(id uint) Comment {
 	var comment Comment
 
 	if cacher, err := FindCache(fmt.Sprintf("comment#id=%d", id), &comment); err != nil {
-		lib.DB.Where("id = ?", id).First(&comment)
-		cacher.StoreCache(&comment)
+		cacher.StoreCache(func() interface{} {
+			lib.DB.Where("id = ?", id).First(&comment)
+			return &comment
+		})
 	}
 
 	return comment
@@ -73,9 +75,11 @@ func FindUser(name string, email string) User {
 
 	// 查询缓存
 	if cacher, err := FindCache(fmt.Sprintf("user#name=%s;email=%s", strings.ToLower(name), strings.ToLower(email)), &user); err != nil {
-		// 不区分大小写
-		lib.DB.Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?)", name, email).First(&user)
-		cacher.StoreCache(&user)
+		cacher.StoreCache(func() interface{} {
+			// 不区分大小写
+			lib.DB.Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?)", name, email).First(&user)
+			return &user
+		})
 	}
 
 	return user
@@ -87,8 +91,10 @@ func FindUserByID(id uint) User {
 
 	// 查询缓存
 	if cacher, err := FindCache(fmt.Sprintf("user#id=%d", id), &user); err != nil {
-		lib.DB.Where("id = ?", id).First(&user)
-		cacher.StoreCache(&user)
+		cacher.StoreCache(func() interface{} {
+			lib.DB.Where("id = ?", id).First(&user)
+			return &user
+		})
 	}
 
 	return user
@@ -98,8 +104,10 @@ func FindPage(key string, siteName string) Page {
 	var page Page
 
 	if cacher, err := FindCache(fmt.Sprintf("page#key=%s;site_name=%s", key, siteName), &page); err != nil {
-		lib.DB.Where("`key` = ? AND `site_name` = ?", key, siteName).First(&page)
-		cacher.StoreCache(&page)
+		cacher.StoreCache(func() interface{} {
+			lib.DB.Where("`key` = ? AND `site_name` = ?", key, siteName).First(&page)
+			return &page
+		})
 	}
 
 	return page
@@ -109,8 +117,10 @@ func FindPageByID(id uint) Page {
 	var page Page
 
 	if cacher, err := FindCache(fmt.Sprintf("page#id=%d", id), &page); err != nil {
-		lib.DB.Where("id = ?", id).First(&page)
-		cacher.StoreCache(&page)
+		cacher.StoreCache(func() interface{} {
+			lib.DB.Where("id = ?", id).First(&page)
+			return &page
+		})
 	}
 
 	return page
@@ -121,8 +131,10 @@ func FindSite(name string) Site {
 
 	// 查询缓存
 	if cacher, err := FindCache(fmt.Sprintf("site#name=%s", name), &site); err != nil {
-		lib.DB.Where("name = ?", name).First(&site)
-		cacher.StoreCache(&site)
+		cacher.StoreCache(func() interface{} {
+			lib.DB.Where("name = ?", name).First(&site)
+			return &site
+		})
 	}
 
 	return site
@@ -132,8 +144,10 @@ func FindSiteByID(id uint) Site {
 	var site Site
 
 	if cacher, err := FindCache(fmt.Sprintf("site#id=%d", id), &site); err != nil {
-		lib.DB.Where("id = ?", id).First(&site)
-		cacher.StoreCache(&site)
+		cacher.StoreCache(func() interface{} {
+			lib.DB.Where("id = ?", id).First(&site)
+			return &site
+		})
 	}
 
 	return site

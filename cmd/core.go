@@ -25,7 +25,10 @@ func loadCore() {
 	syncConfWithDB()
 	notify_launcher.Init() // 初始化 Notify 发射台
 
-	makeCache()
+	// 缓存预热
+	if config.Instance.Cache.Enabled && config.Instance.Cache.WarmUp {
+		makeCache()
+	}
 	// TODO 异步加载开关
 	// go func() {
 	// 	makeCache()
@@ -47,6 +50,16 @@ func initConfig() {
 	}
 	denverLoc, _ := time.LoadLocation(config.Instance.TimeZone)
 	time.Local = denverLoc
+
+	// 缓存配置
+	if config.Instance.Cache.Type == "" {
+		// 默认使用内建缓存
+		config.Instance.Cache.Type = config.CacheTypeBuiltin
+	}
+	if config.Instance.Cache.Type != config.CacheTypeDisabled {
+		// 非缓存禁用模式，Enabled = true
+		config.Instance.Cache.Enabled = true
+	}
 
 	// 配置文件 alias 处理
 	if config.Instance.Captcha.ActionLimit == 0 {

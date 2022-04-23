@@ -3,17 +3,17 @@ module github.com/ArtalkJS/ArtalkGo
 go 1.16
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/PuerkitoBio/goquery v1.7.1
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1560
 	github.com/allegro/bigcache/v3 v3.0.0
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 	github.com/blang/semver v3.5.1+incompatible
+	github.com/bradfitz/gomemcache v0.0.0-20220106215444-fb4bf637b56d
 	github.com/cheggaaa/pb/v3 v3.0.8
 	github.com/eko/gocache/v2 v2.1.0
-	github.com/elliotchance/phpserialize v1.3.1
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/jeremywohl/flatten v1.0.1
@@ -26,7 +26,6 @@ require (
 	github.com/mitchellh/mapstructure v1.4.1
 	github.com/nikoksr/notify v0.23.0
 	github.com/onrik/logrus v0.9.0
-	github.com/onsi/gomega v1.16.0 // indirect
 	github.com/qwqcode/go-aliyun-email v0.0.0-20180120030821-cb6e7b1382bf
 	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5

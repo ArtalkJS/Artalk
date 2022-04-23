@@ -2,10 +2,13 @@ package model
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/eko/gocache/v2/store"
 	"github.com/sirupsen/logrus"
@@ -23,6 +26,10 @@ func (c *cacher) StoreCache(getSrcStruct func() interface{}) error {
 
 func FindCache(name string, destStruct interface{}) (cacher, error) {
 	cacher := cacher{cacheKey: name}
+
+	if !config.Instance.Cache.Enabled {
+		return cacher, errors.New("缓存功能禁用")
+	}
 
 	entry, err := lib.CACHE.Get(lib.Ctx, name)
 	if err != nil {
@@ -50,12 +57,18 @@ func StoreCache(name string, srcStruct interface{}, getSrcStruct ...func() inter
 		srcStruct = getSrcStruct[0]() // 这个 func 内再执行 db 查询，加锁防止反复查询
 	}
 
+	if !config.Instance.Cache.Enabled {
+		return nil
+	}
+
 	str, err := json.Marshal(srcStruct)
 	if err != nil {
 		return err
 	}
 
-	err = lib.CACHE.Set(lib.Ctx, name, []byte(str), &store.Options{})
+	err = lib.CACHE.Set(lib.Ctx, name, []byte(str), &store.Options{
+		Expiration: time.Duration(config.Instance.Cache.GetExpiresTime()),
+	})
 	if err != nil {
 		return err
 	}
@@ -66,6 +79,10 @@ func StoreCache(name string, srcStruct interface{}, getSrcStruct ...func() inter
 }
 
 func ClearCache(name string) error {
+	if !config.Instance.Cache.Enabled {
+		return nil
+	}
+
 	MutexCache.Lock()
 	defer MutexCache.Unlock()
 

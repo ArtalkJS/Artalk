@@ -1,15 +1,6 @@
 package config
 
-import (
-	"os"
-	"strings"
-
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
-)
-
-// Instance 配置实例
-var Instance *Config
+import "time"
 
 // Config 配置
 // @link https://godoc.org/github.com/mitchellh/mapstructure
@@ -20,6 +11,7 @@ type Config struct {
 	Host           string          `mapstructure:"host" json:"host"`                       // HTTP Server 监听 IP
 	Port           int             `mapstructure:"port" json:"port"`                       // HTTP Server 监听 Port
 	DB             DBConf          `mapstructure:"db" json:"db"`                           // 数据文件
+	Cache          CacheConf       `mapstructure:"cache" json:"cache"`                     // 缓存
 	Log            LogConf         `mapstructure:"log" json:"log"`                         // 日志文件
 	AllowOrigins   []string        `mapstructure:"allow_origins" json:"allow_origins"`     // @deprecated 已废弃 (请使用 TrustedDomains)
 	TrustedDomains []string        `mapstructure:"trusted_domains" json:"trusted_domains"` // 可信任的域名 (新)
@@ -37,6 +29,27 @@ type Config struct {
 type DBConf struct {
 	Type DBType `mapstructure:"type" json:"type"`
 	Dsn  string `mapstructure:"dsn" json:"dsn"`
+}
+
+type CacheConf struct {
+	Enabled bool      // 配置文件不允许修改
+	Type    CacheType `mapstructure:"type" json:"type"`
+	Expires int       `mapstructure:"expires" json:"expires"` // 过期时间
+	WarmUp  bool      `mapstructure:"warm_up" json:"warm_up"` // 启动时缓存预热
+	Server  string    `mapstructure:"server" json:"server"`   // 缓存服务器
+	Redis   RedisConf `mapstructure:"redis" json:"redis"`
+}
+
+func (c *CacheConf) GetExpiresTime() int64 {
+	if c.Expires == 0 {
+		return int64(30 * time.Minute) // 默认 30min
+	}
+
+	if c.Expires == -1 {
+		return -1 // Redis.KeepTTL = -1
+	}
+
+	return int64(time.Duration(c.Expires) * time.Minute)
 }
 
 type LogConf struct {
@@ -143,6 +156,15 @@ const (
 	TypeSqlServer  DBType = "sqlserver"
 )
 
+type CacheType string
+
+const (
+	CacheTypeBuiltin  CacheType = "builtin" // 内建缓存
+	CacheTypeRedis    CacheType = "redis"
+	CacheTypeMemcache CacheType = "memcache"
+	CacheTypeDisabled CacheType = "disabled" // 关闭缓存
+)
+
 type EmailSenderType string
 
 const (
@@ -150,6 +172,19 @@ const (
 	TypeAliDM    EmailSenderType = "ali_dm"
 	TypeSendmail EmailSenderType = "sendmail"
 )
+
+// # Redis 配置
+// redis:
+//   network: "tcp"
+//   username: ""
+//   password: ""
+//   db: 0
+type RedisConf struct {
+	Network  string `mapstructure:"network" json:"network"` // tcp or unix
+	Username string `mapstructure:"username" json:"username"`
+	Password string `mapstructure:"password" json:"password"`
+	DB       int    `mapstructure:"db" json:"db"` // Redis 默认数据库 0
+}
 
 type ImgUploadConf struct {
 	Enabled    bool      `mapstructure:"enabled" json:"enabled"`         // 总开关
@@ -209,43 +244,4 @@ type NotifyLINEConf struct {
 	ChannelSecret      string   `mapstructure:"channel_secret" json:"channel_secret"`
 	ChannelAccessToken string   `mapstructure:"channel_access_token" json:"channel_access_token"`
 	Receivers          []string `mapstructure:"receivers" json:"receivers"`
-}
-
-// Init 初始化配置
-func Init(cfgFile string, workDir string) {
-	viper.SetConfigType("yaml")
-
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find config file in path.
-		viper.AddConfigPath(".")
-		viper.SetConfigName("artalk-go.yml")
-	}
-
-	viper.SetEnvPrefix("ATG")
-	viper.AutomaticEnv()
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-
-	// 切换工作目录
-	if workDir != "" {
-		viper.AddConfigPath(workDir) // must before
-		if err := os.Chdir(workDir); err != nil {
-			logrus.Fatal("工作目录切换错误 ", err)
-		}
-	}
-
-	if err := viper.ReadInConfig(); err == nil {
-		// fmt.Print("\n")
-		// fmt.Println("- Using ArtalkGo config file:", viper.ConfigFileUsed())
-	} else {
-		logrus.Fatal("找不到配置文件，使用 `-h` 参数查看帮助")
-	}
-
-	Instance = &Config{}
-	err := viper.Unmarshal(&Instance)
-	if err != nil {
-		logrus.Errorf("unable to decode into struct, %v", err)
-	}
 }

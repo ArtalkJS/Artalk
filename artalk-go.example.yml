@@ -24,6 +24,13 @@ log:
   enabled: true # 总开关
   filename: "./data/artalk-go.log" # 日志文件路径
 
+# 缓存
+cache:
+  type: "builtin" # 支持 redis, memcache, builtin (自带缓存)
+  expires: 30     # 缓存过期时间 (单位：分钟)
+  warm_up: false  # 程序启动时预热缓存
+  server: ""      # 连接缓存服务器 (例如："localhost:6379")
+
 # 可信域名
 trusted_domains:
   # - "*" # 无限制
@@ -52,7 +59,7 @@ login_timeout: 259200
 # 评论审核
 moderator:
   pending_default: false # 发表新评论默认为 “待审状态”
-  api_fail_block: false # 垃圾检测 API 请求错误仍然拦截
+  api_fail_block: false  # 垃圾检测 API 请求错误仍然拦截
   # akismet.com 反垃圾
   akismet_key: ""
   # 腾讯云文本内容安全 (tms)
@@ -71,16 +78,16 @@ moderator:
   keywords:
     enabled: false
     pending: false # 匹配成功设为待审状态
-    files: # 支持多个词库文件
+    files:         # 支持多个词库文件
       - "./data/词库_1.txt"
     file_sep: "\n" # 词库文件内容分割符
     replac_to: "x" # 替换字符
 
 # 验证码
 captcha:
-  enabled: true # 总开关
-  always: false # 总是需要验证码
-  action_limit: 3 # 激活验证码所需操作次数
+  enabled: true    # 总开关
+  always: false    # 总是需要验证码
+  action_limit: 3  # 激活验证码所需操作次数
   action_reset: 60 # 重置操作计数器超时 (单位：s, 设为 -1 不重置)
   # Geetest 极验
   geetest: # https://www.geetest.com
@@ -90,7 +97,7 @@ captcha:
 
 # 邮件通知
 email:
-  enabled: false # 总开关
+  enabled: false    # 总开关
   send_type: "smtp" # 发送方式 [smtp, ali_dm, sendmail]
   send_name: '{{reply_nick}}' # 发信人昵称
   send_addr: "example@qq.com" # 发信人地址
@@ -103,19 +110,19 @@ email:
     username: "example@qq.com"
     password: ""
   ali_dm: # https://help.aliyun.com/document_detail/29444.html
-    access_key_id: "" # 阿里云颁发给用户的访问服务所用的密钥 ID
+    access_key_id: ""     # 阿里云颁发给用户的访问服务所用的密钥 ID
     access_key_secret: "" # 用于加密的密钥
     account_name: "example@example.com" # 管理控制台中配置的发信地址
 
 # 图片上传
 img_upload:
-  enabled: true # 总开关
+  enabled: true              # 总开关
   path: "./data/artalk-img/" # 图片存放路径
-  max_size: 5 # 图片大小限制 (单位：MB)
-  public_path: null # 指定图片链接基础路径 (默认为 "/static/images/")
+  max_size: 5                # 图片大小限制 (单位：MB)
+  public_path: null          # 指定图片链接基础路径 (默认为 "/static/images/")
   # 使用 upgit 将图片上传到 GitHub 或图床 (https://github.com/pluveto/upgit)
   upgit:
-    enabled: false # 启用 upgit
+    enabled: false  # 启用 upgit
     exec: "./upgit -c <upgit配置文件路径> -t /artalk-img"
     del_local: true # 上传后删除本地的图片
 

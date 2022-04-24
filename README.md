@@ -153,15 +153,16 @@ docker-compose up -d
   - [x] 站点 (增/删/改)
   - [x] 数据分页
   - [ ] 配置 (GUI)
-- [x] 数据导入 ([Artransfer](https://github.com/ArtalkJS/Artransfer))
+- [x] 数据导入 ([Artransfer](https://artalk.js.org/guide/transfer.html))
   - [x] Artrans
-  - [x] Artalk v1 (PHP)
   - [x] WordPress
-  - [x] Typecho
+  - [x] Typecho ([插件](https://github.com/ArtalkJS/Artrans-Typecho) / [Artransfer-CLI](https://github.com/ArtalkJS/Artransfer-CLI))
   - [x] Valine
   - [x] Disqus
   - [x] Commento
+  - [x] Waline ([Artransfer-CLI](https://github.com/ArtalkJS/Artransfer-CLI))
   - [x] Twikoo
+  - [x] Artalk v1 (PHP)
 - [x] 数据导出
 - [ ] 数据备份同步
 - [x] 邮件异步队列发送

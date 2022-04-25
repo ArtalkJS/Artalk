@@ -114,7 +114,11 @@ func GetApiPublicConfDataMap(c echo.Context) Map {
 		imgUpload = true // 管理员始终允许上传图片
 	}
 
+	frontendConf := config.Instance.Frontend
+	frontendConf.ImgUpload = imgUpload
+
 	return Map{
-		"img_upload": imgUpload,
+		"img_upload":    imgUpload,
+		"frontend_conf": frontendConf,
 	}
 }

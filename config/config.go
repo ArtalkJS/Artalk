@@ -24,6 +24,7 @@ type Config struct {
 	Email          EmailConf       `mapstructure:"email" json:"email"`                     // 邮箱提醒
 	ImgUpload      ImgUploadConf   `mapstructure:"img_upload" json:"img_upload"`           // 图片上传
 	Notify         NotifyConf      `mapstructure:"notify" json:"notify"`                   // 其他通知方式
+	Frontend       FrontendConf    `mapstructure:"frontend" json:"frontend"`
 }
 
 type DBConf struct {
@@ -255,4 +256,37 @@ type NotifyLINEConf struct {
 	ChannelSecret      string   `mapstructure:"channel_secret" json:"channel_secret"`
 	ChannelAccessToken string   `mapstructure:"channel_access_token" json:"channel_access_token"`
 	Receivers          []string `mapstructure:"receivers" json:"receivers"`
+}
+
+// 使用转换 @link https://transform.tools/json-to-go
+type FrontendConf struct {
+	Placeholder  string `mapstructure:"placeholder" json:"placeholder,omitempty"`
+	NoComment    string `mapstructure:"noComment" json:"noComment,omitempty"`
+	SendBtn      string `mapstructure:"sendBtn" json:"sendBtn,omitempty"`
+	DarkMode     bool   `mapstructure:"darkMode" json:"darkMode,omitempty"`
+	EditorTravel bool   `mapstructure:"editorTravel" json:"editorTravel,omitempty"`
+	Emoticons    string `mapstructure:"emoticons" json:"emoticons,omitempty"`
+	Vote         bool   `mapstructure:"vote" json:"vote,omitempty"`
+	VoteDown     bool   `mapstructure:"voteDown" json:"voteDown,omitempty"`
+	UaBadge      bool   `mapstructure:"uaBadge" json:"uaBadge,omitempty"`
+	ListSort     bool   `mapstructure:"listSort" json:"listSort,omitempty"`
+	PvEl         string `mapstructure:"pvEl" json:"pvEl,omitempty"`
+	FlatMode     string `mapstructure:"flatMode" json:"flatMode,omitempty"`
+	MaxNesting   int    `mapstructure:"maxNesting" json:"maxNesting,omitempty"`
+	Gravatar     struct {
+		Default string `mapstructure:"default" json:"default,omitempty"`
+		Mirror  string `mapstructure:"mirror" json:"mirror,omitempty"`
+	} `mapstructure:"gravatar" json:"gravatar,omitempty"`
+	Pagination struct {
+		PageSize int  `mapstructure:"pageSize" json:"pageSize,omitempty"`
+		ReadMore bool `mapstructure:"readMore" json:"readMore,omitempty"`
+		AutoLoad bool `mapstructure:"autoLoad" json:"autoLoad,omitempty"`
+	} `mapstructure:"pagination" json:"pagination,omitempty"`
+	HeightLimit struct {
+		Content  int `mapstructure:"content" json:"content,omitempty"`
+		Children int `mapstructure:"children" json:"children,omitempty"`
+	} `mapstructure:"heightLimit" json:"heightLimit,omitempty"`
+	ImgUpload    bool `mapstructure:"imgUpload"  json:"imgUpload,omitempty"`
+	ReqTimeout   int  `mapstructure:"reqTimeout" json:"reqTimeout,omitempty"`
+	VersionCheck bool `mapstructure:"versionCheck" json:"versionCheck,omitempty"`
 }

@@ -90,7 +90,7 @@ func InitRouter(e *echo.Echo) {
 
 	// conf
 	api.Any("/conf", func(c echo.Context) error {
-		return c.JSON(200, GetApiPublicConfDataMap(c))
+		return RespData(c, GetApiPublicConfDataMap(c))
 	})
 
 	// version

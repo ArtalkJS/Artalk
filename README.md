@@ -123,6 +123,10 @@ services:
 docker-compose up -d
 ```
 
+## Supporters
+
+[![Stargazers repo roster for @ArtalkJS/Artalk](https://reporoster.com/stars/ArtalkJS/Artalk)](https://github.com/ArtalkJS/Artalk/stargazers)
+
 ## TODOs 
 
 - [x] [Golang 后端](https://github.com/ArtalkJS/ArtalkGo)

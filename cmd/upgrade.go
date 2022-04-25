@@ -29,10 +29,13 @@ var upgradeCmd = &cobra.Command{
 			logrus.Fatal("Error occurred while detecting version: ", err)
 		}
 
-		v := semver.MustParse(strings.TrimPrefix(lib.Version, "v"))
-		if !found || latest.Version.LTE(v) {
-			logrus.Println("当前已是最新版本 v" + v.String() + " 无需升级")
-			return
+		ignoreVersionCheck, _ := cmd.Flags().GetBool("force")
+		if !ignoreVersionCheck {
+			v := semver.MustParse(strings.TrimPrefix(lib.Version, "v"))
+			if !found || latest.Version.LTE(v) {
+				logrus.Println("当前已是最新版本 v" + v.String() + " 无需升级")
+				return
+			}
 		}
 
 		logrus.Info("发现新版本: v" + latest.Version.String())
@@ -58,4 +61,6 @@ var upgradeCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(upgradeCmd)
+
+	flagPV(upgradeCmd, "force", "f", false, "Force upgrade ignore version comparison.")
 }

@@ -40,6 +40,7 @@ const defaults: ArtalkConfig = {
   imgUpload: true,
   reqTimeout: 15000,
   versionCheck: true,
+  useBackendConf: false,
 }
 
 export default defaults

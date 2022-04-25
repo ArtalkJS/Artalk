@@ -5,7 +5,8 @@ import SidebarRoot from './sidebar-root'
 
 export default async function InitSidebar(conf: ArtalkConfig, user: LocalUser, view?: string) {
   // 初始化 Artalk 主程序
-  const artalk = new Artalk(conf)
+  conf.useBackendConf = true
+  const artalk = await (new Artalk(conf))
   artalk.$root.style.display = 'none'
 
   // 初始化用户数据

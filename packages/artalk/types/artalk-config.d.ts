@@ -88,6 +88,9 @@ export default interface ArtalkConfig {
 
   /** 版本检测 */
   versionCheck?: boolean
+
+  /** 复用后端配置 */
+  useBackendConf?: boolean
 }
 
 export interface LocalUser {

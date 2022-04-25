@@ -13,6 +13,7 @@ import SidebarLayer from './components/sidebar-layer'
 import Layer, { GetLayerWrap } from './components/layer'
 import Api from './api'
 import * as Utils from './lib/utils'
+import * as Ui from './lib/ui'
 
 /**
  * Artalk
@@ -21,18 +22,18 @@ import * as Utils from './lib/utils'
 export default class Artalk {
   public static readonly defaults: ArtalkConfig = defaults
 
-  public ctx: Context
-  public conf: ArtalkConfig
-  public $root: HTMLElement
+  public ctx!: Context
+  public conf!: ArtalkConfig
+  public $root!: HTMLElement
 
-  public checkerLauncher: CheckerLauncher
-  public editor: Editor
-  public list: List
-  public sidebarLayer: SidebarLayer
+  public checkerLauncher!: CheckerLauncher
+  public editor!: Editor
+  public list!: List
+  public sidebarLayer!: SidebarLayer
 
   constructor (customConf: ArtalkConfig) {
     // 配置
-    this.conf = { ...Artalk.defaults, ...customConf }
+    this.conf = Utils.mergeDeep(Artalk.defaults, customConf)
     this.conf.server = this.conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
 
     // 默认 pageKey
@@ -66,10 +67,25 @@ export default class Artalk {
     // 界面初始化
     this.$root.classList.add('artalk')
     this.$root.innerHTML = ''
+
+    // 初始化组件
+    if (this.conf.useBackendConf) {
+      // 复用后端的配置
+      // @ts-ignore
+      return (async () => {
+        await this.loadConfRemote()
+        this.initCore()
+        return this // Promise<Artalk>
+      })()
+    }
+
+    this.initCore()
+  }
+
+  private initCore() {
+    // 组件初始化
     this.initLayer()
     this.initDarkMode()
-
-    // 组件初始化
     this.checkerLauncher = new CheckerLauncher(this.ctx)
     Utils.initMarked(this.ctx) // 初始化 marked
 
@@ -100,6 +116,17 @@ export default class Artalk {
         plugin(this.ctx)
       }
     })
+  }
+
+  /** 获取远程配置 */
+  private async loadConfRemote() {
+    Ui.showLoading(this.$root)
+    let backendConf = {}
+    try {
+      backendConf = await (new Api(this.ctx)).conf()
+    } catch (err) { console.error("配置远程获取失败", err) }
+    this.ctx.conf = Utils.mergeDeep(this.ctx.conf, backendConf)
+    Ui.hideLoading(this.$root)
   }
 
   /** 事件绑定 · 初始化 */

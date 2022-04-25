@@ -1,4 +1,5 @@
 import { CommentData, ListData, UserData, PageData, SiteData, NotifyData } from '~/types/artalk-data'
+import ArtalkConfig from '~/types/artalk-config'
 import Context from '../context'
 import { Fetch, ToFormData, POST, GET } from './request'
 import * as Utils from '../lib/utils'
@@ -294,7 +295,22 @@ export default class Api {
 
     const json = await Fetch(this.ctx, `${this.baseURL}/img-upload`, init)
     return ((json.data || {}) as any) as { img_file: string, img_url: string }
+  }
 
+  /** 获取配置 */
+  public async conf() {
+    const data = await POST<any>(this.ctx, `${this.baseURL}/conf`)
+    const conf = (data.frontend_conf || {}) as ArtalkConfig
+
+    // Patch: `emoticons` config string to json
+    if (conf.emoticons && typeof conf.emoticons === "string") {
+      conf.emoticons = conf.emoticons.trim()
+      if (conf.emoticons.startsWith("[") || conf.emoticons.startsWith("{")) {
+        conf.emoticons = JSON.parse(conf.emoticons) // pase json
+      }
+    }
+
+    return conf
   }
 
   // ============================

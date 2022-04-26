@@ -85,9 +85,22 @@ export default class Editor extends Component {
       if (inputEl && inputEl instanceof HTMLInputElement) {
         inputEl.value = this.user.data[field] || ''
         // 绑定事件
-        inputEl.addEventListener('input', () => this.onHeaderInputChanged(field, inputEl))
+        inputEl.addEventListener('input', () => this.onHeaderInput(field, inputEl))
       }
     })
+
+    // Link URL 自动补全协议
+    const $linkInput = this.getInputEl('link')
+    if ($linkInput) {
+      $linkInput.addEventListener('change', () => {
+        const link = $linkInput.value.trim()
+        if (!!link && !/^(http|https):\/\//.test(link)) {
+          $linkInput.value = `https://${link}`
+          this.user.data.link = $linkInput.value
+          this.saveUser()
+        }
+      })
+    }
   }
 
   getInputEl (field: string) {
@@ -101,7 +114,7 @@ export default class Editor extends Component {
   }
 
   /** header 输入框内容变化事件 */
-  onHeaderInputChanged (field: string, inputEl: HTMLInputElement) {
+  onHeaderInput(field: string, inputEl: HTMLInputElement) {
     this.user.data[field] = inputEl.value.trim()
 
     // 若修改的是 nick or email

@@ -197,7 +197,7 @@ func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
 
 	// Batch Insert
 	// @link https://gorm.io/docs/create.html#Batch-Insert
-	lib.DB.Create(&importComments)
+	lib.DB.CreateInBatches(&importComments, 100)
 
 	// ID 变更映射表 index => new_db_id
 	indexToDbIdMap := map[uint]uint{}

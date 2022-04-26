@@ -180,7 +180,7 @@ func ValidateEmail(email string) bool {
 }
 
 func ValidateURL(url string) bool {
-	return govalidator.IsURL(url)
+	return govalidator.IsRequestURL(url)
 }
 
 //#endregion

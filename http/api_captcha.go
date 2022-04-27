@@ -136,10 +136,8 @@ func onCaptchaFail(c echo.Context) {
 //#region 图片验证码
 // 获取对应 IP 图片验证码正确的值
 func GetImageCaptchaRealCode(ip string) string {
-	realVal := ""
-	if val, err := lib.CACHE.Get(lib.Ctx, "captcha:"+ip); err == nil {
-		realVal = string(val.([]byte))
-	}
+	var realVal string
+	lib.CACHE_marshal.Get(lib.Ctx, "captcha:"+ip, &realVal)
 	return strings.ToLower(realVal)
 }
 
@@ -158,22 +156,23 @@ func GetNewImageCaptchaBase64(ip string) string {
 	base64 := "data:image/png;base64," + base64.StdEncoding.EncodeToString(pngBuffer.Bytes())
 
 	// save real code
-	lib.CACHE.Set(lib.Ctx, "captcha:"+ip, []byte(data.Text), &store.Options{Expiration: CaptchaExpiration})
+	lib.CACHE_marshal.Set(lib.Ctx, "captcha:"+ip, data.Text, &store.Options{Expiration: CaptchaExpiration})
 
 	return base64
 }
 
 // 销毁图片验证码
 func DisposeImageCaptcha(ip string) {
-	lib.CACHE.Delete(lib.Ctx, "captcha:"+ip)
+	lib.CACHE_marshal.Delete(lib.Ctx, "captcha:"+ip)
 }
 
 //#endregion
 
 // AlwaysMode 是否能 Pass (for 总是需要验证码的选项)
 func GetAlwaysCaptchaMode_Pass(ip string) bool {
-	val, err := lib.CACHE.Get(lib.Ctx, "captcha-am-pass:"+ip)
-	return err == nil && string(val.([]byte)) == "1"
+	var val string
+	_, err := lib.CACHE_marshal.Get(lib.Ctx, "captcha-am-pass:"+ip, &val)
+	return err == nil && val == "1"
 }
 
 // 设置 AlwaysMode 允许 Pass (for 总是需要验证码的选项)
@@ -183,5 +182,5 @@ func SetAlwaysCaptchaMode_Pass(ip string, pass bool) {
 		val = "1"
 	}
 
-	lib.CACHE.Set(lib.Ctx, "captcha-am-pass:"+ip, []byte(val), &store.Options{Expiration: CaptchaExpiration})
+	lib.CACHE_marshal.Set(lib.Ctx, "captcha-am-pass:"+ip, val, &store.Options{Expiration: CaptchaExpiration})
 }

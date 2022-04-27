@@ -141,8 +141,8 @@ func RecordAction(c echo.Context) {
 func ResetActionRecord(c echo.Context) {
 	ip := c.RealIP()
 
-	lib.CACHE.Delete(lib.Ctx, "action-time:"+ip)
-	lib.CACHE.Delete(lib.Ctx, "action-count:"+ip)
+	lib.CACHE_marshal.Delete(lib.Ctx, "action-time:"+ip)
+	lib.CACHE_marshal.Delete(lib.Ctx, "action-count:"+ip)
 }
 
 // 操作计数是否应该被重置
@@ -153,14 +153,15 @@ func IsActionInTimeFrame(c echo.Context) bool {
 // 修改最后操作时间
 func updateActionLastTime(c echo.Context) {
 	curtTime := fmt.Sprintf("%v", time.Now().Unix())
-	lib.CACHE.Set(lib.Ctx, "action-time:"+c.RealIP(), []byte(curtTime), nil)
+	lib.CACHE_marshal.Set(lib.Ctx, "action-time:"+c.RealIP(), curtTime, nil)
 }
 
 // 获取最后操作时间
 func getActionLastTime(c echo.Context) time.Time {
 	var timestamp int64
-	if val, err := lib.CACHE.Get(lib.Ctx, "action-time:"+c.RealIP()); err == nil {
-		timestamp, _ = strconv.ParseInt(string(val.([]byte)), 10, 64)
+	var val string
+	if _, err := lib.CACHE_marshal.Get(lib.Ctx, "action-time:"+c.RealIP(), &val); err == nil {
+		timestamp, _ = strconv.ParseInt(string(val), 10, 64)
 	}
 	tm := time.Unix(timestamp, 0)
 	return tm
@@ -169,8 +170,9 @@ func getActionLastTime(c echo.Context) time.Time {
 // 获取操作次数
 func getActionCount(c echo.Context) int {
 	count := 0
-	if val, err := lib.CACHE.Get(lib.Ctx, "action-count:"+c.RealIP()); err == nil {
-		count, _ = strconv.Atoi(string(val.([]byte)))
+	var val string
+	if _, err := lib.CACHE_marshal.Get(lib.Ctx, "action-count:"+c.RealIP(), &val); err == nil {
+		count, _ = strconv.Atoi(val)
 	}
 
 	return count
@@ -178,7 +180,7 @@ func getActionCount(c echo.Context) int {
 
 // 修改操作次数
 func setActionCount(c echo.Context, num int) {
-	lib.CACHE.Set(lib.Ctx, "action-count:"+c.RealIP(), []byte(fmt.Sprintf("%d", num)), nil)
+	lib.CACHE_marshal.Set(lib.Ctx, "action-count:"+c.RealIP(), fmt.Sprintf("%d", num), nil)
 }
 
 // 操作次数 +1

@@ -29,7 +29,7 @@ func (a *action) UserGet(c echo.Context) error {
 
 	// loginned user check
 	isLogin := false
-	tUser := GetUserByReqToken(c)
+	tUser := GetUserByReq(c)
 	if tUser.Name == p.Name && tUser.Email == p.Email {
 		isLogin = true
 	}

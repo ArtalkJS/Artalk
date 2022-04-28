@@ -51,16 +51,6 @@ func Run() {
 		e.Use(ActionLimitMiddleware(ActionLimitConf))
 	}
 
-	// Jwt Config
-	CommonJwtConfig = middleware.JWTConfig{
-		Claims:        &jwtCustomClaims{},
-		ContextKey:    "user",
-		SigningMethod: "HS256",
-		TokenLookup:   "header:Authorization,query:token,form:token",
-		AuthScheme:    "Bearer",
-		SigningKey:    []byte(config.Instance.AppKey),
-	}
-
 	// Router
 	InitRouter(e)
 

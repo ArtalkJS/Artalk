@@ -7,7 +7,6 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/pkged"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
 )
 
@@ -63,7 +62,7 @@ func InitRouter(e *echo.Echo) {
 	}
 
 	// api/admin
-	admin := api.Group("/admin", middleware.JWTWithConfig(CommonJwtConfig)) // use jwt
+	admin := api.Group("/admin")
 
 	admin.POST("/comment-edit", action.AdminCommentEdit)
 	admin.POST("/comment-del", action.AdminCommentDel)

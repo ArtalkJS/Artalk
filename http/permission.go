@@ -1,21 +1,16 @@
 package http
 
 import (
-	"encoding/json"
 	"fmt"
 	"path"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
-
-var CommonJwtConfig middleware.JWTConfig
 
 // jwtCustomClaims are custom claims extending default ones.
 // See https://github.com/golang-jwt/jwt for more examples
@@ -186,65 +181,4 @@ func setActionCount(c echo.Context, num int) {
 // 操作次数 +1
 func addActionCount(c echo.Context) {
 	setActionCount(c, getActionCount(c)+1)
-}
-
-func GetJwtInstanceByReq(c echo.Context) *jwt.Token {
-	token := c.QueryParam("token")
-	if token == "" {
-		token = c.FormValue("token")
-	}
-	if token == "" {
-		token = c.Request().Header.Get("Authorization")
-		token = strings.TrimPrefix(token, "Bearer ")
-	}
-	if token == "" {
-		return nil
-	}
-
-	jwt, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if t.Method.Alg() != CommonJwtConfig.SigningMethod {
-			return nil, fmt.Errorf("unexpected jwt signing method=%v", t.Header["alg"])
-		}
-
-		return []byte(config.Instance.AppKey), nil // 密钥
-	})
-	if err != nil {
-		return nil
-	}
-
-	return jwt
-}
-
-func CheckIsAdminByJwt(jwt *jwt.Token) bool {
-	user := GetUserByJwt(jwt)
-
-	return user.IsAdmin
-}
-
-func CheckIsAdminReq(c echo.Context) bool {
-	jwt := GetJwtInstanceByReq(c)
-	if jwt == nil {
-		return false
-	}
-
-	return CheckIsAdminByJwt(jwt)
-}
-
-func GetUserByJwt(jwt *jwt.Token) jwtCustomClaims {
-	if jwt == nil {
-		return jwtCustomClaims{}
-	}
-
-	claims := jwtCustomClaims{}
-	tmp, _ := json.Marshal(jwt.Claims)
-	_ = json.Unmarshal(tmp, &claims)
-
-	return claims
-}
-
-func GetUserByReqToken(c echo.Context) jwtCustomClaims {
-	jwt := GetJwtInstanceByReq(c)
-	user := GetUserByJwt(jwt)
-
-	return user
 }

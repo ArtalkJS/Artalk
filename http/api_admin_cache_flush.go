@@ -16,6 +16,10 @@ func (a *action) AdminCacheFlush(c echo.Context) error {
 		return resp
 	}
 
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "无权访问")
+	}
+
 	if p.FlushAll {
 		go func() {
 			model.CacheFlushAll()

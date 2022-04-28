@@ -17,6 +17,10 @@ func (a *action) AdminSiteAdd(c echo.Context) error {
 		return resp
 	}
 
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "禁止创建站点")
+	}
+
 	if p.Urls != "" {
 		urls := lib.SplitAndTrimSpace(p.Urls, ",")
 		for _, url := range urls {

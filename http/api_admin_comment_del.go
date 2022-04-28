@@ -21,7 +21,7 @@ func (a *action) AdminCommentDel(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
+	if isOK, resp := AdminSiteInControl(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
 		return resp
 	}
 

@@ -18,7 +18,7 @@ func (a *action) AdminPageDel(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
+	if isOK, resp := AdminSiteInControl(c, &p.SiteName, &p.SiteID, nil); !isOK {
 		return resp
 	}
 

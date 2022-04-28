@@ -202,9 +202,13 @@ func MsgCenter(a *action, c echo.Context, p ParamsGet, siteID uint) func(db *gor
 		isAdminReq := CheckIsAdminReq(c)
 
 		// admin_only 检测
-		if strings.HasPrefix(p.Type, "admin_") && !isAdminReq {
-			db = db.Where("id = 0")
-			return db
+		if strings.HasPrefix(p.Type, "admin_") {
+			if !isAdminReq {
+				return db.Where("id = 0")
+			}
+			if !IsAdminHasSiteManageAccess(c, p.SiteName) {
+				return db.Where("id = 0")
+			}
 		}
 
 		// 获取我的 commentIDs

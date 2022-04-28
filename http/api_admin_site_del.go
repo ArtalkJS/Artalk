@@ -21,6 +21,11 @@ func (a *action) AdminSiteDel(c echo.Context) error {
 		return RespError(c, "site 不存在")
 	}
 
+	// 站点操作权限检查
+	if hasAccess := IsAdminHasSiteManageAccess(c, site.Name); !hasAccess {
+		return RespError(c, "无权操作该站点")
+	}
+
 	err := model.DelSite(&site, !p.DelContent)
 	if err != nil {
 		return RespError(c, "site 删除失败")

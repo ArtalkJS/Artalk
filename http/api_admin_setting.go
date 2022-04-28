@@ -20,5 +20,9 @@ func (a *action) AdminSettingSave(c echo.Context) error {
 		return resp
 	}
 
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "无权访问")
+	}
+
 	return RespSuccess(c)
 }

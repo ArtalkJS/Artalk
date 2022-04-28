@@ -9,6 +9,7 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 func (a *action) AdminImportUpload(c echo.Context) error {
@@ -69,6 +70,20 @@ func (a *action) AdminImport(c echo.Context) error {
 		payload = append(payload, k+":"+lib.ToString(v))
 	}
 
+	if !GetIsSuperAdmin(c) {
+		user := GetUserByReq(c)
+		allow := false
+		for _, site := range user.ToCooked().SiteNames {
+			if lib.ContainsStr(payload, "t_name:"+site) {
+				allow = true
+				break
+			}
+		}
+		if !allow {
+			return RespError(c, "禁止导入的目标站点名")
+		}
+	}
+
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTMLCharsetUTF8)
 	c.Response().WriteHeader(http.StatusOK)
 
@@ -89,7 +104,14 @@ func (a *action) AdminImport(c echo.Context) error {
 }
 
 func (a *action) AdminExport(c echo.Context) error {
-	jsonStr, err := artransfer.ExportArtransString()
+	jsonStr, err := artransfer.ExportArtransString(func(db *gorm.DB) *gorm.DB {
+		if !GetIsSuperAdmin(c) {
+			// 仅导出限定范围内的站点
+			db = db.Where("site_name IN (?)", GetUserByReq(c).ToCooked().SiteNames)
+		}
+
+		return db
+	})
 	if err != nil {
 		RespError(c, "导出错误", Map{
 			"err": err,

@@ -17,6 +17,10 @@ func (a *action) AdminSendMail(c echo.Context) error {
 		return resp
 	}
 
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "无权访问")
+	}
+
 	email.AsyncSendTo(p.Subject, p.Body, p.ToAddr)
 
 	return RespSuccess(c)

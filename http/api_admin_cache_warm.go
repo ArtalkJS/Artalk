@@ -15,6 +15,10 @@ func (a *action) AdminCacheWarm(c echo.Context) error {
 		return resp
 	}
 
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "无权访问")
+	}
+
 	go func() {
 		model.CacheWarmUp()
 	}()

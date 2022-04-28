@@ -29,7 +29,8 @@ func SendNotify(comment *model.Comment, pComment *model.Comment) {
 		// ==============
 		//  回复对方
 		// ==============
-		if !comment.IsPending { // 待审状态评论禁止回复对方
+		if !comment.IsPending && pComment.FetchUser().ReceiveEmail {
+			// 不是待审状态评论 && 对方开启接收邮件
 			notify := model.FindCreateNotify(pComment.UserID, comment.ID)
 			notify.SetComment(*comment)
 			notify.SetInitial()
@@ -50,6 +51,16 @@ func SendNotify(comment *model.Comment, pComment *model.Comment) {
 
 			// 管理员评论不回复给其他管理员
 			if model.IsAdminUser(comment.UserID) {
+				continue
+			}
+
+			// 只发送给对应站点管理员
+			if admin.SiteNames != "" && !lib.ContainsStr(admin.ToCooked().SiteNames, comment.SiteName) {
+				continue
+			}
+
+			// 关闭接收邮件
+			if !admin.ReceiveEmail {
 				continue
 			}
 

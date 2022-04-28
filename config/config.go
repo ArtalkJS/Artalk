@@ -76,12 +76,14 @@ type SSLConf struct {
 }
 
 type AdminUserConf struct {
-	Name       string `mapstructure:"name" json:"name"`
-	Email      string `mapstructure:"email" json:"email"`
-	Link       string `mapstructure:"link" json:"link"`
-	Password   string `mapstructure:"password" json:"password"`
-	BadgeName  string `mapstructure:"badge_name" json:"badge_name"`
-	BadgeColor string `mapstructure:"badge_color" json:"badge_color"`
+	Name         string   `mapstructure:"name" json:"name"`
+	Email        string   `mapstructure:"email" json:"email"`
+	Link         string   `mapstructure:"link" json:"link"`
+	Password     string   `mapstructure:"password" json:"password"`
+	BadgeName    string   `mapstructure:"badge_name" json:"badge_name"`
+	BadgeColor   string   `mapstructure:"badge_color" json:"badge_color"`
+	ReceiveEmail *bool    `mapstructure:"receive_email" json:"receive_email"`
+	Sites        []string `mapstructure:"sites" json:"sites"`
 }
 
 type ModeratorConf struct {

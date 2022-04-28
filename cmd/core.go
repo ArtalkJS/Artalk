@@ -152,17 +152,23 @@ func syncConfWithDB() {
 	// 导入配置文件的管理员用户
 	for _, admin := range config.Instance.AdminUsers {
 		user := model.FindUser(admin.Name, admin.Email)
+		receiveEmail := true // 默认允许接收邮件
+		if admin.ReceiveEmail != nil {
+			receiveEmail = *admin.ReceiveEmail
+		}
 		if user.IsEmpty() {
 			// create
 			user = model.User{
-				Name:       admin.Name,
-				Email:      admin.Email,
-				Link:       admin.Link,
-				Password:   admin.Password,
-				BadgeName:  admin.BadgeName,
-				BadgeColor: admin.BadgeColor,
-				IsAdmin:    true,
-				IsInConf:   true,
+				Name:         admin.Name,
+				Email:        admin.Email,
+				Link:         admin.Link,
+				Password:     admin.Password,
+				BadgeName:    admin.BadgeName,
+				BadgeColor:   admin.BadgeColor,
+				IsAdmin:      true,
+				IsInConf:     true,
+				ReceiveEmail: receiveEmail,
+				SiteNames:    strings.Join(admin.Sites, ","),
 			}
 			model.CreateUser(&user)
 		} else {
@@ -175,6 +181,8 @@ func syncConfWithDB() {
 			user.BadgeColor = admin.BadgeColor
 			user.IsAdmin = true
 			user.IsInConf = true
+			user.ReceiveEmail = receiveEmail
+			user.SiteNames = strings.Join(admin.Sites, ",")
 			model.UpdateUser(&user)
 		}
 	}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echolog "github.com/onrik/logrus/echo"
@@ -17,18 +18,7 @@ func Run() {
 	e.HideBanner = true
 
 	// Cors Config
-	allowOrigins := []string{}
-	for _, v := range config.Instance.TrustedDomains { // 可信域名配置
-		if !lib.ContainsStr(allowOrigins, v) {
-			allowOrigins = append(allowOrigins, v)
-		}
-	}
-	if lib.ContainsStr(allowOrigins, "*") { // 通配符关闭跨域控制
-		allowOrigins = []string{"*"}
-	}
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: allowOrigins,
-	}))
+	InitCorsControl(e)
 
 	// Logger
 	e.Logger = echolog.NewLogger(logrus.StandardLogger(), "")
@@ -61,4 +51,33 @@ func Run() {
 	} else {
 		e.Logger.Fatal(e.Start(listenAddr))
 	}
+}
+
+func InitCorsControl(e *echo.Echo) {
+	allowOrigins := []string{}
+
+	// 导入配置中的可信域名
+	for _, v := range config.Instance.TrustedDomains {
+		if !lib.ContainsStr(allowOrigins, v) {
+			allowOrigins = append(allowOrigins, v)
+		}
+	}
+
+	// 导入数据库中的站点 urls
+	for _, site := range model.GetAllCookedSites() {
+		for _, url := range site.Urls {
+			if !lib.ContainsStr(allowOrigins, url) {
+				allowOrigins = append(allowOrigins, url)
+			}
+		}
+	}
+
+	// 通配符关闭跨域控制
+	if lib.ContainsStr(allowOrigins, "*") {
+		allowOrigins = []string{"*"}
+	}
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: allowOrigins,
+	}))
 }

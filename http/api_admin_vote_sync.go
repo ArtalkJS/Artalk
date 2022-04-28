@@ -9,10 +9,6 @@ type ParamsAdminVoteSync struct {
 }
 
 func (a *action) AdminVoteSync(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminVoteSync
 	if isOK, resp := ParamsDecode(c, ParamsAdminVoteSync{}, &p); !isOK {
 		return resp

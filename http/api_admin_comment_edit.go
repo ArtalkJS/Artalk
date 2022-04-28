@@ -28,10 +28,6 @@ type ParamsCommentEdit struct {
 }
 
 func (a *action) AdminCommentEdit(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsCommentEdit
 	if isOK, resp := ParamsDecode(c, ParamsCommentEdit{}, &p); !isOK {
 		return resp

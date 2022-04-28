@@ -12,10 +12,6 @@ import (
 )
 
 func (a *action) AdminImportUpload(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	// 获取 Form
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -56,10 +52,6 @@ type ParamsAdminImport struct {
 }
 
 func (a *action) AdminImport(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminImport
 	if isOK, resp := ParamsDecode(c, ParamsAdminImport{}, &p); !isOK {
 		return resp
@@ -97,10 +89,6 @@ func (a *action) AdminImport(c echo.Context) error {
 }
 
 func (a *action) AdminExport(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	jsonStr, err := artransfer.ExportArtransString()
 	if err != nil {
 		RespError(c, "导出错误", Map{

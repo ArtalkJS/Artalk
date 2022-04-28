@@ -11,10 +11,6 @@ type ParamsAdminCacheFlush struct {
 
 // 缓存清理
 func (a *action) AdminCacheFlush(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminCacheFlush
 	if isOK, resp := ParamsDecode(c, ParamsAdminCacheFlush{}, &p); !isOK {
 		return resp

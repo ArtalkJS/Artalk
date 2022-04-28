@@ -20,10 +20,6 @@ type ParamsAdminPageEdit struct {
 }
 
 func (a *action) AdminPageEdit(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminPageEdit
 	if isOK, resp := ParamsDecode(c, ParamsAdminPageEdit{}, &p); !isOK {
 		return resp

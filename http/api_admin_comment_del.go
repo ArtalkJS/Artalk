@@ -15,10 +15,6 @@ type ParamsCommentDel struct {
 }
 
 func (a *action) AdminCommentDel(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsCommentDel
 	if isOK, resp := ParamsDecode(c, ParamsCommentDel{}, &p); !isOK {
 		return resp

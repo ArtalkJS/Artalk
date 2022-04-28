@@ -12,10 +12,6 @@ type ParamsAdminSiteAdd struct {
 }
 
 func (a *action) AdminSiteAdd(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminSiteAdd
 	if isOK, resp := ParamsDecode(c, ParamsAdminSiteAdd{}, &p); !isOK {
 		return resp

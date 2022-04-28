@@ -19,10 +19,6 @@ type ResponseAdminPageGet struct {
 }
 
 func (a *action) AdminPageGet(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminPageGet
 	if isOK, resp := ParamsDecode(c, ParamsAdminPageGet{}, &p); !isOK {
 		return resp

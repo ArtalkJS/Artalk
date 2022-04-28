@@ -62,7 +62,7 @@ func InitRouter(e *echo.Echo) {
 	}
 
 	// api/admin
-	admin := api.Group("/admin")
+	admin := api.Group("/admin", AdminOnlyHandler)
 
 	admin.POST("/comment-edit", action.AdminCommentEdit)
 	admin.POST("/comment-del", action.AdminCommentDel)

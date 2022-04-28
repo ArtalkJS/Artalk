@@ -12,12 +12,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func AdminOnly(c echo.Context) (isOK bool, resp error) {
-	if !CheckIsAdminReq(c) {
-		return false, RespError(c, "需要验证管理员身份", Map{"need_login": true})
-	}
+func AdminOnlyHandler(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		if !CheckIsAdminReq(c) {
+			return RespError(c, "需要验证管理员身份", Map{"need_login": true})
+		}
 
-	return true, nil
+		return next(c)
+	}
 }
 
 func LoginGetUserToken(user model.User) string {

@@ -18,10 +18,6 @@ type ParamsAdminSiteEdit struct {
 }
 
 func (a *action) AdminSiteEdit(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminSiteEdit
 	if isOK, resp := ParamsDecode(c, ParamsAdminSiteEdit{}, &p); !isOK {
 		return resp

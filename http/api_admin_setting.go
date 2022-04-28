@@ -5,10 +5,6 @@ import (
 )
 
 func (a *action) AdminSettingGet(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	return RespSuccess(c)
 }
 
@@ -19,10 +15,6 @@ type ParamsAdminSettingSave struct {
 }
 
 func (a *action) AdminSettingSave(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminSettingSave
 	if isOK, resp := ParamsDecode(c, ParamsAdminSettingSave{}, &p); !isOK {
 		return resp

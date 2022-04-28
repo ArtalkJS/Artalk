@@ -21,10 +21,6 @@ var allPageFetchDone = 0
 var allPageFetchTotal = 0
 
 func (a *action) AdminPageFetch(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminPageFetch
 	if isOK, resp := ParamsDecode(c, ParamsAdminPageFetch{}, &p); !isOK {
 		return resp

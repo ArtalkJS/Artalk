@@ -11,10 +11,6 @@ type ParamsAdminSiteDel struct {
 }
 
 func (a *action) AdminSiteDel(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminSiteDel
 	if isOK, resp := ParamsDecode(c, ParamsAdminSiteDel{}, &p); !isOK {
 		return resp

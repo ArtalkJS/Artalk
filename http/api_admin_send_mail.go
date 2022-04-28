@@ -12,10 +12,6 @@ type ParamsAdminSendMail struct {
 }
 
 func (a *action) AdminSendMail(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminSendMail
 	if isOK, resp := ParamsDecode(c, ParamsAdminSendMail{}, &p); !isOK {
 		return resp

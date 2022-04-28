@@ -10,10 +10,6 @@ type ParamsAdminCacheWarm struct {
 
 // 缓存预热
 func (a *action) AdminCacheWarm(c echo.Context) error {
-	if isOK, resp := AdminOnly(c); !isOK {
-		return resp
-	}
-
 	var p ParamsAdminCacheWarm
 	if isOK, resp := ParamsDecode(c, ParamsAdminCacheWarm{}, &p); !isOK {
 		return resp

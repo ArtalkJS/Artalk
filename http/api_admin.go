@@ -23,6 +23,7 @@ func AdminOnly(c echo.Context) (isOK bool, resp error) {
 func LoginGetUserToken(user model.User) string {
 	// Set custom claims
 	claims := &jwtCustomClaims{
+		UserID:  user.ID,
 		Name:    user.Name,
 		Email:   user.Email,
 		IsAdmin: user.IsAdmin,
@@ -70,16 +71,18 @@ func GetJwtInstanceByReq(c echo.Context) *jwt.Token {
 	return jwt
 }
 
-func GetUserByJwt(jwt *jwt.Token) jwtCustomClaims {
+func GetUserByJwt(jwt *jwt.Token) model.User {
 	if jwt == nil {
-		return jwtCustomClaims{}
+		return model.User{}
 	}
 
 	claims := jwtCustomClaims{}
 	tmp, _ := json.Marshal(jwt.Claims)
 	_ = json.Unmarshal(tmp, &claims)
 
-	return claims
+	user := model.FindUserByID(claims.UserID)
+
+	return user
 }
 
 func CheckIsAdminReq(c echo.Context) bool {
@@ -92,7 +95,7 @@ func CheckIsAdminReq(c echo.Context) bool {
 	return user.IsAdmin
 }
 
-func GetUserByReq(c echo.Context) jwtCustomClaims {
+func GetUserByReq(c echo.Context) model.User {
 	jwt := GetJwtInstanceByReq(c)
 	user := GetUserByJwt(jwt)
 

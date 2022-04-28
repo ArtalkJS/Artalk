@@ -15,6 +15,7 @@ import (
 // jwtCustomClaims are custom claims extending default ones.
 // See https://github.com/golang-jwt/jwt for more examples
 type jwtCustomClaims struct {
+	UserID  uint   `json:"user_id"`
 	Name    string `json:"name"`
 	Email   string `json:"email"`
 	IsAdmin bool   `json:"is_admin"`

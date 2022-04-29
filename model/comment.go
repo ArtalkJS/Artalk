@@ -145,38 +145,38 @@ func (c *Comment) ToCooked() CookedComment {
 	}
 }
 
-func (c CookedComment) FetchChildrenWithRules(rules ...func(*Comment) bool) []CookedComment {
+func (c CookedComment) FetchChildrenWithCheckers(checkers ...func(*Comment) bool) []CookedComment {
 	children := []CookedComment{}
-	fetchChildrenOnceWithRules(&children, c, rules...) // TODO: children 数量限制
+	fetchChildrenOnceWithCheckers(&children, c, checkers...) // TODO: children 数量限制
 	return children
 }
 
-func fetchChildrenOnceWithRules(src *[]CookedComment, parentComment CookedComment, rules ...func(*Comment) bool) {
+func fetchChildrenOnceWithCheckers(src *[]CookedComment, parentComment CookedComment, checkers ...func(*Comment) bool) {
 	// TODO 子评论排序问题
-	children := FindCommentChildren(parentComment.ID, rules...)
+	children := FindCommentChildren(parentComment.ID, checkers...)
 
 	for _, child := range children {
 		*src = append(*src, child.ToCooked())
-		fetchChildrenOnceWithRules(src, child.ToCooked(), rules...) // loop
+		fetchChildrenOnceWithCheckers(src, child.ToCooked(), checkers...) // loop
 	}
 }
 
 // TODO 已弃用 (原因：不容易做缓存)
-func (c CookedComment) FetchChildren(filters ...func(db *gorm.DB) *gorm.DB) []CookedComment {
-	children := []CookedComment{}
-	fetchChildrenOnce(&children, c, filters...) // TODO: children 数量限制
-	return children
-}
+// func (c CookedComment) _Fetch_Children(filters ...func(db *gorm.DB) *gorm.DB) []CookedComment {
+// 	children := []CookedComment{}
+// 	_fetch_ChildrenOnce(&children, c, filters...) // TODO: children 数量限制
+// 	return children
+// }
 
-func fetchChildrenOnce(src *[]CookedComment, parentComment CookedComment, filters ...func(db *gorm.DB) *gorm.DB) {
-	children := []Comment{}
-	lib.DB.Scopes(filters...).Where("rid = ?", parentComment.ID).Order("created_at ASC").Find(&children)
+// func _fetch_ChildrenOnce(src *[]CookedComment, parentComment CookedComment, filters ...func(db *gorm.DB) *gorm.DB) {
+// 	children := []Comment{}
+// 	lib.DB.Scopes(filters...).Where("rid = ?", parentComment.ID).Order("created_at ASC").Find(&children)
 
-	for _, child := range children {
-		*src = append(*src, child.ToCooked())
-		fetchChildrenOnce(src, child.ToCooked(), filters...) // loop
-	}
-}
+// 	for _, child := range children {
+// 		*src = append(*src, child.ToCooked())
+// 		_fetch_ChildrenOnce(src, child.ToCooked(), filters...) // loop
+// 	}
+// }
 
 type CookedCommentForEmail struct {
 	CookedComment
@@ -250,7 +250,6 @@ func (c *Comment) ToArtran() Artran {
 		Nick:          user.Name,
 		Email:         user.Email,
 		Link:          user.Link,
-		Password:      user.Password,
 		BadgeName:     user.BadgeName,
 		BadgeColor:    user.BadgeColor,
 		PageKey:       page.Key,

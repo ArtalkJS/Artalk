@@ -16,8 +16,12 @@ type ParamsAdminSettingSave struct {
 
 func (a *action) AdminSettingSave(c echo.Context) error {
 	var p ParamsAdminSettingSave
-	if isOK, resp := ParamsDecode(c, ParamsAdminSettingSave{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
+	}
+
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "无权访问")
 	}
 
 	return RespSuccess(c)

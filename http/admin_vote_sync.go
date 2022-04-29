@@ -10,8 +10,12 @@ type ParamsAdminVoteSync struct {
 
 func (a *action) AdminVoteSync(c echo.Context) error {
 	var p ParamsAdminVoteSync
-	if isOK, resp := ParamsDecode(c, ParamsAdminVoteSync{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
+	}
+
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "无权访问")
 	}
 
 	VoteSync(a)

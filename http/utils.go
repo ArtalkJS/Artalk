@@ -17,12 +17,12 @@ import (
 
 type Map = map[string]interface{}
 
-func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface{}) (isContinue bool, resp error) {
+func ParamsDecode(c echo.Context, destParams interface{}) (isContinue bool, resp error) {
 	params := make(map[string]interface{})
 
-	refVal := reflect.ValueOf(paramsStruct)
-	for i := 0; i < refVal.Type().NumField(); i++ {
-		field := refVal.Type().Field(i)
+	refVal := reflect.ValueOf(destParams)
+	for i := 0; i < refVal.Elem().Type().NumField(); i++ {
+		field := refVal.Elem().Type().Field(i)
 		//fieldName := field.Name
 		paramName := field.Tag.Get("mapstructure")
 		paramTagP := field.Tag.Get("param")
@@ -93,7 +93,7 @@ func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface
 	return true, nil
 }
 
-func CheckIfAllowed(c echo.Context, name string, email string, page model.Page, siteName string) (bool, error) {
+func CheckIsAllowed(c echo.Context, name string, email string, page model.Page, siteName string) (bool, error) {
 	isAdminUser := model.IsAdminUserByNameEmail(name, email)
 
 	// 如果用户是管理员，或者当前页只能管理员评论
@@ -204,4 +204,22 @@ func CheckSite(c echo.Context, siteName *string, destID *uint, destSiteAll *bool
 	*destID = site.ID // 更新源 id
 
 	return true, nil
+}
+
+func ContainsComment(comments []model.Comment, targetID uint) bool {
+	for _, c := range comments {
+		if c.ID == targetID {
+			return true
+		}
+	}
+	return false
+}
+
+func ContainsCookedComment(comments []model.CookedComment, targetID uint) bool {
+	for _, c := range comments {
+		if c.ID == targetID {
+			return true
+		}
+	}
+	return false
 }

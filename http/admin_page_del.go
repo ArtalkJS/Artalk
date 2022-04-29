@@ -13,7 +13,7 @@ type ParamsAdminPageDel struct {
 
 func (a *action) AdminPageDel(c echo.Context) error {
 	var p ParamsAdminPageDel
-	if isOK, resp := ParamsDecode(c, ParamsAdminPageDel{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 
@@ -25,6 +25,10 @@ func (a *action) AdminPageDel(c echo.Context) error {
 	page := model.FindPage(p.Key, p.SiteName)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
+	}
+
+	if !IsAdminHasSiteAccess(c, page.SiteName) {
+		return RespError(c, "无权操作")
 	}
 
 	err := model.DelPage(&page)

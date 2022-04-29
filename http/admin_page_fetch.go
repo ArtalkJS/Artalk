@@ -22,7 +22,7 @@ var allPageFetchTotal = 0
 
 func (a *action) AdminPageFetch(c echo.Context) error {
 	var p ParamsAdminPageFetch
-	if isOK, resp := ParamsDecode(c, ParamsAdminPageFetch{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 
@@ -76,6 +76,10 @@ func (a *action) AdminPageFetch(c echo.Context) error {
 	page := model.FindPageByID(p.ID)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
+	}
+
+	if !IsAdminHasSiteAccess(c, page.SiteName) {
+		return RespError(c, "无权操作")
 	}
 
 	if err := page.FetchURL(); err != nil {

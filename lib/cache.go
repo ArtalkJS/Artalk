@@ -16,8 +16,7 @@ import (
 )
 
 var (
-	CACHE         *cache.Cache
-	CACHE_marshal *marshaler.Marshaler
+	CACHE *marshaler.Marshaler
 )
 
 var Ctx = context.Background()
@@ -70,14 +69,14 @@ func OpenCache() (err error) {
 
 	}
 
-	CACHE = cache.New(cacheStore)
+	cacheInstance := cache.New(cacheStore)
 
 	// marshaler wrapper
 	// marshaler using VmihailencoMsgpack
 	// @link https://github.com/vmihailenco/msgpack
 	// Benchmarks
 	// @link https://github.com/alecthomas/go_serialization_benchmarks
-	CACHE_marshal = marshaler.New(CACHE)
+	CACHE = marshaler.New(cacheInstance)
 
 	return
 }

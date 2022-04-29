@@ -39,7 +39,7 @@ func FindCommentRules(id uint, rules ...func(*Comment) bool) Comment {
 }
 
 // (Cached：parent-comments)
-func FindCommentChildren(parentID uint, rules ...func(*Comment) bool) []Comment {
+func FindCommentChildren(parentID uint, checkers ...func(*Comment) bool) []Comment {
 	var children []Comment
 	var childIDs []uint
 
@@ -57,8 +57,8 @@ func FindCommentChildren(parentID uint, rules ...func(*Comment) bool) []Comment 
 		}
 
 		// 规则过滤
-		if len(rules) > 0 {
-			for _, r := range rules {
+		if len(checkers) > 0 {
+			for _, r := range checkers {
 				if !r(&comment) {
 					continue
 				}
@@ -69,6 +69,12 @@ func FindCommentChildren(parentID uint, rules ...func(*Comment) bool) []Comment 
 	}
 
 	return children
+}
+
+func GetUserAllCommentIDs(userID uint) []uint {
+	userAllCommentIDs := []uint{}
+	lib.DB.Model(&Comment{}).Select("id").Where("user_id = ?", userID).Find(&userAllCommentIDs)
+	return userAllCommentIDs
 }
 
 // 查找用户 (精确查找 name & email)

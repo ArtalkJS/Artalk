@@ -20,13 +20,17 @@ type ResponseAdminPageGet struct {
 
 func (a *action) AdminPageGet(c echo.Context) error {
 	var p ParamsAdminPageGet
-	if isOK, resp := ParamsDecode(c, ParamsAdminPageGet{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 
 	// find site
 	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
 		return resp
+	}
+
+	if !IsAdminHasSiteAccess(c, p.SiteName) {
+		return RespError(c, "无权操作")
 	}
 
 	// 准备 query

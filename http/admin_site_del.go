@@ -12,8 +12,12 @@ type ParamsAdminSiteDel struct {
 
 func (a *action) AdminSiteDel(c echo.Context) error {
 	var p ParamsAdminSiteDel
-	if isOK, resp := ParamsDecode(c, ParamsAdminSiteDel{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
+	}
+
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "禁止删除站点")
 	}
 
 	site := model.FindSiteByID(p.ID)

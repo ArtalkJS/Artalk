@@ -21,7 +21,7 @@ type ParamsAdminPageEdit struct {
 
 func (a *action) AdminPageEdit(c echo.Context) error {
 	var p ParamsAdminPageEdit
-	if isOK, resp := ParamsDecode(c, ParamsAdminPageEdit{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 
@@ -34,17 +34,14 @@ func (a *action) AdminPageEdit(c echo.Context) error {
 		return resp
 	}
 
-	// check create page
-	var page model.Page
-	if p.ID == 0 {
-		// create new page
-		page = model.FindCreatePage(p.Key, p.Title, p.SiteName)
-	} else {
-		page = model.FindPageByID(p.ID)
-	}
-
+	// find page
+	var page = model.FindPageByID(p.ID)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
+	}
+
+	if !IsAdminHasSiteAccess(c, page.SiteName) {
+		return RespError(c, "无权操作")
 	}
 
 	// 重命名合法性检测

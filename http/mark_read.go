@@ -19,7 +19,7 @@ type ParamsMarkRead struct {
 
 func (a *action) MarkRead(c echo.Context) error {
 	var p ParamsMarkRead
-	if isOK, resp := ParamsDecode(c, ParamsMarkRead{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

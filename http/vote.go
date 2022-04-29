@@ -21,7 +21,7 @@ type ParamsVote struct {
 
 func (a *action) Vote(c echo.Context) error {
 	var p ParamsVote
-	if isOK, resp := ParamsDecode(c, ParamsVote{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

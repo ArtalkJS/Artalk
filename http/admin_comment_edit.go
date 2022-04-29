@@ -12,6 +12,7 @@ type ParamsCommentEdit struct {
 	ID       uint   `mapstructure:"id" param:"required"`
 	SiteName string `mapstructure:"site_name"`
 	SiteID   uint
+	SiteAll  bool
 
 	// 可修改
 	Content     string `mapstructure:"content"`
@@ -29,18 +30,23 @@ type ParamsCommentEdit struct {
 
 func (a *action) AdminCommentEdit(c echo.Context) error {
 	var p ParamsCommentEdit
-	if isOK, resp := ParamsDecode(c, ParamsCommentEdit{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 
 	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
 		return resp
 	}
 
+	// find comment
 	comment := model.FindComment(p.ID)
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found")
+	}
+
+	if !IsAdminHasSiteAccess(c, comment.SiteName) {
+		return RespError(c, "无权操作")
 	}
 
 	// content

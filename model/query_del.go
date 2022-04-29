@@ -35,6 +35,19 @@ func DelComment(commentID uint) error {
 	return nil
 }
 
+// 删除所有子评论
+func DelCommentChildren(pComment Comment) error {
+	var rErr error
+	children := pComment.ToCooked().FetchChildrenWithCheckers()
+	for _, c := range children {
+		err := DelComment(c.ID)
+		if err != nil {
+			rErr = err
+		}
+	}
+	return rErr
+}
+
 func DelPage(page *Page) error {
 	err := lib.DB.Unscoped().Delete(page).Error
 	if err != nil {

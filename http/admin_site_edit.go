@@ -19,13 +19,18 @@ type ParamsAdminSiteEdit struct {
 
 func (a *action) AdminSiteEdit(c echo.Context) error {
 	var p ParamsAdminSiteEdit
-	if isOK, resp := ParamsDecode(c, ParamsAdminSiteEdit{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 
 	site := model.FindSiteByID(p.ID)
 	if site.IsEmpty() {
 		return RespError(c, "site 不存在")
+	}
+
+	// 站点操作权限检查
+	if !IsAdminHasSiteAccess(c, site.Name) {
+		return RespError(c, "无权操作")
 	}
 
 	if strings.TrimSpace(p.Name) == "" {

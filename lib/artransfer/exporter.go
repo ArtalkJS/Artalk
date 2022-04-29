@@ -5,11 +5,12 @@ import (
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
+	"gorm.io/gorm"
 )
 
-func ExportArtransString() (string, error) {
+func ExportArtransString(dbScopes ...func(*gorm.DB) *gorm.DB) (string, error) {
 	comments := []model.Comment{}
-	lib.DB.Find(&comments)
+	lib.DB.Scopes(dbScopes...).Find(&comments)
 
 	artrans := []model.Artran{}
 	for _, c := range comments {

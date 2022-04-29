@@ -127,21 +127,19 @@ func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
 
 		// 准备 user
 		user := model.FindCreateUser(c.Nick, c.Email, c.Link)
-		userModified := false
-		if c.Password != "" && c.Password != user.Password {
-			user.Password = c.Password
-			userModified = true
-		}
-		if c.BadgeName != "" && c.BadgeName != user.BadgeName {
-			user.BadgeName = c.BadgeName
-			userModified = true
-		}
-		if c.BadgeColor != "" && c.BadgeColor != user.BadgeColor {
-			user.BadgeColor = c.BadgeColor
-			userModified = true
-		}
-		if userModified {
-			model.UpdateUser(&user)
+		if !user.IsAdmin {
+			userModified := false
+			if c.BadgeName != "" && c.BadgeName != user.BadgeName {
+				user.BadgeName = c.BadgeName
+				userModified = true
+			}
+			if c.BadgeColor != "" && c.BadgeColor != user.BadgeColor {
+				user.BadgeColor = c.BadgeColor
+				userModified = true
+			}
+			if userModified {
+				model.UpdateUser(&user)
+			}
 		}
 
 		// 准备 page

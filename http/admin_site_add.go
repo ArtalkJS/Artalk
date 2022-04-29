@@ -13,7 +13,7 @@ type ParamsAdminSiteAdd struct {
 
 func (a *action) AdminSiteAdd(c echo.Context) error {
 	var p ParamsAdminSiteAdd
-	if isOK, resp := ParamsDecode(c, ParamsAdminSiteAdd{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

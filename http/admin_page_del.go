@@ -13,7 +13,7 @@ type ParamsAdminPageDel struct {
 
 func (a *action) AdminPageDel(c echo.Context) error {
 	var p ParamsAdminPageDel
-	if isOK, resp := ParamsDecode(c, ParamsAdminPageDel{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

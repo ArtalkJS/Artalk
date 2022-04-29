@@ -10,7 +10,7 @@ type ParamsAdminSiteGet struct {
 
 func (a *action) AdminSiteGet(c echo.Context) error {
 	var p ParamsAdminSiteGet
-	if isOK, resp := ParamsDecode(c, ParamsAdminSiteGet{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

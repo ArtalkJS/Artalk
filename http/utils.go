@@ -17,12 +17,12 @@ import (
 
 type Map = map[string]interface{}
 
-func ParamsDecode(c echo.Context, paramsStruct interface{}, destParams interface{}) (isContinue bool, resp error) {
+func ParamsDecode(c echo.Context, destParams interface{}) (isContinue bool, resp error) {
 	params := make(map[string]interface{})
 
-	refVal := reflect.ValueOf(paramsStruct)
-	for i := 0; i < refVal.Type().NumField(); i++ {
-		field := refVal.Type().Field(i)
+	refVal := reflect.ValueOf(destParams)
+	for i := 0; i < refVal.Elem().Type().NumField(); i++ {
+		field := refVal.Elem().Type().Field(i)
 		//fieldName := field.Name
 		paramName := field.Tag.Get("mapstructure")
 		paramTagP := field.Tag.Get("param")

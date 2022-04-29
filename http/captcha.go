@@ -70,7 +70,7 @@ func (a *action) CaptchaCheck(c echo.Context) error {
 	ip := c.RealIP()
 
 	var p ParamsCaptchaCheck
-	if isOK, resp := ParamsDecode(c, ParamsCaptchaCheck{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 	inputVal := p.Value

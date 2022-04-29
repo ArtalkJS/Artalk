@@ -43,7 +43,7 @@ func (a *action) ImgUpload(c echo.Context) error {
 
 	// 传入参数解析
 	var p ParamsImgUpload
-	if isOK, resp := ParamsDecode(c, ParamsImgUpload{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

@@ -58,7 +58,7 @@ func GetCommentQuery(a *action, c echo.Context, p ParamsGet, siteID uint) *gorm.
 
 func (a *action) Get(c echo.Context) error {
 	var p ParamsGet
-	if isOK, resp := ParamsDecode(c, ParamsGet{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

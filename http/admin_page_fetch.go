@@ -22,7 +22,7 @@ var allPageFetchTotal = 0
 
 func (a *action) AdminPageFetch(c echo.Context) error {
 	var p ParamsAdminPageFetch
-	if isOK, resp := ParamsDecode(c, ParamsAdminPageFetch{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

@@ -13,7 +13,7 @@ type ParamsAdminSendMail struct {
 
 func (a *action) AdminSendMail(c echo.Context) error {
 	var p ParamsAdminSendMail
-	if isOK, resp := ParamsDecode(c, ParamsAdminSendMail{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

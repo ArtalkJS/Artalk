@@ -16,7 +16,7 @@ type ParamsAdminSettingSave struct {
 
 func (a *action) AdminSettingSave(c echo.Context) error {
 	var p ParamsAdminSettingSave
-	if isOK, resp := ParamsDecode(c, ParamsAdminSettingSave{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

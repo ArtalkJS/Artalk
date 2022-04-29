@@ -35,7 +35,7 @@ type ResponseAdd struct {
 
 func (a *action) Add(c echo.Context) error {
 	var p ParamsAdd
-	if isOK, resp := ParamsDecode(c, ParamsAdd{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

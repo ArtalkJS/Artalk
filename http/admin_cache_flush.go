@@ -12,7 +12,7 @@ type ParamsAdminCacheFlush struct {
 // 缓存清理
 func (a *action) AdminCacheFlush(c echo.Context) error {
 	var p ParamsAdminCacheFlush
-	if isOK, resp := ParamsDecode(c, ParamsAdminCacheFlush{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

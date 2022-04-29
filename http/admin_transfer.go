@@ -54,7 +54,7 @@ type ParamsAdminImport struct {
 
 func (a *action) AdminImport(c echo.Context) error {
 	var p ParamsAdminImport
-	if isOK, resp := ParamsDecode(c, ParamsAdminImport{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

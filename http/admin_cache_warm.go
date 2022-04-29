@@ -11,7 +11,7 @@ type ParamsAdminCacheWarm struct {
 // 缓存预热
 func (a *action) AdminCacheWarm(c echo.Context) error {
 	var p ParamsAdminCacheWarm
-	if isOK, resp := ParamsDecode(c, ParamsAdminCacheWarm{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

@@ -12,7 +12,7 @@ type ParamsUserGet struct {
 
 func (a *action) UserGet(c echo.Context) error {
 	var p ParamsUserGet
-	if isOK, resp := ParamsDecode(c, ParamsUserGet{}, &p); !isOK {
+	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
 

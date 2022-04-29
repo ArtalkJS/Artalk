@@ -30,7 +30,7 @@ func FindCache(name string, destStruct interface{}) (cacher, error) {
 		return cacher, errors.New("缓存功能禁用")
 	}
 
-	_, err := lib.CACHE_marshal.Get(lib.Ctx, name, destStruct)
+	_, err := lib.CACHE.Get(lib.Ctx, name, destStruct)
 	if err != nil {
 		return cacher, err
 	}
@@ -52,7 +52,7 @@ func StoreCache(name string, srcStruct interface{}, getSrcStruct ...func() inter
 		return nil
 	}
 
-	err := lib.CACHE_marshal.Set(lib.Ctx, name, srcStruct, &store.Options{
+	err := lib.CACHE.Set(lib.Ctx, name, srcStruct, &store.Options{
 		Expiration: time.Duration(config.Instance.Cache.GetExpiresTime()),
 	})
 	if err != nil {

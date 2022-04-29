@@ -85,7 +85,14 @@ func (a *action) Get(c echo.Context) error {
 	// prepare the first query
 	findScopes := []func(*gorm.DB) *gorm.DB{}
 	if !p.FlatMode {
+		// nested_mode prepare the root comments as first query result
 		findScopes = append(findScopes, RootComments())
+	}
+	if !p.IsMsgCenter {
+		// pinned comments ignore
+		findScopes = append(findScopes, func(d *gorm.DB) *gorm.DB {
+			return d.Where("is_pinned = ?", false) // 因为置顶是独立的查询，这里就不再查)
+		})
 	}
 
 	// get comments for the first query

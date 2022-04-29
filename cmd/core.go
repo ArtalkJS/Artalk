@@ -3,7 +3,6 @@ package cmd
 import (
 	"os"
 	"strings"
-	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -37,47 +36,6 @@ func loadCore() {
 // 1. 初始化配置
 func initConfig() {
 	config.Init(cfgFile, workDir)
-
-	// 检查 app_key 是否设置
-	if strings.TrimSpace(config.Instance.AppKey) == "" {
-		logrus.Fatal("请检查配置文件，并设置一个 app_key (任意字符串) 用于数据加密")
-	}
-
-	// 设置时区
-	if strings.TrimSpace(config.Instance.TimeZone) == "" {
-		logrus.Fatal("请检查配置文件，并设置 timezone")
-	}
-	denverLoc, _ := time.LoadLocation(config.Instance.TimeZone)
-	time.Local = denverLoc
-
-	// 缓存配置
-	if config.Instance.Cache.Type == "" {
-		// 默认使用内建缓存
-		config.Instance.Cache.Type = config.CacheTypeBuiltin
-	}
-	if config.Instance.Cache.Type != config.CacheTypeDisabled {
-		// 非缓存禁用模式，Enabled = true
-		config.Instance.Cache.Enabled = true
-	}
-
-	// 配置文件 alias 处理
-	if config.Instance.Captcha.ActionLimit == 0 {
-		config.Instance.Captcha.Always = true
-	}
-
-	// 检查废弃需更新配置
-	if config.Instance.Captcha.ActionTimeout != 0 {
-		logrus.Warn("captcha.action_timeout 配置项已废弃，请使用 captcha.action_reset 代替")
-		if config.Instance.Captcha.ActionReset == 0 {
-			config.Instance.Captcha.ActionReset = config.Instance.Captcha.ActionTimeout
-		}
-	}
-	if len(config.Instance.AllowOrigins) != 0 {
-		logrus.Warn("allow_origins 配置项已废弃，请使用 trusted_domains 代替")
-		if len(config.Instance.TrustedDomains) == 0 {
-			config.Instance.TrustedDomains = config.Instance.AllowOrigins
-		}
-	}
 }
 
 // 2. 初始化日志
@@ -127,7 +85,9 @@ func initLog() {
 
 // 3. 初始化数据库
 func initDB() {
-	model.InitDB()
+	lib.InitDB()
+	model.SetDB(lib.DB)
+	model.MigrateModels()
 }
 
 // 4. 初始化缓存

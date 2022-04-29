@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strings"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -47,5 +48,51 @@ func Init(cfgFile string, workDir string) {
 	err := viper.Unmarshal(&Instance)
 	if err != nil {
 		logrus.Errorf("unable to decode into struct, %v", err)
+	}
+
+	// 后续处理
+	postInit()
+}
+
+func postInit() {
+	// 检查 app_key 是否设置
+	if strings.TrimSpace(Instance.AppKey) == "" {
+		logrus.Fatal("请检查配置文件，并设置一个 app_key (任意字符串) 用于数据加密")
+	}
+
+	// 设置时区
+	if strings.TrimSpace(Instance.TimeZone) == "" {
+		logrus.Fatal("请检查配置文件，并设置 timezone")
+	}
+	denverLoc, _ := time.LoadLocation(Instance.TimeZone)
+	time.Local = denverLoc
+
+	// 缓存配置
+	if Instance.Cache.Type == "" {
+		// 默认使用内建缓存
+		Instance.Cache.Type = CacheTypeBuiltin
+	}
+	if Instance.Cache.Type != CacheTypeDisabled {
+		// 非缓存禁用模式，Enabled = true
+		Instance.Cache.Enabled = true
+	}
+
+	// 配置文件 alias 处理
+	if Instance.Captcha.ActionLimit == 0 {
+		Instance.Captcha.Always = true
+	}
+
+	// 检查废弃需更新配置
+	if Instance.Captcha.ActionTimeout != 0 {
+		logrus.Warn("captcha.action_timeout 配置项已废弃，请使用 captcha.action_reset 代替")
+		if Instance.Captcha.ActionReset == 0 {
+			Instance.Captcha.ActionReset = Instance.Captcha.ActionTimeout
+		}
+	}
+	if len(Instance.AllowOrigins) != 0 {
+		logrus.Warn("allow_origins 配置项已废弃，请使用 trusted_domains 代替")
+		if len(Instance.TrustedDomains) == 0 {
+			Instance.TrustedDomains = Instance.AllowOrigins
+		}
 	}
 }

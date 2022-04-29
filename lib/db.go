@@ -3,6 +3,7 @@ package lib
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
@@ -18,6 +19,15 @@ import (
 var DB *gorm.DB
 
 var gormConfig *gorm.Config
+
+func InitDB() {
+	var err error
+	DB, err = OpenDB(config.Instance.DB.Type, config.Instance.DB.Dsn)
+	if err != nil {
+		logrus.Error("数据库初始化发生错误 ", err)
+		os.Exit(1)
+	}
+}
 
 func OpenDB(dbType config.DBType, dsn string) (*gorm.DB, error) {
 	dbConf := config.Instance.DB

@@ -67,21 +67,21 @@ func (n *Notify) GetReadLink() string {
 func (n *Notify) SetInitial() error {
 	n.IsRead = false
 	n.IsEmailed = false
-	return lib.DB.Save(n).Error
+	return DB().Save(n).Error
 }
 
 func (n *Notify) SetRead() error {
 	n.IsRead = true
 	nowTime := time.Now()
 	n.ReadAt = &nowTime
-	return lib.DB.Save(n).Error
+	return DB().Save(n).Error
 }
 
 func (n *Notify) SetEmailed() error {
 	n.IsEmailed = true
 	nowTime := time.Now()
 	n.EmailAt = &nowTime
-	return lib.DB.Save(n).Error
+	return DB().Save(n).Error
 }
 
 type CookedNotify struct {

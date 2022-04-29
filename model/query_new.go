@@ -1,7 +1,6 @@
 package model
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,7 +19,7 @@ func NewSite(name string, urls string) Site {
 }
 
 func CreateSite(site *Site) error {
-	err := lib.DB.Create(&site).Error
+	err := DB().Create(&site).Error
 	if err != nil {
 		return err
 	}
@@ -47,7 +46,7 @@ func NewUser(name string, email string, link string) User {
 }
 
 func CreateUser(user *User) error {
-	err := lib.DB.Create(&user).Error
+	err := DB().Create(&user).Error
 	if err != nil {
 		return err
 	}
@@ -74,7 +73,7 @@ func NewPage(key string, pageTitle string, siteName string) Page {
 }
 
 func CreatePage(page *Page) error {
-	err := lib.DB.Create(&page).Error
+	err := DB().Create(&page).Error
 	if err != nil {
 		return err
 	}
@@ -86,7 +85,7 @@ func CreatePage(page *Page) error {
 }
 
 func CreateComment(comment *Comment) error {
-	err := lib.DB.Create(&comment).Error
+	err := DB().Create(&comment).Error
 	if err != nil {
 		return err
 	}
@@ -106,7 +105,7 @@ func NewNotify(userID uint, commentID uint) Notify {
 	}
 	notify.GenerateKey()
 
-	err := lib.DB.Create(&notify).Error
+	err := DB().Create(&notify).Error
 	if err != nil {
 		logrus.Error("Create Notify error: ", err)
 	}
@@ -123,7 +122,7 @@ func NewVote(targetID uint, voteType VoteType, userID uint, ua string, ip string
 		IP:       ip,
 	}
 
-	err := lib.DB.Create(&vote).Error
+	err := DB().Create(&vote).Error
 	if err != nil {
 		logrus.Error("Create Vote error: ", err)
 	}

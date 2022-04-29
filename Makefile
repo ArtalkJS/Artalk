@@ -4,6 +4,9 @@ COMMIT_HASH  := $(shell git rev-parse --short HEAD)
 DEV_VERSION  := dev-${COMMIT_HASH}
 GO_VERSION   ?= 1.16.6
 
+HAS_RICHGO   := $(shell which richgo)
+GOTEST       ?= $(if $(HAS_RICHGO), richgo test, go test)
+
 all: install build
 
 install:
@@ -38,8 +41,11 @@ dev:
     	github.com/ArtalkJS/ArtalkGo
 	./bin/artalk-go server $(ARGS)
 
-test: update
-	go test -cover github.com/ArtalkJS/ArtalkGo/...
+test:
+	$(GOTEST) -timeout 20m ./model/...
+
+test-coverage:
+	$(GOTEST) -cover ./...
 
 docker-build:
 	./scripts/docker-build.sh
@@ -82,6 +88,6 @@ release:
 		release --rm-dist --skip-validate
 
 .PHONY: all install build build-frontend \
-	update run dev test \
+	update run dev test test-coverage \
 	docker-build docker-push \
 	release-dry-run release;

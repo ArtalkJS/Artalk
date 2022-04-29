@@ -1,0 +1,11 @@
+- id: 1000
+  name: Site A
+  urls: http://localhost:8080/,https://qwqaq.com
+  created_at: 2022-04-29 14:38:40
+  updated_at: 2022-04-29 14:38:40
+
+- id: 1001
+  name: Site B
+  urls: http://artalk.js.org/sub_folder/,http://localhost:8081
+  created_at: 2022-04-29 14:38:40
+  updated_at: 2022-04-29 14:38:40

@@ -170,7 +170,7 @@ func fetchChildrenOnceWithCheckers(src *[]CookedComment, parentComment CookedCom
 
 // func _fetch_ChildrenOnce(src *[]CookedComment, parentComment CookedComment, filters ...func(db *gorm.DB) *gorm.DB) {
 // 	children := []Comment{}
-// 	lib.DB.Scopes(filters...).Where("rid = ?", parentComment.ID).Order("created_at ASC").Find(&children)
+// 	DB().Scopes(filters...).Where("rid = ?", parentComment.ID).Order("created_at ASC").Find(&children)
 
 // 	for _, child := range children {
 // 		*src = append(*src, child.ToCooked())

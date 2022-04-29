@@ -9,8 +9,6 @@ type Site struct {
 	gorm.Model
 	Name string `gorm:"uniqueIndex;size:255"`
 	Urls string
-
-	Users string // 分配给指定 UserIDs
 }
 
 func (s Site) IsEmpty() bool {

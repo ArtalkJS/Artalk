@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,7 +14,7 @@ func CacheWarmUp() {
 		start := time.Now()
 
 		var items []User
-		lib.DB.Find(&items)
+		DB().Find(&items)
 
 		for _, item := range items {
 			UserCacheSave(&item)
@@ -29,7 +28,7 @@ func CacheWarmUp() {
 		start := time.Now()
 
 		var items []Site
-		lib.DB.Find(&items)
+		DB().Find(&items)
 
 		for _, item := range items {
 			SiteCacheSave(&item)
@@ -43,7 +42,7 @@ func CacheWarmUp() {
 		start := time.Now()
 
 		var items []Page
-		lib.DB.Find(&items)
+		DB().Find(&items)
 
 		for _, item := range items {
 			PageCacheSave(&item)
@@ -57,7 +56,7 @@ func CacheWarmUp() {
 		start := time.Now()
 
 		var items []Comment
-		lib.DB.Find(&items)
+		DB().Find(&items)
 
 		for _, item := range items {
 			CommentCacheSave(&item)
@@ -72,7 +71,7 @@ func CacheFlushAll() {
 	// Users
 	{
 		var items []User
-		lib.DB.Find(&items)
+		DB().Find(&items)
 
 		for _, item := range items {
 			UserCacheDel(&item)
@@ -82,7 +81,7 @@ func CacheFlushAll() {
 	// Sites
 	{
 		var items []Site
-		lib.DB.Find(&items)
+		DB().Find(&items)
 
 		for _, item := range items {
 			SiteCacheDel(&item)
@@ -92,7 +91,7 @@ func CacheFlushAll() {
 	// Pages
 	{
 		var items []Page
-		lib.DB.Find(&items)
+		DB().Find(&items)
 
 		for _, item := range items {
 			PageCacheDel(&item)
@@ -102,7 +101,7 @@ func CacheFlushAll() {
 	// Comments
 	{
 		var items []Comment
-		lib.DB.Find(&items)
+		DB().Find(&items)
 
 		for _, item := range items {
 			CommentCacheDel(&item)

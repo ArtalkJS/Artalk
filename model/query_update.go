@@ -4,13 +4,12 @@ import (
 	"errors"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/sirupsen/logrus"
 )
 
 // 更新评论
 func UpdateComment(comment *Comment) error {
-	err := lib.DB.Save(comment).Error
+	err := DB().Save(comment).Error
 	if err != nil {
 		logrus.Error("Update Comment error: ", err)
 	}
@@ -20,7 +19,7 @@ func UpdateComment(comment *Comment) error {
 }
 
 func UpdateSite(site *Site) error {
-	err := lib.DB.Save(site).Error
+	err := DB().Save(site).Error
 	if err != nil {
 		logrus.Error("Update Site error: ", err)
 	}
@@ -29,7 +28,7 @@ func UpdateSite(site *Site) error {
 }
 
 func UpdateUser(user *User) error {
-	err := lib.DB.Save(user).Error
+	err := DB().Save(user).Error
 	if err != nil {
 		logrus.Error("Update User error: ", err)
 	}
@@ -38,7 +37,7 @@ func UpdateUser(user *User) error {
 }
 
 func UpdatePage(page *Page) error {
-	err := lib.DB.Save(page).Error
+	err := DB().Save(page).Error
 	if err != nil {
 		logrus.Error("Update Page error: ", err)
 	}
@@ -53,7 +52,7 @@ func UserNotifyMarkAllAsRead(userID uint) error {
 
 	nowTime := time.Now()
 
-	lib.DB.Model(&Notify{}).Where("user_id = ?", userID).Updates(&Notify{
+	DB().Model(&Notify{}).Where("user_id = ?", userID).Updates(&Notify{
 		IsRead: true,
 		ReadAt: &nowTime,
 	})

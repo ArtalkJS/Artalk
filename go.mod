@@ -14,6 +14,7 @@ require (
 	github.com/eko/gocache/v2 v2.1.0
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-testfixtures/testfixtures/v3 v3.6.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/jeremywohl/flatten v1.0.1
@@ -40,6 +41,7 @@ require (
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	github.com/yuin/goldmark v1.4.0
 	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838
+	golang.org/x/sys v0.0.0-20220429121018-84afa8d3f7b3 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gorm.io/driver/mysql v1.1.2

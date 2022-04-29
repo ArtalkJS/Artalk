@@ -16,14 +16,13 @@ func (a *action) AdminSiteDel(c echo.Context) error {
 		return resp
 	}
 
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "禁止删除站点")
+	}
+
 	site := model.FindSiteByID(p.ID)
 	if site.IsEmpty() {
 		return RespError(c, "site 不存在")
-	}
-
-	// 站点操作权限检查
-	if hasAccess := IsAdminHasSiteManageAccess(c, site.Name); !hasAccess {
-		return RespError(c, "无权操作该站点")
 	}
 
 	err := model.DelSite(&site, !p.DelContent)

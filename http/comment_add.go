@@ -73,7 +73,7 @@ func (a *action) Add(c echo.Context) error {
 	page := model.FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
 
 	// check if the user is allowed to comment
-	if isAllowed, resp := CheckIfAllowed(c, p.Name, p.Email, page, p.SiteName); !isAllowed {
+	if isAllowed, resp := CheckIsAllowed(c, p.Name, p.Email, page, p.SiteName); !isAllowed {
 		return resp
 	}
 

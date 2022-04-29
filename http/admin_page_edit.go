@@ -30,21 +30,18 @@ func (a *action) AdminPageEdit(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := AdminSiteInControl(c, &p.SiteName, &p.SiteID, nil); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
 		return resp
 	}
 
-	// check create page
-	var page model.Page
-	if p.ID == 0 {
-		// create new page
-		page = model.FindCreatePage(p.Key, p.Title, p.SiteName)
-	} else {
-		page = model.FindPageByID(p.ID)
-	}
-
+	// find page
+	var page = model.FindPageByID(p.ID)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
+	}
+
+	if !IsAdminHasSiteAccess(c, page.SiteName) {
+		return RespError(c, "无权操作")
 	}
 
 	// 重命名合法性检测

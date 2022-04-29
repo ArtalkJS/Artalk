@@ -18,13 +18,17 @@ func (a *action) AdminPageDel(c echo.Context) error {
 	}
 
 	// find site
-	if isOK, resp := AdminSiteInControl(c, &p.SiteName, &p.SiteID, nil); !isOK {
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
 		return resp
 	}
 
 	page := model.FindPage(p.Key, p.SiteName)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
+	}
+
+	if !IsAdminHasSiteAccess(c, page.SiteName) {
+		return RespError(c, "无权操作")
 	}
 
 	err := model.DelPage(&page)

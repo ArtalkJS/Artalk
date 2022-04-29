@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -17,19 +18,12 @@ func (a *action) AdminSiteGet(c echo.Context) error {
 	allSites := model.GetAllCookedSites()
 	sites := allSites
 
+	// 非超级管理员仅显示分配的站点
 	if !GetIsSuperAdmin(c) {
-		// 非超级管理员仅显示分配的站点
 		sites = []model.CookedSite{}
 		user := GetUserByReq(c).ToCooked()
 		for _, s := range allSites {
-			hasAccess := false
-			for _, us := range user.SiteNames {
-				if us == s.Name {
-					hasAccess = true
-					break
-				}
-			}
-			if hasAccess {
+			if lib.ContainsStr(user.SiteNames, s.Name) {
 				sites = append(sites, s)
 			}
 		}

@@ -58,32 +58,36 @@ func (a *action) AdminImport(c echo.Context) error {
 		return resp
 	}
 
-	var payloadMap map[string]interface{}
-	err := json.Unmarshal([]byte(p.Payload), &payloadMap)
+	var payloadMapRaw map[string]interface{}
+	err := json.Unmarshal([]byte(p.Payload), &payloadMapRaw)
 	if err != nil {
 		return RespError(c, "payload 解析错误", Map{
 			"error": err,
 		})
 	}
-	payload := []string{}
+
+	payloadMap := map[string]string{}
 	for k, v := range payloadMap {
-		payload = append(payload, k+":"+lib.ToString(v))
+		payloadMap[k] = lib.ToString(v) // convert all value to string
+	}
+
+	payloadArr := []string{}
+	for k, v := range payloadMap {
+		payloadArr = append(payloadArr, k+":"+v)
 	}
 
 	if !GetIsSuperAdmin(c) {
 		user := GetUserByReq(c)
-		allow := false
-		for _, site := range user.ToCooked().SiteNames {
-			if lib.ContainsStr(payload, "t_name:"+site) {
-				allow = true
-				break
+		if sitName, isExist := payloadMap["t_name"]; isExist {
+			if !lib.ContainsStr(user.ToCooked().SiteNames, sitName) {
+				return RespError(c, "禁止导入的目标站点名")
 			}
-		}
-		if !allow {
-			return RespError(c, "禁止导入的目标站点名")
+		} else {
+			return RespError(c, "请填写目标站点名")
 		}
 	}
 
+	// TODO bcz 懒，先整这个缓冲输出，以后改成高级点的
 	c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTMLCharsetUTF8)
 	c.Response().WriteHeader(http.StatusOK)
 
@@ -98,7 +102,7 @@ func (a *action) AdminImport(c echo.Context) error {
 		c.Response().Write([]byte("<script>scroll();</script>"))
 		c.Response().Flush()
 	}
-	artransfer.RunImportArtrans(payload)
+	artransfer.RunImportArtrans(payloadArr)
 
 	return nil
 }

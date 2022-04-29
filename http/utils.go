@@ -93,7 +93,7 @@ func ParamsDecode(c echo.Context, destParams interface{}) (isContinue bool, resp
 	return true, nil
 }
 
-func CheckIfAllowed(c echo.Context, name string, email string, page model.Page, siteName string) (bool, error) {
+func CheckIsAllowed(c echo.Context, name string, email string, page model.Page, siteName string) (bool, error) {
 	isAdminUser := model.IsAdminUserByNameEmail(name, email)
 
 	// 如果用户是管理员，或者当前页只能管理员评论
@@ -204,33 +204,4 @@ func CheckSite(c echo.Context, siteName *string, destID *uint, destSiteAll *bool
 	*destID = site.ID // 更新源 id
 
 	return true, nil
-}
-
-func GetIsSuperAdmin(c echo.Context) bool {
-	user := GetUserByReq(c)
-	return user.IsAdmin && user.SiteNames == ""
-}
-
-func AdminSiteInControl(c echo.Context, siteName *string, destID *uint, destSiteAll *bool) (bool, error) {
-	if hasAccess := IsAdminHasSiteManageAccess(c, *siteName); !hasAccess {
-		return false, RespError(c, "无权操作该站点")
-	}
-
-	return CheckSite(c, siteName, destID, destSiteAll)
-}
-
-func IsAdminHasSiteManageAccess(c echo.Context, siteName string) bool {
-	user := GetUserByReq(c)
-	cookedUser := user.ToCooked()
-
-	if !user.IsAdmin {
-		return false
-	}
-
-	if !GetIsSuperAdmin(c) && !lib.ContainsStr(cookedUser.SiteNames, siteName) {
-		// 如果账户分配了站点，并且待操作的站点并非处于分配的站点列表
-		return false
-	}
-
-	return true
 }

@@ -26,7 +26,6 @@ type Artran struct {
 	Nick       string `json:"nick"`
 	Email      string `json:"email"`
 	Link       string `json:"link"`
-	Password   string `json:"password"`
 	BadgeName  string `json:"badge_name"`
 	BadgeColor string `json:"badge_color"`
 

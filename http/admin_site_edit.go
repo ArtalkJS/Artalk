@@ -29,8 +29,8 @@ func (a *action) AdminSiteEdit(c echo.Context) error {
 	}
 
 	// 站点操作权限检查
-	if hasAccess := IsAdminHasSiteManageAccess(c, site.Name); !hasAccess {
-		return RespError(c, "无权操作该站点")
+	if !IsAdminHasSiteAccess(c, site.Name) {
+		return RespError(c, "无权操作")
 	}
 
 	if strings.TrimSpace(p.Name) == "" {

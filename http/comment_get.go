@@ -206,7 +206,7 @@ func MsgCenter(a *action, c echo.Context, p ParamsGet, siteID uint) func(db *gor
 			if !isAdminReq {
 				return db.Where("id = 0")
 			}
-			if !IsAdminHasSiteManageAccess(c, p.SiteName) {
+			if !IsAdminHasSiteAccess(c, p.SiteName) {
 				return db.Where("id = 0")
 			}
 		}

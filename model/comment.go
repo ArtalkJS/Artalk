@@ -250,7 +250,6 @@ func (c *Comment) ToArtran() Artran {
 		Nick:          user.Name,
 		Email:         user.Email,
 		Link:          user.Link,
-		Password:      user.Password,
 		BadgeName:     user.BadgeName,
 		BadgeColor:    user.BadgeColor,
 		PageKey:       page.Key,

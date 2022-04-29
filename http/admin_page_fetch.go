@@ -78,6 +78,10 @@ func (a *action) AdminPageFetch(c echo.Context) error {
 		return RespError(c, "page not found")
 	}
 
+	if !IsAdminHasSiteAccess(c, page.SiteName) {
+		return RespError(c, "无权操作")
+	}
+
 	if err := page.FetchURL(); err != nil {
 		return RespError(c, "page fetch error: "+err.Error())
 	}

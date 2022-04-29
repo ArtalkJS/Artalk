@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
@@ -102,4 +103,25 @@ func GetUserByReq(c echo.Context) model.User {
 	user := GetUserByJwt(jwt)
 
 	return user
+}
+
+func GetIsSuperAdmin(c echo.Context) bool {
+	user := GetUserByReq(c)
+	return user.IsAdmin && user.SiteNames == ""
+}
+
+func IsAdminHasSiteAccess(c echo.Context, siteName string) bool {
+	user := GetUserByReq(c)
+	cookedUser := user.ToCooked()
+
+	if !user.IsAdmin {
+		return false
+	}
+
+	if !GetIsSuperAdmin(c) && !lib.ContainsStr(cookedUser.SiteNames, siteName) {
+		// 如果账户分配了站点，并且待操作的站点并非处于分配的站点列表
+		return false
+	}
+
+	return true
 }

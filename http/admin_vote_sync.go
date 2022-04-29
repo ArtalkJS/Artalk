@@ -14,6 +14,10 @@ func (a *action) AdminVoteSync(c echo.Context) error {
 		return resp
 	}
 
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "无权访问")
+	}
+
 	VoteSync(a)
 
 	return RespSuccess(c)

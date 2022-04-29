@@ -43,6 +43,10 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 		return RespError(c, "comment not found")
 	}
 
+	if !IsAdminHasSiteManageAccess(c, comment.SiteName) {
+		return RespError(c, "无权操作")
+	}
+
 	// content
 	if p.Content != "" {
 		comment.Content = p.Content

@@ -30,6 +30,10 @@ func (a *action) AdminCommentDel(c echo.Context) error {
 		return RespError(c, "comment not found")
 	}
 
+	if !IsAdminHasSiteManageAccess(c, comment.SiteName) {
+		return RespError(c, "无权操作")
+	}
+
 	if err := model.DelComment(comment.ID); err != nil {
 		return RespError(c, "comment delete error")
 	}

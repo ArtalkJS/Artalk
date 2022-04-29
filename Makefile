@@ -6,12 +6,10 @@ GO_VERSION   ?= 1.16.6
 
 all: install build
 
-.PHONY: install
 install:
 	go mod tidy
 	go install github.com/markbates/pkger/cmd/pkger
 
-.PHONY: build
 build: build-frontend update
 	go build \
     	-ldflags "-s -w -X github.com/ArtalkJS/ArtalkGo/lib.Version=${VERSION} \
@@ -19,19 +17,15 @@ build: build-frontend update
         -o bin/artalk-go \
     	github.com/ArtalkJS/ArtalkGo
 
-.PHONY: build-frontend
 build-frontend:
 	./scripts/build-frontend.sh
 
-.PHONY: update
 update:
 	pkger -include /frontend -include /email-tpl -include /lib/captcha/pages -include /artalk-go.example.yml -o pkged
 
-.PHONY: run
 run: all
 	./bin/artalk-go server $(ARGS)
 
-.PHONY: dev
 dev:
 	@if [ ! -f "pkged/pkged.go" ]; then \
 		make install; \
@@ -44,19 +38,15 @@ dev:
     	github.com/ArtalkJS/ArtalkGo
 	./bin/artalk-go server $(ARGS)
 
-.PHONY: test
 test: update
 	go test -cover github.com/ArtalkJS/ArtalkGo/...
 
-.PHONY: docker-build
 docker-build:
 	./scripts/docker-build.sh
 
-.PHONY: docker-push
 docker-push:
 	./scripts/docker-build.sh --push
 
-.PHONY: release-dry-run
 release-dry-run:
 	@docker run \
 		--rm \
@@ -69,7 +59,7 @@ release-dry-run:
 		troian/golang-cross:v${GO_VERSION} \
 		--rm-dist --skip-validate --skip-publish
 
-.PHONY: release
+
 # https://hub.docker.com/r/troian/golang-cross
 # https://github.com/troian/golang-cross
 # https://goreleaser.com/cmd/goreleaser_release/
@@ -90,3 +80,8 @@ release:
 		-w /go/src/$(PACKAGE_NAME) \
 		troian/golang-cross:v${GO_VERSION} \
 		release --rm-dist --skip-validate
+
+.PHONY: all install build build-frontend \
+	update run dev test \
+	docker-build docker-push \
+	release-dry-run release;

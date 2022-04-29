@@ -205,3 +205,21 @@ func CheckSite(c echo.Context, siteName *string, destID *uint, destSiteAll *bool
 
 	return true, nil
 }
+
+func ContainsComment(comments []model.Comment, targetID uint) bool {
+	for _, c := range comments {
+		if c.ID == targetID {
+			return true
+		}
+	}
+	return false
+}
+
+func ContainsCookedComment(comments []model.CookedComment, targetID uint) bool {
+	for _, c := range comments {
+		if c.ID == targetID {
+			return true
+		}
+	}
+	return false
+}

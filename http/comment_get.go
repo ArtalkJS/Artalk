@@ -103,10 +103,7 @@ func (a *action) Get(c echo.Context) error {
 	prependPinnedComments(a, c, p, &comments)
 
 	// cook
-	cookedComments := []model.CookedComment{}
-	for _, c := range comments {
-		cookedComments = append(cookedComments, c.ToCooked())
-	}
+	cookedComments := model.CookAllComments(comments)
 
 	switch {
 	case !p.FlatMode:
@@ -116,8 +113,8 @@ func (a *action) Get(c echo.Context) error {
 
 		// 获取 comment 子评论
 		for _, parent := range cookedComments { // TODO: Read more children, pagination for children comment
-			children := parent.FetchChildrenWithCheckers(SiteIsolationChecker(c, p), AllowedCommentChecker(c, p))
-			cookedComments = append(cookedComments, children...)
+			children := model.FindCommentChildren(parent.ID, SiteIsolationChecker(c, p), AllowedCommentChecker(c, p))
+			cookedComments = append(cookedComments, model.CookAllComments(children)...)
 		}
 
 	case p.FlatMode:
@@ -127,11 +124,11 @@ func (a *action) Get(c echo.Context) error {
 
 		// find linked comments (被引用的评论，不单独显示)
 		for _, comment := range comments {
-			if comment.Rid == 0 || ContainsCookedComment(cookedComments, comment.Rid) {
+			if comment.Rid == 0 || model.ContainsCookedComment(cookedComments, comment.Rid) {
 				continue
 			}
 
-			rComment := model.FindCommentRules(comment.Rid, SiteIsolationChecker(c, p)) // 查找被回复的评论
+			rComment := model.FindComment(comment.Rid, SiteIsolationChecker(c, p)) // 查找被回复的评论
 			if rComment.IsEmpty() {
 				continue
 			}

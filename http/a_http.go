@@ -64,7 +64,7 @@ func InitCorsControl(e *echo.Echo) {
 	}
 
 	// 导入数据库中的站点 urls
-	for _, site := range model.GetAllCookedSites() {
+	for _, site := range model.FindAllSitesCooked() {
 		for _, url := range site.Urls {
 			if !lib.ContainsStr(allowOrigins, url) {
 				allowOrigins = append(allowOrigins, url)

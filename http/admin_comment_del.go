@@ -40,7 +40,7 @@ func (a *action) AdminCommentDel(c echo.Context) error {
 	}
 
 	// 删除子评论
-	if err := model.DelCommentChildren(comment); err != nil {
+	if err := model.DelCommentChildren(comment.ID); err != nil {
 		return RespError(c, "子评论删除失败")
 	}
 

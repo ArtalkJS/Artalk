@@ -3,11 +3,9 @@ package model
 import (
 	"fmt"
 	"strings"
-
-	"gorm.io/gorm"
 )
 
-func FindComment(id uint) Comment {
+func FindComment(id uint, checkers ...func(*Comment) bool) Comment {
 	var comment Comment
 
 	if cacher, err := FindCache(fmt.Sprintf("comment#id=%d", id), &comment); err != nil {
@@ -17,28 +15,18 @@ func FindComment(id uint) Comment {
 		})
 	}
 
-	return comment
-}
-
-// TODO (!!no cache)
-func FindCommentScopes(id uint, filters ...func(db *gorm.DB) *gorm.DB) Comment {
-	var comment Comment
-	DB().Where("id = ?", id).Scopes(filters...).First(&comment)
-	return comment
-}
-
-func FindCommentRules(id uint, rules ...func(*Comment) bool) Comment {
-	comment := FindComment(id)
-	for _, r := range rules {
-		if !r(&comment) {
+	// the case with checkers
+	for _, c := range checkers {
+		if !c(&comment) {
 			return Comment{}
 		}
 	}
+
 	return comment
 }
 
 // (Cached：parent-comments)
-func FindCommentChildren(parentID uint, checkers ...func(*Comment) bool) []Comment {
+func FindCommentChildrenShallow(parentID uint, checkers ...func(*Comment) bool) []Comment {
 	var children []Comment
 	var childIDs []uint
 
@@ -50,30 +38,29 @@ func FindCommentChildren(parentID uint, checkers ...func(*Comment) bool) []Comme
 	}
 
 	for _, childID := range childIDs {
-		comment := FindComment(childID)
-		if comment.IsEmpty() {
-			continue
+		child := FindComment(childID, checkers...)
+		if !child.IsEmpty() {
+			children = append(children, child)
 		}
-
-		// 规则过滤
-		if len(checkers) > 0 {
-			for _, r := range checkers {
-				if !r(&comment) {
-					continue
-				}
-			}
-		}
-
-		children = append(children, comment)
 	}
 
 	return children
 }
 
-func GetUserAllCommentIDs(userID uint) []uint {
-	userAllCommentIDs := []uint{}
-	DB().Model(&Comment{}).Select("id").Where("user_id = ?", userID).Find(&userAllCommentIDs)
-	return userAllCommentIDs
+func FindCommentChildren(parentID uint, checkers ...func(*Comment) bool) []Comment {
+	allChildren := []Comment{}
+	_findCommentChildrenOnce(&allChildren, parentID, checkers...) // TODO: children 数量限制
+	return allChildren
+}
+
+func _findCommentChildrenOnce(source *[]Comment, parentID uint, checkers ...func(*Comment) bool) {
+	// TODO 子评论排序问题
+	children := FindCommentChildrenShallow(parentID, checkers...)
+
+	for _, child := range children {
+		*source = append(*source, child)
+		_findCommentChildrenOnce(source, child.ID, checkers...) // recurse
+	}
 }
 
 // 查找用户 (精确查找 name & email)
@@ -160,7 +147,7 @@ func FindSiteByID(id uint) Site {
 	return site
 }
 
-func GetAllCookedSites() []CookedSite {
+func FindAllSitesCooked() []CookedSite {
 	var sites []Site
 	DB().Model(&Site{}).Find(&sites)
 
@@ -182,12 +169,6 @@ func FindNotify(userID uint, commentID uint) Notify {
 func FindNotifyByKey(key string) Notify {
 	var notify Notify
 	DB().Where(Notify{Key: key}).First(&notify)
-	return notify
-}
-
-func FindNotifyByID(id uint) Notify {
-	var notify Notify
-	DB().First(&notify, id)
 	return notify
 }
 

@@ -97,7 +97,7 @@ func AllowedCommentChecker(c echo.Context, p ParamsGet) func(*model.Comment) boo
 		}
 
 		// 通知中心允许显示个人的待审状态的评论
-		if comment.IsPending && p.IsMsgCenter && p.User.ID == comment.UserID {
+		if p.IsMsgCenter && p.User.ID == comment.UserID {
 			return true
 		}
 
@@ -188,7 +188,7 @@ func prependPinnedComments(a *action, c echo.Context, p ParamsGet, comments *[]m
 	// 去掉已 pinned 且重复存在于原列表中的评论
 	filteredComments := []model.Comment{}
 	for _, co := range *comments {
-		if !ContainsComment(pinnedComments, co.ID) {
+		if !model.ContainsComment(pinnedComments, co.ID) {
 			filteredComments = append(filteredComments, co)
 		}
 	}

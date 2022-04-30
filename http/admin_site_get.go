@@ -15,7 +15,7 @@ func (a *action) AdminSiteGet(c echo.Context) error {
 		return resp
 	}
 
-	allSites := model.GetAllCookedSites()
+	allSites := model.FindAllSitesCooked()
 	sites := allSites
 
 	// 非超级管理员仅显示分配的站点

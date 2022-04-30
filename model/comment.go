@@ -145,39 +145,6 @@ func (c *Comment) ToCooked() CookedComment {
 	}
 }
 
-func (c CookedComment) FetchChildrenWithCheckers(checkers ...func(*Comment) bool) []CookedComment {
-	children := []CookedComment{}
-	fetchChildrenOnceWithCheckers(&children, c, checkers...) // TODO: children 数量限制
-	return children
-}
-
-func fetchChildrenOnceWithCheckers(src *[]CookedComment, parentComment CookedComment, checkers ...func(*Comment) bool) {
-	// TODO 子评论排序问题
-	children := FindCommentChildren(parentComment.ID, checkers...)
-
-	for _, child := range children {
-		*src = append(*src, child.ToCooked())
-		fetchChildrenOnceWithCheckers(src, child.ToCooked(), checkers...) // loop
-	}
-}
-
-// TODO 已弃用 (原因：不容易做缓存)
-// func (c CookedComment) _Fetch_Children(filters ...func(db *gorm.DB) *gorm.DB) []CookedComment {
-// 	children := []CookedComment{}
-// 	_fetch_ChildrenOnce(&children, c, filters...) // TODO: children 数量限制
-// 	return children
-// }
-
-// func _fetch_ChildrenOnce(src *[]CookedComment, parentComment CookedComment, filters ...func(db *gorm.DB) *gorm.DB) {
-// 	children := []Comment{}
-// 	DB().Scopes(filters...).Where("rid = ?", parentComment.ID).Order("created_at ASC").Find(&children)
-
-// 	for _, child := range children {
-// 		*src = append(*src, child.ToCooked())
-// 		_fetch_ChildrenOnce(src, child.ToCooked(), filters...) // loop
-// 	}
-// }
-
 type CookedCommentForEmail struct {
 	CookedComment
 	Content    string     `json:"content"`

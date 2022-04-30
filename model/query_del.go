@@ -32,9 +32,9 @@ func DelComment(commentID uint) error {
 }
 
 // 删除所有子评论
-func DelCommentChildren(pComment Comment) error {
+func DelCommentChildren(parentID uint) error {
 	var rErr error
-	children := pComment.ToCooked().FetchChildrenWithCheckers()
+	children := FindCommentChildren(parentID)
 	for _, c := range children {
 		err := DelComment(c.ID)
 		if err != nil {

@@ -67,6 +67,12 @@ func postInit() {
 	denverLoc, _ := time.LoadLocation(Instance.TimeZone)
 	time.Local = denverLoc
 
+	// 默认站点配置
+	Instance.SiteDefault = strings.TrimSpace(Instance.SiteDefault)
+	if Instance.SiteDefault == "" {
+		logrus.Fatal("请设置 SiteDefault 默认站点，不能为空")
+	}
+
 	// 缓存配置
 	if Instance.Cache.Type == "" {
 		// 默认使用内建缓存

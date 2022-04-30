@@ -6,8 +6,7 @@ import (
 )
 
 type ParamsAdminSiteDel struct {
-	ID         uint `mapstructure:"id" param:"required"`
-	DelContent bool `mapstructure:"del_content"`
+	ID uint `mapstructure:"id" param:"required"`
 }
 
 func (a *action) AdminSiteDel(c echo.Context) error {
@@ -25,7 +24,7 @@ func (a *action) AdminSiteDel(c echo.Context) error {
 		return RespError(c, "site 不存在")
 	}
 
-	err := model.DelSite(&site, !p.DelContent)
+	err := model.DelSite(&site)
 	if err != nil {
 		return RespError(c, "site 删除失败")
 	}

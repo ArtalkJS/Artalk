@@ -35,7 +35,7 @@ func (a *action) AdminCommentDel(c echo.Context) error {
 	}
 
 	// 删除主评论
-	if err := model.DelComment(comment.ID); err != nil {
+	if err := model.DelComment(&comment); err != nil {
 		return RespError(c, "评论删除失败")
 	}
 

@@ -1,18 +1,15 @@
 package model
 
-func DelComment(commentID uint) error {
-	// 查询 Comment
-	comment := FindComment(commentID)
-
+func DelComment(comment *Comment) error {
 	// 清除 notify
-	if err := DB().Unscoped().Where("comment_id = ?", commentID).Delete(&Notify{}).Error; err != nil {
+	if err := DB().Unscoped().Where("comment_id = ?", comment.ID).Delete(&Notify{}).Error; err != nil {
 		return err
 	}
 
 	// 清除 vote
 	if err := DB().Unscoped().Where(
 		"target_id = ? AND (type = ? OR type = ?)",
-		commentID,
+		comment.ID,
 		string(VoteTypeCommentUp),
 		string(VoteTypeCommentDown),
 	).Delete(&Vote{}).Error; err != nil {
@@ -20,13 +17,13 @@ func DelComment(commentID uint) error {
 	}
 
 	// 删除 comment
-	err := DB().Unscoped().Delete(&Comment{}, commentID).Error
+	err := DB().Unscoped().Delete(comment).Error
 	if err != nil {
 		return err
 	}
 
 	// 删除缓存
-	CommentCacheDel(&comment)
+	CommentCacheDel(comment)
 
 	return nil
 }
@@ -36,7 +33,7 @@ func DelCommentChildren(parentID uint) error {
 	var rErr error
 	children := FindCommentChildren(parentID)
 	for _, c := range children {
-		err := DelComment(c.ID)
+		err := DelComment(&c)
 		if err != nil {
 			rErr = err
 		}
@@ -55,7 +52,7 @@ func DelPage(page *Page) error {
 	DB().Where("page_key = ? AND site_name = ?", page.Key, page.SiteName).Find(&comments)
 
 	for _, c := range comments {
-		DelComment(c.ID)
+		DelComment(&c)
 	}
 
 	// 删除 vote
@@ -72,20 +69,17 @@ func DelPage(page *Page) error {
 	return nil
 }
 
-func DelSite(site *Site, softDel bool) error {
+func DelSite(site *Site) error {
 	err := DB().Unscoped().Delete(&site).Error
 	if err != nil {
 		return err
 	}
 
 	// 删除所有相关内容
-	if !softDel {
-		var pages []Page
-		DB().Where("site_name = ?", site.Name).Find(&pages)
-
-		for _, p := range pages {
-			DelPage(&p)
-		}
+	var pages []Page
+	DB().Where("site_name = ?", site.Name).Find(&pages)
+	for _, p := range pages {
+		DelPage(&p)
 	}
 
 	// 删除缓存

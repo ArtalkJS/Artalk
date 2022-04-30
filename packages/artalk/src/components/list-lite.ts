@@ -314,6 +314,7 @@ export default class ListLite extends Component {
       const children = srcData.filter(o => o.rid === parentC.data.id)
       children.forEach((childData: CommentData) => {
         const childC = this.createComment(childData)
+        childC.parent = parentC
         childC.render()
 
         // 插入到父评论中
@@ -378,16 +379,18 @@ export default class ListLite extends Component {
     if (!this.flatMode) {
       // 嵌套模式
       const comment = this.createComment(commentData)
-      comment.render()
 
       if (commentData.rid === 0) {
         // root评论 新增
+        comment.render()
         this.$commentsWrap.prepend(comment.getEl())
         this.comments.unshift(comment)
       } else {
         // 子评论 新增
         const parent = this.findComment(commentData.rid)
         if (parent) {
+          comment.parent = parent
+          comment.render()
           parent.putChild(comment)
 
           // 若父评论存在 “子评论部分” 限高，取消限高

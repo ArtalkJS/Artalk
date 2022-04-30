@@ -30,6 +30,8 @@ export default class Comment extends Component {
   public replyTo?: CommentData // 回复对象（flatMode 用）
   public $replyTo?: HTMLElement
 
+  public $replyAt?: HTMLElement // 回复 AT（层级嵌套 用）
+
   public afterRender?: () => void
 
   private unread = false
@@ -43,7 +45,7 @@ export default class Comment extends Component {
     super(ctx)
 
     // 最大嵌套数
-    this.maxNestingNum = ctx.conf.maxNesting || 3
+    this.maxNestingNum = ctx.conf.nestMax || 3
 
     this.data = { ...data }
     this.data.date = this.data.date.replace(/-/g, '/') // 解决 Safari 日期解析 NaN 问题
@@ -70,6 +72,7 @@ export default class Comment extends Component {
     this.renderAvatar()
     this.renderHeader()
     this.renderContent()
+    this.renderReplyAt()
     this.renderReplyTo()
     this.renderPending()
     this.renderActionBtn()
@@ -187,6 +190,24 @@ export default class Comment extends Component {
         contentShowBtn.innerHTML = '查看内容'
       }
     })
+  }
+
+  // 层级嵌套模式显示 At
+  private renderReplyAt() {
+    if (!this.conf.nestShowAt || this.$replyAt || this.replyTo || !this.parent) return
+
+    this.$replyAt = Utils.createElement(`<span class="atk-reply-at"><span class="atk-nick"></span>: </span>`)
+    this.$replyAt.querySelector<HTMLElement>('.atk-nick')!.innerText = `@${this.parent.data.nick}`
+    this.$replyAt.onclick = () => {
+      window.location.hash = `#atk-comment-${this.parent!.data.id}`
+    }
+
+    const $firstParaTag = this.$content.querySelector('p:first-child')
+    if ($firstParaTag) {
+      $firstParaTag.prepend(this.$replyAt)
+    } else {
+      this.$content.prepend(this.$replyAt)
+    }
   }
 
   // 回复的对象

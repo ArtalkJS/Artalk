@@ -20,7 +20,8 @@ const defaults: ArtalkConfig = {
   listSort: true,
   pvEl: '#ArtalkPV',
   flatMode: 'auto',
-  maxNesting: 3,
+  nestMax: 3,
+  nestShowAt: false,
   gravatar: {
     default: 'mp',
     mirror: 'https://sdn.geekzu.org/avatar/',

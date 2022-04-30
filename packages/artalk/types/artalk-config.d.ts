@@ -74,8 +74,11 @@ export default interface ArtalkConfig {
   /** 平铺模式 */
   flatMode?: boolean|'auto'
 
+  /** 嵌套模式下显示 AT */
+  nestShowAt?: boolean
+
   /** 最大嵌套数 */
-  maxNesting?: number
+  nestMax?: number
 
   /** 显示 UA 徽标 */
   uaBadge?: boolean

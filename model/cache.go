@@ -19,7 +19,7 @@ var (
 )
 
 func FindAndStoreCache(name string, dest interface{}, queryDBResult func() interface{}) error {
-	// SingleFlight 防止缓存穿透
+	// SingleFlight 防止缓存击穿 (Cache breakdown)
 	v, err, _ := CacheFindGroup.Do(name, func() (interface{}, error) {
 		err := FindCache(name, dest)
 

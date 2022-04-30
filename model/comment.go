@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"gorm.io/gorm"
@@ -29,6 +30,10 @@ type Comment struct {
 	_Page Page
 	_Site Site
 
+	_UserOnce sync.Once
+	_PageOnce sync.Once
+	_SiteOnce sync.Once
+
 	VoteUp   int
 	VoteDown int
 }
@@ -42,36 +47,36 @@ func (c Comment) IsAllowReply() bool {
 }
 
 func (c *Comment) FetchUser() User {
-	if !c._User.IsEmpty() {
-		return c._User
+	if c._User.IsEmpty() {
+		c._UserOnce.Do(func() {
+			user := FindUserByID(c.UserID)
+			c._User = user
+		})
 	}
 
-	user := FindUserByID(c.UserID)
-
-	c._User = user
-	return user
+	return c._User
 }
 
 func (c *Comment) FetchPage() Page {
-	if !c._Page.IsEmpty() {
-		return c._Page
+	if c._Page.IsEmpty() {
+		c._PageOnce.Do(func() {
+			page := FindPage(c.PageKey, c.SiteName)
+			c._Page = page
+		})
 	}
 
-	page := FindPage(c.PageKey, c.SiteName)
-
-	c._Page = page
-	return page
+	return c._Page
 }
 
 func (c *Comment) FetchSite() Site {
-	if !c._Site.IsEmpty() {
-		return c._Site
+	if c._Site.IsEmpty() {
+		c._SiteOnce.Do(func() {
+			site := FindSite(c.SiteName)
+			c._Site = site
+		})
 	}
 
-	site := FindSite(c.SiteName)
-
-	c._Site = site
-	return site
+	return c._Site
 }
 
 // 获取评论回复链接

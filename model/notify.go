@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -21,7 +22,8 @@ type Notify struct {
 
 	Key string `gorm:"index;size:255"`
 
-	_Comment Comment
+	_Comment     Comment
+	_CommentOnce sync.Once
 }
 
 func (n Notify) IsEmpty() bool {
@@ -29,14 +31,14 @@ func (n Notify) IsEmpty() bool {
 }
 
 func (n *Notify) FetchComment() Comment {
-	if !n._Comment.IsEmpty() {
-		return n._Comment
+	if n._Comment.IsEmpty() {
+		n._CommentOnce.Do(func() {
+			comment := FindComment(n.CommentID)
+			n._Comment = comment
+		})
 	}
 
-	comment := FindComment(n.CommentID)
-
-	n._Comment = comment
-	return comment
+	return n._Comment
 }
 
 func (n *Notify) SetComment(comment Comment) {

@@ -3,56 +3,74 @@ package model
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/eko/gocache/v2/store"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/sync/singleflight"
 )
 
 var (
-	MutexCache = sync.Mutex{}
+	CacheFindGroup = new(singleflight.Group)
 )
 
-type cacher struct{ cacheKey string }
+func FindAndStoreCache(name string, dest interface{}, queryDBResult func() interface{}) error {
+	// SingleFlight 防止缓存穿透
+	v, err, _ := CacheFindGroup.Do(name, func() (interface{}, error) {
+		err := FindCache(name, dest)
 
-func (c *cacher) StoreCache(getSrcStruct func() interface{}) error {
-	return StoreCache(c.cacheKey, nil, getSrcStruct)
-}
+		// cache hit 直接返回结果
+		if err == nil {
+			return dest, nil
+		}
 
-func FindCache(name string, destStruct interface{}) (cacher, error) {
-	cacher := cacher{cacheKey: name}
+		// cache miss 查数据库
+		result := queryDBResult()
+		if err := StoreCache(name, result); err != nil {
+			return nil, err
+		}
+		return result, nil
+	})
 
-	if !config.Instance.Cache.Enabled {
-		return cacher, errors.New("缓存功能禁用")
-	}
-
-	_, err := lib.CACHE.Get(lib.Ctx, name, destStruct)
 	if err != nil {
-		return cacher, err
+		return err
 	}
 
-	logrus.Debug("[缓存命中] ", name)
+	if v != nil {
+		reflect.ValueOf(dest).Elem().Set(reflect.ValueOf(v).Elem()) // similar to `*dest = &v`
+	}
 
-	return cacher, nil
+	return nil
 }
 
-func StoreCache(name string, srcStruct interface{}, getSrcStruct ...func() interface{}) error {
-	MutexCache.Lock()
-	defer MutexCache.Unlock()
-
-	if len(getSrcStruct) > 0 { // getSrcStruct 为可选参数，当存在时会覆盖 srcStruct 参数
-		srcStruct = getSrcStruct[0]() // 这个 func 内再执行 db 查询，加锁防止反复查询
+func FindCache(name string, dest interface{}) error {
+	if !config.Instance.Cache.Enabled {
+		return errors.New("缓存功能禁用")
 	}
 
+	// `Get()` is Thread Safe, so no need to add Mutex
+	// @see https://github.com/go-redis/redis/issues/23
+	_, err := lib.CACHE.Get(lib.Ctx, name, dest)
+	if err != nil {
+		return err
+	}
+
+	logrus.Debug("[缓存命中] " + name)
+
+	return nil
+}
+
+func StoreCache(name string, source interface{}) error {
 	if !config.Instance.Cache.Enabled {
 		return nil
 	}
 
-	err := lib.CACHE.Set(lib.Ctx, name, srcStruct, &store.Options{
+	// `Set()` is Thread Safe too, no need to add Mutex either
+	err := lib.CACHE.Set(lib.Ctx, name, source, &store.Options{
 		Expiration: time.Duration(config.Instance.Cache.GetExpiresTime()),
 	})
 	if err != nil {
@@ -68,9 +86,6 @@ func DelCache(name string) error {
 	if !config.Instance.Cache.Enabled {
 		return nil
 	}
-
-	MutexCache.Lock()
-	defer MutexCache.Unlock()
 
 	return lib.CACHE.Delete(lib.Ctx, name)
 }
@@ -162,55 +177,30 @@ func CommentCacheDel(comment *Comment) {
 
 // 缓存 父ID=>子ID 评论数据
 func ChildCommentCacheSave(parentID uint, childID uint) {
-	var cacheKey = fmt.Sprintf("parent-comments#pid=%d", parentID)
 	var childIDs []uint
-	StoreCache(cacheKey, nil, func() interface{} {
-		_, err := FindCache(cacheKey, &childIDs)
-		if err != nil {
-			// 初始化
-			childIDs = []uint{}
-		}
+	var cacheName = fmt.Sprintf("parent-comments#pid=%d", parentID)
 
-		isExist := false
-		for _, i := range childIDs {
-			if i == childID {
-				isExist = true
-				break
-			}
-		}
+	err := FindCache(cacheName, &childIDs)
+	if err != nil { // 初始化
+		childIDs = []uint{}
+	}
 
-		// append if Not exist
-		if !isExist {
-			childIDs = append(childIDs, childID)
+	isExist := false
+	for _, i := range childIDs {
+		if i == childID {
+			isExist = true
+			break
 		}
+	}
 
-		return &childIDs
-	})
+	// append if Not exist
+	if !isExist {
+		childIDs = append(childIDs, childID)
+	}
+
+	StoreCache(cacheName, childIDs)
 }
 
 func ChildCommentCacheDel(parentID uint) {
 	DelCache(fmt.Sprintf("parent-comments#pid=%d", parentID))
-}
-
-// 仅从 pid => child_ids 切片中删除一项，
-// 最后结果可能出现：这个切片为空，但缓存存在 (可命中) 的情况
-func ChildCommentCacheSplice(parentID uint, childID uint) {
-	cacheKey := fmt.Sprintf("parent-comments#pid=%d", parentID)
-	var childIDs []uint
-	StoreCache(cacheKey, nil, func() interface{} {
-		_, err := FindCache(cacheKey, &childIDs)
-		if err != nil {
-			return []uint{}
-		}
-
-		// remove item
-		var nArr []uint
-		for _, id := range childIDs {
-			if id != childID {
-				nArr = append(nArr, id)
-			}
-		}
-
-		return &nArr
-	})
 }

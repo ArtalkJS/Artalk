@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"sync"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/PuerkitoBio/goquery"
@@ -19,8 +20,9 @@ type Page struct {
 	Title     string
 	AdminOnly bool
 
-	SiteName string `gorm:"index;size:255"`
-	_Site    Site
+	SiteName  string `gorm:"index;size:255"`
+	_Site     Site
+	_SiteOnce sync.Once
 
 	_AccessibleURL string
 
@@ -61,14 +63,14 @@ func (p Page) ToCooked() CookedPage {
 }
 
 func (p *Page) FetchSite() Site {
-	if !p._Site.IsEmpty() {
-		return p._Site
+	if p._Site.IsEmpty() {
+		p._SiteOnce.Do(func() {
+			site := FindSite(p.SiteName)
+			p._Site = site
+		})
 	}
 
-	site := FindSite(p.SiteName)
-
-	p._Site = site
-	return site
+	return p._Site
 }
 
 // 获取可访问链接

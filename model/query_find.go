@@ -8,12 +8,10 @@ import (
 func FindComment(id uint, checkers ...func(*Comment) bool) Comment {
 	var comment Comment
 
-	if cacher, err := FindCache(fmt.Sprintf("comment#id=%d", id), &comment); err != nil {
-		cacher.StoreCache(func() interface{} {
-			DB().Where("id = ?", id).First(&comment)
-			return &comment
-		})
-	}
+	FindAndStoreCache(fmt.Sprintf("comment#id=%d", id), &comment, func() interface{} {
+		DB().Where("id = ?", id).First(&comment)
+		return &comment
+	})
 
 	// the case with checkers
 	for _, c := range checkers {
@@ -30,12 +28,10 @@ func FindCommentChildrenShallow(parentID uint, checkers ...func(*Comment) bool) 
 	var children []Comment
 	var childIDs []uint
 
-	if cacher, err := FindCache(fmt.Sprintf("parent-comments#pid=%d", parentID), &childIDs); err != nil {
-		cacher.StoreCache(func() interface{} {
-			DB().Model(&Comment{}).Where(&Comment{Rid: parentID}).Select("id").Find(&childIDs)
-			return &childIDs
-		})
-	}
+	FindAndStoreCache(fmt.Sprintf("parent-comments#pid=%d", parentID), &childIDs, func() interface{} {
+		DB().Model(&Comment{}).Where(&Comment{Rid: parentID}).Select("id").Find(&childIDs)
+		return &childIDs
+	})
 
 	for _, childID := range childIDs {
 		child := FindComment(childID, checkers...)
@@ -68,13 +64,11 @@ func FindUser(name string, email string) User {
 	var user User
 
 	// 查询缓存
-	if cacher, err := FindCache(fmt.Sprintf("user#name=%s;email=%s", strings.ToLower(name), strings.ToLower(email)), &user); err != nil {
-		cacher.StoreCache(func() interface{} {
-			// 不区分大小写
-			DB().Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?)", name, email).First(&user)
-			return &user
-		})
-	}
+	FindAndStoreCache(fmt.Sprintf("user#name=%s;email=%s", strings.ToLower(name), strings.ToLower(email)), &user, func() interface{} {
+		// 不区分大小写
+		DB().Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?)", name, email).First(&user)
+		return &user
+	})
 
 	return user
 }
@@ -84,12 +78,10 @@ func FindUserByID(id uint) User {
 	var user User
 
 	// 查询缓存
-	if cacher, err := FindCache(fmt.Sprintf("user#id=%d", id), &user); err != nil {
-		cacher.StoreCache(func() interface{} {
-			DB().Where("id = ?", id).First(&user)
-			return &user
-		})
-	}
+	FindAndStoreCache(fmt.Sprintf("user#id=%d", id), &user, func() interface{} {
+		DB().Where("id = ?", id).First(&user)
+		return &user
+	})
 
 	return user
 }
@@ -97,12 +89,10 @@ func FindUserByID(id uint) User {
 func FindPage(key string, siteName string) Page {
 	var page Page
 
-	if cacher, err := FindCache(fmt.Sprintf("page#key=%s;site_name=%s", key, siteName), &page); err != nil {
-		cacher.StoreCache(func() interface{} {
-			DB().Where(&Page{Key: key, SiteName: siteName}).First(&page)
-			return &page
-		})
-	}
+	FindAndStoreCache(fmt.Sprintf("page#key=%s;site_name=%s", key, siteName), &page, func() interface{} {
+		DB().Where(&Page{Key: key, SiteName: siteName}).First(&page)
+		return &page
+	})
 
 	return page
 }
@@ -110,12 +100,10 @@ func FindPage(key string, siteName string) Page {
 func FindPageByID(id uint) Page {
 	var page Page
 
-	if cacher, err := FindCache(fmt.Sprintf("page#id=%d", id), &page); err != nil {
-		cacher.StoreCache(func() interface{} {
-			DB().Where("id = ?", id).First(&page)
-			return &page
-		})
-	}
+	FindAndStoreCache(fmt.Sprintf("page#id=%d", id), &page, func() interface{} {
+		DB().Where("id = ?", id).First(&page)
+		return &page
+	})
 
 	return page
 }
@@ -124,12 +112,10 @@ func FindSite(name string) Site {
 	var site Site
 
 	// 查询缓存
-	if cacher, err := FindCache(fmt.Sprintf("site#name=%s", name), &site); err != nil {
-		cacher.StoreCache(func() interface{} {
-			DB().Where("name = ?", name).First(&site)
-			return &site
-		})
-	}
+	FindAndStoreCache(fmt.Sprintf("site#name=%s", name), &site, func() interface{} {
+		DB().Where("name = ?", name).First(&site)
+		return &site
+	})
 
 	return site
 }
@@ -137,12 +123,10 @@ func FindSite(name string) Site {
 func FindSiteByID(id uint) Site {
 	var site Site
 
-	if cacher, err := FindCache(fmt.Sprintf("site#id=%d", id), &site); err != nil {
-		cacher.StoreCache(func() interface{} {
-			DB().Where("id = ?", id).First(&site)
-			return &site
-		})
-	}
+	FindAndStoreCache(fmt.Sprintf("site#id=%d", id), &site, func() interface{} {
+		DB().Where("id = ?", id).First(&site)
+		return &site
+	})
 
 	return site
 }

@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/go-testfixtures/testfixtures/v3"
 )
 
@@ -20,7 +21,9 @@ func TestMain(m *testing.M) {
 	config.Init("./testdata/model_test_conf.yml", "")
 
 	// 初始化测试数据库
-	db, err := gorm.Open(sqlite.Open("../data/test.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("../data/test.db"), &gorm.Config{
+		Logger: lib.NewGormLogger(),
+	})
 	if err != nil {
 		panic(err)
 	}

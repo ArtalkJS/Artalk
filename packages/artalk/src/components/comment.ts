@@ -16,6 +16,7 @@ export default class Comment extends Component {
   public $main!: HTMLElement
   public $header!: HTMLElement
   public $headerNick!: HTMLElement
+  public $headerBadge?: HTMLElement
   public $body!: HTMLElement
   public $content!: HTMLElement
   public $children!: HTMLElement|null
@@ -132,13 +133,14 @@ export default class Comment extends Component {
       this.$headerNick.innerText = this.data.nick
     }
 
-    const $badge = this.$el.querySelector<HTMLElement>('.atk-badge')!
+    this.$headerBadge = this.$el.querySelector<HTMLElement>('.atk-badge')!
     if (this.data.badge_name) {
-      $badge.innerText = this.data.badge_name
+      this.$headerBadge.innerText = this.data.badge_name
       if (this.data.badge_color)
-        $badge.style.backgroundColor = this.data.badge_color
+      this.$headerBadge.style.backgroundColor = this.data.badge_color
     } else {
-      $badge.remove()
+      this.$headerBadge.remove()
+      this.$headerBadge = undefined
     }
 
     if (this.data.is_pinned) {
@@ -204,7 +206,8 @@ export default class Comment extends Component {
     this.$replyAt.querySelector<HTMLElement>('.atk-nick')!.innerText = `${this.replyTo.nick}`
     this.$replyAt.onclick = () => { this.goToReplyComment() }
 
-    this.$headerNick.insertAdjacentElement('afterend', this.$replyAt)
+    const $after = this.$headerBadge || this.$headerNick
+    $after.insertAdjacentElement('afterend', this.$replyAt)
   }
 
   // 回复的对象

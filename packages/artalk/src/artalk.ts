@@ -47,6 +47,11 @@ export default class Artalk {
       this.conf.pageTitle = `${document.title}`
     }
 
+    // 列表显示模式
+    if (this.conf.nestMax && this.conf.nestMax <= 1) {
+      this.conf.flatMode = true
+    }
+
     // 装载元素
     if (!!this.conf.el && this.conf.el instanceof HTMLElement) {
       this.$root = this.conf.el

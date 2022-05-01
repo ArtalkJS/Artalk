@@ -25,7 +25,7 @@ export default class ListLite extends Component {
   public flatMode = false
 
   /** 嵌套模式 */
-  public nestSortBy: ListNest.SortByType = 'DATE_DESC'
+  public nestSortBy!: ListNest.SortByType
 
   /** 分页 */
   public pageMode: 'pagination'|'read-more' = 'pagination'
@@ -57,6 +57,9 @@ export default class ListLite extends Component {
 
     // 评论为空时显示字符
     if (ctx.conf.noComment) this.noCommentText = ctx.conf.noComment
+
+    // 嵌套排序方式
+    this.nestSortBy = this.ctx.conf.nestSort || 'DATE_ASC'
 
     // 评论时间自动更新
     window.setInterval(() => {

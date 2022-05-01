@@ -12,6 +12,10 @@ const defaults: ArtalkConfig = {
   darkMode: false,
   editorTravel: true,
 
+  flatMode: 'auto',
+  nestMax: 2,
+  nestSort: 'DATE_ASC',
+
   emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json",
 
   vote: true,
@@ -19,8 +23,6 @@ const defaults: ArtalkConfig = {
   uaBadge: true,
   listSort: true,
   pvEl: '#ArtalkPV',
-  flatMode: 'auto',
-  nestMax: 2,
 
   gravatar: {
     default: 'mp',

@@ -77,6 +77,9 @@ export default interface ArtalkConfig {
   /** 嵌套模式 · 最大层数 */
   nestMax?: number
 
+  /** 嵌套模式 · 排序方式 */
+  nestSort?: 'DATE_ASC'|'DATE_DESC'
+
   /** 显示 UA 徽标 */
   uaBadge?: boolean
 

@@ -105,8 +105,8 @@ func (a *action) ImgUpload(c echo.Context) error {
 	// @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/MIME_types
 	fileMine := http.DetectContentType(buf)
 	allowMines := []string{
-		"image/jpeg", "image/png", "image/gif",
-		"image/svg+xml", "image/webp", "image/bmp",
+		"image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp",
+		// "image/svg+xml",
 	}
 	if !lib.ContainsStr(allowMines, fileMine) {
 		return RespError(c, "不支持的格式")
@@ -114,12 +114,12 @@ func (a *action) ImgUpload(c echo.Context) error {
 
 	// 图片文件名
 	mineToExts := map[string]string{
-		"image/jpeg":    ".jpg",
-		"image/png":     ".png",
-		"image/gif":     ".gif",
-		"image/svg+xml": ".svg",
-		"image/webp":    ".webp",
-		"image/bmp":     ".bmp",
+		"image/jpeg": ".jpg",
+		"image/png":  ".png",
+		"image/gif":  ".gif",
+		"image/webp": ".webp",
+		"image/bmp":  ".bmp",
+		// "image/svg+xml": ".svg",
 	}
 
 	t := time.Now()

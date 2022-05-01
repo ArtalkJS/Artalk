@@ -21,7 +21,7 @@ const defaults: ArtalkConfig = {
   pvEl: '#ArtalkPV',
   flatMode: 'auto',
   nestMax: 3,
-  nestShowAt: false,
+
   gravatar: {
     default: 'mp',
     mirror: 'https://sdn.geekzu.org/avatar/',

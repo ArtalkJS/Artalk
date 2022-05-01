@@ -133,6 +133,7 @@ export default class Artalk {
   private initEventBind() {
     // 锚点快速跳转评论
     window.addEventListener('hashchange', () => {
+      this.list.goToCommentDelay = false
       this.list.checkGoToCommentByUrlHash()
     })
 

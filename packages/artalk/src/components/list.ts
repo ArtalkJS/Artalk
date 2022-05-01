@@ -112,11 +112,19 @@ export default class List extends ListLite {
     super.onLoad(data, offset)
 
     // 检测锚点跳转
-    this.checkGoToCommentByUrlHash()
+    if (!this.goToCommentFounded) this.checkGoToCommentByUrlHash()
+
+    // 防止评论框被吞
+    if (this.ctx.conf.editorTravel === true) {
+      this.ctx.trigger('editor-travel-back')
+    }
   }
 
+  private goToCommentFounded = false
+  public goToCommentDelay = true
+
   /** 跳到评论项位置 - 根据 `location.hash` */
-  public async checkGoToCommentByUrlHash () {
+  public checkGoToCommentByUrlHash() {
     let commentId = Number(Utils.getQueryParam('atk_comment')) // same as backend GetReplyLink()
     if (!commentId) {
       const match = window.location.hash.match(/#atk-comment-([0-9]+)/)
@@ -124,6 +132,14 @@ export default class List extends ListLite {
       commentId = Number(match[1])
     }
     if (!commentId) return
+
+    const comment = this.findComment(commentId)
+    if (!comment) { // 若找不到评论
+      // 自动翻页
+      if (this.readMoreBtn) this.readMoreBtn.click()
+      else if (this.pagination) this.pagination.next()
+      return
+    }
 
     // 已阅 API
     const notifyKey = Utils.getQueryParam('atk_notify_key')
@@ -137,20 +153,24 @@ export default class List extends ListLite {
         })
     }
 
-    const comment = this.findComment(commentId)
-    // TODO 若找不到评论的情况
-    // if (!comment) { // 若找不到评论
-    //   if (this.hasMoreComments) { // 阅读更多，并重试
-    //     await this.fetchComments()
-    //   }
-    // }
+    // 若父评论存在 “子评论部分” 限高，取消限高
+    comment.getParents().forEach((p) => {
+      if (p.$children) p.heightLimitRemove(p.$children)
+    })
 
-    if (!comment) return
+    const goTo = () => {
+      Ui.scrollIntoView(comment.getEl(), false)
 
-    Ui.scrollIntoView(comment.getEl(), false)
-    window.setTimeout(() => {
-      comment.getEl().classList.add('atk-flash-once')
-    }, 800)
+      comment.getEl().classList.remove('atk-flash-once')
+      window.setTimeout(() => {
+        comment.getEl().classList.add('atk-flash-once')
+      }, 150)
+    }
+
+    if (!this.goToCommentDelay) goTo()
+    else window.setTimeout(() => goTo(), 350)
+
+    this.goToCommentFounded = true
   }
 
   /** 管理员设置页面信息 */

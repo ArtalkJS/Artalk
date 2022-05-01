@@ -15,6 +15,7 @@ export default class Comment extends Component {
 
   public $main!: HTMLElement
   public $header!: HTMLElement
+  public $headerNick!: HTMLElement
   public $body!: HTMLElement
   public $content!: HTMLElement
   public $children!: HTMLElement|null
@@ -23,14 +24,15 @@ export default class Comment extends Component {
   public voteBtnDown?: ActionBtn
 
   public parent: Comment|null
-  public nestedNum: number
-  private maxNestingNum: number // 最多嵌套层数
-  public children: Comment[] = []
+  public nestCurt: number
+  private nestMax: number // 最大嵌套层数
+  private children: Comment[] = []
 
-  public replyTo?: CommentData // 回复对象（flatMode 用）
-  public $replyTo?: HTMLElement
+  public flatMode: boolean = false
+  public replyTo?: CommentData // 回复对象
 
-  public $replyAt?: HTMLElement // 回复 AT（层级嵌套 用）
+  public $replyTo?: HTMLElement // 回复评论内容 (平铺下显示)
+  public $replyAt?: HTMLElement // 回复 AT（层级嵌套下显示）
 
   public afterRender?: () => void
 
@@ -45,13 +47,13 @@ export default class Comment extends Component {
     super(ctx)
 
     // 最大嵌套数
-    this.maxNestingNum = ctx.conf.nestMax || 3
+    this.nestMax = ctx.conf.nestMax || 3
 
     this.data = { ...data }
     this.data.date = this.data.date.replace(/-/g, '/') // 解决 Safari 日期解析 NaN 问题
 
     this.parent = null
-    this.nestedNum = 1 // 现在已嵌套 n 层
+    this.nestCurt = 1 // 现在已嵌套 n 层
   }
 
   /** 渲染 UI */
@@ -120,14 +122,14 @@ export default class Comment extends Component {
   }
 
   private renderHeader() {
-    const $nick = this.$el.querySelector<HTMLElement>('.atk-nick')!
+    this.$headerNick = this.$el.querySelector<HTMLElement>('.atk-nick')!
     if (this.data.link) {
       const $nickA = Utils.createElement<HTMLLinkElement>('<a target="_blank" rel="noreferrer noopener nofollow"></a>')
       $nickA.innerText = this.data.nick
       $nickA.href = this.data.link
-      $nick.append($nickA)
+      this.$headerNick.append($nickA)
     } else {
-      $nick.innerText = this.data.nick
+      this.$headerNick.innerText = this.data.nick
     }
 
     const $badge = this.$el.querySelector<HTMLElement>('.atk-badge')!
@@ -141,7 +143,7 @@ export default class Comment extends Component {
 
     if (this.data.is_pinned) {
       const $pinnedBadge = Utils.createElement(`<span class="atk-item atk-pinned-badge">置顶</span>`) // 置顶徽章
-      $nick.insertAdjacentElement('afterend', $pinnedBadge)
+      this.$headerNick.insertAdjacentElement('afterend', $pinnedBadge)
     }
 
     const $date = this.$el.querySelector<HTMLElement>('.atk-date')!
@@ -194,24 +196,20 @@ export default class Comment extends Component {
 
   // 层级嵌套模式显示 At
   private renderReplyAt() {
-    if (!this.conf.nestShowAt || this.$replyAt || this.replyTo || !this.parent) return
+    if (this.flatMode || this.data.rid === 0) return // not 平铺模式 或 根评论
+    if (this.$replyAt) return // not 关闭显示 或 已经显示
+    if (!this.replyTo) return
 
-    this.$replyAt = Utils.createElement(`<span class="atk-reply-at"><span class="atk-nick"></span>: </span>`)
-    this.$replyAt.querySelector<HTMLElement>('.atk-nick')!.innerText = `@${this.parent.data.nick}`
-    this.$replyAt.onclick = () => {
-      window.location.hash = `#atk-comment-${this.parent!.data.id}`
-    }
+    this.$replyAt = Utils.createElement(`<span class="atk-item atk-reply-at"><span class="atk-arrow"></span><span class="atk-nick"></span></span>`)
+    this.$replyAt.querySelector<HTMLElement>('.atk-nick')!.innerText = `${this.replyTo.nick}`
+    this.$replyAt.onclick = () => { this.goToReplyComment() }
 
-    const $firstParaTag = this.$content.querySelector('p:first-child')
-    if ($firstParaTag) {
-      $firstParaTag.prepend(this.$replyAt)
-    } else {
-      this.$content.prepend(this.$replyAt)
-    }
+    this.$headerNick.insertAdjacentElement('afterend', this.$replyAt)
   }
 
   // 回复的对象
   private renderReplyTo() {
+    if (!this.flatMode) return // 仅平铺模式显示
     if (!this.replyTo) return
 
     this.$replyTo = Utils.createElement(`
@@ -219,11 +217,21 @@ export default class Comment extends Component {
         <div class="atk-meta">回复 <span class="atk-nick"></span>:</div>
         <div class="atk-content"></div>
       </div>`)
-    this.$replyTo.querySelector<HTMLElement>('.atk-nick')!.innerText = `@${this.replyTo.nick}`
+    const $nick = this.$replyTo.querySelector<HTMLElement>('.atk-nick')!
+    $nick.innerText = `@${this.replyTo.nick}`
+    $nick.onclick = () => { this.goToReplyComment() }
     let replyContent = Utils.marked(this.ctx, this.replyTo.content)
     if (this.replyTo.is_collapsed) replyContent = '[已折叠]'
     this.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
     this.$body.prepend(this.$replyTo)
+  }
+
+  public goToReplyComment() {
+    const origHash = window.location.hash
+    const modifyHash = `#atk-comment-${this.data.rid}`
+
+    window.location.hash = modifyHash
+    if (modifyHash === origHash) window.dispatchEvent(new Event('hashchange')) // 强制触发事件
   }
 
   // 待审核状态
@@ -345,30 +353,33 @@ export default class Comment extends Component {
     return this.children
   }
 
-  putChild(childC: Comment) {
+  putChild(childC: Comment, insertMode: 'append'|'prepend' = 'append') {
     childC.parent = this
-    childC.nestedNum = this.nestedNum + 1 // 嵌套层数 +1
+    childC.nestCurt = this.nestCurt + 1 // 嵌套层数 +1
     this.children.push(childC)
 
-    this.getChildrenEl().appendChild(childC.getEl())
+    const $children = this.getChildrenEl()
+    if (insertMode === 'append') $children.append(childC.getEl())
+    else if (insertMode === 'prepend') $children.prepend(childC.getEl())
+
     childC.playFadeInAnim()
 
     // 内容限高
     childC.checkHeightLimitArea('content')
   }
 
-  getChildrenEl() {
-    if (this.$children === null) {
-      // console.log(this.nestedNum)
-      if (this.nestedNum < this.maxNestingNum) {
+  getChildrenEl(): HTMLElement {
+    if (!this.$children) {
+      // console.log(this.nestCurt)
+      if (this.nestCurt < this.nestMax) {
         this.$children = Utils.createElement('<div class="atk-comment-children"></div>')
-        this.$main.appendChild(this.$children)
+        this.$main.append(this.$children)
       } else if (this.parent) {
           this.$children = this.parent.getChildrenEl()
       }
     }
 
-    return this.$children
+    return this.$children!
   }
 
   getParent() {

@@ -83,6 +83,27 @@
           color: var(--at-color-main);
           text-decoration: none;
         }
+
+        &.atk-reply-at {
+          margin-left: 2px;
+
+          & > .atk-arrow:before {
+            content: '';
+            vertical-align: middle;
+            transform: rotate(90deg);
+            border-bottom: 4px solid var(--at-color-grey);
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            display: inline-block;
+            margin-top: -1px;
+          }
+
+          & > .atk-nick {
+            color: var(--at-color-main);
+            cursor: pointer;
+            margin-left: 6px;
+          }
+        }
       }
 
       .badge() {
@@ -149,11 +170,6 @@
 
         .atk-height-limit-btn {
           bottom: 5px;
-        }
-
-        .atk-reply-at > .atk-nick {
-          color: var(--at-color-main);
-          cursor: pointer;
         }
       }
 

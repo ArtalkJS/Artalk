@@ -7,11 +7,14 @@ import Api from '../api'
 import Comment from './comment'
 import Pagination from './pagination'
 import ReadMoreBtn from './read-more-btn'
+import * as ListNest from './list-nest'
 import { backendMinVersion } from '../../package.json'
 
 export default class ListLite extends Component {
   protected $commentsWrap: HTMLElement
-  protected comments: Comment[] = []
+
+  protected commentList: Comment[] = [] // Note: 无层级结构 + 无须排列
+  protected get commentDataList() { return this.commentList.map(c => c.data) }
 
   protected data?: ListData
   protected isLoading: boolean = false
@@ -20,6 +23,9 @@ export default class ListLite extends Component {
 
   /** 平铺模式 */
   public flatMode = false
+
+  /** 嵌套模式 */
+  public nestSortBy: ListNest.SortByType = 'DATE_DESC'
 
   /** 分页 */
   public pageMode: 'pagination'|'read-more' = 'pagination'
@@ -265,7 +271,7 @@ export default class ListLite extends Component {
   /** 刷新界面 */
   public refreshUI() {
     // 无评论
-    const isNoComment = this.comments.length <= 0
+    const isNoComment = this.commentList.length <= 0
     let $noComment = this.$commentsWrap.querySelector<HTMLElement>('.atk-list-no-comment')
 
     if (isNoComment) {
@@ -283,8 +289,11 @@ export default class ListLite extends Component {
   }
 
   /** 创建新评论 */
-  protected createComment(data: CommentData) {
-    const comment = new Comment(this.ctx, data)
+  protected createComment(cData: CommentData, ctxData?: CommentData[]) {
+    if (!ctxData) ctxData = this.commentDataList
+
+    const comment = new Comment(this.ctx, cData)
+    comment.flatMode = this.flatMode
     comment.afterRender = () => {
       if (this.renderComment) this.renderComment(comment)
     }
@@ -292,6 +301,9 @@ export default class ListLite extends Component {
       this.deleteComment(c)
       this.refreshUI()
     }
+
+    // 子评论查找回复对象
+    comment.replyTo = (cData.rid ? ctxData.find(c => c.id === cData.rid) : undefined)
 
     return comment
   }
@@ -303,32 +315,16 @@ export default class ListLite extends Component {
         this.putCommentFlatMode(commentData, srcData, 'append')
       })
     } else {
-      this.importCommentsNesting(srcData)
+      this.importCommentsNest(srcData)
     }
   }
 
   // 导入评论 · 嵌套模式
-  private importCommentsNesting(srcData: CommentData[]) {
-    // 查找并导入所有子评论
-    const loadChildren = (parentC: Comment) => {
-      const children = srcData.filter(o => o.rid === parentC.data.id)
-      children.forEach((childData: CommentData) => {
-        const childC = this.createComment(childData)
-        childC.parent = parentC
-        childC.render()
-
-        // 插入到父评论中
-        parentC.putChild(childC)
-
-        // 递归加载子评论
-        loadChildren(childC)
-      })
-    }
-
+  private importCommentsNest(srcData: CommentData[]) {
     // 遍历 root 评论
-    const rootComments = srcData.filter((o) => o.rid === 0)
-    rootComments.forEach((rootData: CommentData) => {
-      const rootC = this.createComment(rootData)
+    const rootNodes = ListNest.makeNestCommentNodeList(srcData, this.nestSortBy, this.conf.nestMax)
+    rootNodes.forEach((rootNode: ListNest.CommentNode) => {
+      const rootC = this.createComment(rootNode.comment, srcData)
       rootC.render()
 
       // 显示并播放渐入动画
@@ -336,10 +332,25 @@ export default class ListLite extends Component {
       rootC.playFadeInAnim()
 
       // 评论放入 comments 总表中
-      this.comments.push(rootC)
+      this.commentList.push(rootC)
 
       // 加载子评论
-      loadChildren(rootC)
+      const that = this
+      ;(function loadChildren(parentC: Comment, parentNode: ListNest.CommentNode) {
+        parentNode.children.forEach((node: ListNest.CommentNode) => {
+          const childD = node.comment
+          const childC = that.createComment(childD, srcData)
+          childC.render()
+
+          // 插入到父评论中
+          parentC.putChild(childC)
+
+          that.commentList.push(childC)
+
+          // 递归加载子评论
+          loadChildren(childC, node)
+        })
+      })(rootC, rootNode)
 
       // 限高检测
       rootC.checkHeightLimit()
@@ -347,18 +358,13 @@ export default class ListLite extends Component {
   }
 
   /** 导入评论 · 平铺模式 */
-  private putCommentFlatMode(cData: CommentData, srcData: CommentData[], insertMode: 'append'|'prepend') {
+  private putCommentFlatMode(cData: CommentData, ctxData: CommentData[], insertMode: 'append'|'prepend') {
     if (cData.is_collapsed) cData.is_allow_reply = false
-    const comment = this.createComment(cData)
-    if (cData.rid !== 0) {
-      const rComment = srcData.find(o => o.id === cData.rid)
-      if (rComment) comment.replyTo = rComment
-    }
+    const comment = this.createComment(cData, ctxData)
     comment.render()
 
     // 将评论导入 comments 总表中
-    if (insertMode === 'append') this.comments.push(comment)
-    if (insertMode === 'prepend') this.comments.unshift(comment)
+    this.commentList.push(comment)
 
     // 可见评论添加到界面
     // 注：不可见评论用于显示 “引用内容”
@@ -384,14 +390,13 @@ export default class ListLite extends Component {
         // root评论 新增
         comment.render()
         this.$commentsWrap.prepend(comment.getEl())
-        this.comments.unshift(comment)
+        this.commentList.push(comment)
       } else {
         // 子评论 新增
         const parent = this.findComment(commentData.rid)
         if (parent) {
-          comment.parent = parent
           comment.render()
-          parent.putChild(comment)
+          parent.putChild(comment, (this.nestSortBy === 'DATE_ASC' ? 'append' : 'prepend'))
 
           // 若父评论存在 “子评论部分” 限高，取消限高
           comment.getParents().forEach((p) => {
@@ -406,7 +411,7 @@ export default class ListLite extends Component {
       comment.playFadeInAnim() // 播放评论渐出动画
     } else {
       // 平铺模式
-      const comment = this.putCommentFlatMode(commentData, this.comments.map(c => c.data), 'prepend')
+      const comment = this.putCommentFlatMode(commentData, this.commentDataList, 'prepend')
       Ui.scrollIntoView(comment.getEl()) // 滚动到可见
     }
 
@@ -418,47 +423,22 @@ export default class ListLite extends Component {
     this.ctx.trigger('comments-loaded')
   }
 
-  /** 遍历操作 Comment (包括子评论) */
-  protected eachComment(commentList: Comment[], action: (comment: Comment, levelList: Comment[]) => boolean|void) {
-    if (commentList.length === 0) return
-    commentList.every((item) => {
-      if (action(item, commentList) === false) return false
-      this.eachComment(item.getChildren(), action)
-      return true
-    })
-  }
-
   /** 查找评论项 */
-  protected findComment(id: number, src?: Comment[]): Comment|null {
-    if (!src) src = this.comments
-    let comment: Comment|null = null
-    this.eachComment(src, (item) => {
-      if (item.data.id === id) {
-        comment = item
-        return false
-      }
-      return true
-    })
-
-    return comment
+  protected findComment(id: number): Comment|undefined {
+    return this.commentList.find(c => c.data.id === id)
   }
 
   /** 删除评论 */
-  public deleteComment(comment: number|Comment) {
-    let findComment: Comment|null
-    if (typeof comment === 'number') {
-      findComment = this.findComment(comment)
-      if (!findComment) throw Error(`未找到评论 ${comment}`)
-    } else findComment = comment
+  public deleteComment(_comment: number|Comment) {
+    let comment: Comment
+    if (typeof _comment === 'number') {
+      const findComment = this.findComment(_comment)
+      if (!findComment) throw Error(`未找到评论 ${_comment}`)
+      comment = findComment
+    } else comment = _comment
 
-    findComment.getEl().remove()
-    this.eachComment(this.comments, (item, levelList) => {
-      if (item === findComment) {
-        levelList.splice(levelList.indexOf(item), 1)
-        return false
-      }
-      return true
-    })
+    comment.getEl().remove()
+    this.commentList.splice(this.commentList.indexOf(comment), 1)
 
     if (this.data) this.data.total -= 1 // 评论数减 1
 
@@ -469,7 +449,7 @@ export default class ListLite extends Component {
   public clearAllComments() {
     this.$commentsWrap.innerHTML = ''
     this.data = undefined
-    this.comments = []
+    this.commentList = []
   }
 
   /** 更新未读数据 */
@@ -478,7 +458,7 @@ export default class ListLite extends Component {
 
     // 高亮评论
     if (this.unreadHighlight === true) {
-      this.eachComment(this.comments, (comment) => {
+      this.commentList.forEach((comment) => {
         const notify = this.unread.find(o => o.comment_id === comment.data.id)
         if (notify) {
           comment.setUnread(true)

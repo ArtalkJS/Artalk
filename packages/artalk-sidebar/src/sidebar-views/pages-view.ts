@@ -18,6 +18,7 @@ export default class PagesView extends SidebarView {
   viewTabs = {}
   viewActiveTab = ''
 
+  isFirstLoad = true
   pageList!: PageList
   pagination!: Pagination
 
@@ -35,17 +36,20 @@ export default class PagesView extends SidebarView {
   }
 
   async reqPages(offset: number) {
-    this.pageList.initPageList()
+    if (this.isFirstLoad) this.pageList.initPageList()
     ;(this.$el.parentNode as any)?.scrollTo(0, 0)
 
-    Ui.showLoading(this.$el)
+    if (this.isFirstLoad) Ui.showLoading(this.$el)
+    else this.pagination.setLoading(true)
 
     const data = await new Api(this.ctx).pageGet(this.sidebar.curtSite, offset, PAGE_SIZE)
+    this.pageList.$pageList!.innerHTML = ''
     this.pageList.importPages(data.pages || [])
 
-    Ui.hideLoading(this.$el)
+    if (this.isFirstLoad) Ui.hideLoading(this.$el)
+    else this.pagination.setLoading(false)
 
-    if (!this.pagination) {
+    if (this.isFirstLoad) {
       this.pagination = new Pagination(data.total, {
         pageSize: PAGE_SIZE,
         onChange: (o: number) => {
@@ -54,8 +58,9 @@ export default class PagesView extends SidebarView {
       })
 
       this.$el.append(this.pagination.$el)
+      this.isFirstLoad = false
+    } else {
+      if (offset === 0) this.pagination.update(offset, data.total)
     }
-    if (this.pagination && offset === 0)
-      this.pagination.update(offset, data.total)
   }
 }

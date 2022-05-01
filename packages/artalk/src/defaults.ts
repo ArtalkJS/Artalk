@@ -20,7 +20,7 @@ const defaults: ArtalkConfig = {
   listSort: true,
   pvEl: '#ArtalkPV',
   flatMode: 'auto',
-  nestMax: 3,
+  nestMax: 2,
 
   gravatar: {
     default: 'mp',

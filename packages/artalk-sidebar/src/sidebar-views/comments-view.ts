@@ -42,17 +42,16 @@ export default class MessageView extends SidebarView {
       const pageURL = comment.data.page_url
       comment.setOpenURL(`${pageURL}#atk-comment-${comment.data.id}`)
       comment.onReplyBtnClick = () => {
-        if (this.ctx.conf.editorTravel === true) {
-          this.ctx.trigger('editor-reply', {data: comment.data, $el: comment.$el, scroll: false})
-        } else {
-          this.ctx.trigger('sidebar-hide')
-          this.ctx.trigger('editor-reply', {data: comment.data, $el: comment.$el, scroll: true})
-        }
+        this.ctx.trigger('editor-reply', {data: comment.data, $el: comment.$el, scroll: true})
       }
     }
     this.list.paramsEditor = (params) => {
       params.site_name = this.sidebar.curtSite
     }
+    this.ctx.on('list-insert', (data) => {
+      this.list.insertComment(data)
+      ;(this.$el.parentNode as any)?.scrollTo(0, 0)
+    })
 
     this.$el.innerHTML = ''
     this.$el.append(this.list.$el)

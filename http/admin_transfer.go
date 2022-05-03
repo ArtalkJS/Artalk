@@ -67,7 +67,7 @@ func (a *action) AdminImport(c echo.Context) error {
 	}
 
 	payloadMap := map[string]string{}
-	for k, v := range payloadMap {
+	for k, v := range payloadMapRaw {
 		payloadMap[k] = lib.ToString(v) // convert all value to string
 	}
 

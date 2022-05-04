@@ -308,6 +308,9 @@ export default class ListLite extends Component {
     // 子评论查找回复对象
     comment.replyTo = (cData.rid ? ctxData.find(c => c.id === cData.rid) : undefined)
 
+    // 放入 comment 总表中
+    this.commentList.push(comment)
+
     return comment
   }
 
@@ -334,9 +337,6 @@ export default class ListLite extends Component {
       this.$commentsWrap.appendChild(rootC.getEl())
       rootC.playFadeInAnim()
 
-      // 评论放入 comments 总表中
-      this.commentList.push(rootC)
-
       // 加载子评论
       const that = this
       ;(function loadChildren(parentC: Comment, parentNode: ListNest.CommentNode) {
@@ -347,8 +347,6 @@ export default class ListLite extends Component {
 
           // 插入到父评论中
           parentC.putChild(childC)
-
-          that.commentList.push(childC)
 
           // 递归加载子评论
           loadChildren(childC, node)
@@ -365,9 +363,6 @@ export default class ListLite extends Component {
     if (cData.is_collapsed) cData.is_allow_reply = false
     const comment = this.createComment(cData, ctxData)
     comment.render()
-
-    // 将评论导入 comments 总表中
-    this.commentList.push(comment)
 
     // 可见评论添加到界面
     // 注：不可见评论用于显示 “引用内容”
@@ -393,7 +388,6 @@ export default class ListLite extends Component {
         // root评论 新增
         comment.render()
         this.$commentsWrap.prepend(comment.getEl())
-        this.commentList.push(comment)
       } else {
         // 子评论 新增
         const parent = this.findComment(commentData.rid)

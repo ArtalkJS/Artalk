@@ -2,7 +2,7 @@ PACKAGE_NAME := github.com/ArtalkJS/ArtalkGo
 VERSION      ?= $(shell git describe --tags --abbrev=0)
 COMMIT_HASH  := $(shell git rev-parse --short HEAD)
 DEV_VERSION  := dev-${COMMIT_HASH}
-GO_VERSION   ?= 1.16.6
+GO_VERSION   ?= 1.18.1
 
 HAS_RICHGO   := $(shell which richgo)
 GOTEST       ?= $(if $(HAS_RICHGO), richgo test, go test)
@@ -62,7 +62,7 @@ release-dry-run:
 		-v `pwd`:/go/src/$(PACKAGE_NAME) \
 		-v `pwd`/sysroot:/sysroot \
 		-w /go/src/$(PACKAGE_NAME) \
-		troian/golang-cross:v${GO_VERSION} \
+		ghcr.io/goreleaser/goreleaser-cross:v${GO_VERSION} \
 		--rm-dist --skip-validate --skip-publish
 
 
@@ -84,7 +84,7 @@ release:
 		-v `pwd`:/go/src/$(PACKAGE_NAME) \
 		-v `pwd`/sysroot:/sysroot \
 		-w /go/src/$(PACKAGE_NAME) \
-		troian/golang-cross:v${GO_VERSION} \
+		ghcr.io/goreleaser/goreleaser-cross:v${GO_VERSION} \
 		release --rm-dist --skip-validate
 
 .PHONY: all install build build-frontend \

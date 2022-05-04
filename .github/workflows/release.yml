@@ -11,33 +11,33 @@ jobs:
 
     steps:
       - name: checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - run: git fetch --prune --unshallow --tags -f
 
       - name: setup go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
-          go-version: '^1.16.6'
+          go-version: '^1.18.1'
 
       # docker `golang-cross` image cache
-      # `cache-go-cross-v1-16-6`
+      # `cache-go-cross-v1-18-1`
       - run: mkdir -p ~/docker-cache
       - name: docker image cache
-        id: cache-go-cross-v1-16-6
+        id: cache-go-cross-v1-18-1
         uses: actions/cache@v2
         with:
           path: ~/docker-cache
           # Adjust key to meet your cache time requirements e.g.
           # ${{ hashFiles(*) }} can be useful here to invalidate
           # cache on file changes
-          key: cache-go-cross-v1-16-6
+          key: cache-go-cross-v1-18-1
 
-      - if: steps.cache-go-cross-v1-16-6.outputs.cache-hit != 'true'
+      - if: steps.cache-go-cross-v1-18-1.outputs.cache-hit != 'true'
         run: |
-          docker pull troian/golang-cross:v1.16.6
-          docker save -o ~/docker-cache/golang-cross.tar troian/golang-cross:v1.16.6
+          docker pull ghcr.io/goreleaser/goreleaser-cross:v1.18.1
+          docker save -o ~/docker-cache/golang-cross.tar ghcr.io/goreleaser/goreleaser-cross:v1.18.1
 
-      - if: steps.cache-go-cross-v1-16-6.outputs.cache-hit == 'true'
+      - if: steps.cache-go-cross-v1-18-1.outputs.cache-hit == 'true'
         run: docker load -i ~/docker-cache/golang-cross.tar
 
       # build

@@ -90,6 +90,7 @@ builds:
       - arm64
     env:
       - CC=aarch64-linux-gnu-gcc
+      - CXX=aarch64-linux-gnu-g++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
@@ -102,6 +103,7 @@ builds:
       - arm64
     env:
       - CC=oa64-clang
+      - CXX=oa64-clang++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags

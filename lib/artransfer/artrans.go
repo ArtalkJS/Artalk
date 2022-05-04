@@ -75,10 +75,13 @@ func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
 
 	// 目标站点名和目标站点URL都不为空，才开启 URL 解析器
 	showUrlResolver := "off"
-	if basic.TargetSiteName != "" && basic.TargetSiteUrl != "" {
-		basic.UrlResolver = true
+	if basic.UrlResolver {
 		showUrlResolver = "on"
 	}
+	// if basic.TargetSiteName != "" && basic.TargetSiteUrl != "" {
+	// 	basic.UrlResolver = true
+	// 	showUrlResolver = "on"
+	// }
 
 	PrintTable([][]interface{}{
 		{"目标站点名", showTSiteName},
@@ -145,7 +148,8 @@ func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
 		// 准备 page
 		nPageKey := c.PageKey
 		if basic.UrlResolver { // 使用 URL 解析器
-			nPageKey = UrlResolverGetPageKey(basic.TargetSiteUrl, c.PageKey)
+			splittedURLs := lib.SplitAndTrimSpace(basic.TargetSiteUrl, ",")
+			nPageKey = UrlResolverGetPageKey(splittedURLs[0], c.PageKey)
 		}
 
 		page := model.FindCreatePage(nPageKey, c.PageTitle, site.Name)

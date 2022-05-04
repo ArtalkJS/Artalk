@@ -66,7 +66,7 @@ export default interface ArtalkConfig {
   pvEl?: string
 
   /** 暗黑模式 */
-  darkMode?: boolean
+  darkMode?: boolean|'auto'
 
   /** 请求超时（单位：秒） */
   reqTimeout?: number

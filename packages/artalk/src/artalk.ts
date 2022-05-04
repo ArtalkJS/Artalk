@@ -186,7 +186,22 @@ export default class Artalk {
 
   /** 暗黑模式 · 初始化 */
   public initDarkMode() {
+    if (this.conf.darkMode === 'auto') {
+      // 自动切换暗黑模式，事件监听
+      const darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)')
+      darkModeMedia.addEventListener('change', (e) => { this.setDarkMode(e.matches) })
+      this.setDarkMode(darkModeMedia.matches)
+    } else {
+      this.setDarkMode(this.conf.darkMode || false)
+    }
+  }
+
+  /** 暗黑模式 · 设定 */
+  public setDarkMode(darkMode: boolean) {
     const darkModeClassName = 'atk-dark-mode'
+
+    this.ctx.conf.darkMode = darkMode
+    this.ctx.trigger('conf-updated')
 
     if (this.conf.darkMode) {
       this.$root.classList.add(darkModeClassName)
@@ -203,13 +218,6 @@ export default class Artalk {
         $layerWrap.classList.remove(darkModeClassName)
       }
     }
-  }
-
-  /** 暗黑模式 · 设定 */
-  public setDarkMode(darkMode: boolean) {
-    this.ctx.conf.darkMode = darkMode
-    this.ctx.trigger('conf-updated')
-    this.initDarkMode()
   }
 
   /** PV */

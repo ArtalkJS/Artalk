@@ -308,6 +308,9 @@ export default class ListLite extends Component {
     // 子评论查找回复对象
     comment.replyTo = (cData.rid ? ctxData.find(c => c.id === cData.rid) : undefined)
 
+    // 渲染元素
+    comment.render()
+
     // 放入 comment 总表中
     this.commentList.push(comment)
 
@@ -331,7 +334,6 @@ export default class ListLite extends Component {
     const rootNodes = ListNest.makeNestCommentNodeList(srcData, this.nestSortBy, this.conf.nestMax)
     rootNodes.forEach((rootNode: ListNest.CommentNode) => {
       const rootC = this.createComment(rootNode.comment, srcData)
-      rootC.render()
 
       // 显示并播放渐入动画
       this.$commentsWrap.appendChild(rootC.getEl())
@@ -343,7 +345,6 @@ export default class ListLite extends Component {
         parentNode.children.forEach((node: ListNest.CommentNode) => {
           const childD = node.comment
           const childC = that.createComment(childD, srcData)
-          childC.render()
 
           // 插入到父评论中
           parentC.putChild(childC)
@@ -362,7 +363,6 @@ export default class ListLite extends Component {
   private putCommentFlatMode(cData: CommentData, ctxData: CommentData[], insertMode: 'append'|'prepend') {
     if (cData.is_collapsed) cData.is_allow_reply = false
     const comment = this.createComment(cData, ctxData)
-    comment.render()
 
     // 可见评论添加到界面
     // 注：不可见评论用于显示 “引用内容”
@@ -386,13 +386,11 @@ export default class ListLite extends Component {
 
       if (commentData.rid === 0) {
         // root评论 新增
-        comment.render()
         this.$commentsWrap.prepend(comment.getEl())
       } else {
         // 子评论 新增
         const parent = this.findComment(commentData.rid)
         if (parent) {
-          comment.render()
           parent.putChild(comment, (this.nestSortBy === 'DATE_ASC' ? 'append' : 'prepend'))
 
           // 若父评论存在 “子评论部分” 限高，取消限高

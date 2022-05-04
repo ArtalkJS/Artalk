@@ -214,21 +214,13 @@ export default class Editor extends Component {
     this.openedPlugName = null
     this.$plugBtnWrap.innerHTML = ''
 
-    // 依次实例化 plug
+    // 初始化 plug 按钮
     this.LOADABLE_PLUG_LIST.forEach((PlugObj) => {
+      if (PlugObj.Name === 'emoticons' && !this.conf.emoticons) return
+
       // 切换按钮
       const btnElem = Utils.createElement(`<span class="atk-plug-btn" data-plug-name="${PlugObj.Name}">${PlugObj.BtnHTML}</span>`)
       this.$plugBtnWrap.appendChild(btnElem)
-
-      // 表情包插件预加载
-      if (PlugObj.Name === 'emoticons') {
-        const emoPlug = new PlugObj(this) as EmoticonsPlug
-        this.plugList[PlugObj.Name] = emoPlug
-
-        window.setTimeout(() => {
-          emoPlug.loadEmoticonsData()
-        }, 1000) // 延迟 1s 加载
-      }
 
       btnElem.addEventListener('click', () => {
         let plug = this.plugList[PlugObj.Name]
@@ -272,6 +264,16 @@ export default class Editor extends Component {
         btnElem.classList.add('active')
       })
     })
+
+    // 表情包插件预加载
+    if (this.conf.emoticons) {
+      const emoPlug = new EmoticonsPlug(this)
+      this.plugList[EmoticonsPlug.Name] = emoPlug
+
+      window.setTimeout(() => {
+        emoPlug.loadEmoticonsData()
+      }, 1000) // 延迟 1s 加载
+    }
 
     this.initImgUpload()
   }

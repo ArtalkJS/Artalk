@@ -27,7 +27,7 @@ export default interface ArtalkConfig {
   editorTravel?: boolean
 
   /** 表情包 */
-  emoticons?: any
+  emoticons?: object|any[]|string|false
 
   /** Gravatar 头像 */
   gravatar?: {

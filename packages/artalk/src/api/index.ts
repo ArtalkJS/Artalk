@@ -306,6 +306,8 @@ export default class Api {
       conf.emoticons = conf.emoticons.trim()
       if (conf.emoticons.startsWith("[") || conf.emoticons.startsWith("{")) {
         conf.emoticons = JSON.parse(conf.emoticons) // pase json
+      } else if (conf.emoticons === "false") {
+        conf.emoticons = false
       }
     }
 

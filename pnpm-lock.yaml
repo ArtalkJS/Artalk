@@ -47,10 +47,12 @@ importers:
   packages/artalk:
     specifiers:
       '@types/marked': ^4.0.3
+      abortcontroller-polyfill: ^1.7.3
       hanabi: ^0.4.0
       insane: ^2.6.2
       marked: ^4.0.14
     dependencies:
+      abortcontroller-polyfill: 1.7.3
       hanabi: 0.4.0
       insane: 2.6.2
       marked: 4.0.14
@@ -307,6 +309,10 @@ packages:
       '@typescript-eslint/types': 5.20.0
       eslint-visitor-keys: 3.3.0
     dev: true
+
+  /abortcontroller-polyfill/1.7.3:
+    resolution: {integrity: sha512-zetDJxd89y3X99Kvo4qFx8GKlt6GsvN3UcRZHwU6iFA/0KiOmhkTVhe8oRoTBiTVPZu09x3vCra47+w8Yz1+2Q==}
+    dev: false
 
   /acorn-jsx/5.3.2_acorn@8.7.0:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}

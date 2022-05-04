@@ -39,6 +39,7 @@
   "dependencies": {
     "hanabi": "^0.4.0",
     "insane": "^2.6.2",
-    "marked": "^4.0.14"
+    "marked": "^4.0.14",
+    "abortcontroller-polyfill": "^1.7.3"
   }
 }

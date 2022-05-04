@@ -30,7 +30,7 @@
     "vite": "^2.9.5",
     "vite-tsconfig-paths": "^3.4.1"
   },
-  "browserslist":  [
+  "browserslist": [
     "supports es6 and supports es6-class and supports es6-generators and supports es6-module-dynamic-import and supports es6-module and supports es6-number and supports es6-string-includes"
   ]
 }

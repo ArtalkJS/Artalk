@@ -37,5 +37,8 @@ module.exports = {
         "project": [__dirname + "/packages/*/tsconfig.json"]
       },
     },
+    'polyfills': [
+      'AbortController'
+    ]
   },
 }

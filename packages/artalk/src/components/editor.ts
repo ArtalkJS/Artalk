@@ -153,6 +153,7 @@ export default class Editor extends Component {
             this.getInputEl('link')!.value = data.user.link
           }
         })
+        .catch(() => {})
         .finally(() => {
           this.queryUserInfo.abortFunc = null // 清理
         })

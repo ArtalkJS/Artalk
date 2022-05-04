@@ -3,6 +3,7 @@ import ArtalkConfig from '~/types/artalk-config'
 import Context from '../context'
 import { Fetch, ToFormData, POST, GET } from './request'
 import * as Utils from '../lib/utils'
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 
 export default class Api {
   private ctx: Context
@@ -95,8 +96,6 @@ export default class Api {
   /** 用户 · 获取  */
   public userGet(name: string, email: string) {
     const ctrl = new AbortController()
-    const { signal } = ctrl
-
     const params: any = {
       name, email, site_name: (this.ctx.conf.site || '')
     }
@@ -104,7 +103,7 @@ export default class Api {
     const req = Fetch(this.ctx, `${this.baseURL}/user-get`, {
       method: 'POST',
       body: ToFormData(params),
-      signal,
+      signal: ctrl.signal,
     }).then((json) => ({
       user: json.data.user as UserData|null,
       is_login: json.data.is_login as boolean,

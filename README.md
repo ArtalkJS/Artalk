@@ -4,10 +4,9 @@
 
 # ArtalkGo
 
-[![GitHub issues](https://img.shields.io/github/issues/ArtalkJS/ArtalkGo)](https://github.com/ArtalkJS/ArtalkGo/issues)
-[![](https://img.shields.io/github/issues-pr/ArtalkJS/ArtalkGo)](https://github.com/ArtalkJS/ArtalkGo/pulls)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_shield)
-[![CI to Docker Hub](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml)
+[![CircleCI](https://circleci.com/gh/ArtalkJS/ArtalkGo/tree/master.svg?style=svg)](https://circleci.com/gh/ArtalkJS/ArtalkGo/tree/master)
+[![CI to Docker Hub](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_shield)
+[![Docker Pulls](https://img.shields.io/docker/pulls/artalk/artalk-go?style=flat-square)](https://hub.docker.com/r/artalk/artalk-go)
 
 > ArtalkGo: Golang backend of Artalk.
 

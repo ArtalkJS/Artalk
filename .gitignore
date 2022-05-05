@@ -15,17 +15,17 @@
 # vendor/
 
 .history
-
-artalk-go.yml
-config.yml
 .release-env
 
-local/
-bin/
-data/
-dist/
-pkged/pkged.go
+/artalk-go.yml
+/config.yml
+
+/local
+/bin
+/data
+/dist
+/pkged/pkged.go
 
 # always pull latest code and compile
-frontend/sidebar
-frontend/dist
+/frontend/sidebar
+/frontend/dist

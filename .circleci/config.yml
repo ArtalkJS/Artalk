@@ -1,0 +1,27 @@
+version: 2.1
+orbs:
+  node: circleci/node@5.0.2
+jobs:
+  build:
+    docker:
+      - image: 'cimg/node:16.15.0'
+    steps:
+      - node/install
+      - checkout
+      - run:
+          name: Print the node version
+          command: node -v
+      - run:
+          name: Install pnpm
+          command: npm i -g pnpm@7.0.0
+      - run:
+          name: Install Dependencies
+          command: pnpm install --frozen-lockfile
+      - run:
+          name: Build Artalk
+          command: pnpm build:all
+
+workflows:
+  tests:
+    jobs:
+      - build

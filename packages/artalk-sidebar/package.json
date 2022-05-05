@@ -12,7 +12,7 @@
   "bugs": "https://github.com/ArtalkJS/Artalk/issue",
   "scripts": {
     "dev": "vite --port 23367",
-    "build": "pnpm -F artalk build && pnpm lint && vite build",
+    "build": "pnpm lint && vite build",
     "serve": "vite preview",
     "lint": "eslint --ext .js,.ts src"
   },

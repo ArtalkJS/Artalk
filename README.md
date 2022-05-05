@@ -7,30 +7,23 @@
 [![](https://img.shields.io/npm/v/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
 [![](https://img.shields.io/npm/dt/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
 [![](https://badgen.net/bundlephobia/minzip/artalk?style=flat-square)](https://bundlephobia.com/package/artalk)
-[![](https://img.shields.io/github/last-commit/ArtalkJS/Artalk/master.svg?style=flat-square)](https://github.com/ArtalkJS/Artalk/commits/master)
-[![](https://img.shields.io/github/issues-raw/ArtalkJS/Artalk.svg?style=flat-square)](https://github.com/ArtalkJS/Artalk/issues)
-[![](https://img.shields.io/github/issues-pr-raw/ArtalkJS/Artalk.svg?style=flat-square)](https://github.com/ArtalkJS/Artalk/pulls)
-<!-- [![](https://img.shields.io/travis/com/ArtalkJS/Artalk?style=flat-square)](https://travis-ci.com/ArtalkJS/Artalk) -->
-[![](https://img.shields.io/github/license/ArtalkJS/Artalk.svg?style=flat-square)](./LICENSE)
 [![CircleCI](https://circleci.com/gh/ArtalkJS/Artalk/tree/master.svg?style=svg)](https://circleci.com/gh/ArtalkJS/Artalk/tree/master)
 
-> 🌌 一款简洁的自托管评论系统 | A Selfhosted Comment System.
+> 🌌 Golang 自托管评论系统
 
-可参考：[“官方文档”](https://artalk.js.org)
-
-最新版：[“Releases”](https://github.com/ArtalkJS/ArtalkGo/releases)
+[官方文档](https://artalk.js.org) / [最新后端](https://github.com/ArtalkJS/ArtalkGo/releases) / [ArtalkGo](https://github.com/ArtalkJS/ArtalkGo)
 
 ---
 
-- 轻量级 (~30kB)
-- 自托管 (数据安全)
-- 易上手 (防秃顶)
-- Golang 后端 (易部署 / 跨平台)
-- TypeScript & Vanilla (纯天然无添加 / 无依赖)
+- 🍃 轻量 (~30kB)
+- 👨‍👧‍👦 安全 (自托管)
+- 🐳 易上手 (防秃顶)
+- 🍱 Golang 后端 (快速 / 跨平台)
+- 🌊 TypeScript × Vanilla × Vite (纯天然 / 无依赖)
 
 ## 特性
 
-- 侧 边 栏 ：所见即所得的管理方式
+- 侧 边 栏 ：多站点集中化管理
 - 通知中心：红点的标记 / 已读记录
 - 身份验证：徽标自定义 / 密码验证
 - 评论审核：反垃圾检测 / 验证码频率限制
@@ -58,7 +51,7 @@
 - 一页多评：一页多个评论区（似乎没啥用
 - Markdown：语法默认支持
 - 支持 Latex：引入 Artalk 的 Katex 插件
-- [Vite](https://github.com/vitejs/vite)：开发者的极致体验
+- 使用 [Vite](https://github.com/vitejs/vite)：开发者的极致体验
 
 ## 食用方针
 
@@ -123,6 +116,10 @@ services:
 ```sh
 docker-compose up -d
 ```
+
+## Contributors
+
+[![](https://contrib.rocks/image?repo=ArtalkJS/Artalk)](https://github.com/ArtalkJS/Artalk/graphs/contributors)
 
 ## Supporters
 

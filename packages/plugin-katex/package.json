@@ -26,6 +26,6 @@
     "katex": "^0.15.3"
   },
   "devDependencies": {
-    "@types/katex": "^0.14.0"
+    "@types/katex": "0.14.0"
   }
 }

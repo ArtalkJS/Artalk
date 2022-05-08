@@ -17,7 +17,7 @@
     "autoprefixer": "10.4.7",
     "eslint": "8.15.0",
     "eslint-config-airbnb-base": "15.0.0",
-    "eslint-config-airbnb-typescript": "16.2.0",
+    "eslint-config-airbnb-typescript": "17.0.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-import-resolver-typescript": "2.7.1",
     "eslint-plugin-compat": "4.0.2",

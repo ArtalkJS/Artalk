@@ -1,6 +1,8 @@
 {
-  "extends": ["config:base"],
+  "extends": ["config:base", "schedule:weekly"],
   "branchPrefix": "chore/",
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
   "reviewers": [
     "qwqcode",
     "kecrily"

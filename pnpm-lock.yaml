@@ -5,7 +5,7 @@ importers:
   .:
     specifiers:
       '@rollup/plugin-dynamic-import-vars': 1.4.3
-      '@types/node': 16.11.33
+      '@types/node': 16.11.34
       '@typescript-eslint/eslint-plugin': 5.23.0
       '@typescript-eslint/parser': 5.23.0
       autoprefixer: 10.4.7
@@ -25,7 +25,7 @@ importers:
       vite-tsconfig-paths: 3.4.1
     devDependencies:
       '@rollup/plugin-dynamic-import-vars': 1.4.3_rollup@2.72.1
-      '@types/node': 16.11.33
+      '@types/node': 16.11.34
       '@typescript-eslint/eslint-plugin': 5.23.0_c63nfttrfhylg3zmgcxfslaw44
       '@typescript-eslint/parser': 5.23.0_hcfsmds2fshutdssjqluwm76uu
       autoprefixer: 10.4.7_postcss@8.4.13
@@ -180,8 +180,8 @@ packages:
     resolution: {integrity: sha512-HnMWQkLJEf/PnxZIfbm0yGJRRZYYMhb++O9M36UCTA9z53uPvVoSlAwJr3XOpDEryb7Hwl1qAx/MV6YIW1RXxg==}
     dev: true
 
-  /@types/node/16.11.33:
-    resolution: {integrity: sha512-0PJ0vg+JyU0MIan58IOIFRtSvsb7Ri+7Wltx2qAg94eMOrpg4+uuP3aUHCpxXc1i0jCXiC+zIamSZh3l9AbcQA==}
+  /@types/node/16.11.34:
+    resolution: {integrity: sha512-UrWGDyLAlQ2Z8bNOGWTsqbP9ZcBeTYBVuTRNxXTztBy5KhWUFI3BaeDWoCP/CzV/EVGgO1NTYzv9ZytBI9GAEw==}
     dev: true
 
   /@typescript-eslint/eslint-plugin/5.23.0_c63nfttrfhylg3zmgcxfslaw44:

@@ -9,7 +9,7 @@ const defaults: ArtalkConfig = {
   placeholder: '键入内容...',
   noComment: '「此时无声胜有声」',
   sendBtn: '发送评论',
-  darkMode: 'auto',
+  darkMode: false,
   editorTravel: true,
 
   flatMode: 'auto',

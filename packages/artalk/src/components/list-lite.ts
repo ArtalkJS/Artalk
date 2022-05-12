@@ -19,7 +19,7 @@ export default class ListLite extends Component {
   protected data?: ListData
   protected isLoading: boolean = false
 
-  public noCommentText = '无内容' // 无评论时显示
+  public noCommentText: string // 无评论时显示
 
   /** 平铺模式 */
   public flatMode = false
@@ -56,7 +56,7 @@ export default class ListLite extends Component {
     this.$commentsWrap = this.$el.querySelector('.atk-list-comments-wrap')!
 
     // 评论为空时显示字符
-    if (ctx.conf.noComment) this.noCommentText = ctx.conf.noComment
+    this.noCommentText = ctx.conf.noComment || ctx.$t('noComment')
 
     // 嵌套排序方式
     this.nestSortBy = this.ctx.conf.nestSort || 'DATE_ASC'
@@ -65,7 +65,7 @@ export default class ListLite extends Component {
     window.setInterval(() => {
       this.$el.querySelectorAll<HTMLElement>('[data-atk-comment-date]').forEach(el => {
         const date = el.getAttribute('data-atk-comment-date')
-        el.innerText = Utils.timeAgo(new Date(Number(date)))
+        el.innerText = Utils.timeAgo(new Date(Number(date)), this.ctx)
       })
     }, 30 * 1000) // 30s 更新一次
 
@@ -131,8 +131,8 @@ export default class ListLite extends Component {
 
     // 版本检测
     const feMinVersion = data.api_version?.fe_min_version || '0.0.0'
-    if (this.ctx.conf.versionCheck && this.versionCheck('前端', feMinVersion, ARTALK_VERSION)) return
-    if (this.ctx.conf.versionCheck && this.versionCheck('后端', backendMinVersion, data.api_version?.version)) return
+    if (this.ctx.conf.versionCheck && this.versionCheck('frontend', feMinVersion, ARTALK_VERSION)) return
+    if (this.ctx.conf.versionCheck && this.versionCheck('backend', backendMinVersion, data.api_version?.version)) return
 
     // 图片上传功能
     if (data.conf && typeof data.conf.img_upload === "boolean") {
@@ -179,6 +179,7 @@ export default class ListLite extends Component {
         onClick: async (o) => {
           await this.fetchComments(o)
         },
+        text: this.ctx.$t('loadMore'),
       })
       this.$el.append(this.readMoreBtn.$el)
 
@@ -237,14 +238,14 @@ export default class ListLite extends Component {
 
     // 加载更多按钮显示错误
     if (offset !== 0 && this.pageMode === 'read-more') {
-      this.readMoreBtn?.showErr(`获取失败`)
+      this.readMoreBtn?.showErr(this.$t('loadFail'))
       return
     }
 
     // 显示错误对话框
-    const $err = Utils.createElement(`<span>${msg}，无法获取评论列表数据<br/></span>`)
+    const $err = Utils.createElement(`<span>${msg}，${this.$t('listLoadFailMsg')}<br/></span>`)
 
-    const $retryBtn = Utils.createElement('<span style="cursor:pointer;">点击重新获取</span>')
+    const $retryBtn = Utils.createElement(`<span style="cursor:pointer;">${this.$t('listRetry')}</span>`)
     $retryBtn.onclick = () => (this.fetchComments(0))
     $err.appendChild($retryBtn)
 
@@ -428,7 +429,7 @@ export default class ListLite extends Component {
     let comment: Comment
     if (typeof _comment === 'number') {
       const findComment = this.findComment(_comment)
-      if (!findComment) throw Error(`未找到评论 ${_comment}`)
+      if (!findComment) throw Error(`Comment ${_comment} cannot be found`)
       comment = findComment
     } else comment = _comment
 
@@ -472,14 +473,14 @@ export default class ListLite extends Component {
   }
 
   /** 版本检测 */
-  public versionCheck(name: '前端'|'后端', needVersion: string, curtVersion: string): boolean {
+  public versionCheck(name: 'frontend'|'backend', needVersion: string, curtVersion: string): boolean {
     const needUpdate = Utils.versionCompare(needVersion, curtVersion) === 1
     if (needUpdate) {
       // 需要更新
-      const errEl = Utils.createElement(`<div>Artalk ${name}版本已过时，请更新以获得完整体验<br/>`
+      const errEl = Utils.createElement(`<div>Artalk ${this.$t(name)}版本已过时，请更新以获得完整体验<br/>`
       + `如果你是管理员，请前往 “<a href="https://artalk.js.org/" target="_blank">官方文档</a>” 获得帮助`
       + `<br/><br/>`
-      + `<span style="color: var(--at-color-meta);">当前${name}版本 ${curtVersion}，需求版本 >= ${needVersion}</span><br/><br/>`
+      + `<span style="color: var(--at-color-meta);">当前${this.$t(name)}版本 ${curtVersion}，需求版本 >= ${needVersion}</span><br/><br/>`
       + `</div>`)
       const ignoreBtn = Utils.createElement('<span style="cursor:pointer;">忽略</span>')
       ignoreBtn.onclick = () => {

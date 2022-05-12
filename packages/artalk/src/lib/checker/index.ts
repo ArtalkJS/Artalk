@@ -87,7 +87,7 @@ export default class CheckerLauncher {
     }
 
     let btnTextOrg: string | undefined
-    const dialog = new Dialog(formEl)
+    const dialog = new Dialog(this.ctx, formEl)
 
     // 确认按钮
     dialog.setYes((btnEl) => {
@@ -104,7 +104,7 @@ export default class CheckerLauncher {
         btnEl.classList.remove('error')
       }
 
-      btnEl.innerText = '加载中...'
+      btnEl.innerText = `${this.ctx.$t('loading')}...`
 
       // 发送请求
       checker

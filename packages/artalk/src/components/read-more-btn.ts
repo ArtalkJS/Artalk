@@ -5,6 +5,8 @@ export interface ReadMoreBtnConf {
   onClick: (offset: number) => void
 
   pageSize: number
+
+  text?: string
 }
 
 /**
@@ -17,6 +19,7 @@ export default class ReadMoreBtn {
   private $text: HTMLElement
   private offset: number = 0
   private total: number = 0
+  private origText: string = 'Load More'
 
   /** 是否有更多内容 */
   get hasMore() {
@@ -25,12 +28,13 @@ export default class ReadMoreBtn {
 
   public constructor(conf: ReadMoreBtnConf) {
     this.conf = conf
+    this.origText = this.conf.text || this.origText
 
     this.$el = Utils.createElement(
     `<div class="atk-list-read-more" style="display: none;">
       <div class="atk-list-read-more-inner">
         <div class="atk-loading-icon" style="display: none;"></div>
-        <span class="atk-text">加载更多</span>
+        <span class="atk-text">${this.origText}</span>
       </div>
     </div>`)
 
@@ -68,7 +72,7 @@ export default class ReadMoreBtn {
     this.$text.innerText = errMsg
     this.$el.classList.add('atk-err')
     window.setTimeout(() => {
-      this.$text.innerText = '查看更多'
+      this.$text.innerText = this.origText
       this.$el.classList.remove('atk-err')
     }, 2000) // 2s后错误提示复原
   }

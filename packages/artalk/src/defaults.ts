@@ -1,4 +1,4 @@
-import ArtalkConfig from "~/types/artalk-config";
+import ArtalkConfig from "~/types/artalk-config"
 
 const defaults: ArtalkConfig = {
   el: '',
@@ -6,9 +6,9 @@ const defaults: ArtalkConfig = {
   server: '',
   site: '',
 
-  placeholder: '键入内容...',
-  noComment: '「此时无声胜有声」',
-  sendBtn: '发送评论',
+  placeholder: '',
+  noComment: '',
+  sendBtn: '',
   darkMode: false,
   editorTravel: true,
 
@@ -44,6 +44,8 @@ const defaults: ArtalkConfig = {
   reqTimeout: 15000,
   versionCheck: true,
   useBackendConf: false,
+
+  i18n: 'zh-CN',
 }
 
 export default defaults

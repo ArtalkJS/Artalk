@@ -10,14 +10,14 @@ export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit,
   }
 
   // 请求操作
-  const resp = await timeoutFetch(input, timeout || ctx.conf.reqTimeout || 15000, init)
+  const resp = await timeoutFetch(ctx, input, timeout || ctx.conf.reqTimeout || 15000, init)
 
   const respHttpCode = resp.status
   const noAccessCodes = [401, 400]
   const isNoAccess = noAccessCodes.includes(respHttpCode)
 
   if (!resp.ok && !isNoAccess)
-    throw new Error(`请求响应 ${respHttpCode}`)
+    throw new Error(`${ctx.$t('reqGot')} ${respHttpCode}`)
 
   // 解析获取响应的 json
   let json: any = await resp.json()
@@ -82,7 +82,7 @@ export function ToFormData(object: {[key: string]: any}): FormData {
 }
 
 /** 我靠，fetch 一个 timeout，都要丑陋的实现 */
-function timeoutFetch(url: RequestInfo, ms: number, opts: RequestInit) {
+function timeoutFetch(ctx: Context, url: RequestInfo, ms: number, opts: RequestInit) {
   const controller = new AbortController()
   opts.signal?.addEventListener('abort', () => controller.abort()) // 保留原有 signal 功能
   let promise = fetch(url, { ...opts, signal: controller.signal })
@@ -91,7 +91,7 @@ function timeoutFetch(url: RequestInfo, ms: number, opts: RequestInit) {
     promise.finally(() => { clearTimeout(timer) })
   }
   promise = promise.catch((err) => {
-    throw ((err || {}).name === 'AbortError') ? new Error('请求超时或意外终止') : err
+    throw ((err || {}).name === 'AbortError') ? new Error(ctx.$t('reqAborted')) : err
   })
   return promise
 }

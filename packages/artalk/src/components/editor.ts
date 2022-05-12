@@ -101,9 +101,15 @@ export default class Editor extends Component {
         }
       })
     }
+
+    // i18n patch
+    [['nick', '昵称'], ['email', '邮箱'], ['link', '网址']].forEach((entry) => {
+      const $input = this.getInputEl(entry[0])!
+      $input.placeholder = $input.placeholder.replace(entry[1], this.$t(entry[0] as any))
+    })
   }
 
-  getInputEl (field: string) {
+  getInputEl (field: 'nick'|'email'|'link'|string) {
     const inputEl = this.$header.querySelector<HTMLInputElement>(`[name="${field}"]`)
     return inputEl
   }
@@ -181,7 +187,7 @@ export default class Editor extends Component {
 
   initTextarea () {
     // 占位符
-    this.$textarea.placeholder = this.ctx.conf.placeholder || ''
+    this.$textarea.placeholder = this.ctx.conf.placeholder || this.$t('placeholder')
 
     // 修复按下 Tab 输入的内容
     this.$textarea.addEventListener('keydown', (e) => {
@@ -219,7 +225,9 @@ export default class Editor extends Component {
       if (PlugObj.Name === 'emoticons' && !this.conf.emoticons) return
 
       // 切换按钮
-      const btnElem = Utils.createElement(`<span class="atk-plug-btn" data-plug-name="${PlugObj.Name}">${PlugObj.BtnHTML}</span>`)
+      let btnHtml = PlugObj.BtnHTML
+      btnHtml = btnHtml.replace('表情', this.$t('emoticon')).replace('预览', this.$t('preview'))
+      const btnElem = Utils.createElement(`<span class="atk-plug-btn" data-plug-name="${PlugObj.Name}">${btnHtml}</span>`)
       this.$plugBtnWrap.appendChild(btnElem)
 
       btnElem.addEventListener('click', () => {
@@ -290,7 +298,7 @@ export default class Editor extends Component {
 
   /** 初始化图片上传功能 */
   initImgUpload() {
-    this.$imgUploadBtn = Utils.createElement(`<span class="atk-plug-btn">图片</span>`)
+    this.$imgUploadBtn = Utils.createElement(`<span class="atk-plug-btn">${this.$t('image')}</span>`)
     this.$plugBtnWrap.querySelector('[data-plug-name="preview"]')!.before(this.$imgUploadBtn) // 显示在预览图标之前
 
     this.$imgUploadInput = document.createElement('input')
@@ -383,7 +391,7 @@ export default class Editor extends Component {
       resp = await new Api(this.ctx).imgUpload(file)
     } catch (err: any) {
       console.error(err)
-      this.showNotify(`图片上传失败，${err.msg}`, 'e')
+      this.showNotify(`${this.$t('uploadFail')}，${err.msg}`, 'e')
     }
     if (!!resp && resp.img_url) {
       let imgURL = resp.img_url as string
@@ -474,7 +482,7 @@ export default class Editor extends Component {
     }
 
     if (this.$sendReply === null) {
-      this.$sendReply = Utils.createElement('<div class="atk-send-reply">回复 <span class="atk-text"></span><span class="atk-cancel" title="取消 AT">×</span></div>');
+      this.$sendReply = Utils.createElement(`<div class="atk-send-reply">${this.$t('reply')} <span class="atk-text"></span><span class="atk-cancel">×</span></div>`);
       this.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
       this.$sendReply.addEventListener('click', () => {
         this.cancelReply()
@@ -505,7 +513,7 @@ export default class Editor extends Component {
   }
 
   initSubmit () {
-    this.$submitBtn.innerText = this.ctx.conf.sendBtn || 'Send'
+    this.$submitBtn.innerText = this.ctx.conf.sendBtn || this.$t('send')
 
     this.$submitBtn.addEventListener('click', (evt) => {
       const btnEl = evt.currentTarget
@@ -545,7 +553,7 @@ export default class Editor extends Component {
       this.ctx.trigger('editor-submitted')
     } catch (err: any) {
       console.error(err)
-      this.showNotify(`评论失败，${err.msg || String(err)}`, 'e')
+      this.showNotify(`${this.$t('commentFail')}，${err.msg || String(err)}`, 'e')
       return
     } finally {
       Ui.hideLoading(this.$el)

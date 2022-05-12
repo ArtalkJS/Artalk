@@ -55,7 +55,7 @@ const CaptchaChecker: Checker = {
 
     // 图片验证方式
     const elem = Utils.createElement(
-      `<span><img class="atk-captcha-img" src="${that.captchaConf.imgData || ''}" alt="验证码">敲入验证码继续：</span>`
+      `<span><img class="atk-captcha-img" src="${that.captchaConf.imgData || ''}">${that.ctx.$t('captchaCheck')}</span>`
     );
 
     // 刷新验证码
@@ -66,7 +66,7 @@ const CaptchaChecker: Checker = {
           imgEl!.setAttribute('src', imgData)
         })
         .catch((err) => {
-          console.error('验证码获取失败 ', err)
+          console.error('Failed to get captcha image ', err)
         })
     }
     return elem

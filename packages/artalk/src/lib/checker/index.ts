@@ -104,7 +104,7 @@ export default class CheckerLauncher {
         btnEl.classList.remove('error')
       }
 
-      btnEl.innerText = `${this.ctx.$t('loading')}`
+      btnEl.innerText = `${this.ctx.$t('loading')}...`
 
       // 发送请求
       checker

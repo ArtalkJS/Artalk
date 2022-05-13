@@ -11,6 +11,7 @@ export default {
   image: 'Image',
   uploadFail: 'Upload Failed',
   commentFail: 'Failed to comment',
+  restoredMsg: 'Content has been restored',
 
   /* List */
   counter: '{count} Comments',
@@ -38,6 +39,7 @@ export default {
   expand: 'Expand',
   approved: 'Approved',
   pending: 'Pending',
+  pendingMsg: 'Pending, visible only to commenter.',
   delete: 'Delete',
   deleteConfirm: 'Confirm',
   pin: 'Pin',
@@ -63,7 +65,7 @@ export default {
   /* General */
   frontend: 'Frontend',
   backend: 'Backend',
-  loading: 'Loading...',
+  loading: 'Loading',
   loadFail: 'Load Failed',
   editing: 'Editing',
   editFail: 'Edit Failed',

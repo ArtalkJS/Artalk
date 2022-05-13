@@ -71,7 +71,7 @@ export default class Editor extends Component {
   initLocalStorage () {
     const localContent = window.localStorage.getItem('ArtalkContent') || ''
     if (localContent.trim() !== '') {
-      this.showNotify('已自动恢复', 'i')
+      this.showNotify(this.$t('restoredMsg'), 'i')
       this.setContent(localContent)
     }
     this.$textarea.addEventListener('input', () => {

@@ -243,7 +243,7 @@ export default class Comment extends Component {
   private renderPending() {
     if (!this.data.is_pending) return
 
-    const pendingEl = Utils.createElement(`<div class="atk-pending">审核中，仅本人可见。</div>`)
+    const pendingEl = Utils.createElement(`<div class="atk-pending">${this.$t('pendingMsg')}</div>`)
     this.$body.prepend(pendingEl)
   }
 

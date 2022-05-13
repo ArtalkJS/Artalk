@@ -24,28 +24,28 @@
 ## Features
 
 - Sidebar: Multi-site centralized management
-- Notification Center: Red badge alert / Read mark
-- Authentication: User badge customization / Password verification
-- Moderation: Anti-spam detection / captcha frequency limit
-- Emoji: Insert emoji / Quickly import emoji
-- Email reminder: Template customization / multi-admin notification
-- Site isolation: Multi-site management / admin assignment
-- Page management: Title can be displayed / easy to look up
-- Image upload: Upload to local / various remote image host
+- Notification Center: Red badge alert / Mark as read
+- Verification: User Verification Badge / Password access
+- Moderation: Anti-spam detection / Captcha frequency limit
+- Emoticons: Insert emoji / Quickly import presets
+- Email Notify: Template customization / Send to multi-admin
+- Site Isolation: Multi-site management / Admin assignment
+- Page Management: Provide page title / Easy to look up
+- Image Upload: Upload to localhost / various remote image host
 - Private Space Mode: Only visible to yourself / Message board
-- Multiple push: Support Telegram / Slack / LINE
-- Nesting comments: Switchable to flat mode
-- Comment voting: For or against comments
-- Comment sorting: Sort by popularity or time
-- Comment PIN: Pin the important comments on top
-- Look at author only: Show only author's comments
-- Asynchronous processing: Send comments without waiting
-- Scroll loading: Various comment content pagination customization
-- Auto save: A anti-lost editor
-- Autofill: client-autofill
-- Real-time preview: Real-time preview of comment content
+- Multiple Msg Pushers: Support Telegram / Slack / LINE
+- Nested Comments: Switchable to Flat Mode
+- Comment Vote: For or against comments
+- Comment Sort: Sort by popularity or time
+- Comment PIN: Pin important comments
+- Track only author: Show only author's comments
+- Asynchronous: Send comments without waiting
+- Infinite Scrolling: Provide various comment content pagination custom
+- AutoSave: A anti-lost editor
+- AutoFill: Autofill user profile
+- Preview: Real-time preview of markdown
 - Dark Mode: Prevents eye disease damage
-- Comment Folding: I do not want you to see this comment
+- Collapse Comment: I do not want you to see this comment
 - Data Backup: Prevent comment data loss
 - Data Migration: Switch back and forth between different commenting systems
 - Multiple comments on one page: Multiple comment areas on one page (seems useless

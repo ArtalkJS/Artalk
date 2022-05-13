@@ -76,7 +76,7 @@ export default class ActionBtn {
         if (!this.isConfirming) {
           this.isConfirming = true
           this.$el.classList.add('atk-btn-confirm')
-          this.$el.innerText = this.conf.confirmText || this.ctx.$t('confirmAction')
+          this.$el.innerText = this.conf.confirmText || this.ctx.$t('actionConfirm')
           this.confirmRecTimer = window.setTimeout(() => confirmRestore(), 5000)
           return
         }
@@ -110,7 +110,7 @@ export default class ActionBtn {
     this.isLoading = value
     if (value) {
       this.$el.classList.add('atk-btn-loading')
-      this.$el.innerText = loadingText || `${this.ctx.$t('loading')}`
+      this.$el.innerText = loadingText || `${this.ctx.$t('loading')}...`
     } else {
       this.$el.classList.remove('atk-btn-loading')
       this.$el.innerText = this.getText()

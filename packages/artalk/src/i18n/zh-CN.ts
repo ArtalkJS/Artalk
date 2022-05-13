@@ -13,6 +13,7 @@ const zhCN: I18n = {
   image: '图片',
   uploadFail: '上传失败',
   commentFail: '评论失败',
+  restoredMsg: '内容已自动恢复',
 
   /* List */
   counter: '{count} 条评论',
@@ -40,6 +41,7 @@ const zhCN: I18n = {
   expand: '取消折叠',
   approved: '已审',
   pending: '待审',
+  pendingMsg: '审核中，仅本人可见。',
   delete: '删除',
   deleteConfirm: '确认删除',
   pin: '置顶',
@@ -65,7 +67,7 @@ const zhCN: I18n = {
   /* General */
   frontend: '前端',
   backend: '后端',
-  loading: '加载中…',
+  loading: '加载中',
   loadFail: '加载失败',
   editing: '修改中',
   editFail: '修改失败',

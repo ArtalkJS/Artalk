@@ -104,14 +104,12 @@ export default class Editor extends Component {
   }
 
   initLinkInput() {
-    this.$link.placeholder += ' (https://)'
+    // Link URL 自动补全协议
     this.$link.addEventListener('change', () => {
-      // Link URL 自动补全协议
       const link = this.$link.value.trim()
       if (!!link && !/^(http|https):\/\//.test(link)) {
         this.$link.value = `https://${link}`
-        this.user.data.link = this.$link.value
-        this.saveUser()
+        this.user.update({ link: this.$link.value })
       }
     })
   }
@@ -123,21 +121,19 @@ export default class Editor extends Component {
 
   /** header 输入框内容变化事件 */
   onHeaderInput(key: string, $input: HTMLInputElement) {
-    this.user.data[key] = $input.value.trim()
+    this.user.update({
+      [key]: $input.value.trim()
+    })
 
     // 若修改的是 nick or email
     if (key === 'nick' || key === 'email') {
       this.fetchUserInfo()
     }
-
-    this.saveUser()
   }
 
   /** 远程获取用户数据 */
   fetchUserInfo() {
-    // 重置数据
-    this.user.data.token = '' // 清除 token 登陆状态
-    this.user.data.isAdmin = false
+    this.user.logout()
 
     // 获取用户信息
     if (this.queryUserInfo.timeout) window.clearTimeout(this.queryUserInfo.timeout) // 清除待发出的请求
@@ -152,8 +148,7 @@ export default class Editor extends Component {
       this.queryUserInfo.abortFunc = abort
       req.then(data => {
         if (!data.is_login) {
-          this.user.data.token = ''
-          this.user.data.isAdmin = false
+          this.user.logout()
         }
 
         // 未读消息更新
@@ -166,8 +161,8 @@ export default class Editor extends Component {
 
         // 自动填入 link
         if (data.user && data.user.link) {
-          this.user.data.link = data.user.link
           this.$link.value = data.user.link
+          this.user.update({ link: data.user.link })
         }
       })
       .catch(() => {})
@@ -182,11 +177,6 @@ export default class Editor extends Component {
       onSuccess: () => {
       }
     })
-  }
-
-  saveUser() {
-    this.user.save()
-    this.ctx.trigger('user-changed', this.ctx.user.data)
   }
 
   saveContent() {

@@ -101,6 +101,10 @@ export default interface ArtalkConfig {
   i18n?: I18n|string
 }
 
+/**
+ * 本地持久化用户数据
+ * @note 始终保持一层结构，不支持多层结构
+ */
 export interface LocalUser {
   /** 昵称 */
   nick: string

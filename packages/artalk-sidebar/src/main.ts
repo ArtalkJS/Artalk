@@ -11,11 +11,9 @@ export default async function InitSidebar(conf: ArtalkConfig, user: LocalUser, v
 
   // 初始化用户数据
   user = user || {}
-  artalk.ctx.user.data = {
-    ...artalk.ctx.user.data,
+  artalk.ctx.user.update({
     ...user
-  }
-  artalk.ctx.user.save()
+  })
 
   // 初始化 Sidebar
   const sidebarCtx = new SidebarCtx()

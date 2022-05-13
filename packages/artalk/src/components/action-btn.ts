@@ -110,7 +110,7 @@ export default class ActionBtn {
     this.isLoading = value
     if (value) {
       this.$el.classList.add('atk-btn-loading')
-      this.$el.innerText = loadingText || `${this.ctx.$t('loading')}...`
+      this.$el.innerText = loadingText || `${this.ctx.$t('loading')}`
     } else {
       this.$el.classList.remove('atk-btn-loading')
       this.$el.innerText = this.getText()

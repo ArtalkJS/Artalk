@@ -65,7 +65,7 @@ const zhCN: I18n = {
   /* General */
   frontend: '前端',
   backend: '后端',
-  loading: '加载中',
+  loading: '加载中…',
   loadFail: '加载失败',
   editing: '修改中',
   editFail: '修改失败',

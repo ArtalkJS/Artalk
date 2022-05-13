@@ -31,8 +31,8 @@
 - Email reminder: Template customization / multi-admin notification
 - Site isolation: Multi-site management / admin assignment
 - Page management: Title can be displayed / easy to look up
-- Image upload: upload to local / various remote image host
-- Tree Hole Mode: Only visible to yourself / Message board
+- Image upload: Upload to local / various remote image host
+- Private Space Mode: Only visible to yourself / Message board
 - Multiple push: Support Telegram / Slack / LINE
 - Nesting comments: Switchable to flat mode
 - Comment voting: For or against comments
@@ -42,7 +42,7 @@
 - Asynchronous processing: Send comments without waiting
 - Scroll loading: Various comment content pagination customization
 - Auto save: A anti-lost editor
-- Autofill: User website autofill
+- Autofill: client-autofill
 - Real-time preview: Real-time preview of comment content
 - Dark Mode: Prevents eye disease damage
 - Comment Folding: I do not want you to see this comment
@@ -50,12 +50,12 @@
 - Data Migration: Switch back and forth between different commenting systems
 - Multiple comments on one page: Multiple comment areas on one page (seems useless
 - Markdown: Markdown syntax was supported by default
-- Latex support: Import Katex plugin to integrate latex parser for artalk
+- LaTex support: Import KaTex plugin to integrate LaTex parser for artalk
 - Using [Vite](https://github.com/vitejs/vite): The ultimate developer experience
 
 ## Getting Started
 
-Reference to：[“**Documentation**”](https://artalk.js.org/guide/deploy.html)
+Reference to：[**Documentation**](https://artalk.js.org/guide/deploy.html)
 
 ```sh
 $ pnpm add artalk
@@ -128,7 +128,7 @@ docker-compose up -d
 
 ## Feedback
 
-Thanks for the help and feedback provided by the community, if you have good suggestions and comments, please go to [ISSUES](https://github.com/ArtalkJS/Artalk/issues) to let us know at any time.
+Thanks for the help and feedback provided by the community, if you have good suggestions or comments, please go to [issues](https://github.com/ArtalkJS/Artalk/issues) to let us know at any time.
 
 ## Stargazers over time
 

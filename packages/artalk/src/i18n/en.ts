@@ -63,7 +63,7 @@ export default {
   /* General */
   frontend: 'Frontend',
   backend: 'Backend',
-  loading: 'Loading',
+  loading: 'Loading...',
   loadFail: 'Load Failed',
   editing: 'Editing',
   editFail: 'Edit Failed',

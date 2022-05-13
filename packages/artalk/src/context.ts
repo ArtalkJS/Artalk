@@ -1,6 +1,7 @@
 import { marked as libMarked } from 'marked'
 import ArtalkConfig from '~/types/artalk-config'
 import { EventPayloadMap, Event, EventScopeType, Handler } from '~/types/event'
+import { internal as internalLocales, I18n } from './i18n'
 import User from './lib/user'
 
 /**
@@ -43,4 +44,16 @@ export default class Context {
 
   public markedInstance!: typeof libMarked
   public markedReplacers: ((raw: string) => string)[] = []
+
+  public $t(key: keyof I18n, args: {[key: string]: string} = {}): string {
+    let locales = this.conf.i18n
+    if (typeof locales === 'string') {
+      locales = internalLocales[locales]
+    }
+
+    let str = locales?.[key] || key
+    str = str.replace(/\{\s*(\w+?)\s*\}/g, (_, token) => args[token] || '')
+
+    return str
+  }
 }

@@ -11,7 +11,7 @@
 
 > 🌌 Golang 自托管评论系统
 
-[官方文档](https://artalk.js.org) / [最新后端](https://github.com/ArtalkJS/ArtalkGo/releases) / [ArtalkGo](https://github.com/ArtalkJS/ArtalkGo)
+[English](./README.en.md) / [官方文档](https://artalk.js.org) / [最新后端](https://github.com/ArtalkJS/ArtalkGo/releases) / [ArtalkGo](https://github.com/ArtalkJS/ArtalkGo)
 
 ---
 

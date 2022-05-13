@@ -1,3 +1,4 @@
+import Context from '../context'
 import * as Utils from '../lib/utils'
 
 type BtnClickHandler = (btnEl: HTMLElement, dialog: Dialog) => boolean|void
@@ -6,11 +7,14 @@ type BtnClickHandler = (btnEl: HTMLElement, dialog: Dialog) => boolean|void
  * 对话框
  */
 export default class Dialog {
+  public ctx: Context
   public $el: HTMLElement
   public $content: HTMLElement
   public $actions: HTMLElement
 
-  constructor (contentEl: HTMLElement) {
+  constructor (ctx: Context, contentEl: HTMLElement) {
+    this.ctx = ctx
+
     this.$el = Utils.createElement(
       `<div class="atk-layer-dialog-wrap">
         <div class="atk-layer-dialog">
@@ -33,7 +37,7 @@ export default class Dialog {
   /** 按钮 · 确定 */
   public setYes(handler: BtnClickHandler) {
     const btn = Utils.createElement<HTMLButtonElement>(
-      '<button data-action="confirm">确定</button>'
+      `<button data-action="confirm">${this.ctx.$t('confirm')}</button>`
     )
     btn.onclick = this.onBtnClick(handler)
     this.$actions.appendChild(btn)
@@ -44,7 +48,7 @@ export default class Dialog {
   /** 按钮 · 取消 */
   public setNo(handler: BtnClickHandler) {
     const btn = Utils.createElement<HTMLButtonElement>(
-      '<button data-action="cancel">取消</button>'
+      `<button data-action="cancel">${this.ctx.$t('cancel')}</button>`
     )
     btn.onclick = this.onBtnClick(handler)
     this.$actions.appendChild(btn)

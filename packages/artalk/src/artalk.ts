@@ -129,7 +129,7 @@ export default class Artalk {
     let backendConf = {}
     try {
       backendConf = await (new Api(this.ctx)).conf()
-    } catch (err) { console.error("配置远程获取失败", err) }
+    } catch (err) { console.error("Load config from remote err", err) }
     this.ctx.conf = Utils.mergeDeep(this.ctx.conf, backendConf)
     Ui.hideLoading(this.$root)
   }

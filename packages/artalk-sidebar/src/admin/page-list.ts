@@ -208,7 +208,7 @@ export default class PageList extends Component {
     $keyEditBtn.onclick = () => openTextEditor('key')
 
     // 仅管理员可评
-    const adminOnlyActionBtn = new ActionBtn({
+    const adminOnlyActionBtn = new ActionBtn(this.ctx, {
       text: () => {
         $adminOnlyBtn.classList.remove('atk-green', 'atk-yellow')
         $adminOnlyBtn.classList.add(!page.admin_only ? 'atk-green' : 'atk-yellow')

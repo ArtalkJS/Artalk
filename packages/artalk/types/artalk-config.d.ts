@@ -1,3 +1,5 @@
+import { I18n } from '~/src/i18n'
+
 export default interface ArtalkConfig {
   /** 装载元素 */
   el: string|HTMLElement
@@ -92,8 +94,11 @@ export default interface ArtalkConfig {
   /** 版本检测 */
   versionCheck?: boolean
 
-  /** 复用后端配置 */
+  /** 应用后端配置 */
   useBackendConf?: boolean
+
+  /** 国际化 */
+  i18n?: I18n|string
 }
 
 export interface LocalUser {

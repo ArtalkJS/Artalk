@@ -134,8 +134,10 @@ export default class Comment extends Component {
     }
 
     this.$headerBadge = this.$el.querySelector<HTMLElement>('.atk-badge')!
-    if (this.data.badge_name) {
-      this.$headerBadge.innerText = this.data.badge_name
+    let badgeText = this.data.badge_name
+    if (badgeText) {
+      badgeText = badgeText.replace('管理员', this.$t('admin')) // i18n patch
+      this.$headerBadge.innerText = badgeText
       if (this.data.badge_color)
       this.$headerBadge.style.backgroundColor = this.data.badge_color
     } else {
@@ -144,7 +146,7 @@ export default class Comment extends Component {
     }
 
     if (this.data.is_pinned) {
-      const $pinnedBadge = Utils.createElement(`<span class="atk-item atk-pinned-badge">置顶</span>`) // 置顶徽章
+      const $pinnedBadge = Utils.createElement(`<span class="atk-item atk-pinned-badge">${this.$t('pin')}</span>`) // 置顶徽章
       this.$headerNick.insertAdjacentElement('afterend', $pinnedBadge)
     }
 
@@ -174,8 +176,8 @@ export default class Comment extends Component {
     this.$content.classList.add('atk-hide', 'atk-type-collapsed')
     const collapsedInfoEl = Utils.createElement(`
       <div class="atk-collapsed">
-        <span class="atk-text">该评论已被系统或管理员折叠</span>
-        <span class="atk-show-btn">查看内容</span>
+        <span class="atk-text">${this.$t('collapsedMsg')}</span>
+        <span class="atk-show-btn">${this.$t('expand')}</span>
       </div>`)
     this.$body.insertAdjacentElement('beforeend', collapsedInfoEl)
 
@@ -187,11 +189,11 @@ export default class Comment extends Component {
         this.$content.innerHTML = this.getContentMarked()
         this.$content.classList.remove('atk-hide')
         Ui.playFadeInAnim(this.$content)
-        contentShowBtn.innerHTML = '收起内容'
+        contentShowBtn.innerHTML = this.$t('collapse')
       } else {
         this.$content.innerHTML = ''
         this.$content.classList.add('atk-hide')
-        contentShowBtn.innerHTML = '查看内容'
+        contentShowBtn.innerHTML = this.$t('expand')
       }
     })
   }
@@ -217,14 +219,14 @@ export default class Comment extends Component {
 
     this.$replyTo = Utils.createElement(`
       <div class="atk-reply-to">
-        <div class="atk-meta">回复 <span class="atk-nick"></span>:</div>
+        <div class="atk-meta">${this.$t('reply')} <span class="atk-nick"></span>:</div>
         <div class="atk-content"></div>
       </div>`)
     const $nick = this.$replyTo.querySelector<HTMLElement>('.atk-nick')!
     $nick.innerText = `@${this.replyTo.nick}`
     $nick.onclick = () => { this.goToReplyComment() }
     let replyContent = Utils.marked(this.ctx, this.replyTo.content)
-    if (this.replyTo.is_collapsed) replyContent = '[已折叠]'
+    if (this.replyTo.is_collapsed) replyContent = `[${this.$t('collapsed')}]`
     this.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
     this.$body.prepend(this.$replyTo)
   }
@@ -241,7 +243,7 @@ export default class Comment extends Component {
   private renderPending() {
     if (!this.data.is_pending) return
 
-    const pendingEl = Utils.createElement(`<div class="atk-pending">审核中，仅本人可见。</div>`)
+    const pendingEl = Utils.createElement(`<div class="atk-pending">${this.$t('pendingMsg')}</div>`)
     this.$body.prepend(pendingEl)
   }
 
@@ -250,14 +252,14 @@ export default class Comment extends Component {
     // 投票功能
     if (this.ctx.conf.vote) {
       // 赞同按钮
-      this.voteBtnUp = new ActionBtn(() => `赞同 (${this.data.vote_up || 0})`).appendTo(this.$actions)
+      this.voteBtnUp = new ActionBtn(this.ctx, () => `${this.$t('voteUp')} (${this.data.vote_up || 0})`).appendTo(this.$actions)
       this.voteBtnUp.setClick(() => {
         this.vote('up')
       })
 
       // 反对按钮
       if (this.ctx.conf.voteDown) {
-        this.voteBtnDown = new ActionBtn(() => `反对 (${this.data.vote_down || 0})`).appendTo(this.$actions)
+        this.voteBtnDown = new ActionBtn(this.ctx, () => `${this.$t('voteDown')} (${this.data.vote_down || 0})`).appendTo(this.$actions)
         this.voteBtnDown.setClick(() => {
           this.vote('down')
         })
@@ -266,7 +268,7 @@ export default class Comment extends Component {
 
     // 绑定回复按钮事件
     if (this.data.is_allow_reply) {
-      const replyBtn = Utils.createElement(`<span>回复</span>`)
+      const replyBtn = Utils.createElement(`<span>${this.$t('reply')}</span>`)
       this.$actions.append(replyBtn)
       replyBtn.addEventListener('click', (e) => {
         e.stopPropagation() // 防止穿透
@@ -279,8 +281,8 @@ export default class Comment extends Component {
     }
 
     // 绑定折叠按钮事件
-    const collapseBtn = new ActionBtn({
-      text: () => (this.data.is_collapsed ? '取消折叠' : '折叠'),
+    const collapseBtn = new ActionBtn(this.ctx, {
+      text: () => (this.data.is_collapsed ? this.$t('expand') : this.$t('collapse')),
       adminOnly: true
     })
     collapseBtn.appendTo(this.$actions)
@@ -289,8 +291,8 @@ export default class Comment extends Component {
     })
 
     // 绑定待审核按钮事件
-    const pendingBtn = new ActionBtn({
-      text: () => (this.data.is_pending ? '待审' : '已审'),
+    const pendingBtn = new ActionBtn(this.ctx, {
+      text: () => (this.data.is_pending ? this.$t('pending') : this.$t('approved')),
       adminOnly: true
     })
     pendingBtn.appendTo(this.$actions)
@@ -299,10 +301,10 @@ export default class Comment extends Component {
     })
 
     // 绑定删除按钮事件
-    const delBtn = new ActionBtn({
-      text: '删除',
+    const delBtn = new ActionBtn(this.ctx, {
+      text: this.$t('delete'),
       confirm: true,
-      confirmText: '确认删除',
+      confirmText: this.$t('deleteConfirm'),
       adminOnly: true,
     })
     delBtn.appendTo(this.$actions)
@@ -311,8 +313,8 @@ export default class Comment extends Component {
     })
 
     // 绑定置顶按钮事件
-    const pinnedBtn = new ActionBtn({
-      text: () => (this.data.is_pinned ? '取消置顶' : '置顶'),
+    const pinnedBtn = new ActionBtn(this.ctx, {
+      text: () => (this.data.is_pinned ? this.$t('unpin') : this.$t('pin')),
       adminOnly: true
     })
     pinnedBtn.appendTo(this.$actions)
@@ -419,7 +421,7 @@ export default class Comment extends Component {
   }
 
   getDateFormatted() {
-    return Utils.timeAgo(new Date(this.data.date))
+    return Utils.timeAgo(new Date(this.data.date), this.ctx)
   }
 
   getUserUaBrowser() {
@@ -449,7 +451,7 @@ export default class Comment extends Component {
       this.voteBtnDown?.updateText()
     })
     .catch((err) => {
-      actionBtn?.setError(`投票失败`)
+      actionBtn?.setError(this.$t('voteFail'))
       console.log(err)
     })
   }
@@ -458,7 +460,7 @@ export default class Comment extends Component {
   adminEdit(type: 'collapsed'|'pending'|'pinned', btnElem: ActionBtn) {
     if (btnElem.isLoading) return // 若正在修改中
 
-    btnElem.setLoading(true, '修改中...')
+    btnElem.setLoading(true, `${this.$t('editing')}...`)
 
     // 克隆并修改当前数据
     const modify = { ...this.data }
@@ -482,7 +484,7 @@ export default class Comment extends Component {
       this.ctx.trigger('list-refresh-ui')
     }).catch((err) => {
       console.error(err)
-      btnElem.setError('修改失败')
+      btnElem.setError(this.$t('editFail'))
     })
   }
 
@@ -492,7 +494,7 @@ export default class Comment extends Component {
   adminDelete(btnElem: ActionBtn) {
     if (btnElem.isLoading) return // 若正在删除中
 
-    btnElem.setLoading(true, '删除中...')
+    btnElem.setLoading(true, `${this.$t('deleting')}...`)
     new Api(this.ctx).commentDel(this.data.id, this.data.site_name)
       .then(() => {
         btnElem.setLoading(false)
@@ -500,7 +502,7 @@ export default class Comment extends Component {
       })
       .catch((e) => {
         console.error(e)
-        btnElem.setError('删除失败')
+        btnElem.setError(this.$t('deleteFail'))
       })
   }
 
@@ -591,7 +593,7 @@ export default class Comment extends Component {
     $el.classList.add('atk-height-limit')
     $el.style.height = `${maxHeight}px`
     $el.style.overflow = 'hidden'
-    const $hideMoreOpenBtn = Utils.createElement(`<div class="atk-height-limit-btn">阅读更多</span>`)
+    const $hideMoreOpenBtn = Utils.createElement(`<div class="atk-height-limit-btn">${this.$t('readMore')}</span>`)
     $hideMoreOpenBtn.onclick = (e) => {
       e.stopPropagation()
       this.heightLimitRemove($el)

@@ -16,7 +16,7 @@ const AdminChecker: Checker = {
   },
 
   body(that, ctx) {
-    return Utils.createElement('<span>敲入密码来验证管理员身份：</span>')
+    return Utils.createElement(`<span>${that.ctx.$t('adminCheck')}</span>`)
   },
 
   onSuccess(that, ctx, userToken, inputVal, formEl) {

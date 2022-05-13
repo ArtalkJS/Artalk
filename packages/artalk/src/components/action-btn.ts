@@ -1,3 +1,4 @@
+import Context from '../context'
 import * as Utils from '../lib/utils'
 
 interface ActionBtnConf {
@@ -18,6 +19,7 @@ interface ActionBtnConf {
  * 通用操作按钮
  */
 export default class ActionBtn {
+  private ctx: Context
   private conf: ActionBtnConf
   public $el: HTMLElement
 
@@ -31,7 +33,8 @@ export default class ActionBtn {
   public confirmRecTimer?: number // 确认消息复原定时器
 
   /** 构造函数 */
-  constructor(conf: ActionBtnConf|string|(() => string)) {
+  constructor(ctx: Context, conf: ActionBtnConf|string|(() => string)) {
+    this.ctx = ctx
     this.$el = Utils.createElement(`<span class="atk-common-action-btn"></span>`)
 
     this.conf = (typeof conf !== 'object') ? ({ text: conf }) : conf
@@ -73,7 +76,7 @@ export default class ActionBtn {
         if (!this.isConfirming) {
           this.isConfirming = true
           this.$el.classList.add('atk-btn-confirm')
-          this.$el.innerText = this.conf.confirmText || '确认操作'
+          this.$el.innerText = this.conf.confirmText || this.ctx.$t('actionConfirm')
           this.confirmRecTimer = window.setTimeout(() => confirmRestore(), 5000)
           return
         }
@@ -107,7 +110,7 @@ export default class ActionBtn {
     this.isLoading = value
     if (value) {
       this.$el.classList.add('atk-btn-loading')
-      this.$el.innerText = loadingText || '加载中...'
+      this.$el.innerText = loadingText || `${this.ctx.$t('loading')}...`
     } else {
       this.$el.classList.remove('atk-btn-loading')
       this.$el.innerText = this.getText()

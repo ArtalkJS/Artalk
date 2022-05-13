@@ -58,7 +58,7 @@ export function dateFormat(date: Date) {
   return `${vYear}-${vMonth}-${vDay}`
 }
 
-export function timeAgo(date: Date) {
+export function timeAgo(date: Date, ctx: Context) {
   try {
     const oldTime = date.getTime()
     const currTime = new Date().getTime()
@@ -77,16 +77,16 @@ export function timeAgo(date: Date) {
           // 计算相差秒数
           const leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
           const seconds = Math.round(leave3 / 1000)
-          return `${seconds} 秒前`
+          return `${seconds} ${ctx.$t('seconds')}`
         }
-        return `${minutes} 分钟前`
+        return `${minutes} ${ctx.$t('minutes')}`
       }
-      return `${hours} 小时前`
+      return `${hours} ${ctx.$t('hours')}`
     }
-    if (days < 0) return '刚刚'
+    if (days < 0) return ctx.$t('now')
 
     if (days < 8) {
-      return `${days} 天前`
+      return `${days} ${ctx.$t('days')}`
     }
 
     return dateFormat(date)

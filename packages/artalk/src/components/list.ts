@@ -13,6 +13,7 @@ export default class List extends ListLite {
   private $openSidebarBtn!: HTMLElement
   private $unreadBadge!: HTMLElement
   private $commentCount!: HTMLElement
+  private $commentCountNum!: HTMLElement
   private $dropdownWrap?: HTMLElement
 
   constructor (ctx: Context) {
@@ -43,6 +44,10 @@ export default class List extends ListLite {
     this.initListActionBtn()
 
     this.$commentCount = this.$el.querySelector('.atk-comment-count')!
+    this.$commentCount.innerHTML = this.$t('counter', {
+      count: '<span class="atk-comment-count-num">0</span>',
+    })
+    this.$commentCountNum = this.$commentCount.querySelector('.atk-comment-count-num')!
 
     // 评论列表排序 Dropdown 下拉选择层
     if (this.ctx.conf.listSort) {
@@ -85,7 +90,7 @@ export default class List extends ListLite {
   public refreshUI() {
     super.refreshUI()
 
-    this.$el.querySelector<HTMLElement>('.atk-comment-count-num')!.innerText = String(Number(this.data?.total) || 0)
+    this.$commentCountNum.innerText = String(Number(this.data?.total) || 0)
 
     // 已输入个人信息
     if (!!this.ctx.user.data.nick && !!this.ctx.user.data.email) {
@@ -96,15 +101,16 @@ export default class List extends ListLite {
 
     // 仅管理员显示控制
     this.ctx.trigger('check-admin-show-el')
-    this.$openSidebarBtn.querySelector<HTMLElement>('.atk-text')!.innerText = (!this.ctx.user.data.isAdmin) ? '通知中心' : '控制中心'
+    this.$openSidebarBtn.querySelector<HTMLElement>('.atk-text')!
+      .innerText = (!this.ctx.user.data.isAdmin) ? this.$t('msgCenter') : this.$t('ctrlCenter')
 
     // 关闭评论
     if (!!this.data && !!this.data.page && this.data.page.admin_only === true) {
       this.ctx.trigger('editor-close')
-      this.$closeCommentBtn.innerHTML = '打开评论'
+      this.$closeCommentBtn.innerHTML = this.$t('openComment')
     } else {
       this.ctx.trigger('editor-open')
-      this.$closeCommentBtn.innerHTML = '关闭评论'
+      this.$closeCommentBtn.innerHTML = this.$t('closeComment')
     }
   }
 
@@ -185,7 +191,7 @@ export default class List extends ListLite {
         this.refreshUI()
       })
       .catch(err => {
-        this.ctx.trigger('editor-notify', { msg: `修改页面数据失败：${err.msg || String(err)}`, type: 'e'})
+        this.ctx.trigger('editor-notify', { msg: `${this.$t('editFail')}: ${err.msg || String(err)}`, type: 'e'})
       })
       .finally(() => {
         this.ctx.trigger('editor-hide-loading')
@@ -216,10 +222,10 @@ export default class List extends ListLite {
 
     // 下拉列表
     const dropdownList = [
-      ['最新', () => { reloadUseParamsEditor(p => { p.sort_by = 'date_desc' }) }],
-      ['最热', () => { reloadUseParamsEditor(p => { p.sort_by = 'vote' }) }],
-      ['最早', () => { reloadUseParamsEditor(p => { p.sort_by = 'date_asc' }) }],
-      ['作者', () => { reloadUseParamsEditor(p => { p.view_only_admin = true }) }],
+      [this.$t('sortLatest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'date_desc' }) }],
+      [this.$t('sortBest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'vote' }) }],
+      [this.$t('sortOldest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'date_asc' }) }],
+      [this.$t('sortAuthor'), () => { reloadUseParamsEditor(p => { p.view_only_admin = true }) }],
     ]
 
     // 列表项点击事件

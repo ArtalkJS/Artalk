@@ -16,6 +16,13 @@ export default class Editor extends Component {
   public plugList: { [name: string]: any } = {}
 
   public $header: HTMLElement
+  public $nick: HTMLInputElement
+  public $email: HTMLInputElement
+  public $link: HTMLInputElement
+  public get $inputs() {
+    return { nick: this.$nick, email: this.$email, link: this.$link }
+  }
+
   public $textareaWrap: HTMLElement
   public $textarea: HTMLTextAreaElement
   public $plugWrap: HTMLElement
@@ -31,7 +38,7 @@ export default class Editor extends Component {
 
   private isTraveling = false
 
-  private get user () {
+  private get user() {
     return this.ctx.user
   }
 
@@ -41,6 +48,10 @@ export default class Editor extends Component {
     this.$el = Utils.createElement(EditorHTML)
 
     this.$header = this.$el.querySelector('.atk-header')!
+    this.$nick = this.$header.querySelector('[name="nick"]')!
+    this.$email = this.$header.querySelector('[name="email"]')!
+    this.$link = this.$header.querySelector('[name="link"]')!
+
     this.$textareaWrap = this.$el.querySelector('.atk-textarea-wrap')!
     this.$textarea = this.$el.querySelector('.atk-textarea')!
     this.$plugWrap = this.$el.querySelector('.atk-plug-wrap')!
@@ -49,6 +60,7 @@ export default class Editor extends Component {
     this.$submitBtn = this.$el.querySelector('.atk-send-btn')!
     this.$notifyWrap = this.$el.querySelector('.atk-notify-wrap')!
 
+    // 初始化组件
     this.initLocalStorage()
     this.initHeader()
     this.initTextarea()
@@ -68,7 +80,7 @@ export default class Editor extends Component {
     this.ctx.on('conf-updated', () => (this.refreshUploadBtn()))
   }
 
-  initLocalStorage () {
+  initLocalStorage() {
     const localContent = window.localStorage.getItem('ArtalkContent') || ''
     if (localContent.trim() !== '') {
       this.showNotify(this.$t('restoredMsg'), 'i')
@@ -79,39 +91,29 @@ export default class Editor extends Component {
     })
   }
 
-  initHeader () {
-    Object.keys(this.user.data).forEach((field) => {
-      const inputEl = this.getInputEl(field)
-      if (inputEl && inputEl instanceof HTMLInputElement) {
-        inputEl.value = this.user.data[field] || ''
-        // 绑定事件
-        inputEl.addEventListener('input', () => this.onHeaderInput(field, inputEl))
-      }
+  initHeader() {
+    Object.entries(this.$inputs).forEach(([key, $input]) => {
+      $input.value = this.user.data[key] || ''
+      $input.addEventListener('input', () => this.onHeaderInput(key, $input))
+
+      // 设置 Placeholder
+      $input.placeholder = `${this.$t(key as any)}`
     })
 
-    // Link URL 自动补全协议
-    const $linkInput = this.getInputEl('link')
-    if ($linkInput) {
-      $linkInput.addEventListener('change', () => {
-        const link = $linkInput.value.trim()
-        if (!!link && !/^(http|https):\/\//.test(link)) {
-          $linkInput.value = `https://${link}`
-          this.user.data.link = $linkInput.value
-          this.saveUser()
-        }
-      })
-    }
-
-    // i18n patch
-    [['nick', '昵称'], ['email', '邮箱'], ['link', '网址']].forEach((entry) => {
-      const $input = this.getInputEl(entry[0])!
-      $input.placeholder = $input.placeholder.replace(entry[1], this.$t(entry[0] as any))
-    })
+    this.initLinkInput()
   }
 
-  getInputEl (field: 'nick'|'email'|'link'|string) {
-    const inputEl = this.$header.querySelector<HTMLInputElement>(`[name="${field}"]`)
-    return inputEl
+  initLinkInput() {
+    this.$link.placeholder += ' (https://)'
+    this.$link.addEventListener('change', () => {
+      // Link URL 自动补全协议
+      const link = this.$link.value.trim()
+      if (!!link && !/^(http|https):\/\//.test(link)) {
+        this.$link.value = `https://${link}`
+        this.user.data.link = this.$link.value
+        this.saveUser()
+      }
+    })
   }
 
   queryUserInfo = {
@@ -120,72 +122,78 @@ export default class Editor extends Component {
   }
 
   /** header 输入框内容变化事件 */
-  onHeaderInput(field: string, inputEl: HTMLInputElement) {
-    this.user.data[field] = inputEl.value.trim()
+  onHeaderInput(key: string, $input: HTMLInputElement) {
+    this.user.data[key] = $input.value.trim()
 
     // 若修改的是 nick or email
-    if (field === 'nick' || field === 'email') {
-      this.user.data.token = '' // 清除 token 登陆状态
-      this.user.data.isAdmin = false
-
-      // 获取用户信息
-      if (this.queryUserInfo.timeout !== null) window.clearTimeout(this.queryUserInfo.timeout) // 清除待发出的请求
-      if (this.queryUserInfo.abortFunc !== null) this.queryUserInfo.abortFunc() // 之前发出未完成的请求立刻中止
-
-      this.queryUserInfo.timeout = window.setTimeout(() => {
-        this.queryUserInfo.timeout = null // 清理
-
-        const {req, abort} = new Api(this.ctx).userGet(
-          this.user.data.nick, this.user.data.email
-        )
-        this.queryUserInfo.abortFunc = abort
-        req.then(data => {
-          if (!data.is_login) {
-            this.user.data.token = ''
-            this.user.data.isAdmin = false
-          }
-
-          // 未读消息更新
-          this.ctx.trigger('unread-update', { notifies: data.unread, })
-
-          // 若用户为管理员，执行登陆操作
-          if (this.user.checkHasBasicUserInfo() && !data.is_login && data.user && data.user.is_admin) {
-            this.showLoginDialog()
-          }
-
-          // 自动填入 link
-          if (data.user && data.user.link) {
-            this.user.data.link = data.user.link
-            this.getInputEl('link')!.value = data.user.link
-          }
-        })
-        .catch(() => {})
-        .finally(() => {
-          this.queryUserInfo.abortFunc = null // 清理
-        })
-      }, 400) // 延迟执行，减少请求次数
+    if (key === 'nick' || key === 'email') {
+      this.fetchUserInfo()
     }
 
     this.saveUser()
   }
 
-  showLoginDialog () {
+  /** 远程获取用户数据 */
+  fetchUserInfo() {
+    // 重置数据
+    this.user.data.token = '' // 清除 token 登陆状态
+    this.user.data.isAdmin = false
+
+    // 获取用户信息
+    if (this.queryUserInfo.timeout) window.clearTimeout(this.queryUserInfo.timeout) // 清除待发出的请求
+    if (this.queryUserInfo.abortFunc) this.queryUserInfo.abortFunc() // 之前发出未完成的请求立刻中止
+
+    this.queryUserInfo.timeout = window.setTimeout(() => {
+      this.queryUserInfo.timeout = null // 清理
+
+      const {req, abort} = new Api(this.ctx).userGet(
+        this.user.data.nick, this.user.data.email
+      )
+      this.queryUserInfo.abortFunc = abort
+      req.then(data => {
+        if (!data.is_login) {
+          this.user.data.token = ''
+          this.user.data.isAdmin = false
+        }
+
+        // 未读消息更新
+        this.ctx.trigger('unread-update', { notifies: data.unread, })
+
+        // 若用户为管理员，执行登陆操作
+        if (this.user.checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {
+          this.showLoginDialog()
+        }
+
+        // 自动填入 link
+        if (data.user && data.user.link) {
+          this.user.data.link = data.user.link
+          this.$link.value = data.user.link
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        this.queryUserInfo.abortFunc = null // 清理
+      })
+    }, 400) // 延迟执行，减少请求次数
+  }
+
+  showLoginDialog() {
     this.ctx.trigger('checker-admin', {
       onSuccess: () => {
       }
     })
   }
 
-  saveUser () {
+  saveUser() {
     this.user.save()
     this.ctx.trigger('user-changed', this.ctx.user.data)
   }
 
-  saveContent () {
+  saveContent() {
     window.localStorage.setItem('ArtalkContent', this.getContentOriginal().trim())
   }
 
-  initTextarea () {
+  initTextarea() {
     // 占位符
     this.$textarea.placeholder = this.ctx.conf.placeholder || this.$t('placeholder')
 
@@ -205,7 +213,7 @@ export default class Editor extends Component {
     })
   }
 
-  adjustTextareaHeight () {
+  adjustTextareaHeight() {
     const diff = this.$textarea.offsetHeight - this.$textarea.clientHeight
     this.$textarea.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
     this.$textarea.style.height = `${this.$textarea.scrollHeight + diff}px`
@@ -213,7 +221,7 @@ export default class Editor extends Component {
 
   openedPlugName: string|null = null
 
-  initEditorPlug () {
+  initEditorPlug() {
     this.plugList = {}
     this.$plugWrap.innerHTML = ''
     this.$plugWrap.style.display = 'none'
@@ -287,7 +295,7 @@ export default class Editor extends Component {
   }
 
   /** 关闭编辑器插件 */
-  closePlug () {
+  closePlug() {
     this.$plugWrap.innerHTML = ''
     this.$plugWrap.style.display = 'none'
     this.openedPlugName = null
@@ -407,7 +415,7 @@ export default class Editor extends Component {
     }
   }
 
-  insertContent (val: string) {
+  insertContent(val: string) {
     if ((document as any).selection) {
       this.$textarea.focus();
       (document as any).selection.createRange().text = val
@@ -427,7 +435,7 @@ export default class Editor extends Component {
     }
   }
 
-  setContent (val: string) {
+  setContent(val: string) {
     this.$textarea.value = val
     this.saveContent()
     if (!!this.plugList && !!this.plugList.preview) {
@@ -440,13 +448,13 @@ export default class Editor extends Component {
     }, 80)
   }
 
-  clearEditor () {
+  clearEditor() {
     this.setContent('')
     this.cancelReply()
   }
 
   /** 获取最终用于 submit 的数据 */
-  getFinalContent () {
+  getFinalContent() {
     let content = this.getContentOriginal()
 
     // 表情包处理
@@ -458,20 +466,20 @@ export default class Editor extends Component {
     return content
   }
 
-  getContentOriginal () {
+  getContentOriginal() {
     return this.$textarea.value || '' // Tip: !!"0" === true
   }
 
-  getContentMarked () {
+  getContentMarked() {
     return Utils.marked(this.ctx, this.getFinalContent())
   }
 
-  initBottomPart () {
+  initBottomPart() {
     this.initReply()
     this.initSubmit()
   }
 
-  initReply () {
+  initReply() {
     this.replyComment = null
     this.$sendReply = null
   }
@@ -500,7 +508,7 @@ export default class Editor extends Component {
     this.$textarea.focus()
   }
 
-  cancelReply () {
+  cancelReply() {
     if (this.$sendReply !== null) {
       this.$sendReply.remove()
       this.$sendReply = null
@@ -512,7 +520,7 @@ export default class Editor extends Component {
     }
   }
 
-  initSubmit () {
+  initSubmit() {
     this.$submitBtn.innerText = this.ctx.conf.sendBtn || this.$t('send')
 
     this.$submitBtn.addEventListener('click', (evt) => {
@@ -521,7 +529,7 @@ export default class Editor extends Component {
     })
   }
 
-  async submit () {
+  async submit() {
     if (this.getFinalContent().trim() === '') {
       this.$textarea.focus()
       return
@@ -565,7 +573,7 @@ export default class Editor extends Component {
   }
 
   /** 关闭评论 */
-  close () {
+  close() {
     if (!this.$textareaWrap.querySelector('.atk-comment-closed'))
       this.$textareaWrap.prepend(Utils.createElement('<div class="atk-comment-closed">仅管理员可评论</div>'))
 
@@ -581,7 +589,7 @@ export default class Editor extends Component {
   }
 
   /** 打开评论 */
-  open () {
+  open() {
     this.$textareaWrap.querySelector('.atk-comment-closed')?.remove()
     this.$textarea.style.display = ''
     this.$bottom.style.display = ''
@@ -599,7 +607,7 @@ export default class Editor extends Component {
     this.$el.classList.add('atk-fade-in') // 添加渐入动画
   }
 
-  travelBack () {
+  travelBack() {
     if (!this.isTraveling) return
     this.isTraveling = false
     this.ctx.$root.querySelector('.atk-editor-travel-placeholder')?.replaceWith(this.$el)
@@ -608,7 +616,7 @@ export default class Editor extends Component {
     if (this.replyComment !== null) this.cancelReply()
   }
 
-  initRemoteEmoticons () {
+  initRemoteEmoticons() {
 
   }
 }

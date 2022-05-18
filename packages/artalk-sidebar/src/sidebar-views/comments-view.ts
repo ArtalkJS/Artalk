@@ -1,6 +1,6 @@
 import Context from 'artalk/types/context'
 import * as Utils from 'artalk/src/lib/utils'
-import ListLite from 'artalk/src/components/list-lite'
+import ListLite from 'artalk/src/list/list-lite'
 
 import SidebarView from '../sidebar-view'
 

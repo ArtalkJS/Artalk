@@ -8,7 +8,7 @@ import defaults from './defaults'
 
 import CheckerLauncher from './lib/checker'
 import Editor from './editor'
-import List from './components/list'
+import List from './list'
 import SidebarLayer from './components/sidebar-layer'
 
 import Layer, { GetLayerWrap } from './components/layer'

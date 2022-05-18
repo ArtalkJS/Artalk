@@ -77,10 +77,6 @@ export default class UploadPlug extends EditorPlug {
     })
   }
 
-  public onShow() {}
-
-  public onHide() {}
-
   public async uploadImg(file: File) {
     const fileExt = /[^.]+$/.exec(file.name)
     if (!fileExt || !this.allowImgExts.includes(fileExt[0])) return

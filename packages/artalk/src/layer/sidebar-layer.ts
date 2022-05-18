@@ -5,7 +5,7 @@ import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import { SidebarShowPayload } from '~/types/event'
-import SidebarHTML from './html/sidebar-layer.html?raw'
+import SidebarHTML from './sidebar-layer.html?raw'
 import Layer from './layer'
 import Api from '../api'
 

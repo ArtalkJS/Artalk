@@ -1,8 +1,8 @@
 import { CommentData } from '~/types/artalk-data'
 import Context from '~/types/context'
-import Component from '@/lib/component'
-import * as Utils from '@/lib/utils'
-import UADetect from '@/lib/detect'
+import Component from '../lib/component'
+import * as Utils from '../lib/utils'
+import UADetect from '../lib/detect'
 import CommentRender from './render'
 import CommentActions from './actions'
 

@@ -1,6 +1,6 @@
-import Api from '../../api'
+import Api from '../api'
 import Comment from './comment'
-import ActionBtn from '../action-btn'
+import ActionBtn from '../components/action-btn'
 
 export default class CommentActions {
   private comment: Comment
@@ -76,6 +76,7 @@ export default class CommentActions {
       })
   }
 
+  /** 快速跳转到该评论 */
   public goToReplyComment() {
     const origHash = window.location.hash
     const modifyHash = `#atk-comment-${this.data.rid}`

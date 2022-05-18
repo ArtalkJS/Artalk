@@ -2,7 +2,7 @@ import Api from 'artalk/src/api'
 import Context from 'artalk/types/context'
 import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
-import Comment from 'artalk/src/components/comment'
+import Comment from 'artalk/src/comment'
 import Pagination, { PaginationConf } from 'artalk/src/components/pagination'
 
 import SidebarView from '../sidebar-view'

@@ -1,8 +1,8 @@
-import '@/style/comment.less'
+import '../style/comment.less'
 
-import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
-import ActionBtn from '../action-btn'
+import * as Utils from '../lib/utils'
+import * as Ui from '../lib/ui'
+import ActionBtn from '../components/action-btn'
 import CommentHTML from './comment.html?raw'
 import Comment from './comment'
 

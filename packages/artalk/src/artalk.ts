@@ -7,7 +7,7 @@ import ConcreteContext from './context'
 import defaults from './defaults'
 
 import CheckerLauncher from './lib/checker'
-import Editor from './components/editor'
+import Editor from './editor'
 import List from './components/list'
 import SidebarLayer from './components/sidebar-layer'
 

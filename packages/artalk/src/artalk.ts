@@ -2,7 +2,8 @@ import './style/main.less'
 
 import ArtalkConfig from '~/types/artalk-config'
 import { EventPayloadMap, Handler } from '~/types/event'
-import Context from './context'
+import Context from '~/types/context'
+import ConcreteContext from './context'
 import defaults from './defaults'
 
 import CheckerLauncher from './lib/checker'
@@ -67,7 +68,7 @@ export default class Artalk {
     }
 
     // Context 初始化
-    this.ctx = new Context(this.$root, this.conf)
+    this.ctx = new ConcreteContext(this.$root, this.conf)
 
     // 界面初始化
     this.$root.classList.add('artalk')

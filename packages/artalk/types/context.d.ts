@@ -16,7 +16,7 @@ export default interface ContextApi {
   on<K extends keyof EventPayloadMap>(name: K, handler: Handler<EventPayloadMap[K]>, scope?: EventScopeType): void
   off<K extends keyof EventPayloadMap>(name: K, handler?: Handler<EventPayloadMap[K]>, scope?: EventScopeType): void
   trigger<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K], scope?: EventScopeType): void
-  $t(key: keyof I18n, args: {[key: string]: string}): string
+  $t(key: keyof I18n, args?: {[key: string]: string}): string
   markedInstance: typeof libMarked
   markedReplacers: ((raw: string) => string)[]
 }

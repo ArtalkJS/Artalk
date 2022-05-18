@@ -1,6 +1,6 @@
 import './style/sidebar.less'
 
-import Context from 'artalk/src/context'
+import Context from 'artalk/types/context'
 import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
 import Comment  from 'artalk/src/components/comment'

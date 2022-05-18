@@ -1,7 +1,7 @@
 import '../style/list.less'
 
 import { ListData } from '~/types/artalk-data'
-import Context from '../context'
+import Context from '~/types/context'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import Api from '../api'

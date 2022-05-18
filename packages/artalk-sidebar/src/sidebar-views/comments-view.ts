@@ -1,4 +1,4 @@
-import Context from 'artalk/src/context'
+import Context from 'artalk/types/context'
 import * as Utils from 'artalk/src/lib/utils'
 import ListLite from 'artalk/src/components/list-lite'
 

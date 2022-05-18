@@ -1,10 +1,7 @@
 import * as Utils from './utils'
-import Context from '../context'
 
 /** 显示加载 */
-export function showLoading(parentElem: HTMLElement|Context, conf?: { transparentBg?: boolean }) {
-  if (parentElem instanceof Context) parentElem = parentElem.$root
-
+export function showLoading(parentElem: HTMLElement, conf?: { transparentBg?: boolean }) {
   let $loading = parentElem.querySelector<HTMLElement>('.atk-loading')
   if (!$loading) {
     $loading = Utils.createElement(
@@ -29,9 +26,7 @@ export function showLoading(parentElem: HTMLElement|Context, conf?: { transparen
 }
 
 /** 隐藏加载 */
-export function hideLoading(parentElem: HTMLElement|Context) {
-  if (parentElem instanceof Context) parentElem = parentElem.$root
-
+export function hideLoading(parentElem: HTMLElement) {
   const $loading = parentElem.querySelector<HTMLElement>('.atk-loading')
   if ($loading) $loading.style.display = 'none'
 }
@@ -133,9 +128,7 @@ export function playFadeOutAnim(elem: HTMLElement, after?: () => void) {
 }
 
 /** 设置全局错误 */
-export function setError(parentElem: HTMLElement|Context, html: string | HTMLElement | null, title: string = '<span class="atk-error-title">Artalk Error</span>') {
-  if (parentElem instanceof Context) parentElem = parentElem.$root
-
+export function setError(parentElem: HTMLElement, html: string | HTMLElement | null, title: string = '<span class="atk-error-title">Artalk Error</span>') {
   let elem = parentElem.querySelector<HTMLElement>('.atk-error-layer')
   if (html === null) {
     if (elem !== null) elem.remove()

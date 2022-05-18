@@ -1,4 +1,4 @@
-import Context from "~/src/context"
+import Context from '~/types/context'
 import Editor from "../editor"
 
 export default abstract class EditorPlug {

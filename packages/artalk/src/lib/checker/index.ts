@@ -1,4 +1,4 @@
-import Context from '@/context'
+import Context from '~/types/context'
 import Layer from '@/components/layer'
 import Dialog from '@/components/dialog'
 import { CheckerPayload } from '~/types/event'

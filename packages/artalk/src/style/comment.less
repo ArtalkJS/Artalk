@@ -71,6 +71,7 @@
 
       .atk-item {
         display: flex;
+        margin-top: 2px;
         margin-bottom: 2px;
         color: var(--at-color-meta);
 
@@ -107,15 +108,20 @@
       }
 
       .badge() {
+        display: inline-block;
         color: var(--at-color-meta);
         background: var(--at-color-bg-grey);
-        padding: 0 6px;
-        line-height: 18px;
+        padding: 0px 6px;
+        line-height: 17px;
         border-radius: 3px;
 
         &:not(:last-child) {
           margin-right: 6px;
         }
+      }
+
+      .atk-badge-wrap {
+        margin-right: 6px;
       }
 
       .atk-badge {
@@ -136,6 +142,7 @@
       .atk-ua-wrap {
         @media only screen and (max-width: 768px) {
           display: block;
+          margin-top: 5px;
         }
       }
     }

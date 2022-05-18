@@ -161,7 +161,7 @@ export default class List extends ListLite {
 
     // 若父评论存在 “子评论部分” 限高，取消限高
     comment.getParents().forEach((p) => {
-      if (p.$children) p.heightLimitRemove(p.$children)
+      p.getRender().heightLimitRemoveForChildren()
     })
 
     const goTo = () => {

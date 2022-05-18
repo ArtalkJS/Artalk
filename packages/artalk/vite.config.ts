@@ -8,6 +8,7 @@ export default defineConfig({
     target: 'es2015',
     outDir: resolve(__dirname, "dist"),
     minify: 'terser',
+    emptyOutDir: false,
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
       name: 'Artalk',

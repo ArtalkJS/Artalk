@@ -1,7 +1,7 @@
 import { marked as libMarked } from 'marked'
 import insane from 'insane'
 import hanabi from 'hanabi'
-import Context from '../context'
+import Context from '~/types/context'
 
 export function createElement<E extends HTMLElement = HTMLElement>(htmlStr: string = ''): E {
   const div = document.createElement('div')
@@ -118,7 +118,7 @@ export function onImagesLoaded($container: HTMLElement, event: Function) {
 }
 
 export function getGravatarURL(ctx: Context, emailMD5: string) {
-  return `${(ctx.conf.gravatar?.mirror || '').replace(/\/$/, '')}/${emailMD5}?d=${encodeURIComponent(ctx.conf.gravatar?.default || '')}&s=80`
+  return `${(ctx.conf.gravatar.mirror).replace(/\/$/, '')}/${emailMD5}?d=${encodeURIComponent(ctx.conf.gravatar.default)}&s=80`
 }
 
 export function sleep(ms: number) {
@@ -142,6 +142,8 @@ export function versionCompare(a: string, b: string) {
 
 /** 初始化 marked */
 export function initMarked(ctx: Context) {
+  if (!libMarked) return
+
   const renderer = new libMarked.Renderer()
   const orgLinkRenderer = renderer.link
   renderer.link = (href, title, text) => {
@@ -186,9 +188,11 @@ export function initMarked(ctx: Context) {
 
 /** 解析 markdown */
 export function marked(ctx: Context, src: string): string {
+  const rawContent = ctx.markedInstance?.parse(src) || src
+
   // @link https://github.com/markedjs/marked/discussions/1232
   // @link https://gist.github.com/lionel-rowe/bb384465ba4e4c81a9c8dada84167225
-  let dest = insane(ctx.markedInstance.parse(src), {
+  let dest = insane(rawContent, {
     allowedClasses: {},
     allowedSchemes: ['http', 'https', 'mailto'],
     allowedTags: [

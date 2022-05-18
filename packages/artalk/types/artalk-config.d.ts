@@ -8,99 +8,103 @@ export default interface ArtalkConfig {
   pageKey: string
 
   /** 页面标题 */
-  pageTitle?: string
+  pageTitle: string
 
   /** 服务器地址 */
   server: string
 
   /** 站点名 */
-  site?: string
+  site: string
 
   /** 评论框占位字符 */
-  placeholder?: string
+  placeholder: string
 
   /** 评论为空时显示字符 */
-  noComment?: string
+  noComment: string
 
   /** 发送按钮文字 */
-  sendBtn?: string
+  sendBtn: string
 
   /** 评论框旅行（显示在待回复评论后面） */
-  editorTravel?: boolean
+  editorTravel: boolean
 
   /** 表情包 */
-  emoticons?: object|any[]|string|false
+  emoticons: object|any[]|string|false
 
   /** Gravatar 头像 */
-  gravatar?: {
+  gravatar: {
     /** 镜像 */
-    mirror?: string
+    mirror: string
     /** 默认头像（URL or Gravatar Type） */
-    default?: string
+    default: string
   }
 
   /** 分页配置 */
-  pagination?: {
+  pagination: {
     /** 每次请求获取数量 */
-    pageSize?: number
+    pageSize: number
     /** 阅读更多模式 */
-    readMore?: boolean
+    readMore: boolean
     /** 滚动到底部自动加载 */
-    autoLoad?: boolean
+    autoLoad: boolean
   }
 
   /** 内容限高 */
-  heightLimit?: {
+  heightLimit: {
     /** 评论内容限高 */
-    content?: number
+    content: number
 
     /** 子评论区域限高 */
-    children?: number
+    children: number
   }
 
   /** 评论投票按钮 */
-  vote?: boolean
+  vote: boolean
 
   /** 评论投票反对按钮 */
-  voteDown?: boolean
+  voteDown: boolean
 
   /** PV 元素 Selector */
-  pvEl?: string
+  pvEl: string
 
   /** 暗黑模式 */
-  darkMode?: boolean|'auto'
+  darkMode: boolean|'auto'
 
   /** 请求超时（单位：秒） */
-  reqTimeout?: number
+  reqTimeout: number
 
   /** 平铺模式 */
-  flatMode?: boolean|'auto'
+  flatMode: boolean|'auto'
 
   /** 嵌套模式 · 最大层数 */
-  nestMax?: number
+  nestMax: number
 
   /** 嵌套模式 · 排序方式 */
-  nestSort?: 'DATE_ASC'|'DATE_DESC'
+  nestSort: 'DATE_ASC'|'DATE_DESC'
 
   /** 显示 UA 徽标 */
-  uaBadge?: boolean
+  uaBadge: boolean
 
   /** 评论列表排序功能 (显示 Dropdown) */
-  listSort?: boolean
+  listSort: boolean
 
   /** 图片上传功能 */
-  imgUpload?: boolean
+  imgUpload: boolean
 
   /** 版本检测 */
-  versionCheck?: boolean
+  versionCheck: boolean
 
   /** 应用后端配置 */
-  useBackendConf?: boolean
+  useBackendConf: boolean
 
   /** 国际化 */
-  i18n?: I18n|string
+  i18n: I18n|string
 }
 
+/**
+ * 本地持久化用户数据
+ * @note 始终保持一层结构，不支持多层结构
+ */
 export interface LocalUser {
   /** 昵称 */
   nick: string

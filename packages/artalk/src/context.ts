@@ -1,45 +1,46 @@
 import { marked as libMarked } from 'marked'
 import ArtalkConfig from '~/types/artalk-config'
-import { EventPayloadMap, Event, EventScopeType, Handler } from '~/types/event'
+import { Event } from '~/types/event'
 import { internal as internalLocales, I18n } from './i18n'
 import User from './lib/user'
+import ContextApi from '../types/context'
 
 /**
  * Artalk Context
  */
-export default class Context {
+export default class Context implements ContextApi {
   public cid: number // Context 唯一标识
-  public $root: HTMLElement
   public conf: ArtalkConfig
   public user: User
+  public $root: HTMLElement
 
   private eventList: Event[] = []
 
-  public constructor (rootEl: HTMLElement, conf: ArtalkConfig) {
+  public constructor($root: HTMLElement, conf: ArtalkConfig) {
     this.cid = +new Date()
-    this.$root = rootEl
     this.conf = conf
-    this.user = new User(this.conf)
+    this.user = new User(this)
 
+    this.$root = $root
     this.$root.setAttribute('atk-run-id', this.cid.toString())
   }
 
-  public on<K extends keyof EventPayloadMap>(name: K, handler: Handler<EventPayloadMap[K]>, scope: EventScopeType = 'internal') {
-    this.eventList.push({ name, handler: handler as any, scope })
+  public on(name: any, handler: any, scope: any = 'internal') {
+    this.eventList.push({ name, handler, scope })
   }
 
-  public off<K extends keyof EventPayloadMap>(name: K, handler?: Handler<EventPayloadMap[K]>, scope: EventScopeType = 'internal') {
+  public off(name: any, handler: any, scope: any = 'internal') {
     this.eventList = this.eventList.filter((evt) => {
       if (handler) return !(evt.name === name && evt.handler === handler && evt.scope === scope)
       return !(evt.name === name && evt.scope === scope) // 删除全部相同 name event
     })
   }
 
-  public trigger<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K], scope?: EventScopeType) {
+  public trigger(name: any, payload?: any, scope?: any) {
     this.eventList
       .filter((evt) => evt.name === name && (scope ? (evt.scope === scope) : true))
       .map((evt) => evt.handler)
-      .forEach((handler) => handler(payload as any))
+      .forEach((handler) => handler(payload))
   }
 
   public markedInstance!: typeof libMarked

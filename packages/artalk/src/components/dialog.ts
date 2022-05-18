@@ -1,4 +1,4 @@
-import Context from '../context'
+import Context from '~/types/context'
 import * as Utils from '../lib/utils'
 
 type BtnClickHandler = (btnEl: HTMLElement, dialog: Dialog) => boolean|void

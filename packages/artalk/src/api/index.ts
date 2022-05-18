@@ -1,6 +1,6 @@
 import { CommentData, ListData, UserData, PageData, SiteData, NotifyData } from '~/types/artalk-data'
 import ArtalkConfig from '~/types/artalk-config'
-import Context from '../context'
+import Context from '~/types/context'
 import { Fetch, ToFormData, POST, GET } from './request'
 import * as Utils from '../lib/utils'
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'

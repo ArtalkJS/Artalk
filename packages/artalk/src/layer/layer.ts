@@ -1,4 +1,4 @@
-import Context from '../context'
+import Context from '~/types/context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
@@ -40,19 +40,19 @@ export default class Layer extends Component {
     this.$wrap.append(this.$el)
   }
 
-  getName () {
+  getName() {
     return this.name
   }
 
-  getWrapEl () {
+  getWrapEl() {
     return this.$wrap
   }
 
-  getEl () {
+  getEl() {
     return this.$el
   }
 
-  show () {
+  show() {
     this.fireAllActionTimer()
 
     this.$wrap.style.display = 'block'
@@ -126,7 +126,7 @@ export default class Layer extends Component {
   }
 
   /** 销毁 - 无动画 */
-  disposeNow () {
+  disposeNow() {
     this.$el.remove()
     this.pageBodyScrollBarShow()
     // this.$el dispose
@@ -134,21 +134,21 @@ export default class Layer extends Component {
   }
 
   /** 销毁 */
-  dispose () {
+  dispose() {
     this.hide()
     this.$el.remove()
     // this.$el dispose
     this.checkCleanLayer()
   }
 
-  checkCleanLayer () {
+  checkCleanLayer() {
     if (this.getWrapEl().querySelectorAll('.atk-layer-item').length === 0) {
       this.$wrap.style.display = 'none'
     }
   }
 }
 
-export function GetLayerWrap (ctx: Context): { $wrap: HTMLElement, $mask: HTMLElement } {
+export function GetLayerWrap(ctx: Context): { $wrap: HTMLElement, $mask: HTMLElement } {
   let $wrap = document.querySelector<HTMLElement>(`.atk-layer-wrap#ctx-${ctx.cid}`)
   if (!$wrap) {
     $wrap = Utils.createElement(

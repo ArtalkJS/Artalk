@@ -1,12 +1,12 @@
-import { ListData, CommentData, NotifyData, ApiVersionData } from '~/types/artalk-data'
-import Context from '../context'
+import { ListData, CommentData, NotifyData } from '~/types/artalk-data'
+import Context from '~/types/context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import Api from '../api'
-import Comment from './comment'
-import Pagination from './pagination'
-import ReadMoreBtn from './read-more-btn'
+import Comment from '../comment'
+import Pagination from '../components/pagination'
+import ReadMoreBtn from '../components/read-more-btn'
 import * as ListNest from './list-nest'
 import { backendMinVersion } from '../../package.json'
 
@@ -14,7 +14,7 @@ export default class ListLite extends Component {
   protected $commentsWrap: HTMLElement
 
   protected commentList: Comment[] = [] // Note: 无层级结构 + 无须排列
-  protected get commentDataList() { return this.commentList.map(c => c.data) }
+  protected get commentDataList() { return this.commentList.map(c => c.getData()) }
 
   protected data?: ListData
   protected isLoading: boolean = false
@@ -184,7 +184,7 @@ export default class ListLite extends Component {
       this.$el.append(this.readMoreBtn.$el)
 
       // 滚动到底部自动加载
-      if (this.conf.pagination?.autoLoad) {
+      if (this.conf.pagination.autoLoad) {
         // 添加滚动事件监听
         const at = this.scrollListenerAt || document
         if (this.autoLoadScrollEvent) at.removeEventListener('scroll', this.autoLoadScrollEvent) // 解除原有
@@ -296,18 +296,17 @@ export default class ListLite extends Component {
   protected createComment(cData: CommentData, ctxData?: CommentData[]) {
     if (!ctxData) ctxData = this.commentDataList
 
-    const comment = new Comment(this.ctx, cData)
-    comment.flatMode = this.flatMode
-    comment.afterRender = () => {
-      if (this.renderComment) this.renderComment(comment)
-    }
-    comment.onDelete = (c) => {
-      this.deleteComment(c)
-      this.refreshUI()
-    }
-
-    // 子评论查找回复对象
-    comment.replyTo = (cData.rid ? ctxData.find(c => c.id === cData.rid) : undefined)
+    const comment = new Comment(this.ctx, cData, {
+      isFlatMode: this.flatMode,
+      afterRender: () => {
+        if (this.renderComment) this.renderComment(comment)
+      },
+      onDelete: (c: Comment) => {
+        this.deleteComment(c)
+        this.refreshUI()
+      },
+      replyTo: (cData.rid ? ctxData.find(c => c.id === cData.rid) : undefined)
+    })
 
     // 渲染元素
     comment.render()
@@ -338,7 +337,7 @@ export default class ListLite extends Component {
 
       // 显示并播放渐入动画
       this.$commentsWrap.appendChild(rootC.getEl())
-      rootC.playFadeInAnim()
+      rootC.getRender().playFadeAnim()
 
       // 加载子评论
       const that = this
@@ -356,7 +355,7 @@ export default class ListLite extends Component {
       })(rootC, rootNode)
 
       // 限高检测
-      rootC.checkHeightLimit()
+      rootC.getRender().checkHeightLimit()
     })
   }
 
@@ -370,11 +369,11 @@ export default class ListLite extends Component {
     if (cData.visible) {
       if (insertMode === 'append') this.$commentsWrap.append(comment.getEl())
       if (insertMode === 'prepend') this.$commentsWrap.prepend(comment.getEl())
-      comment.playFadeInAnim()
+      comment.getRender().playFadeAnim()
     }
 
     // 平铺评论插入后 · 内容限高检测
-    comment.checkHeightLimit()
+    comment.getRender().checkHeightLimit()
 
     return comment
   }
@@ -396,15 +395,15 @@ export default class ListLite extends Component {
 
           // 若父评论存在 “子评论部分” 限高，取消限高
           comment.getParents().forEach((p) => {
-            if (p.$children) p.heightLimitRemove(p.$children)
+            p.getRender().heightLimitRemoveForChildren()
           })
         }
       }
 
-      comment.checkHeightLimit()
+      comment.getRender().checkHeightLimit()
 
       Ui.scrollIntoView(comment.getEl()) // 滚动到可以见
-      comment.playFadeInAnim() // 播放评论渐出动画
+      comment.getRender().playFadeAnim() // 播放评论渐出动画
     } else {
       // 平铺模式
       const comment = this.putCommentFlatMode(commentData, this.commentDataList, 'prepend')
@@ -421,7 +420,7 @@ export default class ListLite extends Component {
 
   /** 查找评论项 */
   protected findComment(id: number): Comment|undefined {
-    return this.commentList.find(c => c.data.id === id)
+    return this.commentList.find(c => c.getData().id === id)
   }
 
   /** 删除评论 */
@@ -455,18 +454,18 @@ export default class ListLite extends Component {
     // 高亮评论
     if (this.unreadHighlight === true) {
       this.commentList.forEach((comment) => {
-        const notify = this.unread.find(o => o.comment_id === comment.data.id)
+        const notify = this.unread.find(o => o.comment_id === comment.getID())
         if (notify) {
-          comment.setUnread(true)
-          comment.setOpenURL(notify.read_link)
-          comment.openEvt = () => {
-            this.unread = this.unread.filter(o => o.comment_id !== comment.data.id) // remove
+          comment.getRender().setUnread(true)
+          comment.getRender().setOpenAction(() => {
+            window.open(notify.read_link)
+            this.unread = this.unread.filter(o => o.comment_id !== comment.getID()) // remove
             this.ctx.trigger('unread-update', {
               notifies: this.unread
             })
-          }
+          })
         } else {
-          comment.setUnread(false)
+          comment.getRender().setUnread(false)
         }
       })
     }

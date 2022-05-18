@@ -3,6 +3,7 @@ import ArtalkConfig from "~/types/artalk-config"
 const defaults: ArtalkConfig = {
   el: '',
   pageKey: '',
+  pageTitle: '',
   server: '',
   site: '',
 

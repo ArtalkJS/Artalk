@@ -1,6 +1,6 @@
 import '../style/site-list.less'
 
-import Context from 'artalk/src/context'
+import Context from 'artalk/types/context'
 import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
 import { SiteData } from 'artalk/types/artalk-data'

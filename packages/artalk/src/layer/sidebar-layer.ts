@@ -1,11 +1,11 @@
 import '../style/sidebar-layer.less'
 
-import Context from '@/context'
+import Context from '~/types/context'
 import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import { SidebarShowPayload } from '~/types/event'
-import SidebarHTML from './html/sidebar-layer.html?raw'
+import SidebarHTML from './sidebar-layer.html?raw'
 import Layer from './layer'
 import Api from '../api'
 
@@ -125,7 +125,7 @@ export default class SidebarLayer extends Component {
     this.layer?.hide()
   }
 
-  public iframeLoad(src: string) {
+  private iframeLoad(src: string) {
     if (!this.$iframe) return
 
     this.$iframe.src = src
@@ -135,39 +135,5 @@ export default class SidebarLayer extends Component {
     this.$iframe.onload = () => {
       Ui.hideLoading(this.$iframeWrap)
     }
-
-    // this.checkReqStatus(src) // 判不准，删了，没啥用
-  }
-
-  loadingTimer: number|null = null
-
-  // 测试可访问性 (由于 iframe 测不准，需要额外请求)
-  public async checkReqStatus(url: string) {
-    if (this.loadingTimer !== null) window.clearTimeout(this.loadingTimer)
-
-    this.loadingTimer = window.setTimeout(async () => {
-      try {
-        await fetch(url)
-      } catch (err) {
-        console.log(err)
-        // 请求失败，显示错误提示
-        const $errAlert = Utils.createElement(
-          `<div class="atk-err-alert">` +
-          `  <div class="atk-title">侧边栏似乎打开失败</div>` +
-          `  <div class="atk-text"><span id="AtkReload">重新加载</span> / <span id="AtkCancel">取消</span></div>` +
-          `</div>`
-        )
-        const $reloadBtn = $errAlert.querySelector<HTMLElement>('#AtkReload')!
-        const $cancelBtn = $errAlert.querySelector<HTMLElement>('#AtkCancel')!
-        $reloadBtn.onclick = () => {
-          this.iframeLoad(url)
-          $errAlert.remove()
-        }
-        $cancelBtn.onclick = () => { // 提供取消按钮，防止误判
-          $errAlert.remove()
-        }
-        this.$iframeWrap.append($errAlert)
-      }
-    }, 2000) // 2s 后开始检测
   }
 }

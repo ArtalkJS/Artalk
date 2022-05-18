@@ -1,11 +1,11 @@
 import '../style/list.less'
 
 import { ListData } from '~/types/artalk-data'
-import Context from '../context'
+import Context from '~/types/context'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import Api from '../api'
-import ListHTML from './html/list.html?raw'
+import ListHTML from './list.html?raw'
 import ListLite from './list-lite'
 
 export default class List extends ListLite {
@@ -36,8 +36,8 @@ export default class List extends ListLite {
     this.flatMode = flatMode
 
     // 分页模式
-    this.pageMode = this.conf.pagination?.readMore ? 'read-more' : 'pagination'
-    this.pageSize = this.conf.pagination?.pageSize || 20
+    this.pageMode = this.conf.pagination.readMore ? 'read-more' : 'pagination'
+    this.pageSize = this.conf.pagination.pageSize || 20
     this.repositionAt = this.$el
 
     // 操作按钮
@@ -161,7 +161,7 @@ export default class List extends ListLite {
 
     // 若父评论存在 “子评论部分” 限高，取消限高
     comment.getParents().forEach((p) => {
-      if (p.$children) p.heightLimitRemove(p.$children)
+      p.getRender().heightLimitRemoveForChildren()
     })
 
     const goTo = () => {

@@ -14,24 +14,53 @@ type OwOFormatType = {
 }
 
 export default class EmoticonsPlug extends EditorPlug {
-  public $el!: HTMLElement
+  public static Name = 'emoticons'
+
+  declare protected $panel: HTMLElement
+
   public emoticons: EmoticonListData = []
+  public loadingTask: Promise<void>|null = null
 
   public $grpWrap!: HTMLElement
   public $grpSwitcher!: HTMLElement
 
-  public loadingTask: Promise<void>|null = null
-
-  constructor (public editor: Editor) {
+  public constructor(public editor: Editor) {
     super(editor)
 
-    this.$el = Utils.createElement(`<div class="atk-editor-plug-emoticons"></div>`)
+    this.registerPanel(`<div class="atk-editor-plug-emoticons"></div>`)
+    this.registerBtn(this.ctx.$t('emoticon'))
+
+    // 表情包预加载
+    window.setTimeout(() => {
+      this.loadEmoticonsData()
+    }, 1000) // 延迟 1s 加载
+  }
+
+  public onPanelShow() {
+    ;(async () => {
+      await this.loadEmoticonsData()
+
+      // 初始化元素
+      if (!this.isImgLoaded) {
+        this.initEmoticonsList()
+        this.isImgLoaded = true
+      }
+
+      // 延迟执行，防止无法读取高度
+      setTimeout(() => {
+        this.changeListHeight()
+      }, 30)
+    })()
+  }
+
+  public onPanelHide() {
+    this.$panel.parentElement!.style.height = ''
   }
 
   isListLoaded = false
   isImgLoaded = false
 
-  async loadEmoticonsData() {
+  public async loadEmoticonsData() {
     if (this.isListLoaded) return
     if (this.loadingTask !== null) {
       await this.loadingTask
@@ -40,23 +69,23 @@ export default class EmoticonsPlug extends EditorPlug {
 
     // 数据处理
     this.loadingTask = (async () => {
-      Ui.showLoading(this.$el)
+      Ui.showLoading(this.$panel)
       this.emoticons = await this.handleData(this.ctx.conf.emoticons)
-      Ui.hideLoading(this.$el)
+      Ui.hideLoading(this.$panel)
       this.loadingTask = null
       this.isListLoaded = true
     })()
     await this.loadingTask
   }
 
-  async handleData(data: any): Promise<any[]> {
+  private async handleData(data: any): Promise<any[]> {
     if (!Array.isArray(data) && ['object', 'string'].includes(typeof data)) {
       data = [data]
     }
 
     if (!Array.isArray(data)) {
-      Ui.setError(this.$el, "表情包数据必须为 Array/Object/String 类型")
-      Ui.hideLoading(this.$el)
+      Ui.setError(this.$panel, "表情包数据必须为 Array/Object/String 类型")
+      Ui.hideLoading(this.$panel)
       return []
     }
 
@@ -105,7 +134,7 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   /** 远程加载 */
-  async remoteLoad(url: string): Promise<any> {
+  private async remoteLoad(url: string): Promise<any> {
     if (!url) return []
 
     try {
@@ -113,14 +142,14 @@ export default class EmoticonsPlug extends EditorPlug {
       const json = await resp.json()
       return json
     } catch (err) {
-      Ui.hideLoading(this.$el)
-      Ui.setError(this.$el, `表情加载失败 ${String(err)}`)
+      Ui.hideLoading(this.$panel)
+      Ui.setError(this.$panel, `表情加载失败 ${String(err)}`)
       return []
     }
   }
 
   /** 避免表情 item.key 为 null 的情况 */
-  solveNullKey(data: EmoticonGrpData[]) {
+  private solveNullKey(data: EmoticonGrpData[]) {
     data.forEach((grp) => {
       grp.items.forEach((item, index) => {
         if (!item.key) item.key = `${grp.name} ${index+1}`
@@ -129,7 +158,7 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   /** 避免相同 item.key */
-  solveSameKey(data: EmoticonGrpData[]) {
+  private solveSameKey(data: EmoticonGrpData[]) {
     const tmp: {[key: string]: number} = {}
     data.forEach((grp) => {
       grp.items.forEach(item => {
@@ -143,7 +172,7 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   /** 判断是否为 OwO 格式 */
-  isOwOFormat(data: any) {
+  private isOwOFormat(data: any) {
     try {
       return (typeof data === 'object') && !!Object.values(data).length
         && Array.isArray(Object.keys(Object.values<any>(data)[0].container))
@@ -152,7 +181,7 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   /** 转换 OwO 格式数据 */
-  convertOwO(owoData: OwOFormatType): EmoticonListData {
+  private convertOwO(owoData: OwOFormatType): EmoticonListData {
     const dest: EmoticonListData = []
     Object.entries(owoData).forEach(([grpName, grp]) => {
       const nGrp: EmoticonGrpData = { name: grpName, type: grp.type, items: [] }
@@ -171,10 +200,10 @@ export default class EmoticonsPlug extends EditorPlug {
   }
 
   /** 初始化表情列表界面 */
-  initEmoticonsList () {
+  private initEmoticonsList() {
     // 表情列表
     this.$grpWrap = Utils.createElement(`<div class="atk-grp-wrap"></div>`)
-    this.$el.append(this.$grpWrap)
+    this.$panel.append(this.$grpWrap)
 
     this.emoticons.forEach((grp, index) => {
       const $grp = Utils.createElement(`<div class="atk-grp" style="display: none;"></div>`)
@@ -208,24 +237,25 @@ export default class EmoticonsPlug extends EditorPlug {
       })
     })
 
-    // 表情分类
-    this.$grpSwitcher = Utils.createElement(`<div class="atk-grp-switcher"></div>`)
-    this.$el.append(this.$grpSwitcher)
-    this.emoticons.forEach((grp, index) => {
-      const $item = Utils.createElement('<span />')
-      $item.innerText = grp.name
-      $item.setAttribute('data-index', String(index))
-      $item.onclick = () => (this.openGrp(index))
-      this.$grpSwitcher.append($item)
-    })
+    // 表情分类切换 bar
+    if (this.emoticons.length > 1) {
+      this.$grpSwitcher = Utils.createElement(`<div class="atk-grp-switcher"></div>`)
+      this.$panel.append(this.$grpSwitcher)
+      this.emoticons.forEach((grp, index) => {
+        const $item = Utils.createElement('<span />')
+        $item.innerText = grp.name
+        $item.setAttribute('data-index', String(index))
+        $item.onclick = () => (this.openGrp(index))
+        this.$grpSwitcher.append($item)
+      })
+    }
 
     // 默认打开第一个分类
-    if (this.emoticons.length > 0)
-      this.openGrp(0)
+    if (this.emoticons.length > 0) this.openGrp(0)
   }
 
   /** 打开一个表情组 */
-  openGrp (index: number) {
+  public openGrp(index: number) {
     Array.from(this.$grpWrap.children).forEach((item) => {
       const el = item as HTMLElement
       if (el.getAttribute('data-index') !== String(index)) {
@@ -241,41 +271,13 @@ export default class EmoticonsPlug extends EditorPlug {
     this.changeListHeight()
   }
 
-  static Name = 'emoticons'
-  static BtnHTML = '表情'
-
-  getEl () {
-    return this.$el
-  }
-
-  changeListHeight () {
+  private changeListHeight() {
     /* const listWrapHeight = Utils.getHeight(this.$grpWrapem)
     this.editor.plugWrapEl.style.height = `${listWrapHeight > 150 ? listWrapHeight : 150}px` */
   }
 
-  onShow () {
-    ;(async () => {
-      await this.loadEmoticonsData()
-
-      // 初始化元素
-      if (!this.isImgLoaded) {
-        this.initEmoticonsList()
-        this.isImgLoaded = true
-      }
-
-      // 延迟执行，防止无法读取高度
-      setTimeout(() => {
-        this.changeListHeight()
-      }, 30)
-    })()
-  }
-
-  onHide () {
-    this.$el.parentElement!.style.height = ''
-  }
-
   /** 处理评论 content 中的表情内容 */
-  public transEmoticonImageText (text: string) {
+  public transEmoticonImageText(text: string) {
     if (!this.emoticons || !Array.isArray(this.emoticons))
       return text
 

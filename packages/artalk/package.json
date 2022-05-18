@@ -25,7 +25,8 @@
   "types": "./types/index.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm lint && vite build",
+    "build": "pnpm lint && vite build && pnpm build:lite",
+    "build:lite": "vite build --config vite-lite.config.ts",
     "build:demo": "vite build --config vite-demo.config.ts",
     "serve": "vite preview",
     "deploy": "gh-pages -d deploy",

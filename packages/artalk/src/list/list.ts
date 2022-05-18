@@ -36,8 +36,8 @@ export default class List extends ListLite {
     this.flatMode = flatMode
 
     // 分页模式
-    this.pageMode = this.conf.pagination?.readMore ? 'read-more' : 'pagination'
-    this.pageSize = this.conf.pagination?.pageSize || 20
+    this.pageMode = this.conf.pagination.readMore ? 'read-more' : 'pagination'
+    this.pageSize = this.conf.pagination.pageSize || 20
     this.repositionAt = this.$el
 
     // 操作按钮

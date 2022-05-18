@@ -184,7 +184,7 @@ export default class ListLite extends Component {
       this.$el.append(this.readMoreBtn.$el)
 
       // 滚动到底部自动加载
-      if (this.conf.pagination?.autoLoad) {
+      if (this.conf.pagination.autoLoad) {
         // 添加滚动事件监听
         const at = this.scrollListenerAt || document
         if (this.autoLoadScrollEvent) at.removeEventListener('scroll', this.autoLoadScrollEvent) // 解除原有

@@ -32,7 +32,7 @@ export default class Artalk {
   public list!: List
   public sidebarLayer!: SidebarLayer
 
-  constructor (customConf: ArtalkConfig) {
+  constructor(customConf: Partial<ArtalkConfig>) {
     // 配置
     this.conf = Utils.mergeDeep(Artalk.defaults, customConf)
     this.conf.server = this.conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')

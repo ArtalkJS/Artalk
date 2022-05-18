@@ -280,8 +280,8 @@ export default class CommentRender {
   /** 目标内容限高检测 */
   public checkHeightLimitArea(area: 'children'|'content') {
     // 参数准备
-    const childrenMaxH = this.ctx.conf.heightLimit!.children!
-    const contentMaxH = this.ctx.conf.heightLimit!.content!
+    const childrenMaxH = this.ctx.conf.heightLimit.children
+    const contentMaxH = this.ctx.conf.heightLimit.content
 
     if (area === 'children' && !childrenMaxH) return
     if (area === 'content' && !contentMaxH) return

@@ -13,7 +13,7 @@ jobs:
           command: node -v
       - run:
           name: Install pnpm
-          command: npm i -g pnpm@7.0.0
+          command: npm i -g pnpm@7.1.2
       - run:
           name: Install Dependencies
           command: pnpm install --frozen-lockfile

@@ -21,7 +21,7 @@ importers:
       prettier: 2.6.2
       rollup: 2.72.1
       typescript: 4.6.4
-      vite: 2.9.8
+      vite: 2.9.9
       vite-tsconfig-paths: 3.4.1
     devDependencies:
       '@rollup/plugin-dynamic-import-vars': 1.4.3_rollup@2.72.1
@@ -41,8 +41,8 @@ importers:
       prettier: 2.6.2
       rollup: 2.72.1
       typescript: 4.6.4
-      vite: 2.9.8_less@4.1.2
-      vite-tsconfig-paths: 3.4.1_vite@2.9.8
+      vite: 2.9.9_less@4.1.2
+      vite-tsconfig-paths: 3.4.1_vite@2.9.9
 
   packages/artalk:
     specifiers:
@@ -2124,7 +2124,7 @@ packages:
     resolution: {integrity: sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA==}
     dev: true
 
-  /vite-tsconfig-paths/3.4.1_vite@2.9.8:
+  /vite-tsconfig-paths/3.4.1_vite@2.9.9:
     resolution: {integrity: sha512-SgK3/pnTuJ3i+gMSAWLR6VCPSw26bnxawrmXGvCDjJgk8MAQgmbCrFrAzfwbwZBXSqSuvWEuX04Wt73qJKx8fQ==}
     peerDependencies:
       vite: '>2.0.0-0'
@@ -2133,13 +2133,13 @@ packages:
       globrex: 0.1.2
       recrawl-sync: 2.2.2
       tsconfig-paths: 3.14.1
-      vite: 2.9.8_less@4.1.2
+      vite: 2.9.9_less@4.1.2
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /vite/2.9.8_less@4.1.2:
-    resolution: {integrity: sha512-zsBGwn5UT3YS0NLSJ7hnR54+vUKfgzMUh/Z9CxF1YKEBVIe213+63jrFLmZphgGI5zXwQCSmqIdbPuE8NJywPw==}
+  /vite/2.9.9_less@4.1.2:
+    resolution: {integrity: sha512-ffaam+NgHfbEmfw/Vuh6BHKKlI/XIAhxE5QSS7gFLIngxg171mg1P3a4LSRME0z2ZU1ScxoKzphkipcYwSD5Ew==}
     engines: {node: '>=12.2.0'}
     hasBin: true
     peerDependencies:

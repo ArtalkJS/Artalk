@@ -91,6 +91,9 @@ export default interface ArtalkConfig {
   /** 图片上传功能 */
   imgUpload: boolean
 
+  /** 图片上传器 */
+  imgUploader?: (file: File) => Promise<{ img_url: string }>
+
   /** 版本检测 */
   versionCheck: boolean
 

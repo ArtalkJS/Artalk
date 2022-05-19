@@ -98,7 +98,13 @@ export default class UploadPlug extends EditorPlug {
     // 上传图片
     let resp: any
     try {
-      resp = await this.ctx.getApi().imgUpload(file)
+      if (!this.ctx.conf.imgUploader) {
+        // 使用 ArtalkGo 进行图片上传
+        resp = await this.ctx.getApi().imgUpload(file)
+      } else {
+        // 使用自定义的图片上传器
+        resp = await this.ctx.conf.imgUploader(file)
+      }
     } catch (err: any) {
       console.error(err)
       this.editor.showNotify(`${this.ctx.$t('uploadFail')}，${err.msg}`, 'e')

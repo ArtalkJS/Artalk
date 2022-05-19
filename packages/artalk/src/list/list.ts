@@ -1,6 +1,6 @@
 import '../style/list.less'
 
-import { ListData } from '~/types/artalk-data'
+import { ListData, NotifyData } from '~/types/artalk-data'
 import Context from '~/types/context'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
@@ -58,13 +58,6 @@ export default class List extends ListLite {
     this.$el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
 
     // event listen
-    this.ctx.on('list-reload', () => (this.fetchComments(0))) // 刷新评论
-    this.ctx.on('list-refresh-ui', () => (this.refreshUI()))
-    this.ctx.on('list-import', (data) => (this.importComments(data)))
-    this.ctx.on('list-insert', (data) => (this.insertComment(data)))
-    this.ctx.on('list-delete', (comment) => (this.deleteComment(comment.id)))
-    this.ctx.on('list-update', (updateData) => { updateData(this.data);this.refreshUI() } )
-    this.ctx.on('unread-update', (data) => (this.showUnreadBadge(data.notifies?.length || 0)))
   }
 
   private initListActionBtn() {
@@ -74,7 +67,7 @@ export default class List extends ListLite {
     this.$unreadBadge = this.$el.querySelector('.atk-unread-badge')!
 
     this.$openSidebarBtn.addEventListener('click', () => {
-      this.ctx.trigger('sidebar-show')
+      this.ctx.showSidebar()
     })
 
     // 关闭评论按钮
@@ -100,16 +93,16 @@ export default class List extends ListLite {
     }
 
     // 仅管理员显示控制
-    this.ctx.trigger('check-admin-show-el')
+    this.ctx.checkAdminShowEl()
     this.$openSidebarBtn.querySelector<HTMLElement>('.atk-text')!
       .innerText = (!this.ctx.user.data.isAdmin) ? this.$t('msgCenter') : this.$t('ctrlCenter')
 
     // 关闭评论
     if (!!this.data && !!this.data.page && this.data.page.admin_only === true) {
-      this.ctx.trigger('editor-close')
+      this.ctx.editorClose()
       this.$closeCommentBtn.innerHTML = this.$t('openComment')
     } else {
-      this.ctx.trigger('editor-open')
+      this.ctx.editorOpen()
       this.$closeCommentBtn.innerHTML = this.$t('closeComment')
     }
   }
@@ -122,7 +115,7 @@ export default class List extends ListLite {
 
     // 防止评论框被吞
     if (this.ctx.conf.editorTravel === true) {
-      this.ctx.trigger('editor-travel-back')
+      this.ctx.editorTravelBack()
     }
   }
 
@@ -139,7 +132,7 @@ export default class List extends ListLite {
     }
     if (!commentId) return
 
-    const comment = this.findComment(commentId)
+    const comment = this.ctx.findComment(commentId)
     if (!comment) { // 若找不到评论
       // 自动翻页
       if (this.readMoreBtn) this.readMoreBtn.click()
@@ -150,12 +143,10 @@ export default class List extends ListLite {
     // 已阅 API
     const notifyKey = Utils.getQueryParam('atk_notify_key')
     if (notifyKey) {
-      new Api(this.ctx).markRead(notifyKey)
+      this.ctx.getApi().markRead(notifyKey)
         .then(() => {
           this.unread = this.unread.filter(o => o.comment_id !== commentId)
-          this.ctx.trigger('unread-update', {
-            notifies: this.unread
-          })
+          this.updateUnread(this.unread)
         })
     }
 
@@ -183,18 +174,18 @@ export default class List extends ListLite {
   public adminPageEditSave () {
     if (!this.data || !this.data.page) return
 
-    this.ctx.trigger('editor-show-loading')
-    new Api(this.ctx).pageEdit(this.data.page)
+    this.ctx.editorShowLoading()
+    this.ctx.getApi().pageEdit(this.data.page)
       .then((page) => {
         if (this.data)
           this.data.page = { ...page }
         this.refreshUI()
       })
       .catch(err => {
-        this.ctx.trigger('editor-notify', { msg: `${this.$t('editFail')}: ${err.msg || String(err)}`, type: 'e'})
+        this.ctx.editorShowNotify(`${this.$t('editFail')}: ${err.msg || String(err)}`, 'e')
       })
       .finally(() => {
-        this.ctx.trigger('editor-hide-loading')
+        this.ctx.editorHideLoading()
       })
   }
 
@@ -259,5 +250,10 @@ export default class List extends ListLite {
     })
 
     this.$dropdownWrap.append($dropdown)
+  }
+
+  public updateUnread(notifies: NotifyData[]): void {
+    super.updateUnread(notifies)
+    this.showUnreadBadge(notifies?.length || 0)
   }
 }

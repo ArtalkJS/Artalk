@@ -71,15 +71,6 @@ export default class Editor extends Component {
     this.initSubmitBtn()
 
     // 监听事件
-    this.ctx.on('editor-open', () => (this.open()))
-    this.ctx.on('editor-close', () => (this.close()))
-    this.ctx.on('editor-reply', (p) => (this.setReply(p.data, p.$el, p.scroll)))
-    this.ctx.on('editor-reply-cancel', () => (this.cancelReply()))
-    this.ctx.on('editor-show-loading', () => (Ui.showLoading(this.$el)))
-    this.ctx.on('editor-hide-loading', () => (Ui.hideLoading(this.$el)))
-    this.ctx.on('editor-notify', (f) => (this.showNotify(f.msg, f.type)))
-    this.ctx.on('editor-travel', ($el) => (this.travel($el)))
-    this.ctx.on('editor-travel-back', () => (this.travelBack()))
     this.ctx.on('conf-updated', () => {})
   }
 
@@ -247,6 +238,14 @@ export default class Editor extends Component {
     Ui.showNotify(this.$notifyWrap, msg, type)
   }
 
+  public showLoading() {
+    Ui.showLoading(this.$el)
+  }
+
+  public hideLoading() {
+    Ui.hideLoading(this.$el)
+  }
+
   /** 提交评论 */
   public async submit() {
     if (this.getFinalContent().trim() === '') {
@@ -256,10 +255,10 @@ export default class Editor extends Component {
 
     this.ctx.trigger('editor-submit')
 
-    Ui.showLoading(this.$el)
+    this.showLoading()
 
     try {
-      const nComment = await new Api(this.ctx).add({
+      const nComment = await this.ctx.getApi().add({
         content: this.getFinalContent(),
         nick: this.user.data.nick,
         email: this.user.data.email,
@@ -275,7 +274,7 @@ export default class Editor extends Component {
         window.open(`${this.replyComment.page_url}#atk-comment-${nComment.id}`)
       }
 
-      this.ctx.trigger('list-insert', nComment)
+      this.ctx.insertComment(nComment)
       this.clearEditor() // 清空编辑器
       this.ctx.trigger('editor-submitted')
     } catch (err: any) {
@@ -283,7 +282,7 @@ export default class Editor extends Component {
       this.showNotify(`${this.$t('commentFail')}，${err.msg || String(err)}`, 'e')
       return
     } finally {
-      Ui.hideLoading(this.$el)
+      this.hideLoading()
     }
   }
 

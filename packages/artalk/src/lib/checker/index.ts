@@ -1,11 +1,21 @@
 import Context from '~/types/context'
-import { CheckerPayload } from '~/types/event'
 import Dialog from '@/components/dialog'
 import Layer from '@/layer'
 import * as Utils from '../utils'
 import * as Ui from '../ui'
 import CaptchaChecker from './captcha-checker'
 import AdminChecker from './admin-checker'
+
+export interface CheckerCaptchaPayload extends CheckerPayload {
+  imgData?: string
+  iframe?: string
+}
+
+export interface CheckerPayload {
+  onSuccess?: (inputVal: string, dialogEl?: HTMLElement) => void
+  onMount?: (dialogEl: HTMLElement) => void
+  onCancel?: () => void
+}
 
 /**
  * Checker 发射台
@@ -18,22 +28,17 @@ export default class CheckerLauncher {
 
   constructor(ctx: Context) {
     this.ctx = ctx
-
-    this.initEventBind()
   }
 
-  /** 初始化事件绑定 */
-  public initEventBind() {
-    this.ctx.on('checker-captcha', (conf) => {
-      if (conf.imgData) this.captchaConf.imgData = conf.imgData
-      if (conf.iframe) this.captchaConf.iframe = conf.iframe
+  public checkCaptcha(payload: CheckerCaptchaPayload) {
+    this.captchaConf.imgData = payload.imgData
+    this.captchaConf.iframe = payload.iframe
 
-      this.fire(CaptchaChecker, conf)
-    })
+    this.fire(CaptchaChecker, payload)
+  }
 
-    this.ctx.on('checker-admin', (conf) => {
-      this.fire(AdminChecker, conf)
-    })
+  public checkAdmin(payload: CheckerPayload) {
+    this.fire(AdminChecker, payload)
   }
 
   public fire(checker: Checker, payload: CheckerPayload) {

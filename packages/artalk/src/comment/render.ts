@@ -221,7 +221,7 @@ export default class CommentRender {
       replyBtn.addEventListener('click', (e) => {
         e.stopPropagation() // 防止穿透
         if (!this.cConf.onReplyBtnClick) {
-          this.ctx.trigger('editor-reply', {data: this.data, $el: this.$el})
+          this.ctx.replyComment(this.data, this.$el)
         } else {
           this.cConf.onReplyBtnClick()
         }

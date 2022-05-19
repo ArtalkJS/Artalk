@@ -4,10 +4,13 @@ import Context from '~/types/context'
 import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
-import { SidebarShowPayload } from '~/types/event'
 import SidebarHTML from './sidebar-layer.html?raw'
 import Layer from './layer'
 import Api from '../api'
+
+export interface SidebarShowPayload {
+  view?: 'comments'|'sites'|'pages'|'transfer'
+}
 
 export default class SidebarLayer extends Component {
   public layer?: Layer
@@ -29,15 +32,13 @@ export default class SidebarLayer extends Component {
     }
 
     // event
-    this.ctx.on('sidebar-show', (conf) => (this.show(conf || {})))
-    this.ctx.on('sidebar-hide', () => (this.hide()))
     this.ctx.on('user-changed', () => { this.firstShow = true })
   }
 
   private firstShow = true
 
   /** 显示 */
-  public async show(conf: SidebarShowPayload) {
+  public async show(conf: SidebarShowPayload = {}) {
     this.$el.style.transform = '' // 动画清除，防止二次打开失效
 
     // 获取 Layer
@@ -46,7 +47,7 @@ export default class SidebarLayer extends Component {
       this.layer.afterHide = () => {
         // 防止评论框被吞
         if (this.ctx.conf.editorTravel === true) {
-          this.ctx.trigger('editor-travel-back')
+          this.ctx.editorTravelBack()
         }
       }
     }
@@ -62,12 +63,12 @@ export default class SidebarLayer extends Component {
 
     // 管理员身份验证 (若身份失效，弹出验证窗口)
     ;(async () => {
-      const resp = await new Api(this.ctx).loginStatus()
+      const resp = await this.ctx.getApi().loginStatus()
       if (resp.is_admin && !resp.is_login) {
         this.layer?.hide()
         this.firstShow = true
 
-        this.ctx.trigger('checker-admin', {
+        this.ctx.checkAdmin({
           onSuccess: () => {
             setTimeout(() => {
               this.show(conf)
@@ -79,7 +80,7 @@ export default class SidebarLayer extends Component {
     })()
 
     // 清空 unread
-    this.ctx.trigger('unread-update', { notifies: [] })
+    this.ctx.updateNotifies([])
 
     // 第一次加载
     if (this.firstShow) {
@@ -115,6 +116,8 @@ export default class SidebarLayer extends Component {
       if (!this.conf.darkMode && isIframeSrcDarkMode)
         this.iframeLoad(this.$iframe!.src.replace('&darkMode=1', ''))
     }
+
+    this.ctx.trigger('sidebar-show')
   }
 
   /** 隐藏 */
@@ -123,6 +126,8 @@ export default class SidebarLayer extends Component {
     this.$el.style.transform = ''
 
     this.layer?.hide()
+
+    this.ctx.trigger('sidebar-hide')
   }
 
   private iframeLoad(src: string) {

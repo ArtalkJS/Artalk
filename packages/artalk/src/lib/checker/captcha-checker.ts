@@ -5,7 +5,7 @@ import { Checker } from '.'
 
 const CaptchaChecker: Checker = {
   request(that, ctx, inputVal) {
-    return new Api(that.ctx).captchaCheck(inputVal)
+    return that.ctx.getApi().captchaCheck(inputVal)
   },
 
   body(that, ctx) {
@@ -35,7 +35,7 @@ const CaptchaChecker: Checker = {
         if (stop) return
         let isPass = false
         try {
-          const resp = await new Api(that.ctx).captchaStatus()
+          const resp = await that.ctx.getApi().captchaStatus()
           isPass = resp.is_pass
         } catch { isPass = false }
         if (isPass) {
@@ -61,7 +61,7 @@ const CaptchaChecker: Checker = {
     // 刷新验证码
     elem.querySelector<HTMLElement>('.atk-captcha-img')!.onclick = () => {
       const imgEl = elem.querySelector('.atk-captcha-img')
-      new Api(that.ctx).captchaGet()
+      that.ctx.getApi().captchaGet()
         .then((imgData) => {
           imgEl!.setAttribute('src', imgData)
         })

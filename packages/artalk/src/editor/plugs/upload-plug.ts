@@ -37,7 +37,7 @@ export default class UploadPlug extends EditorPlug {
     this.ctx.on('conf-updated', () => {
       if (!this.ctx.conf.imgUpload) {
         this.getBtn()!.setAttribute('atk-only-admin-show', '')
-        this.ctx.trigger('check-admin-show-el')
+        this.ctx.checkAdminShowEl()
       }
     })
 
@@ -98,7 +98,7 @@ export default class UploadPlug extends EditorPlug {
     // 上传图片
     let resp: any
     try {
-      resp = await new Api(this.ctx).imgUpload(file)
+      resp = await this.ctx.getApi().imgUpload(file)
     } catch (err: any) {
       console.error(err)
       this.editor.showNotify(`${this.ctx.$t('uploadFail')}，${err.msg}`, 'e')

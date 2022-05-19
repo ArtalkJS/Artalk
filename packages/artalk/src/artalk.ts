@@ -18,7 +18,8 @@ import * as Ui from './lib/ui'
 
 /**
  * Artalk
- * @link https://artalk.js.org
+ *
+ * @website https://artalk.js.org
  */
 export default class Artalk {
   public static readonly defaults: ArtalkConfig = defaults
@@ -27,6 +28,7 @@ export default class Artalk {
   public conf!: ArtalkConfig
   public $root!: HTMLElement
 
+  public api!: Api
   public checkerLauncher!: CheckerLauncher
   public editor!: Editor
   public list!: List
@@ -70,6 +72,10 @@ export default class Artalk {
     // Context 初始化
     this.ctx = new ConcreteContext(this.$root, this.conf)
 
+    // API 初始化
+    this.api = new Api(this.ctx)
+    this.ctx.setApi(this.api)
+
     // 界面初始化
     this.$root.classList.add('artalk')
     this.$root.innerHTML = ''
@@ -89,22 +95,30 @@ export default class Artalk {
   }
 
   private initCore() {
-    // 组件初始化
+    /* 组件初始化 */
     this.initLayer()
     this.initDarkMode()
+
+    // CheckerLauncher
     this.checkerLauncher = new CheckerLauncher(this.ctx)
-    Utils.initMarked(this.ctx) // 初始化 marked
+    this.ctx.setCheckerLauncher(this.checkerLauncher)
+
+    // 初始化 marked
+    Utils.initMarked(this.ctx)
 
     // 编辑器
     this.editor = new Editor(this.ctx)
+    this.ctx.setEditor(this.editor)
     this.$root.appendChild(this.editor.$el)
 
     // 评论列表
     this.list = new List(this.ctx)
+    this.ctx.setList(this.list)
     this.$root.appendChild(this.list.$el)
 
     // 侧边栏
     this.sidebarLayer = new SidebarLayer(this.ctx)
+    this.ctx.setSidebarLayer(this.sidebarLayer)
     this.$root.appendChild(this.sidebarLayer.$el)
 
     // 评论获取
@@ -129,7 +143,7 @@ export default class Artalk {
     Ui.showLoading(this.$root)
     let backendConf = {}
     try {
-      backendConf = await (new Api(this.ctx)).conf()
+      backendConf = await this.ctx.getApi().conf()
     } catch (err) { console.error("Load config from remote err", err) }
     this.ctx.conf = Utils.mergeDeep(this.ctx.conf, backendConf)
     Ui.hideLoading(this.$root)
@@ -143,33 +157,10 @@ export default class Artalk {
       this.list.checkGoToCommentByUrlHash()
     })
 
-    // 仅管理员显示控制
-    this.ctx.on('check-admin-show-el', () => {
-      const items: HTMLElement[] = []
-
-      this.$root.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
-
-      // for layer
-      const { $wrap: $layerWrap } = GetLayerWrap(this.ctx)
-      if ($layerWrap) $layerWrap.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
-
-      // for sidebar
-      // TODO: 这个其实应该写在 packages/artalk-sidebar 里面的
-      const $sidebarEl = document.querySelector<HTMLElement>('.atk-sidebar')
-      if ($sidebarEl) $sidebarEl.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
-
-      items.forEach(($item: HTMLElement) => {
-        if (this.ctx.user.data.isAdmin)
-          $item.classList.remove('atk-hide')
-        else
-          $item.classList.add('atk-hide')
-      })
-    })
-
     // 本地用户数据变更
     this.ctx.on('user-changed', () => {
-      this.ctx.trigger('check-admin-show-el')
-      this.ctx.trigger('list-refresh-ui')
+      this.ctx.checkAdminShowEl()
+      this.ctx.listRefreshUI()
     })
   }
 
@@ -223,7 +214,7 @@ export default class Artalk {
 
   /** PV */
   public async initPV() {
-    const pvNum = await new Api(this.ctx).pv()
+    const pvNum = await this.ctx.getApi().pv()
     if (Number.isNaN(Number(pvNum)))
       return
 

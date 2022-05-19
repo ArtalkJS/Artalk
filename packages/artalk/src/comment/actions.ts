@@ -17,7 +17,7 @@ export default class CommentActions {
   public vote(type: 'up'|'down') {
     const actionBtn = (type === 'up') ? this.comment.getRender().voteBtnUp : this.comment.getRender().voteBtnDown
 
-    new Api(this.ctx).vote(this.data.id, `comment_${type}`)
+    this.ctx.getApi().vote(this.data.id, `comment_${type}`)
     .then((v) => {
       this.data.vote_up = v.up
       this.data.vote_down = v.down
@@ -46,14 +46,14 @@ export default class CommentActions {
       modify.is_pinned = !modify.is_pinned
     }
 
-    new Api(this.ctx).commentEdit(modify).then((data) => {
+    this.ctx.getApi().commentEdit(modify).then((data) => {
       btnElem.setLoading(false)
 
       // 刷新当前 Comment UI
       this.comment.setData(data)
 
       // 刷新 List UI
-      this.ctx.trigger('list-refresh-ui')
+      this.ctx.listRefreshUI()
     }).catch((err) => {
       console.error(err)
       btnElem.setError(this.ctx.$t('editFail'))
@@ -65,7 +65,7 @@ export default class CommentActions {
     if (btnElem.isLoading) return // 若正在删除中
 
     btnElem.setLoading(true, `${this.ctx.$t('deleting')}...`)
-    new Api(this.ctx).commentDel(this.data.id, this.data.site_name)
+    this.ctx.getApi().commentDel(this.data.id, this.data.site_name)
       .then(() => {
         btnElem.setLoading(false)
         if (this.cConf.onDelete) this.cConf.onDelete(this.comment)

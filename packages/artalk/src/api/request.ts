@@ -33,7 +33,7 @@ export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit,
   if (json.data?.need_captcha) {
     // 请求需要验证码
     json = await (new Promise<any>((resolve, reject) => {
-      ctx.trigger('checker-captcha', {
+      ctx.checkCaptcha({
         imgData: json.data.img_data,
         iframe: json.data.iframe,
         onSuccess: () => { recall(resolve, reject) },
@@ -43,7 +43,7 @@ export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit,
   } else if (json.data?.need_login || isNoAccess) {
     // 请求需要管理员权限
     json = await (new Promise<any>((resolve, reject) => {
-      ctx.trigger('checker-admin', {
+      ctx.checkAdmin({
         onSuccess: () => { recall(resolve, reject) },
         onCancel: () => { reject(json) }
       })

@@ -13,9 +13,6 @@ import { backendMinVersion } from '../../package.json'
 export default class ListLite extends Component {
   protected $commentsWrap: HTMLElement
 
-  protected commentList: Comment[] = [] // Note: 无层级结构 + 无须排列
-  protected get commentDataList() { return this.commentList.map(c => c.getData()) }
-
   protected data?: ListData
   protected isLoading: boolean = false
 
@@ -68,9 +65,18 @@ export default class ListLite extends Component {
         el.innerText = Utils.timeAgo(new Date(Number(date)), this.ctx)
       })
     }, 30 * 1000) // 30s 更新一次
+  }
 
-    // 事件监听
-    this.ctx.on('unread-update', (data) => (this.updateUnread(data.notifies)))
+  public getData() {
+    return this.data
+  }
+
+  public clearData() {
+    this.data = undefined
+  }
+
+  public getCommentsWrapEl() {
+    return this.$commentsWrap
   }
 
   /** 评论获取 */
@@ -93,15 +99,15 @@ export default class ListLite extends Component {
     showLoading()
 
     // 事件通知（开始加载评论）
-    this.ctx.trigger('comments-load')
+    this.ctx.trigger('list-load')
 
     // 清空评论（加载按钮）
-    if (this.pageMode === 'read-more' && offset === 0) { this.clearAllComments() }
+    if (this.pageMode === 'read-more' && offset === 0) { this.ctx.clearAllComments() }
 
     // 请求评论数据
     let listData: ListData
     try {
-      listData = await new Api(this.ctx).get(offset, this.pageSize, this.flatMode, this.paramsEditor)
+      listData = await this.ctx.getApi().get(offset, this.pageSize, this.flatMode, this.paramsEditor)
     } catch (e: any) {
       this.onError(e.msg || String(e), offset, e.data)
       throw e
@@ -125,7 +131,7 @@ export default class ListLite extends Component {
 
   protected onLoad(data: ListData, offset: number) {
     // 清空评论（分页条）
-    if (this.pageMode === 'pagination') { this.clearAllComments() }
+    if (this.pageMode === 'pagination') { this.ctx.clearAllComments() }
 
     this.data = data
 
@@ -148,8 +154,8 @@ export default class ListLite extends Component {
     // 加载后事件
     this.refreshUI()
 
-    this.ctx.trigger('unread-update', { notifies: data.unread || [] })
-    this.ctx.trigger('comments-loaded')
+    this.ctx.updateNotifies(data.unread || [])
+    this.ctx.trigger('list-loaded')
     this.ctx.trigger('conf-updated')
 
     if (this.onAfterLoad) this.onAfterLoad(data)
@@ -211,7 +217,7 @@ export default class ListLite extends Component {
         pageSize: this.pageSize,
         onChange: async (o) => {
           if (this.ctx.conf.editorTravel === true) {
-            this.ctx.trigger('editor-travel-back') // 防止评论框被吞
+            this.ctx.editorTravelBack() // 防止评论框被吞
           }
 
           await this.fetchComments(o)
@@ -265,9 +271,9 @@ export default class ListLite extends Component {
       sidebarView = `sites|${JSON.stringify(viewLoadParam)}`
     }
 
-    adminBtn.onclick = () => (this.ctx.trigger('sidebar-show', {
-      view: sidebarView
-    }))
+    adminBtn.onclick = () => this.ctx.showSidebar({
+      view: sidebarView as any
+    })
 
     Ui.setError(this.$el, $err)
   }
@@ -275,7 +281,7 @@ export default class ListLite extends Component {
   /** 刷新界面 */
   public refreshUI() {
     // 无评论
-    const isNoComment = this.commentList.length <= 0
+    const isNoComment = this.ctx.getCommentList().length <= 0
     let $noComment = this.$commentsWrap.querySelector<HTMLElement>('.atk-list-no-comment')
 
     if (isNoComment) {
@@ -289,12 +295,17 @@ export default class ListLite extends Component {
     }
 
     // 仅管理员显示控制
-    this.ctx.trigger('check-admin-show-el')
+    this.ctx.checkAdminShowEl()
+  }
+
+  /** 重新加载列表 */
+  public reload() {
+    this.fetchComments(0)
   }
 
   /** 创建新评论 */
   protected createComment(cData: CommentData, ctxData?: CommentData[]) {
-    if (!ctxData) ctxData = this.commentDataList
+    if (!ctxData) ctxData = this.ctx.getCommentDataList()
 
     const comment = new Comment(this.ctx, cData, {
       isFlatMode: this.flatMode,
@@ -302,7 +313,7 @@ export default class ListLite extends Component {
         if (this.renderComment) this.renderComment(comment)
       },
       onDelete: (c: Comment) => {
-        this.deleteComment(c)
+        this.ctx.deleteComment(c)
         this.refreshUI()
       },
       replyTo: (cData.rid ? ctxData.find(c => c.id === cData.rid) : undefined)
@@ -312,7 +323,7 @@ export default class ListLite extends Component {
     comment.render()
 
     // 放入 comment 总表中
-    this.commentList.push(comment)
+    this.ctx.getCommentList().push(comment)
 
     return comment
   }
@@ -389,7 +400,7 @@ export default class ListLite extends Component {
         this.$commentsWrap.prepend(comment.getEl())
       } else {
         // 子评论 新增
-        const parent = this.findComment(commentData.rid)
+        const parent = this.ctx.findComment(commentData.rid)
         if (parent) {
           parent.putChild(comment, (this.nestSortBy === 'DATE_ASC' ? 'append' : 'prepend'))
 
@@ -406,7 +417,7 @@ export default class ListLite extends Component {
       comment.getRender().playFadeAnim() // 播放评论渐出动画
     } else {
       // 平铺模式
-      const comment = this.putCommentFlatMode(commentData, this.commentDataList, 'prepend')
+      const comment = this.putCommentFlatMode(commentData, this.ctx.getCommentDataList(), 'prepend')
       Ui.scrollIntoView(comment.getEl()) // 滚动到可见
     }
 
@@ -415,36 +426,8 @@ export default class ListLite extends Component {
 
     // 评论新增后
     this.refreshUI()
-    this.ctx.trigger('comments-loaded')
-  }
-
-  /** 查找评论项 */
-  protected findComment(id: number): Comment|undefined {
-    return this.commentList.find(c => c.getData().id === id)
-  }
-
-  /** 删除评论 */
-  public deleteComment(_comment: number|Comment) {
-    let comment: Comment
-    if (typeof _comment === 'number') {
-      const findComment = this.findComment(_comment)
-      if (!findComment) throw Error(`Comment ${_comment} cannot be found`)
-      comment = findComment
-    } else comment = _comment
-
-    comment.getEl().remove()
-    this.commentList.splice(this.commentList.indexOf(comment), 1)
-
-    if (this.data) this.data.total -= 1 // 评论数减 1
-
-    this.refreshUI()
-  }
-
-  /** 清空所有评论 */
-  public clearAllComments() {
-    this.$commentsWrap.innerHTML = ''
-    this.data = undefined
-    this.commentList = []
+    this.ctx.trigger('list-loaded')
+    this.ctx.trigger('list-inserted', commentData)
   }
 
   /** 更新未读数据 */
@@ -453,16 +436,14 @@ export default class ListLite extends Component {
 
     // 高亮评论
     if (this.unreadHighlight === true) {
-      this.commentList.forEach((comment) => {
+      this.ctx.getCommentList().forEach((comment) => {
         const notify = this.unread.find(o => o.comment_id === comment.getID())
         if (notify) {
           comment.getRender().setUnread(true)
           comment.getRender().setOpenAction(() => {
             window.open(notify.read_link)
             this.unread = this.unread.filter(o => o.comment_id !== comment.getID()) // remove
-            this.ctx.trigger('unread-update', {
-              notifies: this.unread
-            })
+            this.ctx.updateNotifies(this.unread)
           })
         } else {
           comment.getRender().setUnread(false)

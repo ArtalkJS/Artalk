@@ -46,7 +46,7 @@ const defaults: ArtalkConfig = {
   versionCheck: true,
   useBackendConf: false,
 
-  i18n: 'zh-CN',
+  locale: 'zh-CN',
 }
 
 export default defaults

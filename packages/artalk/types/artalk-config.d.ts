@@ -100,8 +100,8 @@ export default interface ArtalkConfig {
   /** 应用后端配置 */
   useBackendConf: boolean
 
-  /** 国际化 */
-  i18n: I18n|string
+  /** 语言本地化 */
+  locale: I18n|string
 }
 
 /**

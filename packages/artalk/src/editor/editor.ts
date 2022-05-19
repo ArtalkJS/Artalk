@@ -289,7 +289,7 @@ export default class Editor extends Component {
   /** 关闭评论 */
   public close() {
     if (!this.$textareaWrap.querySelector('.atk-comment-closed'))
-      this.$textareaWrap.prepend(Utils.createElement('<div class="atk-comment-closed">仅管理员可评论</div>'))
+      this.$textareaWrap.prepend(Utils.createElement(`<div class="atk-comment-closed">${this.$t('onlyAdminCanReply')}</div>`))
 
     if (!this.user.data.isAdmin) {
       this.$textarea.style.display = 'none'

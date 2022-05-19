@@ -12,6 +12,7 @@ export default {
   uploadFail: 'Upload Failed',
   commentFail: 'Failed to comment',
   restoredMsg: 'Content has been restored',
+  onlyAdminCanReply: 'Only admin can reply',
 
   /* List */
   counter: '{count} Comments',

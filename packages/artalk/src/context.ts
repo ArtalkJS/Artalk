@@ -220,7 +220,7 @@ export default class Context implements ContextApi {
 
   /* i18n */
   public $t(key: keyof I18n, args: {[key: string]: string} = {}): string {
-    let locales = this.conf.i18n
+    let locales = this.conf.locale
     if (typeof locales === 'string') {
       locales = internalLocales[locales]
     }

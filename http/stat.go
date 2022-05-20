@@ -48,7 +48,7 @@ func (a *action) Stat(c echo.Context) error {
 
 		return RespData(c, model.CookAllPages(pages))
 
-	case "pv_best_pages":
+	case "pv_most_pages":
 		// PV 数最多的页面
 		var pages []model.Page
 		a.db.Model(&model.Page{}).
@@ -59,7 +59,7 @@ func (a *action) Stat(c echo.Context) error {
 
 		return RespData(c, model.CookAllPages(pages))
 
-	case "commenter_best_pages":
+	case "comment_most_pages":
 		// 评论数最多的页面
 		var pages []model.Page
 		a.db.Raw("SELECT * FROM pages p WHERE p.site_name = ? ORDER BY (SELECT COUNT(*) FROM comments c WHERE c.page_key = p.key AND c.is_pending = ?) DESC", p.SiteName, false).
@@ -89,7 +89,7 @@ func (a *action) Stat(c echo.Context) error {
 
 		return RespData(c, pv)
 
-	case "page_commenter":
+	case "page_comment":
 		// 查询页面的评论数
 		keys := lib.SplitAndTrimSpace(p.PageKeys, ",")
 		counts := map[string]int64{}
@@ -104,7 +104,7 @@ func (a *action) Stat(c echo.Context) error {
 
 		return RespData(c, counts)
 
-	case "site_commenter":
+	case "site_comment":
 		// 全站评论数
 		var count int64
 		a.db.Model(&model.Comment{}).

@@ -6,7 +6,7 @@
   background: var(--at-color-bg);
   border: 1px solid var(--at-color-border);
   border-radius: @block-radius;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 
   @media only screen and (max-width: 768px) {
     margin-bottom: 7px;
@@ -15,7 +15,7 @@
   & > .atk-header {
     display: flex;
     flex-direction: row;
-    padding: calc(@editor-padding / 2) @editor-padding 0;
+    padding: 10px 14px 0;
 
     input {
       flex: 1;
@@ -46,9 +46,9 @@
       border: 2px solid transparent;
       border-radius: calc(@block-radius / 2);
       width: 100%;
-      min-height: 130px;
+      min-height: 120px;
       margin-top: 2px;
-      padding: @editor-padding calc(10px + 5px);
+      padding: 10px 20px;
       resize: none;
       word-wrap: break-word;
       outline: none;
@@ -67,7 +67,7 @@
     & > .atk-send-reply {
       z-index: 2;
       position: absolute;
-      right: 10px;
+      right: 7px;
       bottom: 8px;
       max-width: calc(100% - 20px);
       height: 30px;
@@ -79,6 +79,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       cursor: pointer;
+      border-radius: @block-radius;
 
       .atk-text {
       }
@@ -114,8 +115,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    border-top: 1px solid var(--at-color-border);
-    padding: 0 0 0 calc(@editor-padding - 5px);
+    padding: 5px 5px 5px 10px;
 
     & > .atk-item {
       display: flex;
@@ -129,9 +129,14 @@
       color: var(--at-color-grey);
       font-size: @font-size;
       user-select: none;
+      border-radius: @block-radius;
 
       &:not(:last-child) {
-        border-right: 1px solid var(--at-color-border);
+        margin-right: 2px;
+      }
+
+      &:hover {
+        background: var(--at-color-bg-grey);
       }
 
       &.active {
@@ -164,6 +169,7 @@
       cursor: pointer;
       transition: opacity 0.3s ease-in-out;
       outline: none;
+      border-radius: @block-radius;
 
       &:active {
         opacity: 0.9;
@@ -175,7 +181,7 @@
     z-index: 9;
     position: absolute;
     right: -2px;
-    bottom: 36px;
+    bottom: 40px;
     width: 225px;
     opacity: 0.83;
   }

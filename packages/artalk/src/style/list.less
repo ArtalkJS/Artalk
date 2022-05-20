@@ -4,8 +4,7 @@
   & > .atk-list-header {
     display: flex;
     flex-direction: row;
-    padding: 10px 10px 5px 10px;
-    border-bottom: 1px solid var(--at-color-border);
+    padding: 10px 17px 10px 17px;
 
     .atk-text {
       display: inline-block;
@@ -103,7 +102,6 @@
         &:not(:last-child):not(.atk-hide) {
           margin-right: 10px;
           padding-right: 10px;
-          border-right: 1px solid var(--at-color-border);
         }
 
         .atk-unread-badge {
@@ -129,7 +127,6 @@
 
     .atk-list-comments-wrap {
       .atk-main-editor {
-        margin-top: -1px;
       }
     }
   }
@@ -171,8 +168,8 @@
 
 .atk-list-read-more {
   border-top: 1px dashed var(--at-color-border);
-  margin-top: 20px;
-  padding-bottom: 20px;
+  margin-top: 28px;
+  padding-bottom: 25px;
 
   @media only screen and (max-width: 768px) {
     padding-bottom: 10px;
@@ -210,8 +207,8 @@
     }
 
     &:hover {
+      background: var(--at-color-bg-grey);
       & > .atk-text {
-        color: var(--at-color-main);
       }
     }
   }

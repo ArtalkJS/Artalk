@@ -1,0 +1,15 @@
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="../dist/Artalk.css">
+<script src="../dist/Artalk.js"></script>
+
+<div id="comments"></div>
+
+<script>
+    var artalk = new Artalk({
+      el: '#comments',
+      pageKey: 'https://artalk.js.org/',
+      pageTitle: 'Artalk Home',
+      server: 'http://localhost:23366',
+      site: 'ArtalkDocs',
+    });
+</script>

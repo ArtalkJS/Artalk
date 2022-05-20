@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
-import commonConf from './vite-common.config'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import baseConf from './vite-base.config'
 
 export default defineConfig({
   build: {
@@ -9,6 +8,5 @@ export default defineConfig({
     outDir: resolve(__dirname, "deploy"),
     rollupOptions: {}
   },
-  plugins: [tsconfigPaths()],
-  ...commonConf
+  ...baseConf
 })

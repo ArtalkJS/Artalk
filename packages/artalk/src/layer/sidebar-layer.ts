@@ -88,7 +88,7 @@ export default class SidebarLayer extends Component {
       this.$iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
 
       // 准备 Iframe 参数
-      const baseURL = (import.meta.env.MODE === 'development')  ? 'http://localhost:23367/'
+      const baseURL = (import.meta.env.DEV)  ? 'http://localhost:23367/'
         : Utils.getURLBasedOnApi(this.ctx, '/sidebar/')
 
       const query: any = {

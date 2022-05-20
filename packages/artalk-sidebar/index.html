@@ -21,7 +21,7 @@
 
     InitSidebar({
       el: '#ArtalkSidebar',
-      server: (import.meta.env.MODE === 'development') ? 'http://localhost:23366' : '../',
+      server: (import.meta.env.DEV) ? 'http://localhost:23366' : '../',
       pageKey,
       site,
       darkMode,

@@ -64,6 +64,9 @@ export default interface ArtalkConfig {
   /** 评论投票反对按钮 */
   voteDown: boolean
 
+  /** 评论预览功能 */
+  preview: boolean
+
   /** 评论数绑定元素 Selector */
   countEl: string
 

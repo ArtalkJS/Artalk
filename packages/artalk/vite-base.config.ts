@@ -1,9 +1,10 @@
-import { UserConfigExport } from 'vite'
+import { defineConfig } from 'vite'
+import tsconfigPaths from 'vite-tsconfig-paths'
 import { version } from './package.json'
 
-export default {
+export default defineConfig({
   define: {
-    ARTALK_VERSION: JSON.stringify(version)
+    ARTALK_VERSION: JSON.stringify(version),
   },
   css: {
     preprocessorOptions: {
@@ -12,4 +13,5 @@ export default {
      },
     },
   },
-} as UserConfigExport
+  plugins: [tsconfigPaths()],
+})

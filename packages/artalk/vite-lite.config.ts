@@ -16,4 +16,7 @@ export default Utils.mergeDeep(fullVersionConf, {
       }
    }
   },
+  define: {
+    ARTALK_LITE: true,
+  },
 })

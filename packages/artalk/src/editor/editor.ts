@@ -342,6 +342,7 @@ export default class Editor extends Component {
 
     const disabledPlugs: string[] = []
     if (!this.conf.emoticons) disabledPlugs.push('emoticons')
+    if (!this.conf.preview) disabledPlugs.push('preview')
 
     // 初始化 Editor 插件
     this.ENABLED_PLUGS.forEach((Plug) => {

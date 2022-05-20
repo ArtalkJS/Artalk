@@ -1,22 +1,17 @@
-import Api from 'artalk/src/api'
-import Context from 'artalk/types/context'
-import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
-import Comment from 'artalk/src/comment'
-import Pagination, { PaginationConf } from 'artalk/src/components/pagination'
-
-import SidebarView from '../sidebar-view'
-import PageList from '../admin/page-list'
+import Pagination from 'artalk/src/components/pagination'
+import SidebarView from './sidebar-view'
+import PageList from '../components/page-list'
 
 const PAGE_SIZE = 20
 
 export default class PagesView extends SidebarView {
-  static viewName = 'pages'
-  static viewTitle = '页面'
-  static viewAdminOnly = true
+  protected readonly viewName = 'pages'
+  public readonly viewAdminOnly = true
+  viewTitle() { return '页面' }
 
-  viewTabs = {}
-  viewActiveTab = ''
+  protected tabs = {}
+  protected activeTab = ''
 
   isFirstLoad = true
   pageList!: PageList
@@ -28,7 +23,7 @@ export default class PagesView extends SidebarView {
       this.$el.append(this.pageList.$el)
     }
 
-    this.switchTab(this.viewActiveTab)
+    this.switchTab(this.activeTab)
   }
 
   switchTab(tab: string): boolean|void {

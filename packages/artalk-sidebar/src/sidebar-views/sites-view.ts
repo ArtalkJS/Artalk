@@ -1,18 +1,13 @@
-import Api from 'artalk/src/api'
-import Context from 'artalk/types/context'
-import * as Utils from 'artalk/src/lib/utils'
-import Comment from 'artalk/src/comment'
-
-import SiteList from '../admin/site-list'
-import SidebarView from '../sidebar-view'
+import SiteList from '../components/site-list'
+import SidebarView from './sidebar-view'
 
 export default class SitesView extends SidebarView {
-  static viewName = 'sites'
-  static viewTitle = '站点'
-  static viewAdminOnly = true
+  protected readonly viewName = 'sites'
+  public readonly viewAdminOnly = true
+  viewTitle() { return '站点' }
 
-  viewTabs = {}
-  viewActiveTab = ''
+  protected tabs = {}
+  protected activeTab = ''
 
   siteList!: SiteList
 

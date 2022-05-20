@@ -1,22 +1,17 @@
-import Api from 'artalk/src/api'
-import Context from 'artalk/types/context'
 import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
-import Comment from 'artalk/src/comment'
-
-import SiteList from '../admin/site-list'
-import SidebarView from '../sidebar-view'
+import SidebarView from './sidebar-view'
 
 export default class TransferView extends SidebarView {
-  static viewName = 'transfer'
-  static viewTitle = '迁移'
-  static viewAdminOnly = true
+  protected readonly viewName = 'transfer'
+  public readonly viewAdminOnly = true
+  viewTitle() { return '迁移' }
 
-  viewTabs = {
+  protected tabs = {
     'import': '导入',
     'export': '导出',
   }
-  viewActiveTab = 'import'
+  protected activeTab = 'import'
 
   mount() {
     this.switchTab('import')

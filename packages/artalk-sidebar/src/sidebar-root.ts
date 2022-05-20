@@ -3,30 +3,27 @@ import './style/sidebar.less'
 import Context from 'artalk/types/context'
 import * as Utils from 'artalk/src/lib/utils'
 import * as Ui from 'artalk/src/lib/ui'
-import Comment  from 'artalk/src/comment'
-import { SiteData } from 'artalk/types/artalk-data'
-import Api from 'artalk/src/api'
 
 import Component from './sidebar-component'
 import { SidebarCtx } from './main'
 import SidebarHTML from './sidebar.html?raw'
 
-import SidebarView from './sidebar-view'
+import SidebarView from './sidebar-views/sidebar-view'
 import CommentsView from './sidebar-views/comments-view'
 import PagesView from './sidebar-views/pages-view'
 import SitesView from './sidebar-views/sites-view'
 import TransferView from './sidebar-views/transfer-view'
-import SiteListFloater from './admin/site-list-floater'
+import SiteListFloater from './components/site-list-floater'
 import SettingView from './sidebar-views/setting-view'
 
 import MD5 from './lib/md5'
 
-const REGISTER_VIEWS: (typeof SidebarView)[] = [
+const REGISTER_VIEWS = [
   CommentsView, PagesView, SitesView, TransferView, // SettingView
 ]
 
 export default class SidebarRoot extends Component {
-  public static DEFAULT_VIEW = 'comments'
+  public static readonly DEFAULT_VIEW = 'comments'
 
   public $header: HTMLElement
   public $headerMenu: HTMLElement
@@ -73,12 +70,21 @@ export default class SidebarRoot extends Component {
     this.$viewWrap = this.$el.querySelector('.atk-sidebar-view-wrap')!
 
     // init UI
+    this.initViewInstances()
     this.initViewSwitcher()
 
     // 重载操作
     this.sidebar.reload = () => {
       this.init()
     }
+  }
+
+  /** 初始化 views 实例对象 */
+  private initViewInstances() {
+    REGISTER_VIEWS.forEach((View) => {
+      const viewInstance = new View(this.ctx, this.sidebar, this.$viewWrap)
+      this.viewInstances[viewInstance.getName()] = viewInstance
+    })
   }
 
   /** 初始化 view 切换器 */
@@ -88,18 +94,18 @@ export default class SidebarRoot extends Component {
     }
 
     this.$navViews.innerHTML = ''
-    REGISTER_VIEWS.forEach(view => {
+    Object.entries(this.viewInstances).forEach(([viewName, view]) => {
       const $item = Utils.createElement(`<div class="atk-tab-item"></div>`)
       this.$navViews.append($item)
-      $item.setAttribute('data-name', view.viewName)
-      $item.innerText = view.viewTitle
-      if (view.viewName === this.curtView) {
+      $item.setAttribute('data-name', viewName)
+      $item.innerText = view.viewTitle()
+      if (viewName === this.curtView) {
         $item.classList.add('atk-active')
-        this.$curtViewBtnText.innerText = view.viewTitle
+        this.$curtViewBtnText.innerText = view.viewTitle()
       }
       $item.onclick = () => {
         // 切换 view
-        this.switchView(view.viewName)
+        this.switchView(viewName)
 
         this.toggleViewSwitcher()
       }
@@ -195,25 +201,18 @@ export default class SidebarRoot extends Component {
 
   /** 切换 View */
   public switchView(viewName: string) {
-    if (!REGISTER_VIEWS.find(o => o.viewName === viewName))
+    const view = this.viewInstances[viewName]
+    if (!view)
       throw new Error(`Sidebar View "${viewName}" not found`)
-
-    let view = this.viewInstances[viewName]
-    if (!view) {
-      // 初始化 View
-      const View = REGISTER_VIEWS.find(o => o.viewName === viewName)!
-      view = new View(this.ctx, this.sidebar, this.$viewWrap)
-      this.viewInstances[viewName] = view
-    }
 
     // init view
     view.mount()
 
     this.curtView = viewName
-    this.curtTab = view.viewActiveTab
+    this.curtTab = view.getActiveTab()
 
     // update view indicator
-    this.$curtViewBtnText.innerText = (view.constructor as typeof SidebarView).viewTitle
+    this.$curtViewBtnText.innerText = view.viewTitle()
     this.$navViews.querySelectorAll('.atk-tab-item').forEach((e) => {
       if (e.getAttribute('data-name') === viewName) {
         e.classList.add('atk-active')
@@ -232,16 +231,16 @@ export default class SidebarRoot extends Component {
       if (c.startsWith('atk-view-name-'))
         this.$viewWrap.classList.remove(c)
     })
-    this.$viewWrap.classList.add(`atk-view-name-${(view.constructor as typeof SidebarView).viewName}`)
+    this.$viewWrap.classList.add(`atk-view-name-${view.getName()}`)
   }
 
   private loadViewTabs(view: SidebarView) {
     this.$navTabs.innerHTML = ''
-    Object.entries<string>(view.viewTabs).forEach(([tabName, label]) => {
+    Object.entries<string>(view.getTabs()).forEach(([tabName, label]) => {
       const $tab = Utils.createElement(`<div class="atk-tab-item"></div>`)
       this.$navTabs.append($tab)
       $tab.innerText = label
-      if (view.viewActiveTab === tabName) $tab.classList.add('atk-active')
+      if (view.getActiveTab() === tabName) $tab.classList.add('atk-active')
 
       // 切换 tab
       $tab.onclick = () => {

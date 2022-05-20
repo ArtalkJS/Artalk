@@ -276,8 +276,9 @@ export default class Api {
 
   /** 统计 */
   public async stat(
-    type: 'comment_latest'|'page_latest'|'page_pv_best'|'page_commenter_best'|'page_pv'|'page_commenter',
-    pageKey?: string|string[],
+    type: 'latest_comments'|'latest_pages'|'pv_best_pages'|'commenter_best_pages'|
+          'page_pv'|'site_pv'|'page_commenter'|'site_commenter',
+    pageKeys?: string|string[],
     limit?: number
   ) {
     const params: any = {
@@ -285,10 +286,10 @@ export default class Api {
       site_name: this.ctx.conf.site || '',
     }
 
-    if (pageKey) params.page_key = Array.isArray(pageKey) ? pageKey.join(',') : pageKey
+    if (pageKeys) params.page_keys = Array.isArray(pageKeys) ? pageKeys.join(',') : pageKeys
     if (limit) params.limit = limit
 
-    const data = await POST<PageData[]|CommentData[]|number>(this.ctx, `${this.baseURL}/stat`, params)
+    const data = await POST<PageData[]|CommentData[]|object|number>(this.ctx, `${this.baseURL}/stat`, params)
     return data
   }
 

@@ -56,12 +56,14 @@ export default class Artalk {
     }
 
     // 装载元素
-    if (!!this.conf.el && this.conf.el instanceof HTMLElement) {
+    this.conf.el = this.conf.el || document.createElement('div') // 允许 this.conf.el 为空
+
+    if (this.conf.el instanceof HTMLElement) {
       this.$root = this.conf.el
     } else {
       try {
         const $root = document.querySelector<HTMLElement>(this.conf.el)
-        if (!$root) throw Error(`Sorry, target element "${this.conf.el}" was not found.`)
+        if (!$root) throw Error(`Target element "${this.conf.el}" was not found.`)
         this.$root = $root
       } catch (e) {
         console.error(e)

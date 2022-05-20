@@ -214,17 +214,38 @@ export default class Artalk {
 
   /** PV */
   public async initPV() {
-    const pvNum = await this.ctx.getApi().pv()
-    if (Number.isNaN(Number(pvNum)))
-      return
+    const curtPagePvNum = await this.ctx.getApi().pv()
+    const curtPageKey = this.ctx.conf.pageKey
 
-    if (!this.conf.pvEl || !document.querySelector(this.conf.pvEl))
-      return
+    // 界面更新数据
+    const pvEl = this.conf.pvEl
+    if (!pvEl || !document.querySelector(pvEl)) return
 
-    const $pv = document.querySelector<HTMLElement>(this.conf.pvEl)!
-    // $pv.innerText = '-' // 默认占位符
+    // 当前页面 PV 数
+    let pagePvs: {[key: string]: number} = {}
+    pagePvs[curtPageKey] = curtPagePvNum
 
-    $pv.innerText = String(pvNum)
+    // 查询其他页面的 PV 数
+    const queryPageKeys = Array.from(document.querySelectorAll(pvEl))
+      .filter(e => {
+        const pageKeyAttr = e.getAttribute('data-page-key');
+        return !!pageKeyAttr && pageKeyAttr !== curtPageKey
+      })
+      .map(e => e.getAttribute('data-page-key')!)
+
+    if (queryPageKeys.length > 0) {
+      const pvs: any = await this.ctx.getApi().stat('page_pv', queryPageKeys)
+      pagePvs = { ...pagePvs, ...pvs }
+    }
+
+    this.updatePvEls(pagePvs)
+  }
+
+  private updatePvEls(pvs: {[key: string]: number}) {
+    document.querySelectorAll(this.conf.pvEl).forEach((el) => {
+      const pageKey = el.getAttribute('data-page-key') || this.ctx.conf.pageKey
+      el.innerHTML = `${Number(pvs[pageKey] || 0)}`
+    })
   }
 
   /** 监听事件 */

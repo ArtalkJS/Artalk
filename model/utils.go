@@ -14,6 +14,14 @@ func CookAllComments(comments []Comment) []CookedComment {
 	return cookedComments
 }
 
+func CookAllPages(pages []Page) []CookedPage {
+	cookedPages := []CookedPage{}
+	for _, p := range pages {
+		cookedPages = append(cookedPages, p.ToCooked())
+	}
+	return cookedPages
+}
+
 func GetUserAllCommentIDs(userID uint) []uint {
 	userAllCommentIDs := []uint{}
 	DB().Model(&Comment{}).Select("id").Where("user_id = ?", userID).Find(&userAllCommentIDs)

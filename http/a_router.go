@@ -39,6 +39,7 @@ func InitRouter(e *echo.Echo) {
 	api.POST("/mark-read", action.MarkRead)
 	api.POST("/vote", action.Vote)
 	api.POST("/pv", action.PV)
+	api.POST("/stat", action.Stat)
 
 	// api/upload-img
 	if config.Instance.ImgUpload.Path == "" {

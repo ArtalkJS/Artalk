@@ -30,7 +30,7 @@ export default interface ContextApi {
   user: User
 
   /** marked 依赖对象 */
-  markedInstance: typeof libMarked
+  markedInstance?: typeof libMarked
 
   /** marked 内容替换器 */
   markedReplacers: ((raw: string) => string)[]

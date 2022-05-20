@@ -29,7 +29,7 @@ export default class Context implements ContextApi {
   public conf: ArtalkConfig
   public user: User
   public $root: HTMLElement
-  public markedInstance!: typeof libMarked
+  public markedInstance?: typeof libMarked
   public markedReplacers: ((raw: string) => string)[] = []
 
   private commentList: Comment[] = [] // Note: 无层级结构 + 无须排列

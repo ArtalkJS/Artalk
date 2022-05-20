@@ -142,7 +142,7 @@ export function versionCompare(a: string, b: string) {
 
 /** 初始化 marked */
 export function initMarked(ctx: Context) {
-  if (!libMarked) return
+  try { if (!libMarked.name) return } catch { return }
 
   const renderer = new libMarked.Renderer()
   const orgLinkRenderer = renderer.link
@@ -188,11 +188,21 @@ export function initMarked(ctx: Context) {
 
 /** 解析 markdown */
 export function marked(ctx: Context, src: string): string {
-  const rawContent = ctx.markedInstance?.parse(src) || src
+  let markedContent = ctx.markedInstance?.parse(src)
+  if (!markedContent) {
+    // 无 Markdown 模式简单处理
+    markedContent = src
+      // .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/```\s*([^]+?.*?[^]+?[^]+?)```/g, (_, code) => `<pre><code>${hanabi(code)}</code></pre>`)
+      // .replace(/`([^`]+?)`/g, '<code>$1</code>')
+      .replace(/!\[(.*?)\]\((.*?)\)/g, (_, alt, imgSrc) => `<img src="${imgSrc}" alt="${alt}" />`)
+      .replace(/\[(.*?)\]\((.*?)\)/g, (_, text, link) => `<a href="${link}" target="_blank">${text}</a>`)
+      .replace(/\n/g, '<br>')
+  }
 
   // @link https://github.com/markedjs/marked/discussions/1232
   // @link https://gist.github.com/lionel-rowe/bb384465ba4e4c81a9c8dada84167225
-  let dest = insane(rawContent, {
+  let dest = insane(markedContent, {
     allowedClasses: {},
     allowedSchemes: ['http', 'https', 'mailto'],
     allowedTags: [

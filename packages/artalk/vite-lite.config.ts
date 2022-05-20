@@ -12,6 +12,7 @@ export default Utils.mergeDeep(fullVersionConf, {
         globals: {
           marked: 'marked',
         },
+        assetFileNames: (assetInfo) => (/\.css$/.test(assetInfo.name) ? "ArtalkLite.css" : "[name].[ext]")
       }
    }
   },

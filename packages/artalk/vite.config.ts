@@ -17,12 +17,7 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        assetFileNames: assetInfo => {
-          if (/\.css$/.test(assetInfo.name)) {
-            return 'Artalk.css'
-          }
-          return "[name].[ext]"
-        }
+        assetFileNames: (assetInfo) => (/\.css$/.test(assetInfo.name) ? "Artalk.css" : "[name].[ext]")
       }
     }
   },

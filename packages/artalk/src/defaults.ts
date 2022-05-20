@@ -23,6 +23,7 @@ const defaults: ArtalkConfig = {
   voteDown: false,
   uaBadge: true,
   listSort: true,
+  countEl: '#ArtalkCount',
   pvEl: '#ArtalkPV',
 
   gravatar: {

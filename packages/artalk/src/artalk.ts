@@ -130,7 +130,7 @@ export default class Artalk {
     this.initEventBind()
 
     // 其他
-    this.initPV()
+    this.initCountAndPV()
 
     // 插件初始化
     Artalk.Plugins.forEach(plugin => {
@@ -214,39 +214,42 @@ export default class Artalk {
     }
   }
 
-  /** PV */
-  public async initPV() {
-    const curtPagePvNum = await this.ctx.getApi().pv()
-    const curtPageKey = this.ctx.conf.pageKey
-
-    // 界面更新数据
-    const pvEl = this.conf.pvEl
-    if (!pvEl || !document.querySelector(pvEl)) return
-
-    // 当前页面 PV 数
-    let pagePvs: {[key: string]: number} = {}
-    pagePvs[curtPageKey] = curtPagePvNum
-
-    // 查询其他页面的 PV 数
-    const queryPageKeys = Array.from(document.querySelectorAll(pvEl))
-      .filter(e => {
-        const pageKeyAttr = e.getAttribute('data-page-key');
-        return !!pageKeyAttr && pageKeyAttr !== curtPageKey
-      })
-      .map(e => e.getAttribute('data-page-key')!)
-
-    if (queryPageKeys.length > 0) {
-      const pvs: any = await this.ctx.getApi().stat('page_pv', queryPageKeys)
-      pagePvs = { ...pagePvs, ...pvs }
+  /** 初始化评论数和 PV 数量展示元素 */
+  public async initCountAndPV() {
+    // 评论数
+    const countEl = this.conf.countEl
+    if (countEl && document.querySelector(countEl)) {
+      this.handleStatCount({ api: 'page_comment', countEl })
     }
 
-    this.updatePvEls(pagePvs)
+    // PV
+    const curtPagePvNum = await this.ctx.getApi().pv()
+    const pvEl = this.conf.pvEl
+    if (pvEl && document.querySelector(pvEl)) {
+      this.handleStatCount({ api: 'page_pv', countEl: pvEl, curtPageCount: curtPagePvNum })
+    }
   }
 
-  private updatePvEls(pvs: {[key: string]: number}) {
-    document.querySelectorAll(this.conf.pvEl).forEach((el) => {
-      const pageKey = el.getAttribute('data-page-key') || this.ctx.conf.pageKey
-      el.innerHTML = `${Number(pvs[pageKey] || 0)}`
+  private async handleStatCount(args: { api: 'page_pv'|'page_comment', countEl: string, curtPageCount?: number }) {
+    let pageCounts: {[key: string]: number} = {}
+
+    // 当前页面的统计数
+    const curtPageKey = this.ctx.conf.pageKey
+    if (args.curtPageCount) pageCounts[curtPageKey] = args.curtPageCount
+
+    // 查询其他页面的统计数
+    let queryPageKeys = Array.from(document.querySelectorAll(args.countEl))
+      .map(e => e.getAttribute('data-page-key') || curtPageKey)
+      .filter(pageKey => pageCounts[pageKey] === undefined)
+    queryPageKeys = [...new Set(queryPageKeys)] // 去重
+    if (queryPageKeys.length > 0) {
+      const counts: any = await this.ctx.getApi().stat(args.api, queryPageKeys)
+      pageCounts = { ...pageCounts, ...counts }
+    }
+
+    document.querySelectorAll(args.countEl).forEach((el) => {
+      const pageKey = el.getAttribute('data-page-key') || curtPageKey
+      el.innerHTML = `${Number(pageCounts[pageKey] || 0)}`
     })
   }
 

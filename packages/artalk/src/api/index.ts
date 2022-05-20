@@ -276,8 +276,8 @@ export default class Api {
 
   /** 统计 */
   public async stat(
-    type: 'latest_comments'|'latest_pages'|'pv_best_pages'|'commenter_best_pages'|
-          'page_pv'|'site_pv'|'page_commenter'|'site_commenter',
+    type: 'latest_comments'|'latest_pages'|'pv_most_pages'|'comment_most_pages'|
+          'page_pv'|'site_pv'|'page_comment'|'site_comment',
     pageKeys?: string|string[],
     limit?: number
   ) {

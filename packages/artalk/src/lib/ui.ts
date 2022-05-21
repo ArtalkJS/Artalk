@@ -2,7 +2,8 @@ import * as Utils from './utils'
 
 /** 显示加载 */
 export function showLoading(parentElem: HTMLElement, conf?: { transparentBg?: boolean }) {
-  let $loading = parentElem.querySelector<HTMLElement>('.atk-loading')
+  // Use :scope https://developer.mozilla.org/en-US/docs/Web/CSS/:scope
+  let $loading = parentElem.querySelector<HTMLElement>(':scope > .atk-loading')
   if (!$loading) {
     $loading = Utils.createElement(
     `<div class="atk-loading atk-fade-in" style="display: none;">
@@ -27,7 +28,7 @@ export function showLoading(parentElem: HTMLElement, conf?: { transparentBg?: bo
 
 /** 隐藏加载 */
 export function hideLoading(parentElem: HTMLElement) {
-  const $loading = parentElem.querySelector<HTMLElement>('.atk-loading')
+  const $loading = parentElem.querySelector<HTMLElement>(':scope > .atk-loading')
   if ($loading) $loading.style.display = 'none'
 }
 

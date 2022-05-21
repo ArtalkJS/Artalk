@@ -7,9 +7,7 @@
 }
 
 .artalk, .atk-layer-wrap {
-  line-height: @line-height;
   color: var(--at-color-font);
-  font-family: @font-family;
   word-wrap: break-word;
   word-break: break-all;
 
@@ -64,6 +62,7 @@
     padding: 10px 20px 10px 20px;
     background: var(--at-color-bg-grey);
     border-left: 4px solid #687a86;
+    color: var(--at-color-font);
   }
 
   p:first-child {
@@ -311,10 +310,10 @@ i.atk-icon {
 
       input {
         width: 100%;
-        line-height: calc(@formInputHeight + 4px);
+        line-height: (@formInputHeight + 4px);
         background-color: var(--at-color-bg);
         border: 1px solid var(--at-color-border);
-        border-radius: calc(@block-radius / 2);
+        border-radius: (@block-radius / 2);
         outline: none;
         padding: 0 6px;
         display: block;
@@ -335,7 +334,7 @@ i.atk-icon {
         border: 1px solid var(--at-color-main);
         background: transparent;
         color: var(--at-color-main);
-        border-radius: calc(@block-radius / 2);
+        border-radius: (@block-radius / 2);
         padding: 0 15px;
         line-height: @formInputHeight;
         outline: none;
@@ -405,10 +404,10 @@ i.atk-icon {
   overflow: hidden;
   background-color: #2c2c2c;
   color: #FFF;
-  border-radius: 2px;
+  border-radius: (@block-radius / 2);
   cursor: pointer;
   font-size: 14px;
-  padding: 4px 15px;
+  padding: 5px 15px;
 
   &:not(:last-child) {
     margin-bottom: 3px;

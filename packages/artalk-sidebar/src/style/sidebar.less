@@ -1,6 +1,10 @@
 @header-height: 60px;
 @nav-height: 40px;
 
+.artalk, .atk-layer-wrap {
+  font-family: @font-family;
+}
+
 .atk-sidebar {
   @width: 430px;
   position: fixed;
@@ -468,6 +472,10 @@
 
 .atk-view-name-pages, .atk-view-name-comments {
   padding-bottom: 55px;
+
+  .atk-comment-wrap {
+    border-bottom: 1px solid var(--at-color-border);
+  }
 
   .atk-pagination-wrap {
     z-index: 200;

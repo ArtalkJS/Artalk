@@ -173,6 +173,9 @@ func CommentCacheDel(comment *Comment) {
 
 	// 清除 Rid 缓存
 	ChildCommentCacheDel(comment.ID)
+	if comment.Rid != 0 {
+		ChildCommentCacheDel(comment.Rid)
+	}
 }
 
 // 缓存 父ID=>子ID 评论数据

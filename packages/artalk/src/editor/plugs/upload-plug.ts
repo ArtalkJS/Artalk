@@ -102,7 +102,7 @@ export default class UploadPlug extends EditorPlug {
         resp = await this.ctx.getApi().imgUpload(file)
       } else {
         // 使用自定义的图片上传器
-        resp = await this.ctx.conf.imgUploader(file)
+        resp = {img_url: await this.ctx.conf.imgUploader(file)}
       }
     } catch (err: any) {
       console.error(err)

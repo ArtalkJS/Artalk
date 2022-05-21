@@ -1,6 +1,6 @@
 {
   "name": "artalk",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "backendMinVersion": "2.1.7",
   "license": "LGPL-3.0",
   "description": "A Selfhosted Comment System",

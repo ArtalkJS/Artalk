@@ -1,5 +1,4 @@
 import * as Utils from '@/lib/utils'
-import Api from '@/api'
 import Editor from '../editor'
 import EditorPlug from './editor-plug'
 

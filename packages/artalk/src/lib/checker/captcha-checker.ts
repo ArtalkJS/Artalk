@@ -1,4 +1,3 @@
-import Api from '@/api'
 import * as Utils from '../utils'
 import * as Ui from '../ui'
 import { Checker } from '.'

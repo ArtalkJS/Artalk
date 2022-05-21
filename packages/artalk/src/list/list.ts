@@ -4,7 +4,6 @@ import { ListData, NotifyData } from '~/types/artalk-data'
 import Context from '~/types/context'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
-import Api from '../api'
 import ListHTML from './list.html?raw'
 import ListLite from './list-lite'
 

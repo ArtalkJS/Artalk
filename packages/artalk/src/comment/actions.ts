@@ -1,4 +1,3 @@
-import Api from '../api'
 import Comment from './comment'
 import ActionBtn from '../components/action-btn'
 

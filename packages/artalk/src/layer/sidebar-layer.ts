@@ -6,7 +6,6 @@ import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import SidebarHTML from './sidebar-layer.html?raw'
 import Layer from './layer'
-import Api from '../api'
 
 export interface SidebarShowPayload {
   view?: 'comments'|'sites'|'pages'|'transfer'

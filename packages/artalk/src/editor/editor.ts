@@ -5,7 +5,6 @@ import Context from '~/types/context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
-import Api from '../api'
 
 import EditorHTML from './editor.html?raw'
 

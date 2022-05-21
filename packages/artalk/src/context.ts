@@ -37,13 +37,17 @@ export default class Context implements ContextApi {
   /* 订阅者模式 */
   private eventList: Event[] = []
 
-  public constructor($root: HTMLElement, conf: ArtalkConfig) {
+  public constructor(conf: ArtalkConfig, $root?: HTMLElement) {
     this.cid = +new Date()
     this.conf = conf
     this.user = new User(this)
 
-    this.$root = $root
+    this.$root = $root || document.createElement('div')
     this.$root.setAttribute('atk-run-id', this.cid.toString())
+    this.$root.classList.add('artalk')
+    this.$root.innerHTML = ''
+
+    this.api = new Api(this)
   }
 
   /* 设置持有的同事类 */

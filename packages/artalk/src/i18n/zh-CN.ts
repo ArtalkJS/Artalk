@@ -15,6 +15,7 @@ const zhCN: I18n = {
   commentFail: '评论失败',
   restoredMsg: '内容已自动恢复',
   onlyAdminCanReply: '仅管理员可评论',
+  uploadLoginMsg: '填入你的名字邮箱才能上传哦',
 
   /* List */
   counter: '{count} 条评论',

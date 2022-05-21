@@ -9,15 +9,23 @@ import (
 type ParamsStat struct {
 	Type string `mapstructure:"type" param:"required"`
 
-	SiteName string `mapstructure:"site_name" param:"required"`
+	SiteName string `mapstructure:"site_name"`
 	PageKeys string `mapstructure:"page_keys"`
 
 	Limit int `mapstructure:"limit"`
+
+	SiteID  uint
+	SiteAll bool
 }
 
 func (a *action) Stat(c echo.Context) error {
 	var p ParamsStat
 	if isOK, resp := ParamsDecode(c, &p); !isOK {
+		return resp
+	}
+
+	// find site
+	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
 		return resp
 	}
 

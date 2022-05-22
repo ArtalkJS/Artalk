@@ -3,6 +3,7 @@ package http
 import (
 	"strconv"
 
+	"github.com/ArtalkJS/ArtalkGo/lib/email"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -83,8 +84,17 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 	comment.UA = p.UA
 	comment.IP = p.IP
 	comment.IsCollapsed = p.IsCollapsed
-	comment.IsPending = p.IsPending
 	comment.IsPinned = p.IsPinned
+
+	if p.IsPending != comment.IsPending {
+		// 待审状态发生改变
+		comment.IsPending = p.IsPending
+
+		// 待审状态被修改为 false，则重新发送邮件通知
+		if !comment.IsPending {
+			RenotifyWhenPendingModified(&comment)
+		}
+	}
 
 	if err := model.UpdateComment(&comment); err != nil {
 		return RespError(c, "comment save error")
@@ -93,4 +103,26 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 	return RespData(c, Map{
 		"comment": comment.ToCooked(),
 	})
+}
+
+func RenotifyWhenPendingModified(comment *model.Comment) {
+	if comment.Rid == 0 {
+		return // Root 评论不发送通知，因为这个评论已经被管理员看到了
+	}
+
+	pComment := model.FindComment(comment.Rid)
+	if pComment.FetchUser().IsAdmin {
+		return // 回复对象是管理员，则不再发送通知，因为已经看到了
+	}
+
+	notify := model.FindCreateNotify(pComment.UserID, comment.ID)
+	if notify.IsEmailed {
+		return // 邮件已经发送过，则不再重复发送
+	}
+
+	notify.SetComment(*comment)
+	notify.SetInitial()
+
+	// 邮件通知
+	email.AsyncSend(&notify)
 }

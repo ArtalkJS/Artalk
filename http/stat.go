@@ -4,6 +4,7 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 type ParamsStat struct {
@@ -29,16 +30,27 @@ func (a *action) Stat(c echo.Context) error {
 		return resp
 	}
 
+	// Limit 限定
 	if p.Limit <= 0 {
 		p.Limit = 5
+	}
+	if p.Limit > 100 {
+		p.Limit = 100
+	}
+
+	// 公共查询规则
+	QueryPages := func(d *gorm.DB) *gorm.DB {
+		return d.Model(&model.Page{}).Where("site_name = ?", p.SiteName)
+	}
+	QueryComments := func(d *gorm.DB) *gorm.DB {
+		return d.Model(&model.Comment{}).Where("site_name = ? AND is_pending = ?", p.SiteName, false)
 	}
 
 	switch p.Type {
 	case "latest_comments":
 		// 最新评论
 		var comments []model.Comment
-		a.db.Model(&model.Comment{}).
-			Where("site_name = ? AND is_pending = ?", p.SiteName, false).
+		a.db.Scopes(QueryComments).
 			Order("created_at DESC").
 			Limit(p.Limit).
 			Find(&comments)
@@ -48,8 +60,7 @@ func (a *action) Stat(c echo.Context) error {
 	case "latest_pages":
 		// 最新页面
 		var pages []model.Page
-		a.db.Model(&model.Page{}).
-			Where("site_name = ?", p.SiteName).
+		a.db.Scopes(QueryPages).
 			Order("created_at DESC").
 			Limit(p.Limit).
 			Find(&pages)
@@ -59,8 +70,7 @@ func (a *action) Stat(c echo.Context) error {
 	case "pv_most_pages":
 		// PV 数最多的页面
 		var pages []model.Page
-		a.db.Model(&model.Page{}).
-			Where("site_name = ?", p.SiteName).
+		a.db.Scopes(QueryPages).
 			Order("pv DESC").
 			Limit(p.Limit).
 			Find(&pages)
@@ -84,7 +94,9 @@ func (a *action) Stat(c echo.Context) error {
 		for _, k := range keys {
 			page := model.FindPage(k, p.SiteName)
 			if !page.IsEmpty() {
-				pvs[page.Key] = page.PV
+				pvs[k] = page.PV
+			} else {
+				pvs[k] = 0
 			}
 		}
 
@@ -93,9 +105,7 @@ func (a *action) Stat(c echo.Context) error {
 	case "site_pv":
 		// 全站 PV 数
 		var pv int64
-		a.db.Model(&model.Page{}).
-			Where("site_name = ?", p.SiteName).
-			Count(&pv)
+		a.db.Raw("SELECT SUM(pv) FROM pages WHERE site_name = ?", p.SiteName).Row().Scan(&pv)
 
 		return RespData(c, pv)
 
@@ -105,9 +115,7 @@ func (a *action) Stat(c echo.Context) error {
 		counts := map[string]int64{}
 		for _, k := range keys {
 			var count int64
-			a.db.Model(&model.Comment{}).
-				Where("page_key = ? AND site_name = ? AND is_pending = ?", k, p.SiteName, false).
-				Count(&count)
+			a.db.Scopes(QueryComments).Where("page_key = ?", k).Count(&count)
 
 			counts[k] = count
 		}
@@ -117,11 +125,29 @@ func (a *action) Stat(c echo.Context) error {
 	case "site_comment":
 		// 全站评论数
 		var count int64
-		a.db.Model(&model.Comment{}).
-			Where("site_name = ? AND is_pending = ?", p.SiteName, false).
-			Count(&count)
+		a.db.Scopes(QueryComments).Count(&count)
 
 		return RespData(c, count)
+
+	case "rand_comments":
+		// 随机评论
+		var comments []model.Comment
+		a.db.Scopes(QueryComments).
+			Order("random()").
+			Limit(p.Limit).
+			Find(&comments)
+
+		return RespData(c, model.CookAllComments(comments))
+
+	case "rand_pages":
+		// 随机页面
+		var pages []model.Page
+		a.db.Scopes(QueryPages).
+			Order("random()").
+			Limit(p.Limit).
+			Find(&pages)
+
+		return RespData(c, model.CookAllPages(pages))
 	}
 
 	return RespError(c, "invalid type")

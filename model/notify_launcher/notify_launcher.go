@@ -24,32 +24,52 @@ func SendNotify(comment *model.Comment, pComment *model.Comment) {
 	}
 
 	isRootComment := pComment.IsEmpty()
+	isEmailToAdminOff := !config.Instance.AdminNotify.Email.Enabled
 
 	if !isRootComment {
 		// ==============
-		//  回复对方
+		//  邮件回复对方
 		// ==============
-		if !comment.IsPending && pComment.FetchUser().ReceiveEmail {
-			// 不是待审状态评论 && 对方开启接收邮件
+		(func() {
+			// 待审状态评论回复不邮件通知 (管理员审核通过后才发送)
+			if comment.IsPending {
+				return
+			}
+
+			// 对方个人设定关闭邮件接收
+			if !pComment.FetchUser().ReceiveEmail {
+				return
+			}
+
+			// 对方是管理员，但是管理员邮件接收关闭
+			if pComment.FetchUser().IsAdmin && isEmailToAdminOff {
+				return
+			}
+
 			notify := model.FindCreateNotify(pComment.UserID, comment.ID)
 			notify.SetComment(*comment)
 			notify.SetInitial()
 
 			// 邮件通知
 			email.AsyncSend(&notify)
-		}
+		})()
 	} else {
 		// ==============
-		//  回复管理员
+		//  邮件回复管理员
 		// ==============
 		for _, admin := range model.GetAllAdmins() {
+			// 配置文件关闭管理员邮件接收
+			if isEmailToAdminOff {
+				continue
+			}
+
 			// 管理员自己回复自己，不提醒
 			if comment.UserID == admin.ID {
 				continue
 			}
 
 			// 管理员评论不回复给其他管理员
-			if model.IsAdminUser(comment.UserID) {
+			if comment.FetchUser().IsAdmin {
 				continue
 			}
 
@@ -58,7 +78,7 @@ func SendNotify(comment *model.Comment, pComment *model.Comment) {
 				continue
 			}
 
-			// 关闭接收邮件
+			// 该管理员单独设定关闭接收邮件
 			if !admin.ReceiveEmail {
 				continue
 			}
@@ -72,7 +92,7 @@ func SendNotify(comment *model.Comment, pComment *model.Comment) {
 		}
 	}
 
-	// 管理员多元通知
+	// 管理员多元推送
 	AdminNotify(comment, pComment)
 }
 

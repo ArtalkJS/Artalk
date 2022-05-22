@@ -107,6 +107,11 @@ func postInit() {
 		logrus.Warn("notify 配置项已废弃，请使用 admin_notify 代替")
 		Instance.AdminNotify = *Instance.Notify
 	}
+	if Instance.AdminNotify.Email == nil {
+		Instance.AdminNotify.Email = &EmailConf{
+			Enabled: true, // 默认开启管理员邮件通知
+		}
+	}
 	if Instance.Email.MailSubjectToAdmin != "" {
 		logrus.Warn("email.mail_subject_to_admin 配置项已废弃，请使用 admin_notify.email.mail_subject 代替")
 		Instance.AdminNotify.Email.MailSubject = Instance.Email.MailSubjectToAdmin

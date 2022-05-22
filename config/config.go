@@ -218,7 +218,7 @@ type UpgitConf struct {
 
 // 其他通知方式
 type AdminNotifyConf struct {
-	Email    EmailConf          `mapstructure:"email" json:"email"`         // 邮件通知
+	Email    *EmailConf         `mapstructure:"email" json:"email"`         // 邮件通知
 	Telegram NotifyTelegramConf `mapstructure:"telegram" json:"telegram"`   // TG
 	Lark     NotifyLarkConf     `mapstructure:"lark" json:"lark"`           // 飞书
 	DingTalk NotifyDingTalkConf `mapstructure:"ding_talk" json:"ding_talk"` // 钉钉

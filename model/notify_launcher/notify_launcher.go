@@ -42,7 +42,6 @@ func SendNotify(comment *model.Comment, pComment *model.Comment) {
 		// ==============
 		//  回复管理员
 		// ==============
-		// TODO: 增加用户的站点隔离，指定管理员分配网站
 		for _, admin := range model.GetAllAdmins() {
 			// 管理员自己回复自己，不提醒
 			if comment.UserID == admin.ID {

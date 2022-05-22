@@ -273,8 +273,11 @@ type FrontendConf struct {
 	UaBadge      *bool   `mapstructure:"uaBadge" json:"uaBadge,omitempty"`
 	ListSort     *bool   `mapstructure:"listSort" json:"listSort,omitempty"`
 	PvEl         *string `mapstructure:"pvEl" json:"pvEl,omitempty"`
+	CountEl      *string `mapstructure:"countEl" json:"countEl,omitempty"`
+	Preview      *bool   `mapstructure:"preview" json:"preview,omitempty"`
 	FlatMode     *string `mapstructure:"flatMode" json:"flatMode,omitempty"`
-	MaxNesting   *int    `mapstructure:"maxNesting" json:"maxNesting,omitempty"`
+	NestMax      *int    `mapstructure:"nestMax" json:"nestMax,omitempty"`
+	NestSort     *string `mapstructure:"nestSort" json:"nestSort,omitempty"`
 	Gravatar     *struct {
 		Default *string `mapstructure:"default" json:"default,omitempty"`
 		Mirror  *string `mapstructure:"mirror" json:"mirror,omitempty"`
@@ -288,7 +291,8 @@ type FrontendConf struct {
 		Content  *int `mapstructure:"content" json:"content,omitempty"`
 		Children *int `mapstructure:"children" json:"children,omitempty"`
 	} `mapstructure:"heightLimit" json:"heightLimit,omitempty"`
-	ImgUpload    *bool `mapstructure:"imgUpload"  json:"imgUpload,omitempty"`
-	ReqTimeout   *int  `mapstructure:"reqTimeout" json:"reqTimeout,omitempty"`
-	VersionCheck *bool `mapstructure:"versionCheck" json:"versionCheck,omitempty"`
+	ImgUpload    *bool   `mapstructure:"imgUpload"  json:"imgUpload,omitempty"`
+	ReqTimeout   *int    `mapstructure:"reqTimeout" json:"reqTimeout,omitempty"`
+	VersionCheck *bool   `mapstructure:"versionCheck" json:"versionCheck,omitempty"`
+	Locale       *string `mapstructure:"locale" json:"locale,omitempty"`
 }

@@ -10,8 +10,11 @@ frontend:
   uaBadge: true
   listSort: true
   pvEl: "#ArtalkPV"
+  countEl: "#ArtalkCount"
+  preview: true
   flatMode: "auto"
-  maxNesting: 3
+  nestMax: 2
+  nestSort: DATE_ASC
   gravatar:
     default: "mp"
     mirror: "https://sdn.geekzu.org/avatar/"
@@ -24,3 +27,4 @@ frontend:
     children: 400
   reqTimeout: 15000
   versionCheck: true
+  locale: zh-CN

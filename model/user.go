@@ -41,7 +41,7 @@ type CookedUser struct {
 }
 
 func (u User) ToCooked() CookedUser {
-	splitSites := lib.RemoveBlankStrings(lib.SplitAndTrimSpace(u.SiteNames, ","))
+	splitSites := lib.SplitAndTrimSpace(u.SiteNames, ",")
 
 	return CookedUser{
 		ID:           u.ID,

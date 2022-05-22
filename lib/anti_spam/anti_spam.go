@@ -126,7 +126,7 @@ func SyncSpamCheck(comment *model.Comment, echoCtx echo.Context) {
 					logrus.Error("关键词词库文件 " + f + " 加载失败")
 				} else {
 					fileContent := string(buf)
-					*AntiSpamReplaceKeywords = append(*AntiSpamReplaceKeywords, lib.RemoveBlankStrings(lib.SplitAndTrimSpace(fileContent, keywordsConf.FileSep))...)
+					*AntiSpamReplaceKeywords = append(*AntiSpamReplaceKeywords, lib.SplitAndTrimSpace(fileContent, keywordsConf.FileSep)...)
 				}
 			}
 		}

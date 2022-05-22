@@ -103,7 +103,7 @@ func SplitAndTrimSpace(s string, sep string) []string {
 	for _, v := range splitted {
 		arr = append(arr, strings.TrimSpace(v))
 	}
-	return arr
+	return RemoveBlankStrings(arr)
 }
 
 func RemoveBlankStrings(s []string) []string {

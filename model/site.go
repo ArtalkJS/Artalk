@@ -24,7 +24,7 @@ type CookedSite struct {
 }
 
 func (s Site) ToCooked() CookedSite {
-	splitUrls := lib.RemoveBlankStrings(lib.SplitAndTrimSpace(s.Urls, ","))
+	splitUrls := lib.SplitAndTrimSpace(s.Urls, ",")
 	firstUrl := ""
 	if len(splitUrls) > 0 {
 		firstUrl = splitUrls[0]

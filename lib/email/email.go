@@ -57,7 +57,7 @@ func AsyncSendToAdmin(notify *model.Notify, admin *model.User) {
 	}
 
 	fromName := RenderCommon(config.Instance.Email.SendName, notify, from, to)
-	subject := RenderCommon(config.Instance.Email.MailSubjectToAdmin, notify, from, to)
+	subject := RenderCommon(config.Instance.AdminNotify.Email.MailSubjectToAdmin, notify, from, to)
 	body := RenderEmailTpl(notify, from, to)
 
 	AddToQueue(Email{

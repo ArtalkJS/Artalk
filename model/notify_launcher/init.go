@@ -19,7 +19,7 @@ func Init() {
 	email.InitQueue()
 
 	// Telegram
-	tgConf := config.Instance.Notify.Telegram
+	tgConf := config.Instance.AdminNotify.Telegram
 	if tgConf.Enabled {
 		telegramService, _ := telegram.New(tgConf.ApiToken)
 		telegramService.AddReceivers(tgConf.Receivers...)
@@ -27,14 +27,14 @@ func Init() {
 	}
 
 	// 钉钉
-	dingTalkConf := config.Instance.Notify.DingTalk
+	dingTalkConf := config.Instance.AdminNotify.DingTalk
 	if dingTalkConf.Enabled {
 		dingTalkService := dingding.New(&dingding.Config{Token: dingTalkConf.Token, Secret: dingTalkConf.Secret})
 		notify.UseServices(dingTalkService)
 	}
 
 	// Slack
-	slackConf := config.Instance.Notify.Slack
+	slackConf := config.Instance.AdminNotify.Slack
 	if slackConf.Enabled {
 		slackService := slack.New(slackConf.OauthToken)
 		slackService.AddReceivers(slackConf.Receivers...)
@@ -42,9 +42,9 @@ func Init() {
 	}
 
 	// LINE
-	LINEConf := config.Instance.Notify.LINE
+	LINEConf := config.Instance.AdminNotify.LINE
 	if LINEConf.Enabled {
-		lineService, _ := line.New(config.Instance.Notify.LINE.ChannelSecret, config.Instance.Notify.LINE.ChannelAccessToken)
+		lineService, _ := line.New(config.Instance.AdminNotify.LINE.ChannelSecret, config.Instance.AdminNotify.LINE.ChannelAccessToken)
 		lineService.AddReceivers(LINEConf.Receivers...)
 		notify.UseServices(lineService)
 	}

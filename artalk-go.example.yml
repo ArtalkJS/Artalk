@@ -106,9 +106,8 @@ email:
   enabled: false    # 总开关
   send_type: "smtp" # 发送方式 [smtp, ali_dm, sendmail]
   send_name: '{{reply_nick}}' # 发信人昵称
-  send_addr: "example@qq.com" # 发信人地址
+  send_addr: "noreply@example.com" # 发信人地址
   mail_subject: "[{{site_name}}] 您收到了来自 @{{reply_nick}} 的回复"
-  mail_subject_to_admin: '[{{site_name}}] 您的文章 "{{page_title}}" 有新回复'
   mail_tpl: "default" # 邮件模板文件
   smtp:
     host: "smtp.qq.com"
@@ -118,7 +117,7 @@ email:
   ali_dm: # https://help.aliyun.com/document_detail/29444.html
     access_key_id: ""     # 阿里云颁发给用户的访问服务所用的密钥 ID
     access_key_secret: "" # 用于加密的密钥
-    account_name: "example@example.com" # 管理控制台中配置的发信地址
+    account_name: "noreply@example.com" # 管理控制台中配置的发信地址
 
 # 图片上传
 img_upload:
@@ -132,38 +131,21 @@ img_upload:
     exec: "./upgit -c <upgit配置文件路径> -t /artalk-img"
     del_local: true # 上传后删除本地的图片
 
-# 其他通知方式
-notify:
+# 管理员多元推送
+admin_notify:
+  # 邮件通知管理员
+  email:
+    enabled: true
+    mail_subject: '[{{site_name}}] 您的文章 "{{page_title}}" 有新回复'
   # Telegram
   telegram:
     enabled: false
     api_token: ""
     receivers:
       - 7777777
-  # 飞书
-  lark:
-    enabled: false
-    webhook_url: ""
-  # 钉钉
-  ding_talk:
-    enabled: false
-    token: ""
-    secret: ""
   # Bark
   bark:
     enabled: false
     server: "http://day.app/xxxxxxx/"
-  # Slack
-  slack:
-    enabled: false
-    oauth_token: ""
-    receivers:
-      - "CHANNEL_ID"
-  # LINE
-  line:
-    enabled: false
-    channel_secret: ""
-    channel_access_token: ""
-    receivers:
-      - "USER_ID_1"
-      - "GROUP_ID_1"
+  # 另支持 飞书机器人、钉钉、Slack、LINE 等更多推送方式
+  # 详情参考：https://artalk.js.org/guide/backend/notify.html

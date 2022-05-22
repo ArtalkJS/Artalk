@@ -88,7 +88,7 @@ func postInit() {
 		Instance.Captcha.Always = true
 	}
 
-	// 检查废弃需更新配置
+	/* 检查废弃需更新配置 */
 	if Instance.Captcha.ActionTimeout != 0 {
 		logrus.Warn("captcha.action_timeout 配置项已废弃，请使用 captcha.action_reset 代替")
 		if Instance.Captcha.ActionReset == 0 {
@@ -100,5 +100,15 @@ func postInit() {
 		if len(Instance.TrustedDomains) == 0 {
 			Instance.TrustedDomains = Instance.AllowOrigins
 		}
+	}
+
+	// @version < 2.2.0
+	if Instance.Notify != nil {
+		logrus.Warn("notify 配置项已废弃，请使用 admin_notify 代替")
+		Instance.AdminNotify = *Instance.Notify
+	}
+	if Instance.Email.MailSubjectToAdmin != "" {
+		logrus.Warn("email.mail_subject_to_admin 配置项已废弃，请使用 admin_notify.email.mail_subject 代替")
+		Instance.AdminNotify.Email.MailSubject = Instance.Email.MailSubjectToAdmin
 	}
 }

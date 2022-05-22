@@ -122,7 +122,7 @@ func AdminNotify(comment *model.Comment, pComment *model.Comment) {
 
 // 飞书发送
 func SendLark(msg string) {
-	larkConf := config.Instance.Notify.Lark
+	larkConf := config.Instance.AdminNotify.Lark
 	if !larkConf.Enabled {
 		return
 	}
@@ -139,7 +139,7 @@ func SendLark(msg string) {
 
 // Bark 发送
 func SendBark(title string, msg string) {
-	barkConf := config.Instance.Notify.Bark
+	barkConf := config.Instance.AdminNotify.Bark
 	if !barkConf.Enabled {
 		return
 	}

@@ -70,8 +70,10 @@ func (a *action) Stat(c echo.Context) error {
 	case "comment_most_pages":
 		// 评论数最多的页面
 		var pages []model.Page
-		a.db.Raw("SELECT * FROM pages p WHERE p.site_name = ? ORDER BY (SELECT COUNT(*) FROM comments c WHERE c.page_key = p.key AND c.is_pending = ?) DESC", p.SiteName, false).
-			Find(&pages)
+		a.db.Raw(
+			"SELECT * FROM pages p WHERE p.site_name = ? ORDER BY (SELECT COUNT(*) FROM comments c WHERE c.page_key = p.key AND c.is_pending = ?) DESC LIMIT ?",
+			p.SiteName, false, p.Limit,
+		).Find(&pages)
 
 		return RespData(c, model.CookAllPages(pages))
 

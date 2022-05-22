@@ -124,7 +124,8 @@ func (a *action) Add(c echo.Context) error {
 	}
 
 	// default comment type
-	if config.Instance.Moderator.PendingDefault {
+	if !CheckIsAdminReq(c) && config.Instance.Moderator.PendingDefault {
+		// 不是管理员评论 && 配置开启评论默认待审
 		comment.IsPending = true
 	}
 

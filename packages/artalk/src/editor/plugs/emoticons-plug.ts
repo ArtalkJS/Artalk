@@ -265,8 +265,8 @@ export default class EmoticonsPlug extends EditorPlug {
       }
     })
 
-    this.$grpSwitcher.querySelectorAll('span.active').forEach(item => item.classList.remove('active'))
-    this.$grpSwitcher.querySelector(`span[data-index="${index}"]`)?.classList.add('active')
+    this.$grpSwitcher?.querySelectorAll('span.active').forEach(item => item.classList.remove('active'))
+    this.$grpSwitcher?.querySelector(`span[data-index="${index}"]`)?.classList.add('active')
 
     this.changeListHeight()
   }

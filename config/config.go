@@ -227,6 +227,7 @@ type AdminNotifyConf struct {
 	Bark          NotifyBarkConf     `mapstructure:"bark" json:"bark"`                     // bark
 	Slack         NotifySlackConf    `mapstructure:"slack" json:"slack"`                   // slack
 	LINE          NotifyLINEConf     `mapstructure:"line" json:"line"`                     // LINE
+	WebHook       NotifyWebHookConf  `mapstructure:"webhook" json:"webhook"`               // WebHook
 	NoiseMode     bool               `mapstructure:"noise_mode" json:"noise_mode"`         // 嘈杂模式 (非回复管理员的评论也发送通知)
 }
 
@@ -268,6 +269,11 @@ type NotifyLINEConf struct {
 	ChannelSecret      string   `mapstructure:"channel_secret" json:"channel_secret"`
 	ChannelAccessToken string   `mapstructure:"channel_access_token" json:"channel_access_token"`
 	Receivers          []string `mapstructure:"receivers" json:"receivers"`
+}
+
+type NotifyWebHookConf struct {
+	Enabled bool   `mapstructure:"enabled" json:"enabled"`
+	URL     string `mapstructure:"url" json:"url"`
 }
 
 // 使用转换 @link https://transform.tools/json-to-go

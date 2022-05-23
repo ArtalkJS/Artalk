@@ -154,5 +154,9 @@ admin_notify:
   lark:
     enabled: false
     webhook_url: ""
+  # WebHook
+  webhook:
+    enabled: false
+    url: ""
   # 另支持 钉钉、Slack、LINE 等多种推送方式
   # 详情参考：https://artalk.js.org/guide/backend/notify.html

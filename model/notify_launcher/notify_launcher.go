@@ -1,6 +1,8 @@
 package notify_launcher
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"html"
 	"net/http"
@@ -155,14 +157,25 @@ func AdminNotify(comment *model.Comment, pComment *model.Comment) {
 	}()
 
 	// 飞书
-	go func() {
-		SendLark(subject, body)
-	}()
+	if config.Instance.AdminNotify.Lark.Enabled {
+		go func() {
+			SendLark(subject, body)
+		}()
+	}
 
 	// Bark
-	go func() {
-		SendBark(subject, body)
-	}()
+	if config.Instance.AdminNotify.Bark.Enabled {
+		go func() {
+			SendBark(subject, body)
+		}()
+	}
+
+	// WebHook
+	if config.Instance.AdminNotify.WebHook.Enabled {
+		go func() {
+			SendWebHook(subject, body, comment, pComment)
+		}()
+	}
 }
 
 // 飞书发送
@@ -200,6 +213,41 @@ func SendBark(title string, msg string) {
 	result, err := http.Get(fmt.Sprintf("%s/%s/%s", strings.TrimSuffix(barkConf.Server, "/"), url.QueryEscape(title), url.QueryEscape(msg)))
 	if err != nil {
 		logrus.Error("[Bark]", " 消息发送失败：", err)
+		return
+	}
+
+	defer result.Body.Close()
+}
+
+type NotifyWebHookReqBody struct {
+	NotifySubject string      `json:"notify_subject"`
+	NotifyBody    string      `json:"notify_body"`
+	Comment       interface{} `json:"comment"`
+	ParentComment interface{} `json:"parent_comment"`
+}
+
+// WebHook 发送
+func SendWebHook(subject string, body string, comment *model.Comment, pComment *model.Comment) {
+	webhookConf := config.Instance.AdminNotify.WebHook
+	if !webhookConf.Enabled {
+		return
+	}
+
+	reqData := NotifyWebHookReqBody{
+		NotifySubject: subject,
+		NotifyBody:    body,
+		Comment:       comment.ToCooked(),
+	}
+	if !pComment.IsEmpty() {
+		reqData.ParentComment = pComment.ToCooked()
+	} else {
+		reqData.ParentComment = nil
+	}
+
+	jsonByte, _ := json.Marshal(reqData)
+	result, err := http.Post(webhookConf.URL, "application/json", bytes.NewReader(jsonByte))
+	if err != nil {
+		logrus.Error("[WebHook 推送]", " 消息发送失败：", err)
 		return
 	}
 

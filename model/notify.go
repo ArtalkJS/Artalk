@@ -12,7 +12,7 @@ import (
 type Notify struct {
 	gorm.Model
 
-	UserID    uint `gorm:"index"` // 通知对象
+	UserID    uint `gorm:"index"` // 通知对象 (接收通知的用户 ID)
 	CommentID uint `gorm:"index"` // 待查看的评论
 
 	IsRead    bool
@@ -45,14 +45,18 @@ func (n *Notify) SetComment(comment Comment) {
 	n._Comment = comment
 }
 
+// 获取接收通知的用户
+func (n *Notify) FetchUser() User {
+	return FindUserByID(n.UserID)
+}
+
 func (n *Notify) GetParentComment() Comment {
 	comment := n.FetchComment()
 	if comment.Rid == 0 {
 		return Comment{}
 	}
 
-	pComment := FindComment(comment.Rid)
-	return pComment
+	return FindComment(comment.Rid)
 }
 
 // 操作时的验证密钥（判断是否本人操作）

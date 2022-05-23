@@ -115,6 +115,10 @@ func RenotifyWhenPendingModified(comment *model.Comment) {
 		return // 回复对象是管理员，则不再发送通知，因为已经看到了
 	}
 
+	if comment.UserID == pComment.UserID {
+		return // 自己回复自己，不通知
+	}
+
 	notify := model.FindCreateNotify(pComment.UserID, comment.ID)
 	if notify.IsEmailed {
 		return // 邮件已经发送过，则不再重复发送

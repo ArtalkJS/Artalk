@@ -105,7 +105,7 @@ captcha:
 email:
   enabled: false    # 总开关
   send_type: "smtp" # 发送方式 [smtp, ali_dm, sendmail]
-  send_name: '{{reply_nick}}'      # 发信人昵称
+  send_name: "{{reply_nick}}"      # 发信人昵称
   send_addr: "noreply@example.com" # 发信人地址
   mail_subject: "[{{site_name}}] 您收到了来自 @{{reply_nick}} 的回复"
   mail_tpl: "default" # 邮件模板文件
@@ -133,10 +133,13 @@ img_upload:
 
 # 管理员多元推送
 admin_notify:
+  # 通知模版
+  notify_tpl: "default"
+  noise_mode: false
   # 邮件通知管理员
   email:
     enabled: true # 当使用其他推送方式时，可以关闭管理员邮件通知
-    mail_subject: '[{{site_name}}] 您的文章 "{{page_title}}" 有新回复'
+    mail_subject: "[{{site_name}}] 您的文章「{{page_title}}」有新回复"
   # Telegram
   telegram:
     enabled: false
@@ -147,5 +150,9 @@ admin_notify:
   bark:
     enabled: false
     server: "http://day.app/xxxxxxx/"
-  # 另支持 飞书机器人、钉钉、Slack、LINE 等多种推送方式
+  # 飞书
+  lark:
+    enabled: false
+    webhook_url: ""
+  # 另支持 钉钉、Slack、LINE 等多种推送方式
   # 详情参考：https://artalk.js.org/guide/backend/notify.html

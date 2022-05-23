@@ -116,4 +116,18 @@ func postInit() {
 		logrus.Warn("email.mail_subject_to_admin 配置项已废弃，请使用 admin_notify.email.mail_subject 代替")
 		Instance.AdminNotify.Email.MailSubject = Instance.Email.MailSubjectToAdmin
 	}
+
+	// 管理员邮件通知配置继承
+	if Instance.AdminNotify.Email.MailSubject == "" {
+		if Instance.AdminNotify.NotifySubject != "" {
+			Instance.AdminNotify.Email.MailSubject = Instance.AdminNotify.NotifySubject
+		} else if Instance.Email.MailSubject != "" {
+			Instance.AdminNotify.Email.MailSubject = Instance.Email.MailSubject
+		}
+	}
+
+	// 默认待审模式下开启管理员通知嘈杂模式，保证管理员能看到待审核文章
+	if Instance.Moderator.PendingDefault {
+		Instance.AdminNotify.NoiseMode = true
+	}
 }

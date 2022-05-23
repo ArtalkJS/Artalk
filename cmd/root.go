@@ -67,7 +67,7 @@ func init() {
 		Use:   "config",
 		Short: "输出配置信息",
 		Run: func(cmd *cobra.Command, args []string) {
-			loadCore()
+			initConfig()
 			buf, _ := json.MarshalIndent(config.Instance, "", "    ")
 			fmt.Println(string(buf))
 		},

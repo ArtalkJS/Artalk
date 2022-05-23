@@ -16,18 +16,36 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/pkged"
 )
 
-func RenderEmailTpl(notify *model.Notify, from model.CookedCommentForEmail, to model.CookedCommentForEmail) string {
-	tplName := config.Instance.Email.MailTpl
-	tpl := ""
-	if _, err := os.Stat(tplName); errors.Is(err, os.ErrNotExist) {
-		tpl = GetInternalEmailTpl(tplName)
-	} else {
-		tpl = GetExternalEmailTpl(tplName)
+func RenderCommon(str string, notify *model.Notify) string {
+	fromComment := notify.FetchComment()
+	from := fromComment.ToCookedForEmail()
+
+	toComment := notify.GetParentComment()
+	to := toComment.ToCookedForEmail()
+
+	toUser := notify.FetchUser()
+
+	cf := CommonFields{
+		From:          from,
+		To:            to,
+		Comment:       from,
+		ParentComment: to,
+
+		Nick:         toUser.Name,
+		Content:      to.Content,
+		ReplyNick:    from.Nick,
+		ReplyContent: from.Content,
+		PageTitle:    from.Page.Title,
+		PageURL:      from.Page.URL,
+		SiteName:     from.SiteName,
+		SiteURL:      from.Site.FirstUrl,
+
+		LinkToReply: notify.GetReadLink(),
 	}
 
-	tpl = RenderCommon(tpl, notify, from, to)
+	flat := lib.StructToFlatDotMap(&cf)
 
-	return tpl
+	return ReplaceAllMustache(str, flat)
 }
 
 type CommonFields struct {
@@ -49,57 +67,6 @@ type CommonFields struct {
 	LinkToReply string `json:"link_to_reply"`
 }
 
-func RenderCommon(str string, notify *model.Notify, from model.CookedCommentForEmail, to model.CookedCommentForEmail) string {
-	cf := CommonFields{
-		From:          from,
-		To:            to,
-		Comment:       from,
-		ParentComment: to,
-
-		Nick:         to.Nick,
-		Content:      to.Content,
-		ReplyNick:    from.Nick,
-		ReplyContent: from.Content,
-		PageTitle:    from.Page.Title,
-		PageURL:      from.Page.URL,
-		SiteName:     from.SiteName,
-		SiteURL:      from.Site.FirstUrl,
-
-		LinkToReply: notify.GetReadLink(),
-	}
-
-	flat := lib.StructToFlatDotMap(&cf)
-
-	return ReplaceAllMustache(str, flat)
-}
-
-// 获取内建模版
-func GetInternalEmailTpl(tplName string) string {
-	filename := fmt.Sprintf("/email-tpl/%s.html", tplName)
-	f, err := pkged.Open(filename)
-	if err != nil {
-		return ""
-	}
-
-	buf := new(bytes.Buffer)
-	if _, err := buf.ReadFrom(f); err != nil {
-		return ""
-	}
-	contents := buf.String()
-
-	return contents
-}
-
-// 获取外置模版
-func GetExternalEmailTpl(filename string) string {
-	buf, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return ""
-	}
-
-	return string(buf)
-}
-
 // 替换 {{ key }} 为 val
 func ReplaceAllMustache(data string, dict map[string]interface{}) string {
 	r := regexp.MustCompile(`{{\s*(.*?)\s*}}`)
@@ -117,11 +84,93 @@ func ReplaceAllMustache(data string, dict map[string]interface{}) string {
 func GetPurifiedValue(k string, v interface{}) string {
 	val := fmt.Sprintf("%v", v)
 
-	// 去除标签数据，防止数据泄漏
-	if k == "reply_content" || strings.HasSuffix(k, ".content") { // 排除 model.CookedComment.content
+	// 白名单
+	ignoreEscapeKeys := []string{"reply_content", "content", "link_to_reply"}
+	if lib.ContainsStr(ignoreEscapeKeys, k) ||
+		strings.HasSuffix(k, ".content") || // 排除 model.CookedComment.content
+		strings.HasSuffix(k, ".content_raw") {
 		return val
 	}
 
 	val = html.EscapeString(val)
 	return val
+}
+
+// 渲染邮件 Body 内容
+func RenderEmailBody(notify *model.Notify) string {
+	tplName := config.Instance.Email.MailTpl
+	if tplName == "" {
+		tplName = "default"
+	}
+
+	tpl := ""
+	if _, err := os.Stat(tplName); errors.Is(err, os.ErrNotExist) {
+		tpl = GetInternalEmailTpl(tplName)
+	} else {
+		tpl = GetExternalTpl(tplName)
+	}
+
+	tpl = RenderCommon(tpl, notify)
+
+	return tpl
+}
+
+// 渲染管理员推送 Body 内容
+func RenderNotifyBody(notify *model.Notify) string {
+	tplName := config.Instance.AdminNotify.NotifyTpl
+	if tplName == "" {
+		tplName = "default"
+	}
+
+	tpl := ""
+	if _, err := os.Stat(tplName); errors.Is(err, os.ErrNotExist) {
+		tpl = GetInternalNotifyTpl(tplName)
+	} else {
+		tpl = GetExternalTpl(tplName)
+	}
+
+	tpl = RenderCommon(tpl, notify)
+
+	return tpl
+}
+
+// 获取内建邮件模版
+func GetInternalEmailTpl(tplName string) string {
+	return GetInternalTpl("email-tpl", tplName)
+}
+
+// 获取内建通知模版
+func GetInternalNotifyTpl(tplName string) string {
+	if tplName == "default" {
+		return "@{{reply_nick}}:\n\n{{comment.content_raw}}\n\n{{link_to_reply}}"
+	}
+
+	return GetInternalTpl("notify-tpl", tplName)
+}
+
+// 获取内建模版
+func GetInternalTpl(basePath string, tplName string) string {
+	filename := fmt.Sprintf("/%s/%s.html", basePath, tplName)
+	f, err := pkged.Open(filename)
+	if err != nil {
+		return ""
+	}
+
+	buf := new(bytes.Buffer)
+	if _, err := buf.ReadFrom(f); err != nil {
+		return ""
+	}
+	contents := buf.String()
+
+	return contents
+}
+
+// 获取外置模版
+func GetExternalTpl(filename string) string {
+	buf, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return ""
+	}
+
+	return string(buf)
 }

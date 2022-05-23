@@ -218,13 +218,19 @@ type UpgitConf struct {
 
 // 其他通知方式
 type AdminNotifyConf struct {
-	Email    *EmailConf         `mapstructure:"email" json:"email"`         // 邮件通知
-	Telegram NotifyTelegramConf `mapstructure:"telegram" json:"telegram"`   // TG
-	Lark     NotifyLarkConf     `mapstructure:"lark" json:"lark"`           // 飞书
-	DingTalk NotifyDingTalkConf `mapstructure:"ding_talk" json:"ding_talk"` // 钉钉
-	Bark     NotifyBarkConf     `mapstructure:"bark" json:"bark"`           // bark
-	Slack    NotifySlackConf    `mapstructure:"slack" json:"slack"`         // slack
-	LINE     NotifyLINEConf     `mapstructure:"line" json:"line"`           // LINE
+	Email     *AdminEmailConf    `mapstructure:"email" json:"email"`           // 邮件通知
+	Telegram  NotifyTelegramConf `mapstructure:"telegram" json:"telegram"`     // TG
+	Lark      NotifyLarkConf     `mapstructure:"lark" json:"lark"`             // 飞书
+	DingTalk  NotifyDingTalkConf `mapstructure:"ding_talk" json:"ding_talk"`   // 钉钉
+	Bark      NotifyBarkConf     `mapstructure:"bark" json:"bark"`             // bark
+	Slack     NotifySlackConf    `mapstructure:"slack" json:"slack"`           // slack
+	LINE      NotifyLINEConf     `mapstructure:"line" json:"line"`             // LINE
+	NoiseMode bool               `mapstructure:"noise_mode" json:"noise_mode"` // 嘈杂模式 (非回复管理员的评论也发送通知)
+}
+
+type AdminEmailConf struct {
+	Enabled     bool   `mapstructure:"enabled" json:"enabled"`           // 总开关
+	MailSubject string `mapstructure:"mail_subject" json:"mail_subject"` // 邮件标题
 }
 
 type NotifyTelegramConf struct {

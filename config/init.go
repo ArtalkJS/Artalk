@@ -108,7 +108,7 @@ func postInit() {
 		Instance.AdminNotify = *Instance.Notify
 	}
 	if Instance.AdminNotify.Email == nil {
-		Instance.AdminNotify.Email = &EmailConf{
+		Instance.AdminNotify.Email = &AdminEmailConf{
 			Enabled: true, // 默认开启管理员邮件通知
 		}
 	}

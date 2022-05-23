@@ -16,14 +16,26 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/pkged"
 )
 
-func RenderCommon(str string, notify *model.Notify) string {
+func RenderCommon(str string, notify *model.Notify, _renderType ...string) string {
+	// 渲染类型
+	renderType := "email" // 默认为邮件发送渲染
+	if len(_renderType) > 0 {
+		renderType = _renderType[0]
+	}
+
 	fromComment := notify.FetchComment()
 	from := fromComment.ToCookedForEmail()
-
 	toComment := notify.GetParentComment()
 	to := toComment.ToCookedForEmail()
 
-	toUser := notify.FetchUser()
+	toUser := notify.FetchUser() // 发送目标用户
+
+	content := to.Content
+	replyContent := from.Content
+	if renderType == "notify" { // 多元推送内容
+		content = HandleEmoticonsImgTagsForNotify(to.ContentRaw)
+		replyContent = HandleEmoticonsImgTagsForNotify(from.ContentRaw)
+	}
 
 	cf := CommonFields{
 		From:          from,
@@ -32,9 +44,9 @@ func RenderCommon(str string, notify *model.Notify) string {
 		ParentComment: to,
 
 		Nick:         toUser.Name,
-		Content:      to.Content,
+		Content:      content,
 		ReplyNick:    from.Nick,
-		ReplyContent: from.Content,
+		ReplyContent: replyContent,
 		PageTitle:    from.Page.Title,
 		PageURL:      from.Page.URL,
 		SiteName:     from.SiteName,
@@ -96,6 +108,20 @@ func GetPurifiedValue(k string, v interface{}) string {
 	return val
 }
 
+func HandleEmoticonsImgTagsForNotify(str string) string {
+	r := regexp.MustCompile(`<img\s[^>]*?atk-emoticon=["]([^"]*?)["][^>]*?>`)
+	return r.ReplaceAllStringFunc(str, func(m string) string {
+		ms := r.FindStringSubmatch(m)
+		if len(ms) < 2 {
+			return m
+		}
+		if ms[1] == "" {
+			return "[表情]"
+		}
+		return "[" + ms[1] + "]"
+	})
+}
+
 // 渲染邮件 Body 内容
 func RenderEmailBody(notify *model.Notify) string {
 	tplName := config.Instance.Email.MailTpl
@@ -129,7 +155,7 @@ func RenderNotifyBody(notify *model.Notify) string {
 		tpl = GetExternalTpl(tplName)
 	}
 
-	tpl = RenderCommon(tpl, notify)
+	tpl = RenderCommon(tpl, notify, "notify")
 
 	return tpl
 }
@@ -142,7 +168,7 @@ func GetInternalEmailTpl(tplName string) string {
 // 获取内建通知模版
 func GetInternalNotifyTpl(tplName string) string {
 	if tplName == "default" {
-		return "@{{reply_nick}}:\n\n{{comment.content_raw}}\n\n{{link_to_reply}}"
+		return "@{{reply_nick}}:\n\n{{reply_content}}\n\n{{link_to_reply}}"
 	}
 
 	return GetInternalTpl("notify-tpl", tplName)

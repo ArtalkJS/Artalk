@@ -136,7 +136,7 @@ func AdminNotify(comment *model.Comment, pComment *model.Comment) {
 
 	subject := ""
 	if adminNotifyConf.NotifySubject != "" {
-		subject = email.RenderCommon(adminNotifyConf.NotifySubject, &notify)
+		subject = email.RenderCommon(adminNotifyConf.NotifySubject, &notify, "notify")
 	}
 
 	body := email.RenderNotifyBody(&notify)

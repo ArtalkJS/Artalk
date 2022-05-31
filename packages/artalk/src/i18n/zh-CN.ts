@@ -6,7 +6,7 @@ const zhCN: I18n = {
   noComment: '「此时无声胜有声」',
   send: '发送评论',
   nick: '昵称',
-  email: '邮件',
+  email: '邮箱',
   link: '网址',
   emoticon: '表情',
   preview: '预览',

@@ -9,5 +9,4 @@ services:
     ports:
       - 8080:23366
     volumes:
-      - ./conf.yml:/conf.yml
       - ./data:/data

@@ -36,15 +36,18 @@ RUN apk upgrade \
     && echo ${TZ} > /etc/timezone
 
 # add alias
-RUN echo -e '#!/bin/bash\n/artalk-go -w / -c /conf.yml "$@"' > /usr/bin/artalk-go \
+RUN echo -e '#!/bin/bash\n/artalk-go -w / -c /data/artalk-go.yml "$@"' > /usr/bin/artalk-go \
     && chmod +x /usr/bin/artalk-go \
     && cp -p /usr/bin/artalk-go /usr/bin/artalk
 
-VOLUME ["/conf.yml", "/data"]
+VOLUME ["/data"]
 
-ENTRYPOINT ["/usr/bin/artalk-go"]
+COPY docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 
 # expose ArtalkGo default port
 EXPOSE 23366
 
-CMD ["server", "--host", "0.0.0.0", "--port", "23366"]
+CMD ["server", "--host", "localhost", "--port", "23366"]

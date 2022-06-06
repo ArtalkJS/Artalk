@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
@@ -44,6 +45,13 @@ func (a *action) Stat(c echo.Context) error {
 	}
 	QueryComments := func(d *gorm.DB) *gorm.DB {
 		return d.Model(&model.Comment{}).Where("site_name = ? AND is_pending = ?", p.SiteName, false)
+	}
+	QueryOrderRand := func(d *gorm.DB) *gorm.DB {
+		if config.Instance.DB.Type == config.TypeSQLite {
+			return d.Order("RANDOM()") // SQLite case
+		} else {
+			return d.Order("RAND()")
+		}
 	}
 
 	switch p.Type {
@@ -132,8 +140,7 @@ func (a *action) Stat(c echo.Context) error {
 	case "rand_comments":
 		// 随机评论
 		var comments []model.Comment
-		a.db.Scopes(QueryComments).
-			Order("random()").
+		a.db.Scopes(QueryComments, QueryOrderRand).
 			Limit(p.Limit).
 			Find(&comments)
 
@@ -142,8 +149,7 @@ func (a *action) Stat(c echo.Context) error {
 	case "rand_pages":
 		// 随机页面
 		var pages []model.Page
-		a.db.Scopes(QueryPages).
-			Order("random()").
+		a.db.Scopes(QueryPages, QueryOrderRand).
 			Limit(p.Limit).
 			Find(&pages)
 

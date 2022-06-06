@@ -51,7 +51,7 @@ func StructToFlatDotMap(s interface{}) map[string]interface{} {
 func Marked(markdownStr string) (string, error) {
 	bmPolicy := bluemonday.UGCPolicy()
 	bmPolicy.RequireNoReferrerOnLinks(true)
-	bmPolicy.AllowAttrs("width", "height", "align").OnElements("img")
+	bmPolicy.AllowAttrs("width", "height", "align", "atk-emoticon").OnElements("img")
 	bmPolicy.AllowAttrs("style", "class", "align").OnElements("span", "p", "div", "a")
 
 	// https://github.com/yuin/goldmark#security

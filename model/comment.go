@@ -100,6 +100,7 @@ func (c *Comment) GetLinkToReply(notifyKey ...string) string {
 type CookedComment struct {
 	ID             uint   `json:"id"`
 	Content        string `json:"content"`
+	ContentMarked  string `json:"content_marked"`
 	UserID         uint   `json:"user_id"`
 	Nick           string `json:"nick"`
 	EmailEncrypted string `json:"email_encrypted"`
@@ -125,9 +126,12 @@ func (c *Comment) ToCooked() CookedComment {
 	user := c.FetchUser()
 	page := c.FetchPage()
 
+	markedContent, _ := lib.Marked(c.Content)
+
 	return CookedComment{
 		ID:             c.ID,
 		Content:        c.Content,
+		ContentMarked:  markedContent,
 		UserID:         c.UserID,
 		Nick:           user.Name,
 		EmailEncrypted: lib.GetMD5Hash(user.Email),

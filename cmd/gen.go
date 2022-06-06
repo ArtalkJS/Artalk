@@ -16,9 +16,14 @@ import (
 var genCmd = &cobra.Command{
 	Use:   "gen <类型> <目标路径>",
 	Short: "生成一些内容",
-	Long:  "生成一些内容\n例如：artalk-go gen artalk-go.example.yml ./artalk-go.yml",
+	Long:  "生成一些内容\n例如：artalk-go gen config ./artalk-go.yml",
 	Args:  cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {
+		isFileExisted := func(path string) bool {
+			_, err := os.Stat(path)
+			return err == nil
+		}
+
 		// 工作目录
 		if workDir != "" {
 			if err := os.Chdir(workDir); err != nil {
@@ -28,6 +33,10 @@ var genCmd = &cobra.Command{
 
 		// 参数
 		genType := args[0]
+		if genType == "config" || genType == "conf" {
+			genType = "artalk-go.example.yml"
+		}
+
 		genPath := filepath.Base(genType)
 		if len(args) >= 2 {
 			genPath = args[1]
@@ -55,9 +64,11 @@ var genCmd = &cobra.Command{
 		if err != nil {
 			logrus.Fatal(err)
 		}
-
-		_, err = os.Stat(absPath)
-		if err == nil {
+		if s, err := os.Stat(absPath); err == nil && s.IsDir() {
+			absPath = filepath.Join(absPath, filepath.Base(genType))
+		}
+		isForce, _ := cmd.Flags().GetBool("force")
+		if isFileExisted(absPath) && !isForce {
 			logrus.Fatal("已存在文件: " + absPath)
 		}
 
@@ -77,6 +88,8 @@ var genCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(genCmd)
+
+	flagPV(genCmd, "force", "f", false, "Force overwrite an existing file")
 }
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*")

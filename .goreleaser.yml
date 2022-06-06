@@ -51,6 +51,10 @@ builds:
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
+    flags:
+      # https://go-review.googlesource.com/c/go/+/224588/
+      # https://github.com/ArtalkJS/ArtalkGo/issues/35
+      - -tags=timetzdata
 
   # Darwin (amd_64)
   - id: darwin-amd64

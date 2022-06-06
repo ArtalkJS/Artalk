@@ -108,58 +108,57 @@ func CheckIsAllowed(c echo.Context, name string, email string, page model.Page, 
 
 func CheckReferer(c echo.Context, site model.Site) (bool, error) {
 	isAdminReq := CheckIsAdminReq(c)
-	if isAdminReq || site.IsEmpty() {
+	if isAdminReq {
+		return true, nil // 管理员直接允许
+	}
+
+	// 可信来源 URL
+	allowReferrers := []string{}
+	allowReferrers = append(allowReferrers, c.Scheme()+"://"+c.Request().Host) // 默认允许来自相同域名的请求
+	allowReferrers = append(allowReferrers, config.Instance.TrustedDomains...) // 允许配置文件域名
+	allowReferrers = append(allowReferrers, site.ToCooked().Urls...)           // 允许数据库站点 URLs 中的域名
+
+	if len(allowReferrers) == 0 {
+		return true, nil // 若列表中无数据，则取消控制
+	}
+
+	// 列表中出现通配符关闭 Referer 控制
+	if lib.ContainsStr(allowReferrers, "*") {
 		return true, nil
-	}
-
-	// 可信域名配置
-	confTrustedDomains := config.Instance.TrustedDomains
-
-	// 请求 Referer 合法性判断
-	if strings.TrimSpace(site.Urls) == "" && len(confTrustedDomains) == 0 {
-		return true, nil // 若 url 字段为空，则取消控制
-	}
-
-	// 可信域名出现通配符关闭 Referer 控制
-	if lib.ContainsStr(confTrustedDomains, "*") {
-		return true, nil
-	}
-
-	allowUrls := site.ToCooked().Urls
-	if len(confTrustedDomains) != 0 {
-		allowUrls = append(allowUrls, confTrustedDomains...)
 	}
 
 	referer := c.Request().Referer()
 	if referer == "" {
-		return true, nil
+		return false, RespError(c, "需携带 Referer 访问，请检查前端 Referrer-Policy 设置")
 	}
 
-	pr, err := url.Parse(referer)
+	pReferer, err := url.Parse(referer)
 	if err != nil {
-		return true, nil
+		return false, RespError(c, "Referer 不合法")
 	}
 
-	allow := false
-	for _, u := range allowUrls {
-		u = strings.TrimSpace(u)
-		if u == "" {
+	for _, a := range allowReferrers {
+		a = strings.TrimSpace(a)
+		if a == "" {
 			continue
 		}
-		pu, err := url.Parse(u)
+		pAllow, err := url.Parse(a)
 		if err != nil {
 			continue
 		}
-		if pu.Hostname() == pr.Hostname() {
-			allow = true
-			break
+
+		// 在可信来源列表中匹配 Referer 的 host 部分 (含端口) 则放行
+		// @see https://web.dev/referrer-best-practices/
+		// Referrer-Policy 不能设为 no-referer，
+		// Chrome v85+ 默认为：strict-origin-when-cross-origin。
+		// 前端页面 head 不配置 <meta name="referrer" content="no-referer" />，
+		// 浏览器默认都会至少携带 Origin 数据 (不带 path，但包含端口)
+		if pAllow.Host == pReferer.Host {
+			return true, nil
 		}
 	}
-	if !allow {
-		return false, RespError(c, "非法请求：Referer 不被允许")
-	}
 
-	return true, nil
+	return false, RespError(c, "不允许的 Referer，请将其加入可信域名")
 }
 
 func CheckSite(c echo.Context, siteName *string, destID *uint, destSiteAll *bool) (bool, error) {

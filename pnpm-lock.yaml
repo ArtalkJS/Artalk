@@ -19,12 +19,12 @@ importers:
       less: 4.1.2
       postcss: 8.4.14
       prettier: 2.6.2
-      rollup: 2.75.3
+      rollup: 2.75.5
       typescript: 4.7.2
       vite: 2.9.9
       vite-tsconfig-paths: 3.5.0
     devDependencies:
-      '@rollup/plugin-dynamic-import-vars': 1.4.3_rollup@2.75.3
+      '@rollup/plugin-dynamic-import-vars': 1.4.3_rollup@2.75.5
       '@types/node': 16.11.38
       '@typescript-eslint/eslint-plugin': 5.26.0_hzuh7e2up357pvq3mkokjvu2lq
       '@typescript-eslint/parser': 5.26.0_xztl6dhthcahlo6akmb2bmjmle
@@ -39,7 +39,7 @@ importers:
       less: 4.1.2
       postcss: 8.4.14
       prettier: 2.6.2
-      rollup: 2.75.3
+      rollup: 2.75.5
       typescript: 4.7.2
       vite: 2.9.9_less@4.1.2
       vite-tsconfig-paths: 3.5.0_vite@2.9.9
@@ -143,7 +143,7 @@ packages:
       fastq: 1.13.0
     dev: true
 
-  /@rollup/plugin-dynamic-import-vars/1.4.3_rollup@2.75.3:
+  /@rollup/plugin-dynamic-import-vars/1.4.3_rollup@2.75.5:
     resolution: {integrity: sha512-VYP9BBVI0pcYpLp/DkFT8YP+EmqmWFMmWXoTObDH6OouERxJyPsIj0tC3HxhjNBOKgcRc7eV75IQItzELt7QSg==}
     engines: {node: '>= 10.0.0'}
     peerDependencies:
@@ -153,7 +153,7 @@ packages:
       estree-walker: 2.0.2
       fast-glob: 3.2.11
       magic-string: 0.25.9
-      rollup: 2.75.3
+      rollup: 2.75.5
     dev: true
 
   /@rollup/pluginutils/4.2.1:
@@ -1920,8 +1920,8 @@ packages:
       glob: 7.2.0
     dev: true
 
-  /rollup/2.75.3:
-    resolution: {integrity: sha512-YA29fLU6MAYSaDxIQYrGGOcbXlDmG96h0krGGYObroezcQ0KgEPM3+7MtKD/qeuUbFuAJXvKZee5dA1dpwq1PQ==}
+  /rollup/2.75.5:
+    resolution: {integrity: sha512-JzNlJZDison3o2mOxVmb44Oz7t74EfSd1SQrplQk0wSaXV7uLQXtVdHbxlcT3w+8tZ1TL4r/eLfc7nAbz38BBA==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:
@@ -2172,7 +2172,7 @@ packages:
       less: 4.1.2
       postcss: 8.4.14
       resolve: 1.22.0
-      rollup: 2.75.3
+      rollup: 2.75.5
     optionalDependencies:
       fsevents: 2.3.2
     dev: true

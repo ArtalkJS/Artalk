@@ -28,6 +28,8 @@
 
 ## Build
 
+> 注：绝大多数情况下，你无需进行以下手动编译操作，见：[后端部署文档](https://artalk.js.org/guide/backend/install.html)
+
 ### 编译二进制文件
 
 ```sh
@@ -36,10 +38,28 @@ $ make all
 
 编译后二进制文件将输出到 `bin/` 目录下
 
-### Docker 镜像制作
+### Docker Compose 编译运行
 
 ```sh
-# 制作镜像
+# 克隆项目
+$ git clone https://github.com/ArtalkJS/ArtalkGo
+$ cd ArtalkGo
+
+# 构建镜像
+$ docker compose build
+
+# 运行
+$ docker compose up -d
+```
+
+### Docker 镜像构建
+
+```sh
+# 克隆项目
+$ git clone https://github.com/ArtalkJS/ArtalkGo
+$ cd ArtalkGo
+
+# 构建镜像
 $ make docker-docker
 
 # 发布镜像

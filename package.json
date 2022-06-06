@@ -25,7 +25,7 @@
     "less": "4.1.2",
     "postcss": "8.4.14",
     "prettier": "2.6.2",
-    "rollup": "2.75.3",
+    "rollup": "2.75.5",
     "typescript": "4.7.2",
     "vite": "2.9.9",
     "vite-tsconfig-paths": "3.5.0"

@@ -15,7 +15,7 @@ if [[ ! -e /data/artalk-go.yml ]]; then
         upMsg+=$'#\n'
         upMsg+=$'# The original config file has been moved to the "/data/" folder,\n'
         upMsg+=$'# please unmount the config file volume from your container\n'
-        upMsg+=$'# and edit "/data/artalk-go.yml for configuration.'
+        upMsg+=$'# and edit "/data/artalk-go.yml" for configuration.'
         echo "$upMsg" > /conf.yml
         echo "$(date) [info] Copy config file from '/conf.yml' to '/data/artalk-go.yml' for upgrade"
     fi

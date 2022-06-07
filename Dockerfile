@@ -50,4 +50,4 @@ ENTRYPOINT ["/entrypoint.sh"]
 # expose ArtalkGo default port
 EXPOSE 23366
 
-CMD ["server", "--host", "localhost", "--port", "23366"]
+CMD ["server", "--host", "0.0.0.0", "--port", "23366"]

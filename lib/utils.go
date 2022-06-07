@@ -97,6 +97,19 @@ func ContainsStr(s []string, v string) bool {
 	return false
 }
 
+// RemoveDuplicates removes the duplicates strings from a Slice
+func RemoveDuplicates(arr []string) []string {
+	allKeys := make(map[string]bool)
+	list := []string{}
+	for _, item := range arr {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
+}
+
 func SplitAndTrimSpace(s string, sep string) []string {
 	splitted := strings.Split(s, sep)
 	arr := []string{}

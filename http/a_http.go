@@ -55,28 +55,26 @@ func Run() {
 }
 
 func InitCorsControl(e *echo.Echo) {
-	allowOrigins := []string{}
-	pushAllowOrigin := func(u string) {
-		if !lib.ContainsStr(allowOrigins, u) {
-			allowOrigins = append(allowOrigins, extractURLForCorsConf(u))
-		}
-	}
-
-	// 导入配置中的可信域名
-	for _, v := range config.Instance.TrustedDomains {
-		pushAllowOrigin(v)
-	}
-
-	// 导入数据库中的站点 urls
+	siteUrls := []string{}
 	for _, site := range model.FindAllSitesCooked() {
-		for _, url := range site.Urls {
-			pushAllowOrigin(url)
-		}
+		siteUrls = append(siteUrls, site.Urls...)
 	}
 
-	// 通配符关闭跨域控制
+	allowOrigins := []string{}
+	allowOrigins = append(allowOrigins, config.Instance.TrustedDomains...) // 导入配置中的可信域名
+	allowOrigins = append(allowOrigins, siteUrls...)                       // 导入数据库中的站点 urls
+
 	if lib.ContainsStr(allowOrigins, "*") {
-		allowOrigins = []string{"*"}
+		allowOrigins = []string{"*"} // 通配符关闭跨域控制
+	} else {
+		// 提取 URL
+		extractURLsArr := []string{}
+		for _, u := range allowOrigins {
+			extractURLsArr = append(extractURLsArr, extractURLForCorsConf(u))
+		}
+		// 去重
+		extractURLsArr = lib.RemoveDuplicates(extractURLsArr)
+		allowOrigins = extractURLsArr
 	}
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{

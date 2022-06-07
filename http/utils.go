@@ -112,21 +112,7 @@ func CheckReferer(c echo.Context, site model.Site) (bool, error) {
 		return true, nil // 管理员直接允许
 	}
 
-	// 可信来源 URL
-	allowReferrers := []string{}
-	allowReferrers = append(allowReferrers, c.Scheme()+"://"+c.Request().Host) // 默认允许来自相同域名的请求
-	allowReferrers = append(allowReferrers, config.Instance.TrustedDomains...) // 允许配置文件域名
-	allowReferrers = append(allowReferrers, site.ToCooked().Urls...)           // 允许数据库站点 URLs 中的域名
-
-	if len(allowReferrers) == 0 {
-		return true, nil // 若列表中无数据，则取消控制
-	}
-
-	// 列表中出现通配符关闭 Referer 控制
-	if lib.ContainsStr(allowReferrers, "*") {
-		return true, nil
-	}
-
+	// 读取 Referer
 	referer := c.Request().Referer()
 	if referer == "" {
 		return false, RespError(c, "需携带 Referer 访问，请检查前端 Referrer-Policy 设置")
@@ -137,6 +123,23 @@ func CheckReferer(c echo.Context, site model.Site) (bool, error) {
 		return false, RespError(c, "Referer 不合法")
 	}
 
+	// 可信来源 URL
+	allowReferrers := []string{}
+
+	// 用户配置
+	allowReferrers = append(allowReferrers, config.Instance.TrustedDomains...) // 允许配置文件域名
+	allowReferrers = append(allowReferrers, site.ToCooked().Urls...)           // 允许数据库站点 URLs 中的域名
+	if len(allowReferrers) == 0 {
+		return true, nil // 若用户配置列表中无数据，则取消控制
+	}
+	if lib.ContainsStr(allowReferrers, "*") {
+		return true, nil // 列表中出现通配符关闭 Referer 控制
+	}
+
+	// 系统配置：默认允许来自相同域名的请求
+	allowReferrers = append(allowReferrers, c.Scheme()+"://"+c.Request().Host)
+
+	allowReferrers = lib.RemoveDuplicates(allowReferrers) // 去重
 	for _, a := range allowReferrers {
 		a = strings.TrimSpace(a)
 		if a == "" {

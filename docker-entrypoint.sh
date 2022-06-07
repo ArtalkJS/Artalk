@@ -1,7 +1,8 @@
 #!/bin/bash
+set -e
 
-if [[ ! -e /data/artalk-go.yml ]]; then
-    if [[ ! -e /conf.yml ]]; then
+if [ ! -e /data/artalk-go.yml ] && [ "$1" != 'gen' ]; then
+    if [ ! -e /conf.yml ]; then
         # Generate new config
         artalk-go gen conf /data/artalk-go.yml
         echo "$(date) [info] Generate new config file to '/data/artalk-go.yml'"
@@ -21,5 +22,5 @@ if [[ ! -e /data/artalk-go.yml ]]; then
     fi
 fi
 
-# Run ArtalkGo Server
+# Run ArtalkGo
 artalk-go "$@"

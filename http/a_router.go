@@ -32,9 +32,7 @@ func InitRouter(e *echo.Echo) {
 	api.POST("/add", action.Add)
 	api.POST("/get", action.Get)
 	api.POST("/user-get", action.UserGet)
-	api.GET("/login", action.Login)
 	api.POST("/login", action.Login)
-	api.GET("/login-status", action.LoginStatus)
 	api.POST("/login-status", action.LoginStatus)
 	api.POST("/mark-read", action.MarkRead)
 	api.POST("/vote", action.Vote)
@@ -52,13 +50,10 @@ func InitRouter(e *echo.Echo) {
 	// api/captcha
 	if config.Instance.Captcha.Enabled {
 		ca := api.Group("/captcha")
-		ca.GET("/refresh", action.CaptchaGet)
 		ca.POST("/refresh", action.CaptchaGet)
 		ca.GET("/get", action.CaptchaGet)
 		ca.POST("/get", action.CaptchaGet)
-		ca.GET("/check", action.CaptchaCheck)
 		ca.POST("/check", action.CaptchaCheck)
-		ca.GET("/status", action.CaptchaStatus)
 		ca.POST("/status", action.CaptchaStatus)
 	}
 

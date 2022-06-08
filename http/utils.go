@@ -106,41 +106,58 @@ func CheckIsAllowed(c echo.Context, name string, email string, page model.Page, 
 	return true, nil
 }
 
-func CheckReferer(c echo.Context, site model.Site) (bool, error) {
+// 检测 Origin 合法性
+// 防止 CSRF 攻击
+// @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
+func CheckOrigin(c echo.Context, site model.Site) (bool, error) {
 	isAdminReq := CheckIsAdminReq(c)
 	if isAdminReq {
 		return true, nil // 管理员直接允许
 	}
 
-	// 读取 Referer
-	referer := c.Request().Referer()
-	if referer == "" {
-		return false, RespError(c, "需携带 Referer 访问，请检查前端 Referrer-Policy 设置")
-	}
-
-	pReferer, err := url.Parse(referer)
-	if err != nil {
-		return false, RespError(c, "Referer 不合法")
-	}
-
 	// 可信来源 URL
-	allowReferrers := []string{}
+	allowSrcURLs := []string{}
 
 	// 用户配置
-	allowReferrers = append(allowReferrers, config.Instance.TrustedDomains...) // 允许配置文件域名
-	allowReferrers = append(allowReferrers, site.ToCooked().Urls...)           // 允许数据库站点 URLs 中的域名
-	if len(allowReferrers) == 0 {
+	allowSrcURLs = append(allowSrcURLs, config.Instance.TrustedDomains...) // 允许配置文件域名
+	allowSrcURLs = append(allowSrcURLs, site.ToCooked().Urls...)           // 允许数据库站点 URLs 中的域名
+	if len(allowSrcURLs) == 0 {
 		return true, nil // 若用户配置列表中无数据，则取消控制
 	}
-	if lib.ContainsStr(allowReferrers, "*") {
-		return true, nil // 列表中出现通配符关闭 Referer 控制
+	if lib.ContainsStr(allowSrcURLs, "*") {
+		return true, nil // 列表中出现通配符关闭控制
+	}
+
+	host := c.Request().Host
+	realHostUnderProxy := c.Request().Header.Get("X-Forwarded-Host")
+	if realHostUnderProxy != "" {
+		host = realHostUnderProxy
+	}
+
+	// 读取 Origin 数据
+	// @note Origin 标头在前端 fetch POST 操作中总是携带的，
+	// 		 即使配置 Referrer-Policy: no-referrer
+	// @see https://stackoverflow.com/questions/42239643/when-do-browsers-send-the-origin-header-when-do-browsers-set-the-origin-to-null
+	origin := c.Request().Header.Get(echo.HeaderOrigin)
+	if origin == "" || origin == "null" {
+		// 从 Referer 获取 Origin
+		referer := c.Request().Referer()
+		if referer == "" {
+			return false, RespError(c, "无效请求，Origin 无法获取")
+		}
+		origin = referer
+	}
+
+	pOrigin, err := url.Parse(origin)
+	if err != nil {
+		return false, RespError(c, "Origin 不合法")
 	}
 
 	// 系统配置：默认允许来自相同域名的请求
-	allowReferrers = append(allowReferrers, c.Scheme()+"://"+c.Request().Host)
+	allowSrcURLs = append(allowSrcURLs, c.Scheme()+"://"+host)
 
-	allowReferrers = lib.RemoveDuplicates(allowReferrers) // 去重
-	for _, a := range allowReferrers {
+	allowSrcURLs = lib.RemoveDuplicates(allowSrcURLs) // 去重
+	for _, a := range allowSrcURLs {
 		a = strings.TrimSpace(a)
 		if a == "" {
 			continue
@@ -156,12 +173,12 @@ func CheckReferer(c echo.Context, site model.Site) (bool, error) {
 		// Chrome v85+ 默认为：strict-origin-when-cross-origin。
 		// 前端页面 head 不配置 <meta name="referrer" content="no-referer" />，
 		// 浏览器默认都会至少携带 Origin 数据 (不带 path，但包含端口)
-		if pAllow.Host == pReferer.Host {
+		if pAllow.Host == pOrigin.Host {
 			return true, nil
 		}
 	}
 
-	return false, RespError(c, "不允许的 Referer，请将其加入可信域名")
+	return false, RespError(c, "非法请求，请检查可信域名配置")
 }
 
 func CheckSite(c echo.Context, siteName *string, destID *uint, destSiteAll *bool) (bool, error) {
@@ -198,8 +215,8 @@ func CheckSite(c echo.Context, siteName *string, destID *uint, destSiteAll *bool
 		})
 	}
 
-	// 检测 Referer 合法性
-	if isOK, resp := CheckReferer(c, site); !isOK {
+	// 检测 Origin 合法性
+	if isOK, resp := CheckOrigin(c, site); !isOK {
 		return false, resp
 	}
 

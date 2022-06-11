@@ -75,6 +75,9 @@ export default interface ContextApi {
   /** 列表 - 重新加载数据 */
   listReload(): void
 
+  /** 列表 - 重新加载数据 (别名) */
+  reload(): void
+
   /** 列表 - UI 更新 */
   listRefreshUI(): void
 
@@ -125,4 +128,7 @@ export default interface ContextApi {
 
   /** i18n 翻译 */
   $t(key: keyof I18n, args?: {[key: string]: string}): string
+
+  /** 设置暗黑模式 */
+  setDarkMode(darkMode: boolean): void
 }

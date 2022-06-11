@@ -132,6 +132,10 @@ export default class Context implements ContextApi {
     this.list.reload()
   }
 
+  public reload(): void {
+    this.listReload()
+  }
+
   public listRefreshUI(): void {
     this.list.refreshUI()
   }
@@ -233,5 +237,28 @@ export default class Context implements ContextApi {
     str = str.replace(/\{\s*(\w+?)\s*\}/g, (_, token) => args[token] || '')
 
     return str
+  }
+
+  public setDarkMode(darkMode: boolean): void {
+    const darkModeClassName = 'atk-dark-mode'
+
+    this.conf.darkMode = darkMode
+    this.trigger('conf-updated')
+
+    if (this.conf.darkMode) {
+      this.$root.classList.add(darkModeClassName)
+    } else {
+      this.$root.classList.remove(darkModeClassName)
+    }
+
+    // for Layer
+    const { $wrap: $layerWrap } = GetLayerWrap(this)
+    if ($layerWrap) {
+      if (this.conf.darkMode) {
+        $layerWrap.classList.add(darkModeClassName)
+      } else {
+        $layerWrap.classList.remove(darkModeClassName)
+      }
+    }
   }
 }

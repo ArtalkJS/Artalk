@@ -13,7 +13,7 @@ import Editor from './editor'
 import List from './list'
 import SidebarLayer from './layer/sidebar-layer'
 
-import Layer, { GetLayerWrap } from './layer'
+import Layer from './layer'
 import * as Utils from './lib/utils'
 import * as Ui from './lib/ui'
 import * as Stat from './lib/stat'
@@ -198,30 +198,6 @@ export default class Artalk {
     }
   }
 
-  /** 设置暗黑模式 */
-  public setDarkMode(darkMode: boolean) {
-    const darkModeClassName = 'atk-dark-mode'
-
-    this.ctx.conf.darkMode = darkMode
-    this.ctx.trigger('conf-updated')
-
-    if (this.conf.darkMode) {
-      this.$root.classList.add(darkModeClassName)
-    } else {
-      this.$root.classList.remove(darkModeClassName)
-    }
-
-    // for Layer
-    const { $wrap: $layerWrap } = GetLayerWrap(this.ctx)
-    if ($layerWrap) {
-      if (this.conf.darkMode) {
-        $layerWrap.classList.add(darkModeClassName)
-      } else {
-        $layerWrap.classList.remove(darkModeClassName)
-      }
-    }
-  }
-
   /** 监听事件 */
   public on<K extends keyof EventPayloadMap>(name: K, handler: Handler<EventPayloadMap[K]>) {
     this.ctx.on(name, handler, 'external')
@@ -240,6 +216,11 @@ export default class Artalk {
   /** 重新加载 */
   public reload() {
     this.ctx.listReload()
+  }
+
+  /** 设置暗黑模式 */
+  public setDarkMode(darkMode: boolean) {
+    this.ctx.setDarkMode(darkMode)
   }
 
   /** Use Plugin */

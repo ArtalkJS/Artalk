@@ -14,7 +14,7 @@ type ParamsVote struct {
 	Name  string `mapstructure:"name"`
 	Email string `mapstructure:"email"`
 
-	SiteName string `mapstructure:"site_name"`
+	SiteName string
 	SiteID   uint
 	SiteAll  bool
 }
@@ -25,10 +25,8 @@ func (a *action) Vote(c echo.Context) error {
 		return resp
 	}
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
-		return resp
-	}
+	// use site
+	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	// find user
 	var user model.User

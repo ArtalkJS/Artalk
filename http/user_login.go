@@ -3,8 +3,12 @@ package http
 import (
 	"crypto/md5"
 	"fmt"
+	"net/http"
 	"strings"
+	"time"
 
+	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -25,8 +29,7 @@ func (a *action) Login(c echo.Context) error {
 	// record action for limiting action
 	RecordAction(c)
 
-	user := model.FindUser(p.Name, p.Email) // name = ? OR email = ?
-
+	user := model.FindUser(p.Name, p.Email) // name = ? AND email = ?
 	if user.IsEmpty() {
 		return RespError(c, "验证失败")
 	}
@@ -60,9 +63,36 @@ func (a *action) Login(c echo.Context) error {
 		return RespError(c, "验证失败")
 	}
 
+	jwtToken := LoginGetUserToken(user)
+	setAuthCookie(c, jwtToken, time.Now().Add(time.Second*time.Duration(config.Instance.LoginTimeout)))
+
 	return RespData(c, Map{
-		"token": LoginGetUserToken(user),
+		"token": jwtToken,
 	})
+}
+
+func setAuthCookie(c echo.Context, jwtToken string, expires time.Time) {
+	if !config.Instance.Cookie.Enabled {
+		return
+	}
+
+	// save jwt token to cookie
+	cookie := new(http.Cookie)
+	cookie.Name = lib.COOKIE_KEY_ATK_AUTH
+	cookie.Value = jwtToken
+	cookie.Expires = expires
+
+	// @see https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Cookies
+	// @see https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes
+	cookie.Path = "/"
+	cookie.HttpOnly = true                     // prevent XSS
+	cookie.Secure = true                       // https only
+	cookie.SameSite = http.SameSiteDefaultMode // for cors-request
+
+	// @note cookie secure is not working on localhost
+	// @see https://bugs.chromium.org/p/chromium/issues/detail?id=1177877#c7
+
+	c.SetCookie(cookie)
 }
 
 func HashPassword(password string) (string, error) {

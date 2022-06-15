@@ -6,7 +6,7 @@ import (
 )
 
 type ParamsAdminPageGet struct {
-	SiteName string `mapstructure:"site_name"`
+	SiteName string
 	SiteID   uint
 	SiteAll  bool
 	Limit    int `mapstructure:"limit"`
@@ -24,10 +24,8 @@ func (a *action) AdminPageGet(c echo.Context) error {
 		return resp
 	}
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
-		return resp
-	}
+	// use site
+	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	if !IsAdminHasSiteAccess(c, p.SiteName) {
 		return RespError(c, "无权操作")

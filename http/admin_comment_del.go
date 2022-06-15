@@ -8,7 +8,7 @@ import (
 type ParamsCommentDel struct {
 	ID uint `mapstructure:"id" param:"required"`
 
-	SiteName string `mapstructure:"site_name"`
+	SiteName string
 	SiteID   uint
 	SiteAll  bool
 }
@@ -19,10 +19,8 @@ func (a *action) AdminCommentDel(c echo.Context) error {
 		return resp
 	}
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
-		return resp
-	}
+	// use site
+	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	// find comment
 	comment := model.FindComment(p.ID)

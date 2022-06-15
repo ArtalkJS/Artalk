@@ -10,8 +10,8 @@ import (
 )
 
 type ParamsAdminPageFetch struct {
-	ID       uint   `mapstructure:"id"`
-	SiteName string `mapstructure:"site_name"`
+	ID       uint `mapstructure:"id"`
+	SiteName string
 
 	GetStatus bool `mapstructure:"get_status"`
 }
@@ -25,6 +25,8 @@ func (a *action) AdminPageFetch(c echo.Context) error {
 	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
 	}
+
+	UseSite(c, &p.SiteName, nil, nil)
 
 	// 状态获取
 	if p.GetStatus {

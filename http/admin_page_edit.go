@@ -9,8 +9,8 @@ import (
 
 type ParamsAdminPageEdit struct {
 	// 查询值
-	ID       uint   `mapstructure:"id"`
-	SiteName string `mapstructure:"site_name"`
+	ID       uint `mapstructure:"id"`
+	SiteName string
 	SiteID   uint
 
 	// 修改值
@@ -29,10 +29,8 @@ func (a *action) AdminPageEdit(c echo.Context) error {
 		return RespError(c, "page key 不能为空白字符")
 	}
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
-		return resp
-	}
+	// use site
+	UseSite(c, &p.SiteName, &p.SiteID, nil)
 
 	// find page
 	var page = model.FindPageByID(p.ID)

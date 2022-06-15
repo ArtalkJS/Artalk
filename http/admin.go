@@ -47,6 +47,17 @@ func LoginGetUserToken(user model.User) string {
 	return t
 }
 
+func GetJwtStrByReqCookie(c echo.Context) string {
+	if !config.Instance.Cookie.Enabled {
+		return ""
+	}
+	cookie, err := c.Cookie(lib.COOKIE_KEY_ATK_AUTH)
+	if err != nil {
+		return ""
+	}
+	return cookie.Value
+}
+
 func GetJwtInstanceByReq(c echo.Context) *jwt.Token {
 	token := c.QueryParam("token")
 	if token == "" {
@@ -55,6 +66,9 @@ func GetJwtInstanceByReq(c echo.Context) *jwt.Token {
 	if token == "" {
 		token = c.Request().Header.Get("Authorization")
 		token = strings.TrimPrefix(token, "Bearer ")
+	}
+	if token == "" {
+		token = GetJwtStrByReqCookie(c)
 	}
 	if token == "" {
 		return nil

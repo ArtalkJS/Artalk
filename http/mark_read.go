@@ -12,7 +12,7 @@ type ParamsMarkRead struct {
 	Email   string `mapstructure:"email"`
 	AllRead bool   `mapstructure:"all_read"`
 
-	SiteName string `mapstructure:"site_name"`
+	SiteName string
 	SiteID   uint
 	SiteAll  bool
 }
@@ -23,10 +23,8 @@ func (a *action) MarkRead(c echo.Context) error {
 		return resp
 	}
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
-		return resp
-	}
+	// use site
+	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	// all read
 	if p.AllRead {

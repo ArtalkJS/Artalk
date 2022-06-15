@@ -34,6 +34,7 @@ func InitRouter(e *echo.Echo) {
 	api.POST("/user-get", action.UserGet)
 	api.POST("/login", action.Login)
 	api.POST("/login-status", action.LoginStatus)
+	api.POST("/logout", action.Logout)
 	api.POST("/mark-read", action.MarkRead)
 	api.POST("/vote", action.Vote)
 	api.POST("/pv", action.PV)

@@ -11,7 +11,7 @@ import (
 type ParamsStat struct {
 	Type string `mapstructure:"type" param:"required"`
 
-	SiteName string `mapstructure:"site_name"`
+	SiteName string
 	PageKeys string `mapstructure:"page_keys"`
 
 	Limit int `mapstructure:"limit"`
@@ -26,10 +26,8 @@ func (a *action) Stat(c echo.Context) error {
 		return resp
 	}
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
-		return resp
-	}
+	// use site
+	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	// Limit 限定
 	if p.Limit <= 0 {

@@ -27,7 +27,7 @@ type ParamsImgUpload struct {
 	PageKey   string `mapstructure:"page_key" param:"required"`
 	PageTitle string `mapstructure:"page_title"`
 
-	SiteName string `mapstructure:"site_name"`
+	SiteName string
 
 	SiteID  uint
 	SiteAll bool
@@ -51,10 +51,8 @@ func (a *action) ImgUpload(c echo.Context) error {
 		return RespError(c, "Invalid email")
 	}
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
-		return resp
-	}
+	// use site
+	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	// 记录请求次数 (for 请求频率限制)
 	RecordAction(c)

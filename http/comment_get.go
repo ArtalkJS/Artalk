@@ -8,7 +8,7 @@ import (
 
 type ParamsGet struct {
 	PageKey  string `mapstructure:"page_key" param:"required"`
-	SiteName string `mapstructure:"site_name"`
+	SiteName string
 
 	Limit  int `mapstructure:"limit"`
 	Offset int `mapstructure:"offset"`
@@ -47,10 +47,8 @@ func (a *action) Get(c echo.Context) error {
 		return resp
 	}
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, &p.SiteAll); !isOK {
-		return resp
-	}
+	// use site
+	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	// find page
 	var page model.Page

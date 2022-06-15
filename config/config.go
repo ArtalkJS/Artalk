@@ -19,6 +19,7 @@ type Config struct {
 	SiteDefault    string           `mapstructure:"site_default" json:"site_default"`       // 默认站点名（当请求无指定 site_name 时使用）
 	AdminUsers     []AdminUserConf  `mapstructure:"admin_users" json:"admin_users"`         // 管理员账户
 	LoginTimeout   int              `mapstructure:"login_timeout" json:"login_timeout"`     // 登陆超时
+	Cookie         CookieConf       `mapstructure:"cookie" json:"cookie"`                   // Cookie
 	Moderator      ModeratorConf    `mapstructure:"moderator" json:"moderator"`             // 评论审查
 	Captcha        CaptchaConf      `mapstructure:"captcha" json:"captcha"`                 // 验证码
 	Email          EmailConf        `mapstructure:"email" json:"email"`                     // 邮箱提醒
@@ -85,6 +86,10 @@ type AdminUserConf struct {
 	BadgeColor   string   `mapstructure:"badge_color" json:"badge_color"`
 	ReceiveEmail *bool    `mapstructure:"receive_email" json:"receive_email"`
 	Sites        []string `mapstructure:"sites" json:"sites"`
+}
+
+type CookieConf struct {
+	Enabled bool `mapstructure:"enabled" json:"enabled"`
 }
 
 type ModeratorConf struct {

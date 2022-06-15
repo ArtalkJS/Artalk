@@ -16,22 +16,17 @@ func (a *action) UserGet(c echo.Context) error {
 		return resp
 	}
 
-	user := model.FindUser(p.Name, p.Email)
+	// login status
+	isLogin := !GetUserByReq(c).IsEmpty()
 
+	user := model.FindUser(p.Name, p.Email)
 	if user.IsEmpty() {
 		return RespData(c, Map{
 			"user":         nil,
-			"is_login":     false,
+			"is_login":     isLogin,
 			"unread":       []interface{}{},
 			"unread_count": 0,
 		})
-	}
-
-	// loginned user check
-	isLogin := false
-	tUser := GetUserByReq(c)
-	if tUser.Name == p.Name && tUser.Email == p.Email {
-		isLogin = true
 	}
 
 	// unread notifies

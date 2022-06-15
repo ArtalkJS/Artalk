@@ -7,7 +7,7 @@ import (
 
 type ParamsAdminPageDel struct {
 	Key      string `mapstructure:"key" param:"required"`
-	SiteName string `mapstructure:"site_name"`
+	SiteName string
 	SiteID   uint
 }
 
@@ -17,10 +17,8 @@ func (a *action) AdminPageDel(c echo.Context) error {
 		return resp
 	}
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
-		return resp
-	}
+	// use site
+	UseSite(c, &p.SiteName, &p.SiteID, nil)
 
 	page := model.FindPage(p.Key, p.SiteName)
 	if page.IsEmpty() {

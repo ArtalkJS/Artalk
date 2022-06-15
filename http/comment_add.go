@@ -25,7 +25,7 @@ type ParamsAdd struct {
 	PageTitle string `mapstructure:"page_title"`
 
 	Token    string `mapstructure:"token"`
-	SiteName string `mapstructure:"site_name"`
+	SiteName string
 	SiteID   uint
 }
 
@@ -64,10 +64,8 @@ func (a *action) Add(c echo.Context) error {
 	// record action for limiting action
 	RecordAction(c)
 
-	// find site
-	if isOK, resp := CheckSite(c, &p.SiteName, &p.SiteID, nil); !isOK {
-		return resp
-	}
+	// use site
+	UseSite(c, &p.SiteName, &p.SiteID, nil)
 
 	// find page
 	page := model.FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)

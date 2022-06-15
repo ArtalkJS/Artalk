@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSRF Test</title>
+
+  <!-- 解除注释来测试当 referer 为空时的行为 -->
+  <!-- <meta name="referrer" content="never"> -->
+</head>
+<body>
+
+  <form action="http://localhost:23366/api/add" method="post">
+    <input type="text" name="name" value="admin">
+    <input type="text" name="email" value="test@example.com">
+    <input type="text" name="link" value="">
+    <input type="text" name="content" value="CSRF Success">
+    <input type="text" name="rid" value="0">
+    <input type="text" name="page_key" value="https://artalk.js.org/">
+    <input type="text" name="site_name" value="ArtalkDocs">
+    <button type="submit">Fire!</button>
+  </form>
+
+</body>
+</html>

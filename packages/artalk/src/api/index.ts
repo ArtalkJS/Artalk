@@ -1,7 +1,7 @@
 import { CommentData, ListData, UserData, PageData, SiteData, NotifyData } from '~/types/artalk-data'
 import ArtalkConfig from '~/types/artalk-config'
 import Context from '~/types/context'
-import { Fetch, ToFormData, POST, GET } from './request'
+import { Fetch, ToFormData, POST } from './request'
 import * as Utils from '../lib/utils'
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 
@@ -124,6 +124,11 @@ export default class Api {
       email: this.ctx.user.data.email
     })
     return (data || { is_login: false, is_admin: false }) as { is_login: boolean, is_admin: boolean }
+  }
+
+  /** 用户 · 注销 */
+  public async logout() {
+    return POST(this.ctx, `${this.baseURL}/logout`)
   }
 
   // ============================

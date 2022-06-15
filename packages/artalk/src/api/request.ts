@@ -9,6 +9,9 @@ export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit,
     init.headers = headers
   }
 
+  // 跨域请求携带 cookie (无需)
+  // init.credentials = 'include'
+
   // 请求操作
   const resp = await timeoutFetch(ctx, input, timeout || ctx.conf.reqTimeout || 15000, init)
 
@@ -60,19 +63,20 @@ export async function POST<T>(ctx: Context, url: string, data?: {[key: string]: 
   const init: RequestInit = {
     method: 'POST',
   }
-  if (data) init.body = ToFormData(data)
+  data = { site_name: ctx.conf.site || '', ...(data || {}) } // 总是携带 site_name
+  init.body = ToFormData(data)
 
   const json = await Fetch(ctx, url, init)
   return ((json.data || {}) as T)
 }
 
-/** 公共 GET 请求 */
-export async function GET<T>(ctx: Context, url: string, data?: {[key: string]: any}) {
-  const json = await Fetch(ctx, url + (data ? (`?${new URLSearchParams(data)}`) : ''), {
-    method: 'GET',
-  })
-  return ((json.data || {}) as T)
-}
+/** 公共 GET 请求 (无 GET 方式 API) */
+// export async function GET<T>(ctx: Context, url: string, data?: {[key: string]: any}) {
+//   const json = await Fetch(ctx, url + (data ? (`?${new URLSearchParams(data)}`) : ''), {
+//     method: 'GET',
+//   })
+//   return ((json.data || {}) as T)
+// }
 
 /** 对象转 FormData */
 export function ToFormData(object: {[key: string]: any}): FormData {

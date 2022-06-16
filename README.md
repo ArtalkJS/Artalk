@@ -10,7 +10,7 @@
 
 > ArtalkGo: Golang backend of Artalk.
 
-前往：[“**官方文档 · 后端部分**”](https://artalk.js.org/guide/backend/)
+前往：[“**官方文档 · 后端部分**”](https://artalk.js.org/guide/backend/config.html)
 
 ---
 

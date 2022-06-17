@@ -41,7 +41,7 @@ const zhCN: I18n = {
   collapse: '折叠',
   collapsed: '已折叠',
   collapsedMsg: '该评论已被系统或管理员折叠',
-  expand: '取消折叠',
+  expand: '展开',
   approved: '已审',
   pending: '待审',
   pendingMsg: '审核中，仅本人可见。',

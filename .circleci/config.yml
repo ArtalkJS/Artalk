@@ -4,7 +4,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: 'cimg/node:16.15.0'
+      - image: 'cimg/node:16.15.1'
     steps:
       - node/install
       - checkout

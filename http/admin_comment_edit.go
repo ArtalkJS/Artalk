@@ -3,6 +3,7 @@ package http
 import (
 	"strconv"
 
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/lib/email"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
@@ -48,6 +49,14 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 		return RespError(c, "无权操作")
 	}
 
+	// check params
+	if p.Email != "" && !lib.ValidateEmail(p.Email) {
+		return RespError(c, "Invalid email")
+	}
+	if p.Link != "" && !lib.ValidateURL(p.Link) {
+		return RespError(c, "Invalid link")
+	}
+
 	// content
 	if p.Content != "" {
 		comment.Content = p.Content
@@ -60,14 +69,22 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 		}
 	}
 
-	// user
-	if p.Nick != "" && p.Email != "" {
-		user := model.FindCreateUser(p.Nick, p.Email, p.Link)
-		if user.ID != comment.UserID {
-			comment.UserID = user.ID
-		}
+	// merge user
+	originalUser := comment.FetchUser()
+	if p.Nick == "" {
+		p.Nick = originalUser.Name
 	}
-	user := comment.FetchUser()
+	if p.Email == "" {
+		p.Email = originalUser.Email
+	}
+
+	// find or save new user
+	user := model.FindCreateUser(p.Nick, p.Email, p.Link)
+	if user.ID != comment.UserID {
+		comment.UserID = user.ID
+	}
+
+	// user link update
 	if p.Link != "" && p.Link != user.Link {
 		user.Link = p.Link
 		model.UpdateUser(&user)

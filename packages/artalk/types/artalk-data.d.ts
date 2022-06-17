@@ -8,6 +8,9 @@ export interface CommentData {
   /** 用户昵称 */
   nick: string
 
+  /** 用户邮箱 (该字段仅管理员可见) */
+  email?: string
+
   /** 用户邮箱（已加密） */
   email_encrypted: string
 

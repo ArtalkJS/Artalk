@@ -127,6 +127,14 @@ export default class Context implements ContextApi {
     this.editor.cancelReply()
   }
 
+  public editComment(commentData: CommentData, $comment: HTMLElement): void {
+    this.editor.setEditComment(commentData, $comment)
+  }
+
+  public cancelEditComment(): void {
+    this.editor.cancelEditComment()
+  }
+
   public updateNotifies(notifies: NotifyData[]): void {
     this.list.updateUnread(notifies)
   }

@@ -50,12 +50,12 @@ importers:
       abortcontroller-polyfill: ^1.7.3
       hanabi: ^0.4.0
       insane: ^2.6.2
-      marked: ^4.0.16
+      marked: ^4.0.17
     dependencies:
       abortcontroller-polyfill: 1.7.3
       hanabi: 0.4.0
       insane: 2.6.2
-      marked: 4.0.16
+      marked: 4.0.17
     devDependencies:
       '@types/marked': 4.0.3
 
@@ -1616,8 +1616,8 @@ packages:
     dev: true
     optional: true
 
-  /marked/4.0.16:
-    resolution: {integrity: sha512-wahonIQ5Jnyatt2fn8KqF/nIqZM8mh3oRu2+l5EANGMhu6RFjiSG52QNE2eWzFMI94HqYSgN184NurgNG6CztA==}
+  /marked/4.0.17:
+    resolution: {integrity: sha512-Wfk0ATOK5iPxM4ptrORkFemqroz0ZDxp5MWfYA7H/F+wO17NRWV5Ypxi6p3g2Xmw2bKeiYOl6oVnLHKxBA0VhA==}
     engines: {node: '>= 12'}
     hasBin: true
     dev: false

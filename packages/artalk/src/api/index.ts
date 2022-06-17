@@ -58,7 +58,7 @@ export default class Api {
   }
 
   /** 评论 · 修改 */
-  public async commentEdit(data: CommentData) {
+  public async commentEdit(data: Partial<CommentData>) {
     const params: any = {
       ...data,
     }

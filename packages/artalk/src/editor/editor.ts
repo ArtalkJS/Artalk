@@ -31,10 +31,16 @@ export default class Editor extends Component {
   public $submitBtn: HTMLButtonElement
   public $notifyWrap: HTMLElement
 
+  // Editor 不同的状态
   private replyComment: CommentData|null = null
   private $sendReply: HTMLElement|null = null
 
   private isTraveling = false
+
+  private editComment: CommentData|null = null
+  private get isEditMode() {
+    return this.editComment !== null
+  }
 
   /** 启用的插件 */
   private readonly ENABLED_PLUGS = [ EmoticonsPlug, UploadPlug, PreviewPlug, HeaderInputPlug ]
@@ -98,6 +104,8 @@ export default class Editor extends Component {
   }
 
   private onHeaderInput(key: string, $input: HTMLInputElement) {
+    if (this.isEditMode) return // 评论编辑模式，不修改个人信息
+
     this.user.update({
       [key]: $input.value.trim()
     })
@@ -245,7 +253,7 @@ export default class Editor extends Component {
     Ui.hideLoading(this.$el)
   }
 
-  /** 提交评论 */
+  /** 点击评论提交按钮事件 */
   public async submit() {
     if (this.getFinalContent().trim() === '') {
       this.$textarea.focus()
@@ -256,6 +264,17 @@ export default class Editor extends Component {
 
     this.showLoading()
 
+    if (!this.isEditMode) {
+      await this.submitAdd()
+    } else {
+      await this.submitEdit()
+    }
+
+    this.hideLoading()
+  }
+
+  /** 创建评论 */
+  public async submitAdd() {
     try {
       const nComment = await this.ctx.getApi().add({
         content: this.getFinalContent(),
@@ -279,9 +298,28 @@ export default class Editor extends Component {
     } catch (err: any) {
       console.error(err)
       this.showNotify(`${this.$t('commentFail')}，${err.msg || String(err)}`, 'e')
-      return
-    } finally {
-      this.hideLoading()
+    }
+  }
+
+  /** 修改评论 */
+  public async submitEdit() {
+    if (this.editComment === null)
+      throw new Error('submitEdit() should only be called in edit mode')
+
+    try {
+      const saveData = {
+        id: this.editComment.id,
+        content: this.getFinalContent(),
+        nick: this.$nick.value,
+        email: this.$email.value,
+        link: this.$link.value,
+      }
+      const nComment = await this.ctx.getApi().commentEdit(saveData)
+      this.ctx.updateComment(nComment)
+      this.ctx.trigger('editor-submitted')
+    } catch (err: any) {
+      console.error(err)
+      this.showNotify(`${this.$t('commentFail')}，${err.msg || String(err)}`, 'e')
     }
   }
 

@@ -63,6 +63,9 @@ export default interface ContextApi {
   /** 插入评论 */
   insertComment(commentData: CommentData): void
 
+  /** 更新评论 */
+  updateComment(commentData: CommentData): void
+
   /** 评论回复 */
   replyComment(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
 

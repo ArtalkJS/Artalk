@@ -35,9 +35,11 @@ export default class Artalk {
   public list!: List
   public sidebarLayer!: SidebarLayer
 
-  protected static Plugins: ArtalkPlug[] = [
-    Stat.PvCountWidget
-  ]
+  /** Plugins (in global scope)  */
+  protected static Plugins: ArtalkPlug[] = [ Stat.PvCountWidget ]
+
+  /** Plugins (in a instance scope) */
+  protected instancePlugins: ArtalkPlug[] = []
 
   constructor(customConf: Partial<ArtalkConfig>) {
     /* 初始化基本配置 */
@@ -86,7 +88,7 @@ export default class Artalk {
     // 事件绑定初始化
     this.initEventBind()
 
-    // 插件初始化
+    // 插件初始化 (global scope)
     Artalk.Plugins.forEach(plugin => {
       if (typeof plugin === 'function')
         plugin(this.ctx)
@@ -223,9 +225,21 @@ export default class Artalk {
     this.ctx.setDarkMode(darkMode)
   }
 
-  /** Use Plugin */
-  public static Use(plugin: ArtalkPlug) {
+  /** Use Plugin (specific instance) */
+  public use(plugin: ArtalkPlug) {
+    this.instancePlugins.push(plugin)
+    if (typeof plugin === 'function') plugin(this.ctx)
+  }
+
+  /** Use Plugin (static method for global scope) */
+  public static use(plugin: ArtalkPlug) {
     this.Plugins.push(plugin)
+  }
+
+  /** @deprecated Please replace it with lowercase function name `use(...)`. */
+  public static Use(plugin: ArtalkPlug) {
+    this.use(plugin)
+    console.warn('`Use(...)` is deprecated, replace it with lowercase `use(...)`.')
   }
 
   /** 装载数量统计元素 */

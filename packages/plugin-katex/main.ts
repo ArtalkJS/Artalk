@@ -4,7 +4,7 @@ import Artalk from 'artalk'
 import katex from 'katex'
 
 // @link https://github.com/markedjs/marked/issues/1538#issuecomment-575838181
-Artalk.Use((ctx) => {
+Artalk.use((ctx) => {
   let i = 0
   const nextID = () => `__atk_katext_id_${i++}__`
   const mathExpressions: { [key: string]: { type: 'block' | 'inline', expression: string } } = {}

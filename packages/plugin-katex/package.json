@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "artalk": "workspace: *",
-    "katex": "^0.15.6"
+    "katex": "^0.16.0"
   },
   "devDependencies": {
     "@types/katex": "0.14.0"

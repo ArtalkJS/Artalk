@@ -69,10 +69,10 @@ importers:
     specifiers:
       '@types/katex': 0.14.0
       artalk: 'workspace: *'
-      katex: ^0.15.6
+      katex: ^0.16.0
     dependencies:
       artalk: link:../artalk
-      katex: 0.15.6
+      katex: 0.16.0
     devDependencies:
       '@types/katex': 0.14.0
 
@@ -1535,8 +1535,8 @@ packages:
     hasBin: true
     dev: true
 
-  /katex/0.15.6:
-    resolution: {integrity: sha512-UpzJy4yrnqnhXvRPhjEuLA4lcPn6eRngixW7Q3TJErjg3Aw2PuLFBzTkdUb89UtumxjhHTqL3a5GDGETMSwgJA==}
+  /katex/0.16.0:
+    resolution: {integrity: sha512-wPRB4iUPysfH97wTgG5/tRLYxmKVq6Q4jRAWRVOUxXB1dsiv4cvcNjqabHkrOvJHM1Bpk3WrgmllSO1vIvP24w==}
     hasBin: true
     dependencies:
       commander: 8.3.0

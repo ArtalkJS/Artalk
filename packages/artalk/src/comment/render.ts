@@ -214,7 +214,7 @@ export default class CommentRender {
       }
     }
 
-    // 绑定回复按钮事件
+    // 回复按钮
     if (this.data.is_allow_reply) {
       const replyBtn = Utils.createElement(`<span>${this.ctx.$t('reply')}</span>`)
       this.$actions.append(replyBtn)
@@ -228,7 +228,7 @@ export default class CommentRender {
       })
     }
 
-    // 绑定折叠按钮事件
+    // 折叠按钮
     const collapseBtn = new ActionBtn(this.ctx, {
       text: () => (this.data.is_collapsed ? this.ctx.$t('expand') : this.ctx.$t('collapse')),
       adminOnly: true
@@ -238,7 +238,7 @@ export default class CommentRender {
       this.comment.getActions().adminEdit('collapsed', collapseBtn)
     })
 
-    // 绑定待审核按钮事件
+    // 审核按钮
     const pendingBtn = new ActionBtn(this.ctx, {
       text: () => (this.data.is_pending ? this.ctx.$t('pending') : this.ctx.$t('approved')),
       adminOnly: true
@@ -248,7 +248,27 @@ export default class CommentRender {
       this.comment.getActions().adminEdit('pending', pendingBtn)
     })
 
-    // 绑定删除按钮事件
+    // 置顶按钮
+    const pinnedBtn = new ActionBtn(this.ctx, {
+      text: () => (this.data.is_pinned ? this.ctx.$t('unpin') : this.ctx.$t('pin')),
+      adminOnly: true
+    })
+    pinnedBtn.appendTo(this.$actions)
+    pinnedBtn.setClick(() => {
+      this.comment.getActions().adminEdit('pinned', pendingBtn)
+    })
+
+    // 编辑按钮
+    const editBtn = new ActionBtn(this.ctx, {
+      text: this.ctx.$t('edit'),
+      adminOnly: true
+    })
+    editBtn.appendTo(this.$actions)
+    editBtn.setClick(() => {
+      this.ctx.editComment(this.data, this.$el)
+    })
+
+    // 删除按钮
     const delBtn = new ActionBtn(this.ctx, {
       text: this.ctx.$t('delete'),
       confirm: true,
@@ -258,16 +278,6 @@ export default class CommentRender {
     delBtn.appendTo(this.$actions)
     delBtn.setClick(() => {
       this.comment.getActions().adminDelete(delBtn)
-    })
-
-    // 绑定置顶按钮事件
-    const pinnedBtn = new ActionBtn(this.ctx, {
-      text: () => (this.data.is_pinned ? this.ctx.$t('unpin') : this.ctx.$t('pin')),
-      adminOnly: true
-    })
-    pinnedBtn.appendTo(this.$actions)
-    pinnedBtn.setClick(() => {
-      this.comment.getActions().adminEdit('pinned', pendingBtn)
     })
   }
 

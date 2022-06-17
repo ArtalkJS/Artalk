@@ -115,12 +115,24 @@ export default class Context implements ContextApi {
     this.list.insertComment(commentData)
   }
 
+  public updateComment(commentData: CommentData): void {
+    this.list.updateComment(commentData)
+  }
+
   public replyComment(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void {
     this.editor.setReply(commentData, $comment, scroll)
   }
 
   public cancelReplyComment(): void {
     this.editor.cancelReply()
+  }
+
+  public editComment(commentData: CommentData, $comment: HTMLElement): void {
+    this.editor.setEditComment(commentData, $comment)
+  }
+
+  public cancelEditComment(): void {
+    this.editor.cancelEditComment()
   }
 
   public updateNotifies(notifies: NotifyData[]): void {

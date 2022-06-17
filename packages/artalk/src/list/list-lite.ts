@@ -429,6 +429,14 @@ export default class ListLite extends Component {
     this.ctx.trigger('list-inserted', commentData)
   }
 
+  /** 更新评论 */
+  public updateComment(commentData: CommentData) {
+    const comment = this.ctx.findComment(commentData.id)
+    if (comment) {
+      comment.setData(commentData)
+    }
+  }
+
   /** 更新未读数据 */
   public updateUnread(notifies: NotifyData[]) {
     this.unread = notifies

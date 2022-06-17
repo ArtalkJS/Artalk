@@ -31,10 +31,18 @@ export default class Editor extends Component {
   public $submitBtn: HTMLButtonElement
   public $notifyWrap: HTMLElement
 
+  // Editor 的不同状态
+  private isTraveling = false
+
+  /** 回复评论 */
   private replyComment: CommentData|null = null
   private $sendReply: HTMLElement|null = null
+  public get isReplyMode() { return this.replyComment !== null }
 
-  private isTraveling = false
+  /** 编辑评论 */
+  private editComment: CommentData|null = null
+  private $editCancelBtn: HTMLElement|null = null
+  public get isEditMode() { return this.editComment !== null }
 
   /** 启用的插件 */
   private readonly ENABLED_PLUGS = [ EmoticonsPlug, UploadPlug, PreviewPlug, HeaderInputPlug ]
@@ -98,6 +106,8 @@ export default class Editor extends Component {
   }
 
   private onHeaderInput(key: string, $input: HTMLInputElement) {
+    if (this.isEditMode) return // 评论编辑模式，不修改个人信息
+
     this.user.update({
       [key]: $input.value.trim()
     })
@@ -128,8 +138,13 @@ export default class Editor extends Component {
     })
   }
 
+  private refreshSendBtnText() {
+    if (this.isEditMode) this.$submitBtn.innerText = this.$t('save')
+    else this.$submitBtn.innerText = this.ctx.conf.sendBtn || this.$t('send')
+  }
+
   private initSubmitBtn() {
-    this.$submitBtn.innerText = this.ctx.conf.sendBtn || this.$t('send')
+    this.refreshSendBtnText()
     this.$submitBtn.addEventListener('click', () => (this.submit()))
   }
 
@@ -186,21 +201,16 @@ export default class Editor extends Component {
     }
   }
 
-  public clearEditor() {
-    this.setContent('')
-    this.cancelReply()
-  }
-
   private adjustTextareaHeight() {
     const diff = this.$textarea.offsetHeight - this.$textarea.clientHeight
     this.$textarea.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
     this.$textarea.style.height = `${this.$textarea.scrollHeight + diff}px`
   }
 
+  /** 设置回复评论 */
   public setReply(commentData: CommentData, $comment: HTMLElement, scroll = true) {
-    if (this.replyComment !== null) {
-      this.cancelReply()
-    }
+    if (this.isEditMode) this.cancelEditComment()
+    if (this.isReplyMode) this.cancelReply()
 
     if (this.$sendReply === null) {
       this.$sendReply = Utils.createElement(`<div class="atk-send-reply">${this.$t('reply')} <span class="atk-text"></span><span class="atk-cancel">×</span></div>`);
@@ -221,6 +231,7 @@ export default class Editor extends Component {
     this.$textarea.focus()
   }
 
+  /** 取消回复评论 */
   public cancelReply() {
     if (this.$sendReply !== null) {
       this.$sendReply.remove()
@@ -231,6 +242,53 @@ export default class Editor extends Component {
     if (this.ctx.conf.editorTravel === true) {
       this.travelBack()
     }
+  }
+
+  /** 设置编辑评论 */
+  public setEditComment(commentData: CommentData, $comment: HTMLElement) {
+    if (this.isEditMode) this.cancelEditComment()
+    if (this.isReplyMode) this.cancelReply()
+
+    if (this.$editCancelBtn === null) {
+      this.$editCancelBtn = Utils.createElement(`<div class="atk-send-reply">${this.$t('editCancel')}<span class="atk-cancel">×</span></div>`);
+      this.$editCancelBtn.onclick = () => {
+        this.cancelEditComment()
+      }
+      this.$textareaWrap.append(this.$editCancelBtn)
+    }
+    this.editComment = commentData
+
+    this.$header.style.display = 'none' // TODO 暂时隐藏
+
+    this.travel($comment)
+
+    this.$nick.value = commentData.nick
+    this.$email.value = commentData.email || ''
+    this.$link.value = commentData.link
+
+    this.setContent(commentData.content)
+    this.$textarea.focus()
+
+    this.refreshSendBtnText()
+  }
+
+  /** 取消编辑评论 */
+  public cancelEditComment() {
+    if (this.$editCancelBtn !== null) {
+      this.$editCancelBtn.remove()
+      this.$editCancelBtn = null
+    }
+
+    this.editComment = null
+    this.travelBack()
+
+    this.$nick.value = this.user.data.nick
+    this.$email.value = this.user.data.email
+    this.$link.value = this.user.data.link
+
+    this.setContent('')
+    this.refreshSendBtnText()
+    this.$header.style.display = '' // TODO
   }
 
   public showNotify(msg: string, type: "i"|"s"|"w"|"e") {
@@ -245,7 +303,7 @@ export default class Editor extends Component {
     Ui.hideLoading(this.$el)
   }
 
-  /** 提交评论 */
+  /** 点击评论提交按钮事件 */
   public async submit() {
     if (this.getFinalContent().trim() === '') {
       this.$textarea.focus()
@@ -256,6 +314,17 @@ export default class Editor extends Component {
 
     this.showLoading()
 
+    if (!this.isEditMode) {
+      await this.submitAdd()
+    } else {
+      await this.submitEdit()
+    }
+
+    this.hideLoading()
+  }
+
+  /** 创建评论 */
+  public async submitAdd() {
     try {
       const nComment = await this.ctx.getApi().add({
         content: this.getFinalContent(),
@@ -274,14 +343,40 @@ export default class Editor extends Component {
       }
 
       this.ctx.insertComment(nComment)
-      this.clearEditor() // 清空编辑器
+
+      // 复原编辑器
+      this.setContent('')
+      this.cancelReply()
+
       this.ctx.trigger('editor-submitted')
     } catch (err: any) {
       console.error(err)
       this.showNotify(`${this.$t('commentFail')}，${err.msg || String(err)}`, 'e')
-      return
-    } finally {
-      this.hideLoading()
+    }
+  }
+
+  /** 修改评论 */
+  public async submitEdit() {
+    try {
+      const saveData = {
+        content: this.getFinalContent(),
+        nick: this.$nick.value,
+        email: this.$email.value,
+        link: this.$link.value,
+      }
+      const nComment = await this.ctx.getApi().commentEdit({
+        ...this.editComment, ...saveData
+      })
+      this.ctx.updateComment(nComment)
+
+      // 复原编辑器
+      this.setContent('')
+      this.cancelEditComment()
+
+      this.ctx.trigger('editor-submitted')
+    } catch (err: any) {
+      console.error(err)
+      this.showNotify(`${this.$t('commentFail')}，${err.msg || String(err)}`, 'e')
     }
   }
 

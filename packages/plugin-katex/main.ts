@@ -5,6 +5,11 @@ import katex from 'katex'
 
 // @link https://github.com/markedjs/marked/issues/1538#issuecomment-575838181
 Artalk.use((ctx) => {
+  if (!ctx.markedInstance) {
+    console.log('[artalk-plugin-katex] no marked instance found')
+    return
+  }
+
   let i = 0
   const nextID = () => `__atk_katext_id_${i++}__`
   const mathExpressions: { [key: string]: { type: 'block' | 'inline', expression: string } } = {}

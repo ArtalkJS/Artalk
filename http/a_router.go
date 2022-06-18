@@ -27,7 +27,7 @@ func InitRouter(e *echo.Echo) {
 	}
 
 	// api
-	api := e.Group("/api")
+	api := e.Group("/api", SiteOriginMiddleware())
 
 	api.POST("/add", action.Add)
 	api.POST("/get", action.Get)

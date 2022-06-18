@@ -81,8 +81,6 @@ func InitCorsControl(e *echo.Echo) {
 		AllowOrigins:     allowOrigins,
 		AllowCredentials: true, // allow cors with cookies
 	}))
-
-	e.Use(SiteOriginMiddleware())
 }
 
 // 从完整 URL 中提取出 Scheme + Host 部分 (保留端口号)

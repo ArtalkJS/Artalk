@@ -1,5 +1,5 @@
 {
-  "name": "@artalkjs/artalk-sidebar",
+  "name": "@artalk/artalk-sidebar",
   "version": "0.2.0",
   "license": "LGPL-3.0",
   "description": "The sidebar of artalk",

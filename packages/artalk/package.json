@@ -22,7 +22,7 @@
   "unpkg": "./dist/Artalk.iife.js",
   "jsdelivr": "./dist/Artalk.iife.js",
   "module": "./dist/Artalk.es.js",
-  "types": "./types/index.d.ts",
+  "types": "./dist/src/main.d.ts",
   "scripts": {
     "dev": "vite",
     "build": "pnpm lint && vite build && pnpm build:lite",

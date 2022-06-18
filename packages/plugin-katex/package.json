@@ -1,5 +1,5 @@
 {
-  "name": "@artalkjs/plugin-katex",
+  "name": "@artalk/plugin-katex",
   "version": "0.1.3",
   "license": "LGPL-3.0",
   "description": "The katex plugin of artalk",

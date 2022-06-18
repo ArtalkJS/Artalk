@@ -10,8 +10,8 @@ export default defineConfig({
     minify: 'terser',
     lib: {
       entry: resolve(__dirname, './main.ts'),
-      name: 'plugin-lightbox',
-      fileName: (format) => ((format == "umd") ? 'plugin-lightbox.js' : `plugin-lightbox.${format}.js`),
+      name: 'artalk-plugin-lightbox',
+      fileName: (format) => ((format == "umd") ? 'artalk-plugin-lightbox.js' : `artalk-plugin-lightbox.${format}.js`),
       formats: ["es", "umd", "iife"]
     },
     rollupOptions: {

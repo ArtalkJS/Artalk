@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>plugin-lightbox</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div id="switcher">
+    <button>LightGallery</button>
+    <button>FancyBox</button>
+    <button>lightbox2</button>
+  </div>
+
+  <div id="comments"></div>
+
+  <script type="module">
+    const type = localStorage.getItem('lightbox_type') || 'LightGallery'
+    if (type === 'LightGallery') {
+      loadSrc(
+        'https://unpkg.com/lightgallery@2.5.0/lightgallery.min.js',
+        'https://unpkg.com/lightgallery@2.5.0/css/lightgallery.css'
+      )
+    } else if (type === 'FancyBox') {
+      loadSrc(
+        'https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js',
+        'https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css'
+      )
+    } else if (type === 'lightbox2') {
+      loadSrc(
+        'https://unpkg.com/lightbox2@v2/dist/js/lightbox-plus-jquery.min.js',
+        'https://unpkg.com/lightbox2@v2/dist/css/lightbox.min.css'
+      )
+    }
+
+    // switcher
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('#switcher button').forEach(btn => {
+        btn.onclick = () => {
+          localStorage.setItem('lightbox_type', btn.innerText)
+          location.reload()
+        }
+      })
+    })
+
+    import Artalk from 'artalk'
+    import './main.ts'
+    import 'artalk/dist/Artalk.css'
+
+    function loadArtalk() {
+      var artalk = new Artalk({
+        el: '#comments',
+        pageKey: 'https://artalk.js.org/',
+        pageTitle: 'Artalk Home',
+        server: (import.meta.env.DEV) ? 'http://localhost:23366' : 'https://artalk.qwqaq.com',
+        site: 'ArtalkDocs',
+      });
+    }
+
+    function loadSrc(js, css) {
+      const script = document.createElement('script')
+      script.src = js
+      document.body.appendChild(script)
+      script.onload = () => {
+        loadArtalk()
+      }
+      const style = document.createElement('link')
+      style.rel = 'stylesheet'
+      style.href = css
+      document.head.appendChild(style)
+    }
+  </script>
+</body>
+</html>

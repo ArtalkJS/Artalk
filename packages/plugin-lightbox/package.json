@@ -1,0 +1,18 @@
+{
+  "name": "@artalk/plugin-lightbox",
+  "version": "0.1.0",
+  "license": "LGPL-3.0",
+  "description": "The image lightbox plugin for artalk",
+  "main": "./dist/artalk-plugin-lightbox.js",
+  "module": "./dist/artalk-plugin-lightbox.es.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "prepublish": "pnpm build",
+    "publish": "pnpm publish --access=public"
+  },
+  "dependencies": {
+    "artalk": "workspace: *"
+  }
+}

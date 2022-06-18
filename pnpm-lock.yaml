@@ -78,13 +78,11 @@ importers:
     devDependencies:
       '@types/katex': 0.14.0
 
-  packages/plugin-lightgallery:
+  packages/plugin-lightbox:
     specifiers:
       artalk: 'workspace: *'
-      lightgallery: ^2.5.0
     dependencies:
       artalk: link:../artalk
-      lightgallery: 2.5.0
 
 packages:
 
@@ -1734,11 +1732,6 @@ packages:
       prelude-ls: 1.2.1
       type-check: 0.4.0
     dev: true
-
-  /lightgallery/2.5.0:
-    resolution: {integrity: sha512-pzg5gwflLGlKaK1VqDKpb7yqQ/WSV/TxFaHRR7ld7G5iOI9gkJZ2qKKo2lyqvTvu8yAqNYXoU0w9O/Dll6POkw==}
-    engines: {node: '>=6.0.0'}
-    dev: false
 
   /locate-path/2.0.0:
     resolution: {integrity: sha1-K1aLJl7slExtnA3pw9u7ygNUzY4=}

@@ -12,8 +12,8 @@
   "devDependencies": {
     "@rollup/plugin-dynamic-import-vars": "1.4.3",
     "@types/node": "16.11.43",
-    "@typescript-eslint/eslint-plugin": "5.29.0",
-    "@typescript-eslint/parser": "5.29.0",
+    "@typescript-eslint/eslint-plugin": "5.30.5",
+    "@typescript-eslint/parser": "5.30.5",
     "autoprefixer": "10.4.7",
     "eslint": "8.19.0",
     "eslint-config-airbnb-base": "15.0.0",

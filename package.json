@@ -28,7 +28,7 @@
     "rollup": "2.75.7",
     "typescript": "4.7.4",
     "vite": "2.9.13",
-    "vite-plugin-dts": "^1.2.0",
+    "vite-plugin-dts": "^1.2.1",
     "vite-tsconfig-paths": "3.5.0"
   },
   "browserslist": [

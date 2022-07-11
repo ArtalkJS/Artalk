@@ -63,7 +63,7 @@ export default class CommentRender {
     $avatarImg.src = this.comment.getGravatarURL()
     if (this.data.link) {
       const $avatarA = Utils.createElement<HTMLLinkElement>('<a target="_blank" rel="noreferrer noopener nofollow"></a>')
-      $avatarA.href = this.data.link
+      $avatarA.href = Utils.isValidURL(this.data.link) ? this.data.link : `http://${this.data.link}`
       $avatarA.append($avatarImg)
       $avatar.append($avatarA)
     } else {
@@ -78,7 +78,7 @@ export default class CommentRender {
     if (this.data.link) {
       const $nickA = Utils.createElement<HTMLLinkElement>('<a target="_blank" rel="noreferrer noopener nofollow"></a>')
       $nickA.innerText = this.data.nick
-      $nickA.href = this.data.link
+      $nickA.href = Utils.isValidURL(this.data.link) ? this.data.link : `http://${this.data.link}`
       this.$headerNick.append($nickA)
     } else {
       this.$headerNick.innerText = this.data.nick

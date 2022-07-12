@@ -115,8 +115,9 @@ export default class CommentRender {
       $uaWrap.innerHTML = ''
       const $uaBrowser = Utils.createElement(`<span class="atk-ua ua-browser"></span>`)
       const $usOS = Utils.createElement(`<span class="atk-ua ua-os"></span>`)
-      $uaBrowser.innerText = this.comment.getUserUaBrowser()
-      $usOS.innerText = this.comment.getUserUaOS()
+      const uaInfo = this.comment.getUserUA()
+      $uaBrowser.innerText = uaInfo.browser
+      $usOS.innerText = uaInfo.os
       $uaWrap.append($uaBrowser)
       $uaWrap.append($usOS)
     }

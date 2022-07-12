@@ -49,7 +49,7 @@ export default class CommentRender {
     this.renderReplyAt()
     this.renderReplyTo()
     this.renderPending()
-    this.renderActionBtn()
+    this.renderActions()
 
     this.recoveryChildrenWrap()
 
@@ -73,6 +73,13 @@ export default class CommentRender {
 
   /** 初始化 - 评论信息 */
   private renderHeader() {
+    this.renderHeader_Nick()
+    this.renderHeader_VerifyBadge()
+    this.renderHeader_Date()
+    this.renderHeader_UABadge()
+  }
+
+  private renderHeader_Nick() {
     this.$headerNick = this.$el.querySelector<HTMLElement>('.atk-nick')!
 
     if (this.data.link) {
@@ -83,7 +90,9 @@ export default class CommentRender {
     } else {
       this.$headerNick.innerText = this.data.nick
     }
+  }
 
+  private renderHeader_VerifyBadge() {
     this.$headerBadgeWrap = this.$el.querySelector<HTMLElement>('.atk-badge-wrap')!
     this.$headerBadgeWrap.innerHTML = ''
 
@@ -100,11 +109,15 @@ export default class CommentRender {
       const $pinnedBadge = Utils.createElement(`<span class="atk-pinned-badge">${this.ctx.$t('pin')}</span>`) // 置顶徽章
       this.$headerBadgeWrap.append($pinnedBadge)
     }
+  }
 
+  private renderHeader_Date() {
     const $date = this.$el.querySelector<HTMLElement>('.atk-date')!
     $date.innerText = this.comment.getDateFormatted()
     $date.setAttribute('data-atk-comment-date', String(+new Date(this.data.date)))
+  }
 
+  private renderHeader_UABadge() {
     if (this.ctx.conf.uaBadge) {
       let $uaWrap = this.$header.querySelector('atk-ua-wrap')
       if (!$uaWrap) {
@@ -197,39 +210,55 @@ export default class CommentRender {
   }
 
   /** 初始化 - 评论操作按钮 */
-  private renderActionBtn() {
-    // 投票功能
-    if (this.ctx.conf.vote) {
-      // 赞同按钮
-      this.voteBtnUp = new ActionBtn(this.ctx, () => `${this.ctx.$t('voteUp')} (${this.data.vote_up || 0})`).appendTo(this.$actions)
-      this.voteBtnUp.setClick(() => {
-        this.comment.getActions().vote('up')
-      })
+  private renderActions() {
+    this.renderActions_Vote()
+    this.renderActions_Reply()
 
-      // 反对按钮
-      if (this.ctx.conf.voteDown) {
-        this.voteBtnDown = new ActionBtn(this.ctx, () => `${this.ctx.$t('voteDown')} (${this.data.vote_down || 0})`).appendTo(this.$actions)
-        this.voteBtnDown.setClick(() => {
-          this.comment.getActions().vote('down')
-        })
+    // 管理员操作
+    this.renderActions_Collapse()
+    this.renderActions_Moderator()
+    this.renderActions_Pin()
+    this.renderActions_Edit()
+    this.renderActions_Del()
+  }
+
+  // 操作按钮 - 投票
+  private renderActions_Vote() {
+    if (!this.ctx.conf.vote) return // 关闭投票功能
+
+    // 赞同按钮
+    this.voteBtnUp = new ActionBtn(this.ctx, () => `${this.ctx.$t('voteUp')} (${this.data.vote_up || 0})`).appendTo(this.$actions)
+    this.voteBtnUp.setClick(() => {
+      this.comment.getActions().vote('up')
+    })
+
+    // 反对按钮
+    if (this.ctx.conf.voteDown) {
+      this.voteBtnDown = new ActionBtn(this.ctx, () => `${this.ctx.$t('voteDown')} (${this.data.vote_down || 0})`).appendTo(this.$actions)
+      this.voteBtnDown.setClick(() => {
+        this.comment.getActions().vote('down')
+      })
+    }
+  }
+
+  // 操作按钮 - 回复
+  private renderActions_Reply() {
+    if (!this.data.is_allow_reply) return // 不允许回复
+
+    const replyBtn = Utils.createElement(`<span>${this.ctx.$t('reply')}</span>`)
+    this.$actions.append(replyBtn)
+    replyBtn.addEventListener('click', (e) => {
+      e.stopPropagation() // 防止穿透
+      if (!this.cConf.onReplyBtnClick) {
+        this.ctx.replyComment(this.data, this.$el)
+      } else {
+        this.cConf.onReplyBtnClick()
       }
-    }
+    })
+  }
 
-    // 回复按钮
-    if (this.data.is_allow_reply) {
-      const replyBtn = Utils.createElement(`<span>${this.ctx.$t('reply')}</span>`)
-      this.$actions.append(replyBtn)
-      replyBtn.addEventListener('click', (e) => {
-        e.stopPropagation() // 防止穿透
-        if (!this.cConf.onReplyBtnClick) {
-          this.ctx.replyComment(this.data, this.$el)
-        } else {
-          this.cConf.onReplyBtnClick()
-        }
-      })
-    }
-
-    // 折叠按钮
+  // 操作按钮 - 折叠
+  private renderActions_Collapse() {
     const collapseBtn = new ActionBtn(this.ctx, {
       text: () => (this.data.is_collapsed ? this.ctx.$t('expand') : this.ctx.$t('collapse')),
       adminOnly: true
@@ -238,8 +267,10 @@ export default class CommentRender {
     collapseBtn.setClick(() => {
       this.comment.getActions().adminEdit('collapsed', collapseBtn)
     })
+  }
 
-    // 审核按钮
+  // 操作按钮 - 审核
+  private renderActions_Moderator() {
     const pendingBtn = new ActionBtn(this.ctx, {
       text: () => (this.data.is_pending ? this.ctx.$t('pending') : this.ctx.$t('approved')),
       adminOnly: true
@@ -248,18 +279,22 @@ export default class CommentRender {
     pendingBtn.setClick(() => {
       this.comment.getActions().adminEdit('pending', pendingBtn)
     })
+  }
 
-    // 置顶按钮
+  // 操作按钮 - 置顶
+  private renderActions_Pin() {
     const pinnedBtn = new ActionBtn(this.ctx, {
       text: () => (this.data.is_pinned ? this.ctx.$t('unpin') : this.ctx.$t('pin')),
       adminOnly: true
     })
     pinnedBtn.appendTo(this.$actions)
     pinnedBtn.setClick(() => {
-      this.comment.getActions().adminEdit('pinned', pendingBtn)
+      this.comment.getActions().adminEdit('pinned', pinnedBtn)
     })
+  }
 
-    // 编辑按钮
+  // 操作按钮 - 编辑
+  private renderActions_Edit() {
     const editBtn = new ActionBtn(this.ctx, {
       text: this.ctx.$t('edit'),
       adminOnly: true
@@ -268,8 +303,10 @@ export default class CommentRender {
     editBtn.setClick(() => {
       this.ctx.editComment(this.data, this.$el)
     })
+  }
 
-    // 删除按钮
+  // 操作按钮 - 删除
+  private renderActions_Del() {
     const delBtn = new ActionBtn(this.ctx, {
       text: this.ctx.$t('delete'),
       confirm: true,

@@ -249,20 +249,14 @@ export default class Context implements ContextApi {
     this.conf.darkMode = darkMode
     this.trigger('conf-updated')
 
-    if (this.conf.darkMode) {
-      this.$root.classList.add(darkModeClassName)
-    } else {
-      this.$root.classList.remove(darkModeClassName)
-    }
+    if (this.conf.darkMode) this.$root.classList.add(darkModeClassName)
+    else this.$root.classList.remove(darkModeClassName)
 
     // for Layer
     const { $wrap: $layerWrap } = GetLayerWrap(this)
     if ($layerWrap) {
-      if (this.conf.darkMode) {
-        $layerWrap.classList.add(darkModeClassName)
-      } else {
-        $layerWrap.classList.remove(darkModeClassName)
-      }
+      if (this.conf.darkMode) $layerWrap.classList.add(darkModeClassName)
+      else $layerWrap.classList.remove(darkModeClassName)
     }
   }
 }

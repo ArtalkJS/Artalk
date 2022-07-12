@@ -172,16 +172,13 @@ export default class Comment extends Component {
     return Utils.timeAgo(new Date(this.data.date), this.ctx)
   }
 
-  /** 获取用户 UserAgent 浏览器 */
-  public getUserUaBrowser() {
+  /** 获取用户 UserAgent 信息 */
+  public getUserUA() {
     const info = UADetect(this.data.ua)
-    return `${info.browser} ${info.version}`
-  }
-
-  /** 获取用户 UserAgent 系统 */
-  public getUserUaOS() {
-    const info = UADetect(this.data.ua)
-    return `${info.os} ${info.osVersion}`
+    return {
+      browser: `${info.browser} ${info.version}`,
+      os: `${info.os} ${info.osVersion}`
+    }
   }
 
   /** 获取配置 */

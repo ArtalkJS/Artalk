@@ -2,7 +2,7 @@ import { marked as libMarked } from 'marked'
 import ArtalkConfig from '~/types/artalk-config'
 import { CommentData, NotifyData } from '~/types/artalk-data'
 import { Event } from '~/types/event'
-import { internal as internalLocales, I18n } from './i18n'
+import getI18n, { I18n } from './i18n'
 import User from './lib/user'
 import ContextApi from '../types/context'
 import Editor from './editor'
@@ -240,15 +240,7 @@ export default class Context implements ContextApi {
 
   /* i18n */
   public $t(key: keyof I18n, args: {[key: string]: string} = {}): string {
-    let locales = this.conf.locale
-    if (typeof locales === 'string') {
-      locales = internalLocales[locales]
-    }
-
-    let str = locales?.[key] || key
-    str = str.replace(/\{\s*(\w+?)\s*\}/g, (_, token) => args[token] || '')
-
-    return str
+    return getI18n(this.conf.locale, key, args)
   }
 
   public setDarkMode(darkMode: boolean): void {
@@ -257,20 +249,14 @@ export default class Context implements ContextApi {
     this.conf.darkMode = darkMode
     this.trigger('conf-updated')
 
-    if (this.conf.darkMode) {
-      this.$root.classList.add(darkModeClassName)
-    } else {
-      this.$root.classList.remove(darkModeClassName)
-    }
+    if (this.conf.darkMode) this.$root.classList.add(darkModeClassName)
+    else this.$root.classList.remove(darkModeClassName)
 
     // for Layer
     const { $wrap: $layerWrap } = GetLayerWrap(this)
     if ($layerWrap) {
-      if (this.conf.darkMode) {
-        $layerWrap.classList.add(darkModeClassName)
-      } else {
-        $layerWrap.classList.remove(darkModeClassName)
-      }
+      if (this.conf.darkMode) $layerWrap.classList.add(darkModeClassName)
+      else $layerWrap.classList.remove(darkModeClassName)
     }
   }
 }

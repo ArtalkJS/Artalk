@@ -194,15 +194,13 @@ export default class ListLite extends Component {
         const at = this.scrollListenerAt || document
         if (this.autoLoadScrollEvent) at.removeEventListener('scroll', this.autoLoadScrollEvent) // 解除原有
         this.autoLoadScrollEvent = () => {
-          if (this.pageMode !== 'read-more') return
-          if (!this.readMoreBtn) return
-
-          if (!this.readMoreBtn.hasMore) return
-          if (this.isLoading) return
+          if (this.pageMode !== 'read-more'
+            || !this.readMoreBtn?.hasMore
+            || this.isLoading
+          ) return
 
           const $target = this.$el.querySelector<HTMLElement>('.atk-list-comments-wrap > .atk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
-          if (!$target) return
-          if (Ui.isVisible($target, this.scrollListenerAt)) {
+          if ($target && Ui.isVisible($target, this.scrollListenerAt)) {
             this.readMoreBtn.click() // 自动点击加载更多按钮
           }
         }

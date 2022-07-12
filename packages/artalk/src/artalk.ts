@@ -6,7 +6,6 @@ import ArtalkPlug from '~/types/plug'
 import Context from '~/types/context'
 import ConcreteContext from './context'
 import defaults from './defaults'
-import { internal as internalLocales } from './i18n'
 
 import CheckerLauncher from './lib/checker'
 import Editor from './editor'
@@ -164,20 +163,8 @@ export default class Artalk {
 
   /** 语言初始化 */
   private initLocale() {
-    if (typeof this.conf.locale === 'string') {
-      if (this.conf.locale === 'auto') { // 自动切换
-        this.conf.locale = ((navigator.languages) ? navigator.languages[0] : navigator.language)
-      }
-
-      this.conf.locale = this.conf.locale.replace(
-        /^([a-zA-Z]+)(-[a-zA-Z]+)?$/,
-        (_, p1: string, p2: string) => (p1.toLowerCase() + (p2 || '').toUpperCase())
-      )
-
-      if (!internalLocales[this.conf.locale]) { // 语言不存在时，使用 en
-        console.log(`Locale "${this.conf.locale}" not found.`)
-        this.conf.locale = 'en'
-      }
+    if (this.conf.locale === 'auto') { // 自适应语言
+      this.conf.locale = navigator.language
     }
   }
 

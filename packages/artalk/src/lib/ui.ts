@@ -32,6 +32,12 @@ export function hideLoading(parentElem: HTMLElement) {
   if ($loading) $loading.style.display = 'none'
 }
 
+/** 元素加载动画 */
+export function setLoading(val: boolean, parentElem: HTMLElement) {
+  if (val) showLoading(parentElem)
+  else hideLoading(parentElem)
+}
+
 /** 元素是否用户可见 */
 export function isVisible(el: HTMLElement, viewport: HTMLElement = document.documentElement) {
   const viewportHeight = viewport.clientHeight

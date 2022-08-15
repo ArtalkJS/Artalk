@@ -27,7 +27,7 @@
     "prettier": "2.7.1",
     "rollup": "2.75.7",
     "typescript": "4.7.4",
-    "vite": "2.9.14",
+    "vite": "2.9.15",
     "vite-plugin-dts": "^1.2.1",
     "vite-tsconfig-paths": "3.5.0"
   },

@@ -4,7 +4,7 @@ importers:
 
   .:
     specifiers:
-      '@rollup/plugin-dynamic-import-vars': 1.4.3
+      '@rollup/plugin-dynamic-import-vars': 1.4.4
       '@types/node': 16.11.51
       '@typescript-eslint/eslint-plugin': 5.30.7
       '@typescript-eslint/parser': 5.30.7
@@ -25,7 +25,7 @@ importers:
       vite-plugin-dts: ^1.2.1
       vite-tsconfig-paths: 3.5.0
     devDependencies:
-      '@rollup/plugin-dynamic-import-vars': 1.4.3_rollup@2.75.7
+      '@rollup/plugin-dynamic-import-vars': 1.4.4_rollup@2.75.7
       '@types/node': 16.11.51
       '@typescript-eslint/eslint-plugin': 5.30.7_6wltbjakwuqm7awqswigmiuhd4
       '@typescript-eslint/parser': 5.30.7_he2ccbldppg44uulnyq4rwocfa
@@ -190,8 +190,8 @@ packages:
       fastq: 1.13.0
     dev: true
 
-  /@rollup/plugin-dynamic-import-vars/1.4.3_rollup@2.75.7:
-    resolution: {integrity: sha512-VYP9BBVI0pcYpLp/DkFT8YP+EmqmWFMmWXoTObDH6OouERxJyPsIj0tC3HxhjNBOKgcRc7eV75IQItzELt7QSg==}
+  /@rollup/plugin-dynamic-import-vars/1.4.4_rollup@2.75.7:
+    resolution: {integrity: sha512-51BcU6ag9EeF09CtEsa5D/IHYo7KI42TR1Jc4doNzV1nHAiH7TvUi5vsLERFMjs9Gzy9K0otbZH/2wb0hpBhRA==}
     engines: {node: '>= 10.0.0'}
     peerDependencies:
       rollup: ^1.20.0||^2.0.0

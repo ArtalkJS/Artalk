@@ -35,12 +35,12 @@
     "lint": "eslint --ext .js,.ts src"
   },
   "devDependencies": {
-    "@types/marked": "4.0.3"
+    "@types/marked": "4.0.6"
   },
   "dependencies": {
     "hanabi": "^0.4.0",
     "insane": "^2.6.2",
-    "marked": "^4.0.18",
+    "marked": "^4.0.19",
     "abortcontroller-polyfill": "^1.7.3"
   }
 }

@@ -22,7 +22,7 @@ importers:
       rollup: 2.78.1
       typescript: 4.7.4
       vite: 2.9.15
-      vite-plugin-dts: ^1.2.1
+      vite-plugin-dts: ^1.4.1
       vite-tsconfig-paths: 3.5.0
     devDependencies:
       '@rollup/plugin-dynamic-import-vars': 1.4.4_rollup@2.78.1
@@ -43,7 +43,7 @@ importers:
       rollup: 2.78.1
       typescript: 4.7.4
       vite: 2.9.15_less@4.1.3
-      vite-plugin-dts: 1.2.1_vite@2.9.15
+      vite-plugin-dts: 1.4.1_vite@2.9.15
       vite-tsconfig-paths: 3.5.0_vite@2.9.15
 
   packages/artalk:
@@ -2409,8 +2409,8 @@ packages:
     engines: {node: '>= 0.10'}
     dev: true
 
-  /vite-plugin-dts/1.2.1_vite@2.9.15:
-    resolution: {integrity: sha512-V59rsKQnPI6FTGybh/ED4+dyK3UeSkvC1CJzpuDNoXb7mKNUcWmg66EM0N5Ijoc8xDAfZIXYxQjg675YHIDvFw==}
+  /vite-plugin-dts/1.4.1_vite@2.9.15:
+    resolution: {integrity: sha512-jo7E4ZeheD2o48oGiI3EygPbej7ZkGFHg3GVTt7Wuo6NgzThLvuzGGuduaFpnhJOGi1piDFsu6oui/wDKIIORQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       vite: '>=2.4.4'

@@ -48,18 +48,18 @@ importers:
 
   packages/artalk:
     specifiers:
-      '@types/marked': 4.0.3
+      '@types/marked': 4.0.6
       abortcontroller-polyfill: ^1.7.3
       hanabi: ^0.4.0
       insane: ^2.6.2
-      marked: ^4.0.18
+      marked: ^4.0.19
     dependencies:
       abortcontroller-polyfill: 1.7.3
       hanabi: 0.4.0
       insane: 2.6.2
-      marked: 4.0.18
+      marked: 4.0.19
     devDependencies:
-      '@types/marked': 4.0.3
+      '@types/marked': 4.0.6
 
   packages/artalk-sidebar:
     specifiers:
@@ -270,8 +270,8 @@ packages:
     resolution: {integrity: sha512-+2FW2CcT0K3P+JMR8YG846bmDwplKUTsWgT2ENwdQ1UdVfRk3GQrh6Mi4sTopy30gI8Uau5CEqHTDZ6YvWIUPA==}
     dev: true
 
-  /@types/marked/4.0.3:
-    resolution: {integrity: sha512-HnMWQkLJEf/PnxZIfbm0yGJRRZYYMhb++O9M36UCTA9z53uPvVoSlAwJr3XOpDEryb7Hwl1qAx/MV6YIW1RXxg==}
+  /@types/marked/4.0.6:
+    resolution: {integrity: sha512-ITAVUzsnVbhy5afxhs4PPPbrv2hKVEDH5BhhaQNQlVG0UNu+9A18XSdYr53nBdHZ0ADEQLl+ciOjXbs7eHdiQQ==}
     dev: true
 
   /@types/node/12.20.24:
@@ -1798,8 +1798,8 @@ packages:
     dev: true
     optional: true
 
-  /marked/4.0.18:
-    resolution: {integrity: sha512-wbLDJ7Zh0sqA0Vdg6aqlbT+yPxqLblpAZh1mK2+AO2twQkPywvvqQNfEPVwSSRjZ7dZcdeVBIAgiO7MMp3Dszw==}
+  /marked/4.0.19:
+    resolution: {integrity: sha512-rgQF/OxOiLcvgUAj1Q1tAf4Bgxn5h5JZTp04Fx4XUkVhs7B+7YA9JEWJhJpoO8eJt8MkZMwqLCNeNqj1bCREZQ==}
     engines: {node: '>= 12'}
     hasBin: true
     dev: false

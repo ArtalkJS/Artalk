@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-dynamic-import-vars": "1.4.4",
-    "@types/node": "16.11.56",
+    "@types/node": "16.11.59",
     "@typescript-eslint/eslint-plugin": "5.30.7",
     "@typescript-eslint/parser": "5.30.7",
     "autoprefixer": "10.4.10",

@@ -11,7 +11,7 @@ const AdminChecker: Checker = {
       password: inputVal
     }
 
-    return that.ctx.getApi().login(data.name, data.email, data.password)
+    return that.ctx.getApi().user.login(data.name, data.email, data.password)
   },
 
   body(that, ctx) {

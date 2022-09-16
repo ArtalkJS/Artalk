@@ -37,7 +37,7 @@ export default class PagesView extends SidebarView {
     if (this.isFirstLoad) Ui.showLoading(this.$el)
     else this.pagination.setLoading(true)
 
-    const data = await this.ctx.getApi().pageGet(this.sidebar.curtSite, offset, PAGE_SIZE)
+    const data = await this.ctx.getApi().page.pageGet(this.sidebar.curtSite, offset, PAGE_SIZE)
     this.pageList.$pageList!.innerHTML = ''
     this.pageList.importPages(data.pages || [])
 

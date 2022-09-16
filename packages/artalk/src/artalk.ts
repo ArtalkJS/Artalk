@@ -140,7 +140,7 @@ export default class Artalk {
     Ui.showLoading(this.$root)
     let backendConf = {}
     try {
-      backendConf = await this.ctx.getApi().conf()
+      backendConf = await this.ctx.getApi().system.conf()
     } catch (err) { console.error("Load config from remote err", err) }
     this.ctx.conf = Utils.mergeDeep(this.ctx.conf, backendConf)
     Ui.hideLoading(this.$root)

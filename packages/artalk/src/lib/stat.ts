@@ -21,7 +21,7 @@ export async function initCountWidget(p: CountConf) {
   }
 
   // PV
-  const curtPagePvNum = p.pvAdd ? await p.ctx.getApi().pv() : undefined
+  const curtPagePvNum = p.pvAdd ? await p.ctx.getApi().page.pv() : undefined
   const pvEl = p.ctx.conf.pvEl
   if (pvEl && document.querySelector(pvEl)) {
     handleStatCount(p, {
@@ -52,7 +52,7 @@ export async function handleStatCount(
     .filter((pageKey) => pageCounts[pageKey] === undefined)
   queryPageKeys = [...new Set(queryPageKeys)] // 去重
   if (queryPageKeys.length > 0) {
-    const counts: any = await p.ctx.getApi().stat(args.api, queryPageKeys)
+    const counts: any = await p.ctx.getApi().page.stat(args.api, queryPageKeys)
     pageCounts = { ...pageCounts, ...counts }
   }
 

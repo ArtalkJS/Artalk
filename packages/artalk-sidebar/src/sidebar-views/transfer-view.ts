@@ -276,7 +276,7 @@ export default class TransferView extends SidebarView {
     Ui.showLoading(this.$el)
 
     try {
-      const d = await this.ctx.getApi().export()
+      const d = await this.ctx.getApi().site.export()
       this.download(`backup-${this.getYmdHisFilename()}.artrans`, d)
     } catch (err: any) {
       console.log(err)

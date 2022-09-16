@@ -38,9 +38,9 @@ export default class PageList extends Component {
 
     // 缓存操作按钮
     const $cacheFlushBtn = this.$el.querySelector<HTMLElement>('.atk-cache-flush-all-btn')!
-    $cacheFlushBtn.onclick = () => { this.ctx.getApi().cacheFlushAll().then((d: any) => alert(d.msg)).catch(() => alert('操作失败')) }
+    $cacheFlushBtn.onclick = () => { this.ctx.getApi().admin.cacheFlushAll().then((d: any) => alert(d.msg)).catch(() => alert('操作失败')) }
     const $cacheWarmBtn = this.$el.querySelector<HTMLElement>('.atk-cache-warm-up-btn')!
-    $cacheWarmBtn.onclick = () => { this.ctx.getApi().cacheWarmUp().then((d: any) => alert(d.msg)).catch(() => alert('操作失败')) }
+    $cacheWarmBtn.onclick = () => { this.ctx.getApi().admin.cacheWarmUp().then((d: any) => alert(d.msg)).catch(() => alert('操作失败')) }
 
     // 更新全部页面标题按钮
     ;(async () => {
@@ -57,7 +57,7 @@ export default class PageList extends Component {
         }, 1500)
       }
       const checkStatus = async () => {
-        const status = await this.ctx.getApi().pageFetch(undefined, undefined, true)
+        const status = await this.ctx.getApi().page.pageFetch(undefined, undefined, true)
         return status
       }
       const startWatchdog = () => {
@@ -65,7 +65,7 @@ export default class PageList extends Component {
 
         // 不完美的轮询更新状态
         const timerID = window.setInterval(async () => {
-          const d = await this.ctx.getApi().pageFetch(undefined, undefined, true)
+          const d = await this.ctx.getApi().page.pageFetch(undefined, undefined, true)
 
           if (d.is_progress === false) {
             clearInterval(timerID)
@@ -92,7 +92,7 @@ export default class PageList extends Component {
 
         // 发起任务
         try {
-          await this.ctx.getApi().pageFetch(undefined, this.sidebar.curtSite)
+          await this.ctx.getApi().page.pageFetch(undefined, this.sidebar.curtSite)
         } catch (err: any) {
           alert(err.msg)
           done()
@@ -187,7 +187,7 @@ export default class PageList extends Component {
           Ui.showLoading(textEditor.$el)
           let p: PageData
           try {
-            p = await this.ctx.getApi().pageEdit({ ...page, [key]: val })
+            p = await this.ctx.getApi().page.pageEdit({ ...page, [key]: val })
           } catch (err: any) {
             showError(`修改失败：${err.msg || '未知错误'}`)
             console.error(err)
@@ -219,7 +219,7 @@ export default class PageList extends Component {
       showLoading()
       let p: PageData
       try {
-        p = await this.ctx.getApi().pageEdit({ ...page, admin_only: !page.admin_only })
+        p = await this.ctx.getApi().page.pageEdit({ ...page, admin_only: !page.admin_only })
       } catch (err: any) {
         showError(`修改失败：${err.msg || '未知错误'}`)
         console.log(err)
@@ -234,7 +234,7 @@ export default class PageList extends Component {
       showLoading()
       let p: PageData
       try {
-        p = (await this.ctx.getApi().pageFetch(page.id)).page
+        p = (await this.ctx.getApi().page.pageFetch(page.id)).page
       } catch (err: any) {
         showError(`同步失败：${err.msg || '未知错误'}`)
         console.log(err)
@@ -248,7 +248,7 @@ export default class PageList extends Component {
       const del = async () => {
         showLoading()
         try {
-          await this.ctx.getApi().pageDel(page.key, page.site_name)
+          await this.ctx.getApi().page.pageDel(page.key, page.site_name)
         } catch (err: any) {
           console.log(err)
           showError(`删除失败 ${String(err)}`)

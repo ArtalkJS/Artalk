@@ -49,7 +49,7 @@ export default class SiteListFloater {
 
     renderSiteItem('所有站点', '_', '__ATK_SITE_ALL')
 
-    const sites = await this.ctx.getApi().siteGet()
+    const sites = await this.ctx.getApi().site.siteGet()
     sites.forEach((site) => {
       renderSiteItem(site.name, site.name.substring(0, 1))
     })

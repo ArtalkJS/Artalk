@@ -99,7 +99,7 @@ export default class UploadPlug extends EditorPlug {
     try {
       if (!this.ctx.conf.imgUploader) {
         // 使用 ArtalkGo 进行图片上传
-        resp = await this.ctx.getApi().imgUpload(file)
+        resp = await this.ctx.getApi().upload.imgUpload(file)
       } else {
         // 使用自定义的图片上传器
         resp = {img_url: await this.ctx.conf.imgUploader(file)}

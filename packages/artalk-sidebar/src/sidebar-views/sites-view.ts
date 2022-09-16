@@ -25,7 +25,7 @@ export default class SitesView extends SidebarView {
   }
 
   async reqSites() {
-    const sites = await this.ctx.getApi().siteGet()
+    const sites = await this.ctx.getApi().site.siteGet()
     this.siteList.loadSites(sites)
   }
 }

@@ -39,7 +39,7 @@ export default class HeaderInputPlug extends EditorPlug {
     this.queryUserInfo.timeout = window.setTimeout(() => {
       this.queryUserInfo.timeout = null // 清理
 
-      const {req, abort} = this.ctx.getApi().userGet(
+      const {req, abort} = this.ctx.getApi().user.userGet(
         this.ctx.user.data.nick, this.ctx.user.data.email
       )
       this.queryUserInfo.abortFunc = abort

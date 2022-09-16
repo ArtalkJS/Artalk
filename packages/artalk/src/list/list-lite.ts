@@ -107,7 +107,7 @@ export default class ListLite extends Component {
     // 请求评论数据
     let listData: ListData
     try {
-      listData = await this.ctx.getApi()
+      listData = await this.ctx.getApi().comment
         .get(offset, this.pageSize, this.flatMode, this.paramsEditor)
     } catch (e: any) {
       this.onError(e.msg || String(e), offset, e.data)

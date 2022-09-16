@@ -180,7 +180,7 @@ export default class SiteList extends Component {
           Ui.showLoading(textEditor.$el)
           let s: SiteData
           try {
-            s = await this.ctx.getApi().siteEdit({ ...site, [key]: val })
+            s = await this.ctx.getApi().site.siteEdit({ ...site, [key]: val })
           } catch (err: any) {
             showError(`修改失败：${err.msg || '未知错误'}`)
             console.error(err)
@@ -211,7 +211,7 @@ export default class SiteList extends Component {
       const del = async () => {
         showLoading()
         try {
-          await this.ctx.getApi().siteDel(site.id, true)
+          await this.ctx.getApi().site.siteDel(site.id, true)
         } catch (err: any) {
           console.log(err)
           showError(`删除失败 ${String(err)}`)
@@ -273,7 +273,7 @@ export default class SiteList extends Component {
       Ui.showLoading(this.$add!)
       let s: SiteData
       try {
-        s = await this.ctx.getApi().siteAdd(siteName, siteUrls)
+        s = await this.ctx.getApi().site.siteAdd(siteName, siteUrls)
       } catch (err: any) {
         window.alert(`创建失败：${err.msg || ''}`)
         console.error(err)

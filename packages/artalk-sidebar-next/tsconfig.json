@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "allowJs": true
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": [
+    "typed-router.d.ts",
+    "components.d.ts",
+    "auto-imports.d.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.vue"
+  ],
+  "extends": "@vue/tsconfig/tsconfig.json"
+}

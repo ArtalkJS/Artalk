@@ -19,4 +19,11 @@ export default defineConfig({
   server: {
     open: true,
   },
+  css: {
+    preprocessorOptions: {
+      less: {
+         additionalData: `@import "./src/style/_variables.less";`
+     },
+    },
+  },
 })

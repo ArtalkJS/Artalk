@@ -92,7 +92,7 @@ function switchTab(name: string) {
     }
 
     .text {
-
+      color: #2a2e2e;
     }
   }
 

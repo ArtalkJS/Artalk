@@ -1,5 +1,3 @@
-import '../style/sidebar-layer.less'
-
 import Context from '~/types/context'
 import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'

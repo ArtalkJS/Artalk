@@ -1,0 +1,70 @@
+<script setup lang="ts">
+import global from '../global'
+import ListLite from 'artalk/src/list/list-lite'
+import { useNavStore } from '../stores/nav'
+import { storeToRefs } from 'pinia'
+
+const wrapEl = ref<HTMLElement>()
+const listEl = ref<HTMLElement>()
+const nav = useNavStore()
+const { curtTab } = storeToRefs(nav)
+
+onMounted(() => {
+  // 初始化导航条
+  nav.updateTabs({
+    admin_all: '全部',
+    admin_pending: '待审',
+    all: '个人',
+  })
+  nav.setTabActive('admin_all')
+  watch(curtTab, (curtTab) => {
+    list.fetchComments(0)
+  })
+
+  // 初始化评论列表
+  const list = new ListLite(global.artalk!.ctx)
+  // @ts-ignore
+  global.artalk!.ctx.setList(list)
+
+  list.flatMode = true
+  list.unreadHighlight = true
+  list.scrollListenerAt = wrapEl.value
+  list.pageMode = 'pagination'
+  list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
+  list.renderComment = (comment) => {
+    const pageURL = comment.getData().page_url
+    comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
+    comment.getConf().onReplyBtnClick = () => {
+      global.artalk!.ctx.replyComment(comment.getData(), comment.getEl(), true)
+    }
+  }
+  list.paramsEditor = (params) => {
+    params.type = curtTab.value // 列表数据类型
+    params.site_name = 'ArtalkDocs' // 站点名
+  }
+  global.artalk!.on('list-inserted', (data) => {
+    wrapEl.value!.scrollTo(0, 0)
+  })
+
+  list.reload()
+
+  listEl.value?.append(list.$el)
+})
+</script>
+
+<template>
+  <div ref="wrapEl" class="comments-wrap artalk">
+    <div ref="listEl" />
+  </div>
+</template>
+
+<style scoped lang="scss">
+.comments-wrap {
+  overflow-y: auto;
+  height: 100%;
+
+  :deep(.atk-comment-wrap) {
+    border-bottom: 1px solid var(--at-color-border);
+  }
+}
+</style>

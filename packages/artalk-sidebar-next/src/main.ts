@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import { createRouter, createWebHashHistory } from 'vue-router/auto'
 import 'artalk/dist/Artalk.css'
 import Artalk from 'artalk'
@@ -7,26 +8,37 @@ import App from './App.vue'
 import global from './global'
 
 // 启动参数
-const p        = new URLSearchParams(document.location.search)
-const pageKey  = p.get('pageKey') || ''
-const site     = p.get('site') || ''
-const user     = JSON.parse(p.get('user') || '{}')
-const view     = p.get('view') || ''
-const darkMode = p.get('darkMode') === '1'
+function getBootParameters() {
+  const p = new URLSearchParams(document.location.search)
+  return {
+    pageKey:  p.get('pageKey') || '',
+    site:     p.get('site') || '',
+    user:     JSON.parse(p.get('user') || '{}'),
+    view:     p.get('view') || '',
+    darkMode: p.get('darkMode') === '1'
+  }
+}
+
+function createArtalkInstance() {
+  const p = getBootParameters()
+  const artalkEl = document.createElement('div')
+  artalkEl.style.display = 'none'
+  document.body.append(artalkEl)
+
+  Artalk.DisabledComponents = ['list']
+  return new Artalk({
+    el: artalkEl,
+    server: (import.meta.env.DEV) ? 'http://localhost:23366' : '/',
+    pageKey: 'https://artalk.js.org/guide/intro.html',
+    site: p.site,
+    darkMode: p.darkMode,
+    useBackendConf: true
+  }) as unknown as Promise<Artalk>
+}
 
 // 初始化 Artalk
-global.artalk = await (new Artalk({
-  el: document.createElement('div'),
-  server: (import.meta.env.DEV) ? 'http://localhost:23366' : '/',
-  pageKey,
-  site,
-  darkMode,
-  useBackendConf: true
-}))
-
-global.artalk.ctx.user.update({
-  ...user
-})
+global.artalk = await createArtalkInstance()
+// note: 这里 await 会阻塞整个 vue app
 
 const app = createApp(App)
 
@@ -35,4 +47,8 @@ const router = createRouter({
 })
 
 app.use(router)
+
+const pinia = createPinia()
+app.use(pinia)
+
 app.mount('#app')

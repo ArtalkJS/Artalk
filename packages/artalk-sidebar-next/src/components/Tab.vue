@@ -1,58 +1,72 @@
 <script setup lang="ts">
-const tabGrps = {
-  '评论': ['全部', '待审', '个人'],
-  '页面': [],
-  '站点': [],
-  '迁移': ['导入', '导出']
+import { useNavStore } from '../stores/nav'
+import { storeToRefs } from 'pinia'
+
+const router = useRouter()
+const { curtPage, curtTab, tabs } = storeToRefs(useNavStore())
+const indicator = ref<'pages'|'tabs'>('tabs')
+
+const pages: { [name: string]: { label: string, link: string } } = {
+  comments: {
+    label: '评论',
+    link: '/comments',
+  },
+  pages: {
+    label: '页面',
+    link: '/pages',
+  },
+  sites: {
+    label: '站点',
+    link: '/sites',
+  },
+  transfer: {
+    label: '迁移',
+    link: '/transfer',
+  }
 }
 
-type View = keyof typeof tabGrps
-
-let viewCurt = ref<View>('评论')
-let tabCurt = ref('全部')
-
-let displayType = ref<'views'|'tabs'>('tabs')
-
-function toggleDisplay() {
-  displayType.value = displayType.value !== 'tabs' ? 'tabs' : 'views'
+function toggleIndicator() {
+  indicator.value = (indicator.value !== 'tabs') ? 'tabs' : 'pages'
 }
 
-function switchView(name: View) {
-  viewCurt.value = name
-  displayType.value = 'tabs'
+function switchPage(pageName: string) {
+  curtPage.value = pageName
+  indicator.value = 'tabs'
+
+  router.replace(pages[pageName].link)
 }
 
-function switchTab(name: string) {
-  tabCurt.value = name
+function switchTab(tabName: string) {
+  curtTab.value = tabName
 }
 </script>
 
 <template>
   <div class="tab">
-    <div class="view" @click="toggleDisplay()">
-      <div class="icon" :class="(displayType === 'tabs') ? 'menu' : 'arrow'"></div>
-      <div class="text">{{ viewCurt }}</div>
+    <div class="page" @click="toggleIndicator()">
+      <div class="icon" :class="(indicator === 'tabs') ? 'menu' : 'arrow'"></div>
+      <div class="text">{{ pages[curtPage].label }}</div>
     </div>
 
     <div class="tab-list">
       <!-- tabs -->
-      <template v-if="displayType === 'tabs'">
+      <template v-if="indicator === 'tabs'">
         <div
-          v-for="(tab) in tabGrps[viewCurt]"
+          v-for="(tabLabel, tabName) in tabs"
           class="item"
-          :class="{ active: tab === tabCurt }"
-          @click="switchTab(tab)"
-        >{{ tab }}</div>
+          :class="{ active: curtTab === tabName }"
+          @click="switchTab(tabName as string)"
+        >{{ tabLabel }}</div>
       </template>
 
-      <!-- views -->
+      <!-- pages -->
       <template v-else>
         <div
-          v-for="(view) in Object.keys(tabGrps)"
+          v-for="(page, pageName) in pages"
           class="item"
-          :class="{ active: view === viewCurt }"
-          @click="switchView(view as View)"
-        >{{ view }}</div>
+          :class="{ active: pageName === curtPage }"
+          @click="switchPage(pageName as string)"
+        >{{ page.label }}</div>
       </template>
     </div>
   </div>
@@ -66,7 +80,7 @@ function switchTab(name: string) {
   border-bottom: 1px solid #eceff2;
   height: 41px;
 
-  .view {
+  .page {
     display: flex;
     align-items: center;
     height: 100%;

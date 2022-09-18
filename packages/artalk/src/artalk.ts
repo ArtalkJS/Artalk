@@ -40,6 +40,9 @@ export default class Artalk {
   /** Plugins (in a instance scope) */
   protected instancePlugins: ArtalkPlug[] = []
 
+  /** 禁用的组件 */
+  public static DisabledComponents: string[] = []
+
   constructor(customConf: Partial<ArtalkConfig>) {
     /* 初始化基本配置 */
     this.conf = Artalk.HandelBaseConf(customConf)
@@ -62,30 +65,50 @@ export default class Artalk {
     this.initDarkMode()
     Utils.initMarked(this.ctx)
 
-    // CheckerLauncher
-    this.checkerLauncher = new CheckerLauncher(this.ctx)
-    this.ctx.setCheckerLauncher(this.checkerLauncher)
+    const Components: { [name: string]: () => void } = {
+      // CheckerLauncher
+      checkerLauncher: () => {
+        this.checkerLauncher = new CheckerLauncher(this.ctx)
+        this.ctx.setCheckerLauncher(this.checkerLauncher)
+      },
 
-    // 编辑器
-    this.editor = new Editor(this.ctx)
-    this.ctx.setEditor(this.editor)
-    this.$root.appendChild(this.editor.$el)
+      // 编辑器
+      editor: () => {
+        this.editor = new Editor(this.ctx)
+        this.ctx.setEditor(this.editor)
+        this.$root.appendChild(this.editor.$el)
+      },
 
-    // 评论列表
-    this.list = new List(this.ctx)
-    this.ctx.setList(this.list)
-    this.$root.appendChild(this.list.$el)
+      // 评论列表
+      list: () => {
+        // 评论列表
+        this.list = new List(this.ctx)
+        this.ctx.setList(this.list)
+        this.$root.appendChild(this.list.$el)
 
-    // 侧边栏
-    this.sidebarLayer = new SidebarLayer(this.ctx)
-    this.ctx.setSidebarLayer(this.sidebarLayer)
-    this.$root.appendChild(this.sidebarLayer.$el)
+        // 评论获取
+        this.list.fetchComments(0)
+      },
 
-    // 评论获取
-    this.list.fetchComments(0)
+      // 侧边栏 Layer
+      sidebarLayer: () => {
+        this.sidebarLayer = new SidebarLayer(this.ctx)
+        this.ctx.setSidebarLayer(this.sidebarLayer)
+        this.$root.appendChild(this.sidebarLayer.$el)
+      },
 
-    // 事件绑定初始化
-    this.initEventBind()
+      // 默认事件绑定
+      eventsDefault: () => {
+        this.initEventBind()
+      }
+    }
+
+    // 组件初始化
+    Object.entries(Components).forEach(([name, initComponent]) => {
+      if (Artalk.DisabledComponents.includes(name)) return
+
+      initComponent()
+    })
 
     // 插件初始化 (global scope)
     Artalk.Plugins.forEach(plugin => {
@@ -95,7 +118,7 @@ export default class Artalk {
   }
 
   /** 基本配置初始化 */
-  private static HandelBaseConf(customConf: Partial<ArtalkConfig>): ArtalkConfig {
+  public static HandelBaseConf(customConf: Partial<ArtalkConfig>): ArtalkConfig {
     // 合并默认配置
     const conf: ArtalkConfig = Utils.mergeDeep(Artalk.defaults, customConf)
 

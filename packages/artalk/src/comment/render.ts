@@ -1,5 +1,3 @@
-import '../style/comment.less'
-
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import ActionBtn from '../components/action-btn'

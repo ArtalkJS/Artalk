@@ -1,5 +1,3 @@
-import '../style/list.less'
-
 import { ListData, NotifyData } from '~/types/artalk-data'
 import Context from '~/types/context'
 import * as Utils from '../lib/utils'

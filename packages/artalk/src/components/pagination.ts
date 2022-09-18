@@ -1,4 +1,3 @@
-import '../style/pagination.less'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 

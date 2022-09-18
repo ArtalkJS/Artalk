@@ -1,5 +1,3 @@
-import '@/style/editor.less'
-
 import { CommentData } from '~/types/artalk-data'
 import Context from '~/types/context'
 import Component from '../lib/component'

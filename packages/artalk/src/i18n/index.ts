@@ -1,5 +1,6 @@
 import en from './en'
 import zhCN from './zh-CN'
+import zhTW from './zh-TW'
 
 export type I18n = typeof en
 
@@ -10,6 +11,7 @@ export const internal = {
   'en': en,
   'en-US': en,
   'zh-CN': zhCN,
+  'zh-TW': zhTW,
 }
 
 export const external = {

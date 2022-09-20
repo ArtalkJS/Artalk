@@ -16,7 +16,6 @@ export const internal = {
 
 export const external = {
   'jp-JP': {},
-  'zh-TW': {},
   'fr-FR': {},
   'de-DE': {},
   'bn-IN': {},

@@ -11,6 +11,10 @@ const pages = ref<PageData[]>([])
 const curtEditPageID = ref<number|null>(null)
 
 onMounted(() => {
+  nav.updateTabs({
+
+  }, '')
+
   artalk?.ctx.getApi().page.pageGet(site.value).then(data => {
     pages.value = data.pages
   })

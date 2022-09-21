@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 import { createRouter, createWebHashHistory } from 'vue-router/auto'
 import 'artalk/dist/Artalk.css'
 import Artalk from 'artalk'
-import './style.css'
+import './style.scss'
 import App from './App.vue'
 import global, { bootParams } from './global'
 

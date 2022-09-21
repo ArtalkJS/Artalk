@@ -12,6 +12,9 @@ declare module '@vue/runtime-core' {
     PageEditor: typeof import('./src/components/PageEditor.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SiteAdd: typeof import('./src/components/SiteAdd.vue')['default']
+    SiteCreate: typeof import('./src/components/SiteCreate.vue')['default']
+    SiteEditor: typeof import('./src/components/SiteEditor.vue')['default']
     Tab: typeof import('./src/components/Tab.vue')['default']
   }
 }

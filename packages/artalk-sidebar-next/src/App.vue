@@ -6,8 +6,10 @@
   <Header />
   <Tab />
 
-  <div class="main artalk">
-    <router-view />
+  <div class="main artalk atk-sidebar">
+    <div class="atk-sidebar-inner">
+      <router-view />
+    </div>
   </div>
 </template>
 

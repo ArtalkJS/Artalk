@@ -17,13 +17,12 @@ export default defineConfig({
     }),
   ],
   server: {
-    open: true,
     port: 23367,
   },
   css: {
     preprocessorOptions: {
-      less: {
-         additionalData: `@import "./src/style/_variables.less";`
+      scss: {
+         additionalData: `@import "./src/style/_variables.scss";@import "./src/style/_extends.scss";`
      },
     },
   },

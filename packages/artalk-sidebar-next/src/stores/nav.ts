@@ -7,8 +7,9 @@ export const useNavStore = defineStore('nav', () => {
   const curtTab = ref('')
   const tabs = ref<TabsObj>({})
 
-  const updateTabs = (aTabs: TabsObj) => {
+  const updateTabs = (aTabs: TabsObj, activeTab?: string) => {
     tabs.value = aTabs
+    if (activeTab) curtTab.value = activeTab
   }
 
   const setTabActive = (tabName: string) => {

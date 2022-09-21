@@ -6,7 +6,7 @@
   <Header />
   <Tab />
 
-  <div class="main">
+  <div class="main artalk">
     <router-view />
   </div>
 </template>

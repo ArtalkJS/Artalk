@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import global from '../global'
+import { artalk } from '../global'
 import ListLite from 'artalk/src/list/list-lite'
 import { useNavStore } from '../stores/nav'
 import { storeToRefs } from 'pinia'
@@ -15,16 +15,15 @@ onMounted(() => {
     admin_all: '全部',
     admin_pending: '待审',
     all: '个人',
-  })
-  nav.setTabActive('admin_all')
+  }, 'admin_all')
   watch(curtTab, (curtTab) => {
     list.fetchComments(0)
   })
 
   // 初始化评论列表
-  const list = new ListLite(global.artalk!.ctx)
+  const list = new ListLite(artalk!.ctx)
   // @ts-ignore
-  global.artalk!.ctx.setList(list)
+  artalk!.ctx.setList(list)
 
   list.flatMode = true
   list.unreadHighlight = true
@@ -35,14 +34,14 @@ onMounted(() => {
     const pageURL = comment.getData().page_url
     comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
     comment.getConf().onReplyBtnClick = () => {
-      global.artalk!.ctx.replyComment(comment.getData(), comment.getEl(), true)
+      artalk!.ctx.replyComment(comment.getData(), comment.getEl(), true)
     }
   }
   list.paramsEditor = (params) => {
     params.type = curtTab.value // 列表数据类型
     params.site_name = 'ArtalkDocs' // 站点名
   }
-  global.artalk!.on('list-inserted', (data) => {
+  artalk!.on('list-inserted', (data) => {
     wrapEl.value!.scrollTo(0, 0)
   })
 
@@ -53,7 +52,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="wrapEl" class="comments-wrap artalk">
+  <div ref="wrapEl" class="comments-wrap">
     <div ref="listEl" />
   </div>
 </template>

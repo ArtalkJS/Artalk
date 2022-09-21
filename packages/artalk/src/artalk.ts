@@ -29,11 +29,6 @@ export default class Artalk {
   public ctx!: Context
   public $root!: HTMLElement
 
-  public checkerLauncher!: CheckerLauncher
-  public editor!: Editor
-  public list!: List
-  public sidebarLayer!: SidebarLayer
-
   /** Plugins (in global scope)  */
   protected static Plugins: ArtalkPlug[] = [ Stat.PvCountWidget ]
 
@@ -68,33 +63,33 @@ export default class Artalk {
     const Components: { [name: string]: () => void } = {
       // CheckerLauncher
       checkerLauncher: () => {
-        this.checkerLauncher = new CheckerLauncher(this.ctx)
-        this.ctx.setCheckerLauncher(this.checkerLauncher)
+        const checkerLauncher = new CheckerLauncher(this.ctx)
+        this.ctx.setCheckerLauncher(checkerLauncher)
       },
 
       // 编辑器
       editor: () => {
-        this.editor = new Editor(this.ctx)
-        this.ctx.setEditor(this.editor)
-        this.$root.appendChild(this.editor.$el)
+        const editor = new Editor(this.ctx)
+        this.ctx.setEditor(editor)
+        this.$root.appendChild(editor.$el)
       },
 
       // 评论列表
       list: () => {
         // 评论列表
-        this.list = new List(this.ctx)
-        this.ctx.setList(this.list)
-        this.$root.appendChild(this.list.$el)
+        const list = new List(this.ctx)
+        this.ctx.setList(list)
+        this.$root.appendChild(list.$el)
 
         // 评论获取
-        this.list.fetchComments(0)
+        list.fetchComments(0)
       },
 
       // 侧边栏 Layer
       sidebarLayer: () => {
-        this.sidebarLayer = new SidebarLayer(this.ctx)
-        this.ctx.setSidebarLayer(this.sidebarLayer)
-        this.$root.appendChild(this.sidebarLayer.$el)
+        const sidebarLayer = new SidebarLayer(this.ctx)
+        this.ctx.setSidebarLayer(sidebarLayer)
+        this.$root.appendChild(sidebarLayer.$el)
       },
 
       // 默认事件绑定
@@ -173,8 +168,7 @@ export default class Artalk {
   private initEventBind() {
     // 锚点快速跳转评论
     window.addEventListener('hashchange', () => {
-      this.list.goToCommentDelay = false
-      this.list.checkGoToCommentByUrlHash()
+      this.ctx.listHashGotoCheck()
     })
 
     // 本地用户数据变更

@@ -12,6 +12,7 @@ import SidebarLayer, { SidebarShowPayload } from './layer/sidebar-layer'
 import CheckerLauncher, { CheckerCaptchaPayload, CheckerPayload } from './lib/checker'
 import Layer, { GetLayerWrap } from './layer'
 import Api from './api'
+import List from './list'
 
 /**
  * Artalk Context
@@ -20,7 +21,7 @@ export default class Context implements ContextApi {
   /* 持有同事类 */
   private api!: Api
   private editor!: Editor
-  private list!: ListLite
+  private list?: ListLite
   private sidebarLayer!: SidebarLayer
   private checkerLauncher!: CheckerLauncher
 
@@ -99,24 +100,29 @@ export default class Context implements ContextApi {
     comment.getEl().remove()
     this.commentList.splice(this.commentList.indexOf(comment), 1)
 
-    const listData = this.list.getData()
-    if (listData) listData.total -= 1 // 评论数减 1
+    if (this.list) {
+      const listData = this.list.getData()
+      if (listData) listData.total -= 1 // 评论数减 1
 
-    this.list.refreshUI()
+      this.list.refreshUI()
+    }
   }
 
   public clearAllComments() {
-    this.list.getCommentsWrapEl().innerHTML = ''
-    this.list.clearData()
+    if (this.list) {
+      this.list.getCommentsWrapEl().innerHTML = ''
+      this.list.clearData()
+    }
+
     this.commentList = []
   }
 
   public insertComment(commentData: CommentData) {
-    this.list.insertComment(commentData)
+    this.list?.insertComment(commentData)
   }
 
   public updateComment(commentData: CommentData): void {
-    this.list.updateComment(commentData)
+    this.list?.updateComment(commentData)
   }
 
   public replyComment(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void {
@@ -136,12 +142,12 @@ export default class Context implements ContextApi {
   }
 
   public updateNotifies(notifies: NotifyData[]): void {
-    this.list.updateUnread(notifies)
+    this.list?.updateUnread(notifies)
   }
 
   /* 评论列表 */
   public listReload(): void {
-    this.list.reload()
+    this.list?.reload()
   }
 
   public reload(): void {
@@ -149,7 +155,15 @@ export default class Context implements ContextApi {
   }
 
   public listRefreshUI(): void {
-    this.list.refreshUI()
+    this.list?.refreshUI()
+  }
+
+  public listHashGotoCheck(): void {
+    if (!this.list || this.list !instanceof List) return
+    const list = this.list as List
+
+    list.goToCommentDelay = false
+    list.checkGoToCommentByUrlHash()
   }
 
   /* 编辑器 */

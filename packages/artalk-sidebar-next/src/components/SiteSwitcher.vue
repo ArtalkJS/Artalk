@@ -6,7 +6,6 @@ import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 
 const el = ref<HTMLElement|null>(null)
-const elShow = ref(false)
 const sites = ref<SiteData[]>([])
 
 const { siteSwitcherShow: curtShow } = storeToRefs(useNavStore())
@@ -61,19 +60,21 @@ watch(curtShow, (value) => {
 </script>
 
 <template>
-  <div ref="el" v-show="curtShow" class="atk-site-list-floater">
-    <div class="atk-sites">
-      <div
-        v-for="(site) in displaySites"
-        class="atk-site-item"
-        :class="{ 'atk-active': curtSite === site.name }"
-        @click="switchSite(site.name)"
-      >
-        <div class="atk-site-logo">{{ site.logoText }}</div>
-        <div class="atk-site-name">{{ site.label }}</div>
+  <Transition>
+    <div ref="el" v-show="curtShow" class="atk-site-list-floater">
+      <div class="atk-sites">
+        <div
+          v-for="(site) in displaySites"
+          class="atk-site-item"
+          :class="{ 'atk-active': curtSite === site.name }"
+          @click="switchSite(site.name)"
+        >
+          <div class="atk-site-logo">{{ site.logoText }}</div>
+          <div class="atk-site-name">{{ site.label }}</div>
+        </div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <style scoped lang="scss">
@@ -82,9 +83,8 @@ watch(curtShow, (value) => {
 
   position: absolute;
   z-index: 9999;
-  left: 50%;
+  left: calc((100% - 80%) / 2);
   top: 70px;
-  transform: translateX(-50%);
   pointer-events: all;
   background: #FFF;
   width: 80%;
@@ -93,6 +93,7 @@ watch(curtShow, (value) => {
   border: 1px solid #eceff2;
   border-radius: 4px;
   overflow-y: auto;
+  transition: all 0.2s ease;
 
   .atk-sites {
     display: flex;
@@ -130,5 +131,10 @@ watch(curtShow, (value) => {
       }
     }
   }
+}
+
+.v-enter-from, .v-leave-to {
+  opacity: 0;
+  transform: scale3d(1.05, 1.05, 1.05);
 }
 </style>

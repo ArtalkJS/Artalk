@@ -10,7 +10,7 @@ const { site: curtSite } = storeToRefs(user)
 
 <template>
   <div class="header">
-    <div class="avatar clickable" @click="nav.showSiteSwitcher()">
+    <div class="avatar clickable" :class="{ 'active': nav.siteSwitcherShow }" @click="nav.showSiteSwitcher()">
       <div class="site">{{ curtSite.substring(0, 1) }}</div>
     </div>
     <div class="title">
@@ -51,7 +51,7 @@ const { site: curtSite } = storeToRefs(user)
     &.clickable {
       cursor: pointer;
 
-      &:hover {
+      &:hover, &.active {
         background: #f4f4f4;
         border-right: 1px solid #eceff2;
       }

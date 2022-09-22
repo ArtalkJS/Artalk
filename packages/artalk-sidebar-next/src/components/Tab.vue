@@ -30,7 +30,6 @@ function toggleIndicator() {
 }
 
 function switchPage(pageName: string) {
-  curtPage.value = pageName
   indicator.value = 'tabs'
 
   router.replace(pages[pageName].link)
@@ -39,13 +38,17 @@ function switchPage(pageName: string) {
 function switchTab(tabName: string) {
   curtTab.value = tabName
 }
+
+router.afterEach((to, from, failure) => {
+  curtPage.value = to.name.replace(/^\//, '')
+})
 </script>
 
 <template>
   <div class="tab">
     <div class="page" @click="toggleIndicator()">
       <div class="icon" :class="(indicator === 'tabs') ? 'menu' : 'arrow'"></div>
-      <div class="text">{{ pages[curtPage].label }}</div>
+      <div class="text">{{ pages[curtPage]?.label || '' }}</div>
     </div>
 
     <div class="tab-list">

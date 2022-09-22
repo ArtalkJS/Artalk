@@ -11,6 +11,8 @@ const sites = ref<SiteData[]>([])
 const { siteSwitcherShow: curtShow } = storeToRefs(useNavStore())
 const { site: curtSite } = storeToRefs(useUserStore())
 
+const router = useRouter()
+
 onMounted(() => {
   artalk?.ctx.getApi().site.siteGet().then((respSites) => {
     sites.value = respSites
@@ -24,7 +26,12 @@ interface IDisplaySite {
 }
 
 function switchSite(siteName: string) {
-  curtSite.value = siteName
+  if (siteName === '__SITE_MANAGEMENT__') {
+    router.replace('/sites')
+  } else {
+    curtSite.value = siteName
+  }
+
   curtShow.value = false
 }
 
@@ -37,7 +44,7 @@ const displaySites = computed(() => {
       logoText: site.name.substring(0, 1)
     })
   })
-  displays.push({ label: '站点管理', name: '', logoText: '+' })
+  displays.push({ label: '站点管理', name: '__SITE_MANAGEMENT__', logoText: '+' })
   return displays
 })
 

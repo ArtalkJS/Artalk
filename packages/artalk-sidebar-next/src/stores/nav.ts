@@ -6,6 +6,7 @@ export const useNavStore = defineStore('nav', () => {
   const curtPage = ref('comments')
   const curtTab = ref('')
   const tabs = ref<TabsObj>({})
+  const siteSwitcherShow = ref(false)
 
   const updateTabs = (aTabs: TabsObj, activeTab?: string) => {
     tabs.value = aTabs
@@ -16,5 +17,21 @@ export const useNavStore = defineStore('nav', () => {
     curtTab.value = tabName
   }
 
-  return { curtPage, curtTab, tabs, updateTabs, setTabActive }
+  const showSiteSwitcher = () => {
+    siteSwitcherShow.value = true
+  }
+
+  const hideSiteSwitcher = () => {
+    siteSwitcherShow.value = false
+  }
+
+  const toggleSiteSwitcher = () => {
+    siteSwitcherShow.value = !siteSwitcherShow.value
+  }
+
+  return {
+    curtPage, curtTab, tabs, siteSwitcherShow,
+    updateTabs, setTabActive,
+    showSiteSwitcher, hideSiteSwitcher, toggleSiteSwitcher,
+  }
 })

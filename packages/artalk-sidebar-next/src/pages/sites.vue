@@ -60,19 +60,20 @@ function onNewSiteCreated() {
     <SiteCreate v-if="showSiteCreate" @close="showSiteCreate = false" @done="onNewSiteCreated()" />
     <div class="atk-site-rows-wrap">
       <template v-for="(sites) in sitesGrouped">
+        <template v-if="curtEditSite !== null">
+          <SiteEditor v-if="!!sites.includes(curtEditSite)" :site="curtEditSite" @close="curtEditSite = null" />
+        </template>
         <div class="atk-site-row">
           <div
             v-for="(site) in sites"
             class="atk-site-item"
+            :class="{ 'atk-active': curtEditSite === site }"
             @click="edit(site)"
           >
             <div class="atk-site-logo">{{ site.name.substring(0, 1) }}</div>
             <div class="atk-site-name">{{ site.name }}</div>
           </div>
         </div>
-        <template v-if="curtEditSite !== null">
-          <SiteEditor v-if="!!sites.includes(curtEditSite)" :site="curtEditSite" @close="curtEditSite = null" />
-        </template>
       </template>
     </div>
   </div>

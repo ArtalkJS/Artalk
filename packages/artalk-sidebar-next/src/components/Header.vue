@@ -1,17 +1,24 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { useUserStore } from '../stores/user'
+import { useNavStore } from '../stores/nav'
 
+const nav = useNavStore()
+const user = useUserStore()
+const { site: curtSite } = storeToRefs(user)
 </script>
 
 <template>
   <div class="header">
-    <div class="avatar clickable">
-      <div class="site">A</div>
+    <div class="avatar clickable" @click="nav.showSiteSwitcher()">
+      <div class="site">{{ curtSite.substring(0, 1) }}</div>
     </div>
     <div class="title">
       <div class="text">控制中心</div>
     </div>
     <div class="close-btn"></div>
   </div>
+  <SiteSwitcher />
 </template>
 
 <style scoped lang="scss">

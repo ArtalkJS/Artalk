@@ -15,6 +15,7 @@ declare module '@vue/runtime-core' {
     SiteAdd: typeof import('./src/components/SiteAdd.vue')['default']
     SiteCreate: typeof import('./src/components/SiteCreate.vue')['default']
     SiteEditor: typeof import('./src/components/SiteEditor.vue')['default']
+    SiteSwitcher: typeof import('./src/components/SiteSwitcher.vue')['default']
     Tab: typeof import('./src/components/Tab.vue')['default']
   }
 }

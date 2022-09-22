@@ -2,12 +2,14 @@
 import { artalk } from '../global'
 import ListLite from 'artalk/src/list/list-lite'
 import { useNavStore } from '../stores/nav'
+import { useUserStore } from '../stores/user'
 import { storeToRefs } from 'pinia'
 
 const wrapEl = ref<HTMLElement>()
 const listEl = ref<HTMLElement>()
 const nav = useNavStore()
 const { curtTab } = storeToRefs(nav)
+const { site: curtSite } = storeToRefs(useUserStore())
 
 onMounted(() => {
   // 初始化导航条
@@ -18,6 +20,10 @@ onMounted(() => {
   }, 'admin_all')
   watch(curtTab, (curtTab) => {
     list.fetchComments(0)
+  })
+
+  watch(curtSite, (value) => {
+    list.reload()
   })
 
   // 初始化评论列表
@@ -39,7 +45,7 @@ onMounted(() => {
   }
   list.paramsEditor = (params) => {
     params.type = curtTab.value // 列表数据类型
-    params.site_name = 'ArtalkDocs' // 站点名
+    params.site_name = curtSite.value // 站点名
   }
   artalk!.on('list-inserted', (data) => {
     wrapEl.value!.scrollTo(0, 0)

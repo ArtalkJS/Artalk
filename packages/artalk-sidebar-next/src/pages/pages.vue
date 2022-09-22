@@ -6,7 +6,7 @@ import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 
 const nav = useNavStore()
-const { site } = storeToRefs(useUserStore())
+const { site: curtSite } = storeToRefs(useUserStore())
 const pages = ref<PageData[]>([])
 const curtEditPageID = ref<number|null>(null)
 
@@ -15,8 +15,16 @@ onMounted(() => {
 
   }, '')
 
-  artalk?.ctx.getApi().page.pageGet(site.value).then(data => {
-    pages.value = data.pages
+  const loadPages = () => {
+    artalk?.ctx.getApi().page.pageGet(curtSite.value).then(data => {
+      pages.value = data.pages
+    })
+  }
+
+  loadPages()
+
+  watch(curtSite, (value) => {
+    loadPages()
   })
 })
 

@@ -7,6 +7,7 @@ export const useNavStore = defineStore('nav', () => {
   const curtTab = ref('')
   const tabs = ref<TabsObj>({})
   const siteSwitcherShow = ref(false)
+  const scrollableArea = ref<HTMLElement|null>(null)
 
   const updateTabs = (aTabs: TabsObj, activeTab?: string) => {
     tabs.value = aTabs
@@ -29,9 +30,14 @@ export const useNavStore = defineStore('nav', () => {
     siteSwitcherShow.value = !siteSwitcherShow.value
   }
 
+  const scrollToTop = () => {
+    scrollableArea.value?.scrollTo(0, 0)
+  }
+
   return {
-    curtPage, curtTab, tabs, siteSwitcherShow,
+    curtPage, curtTab, tabs, siteSwitcherShow, scrollableArea,
     updateTabs, setTabActive,
     showSiteSwitcher, hideSiteSwitcher, toggleSiteSwitcher,
+    scrollToTop,
   }
 })

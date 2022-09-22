@@ -1,12 +1,16 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { useNavStore } from './stores/nav'
 
+const nav = useNavStore()
+const { scrollableArea } = storeToRefs(nav)
 </script>
 
 <template>
   <Header />
   <Tab />
 
-  <div class="main artalk atk-sidebar">
+  <div ref="scrollableArea" class="main artalk atk-sidebar">
     <div class="atk-sidebar-inner">
       <router-view />
     </div>

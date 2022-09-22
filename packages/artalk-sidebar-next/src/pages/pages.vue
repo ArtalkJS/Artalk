@@ -4,32 +4,44 @@ import { artalk } from '../global'
 import type { PageData } from 'artalk/types/artalk-data'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
+import Pagination from '../components/Pagination.vue'
 
 const nav = useNavStore()
 const { site: curtSite } = storeToRefs(useUserStore())
 const pages = ref<PageData[]>([])
 const curtEditPageID = ref<number|null>(null)
 
+const pageSize = ref(20)
+const pageTotal = ref(0)
+const pagination = ref<InstanceType<typeof Pagination>>()
+
 onMounted(() => {
   nav.updateTabs({
 
   }, '')
 
-  const loadPages = () => {
-    artalk?.ctx.getApi().page.pageGet(curtSite.value).then(data => {
-      pages.value = data.pages
-    })
-  }
-
-  loadPages()
+  reqPages(0)
 
   watch(curtSite, (value) => {
-    loadPages()
+    pagination.value?.reset()
+    reqPages(0)
   })
 })
 
 function editPage(page: PageData) {
   curtEditPageID.value = page.id
+}
+
+function reqPages(offset: number) {
+  artalk?.ctx.getApi().page.pageGet(curtSite.value, offset, pageSize.value).then(data => {
+    pageTotal.value = data.total
+    pages.value = data.pages
+    nav.scrollToTop()
+  })
+}
+
+function onChangePage(offset: number) {
+  reqPages(offset)
 }
 </script>
 
@@ -54,6 +66,7 @@ function editPage(page: PageData) {
         <PageEditor v-if="curtEditPageID === page.id" :page="page" @close="curtEditPageID = null" />
       </div>
     </div>
+    <Pagination ref="pagination" :pageSize="pageSize" :total="pageTotal" @change="onChangePage" />
   </div>
 </template>
 

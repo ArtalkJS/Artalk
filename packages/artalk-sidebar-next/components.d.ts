@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
     FileUploader: typeof import('./src/components/FileUploader.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    ItemTextEditor: typeof import('./src/components/ItemTextEditor.vue')['default']
     LogTerminal: typeof import('./src/components/LogTerminal.vue')['default']
     PageEditor: typeof import('./src/components/PageEditor.vue')['default']
     Pagination: typeof import('./src/components/Pagination.vue')['default']

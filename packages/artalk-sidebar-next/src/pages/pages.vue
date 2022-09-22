@@ -43,6 +43,16 @@ function reqPages(offset: number) {
 function onChangePage(offset: number) {
   reqPages(offset)
 }
+
+function onPageItemUpdate(page: PageData) {
+  const index = pages.value.findIndex(p => p.id === page.id)
+  if (index != -1) {
+    const orgPage = pages.value[index]
+    Object.keys(orgPage).forEach(key => {
+      ;(orgPage as any)[key] = (page as any)[key]
+    })
+  }
+}
 </script>
 
 <template>
@@ -63,7 +73,7 @@ function onChangePage(offset: number) {
             <i class="atk-icon atk-icon-edit"></i>
           </div>
         </div>
-        <PageEditor v-if="curtEditPageID === page.id" :page="page" @close="curtEditPageID = null" />
+        <PageEditor v-if="curtEditPageID === page.id" :page="page" @close="curtEditPageID = null" @update="onPageItemUpdate" />
       </div>
     </div>
     <Pagination ref="pagination" :pageSize="pageSize" :total="pageTotal" @change="onChangePage" />

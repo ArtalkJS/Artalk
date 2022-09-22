@@ -1,13 +1,23 @@
 <script setup lang="ts">
 import type { SiteData } from 'artalk/types/artalk-data'
+import { artalk } from '../global'
 
 const props = defineProps<{
   site: SiteData
 }>()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits<{
+  (evt: 'close'): void
+  (evt: 'update', page: SiteData): void
+}>()
 
 const { site } = toRefs(props)
+const isLoading = ref(false)
+const editFieldKey = ref<keyof SiteData|null>(null)
+const editFieldVal = computed(() => {
+  if (editFieldKey.value === 'urls') return site.value.urls_raw || ''
+  return String(editFieldKey ? site.value[editFieldKey.value!] || '' : '')
+})
 
 function close() {
   emit('close')
@@ -18,15 +28,37 @@ function openURL(url: string) {
 }
 
 function rename() {
-
+  editFieldKey.value = 'name'
 }
 
 function editURL() {
-
+  editFieldKey.value = 'urls'
 }
 
 function del() {
 
+}
+
+async function onFieldEditorYes(val: string) {
+  if (editFieldVal.value !== val) {
+    isLoading.value = true
+    let s: SiteData
+    try {
+      s = await artalk!.ctx.getApi().site.siteEdit({ ...site.value, [editFieldKey.value as any]: val })
+    } catch (err: any) {
+      alert(`修改失败：${err.msg || '未知错误'}`)
+      console.error(err)
+      return false
+    } finally { isLoading.value = false }
+    emit('update', s)
+  }
+
+  editFieldKey.value = null
+  return true
+}
+
+function onFiledEditorNo() {
+  editFieldKey.value = null
 }
 </script>
 
@@ -59,6 +91,12 @@ function del() {
           <i class="atk-icon atk-icon-del"></i>
         </div>
       </div>
+      <ItemTextEditor
+        v-if="!!editFieldKey"
+        :init-value="editFieldVal"
+        @yes="onFieldEditorYes"
+        @no="onFiledEditorNo"
+      />
     </div>
   </div>
 </template>

@@ -47,6 +47,16 @@ function edit(site: SiteData) {
 function onNewSiteCreated() {
   alert('a new site created')
 }
+
+function onSiteItemUpdate(site: SiteData) {
+  const index = sites.value.findIndex(s => s.id === site.id)
+  if (index != -1) {
+    const orgSite = sites.value[index]
+    Object.keys(orgSite).forEach(key => {
+      ;(orgSite as any)[key] = (site as any)[key]
+    })
+  }
+}
 </script>
 
 <template>
@@ -61,7 +71,12 @@ function onNewSiteCreated() {
     <div class="atk-site-rows-wrap">
       <template v-for="(sites) in sitesGrouped">
         <template v-if="curtEditSite !== null">
-          <SiteEditor v-if="!!sites.includes(curtEditSite)" :site="curtEditSite" @close="curtEditSite = null" />
+          <SiteEditor
+            v-if="!!sites.includes(curtEditSite)"
+            :site="curtEditSite"
+            @close="curtEditSite = null"
+            @update="onSiteItemUpdate"
+          />
         </template>
         <div class="atk-site-row">
           <div

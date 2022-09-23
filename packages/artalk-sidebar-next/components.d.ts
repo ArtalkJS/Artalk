@@ -16,6 +16,7 @@ declare module '@vue/runtime-core' {
     LogTerminal: typeof import('./src/components/LogTerminal.vue')['default']
     PageEditor: typeof import('./src/components/PageEditor.vue')['default']
     Pagination: typeof import('./src/components/Pagination.vue')['default']
+    Preference: typeof import('./src/components/Preference.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SiteAdd: typeof import('./src/components/SiteAdd.vue')['default']

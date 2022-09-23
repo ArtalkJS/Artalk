@@ -1,20 +1,37 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useNavStore } from './stores/nav'
+import global, { bootParams, createArtalkInstance } from './global'
 
 const nav = useNavStore()
 const { scrollableArea } = storeToRefs(nav)
+const artalkLoaded = ref(false)
+
+onMounted(() => {
+  createArtalkInstance().then(artalkInstance => {
+    // 初始化 Artalk
+    global.setArtalk(artalkInstance)
+
+    // 更新用户资料
+    global.getArtalk()!.ctx.user.update(bootParams.user)
+
+    artalkLoaded.value = true
+  })
+})
 </script>
 
 <template>
-  <Header />
-  <Tab />
+  <div v-if="artalkLoaded">
+    <Header />
+    <Tab />
 
-  <div ref="scrollableArea" class="main artalk atk-sidebar">
-    <div class="atk-sidebar-inner">
-      <router-view />
+    <div ref="scrollableArea" class="main artalk atk-sidebar">
+      <div class="atk-sidebar-inner">
+        <router-view />
+      </div>
     </div>
   </div>
+  <LoadingLayer v-if="!artalkLoaded" />
 </template>
 
 <style scoped lang="scss">

@@ -80,7 +80,10 @@ function onFiledEditorNo() {
   <div class="atk-site-edit">
     <div class="atk-header">
       <div class="atk-site-info">
-        <span class="atk-site-name">{{ site.name }}</span>
+        <span
+          class="atk-site-name"
+          @click="!site.first_url || openURL(site.first_url)"
+        >{{ site.name }}</span>
         <span class="atk-site-urls">
           <div
             v-for="(url) in site.urls"
@@ -105,6 +108,7 @@ function onFiledEditorNo() {
           <i class="atk-icon atk-icon-del"></i>
         </div>
       </div>
+      <LoadingLayer v-if="isLoading" style="z-index: 1000" />
       <ItemTextEditor
         v-if="!!editFieldKey"
         :init-value="editFieldVal"

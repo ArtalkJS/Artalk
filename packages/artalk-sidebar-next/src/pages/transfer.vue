@@ -15,6 +15,8 @@ const importParams = ref({
   payload: ''
 })
 
+const isLoading = ref(false)
+
 const uploadApiURL = ref('')
 const importTaskApiURL = ref('')
 
@@ -95,6 +97,7 @@ function importTaskDone() {
 async function startExportTask() {
   if (exportTaskStarted.value) return
   exportTaskStarted.value = true
+  isLoading.value = true
   try {
     const data = await artalk!.ctx.getApi().site.export()
     downloadFile(`backup-${getYmdHisFilename()}.artrans`, data)
@@ -102,7 +105,10 @@ async function startExportTask() {
     console.log(err)
     window.alert(`${String(err)}`)
     return
-  } finally { exportTaskStarted.value = false }
+  } finally {
+    exportTaskStarted.value = false
+    isLoading.value = false
+  }
 }
 
 function downloadFile(filename: string, text: string) {
@@ -138,6 +144,7 @@ function padWithZeros(vNumber: number, width: number) {
 </script>
 
 <template>
+  <LoadingLayer v-if="isLoading" />
   <LogTerminal v-if="importTaskStarted" :api-url="importTaskApiURL" :req-params="importTaskParams" @back="importTaskDone()" />
   <div v-show="!importTaskStarted" class="atk-form">
     <div class="atk-label atk-data-file-label">Artrans 数据文件</div>

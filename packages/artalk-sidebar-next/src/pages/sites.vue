@@ -8,14 +8,18 @@ const sites = ref<SiteData[]>([])
 const curtEditSite = ref<SiteData|null>(null)
 const showSiteCreate = ref(false)
 const siteCreateInitVal = ref()
+const isLoading = ref(false)
 
 onMounted(() => {
   nav.updateTabs({
 
   }, '')
 
+  isLoading.value = true
   artalk?.ctx.getApi().site.siteGet().then(gotSites => {
     sites.value = gotSites
+  }).finally(() => {
+    isLoading.value = false
   })
 
   // 通过启动参数打开站点创建
@@ -59,6 +63,7 @@ function edit(site: SiteData) {
 function onNewSiteCreated(siteNew: SiteData) {
   sites.value.push(siteNew)
   showSiteCreate.value = false
+  nav.refreshSites()
 }
 
 function onSiteItemUpdate(site: SiteData) {
@@ -69,11 +74,13 @@ function onSiteItemUpdate(site: SiteData) {
       ;(orgSite as any)[key] = (site as any)[key]
     })
   }
+  nav.refreshSites()
 }
 
 function onSiteItemRemove(id: number) {
   const index = sites.value.findIndex(p => p.id === id)
   sites.value.splice(index, 1)
+  nav.refreshSites()
 }
 </script>
 
@@ -115,6 +122,7 @@ function onSiteItemRemove(id: number) {
         </div>
       </template>
     </div>
+    <LoadingLayer v-if="isLoading" />
   </div>
 </template>
 

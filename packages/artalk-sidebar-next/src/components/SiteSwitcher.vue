@@ -1,22 +1,19 @@
 <script setup lang="ts">
 import type { SiteData } from 'artalk/types/artalk-data'
 import { storeToRefs } from 'pinia';
-import { artalk } from '../global'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 
 const el = ref<HTMLElement|null>(null)
-const sites = ref<SiteData[]>([])
 
-const { siteSwitcherShow: curtShow } = storeToRefs(useNavStore())
+const nav = useNavStore()
+const { siteSwitcherShow: curtShow, sites } = storeToRefs(nav)
 const { site: curtSite } = storeToRefs(useUserStore())
 
 const router = useRouter()
 
 onMounted(() => {
-  artalk?.ctx.getApi().site.siteGet().then((respSites) => {
-    sites.value = respSites
-  })
+  nav.refreshSites()
 })
 
 interface IDisplaySite {

@@ -5,9 +5,12 @@ const props = defineProps<{
 
   /** 每页数量 */
   pageSize: number
+
+  /** 加载中 */
+  isLoading?: boolean
 }>()
 
-const { pageSize, total } = toRefs(props)
+const { pageSize, total, isLoading } = toRefs(props)
 
 const emit = defineEmits<{
   /** 翻页事件 */
@@ -121,6 +124,7 @@ defineExpose({ prev, next, reset })
         @click="next()"
       >Next</div>
     </div>
+    <LoadingLayer v-if="isLoading" />
   </div>
 </template>
 

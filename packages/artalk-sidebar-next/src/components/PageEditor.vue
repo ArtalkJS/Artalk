@@ -118,6 +118,7 @@ function onFiledEditorNo() {
         <i class="atk-icon atk-icon-close"></i>
       </div>
     </div>
+    <LoadingLayer v-if="isLoading" style="z-index: 1000" />
     <ItemTextEditor
       v-if="!!editFieldKey"
       :init-value="editFieldVal"

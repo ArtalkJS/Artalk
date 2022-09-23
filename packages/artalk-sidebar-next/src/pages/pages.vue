@@ -14,6 +14,7 @@ const curtEditPageID = ref<number|null>(null)
 const pageSize = ref(20)
 const pageTotal = ref(0)
 const pagination = ref<InstanceType<typeof Pagination>>()
+const isLoading = ref(false)
 
 onMounted(() => {
   nav.updateTabs({
@@ -33,11 +34,15 @@ function editPage(page: PageData) {
 }
 
 function reqPages(offset: number) {
-  artalk?.ctx.getApi().page.pageGet(curtSite.value, offset, pageSize.value).then(data => {
-    pageTotal.value = data.total
-    pages.value = data.pages
-    nav.scrollToTop()
-  })
+  isLoading.value = true
+  artalk?.ctx.getApi().page.pageGet(curtSite.value, offset, pageSize.value)
+    .then(data => {
+      pageTotal.value = data.total
+      pages.value = data.pages
+      nav.scrollToTop()
+    }).finally(() => {
+      isLoading.value = false
+    })
 }
 
 function onChangePage(offset: number) {
@@ -63,9 +68,9 @@ function onPageItemRemove(id: number) {
 <template>
   <div class="atk-page-list-wrap">
     <div class="atk-header-action-bar">
-    <span class="atk-update-all-title-btn"><i class="atk-icon atk-icon-sync"></i> <span class="atk-text">更新标题</span></span>
-    <span class="atk-cache-flush-all-btn"><span class="atk-text">缓存清除</span></span>
-    <span class="atk-cache-warm-up-btn"><span class="atk-text">缓存预热</span></span>
+      <span class="atk-update-all-title-btn"><i class="atk-icon atk-icon-sync"></i> <span class="atk-text">更新标题</span></span>
+      <span class="atk-cache-flush-all-btn"><span class="atk-text">缓存清除</span></span>
+      <span class="atk-cache-warm-up-btn"><span class="atk-text">缓存预热</span></span>
     </div>
     <div class="atk-page-list">
       <div v-for="(page) in pages" class="atk-page-item">
@@ -91,6 +96,7 @@ function onPageItemRemove(id: number) {
       ref="pagination"
       :pageSize="pageSize"
       :total="pageTotal"
+      :is-loading="isLoading"
       @change="onChangePage"
     />
   </div>

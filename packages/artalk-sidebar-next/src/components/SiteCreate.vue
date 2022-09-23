@@ -59,6 +59,7 @@ function close() {
       <input v-model="site.urls" type="text" name="AtkSiteUrls" placeholder="站点 URL（多个用逗号隔开）" autocomplete="off">
       <button type="submit" class="atk-btn" name="AtkSubmit">创建</button>
     </form>
+    <LoadingLayer v-if="isLoading" />
   </div>
 </template>
 

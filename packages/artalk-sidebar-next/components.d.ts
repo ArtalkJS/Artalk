@@ -11,6 +11,8 @@ declare module '@vue/runtime-core' {
     Header: typeof import('./src/components/Header.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     ItemTextEditor: typeof import('./src/components/ItemTextEditor.vue')['default']
+    Loading: typeof import('./src/components/Loading.vue')['default']
+    LoadingLayer: typeof import('./src/components/LoadingLayer.vue')['default']
     LogTerminal: typeof import('./src/components/LogTerminal.vue')['default']
     PageEditor: typeof import('./src/components/PageEditor.vue')['default']
     Pagination: typeof import('./src/components/Pagination.vue')['default']

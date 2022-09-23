@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia'
+import { artalk } from '../global'
+import type { SiteData } from 'artalk/types/artalk-data'
 
 type TabsObj = {[name: string]: string}
 
 export const useNavStore = defineStore('nav', () => {
+  const sites = ref<SiteData[]>([])
   const curtPage = ref('comments')
   const curtTab = ref('')
   const tabs = ref<TabsObj>({})
@@ -34,10 +37,17 @@ export const useNavStore = defineStore('nav', () => {
     scrollableArea.value?.scrollTo(0, 0)
   }
 
+  const refreshSites = () => {
+    artalk?.ctx.getApi().site.siteGet().then((respSites) => {
+      sites.value = respSites
+    })
+  }
+
   return {
-    curtPage, curtTab, tabs, siteSwitcherShow, scrollableArea,
+    sites, curtPage, curtTab, tabs, siteSwitcherShow, scrollableArea,
     updateTabs, setTabActive,
     showSiteSwitcher, hideSiteSwitcher, toggleSiteSwitcher,
     scrollToTop,
+    refreshSites,
   }
 })

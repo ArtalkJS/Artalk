@@ -1,24 +1,43 @@
 <script setup lang="ts">
+import MD5 from '../lib/md5'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '../stores/user'
 import { useNavStore } from '../stores/nav'
+import { artalk } from '../global'
 
 const nav = useNavStore()
 const user = useUserStore()
-const { site: curtSite } = storeToRefs(user)
+const { site: curtSite, isAdmin, email } = storeToRefs(user)
+
+const userAvatarImgURL = computed(() =>
+  `${(artalk?.ctx.conf.gravatar.mirror || '').replace(/\/$/, '')}/${MD5(email.value)}`
+  + `?d=${encodeURIComponent(artalk?.ctx.conf.gravatar.default || 'mp')}&s=80`)
 </script>
 
 <template>
   <div class="header">
-    <div class="avatar clickable" :class="{ 'active': nav.siteSwitcherShow }" @click="nav.showSiteSwitcher()">
-      <div class="site">{{ curtSite.substring(0, 1) }}</div>
-    </div>
+    <template v-if="isAdmin">
+      <div
+        class="avatar clickable"
+        :class="{ 'active': nav.siteSwitcherShow }"
+        @click="nav.showSiteSwitcher()"
+      >
+        <div class="site">{{ curtSite.substring(0, 1) }}</div>
+      </div>
+    </template>
+    <template v-else>
+      <div class="avatar">
+        <img :src="userAvatarImgURL">
+      </div>
+    </template>
+
     <div class="title">
-      <div class="text">控制中心</div>
+      <div class="text">{{ isAdmin ? '控制中心' : '通知中心' }}</div>
     </div>
+
     <div class="close-btn"></div>
   </div>
-  <SiteSwitcher />
+  <SiteSwitcher v-if="isAdmin" />
 </template>
 
 <style scoped lang="scss">
@@ -66,6 +85,17 @@ const { site: curtSite } = storeToRefs(user)
         margin-top: -1px;
         display: inline-block;
       }
+    }
+
+    img {
+      height: 30px;
+      width: 30px;
+      border-radius: 2px;
+      background: #697182;
+      text-align: center;
+      line-height: 30px;
+      font-size: 13px;
+      color: #FFF;
     }
   }
 

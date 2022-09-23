@@ -1,29 +1,46 @@
 <script setup lang="ts">
 import { useNavStore } from '../stores/nav'
+import { useUserStore } from '../stores/user'
 import { storeToRefs } from 'pinia'
+
+type PageItem = { label: string, link: string }
 
 const router = useRouter()
 const { curtPage, curtTab, tabs } = storeToRefs(useNavStore())
+const { isAdmin } = storeToRefs(useUserStore())
 const indicator = ref<'pages'|'tabs'>('tabs')
 
-const pages: { [name: string]: { label: string, link: string } } = {
-  comments: {
-    label: '评论',
-    link: '/comments',
-  },
-  pages: {
-    label: '页面',
-    link: '/pages',
-  },
-  sites: {
-    label: '站点',
-    link: '/sites',
-  },
-  transfer: {
-    label: '迁移',
-    link: '/transfer',
+const pages = ref<{ [name: string]: PageItem }>({})
+
+onMounted(() => {
+  if (isAdmin.value) {
+    pages.value = {
+      comments: {
+        label: '评论',
+        link: '/comments',
+      },
+      pages: {
+        label: '页面',
+        link: '/pages',
+      },
+      sites: {
+        label: '站点',
+        link: '/sites',
+      },
+      transfer: {
+        label: '迁移',
+        link: '/transfer',
+      }
+    }
+  } else {
+    pages.value = {
+      comments: {
+        label: '评论',
+        link: '/comments',
+      }
+    }
   }
-}
+})
 
 function toggleIndicator() {
   indicator.value = (indicator.value !== 'tabs') ? 'tabs' : 'pages'
@@ -32,7 +49,7 @@ function toggleIndicator() {
 function switchPage(pageName: string) {
   indicator.value = 'tabs'
 
-  router.replace(pages[pageName].link)
+  router.replace(pages.value[pageName].link)
 }
 
 function switchTab(tabName: string) {

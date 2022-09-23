@@ -9,6 +9,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (evt: 'close'): void
   (evt: 'update', page: PageData): void
+  (evt: 'remove', id: number): void
 }>()
 
 const { page } = toRefs(props)
@@ -24,16 +25,47 @@ function editKey() {
   editFieldKey.value = 'key'
 }
 
-function editAdminOnly() {
-
+async function editAdminOnly() {
+  isLoading.value = true
+  let p: PageData
+  try {
+    p = await artalk!.ctx.getApi().page.pageEdit({ ...page.value, admin_only: !page.value.admin_only })
+  } catch (err: any) {
+    alert(`修改失败：${err.msg || '未知错误'}`)
+    console.log(err)
+    return
+  } finally { isLoading.value = false }
+  emit('update', p)
 }
 
-function sync() {
-
+async function sync() {
+  isLoading.value = true
+  let p: PageData
+  try {
+    p = (await artalk!.ctx.getApi().page.pageFetch(page.value.id)).page
+  } catch (err: any) {
+    alert(`同步失败：${err.msg || '未知错误'}`)
+    console.log(err)
+    return
+  } finally { isLoading.value = false }
+  emit('update', p)
 }
 
 function del() {
-
+  const del = async () => {
+    isLoading.value = true
+    try {
+      await artalk!.ctx.getApi().page.pageDel(page.value.key, page.value.site_name)
+    } catch (err: any) {
+      console.log(err)
+      alert(`删除失败 ${String(err)}`)
+      return
+    } finally { isLoading.value = false }
+    emit('remove', page.value.id)
+  }
+  if (window.confirm(
+    `确认删除页面 "${page.value.title || page.value.key}"？将会删除所有相关数据`
+  )) del()
 }
 
 function close() {

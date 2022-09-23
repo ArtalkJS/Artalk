@@ -17,6 +17,7 @@ export default class SiteApi extends ApiBase {
   public async siteAdd(name: string, urls: string) {
     const params: any = {
       name, urls,
+      site_name: '' // 全局保留字段，当前站点名
     }
 
     const d = await this.POST<any>('/admin/site-add', params)

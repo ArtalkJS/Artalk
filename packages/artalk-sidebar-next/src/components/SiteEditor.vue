@@ -9,6 +9,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (evt: 'close'): void
   (evt: 'update', page: SiteData): void
+  (evt: 'remove', id: number): void
 }>()
 
 const { site } = toRefs(props)
@@ -36,7 +37,20 @@ function editURL() {
 }
 
 function del() {
-
+  const del = async () => {
+    isLoading.value = true
+    try {
+      await artalk!.ctx.getApi().site.siteDel(site.value.id, true)
+    } catch (err: any) {
+      console.log(err)
+      alert(`删除失败 ${String(err)}`)
+      return
+    } finally { isLoading.value = false }
+    emit('remove', site.value.id)
+  }
+  if (window.confirm(
+    `确认删除站点 "${site.value.name}"？将会删除所有相关数据`
+  )) del()
 }
 
 async function onFieldEditorYes(val: string) {

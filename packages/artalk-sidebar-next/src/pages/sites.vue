@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useNavStore } from '../stores/nav'
-import { artalk } from '../global'
+import { artalk, bootParams } from '../global'
 import type { SiteData } from 'artalk/types/artalk-data'
 
 const nav = useNavStore()
 const sites = ref<SiteData[]>([])
 const curtEditSite = ref<SiteData|null>(null)
 const showSiteCreate = ref(false)
+const siteCreateInitVal = ref()
 
 onMounted(() => {
   nav.updateTabs({
@@ -16,6 +17,17 @@ onMounted(() => {
   artalk?.ctx.getApi().site.siteGet().then(gotSites => {
     sites.value = gotSites
   })
+
+  // 通过启动参数打开站点创建
+  const vp = bootParams.viewParams
+  if (vp && vp.create_name && vp.create_urls) {
+    siteCreateInitVal.value = { name: vp.create_name, urls: vp.create_urls }
+    showSiteCreate.value = true
+    nextTick(() => {
+      siteCreateInitVal.value = null
+      bootParams.viewParams = null
+    })
+  }
 })
 
 function create() {
@@ -44,18 +56,24 @@ function edit(site: SiteData) {
   curtEditSite.value = site
 }
 
-function onNewSiteCreated() {
-  alert('a new site created')
+function onNewSiteCreated(siteNew: SiteData) {
+  sites.value.push(siteNew)
+  showSiteCreate.value = false
 }
 
 function onSiteItemUpdate(site: SiteData) {
   const index = sites.value.findIndex(s => s.id === site.id)
   if (index != -1) {
     const orgSite = sites.value[index]
-    Object.keys(orgSite).forEach(key => {
+    Object.keys(site).forEach(key => {
       ;(orgSite as any)[key] = (site as any)[key]
     })
   }
+}
+
+function onSiteItemRemove(id: number) {
+  const index = sites.value.findIndex(p => p.id === id)
+  sites.value.splice(index, 1)
 }
 </script>
 
@@ -67,7 +85,12 @@ function onSiteItemUpdate(site: SiteData) {
         <div class="atk-item atk-site-add-btn" @click="create()"><i class="atk-icon atk-icon-plus"></i></div>
       </div>
     </div>
-    <SiteCreate v-if="showSiteCreate" @close="showSiteCreate = false" @done="onNewSiteCreated()" />
+    <SiteCreate
+      v-if="showSiteCreate"
+      :init-val="siteCreateInitVal"
+      @close="showSiteCreate = false"
+      @done="onNewSiteCreated"
+    />
     <div class="atk-site-rows-wrap">
       <template v-for="(sites) in sitesGrouped">
         <template v-if="curtEditSite !== null">
@@ -76,6 +99,7 @@ function onSiteItemUpdate(site: SiteData) {
             :site="curtEditSite"
             @close="curtEditSite = null"
             @update="onSiteItemUpdate"
+            @remove="onSiteItemRemove"
           />
         </template>
         <div class="atk-site-row">

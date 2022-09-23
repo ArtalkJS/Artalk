@@ -48,10 +48,15 @@ function onPageItemUpdate(page: PageData) {
   const index = pages.value.findIndex(p => p.id === page.id)
   if (index != -1) {
     const orgPage = pages.value[index]
-    Object.keys(orgPage).forEach(key => {
+    Object.keys(page).forEach(key => {
       ;(orgPage as any)[key] = (page as any)[key]
     })
   }
+}
+
+function onPageItemRemove(id: number) {
+  const index = pages.value.findIndex(p => p.id === id)
+  pages.value.splice(index, 1)
 }
 </script>
 
@@ -73,10 +78,21 @@ function onPageItemUpdate(page: PageData) {
             <i class="atk-icon atk-icon-edit"></i>
           </div>
         </div>
-        <PageEditor v-if="curtEditPageID === page.id" :page="page" @close="curtEditPageID = null" @update="onPageItemUpdate" />
+        <PageEditor
+          v-if="curtEditPageID === page.id"
+          :page="page"
+          @close="curtEditPageID = null"
+          @update="onPageItemUpdate"
+          @remove="onPageItemRemove"
+        />
       </div>
     </div>
-    <Pagination ref="pagination" :pageSize="pageSize" :total="pageTotal" @change="onChangePage" />
+    <Pagination
+      ref="pagination"
+      :pageSize="pageSize"
+      :total="pageTotal"
+      @change="onChangePage"
+    />
   </div>
 </template>
 

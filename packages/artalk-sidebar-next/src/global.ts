@@ -9,11 +9,12 @@ function getBootParams() {
   const p = new URLSearchParams(document.location.search)
 
   return {
-    pageKey:  p.get('pageKey') || '',
-    site:     p.get('site') || '',
-    user:     <LocalUser>JSON.parse(p.get('user') || '{}'),
-    view:     p.get('view') || '',
-    darkMode: p.get('darkMode') === '1'
+    pageKey:    p.get('pageKey') || '',
+    site:       p.get('site') || '',
+    user:       <LocalUser>JSON.parse(p.get('user') || '{}'),
+    view:       p.get('view') || '',
+    viewParams: <any>null,
+    darkMode:   p.get('darkMode') === '1'
   }
 }
 

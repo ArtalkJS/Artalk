@@ -9,6 +9,7 @@ const router = useRouter()
 const { curtPage, curtTab, tabs } = storeToRefs(useNavStore())
 const { isAdmin } = storeToRefs(useUserStore())
 const indicator = ref<'pages'|'tabs'>('tabs')
+const tabListEl = ref<HTMLElement|null>(null)
 
 const pages = ref<{ [name: string]: PageItem }>({})
 
@@ -30,6 +31,10 @@ onMounted(() => {
       transfer: {
         label: '迁移',
         link: '/transfer',
+      },
+      settings: {
+        label: '设置',
+        link: '/settings'
       }
     }
   } else {
@@ -40,6 +45,11 @@ onMounted(() => {
       }
     }
   }
+
+  tabListEl.value!.addEventListener('wheel', (evt) => {
+    evt.preventDefault()
+    tabListEl.value!.scrollLeft += evt.deltaY
+  })
 })
 
 function toggleIndicator() {
@@ -68,7 +78,7 @@ router.afterEach((to, from, failure) => {
       <div class="text">{{ pages[curtPage]?.label || '' }}</div>
     </div>
 
-    <div class="tab-list">
+    <div ref="tabListEl" class="tab-list">
       <!-- tabs -->
       <template v-if="indicator === 'tabs'">
         <div
@@ -108,6 +118,7 @@ router.afterEach((to, from, failure) => {
     border-right: 1px solid #eceff2;
     cursor: pointer;
     user-select: none;
+    white-space: nowrap;
 
     .icon {
       width: 17px;
@@ -137,6 +148,12 @@ router.afterEach((to, from, failure) => {
     flex-direction: row;
     overflow-y: auto;
 
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      background: transparent;
+    }
+
     .item {
       padding: 0 20px;
       color: #757575;
@@ -145,6 +162,7 @@ router.afterEach((to, from, failure) => {
       justify-content: center;
       height: 100%;
       cursor: pointer;
+      white-space: nowrap;
 
       &.active {
         color: #2a2e2e;

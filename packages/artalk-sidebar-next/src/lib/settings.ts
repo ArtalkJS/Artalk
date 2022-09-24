@@ -1,26 +1,72 @@
-export function transSettingKey(key: string) {
-  const transMap: { [key: string]: string } = {
-    host: '后端地址',
-    port: '后端端口',
-    app_key: '安全密钥',
-    debug: '调试模式',
-    timezone: '时间区域',
-    db: '数据库',
-    log: '系统日志',
-    cache: '系统缓存',
-    trusted_domains: '安全域名',
-    ssl: 'SSL',
-    site_default: '默认站点',
-    admin_users: '管理员账户',
-    login_timeout: '登陆时长',
-    moderator: '评论审核',
-    captcha: '验证码',
-    email: '邮箱通知',
-    img_upload: '图片上传',
-    admin_notify: '多元推送',
-  }
+import YAML from 'yaml'
+import confTemplate from '../assets/artalk-go.example.yml?raw'
+const yamlDocTpl = YAML.parseDocument(confTemplate)
 
-  return transMap[key] || key
+type YAMLPair = {
+  key?: { value: string, commentBefore: string, comment: string },
+  value?: { commentBefore: string, comment: string, value?: any, items?: YAMLPair[] }
 }
 
-export default { transSettingKey }
+export const comments: { [path: string]: string } = {}
+export const defaultValues: { [path: string]: string } = {}
+
+function loop(pairs: YAMLPair[], parent?: YAMLPair, path?: string[]) {
+  pairs.forEach((item, index: number) => {
+    const key = item?.key?.value
+    if (!key) return
+
+    const itemPath = (!path) ? [key] : [...path, key]
+
+    let comment = ''
+    if (index === 0 && parent) comment = parent?.value?.commentBefore || ''
+    else comment = item?.key?.commentBefore || ''
+
+    const pathStr = itemPath.join('.')
+    comments[pathStr] = comment.trim()
+    defaultValues[pathStr] = item?.value?.value
+
+    // 继续执行
+    if (item?.value?.items) {
+      loop(item.value.items, item, itemPath)
+    }
+  })
+}
+
+loop((yamlDocTpl as any).contents.items)
+
+export function extractItemDescFromComment(name: string, path: string) {
+  const comment = (comments[path] || '').trim()
+
+  let title = ''
+  let subTitle = ''
+  let opts: string[]|null = null
+
+  const stReg = /\(.*?\)$/gm
+  title = comment.replace(stReg, '').trim()
+  const stFind = stReg.exec(comment)
+  subTitle = stFind ? stFind[0].substring(1, stFind[0].length-1) : ''
+  if (!title) {
+    const commonDict: any = { 'enabled': '启用' }
+    title = commonDict[name] || snakeToCamel(name)
+  }
+
+  const optReg = /\[.*?\]/gm
+  const optFind = optReg.exec(title)
+  if (optFind) {
+    try { opts = JSON.parse(optFind[0]) } catch (err) { console.error(err) }
+    title = title.replace(optReg, '').trim()
+  }
+
+  return {
+    title, subTitle, opts
+  }
+}
+
+function snakeToCamel(str: string) {
+  return str.toLowerCase()
+    .replace(/([_][a-z]|^[a-z])/g, (group) =>
+      group.slice(-1).toUpperCase()
+    )
+}
+
+export default { comments, defaultValues, extractItemDescFromComment }

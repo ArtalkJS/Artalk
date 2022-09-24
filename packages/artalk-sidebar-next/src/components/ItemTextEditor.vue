@@ -112,6 +112,10 @@ async function submit(type: 'yes'|'no') {
       background: transparent;
 
       &.atk-invalid {}
+
+      &:focus {
+        border-bottom-color: var(--at-color-main);
+      }
     }
   }
 

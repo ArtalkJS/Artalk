@@ -7,6 +7,11 @@ const props = defineProps<{
     valDefault: { [key: string]: any }|Array<any>|boolean|string|number,
     path: (string|number)[]
   },
+  expandGrp?: string
+}>()
+
+const emits = defineEmits<{
+  (evt: 'toggle', key?: string): void
 }>()
 
 const { tplPfItem: tplPf } = toRefs(props)
@@ -15,13 +20,24 @@ const path = computed(() => tplPf.value.path.join('.'))
 const desc = computed(() => settings.extractItemDescFromComment(String(tplPf.value.key), path.value))
 const isRoot = computed(() => tplPf.value.path.length === 1)
 const level = computed(() => tplPf.value.path.length)
+
+function onToggleGrp(key?: string) {
+  emits('toggle', key)
+}
 </script>
 
 <template>
   <div class="pf">
     <!-- 数组 -->
     <div v-if="Array.isArray(tplPfItem.valDefault)" class="arr-grp">
-      <PreferenceGrp :title="desc.title" :sub-title="desc.subTitle" :level="level">
+      <PreferenceGrp
+        :title="desc.title"
+        :sub-title="desc.subTitle"
+        :level="level"
+        :pf-key="String(tplPfItem.key)"
+        :expand="level !== 1 || expandGrp === tplPfItem.key"
+        @toggle="onToggleGrp(String(tplPfItem.key))"
+      >
         <div v-for="(item, index) in tplPfItem.valDefault">
           <Preference :tpl-pf-item="{ key: index, valDefault: item, path: [...tplPfItem.path, index] }" />
         </div>
@@ -30,7 +46,14 @@ const level = computed(() => tplPf.value.path.length)
 
     <!-- 对象 -->
     <div v-else-if="tplPfItem.valDefault !== null && typeof tplPfItem.valDefault === 'object'" class="obj-grp">
-      <PreferenceGrp :title="desc.title" :sub-title="desc.subTitle" :level="level">
+      <PreferenceGrp
+        :title="desc.title"
+        :sub-title="desc.subTitle"
+        :level="level"
+        :pf-key="String(tplPfItem.key)"
+        :expand="level !== 1 || expandGrp === tplPfItem.key"
+        @toggle="onToggleGrp(String(tplPfItem.key))"
+      >
         <div v-for="key in Object.keys(tplPfItem.valDefault)">
           <Preference :tpl-pf-item="{ key, valDefault: tplPfItem.valDefault[key], path: [...tplPfItem.path, key] }" />
         </div>

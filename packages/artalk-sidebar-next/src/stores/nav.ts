@@ -37,6 +37,10 @@ export const useNavStore = defineStore('nav', () => {
     scrollableArea.value?.scrollTo(0, 0)
   }
 
+  const scrollToEl = (el: HTMLElement) => {
+    scrollableArea.value?.scrollTo(0, el.offsetTop)
+  }
+
   const refreshSites = () => {
     artalk?.ctx.getApi().site.siteGet().then((respSites) => {
       sites.value = respSites
@@ -47,7 +51,7 @@ export const useNavStore = defineStore('nav', () => {
     sites, curtPage, curtTab, tabs, siteSwitcherShow, scrollableArea,
     updateTabs, setTabActive,
     showSiteSwitcher, hideSiteSwitcher, toggleSiteSwitcher,
-    scrollToTop,
+    scrollToTop, scrollToEl,
     refreshSites,
   }
 })

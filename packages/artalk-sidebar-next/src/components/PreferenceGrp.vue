@@ -1,18 +1,36 @@
 <script setup lang="ts">
+import { useNavStore } from '../stores/nav'
+
+const nav = useNavStore()
+
 const props = defineProps<{
+  pfKey: string
   title: string
   subTitle: string
   level: number
+  expand: boolean
 }>()
+
+const emits = defineEmits<{
+  (evt: 'toggle', key?: string): void
+}>()
+
+function onHeadClick(evt: Event) {
+  if (props.level !== 1) return
+  emits('toggle', props.pfKey)
+  nextTick(() => {
+    nav.scrollToEl(evt.target as HTMLElement)
+  })
+}
 </script>
 
 <template>
-  <div class="pf-grp" :class="`level-${level}`">
-    <div class="pf-head">
+  <div class="pf-grp" :class="[`level-${level}`, expand ? 'expand' : '']">
+    <div class="pf-head" @click="onHeadClick">
       <div class="title">{{ props.title }}</div>
       <div v-if="!!props.subTitle" class="sub-title">{{ props.subTitle }}</div>
     </div>
-    <div class="pf-body">
+    <div v-show="expand" class="pf-body">
       <slot />
     </div>
   </div>
@@ -23,6 +41,7 @@ const props = defineProps<{
   & > .pf-head {
     margin-top: 30px;
     margin-bottom: 20px;
+    cursor: pointer;
 
     .title {
       font-size: 1.4em;
@@ -31,17 +50,23 @@ const props = defineProps<{
 
       &::before {
         position: absolute;
-        top: calc(50% - 25px / 2);
+        top: 50%;
+        transform: translateY(-50%);
+        transition: height ease .2s;
         left: -10px;
         content: '';
-        height: 25px;
-        width: 7px;
+        height: 10px;
+        width: 10px;
         background: #B7DCFF;
       }
     }
   }
 
   & > .pf-body {
+  }
+
+  &.expand > .pf-head .title::before {
+    height: 25px;
   }
 }
 

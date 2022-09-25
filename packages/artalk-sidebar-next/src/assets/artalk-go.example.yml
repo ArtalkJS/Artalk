@@ -13,6 +13,12 @@ debug: false
 # 时间区域
 timezone: "Asia/Shanghai"
 
+# 默认站点名
+site_default: "默认站点"
+
+# 登陆有效时长 (单位：秒)
+login_timeout: 259200
+
 # 数据库
 db:
   # 数据库类型 ["sqlite", "mysql", "pgsql", "mssql"]
@@ -75,9 +81,6 @@ ssl:
   # 密钥文件路径
   key_path: ""
 
-# 默认站点名
-site_default: "默认站点"
-
 # 管理员账户
 admin_users:
   - name: "admin"
@@ -85,9 +88,6 @@ admin_users:
     password: "" # 支持 bcrypt 或 md5 加密，如："(md5)50c21190c6e4e5418c6a90d2b5031119"
     badge_name: "管理员"
     badge_color: "#FF6C00"
-
-# 登陆有效时长 (单位：秒)
-login_timeout: 259200
 
 # 评论审核
 moderator:

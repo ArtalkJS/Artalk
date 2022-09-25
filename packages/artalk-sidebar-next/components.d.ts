@@ -17,6 +17,7 @@ declare module '@vue/runtime-core' {
     PageEditor: typeof import('./src/components/PageEditor.vue')['default']
     Pagination: typeof import('./src/components/Pagination.vue')['default']
     Preference: typeof import('./src/components/Preference.vue')['default']
+    PreferenceArr: typeof import('./src/components/PreferenceArr.vue')['default']
     PreferenceGrp: typeof import('./src/components/PreferenceGrp.vue')['default']
     PreferenceHead: typeof import('./src/components/PreferenceHead.vue')['default']
     PreferenceItem: typeof import('./src/components/PreferenceItem.vue')['default']

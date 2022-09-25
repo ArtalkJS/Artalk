@@ -22,9 +22,19 @@ function onChange(value: boolean|string) {
       </div>
 
       <div class="value">
+        <!-- 候选框 -->
+        <template v-if="desc.opts !== null">
+          <select :value="customValue" @change="onChange(($event.target as any).value)">
+            <option
+              v-for="item in desc.opts"
+              :value="item"
+            >{{ item }}</option>
+          </select>
+        </template>
+
         <!-- 开关 -->
-        <template v-if="typeof tplData === 'boolean'">
-            <input type="checkbox" :checked="customValue" @change="onChange(($event.target as any).checked)">
+        <template v-else-if="typeof tplData === 'boolean'">
+          <input type="checkbox" :checked="customValue" @change="onChange(($event.target as any).checked)">
         </template>
 
         <!-- 文本框 -->
@@ -69,21 +79,6 @@ function onChange(value: boolean|string) {
     justify-content: flex-end;
     align-items: center;
     min-height: 35px;
-
-    input[type="text"] {
-      font-size: 17px;
-      width: 100%;
-      height: 35px;
-      padding: 3px 5px;
-      border: 0;
-      border-bottom: 1px solid var(--at-color-border);
-      outline: none;
-      background: transparent;
-
-      &:focus {
-        border-bottom-color: var(--at-color-main);
-      }
-    }
   }
 }
 </style>

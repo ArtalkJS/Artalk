@@ -41,18 +41,8 @@ function onHeadClick(evt: Event) {
     <div v-show="expanded" class="pf-body">
       <!-- Array -->
       <template v-if="Array.isArray(tplData)">
-        <div v-for="(value, index) in tplData">
-          <PreferenceGrp
-            v-if="value !== null && typeof value === 'object'"
-            :tpl-data="value"
-            :path="[...path, index]"
-            :toggle="emits('toggle')"
-          />
-          <PreferenceItem
-            v-else :tpl-data="value"
-            :path="[...path, index]"
-          />
-        </div>
+        <div v-if="path.join('.') === 'admin_users'">暂不支持编辑，敬请期待 😉（咕咕咕</div>
+        <PreferenceArr v-else :tpl-data="tplData" :path="path" />
       </template>
       <!-- Object -->
       <template v-else>

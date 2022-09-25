@@ -19,6 +19,7 @@ declare module '@vue/runtime-core' {
     Preference: typeof import('./src/components/Preference.vue')['default']
     PreferenceGrp: typeof import('./src/components/PreferenceGrp.vue')['default']
     PreferenceHead: typeof import('./src/components/PreferenceHead.vue')['default']
+    PreferenceItem: typeof import('./src/components/PreferenceItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SiteAdd: typeof import('./src/components/SiteAdd.vue')['default']

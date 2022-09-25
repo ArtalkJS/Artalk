@@ -1,42 +1,86 @@
 <script setup lang="ts">
-import { useNavStore } from '../stores/nav'
-
-const nav = useNavStore()
+import settings from '../lib/settings'
 
 const props = defineProps<{
-  pfKey: string
-  title: string
-  subTitle: string
-  level: number
-  expand: boolean
+  tplData: Object|Array<any>
+  path: (string|number)[]
 }>()
 
 const emits = defineEmits<{
-  (evt: 'toggle', key?: string): void
+  (evt: 'toggle', path?: string): void
 }>()
 
+const desc = computed(() => settings.extractItemDescFromComment(props.path))
+const level = computed(() => props.path.length)
+
+const expanded = ref(true)
+
+onMounted(() => {
+  if (level.value === 1) expanded.value = false
+})
+
 function onHeadClick(evt: Event) {
-  if (props.level !== 1) return
-  emits('toggle', props.pfKey)
-  nextTick(() => {
-    nav.scrollToEl(evt.target as HTMLElement)
-  })
+  if (level.value !== 1) return
+  if (!expanded.value) {
+    expanded.value = true
+    // nextTick(() => {
+    //   nav.scrollToEl(evt.target as HTMLElement)
+    // })
+  } else {
+    expanded.value = false
+  }
 }
 </script>
 
 <template>
-  <div class="pf-grp" :class="[`level-${level}`, expand ? 'expand' : '']">
-    <div class="pf-head" @click="onHeadClick">
-      <div class="title">{{ props.title }}</div>
-      <div v-if="!!props.subTitle" class="sub-title">{{ props.subTitle }}</div>
+  <div class="pf-grp" :class="[`level-${level}`, expanded ? 'expand' : '']">
+    <div v-if="level > 0" class="pf-head" @click="onHeadClick">
+      <div class="title">{{ desc.title }}</div>
+      <div v-if="!!desc.subTitle" class="sub-title">{{ desc.subTitle }}</div>
     </div>
-    <div v-show="expand" class="pf-body">
-      <slot />
+    <div v-show="expanded" class="pf-body">
+      <!-- Array -->
+      <template v-if="Array.isArray(tplData)">
+        <div v-for="(value, index) in tplData">
+          <PreferenceGrp
+            v-if="value !== null && typeof value === 'object'"
+            :tpl-data="value"
+            :path="[...path, index]"
+            :toggle="emits('toggle')"
+          />
+          <PreferenceItem
+            v-else :tpl-data="value"
+            :path="[...path, index]"
+          />
+        </div>
+      </template>
+      <!-- Object -->
+      <template v-else>
+        <div v-for="[key, value] in Object.entries(tplData)">
+          <PreferenceGrp
+            v-if="value !== null && typeof value === 'object'"
+            :tpl-data="value"
+            :path="[...path, key]"
+            :toggle="emits('toggle')"
+          />
+          <PreferenceItem
+            v-else
+            :tpl-data="value"
+            :path="[...path, key]"
+          />
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+.pf-grp {
+  background: #fff;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
 .pf-grp.level-1 {
   & > .pf-head {
     margin-top: 30px;
@@ -94,7 +138,7 @@ function onHeadClick(evt: Event) {
 
 
 .pf-grp.level-3 {
-  margin-left: 25px;
+  margin-left: 10px;
 
   & > .pf-head {
     margin-top: 15px;
@@ -105,6 +149,10 @@ function onHeadClick(evt: Event) {
       font-weight: bold;
       font-size: 0.9em;
     }
+  }
+
+  & > .pf-body {
+    margin-left: 15px;
   }
 }
 

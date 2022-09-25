@@ -1,5 +1,8 @@
 import YAML from 'yaml'
 import confTemplate from '../assets/artalk-go.example.yml?raw'
+
+const customs = shallowRef<YAML.Document.Parsed<YAML.ParsedNode>>()
+
 const yamlDocTpl = YAML.parseDocument(confTemplate)
 
 type YAMLPair = {
@@ -25,7 +28,7 @@ function loop(pairs: YAMLPair[], parent?: YAMLPair, path?: string[]) {
     comments[pathStr] = comment.trim()
     defaultValues[pathStr] = item?.value?.value
 
-    // 继续执行
+    // 继续迭代
     if (item?.value?.items) {
       loop(item.value.items, item, itemPath)
     }
@@ -34,8 +37,10 @@ function loop(pairs: YAMLPair[], parent?: YAMLPair, path?: string[]) {
 
 loop((yamlDocTpl as any).contents.items)
 
-export function extractItemDescFromComment(name: string, path: string) {
-  const comment = (comments[path] || '').trim()
+export function extractItemDescFromComment(nodePath: string|(string|number)[]) {
+  if (Array.isArray(nodePath)) nodePath = nodePath.join('.')
+  const nodeName = nodePath.split('.').slice(-1)[0]
+  const comment = (comments[nodePath] || '').trim()
 
   let title = ''
   let subTitle = ''
@@ -47,7 +52,7 @@ export function extractItemDescFromComment(name: string, path: string) {
   subTitle = stFind ? stFind[0].substring(1, stFind[0].length-1) : ''
   if (!title) {
     const commonDict: any = { 'enabled': '启用' }
-    title = commonDict[name] || snakeToCamel(name)
+    title = commonDict[nodeName] || snakeToCamel(nodeName)
   }
 
   const optReg = /\[.*?\]/gm
@@ -69,4 +74,4 @@ function snakeToCamel(str: string) {
     )
 }
 
-export default { comments, defaultValues, extractItemDescFromComment }
+export default { comments, customs, defaultValues, extractItemDescFromComment }

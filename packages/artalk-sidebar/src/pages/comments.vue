@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { artalk } from '../global'
-import { ListLite } from 'artalk'
+import Artalk from 'artalk'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 import { storeToRefs } from 'pinia'
@@ -38,8 +38,7 @@ onMounted(() => {
   })
 
   // 初始化评论列表
-  const list = new ListLite(artalk!.ctx)
-  // @ts-ignore
+  const list = new Artalk.ListLite(artalk!.ctx)
   artalk!.ctx.setList(list)
 
   list.flatMode = true

@@ -18,10 +18,6 @@ export default Utils.mergeDeep(baseConf, defineConfig({
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => (/\.css$/.test(assetInfo.name || '') ? "Artalk.css" : "[name].[ext]"),
-
-        // Entry module "src/main.ts" is using named and default exports together.
-        // Consumers of your bundle will have to use `Artalk["default"]` to access the default export
-        exports: 'named'
       }
     }
   },

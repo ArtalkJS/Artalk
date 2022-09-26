@@ -7,6 +7,7 @@ import Context from '~/types/context'
 import ConcreteContext from './context'
 import defaults from './defaults'
 
+import ListLite from './list/list-lite'
 import CheckerLauncher from './lib/checker'
 import Editor from './editor'
 import List from './list'
@@ -23,6 +24,7 @@ import * as Stat from './lib/stat'
  * @website https://artalk.js.org
  */
 export default class Artalk {
+  public static ListLite = ListLite
   public static readonly defaults: ArtalkConfig = defaults
 
   public conf!: ArtalkConfig

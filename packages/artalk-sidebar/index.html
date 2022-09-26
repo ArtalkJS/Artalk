@@ -1,31 +1,12 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Artalk Sidebar</title>
-</head>
-<body>
-  <div id="ArtalkSidebar"></div>
-
-  <script type="module">
-    import InitSidebar from './src/main'
-
-    const p        = new URLSearchParams(document.location.search)
-    const pageKey  = p.get('pageKey') || ''
-    const site     = p.get('site') || ''
-    const user     = JSON.parse(p.get('user') || '{}')
-    const view     = p.get('view') || ''
-    const darkMode = p.get('darkMode') === '1'
-
-    InitSidebar({
-      el: '#ArtalkSidebar',
-      server: (import.meta.env.DEV) ? 'http://localhost:23366' : '../',
-      pageKey,
-      site,
-      darkMode,
-    }, user, view)
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artalk Sidebar</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { artalk } from '../global'
-import ListLite from 'artalk/src/list/list-lite'
+import { ListLite } from 'artalk'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 import { storeToRefs } from 'pinia'

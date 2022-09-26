@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { resolve } from 'path'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import VueRouter from 'unplugin-vue-router/vite'
@@ -8,6 +9,11 @@ import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    target: 'es2015',
+    outDir: resolve(__dirname, "dist"),
+    minify: 'terser'
+  },
   plugins: [
     VueRouter({ importMode: 'sync' }),
     vue(),
@@ -15,6 +21,17 @@ export default defineConfig({
     AutoImport({
       imports: ['vue', VueRouterAutoImports],
     }),
+    (() => ({
+      name: 'prod-vue-resolver',
+      resolveId (id) {
+        // @issue https://github.com/vitejs/vite/issues/6607
+        // dev mode vite resolves vue in other way
+        // only in prod mode, `id === vue` is true
+        if(id === 'vue') {
+          return resolve(__dirname, './node_modules/vue/dist/vue.runtime.esm-bundler.js')
+        }
+      }
+    }))(),
   ],
   server: {
     port: 23367,

@@ -1,12 +1,13 @@
 {
   "name": "artalk-sidebar-next",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "build": "pnpm run fetch-conf-tpl && vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "fetch-conf-tpl": "node scripts/fetch-conf-tpl.js"
   },
   "dependencies": {
     "artalk": "workspace: *",

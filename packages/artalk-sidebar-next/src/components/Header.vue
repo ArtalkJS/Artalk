@@ -57,6 +57,7 @@ const userAvatarImgURL = computed(() =>
     padding: 0 10px 0 15px;
 
     .site {
+      user-select: none;
       color: #fff;
       background: #697182;
       height: 30px;

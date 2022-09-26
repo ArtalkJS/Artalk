@@ -41,7 +41,7 @@ function onHeadClick(evt: Event) {
     <div v-show="expanded" class="pf-body">
       <!-- Array -->
       <template v-if="Array.isArray(tplData)">
-        <div v-if="path.join('.') === 'admin_users'">暂不支持编辑，敬请期待 😉（咕咕咕</div>
+        <div v-if="path.join('.') === 'admin_users'" class="coming-soon">暂不支持编辑，敬请期待 😉（<b>咕咕咕</b></div>
         <PreferenceArr v-else :tpl-data="tplData" :path="path" />
       </template>
       <!-- Object -->
@@ -154,6 +154,19 @@ function onHeadClick(evt: Event) {
   & > .sub-title {
     font-size: 14px;
     margin-top: 5px;
+  }
+}
+
+.coming-soon {
+  b {
+    font-weight: normal;
+    color: #000;
+    background: #000;
+    transition: .1s ease background;
+
+    &:hover {
+      background: transparent;
+    }
   }
 }
 </style>

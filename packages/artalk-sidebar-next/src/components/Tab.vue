@@ -3,9 +3,10 @@ import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 import { storeToRefs } from 'pinia'
 
-type PageItem = { label: string, link: string }
+type PageItem = { label: string, link: string, hide?: boolean }
 
 const router = useRouter()
+const route = useRoute()
 const { curtPage, curtTab, tabs } = storeToRefs(useNavStore())
 const { isAdmin } = storeToRefs(useUserStore())
 const indicator = ref<'pages'|'tabs'>('tabs')
@@ -31,6 +32,7 @@ onMounted(() => {
       transfer: {
         label: '迁移',
         link: '/transfer',
+        hide: true,
       },
       settings: {
         label: '设置',
@@ -50,6 +52,8 @@ onMounted(() => {
     evt.preventDefault()
     tabListEl.value!.scrollLeft += evt.deltaY
   })
+
+  curtPage.value = route.name.replace(/^\//, '')
 })
 
 function toggleIndicator() {
@@ -94,6 +98,7 @@ router.afterEach((to, from, failure) => {
         <div
           v-for="(page, pageName) in pages"
           class="item"
+          v-show="!page.hide"
           :class="{ active: pageName === curtPage }"
           @click="switchPage(pageName as string)"
         >{{ page.label }}</div>

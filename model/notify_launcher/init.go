@@ -12,25 +12,29 @@ import (
 	"github.com/nikoksr/notify/service/telegram"
 )
 
+var Notify *notify.Notify
 var NotifyCtx = context.Background()
 
 func Init() {
 	// 初始化邮件队列
 	email.InitQueue()
 
+	// 初始化 Notify
+	Notify = notify.New()
+
 	// Telegram
 	tgConf := config.Instance.AdminNotify.Telegram
 	if tgConf.Enabled {
 		telegramService, _ := telegram.New(tgConf.ApiToken)
 		telegramService.AddReceivers(tgConf.Receivers...)
-		notify.UseServices(telegramService)
+		Notify.UseServices(telegramService)
 	}
 
 	// 钉钉
 	dingTalkConf := config.Instance.AdminNotify.DingTalk
 	if dingTalkConf.Enabled {
 		dingTalkService := dingding.New(&dingding.Config{Token: dingTalkConf.Token, Secret: dingTalkConf.Secret})
-		notify.UseServices(dingTalkService)
+		Notify.UseServices(dingTalkService)
 	}
 
 	// Slack
@@ -38,7 +42,7 @@ func Init() {
 	if slackConf.Enabled {
 		slackService := slack.New(slackConf.OauthToken)
 		slackService.AddReceivers(slackConf.Receivers...)
-		notify.UseServices(slackService)
+		Notify.UseServices(slackService)
 	}
 
 	// LINE
@@ -46,6 +50,6 @@ func Init() {
 	if LINEConf.Enabled {
 		lineService, _ := line.New(config.Instance.AdminNotify.LINE.ChannelSecret, config.Instance.AdminNotify.LINE.ChannelAccessToken)
 		lineService.AddReceivers(LINEConf.Receivers...)
-		notify.UseServices(lineService)
+		Notify.UseServices(lineService)
 	}
 }

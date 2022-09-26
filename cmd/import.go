@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
+	"github.com/ArtalkJS/ArtalkGo/lib/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -19,7 +20,7 @@ var importCmd = &cobra.Command{
 `,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		loadCore() // 装载核心
+		core.LoadCore(cfgFile, workDir) // 装载核心
 
 		parcelFile := args[0]
 		if _, err := os.Stat(parcelFile); errors.Is(err, os.ErrNotExist) {

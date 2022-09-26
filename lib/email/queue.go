@@ -4,11 +4,18 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/config"
 )
 
-var emailCh = make(chan Email) // make(chan Email, 5)
+var emailCh *(chan Email)
 
 func InitQueue() {
+	if emailCh != nil {
+		return
+	}
+
+	ch := make(chan Email) // make(chan Email, 5)
+	emailCh = &ch
+
 	go func() {
-		for email := range emailCh {
+		for email := range *emailCh {
 			result := false
 			switch config.Instance.Email.SendType {
 			case config.TypeSMTP:
@@ -31,6 +38,6 @@ func InitQueue() {
 
 func AddToQueue(email Email) {
 	go func() {
-		emailCh <- email
+		*emailCh <- email
 	}()
 }

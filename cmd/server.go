@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ArtalkJS/ArtalkGo/http"
+	"github.com/ArtalkJS/ArtalkGo/lib/core"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +15,7 @@ var serverCmd = &cobra.Command{
 	Long:    Banner,
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		loadCore() // 装载核心
+		core.LoadCore(cfgFile, workDir) // 装载核心
 
 		fmt.Println(Banner)
 		fmt.Print("-------------------------------\n\n")

@@ -15,7 +15,6 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/lib/email"
 	"github.com/ArtalkJS/ArtalkGo/model"
-	libNotify "github.com/nikoksr/notify"
 
 	"github.com/sirupsen/logrus"
 )
@@ -150,7 +149,7 @@ func AdminNotify(comment *model.Comment, pComment *model.Comment) {
 
 	// 使用 Notify 库发送
 	go func() {
-		err := libNotify.Send(NotifyCtx, subject, html.EscapeString(body))
+		err := Notify.Send(NotifyCtx, subject, html.EscapeString(body))
 		if err != nil {
 			logrus.Error("[Notify]", err)
 		}

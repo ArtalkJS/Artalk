@@ -6,6 +6,7 @@ import (
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/lib/core"
 	"github.com/spf13/cobra"
 )
 
@@ -67,7 +68,7 @@ func init() {
 		Use:   "config",
 		Short: "输出配置信息",
 		Run: func(cmd *cobra.Command, args []string) {
-			initConfig()
+			core.LoadConfOnly(cfgFile, workDir)
 			buf, _ := json.MarshalIndent(config.Instance, "", "    ")
 			fmt.Println(string(buf))
 		},

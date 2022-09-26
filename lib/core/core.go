@@ -1,7 +1,9 @@
-package cmd
+package core
 
 import (
+	"io/ioutil"
 	"os"
+	"sync"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -13,32 +15,50 @@ import (
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
+var firstLoad = true
+var mutex = sync.Mutex{}
+
 // 装载核心功能
-func loadCore() {
-	initConfig()
+func LoadCore(cfgFile string, workDir string) {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	firstLoad = false
+
+	initConfig(cfgFile, workDir)
 	initLog()
 	initCache()
 	initDB()
 	notify_launcher.Init() // 初始化 Notify 发射台
 
-	// 缓存预热
-	if config.Instance.Cache.Enabled && config.Instance.Cache.WarmUp {
-		model.CacheWarmUp()
+	// 首次 Load
+	if firstLoad {
+		// 缓存预热
+		if config.Instance.Cache.Enabled && config.Instance.Cache.WarmUp {
+			model.CacheWarmUp()
+		}
+		// 异步加载
+		// go func() {
+		// 	model.CacheWarmUp()
+		// }()
 	}
-	// 异步加载
-	// go func() {
-	// 	model.CacheWarmUp()
-	// }()
+}
+
+// 仅装载配置
+func LoadConfOnly(cfgFile string, workDir string) {
+	initConfig(cfgFile, workDir)
 }
 
 // 1. 初始化配置
-func initConfig() {
+func initConfig(cfgFile string, workDir string) {
 	config.Init(cfgFile, workDir)
 }
 
 // 2. 初始化日志
 func initLog() {
+	logrus.New()
 	if !config.Instance.Log.Enabled {
+		logrus.SetOutput(ioutil.Discard)
 		return
 	}
 
@@ -50,34 +70,39 @@ func initLog() {
 		DisableColors:    false,
 	}
 
-	// 文件输出格式
-	fileFormatter := &prefixed.TextFormatter{
-		FullTimestamp:   true,
-		TimestampFormat: "2006-01-02.15:04:05.000000",
-		ForceFormatting: true,
-		ForceColors:     false,
-		DisableColors:   true,
-	}
-
-	// logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetFormatter(stdFormatter)
 	logrus.SetOutput(os.Stdout)
 
 	if config.Instance.Debug {
 		logrus.SetLevel(logrus.DebugLevel)
+	} else {
+		logrus.SetLevel(logrus.InfoLevel)
 	}
 
+	// 日志输出到文件
 	if config.Instance.Log.Filename != "" {
-		// 文件保存
+		fileFormatter := &prefixed.TextFormatter{
+			FullTimestamp:   true,
+			TimestampFormat: "2006-01-02.15:04:05.000000",
+			ForceFormatting: true,
+			ForceColors:     false,
+			DisableColors:   true,
+		}
+
 		pathMap := lfshook.PathMap{
 			logrus.InfoLevel:  config.Instance.Log.Filename,
 			logrus.DebugLevel: config.Instance.Log.Filename,
 			logrus.ErrorLevel: config.Instance.Log.Filename,
 		}
-		logrus.AddHook(lfshook.NewHook(
+
+		newHooks := make(logrus.LevelHooks)
+		newHooks.Add(lfshook.NewHook(
 			pathMap,
 			fileFormatter,
 		))
+
+		//logrus.AddHook(lfshook.NewHook()) // 使用 Replace 而不使用 Add
+		logrus.StandardLogger().ReplaceHooks(newHooks)
 	}
 }
 

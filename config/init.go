@@ -14,6 +14,7 @@ var Instance *Config
 
 // Init 初始化配置
 func Init(cfgFile string, workDir string) {
+	viper.Reset()
 	viper.SetConfigType("yaml")
 
 	if cfgFile != "" {

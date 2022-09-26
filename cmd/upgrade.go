@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/lib/core"
 	"github.com/blang/semver"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 	"github.com/sirupsen/logrus"
@@ -20,7 +21,7 @@ var upgradeCmd = &cobra.Command{
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		// loadCore() // 装载核心
-		initConfig()
+		core.LoadConfOnly(cfgFile, workDir)
 
 		logrus.Info("从 GitHub Release 检索更新中...")
 

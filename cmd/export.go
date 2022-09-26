@@ -9,6 +9,7 @@ import (
 
 	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
+	"github.com/ArtalkJS/ArtalkGo/lib/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -22,7 +23,7 @@ var exportCmd = &cobra.Command{
 - 文档：https://artalk.js.org/guide/transfer.html
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		loadCore() // 装载核心
+		core.LoadCore(cfgFile, workDir) // 装载核心
 
 		jsonStr, err := artransfer.ExportArtransString()
 		if err != nil {

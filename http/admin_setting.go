@@ -27,13 +27,13 @@ type ParamsAdminSettingSave struct {
 }
 
 func (a *action) AdminSettingSave(c echo.Context) error {
+	if !GetIsSuperAdmin(c) {
+		return RespError(c, "无权访问")
+	}
+
 	var p ParamsAdminSettingSave
 	if isOK, resp := ParamsDecode(c, &p); !isOK {
 		return resp
-	}
-
-	if !GetIsSuperAdmin(c) {
-		return RespError(c, "无权访问")
 	}
 
 	confFilename := viper.ConfigFileUsed()

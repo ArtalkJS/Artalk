@@ -71,7 +71,7 @@ type BasicParams struct {
 func GetBasicParamsFrom(payload []string) *BasicParams {
 	basic := BasicParams{}
 
-	basic.UrlResolver = true // 默认开启
+	basic.UrlResolver = false // 默认关闭
 
 	GetParamsFrom(payload).To(map[string]interface{}{
 		"t_name":         &basic.TargetSiteName,

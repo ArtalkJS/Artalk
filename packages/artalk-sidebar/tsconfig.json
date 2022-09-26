@@ -1,12 +1,16 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "dist",
-    "paths": {
-      "~/*": ["./*"],
-      "@/*": ["./src/*"]
-    }
+    "baseUrl": "./",
+    "allowJs": true
   },
-  "include": ["./src", "./types"]
+  "exclude": ["node_modules", "dist"],
+  "include": [
+    "typed-router.d.ts",
+    "components.d.ts",
+    "auto-imports.d.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.vue"
+  ],
+  "extends": "@vue/tsconfig/tsconfig.json"
 }

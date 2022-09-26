@@ -7,7 +7,7 @@ import Comment from '../comment'
 import Pagination from '../components/pagination'
 import ReadMoreBtn from '../components/read-more-btn'
 import * as ListNest from './list-nest'
-import { backendMinVersion } from '../../package.json'
+import { backendMinVersion, version as ARTALK_VERSION } from '../../package.json'
 
 export default class ListLite extends Component {
   protected $commentsWrap: HTMLElement

@@ -1,0 +1,304 @@
+# 服务器地址
+host: "0.0.0.0"
+
+# 服务器端口
+port: 23366
+
+# 加密密钥
+app_key: ""
+
+# 调试模式
+debug: false
+
+# 时间区域
+timezone: "Asia/Shanghai"
+
+# 默认站点名
+site_default: "默认站点"
+
+# 登陆有效时长 (单位：秒)
+login_timeout: 259200
+
+# 数据库
+db:
+  # 数据库类型 ["sqlite", "mysql", "pgsql", "mssql"]
+  type: "sqlite"
+  # 数据库文件 (仅 SQLite 数据库需填写)
+  file: "./data/artalk-go.db"
+  # 数据库名称
+  name: "artalk"
+  # 数据库地址
+  host: "localhost"
+  # 数据库端口
+  port: "3306"
+  # 数据库账户
+  user: "root"
+  # 数据库密码
+  password: ""
+  # 编码格式
+  charset: "utf8mb4"
+  # 表前缀 (例如："atk_")
+  table_prefix: ""
+
+# 日志
+log:
+  # 启用日志
+  enabled: true
+  # 日志文件路径
+  filename: "./data/artalk-go.log"
+
+# 缓存
+cache:
+  # 缓存类型 ["redis", "memcache", "builtin"]
+  type: "builtin"
+  # 缓存过期时间 (单位：分钟)
+  expires: 30
+  # 缓存启动预热 (程序启动时预热缓存)
+  warm_up: false
+  # 缓存服务器地址 (例如："localhost:6379")
+  server: ""
+  # Redis 配置
+  redis:
+    # 连接方式 ["tcp", "unix"]
+    network: "tcp"
+    # 用户名
+    username: ""
+    # 密码
+    password: ""
+    # 数据库编号 (例如使用零号数据库填写 0)
+    db: 0
+
+# 可信域名
+trusted_domains:
+  - "https://artalk.你的域名:23366"
+
+# SSL
+ssl:
+  # 启用 SSL
+  enabled: false
+  # 证书文件路径
+  cert_path: ""
+  # 密钥文件路径
+  key_path: ""
+
+# 管理员账户
+admin_users:
+  - name: "admin"
+    email: "admin@example.com"
+    password: "" # 支持 bcrypt 或 md5 加密，如："(md5)50c21190c6e4e5418c6a90d2b5031119"
+    badge_name: "管理员"
+    badge_color: "#FF6C00"
+
+# 评论审核
+moderator:
+  # 默认待审 (发表新评论需要后台人工审核后才能显示)
+  pending_default: false
+  # API 请求错误时拦截 (关闭此项当请求错误时让评论放行)
+  api_fail_block: false
+  # Akismet Key
+  # (Akismet 反垃圾服务，https://akismet.com)
+  akismet_key: ""
+  # 腾讯云文本内容安全
+  # (https://cloud.tencent.com/document/product/1124/64508)
+  tencent:
+    enabled: false
+    secret_id: ""
+    secret_key: ""
+    region: "ap-guangzhou"
+  # 阿里云内容安全
+  # (https://help.aliyun.com/document_detail/28417.html)
+  aliyun:
+    enabled: false
+    access_key_id: ""
+    access_key_secret: ""
+    region: "cn-shanghai"
+  # 关键词过滤 (本地离线词库)
+  keywords:
+    enabled: false
+    # 匹配成功设为待审状态
+    pending: false
+    # 词库文件 (支持多个词库文件)
+    files:
+      - "./data/词库_1.txt"
+    # 词库文件内容分割符 (例如填写 "\n" 文件中一行一个关键词)
+    file_sep: "\n"
+    # 替换字符
+    replac_to: "x"
+
+# 验证码
+captcha:
+  # 启用验证码
+  enabled: true
+  # 总是需要验证码
+  always: false
+  # 激活验证码所需操作次数
+  action_limit: 3
+  # 重置操作计数器超时 (单位：s, 设为 -1 不重置)
+  action_reset: 60
+  # Geetest 极验 (https://www.geetest.com)
+  geetest:
+    enabled: false
+    captcha_id: ""
+    captcha_key: ""
+
+# 邮件通知
+email:
+  # 启用邮件通知
+  enabled: false
+  # 发送方式 ["smtp", "ali_dm", "sendmail"]
+  send_type: "smtp"
+  # 发信人昵称
+  send_name: "{{reply_nick}}"
+  # 发信人地址
+  send_addr: "noreply@example.com"
+  # 邮件标题
+  mail_subject: "[{{site_name}}] 您收到了来自 @{{reply_nick}} 的回复"
+  # 邮件模板文件 (填入文件路径使用自定义模板)
+  mail_tpl: "default"
+  # SMTP 发送 (启用请将发送方式设为 "smtp")
+  smtp:
+    # 发件地址
+    host: "smtp.qq.com"
+    # 发件端口
+    port: 587
+    # 用户名
+    username: "example@qq.com"
+    # 密码
+    password: ""
+  # 阿里云邮件推送
+  # (启用请将发送方式设为 "ali_dm"；参考：https://help.aliyun.com/document_detail/29444.html)
+  ali_dm:
+    access_key_id: ""
+    access_key_secret: ""
+    account_name: "noreply@example.com"
+
+# 图片上传
+img_upload:
+  # 启用图片上传
+  enabled: true
+  # 图片存放路径
+  path: "./data/artalk-img/"
+  # 图片大小限制 (单位：MB)
+  max_size: 5
+  # 图片链接基础路径 (默认为 "/static/images/")
+  public_path: null
+  # Upgit 配置
+  # (使用 Upgit 将图片上传到 GitHub 或图床：https://github.com/pluveto/upgit)
+  upgit:
+    # 启用 Upgit
+    enabled: false
+    # 命令行参数
+    exec: "./upgit -c <upgit配置文件路径> -t /artalk-img"
+    # 上传后删除本地的图片
+    del_local: true
+
+# 多元推送
+admin_notify:
+  # 通知模版 (填入文件路径使用自定义模板)
+  notify_tpl: "default"
+  # 嘈杂模式
+  noise_mode: false
+  # 邮件通知管理员
+  email:
+    # 开启 (当使用其他推送方式时，可以关闭管理员邮件通知)
+    enabled: true
+    # 邮件标题 (发送给管理员的邮件标题)
+    mail_subject: "[{{site_name}}] 您的文章「{{page_title}}」有新回复"
+  # Telegram
+  telegram:
+    enabled: false
+    api_token: ""
+    receivers:
+      - 7777777
+  # Bark
+  bark:
+    enabled: false
+    server: "http://day.app/xxxxxxx/"
+  # 飞书
+  lark:
+    enabled: false
+    webhook_url: ""
+  # WebHook
+  webhook:
+    enabled: false
+    url: ""
+  # 钉钉
+  ding_talk:
+    enabled: true
+    token: ""
+    secret: ""
+  # Slack
+  slack:
+    enabled: true
+    oauth_token: ""
+    receivers:
+      - "CHANNEL_ID"
+  # LINE
+  line:
+    enabled: true
+    channel_secret: ""
+    channel_access_token: ""
+    receivers:
+      - "USER_ID_1"
+      - "GROUP_ID_1"
+
+# 前端配置
+frontend:
+  # 评论框占位文字
+  placeholder: "键入内容..."
+  # 无评论显示文字
+  noComment: "「此时无声胜有声」"
+  # 发送按钮文字
+  sendBtn: "发送评论"
+  # 评论框旅行
+  editorTravel: true
+  # 暗黑模式
+  darkMode: false
+  # 表情包
+  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
+  # 投票按钮
+  vote: true
+  # 反对按钮
+  voteDown: false
+  # 用户 UA 徽标
+  uaBadge: true
+  # 评论排序功能
+  listSort: true
+  # 页面 PV 绑定元素
+  pvEl: "#ArtalkPV"
+  # 评论数绑定元素
+  countEl: "#ArtalkCount"
+  # 编辑器实时预览功能
+  preview: true
+  # 平铺模式
+  flatMode: "auto"
+  # 最大嵌套层数
+  nestMax: 2
+  # 嵌套评论排序规则
+  nestSort: DATE_ASC
+  # 头像
+  gravatar:
+    # Gravatar 镜像地址
+    mirror: "https://sdn.geekzu.org/avatar/"
+    # 默认头像
+    default: "mp"
+  # 评论分页
+  pagination:
+    # 每页评论数
+    pageSize: 20
+    # 加载更多模式 (关闭则使用分页条)
+    readMore: true
+    # 滚动加载
+    autoLoad: true
+  # 内容限高
+  heightLimit:
+    # 评论内容限高 (单位：px)
+    content: 300
+    # 子评论区域限高 (单位：px)
+    children: 400
+  # 请求超时 (单位：毫秒)
+  reqTimeout: 15000
+  # 版本检测
+  versionCheck: true
+  # 语言设定
+  locale: zh-CN

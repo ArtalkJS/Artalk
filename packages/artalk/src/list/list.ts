@@ -1,5 +1,6 @@
 import { ListData, NotifyData } from '~/types/artalk-data'
 import Context from '~/types/context'
+import { version as ARTALK_VERSION } from '../../package.json'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import ListHTML from './list.html?raw'

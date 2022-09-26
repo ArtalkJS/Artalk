@@ -1,4 +1,4 @@
-.atk-slim-scrollbar() {
+.atk-slim-scrollbar {
   &::-webkit-scrollbar {
     width: 4px;
     height: 4px;
@@ -19,7 +19,7 @@
   }
 }
 
-.atk-list-text-actions() {
+.atk-list-text-actions {
   display: flex;
   flex-direction: column;
   flex: auto;
@@ -61,7 +61,7 @@
   }
 }
 
-.atk-list-btn-actions() {
+.atk-list-btn-actions {
   display: flex;
   flex-direction: row;
   align-items: center;

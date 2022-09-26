@@ -1,25 +1,45 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
-import tsconfigPaths from 'vite-tsconfig-paths'
-import { version as artalkVersion } from 'artalk/package.json'
-import { version as sidebarVersion } from './package.json'
+import vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
+import VueRouter from 'unplugin-vue-router/vite'
+import { VueRouterAutoImports } from 'unplugin-vue-router'
+import Components from 'unplugin-vue-components/vite'
+import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  base: './',
-  define: {
-    ARTALK_VERSION: JSON.stringify(artalkVersion),
-    ARTALK_SIDEBAR_VERSION: JSON.stringify(sidebarVersion)
-  },
   build: {
     target: 'es2015',
     outDir: resolve(__dirname, "dist"),
     minify: 'terser'
   },
-  plugins: [tsconfigPaths()],
+  plugins: [
+    VueRouter({ importMode: 'sync' }),
+    vue(),
+    Components({ resolvers: [HeadlessUiResolver()] }),
+    AutoImport({
+      imports: ['vue', VueRouterAutoImports],
+    }),
+    (() => ({
+      name: 'prod-vue-resolver',
+      resolveId (id) {
+        // @issue https://github.com/vitejs/vite/issues/6607
+        // dev mode vite resolves vue in other way
+        // only in prod mode, `id === vue` is true
+        if(id === 'vue') {
+          return resolve(__dirname, './node_modules/vue/dist/vue.runtime.esm-bundler.js')
+        }
+      }
+    }))(),
+  ],
+  server: {
+    port: 23367,
+  },
   css: {
     preprocessorOptions: {
-      less: {
-         additionalData: `@import "./src/style/_variables.less";@import "./src/style/_extend.less";`
+      scss: {
+         additionalData: `@import "./src/style/_variables.scss";@import "./src/style/_extends.scss";`
      },
     },
   },

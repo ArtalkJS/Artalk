@@ -1,0 +1,221 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #fff;
+  margin: 0;
+}
+
+.artalk, .atk-layer-wrap {
+  font-family: $font-family;
+}
+
+.atk-sidebar {
+  .atk-sidebar-inner {
+    position: relative;
+  }
+
+  .atk-sidebar-no-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    font-size: 35px;
+    color: var(--at-color-meta);
+    pointer-events: none;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .atk-form {
+    $form-height: 35px;
+
+    padding: 20px 30px;
+
+    .atk-label {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: var(--at-color-font);
+    }
+
+    .atk-desc {
+      font-size: 14px;
+      margin-top: 10px;
+      margin-left: 15px;
+      margin-bottom: 25px;
+      display: block;
+      color: var(--at-color-meta);
+
+      a {
+        opacity: 0.8;
+      }
+    }
+
+    input, textarea {
+      display: block;
+      line-height: $form-height;
+      padding: 0 10px;
+      margin: 0;
+      border: none;
+      border-bottom: 2px solid var(--at-color-border);
+      outline: none;
+      width: 100%;
+      margin-bottom: 25px;
+      background: var(--at-color-bg);
+
+      &:focus {
+        border-bottom-color: var(--at-color-bg-light);
+      }
+
+      &[type="file"] {
+        background: transparent;
+        border: 2px solid var(--at-color-border);
+        cursor: pointer;
+        position: relative;
+        padding: 6px 15px;
+        line-height: 0;
+        margin-bottom: 17px;
+        border-radius: 50px;
+
+        &:hover {
+          background: var(--at-color-bg-light);
+          border-color: var(--at-color-bg-light);
+        }
+      }
+
+      &[type="file"]::-webkit-file-upload-button {
+        background: transparent;
+        color: var(--at-color-font);
+        border: 0;
+        border-right: 2px solid #eee;
+        border-left: 0;
+        border-top: 0;
+        border-bottom: 0;
+        padding: 0 20px 0 10px;
+        line-height: 25px;
+        margin-right: 15px;
+        cursor: pointer;
+        transition: .2s ease;
+        -webkit-appearance: none;
+        border-radius: 0;
+      }
+    }
+
+    textarea {
+      font-size: 13px;
+      line-height: 20px;
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    select {
+      display: block;
+      outline: none;
+      height: $form-height;
+      padding: 5px 10px;
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid var(--at-color-border);
+      margin-bottom: 25px;
+      -webkit-appearance: none;
+      border-radius: 0;
+      background: var(--at-color-bg);
+    }
+
+    button {
+      &:hover {
+        background: var(--at-color-bg-light);
+      }
+
+      text-align: center;
+      color: var(--at-color-light);
+      background: transparent;
+      border: 2px solid var(--at-color-bg-light);
+      line-height: $form-height;
+      letter-spacing: 2em;
+      text-indent: 2em; // center
+      cursor: pointer;
+      outline: none;
+      padding: 0 20px;
+      border-radius: 50px;
+      margin: 0 5px;
+      width: 100%;
+      user-select: none;
+    }
+
+    input, select, button {
+      font-size: 15px;
+    }
+
+    .atk-file-upload-group {
+      height: 100px;
+      overflow: hidden;
+    }
+
+    .atk-uploading-wrap {
+      .atk-progress {
+        width: 100%;
+        height: 12px;
+        display: block;
+        overflow: hidden;
+        background: #eee;
+        border-radius: 100px;
+        margin-bottom: 7px;
+        margin-top: 20px;
+
+        .atk-bar {
+          transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+          background: var(--at-color-main);
+          height: 100%;
+          width: 0%;
+          opacity: 0.7;
+        }
+      }
+
+      .atk-status {
+        color: var(--at-color-meta);
+        font-size: 14px;
+
+        .atk-curt {
+          color: var(--at-color-main)
+        }
+
+        .atk-abort {
+          cursor: pointer;
+          float: right;
+
+          &:hover {
+            color: var(--at-color-main);
+          }
+        }
+      }
+    }
+  }
+
+  .atk-log-wrap {
+    .atk-log-back-btn {
+      display: inline-block;
+      padding: 5px 33px;
+      cursor: pointer;
+      user-select: none;
+      border-right: 1px solid var(--at-color-border);
+      border-left: 1px solid transparent;
+      &:hover {
+        background: #f4f4f4;
+      }
+    }
+
+    .atk-log {}
+
+    .atk-iframe {
+      width: 100%;
+      height: calc(100vh - 150px);
+      border: 0;
+      background: #f4f4f4;
+      border: 3px solid #eee;
+    }
+  }
+}

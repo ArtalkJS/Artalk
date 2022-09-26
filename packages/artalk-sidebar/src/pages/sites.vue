@@ -1,3 +1,132 @@
+<script setup lang="ts">
+import { useNavStore } from '../stores/nav'
+import { artalk, bootParams } from '../global'
+import type { SiteData } from 'artalk/types/artalk-data'
+
+const nav = useNavStore()
+const sites = ref<SiteData[]>([])
+const curtEditSite = ref<SiteData|null>(null)
+const showSiteCreate = ref(false)
+const siteCreateInitVal = ref()
+const isLoading = ref(false)
+
+onMounted(() => {
+  nav.updateTabs({
+
+  }, '')
+
+  isLoading.value = true
+  artalk?.ctx.getApi().site.siteGet().then(gotSites => {
+    sites.value = gotSites
+  }).finally(() => {
+    isLoading.value = false
+  })
+
+  // 通过启动参数打开站点创建
+  const vp = bootParams.viewParams
+  if (vp && vp.create_name && vp.create_urls) {
+    siteCreateInitVal.value = { name: vp.create_name, urls: vp.create_urls }
+    showSiteCreate.value = true
+    nextTick(() => {
+      siteCreateInitVal.value = null
+      bootParams.viewParams = null
+    })
+  }
+})
+
+function create() {
+  curtEditSite.value = null
+  showSiteCreate.value = true
+}
+
+const sitesGrouped = computed(() => {
+  if (sites.value.length === 0) return []
+
+  const grp: SiteData[][] = []
+  let j = -1
+  for (let i = 0; i < sites.value.length; i++) {
+    const item = sites.value[i]
+    if (i % 4 === 0) { // 每 4 个一组
+      grp.push([])
+      j++
+    }
+    grp[j].push(item)
+  }
+  return grp
+})
+
+function edit(site: SiteData) {
+  showSiteCreate.value = false
+  curtEditSite.value = site
+}
+
+function onNewSiteCreated(siteNew: SiteData) {
+  sites.value.push(siteNew)
+  showSiteCreate.value = false
+  nav.refreshSites()
+}
+
+function onSiteItemUpdate(site: SiteData) {
+  const index = sites.value.findIndex(s => s.id === site.id)
+  if (index != -1) {
+    const orgSite = sites.value[index]
+    Object.keys(site).forEach(key => {
+      ;(orgSite as any)[key] = (site as any)[key]
+    })
+  }
+  nav.refreshSites()
+}
+
+function onSiteItemRemove(id: number) {
+  const index = sites.value.findIndex(p => p.id === id)
+  sites.value.splice(index, 1)
+  nav.refreshSites()
+}
+</script>
+
+<template>
+  <div class="atk-site-list">
+    <div class="atk-header">
+      <div class="atk-title">共 {{ sites.length }} 个站点</div>
+      <div class="atk-actions">
+        <div class="atk-item atk-site-add-btn" @click="create()"><i class="atk-icon atk-icon-plus"></i></div>
+      </div>
+    </div>
+    <SiteCreate
+      v-if="showSiteCreate"
+      :init-val="siteCreateInitVal"
+      @close="showSiteCreate = false"
+      @done="onNewSiteCreated"
+    />
+    <div class="atk-site-rows-wrap">
+      <template v-for="(sites) in sitesGrouped">
+        <template v-if="curtEditSite !== null">
+          <SiteEditor
+            v-if="!!sites.includes(curtEditSite)"
+            :site="curtEditSite"
+            @close="curtEditSite = null"
+            @update="onSiteItemUpdate"
+            @remove="onSiteItemRemove"
+          />
+        </template>
+        <div class="atk-site-row">
+          <div
+            v-for="(site) in sites"
+            class="atk-site-item"
+            :class="{ 'atk-active': curtEditSite === site }"
+            @click="edit(site)"
+          >
+            <div class="atk-site-logo">{{ site.name.substring(0, 1) }}</div>
+            <div class="atk-site-name">{{ site.name }}</div>
+          </div>
+        </div>
+      </template>
+    </div>
+    <LoadingLayer v-if="isLoading" />
+  </div>
+</template>
+
+<style scoped lang="scss">
 .atk-site-list {
   & > .atk-header {
     display: flex;
@@ -90,7 +219,7 @@
     }
   }
 
-  .atk-site-edit, .atk-site-add {
+  :deep(.atk-site-edit), :deep(.atk-site-add) {
     position: relative;
     min-height: 120px;
     width: 100%;
@@ -171,7 +300,7 @@
       padding-bottom: 10px;
 
       .atk-site-text-actions {
-        .atk-list-text-actions();
+        @extend .atk-list-text-actions;
         height: 90px;
         padding: 0;
         padding-left: 10px;
@@ -183,7 +312,7 @@
       }
 
       .atk-site-btn-actions {
-        .atk-list-btn-actions();
+        @extend .atk-list-btn-actions;
 
         padding-right: 9px;
       }
@@ -194,7 +323,7 @@
     }
   }
 
-  .atk-site-add {
+  :deep(.atk-site-add) {
     position: relative;
 
     .atk-header {
@@ -208,3 +337,4 @@
     }
   }
 }
+</style>

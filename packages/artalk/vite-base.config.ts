@@ -2,12 +2,8 @@ import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { resolve } from 'path'
 import dts from 'vite-plugin-dts'
-import { version } from './package.json'
 
 export default defineConfig({
-  define: {
-    ARTALK_VERSION: JSON.stringify(version),
-  },
   css: {
     preprocessorOptions: {
       less: {

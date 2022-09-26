@@ -22,4 +22,18 @@ export default class SystemApi extends ApiBase {
 
     return conf
   }
+
+  /** 获取配置数据 */
+  public async getSettings() {
+    const data = await this.POST<string>('/admin/setting-get')
+    return data
+  }
+
+  /** 保存配置数据 */
+  public async saveSettings(yamlStr: string) {
+    const data = await this.POST<boolean>('/admin/setting-save', {
+      data: yamlStr,
+    })
+    return data
+  }
 }

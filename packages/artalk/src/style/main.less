@@ -103,6 +103,23 @@
   tr:nth-child(even) {
     background-color: var(--at-color-bg-grey);
   }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  li + li {
+    margin-top: 8px;
+  }
+
+  li > ol,
+  li > ul {
+    margin: 8px 0 0;
+  }
 }
 
 .atk-hide {

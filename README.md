@@ -112,7 +112,7 @@ services:
     container_name: artalk
     image: artalk/artalk-go
     ports:
-      - 端口号:23366
+      - 8080:23366
     volumes:
       - ./data:/data
 ```
@@ -165,8 +165,8 @@ docker-compose up -d
   - [x] 评论 (增/删/改)
   - [x] 页面 (增/删/改)
   - [x] 站点 (增/删/改)
-  - [x] 数据分页
-  - [ ] 配置 (GUI)
+  - [ ] 用户 (增/删/改)
+  - [x] 设置 (GUI)
 - [x] 数据导入 ([Artransfer](https://artalk.js.org/guide/transfer.html))
   - [x] Artrans
   - [x] WordPress
@@ -178,7 +178,6 @@ docker-compose up -d
   - [x] Twikoo
   - [x] Artalk v1 (PHP)
 - [x] 数据导出
-- [ ] 数据备份同步
 - [x] 邮件异步队列发送
 - [ ] 邮件队列持久化
 - [x] 邮件多种发送方式
@@ -226,7 +225,7 @@ docker-compose up -d
 - [ ] 扩展中心
 - [ ] 开放用户注册
 - [ ] 接入第三方登录
-- [x] 国际化 (i18n)
+- [x] 多语言 / 国际化 (i18n)
 - [x] 一键升级
 
 ## Stargazers over time

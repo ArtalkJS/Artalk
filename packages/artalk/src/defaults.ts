@@ -29,7 +29,7 @@ const defaults: ArtalkConfig = {
 
   gravatar: {
     default: 'mp',
-    mirror: 'https://sdn.geekzu.org/avatar/',
+    mirror: 'https://cravatar.cn/avatar/',
   },
 
   pagination: {

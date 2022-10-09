@@ -26,8 +26,8 @@ export function createArtalkInstance() {
   Artalk.DisabledComponents = ['list']
   return new Artalk({
     el: artalkEl,
-    server: (import.meta.env.DEV) ? 'http://localhost:23366' : '/',
-    pageKey: 'https://artalk.js.org/guide/intro.html',
+    server: (import.meta.env.DEV) ? 'http://localhost:23366' : '../',
+    pageKey: bootParams.pageKey,
     site: bootParams.site,
     darkMode: bootParams.darkMode,
     useBackendConf: true

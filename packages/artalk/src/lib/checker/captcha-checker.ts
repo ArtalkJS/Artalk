@@ -77,6 +77,7 @@ const CaptchaChecker: Checker = {
 
   onError(that, ctx, err, inputVal, formEl) {
     formEl.querySelector<HTMLElement>('.atk-captcha-img')!.click() // 刷新验证码
+    formEl.querySelector<HTMLInputElement>('input[type="text"]')!.value = '' // 清空输入框输入
   }
 }
 

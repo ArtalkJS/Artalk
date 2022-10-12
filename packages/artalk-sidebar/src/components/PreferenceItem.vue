@@ -6,11 +6,11 @@ const props = defineProps<{
   path: (string|number)[]
 }>()
 
-const desc = computed(() => settings.extractItemDescFromComment(props.path))
-const customValue = computed(() => settings.customs.value?.getIn(props.path) as any)
+const desc = computed(() => settings.get().extractItemDescFromComment(props.path))
+const customValue = computed(() => settings.get().customs.value?.getIn(props.path) as any)
 
 function onChange(value: boolean|string) {
-  settings.customs.value?.setIn(props.path, value)
+  settings.get().customs.value?.setIn(props.path, value)
 }
 </script>
 

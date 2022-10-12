@@ -10,7 +10,7 @@ const emits = defineEmits<{
   (evt: 'toggle', path?: string): void
 }>()
 
-const desc = computed(() => settings.extractItemDescFromComment(props.path))
+const desc = computed(() => settings.get().extractItemDescFromComment(props.path))
 const level = computed(() => props.path.length)
 
 const expanded = ref(true)

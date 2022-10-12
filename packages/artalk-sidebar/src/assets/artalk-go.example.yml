@@ -279,7 +279,7 @@ frontend:
   # 头像
   gravatar:
     # Gravatar 镜像地址
-    mirror: "https://sdn.geekzu.org/avatar/"
+    mirror: "https://cravatar.cn/avatar/"
     # 默认头像
     default: "mp"
   # 评论分页

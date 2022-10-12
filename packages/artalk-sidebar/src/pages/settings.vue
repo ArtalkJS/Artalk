@@ -13,6 +13,10 @@ const { curtTab } = storeToRefs(nav)
 const settingsTpl = YAML.parseDocument(confTemplate)
 const isLoading = ref(false)
 
+onBeforeMount(() => {
+  settings.init()
+})
+
 onMounted(() => {
   nav.updateTabs({
     'transfer': '迁移',
@@ -23,14 +27,14 @@ onMounted(() => {
   })
 
   artalk!.ctx.getApi().system.getSettings().then((yamlStr) => {
-    settings.customs.value = YAML.parseDocument(yamlStr)
+    settings.get().customs.value = YAML.parseDocument(yamlStr)
   })
 })
 
 function save() {
   let yamlStr = ''
   try {
-    yamlStr = settings.customs.value?.toString() || ''
+    yamlStr = settings.get().customs.value?.toString() || ''
   } catch (err) {
     alert('配置文件生成失败：'+err)
     console.error(err)

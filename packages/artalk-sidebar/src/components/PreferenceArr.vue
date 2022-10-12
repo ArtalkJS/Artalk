@@ -10,25 +10,25 @@ const ci = getCurrentInstance()
 
 const customValue = ref([])
 const update = () => {
-  customValue.value = (settings.customs.value?.getIn(props.path) as any)?.items || []
+  customValue.value = (settings.get().customs.value?.getIn(props.path) as any)?.items || []
   ci?.proxy?.$forceUpdate()
 }
-watch(settings.customs, (customs) => {
+watch(settings.get().customs, (customs) => {
   update()
 })
 
 function onChange(index: number, val: string) {
-  settings.customs.value?.setIn([...props.path, index], val)
+  settings.get().customs.value?.setIn([...props.path, index], val)
 }
 
 function remove(index: number) {
-  settings.customs.value?.deleteIn([...props.path, index])
+  settings.get().customs.value?.deleteIn([...props.path, index])
   update()
 }
 
 function add() {
-  if (!customValue.value) settings.customs.value?.setIn([...props.path], [''])
-  else settings.customs.value?.setIn([...props.path, customValue.value.length], '')
+  if (!customValue.value) settings.get().customs.value?.setIn([...props.path], [''])
+  else settings.get().customs.value?.setIn([...props.path, customValue.value.length], '')
   update()
 }
 </script>

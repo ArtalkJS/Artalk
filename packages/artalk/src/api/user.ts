@@ -15,7 +15,7 @@ export default class UserApi extends ApiBase {
     if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
 
     const data = await this.POST<any>('/login', params)
-    return (data.token as string)
+    return data as { token: string, user: UserData }
   }
 
   /** 用户 · 获取  */

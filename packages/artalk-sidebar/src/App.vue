@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useNavStore } from './stores/nav'
+import { useUserStore } from './stores/user'
 import global, { bootParams, createArtalkInstance } from './global'
 
 const nav = useNavStore()
+const user = useUserStore()
 const router = useRouter()
 const { scrollableArea } = storeToRefs(nav)
 const artalkLoaded = ref(false)
@@ -14,15 +16,19 @@ onMounted(() => {
     global.setArtalk(artalkInstance)
 
     // 更新用户资料
-    global.getArtalk()!.ctx.user.update(bootParams.user)
+    if (bootParams.user?.token) {
+      artalkInstance.ctx.user.update(bootParams.user)
+    } else {
+      try { global.importUserDataFromArtalkInstance() } catch {}
+    }
 
     // 验证登陆身份有效性
-    // artalkInstance.ctx.getApi().user.loginStatus()
-    //   .then(resp => {
-    //     if (resp.is_admin && !resp.is_login) {
-    //       router.replace('/login')
-    //     }
-    //   })
+    artalkInstance.ctx.getApi().user.loginStatus()
+      .then(resp => {
+        if (!resp.is_login) {
+          router.replace('/login')
+        }
+      })
 
     artalkLoaded.value = true
   })

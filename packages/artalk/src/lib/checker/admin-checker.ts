@@ -11,7 +11,10 @@ const AdminChecker: Checker = {
       password: inputVal
     }
 
-    return that.ctx.getApi().user.login(data.name, data.email, data.password)
+    return (async () => {
+      const resp = await that.ctx.getApi().user.login(data.name, data.email, data.password)
+      return resp.token
+    })()
   },
 
   body(that, ctx) {

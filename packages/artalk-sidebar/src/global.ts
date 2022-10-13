@@ -1,5 +1,6 @@
 import Artalk from 'artalk'
 import type { LocalUser } from 'artalk/types/artalk-config'
+import { useUserStore } from './stores/user'
 
 export let artalk: Artalk|null = null
 
@@ -34,11 +35,26 @@ export function createArtalkInstance() {
   }) as unknown as Promise<Artalk>
 }
 
+export function importUserDataFromArtalkInstance() {
+  if (!artalk) throw Error("the artalk instance is not exist")
+  if (!artalk.ctx.user.data.token) throw Error("the user data in artalk instance is invalid")
+
+  const userData = artalk.ctx.user.data
+  useUserStore().$patch((state) => {
+    state.site = '__ATK_SITE_ALL'
+    state.name = userData.nick
+    state.email = userData.email
+    state.isAdmin = userData.isAdmin
+    state.token = userData.token
+  })
+}
+
 export default {
   createArtalkInstance,
   getArtalk: () => artalk,
   setArtalk: (artalkInstance: Artalk) => {
     artalk = artalkInstance
   },
-  getBootParams: () => bootParams
+  getBootParams: () => bootParams,
+  importUserDataFromArtalkInstance,
 }

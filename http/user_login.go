@@ -15,7 +15,7 @@ import (
 )
 
 type ParamsLogin struct {
-	Name     string `mapstructure:"name" param:"required"`
+	Name     string `mapstructure:"name"`
 	Email    string `mapstructure:"email" param:"required"`
 	Password string `mapstructure:"password" param:"required"`
 }
@@ -26,10 +26,34 @@ func (a *action) Login(c echo.Context) error {
 		return resp
 	}
 
+	// 账户读取
+	var user model.User
+	if p.Name == "" {
+		// 仅 Email 的查询
+		users := model.FindUsersByEmail(p.Email)
+		if len(users) == 1 {
+			// 仅有一个 email 匹配的用户
+			user = users[0]
+		} else if len(users) > 1 {
+			// 存在多个 email 匹配的用户
+			userNames := []string{}
+			for _, u := range users {
+				userNames = append(userNames, u.Name)
+			}
+			return RespError(c, "需要选择用户名", Map{
+				// 前端需做处理让用户选择用户名，
+				// 之后再发起带 name 参数的请求
+				"need_name_select": userNames,
+			})
+		}
+	} else {
+		// Name + Email 的精准查询
+		user = model.FindUser(p.Name, p.Email) // name = ? AND email = ?
+	}
+
 	// record action for limiting action
 	RecordAction(c)
 
-	user := model.FindUser(p.Name, p.Email) // name = ? AND email = ?
 	if user.IsEmpty() {
 		return RespError(c, "验证失败")
 	}
@@ -68,6 +92,7 @@ func (a *action) Login(c echo.Context) error {
 
 	return RespData(c, Map{
 		"token": jwtToken,
+		"user":  user.ToCooked(),
 	})
 }
 

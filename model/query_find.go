@@ -73,6 +73,25 @@ func FindUser(name string, email string) User {
 	return user
 }
 
+// 查找用户 (仅根据 email)
+func FindUsersByEmail(email string) []User {
+	var userIds = []uint{}
+
+	// 查询缓存
+	FindAndStoreCache(fmt.Sprintf("user_id#email=%s", strings.ToLower(email)), &userIds, func() interface{} {
+		DB().Model(&User{}).Where("LOWER(email) = LOWER(?)", email).Pluck("id", &userIds)
+
+		return &userIds
+	})
+
+	users := []User{}
+	for _, id := range userIds {
+		users = append(users, FindUserByID(id))
+	}
+
+	return users
+}
+
 // 查找用户 (通过 ID)
 func FindUserByID(id uint) User {
 	var user User

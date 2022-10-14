@@ -204,7 +204,14 @@ export function marked(ctx: Context, src: string): string {
   // @link https://gist.github.com/lionel-rowe/bb384465ba4e4c81a9c8dada84167225
   let dest = insane(markedContent, {
     allowedClasses: {},
-    allowedSchemes: ['http', 'https', 'mailto'],
+    // @refer CVE-2018-8495
+    // @link https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8495
+    // @link https://leucosite.com/Microsoft-Edge-RCE/
+    // @link https://medium.com/@knownsec404team/analysis-of-the-security-issues-of-url-scheme-in-pc-from-cve-2018-8495-934478a36756
+    allowedSchemes: [
+      'http', 'https', 'mailto',
+      'data' // for support base64 encoded image (安全性有待考虑)
+    ],
     allowedTags: [
       'a', 'abbr', 'article', 'b', 'blockquote', 'br', 'caption', 'code', 'del', 'details', 'div', 'em',
       'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'ins', 'kbd', 'li', 'main', 'mark',

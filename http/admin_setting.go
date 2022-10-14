@@ -3,10 +3,10 @@ package http
 import (
 	"os"
 
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib/core"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 func (a *action) AdminSettingGet(c echo.Context) error {
@@ -14,7 +14,7 @@ func (a *action) AdminSettingGet(c echo.Context) error {
 		return RespError(c, "无权访问")
 	}
 
-	dat, err := os.ReadFile(viper.ConfigFileUsed())
+	dat, err := os.ReadFile(config.GetCfgFileLoaded())
 	if err != nil {
 		return RespError(c, "配置文件读取失败")
 	}
@@ -36,8 +36,8 @@ func (a *action) AdminSettingSave(c echo.Context) error {
 		return resp
 	}
 
-	confFilename := viper.ConfigFileUsed()
-	f, err := os.Create(confFilename)
+	configFile := config.GetCfgFileLoaded()
+	f, err := os.Create(configFile)
 	if err != nil {
 		return RespError(c, "配置文件读取失败，"+err.Error())
 	}
@@ -54,7 +54,7 @@ func (a *action) AdminSettingSave(c echo.Context) error {
 	if err3 != nil {
 		return RespError(c, "工作路径获取失败，"+err3.Error())
 	}
-	core.LoadCore(confFilename, workDir)
+	core.LoadCore(configFile, workDir)
 	logrus.Info("服务已重启完毕")
 
 	return RespSuccess(c)

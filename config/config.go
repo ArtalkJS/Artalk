@@ -5,53 +5,53 @@ import "time"
 // Config 配置
 // @link https://godoc.org/github.com/mitchellh/mapstructure
 type Config struct {
-	AppKey         string           `mapstructure:"app_key" json:"app_key"`                 // 加密密钥
-	Debug          bool             `mapstructure:"debug" json:"debug"`                     // 调试模式
-	TimeZone       string           `mapstructure:"timezone" json:"timezone"`               // 时区
-	Host           string           `mapstructure:"host" json:"host"`                       // HTTP Server 监听 IP
-	Port           int              `mapstructure:"port" json:"port"`                       // HTTP Server 监听 Port
-	DB             DBConf           `mapstructure:"db" json:"db"`                           // 数据文件
-	Cache          CacheConf        `mapstructure:"cache" json:"cache"`                     // 缓存
-	Log            LogConf          `mapstructure:"log" json:"log"`                         // 日志文件
-	AllowOrigins   []string         `mapstructure:"allow_origins" json:"-"`                 // @deprecated 已废弃 (请使用 TrustedDomains)
-	TrustedDomains []string         `mapstructure:"trusted_domains" json:"trusted_domains"` // 可信任的域名 (新)
-	SSL            SSLConf          `mapstructure:"ssl" json:"ssl"`                         // SSL
-	SiteDefault    string           `mapstructure:"site_default" json:"site_default"`       // 默认站点名（当请求无指定 site_name 时使用）
-	AdminUsers     []AdminUserConf  `mapstructure:"admin_users" json:"admin_users"`         // 管理员账户
-	LoginTimeout   int              `mapstructure:"login_timeout" json:"login_timeout"`     // 登陆超时
-	Cookie         CookieConf       `mapstructure:"cookie" json:"cookie"`                   // Cookie
-	Moderator      ModeratorConf    `mapstructure:"moderator" json:"moderator"`             // 评论审查
-	Captcha        CaptchaConf      `mapstructure:"captcha" json:"captcha"`                 // 验证码
-	Email          EmailConf        `mapstructure:"email" json:"email"`                     // 邮箱提醒
-	ImgUpload      ImgUploadConf    `mapstructure:"img_upload" json:"img_upload"`           // 图片上传
-	AdminNotify    AdminNotifyConf  `mapstructure:"admin_notify" json:"admin_notify"`       // 其他通知方式
-	Notify         *AdminNotifyConf `mapstructure:"notify" json:"-"`                        // @deprecated 已废弃 (请使用 AdminNotify)
-	Frontend       FrontendConf     `mapstructure:"frontend" json:"frontend"`
+	AppKey         string                 `koanf:"app_key" json:"app_key"`                 // 加密密钥
+	Debug          bool                   `koanf:"debug" json:"debug"`                     // 调试模式
+	TimeZone       string                 `koanf:"timezone" json:"timezone"`               // 时区
+	Host           string                 `koanf:"host" json:"host"`                       // HTTP Server 监听 IP
+	Port           int                    `koanf:"port" json:"port"`                       // HTTP Server 监听 Port
+	DB             DBConf                 `koanf:"db" json:"db"`                           // 数据文件
+	Cache          CacheConf              `koanf:"cache" json:"cache"`                     // 缓存
+	Log            LogConf                `koanf:"log" json:"log"`                         // 日志文件
+	AllowOrigins   []string               `koanf:"allow_origins" json:"-"`                 // @deprecated 已废弃 (请使用 TrustedDomains)
+	TrustedDomains []string               `koanf:"trusted_domains" json:"trusted_domains"` // 可信任的域名 (新)
+	SSL            SSLConf                `koanf:"ssl" json:"ssl"`                         // SSL
+	SiteDefault    string                 `koanf:"site_default" json:"site_default"`       // 默认站点名（当请求无指定 site_name 时使用）
+	AdminUsers     []AdminUserConf        `koanf:"admin_users" json:"admin_users"`         // 管理员账户
+	LoginTimeout   int                    `koanf:"login_timeout" json:"login_timeout"`     // 登陆超时
+	Cookie         CookieConf             `koanf:"cookie" json:"cookie"`                   // Cookie
+	Moderator      ModeratorConf          `koanf:"moderator" json:"moderator"`             // 评论审查
+	Captcha        CaptchaConf            `koanf:"captcha" json:"captcha"`                 // 验证码
+	Email          EmailConf              `koanf:"email" json:"email"`                     // 邮箱提醒
+	ImgUpload      ImgUploadConf          `koanf:"img_upload" json:"img_upload"`           // 图片上传
+	AdminNotify    AdminNotifyConf        `koanf:"admin_notify" json:"admin_notify"`       // 其他通知方式
+	Notify         *AdminNotifyConf       `koanf:"notify" json:"-"`                        // @deprecated 已废弃 (请使用 AdminNotify)
+	Frontend       map[string]interface{} `koanf:"frontend" json:"frontend"`
 }
 
 type DBConf struct {
-	Type DBType `mapstructure:"type" json:"type"`
-	Dsn  string `mapstructure:"dsn" json:"dsn"` // 最高优先级
+	Type DBType `koanf:"type" json:"type"`
+	Dsn  string `koanf:"dsn" json:"dsn"` // 最高优先级
 
-	File string `mapstructure:"file" json:"file"`
-	Name string `mapstructure:"name" json:"name"`
+	File string `koanf:"file" json:"file"`
+	Name string `koanf:"name" json:"name"`
 
-	Host     string `mapstructure:"host" json:"host"`
-	Port     int    `mapstructure:"port" json:"port"`
-	User     string `mapstructure:"user" json:"user"`
-	Password string `mapstructure:"password" json:"password"`
+	Host     string `koanf:"host" json:"host"`
+	Port     int    `koanf:"port" json:"port"`
+	User     string `koanf:"user" json:"user"`
+	Password string `koanf:"password" json:"password"`
 
-	TablePrefix string `mapstructure:"table_prefix" json:"table_prefix"`
-	Charset     string `mapstructure:"charset" json:"charset"`
+	TablePrefix string `koanf:"table_prefix" json:"table_prefix"`
+	Charset     string `koanf:"charset" json:"charset"`
 }
 
 type CacheConf struct {
 	Enabled bool      // 配置文件不允许修改
-	Type    CacheType `mapstructure:"type" json:"type"`
-	Expires int       `mapstructure:"expires" json:"expires"` // 过期时间
-	WarmUp  bool      `mapstructure:"warm_up" json:"warm_up"` // 启动时缓存预热
-	Server  string    `mapstructure:"server" json:"server"`   // 缓存服务器
-	Redis   RedisConf `mapstructure:"redis" json:"redis"`
+	Type    CacheType `koanf:"type" json:"type"`
+	Expires int       `koanf:"expires" json:"expires"` // 过期时间
+	WarmUp  bool      `koanf:"warm_up" json:"warm_up"` // 启动时缓存预热
+	Server  string    `koanf:"server" json:"server"`   // 缓存服务器
+	Redis   RedisConf `koanf:"redis" json:"redis"`
 }
 
 func (c *CacheConf) GetExpiresTime() int64 {
@@ -67,104 +67,104 @@ func (c *CacheConf) GetExpiresTime() int64 {
 }
 
 type LogConf struct {
-	Enabled  bool   `mapstructure:"enabled" json:"enabled"`
-	Filename string `mapstructure:"filename" json:"filename"`
+	Enabled  bool   `koanf:"enabled" json:"enabled"`
+	Filename string `koanf:"filename" json:"filename"`
 }
 
 type SSLConf struct {
-	Enabled  bool   `mapstructure:"enabled" json:"enabled"`
-	CertPath string `mapstructure:"cert_path" json:"cert_path"`
-	KeyPath  string `mapstructure:"key_path" json:"key_path"`
+	Enabled  bool   `koanf:"enabled" json:"enabled"`
+	CertPath string `koanf:"cert_path" json:"cert_path"`
+	KeyPath  string `koanf:"key_path" json:"key_path"`
 }
 
 type AdminUserConf struct {
-	Name         string   `mapstructure:"name" json:"name"`
-	Email        string   `mapstructure:"email" json:"email"`
-	Link         string   `mapstructure:"link" json:"link"`
-	Password     string   `mapstructure:"password" json:"password"`
-	BadgeName    string   `mapstructure:"badge_name" json:"badge_name"`
-	BadgeColor   string   `mapstructure:"badge_color" json:"badge_color"`
-	ReceiveEmail *bool    `mapstructure:"receive_email" json:"receive_email"`
-	Sites        []string `mapstructure:"sites" json:"sites"`
+	Name         string   `koanf:"name" json:"name"`
+	Email        string   `koanf:"email" json:"email"`
+	Link         string   `koanf:"link" json:"link"`
+	Password     string   `koanf:"password" json:"password"`
+	BadgeName    string   `koanf:"badge_name" json:"badge_name"`
+	BadgeColor   string   `koanf:"badge_color" json:"badge_color"`
+	ReceiveEmail *bool    `koanf:"receive_email" json:"receive_email"`
+	Sites        []string `koanf:"sites" json:"sites"`
 }
 
 type CookieConf struct {
-	Enabled bool `mapstructure:"enabled" json:"enabled"`
+	Enabled bool `koanf:"enabled" json:"enabled"`
 }
 
 type ModeratorConf struct {
-	PendingDefault bool                 `mapstructure:"pending_default" json:"pending_default"`
-	ApiFailBlock   bool                 `mapstructure:"api_fail_block" json:"api_fail_block"` // API 请求错误仍然拦截
-	AkismetKey     string               `mapstructure:"akismet_key" json:"akismet_key"`
-	Tencent        TencentAntispamConf  `mapstructure:"tencent" json:"tencent"`
-	Aliyun         AliyunAntispamConf   `mapstructure:"aliyun" json:"aliyun"`
-	Keywords       KeyWordsAntispamConf `mapstructure:"keywords" json:"keywords"`
+	PendingDefault bool                 `koanf:"pending_default" json:"pending_default"`
+	ApiFailBlock   bool                 `koanf:"api_fail_block" json:"api_fail_block"` // API 请求错误仍然拦截
+	AkismetKey     string               `koanf:"akismet_key" json:"akismet_key"`
+	Tencent        TencentAntispamConf  `koanf:"tencent" json:"tencent"`
+	Aliyun         AliyunAntispamConf   `koanf:"aliyun" json:"aliyun"`
+	Keywords       KeyWordsAntispamConf `koanf:"keywords" json:"keywords"`
 }
 
 // 腾讯云反垃圾
 type TencentAntispamConf struct {
-	Enabled   bool   `mapstructure:"enabled" json:"enabled"`
-	SecretID  string `mapstructure:"secret_id" json:"secret_id"`
-	SecretKey string `mapstructure:"secret_key" json:"secret_key"`
-	Region    string `mapstructure:"region" json:"region"`
+	Enabled   bool   `koanf:"enabled" json:"enabled"`
+	SecretID  string `koanf:"secret_id" json:"secret_id"`
+	SecretKey string `koanf:"secret_key" json:"secret_key"`
+	Region    string `koanf:"region" json:"region"`
 }
 
 // 阿里云反垃圾
 type AliyunAntispamConf struct {
-	Enabled         bool   `mapstructure:"enabled" json:"enabled"`
-	AccessKeyID     string `mapstructure:"access_key_id" json:"access_key_id"`
-	AccessKeySecret string `mapstructure:"access_key_secret" json:"access_key_secret"`
-	Region          string `mapstructure:"region" json:"region"`
+	Enabled         bool   `koanf:"enabled" json:"enabled"`
+	AccessKeyID     string `koanf:"access_key_id" json:"access_key_id"`
+	AccessKeySecret string `koanf:"access_key_secret" json:"access_key_secret"`
+	Region          string `koanf:"region" json:"region"`
 }
 
 // 关键词词库过滤
 type KeyWordsAntispamConf struct {
-	Enabled  bool     `mapstructure:"enabled" json:"enabled"`
-	Pending  bool     `mapstructure:"pending" json:"pending"`
-	Files    []string `mapstructure:"files" json:"files"`
-	FileSep  string   `mapstructure:"file_sep" json:"file_sep"`
-	ReplacTo string   `mapstructure:"replac_to" json:"replac_to"`
+	Enabled  bool     `koanf:"enabled" json:"enabled"`
+	Pending  bool     `koanf:"pending" json:"pending"`
+	Files    []string `koanf:"files" json:"files"`
+	FileSep  string   `koanf:"file_sep" json:"file_sep"`
+	ReplacTo string   `koanf:"replac_to" json:"replac_to"`
 }
 
 type CaptchaConf struct {
-	Enabled       bool        `mapstructure:"enabled" json:"enabled"`
-	Always        bool        `mapstructure:"always" json:"always"`
-	ActionTimeout int         `mapstructure:"action_timeout" json:"-"` // @deprecated 已废弃 (请使用 ActionReset)
-	ActionReset   int         `mapstructure:"action_reset" json:"action_reset"`
-	ActionLimit   int         `mapstructure:"action_limit" json:"action_limit"`
-	Geetest       GeetestConf `mapstructure:"geetest" json:"geetest"`
+	Enabled       bool        `koanf:"enabled" json:"enabled"`
+	Always        bool        `koanf:"always" json:"always"`
+	ActionTimeout int         `koanf:"action_timeout" json:"-"` // @deprecated 已废弃 (请使用 ActionReset)
+	ActionReset   int         `koanf:"action_reset" json:"action_reset"`
+	ActionLimit   int         `koanf:"action_limit" json:"action_limit"`
+	Geetest       GeetestConf `koanf:"geetest" json:"geetest"`
 }
 
 type GeetestConf struct {
-	Enabled    bool   `mapstructure:"enabled" json:"enabled"`
-	CaptchaID  string `mapstructure:"captcha_id" json:"captcha_id"`
-	CaptchaKey string `mapstructure:"captcha_key" json:"captcha_key"`
+	Enabled    bool   `koanf:"enabled" json:"enabled"`
+	CaptchaID  string `koanf:"captcha_id" json:"captcha_id"`
+	CaptchaKey string `koanf:"captcha_key" json:"captcha_key"`
 }
 
 type EmailConf struct {
-	Enabled            bool            `mapstructure:"enabled" json:"enabled"`           // 总开关
-	SendType           EmailSenderType `mapstructure:"send_type" json:"send_type"`       // 发送方式
-	SendName           string          `mapstructure:"send_name" json:"send_name"`       // 发件人名
-	SendAddr           string          `mapstructure:"send_addr" json:"send_addr"`       // 发件人地址
-	MailSubject        string          `mapstructure:"mail_subject" json:"mail_subject"` // 邮件标题
-	MailSubjectToAdmin string          `mapstructure:"mail_subject_to_admin" json:"-"`   // @deprecated 已废弃 (请使用 AdminNotify.Email.MailSubject) - 邮件标题 (发送给管理员用)
-	MailTpl            string          `mapstructure:"mail_tpl" json:"mail_tpl"`         // 邮件模板
-	SMTP               SMTPConf        `mapstructure:"smtp" json:"smtp"`                 // SMTP 配置
-	AliDM              AliDMConf       `mapstructure:"ali_dm" json:"ali_dm"`             // 阿里云邮件配置
+	Enabled            bool            `koanf:"enabled" json:"enabled"`           // 总开关
+	SendType           EmailSenderType `koanf:"send_type" json:"send_type"`       // 发送方式
+	SendName           string          `koanf:"send_name" json:"send_name"`       // 发件人名
+	SendAddr           string          `koanf:"send_addr" json:"send_addr"`       // 发件人地址
+	MailSubject        string          `koanf:"mail_subject" json:"mail_subject"` // 邮件标题
+	MailSubjectToAdmin string          `koanf:"mail_subject_to_admin" json:"-"`   // @deprecated 已废弃 (请使用 AdminNotify.Email.MailSubject) - 邮件标题 (发送给管理员用)
+	MailTpl            string          `koanf:"mail_tpl" json:"mail_tpl"`         // 邮件模板
+	SMTP               SMTPConf        `koanf:"smtp" json:"smtp"`                 // SMTP 配置
+	AliDM              AliDMConf       `koanf:"ali_dm" json:"ali_dm"`             // 阿里云邮件配置
 }
 
 type SMTPConf struct {
-	Host     string `mapstructure:"host" json:"host"`
-	Port     int    `mapstructure:"port" json:"port"`
-	Username string `mapstructure:"username" json:"username"`
-	Password string `mapstructure:"password" json:"password"`
-	From     string `mapstructure:"from" json:"from"`
+	Host     string `koanf:"host" json:"host"`
+	Port     int    `koanf:"port" json:"port"`
+	Username string `koanf:"username" json:"username"`
+	Password string `koanf:"password" json:"password"`
+	From     string `koanf:"from" json:"from"`
 }
 
 type AliDMConf struct {
-	AccessKeyId     string `mapstructure:"access_key_id" json:"access_key_id"`
-	AccessKeySecret string `mapstructure:"access_key_secret" json:"access_key_secret"`
-	AccountName     string `mapstructure:"account_name" json:"account_name"`
+	AccessKeyId     string `koanf:"access_key_id" json:"access_key_id"`
+	AccessKeySecret string `koanf:"access_key_secret" json:"access_key_secret"`
+	AccountName     string `koanf:"account_name" json:"account_name"`
 }
 
 type DBType string
@@ -200,120 +200,83 @@ const (
 //   password: ""
 //   db: 0
 type RedisConf struct {
-	Network  string `mapstructure:"network" json:"network"` // tcp or unix
-	Username string `mapstructure:"username" json:"username"`
-	Password string `mapstructure:"password" json:"password"`
-	DB       int    `mapstructure:"db" json:"db"` // Redis 默认数据库 0
+	Network  string `koanf:"network" json:"network"` // tcp or unix
+	Username string `koanf:"username" json:"username"`
+	Password string `koanf:"password" json:"password"`
+	DB       int    `koanf:"db" json:"db"` // Redis 默认数据库 0
 }
 
 type ImgUploadConf struct {
-	Enabled    bool      `mapstructure:"enabled" json:"enabled"`         // 总开关
-	Path       string    `mapstructure:"path" json:"path"`               // 图片存放路径
-	MaxSize    int64     `mapstructure:"max_size" json:"max_size"`       // 图片大小限制
-	Quality    string    `mapstructure:"quality" json:"quality"`         // 图片质量
-	PublicPath string    `mapstructure:"public_path" json:"public_path"` // 图片 URL 基础路径
-	Upgit      UpgitConf `mapstructure:"upgit" json:"upgit"`             // upgit
+	Enabled    bool      `koanf:"enabled" json:"enabled"`         // 总开关
+	Path       string    `koanf:"path" json:"path"`               // 图片存放路径
+	MaxSize    int64     `koanf:"max_size" json:"max_size"`       // 图片大小限制
+	Quality    string    `koanf:"quality" json:"quality"`         // 图片质量
+	PublicPath string    `koanf:"public_path" json:"public_path"` // 图片 URL 基础路径
+	Upgit      UpgitConf `koanf:"upgit" json:"upgit"`             // upgit
 }
 
 type UpgitConf struct {
-	Enabled  bool   `mapstructure:"enabled" json:"enabled"`     // 启用 upgit
-	Exec     string `mapstructure:"exec" json:"exec"`           // 启动命令
-	DelLocal bool   `mapstructure:"del_local" json:"del_local"` // 上传后删除本地的图片
+	Enabled  bool   `koanf:"enabled" json:"enabled"`     // 启用 upgit
+	Exec     string `koanf:"exec" json:"exec"`           // 启动命令
+	DelLocal bool   `koanf:"del_local" json:"del_local"` // 上传后删除本地的图片
 }
 
 // 其他通知方式
 type AdminNotifyConf struct {
-	NotifyTpl     string             `mapstructure:"notify_tpl" json:"notify_tpl"`         // 通知模板
-	NotifySubject string             `mapstructure:"notify_subject" json:"notify_subject"` // 通知标题
-	Email         *AdminEmailConf    `mapstructure:"email" json:"email"`                   // 邮件通知
-	Telegram      NotifyTelegramConf `mapstructure:"telegram" json:"telegram"`             // TG
-	Lark          NotifyLarkConf     `mapstructure:"lark" json:"lark"`                     // 飞书
-	DingTalk      NotifyDingTalkConf `mapstructure:"ding_talk" json:"ding_talk"`           // 钉钉
-	Bark          NotifyBarkConf     `mapstructure:"bark" json:"bark"`                     // bark
-	Slack         NotifySlackConf    `mapstructure:"slack" json:"slack"`                   // slack
-	LINE          NotifyLINEConf     `mapstructure:"line" json:"line"`                     // LINE
-	WebHook       NotifyWebHookConf  `mapstructure:"webhook" json:"webhook"`               // WebHook
-	NoiseMode     bool               `mapstructure:"noise_mode" json:"noise_mode"`         // 嘈杂模式 (非回复管理员的评论也发送通知)
+	NotifyTpl     string             `koanf:"notify_tpl" json:"notify_tpl"`         // 通知模板
+	NotifySubject string             `koanf:"notify_subject" json:"notify_subject"` // 通知标题
+	Email         *AdminEmailConf    `koanf:"email" json:"email"`                   // 邮件通知
+	Telegram      NotifyTelegramConf `koanf:"telegram" json:"telegram"`             // TG
+	Lark          NotifyLarkConf     `koanf:"lark" json:"lark"`                     // 飞书
+	DingTalk      NotifyDingTalkConf `koanf:"ding_talk" json:"ding_talk"`           // 钉钉
+	Bark          NotifyBarkConf     `koanf:"bark" json:"bark"`                     // bark
+	Slack         NotifySlackConf    `koanf:"slack" json:"slack"`                   // slack
+	LINE          NotifyLINEConf     `koanf:"line" json:"line"`                     // LINE
+	WebHook       NotifyWebHookConf  `koanf:"webhook" json:"webhook"`               // WebHook
+	NoiseMode     bool               `koanf:"noise_mode" json:"noise_mode"`         // 嘈杂模式 (非回复管理员的评论也发送通知)
 }
 
 type AdminEmailConf struct {
-	Enabled     bool   `mapstructure:"enabled" json:"enabled"`           // 管理员总开关
-	MailSubject string `mapstructure:"mail_subject" json:"mail_subject"` // 管理员邮件标题
+	Enabled     bool   `koanf:"enabled" json:"enabled"`           // 管理员总开关
+	MailSubject string `koanf:"mail_subject" json:"mail_subject"` // 管理员邮件标题
 }
 
 type NotifyTelegramConf struct {
-	Enabled   bool    `mapstructure:"enabled" json:"enabled"`
-	ApiToken  string  `mapstructure:"api_token" json:"api_token"`
-	Receivers []int64 `mapstructure:"receivers" json:"receivers"`
+	Enabled   bool    `koanf:"enabled" json:"enabled"`
+	ApiToken  string  `koanf:"api_token" json:"api_token"`
+	Receivers []int64 `koanf:"receivers" json:"receivers"`
 }
 
 type NotifyDingTalkConf struct {
-	Enabled bool   `mapstructure:"enabled" json:"enabled"`
-	Token   string `mapstructure:"token" json:"token"`
-	Secret  string `mapstructure:"secret" json:"secret"`
+	Enabled bool   `koanf:"enabled" json:"enabled"`
+	Token   string `koanf:"token" json:"token"`
+	Secret  string `koanf:"secret" json:"secret"`
 }
 
 type NotifyLarkConf struct {
-	Enabled    bool   `mapstructure:"enabled" json:"enabled"`
-	WebhookURL string `mapstructure:"webhook_url" json:"webhook_url"`
+	Enabled    bool   `koanf:"enabled" json:"enabled"`
+	WebhookURL string `koanf:"webhook_url" json:"webhook_url"`
 }
 
 type NotifyBarkConf struct {
-	Enabled bool   `mapstructure:"enabled" json:"enabled"`
-	Server  string `mapstructure:"server" json:"server"`
+	Enabled bool   `koanf:"enabled" json:"enabled"`
+	Server  string `koanf:"server" json:"server"`
 }
 
 type NotifySlackConf struct {
-	Enabled    bool     `mapstructure:"enabled" json:"enabled"`
-	OauthToken string   `mapstructure:"oauth_token" json:"oauth_token"`
-	Receivers  []string `mapstructure:"receivers" json:"receivers"`
+	Enabled    bool     `koanf:"enabled" json:"enabled"`
+	OauthToken string   `koanf:"oauth_token" json:"oauth_token"`
+	Receivers  []string `koanf:"receivers" json:"receivers"`
 }
 
 type NotifyLINEConf struct {
-	Enabled            bool     `mapstructure:"enabled" json:"enabled"`
-	ChannelSecret      string   `mapstructure:"channel_secret" json:"channel_secret"`
-	ChannelAccessToken string   `mapstructure:"channel_access_token" json:"channel_access_token"`
-	Receivers          []string `mapstructure:"receivers" json:"receivers"`
+	Enabled            bool     `koanf:"enabled" json:"enabled"`
+	ChannelSecret      string   `koanf:"channel_secret" json:"channel_secret"`
+	ChannelAccessToken string   `koanf:"channel_access_token" json:"channel_access_token"`
+	Receivers          []string `koanf:"receivers" json:"receivers"`
 }
 
 type NotifyWebHookConf struct {
-	Enabled bool   `mapstructure:"enabled" json:"enabled"`
-	URL     string `mapstructure:"url" json:"url"`
-}
-
-// 使用转换 @link https://transform.tools/json-to-go
-type FrontendConf struct {
-	Placeholder  *string `mapstructure:"placeholder" json:"placeholder,omitempty"`
-	NoComment    *string `mapstructure:"noComment" json:"noComment,omitempty"`
-	SendBtn      *string `mapstructure:"sendBtn" json:"sendBtn,omitempty"`
-	DarkMode     *bool   `mapstructure:"darkMode" json:"darkMode,omitempty"`
-	EditorTravel *bool   `mapstructure:"editorTravel" json:"editorTravel,omitempty"`
-	Emoticons    *string `mapstructure:"emoticons" json:"emoticons,omitempty"`
-	Vote         *bool   `mapstructure:"vote" json:"vote,omitempty"`
-	VoteDown     *bool   `mapstructure:"voteDown" json:"voteDown,omitempty"`
-	UaBadge      *bool   `mapstructure:"uaBadge" json:"uaBadge,omitempty"`
-	ListSort     *bool   `mapstructure:"listSort" json:"listSort,omitempty"`
-	PvEl         *string `mapstructure:"pvEl" json:"pvEl,omitempty"`
-	CountEl      *string `mapstructure:"countEl" json:"countEl,omitempty"`
-	Preview      *bool   `mapstructure:"preview" json:"preview,omitempty"`
-	FlatMode     *string `mapstructure:"flatMode" json:"flatMode,omitempty"`
-	NestMax      *int    `mapstructure:"nestMax" json:"nestMax,omitempty"`
-	NestSort     *string `mapstructure:"nestSort" json:"nestSort,omitempty"`
-	Gravatar     *struct {
-		Default *string `mapstructure:"default" json:"default,omitempty"`
-		Mirror  *string `mapstructure:"mirror" json:"mirror,omitempty"`
-	} `mapstructure:"gravatar" json:"gravatar,omitempty"`
-	Pagination *struct {
-		PageSize *int  `mapstructure:"pageSize" json:"pageSize,omitempty"`
-		ReadMore *bool `mapstructure:"readMore" json:"readMore,omitempty"`
-		AutoLoad *bool `mapstructure:"autoLoad" json:"autoLoad,omitempty"`
-	} `mapstructure:"pagination" json:"pagination,omitempty"`
-	HeightLimit *struct {
-		Content  *int `mapstructure:"content" json:"content,omitempty"`
-		Children *int `mapstructure:"children" json:"children,omitempty"`
-	} `mapstructure:"heightLimit" json:"heightLimit,omitempty"`
-	ImgUpload    *bool   `mapstructure:"imgUpload"  json:"imgUpload,omitempty"`
-	ReqTimeout   *int    `mapstructure:"reqTimeout" json:"reqTimeout,omitempty"`
-	VersionCheck *bool   `mapstructure:"versionCheck" json:"versionCheck,omitempty"`
-	Locale       *string `mapstructure:"locale" json:"locale,omitempty"`
+	Enabled bool   `koanf:"enabled" json:"enabled"`
+	URL     string `koanf:"url" json:"url"`
 }

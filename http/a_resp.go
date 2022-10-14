@@ -115,7 +115,7 @@ func GetApiPublicConfDataMap(c echo.Context) Map {
 	}
 
 	frontendConf := config.Instance.Frontend
-	frontendConf.ImgUpload = &imgUpload
+	frontendConf["imgUpload"] = &imgUpload
 
 	return Map{
 		"img_upload":    imgUpload,

@@ -5,51 +5,54 @@ import (
 	"strings"
 	"time"
 
+	"github.com/knadh/koanf"
+	"github.com/knadh/koanf/parsers/yaml"
+	"github.com/knadh/koanf/providers/file"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
-// Instance 配置实例
-var Instance *Config
+const DEFAULT_CONF_FILE = "artalk-go.yml"
+
+var (
+	kf     = koanf.New(".")
+	parser = yaml.Parser()
+
+	// 配置实例
+	Instance      *Config
+	cfgFileLoaded string
+)
+
+func GetCfgFileLoaded() string {
+	return cfgFileLoaded
+}
 
 // Init 初始化配置
 func Init(cfgFile string, workDir string) {
-	viper.Reset()
-	viper.SetConfigType("yaml")
-
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find config file in path.
-		viper.AddConfigPath(".")
-		viper.SetConfigName("artalk-go.yml")
-	}
-
-	viper.SetEnvPrefix("ATG")
-	viper.AutomaticEnv()
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-
 	// 切换工作目录
 	if workDir != "" {
-		viper.AddConfigPath(workDir) // must before
 		if err := os.Chdir(workDir); err != nil {
 			logrus.Fatal("工作目录切换错误 ", err)
 		}
 	}
 
-	if err := viper.ReadInConfig(); err == nil {
-		// fmt.Print("\n")
-		// fmt.Println("- Using ArtalkGo config file:", viper.ConfigFileUsed())
-	} else {
-		logrus.Fatal("找不到配置文件，使用 `-h` 参数查看帮助")
+	if cfgFile == "" {
+		cfgFile = DEFAULT_CONF_FILE
+	}
+
+	// load yaml config
+	if err := kf.Load(file.Provider(cfgFile), parser); err != nil {
+		logrus.Errorln(err)
+		logrus.Fatal("配置文件读取错误")
 	}
 
 	Instance = &Config{}
-	err := viper.Unmarshal(&Instance)
-	if err != nil {
-		logrus.Errorf("unable to decode into struct, %v", err)
+
+	if err := kf.Unmarshal("", Instance); err != nil {
+		logrus.Errorln(err)
+		logrus.Fatal("配置文件解析错误")
 	}
+
+	cfgFileLoaded = cfgFile
 
 	// 后续处理
 	postInit()

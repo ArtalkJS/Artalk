@@ -21,6 +21,8 @@ func InitRouter(e *echo.Echo) {
 	fileServer := http.FileServer(f)
 	e.Any("/*", echo.WrapHandler(fileServer))
 
+	e.Use(RootPageMiddleware())
+
 	// All Actions
 	action := &action{
 		db: lib.DB,
@@ -93,4 +95,20 @@ func InitRouter(e *echo.Echo) {
 	api.Any("/version", func(c echo.Context) error {
 		return c.JSON(200, GetApiVersionDataMap())
 	})
+}
+
+func RootPageMiddleware() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if c.Request().URL.Path == "/" && c.Request().Method == "GET" {
+				_, err := pkged.Open("/frontend/sidebar/index.html")
+				if err == nil {
+					c.Redirect(http.StatusFound, "./sidebar/")
+					return nil
+				}
+			}
+
+			return next(c)
+		}
+	}
 }

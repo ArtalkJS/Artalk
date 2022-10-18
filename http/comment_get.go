@@ -17,6 +17,8 @@ type ParamsGet struct {
 	SortBy        string `mapstructure:"sort_by"`         // date_asc, date_desc, vote
 	ViewOnlyAdmin bool   `mapstructure:"view_only_admin"` // 只看 admin
 
+	Search string `mapstructure:"search"`
+
 	// Message Center
 	Type  string `mapstructure:"type"` // ["", "all", "mentions", "mine", "pending", "admin_all", "admin_pending"]
 	Name  string `mapstructure:"name"`
@@ -91,6 +93,11 @@ func (a *action) Get(c echo.Context) error {
 		findScopes = append(findScopes, func(d *gorm.DB) *gorm.DB {
 			return d.Where("is_pinned = ?", false) // 因为置顶是独立的查询，这里就不再查)
 		})
+	}
+
+	// search function
+	if p.Search != "" {
+		findScopes = append(findScopes, CommentSearchScope(a, p))
 	}
 
 	// get comments for the first query

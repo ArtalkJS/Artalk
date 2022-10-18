@@ -73,8 +73,8 @@ func FindUser(name string, email string) User {
 	return user
 }
 
-// 查找用户 (仅根据 email)
-func FindUsersByEmail(email string) []User {
+// 查找用户 ID (仅根据 email)
+func FindUserIdsByEmail(email string) []uint {
 	var userIds = []uint{}
 
 	// 查询缓存
@@ -83,6 +83,13 @@ func FindUsersByEmail(email string) []User {
 
 		return &userIds
 	})
+
+	return userIds
+}
+
+// 查找用户 (仅根据 email)
+func FindUsersByEmail(email string) []User {
+	userIds := FindUserIdsByEmail(email)
 
 	users := []User{}
 	for _, id := range userIds {

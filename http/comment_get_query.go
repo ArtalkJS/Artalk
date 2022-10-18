@@ -156,6 +156,19 @@ func CountComments(db *gorm.DB) int64 {
 	return count
 }
 
+// 评论搜索
+func CommentSearchScope(a *action, p ParamsGet) func(d *gorm.DB) *gorm.DB {
+	var userIds []uint
+	a.db.Model(&model.User{}).Where(
+		"LOWER(name) = LOWER(?) OR LOWER(email) = LOWER(?)", p.Search, p.Search,
+	).Pluck("id", &userIds)
+
+	return func(d *gorm.DB) *gorm.DB {
+		return d.Where("user_id IN (?) OR content LIKE ? OR page_key = ? OR ip = ? OR ua = ?",
+			userIds, "%"+p.Search+"%", p.Search, p.Search, p.Search)
+	}
+}
+
 // 分页
 func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
 	if offset < 0 {

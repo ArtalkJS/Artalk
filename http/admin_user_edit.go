@@ -17,6 +17,8 @@ type ParamsAdminUserEdit struct {
 	IsAdmin      bool   `mapstructure:"is_admin"`
 	SiteNames    string `mapstructure:"site_names"`
 	ReceiveEmail bool   `mapstructure:"receive_email"`
+	BadgeName    string `mapstructure:"badge_name"`
+	BadgeColor   string `mapstructure:"badge_color"`
 }
 
 func (a *action) AdminUserEdit(c echo.Context) error {
@@ -55,6 +57,8 @@ func (a *action) AdminUserEdit(c echo.Context) error {
 	user.IsAdmin = p.IsAdmin
 	user.SiteNames = p.SiteNames
 	user.ReceiveEmail = p.ReceiveEmail
+	user.BadgeName = p.BadgeName
+	user.BadgeColor = p.BadgeColor
 
 	err := model.UpdateUser(&user)
 	if err != nil {

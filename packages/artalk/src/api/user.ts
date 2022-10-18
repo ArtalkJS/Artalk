@@ -1,4 +1,4 @@
-import { UserData, NotifyData } from '~/types/artalk-data'
+import { UserData, NotifyData, UserDataForAdmin } from '~/types/artalk-data'
 import ApiBase from './api-base'
 import { ToFormData } from './request'
 
@@ -71,5 +71,39 @@ export default class UserApi extends ApiBase {
     }
 
     return this.POST(`/mark-read`, params)
+  }
+
+  /** 用户 · 列表 */
+  public async userList(offset?: number, limit?: number) {
+    const params: any = {
+      offset: offset || 0,
+      limit: limit || 15,
+    }
+
+    const d = await this.POST<any>('/admin/user-list', params)
+    return (d as { users: UserDataForAdmin })
+  }
+
+  /** 用户 · 修改 */
+  public async userEdit(user: Partial<UserDataForAdmin>, password?: string) {
+    const params: any = {
+      id: user.id,
+      email: user.email || '',
+      password: password || '',
+      link: user.link || '',
+      is_admin: user.is_admin || false,
+      site_names: user.site_names?.join(',') || '',
+      receive_email: user.receive_email
+    }
+
+    const d = await this.POST<any>('/admin/user-edit', params)
+    return (d.user as UserDataForAdmin)
+  }
+
+  /** 用户 · 删除 */
+  public userDel(userID: number) {
+    return this.POST('/admin/user-del', {
+      id: String(userID)
+    })
   }
 }

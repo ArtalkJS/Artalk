@@ -170,6 +170,17 @@ export interface UserData {
   receive_email: boolean
 }
 
+export interface UserDataForAdmin extends UserData {
+  /** 最后一次操作 IP */
+  last_ip: string
+
+  /** 最后一次操作 UA */
+  last_ua: string
+
+  /** 是否存在于配置文件中 */
+  is_in_conf: boolean
+}
+
 export interface NotifyData {
   /** 通知 ID */
   id: number

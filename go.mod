@@ -18,7 +18,7 @@ require (
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/knadh/koanf v1.4.3
-	github.com/labstack/echo/v4 v4.5.0
+	github.com/labstack/echo/v4 v4.9.0
 	github.com/markbates/pkger v0.17.1
 	github.com/microcosm-cc/bluemonday v1.0.18
 	github.com/mitchellh/mapstructure v1.5.0
@@ -85,7 +85,7 @@ require (
 	github.com/jinzhu/now v1.1.2 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/labstack/gommon v0.3.0 // indirect
+	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/line/line-bot-sdk-go v7.8.0+incompatible // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect

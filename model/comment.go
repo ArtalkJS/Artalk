@@ -160,6 +160,7 @@ type CookedCommentForEmail struct {
 	ContentRaw string     `json:"content_raw"`
 	Nick       string     `json:"nick"`
 	Email      string     `json:"email"`
+	IP         string     `json:"ip"`
 	Datetime   string     `json:"datetime"`
 	Date       string     `json:"date"`
 	Time       string     `json:"time"`
@@ -181,6 +182,7 @@ func (c *Comment) ToCookedForEmail() CookedCommentForEmail {
 		ContentRaw: c.Content,
 		Nick:       user.Name,
 		Email:      user.Email,
+		IP:         c.IP,
 		Datetime:   c.CreatedAt.Local().Format("2006-01-02 15:04:05"),
 		Date:       c.CreatedAt.Local().Format("2006-01-02"),
 		Time:       c.CreatedAt.Local().Format("15:04:05"),

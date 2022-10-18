@@ -30,7 +30,7 @@ db:
   # 数据库地址
   host: "localhost"
   # 数据库端口
-  port: "3306"
+  port: 3306
   # 数据库账户
   user: "root"
   # 数据库密码

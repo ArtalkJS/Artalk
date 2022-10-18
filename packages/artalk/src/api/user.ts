@@ -93,7 +93,9 @@ export default class UserApi extends ApiBase {
       link: user.link || '',
       is_admin: user.is_admin || false,
       site_names: user.site_names?.join(',') || '',
-      receive_email: user.receive_email
+      receive_email: user.receive_email,
+      badge_name: user.badge_name,
+      badge_color: user.badge_color
     }
 
     const d = await this.POST<any>('/admin/user-edit', params)

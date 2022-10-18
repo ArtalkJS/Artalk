@@ -75,6 +75,12 @@ func InitRouter(e *echo.Echo) {
 	admin.POST("/site-add", action.AdminSiteAdd)
 	admin.POST("/site-edit", action.AdminSiteEdit)
 	admin.POST("/site-del", action.AdminSiteDel)
+
+	admin.POST("/user-get", action.AdminUserGet)
+	admin.POST("/user-add", action.AdminUserAdd)
+	admin.POST("/user-edit", action.AdminUserEdit)
+	admin.POST("/user-del", action.AdminUserDel)
+
 	admin.POST("/setting-get", action.AdminSettingGet)
 	admin.POST("/setting-save", action.AdminSettingSave)
 	admin.POST("/import", action.AdminImport)

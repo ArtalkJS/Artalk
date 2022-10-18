@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/ArtalkJS/ArtalkGo/lib"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +26,17 @@ type User struct {
 
 func (u User) IsEmpty() bool {
 	return u.ID == 0
+}
+
+func (u *User) SetPasswordEncrypt(password string) (err error) {
+	var encrypted []byte
+	if encrypted, err = bcrypt.GenerateFromPassword(
+		[]byte(password), bcrypt.DefaultCost,
+	); err != nil {
+		return err
+	}
+	u.Password = "(bcrypt)" + string(encrypted)
+	return nil
 }
 
 type CookedUser struct {
@@ -54,5 +66,23 @@ func (u User) ToCooked() CookedUser {
 		SiteNames:    splitSites,
 		SiteNamesRaw: u.SiteNames,
 		ReceiveEmail: u.ReceiveEmail,
+	}
+}
+
+type CookedUserForAdmin struct {
+	CookedUser
+	LastIP   string `json:"last_ip"`
+	LastUA   string `json:"last_ua"`
+	IsInConf bool   `json:"is_in_conf"`
+}
+
+func (u User) ToCookedForAdmin() CookedUserForAdmin {
+	cookedUser := u.ToCooked()
+
+	return CookedUserForAdmin{
+		CookedUser: cookedUser,
+		LastIP:     u.LastIP,
+		LastUA:     u.LastUA,
+		IsInConf:   u.IsInConf,
 	}
 }

@@ -174,7 +174,7 @@ func ImportArtrans(basic *BasicParams, srcComments []model.Artran) {
 
 			IsCollapsed: c.IsCollapsed == lib.ToString(true),
 			IsPending:   c.IsPending == lib.ToString(true),
-			IsPinned:    c.IsPending == lib.ToString(true),
+			IsPinned:    c.IsPinned == lib.ToString(true),
 
 			VoteUp:   voteUp,
 			VoteDown: voteDown,

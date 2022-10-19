@@ -91,7 +91,6 @@ export default class Artalk {
       sidebarLayer: () => {
         const sidebarLayer = new SidebarLayer(this.ctx)
         this.ctx.setSidebarLayer(sidebarLayer)
-        this.$root.appendChild(sidebarLayer.$el)
       },
 
       // 默认事件绑定

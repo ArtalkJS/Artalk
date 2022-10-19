@@ -37,7 +37,7 @@ export function createArtalkInstance() {
 
 export function importUserDataFromArtalkInstance() {
   if (!artalk) throw Error("the artalk instance is not exist")
-  if (!artalk.ctx.user.data.token) throw Error("the user data in artalk instance is invalid")
+  if (!artalk.ctx.user.data.email) throw Error("the user data in artalk instance is invalid")
 
   const userData = artalk.ctx.user.data
   useUserStore().$patch((state) => {

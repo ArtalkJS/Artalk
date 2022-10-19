@@ -16,7 +16,7 @@ onMounted(() => {
     global.setArtalk(artalkInstance)
 
     // 更新用户资料
-    if (bootParams.user?.token) {
+    if (bootParams.user?.email) {
       artalkInstance.ctx.user.update(bootParams.user)
     } else {
       try { global.importUserDataFromArtalkInstance() } catch {}
@@ -25,7 +25,7 @@ onMounted(() => {
     // 验证登陆身份有效性
     artalkInstance.ctx.getApi().user.loginStatus()
       .then(resp => {
-        if (!resp.is_login) {
+        if (resp.is_admin && !resp.is_login) {
           router.replace('/login')
         }
       })

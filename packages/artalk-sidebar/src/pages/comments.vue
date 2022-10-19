@@ -12,6 +12,8 @@ const nav = useNavStore()
 const { curtTab } = storeToRefs(nav)
 const { site: curtSite } = storeToRefs(user)
 
+const search = ref('')
+
 onMounted(() => {
   // 初始化导航条
   if (user.isAdmin) {
@@ -56,6 +58,7 @@ onMounted(() => {
   list.paramsEditor = (params) => {
     params.type = curtTab.value // 列表数据类型
     params.site_name = curtSite.value // 站点名
+    if (search.value) params.search = search.value
   }
   artalk!.on('list-inserted', (data) => {
     wrapEl.value!.scrollTo(0, 0)
@@ -64,6 +67,16 @@ onMounted(() => {
   list.reload()
 
   listEl.value?.append(list.$el)
+
+  // 搜索功能
+  nav.enableSearch((value: string) => {
+    search.value = value
+    list.reload()
+  }, () => {
+    if (search.value === '') return
+    search.value = ''
+    list.reload()
+  })
 })
 </script>
 

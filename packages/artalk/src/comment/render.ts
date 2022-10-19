@@ -58,7 +58,8 @@ export default class CommentRender {
   private renderAvatar() {
     const $avatar = this.$el.querySelector<HTMLElement>('.atk-avatar')!
     const $avatarImg = Utils.createElement<HTMLImageElement>('<img />')
-    $avatarImg.src = this.comment.getGravatarURL()
+    const avatarURLBuilder = this.ctx.conf.avatarURLBuilder
+    $avatarImg.src = avatarURLBuilder ? avatarURLBuilder(this.data) : this.comment.getGravatarURL()
     if (this.data.link) {
       const $avatarA = Utils.createElement<HTMLLinkElement>('<a target="_blank" rel="noreferrer noopener nofollow"></a>')
       $avatarA.href = Utils.isValidURL(this.data.link) ? this.data.link : `https://${this.data.link}`

@@ -1,4 +1,5 @@
 import { I18n } from '~/src/i18n'
+import { CommentData } from './artalk-data'
 
 export default interface ArtalkConfig {
   /** 装载元素 */
@@ -38,6 +39,9 @@ export default interface ArtalkConfig {
     /** 默认头像（URL or Gravatar Type） */
     default: string
   }
+
+  /** 头像链接生成器 */
+  avatarURLBuilder?: (comment: CommentData) => string,
 
   /** 分页配置 */
   pagination: {

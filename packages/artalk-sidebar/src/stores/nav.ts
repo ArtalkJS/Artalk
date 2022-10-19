@@ -11,6 +11,9 @@ export const useNavStore = defineStore('nav', () => {
   const tabs = ref<TabsObj>({})
   const siteSwitcherShow = ref(false)
   const scrollableArea = ref<HTMLElement|null>(null)
+  const isSearchEnabled = ref(false)
+  const searchEvent = ref<((val: string) => void)|null>(null)
+  const searchResetEvent = ref<(() => void)|null>(null)
 
   const updateTabs = (aTabs: TabsObj, activeTab?: string) => {
     tabs.value = aTabs
@@ -47,11 +50,18 @@ export const useNavStore = defineStore('nav', () => {
     })
   }
 
+  const enableSearch = (searchEvt: ((val: string) => void), searchResetEvt: () => void) => {
+    isSearchEnabled.value = true
+    searchEvent.value = searchEvt
+    searchResetEvent.value = searchResetEvt
+  }
+
   return {
     sites, curtPage, curtTab, tabs, siteSwitcherShow, scrollableArea,
     updateTabs, setTabActive,
     showSiteSwitcher, hideSiteSwitcher, toggleSiteSwitcher,
     scrollToTop, scrollToEl,
     refreshSites,
+    isSearchEnabled, searchEvent, searchResetEvent, enableSearch,
   }
 })

@@ -145,7 +145,7 @@ docker-compose up -d
   - [x] MySQL
   - [x] Postgres
   - [x] SQLServer
-- [x] 多缓存支持
+- [x] 多缓存数据库支持
   - [x] In-memory (内建缓存)
   - [x] Redis
   - [x] Memcache
@@ -165,7 +165,7 @@ docker-compose up -d
   - [x] 评论 (增/删/改)
   - [x] 页面 (增/删/改)
   - [x] 站点 (增/删/改)
-  - [ ] 用户 (增/删/改)
+  - [x] 用户 (增/删/改)
   - [x] 设置 (GUI)
 - [x] 数据导入 ([Artransfer](https://artalk.js.org/guide/transfer.html))
   - [x] Artrans
@@ -178,13 +178,13 @@ docker-compose up -d
   - [x] Twikoo
   - [x] Artalk v1 (PHP)
 - [x] 数据导出
-- [x] 邮件异步队列发送
-- [ ] 邮件队列持久化
 - [x] 邮件多种发送方式
   - [x] SMTP
   - [x] 阿里云邮件
   - [x] 系统调用 sendmail
 - [x] 邮件多模板自定义
+- [x] 邮件异步队列发送
+  - [ ] 队列持久化
 - [x] 用户已读标记
 - [x] 验证码
   - [x] 图片验证码
@@ -210,21 +210,21 @@ docker-compose up -d
 - [x] JWT 登陆状态验证
 - [x] 时区自定义
 - [x] 只看作者功能
-- [ ] AT 提及 (@)
-- [ ] 评论话题 (#)
-- [ ] 表情包统一管理
-  - [ ] 导入表情包
-  - [ ] 表情包图片地址控制
 - [x] 图片上传
 - [x] 图片上传到图床 ([upgit](https://github.com/pluveto/upgit))
 - [ ] 图片管理
 - [ ] 附件上传 / 管理
+- [ ] 表情包统一管理
+  - [ ] 导入表情包
+  - [ ] 表情包图片地址控制
+- [ ] AT 提及 (@)
+- [ ] 评论话题 (#)
 - [ ] 评论标签分类系统
 - [ ] 主题样式更换
 - [ ] 规范化 API
 - [ ] 扩展中心
 - [ ] 开放用户注册
-- [ ] 接入第三方登录
+- [ ] 第三方登录接入
 - [x] 多语言 / 国际化 (i18n)
 - [x] 一键升级
 

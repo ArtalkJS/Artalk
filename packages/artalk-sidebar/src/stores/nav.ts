@@ -5,15 +5,19 @@ import type { SiteData } from 'artalk/types/artalk-data'
 type TabsObj = {[name: string]: string}
 
 export const useNavStore = defineStore('nav', () => {
-  const sites = ref<SiteData[]>([])
-  const curtPage = ref('comments')
   const curtTab = ref('')
   const tabs = ref<TabsObj>({})
+
+  const curtPage = ref('comments')
+  const sites = ref<SiteData[]>([])
   const siteSwitcherShow = ref(false)
-  const scrollableArea = ref<HTMLElement|null>(null)
+
   const isSearchEnabled = ref(false)
   const searchEvent = ref<((val: string) => void)|null>(null)
   const searchResetEvent = ref<(() => void)|null>(null)
+
+  const isPageLoading = ref(false)
+  const scrollableArea = ref<HTMLElement|null>(null)
 
   const updateTabs = (aTabs: TabsObj, activeTab?: string) => {
     tabs.value = aTabs
@@ -36,12 +40,16 @@ export const useNavStore = defineStore('nav', () => {
     siteSwitcherShow.value = !siteSwitcherShow.value
   }
 
-  const scrollToTop = () => {
+  const scrollPageToTop = () => {
     scrollableArea.value?.scrollTo(0, 0)
   }
 
-  const scrollToEl = (el: HTMLElement) => {
+  const scrollPageToEl = (el: HTMLElement) => {
     scrollableArea.value?.scrollTo(0, el.offsetTop)
+  }
+
+  const setPageLoading = (pageLoading: boolean) => {
+    isPageLoading.value = pageLoading
   }
 
   const refreshSites = () => {
@@ -57,10 +65,10 @@ export const useNavStore = defineStore('nav', () => {
   }
 
   return {
-    sites, curtPage, curtTab, tabs, siteSwitcherShow, scrollableArea,
+    sites, curtPage, curtTab, tabs, siteSwitcherShow, scrollableArea, isPageLoading,
     updateTabs, setTabActive,
     showSiteSwitcher, hideSiteSwitcher, toggleSiteSwitcher,
-    scrollToTop, scrollToEl,
+    scrollPageToTop, scrollPageToEl, setPageLoading,
     refreshSites,
     isSearchEnabled, searchEvent, searchResetEvent, enableSearch,
   }

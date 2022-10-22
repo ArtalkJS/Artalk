@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import settings from '../lib/settings'
 
+const router = useRouter()
+
 const props = defineProps<{
   tplData: Object|Array<any>
   path: (string|number)[]
@@ -24,7 +26,7 @@ function onHeadClick(evt: Event) {
   if (!expanded.value) {
     expanded.value = true
     // nextTick(() => {
-    //   nav.scrollToEl(evt.target as HTMLElement)
+    //   nav.scrollPageToEl(evt.target as HTMLElement)
     // })
   } else {
     expanded.value = false
@@ -41,7 +43,7 @@ function onHeadClick(evt: Event) {
     <div v-show="expanded" class="pf-body">
       <!-- Array -->
       <template v-if="Array.isArray(tplData)">
-        <div v-if="path.join('.') === 'admin_users'" class="coming-soon">暂不支持编辑，敬请期待 😉（<b>咕咕咕</b></div>
+        <div v-if="path.join('.') === 'admin_users'">切换到 <a style="cursor: pointer;" @click="router.replace('/users')">用户管理</a></div>
         <PreferenceArr v-else :tpl-data="tplData" :path="path" />
       </template>
       <!-- Object -->
@@ -154,19 +156,6 @@ function onHeadClick(evt: Event) {
   & > .sub-title {
     font-size: 14px;
     margin-top: 5px;
-  }
-}
-
-.coming-soon {
-  b {
-    font-weight: normal;
-    color: #000;
-    background: #000;
-    transition: .1s ease background;
-
-    &:hover {
-      background: transparent;
-    }
   }
 }
 </style>

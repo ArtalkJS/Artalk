@@ -14,7 +14,6 @@ const curtEditPageID = ref<number|null>(null)
 const pageSize = ref(20)
 const pageTotal = ref(0)
 const pagination = ref<InstanceType<typeof Pagination>>()
-const isLoading = ref(false)
 const showActBarBorder = ref(false)
 const refreshBtn = ref({
   isRun: false,
@@ -58,14 +57,14 @@ function editPage(page: PageData) {
 }
 
 function reqPages(offset: number) {
-  isLoading.value = true
+  nav.setPageLoading(true)
   artalk?.ctx.getApi().page.pageGet(curtSite.value, offset, pageSize.value)
     .then(data => {
       pageTotal.value = data.total
       pages.value = data.pages
-      nav.scrollToTop()
+      nav.scrollPageToTop()
     }).finally(() => {
-      isLoading.value = false
+      nav.setPageLoading(false)
     })
 }
 
@@ -174,7 +173,7 @@ function cacheWarm() {
       ref="pagination"
       :pageSize="pageSize"
       :total="pageTotal"
-      :is-loading="isLoading"
+      :disabled="nav.isPageLoading"
       @change="onChangePage"
     />
   </div>
@@ -190,7 +189,7 @@ function cacheWarm() {
     overflow: hidden;
     padding: 10px 15px 0 15px;
     background: #fff;
-    z-index: 999;
+    z-index: 10;
     border-bottom: 1px solid transparent;
     transition: .3s ease-out padding;
 

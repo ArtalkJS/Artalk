@@ -179,6 +179,9 @@ export interface UserDataForAdmin extends UserData {
 
   /** 是否存在于配置文件中 */
   is_in_conf: boolean
+
+  /** 评论数 */
+  comment_count: number
 }
 
 export interface NotifyData {

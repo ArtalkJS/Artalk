@@ -31,9 +31,14 @@ onMounted(() => {
         label: '页面',
         link: '/pages',
       },
+      users: {
+        label: '用户',
+        link: '/users',
+      },
       sites: {
         label: '站点',
         link: '/sites',
+        hide: true,
       },
       transfer: {
         label: '迁移',

@@ -13,7 +13,6 @@ body {
 
 .atk-sidebar {
   .atk-sidebar-inner {
-    position: relative;
   }
 
   .atk-sidebar-no-content {
@@ -39,6 +38,13 @@ body {
       font-size: 16px;
       margin-bottom: 12px;
       color: var(--at-color-font);
+
+      &.required::after {
+        content: '*';
+        color: var(--at-color-red);
+        margin-left: 5px;
+        vertical-align: top;
+      }
     }
 
     .atk-desc {

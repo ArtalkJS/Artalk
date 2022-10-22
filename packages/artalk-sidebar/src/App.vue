@@ -40,10 +40,11 @@ onMounted(() => {
     <Header />
     <Tab />
 
-    <div ref="scrollableArea" class="main artalk atk-sidebar">
-      <div class="atk-sidebar-inner">
+    <div class="main artalk atk-sidebar">
+      <div ref="scrollableArea" class="atk-sidebar-inner">
         <router-view />
       </div>
+      <LoadingLayer v-if="nav.isPageLoading" />
     </div>
   </div>
   <LoadingLayer v-if="!artalkLoaded" />
@@ -51,9 +52,11 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .main {
-  overflow-y: auto;
-  height: calc(100vh - 61px - 41px);
-  padding-bottom: 50px;
+  .atk-sidebar-inner {
+    overflow-y: auto;
+    height: calc(100vh - 61px - 41px);
+    padding-bottom: 50px;
+  }
 
   // 分页条占位
   :deep(.atk-pagination-wrap) {

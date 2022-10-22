@@ -6,13 +6,14 @@ import (
 )
 
 type ParamsAdminUserGet struct {
-	Limit  int `mapstructure:"limit"`
-	Offset int `mapstructure:"offset"`
+	Limit  int    `mapstructure:"limit"`
+	Offset int    `mapstructure:"offset"`
+	Type   string `mapstructure:"type"`
 }
 
 type ResponseAdminUserGet struct {
 	Total int64                      `json:"total"`
-	Users []model.CookedUserForAdmin `json:"pages"`
+	Users []model.CookedUserForAdmin `json:"users"`
 }
 
 func (a *action) AdminUserGet(c echo.Context) error {
@@ -31,6 +32,17 @@ func (a *action) AdminUserGet(c echo.Context) error {
 	// 总共条数
 	var total int64
 	query.Count(&total)
+
+	// 类型筛选
+	if p.Type == "" {
+		p.Type = "all" // 默认类型
+	}
+
+	if p.Type == "admin" {
+		query = query.Where("is_admin = ?", true)
+	} else if p.Type == "in_conf" {
+		query = query.Where("is_in_conf = ?", true)
+	}
 
 	// 数据分页
 	query = query.Scopes(Paginate(p.Offset, p.Limit))

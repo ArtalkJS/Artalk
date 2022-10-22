@@ -71,18 +71,22 @@ func (u User) ToCooked() CookedUser {
 
 type CookedUserForAdmin struct {
 	CookedUser
-	LastIP   string `json:"last_ip"`
-	LastUA   string `json:"last_ua"`
-	IsInConf bool   `json:"is_in_conf"`
+	LastIP       string `json:"last_ip"`
+	LastUA       string `json:"last_ua"`
+	IsInConf     bool   `json:"is_in_conf"`
+	CommentCount int64  `json:"comment_count"`
 }
 
 func (u User) ToCookedForAdmin() CookedUserForAdmin {
 	cookedUser := u.ToCooked()
+	var commentCount int64
+	DB().Model(&Comment{}).Where("user_id = ?", u.ID).Count(&commentCount)
 
 	return CookedUserForAdmin{
-		CookedUser: cookedUser,
-		LastIP:     u.LastIP,
-		LastUA:     u.LastUA,
-		IsInConf:   u.IsInConf,
+		CookedUser:   cookedUser,
+		LastIP:       u.LastIP,
+		LastUA:       u.LastUA,
+		IsInConf:     u.IsInConf,
+		CommentCount: commentCount,
 	}
 }

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/ArtalkJS/ArtalkGo/lib"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 )
@@ -10,13 +11,13 @@ type ParamsAdminUserEdit struct {
 	ID uint `mapstructure:"id" param:"required"`
 
 	// 修改值
-	Name         string `mapstructure:"name"`
-	Email        string `mapstructure:"email"`
+	Name         string `mapstructure:"name" param:"required"`
+	Email        string `mapstructure:"email" param:"required"`
 	Password     string `mapstructure:"password"`
 	Link         string `mapstructure:"link"`
-	IsAdmin      bool   `mapstructure:"is_admin"`
+	IsAdmin      bool   `mapstructure:"is_admin" param:"required"`
 	SiteNames    string `mapstructure:"site_names"`
-	ReceiveEmail bool   `mapstructure:"receive_email"`
+	ReceiveEmail bool   `mapstructure:"receive_email" param:"required"`
 	BadgeName    string `mapstructure:"badge_name"`
 	BadgeColor   string `mapstructure:"badge_color"`
 }
@@ -42,6 +43,13 @@ func (a *action) AdminUserEdit(c echo.Context) error {
 
 	if modifyName && modifyEmail && !model.FindUser(p.Name, p.Email).IsEmpty() {
 		return RespError(c, "user 已存在，请更换用户名和邮箱")
+	}
+
+	if !lib.ValidateEmail(p.Email) {
+		return RespError(c, "Invalid email")
+	}
+	if p.Link != "" && !lib.ValidateURL(p.Link) {
+		return RespError(c, "Invalid link")
 	}
 
 	// 删除原有缓存

@@ -94,6 +94,14 @@ func DelUser(user *User) error {
 		return err
 	}
 
+	// 删除所有相关内容
+	var comments []Comment
+	DB().Where("user_id = ?", user.ID).Find(&comments)
+	for _, c := range comments {
+		DelComment(&c)           // 删除主评论
+		DelCommentChildren(c.ID) // 删除子评论
+	}
+
 	// 删除缓存
 	UserCacheDel(user)
 

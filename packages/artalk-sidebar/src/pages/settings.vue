@@ -19,11 +19,13 @@ onBeforeMount(() => {
 
 onMounted(() => {
   nav.updateTabs({
+    'sites': '站点',
     'transfer': '迁移',
   })
 
   watch(curtTab, (tab) => {
-    if (tab === 'transfer') router.replace('/transfer')
+    if (tab === 'sites') router.replace('/sites')
+    else if (tab === 'transfer') router.replace('/transfer')
   })
 
   artalk!.ctx.getApi().system.getSettings().then((yamlStr) => {

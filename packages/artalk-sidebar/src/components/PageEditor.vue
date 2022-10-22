@@ -130,7 +130,7 @@ function onFiledEditorNo() {
 
 <style scoped lang="scss">
 .atk-page-edit-layer {
-  z-index: 999;
+  z-index: 9;
   background: var(--at-color-bg);
   position: absolute;
   width: 100%;

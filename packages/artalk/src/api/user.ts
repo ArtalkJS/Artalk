@@ -74,28 +74,49 @@ export default class UserApi extends ApiBase {
   }
 
   /** 用户 · 列表 */
-  public async userList(offset?: number, limit?: number) {
+  public async userList(offset?: number, limit?: number, type?: 'all'|'admin'|'in_conf') {
     const params: any = {
       offset: offset || 0,
       limit: limit || 15,
     }
 
-    const d = await this.POST<any>('/admin/user-list', params)
-    return (d as { users: UserDataForAdmin })
+    if (type) params.type = type
+
+    const d = await this.POST<any>('/admin/user-get', params)
+    return (d as { users: UserDataForAdmin[], total: number })
+  }
+
+  /** 用户 · 新增 */
+  public async userAdd(user: Partial<UserDataForAdmin>, password?: string) {
+    const params: any = {
+      name: user.name || '',
+      email: user.email || '',
+      password: password || '',
+      link: user.link || '',
+      is_admin: user.is_admin || false,
+      site_names: user.site_names_raw || '',
+      receive_email: user.receive_email || true,
+      badge_name: user.badge_name || '',
+      badge_color: user.badge_color || '',
+    }
+
+    const d = await this.POST<any>('/admin/user-add', params)
+    return (d.user as UserDataForAdmin)
   }
 
   /** 用户 · 修改 */
   public async userEdit(user: Partial<UserDataForAdmin>, password?: string) {
     const params: any = {
       id: user.id,
+      name: user.name || '',
       email: user.email || '',
       password: password || '',
       link: user.link || '',
       is_admin: user.is_admin || false,
-      site_names: user.site_names?.join(',') || '',
-      receive_email: user.receive_email,
-      badge_name: user.badge_name,
-      badge_color: user.badge_color
+      site_names: user.site_names_raw || '',
+      receive_email: user.receive_email || true,
+      badge_name: user.badge_name || '',
+      badge_color: user.badge_color || '',
     }
 
     const d = await this.POST<any>('/admin/user-edit', params)

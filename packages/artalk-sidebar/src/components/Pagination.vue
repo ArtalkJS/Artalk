@@ -6,11 +6,11 @@ const props = defineProps<{
   /** 每页数量 */
   pageSize: number
 
-  /** 加载中 */
-  isLoading?: boolean
+  /** 禁用 */
+  disabled?: boolean
 }>()
 
-const { pageSize, total, isLoading } = toRefs(props)
+const { pageSize, total, disabled } = toRefs(props)
 
 const emit = defineEmits<{
   /** 翻页事件 */
@@ -34,12 +34,14 @@ function changePage(page: number) {
 
 /* 按钮点击操作 */
 function prev() {
+  if (disabled?.value) return
   const page = curtPage.value - 1
   if (page < 1) { return }
   changePage(page)
 }
 
 function next() {
+  if (disabled?.value) return
   const page = curtPage.value + 1
   if (page > maxPage.value) { return }
   changePage(page)
@@ -107,7 +109,7 @@ defineExpose({ prev, next, reset })
     <div class="atk-pagination">
       <div
         class="atk-btn atk-btn-prev"
-        :class="{ 'atk-disabled': prevDisabled }"
+        :class="{ 'atk-disabled': disabled || prevDisabled }"
         @click="prev()"
       >Prev</div>
       <input
@@ -117,14 +119,14 @@ defineExpose({ prev, next, reset })
         v-model="inputValue"
         @input="triggerInput(false)"
         @keydown="onInputKeydown"
+        :disabled="disabled"
       />
       <div
         class="atk-btn atk-btn-next"
-        :class="{ 'atk-disabled': nextDisabled }"
+        :class="{ 'atk-disabled': disabled || nextDisabled }"
         @click="next()"
       >Next</div>
     </div>
-    <LoadingLayer v-if="isLoading" />
   </div>
 </template>
 

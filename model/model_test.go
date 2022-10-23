@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 	var err error
 
 	// 加载测试配置
-	config.Init("./testdata/model_test_conf.yml", "")
+	config.Init("./testdata/model_test_conf.yml")
 
 	// 初始化测试数据库
 	dbFilename := "../data/test.db"

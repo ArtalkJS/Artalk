@@ -83,11 +83,11 @@ ssl:
 
 # 管理员账户
 admin_users:
-  - name: "admin"
-    email: "admin@example.com"
-    password: "" # 支持 bcrypt 或 md5 加密，如："(md5)50c21190c6e4e5418c6a90d2b5031119"
-    badge_name: "管理员"
-    badge_color: "#FF6C00"
+  # - name: "admin"
+  #   email: "admin@example.com"
+  #   password: "" # 支持 bcrypt 或 md5 加密，如："(md5)50c21190c6e4e5418c6a90d2b5031119"
+  #   badge_name: "管理员"
+  #   badge_color: "#FF6C00"
 
 # 评论审核
 moderator:

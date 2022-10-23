@@ -1,7 +1,6 @@
 package config
 
 import (
-	"os"
 	"strings"
 	"time"
 
@@ -27,14 +26,7 @@ func GetCfgFileLoaded() string {
 }
 
 // Init 初始化配置
-func Init(cfgFile string, workDir string) {
-	// 切换工作目录
-	if workDir != "" {
-		if err := os.Chdir(workDir); err != nil {
-			logrus.Fatal("工作目录切换错误 ", err)
-		}
-	}
-
+func Init(cfgFile string) {
 	if cfgFile == "" {
 		cfgFile = DEFAULT_CONF_FILE
 	}

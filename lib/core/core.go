@@ -51,7 +51,23 @@ func LoadConfOnly(cfgFile string, workDir string) {
 
 // 1. 初始化配置
 func initConfig(cfgFile string, workDir string) {
-	config.Init(cfgFile, workDir)
+	// 切换工作目录
+	if workDir != "" {
+		if err := os.Chdir(workDir); err != nil {
+			logrus.Fatal("工作目录切换错误 ", err)
+		}
+	}
+
+	if cfgFile == "" {
+		cfgFile = config.DEFAULT_CONF_FILE
+	}
+
+	// 自动生成新配置文件
+	if !CheckFileExist(cfgFile) {
+		Gen("config", cfgFile, false)
+	}
+
+	config.Init(cfgFile)
 }
 
 // 2. 初始化日志

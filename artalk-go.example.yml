@@ -284,8 +284,6 @@ frontend:
     default: "mp"
   # 评论分页
   pagination:
-    # 每页评论数
-    pageSize: 20
     # 加载更多模式 (关闭则使用分页条)
     readMore: true
     # 滚动加载

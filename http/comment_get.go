@@ -40,7 +40,7 @@ type ResponseGet struct {
 	Unread      []model.CookedNotify  `json:"unread"`
 	UnreadCount int                   `json:"unread_count"`
 	ApiVersion  Map                   `json:"api_version"`
-	Conf        Map                   `json:"conf"`
+	Conf        Map                   `json:"conf,omitempty"`
 }
 
 func (a *action) Get(c echo.Context) error {
@@ -159,7 +159,7 @@ func (a *action) Get(c echo.Context) error {
 		unreadNotifies = model.FindUnreadNotifies(p.User.ID)
 	}
 
-	return RespData(c, ResponseGet{
+	resp := ResponseGet{
 		Comments:    cookedComments,
 		Total:       total,
 		TotalRoots:  totalRoots,
@@ -167,6 +167,11 @@ func (a *action) Get(c echo.Context) error {
 		Unread:      unreadNotifies,
 		UnreadCount: len(unreadNotifies),
 		ApiVersion:  GetApiVersionDataMap(),
-		Conf:        GetApiPublicConfDataMap(c),
-	})
+	}
+
+	if p.Offset == 0 {
+		resp.Conf = GetApiPublicConfDataMap(c)
+	}
+
+	return RespData(c, resp)
 }

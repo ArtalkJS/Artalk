@@ -107,7 +107,7 @@ export default interface ArtalkConfig {
   /** 版本检测 */
   versionCheck: boolean
 
-  /** 应用后端配置 */
+  /** 引用后端配置 */
   useBackendConf: boolean
 
   /** 语言本地化 */

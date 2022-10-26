@@ -64,7 +64,8 @@ onMounted(() => {
     tabListEl.value!.scrollLeft += evt.deltaY
   })
 
-  curtPage.value = route.name.replace(/^\//, '')
+  if (route.name)
+    curtPage.value = route.name.replace(/^\//, '')
 })
 
 function toggleIndicator() {

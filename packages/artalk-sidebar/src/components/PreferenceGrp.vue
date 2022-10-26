@@ -8,10 +8,6 @@ const props = defineProps<{
   path: (string|number)[]
 }>()
 
-const emits = defineEmits<{
-  (evt: 'toggle', path?: string): void
-}>()
-
 const desc = computed(() => settings.get().extractItemDescFromComment(props.path))
 const level = computed(() => props.path.length)
 
@@ -43,18 +39,20 @@ function onHeadClick(evt: Event) {
     <div v-show="expanded" class="pf-body">
       <!-- Array -->
       <template v-if="Array.isArray(tplData)">
-        <div v-if="path.join('.') === 'admin_users'">切换到 <a style="cursor: pointer;" @click="router.replace('/users')">用户管理</a></div>
-        <PreferenceArr v-else :tpl-data="tplData" :path="path" />
+        <PreferenceArr :tpl-data="tplData" :path="path" />
       </template>
       <!-- Object -->
       <template v-else>
         <div v-for="[key, value] in Object.entries(tplData)">
+          <!-- Admin Users -->
+          <template v-if="key === 'admin_users'"></template>
+          <!-- Grp -->
           <PreferenceGrp
-            v-if="value !== null && typeof value === 'object'"
+            v-else-if="value !== null && typeof value === 'object'"
             :tpl-data="value"
             :path="[...path, key]"
-            :toggle="emits('toggle')"
           />
+          <!-- Item Input -->
           <PreferenceItem
             v-else
             :tpl-data="value"

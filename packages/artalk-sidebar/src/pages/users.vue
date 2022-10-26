@@ -107,7 +107,6 @@ function delUser(user: UserDataForAdmin) {
       .then(() => {
         const index = users.value.findIndex(u => u.id === user.id)
         users.value.splice(index, 1)
-        alert('删除成功')
       })
       .catch((e) => {
         alert('删除失败：'+e.msg)

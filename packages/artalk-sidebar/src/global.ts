@@ -51,7 +51,7 @@ export function importUserDataFromArtalkInstance() {
 
 export default {
   createArtalkInstance,
-  getArtalk: () => artalk,
+  getArtalk: () => artalk!,
   setArtalk: (artalkInstance: Artalk) => {
     artalk = artalkInstance
   },

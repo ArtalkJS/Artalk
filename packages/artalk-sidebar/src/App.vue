@@ -9,26 +9,10 @@ const user = useUserStore()
 const route = useRoute()
 const router = useRouter()
 const { scrollableArea } = storeToRefs(nav)
-const artalkLoaded = ref(false)
-
-const LinkMap: {[key:string]:string} = {
-  comments: '/comments',
-  pages: '/pages',
-  sites: '/sites',
-  settings: '/settings'
-}
 
 onBeforeMount(() => {
-  const artalkInstance = createArtalkInstance()
-
-  // 初始化 Artalk
-  global.setArtalk(artalkInstance)
-
-  artalkLoaded.value = true
-
-  // 更新用户资料
   if (bootParams.user?.email) {
-    artalkInstance.ctx.user.update(bootParams.user)
+    global.getArtalk().ctx.user.update(bootParams.user)
   } else {
     try {
       global.importUserDataFromArtalkInstance()
@@ -40,39 +24,24 @@ onBeforeMount(() => {
   }
 
   // 验证登陆身份有效性
-  artalkInstance.ctx.getApi().user.loginStatus().then(resp => {
+  global.getArtalk().ctx.getApi().user.loginStatus().then(resp => {
     if (resp.is_admin && !resp.is_login) {
       router.replace('/login')
-      return
     }
   })
-
-  // 首页跳转
-  if (route.path === '/') {
-    if (bootParams.view) {
-      const splitted = bootParams.view.split('|')
-      if (splitted[0]) bootParams.view = splitted[0]
-      if (splitted[1]) bootParams.viewParams = JSON.parse(splitted[1])
-    }
-
-    router.replace(LinkMap[bootParams.view] || '/comments')
-  }
 })
 </script>
 
 <template>
-  <div v-if="artalkLoaded">
-    <Header />
-    <Tab />
+  <Header />
+  <Tab />
 
-    <div class="main artalk atk-sidebar">
-      <div ref="scrollableArea" class="atk-sidebar-inner">
-        <router-view />
-      </div>
-      <LoadingLayer v-if="nav.isPageLoading" />
+  <div class="main artalk atk-sidebar">
+    <div ref="scrollableArea" class="atk-sidebar-inner">
+      <router-view />
     </div>
+    <LoadingLayer v-if="nav.isPageLoading" />
   </div>
-  <LoadingLayer v-if="!artalkLoaded" />
 </template>
 
 <style scoped lang="scss">

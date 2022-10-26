@@ -15,17 +15,56 @@ export default class ListLite extends Component {
   protected data?: ListData
   protected isLoading: boolean = false
 
-  public noCommentText: string // 无评论时显示
+  public noCommentText?: string // 无评论时显示
+
+  /** 嵌套模式下的排序方式 */
+  private _nestSortBy?: ListNest.SortByType
+  public get nestSortBy() {
+    if (this._nestSortBy !== undefined) return this._nestSortBy
+    return this.ctx.conf.nestSort || 'DATE_ASC'
+  }
+  public set nestSortBy(val: ListNest.SortByType) {
+    this._nestSortBy = val
+  }
 
   /** 平铺模式 */
-  public flatMode = false
+  private _flatMode?:boolean
+  public get flatMode() {
+    if (this._flatMode !== undefined)
+      return this._flatMode
 
-  /** 嵌套模式 */
-  public nestSortBy!: ListNest.SortByType
+    // 配置开启平铺模式
+    if (this.ctx.conf.flatMode === true || Number(this.ctx.conf.nestMax) <= 1)
+      return true
 
-  /** 分页 */
-  public pageMode: 'pagination'|'read-more' = 'pagination'
-  public pageSize: number = 20 // 每次请求获取量
+    // 自动判断启用平铺模式
+    if (this.ctx.conf.flatMode === 'auto' && window.matchMedia("(max-width: 768px)").matches)
+      return true
+
+    return false
+  }
+  public set flatMode(val: boolean) {
+    this._flatMode = val
+  }
+
+  /** 分页方式 */
+  public _pageMode?: 'pagination'|'read-more'
+  public get pageMode() {
+    return this._pageMode || this.conf.pagination.readMore ? 'read-more' : 'pagination'
+  }
+  public set pageMode(val: 'pagination'|'read-more') {
+    this._pageMode = val
+  }
+
+  /** 每页数量 (每次请求获取量) */
+  private _pageSize?: number
+  public get pageSize() {
+    return this._pageSize || this.conf.pagination.pageSize
+  }
+  public set pageSize(val: number) {
+    this._pageSize = val
+  }
+
   public scrollListenerAt?: HTMLElement // 监听指定元素上的滚动
   public repositionAt?: HTMLElement // 翻页归位到指定元素
 
@@ -51,12 +90,6 @@ export default class ListLite extends Component {
     </div>`)
     this.$commentsWrap = this.$el.querySelector('.atk-list-comments-wrap')!
 
-    // 评论为空时显示字符
-    this.noCommentText = ctx.conf.noComment || ctx.$t('noComment')
-
-    // 嵌套排序方式
-    this.nestSortBy = this.ctx.conf.nestSort || 'DATE_ASC'
-
     // 评论时间自动更新
     window.setInterval(() => {
       this.$el.querySelectorAll<HTMLElement>('[data-atk-comment-date]').forEach(el => {
@@ -64,6 +97,10 @@ export default class ListLite extends Component {
         el.innerText = Utils.timeAgo(new Date(Number(date)), this.ctx)
       })
     }, 30 * 1000) // 30s 更新一次
+
+    // 事件监听
+    this.ctx.on('conf-loaded', () => {
+    })
   }
 
   public getData() {
@@ -99,8 +136,8 @@ export default class ListLite extends Component {
     // 事件通知（开始加载评论）
     this.ctx.trigger('list-load')
 
-    // 清空评论（加载按钮）
-    if (isFirstLoad && this.pageMode === 'read-more') {
+    // 清空评论（按钮加载更多的第一页、每次加载分页页面）
+    if ((this.pageMode === 'read-more' && isFirstLoad) || this.pageMode === 'pagination') {
       this.ctx.clearAllComments()
     }
 
@@ -130,21 +167,24 @@ export default class ListLite extends Component {
     }
   }
 
-  protected onLoad(data: ListData, offset: number) {
-    // 清空评论（分页条）
-    if (this.pageMode === 'pagination') { this.ctx.clearAllComments() }
+  private confLoaded = false
 
+  protected onLoad(data: ListData, offset: number) {
     this.data = data
+
+    // 装载后端提供的配置
+    if (!this.confLoaded) {
+      if (this.conf.useBackendConf)
+        this.ctx.updateConf(data.conf.frontend_conf)
+      else
+        this.ctx.updateConf({})
+      this.confLoaded = true
+    }
 
     // 版本检测
     const feMinVersion = data.api_version?.fe_min_version || '0.0.0'
     if (this.ctx.conf.versionCheck && this.versionCheck('frontend', feMinVersion, ARTALK_VERSION)) return
     if (this.ctx.conf.versionCheck && this.versionCheck('backend', backendMinVersion, data.api_version?.version)) return
-
-    // 图片上传功能
-    if (data.conf && typeof data.conf.img_upload === "boolean") {
-      this.ctx.conf.imgUpload = data.conf.img_upload
-    }
 
     // 导入数据
     this.importComments(data.comments)
@@ -157,7 +197,6 @@ export default class ListLite extends Component {
 
     this.ctx.updateNotifies(data.unread || [])
     this.ctx.trigger('list-loaded')
-    this.ctx.trigger('conf-updated')
 
     if (this.onAfterLoad) this.onAfterLoad(data)
   }
@@ -286,7 +325,7 @@ export default class ListLite extends Component {
     if (isNoComment) {
       if (!$noComment) {
         $noComment = Utils.createElement('<div class="atk-list-no-comment"></div>')
-        $noComment.innerHTML = this.noCommentText
+        $noComment.innerHTML = this.noCommentText || this.ctx.conf.noComment || this.ctx.$t('noComment')
         this.$commentsWrap.appendChild($noComment)
       }
     } else {
@@ -473,7 +512,6 @@ export default class ListLite extends Component {
       ignoreBtn.onclick = () => {
         Ui.setError(this.$el.parentElement!, null)
         this.ctx.conf.versionCheck = false
-        this.ctx.trigger('conf-updated')
         this.fetchComments(0)
       }
       errEl.append(ignoreBtn)

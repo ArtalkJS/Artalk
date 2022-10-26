@@ -48,9 +48,6 @@ export default class Artalk {
     /* 初始化 Context */
     this.ctx = new ConcreteContext(this.conf, this.$root)
 
-    // @ts-ignore 远程加载引用后端的配置
-    if (this.conf.useBackendConf) return this.loadConfRemoteAndInitComponents()
-
     /* 初始化组件 */
     this.initComponents()
   }
@@ -59,7 +56,6 @@ export default class Artalk {
   private initComponents() {
     this.initLocale()
     this.initLayer()
-    this.initDarkMode()
     Utils.initMarked(this.ctx)
 
     const Components: { [name: string]: () => void } = {
@@ -147,24 +143,6 @@ export default class Artalk {
     return conf
   }
 
-  /** 初始化组件根据远程加载的配置 */
-  private async loadConfRemoteAndInitComponents() {
-    await this.loadConfRemote()
-    this.initComponents()
-    return this
-  }
-
-  /** 远程加载配置 */
-  private async loadConfRemote() {
-    Ui.showLoading(this.$root)
-    let backendConf = {}
-    try {
-      backendConf = await this.ctx.getApi().system.conf()
-    } catch (err) { console.error("Load config from remote err", err) }
-    this.ctx.conf = Utils.mergeDeep(this.ctx.conf, backendConf)
-    Ui.hideLoading(this.$root)
-  }
-
   /** 事件绑定初始化 */
   private initEventBind() {
     // 锚点快速跳转评论
@@ -191,18 +169,6 @@ export default class Artalk {
     // 记录页面原始 Styles
     Layer.BodyOrgOverflow = document.body.style.overflow
     Layer.BodyOrgPaddingRight = document.body.style.paddingRight
-  }
-
-  /** 暗黑模式初始化 */
-  private initDarkMode() {
-    if (this.conf.darkMode === 'auto') {
-      // 自动切换暗黑模式，事件监听
-      const darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)')
-      darkModeMedia.addEventListener('change', (e) => { this.setDarkMode(e.matches) })
-      this.setDarkMode(darkModeMedia.matches)
-    } else {
-      this.setDarkMode(this.conf.darkMode || false)
-    }
   }
 
   /** 监听事件 */

@@ -143,4 +143,7 @@ export default interface ContextApi {
 
   /** 设置暗黑模式 */
   setDarkMode(darkMode: boolean): void
+
+  /** 更新配置 */
+  updateConf(conf: Partial<ArtalkConfig>): void
 }

@@ -50,7 +50,7 @@ export default class ListLite extends Component {
   /** 分页方式 */
   public _pageMode?: 'pagination'|'read-more'
   public get pageMode() {
-    return this._pageMode || this.conf.pagination.readMore ? 'read-more' : 'pagination'
+    return this._pageMode || (this.conf.pagination.readMore ? 'read-more' : 'pagination')
   }
   public set pageMode(val: 'pagination'|'read-more') {
     this._pageMode = val

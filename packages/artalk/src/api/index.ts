@@ -18,11 +18,12 @@ const ApiComponents = {
 
 class Api {
   protected ctx: Context
-  public baseURL: string
+  public get baseURL() {
+    return `${this.ctx.conf.server}/api`
+  }
 
   constructor (ctx: Context) {
     this.ctx = ctx
-    this.baseURL = `${ctx.conf.server}/api`
 
     Object.entries(ApiComponents).forEach(([key, ApiComponent]) => {
       this[key] = new ApiComponent(this, this.ctx)

@@ -68,15 +68,15 @@ export default class Editor extends Component {
     this.$plugBtnWrap = this.$el.querySelector('.atk-plug-btn-wrap')!
     this.$plugPanelWrap = this.$el.querySelector('.atk-plug-panel-wrap')!
 
-    // 执行初始化
-    this.initLocalStorage()
-    this.initHeader()
-    this.initTextarea()
-    this.initPlugs()
-    this.initSubmitBtn()
-
     // 监听事件
-    this.ctx.on('conf-updated', () => {})
+    this.ctx.on('conf-loaded', () => {
+      // 执行初始化
+      this.initLocalStorage()
+      this.initHeader()
+      this.initTextarea()
+      this.initSubmitBtn()
+      this.initPlugs()
+    })
   }
 
   private initLocalStorage() {

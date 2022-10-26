@@ -4,6 +4,7 @@ import { CommentData, NotifyData } from '~/types/artalk-data'
 import { Event } from '~/types/event'
 import getI18n, { I18n } from './i18n'
 import User from './lib/user'
+import * as Utils from './lib/utils'
 import ContextApi from '../types/context'
 import Editor from './editor'
 import Comment from './comment'
@@ -49,6 +50,10 @@ export default class Context implements ContextApi {
     this.$root.innerHTML = ''
 
     this.api = new Api(this)
+
+    this.on('conf-loaded', () => {
+      this.refreshDarkModeConf()
+    })
   }
 
   /* 设置持有的同事类 */
@@ -258,19 +263,44 @@ export default class Context implements ContextApi {
   }
 
   public setDarkMode(darkMode: boolean): void {
+    if (this.conf.darkMode === darkMode) return
+
     const darkModeClassName = 'atk-dark-mode'
 
     this.conf.darkMode = darkMode
-    this.trigger('conf-updated')
 
-    if (this.conf.darkMode) this.$root.classList.add(darkModeClassName)
+    if (darkMode) this.$root.classList.add(darkModeClassName)
     else this.$root.classList.remove(darkModeClassName)
 
     // for Layer
     const { $wrap: $layerWrap } = GetLayerWrap(this)
     if ($layerWrap) {
-      if (this.conf.darkMode) $layerWrap.classList.add(darkModeClassName)
+      if (darkMode) $layerWrap.classList.add(darkModeClassName)
       else $layerWrap.classList.remove(darkModeClassName)
     }
+  }
+
+  private darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)')
+  private darkModeAutoFunc?: (evt: MediaQueryListEvent) => void
+  private refreshDarkModeConf(): void {
+    if (this.conf.darkMode === 'auto') {
+      // 自动切换暗黑模式，事件监听
+      this.setDarkMode(this.darkModeMedia.matches)
+      if (!this.darkModeAutoFunc) {
+        this.darkModeAutoFunc = (evt) => { this.setDarkMode(evt.matches) }
+        this.darkModeMedia.addEventListener('change', this.darkModeAutoFunc)
+      }
+    } else {
+      if (this.darkModeAutoFunc) {
+        // 解除事件监听绑定
+        this.darkModeMedia.removeEventListener('change', this.darkModeAutoFunc)
+      }
+      this.setDarkMode(this.conf.darkMode || false)
+    }
+  }
+
+  public updateConf(conf: Partial<ArtalkConfig>): void {
+    this.conf = Utils.mergeDeep(this.conf, conf)
+    this.trigger('conf-loaded')
   }
 }

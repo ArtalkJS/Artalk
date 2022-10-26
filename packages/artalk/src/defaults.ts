@@ -46,7 +46,7 @@ const defaults: ArtalkConfig = {
   imgUpload: true,
   reqTimeout: 15000,
   versionCheck: true,
-  useBackendConf: false,
+  useBackendConf: true,
 
   locale: 'zh-CN',
 }

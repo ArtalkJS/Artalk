@@ -9,7 +9,15 @@ export interface CountConf {
 }
 
 export const PvCountWidget: ArtalkPlug = (ctx: ContextApi) => {
-  initCountWidget({ ctx, pvAdd: true })
+  if (!ctx.conf.useBackendConf) {
+    // 不使用后端配置，在 Artalk 实例被创建后，立刻初始化
+    initCountWidget({ ctx, pvAdd: true })
+  } else {
+    // 若使用后端配置，需待配置成功获取后 (来自后端设定的 pvEl 等)，再初始化
+    ctx.on('list-loaded', () => {
+      initCountWidget({ ctx, pvAdd: true })
+    })
+  }
 }
 
 /** 初始化评论数和 PV 数量展示元素 */

@@ -69,8 +69,7 @@ cache:
     db: 0
 
 # 可信域名
-trusted_domains:
-  - "https://artalk.你的域名:23366"
+trusted_domains: [] # 例如：["https://artalk.example.com:23366"]
 
 # SSL
 ssl:

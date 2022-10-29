@@ -26,6 +26,8 @@ onBeforeMount(() => {
   // 验证登陆身份有效性
   global.getArtalk().ctx.getApi().user.loginStatus().then(resp => {
     if (resp.is_admin && !resp.is_login) {
+      global.getArtalk().ctx.user.logout()
+      user.logout()
       router.replace('/login')
     }
   })

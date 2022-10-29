@@ -66,7 +66,7 @@ function onChangePage(offset: number) {
 
 function editUser(user: UserDataForAdmin) {
   if (user.is_in_conf) {
-    alert('暂不支持编辑配置文件中的用户')
+    alert('暂不支持在线编辑配置文件中的用户，请手动修改配置文件')
     return
   }
 
@@ -97,16 +97,15 @@ function closeEditUser() {
 }
 
 function delUser(user: UserDataForAdmin) {
-  if (user.is_in_conf) {
-    alert('暂不支持删除配置文件中的用户')
-    return
-  }
-
   if (window.confirm(`该操作将删除 用户："${user.name}" 邮箱："${user.email}" 所有评论，包括其评论下面他人的回复评论，是否继续？`)) {
     artalk!.ctx.getApi().user.userDel(user.id)
       .then(() => {
         const index = users.value.findIndex(u => u.id === user.id)
         users.value.splice(index, 1)
+
+        if (user.is_in_conf) {
+          alert('用户已从数据库删除，请手动编辑配置文件并删除用户')
+        }
       })
       .catch((e) => {
         alert('删除失败：'+e.msg)

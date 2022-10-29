@@ -8,5 +8,13 @@ export const useUserStore = defineStore('user', () => {
   const isAdmin = ref(bootParams.user.isAdmin || false)
   const token = ref(bootParams.user.token || '')
 
-  return { site, name, email, isAdmin, token }
+  const logout = () => {
+    site.value = ''
+    name.value = ''
+    email.value = ''
+    isAdmin.value = false
+    token.value = ''
+  }
+
+  return { site, name, email, isAdmin, token, logout }
 })

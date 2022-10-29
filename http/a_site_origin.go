@@ -3,6 +3,7 @@ package http
 import (
 	"fmt"
 	"net/url"
+	"path"
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
@@ -11,10 +12,23 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// 不启用 Origin 控制的 API paths
+var SiteOriginSkips = []string{
+	"/api/user-get",
+	"/api/login",
+}
+
 // 站点隔离 & Origin 控制
 func SiteOriginMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			// 忽略白名单
+			for _, p := range SiteOriginSkips {
+				if path.Clean(c.Request().URL.Path) == path.Clean(p) {
+					return next(c)
+				}
+			}
+
 			siteName := c.FormValue("site_name")
 			siteID := uint(0)
 			var site *model.Site = nil
@@ -40,7 +54,7 @@ func SiteOriginMiddleware() echo.MiddlewareFunc {
 
 				findSite := model.FindSite(siteName)
 				if findSite.IsEmpty() {
-					return RespError(c, fmt.Sprintf("未找到站点：`%s`，请控制台创建站点", siteName), Map{
+					return RespError(c, fmt.Sprintf("未找到站点：`%s`，请在控制台创建站点", siteName), Map{
 						"err_no_site": true,
 					})
 				}

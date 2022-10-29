@@ -15,7 +15,7 @@ const indicator = ref<'pages'|'tabs'>('tabs')
 const tabListEl = ref<HTMLElement|null>(null)
 
 const pages = computed((): { [name: string]: PageItem } => {
-  if (isAdmin) {
+  if (isAdmin.value) {
     return {
       comments: {
         label: '评论',

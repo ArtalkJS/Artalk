@@ -115,6 +115,9 @@ func GetApiPublicConfDataMap(c echo.Context) Map {
 	}
 
 	frontendConf := config.Instance.Frontend
+	if frontendConf == nil {
+		frontendConf = make(map[string]interface{})
+	}
 	frontendConf["imgUpload"] = &imgUpload
 
 	return Map{

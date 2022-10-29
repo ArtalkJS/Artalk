@@ -20,10 +20,11 @@ func SiteOriginMiddleware() echo.MiddlewareFunc {
 			var site *model.Site = nil
 
 			siteAll := false
+			isSuperAdmin := GetIsSuperAdmin(c)
 
 			// 请求站点名 == "__ATK_SITE_ALL" 时取消站点隔离
 			if siteName == lib.ATK_SITE_ALL {
-				if !CheckIsAdminReq(c) {
+				if !isSuperAdmin {
 					return RespError(c, "仅管理员查询允许取消站点隔离")
 				}
 
@@ -47,12 +48,14 @@ func SiteOriginMiddleware() echo.MiddlewareFunc {
 				siteID = findSite.ID
 			}
 
-			// 检测 Origin 合法性 (防止 CSRF 攻击)
-			if isOK, resp := CheckOrigin(c, site); !isOK {
-				return resp
+			// 检测 Origin 合法性 (防止跨域的 CSRF 攻击)
+			if !isSuperAdmin { // 管理员忽略 Origin 检测
+				if isOK, resp := CheckOrigin(c, site); !isOK {
+					return resp
+				}
 			}
 
-			// 设置上下文
+			// 设置 Context Values
 			c.Set(lib.CTX_KEY_ATK_SITE_ID, siteID)
 			c.Set(lib.CTX_KEY_ATK_SITE_NAME, siteName)
 			c.Set(lib.CTX_KEY_ATK_SITE_ALL, siteAll)
@@ -75,28 +78,19 @@ func UseSite(c echo.Context, siteName *string, destID *uint, destSiteAll *bool) 
 }
 
 // 检测 Origin 合法性
-// 防止 CSRF 攻击
+// 防止跨域的 CSRF 攻击
 // @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
 func CheckOrigin(c echo.Context, allowSite *model.Site) (bool, error) {
 	// 可信来源 URL
-	allowSrcURLs := []string{}
+	allowURLs := []string{}
 
 	// 用户配置
-	allowSrcURLs = append(allowSrcURLs, config.Instance.TrustedDomains...) // 允许配置文件域名
+	allowURLs = append(allowURLs, config.Instance.TrustedDomains...) // 允许配置文件域名
 	if allowSite != nil {
-		allowSrcURLs = append(allowSrcURLs, allowSite.ToCooked().Urls...) // 允许数据库站点 URLs 中的域名
+		allowURLs = append(allowURLs, allowSite.ToCooked().Urls...) // 允许数据库站点 URLs 中的域名
 	}
-	if len(allowSrcURLs) == 0 {
-		return true, nil // 若用户配置列表中无数据，则取消控制
-	}
-	if lib.ContainsStr(allowSrcURLs, "*") {
+	if lib.ContainsStr(allowURLs, "*") {
 		return true, nil // 列表中出现通配符关闭控制
-	}
-
-	host := c.Request().Host
-	realHostUnderProxy := c.Request().Header.Get("X-Forwarded-Host")
-	if realHostUnderProxy != "" {
-		host = realHostUnderProxy
 	}
 
 	// 读取 Origin 数据
@@ -113,22 +107,41 @@ func CheckOrigin(c echo.Context, allowSite *model.Site) (bool, error) {
 		origin = referer
 	}
 
-	pOrigin, err := url.Parse(origin)
-	if err != nil {
-		return false, RespError(c, "Origin 不合法")
+	// 允许同源请求
+	host := c.Request().Host
+	realHostUnderProxy := c.Request().Header.Get("X-Forwarded-Host")
+	if realHostUnderProxy != "" {
+		host = realHostUnderProxy
+	}
+	allowURLs = append(allowURLs, c.Scheme()+"://"+host)
+
+	// 判断 Origin 是否被允许
+	if GetIsAllowOrigin(origin, allowURLs) {
+		return true, nil
 	}
 
-	// 系统配置：默认允许来自相同域名的请求
-	allowSrcURLs = append(allowSrcURLs, c.Scheme()+"://"+host)
+	return false, RespError(c, "非法请求，请检查可信域名配置")
+}
 
-	allowSrcURLs = lib.RemoveDuplicates(allowSrcURLs) // 去重
-	for _, a := range allowSrcURLs {
-		a = strings.TrimSpace(a)
-		if a == "" {
+// 判断 Origin 是否被允许
+// origin is 'schema://hostname:port',
+// allowURLs is a collection of url strings
+func GetIsAllowOrigin(origin string, allowURLs []string) bool {
+	// Origin 合法性检测
+	originP, err := url.Parse(origin)
+	if err != nil || originP.Scheme == "" || originP.Host == "" {
+		return false
+	}
+
+	// 提取 URLs 检测 Origin 是否匹配
+	for _, u := range allowURLs {
+		u = strings.TrimSpace(u)
+		if u == "" {
 			continue
 		}
-		pAllow, err := url.Parse(a)
-		if err != nil {
+
+		urlP, err := url.Parse(u)
+		if err != nil || urlP.Scheme == "" || urlP.Host == "" {
 			continue
 		}
 
@@ -138,10 +151,10 @@ func CheckOrigin(c echo.Context, allowSite *model.Site) (bool, error) {
 		// Chrome v85+ 默认为：strict-origin-when-cross-origin。
 		// 前端页面 head 不配置 <meta name="referrer" content="no-referer" />，
 		// 浏览器默认都会至少携带 Origin 数据 (不带 path，但包含端口)
-		if pAllow.Host == pOrigin.Host {
-			return true, nil
+		if urlP.Scheme == originP.Scheme && urlP.Host == originP.Host {
+			return true
 		}
 	}
 
-	return false, RespError(c, "非法请求，请检查可信域名配置")
+	return false
 }

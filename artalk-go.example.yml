@@ -69,8 +69,7 @@ cache:
     db: 0
 
 # 可信域名
-trusted_domains:
-  - "https://artalk.你的域名:23366"
+trusted_domains: [] # 例如：["https://artalk.example.com:23366"]
 
 # SSL
 ssl:
@@ -270,11 +269,11 @@ frontend:
   countEl: "#ArtalkCount"
   # 编辑器实时预览功能
   preview: true
-  # 平铺模式
+  # 平铺模式 ["auto", true, false]
   flatMode: "auto"
   # 最大嵌套层数
   nestMax: 2
-  # 嵌套评论排序规则
+  # 嵌套评论排序规则 ["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]
   nestSort: DATE_ASC
   # 头像
   gravatar:
@@ -298,5 +297,3 @@ frontend:
   reqTimeout: 15000
   # 版本检测
   versionCheck: true
-  # 语言设定
-  locale: zh-CN

@@ -2,7 +2,6 @@ package http
 
 import (
 	"fmt"
-	libURL "net/url"
 
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/lib"
@@ -55,40 +54,33 @@ func Run() {
 }
 
 func InitCorsControl(e *echo.Echo) {
-	siteUrls := []string{}
-	for _, site := range model.FindAllSitesCooked() {
-		siteUrls = append(siteUrls, site.Urls...)
-	}
-
-	allowOrigins := []string{}
-	allowOrigins = append(allowOrigins, config.Instance.TrustedDomains...) // 导入配置中的可信域名
-	allowOrigins = append(allowOrigins, siteUrls...)                       // 导入数据库中的站点 urls
-
-	if lib.ContainsStr(allowOrigins, "*") {
-		allowOrigins = []string{"*"} // 通配符关闭跨域控制
-	} else {
-		// 提取 URL
-		extractURLsArr := []string{}
-		for _, u := range allowOrigins {
-			extractURLsArr = append(extractURLsArr, extractURLForCorsConf(u))
-		}
-		// 去重
-		extractURLsArr = lib.RemoveDuplicates(extractURLsArr)
-		allowOrigins = extractURLsArr
-	}
-
+	// CORS 配置
+	// for Preflight Request
+	// 非法 Origin 浏览器拦截继续的请求
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     allowOrigins,
 		AllowCredentials: true, // allow cors with cookies
+		AllowOriginFunc: func(origin string) (bool, error) {
+			if lib.ContainsStr(config.Instance.TrustedDomains, "*") {
+				return true, nil // 通配符关闭 origin 检测
+			}
+
+			allowURLs := []string{}
+			allowURLs = append(allowURLs, config.Instance.TrustedDomains...) // 导入配置中的可信域名
+			for _, site := range model.FindAllSitesCooked() {                // 导入数据库中的站点 urls
+				allowURLs = append(allowURLs, site.Urls...)
+			}
+
+			if len(allowURLs) == 0 {
+				// 无配置的情况全部放行
+				// 如程序第一次运行的时候
+				return true, nil
+			}
+
+			if GetIsAllowOrigin(origin, allowURLs) {
+				return true, nil
+			}
+
+			return false, nil
+		},
 	}))
-}
-
-// 从完整 URL 中提取出 Scheme + Host 部分 (保留端口号)
-func extractURLForCorsConf(u string) string {
-	pu, err := libURL.Parse(u)
-	if err != nil {
-		return u
-	}
-
-	return pu.Scheme + "://" + pu.Host
 }

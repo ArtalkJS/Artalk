@@ -30,6 +30,9 @@ func (a *action) Login(c echo.Context) error {
 	var user model.User
 	if p.Name == "" {
 		// 仅 Email 的查询
+		if !lib.ValidateEmail(p.Email) {
+			return RespError(c, "请输入正确的邮箱")
+		}
 		users := model.FindUsersByEmail(p.Email)
 		if len(users) == 1 {
 			// 仅有一个 email 匹配的用户

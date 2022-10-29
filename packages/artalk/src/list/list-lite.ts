@@ -277,6 +277,10 @@ export default class ListLite extends Component {
 
   /** 错误处理 */
   protected onError(msg: any, offset: number, errData?: any) {
+    if (!this.confLoaded) {
+      this.ctx.updateConf({})
+    }
+
     msg = String(msg)
     console.error(msg)
 

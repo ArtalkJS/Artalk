@@ -30,7 +30,7 @@ db:
   # 数据库地址
   host: "localhost"
   # 数据库端口
-  port: "3306"
+  port: 3306
   # 数据库账户
   user: "root"
   # 数据库密码
@@ -69,8 +69,7 @@ cache:
     db: 0
 
 # 可信域名
-trusted_domains:
-  - "https://artalk.你的域名:23366"
+trusted_domains: [] # 例如：["https://artalk.example.com:23366"]
 
 # SSL
 ssl:
@@ -83,11 +82,11 @@ ssl:
 
 # 管理员账户
 admin_users:
-  - name: "admin"
-    email: "admin@example.com"
-    password: "" # 支持 bcrypt 或 md5 加密，如："(md5)50c21190c6e4e5418c6a90d2b5031119"
-    badge_name: "管理员"
-    badge_color: "#FF6C00"
+  # - name: "admin"
+  #   email: "admin@example.com"
+  #   password: "" # 支持 bcrypt 或 md5 加密，如："(md5)50c21190c6e4e5418c6a90d2b5031119"
+  #   badge_name: "管理员"
+  #   badge_color: "#FF6C00"
 
 # 评论审核
 moderator:
@@ -224,18 +223,18 @@ admin_notify:
     url: ""
   # 钉钉
   ding_talk:
-    enabled: true
+    enabled: false
     token: ""
     secret: ""
   # Slack
   slack:
-    enabled: true
+    enabled: false
     oauth_token: ""
     receivers:
       - "CHANNEL_ID"
   # LINE
   line:
-    enabled: true
+    enabled: false
     channel_secret: ""
     channel_access_token: ""
     receivers:
@@ -270,11 +269,11 @@ frontend:
   countEl: "#ArtalkCount"
   # 编辑器实时预览功能
   preview: true
-  # 平铺模式
+  # 平铺模式 ["auto", true, false]
   flatMode: "auto"
   # 最大嵌套层数
   nestMax: 2
-  # 嵌套评论排序规则
+  # 嵌套评论排序规则 ["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]
   nestSort: DATE_ASC
   # 头像
   gravatar:
@@ -284,8 +283,6 @@ frontend:
     default: "mp"
   # 评论分页
   pagination:
-    # 每页评论数
-    pageSize: 20
     # 加载更多模式 (关闭则使用分页条)
     readMore: true
     # 滚动加载
@@ -300,5 +297,3 @@ frontend:
   reqTimeout: 15000
   # 版本检测
   versionCheck: true
-  # 语言设定
-  locale: zh-CN

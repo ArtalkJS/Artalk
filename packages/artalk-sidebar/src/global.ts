@@ -32,7 +32,7 @@ export function createArtalkInstance() {
     site: bootParams.site,
     darkMode: bootParams.darkMode,
     useBackendConf: true
-  }) as unknown as Promise<Artalk>
+  })
 }
 
 export function importUserDataFromArtalkInstance() {
@@ -51,7 +51,7 @@ export function importUserDataFromArtalkInstance() {
 
 export default {
   createArtalkInstance,
-  getArtalk: () => artalk,
+  getArtalk: () => artalk!,
   setArtalk: (artalkInstance: Artalk) => {
     artalk = artalkInstance
   },

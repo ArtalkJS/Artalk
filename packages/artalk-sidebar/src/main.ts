@@ -4,6 +4,10 @@ import { createRouter, createWebHashHistory } from 'vue-router/auto'
 import 'artalk/dist/Artalk.css'
 import './style.scss'
 import App from './App.vue'
+import global, { createArtalkInstance, bootParams } from './global'
+
+// 初始化 Artalk
+global.setArtalk(createArtalkInstance())
 
 const app = createApp(App)
 

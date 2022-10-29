@@ -23,20 +23,7 @@ export default class List extends ListLite {
     el.querySelector('.atk-list-body')!.append(this.$el)
     this.$el = el
 
-    // 平铺模式
-    if (this.ctx.conf.flatMode === true) {
-      this.flatMode = true // 遵循配置总是开启平铺模式
-    } else if (this.conf.nestMax && this.conf.nestMax <= 1) {
-      this.flatMode = true // 嵌套层数值无效时，强制开启平铺模式
-    } else if (this.ctx.conf.flatMode === 'auto') {
-      // 自动判断启用平铺模式
-      if (window.matchMedia("(max-width: 768px)").matches)
-        this.flatMode = true
-    }
-
     // 分页模式
-    this.pageMode = this.conf.pagination.readMore ? 'read-more' : 'pagination'
-    this.pageSize = this.conf.pagination.pageSize || 20
     this.repositionAt = this.$el
 
     // 操作按钮
@@ -47,11 +34,6 @@ export default class List extends ListLite {
       count: '<span class="atk-comment-count-num">0</span>',
     })
     this.$commentCountNum = this.$commentCount.querySelector('.atk-comment-count-num')!
-
-    // 评论列表排序 Dropdown 下拉选择层
-    if (this.ctx.conf.listSort) {
-      this.initDropdown()
-    }
 
     // copyright
     this.$el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
@@ -103,6 +85,11 @@ export default class List extends ListLite {
     } else {
       this.ctx.editorOpen()
       this.$closeCommentBtn.innerHTML = this.$t('closeComment')
+    }
+
+    // 评论列表排序 Dropdown 下拉选择层
+    if (this.ctx.conf.listSort) {
+      this.initDropdown()
     }
   }
 
@@ -197,8 +184,13 @@ export default class List extends ListLite {
     }
   }
 
+  private dropdownLoaded = false
+
   /** 初始化选择下拉层 */
   protected initDropdown() {
+    if (this.dropdownLoaded) return
+    this.dropdownLoaded = true
+
     this.$dropdownWrap = this.$commentCount
     this.$commentCount.classList.add('atk-dropdown-wrap')
 

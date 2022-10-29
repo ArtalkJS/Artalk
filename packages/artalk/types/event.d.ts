@@ -9,7 +9,7 @@ export interface EventPayloadMap {
   'editor-submit': undefined       // 编辑器提交时
   'editor-submitted': undefined    // 编辑器提交后
   'user-changed': LocalUser        // 本地用户数据变更时
-  'conf-updated': undefined        // Artalk 配置变更时
+  'conf-loaded': undefined         // Artalk 配置变更时
   'sidebar-show': undefined        // 侧边栏显示
   'sidebar-hide': undefined        // 侧边栏隐藏
 }

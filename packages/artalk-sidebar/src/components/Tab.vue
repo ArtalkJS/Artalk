@@ -14,15 +14,9 @@ const { isAdmin } = storeToRefs(useUserStore())
 const indicator = ref<'pages'|'tabs'>('tabs')
 const tabListEl = ref<HTMLElement|null>(null)
 
-const pages = ref<{ [name: string]: PageItem }>({})
-
-const isSearchShow = ref(false)
-const searchValue = ref('')
-const searchInputEl = ref<HTMLInputElement|null>(null)
-
-onMounted(() => {
-  if (isAdmin.value) {
-    pages.value = {
+const pages = computed((): { [name: string]: PageItem } => {
+  if (isAdmin) {
+    return {
       comments: {
         label: '评论',
         link: '/comments',
@@ -51,20 +45,24 @@ onMounted(() => {
       }
     }
   } else {
-    pages.value = {
+    return {
       comments: {
         label: '评论',
         link: '/comments',
       }
     }
   }
+})
 
+const isSearchShow = ref(false)
+const searchValue = ref('')
+const searchInputEl = ref<HTMLInputElement|null>(null)
+
+onMounted(() => {
   tabListEl.value!.addEventListener('wheel', (evt) => {
     evt.preventDefault()
     tabListEl.value!.scrollLeft += evt.deltaY
   })
-
-  curtPage.value = route.name.replace(/^\//, '')
 })
 
 function toggleIndicator() {

@@ -9,7 +9,12 @@ const props = defineProps<{
 const desc = computed(() => settings.get().extractItemDescFromComment(props.path))
 const customValue = computed(() => settings.get().customs.value?.getIn(props.path) as any)
 
-function onChange(value: boolean|string) {
+function onChange(value: boolean|string|number) {
+  // 类型转换
+  if (value === "true") value = true
+  else if (value === "false") value = false
+  else if (!isNaN(Number(value))) value = Number(value)
+
   settings.get().customs.value?.setIn(props.path, value)
 }
 </script>

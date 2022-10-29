@@ -21,6 +21,7 @@ module.exports = {
     'no-plusplus': 0,
     'no-param-reassign': 0,
     'no-console': 0,
+    'no-underscore-dangle': 0,
     'no-constructor-return': 0,
     'class-methods-use-this': 0,
     'spaced-comment': 0,

@@ -56,52 +56,27 @@
 
 前往：[“**部署文档**”](https://artalk.js.org/guide/deploy.html)
 
-```sh
-$ pnpm add artalk
-```
-
 ```ts
-import Artalk from 'artalk'
-
 new Artalk({
-  el:        '#Comments',
-  pageKey:   'http://your_domain/post/1', // 页面链接
-  pageTitle: '关于如何引入 Artalk 这档子事', // 页面标题
-  server:    'http://localhost:8080/api', // 后端地址
-  site:      'Artalk 的博客 (你的站点名)',
+  el:     '#Comments',
+  site:   'Artalk 的博客',
+  server: 'https://artalk.example.com'
 })
 ```
 
 ### Docker
 
-```sh
-# 为 Artalk 创建一个目录
-mkdir Artalk
-cd Artalk
-
-# 拉取 docker 镜像
-docker pull artalk/artalk-go
-
-# 生成配置文件
-docker run -it -v $(pwd)/data:/data --rm artalk/artalk-go gen config data/artalk-go.yml
-
-# 编辑配置文件
-vim data/artalk-go.yml
-
-# 运行 docker 容器
+```bash
 docker run -d \
   --name artalk-go \
-  -p 0.0.0.0:8080:23366 \
+  -p 8080:23366 \
   -v $(pwd)/data:/data \
   artalk/artalk-go
 ```
 
 ### Docker Compose
 
-```sh
-mkdir Artalk
-cd Artalk
-
+```bash
 vim docker-compose.yaml
 ```
 
@@ -117,7 +92,7 @@ services:
       - ./data:/data
 ```
 
-```sh
+```bash
 docker-compose up -d
 ```
 
@@ -162,10 +137,10 @@ docker-compose up -d
   - [x] 我的
   - [x] 待审
 - [x] 管理员控制台
-  - [x] 评论 (增/删/改)
-  - [x] 页面 (增/删/改)
-  - [x] 站点 (增/删/改)
-  - [x] 用户 (增/删/改)
+  - [x] 评论
+  - [x] 页面
+  - [x] 站点
+  - [x] 用户
   - [x] 设置 (GUI)
 - [x] 数据导入 ([Artransfer](https://artalk.js.org/guide/transfer.html))
   - [x] Artrans

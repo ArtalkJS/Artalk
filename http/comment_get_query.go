@@ -1,8 +1,12 @@
 package http
 
 import (
+	"fmt"
+	"reflect"
+	"strconv"
 	"strings"
 
+	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/model"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -208,4 +212,30 @@ func prependPinnedComments(a *action, c echo.Context, p ParamsGet, comments *[]m
 
 	// prepend
 	*comments = append(pinnedComments, filteredComments...)
+}
+
+// 处理来自配置文件的 fronted 配置项
+func UseCfgFrontend(p *ParamsGet) {
+	feConf := config.Instance.Frontend
+	if feConf == nil || reflect.ValueOf(feConf).Kind() != reflect.Map {
+		return
+	}
+
+	// pagination
+	(func() {
+		pagination, isExist := feConf["pagination"]
+		if !isExist {
+			return
+		}
+		if reflect.ValueOf(pagination).Kind() != reflect.Map {
+			return
+		}
+
+		// pagination.pageSize
+		cfgPageSizeStr := fmt.Sprintf("%v", pagination.(Map)["pageSize"])
+		confPageSize, err := strconv.Atoi(cfgPageSizeStr)
+		if err == nil && confPageSize > 0 {
+			p.Limit = confPageSize
+		}
+	})()
 }

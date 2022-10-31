@@ -52,6 +52,9 @@ func (a *action) Get(c echo.Context) error {
 	// use site
 	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
+	// handle params
+	UseCfgFrontend(&p)
+
 	// find page
 	var page model.Page
 	if !p.SiteAll {

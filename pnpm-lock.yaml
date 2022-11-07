@@ -77,7 +77,7 @@ importers:
       vite: ^3.1.8
       vue: ^3.2.37
       vue-router: ^4.1.5
-      vue-tsc: ^0.40.4
+      vue-tsc: ^0.40.13
       yaml: ^2.1.3
     dependencies:
       artalk: link:../artalk

@@ -17,7 +17,7 @@ importers:
       eslint-plugin-compat: 4.0.2
       eslint-plugin-import: 2.26.0
       less: 4.1.3
-      postcss: 8.4.18
+      postcss: 8.4.19
       prettier: 2.7.1
       rollup: 2.79.1
       terser: 5.15.1
@@ -30,7 +30,7 @@ importers:
       '@types/node': 16.11.66
       '@typescript-eslint/eslint-plugin': 5.30.7_p7sjr5lknubcyol423ahm6mhy4
       '@typescript-eslint/parser': 5.30.7_4brgkhw6cq4me3drk3kxrpb2mm
-      autoprefixer: 10.4.13_postcss@8.4.18
+      autoprefixer: 10.4.13_postcss@8.4.19
       eslint: 8.23.1
       eslint-config-airbnb-base: 15.0.0_hdzsmr7kawaomymueo2tso6fjq
       eslint-config-airbnb-typescript: 17.0.0_augok7nz2eukfy6al3c2htu3pu
@@ -39,7 +39,7 @@ importers:
       eslint-plugin-compat: 4.0.2_eslint@8.23.1
       eslint-plugin-import: 2.26.0_tkkcjms4d4bwzc34a57yfx7kpa
       less: 4.1.3
-      postcss: 8.4.18
+      postcss: 8.4.19
       prettier: 2.7.1
       rollup: 2.79.1
       terser: 5.15.1
@@ -625,7 +625,7 @@ packages:
       '@vue/shared': 3.2.39
       estree-walker: 2.0.2
       magic-string: 0.25.9
-      postcss: 8.4.18
+      postcss: 8.4.19
       source-map: 0.6.1
 
   /@vue/compiler-ssr/3.2.39:
@@ -796,7 +796,7 @@ packages:
       '@babel/types': 7.19.4
     dev: true
 
-  /autoprefixer/10.4.13_postcss@8.4.18:
+  /autoprefixer/10.4.13_postcss@8.4.19:
     resolution: {integrity: sha512-49vKpMqcZYsJjwotvt4+h/BCjJVnhGwcLpDt5xkcaOG3eLrG/HUYLagrihYsQ+qrIBgIzX1Rw7a6L8I/ZA1Atg==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
@@ -808,7 +808,7 @@ packages:
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
-      postcss: 8.4.18
+      postcss: 8.4.19
       postcss-value-parser: 4.2.0
     dev: true
 
@@ -2465,6 +2465,15 @@ packages:
 
   /postcss/8.4.18:
     resolution: {integrity: sha512-Wi8mWhncLJm11GATDaQKobXSNEYGUHeQLiQqDFG1qQ5UTDPTEvKw0Xt5NsTpktGTwLps3ByrWsBrG0rB8YQ9oA==}
+    engines: {node: ^10 || ^12 || >=14}
+    dependencies:
+      nanoid: 3.3.4
+      picocolors: 1.0.0
+      source-map-js: 1.0.2
+    dev: true
+
+  /postcss/8.4.19:
+    resolution: {integrity: sha512-h+pbPsyhlYj6N2ozBmHhHrs9DzGmbaarbLvWipMRO7RLS+v4onj26MPFXA5OBYFxyqYhUJK456SwDcY9H2/zsA==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       nanoid: 3.3.4

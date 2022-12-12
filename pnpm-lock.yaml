@@ -100,10 +100,10 @@ importers:
     specifiers:
       '@types/katex': 0.14.0
       artalk: 'workspace: *'
-      katex: ^0.16.3
+      katex: ^0.16.4
     dependencies:
       artalk: link:../artalk
-      katex: 0.16.3
+      katex: 0.16.4
     devDependencies:
       '@types/katex': 0.14.0
 
@@ -2099,8 +2099,8 @@ packages:
       graceful-fs: 4.2.10
     dev: true
 
-  /katex/0.16.3:
-    resolution: {integrity: sha512-3EykQddareoRmbtNiNEDgl3IGjryyrp2eg/25fHDEnlHymIDi33bptkMv6K4EOC2LZCybLW/ZkEo6Le+EM9pmA==}
+  /katex/0.16.4:
+    resolution: {integrity: sha512-WudRKUj8yyBeVDI4aYMNxhx5Vhh2PjpzQw1GRu/LVGqL4m1AxwD1GcUp0IMbdJaf5zsjtj8ghP0DOQRYhroNkw==}
     hasBin: true
     dependencies:
       commander: 8.3.0

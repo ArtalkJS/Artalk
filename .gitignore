@@ -19,6 +19,7 @@
 node_modules
 
 .vscode/*.log
+.idea/
 
 .history
 .release-env

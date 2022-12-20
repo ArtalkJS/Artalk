@@ -165,6 +165,7 @@ type AliDMConf struct {
 	AccessKeyId     string `koanf:"access_key_id" json:"access_key_id"`
 	AccessKeySecret string `koanf:"access_key_secret" json:"access_key_secret"`
 	AccountName     string `koanf:"account_name" json:"account_name"`
+	Region          string `koanf:"region" json:"region"`
 }
 
 type DBType string
@@ -195,10 +196,11 @@ const (
 
 // # Redis 配置
 // redis:
-//   network: "tcp"
-//   username: ""
-//   password: ""
-//   db: 0
+//
+//	network: "tcp"
+//	username: ""
+//	password: ""
+//	db: 0
 type RedisConf struct {
 	Network  string `koanf:"network" json:"network"` // tcp or unix
 	Username string `koanf:"username" json:"username"`

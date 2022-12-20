@@ -2,34 +2,31 @@ package email
 
 import (
 	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/sirupsen/logrus"
 )
 
-var emailCh *(chan Email)
+// emailCh is a channel for email queue
+var emailCh chan Email = nil
 
 func InitQueue() {
 	if emailCh != nil {
-		return
+		emailCh = make(chan Email) // TODO: add size limit
 	}
 
-	ch := make(chan Email) // make(chan Email, 5)
-	emailCh = &ch
-
 	go func() {
-		for email := range *emailCh {
-			result := false
-			switch config.Instance.Email.SendType {
-			case config.TypeSMTP:
-				result = SendBySMTP(email)
-			case config.TypeAliDM:
-				result = SendByAliDM(email)
-			case config.TypeSendmail:
-				result = SendByUsingSystemCMD(email)
-			}
+		for {
+			select {
+			case email := <-emailCh:
+				sender := NewSender(config.Instance.Email.SendType)
 
-			if result { // 发送成功
-				if email.LinkedNotify != nil {
-					// 标记关联评论邮件发送状态
-					email.LinkedNotify.SetEmailed()
+				if sender.Send(email) { // 发送成功
+					if email.LinkedNotify != nil {
+						// 标记关联评论邮件发送状态
+						if err := email.LinkedNotify.SetEmailed(); err != nil {
+							logrus.Errorf("[EMAIL] 标记关联评论邮件发送状态失败: %s", err)
+							continue
+						}
+					}
 				}
 			}
 		}
@@ -37,7 +34,5 @@ func InitQueue() {
 }
 
 func AddToQueue(email Email) {
-	go func() {
-		*emailCh <- email
-	}()
+	emailCh <- email
 }

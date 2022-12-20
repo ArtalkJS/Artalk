@@ -2,13 +2,8 @@ package email
 
 import (
 	"bytes"
-	"io/ioutil"
-	"os/exec"
-
 	"github.com/ArtalkJS/ArtalkGo/config"
 	"github.com/ArtalkJS/ArtalkGo/model"
-	ali_dm "github.com/qwqcode/go-aliyun-email"
-	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -21,87 +16,25 @@ type Email struct {
 	LinkedNotify *model.Notify
 }
 
-func SendBySMTP(email Email) bool {
-	smtp := config.Instance.Email.SMTP
-
-	m := GetCookedEmail(email)
-	d := gomail.NewDialer(smtp.Host, smtp.Port, smtp.Username, smtp.Password)
-
-	// 发送邮件
-	if err := d.DialAndSend(m); err != nil {
-		logrus.Error("[EMAIL] SMTP 邮件发送失败 ", err)
-		return false
-	}
-	return true
+// Sender is an interface for sending email.
+type Sender interface {
+	Send(email Email) bool
 }
 
-func SendByAliDM(email Email) bool {
-	client := ali_dm.NewClient(
-		config.Instance.Email.AliDM.AccessKeyId,
-		config.Instance.Email.AliDM.AccessKeySecret,
-		config.Instance.Email.AliDM.AccountName,
-		email.FromName,
-		ali_dm.RegionCNHangZhou,
-	)
-	req := &ali_dm.SingleRequest{
-		ReplyToAddress: true,
-		AddressType:    1,
-		ToAddress:      email.ToAddr,
-		Subject:        email.Subject,
-		HtmlBody:       email.Body,
+func NewSender(t config.EmailSenderType) Sender {
+	switch t {
+	case config.TypeSMTP:
+		return NewSmtpSender(&config.Instance.Email.SMTP)
+	case config.TypeAliDM:
+		return NewAliDMSender(&config.Instance.Email.AliDM)
+	case config.TypeSendmail:
+		return NewCmdSender()
+	default:
+		panic("Unknown email sender type")
 	}
-
-	resp, err := client.SingleRequest(req)
-	if err != nil {
-		logrus.Error("[EMAIL] ali_dm 邮件发送失败 ", err)
-		return false
-	}
-
-	if config.Instance.Debug {
-		logrus.Debug(resp)
-	}
-
-	return true
 }
 
-func SendByUsingSystemCMD(email Email) bool {
-	LogTag := "[EMAIL] [sendmail] "
-	msg := GetEmailMineTxt(email)
-
-	// 调用系统 sendmail
-	sendmail := exec.Command("/usr/sbin/sendmail", "-t", "-oi")
-	stdin, err := sendmail.StdinPipe()
-	if err != nil {
-		logrus.Error(LogTag, err)
-		return false
-	}
-
-	stdout, err := sendmail.StdoutPipe()
-	if err != nil {
-		logrus.Error(LogTag, err)
-		return false
-	}
-
-	sendmail.Start()
-	stdin.Write([]byte(msg))
-	stdin.Close()
-	sentBytes, _ := ioutil.ReadAll(stdout)
-	if err := sendmail.Wait(); err != nil {
-		logrus.Error(LogTag, err)
-		if exitError, ok := err.(*exec.ExitError); ok {
-			logrus.Error(LogTag, "Exit code is %d", exitError.ExitCode())
-		}
-		return false
-	}
-
-	if config.Instance.Debug {
-		logrus.Debug(string(sentBytes))
-	}
-
-	return true
-}
-
-func GetCookedEmail(email Email) *gomail.Message {
+func getCookedEmail(email Email) *gomail.Message {
 	m := gomail.NewMessage()
 
 	// 发送人
@@ -120,8 +53,8 @@ func GetCookedEmail(email Email) *gomail.Message {
 	return m
 }
 
-func GetEmailMineTxt(email Email) string {
+func getEmailMineTxt(email Email) string {
 	emailBuffer := bytes.NewBuffer([]byte{})
-	GetCookedEmail(email).WriteTo(emailBuffer)
+	getCookedEmail(email).WriteTo(emailBuffer)
 	return string(emailBuffer.Bytes()[:])
 }

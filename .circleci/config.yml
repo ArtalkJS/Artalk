@@ -4,11 +4,11 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 jobs:
   test:
-    working_directory: /go/src/github.com/ArtalkJS/ArtalkGo
+    working_directory: ~/go/src/github.com/ArtalkJS/ArtalkGo
     environment:
       GO111MODULE: "on"
     docker:
-      - image: circleci/golang:latest
+      - image: cimg/go:1.18
     steps:
       - checkout
       - run:

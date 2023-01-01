@@ -1,7 +1,8 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -12,8 +13,8 @@ type ParamsAdminUserGet struct {
 }
 
 type ResponseAdminUserGet struct {
-	Total int64                      `json:"total"`
-	Users []model.CookedUserForAdmin `json:"users"`
+	Total int64                       `json:"total"`
+	Users []entity.CookedUserForAdmin `json:"users"`
 }
 
 func (a *action) AdminUserGet(c echo.Context) error {
@@ -27,11 +28,11 @@ func (a *action) AdminUserGet(c echo.Context) error {
 	}
 
 	// 准备 query
-	query := a.db.Model(&model.User{}).Order("created_at DESC")
+	db := a.db.Model(&entity.User{}).Order("created_at DESC")
 
 	// 总共条数
 	var total int64
-	query.Count(&total)
+	db.Count(&total)
 
 	// 类型筛选
 	if p.Type == "" {
@@ -39,21 +40,21 @@ func (a *action) AdminUserGet(c echo.Context) error {
 	}
 
 	if p.Type == "admin" {
-		query = query.Where("is_admin = ?", true)
+		db = db.Where("is_admin = ?", true)
 	} else if p.Type == "in_conf" {
-		query = query.Where("is_in_conf = ?", true)
+		db = db.Where("is_in_conf = ?", true)
 	}
 
 	// 数据分页
-	query = query.Scopes(Paginate(p.Offset, p.Limit))
+	db = db.Scopes(Paginate(p.Offset, p.Limit))
 
 	// 查找
-	var users []model.User
-	query.Find(&users)
+	var users []entity.User
+	db.Find(&users)
 
-	var cookedUsers []model.CookedUserForAdmin
+	var cookedUsers []entity.CookedUserForAdmin
 	for _, u := range users {
-		cookedUsers = append(cookedUsers, u.ToCookedForAdmin())
+		cookedUsers = append(cookedUsers, query.UserToCookedForAdmin(&u))
 	}
 
 	return RespData(c, ResponseAdminUserGet{

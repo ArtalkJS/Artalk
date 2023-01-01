@@ -1,9 +1,10 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -39,10 +40,10 @@ func (a *action) Stat(c echo.Context) error {
 
 	// 公共查询规则
 	QueryPages := func(d *gorm.DB) *gorm.DB {
-		return d.Model(&model.Page{}).Where("site_name = ?", p.SiteName)
+		return d.Model(&entity.Page{}).Where("site_name = ?", p.SiteName)
 	}
 	QueryComments := func(d *gorm.DB) *gorm.DB {
-		return d.Model(&model.Comment{}).Where("site_name = ? AND is_pending = ?", p.SiteName, false)
+		return d.Model(&entity.Comment{}).Where("site_name = ? AND is_pending = ?", p.SiteName, false)
 	}
 	QueryOrderRand := func(d *gorm.DB) *gorm.DB {
 		if config.Instance.DB.Type == config.TypeSQLite {
@@ -55,50 +56,50 @@ func (a *action) Stat(c echo.Context) error {
 	switch p.Type {
 	case "latest_comments":
 		// 最新评论
-		var comments []model.Comment
+		var comments []entity.Comment
 		a.db.Scopes(QueryComments).
 			Order("created_at DESC").
 			Limit(p.Limit).
 			Find(&comments)
 
-		return RespData(c, model.CookAllComments(comments))
+		return RespData(c, query.CookAllComments(comments))
 
 	case "latest_pages":
 		// 最新页面
-		var pages []model.Page
+		var pages []entity.Page
 		a.db.Scopes(QueryPages).
 			Order("created_at DESC").
 			Limit(p.Limit).
 			Find(&pages)
 
-		return RespData(c, model.CookAllPages(pages))
+		return RespData(c, query.CookAllPages(pages))
 
 	case "pv_most_pages":
 		// PV 数最多的页面
-		var pages []model.Page
+		var pages []entity.Page
 		a.db.Scopes(QueryPages).
 			Order("pv DESC").
 			Limit(p.Limit).
 			Find(&pages)
 
-		return RespData(c, model.CookAllPages(pages))
+		return RespData(c, query.CookAllPages(pages))
 
 	case "comment_most_pages":
 		// 评论数最多的页面
-		var pages []model.Page
+		var pages []entity.Page
 		a.db.Raw(
 			"SELECT * FROM pages p WHERE p.site_name = ? ORDER BY (SELECT COUNT(*) FROM comments c WHERE c.page_key = p.key AND c.is_pending = ?) DESC LIMIT ?",
 			p.SiteName, false, p.Limit,
 		).Find(&pages)
 
-		return RespData(c, model.CookAllPages(pages))
+		return RespData(c, query.CookAllPages(pages))
 
 	case "page_pv":
 		// 查询页面的 PV 数
-		keys := lib.SplitAndTrimSpace(p.PageKeys, ",")
+		keys := utils.SplitAndTrimSpace(p.PageKeys, ",")
 		pvs := map[string]int{}
 		for _, k := range keys {
-			page := model.FindPage(k, p.SiteName)
+			page := query.FindPage(k, p.SiteName)
 			if !page.IsEmpty() {
 				pvs[k] = page.PV
 			} else {
@@ -117,7 +118,7 @@ func (a *action) Stat(c echo.Context) error {
 
 	case "page_comment":
 		// 查询页面的评论数
-		keys := lib.SplitAndTrimSpace(p.PageKeys, ",")
+		keys := utils.SplitAndTrimSpace(p.PageKeys, ",")
 		counts := map[string]int64{}
 		for _, k := range keys {
 			var count int64
@@ -137,21 +138,21 @@ func (a *action) Stat(c echo.Context) error {
 
 	case "rand_comments":
 		// 随机评论
-		var comments []model.Comment
+		var comments []entity.Comment
 		a.db.Scopes(QueryComments, QueryOrderRand).
 			Limit(p.Limit).
 			Find(&comments)
 
-		return RespData(c, model.CookAllComments(comments))
+		return RespData(c, query.CookAllComments(comments))
 
 	case "rand_pages":
 		// 随机页面
-		var pages []model.Page
+		var pages []entity.Page
 		a.db.Scopes(QueryPages, QueryOrderRand).
 			Limit(p.Limit).
 			Find(&pages)
 
-		return RespData(c, model.CookAllPages(pages))
+		return RespData(c, query.CookAllPages(pages))
 	}
 
 	return RespError(c, "invalid type")

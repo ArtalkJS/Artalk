@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -24,13 +24,13 @@ func (a *action) PV(c echo.Context) error {
 	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	// find page
-	page := model.FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
+	page := query.FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
 
 	// ip := c.RealIP()
 	// ua := c.Request().UserAgent()
 
 	page.PV++
-	model.UpdatePage(&page)
+	query.UpdatePage(&page)
 
 	return RespData(c, Map{
 		"pv": page.PV,

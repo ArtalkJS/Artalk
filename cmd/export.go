@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
-	"github.com/ArtalkJS/ArtalkGo/lib/core"
+	"github.com/ArtalkJS/ArtalkGo/internal/artransfer"
+	"github.com/ArtalkJS/ArtalkGo/internal/core"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -51,7 +51,7 @@ var exportCmd = &cobra.Command{
 			}
 
 			// mkdir -p
-			if err := lib.EnsureDir(filepath.Dir(filename)); err != nil {
+			if err := utils.EnsureDir(filepath.Dir(filename)); err != nil {
 				logrus.Fatal(err)
 			}
 

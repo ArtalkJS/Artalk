@@ -3,9 +3,9 @@ package http
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echolog "github.com/onrik/logrus/echo"
@@ -60,13 +60,13 @@ func InitCorsControl(e *echo.Echo) {
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowCredentials: true, // allow cors with cookies
 		AllowOriginFunc: func(origin string) (bool, error) {
-			if lib.ContainsStr(config.Instance.TrustedDomains, "*") {
+			if utils.ContainsStr(config.Instance.TrustedDomains, "*") {
 				return true, nil // 通配符关闭 origin 检测
 			}
 
 			allowURLs := []string{}
 			allowURLs = append(allowURLs, config.Instance.TrustedDomains...) // 导入配置中的可信域名
-			for _, site := range model.FindAllSitesCooked() {                // 导入数据库中的站点 urls
+			for _, site := range query.FindAllSitesCooked() {                // 导入数据库中的站点 urls
 				allowURLs = append(allowURLs, site.Urls...)
 			}
 

@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/ArtalkJS/ArtalkGo/lib/core"
+	"github.com/ArtalkJS/ArtalkGo/internal/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

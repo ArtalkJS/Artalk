@@ -7,9 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -27,13 +28,13 @@ func (a *action) Login(c echo.Context) error {
 	}
 
 	// 账户读取
-	var user model.User
+	var user entity.User
 	if p.Name == "" {
 		// 仅 Email 的查询
-		if !lib.ValidateEmail(p.Email) {
+		if !utils.ValidateEmail(p.Email) {
 			return RespError(c, "请输入正确的邮箱")
 		}
-		users := model.FindUsersByEmail(p.Email)
+		users := query.FindUsersByEmail(p.Email)
 		if len(users) == 1 {
 			// 仅有一个 email 匹配的用户
 			user = users[0]
@@ -51,7 +52,7 @@ func (a *action) Login(c echo.Context) error {
 		}
 	} else {
 		// Name + Email 的精准查询
-		user = model.FindUser(p.Name, p.Email) // name = ? AND email = ?
+		user = query.FindUser(p.Name, p.Email) // name = ? AND email = ?
 	}
 
 	// record action for limiting action
@@ -95,7 +96,7 @@ func (a *action) Login(c echo.Context) error {
 
 	return RespData(c, Map{
 		"token": jwtToken,
-		"user":  user.ToCooked(),
+		"user":  query.CookUser(&user),
 	})
 }
 
@@ -106,7 +107,7 @@ func setAuthCookie(c echo.Context, jwtToken string, expires time.Time) {
 
 	// save jwt token to cookie
 	cookie := new(http.Cookie)
-	cookie.Name = lib.COOKIE_KEY_ATK_AUTH
+	cookie.Name = config.COOKIE_KEY_ATK_AUTH
 	cookie.Value = jwtToken
 	cookie.Expires = expires
 
@@ -142,7 +143,7 @@ func (a *action) LoginStatus(c echo.Context) error {
 
 	isAdmin := false
 	if p.Email != "" && p.Name != "" {
-		isAdmin = model.IsAdminUserByNameEmail(p.Name, p.Email)
+		isAdmin = query.IsAdminUserByNameEmail(p.Name, p.Email)
 	}
 
 	return RespData(c, Map{

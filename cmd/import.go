@@ -4,8 +4,8 @@ import (
 	"errors"
 	"os"
 
-	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
-	"github.com/ArtalkJS/ArtalkGo/lib/core"
+	"github.com/ArtalkJS/ArtalkGo/internal/artransfer"
+	"github.com/ArtalkJS/ArtalkGo/internal/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

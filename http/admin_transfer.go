@@ -5,8 +5,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/lib/artransfer"
+	"github.com/ArtalkJS/ArtalkGo/internal/artransfer"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -68,7 +69,7 @@ func (a *action) AdminImport(c echo.Context) error {
 
 	payloadMap := map[string]string{}
 	for k, v := range payloadMapRaw {
-		payloadMap[k] = lib.ToString(v) // convert all value to string
+		payloadMap[k] = utils.ToString(v) // convert all value to string
 	}
 
 	payloadArr := []string{}
@@ -79,7 +80,7 @@ func (a *action) AdminImport(c echo.Context) error {
 	if !GetIsSuperAdmin(c) {
 		user := GetUserByReq(c)
 		if sitName, isExist := payloadMap["t_name"]; isExist {
-			if !lib.ContainsStr(user.ToCooked().SiteNames, sitName) {
+			if !utils.ContainsStr(query.CookUser(&user).SiteNames, sitName) {
 				return RespError(c, "禁止导入的目标站点名")
 			}
 		} else {
@@ -111,7 +112,8 @@ func (a *action) AdminExport(c echo.Context) error {
 	jsonStr, err := artransfer.ExportArtransString(func(db *gorm.DB) *gorm.DB {
 		if !GetIsSuperAdmin(c) {
 			// 仅导出限定范围内的站点
-			db = db.Where("site_name IN (?)", GetUserByReq(c).ToCooked().SiteNames)
+			u := GetUserByReq(c)
+			db = db.Where("site_name IN (?)", query.CookUser(&u).SiteNames)
 		}
 
 		return db

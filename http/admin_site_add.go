@@ -1,8 +1,10 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -22,31 +24,31 @@ func (a *action) AdminSiteAdd(c echo.Context) error {
 	}
 
 	if p.Urls != "" {
-		urls := lib.SplitAndTrimSpace(p.Urls, ",")
+		urls := utils.SplitAndTrimSpace(p.Urls, ",")
 		for _, url := range urls {
-			if !lib.ValidateURL(url) {
+			if !utils.ValidateURL(url) {
 				return RespError(c, "Invalid url exist")
 			}
 		}
 	}
 
-	if p.Name == lib.ATK_SITE_ALL {
+	if p.Name == config.ATK_SITE_ALL {
 		return RespError(c, "禁止使用保留关键字作为名称")
 	}
 
-	if !model.FindSite(p.Name).IsEmpty() {
+	if !query.FindSite(p.Name).IsEmpty() {
 		return RespError(c, "site 已存在")
 	}
 
-	site := model.Site{}
+	site := entity.Site{}
 	site.Name = p.Name
 	site.Urls = p.Urls
-	err := model.CreateSite(&site)
+	err := query.CreateSite(&site)
 	if err != nil {
 		return RespError(c, "site 创建失败")
 	}
 
 	return RespData(c, Map{
-		"site": site.ToCooked(),
+		"site": query.CookSite(&site),
 	})
 }

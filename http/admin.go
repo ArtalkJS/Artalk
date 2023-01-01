@@ -6,9 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 )
@@ -23,7 +24,7 @@ func AdminOnlyHandler(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func LoginGetUserToken(user model.User) string {
+func LoginGetUserToken(user entity.User) string {
 	// Set custom claims
 	claims := &jwtCustomClaims{
 		UserID:  user.ID,
@@ -51,7 +52,7 @@ func GetJwtStrByReqCookie(c echo.Context) string {
 	if !config.Instance.Cookie.Enabled {
 		return ""
 	}
-	cookie, err := c.Cookie(lib.COOKIE_KEY_ATK_AUTH)
+	cookie, err := c.Cookie(config.COOKIE_KEY_ATK_AUTH)
 	if err != nil {
 		return ""
 	}
@@ -88,16 +89,16 @@ func GetJwtInstanceByReq(c echo.Context) *jwt.Token {
 	return jwt
 }
 
-func GetUserByJwt(jwt *jwt.Token) model.User {
+func GetUserByJwt(jwt *jwt.Token) entity.User {
 	if jwt == nil {
-		return model.User{}
+		return entity.User{}
 	}
 
 	claims := jwtCustomClaims{}
 	tmp, _ := json.Marshal(jwt.Claims)
 	_ = json.Unmarshal(tmp, &claims)
 
-	user := model.FindUserByID(claims.UserID)
+	user := query.FindUserByID(claims.UserID)
 
 	return user
 }
@@ -112,7 +113,7 @@ func CheckIsAdminReq(c echo.Context) bool {
 	return user.IsAdmin
 }
 
-func GetUserByReq(c echo.Context) model.User {
+func GetUserByReq(c echo.Context) entity.User {
 	jwt := GetJwtInstanceByReq(c)
 	user := GetUserByJwt(jwt)
 
@@ -126,13 +127,13 @@ func GetIsSuperAdmin(c echo.Context) bool {
 
 func IsAdminHasSiteAccess(c echo.Context, siteName string) bool {
 	user := GetUserByReq(c)
-	cookedUser := user.ToCooked()
+	cookedUser := query.CookUser(&user)
 
 	if !user.IsAdmin {
 		return false
 	}
 
-	if !GetIsSuperAdmin(c) && !lib.ContainsStr(cookedUser.SiteNames, siteName) {
+	if !GetIsSuperAdmin(c) && !utils.ContainsStr(cookedUser.SiteNames, siteName) {
 		// 如果账户分配了站点，并且待操作的站点并非处于分配的站点列表
 		return false
 	}

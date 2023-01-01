@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib/email"
+	"github.com/ArtalkJS/ArtalkGo/internal/email"
 	"github.com/labstack/echo/v4"
 )
 

@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -20,7 +20,7 @@ func (a *action) AdminPageDel(c echo.Context) error {
 	// use site
 	UseSite(c, &p.SiteName, &p.SiteID, nil)
 
-	page := model.FindPage(p.Key, p.SiteName)
+	page := query.FindPage(p.Key, p.SiteName)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
 	}
@@ -29,7 +29,7 @@ func (a *action) AdminPageDel(c echo.Context) error {
 		return RespError(c, "无权操作")
 	}
 
-	err := model.DelPage(&page)
+	err := query.DelPage(&page)
 	if err != nil {
 		return RespError(c, "Page 删除失败")
 	}

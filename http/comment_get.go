@@ -1,7 +1,8 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -28,19 +29,19 @@ type ParamsGet struct {
 	SiteAll bool
 
 	IsMsgCenter bool
-	User        *model.User
+	User        *entity.User
 	IsAdminReq  bool
 }
 
 type ResponseGet struct {
-	Comments    []model.CookedComment `json:"comments"`
-	Total       int64                 `json:"total"`
-	TotalRoots  int64                 `json:"total_roots"`
-	Page        model.CookedPage      `json:"page"`
-	Unread      []model.CookedNotify  `json:"unread"`
-	UnreadCount int                   `json:"unread_count"`
-	ApiVersion  Map                   `json:"api_version"`
-	Conf        Map                   `json:"conf,omitempty"`
+	Comments    []entity.CookedComment `json:"comments"`
+	Total       int64                  `json:"total"`
+	TotalRoots  int64                  `json:"total_roots"`
+	Page        entity.CookedPage      `json:"page"`
+	Unread      []entity.CookedNotify  `json:"unread"`
+	UnreadCount int                    `json:"unread_count"`
+	ApiVersion  Map                    `json:"api_version"`
+	Conf        Map                    `json:"conf,omitempty"`
 }
 
 func (a *action) Get(c echo.Context) error {
@@ -56,11 +57,11 @@ func (a *action) Get(c echo.Context) error {
 	UseCfgFrontend(&p)
 
 	// find page
-	var page model.Page
+	var page entity.Page
 	if !p.SiteAll {
-		page = model.FindPage(p.PageKey, p.SiteName)
+		page = query.FindPage(p.PageKey, p.SiteName)
 		if page.IsEmpty() { // if page not found
-			page = model.Page{
+			page = entity.Page{
 				Key:      p.PageKey,
 				SiteName: p.SiteName,
 			}
@@ -68,9 +69,9 @@ func (a *action) Get(c echo.Context) error {
 	}
 
 	// find user
-	var user model.User
+	var user entity.User
 	if p.Name != "" && p.Email != "" {
-		user = model.FindUser(p.Name, p.Email)
+		user = query.FindUser(p.Name, p.Email)
 		p.User = &user // init params user field
 	}
 
@@ -104,14 +105,14 @@ func (a *action) Get(c echo.Context) error {
 	}
 
 	// get comments for the first query
-	var comments []model.Comment
+	var comments []entity.Comment
 	GetCommentQuery(a, c, p, p.SiteID, findScopes...).Scopes(Paginate(p.Offset, p.Limit)).Find(&comments)
 
 	// prepend the pinned comments
 	prependPinnedComments(a, c, p, &comments)
 
 	// cook
-	cookedComments := model.CookAllComments(comments)
+	cookedComments := query.CookAllComments(comments)
 
 	switch {
 	case !p.FlatMode:
@@ -121,8 +122,8 @@ func (a *action) Get(c echo.Context) error {
 
 		// 获取 comment 子评论
 		for _, parent := range cookedComments { // TODO: Read more children, pagination for children comment
-			children := model.FindCommentChildren(parent.ID, SiteIsolationChecker(c, p), AllowedCommentChecker(c, p))
-			cookedComments = append(cookedComments, model.CookAllComments(children)...)
+			children := query.FindCommentChildren(parent.ID, SiteIsolationChecker(c, p), AllowedCommentChecker(c, p))
+			cookedComments = append(cookedComments, query.CookAllComments(children)...)
 		}
 
 	case p.FlatMode:
@@ -132,16 +133,16 @@ func (a *action) Get(c echo.Context) error {
 
 		// find linked comments (被引用的评论，不单独显示)
 		for _, comment := range comments {
-			if comment.Rid == 0 || model.ContainsCookedComment(cookedComments, comment.Rid) {
+			if comment.Rid == 0 || entity.ContainsCookedComment(cookedComments, comment.Rid) {
 				continue
 			}
 
-			rComment := model.FindComment(comment.Rid, SiteIsolationChecker(c, p)) // 查找被回复的评论
+			rComment := query.FindComment(comment.Rid, SiteIsolationChecker(c, p)) // 查找被回复的评论
 			if rComment.IsEmpty() {
 				continue
 			}
 
-			rCooked := rComment.ToCooked()
+			rCooked := query.CookComment(&rComment)
 			rCooked.Visible = false // 设置为不可见
 			cookedComments = append(cookedComments, rCooked)
 		}
@@ -153,20 +154,20 @@ func (a *action) Get(c echo.Context) error {
 
 	// mark all as read in msg center
 	if p.IsMsgCenter {
-		model.UserNotifyMarkAllAsRead(p.User.ID)
+		query.UserNotifyMarkAllAsRead(p.User.ID)
 	}
 
 	// unread notifies
-	var unreadNotifies = []model.CookedNotify{}
+	var unreadNotifies = []entity.CookedNotify{}
 	if p.User != nil {
-		unreadNotifies = model.FindUnreadNotifies(p.User.ID)
+		unreadNotifies = query.CookAllNotifies(query.FindUnreadNotifies(p.User.ID))
 	}
 
 	resp := ResponseGet{
 		Comments:    cookedComments,
 		Total:       total,
 		TotalRoots:  totalRoots,
-		Page:        page.ToCooked(),
+		Page:        query.CookPage(&page),
 		Unread:      unreadNotifies,
 		UnreadCount: len(unreadNotifies),
 		ApiVersion:  GetApiVersionDataMap(),

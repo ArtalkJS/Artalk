@@ -1,7 +1,8 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,8 +15,8 @@ type ParamsAdminPageGet struct {
 }
 
 type ResponseAdminPageGet struct {
-	Total int64              `json:"total"`
-	Pages []model.CookedPage `json:"pages"`
+	Total int64               `json:"total"`
+	Pages []entity.CookedPage `json:"pages"`
 }
 
 func (a *action) AdminPageGet(c echo.Context) error {
@@ -32,25 +33,25 @@ func (a *action) AdminPageGet(c echo.Context) error {
 	}
 
 	// 准备 query
-	query := a.db.Model(&model.Page{}).Order("created_at DESC")
+	db := a.db.Model(&entity.Page{}).Order("created_at DESC")
 	if !p.SiteAll { // 不是查的所有站点
-		query = query.Where("site_name = ?", p.SiteName)
+		db = db.Where("site_name = ?", p.SiteName)
 	}
 
 	// 总共条数
 	var total int64
-	query.Count(&total)
+	db.Count(&total)
 
 	// 数据分页
-	query = query.Scopes(Paginate(p.Offset, p.Limit))
+	db = db.Scopes(Paginate(p.Offset, p.Limit))
 
 	// 查找
-	var pages []model.Page
-	query.Find(&pages)
+	var pages []entity.Page
+	db.Find(&pages)
 
-	var cookedPages []model.CookedPage
+	var cookedPages []entity.CookedPage
 	for _, p := range pages {
-		cookedPages = append(cookedPages, p.ToCooked())
+		cookedPages = append(cookedPages, query.CookPage(&p))
 	}
 
 	return RespData(c, ResponseAdminPageGet{

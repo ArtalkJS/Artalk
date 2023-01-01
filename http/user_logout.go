@@ -3,7 +3,7 @@ package http
 import (
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
 	"github.com/labstack/echo/v4"
 )
 

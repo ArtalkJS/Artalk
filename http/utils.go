@@ -5,7 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 	"github.com/mitchellh/mapstructure"
 	"github.com/sirupsen/logrus"
@@ -89,8 +90,8 @@ func ParamsDecode(c echo.Context, destParams interface{}) (isContinue bool, resp
 	return true, nil
 }
 
-func CheckIsAllowed(c echo.Context, name string, email string, page model.Page, siteName string) (bool, error) {
-	isAdminUser := model.IsAdminUserByNameEmail(name, email)
+func CheckIsAllowed(c echo.Context, name string, email string, page entity.Page, siteName string) (bool, error) {
+	isAdminUser := query.IsAdminUserByNameEmail(name, email)
 
 	// 如果用户是管理员，或者当前页只能管理员评论
 	if isAdminUser || page.AdminOnly {

@@ -6,9 +6,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -31,13 +32,13 @@ func SiteOriginMiddleware() echo.MiddlewareFunc {
 
 			siteName := c.FormValue("site_name")
 			siteID := uint(0)
-			var site *model.Site = nil
+			var site *entity.Site = nil
 
 			siteAll := false
 			isSuperAdmin := GetIsSuperAdmin(c)
 
 			// 请求站点名 == "__ATK_SITE_ALL" 时取消站点隔离
-			if siteName == lib.ATK_SITE_ALL {
+			if siteName == config.ATK_SITE_ALL {
 				if !isSuperAdmin {
 					return RespError(c, "仅管理员查询允许取消站点隔离")
 				}
@@ -48,11 +49,11 @@ func SiteOriginMiddleware() echo.MiddlewareFunc {
 				if siteName == "" {
 					siteName = strings.TrimSpace(config.Instance.SiteDefault)
 					if siteName != "" {
-						model.FindCreateSite(siteName) // 默认站点不存在则创建
+						query.FindCreateSite(siteName) // 默认站点不存在则创建
 					}
 				}
 
-				findSite := model.FindSite(siteName)
+				findSite := query.FindSite(siteName)
 				if findSite.IsEmpty() {
 					return RespError(c, fmt.Sprintf("未找到站点：`%s`，请在控制台创建站点", siteName), Map{
 						"err_no_site": true,
@@ -70,9 +71,9 @@ func SiteOriginMiddleware() echo.MiddlewareFunc {
 			}
 
 			// 设置 Context Values
-			c.Set(lib.CTX_KEY_ATK_SITE_ID, siteID)
-			c.Set(lib.CTX_KEY_ATK_SITE_NAME, siteName)
-			c.Set(lib.CTX_KEY_ATK_SITE_ALL, siteAll)
+			c.Set(config.CTX_KEY_ATK_SITE_ID, siteID)
+			c.Set(config.CTX_KEY_ATK_SITE_NAME, siteName)
+			c.Set(config.CTX_KEY_ATK_SITE_ALL, siteAll)
 
 			return next(c)
 		}
@@ -81,29 +82,29 @@ func SiteOriginMiddleware() echo.MiddlewareFunc {
 
 func UseSite(c echo.Context, siteName *string, destID *uint, destSiteAll *bool) {
 	if destID != nil {
-		*destID = c.Get(lib.CTX_KEY_ATK_SITE_ID).(uint)
+		*destID = c.Get(config.CTX_KEY_ATK_SITE_ID).(uint)
 	}
 	if siteName != nil {
-		*siteName = c.Get(lib.CTX_KEY_ATK_SITE_NAME).(string)
+		*siteName = c.Get(config.CTX_KEY_ATK_SITE_NAME).(string)
 	}
 	if destSiteAll != nil {
-		*destSiteAll = c.Get(lib.CTX_KEY_ATK_SITE_ALL).(bool)
+		*destSiteAll = c.Get(config.CTX_KEY_ATK_SITE_ALL).(bool)
 	}
 }
 
 // 检测 Origin 合法性
 // 防止跨域的 CSRF 攻击
 // @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
-func CheckOrigin(c echo.Context, allowSite *model.Site) (bool, error) {
+func CheckOrigin(c echo.Context, allowSite *entity.Site) (bool, error) {
 	// 可信来源 URL
 	allowURLs := []string{}
 
 	// 用户配置
 	allowURLs = append(allowURLs, config.Instance.TrustedDomains...) // 允许配置文件域名
 	if allowSite != nil {
-		allowURLs = append(allowURLs, allowSite.ToCooked().Urls...) // 允许数据库站点 URLs 中的域名
+		allowURLs = append(allowURLs, query.CookSite(allowSite).Urls...) // 允许数据库站点 URLs 中的域名
 	}
-	if lib.ContainsStr(allowURLs, "*") {
+	if utils.ContainsStr(allowURLs, "*") {
 		return true, nil // 列表中出现通配符关闭控制
 	}
 

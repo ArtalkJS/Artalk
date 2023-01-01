@@ -1,8 +1,9 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
@@ -29,18 +30,18 @@ func (a *action) AdminUserAdd(c echo.Context) error {
 		return resp
 	}
 
-	if !model.FindUser(p.Name, p.Email).IsEmpty() {
+	if !query.FindUser(p.Name, p.Email).IsEmpty() {
 		return RespError(c, "用户已存在")
 	}
 
-	if !lib.ValidateEmail(p.Email) {
+	if !utils.ValidateEmail(p.Email) {
 		return RespError(c, "Invalid email")
 	}
-	if p.Link != "" && !lib.ValidateURL(p.Link) {
+	if p.Link != "" && !utils.ValidateURL(p.Link) {
 		return RespError(c, "Invalid link")
 	}
 
-	user := model.User{}
+	user := entity.User{}
 	user.Name = p.Name
 	user.Email = p.Email
 	user.Link = p.Link
@@ -58,12 +59,12 @@ func (a *action) AdminUserAdd(c echo.Context) error {
 		}
 	}
 
-	err := model.CreateUser(&user)
+	err := query.CreateUser(&user)
 	if err != nil {
 		return RespError(c, "user 创建失败")
 	}
 
 	return RespData(c, Map{
-		"user": user.ToCookedForAdmin(),
+		"user": query.UserToCookedForAdmin(&user),
 	})
 }

@@ -3,8 +3,8 @@ package http
 import (
 	"net/http"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/db"
 	"github.com/ArtalkJS/ArtalkGo/pkged"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
@@ -25,7 +25,7 @@ func InitRouter(e *echo.Echo) {
 
 	// All Actions
 	action := &action{
-		db: lib.DB,
+		db: db.DB(),
 	}
 
 	// api

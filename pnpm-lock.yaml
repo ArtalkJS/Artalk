@@ -98,14 +98,14 @@ importers:
 
   packages/plugin-katex:
     specifiers:
-      '@types/katex': 0.14.0
+      '@types/katex': 0.16.0
       artalk: 'workspace: *'
       katex: ^0.16.4
     dependencies:
       artalk: link:../artalk
       katex: 0.16.4
     devDependencies:
-      '@types/katex': 0.14.0
+      '@types/katex': 0.16.0
 
   packages/plugin-lightbox:
     specifiers:
@@ -404,8 +404,8 @@ packages:
     resolution: {integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=}
     dev: true
 
-  /@types/katex/0.14.0:
-    resolution: {integrity: sha512-+2FW2CcT0K3P+JMR8YG846bmDwplKUTsWgT2ENwdQ1UdVfRk3GQrh6Mi4sTopy30gI8Uau5CEqHTDZ6YvWIUPA==}
+  /@types/katex/0.16.0:
+    resolution: {integrity: sha512-hz+S3nV6Mym5xPbT9fnO8dDhBFQguMYpY0Ipxv06JMi1ORgnEM4M1ymWDUhUNer3ElLmT583opRo4RzxKmh9jw==}
     dev: true
 
   /@types/marked/4.0.6:

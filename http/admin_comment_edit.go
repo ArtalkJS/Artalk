@@ -3,9 +3,10 @@ package http
 import (
 	"strconv"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/lib/email"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/email"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -40,7 +41,7 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	// find comment
-	comment := model.FindComment(p.ID)
+	comment := query.FindComment(p.ID)
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found")
 	}
@@ -50,10 +51,10 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 	}
 
 	// check params
-	if p.Email != "" && !lib.ValidateEmail(p.Email) {
+	if p.Email != "" && !utils.ValidateEmail(p.Email) {
 		return RespError(c, "Invalid email")
 	}
-	if p.Link != "" && !lib.ValidateURL(p.Link) {
+	if p.Link != "" && !utils.ValidateURL(p.Link) {
 		return RespError(c, "Invalid link")
 	}
 
@@ -70,7 +71,7 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 	}
 
 	// merge user
-	originalUser := comment.FetchUser()
+	originalUser := query.FetchUserForComment(&comment)
 	if p.Nick == "" {
 		p.Nick = originalUser.Name
 	}
@@ -79,7 +80,7 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 	}
 
 	// find or save new user
-	user := model.FindCreateUser(p.Nick, p.Email, p.Link)
+	user := query.FindCreateUser(p.Nick, p.Email, p.Link)
 	if user.ID != comment.UserID {
 		comment.UserID = user.ID
 	}
@@ -87,12 +88,12 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 	// user link update
 	if p.Link != "" && p.Link != user.Link {
 		user.Link = p.Link
-		model.UpdateUser(&user)
+		query.UpdateUser(&user)
 	}
 
 	// pageKey
 	if p.PageKey != "" && p.PageKey != comment.PageKey {
-		model.FindCreatePage(p.PageKey, "", p.SiteName)
+		query.FindCreatePage(p.PageKey, "", p.SiteName)
 		comment.PageKey = p.PageKey
 	}
 
@@ -111,22 +112,22 @@ func (a *action) AdminCommentEdit(c echo.Context) error {
 		}
 	}
 
-	if err := model.UpdateComment(&comment); err != nil {
+	if err := query.UpdateComment(&comment); err != nil {
 		return RespError(c, "comment save error")
 	}
 
 	return RespData(c, Map{
-		"comment": comment.ToCooked(),
+		"comment": query.CookComment(&comment),
 	})
 }
 
-func RenotifyWhenPendingModified(comment *model.Comment) {
+func RenotifyWhenPendingModified(comment *entity.Comment) {
 	if comment.Rid == 0 {
 		return // Root 评论不发送通知，因为这个评论已经被管理员看到了
 	}
 
-	pComment := model.FindComment(comment.Rid)
-	if pComment.FetchUser().IsAdmin {
+	pComment := query.FindComment(comment.Rid)
+	if query.FetchUserForComment(&pComment).IsAdmin {
 		return // 回复对象是管理员，则不再发送通知，因为已经看到了
 	}
 
@@ -134,13 +135,13 @@ func RenotifyWhenPendingModified(comment *model.Comment) {
 		return // 自己回复自己，不通知
 	}
 
-	notify := model.FindCreateNotify(pComment.UserID, comment.ID)
+	notify := query.FindCreateNotify(pComment.UserID, comment.ID)
 	if notify.IsEmailed {
 		return // 邮件已经发送过，则不再重复发送
 	}
 
 	notify.SetComment(*comment)
-	notify.SetInitial()
+	query.NotifySetInitial(&notify)
 
 	// 邮件通知
 	email.AsyncSend(&notify)

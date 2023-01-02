@@ -11,20 +11,16 @@ all: install build
 
 install:
 	go mod tidy
-	go install github.com/markbates/pkger/cmd/pkger
 
-build: build-frontend update
+build: build-frontend
 	go build \
-    	-ldflags "-s -w -X github.com/ArtalkJS/ArtalkGo/lib.Version=${VERSION} \
-        -X github.com/ArtalkJS/ArtalkGo/lib.CommitHash=${COMMIT_HASH}" \
+    	-ldflags "-s -w -X github.com/ArtalkJS/ArtalkGo/internal/config.Version=${VERSION} \
+        -X github.com/ArtalkJS/ArtalkGo/internal/config.CommitHash=${COMMIT_HASH}" \
         -o bin/artalk-go \
     	github.com/ArtalkJS/ArtalkGo
 
 build-frontend:
 	./scripts/build-frontend.sh
-
-update:
-	pkger -include /frontend -include /email-tpl -include /lib/captcha/pages -include /artalk-go.example.yml -o pkged
 
 run: all
 	./bin/artalk-go server $(ARGS)
@@ -32,17 +28,16 @@ run: all
 dev:
 	@if [ ! -f "pkged/pkged.go" ]; then \
 		make install; \
-		make update; \
 	fi
 	@go build \
-    	-ldflags "-s -w -X github.com/ArtalkJS/ArtalkGo/lib.Version=${VERSION} \
-        -X github.com/ArtalkJS/ArtalkGo/lib.CommitHash=${COMMIT_HASH}" \
+    	-ldflags "-s -w -X github.com/ArtalkJS/ArtalkGo/internal/config.Version=${VERSION} \
+        -X github.com/ArtalkJS/ArtalkGo/internal/config.CommitHash=${COMMIT_HASH}" \
         -o bin/artalk-go \
     	github.com/ArtalkJS/ArtalkGo
 	./bin/artalk-go server $(ARGS)
 
 test:
-	$(GOTEST) -timeout 20m ./model/...
+	$(GOTEST) -timeout 20m ./internal/...
 
 test-coverage:
 	$(GOTEST) -cover ./...
@@ -88,6 +83,6 @@ release:
 		release --rm-dist --skip-validate
 
 .PHONY: all install build build-frontend \
-	update run dev test test-coverage \
+	run dev test test-coverage \
 	docker-build docker-push \
 	release-dry-run release;

@@ -1,7 +1,8 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -24,25 +25,25 @@ func (a *action) AdminVoteSync(c echo.Context) error {
 }
 
 func VoteSync(a *action) {
-	var comments []model.Comment
+	var comments []entity.Comment
 	a.db.Find(&comments)
 
 	for _, c := range comments {
-		voteUp := model.GetVoteNum(c.ID, string(model.VoteTypeCommentUp))
-		voteDown := model.GetVoteNum(c.ID, string(model.VoteTypeCommentDown))
+		voteUp := query.GetVoteNum(c.ID, string(entity.VoteTypeCommentUp))
+		voteDown := query.GetVoteNum(c.ID, string(entity.VoteTypeCommentDown))
 		c.VoteUp = int(voteUp)
 		c.VoteDown = int(voteDown)
-		model.UpdateComment(&c)
+		query.UpdateComment(&c)
 	}
 
-	var pages []model.Page
+	var pages []entity.Page
 	a.db.Find(&pages)
 
 	for _, p := range pages {
-		voteUp := model.GetVoteNum(p.ID, string(model.VoteTypePageUp))
-		voteDown := model.GetVoteNum(p.ID, string(model.VoteTypePageDown))
+		voteUp := query.GetVoteNum(p.ID, string(entity.VoteTypePageUp))
+		voteDown := query.GetVoteNum(p.ID, string(entity.VoteTypePageDown))
 		p.VoteUp = voteUp
 		p.VoteDown = voteDown
-		model.UpdatePage(&p)
+		query.UpdatePage(&p)
 	}
 }

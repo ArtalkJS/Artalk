@@ -1,8 +1,9 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/cache"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -32,7 +33,7 @@ func (a *action) AdminUserEdit(c echo.Context) error {
 		return resp
 	}
 
-	user := model.FindUserByID(p.ID)
+	user := query.FindUserByID(p.ID)
 	if user.IsEmpty() {
 		return RespError(c, "user 不存在")
 	}
@@ -41,19 +42,19 @@ func (a *action) AdminUserEdit(c echo.Context) error {
 	modifyName := p.Name != user.Name
 	modifyEmail := p.Email != user.Email
 
-	if modifyName && modifyEmail && !model.FindUser(p.Name, p.Email).IsEmpty() {
+	if modifyName && modifyEmail && !query.FindUser(p.Name, p.Email).IsEmpty() {
 		return RespError(c, "user 已存在，请更换用户名和邮箱")
 	}
 
-	if !lib.ValidateEmail(p.Email) {
+	if !utils.ValidateEmail(p.Email) {
 		return RespError(c, "Invalid email")
 	}
-	if p.Link != "" && !lib.ValidateURL(p.Link) {
+	if p.Link != "" && !utils.ValidateURL(p.Link) {
 		return RespError(c, "Invalid link")
 	}
 
 	// 删除原有缓存
-	model.UserCacheDel(&user)
+	cache.UserCacheDel(&user)
 
 	// 修改 user
 	user.Name = p.Name
@@ -68,12 +69,12 @@ func (a *action) AdminUserEdit(c echo.Context) error {
 	user.BadgeName = p.BadgeName
 	user.BadgeColor = p.BadgeColor
 
-	err := model.UpdateUser(&user)
+	err := query.UpdateUser(&user)
 	if err != nil {
 		return RespError(c, "user 保存失败")
 	}
 
 	return RespData(c, Map{
-		"user": user.ToCookedForAdmin(),
+		"user": query.UserToCookedForAdmin(&user),
 	})
 }

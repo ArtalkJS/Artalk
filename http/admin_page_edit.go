@@ -3,7 +3,9 @@ package http
 import (
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/cache"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -33,7 +35,7 @@ func (a *action) AdminPageEdit(c echo.Context) error {
 	UseSite(c, &p.SiteName, &p.SiteID, nil)
 
 	// find page
-	var page = model.FindPageByID(p.ID)
+	var page = query.FindPageByID(p.ID)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
 	}
@@ -44,33 +46,33 @@ func (a *action) AdminPageEdit(c echo.Context) error {
 
 	// 重命名合法性检测
 	modifyKey := p.Key != page.Key
-	if modifyKey && !model.FindPage(p.Key, p.SiteName).IsEmpty() {
+	if modifyKey && !query.FindPage(p.Key, p.SiteName).IsEmpty() {
 		return RespError(c, "page 已存在，请换个 key")
 	}
 
 	// 预先删除缓存，防止修改主键原有 page_key 占用问题
-	model.PageCacheDel(&page)
+	cache.PageCacheDel(&page)
 
 	page.Title = p.Title
 	page.AdminOnly = p.AdminOnly
 	if modifyKey {
 		// 相关性数据修改
-		var comments []model.Comment
+		var comments []entity.Comment
 		a.db.Where("page_key = ?", page.Key).Find(&comments)
 
 		for _, comment := range comments {
 			comment.PageKey = p.Key
-			model.UpdateComment(&comment)
+			query.UpdateComment(&comment)
 		}
 
 		page.Key = p.Key
 	}
 
-	if err := model.UpdatePage(&page); err != nil {
+	if err := query.UpdatePage(&page); err != nil {
 		return RespError(c, "page save error")
 	}
 
 	return RespData(c, Map{
-		"page": page.ToCooked(),
+		"page": query.CookPage(&page),
 	})
 }

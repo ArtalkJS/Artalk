@@ -11,8 +11,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
@@ -47,7 +47,7 @@ func (a *action) ImgUpload(c echo.Context) error {
 		return resp
 	}
 
-	if !lib.ValidateEmail(p.Email) {
+	if !utils.ValidateEmail(p.Email) {
 		return RespError(c, "Invalid email")
 	}
 
@@ -58,7 +58,7 @@ func (a *action) ImgUpload(c echo.Context) error {
 	RecordAction(c)
 
 	// find page
-	// page := model.FindPage(p.PageKey, p.PageTitle)
+	// page := entity.FindPage(p.PageKey, p.PageTitle)
 	// ip := c.RealIP()
 	// ua := c.Request().UserAgent()
 
@@ -106,7 +106,7 @@ func (a *action) ImgUpload(c echo.Context) error {
 		"image/jpeg", "image/png", "image/gif", "image/webp", "image/bmp",
 		// "image/svg+xml",
 	}
-	if !lib.ContainsStr(allowMines, fileMine) {
+	if !utils.ContainsStr(allowMines, fileMine) {
 		return RespError(c, "不支持的格式")
 	}
 
@@ -124,7 +124,7 @@ func (a *action) ImgUpload(c echo.Context) error {
 	filename := t.Format("20060102-150405.000") + mineToExts[fileMine]
 
 	// 创建图片目标文件
-	if err := lib.EnsureDir(config.Instance.ImgUpload.Path); err != nil {
+	if err := utils.EnsureDir(config.Instance.ImgUpload.Path); err != nil {
 		logrus.Error(err)
 		return RespError(c, "创建图片存放文件夹失败")
 	}
@@ -153,7 +153,7 @@ func (a *action) ImgUpload(c echo.Context) error {
 	// 使用 upgit
 	if config.Instance.ImgUpload.Upgit.Enabled {
 		upgitURL := execUpgitUpload(fileFullPath)
-		if upgitURL == "" || !lib.ValidateURL(upgitURL) {
+		if upgitURL == "" || !utils.ValidateURL(upgitURL) {
 			// 上传失败，删除源图片文件
 			var err = os.Remove(fileFullPath)
 			if err != nil {

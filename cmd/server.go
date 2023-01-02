@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ArtalkJS/ArtalkGo/http"
-	"github.com/ArtalkJS/ArtalkGo/lib/core"
+	"github.com/ArtalkJS/ArtalkGo/internal/core"
 	"github.com/spf13/cobra"
 )
 

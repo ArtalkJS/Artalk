@@ -3,8 +3,10 @@ package http
 import (
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/cache"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 )
 
@@ -23,7 +25,7 @@ func (a *action) AdminSiteEdit(c echo.Context) error {
 		return resp
 	}
 
-	site := model.FindSiteByID(p.ID)
+	site := query.FindSiteByID(p.ID)
 	if site.IsEmpty() {
 		return RespError(c, "site 不存在")
 	}
@@ -39,37 +41,37 @@ func (a *action) AdminSiteEdit(c echo.Context) error {
 
 	// 重命名合法性检测
 	modifyName := p.Name != site.Name
-	if modifyName && !model.FindSite(p.Name).IsEmpty() {
+	if modifyName && !query.FindSite(p.Name).IsEmpty() {
 		return RespError(c, "site 已存在，请换个名称")
 	}
 
 	// urls 合法性检测
 	if p.Urls != "" {
-		for _, url := range lib.SplitAndTrimSpace(p.Urls, ",") {
-			if !lib.ValidateURL(url) {
+		for _, url := range utils.SplitAndTrimSpace(p.Urls, ",") {
+			if !utils.ValidateURL(url) {
 				return RespError(c, "Invalid url exist")
 			}
 		}
 	}
 
 	// 预先删除缓存，防止修改主键原有 site_name 占用问题
-	model.SiteCacheDel(&site)
+	cache.SiteCacheDel(&site)
 
 	// 同步变更 site_name
 	if modifyName {
-		var comments []model.Comment
-		var pages []model.Page
+		var comments []entity.Comment
+		var pages []entity.Page
 
 		a.db.Where("site_name = ?", site.Name).Find(&comments)
 		a.db.Where("site_name = ?", site.Name).Find(&pages)
 
 		for _, comment := range comments {
 			comment.SiteName = p.Name
-			model.UpdateComment(&comment)
+			query.UpdateComment(&comment)
 		}
 		for _, page := range pages {
 			page.SiteName = p.Name
-			model.UpdatePage(&page)
+			query.UpdatePage(&page)
 		}
 	}
 
@@ -77,12 +79,12 @@ func (a *action) AdminSiteEdit(c echo.Context) error {
 	site.Name = p.Name
 	site.Urls = p.Urls
 
-	err := model.UpdateSite(&site)
+	err := query.UpdateSite(&site)
 	if err != nil {
 		return RespError(c, "site 保存失败")
 	}
 
 	return RespData(c, Map{
-		"site": site.ToCooked(),
+		"site": query.CookSite(&site),
 	})
 }

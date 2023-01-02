@@ -13,6 +13,7 @@
         "Metas",
         "pgsql",
         "sendmail",
-        "sqlite"
+        "sqlite",
+        "pkged"
     ]
 }

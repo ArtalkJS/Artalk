@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,12 +19,12 @@ func (a *action) AdminSiteDel(c echo.Context) error {
 		return RespError(c, "禁止删除站点")
 	}
 
-	site := model.FindSiteByID(p.ID)
+	site := query.FindSiteByID(p.ID)
 	if site.IsEmpty() {
 		return RespError(c, "site 不存在")
 	}
 
-	err := model.DelSite(&site)
+	err := query.DelSite(&site)
 	if err != nil {
 		return RespError(c, "site 删除失败")
 	}

@@ -3,7 +3,8 @@ package http
 import (
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -29,9 +30,9 @@ func (a *action) Vote(c echo.Context) error {
 	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	// find user
-	var user model.User
+	var user entity.User
 	if p.Name != "" && p.Email != "" {
-		user = model.FindCreateUser(p.Name, p.Email, "")
+		user = query.FindCreateUser(p.Name, p.Email, "")
 	}
 
 	ip := c.RealIP()
@@ -48,17 +49,17 @@ func (a *action) Vote(c echo.Context) error {
 		return RespError(c, "unknown type")
 	}
 
-	var comment model.Comment
-	var page model.Page
+	var comment entity.Comment
+	var page entity.Page
 
 	switch {
 	case isVoteComment:
-		comment = model.FindComment(p.TargetID)
+		comment = query.FindComment(p.TargetID)
 		if comment.IsEmpty() {
 			return RespError(c, "comment not found")
 		}
 	case isVotePage:
-		page = model.FindPageByID(p.TargetID)
+		page = query.FindPageByID(p.TargetID)
 		if page.IsEmpty() {
 			return RespError(c, "page not found")
 		}
@@ -72,23 +73,23 @@ func (a *action) Vote(c echo.Context) error {
 		case isVoteComment:
 			comment.VoteUp = up
 			comment.VoteDown = down
-			model.UpdateComment(&comment)
+			query.UpdateComment(&comment)
 		case isVotePage:
 			page.VoteUp = up
 			page.VoteDown = down
-			model.UpdatePage(&page)
+			query.UpdatePage(&page)
 		}
 	}
 
 	createNew := func(t string) error {
 		// create new vote record
-		_, err := model.NewVote(p.TargetID, model.VoteType(t), user.ID, c.Request().UserAgent(), ip)
+		_, err := query.NewVote(p.TargetID, entity.VoteType(t), user.ID, c.Request().UserAgent(), ip)
 
 		return err
 	}
 
 	// un-vote
-	var avaliableVotes []model.Vote
+	var avaliableVotes []entity.Vote
 	a.db.Where("target_id = ? AND type LIKE ? AND ip = ?", p.TargetID, voteTo+"%", ip).Find(&avaliableVotes)
 	if len(avaliableVotes) > 0 {
 		for _, v := range avaliableVotes {
@@ -100,7 +101,7 @@ func (a *action) Vote(c echo.Context) error {
 			createNew(p.FullType)
 		}
 
-		up, down := model.GetVoteNumUpDown(p.TargetID, voteTo)
+		up, down := query.GetVoteNumUpDown(p.TargetID, voteTo)
 		save(up, down)
 
 		RecordAction(c)
@@ -114,7 +115,7 @@ func (a *action) Vote(c echo.Context) error {
 	createNew(p.FullType)
 
 	// sync
-	up, down := model.GetVoteNumUpDown(p.TargetID, voteTo)
+	up, down := query.GetVoteNumUpDown(p.TargetID, voteTo)
 	save(up, down)
 
 	RecordAction(c)

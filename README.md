@@ -28,7 +28,7 @@
 
 ## Build
 
-> 注：绝大多数情况下，你无需进行以下手动编译操作，见：[后端部署文档](https://artalk.js.org/guide/backend/install.html)
+> 部署可以使用官方提供的 Docker 镜像，见：[后端部署文档](https://artalk.js.org/guide/backend/install.html)
 
 ### 编译二进制文件
 

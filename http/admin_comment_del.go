@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -23,7 +23,7 @@ func (a *action) AdminCommentDel(c echo.Context) error {
 	UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 	// find comment
-	comment := model.FindComment(p.ID)
+	comment := query.FindComment(p.ID)
 	if comment.IsEmpty() {
 		return RespError(c, "comment not found")
 	}
@@ -33,12 +33,12 @@ func (a *action) AdminCommentDel(c echo.Context) error {
 	}
 
 	// 删除主评论
-	if err := model.DelComment(&comment); err != nil {
+	if err := query.DelComment(&comment); err != nil {
 		return RespError(c, "评论删除失败")
 	}
 
 	// 删除子评论
-	if err := model.DelCommentChildren(comment.ID); err != nil {
+	if err := query.DelCommentChildren(comment.ID); err != nil {
 		return RespError(c, "子评论删除失败")
 	}
 

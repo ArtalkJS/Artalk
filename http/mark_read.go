@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -32,8 +32,8 @@ func (a *action) MarkRead(c echo.Context) error {
 			return RespError(c, "need username and email")
 		}
 
-		user := model.FindUser(p.Name, p.Email)
-		err := model.UserNotifyMarkAllAsRead(user.ID)
+		user := query.FindUser(p.Name, p.Email)
+		err := query.UserNotifyMarkAllAsRead(user.ID)
 		if err != nil {
 			return RespError(c, err.Error())
 		}
@@ -42,7 +42,7 @@ func (a *action) MarkRead(c echo.Context) error {
 	}
 
 	// find notify
-	notify := model.FindNotifyByKey(p.NotifyKey)
+	notify := query.FindNotifyByKey(p.NotifyKey)
 	if notify.IsEmpty() {
 		return RespError(c, "notify key is wrong")
 	}
@@ -52,7 +52,7 @@ func (a *action) MarkRead(c echo.Context) error {
 	}
 
 	// update notify
-	err := notify.SetRead()
+	err := query.NotifySetRead(&notify)
 	if err != nil {
 		return RespError(c, "notify save error")
 	}

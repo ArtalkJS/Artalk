@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,7 +19,7 @@ func (a *action) UserGet(c echo.Context) error {
 	// login status
 	isLogin := !GetUserByReq(c).IsEmpty()
 
-	user := model.FindUser(p.Name, p.Email)
+	user := query.FindUser(p.Name, p.Email)
 	if user.IsEmpty() {
 		return RespData(c, Map{
 			"user":         nil,
@@ -30,10 +30,10 @@ func (a *action) UserGet(c echo.Context) error {
 	}
 
 	// unread notifies
-	unreadNotifies := model.FindUnreadNotifies(user.ID)
+	unreadNotifies := query.CookAllNotifies(query.FindUnreadNotifies(user.ID))
 
 	return RespData(c, Map{
-		"user":         user.ToCooked(),
+		"user":         query.CookUser(&user),
 		"is_login":     isLogin,
 		"unread":       unreadNotifies,
 		"unread_count": len(unreadNotifies),

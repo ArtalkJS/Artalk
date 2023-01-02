@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/cache"
 	"github.com/labstack/echo/v4"
 )
 
@@ -20,7 +20,7 @@ func (a *action) AdminCacheWarm(c echo.Context) error {
 	}
 
 	go func() {
-		model.CacheWarmUp()
+		cache.CacheWarmUp()
 	}()
 
 	return RespData(c, Map{
@@ -45,7 +45,7 @@ func (a *action) AdminCacheFlush(c echo.Context) error {
 
 	if p.FlushAll {
 		go func() {
-			model.CacheFlushAll()
+			cache.CacheFlushAll()
 		}()
 
 		return RespData(c, Map{

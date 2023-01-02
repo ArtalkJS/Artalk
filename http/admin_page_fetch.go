@@ -3,8 +3,9 @@ package http
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
@@ -54,16 +55,16 @@ func (a *action) AdminPageFetch(c echo.Context) error {
 			allPageFetching = true
 			allPageFetchDone = 0
 			allPageFetchTotal = 0
-			var pages []model.Page
-			query := a.db.Model(&model.Page{})
-			if p.SiteName != lib.ATK_SITE_ALL {
-				query = query.Where(&model.Page{SiteName: p.SiteName})
+			var pages []entity.Page
+			db := a.db.Model(&entity.Page{})
+			if p.SiteName != config.ATK_SITE_ALL {
+				db = db.Where(&entity.Page{SiteName: p.SiteName})
 			}
-			query.Find(&pages)
+			db.Find(&pages)
 
 			allPageFetchTotal = len(pages)
 			for _, p := range pages {
-				if err := p.FetchURL(); err != nil {
+				if err := query.FetchPageFromURL(&p); err != nil {
 					logrus.Error(c, "[api_admin_page_fetch] page fetch error: "+err.Error())
 				} else {
 					allPageFetchDone++
@@ -75,7 +76,7 @@ func (a *action) AdminPageFetch(c echo.Context) error {
 		return RespSuccess(c)
 	}
 
-	page := model.FindPageByID(p.ID)
+	page := query.FindPageByID(p.ID)
 	if page.IsEmpty() {
 		return RespError(c, "page not found")
 	}
@@ -84,11 +85,11 @@ func (a *action) AdminPageFetch(c echo.Context) error {
 		return RespError(c, "无权操作")
 	}
 
-	if err := page.FetchURL(); err != nil {
+	if err := query.FetchPageFromURL(&page); err != nil {
 		return RespError(c, "page fetch error: "+err.Error())
 	}
 
 	return RespData(c, Map{
-		"page": page.ToCooked(),
+		"page": query.CookPage(&page),
 	})
 }

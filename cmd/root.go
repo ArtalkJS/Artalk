@@ -4,13 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/lib/core"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/core"
 	"github.com/spf13/cobra"
 )
 
-var Version = lib.Version + `/` + lib.CommitHash
+var Version = config.Version + `/` + config.CommitHash
 
 var Banner = `
  ________  ________  _________  ________  ___       ___  __       

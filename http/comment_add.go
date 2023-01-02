@@ -3,11 +3,12 @@ package http
 import (
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/lib/anti_spam"
-	"github.com/ArtalkJS/ArtalkGo/model"
-	"github.com/ArtalkJS/ArtalkGo/model/notify_launcher"
+	"github.com/ArtalkJS/ArtalkGo/internal/anti_spam"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/notify_launcher"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/labstack/echo/v4"
 
 	"github.com/sirupsen/logrus"
@@ -30,7 +31,7 @@ type ParamsAdd struct {
 }
 
 type ResponseAdd struct {
-	Comment model.CookedComment `json:"comment"`
+	Comment entity.CookedComment `json:"comment"`
 }
 
 func (a *action) Add(c echo.Context) error {
@@ -46,10 +47,10 @@ func (a *action) Add(c echo.Context) error {
 		return RespError(c, "邮箱不能为空")
 	}
 
-	if !lib.ValidateEmail(p.Email) {
+	if !utils.ValidateEmail(p.Email) {
 		return RespError(c, "Invalid email")
 	}
-	if p.Link != "" && !lib.ValidateURL(p.Link) {
+	if p.Link != "" && !utils.ValidateURL(p.Link) {
 		return RespError(c, "Invalid link")
 	}
 
@@ -68,7 +69,7 @@ func (a *action) Add(c echo.Context) error {
 	UseSite(c, &p.SiteName, &p.SiteID, nil)
 
 	// find page
-	page := model.FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
+	page := query.FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
 
 	// check if the user is allowed to comment
 	if isAllowed, resp := CheckIsAllowed(c, p.Name, p.Email, page, p.SiteName); !isAllowed {
@@ -76,9 +77,9 @@ func (a *action) Add(c echo.Context) error {
 	}
 
 	// check reply comment
-	var parentComment model.Comment
+	var parentComment entity.Comment
 	if p.Rid != 0 {
-		parentComment = model.FindComment(p.Rid)
+		parentComment = query.FindComment(p.Rid)
 		if parentComment.IsEmpty() {
 			return RespError(c, "找不到父评论")
 		}
@@ -91,7 +92,7 @@ func (a *action) Add(c echo.Context) error {
 	}
 
 	// find user
-	user := model.FindCreateUser(p.Name, p.Email, p.Link)
+	user := query.FindCreateUser(p.Name, p.Email, p.Link)
 	if user.ID == 0 || page.Key == "" {
 		logrus.Error("Cannot get user or page")
 		return RespError(c, "评论失败")
@@ -103,9 +104,9 @@ func (a *action) Add(c echo.Context) error {
 	user.LastUA = ua
 	user.Name = p.Name // for 若用户修改用户名大小写
 	user.Email = p.Email
-	model.UpdateUser(&user)
+	query.UpdateUser(&user)
 
-	comment := model.Comment{
+	comment := entity.Comment{
 		Content:  p.Content,
 		PageKey:  page.Key,
 		SiteName: p.SiteName,
@@ -128,7 +129,7 @@ func (a *action) Add(c echo.Context) error {
 	}
 
 	// save to database
-	err := model.CreateComment(&comment)
+	err := query.CreateComment(&comment)
 	if err != nil {
 		logrus.Error("Save Comment error: ", err)
 		return RespError(c, "评论失败")
@@ -137,8 +138,8 @@ func (a *action) Add(c echo.Context) error {
 	// 异步执行
 	go func() {
 		// Page Update
-		if page.ToCooked().URL != "" && page.Title == "" {
-			page.FetchURL()
+		if query.CookPage(&page).URL != "" && page.Title == "" {
+			query.FetchPageFromURL(&page)
 		}
 
 		// 垃圾检测
@@ -151,6 +152,6 @@ func (a *action) Add(c echo.Context) error {
 	}()
 
 	return RespData(c, ResponseAdd{
-		Comment: comment.ToCooked(),
+		Comment: query.CookComment(&comment),
 	})
 }

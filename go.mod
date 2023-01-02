@@ -19,7 +19,6 @@ require (
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/knadh/koanf v1.4.3
 	github.com/labstack/echo/v4 v4.9.1
-	github.com/markbates/pkger v0.17.1
 	github.com/microcosm-cc/bluemonday v1.0.18
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nikoksr/notify v0.23.0
@@ -64,7 +63,6 @@ require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
-	github.com/gobuffalo/here v0.6.0 // indirect
 	github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect

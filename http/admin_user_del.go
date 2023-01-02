@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,12 +19,12 @@ func (a *action) AdminUserDel(c echo.Context) error {
 		return resp
 	}
 
-	user := model.FindUserByID(p.ID)
+	user := query.FindUserByID(p.ID)
 	if user.IsEmpty() {
 		return RespError(c, "user 不存在")
 	}
 
-	err := model.DelUser(&user)
+	err := query.DelUser(&user)
 	if err != nil {
 		return RespError(c, "user 删除失败")
 	}

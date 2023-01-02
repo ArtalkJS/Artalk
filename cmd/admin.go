@@ -8,9 +8,10 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/lib/core"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/core"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
@@ -33,10 +34,10 @@ var adminCmd = &cobra.Command{
 			logrus.Fatal(err)
 		}
 
-		findUser := model.FindUser(username, email)
+		findUser := query.FindUser(username, email)
 		if !findUser.IsEmpty() {
 			findUser.SetPasswordEncrypt(password)
-			if err := model.UpdateUser(&findUser); err != nil {
+			if err := query.UpdateUser(&findUser); err != nil {
 				logrus.Fatal(err)
 			}
 
@@ -44,7 +45,7 @@ var adminCmd = &cobra.Command{
 			return
 		}
 
-		user := model.User{
+		user := entity.User{
 			Name:       username,
 			Email:      email,
 			IsAdmin:    true,
@@ -53,7 +54,7 @@ var adminCmd = &cobra.Command{
 		}
 		user.SetPasswordEncrypt(password)
 
-		if err := model.CreateUser(&user); err != nil {
+		if err := query.CreateUser(&user); err != nil {
 			logrus.Fatal(err)
 		}
 
@@ -82,7 +83,7 @@ func credentials() (string, string, string, error) {
 	if err != nil {
 		return "", "", "", err
 	}
-	if !lib.ValidateEmail(strings.TrimSpace(email)) {
+	if !utils.ValidateEmail(strings.TrimSpace(email)) {
 		return "", "", "", errors.New("邮箱格式不合法")
 	}
 

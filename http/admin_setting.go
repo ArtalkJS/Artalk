@@ -3,8 +3,8 @@ package http
 import (
 	"os"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/lib/core"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/core"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )

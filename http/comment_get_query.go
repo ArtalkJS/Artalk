@@ -6,19 +6,20 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/config"
-	"github.com/ArtalkJS/ArtalkGo/model"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
 // 获取评论查询实例
 func GetCommentQuery(a *action, c echo.Context, p ParamsGet, siteID uint, scopes ...func(*gorm.DB) *gorm.DB) *gorm.DB {
-	query := a.db.Model(&model.Comment{})
+	db := a.db.Model(&entity.Comment{})
 
-	query.Scopes(SiteIsolationScope(c, p), AllowedComment(c, p))
-	query.Order(GetSortRuleSQL(p.SortBy, "created_at DESC")) // 排序规则
-	query.Scopes(scopes...)
+	db.Scopes(SiteIsolationScope(c, p), AllowedComment(c, p))
+	db.Order(GetSortRuleSQL(p.SortBy, "created_at DESC")) // 排序规则
+	db.Scopes(scopes...)
 
 	switch {
 	case !p.IsMsgCenter:
@@ -28,11 +29,11 @@ func GetCommentQuery(a *action, c echo.Context, p ParamsGet, siteID uint, scopes
 
 		// 只看管理员功能
 		if p.ViewOnlyAdmin {
-			adminIDs := model.GetAllAdminIDs()    // 获取管理员列表
-			query.Where("user_id IN ?", adminIDs) // 只允许管理员 user_id
+			adminIDs := query.GetAllAdminIDs() // 获取管理员列表
+			db.Where("user_id IN ?", adminIDs) // 只允许管理员 user_id
 		}
 
-		query.Where("page_key = ?", p.PageKey)
+		db.Where("page_key = ?", p.PageKey)
 
 	case p.IsMsgCenter:
 		// ==========
@@ -40,35 +41,35 @@ func GetCommentQuery(a *action, c echo.Context, p ParamsGet, siteID uint, scopes
 		// ==========
 		user := p.User
 		if user == nil || user.IsEmpty() {
-			return query.Where("id = 0") // user not found
+			return db.Where("id = 0") // user not found
 		}
 
 		// admin_only 检测
 		if strings.HasPrefix(p.Type, "admin_") {
 			if !p.IsAdminReq || !IsAdminHasSiteAccess(c, p.SiteName) {
-				return query.Where("id = 0")
+				return db.Where("id = 0")
 			}
 		}
 
 		switch p.Type {
 		case "all":
-			query.Where("rid IN (?) OR user_id = ?", model.GetUserAllCommentIDs(user.ID), user.ID)
+			db.Where("rid IN (?) OR user_id = ?", query.GetUserAllCommentIDs(user.ID), user.ID)
 		case "mentions":
-			query.Where("rid IN (?) AND user_id != ?", model.GetUserAllCommentIDs(user.ID), user.ID)
+			db.Where("rid IN (?) AND user_id != ?", query.GetUserAllCommentIDs(user.ID), user.ID)
 		case "mine":
-			query.Where("user_id = ?", user.ID)
+			db.Where("user_id = ?", user.ID)
 		case "pending":
-			query.Where("user_id = ? AND is_pending = ?", user.ID, true)
+			db.Where("user_id = ? AND is_pending = ?", user.ID, true)
 		case "admin_all":
 
 		case "admin_pending":
-			query.Where("is_pending = ?", true)
+			db.Where("is_pending = ?", true)
 		default:
-			return query.Where("id = 0")
+			return db.Where("id = 0")
 		}
 	}
 
-	return query
+	return db
 }
 
 // 根评论 Root comments
@@ -94,8 +95,8 @@ func AllowedComment(c echo.Context, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func AllowedCommentChecker(c echo.Context, p ParamsGet) func(*model.Comment) bool {
-	return func(comment *model.Comment) bool {
+func AllowedCommentChecker(c echo.Context, p ParamsGet) func(*entity.Comment) bool {
+	return func(comment *entity.Comment) bool {
 		if CheckIsAdminReq(c) {
 			return true // 管理员显示全部
 		}
@@ -114,8 +115,8 @@ func AllowedCommentChecker(c echo.Context, p ParamsGet) func(*model.Comment) boo
 	}
 }
 
-func SiteIsolationChecker(c echo.Context, p ParamsGet) func(*model.Comment) bool {
-	return func(comment *model.Comment) bool {
+func SiteIsolationChecker(c echo.Context, p ParamsGet) func(*entity.Comment) bool {
+	return func(comment *entity.Comment) bool {
 		if CheckIsAdminReq(c) && p.SiteAll {
 			return true // 仅管理员支持取消站点隔离
 		}
@@ -163,7 +164,7 @@ func CountComments(db *gorm.DB) int64 {
 // 评论搜索
 func CommentSearchScope(a *action, p ParamsGet) func(d *gorm.DB) *gorm.DB {
 	var userIds []uint
-	a.db.Model(&model.User{}).Where(
+	a.db.Model(&entity.User{}).Where(
 		"LOWER(name) = LOWER(?) OR LOWER(email) = LOWER(?)", p.Search, p.Search,
 	).Pluck("id", &userIds)
 
@@ -191,21 +192,21 @@ func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
 }
 
 // 插入置顶的评论
-func prependPinnedComments(a *action, c echo.Context, p ParamsGet, comments *[]model.Comment) {
+func prependPinnedComments(a *action, c echo.Context, p ParamsGet, comments *[]entity.Comment) {
 	if p.IsMsgCenter || p.Offset != 0 {
 		return // 通知中心关闭置顶 & 仅在分页的首页加入置顶评论
 	}
 
-	pinnedComments := []model.Comment{}
+	pinnedComments := []entity.Comment{}
 	GetCommentQuery(a, c, p, p.SiteID).Where("is_pinned = ?", true).Find(&pinnedComments)
 	if len(pinnedComments) == 0 {
 		return // 没有置顶评论
 	}
 
 	// 去掉已 pinned 且重复存在于原列表中的评论
-	filteredComments := []model.Comment{}
+	filteredComments := []entity.Comment{}
 	for _, co := range *comments {
-		if !model.ContainsComment(pinnedComments, co.ID) {
+		if !entity.ContainsComment(pinnedComments, co.ID) {
 			filteredComments = append(filteredComments, co)
 		}
 	}

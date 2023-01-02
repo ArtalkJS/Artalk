@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/lib"
-	"github.com/ArtalkJS/ArtalkGo/lib/core"
+	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/core"
 	"github.com/blang/semver"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 	"github.com/sirupsen/logrus"
@@ -32,7 +32,7 @@ var upgradeCmd = &cobra.Command{
 
 		ignoreVersionCheck, _ := cmd.Flags().GetBool("force")
 		if !ignoreVersionCheck {
-			v := semver.MustParse(strings.TrimPrefix(lib.Version, "v"))
+			v := semver.MustParse(strings.TrimPrefix(config.Version, "v"))
 			if !found || latest.Version.LTE(v) {
 				logrus.Println("当前已是最新版本 v" + v.String() + " 无需升级")
 				return

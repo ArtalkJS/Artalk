@@ -2,7 +2,7 @@ PACKAGE_NAME := github.com/ArtalkJS/ArtalkGo
 VERSION      ?= $(shell git describe --tags --abbrev=0)
 COMMIT_HASH  := $(shell git rev-parse --short HEAD)
 DEV_VERSION  := dev-${COMMIT_HASH}
-GO_VERSION   ?= 1.18.1
+GO_VERSION   ?= 1.19.4
 
 HAS_RICHGO   := $(shell which richgo)
 GOTEST       ?= $(if $(HAS_RICHGO), richgo test, go test)

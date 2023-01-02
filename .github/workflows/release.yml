@@ -17,27 +17,27 @@ jobs:
       - name: setup go
         uses: actions/setup-go@v3
         with:
-          go-version: '^1.18.1'
+          go-version: '^1.19.4'
 
       # docker `golang-cross` image cache
-      # `cache-go-cross-v1-18-1`
+      # `cache-go-cross-v1-19-4`
       - run: mkdir -p ~/docker-cache
       - name: docker image cache
-        id: cache-go-cross-v1-18-1
+        id: cache-go-cross-v1-19-4
         uses: actions/cache@v2
         with:
           path: ~/docker-cache
           # Adjust key to meet your cache time requirements e.g.
           # ${{ hashFiles(*) }} can be useful here to invalidate
           # cache on file changes
-          key: cache-go-cross-v1-18-1
+          key: cache-go-cross-v1-19-4
 
-      - if: steps.cache-go-cross-v1-18-1.outputs.cache-hit != 'true'
+      - if: steps.cache-go-cross-v1-19-4.outputs.cache-hit != 'true'
         run: |
-          docker pull ghcr.io/goreleaser/goreleaser-cross:v1.18.1
-          docker save -o ~/docker-cache/golang-cross.tar ghcr.io/goreleaser/goreleaser-cross:v1.18.1
+          docker pull ghcr.io/goreleaser/goreleaser-cross:v1.19.4
+          docker save -o ~/docker-cache/golang-cross.tar ghcr.io/goreleaser/goreleaser-cross:v1.19.4
 
-      - if: steps.cache-go-cross-v1-18-1.outputs.cache-hit == 'true'
+      - if: steps.cache-go-cross-v1-19-4.outputs.cache-hit == 'true'
         run: docker load -i ~/docker-cache/golang-cross.tar
 
       # build

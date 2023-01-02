@@ -8,7 +8,7 @@ jobs:
     environment:
       GO111MODULE: "on"
     docker:
-      - image: cimg/go:1.18
+      - image: cimg/go:1.19
     steps:
       - checkout
       - run:
@@ -17,12 +17,12 @@ jobs:
             go version
       - restore_cache:
           keys:
-            - go-mod-1.18-{{ checksum "go.sum" }}
+            - go-mod-1.19-{{ checksum "go.sum" }}
       - run:
           name: Install Dependencies
           command: go mod download
       - save_cache:
-          key: go-mod-1.18-{{ checksum "go.sum" }}
+          key: go-mod-1.19-{{ checksum "go.sum" }}
           paths:
             - "~/go/pkg/mod"
       - run:

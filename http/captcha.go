@@ -13,7 +13,7 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/internal/cache"
 	"github.com/ArtalkJS/ArtalkGo/internal/captcha"
 	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/eko/gocache/v2/store"
+	"github.com/eko/gocache/lib/v4/store"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	imgCaptcha "github.com/steambap/captcha"
@@ -155,7 +155,7 @@ func GetNewImageCaptchaBase64(ip string) string {
 	base64 := "data:image/png;base64," + base64.StdEncoding.EncodeToString(pngBuffer.Bytes())
 
 	// save real code
-	cache.CACHE.Set(cache.Ctx, "captcha:"+ip, data.Text, &store.Options{Expiration: CaptchaExpiration})
+	cache.CACHE.Set(cache.Ctx, "captcha:"+ip, data.Text, store.WithExpiration(CaptchaExpiration))
 
 	return base64
 }
@@ -181,5 +181,5 @@ func SetAlwaysCaptchaMode_Pass(ip string, pass bool) {
 		val = "1"
 	}
 
-	cache.CACHE.Set(cache.Ctx, "captcha-am-pass:"+ip, val, &store.Options{Expiration: CaptchaExpiration})
+	cache.CACHE.Set(cache.Ctx, "captcha-am-pass:"+ip, val, store.WithExpiration(CaptchaExpiration))
 }

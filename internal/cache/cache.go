@@ -6,11 +6,14 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/allegro/bigcache/v3"
+	"github.com/allegro/bigcache"
 	"github.com/bradfitz/gomemcache/memcache"
-	"github.com/eko/gocache/v2/cache"
-	"github.com/eko/gocache/v2/marshaler"
-	"github.com/eko/gocache/v2/store"
+	"github.com/eko/gocache/lib/v4/cache"
+	"github.com/eko/gocache/lib/v4/marshaler"
+	"github.com/eko/gocache/lib/v4/store"
+	bigcache_store "github.com/eko/gocache/store/bigcache/v4"
+	memcache_store "github.com/eko/gocache/store/memcache/v4"
+	redis_store "github.com/eko/gocache/store/redis/v4"
 	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
 )
@@ -37,7 +40,7 @@ func OpenCache() (err error) {
 		if err != nil {
 			return err
 		}
-		cacheStore = store.NewBigcache(bigcacheClient, nil) // No options provided (as second argument)
+		cacheStore = bigcache_store.NewBigcache(bigcacheClient) // No options provided (as second argument)
 
 	case config.CacheTypeRedis:
 		// Redis
@@ -46,22 +49,20 @@ func OpenCache() (err error) {
 			network = config.Instance.Cache.Redis.Network
 		}
 
-		cacheStore = store.NewRedis(redis.NewClient(&redis.Options{
+		cacheStore = redis_store.NewRedis(redis.NewClient(&redis.Options{
 			Network:  network,
 			Addr:     config.Instance.Cache.Server,
 			Username: config.Instance.Cache.Redis.Username,
 			Password: config.Instance.Cache.Redis.Password,
 			DB:       config.Instance.Cache.Redis.DB,
-		}), nil)
+		}))
 
 	case config.CacheTypeMemcache:
 		// Memcache
 		servers := strings.Split(config.Instance.Cache.Server, ",")
-		cacheStore = store.NewMemcache(
+		cacheStore = memcache_store.NewMemcache(
 			memcache.New(servers...),
-			&store.Options{
-				Expiration: time.Duration(config.Instance.Cache.GetExpiresTime()),
-			},
+			store.WithExpiration(time.Duration(config.Instance.Cache.GetExpiresTime())),
 		)
 
 	default:
@@ -69,7 +70,7 @@ func OpenCache() (err error) {
 
 	}
 
-	cacheInstance := cache.New(cacheStore)
+	cacheInstance := cache.New[any](cacheStore)
 
 	// marshaler wrapper
 	// marshaler using VmihailencoMsgpack

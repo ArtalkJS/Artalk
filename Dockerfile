@@ -1,5 +1,5 @@
 ### build ArtalkGo
-FROM golang:1.18.1-alpine3.15 as builder
+FROM golang:1.19.4-alpine3.17 as builder
 
 WORKDIR /source
 
@@ -7,7 +7,7 @@ WORKDIR /source
 RUN set -ex \
     && apk upgrade \
     && apk add make git gcc musl-dev nodejs bash npm\
-    && npm install -g pnpm@7.2.1
+    && npm install -g pnpm@7.21.0
 
 COPY . ./ArtalkGo
 

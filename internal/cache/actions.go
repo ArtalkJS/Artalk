@@ -9,7 +9,7 @@ import (
 
 	"github.com/ArtalkJS/ArtalkGo/internal/config"
 	"github.com/ArtalkJS/ArtalkGo/internal/entity"
-	"github.com/eko/gocache/v2/store"
+	"github.com/eko/gocache/lib/v4/store"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/singleflight"
 )
@@ -70,9 +70,9 @@ func StoreCache(name string, source interface{}) error {
 	}
 
 	// `Set()` is Thread Safe too, no need to add Mutex either
-	err := CACHE.Set(Ctx, name, source, &store.Options{
-		Expiration: time.Duration(config.Instance.Cache.GetExpiresTime()),
-	})
+	err := CACHE.Set(Ctx, name, source,
+		store.WithExpiration(time.Duration(config.Instance.Cache.GetExpiresTime())),
+	)
 	if err != nil {
 		return err
 	}

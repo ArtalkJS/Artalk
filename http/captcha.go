@@ -13,7 +13,6 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/internal/cache"
 	"github.com/ArtalkJS/ArtalkGo/internal/captcha"
 	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/pkged"
 	"github.com/eko/gocache/v2/store"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
@@ -41,7 +40,7 @@ func (a *action) CaptchaGet(c echo.Context) error {
 	//  Geetest
 	// ===========
 	if config.Instance.Captcha.Geetest.Enabled {
-		pageFile, _ := pkged.Open("/internal/captcha/pages/geetest.html")
+		pageFile, _ := captcha.GetPage("geetest.html")
 		buf, _ := ioutil.ReadAll(pageFile)
 
 		var page bytes.Buffer

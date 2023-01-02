@@ -1,24 +1,24 @@
 package http
 
 import (
+	"io/fs"
 	"net/http"
 
 	"github.com/ArtalkJS/ArtalkGo/internal/config"
 	"github.com/ArtalkJS/ArtalkGo/internal/db"
-	"github.com/ArtalkJS/ArtalkGo/pkged"
+	"github.com/ArtalkJS/ArtalkGo/internal/pkged"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
 
 func InitRouter(e *echo.Echo) {
 	// Init File Server
-	f, err := pkged.Open("/frontend")
+	sub, err := fs.Sub(pkged.FS(), "frontend")
 	if err != nil {
 		logrus.Fatal(err)
 		return
 	}
-
-	fileServer := http.FileServer(f)
+	fileServer := http.FileServer(http.FS(sub))
 	e.Any("/*", echo.WrapHandler(fileServer))
 
 	e.Use(RootPageMiddleware())
@@ -107,7 +107,7 @@ func RootPageMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			if c.Request().URL.Path == "/" && c.Request().Method == "GET" {
-				_, err := pkged.Open("/frontend/sidebar/index.html")
+				_, err := pkged.FS().Open("frontend/sidebar/index.html")
 				if err == nil {
 					c.Redirect(http.StatusFound, "./sidebar/")
 					return nil

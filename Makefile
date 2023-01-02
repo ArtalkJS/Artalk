@@ -11,9 +11,8 @@ all: install build
 
 install:
 	go mod tidy
-	go install github.com/markbates/pkger/cmd/pkger
 
-build: build-frontend update
+build: build-frontend
 	go build \
     	-ldflags "-s -w -X github.com/ArtalkJS/ArtalkGo/internal/config.Version=${VERSION} \
         -X github.com/ArtalkJS/ArtalkGo/internal/config.CommitHash=${COMMIT_HASH}" \
@@ -23,16 +22,12 @@ build: build-frontend update
 build-frontend:
 	./scripts/build-frontend.sh
 
-update:
-	pkger -include /frontend -include /email-tpl -include /internal/captcha/pages -include /artalk-go.example.yml -o pkged
-
 run: all
 	./bin/artalk-go server $(ARGS)
 
 dev:
 	@if [ ! -f "pkged/pkged.go" ]; then \
 		make install; \
-		make update; \
 	fi
 	@go build \
     	-ldflags "-s -w -X github.com/ArtalkJS/ArtalkGo/internal/config.Version=${VERSION} \
@@ -88,6 +83,6 @@ release:
 		release --rm-dist --skip-validate
 
 .PHONY: all install build build-frontend \
-	update run dev test test-coverage \
+	run dev test test-coverage \
 	docker-build docker-push \
 	release-dry-run release;

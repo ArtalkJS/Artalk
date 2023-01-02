@@ -2,10 +2,10 @@ package email
 
 import (
 	"bytes"
+	"embed"
 	"errors"
 	"fmt"
 	"html"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
@@ -14,8 +14,11 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/internal/entity"
 	"github.com/ArtalkJS/ArtalkGo/internal/query"
 	"github.com/ArtalkJS/ArtalkGo/internal/utils"
-	"github.com/ArtalkJS/ArtalkGo/pkged"
 )
+
+//go:embed email_tpl/*
+//go:embed notify_tpl/*
+var internalTpl embed.FS
 
 func RenderCommon(str string, notify *entity.Notify, _renderType ...string) string {
 	// 渲染类型
@@ -163,22 +166,18 @@ func RenderNotifyBody(notify *entity.Notify) string {
 
 // 获取内建邮件模版
 func GetInternalEmailTpl(tplName string) string {
-	return GetInternalTpl("email-tpl", tplName)
+	return GetInternalTpl("email_tpl", tplName)
 }
 
 // 获取内建通知模版
 func GetInternalNotifyTpl(tplName string) string {
-	if tplName == "default" {
-		return "@{{reply_nick}}:\n\n{{reply_content}}\n\n{{link_to_reply}}"
-	}
-
-	return GetInternalTpl("notify-tpl", tplName)
+	return GetInternalTpl("notify_tpl", tplName)
 }
 
 // 获取内建模版
 func GetInternalTpl(basePath string, tplName string) string {
-	filename := fmt.Sprintf("/%s/%s.html", basePath, tplName)
-	f, err := pkged.Open(filename)
+	filename := fmt.Sprintf("%s/%s.html", basePath, tplName)
+	f, err := internalTpl.Open(filename)
 	if err != nil {
 		return ""
 	}
@@ -194,7 +193,7 @@ func GetInternalTpl(basePath string, tplName string) string {
 
 // 获取外置模版
 func GetExternalTpl(filename string) string {
-	buf, err := ioutil.ReadFile(filename)
+	buf, err := os.ReadFile(filename)
 	if err != nil {
 		return ""
 	}

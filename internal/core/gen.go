@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/pkged"
+	"github.com/ArtalkJS/ArtalkGo/internal/pkged"
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,7 +23,7 @@ func Gen(genType string, specificPath string, overwrite bool) {
 		genPath = specificPath
 	}
 
-	file, err := pkged.Open("/" + strings.TrimPrefix(genType, "/"))
+	file, err := pkged.FS().Open(strings.TrimPrefix(genType, "/"))
 	if err != nil {
 		logrus.Fatal("无效的内置资源: "+genType+" ", err)
 	}

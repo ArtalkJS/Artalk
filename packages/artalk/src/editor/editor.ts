@@ -433,6 +433,7 @@ export default class Editor extends Component {
     this.$plugBtnWrap.innerHTML = ''
 
     const disabledPlugs: string[] = []
+    if (!this.conf.imgUpload) disabledPlugs.push('upload')
     if (!this.conf.emoticons) disabledPlugs.push('emoticons')
     if (!this.conf.preview) disabledPlugs.push('preview')
 

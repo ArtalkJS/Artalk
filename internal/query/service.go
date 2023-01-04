@@ -155,3 +155,31 @@ func GetReadLinkByNotify(n *entity.Notify) string {
 
 	return GetLinkToReplyByComment(&c, n.Key)
 }
+
+// ===============
+//	Vote
+// ===============
+
+func VoteSync() {
+	var comments []entity.Comment
+	DB().Find(&comments)
+
+	for _, c := range comments {
+		voteUp := GetVoteNum(c.ID, string(entity.VoteTypeCommentUp))
+		voteDown := GetVoteNum(c.ID, string(entity.VoteTypeCommentDown))
+		c.VoteUp = int(voteUp)
+		c.VoteDown = int(voteDown)
+		UpdateComment(&c)
+	}
+
+	var pages []entity.Page
+	DB().Find(&pages)
+
+	for _, p := range pages {
+		voteUp := GetVoteNum(p.ID, string(entity.VoteTypePageUp))
+		voteDown := GetVoteNum(p.ID, string(entity.VoteTypePageDown))
+		p.VoteUp = voteUp
+		p.VoteDown = voteDown
+		UpdatePage(&p)
+	}
+}

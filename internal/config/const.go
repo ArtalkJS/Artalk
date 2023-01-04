@@ -12,3 +12,6 @@ const COOKIE_KEY_ATK_AUTH = "ATK_AUTH"
 const CTX_KEY_ATK_SITE_ID = "atk_site_id"
 const CTX_KEY_ATK_SITE_NAME = "atk_site_name"
 const CTX_KEY_ATK_SITE_ALL = "atk_site_all"
+
+// 图片上传目录路由重写路径
+var IMG_UPLOAD_PUBLIC_PATH = "/static/images"

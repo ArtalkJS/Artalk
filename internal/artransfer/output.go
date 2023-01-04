@@ -8,11 +8,10 @@ import (
 	"strings"
 
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
 
-var HttpOutputEchoCtx echo.Context // TODO 只支持单线执行，同时请求两个地方会出问题
+// TODO 只支持单线执行，同时请求两个地方会出问题
 var HttpOutput func(continueRun bool, text string)
 var Assumeyes bool = false
 

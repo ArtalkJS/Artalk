@@ -17,15 +17,13 @@ require (
 	github.com/eko/gocache/store/redis/v4 v4.1.2
 	github.com/go-redis/redis/v8 v8.11.6-0.20220405070650-99c79f7041fc
 	github.com/go-testfixtures/testfixtures/v3 v3.8.1
+	github.com/gofiber/fiber/v2 v2.40.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.4.3
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/knadh/koanf v1.4.4
-	github.com/labstack/echo/v4 v4.10.0
 	github.com/microcosm-cc/bluemonday v1.0.21
-	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nikoksr/notify v0.36.0
-	github.com/onrik/logrus v0.10.0
 	github.com/qwqcode/go-aliyun-email v0.0.0-20180120030821-cb6e7b1382bf
 	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
@@ -52,6 +50,7 @@ require (
 
 require (
 	github.com/VividCortex/ewma v1.2.0 // indirect
+	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -85,7 +84,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/labstack/gommon v0.4.0 // indirect
+	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/line/line-bot-sdk-go v7.8.0+incompatible // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
@@ -95,6 +94,7 @@ require (
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/microsoft/go-mssqldb v0.19.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
+	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
@@ -117,7 +117,8 @@ require (
 	github.com/ulikunitz/xz v0.5.11 // indirect
 	github.com/utahta/go-linenotify v0.5.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasttemplate v1.2.2 // indirect
+	github.com/valyala/fasthttp v1.41.0 // indirect
+	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	golang.org/x/exp v0.0.0-20221230185412-738e83a70c30 // indirect
 	golang.org/x/image v0.2.0 // indirect
@@ -125,7 +126,6 @@ require (
 	golang.org/x/oauth2 v0.3.0 // indirect
 	golang.org/x/sys v0.3.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
-	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect

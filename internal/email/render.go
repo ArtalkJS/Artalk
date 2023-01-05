@@ -127,8 +127,15 @@ func HandleEmoticonsImgTagsForNotify(str string) string {
 }
 
 // 渲染邮件 Body 内容
-func RenderEmailBody(notify *entity.Notify) string {
+func RenderEmailBody(notify *entity.Notify, isSendToAdmin bool) string {
 	tplName := config.Instance.Email.MailTpl
+
+	// 发送给管理员的邮件单独使用管理员邮件模板
+	if isSendToAdmin {
+		tplName = config.Instance.AdminNotify.Email.MailTpl
+	}
+
+	// 配置文件未指定邮件模板路径，使用内置默认模板
 	if tplName == "" {
 		tplName = "default"
 	}
@@ -137,6 +144,8 @@ func RenderEmailBody(notify *entity.Notify) string {
 	if _, err := os.Stat(tplName); errors.Is(err, os.ErrNotExist) {
 		tpl = GetInternalEmailTpl(tplName)
 	} else {
+		// TODO 反复文件 IO 操作会导致性能下降，
+		// 之后优化可以改成程序启动时加载模板文件到内存中
 		tpl = GetExternalTpl(tplName)
 	}
 

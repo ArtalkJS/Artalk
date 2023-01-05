@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/ArtalkGo/internal/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -23,10 +24,14 @@ func GetApiPublicConfDataMap(c *fiber.Ctx) Map {
 		imgUpload = true // 管理员始终允许上传图片
 	}
 
-	frontendConf := config.Instance.Frontend
-	if frontendConf == nil {
-		frontendConf = make(map[string]interface{})
+	frontendConfSrc := config.Instance.Frontend
+	if frontendConfSrc == nil {
+		frontendConfSrc = make(map[string]interface{})
 	}
+
+	frontendConf := make(map[string]interface{})
+	utils.CopyStruct(&frontendConfSrc, &frontendConf)
+
 	frontendConf["imgUpload"] = &imgUpload
 
 	return Map{

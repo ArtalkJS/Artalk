@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/jeremywohl/flatten"
+	"github.com/vmihailenco/msgpack"
 )
 
 func StructToMap(s interface{}) map[string]interface{} {
@@ -20,4 +21,16 @@ func StructToFlatDotMap(s interface{}) map[string]interface{} {
 		return map[string]interface{}{}
 	}
 	return mainFlat
+}
+
+func CopyStruct(src *map[string]interface{}, dest *map[string]interface{}) error {
+	b, err := msgpack.Marshal(src)
+	if err != nil {
+		return err
+	}
+	err = msgpack.Unmarshal(b, dest)
+	if err != nil {
+		return err
+	}
+	return nil
 }

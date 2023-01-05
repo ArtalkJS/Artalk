@@ -10,12 +10,17 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/server/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/fiber/v2/middleware/pprof"
 	"github.com/sirupsen/logrus"
 )
 
 func Init(app *fiber.App) {
 	cors(app)
 	actionLimit(app)
+
+	if config.Instance.Debug {
+		app.Use(pprof.New())
+	}
 
 	api := app.Group("/api", middleware.SiteOriginMiddleware())
 	{

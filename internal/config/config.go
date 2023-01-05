@@ -241,6 +241,7 @@ type AdminNotifyConf struct {
 type AdminEmailConf struct {
 	Enabled     bool   `koanf:"enabled" json:"enabled"`           // 管理员总开关
 	MailSubject string `koanf:"mail_subject" json:"mail_subject"` // 管理员邮件标题
+	MailTpl     string `koanf:"mail_tpl" json:"mail_tpl"`         // 管理员专用邮件模板
 }
 
 type NotifyTelegramConf struct {

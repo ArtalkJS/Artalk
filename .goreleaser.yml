@@ -68,9 +68,9 @@ builds:
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
-      
+
   ## Arm
-  
+
   # Linux (arm_v7)
   - id: linux-armhf
     goos:
@@ -78,7 +78,7 @@ builds:
     goarch:
       - arm
     goarm:
-      - 7
+      - '7'
     env:
       - CC=arm-linux-gnueabihf-gcc
       - CXX=arm-linux-gnueabihf-g++
@@ -150,6 +150,6 @@ changelog:
 release:
   github:
     owner: ArtalkJS
-    name: ArtalkGo
+    name: Artalk
   prerelease: auto
   draft: true

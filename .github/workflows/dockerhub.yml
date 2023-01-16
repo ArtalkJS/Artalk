@@ -12,6 +12,7 @@ on:
 
 jobs:
   docker:
+    if: github.repository == 'ArtalkJS/Artalk'
     runs-on: ubuntu-latest
 
     steps:

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-ignore
 import MD5 from '../lib/md5'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '../stores/user'

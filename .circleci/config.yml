@@ -1,40 +1,26 @@
 # https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-jobs:
-  test:
-    working_directory: ~/go/src/github.com/ArtalkJS/ArtalkGo
-    environment:
-      GO111MODULE: "on"
-    docker:
-      - image: cimg/go:1.19
-    steps:
-      - checkout
-      - run:
-          name: "Print the Go version"
-          command: >
-            go version
-      - restore_cache:
-          keys:
-            - go-mod-1.19-{{ checksum "go.sum" }}
-      - run:
-          name: Install Dependencies
-          command: go mod download
-      - save_cache:
-          key: go-mod-1.19-{{ checksum "go.sum" }}
-          paths:
-            - "~/go/pkg/mod"
-      - run:
-          name: Run tests
-          command: |
-            mkdir -p /tmp/test-reports
-            gotestsum --junitfile /tmp/test-reports/unit-tests.xml
-      - store_test_results:
-          path: /tmp/test-reports
+# this allows you to use CircleCI's dynamic configuration
+# https://circleci.com/docs/2.0/dynamic-config/
+setup: true
 
-# Invoke jobs via workflows
+# the path-filtering orb is required to continue a pipeline based on
+# https://circleci.com/developer/orbs/orb/circleci/path-filtering
+orbs:
+  path-filtering: circleci/path-filtering@0.0.1
+
 workflows:
-  tests:
+  setup:
     jobs:
-      - test
+      - path-filtering/filter:
+          mapping: |
+            (cmd|internal|server|pkg|test)/.*  trigger-app true
+            main.go|go.mod|go.sum|artalk-go.example.yml  trigger-app true
+            (ui)/.*  trigger-ui  true
+          base-revision: master  # git branch name
+          config-path: .circleci/conditional_config.yml
+          filters:
+            branches:
+              ignore:
+                - gh-pages

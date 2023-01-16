@@ -5,7 +5,7 @@ set -e
 if ! command -v pnpm &> /dev/null
 then
     apt-get update && apt-get install --no-install-recommends -y -q curl ca-certificates
-    
+
     # Install volta
     bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
     export VOLTA_HOME="${HOME}/.volta"
@@ -15,28 +15,15 @@ then
     volta install pnpm
 fi
 
-mkdir -p ./local/
+pnpm --dir ./ui install --frozen-lockfile
+pnpm --dir ./ui build:all
 
-cd ./local/
-rm -rf ./Artalk
+## dist
+DIST_DIR="./public/dist"
+rm -rf ${DIST_DIR} && mkdir -p ${DIST_DIR}
+cp -r ./ui/packages/artalk/dist/{Artalk.css,Artalk.js} ${DIST_DIR}
 
-git clone https://github.com/ArtalkJS/Artalk.git Artalk
-cd Artalk
-
-# # using latest tag soruce code
-# git fetch --tags
-# git checkout $(git describe --tags --abbrev=0)
-
-pnpm install
-pnpm build:all
-
-cd ../../
-
-rm -rf ./frontend/dist
-rm -rf ./frontend/sidebar
-
-mkdir -p ./frontend/dist
-cp -r ./local/Artalk/packages/artalk/dist/{Artalk.css,Artalk.js} ./frontend/dist
-
-mkdir -p ./frontend/sidebar
-cp -r ./local/Artalk/packages/artalk-sidebar/dist/* ./frontend/sidebar
+## sidebar
+SIDEBAR_DIR="./public/sidebar"
+rm -rf ${SIDEBAR_DIR} && mkdir -p ${SIDEBAR_DIR}
+cp -r ./ui/packages/artalk-sidebar/dist/* ${SIDEBAR_DIR}

@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "allowJs": true
+    "baseUrl": "./"
   },
   "exclude": ["node_modules", "dist"],
   "include": [

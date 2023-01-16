@@ -7,7 +7,7 @@ import (
 	"github.com/ArtalkJS/ArtalkGo/internal/pkged"
 )
 
-//go:embed frontend/*
+//go:embed public/*
 //go:embed artalk-go.example.yml
 var embedFS embed.FS
 

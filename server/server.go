@@ -107,14 +107,14 @@ func actionLimit(f fiber.Router) {
 func static(f fiber.Router) {
 	f.Use("/", filesystem.New(filesystem.Config{
 		Root:       http.FS(pkged.FS()),
-		PathPrefix: "frontend",
+		PathPrefix: "public",
 		Browse:     false,
 	}))
 }
 
 func index(f fiber.Router) {
 	f.All("/", func(c *fiber.Ctx) error {
-		if _, err := pkged.FS().Open("frontend/sidebar/index.html"); err == nil {
+		if _, err := pkged.FS().Open("public/sidebar/index.html"); err == nil {
 			return c.Redirect("./sidebar/", fiber.StatusFound)
 		}
 

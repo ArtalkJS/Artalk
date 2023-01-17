@@ -1,208 +1,192 @@
-# 服务器地址
+# Listen host
 host: "0.0.0.0"
-
-# 服务器端口
+# Listen port
 port: 23366
-
-# 加密密钥
+# Key for generation of JWT token
 app_key: ""
-
-# 调试模式
+# Debug mode
 debug: false
-
-# 时间区域
+# Timezone. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone: "Asia/Shanghai"
-
-# 默认站点名
-site_default: "默认站点"
-
-# 登陆有效时长 (单位：秒)
+# Default site name
+site_default: "Default Site"
+# Login timeout (in seconds)
 login_timeout: 259200
-
-# 数据库
+# Database
 db:
-  # 数据库类型 ["sqlite", "mysql", "pgsql", "mssql"]
+  # Database type ["sqlite", "mysql", "pgsql", "mssql"]
   type: "sqlite"
-  # 数据库文件 (仅 SQLite 数据库需填写)
+  # Database file (only for SQLite)
   file: "./data/artalk.db"
-  # 数据库名称
-  name: "artalk"
-  # 数据库地址
-  host: "localhost"
-  # 数据库端口
-  port: 3306
-  # 数据库账户
-  user: "root"
-  # 数据库密码
-  password: ""
-  # 编码格式
-  charset: "utf8mb4"
-  # 表前缀 (例如："atk_")
+  # Table prefix (e.g. "atk_")
   table_prefix: ""
+  # The following is not nessary for SQLite
+  # Database name
+  name: "artalk"
+  # Host address
+  host: "localhost"
+  # Host port
+  port: 3306
+  # Database user
+  user: "root"
+  # Database password
+  password: ""
+  # Database charset
+  charset: "utf8mb4"
 
-# 日志
+# Logging
 log:
-  # 启用日志
+  # Enable logging
   enabled: true
-  # 日志文件路径
+  # Log file path
   filename: "./data/artalk.log"
-
-# 缓存
+# Cache
 cache:
-  # 缓存类型 ["redis", "memcache", "builtin"]
+  # Cache type ["redis", "memcache", "builtin"]
   type: "builtin"
-  # 缓存过期时间 (单位：分钟)
+  # Cache expiration time (in minutes)
   expires: 30
-  # 缓存启动预热 (程序启动时预热缓存)
+  # Cache warm up (warm up cache when program starts)
   warm_up: false
-  # 缓存服务器地址 (例如："localhost:6379")
+  # Cache server address (e.g. "localhost:6379")
   server: ""
-  # Redis 配置
+  # Redis config
   redis:
-    # 连接方式 ["tcp", "unix"]
+    # Connection type ["tcp", "unix"]
     network: "tcp"
-    # 用户名
+    # Redis username
     username: ""
-    # 密码
+    # Redis password
     password: ""
-    # 数据库编号 (例如使用零号数据库填写 0)
+    # Redis database number (e.g. 0)
     db: 0
-
-# 可信域名
-trusted_domains: [] # 例如：["https://artalk.example.com:23366"]
+# Trusted domains, e.g. ["https://artalk.example.com:23366"] add url of your site her
 
 # SSL
 ssl:
-  # 启用 SSL
+  # Enable SSL
   enabled: false
-  # 证书文件路径
+  # Certificate file path, e.g. "/etc/letsencrypt/live/example.com/fullchain.pem"
   cert_path: ""
-  # 密钥文件路径
+  # Key file path, e.g. "/etc/letsencrypt/live/example.com/privkey.pem"
   key_path: ""
-
-# 管理员账户
+# Admin users
 admin_users:
+  # Remove the following line comment symbol (#) to enable admin users
   # - name: "admin"
   #   email: "admin@example.com"
-  #   password: "" # 支持 bcrypt 或 md5 加密，如："(md5)50c21190c6e4e5418c6a90d2b5031119"
-  #   badge_name: "管理员"
   #   badge_color: "#FF6C00"
-
-# 评论审核
+# Comment examination before being public
 moderator:
-  # 默认待审 (发表新评论需要后台人工审核后才能显示)
+  # Default pending (new comments need to be approved by admin)
   pending_default: false
-  # API 请求错误时拦截 (关闭此项当请求错误时让评论放行)
+  # Block when API request fails (set to false to let comments pass when API request fails)
   api_fail_block: false
   # Akismet Key
-  # (Akismet 反垃圾服务，https://akismet.com)
+  # (Akismet anti-spam service, https://akismet.com)
   akismet_key: ""
-  # 腾讯云文本内容安全
+  # Auto review comments with Tencent Cloud Content Security
   # (https://cloud.tencent.com/document/product/1124/64508)
   tencent:
     enabled: false
     secret_id: ""
     secret_key: ""
     region: "ap-guangzhou"
-  # 阿里云内容安全
+  # Auto review comments with Aliyun Content Security
   # (https://help.aliyun.com/document_detail/28417.html)
   aliyun:
     enabled: false
     access_key_id: ""
     access_key_secret: ""
     region: "cn-shanghai"
-  # 关键词过滤 (本地离线词库)
+  # Keyword filter (local offline dictionary)
   keywords:
+    # Enable keyword filter
     enabled: false
-    # 匹配成功设为待审状态
+    # Set to pending when match
     pending: false
-    # 词库文件 (支持多个词库文件)
+    # Dictionary file (support multiple dictionary files)
     files:
-      - "./data/词库_1.txt"
-    # 词库文件内容分割符 (例如填写 "\n" 文件中一行一个关键词)
     file_sep: "\n"
-    # 替换字符
     replac_to: "x"
-
-# 验证码
+# Captcha
 captcha:
-  # 启用验证码
+  # Enable captcha
   enabled: true
-  # 总是需要验证码
+  # Captcha is required always
   always: false
-  # 激活验证码所需操作次数
+  # Captcha type ["geetest", "image"]
+  # The number of actions required to activate captcha
   action_limit: 3
-  # 重置操作计数器超时 (单位：s, 设为 -1 不重置)
+  # Timeout to reset action counter (unit: s, set to -1 to disable)
   action_reset: 60
-  # Geetest 极验 (https://www.geetest.com)
+  # Geetest (https://www.geetest.com)
   geetest:
     enabled: false
     captcha_id: ""
     captcha_key: ""
-
-# 邮件通知
+# Mail notification
 email:
-  # 启用邮件通知
+  # Enable mail notification
   enabled: false
-  # 发送方式 ["smtp", "ali_dm", "sendmail"]
+  # Send method ["smtp", "ali_dm", "sendmail"]
   send_type: "smtp"
-  # 发信人昵称
+  # Nick name of sender
   send_name: "{{reply_nick}}"
-  # 发信人地址
+  # Email address of sender
   send_addr: "noreply@example.com"
-  # 邮件标题
-  mail_subject: "[{{site_name}}] 您收到了来自 @{{reply_nick}} 的回复"
-  # 邮件模板文件 (填入文件路径使用自定义模板)
+  # Mail title
+  # Mail template file (set to file path to use custom template)
   mail_tpl: "default"
-  # SMTP 发送 (启用请将发送方式设为 "smtp")
+  # SMTP send (set to "smtp" to enable)
   smtp:
-    # 发件地址
+    # Email address of sender
     host: "smtp.qq.com"
-    # 发件端口
+    # Email port
     port: 587
-    # 用户名
+    # Email address of sender
     username: "example@qq.com"
-    # 密码
+    # Password
     password: ""
-  # 阿里云邮件推送
-  # (启用请将发送方式设为 "ali_dm"；参考：https://help.aliyun.com/document_detail/29444.html)
+  # Aliyun mail push
+  # (set send method to "ali_dm" to enable; see: https://help.aliyun.com/document_detail/29444.html)
   ali_dm:
     access_key_id: ""
     access_key_secret: ""
     account_name: "noreply@example.com"
-
-# 图片上传
+# Image upload for comment
 img_upload:
-  # 启用图片上传
+  # Enable image upload
   enabled: true
-  # 图片存放路径
+  # Image storage
   path: "./data/artalk-img/"
-  # 图片大小限制 (单位：MB)
+  # Image size limit (unit: MB)
   max_size: 5
-  # 图片链接基础路径 (默认为 "/static/images/")
+  # Image link base path (default: "/static/images/")
   public_path: null
-  # Upgit 配置
-  # (使用 Upgit 将图片上传到 GitHub 或图床：https://github.com/pluveto/upgit)
+  # Upgit config
   upgit:
-    # 启用 Upgit
+    # Enable Upgit
     enabled: false
-    # 命令行参数
-    exec: "./upgit -c <upgit配置文件路径> -t /artalk-img"
-    # 上传后删除本地的图片
+    # Command line arguments
+    exec: "./upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
+    # Delete local image after upload success
     del_local: true
-
-# 多元推送
+# Multi-push
 admin_notify:
-  # 通知模版 (填入文件路径使用自定义模板)
+  # Notification template (set to file path to use custom template)
   notify_tpl: "default"
-  # 嘈杂模式
+  # Noise mode
+  # noise_mode is disabled by default. 
+  # When this option is set to `false`, only messages sent to the administrator will be notified,
+  # such as "user A" replies to "user B", the communication between these two users will not be notified to the administrator.
   noise_mode: false
-  # 邮件通知管理员
+  # Notify admin
   email:
-    # 开启 (当使用其他推送方式时，可以关闭管理员邮件通知)
+    # Enable (can be disabled when using other push methods)
     enabled: true
-    # 邮件标题 (发送给管理员的邮件标题)
-    mail_subject: "[{{site_name}}] 您的文章「{{page_title}}」有新回复"
+    # Mail title (mail title sent to admin)
+    mail_subject: "[{{site_name}}] Post \"{{page_title}}\" has new a comment"
   # Telegram
   telegram:
     enabled: false
@@ -213,7 +197,6 @@ admin_notify:
   bark:
     enabled: false
     server: "http://day.app/xxxxxxx/"
-  # 飞书
   lark:
     enabled: false
     webhook_url: ""
@@ -221,7 +204,6 @@ admin_notify:
   webhook:
     enabled: false
     url: ""
-  # 钉钉
   ding_talk:
     enabled: false
     token: ""
@@ -240,62 +222,58 @@ admin_notify:
     receivers:
       - "USER_ID_1"
       - "GROUP_ID_1"
-
-# 前端配置
+# Frontend config
 frontend:
-  # 评论框占位文字
-  placeholder: "键入内容..."
-  # 无评论显示文字
-  noComment: "「此时无声胜有声」"
-  # 发送按钮文字
-  sendBtn: "发送评论"
-  # 评论框旅行
+  # Comment box placeholder
+  placeholder: "What do you think?"
+  # Text to display when there is
+  noComment: "No comments yet."
+  # Text of the send button
+  sendBtn: "Send"
   editorTravel: true
-  # 暗黑模式
+  # Dark mode
   darkMode: false
-  # 表情包
+  # Emoticons
   emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
-  # 投票按钮
+  # Vote button
   vote: true
-  # 反对按钮
+  # Dislike button
   voteDown: false
-  # 用户 UA 徽标
+  # User UA badge
   uaBadge: true
-  # 评论排序功能
+  # Comment sorting
   listSort: true
-  # 页面 PV 绑定元素
+  # Page PV binding element
   pvEl: "#ArtalkPV"
-  # 评论数绑定元素
+  # Comment count binding element
   countEl: "#ArtalkCount"
-  # 编辑器实时预览功能
+  # Editor real-time preview
   preview: true
-  # 平铺模式 ["auto", true, false]
+  # Flatten mode ["auto", true, false]
   flatMode: "auto"
-  # 最大嵌套层数
+  # Maximum nesting level
   nestMax: 2
-  # 嵌套评论排序规则 ["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]
+  # Nesting comment sorting rules ["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]
   nestSort: DATE_ASC
-  # 头像
+  # Gravatar
   gravatar:
-    # Gravatar 镜像地址
     mirror: "https://cravatar.cn/avatar/"
-    # 默认头像
     default: "mp"
-  # 评论分页
+  # Comment pagination
   pagination:
-    # 每页评论数
+    # Number of comments per page
     pageSize: 20
-    # 加载更多模式 (关闭则使用分页条)
+    # Load more mode (disabled to use pagination bar)
     readMore: true
-    # 滚动加载
+    # Scroll loading
     autoLoad: true
-  # 内容限高
+  # Content height limit
   heightLimit:
-    # 评论内容限高 (单位：px)
+    # Comment content height limit (unit: px)
     content: 300
-    # 子评论区域限高 (单位：px)
+    # Sub-comment area height limit (unit: px)
     children: 400
-  # 请求超时 (单位：毫秒)
+  # Request timeout (unit: ms)
   reqTimeout: 15000
-  # 版本检测
+  # Version check
   versionCheck: true

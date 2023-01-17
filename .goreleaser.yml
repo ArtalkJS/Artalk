@@ -6,7 +6,7 @@
 # https://goreleaser.com/customization/fury/
 # https://goreleaser.com/customization/announce/telegram/
 
-project_name: artalk-go
+project_name: artalk
 
 env:
   - GO111MODULE=on
@@ -113,7 +113,7 @@ builds:
     ldflags: *common_ldflags
 
 archives:
-  - id: artalk-go
+  - id: artalk
     builds:
       - linux-amd64
       - darwin-amd64
@@ -130,7 +130,7 @@ archives:
     files:
       - README*
       - LICENSE*
-      - artalk-go.yml
+      - artalk.yml
 
 checksum:
   name_template: 'checksums.txt'

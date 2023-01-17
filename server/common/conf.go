@@ -10,7 +10,7 @@ import (
 
 func GetApiVersionDataMap() Map {
 	return Map{
-		"app":            "artalk-go",
+		"app":            "artalk",
 		"version":        strings.TrimPrefix(config.Version, "v"),
 		"commit_hash":    config.CommitHash,
 		"fe_min_version": strings.TrimPrefix(config.FeMinVersion, "v"),

@@ -68,10 +68,10 @@ new Artalk({
 
 ```bash
 docker run -d \
-  --name artalk-go \
+  --name artalk \
   -p 8080:23366 \
   -v $(pwd)/data:/data \
-  artalk/artalk-go
+  artalk/artalk
 ```
 
 ### Docker Compose
@@ -85,7 +85,7 @@ version: "3.5"
 services:
   artalk:
     container_name: artalk
-    image: artalk/artalk-go
+    image: artalk/artalk
     ports:
       - 8080:23366
     volumes:

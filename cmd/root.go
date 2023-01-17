@@ -32,7 +32,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "artalk-go",
+	Use:     "artalk",
 	Short:   "Artalk: A Fast, Slight & Delightful Comment System",
 	Long:    Banner,
 	Version: Version,
@@ -49,7 +49,7 @@ func Execute() {
 
 func init() {
 	rootCmd.SetVersionTemplate("ArtalkGo ({{printf \"%s\" .Version}})\n")
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "配置文件路径 (defaults are './artalk-go.yml')")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "配置文件路径 (defaults are './artalk.yml')")
 	rootCmd.PersistentFlags().StringVarP(&workDir, "workdir", "w", "", "程序工作目录 (defaults are './')")
 
 	// Version Command

@@ -2,8 +2,8 @@
 
 set -e
 
-IMAGE_NAME="artalk-go"
-REPO_NAME="artalk/artalk-go"
+IMAGE_NAME="artalk"
+REPO_NAME="artalk/artalk"
 
 VERSION=$(git describe --tags --abbrev=0)
 

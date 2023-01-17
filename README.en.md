@@ -82,14 +82,14 @@ mkdir Artalk
 cd Artalk
 
 # Download config template
-curl -L https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/master/artalk-go.example.yml > conf.yml
+curl -L https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/master/artalk.example.yml > conf.yml
 
 docker run -d \
   --name artalk \
   -p 0.0.0.0:8080:23366 \
   -v $(pwd)/conf.yml:/conf.yml \
   -v $(pwd)/data:/data \
-  artalk/artalk-go
+  artalk/artalk
 ```
 
 ### Docker Compose
@@ -106,7 +106,7 @@ version: "3.5"
 services:
   artalk:
     container_name: artalk
-    image: artalk/artalk-go
+    image: artalk/artalk
     ports:
       - 8080:23366
     volumes:

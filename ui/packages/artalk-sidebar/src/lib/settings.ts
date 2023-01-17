@@ -1,5 +1,5 @@
 import YAML from 'yaml'
-import confTemplate from '../assets/artalk-go.example.yml?raw'
+import confTemplate from '../assets/artalk.example.yml?raw'
 
 type YAMLPair = {
   key?: { value: string, commentBefore: string, comment: string },

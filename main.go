@@ -8,7 +8,7 @@ import (
 )
 
 //go:embed public/*
-//go:embed artalk-go.example.yml
+//go:embed artalk.example.yml
 var embedFS embed.FS
 
 func main() {

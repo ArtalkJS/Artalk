@@ -3,7 +3,7 @@ import YAML from 'yaml'
 import { useNavStore } from '../stores/nav'
 import { artalk } from '../global'
 import settings from '../lib/settings'
-import confTemplate from '../assets/artalk-go.example.yml?raw'
+import confTemplate from '../assets/artalk.example.yml?raw'
 import { storeToRefs } from 'pinia'
 import LoadingLayer from '../components/LoadingLayer.vue'
 

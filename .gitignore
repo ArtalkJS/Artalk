@@ -39,7 +39,7 @@ Thumbs.db
 /sysroot
 node_modules
 
-/artalk-go.yml
+/artalk.yml
 /config.yml
 
 /local

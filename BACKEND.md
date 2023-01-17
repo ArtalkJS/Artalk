@@ -1,12 +1,12 @@
 <p align="center">
-<img src="./docs/artalk-go.png" alt="Artalk" width="100%">
+<img src="./docs/artalk.png" alt="Artalk" width="100%">
 </p>
 
 # ArtalkGo
 
 [![CircleCI](https://circleci.com/gh/ArtalkJS/ArtalkGo/tree/master.svg?style=svg)](https://circleci.com/gh/ArtalkJS/ArtalkGo/tree/master)
 [![CI to Docker Hub](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_shield)
-[![Docker Pulls](https://img.shields.io/docker/pulls/artalk/artalk-go?style=flat-square)](https://hub.docker.com/r/artalk/artalk-go)
+[![Docker Pulls](https://img.shields.io/docker/pulls/artalk/artalk?style=flat-square)](https://hub.docker.com/r/artalk/artalk)
 
 > ArtalkGo: Golang backend of Artalk.
 

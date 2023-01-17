@@ -2,7 +2,7 @@ version: "3.5"
 services:
   artalk:
     container_name: artalk
-    image: artalk/artalk-go
+    image: artalk/artalk
     build: 
       context: ./
       dockerfile: Dockerfile

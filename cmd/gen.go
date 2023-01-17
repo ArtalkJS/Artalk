@@ -11,7 +11,7 @@ import (
 var genCmd = &cobra.Command{
 	Use:   "gen <类型> <目标路径>",
 	Short: "生成一些内容",
-	Long:  "生成一些内容\n例如：artalk-go gen config ./artalk-go.yml",
+	Long:  "生成一些内容\n例如：artalk gen config ./artalk.yml",
 	Args:  cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {
 		// 工作目录

@@ -28,7 +28,7 @@ ARG TZ="Asia/Shanghai"
 
 ENV TZ ${TZ}
 
-COPY --from=builder /source/ArtalkGo/bin/artalk-go /artalk-go
+COPY --from=builder /source/ArtalkGo/bin/artalk /artalk
 
 RUN apk upgrade \
     && apk add bash tzdata \
@@ -36,9 +36,9 @@ RUN apk upgrade \
     && echo ${TZ} > /etc/timezone
 
 # add alias
-RUN echo -e '#!/bin/bash\n/artalk-go -w / -c /data/artalk-go.yml "$@"' > /usr/bin/artalk-go \
-    && chmod +x /usr/bin/artalk-go \
-    && cp -p /usr/bin/artalk-go /usr/bin/artalk
+RUN echo -e '#!/bin/bash\n/artalk -w / -c /data/artalk.yml "$@"' > /usr/bin/artalk \
+    && chmod +x /usr/bin/artalk \
+    && cp -p /usr/bin/artalk /usr/bin/artalk
 
 VOLUME ["/data"]
 

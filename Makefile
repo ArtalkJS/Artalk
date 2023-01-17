@@ -1,4 +1,5 @@
-PACKAGE_NAME := github.com/ArtalkJS/ArtalkGo
+PACKAGE_NAME := github.com/ArtalkJS/Artalk
+BIN_NAME	 := ./bin/artalk
 VERSION      ?= $(shell git describe --tags --abbrev=0)
 COMMIT_HASH  := $(shell git rev-parse --short HEAD)
 DEV_VERSION  := dev-${COMMIT_HASH}
@@ -14,27 +15,27 @@ install:
 
 build: build-frontend
 	go build \
-    	-ldflags "-s -w -X github.com/ArtalkJS/ArtalkGo/internal/config.Version=${VERSION} \
-        -X github.com/ArtalkJS/ArtalkGo/internal/config.CommitHash=${COMMIT_HASH}" \
-        -o bin/artalk-go \
-    	github.com/ArtalkJS/ArtalkGo
+    	-ldflags "-s -w -X github.com/ArtalkJS/Artalk/internal/config.Version=${VERSION} \
+        -X github.com/ArtalkJS/Artalk/internal/config.CommitHash=${COMMIT_HASH}" \
+        -o $(BIN_NAME) \
+    	github.com/ArtalkJS/Artalk
 
 build-frontend:
 	./scripts/build-frontend.sh
 
 run: all
-	./bin/artalk-go server $(ARGS)
+	$(BIN_NAME) server $(ARGS)
 
 dev:
 	@if [ ! -f "pkged/pkged.go" ]; then \
 		make install; \
 	fi
 	@go build \
-    	-ldflags "-s -w -X github.com/ArtalkJS/ArtalkGo/internal/config.Version=${VERSION} \
-        -X github.com/ArtalkJS/ArtalkGo/internal/config.CommitHash=${COMMIT_HASH}" \
-        -o bin/artalk-go \
-    	github.com/ArtalkJS/ArtalkGo
-	./bin/artalk-go server $(ARGS)
+    	-ldflags "-s -w -X github.com/ArtalkJS/Artalk/internal/config.Version=${VERSION} \
+        -X github.com/ArtalkJS/Artalk/internal/config.CommitHash=${COMMIT_HASH}" \
+        -o $(BIN_NAME) \
+    	github.com/ArtalkJS/Artalk
+	$(BIN_NAME) server $(ARGS)
 
 test:
 	$(GOTEST) -timeout 20m ./internal/...

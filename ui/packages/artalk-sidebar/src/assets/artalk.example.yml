@@ -24,7 +24,7 @@ db:
   # 数据库类型 ["sqlite", "mysql", "pgsql", "mssql"]
   type: "sqlite"
   # 数据库文件 (仅 SQLite 数据库需填写)
-  file: "./data/artalk-go.db"
+  file: "./data/artalk.db"
   # 数据库名称
   name: "artalk"
   # 数据库地址
@@ -45,7 +45,7 @@ log:
   # 启用日志
   enabled: true
   # 日志文件路径
-  filename: "./data/artalk-go.log"
+  filename: "./data/artalk.log"
 
 # 缓存
 cache:

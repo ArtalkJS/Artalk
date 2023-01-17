@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const DEFAULT_CONF_FILE = "artalk-go.yml"
+const DEFAULT_CONF_FILE = "artalk.yml"
 
 var (
 	kf     = koanf.New(".")

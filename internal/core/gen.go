@@ -15,7 +15,7 @@ import (
 func Gen(genType string, specificPath string, overwrite bool) {
 	// 参数
 	if genType == "config" || genType == "conf" {
-		genType = "artalk-go.example.yml"
+		genType = "artalk.example.yml"
 	}
 
 	genPath := filepath.Base(genType)
@@ -34,7 +34,7 @@ func Gen(genType string, specificPath string, overwrite bool) {
 	}
 
 	// 自动生成 app_key
-	if strings.Contains(filepath.Base(genType), "artalk-go.example.yml") {
+	if strings.Contains(filepath.Base(genType), "artalk.example.yml") {
 		str := string(buf)
 		appKey := RandStringRunes(16)
 		str = strings.Replace(str, `app_key: ""`, fmt.Sprintf(`app_key: "%s"`, appKey), 1)

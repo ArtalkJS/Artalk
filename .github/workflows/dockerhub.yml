@@ -38,7 +38,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/artalk-go
+            ${{ secrets.DOCKERHUB_USERNAME }}/artalk
           tags: |
             type=ref,event=branch
             type=ref,event=pr

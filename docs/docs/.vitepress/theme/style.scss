@@ -1,0 +1,142 @@
+:root {
+  --vp-c-brand: #558fb5;
+  --vp-c-brand-light: #498cb8;
+  --vp-c-brand-lighter: #549ccc;
+  --vp-c-brand-dark: #366482;
+  --vp-c-brand-darker: #244f6b;
+  --vp-code-block-bg: #f6f8fa;
+  --vp-c-divider: #dfe2e5;
+
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(90deg,#0083ff, #37dfd9);
+}
+
+.dark {
+  --vp-c-bg: #22272e;
+  --vp-c-bg-alt: #22272e;
+  --vp-code-block-bg: #2b313a;
+  --vp-c-text-2: #8094a8;
+  --vp-button-alt-bg: #1e2224;
+  --vp-button-alt-border: #2d3235;
+  --vp-c-bg-soft: #1e2224;
+  --vp-c-divider-light: #2d3235;
+  --vp-c-divider: #34404c;
+  --vp-c-black: #22272e;
+  --vp-c-bg-soft: #2b313a;
+}
+
+.VPHome .clip {
+  font-weight: 500;
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+  display: inline-block;
+}
+
+.VPHome .VPButton.brand {
+  border-color: #0083ff;
+  color: #fff;
+  background-color: #0083ff;
+
+  &:hover {
+    border-color: #007CF0;
+    color: #fff;
+    background-color: #007CF0;
+  }
+}
+
+/** 一起摇摆 **/
+.wave {
+  display: inline-block;
+  transform-origin: center bottom;
+  animation:upAnimation 2.33s ease .8s 3 both;
+}
+@keyframes upAnimation {
+  0% {
+    transform: rotate(0deg);
+    transition-timing-function:cubic-bezier(0.215, .61, .355, 1);
+  }
+  10% {
+    transform: rotate(-12deg);
+    transition-timing-function:cubic-bezier(0.215, .61, .355, 1);
+  }
+  20% {
+    transform: rotate(12deg);
+    transition-timing-function:cubic-bezier(0.215, .61, .355, 1);
+  }
+  28% {
+    transform: rotate(-10deg);
+    transition-timing-function:cubic-bezier(0.215, .61, .355, 1);
+  }
+  36% {
+    transform: rotate(10deg);
+    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+  }
+  42% {
+    transform: rotate(-8deg);
+    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+  }
+  48% {
+    transform: rotate(8deg);
+    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+  }
+  52% {
+    transform: rotate(-4deg);
+    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+  }
+  56% {
+    transform: rotate(4deg);
+    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+  }
+  60% {
+    transform: rotate(0deg);
+    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+  }
+  100% {
+    transform: rotate(0deg);
+    transition-timing-function:cubic-bezier(0.215, .61, .355, 1);
+  }
+}
+
+.vp-doc > div > img {
+  max-width: 100%;
+  margin: 1.5em auto;
+}
+
+img[atk-emoticon] {
+  display: initial;
+}
+
+/* 由于 body 未添加一致的 transition，导致其他地方暗黑模式切换加 transition 比较怪 */
+.vp-doc div[class*='language-'] { transition: none; }
+.vp-doc :not(pre) > code { transition: none; }
+
+.vp-doc {
+  table {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    display: block;
+    overflow-x: auto
+  }
+
+  td,th {
+    padding: .6em 1em;
+  }
+}
+
+/* 侧边栏 */
+.VPSidebar::-webkit-scrollbar {
+  width: 7px
+}
+
+.VPSidebar::-webkit-scrollbar-track {
+  background-color: transparent
+}
+
+.VPSidebar::-webkit-scrollbar-thumb {
+  background-color: var(--vp-c-divider)
+}
+
+// details block patch
+.custom-block.details > summary {
+  cursor: pointer;
+}

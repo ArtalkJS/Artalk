@@ -2,17 +2,15 @@
 
 set -e
 
-IMAGE_NAME="artalk"
-REPO_NAME="artalk/artalk"
-
+IMAGE_NAME="artalk/artalk"
 VERSION=$(git describe --tags --abbrev=0)
 
 if [[ $* == *--push* ]]
 then
     # tag and push image
     for tag in {${VERSION},latest}; do
-        docker image tag ${IMAGE_NAME} ${REPO_NAME}:${tag}
-        docker push ${REPO_NAME}:${tag}
+        docker image tag ${IMAGE_NAME} ${IMAGE_NAME}:${tag}
+        docker push ${IMAGE_NAME}:${tag}
     done
 else
     # build

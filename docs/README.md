@@ -1,6 +1,6 @@
 ## Artalk Documentation
 
-> the documentation of Artalk
+> The Documentation of Artalk
 
 ## Build
 

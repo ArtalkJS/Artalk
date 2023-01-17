@@ -60,7 +60,7 @@ $ git clone https://github.com/ArtalkJS/Artalk
 $ cd Artalk
 
 # 构建镜像
-$ make docker-docker
+$ make docker-build
 
 # 发布镜像
 $ make docker-push

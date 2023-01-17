@@ -7,7 +7,14 @@ on:
 
 jobs:
   deploy:
+    if: github.repository == 'ArtalkJS/Artalk'
+
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./docs  # set for building docs
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -37,6 +44,6 @@ jobs:
         secret_key: ${{ secrets.TENCENT_CLOUD_SECRET_KEY }}
         cos_bucket: ${{ secrets.DOCS_CN_COS_BUCKET }}
         cos_region: ${{ secrets.DOCS_CN_COS_REGION }}
-        local_path: docs/.vitepress/dist/
+        local_path: .vitepress/dist/
         remote_path: /
         clean: true

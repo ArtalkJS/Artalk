@@ -4,7 +4,7 @@ import (
 	"io"
 	"os/exec"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/sirupsen/logrus"
 )
 

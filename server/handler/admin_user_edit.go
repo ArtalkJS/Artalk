@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/internal/cache"
-	"github.com/ArtalkJS/ArtalkGo/internal/query"
-	"github.com/ArtalkJS/ArtalkGo/internal/utils"
-	"github.com/ArtalkJS/ArtalkGo/server/common"
+	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/ArtalkJS/Artalk/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
 

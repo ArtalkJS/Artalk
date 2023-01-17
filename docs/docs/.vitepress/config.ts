@@ -146,7 +146,7 @@ export default defineConfig({
           },
           {
             text: '后端仓库',
-            link: 'https://github.com/ArtalkJS/ArtalkGo',
+            link: 'https://github.com/ArtalkJS/Artalk',
           },
           {
             text: '文档仓库',

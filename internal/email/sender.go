@@ -3,8 +3,8 @@ package email
 import (
 	"bytes"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/entity"
 	"gopkg.in/gomail.v2"
 )
 

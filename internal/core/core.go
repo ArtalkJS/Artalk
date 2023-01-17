@@ -5,10 +5,10 @@ import (
 	"os"
 	"sync"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/cache"
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/db"
-	"github.com/ArtalkJS/ArtalkGo/internal/notify_launcher"
+	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/notify_launcher"
 
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"

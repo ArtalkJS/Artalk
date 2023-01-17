@@ -3,11 +3,11 @@ prev: install.md
 next: config.md
 ---
 
-# ArtalkGo
+# Artalk
 
 Artalk 拥有一个 Golang 语言编写的后端程序。
 
-[GitHub 代码仓库](https://github.com/ArtalkJS/ArtalkGo)
+[GitHub 代码仓库](https://github.com/ArtalkJS/Artalk)
 
 - 高效快速
 - 异步执行

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/cache"
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/sirupsen/logrus"
 )
 

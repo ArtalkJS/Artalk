@@ -1,8 +1,8 @@
 package email
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/sirupsen/logrus"
 )
 

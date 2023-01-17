@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/db"
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
-	"github.com/ArtalkJS/ArtalkGo/internal/query"
-	"github.com/ArtalkJS/ArtalkGo/internal/utils"
+	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/cheggaaa/pb/v3"
 )
 

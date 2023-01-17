@@ -219,7 +219,7 @@
 
 | 字段名 | 数据类型 | 默认 | 说明 |
 | ----- | ------- | :-: | --- |
-| `app` | String | `artalk-go` | Artalk 后端程序名 |
+| `app` | String | `artalk` | Artalk 后端程序名 |
 | `version` | String | - | Artalk 后端程序版本号 |
 | `commit_hash` | String | - | Artalk 后端程序 Git 提交哈希值 |
 | `fe_min_version` | String | - | Artalk 后端程序所需前端最低版本 |

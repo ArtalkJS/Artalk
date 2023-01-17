@@ -6,9 +6,9 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/captcha"
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/server/common"
+	"github.com/ArtalkJS/Artalk/internal/captcha"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 )

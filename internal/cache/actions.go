@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/eko/gocache/lib/v4/store"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/singleflight"

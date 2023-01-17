@@ -3,13 +3,13 @@ package handler
 import (
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/anti_spam"
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
-	"github.com/ArtalkJS/ArtalkGo/internal/notify_launcher"
-	"github.com/ArtalkJS/ArtalkGo/internal/query"
-	"github.com/ArtalkJS/ArtalkGo/internal/utils"
-	"github.com/ArtalkJS/ArtalkGo/server/common"
+	"github.com/ArtalkJS/Artalk/internal/anti_spam"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/notify_launcher"
+	"github.com/ArtalkJS/Artalk/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 )

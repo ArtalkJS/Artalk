@@ -1,7 +1,7 @@
 package email
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/config"
 	aliyun_email "github.com/qwqcode/go-aliyun-email"
 	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"

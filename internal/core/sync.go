@@ -3,9 +3,9 @@ package core
 import (
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
-	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/query"
 )
 
 func SyncFromConf() {

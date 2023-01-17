@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/cache"
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/ArtalkJS/Artalk/internal/entity"
 )
 
 func FindComment(id uint, checkers ...func(*entity.Comment) bool) entity.Comment {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/core"
-	"github.com/ArtalkJS/ArtalkGo/server"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/ArtalkJS/Artalk/server"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/sirupsen/logrus"

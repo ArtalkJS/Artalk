@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/cache"
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/eko/gocache/lib/v4/store"
 	"github.com/gofiber/fiber/v2"
 	imgCaptcha "github.com/steambap/captcha"

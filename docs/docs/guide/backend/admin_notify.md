@@ -1,6 +1,6 @@
 # 多元推送
 
-你可以配置 `admin_notify`，让 ArtalkGo 以多种方式通知管理员。
+你可以配置 `admin_notify`，让 Artalk 以多种方式通知管理员。
 
 支持 **Telegram**、**飞书**、**钉钉**、**Bark**、**Slack**、**LINE**，并且多种方式可以同时启用。
 
@@ -94,7 +94,7 @@ admin_notify:
 
 ![](/images/notify/tg-1.png)
 
-标红的文字就是你之后需要在 ArtalkGo 配置中填入的 `api_token`。
+标红的文字就是你之后需要在 Artalk 配置中填入的 `api_token`。
 
 配置中的 `receivers` 填入需要接受消息的账号数字 ID，可以搜索机器人 `@RawDataBot` 获取如图：
 
@@ -104,7 +104,7 @@ admin_notify:
 
 ::: tip
 
-鉴于复杂的网络环境，如需使用代理，请在 ArtalkGo 启动之前配置环境变量，例如：
+鉴于复杂的网络环境，如需使用代理，请在 Artalk 启动之前配置环境变量，例如：
 
 ```sh
 export https_proxy=http://127.0.0.1:7890
@@ -134,7 +134,7 @@ admin_notify:
 
 <img src="/images/notify/lark-2.png" width="700px">
 
-复制如上图的 WebHook 地址，并修改 ArtalkGo 的 `webhook_url` 配置即可。
+复制如上图的 WebHook 地址，并修改 Artalk 的 `webhook_url` 配置即可。
 
 <img src="/images/notify/lark-3.png" width="400px">
 
@@ -165,7 +165,7 @@ admin_notify:
 
 [Bark](https://github.com/Finb/Bark) 是一款开源的 iOS App，并且[支持自托管](https://github.com/Finb/bark-server)，你能使用 Bark 轻松地推送消息给你的 iOS 设备。
 
-你可以在 App Store 搜索下载，并获得需要填入 ArtalkGo 的 `server` 配置项：
+你可以在 App Store 搜索下载，并获得需要填入 Artalk 的 `server` 配置项：
 
 
 <img src="/images/notify/bark.png" width="700px">
@@ -231,9 +231,9 @@ noise_mode 默认为关闭状态，当该项设置为 `false` 时，站内仅向
 
 开启 WebHook 后，创建新评论将以 **POST** 方式携带 `application/json` 类型的 Body 数据请求设定的 WebHook 地址。
 
-你可以编写自己的 Server 端代码，处理来自 ArtalkGo 的请求。
+你可以编写自己的 Server 端代码，处理来自 Artalk 的请求。
 
-**ArtalkGo 配置文件**
+**Artalk 配置文件**
 
 ```yaml
 admin_notify:
@@ -359,7 +359,7 @@ import (
     "net/http"
 )
 
-type ArtalkGoNotify struct {
+type ArtalkNotify struct {
 	NotifySubject string      `json:"notify_subject"`
 	NotifyBody    string      `json:"notify_body"`
 	Comment       interface{} `json:"comment"`
@@ -368,7 +368,7 @@ type ArtalkGoNotify struct {
 
 func webhookHandler(rw http.ResponseWriter, req *http.Request) {
     decoder := json.NewDecoder(req.Body)
-    var notify ArtalkGoNotify
+    var notify ArtalkNotify
     err := decoder.Decode(&notify)
     if err != nil {
         panic(err)

@@ -3,8 +3,8 @@ package main
 import (
 	"embed"
 
-	"github.com/ArtalkJS/ArtalkGo/cmd"
-	"github.com/ArtalkJS/ArtalkGo/internal/pkged"
+	"github.com/ArtalkJS/Artalk/cmd"
+	"github.com/ArtalkJS/Artalk/internal/pkged"
 )
 
 //go:embed public/*

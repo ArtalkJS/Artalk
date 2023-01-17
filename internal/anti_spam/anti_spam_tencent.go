@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/sirupsen/logrus"
 
 	// 腾讯啊腾讯.... 怎么这么多引入啊？

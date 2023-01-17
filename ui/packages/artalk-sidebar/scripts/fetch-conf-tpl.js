@@ -7,20 +7,20 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 fs.copyFile(path.join(__dirname, '../../../../artalk.example.yml'), path.join(__dirname, '../src/assets/artalk.example.yml'), (err) => {
-  if (!err) console.log("\nArtalkGo config file 'artalk.example.yml' loaded.\n")
+  if (!err) console.log("\nArtalk config file 'artalk.example.yml' loaded.\n")
   else console.error("Failed to load config file 'artalk.example.yml':\n\n", err, "\n");
 })
 
 // const file = fs.createWriteStream()
 
 // https.get(
-//   'https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/master/artalk.example.yml',
+//   'https://raw.githubusercontent.com/ArtalkJS/Artalk/master/artalk.example.yml',
 //   (resp) => {
 //     resp.pipe(file)
 
 //     file.on('finish', () => {
 //       file.close()
-//       console.log("\nArtalkGo 'artalk.example.yml' file download completed.\n")
+//       console.log("\nArtalk 'artalk.example.yml' file download completed.\n")
 //     })
 //   }
 // ).on('error', (e) => {

@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/gofiber/fiber/v2"
 )
 

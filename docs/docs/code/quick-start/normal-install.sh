@@ -1,4 +1,4 @@
-$ tar xvzf artalk-go.tar.gz
-$ cd artalk-go
-$ vim artalk-go.yml
-$ ./artalk-go server
+$ tar xvzf artalk.tar.gz
+$ cd artalk
+$ vim artalk.yml
+$ ./artalk server

@@ -11,7 +11,7 @@
 
 > 🌌 A Self-hosted comment system
 
-[简体中文](./README.md) / [Documentation](https://artalk.js.org) / [Releases](https://github.com/ArtalkJS/ArtalkGo/releases) / [ArtalkGo](https://github.com/ArtalkJS/ArtalkGo)
+[简体中文](./README.md) / [Documentation](https://artalk.js.org) / [Releases](https://github.com/ArtalkJS/Artalk/releases) / [Artalk](https://github.com/ArtalkJS/Artalk)
 
 ---
 
@@ -82,7 +82,7 @@ mkdir Artalk
 cd Artalk
 
 # Download config template
-curl -L https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/master/artalk.example.yml > conf.yml
+curl -L https://raw.githubusercontent.com/ArtalkJS/Artalk/master/artalk.example.yml > conf.yml
 
 docker run -d \
   --name artalk \

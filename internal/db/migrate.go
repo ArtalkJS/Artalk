@@ -1,6 +1,6 @@
 package db
 
-import "github.com/ArtalkJS/ArtalkGo/internal/entity"
+import "github.com/ArtalkJS/Artalk/internal/entity"
 
 func MigrateModels() {
 	// Migrate the schema

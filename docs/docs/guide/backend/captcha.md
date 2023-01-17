@@ -1,6 +1,6 @@
 # 验证码
 
-ArtalkGo 内置图片验证码功能，你可以配置操作频率限制，当超过限度时激活验证码。
+Artalk 内置图片验证码功能，你可以配置操作频率限制，当超过限度时激活验证码。
 
 此外，你也可以接入[极验](https://www.geetest.com/)，拥有一个滑动验证码。
 
@@ -65,7 +65,7 @@ captcha:
 
 ## Geetest 极验
 
-ArtalkGo 支持接入 [Geetest 极验](https://www.geetest.com/adaptive-captcha) 第四代「行为验」，启用极验后，验证码将切换为滑动验证码。
+Artalk 支持接入 [Geetest 极验](https://www.geetest.com/adaptive-captcha) 第四代「行为验」，启用极验后，验证码将切换为滑动验证码。
 
 你需要在官网注册账号，并申请获得 `captcha_id` 和 `captcha_key`，并填入配置文件：
 

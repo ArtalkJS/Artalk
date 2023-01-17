@@ -3,11 +3,11 @@ package server
 import (
 	"net/http"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/pkged"
-	"github.com/ArtalkJS/ArtalkGo/server/common"
-	h "github.com/ArtalkJS/ArtalkGo/server/handler"
-	"github.com/ArtalkJS/ArtalkGo/server/middleware"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/pkged"
+	"github.com/ArtalkJS/Artalk/server/common"
+	h "github.com/ArtalkJS/Artalk/server/handler"
+	"github.com/ArtalkJS/Artalk/server/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/pprof"

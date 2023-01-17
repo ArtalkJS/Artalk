@@ -6,10 +6,10 @@
 
 ```bash
 docker run -d \
-    --name artalk-go \
+    --name artalk \
     -p 8080:23366 \
     -v $(pwd)/data:/data \
-    artalk/artalk-go
+    artalk/artalk
 ```
 
 > 假设域名 `http://your_domain` 已正确添加 DNS 记录并指向你的服务器 IP
@@ -19,7 +19,7 @@ docker run -d \
 执行命令创建管理员账户：
 
 ```bash
-docker exec -it artalk-go artalk admin
+docker exec -it artalk artalk admin
 ```
 
 在你的网站引入 Artalk 程序内嵌的的前端 CSS、JS 资源并初始化：
@@ -54,9 +54,9 @@ new Artalk({
 
 ## 普通方式部署
 
-1. 前往 [GitHub Release](https://github.com/ArtalkJS/ArtalkGo/releases) 下载程序压缩包
-2. 提取压缩包：`tar -zxvf artalk-go_版本号_系统_架构.tar.gz`
-3. 运行程序 `./artalk-go server`
+1. 前往 [GitHub Release](https://github.com/ArtalkJS/Artalk/releases) 下载程序压缩包
+2. 提取压缩包：`tar -zxvf artalk_版本号_系统_架构.tar.gz`
+3. 运行程序 `./artalk server`
 4. 前端配置
 
     ```js
@@ -72,12 +72,12 @@ new Artalk({
 
 |文件名|操作系统|CPU 架构|
 |:-|:-:|:-:|
-|artalk-go_linux_amd64.tar.gz|Linux|x86_64|
-|artalk-go_linux_arm64.tar.gz|Linux|ARM64|
-|artalk-go_linux_arm7.tar.gz|Linux|ARMv7|
-|artalk-go_windows_amd64.zip|Windows|x86_64|
-|artalk-go_darwin_arm64.tar.gz|macOS|Apple Silicon|
-|artalk-go_darwin_amd64.tar.gz|macOS|Intel Chip <sup>~~(什么狗屎)~~</sup>|
+|artalk_linux_amd64.tar.gz|Linux|x86_64|
+|artalk_linux_arm64.tar.gz|Linux|ARM64|
+|artalk_linux_arm7.tar.gz|Linux|ARMv7|
+|artalk_windows_amd64.zip|Windows|x86_64|
+|artalk_darwin_arm64.tar.gz|macOS|Apple Silicon|
+|artalk_darwin_amd64.tar.gz|macOS|Intel Chip <sup>~~(什么狗屎)~~</sup>|
 
 ## Docker Compose 部署
 
@@ -87,8 +87,8 @@ new Artalk({
 version: "3.5"
 services:
   artalk:
-    container_name: artalk-go
-    image: artalk/artalk-go
+    container_name: artalk
+    image: artalk/artalk
     ports:
       - 8080:23366
     volumes:

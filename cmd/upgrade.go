@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/core"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/blang/semver"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 	"github.com/sirupsen/logrus"
@@ -17,7 +17,7 @@ var upgradeCmd = &cobra.Command{
 	Use:     "upgrade",
 	Aliases: []string{"update"},
 	Short:   "升级到最新版",
-	Long:    "将 ArtalkGo 升级到最新版本，\n更新源为 GitHub Releases，\n更新需要重启 ArtalkGo 才能生效。",
+	Long:    "将 Artalk 升级到最新版本，\n更新源为 GitHub Releases，\n更新需要重启 Artalk 才能生效。",
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		// loadCore() // 装载核心
@@ -25,7 +25,7 @@ var upgradeCmd = &cobra.Command{
 
 		logrus.Info("从 GitHub Release 检索更新中...")
 
-		latest, found, err := selfupdate.DetectLatest("ArtalkJS/ArtalkGo")
+		latest, found, err := selfupdate.DetectLatest("ArtalkJS/Artalk")
 		if err != nil {
 			logrus.Fatal("Error occurred while detecting version: ", err)
 		}

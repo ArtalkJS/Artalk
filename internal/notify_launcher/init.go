@@ -3,8 +3,8 @@ package notify_launcher
 import (
 	"context"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/email"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/email"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/dingding"
 	"github.com/nikoksr/notify/service/line"

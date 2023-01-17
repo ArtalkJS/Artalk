@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/server/common"
-	"github.com/ArtalkJS/ArtalkGo/server/middleware/cors"
+	"github.com/ArtalkJS/Artalk/server/common"
+	"github.com/ArtalkJS/Artalk/server/middleware/cors"
 	"github.com/gofiber/fiber/v2"
 )
 

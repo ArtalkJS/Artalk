@@ -35,8 +35,8 @@ builds:
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: &common_ldflags |
-      -X github.com/ArtalkJS/ArtalkGo/internal/config.Version={{.Version}}
-      -X github.com/ArtalkJS/ArtalkGo/internal/config.CommitHash={{ .ShortCommit }}
+      -X github.com/ArtalkJS/Artalk/internal/config.Version={{.Version}}
+      -X github.com/ArtalkJS/Artalk/internal/config.CommitHash={{ .ShortCommit }}
       -s -w
 
   # Windows (amd_64)
@@ -53,7 +53,7 @@ builds:
     ldflags: *common_ldflags
     flags:
       # https://go-review.googlesource.com/c/go/+/224588/
-      # https://github.com/ArtalkJS/ArtalkGo/issues/35
+      # https://github.com/ArtalkJS/Artalk/issues/35
       - -tags=timetzdata
 
   # Darwin (amd_64)

@@ -11,7 +11,7 @@ if [ ! -e /data/artalk.yml ] && [ "$1" != 'gen' ]; then
         cp /conf.yml /data/artalk.yml
         upMsg=""
         upMsg+=$'# [v2.1.9+ Updated]\n'
-        upMsg+=$'# The new version of the ArtalkGo container recommends mounting\n'
+        upMsg+=$'# The new version of the Artalk container recommends mounting\n'
         upMsg+=$'# an entire folder instead of a single file to avoid some issues.\n'
         upMsg+=$'#\n'
         upMsg+=$'# The original config file has been moved to the "/data/" folder,\n'
@@ -22,5 +22,5 @@ if [ ! -e /data/artalk.yml ] && [ "$1" != 'gen' ]; then
     fi
 fi
 
-# Run ArtalkGo
+# Run Artalk
 artalk "$@"

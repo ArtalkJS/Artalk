@@ -1,4 +1,4 @@
-### build ArtalkGo
+### build Artalk
 FROM golang:1.19.4-alpine3.17 as builder
 
 WORKDIR /source
@@ -9,11 +9,11 @@ RUN set -ex \
     && apk add make git gcc musl-dev nodejs bash npm\
     && npm install -g pnpm@7.25.0
 
-COPY . ./ArtalkGo
+COPY . ./Artalk
 
 # build
 RUN set -ex \
-    && cd ./ArtalkGo \
+    && cd ./Artalk \
     && git fetch --tags -f \
     && export VERSION=$(git describe --tags --abbrev=0) \
     && export COMMIT_SHA=$(git rev-parse --short HEAD) \
@@ -28,7 +28,7 @@ ARG TZ="Asia/Shanghai"
 
 ENV TZ ${TZ}
 
-COPY --from=builder /source/ArtalkGo/bin/artalk /artalk
+COPY --from=builder /source/Artalk/bin/artalk /artalk
 
 RUN apk upgrade \
     && apk add bash tzdata \
@@ -47,7 +47,7 @@ RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-# expose ArtalkGo default port
+# expose Artalk default port
 EXPOSE 23366
 
 CMD ["server", "--host", "0.0.0.0", "--port", "23366"]

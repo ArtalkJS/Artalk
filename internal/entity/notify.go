@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/utils"
+	"github.com/ArtalkJS/Artalk/internal/utils"
 	"gorm.io/gorm"
 )
 

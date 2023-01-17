@@ -8,9 +8,9 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/db"
-	"github.com/ArtalkJS/ArtalkGo/internal/utils"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/go-testfixtures/testfixtures/v3"
 )
 

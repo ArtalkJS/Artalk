@@ -3,8 +3,8 @@ package common
 import (
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/utils"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/gofiber/fiber/v2"
 )
 

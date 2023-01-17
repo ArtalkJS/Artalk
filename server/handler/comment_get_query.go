@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/db"
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
-	"github.com/ArtalkJS/ArtalkGo/internal/query"
-	"github.com/ArtalkJS/ArtalkGo/server/common"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/query"
+	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )

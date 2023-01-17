@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/core"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +48,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.SetVersionTemplate("ArtalkGo ({{printf \"%s\" .Version}})\n")
+	rootCmd.SetVersionTemplate("Artalk ({{printf \"%s\" .Version}})\n")
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "配置文件路径 (defaults are './artalk.yml')")
 	rootCmd.PersistentFlags().StringVarP(&workDir, "workdir", "w", "", "程序工作目录 (defaults are './')")
 
@@ -57,7 +57,7 @@ func init() {
 		Use:   "version",
 		Short: "输出版本信息",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("ArtalkGo (" + Version + ")")
+			fmt.Println("Artalk (" + Version + ")")
 		},
 	}
 	rootCmd.AddCommand(versionCmd)

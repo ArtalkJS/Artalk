@@ -17,7 +17,7 @@ Artran = Art + Ran (艺术 + 奔跑)
     "id": "123", 
     "rid": "233", 
     "content": "Hello Artalk", 
-    "ua": "ArtalkGo/6.6", 
+    "ua": "Artalk/6.6", 
     "ip": "233.233.233.233",
     "created_at": "2021-10-28 20:50:15 +0800 +0800", 
     "updated_at": "2021-10-28 20:50:15 +0800 +0800", 
@@ -62,7 +62,7 @@ Artran = Art + Ran (艺术 + 奔跑)
 转换为 `.artrans` 格式的数据文件可以导入 Artalk：
 
 - **前端导入**：你可在「[控制中心](./frontend/sidebar.md#控制中心)」找到「迁移」选项卡，并根据提示导入 Artrans。
-- **命令行导入**：执行 `artalk-go import -h` 查阅帮助文档。
+- **命令行导入**：执行 `artalk import -h` 查阅帮助文档。
 
 ## 获取源数据
 
@@ -160,16 +160,16 @@ typecho-20220424-202246.artrans
 
 ## 命令行导入
 
-执行 `artalk-go import -h` 查看帮助文档。
+执行 `artalk import -h` 查看帮助文档。
 
 ```bash
-./artalk-go import 数据类型 [参数...]
+./artalk import 数据类型 [参数...]
 ```
 
 参数格式遵循 `<key>:<value>`，例如：
 
 ```bash
-./artalk-go import 类型 t_name:"Site" t_url:"https://xx.com" json_file:"文件路径"
+./artalk import 类型 t_name:"Site" t_url:"https://xx.com" json_file:"文件路径"
 ```
 
 前端的导入同样可以手动输入启动参数，例如：
@@ -182,7 +182,7 @@ typecho-20220424-202246.artrans
 }
 ```
 
-ArtalkGo 导入功能的通用启动参数：
+Artalk 导入功能的通用启动参数：
 
 |   参数   | 类型   | 说明         |
 | :------: | ------ | ------------ |
@@ -197,16 +197,16 @@ ArtalkGo 导入功能的通用启动参数：
 
 ### 命令行备份
 
-导出：`artalk-go export ./artrans`
+导出：`artalk export ./artrans`
 
-导入：`artalk-go import ./artrans`
+导入：`artalk import ./artrans`
 
 ### 高级玩法
 
-执行 `artalk-go export` 可直接 “标准输出”，并进行 “管道” 或 “输出重定向” 等操作，例如：
+执行 `artalk export` 可直接 “标准输出”，并进行 “管道” 或 “输出重定向” 等操作，例如：
 
 ```bash
-artalk-go export | gzip -9 | ssh username@remote_ip "cat > ~/backup/artrans.gz"
+artalk export | gzip -9 | ssh username@remote_ip "cat > ~/backup/artrans.gz"
 ```
 
 ## 写在结尾

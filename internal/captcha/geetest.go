@@ -11,7 +11,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/tidwall/gjson"
 )
 

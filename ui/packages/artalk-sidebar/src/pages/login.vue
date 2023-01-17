@@ -68,7 +68,7 @@ function login(username?: string) {
       <button type="submit">登陆</button>
     </form>
     <div class="copyright">
-      Powered by <a href="https://artalk.js.org" target="_blank">ArtalkGo</a> (v{{version}} / {{buildHash}})
+      Powered by <a href="https://artalk.js.org" target="_blank">Artalk</a> (v{{version}} / {{buildHash}})
     </div>
 
     <div v-if="userSelector" class="layer">

@@ -82,7 +82,7 @@ Artalk 社区是包容开放的社区，我们欢迎不同水平的人员帮助 
 ::: tip 立即为社区贡献力量？
 
  - 维护 Artalk 前端（仓库地址 [@ArtalkJS/Artalk](https://github.com/ArtalkJS/Artalk)）
- - 维护 Artalk 后端（仓库地址 [@ArtalkJS/ArtalkGo](https://github.com/ArtalkJS/ArtalkGo)）
+ - 维护 Artalk 后端（仓库地址 [@ArtalkJS/Artalk](https://github.com/ArtalkJS/Artalk)）
  - 完善 Artalk 文档（仓库地址 [@ArtalkJS/Docs](https://github.com/ArtalkJS/Docs)）
  - 改进数据迁移工具（仓库地址 [@ArtalkJS/Artransfer](https://github.com/ArtalkJS/Artransfer)）
  - 分享你的想法创意（下方留言 / [Discussions](https://github.com/ArtalkJS/Artalk/discussions)）

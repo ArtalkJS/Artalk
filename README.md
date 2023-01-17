@@ -11,7 +11,7 @@
 
 > 🌌 Golang 自托管评论系统
 
-[English](./README.en.md) / [官方文档](https://artalk.js.org) / [最新后端](https://github.com/ArtalkJS/ArtalkGo/releases) / [ArtalkGo](https://github.com/ArtalkJS/ArtalkGo)
+[English](./README.en.md) / [官方文档](https://artalk.js.org) / [最新后端](https://github.com/ArtalkJS/Artalk/releases) / [Artalk](https://github.com/ArtalkJS/Artalk)
 
 ---
 
@@ -114,7 +114,7 @@ docker-compose up -d
 
 ## TODOs 
 
-- [x] [Golang 后端](https://github.com/ArtalkJS/ArtalkGo)
+- [x] [Golang 后端](https://github.com/ArtalkJS/Artalk)
 - [x] 多数据库支持
   - [x] SQLite
   - [x] MySQL

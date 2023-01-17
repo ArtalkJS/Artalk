@@ -3,7 +3,7 @@ package query
 import (
 	"testing"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/entity"
 )
 
 func Test_GetPageAccessibleURL(t *testing.T) {

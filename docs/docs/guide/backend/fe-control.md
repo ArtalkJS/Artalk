@@ -4,7 +4,7 @@
 
 ## 在前端引入内置的资源
 
-后端 ArtalkGo 服务器中内置了可供前端引入的 JS 和 CSS 资源文件：
+后端 Artalk 服务器中内置了可供前端引入的 JS 和 CSS 资源文件：
 
 ```html
 <!-- CSS -->
@@ -14,9 +14,9 @@
 <script src="https://<artalk_go_server>/dist/Artalk.js"></script>
 ```
 
-> 提示：将 `<artalk_go_server>` 替换为你的 ArtalkGo 服务器地址。
+> 提示：将 `<artalk_go_server>` 替换为你的 Artalk 服务器地址。
 
-这样如果升级后端 ArtalkGo 程序，前端无需更换新版 ArtalkJS 的引入地址，来使之与后端程序兼容。
+这样如果升级后端 Artalk 程序，前端无需更换新版 ArtalkJS 的引入地址，来使之与后端程序兼容。
 
 注：内置的前端 JS 和 CSS 始终与后端版本兼容，但不保证是最新的版本。
 
@@ -32,7 +32,7 @@ new Artalk({
 })
 ```
 
-然后，在后端 ArtalkGo 的配置文件中添加 `frontend` 字段内容，例如 `artalk-go.yml` 添加：
+然后，在后端 Artalk 的配置文件中添加 `frontend` 字段内容，例如 `artalk.yml` 添加：
 
 ```yaml
 frontend:
@@ -46,7 +46,7 @@ frontend:
 
 这样就无需在前端改动配置，前端的配置始终跟随后端。
 
-一份完整的后端 `frontend` 字段配置文件可供参考：[artalk-go.frontend.example.yml](https://github.com/ArtalkJS/ArtalkGo/blob/master/artalk-go.frontend.example.yml)
+一份完整的后端 `frontend` 字段配置文件可供参考：[artalk.frontend.example.yml](https://github.com/ArtalkJS/Artalk/blob/master/artalk.frontend.example.yml)
 
 ::: tip
 

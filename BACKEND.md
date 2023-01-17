@@ -2,13 +2,13 @@
 <img src="./docs/artalk.png" alt="Artalk" width="100%">
 </p>
 
-# ArtalkGo
+# Artalk
 
-[![CircleCI](https://circleci.com/gh/ArtalkJS/ArtalkGo/tree/master.svg?style=svg)](https://circleci.com/gh/ArtalkJS/ArtalkGo/tree/master)
-[![CI to Docker Hub](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/ArtalkJS/ArtalkGo/actions/workflows/dockerhub.yml) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_shield)
+[![CircleCI](https://circleci.com/gh/ArtalkJS/Artalk/tree/master.svg?style=svg)](https://circleci.com/gh/ArtalkJS/Artalk/tree/master)
+[![CI to Docker Hub](https://github.com/ArtalkJS/Artalk/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/ArtalkJS/Artalk/actions/workflows/dockerhub.yml) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk?ref=badge_shield)
 [![Docker Pulls](https://img.shields.io/docker/pulls/artalk/artalk?style=flat-square)](https://hub.docker.com/r/artalk/artalk)
 
-> ArtalkGo: Golang backend of Artalk.
+> Artalk: Golang backend of Artalk.
 
 前往：[“**官方文档 · 后端部分**”](https://artalk.js.org/guide/backend/config.html)
 
@@ -42,8 +42,8 @@ $ make all
 
 ```sh
 # 克隆项目
-$ git clone https://github.com/ArtalkJS/ArtalkGo
-$ cd ArtalkGo
+$ git clone https://github.com/ArtalkJS/Artalk
+$ cd Artalk
 
 # 构建镜像
 $ docker compose build
@@ -56,8 +56,8 @@ $ docker compose up -d
 
 ```sh
 # 克隆项目
-$ git clone https://github.com/ArtalkJS/ArtalkGo
-$ cd ArtalkGo
+$ git clone https://github.com/ArtalkJS/Artalk
+$ cd Artalk
 
 # 构建镜像
 $ make docker-docker
@@ -72,4 +72,4 @@ Reference to https://github.com/ArtalkJS/Artalk#todos
 
 ## License
 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalkGo?ref=badge_large)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk?ref=badge_large)

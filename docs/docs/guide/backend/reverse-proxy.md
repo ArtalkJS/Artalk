@@ -5,7 +5,7 @@
 假定：
 
 - 你想绑定的域名是：`artalk.your_domain.com`
-- ArtalkGo 本地地址：`http://localhost:23366`
+- Artalk 本地地址：`http://localhost:23366`
 
 以 Ubuntu 20.04 为例：
 
@@ -64,7 +64,7 @@ new Artalk({ server: "http://artalk.your_domain.com" })
 
 注意配置文件权限，以及反代目标 URL 可访问性
 
-尤其是运行在 Docker 容器内的 artalk-go，注意检查 IP 和端口是否能够被 Nginx 正常访问
+尤其是运行在 Docker 容器内的 artalk，注意检查 IP 和端口是否能够被 Nginx 正常访问
 :::
 
 ## Caddy
@@ -105,7 +105,7 @@ artalk.your_domain.com {
 
 ![](/images/baota-proxy/1.png)
 
-打开「反向代理」选项卡，点击「添加反向代理」，「目标 URL」填写 `http://localhost:端口号`（端口号与 ArtalkGo 端口对应），「发送域名」填写 `$host`，如图：
+打开「反向代理」选项卡，点击「添加反向代理」，「目标 URL」填写 `http://localhost:端口号`（端口号与 Artalk 端口对应），「发送域名」填写 `$host`，如图：
 
 ![](/images/baota-proxy/2.png)
 

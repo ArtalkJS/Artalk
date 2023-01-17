@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/pkged"
+	"github.com/ArtalkJS/Artalk/internal/pkged"
 	"github.com/sirupsen/logrus"
 )
 

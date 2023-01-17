@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/utils"
-	"github.com/ArtalkJS/ArtalkGo/server/common"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 )

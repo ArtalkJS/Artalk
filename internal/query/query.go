@@ -1,6 +1,6 @@
 package query
 
-import "github.com/ArtalkJS/ArtalkGo/internal/entity"
+import "github.com/ArtalkJS/Artalk/internal/entity"
 
 func GetUserAllCommentIDs(userID uint) []uint {
 	userAllCommentIDs := []uint{}

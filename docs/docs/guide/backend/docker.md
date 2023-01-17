@@ -2,11 +2,11 @@
 
 Artalk 提供后端程序的 Docker 镜像，以便加速部署流程，提供一个良好的部署体验。
 
-[Docker Hub](https://hub.docker.com/r/artalk/artalk-go) 镜像版本随代码仓库的 [Releases](https://github.com/ArtalkJS/ArtalkGo/releases) 保持同步。
+[Docker Hub](https://hub.docker.com/r/artalk/artalk) 镜像版本随代码仓库的 [Releases](https://github.com/ArtalkJS/Artalk/releases) 保持同步。
 
 ## 镜像拉取
 
-`docker pull artalk/artalk-go`
+`docker pull artalk/artalk`
 
 ## 容器创建
 
@@ -19,25 +19,25 @@ Artalk 提供后端程序的 Docker 镜像，以便加速部署流程，提供�
 常规的 Docker 容器创建可参考：
 
 ```bash
-# 为 ArtalkGo 创建一个目录
-mkdir ArtalkGo
-cd ArtalkGo
+# 为 Artalk 创建一个目录
+mkdir Artalk
+cd Artalk
 
 # 拉取 docker 镜像
-docker pull artalk/artalk-go
+docker pull artalk/artalk
 
 # 生成配置文件
-docker run -it -v $(pwd)/data:/data --rm artalk/artalk-go gen config data/artalk-go.yml
+docker run -it -v $(pwd)/data:/data --rm artalk/artalk gen config data/artalk.yml
 
 # 编辑配置文件
-vim data/artalk-go.yml
+vim data/artalk.yml
 
 # 运行 docker 容器
 docker run -d \
-  --name artalk-go \
+  --name artalk \
   -p 0.0.0.0:8080:23366 \
   -v $(pwd)/data:/data \
-  artalk/artalk-go
+  artalk/artalk
 ```
 
 然后，在前端配置填入后端地址：
@@ -55,7 +55,7 @@ new Artalk({ server: "http://your_domain:8080" })
 docker-compose restart
 
 # Docker
-docker restart artalk-go
+docker restart artalk
 ```
 
 ## 停止
@@ -65,7 +65,7 @@ docker restart artalk-go
 docker-compose stop
 
 # Docker
-docker stop artalk-go
+docker stop artalk
 ```
 
 ## 升级
@@ -83,13 +83,13 @@ docker-compose up -d
 ### Docker
 
 ```bash
-docker stop artalk-go
-docker rm artalk-go
-docker pull artalk/artalk-go
+docker stop artalk
+docker rm artalk
+docker pull artalk/artalk
 ```
 
 ::: tip
-升级可能会有配置文件等变动，请注意查看版本 Changelog，通常是在 [GitHub Release](https://github.com/ArtalkJS/ArtalkGo/releases) 页面
+升级可能会有配置文件等变动，请注意查看版本 Changelog，通常是在 [GitHub Release](https://github.com/ArtalkJS/Artalk/releases) 页面
 :::
 
 ## 拉取历史镜像
@@ -97,7 +97,7 @@ docker pull artalk/artalk-go
 镜像会随代码仓库 tags 自动构建发布，您可拉取不同版本号的镜像。
 
 ```bash
-docker pull artalk/artalk-go@版本号
+docker pull artalk/artalk@版本号
 ```
 
 ## 进入容器

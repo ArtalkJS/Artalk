@@ -8,8 +8,8 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
-	"github.com/ArtalkJS/ArtalkGo/internal/utils"
+	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/sirupsen/logrus"
 )

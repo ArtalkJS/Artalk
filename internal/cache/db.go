@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/ArtalkJS/ArtalkGo/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/db"
 	"gorm.io/gorm"
 )
 

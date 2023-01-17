@@ -1,8 +1,8 @@
 # 邮件通知
 
-启用后，当用户「新增评论」或「回复评论」时，ArtalkGo 会向「普通用户」或「管理员」发送邮件。
+启用后，当用户「新增评论」或「回复评论」时，Artalk 会向「普通用户」或「管理员」发送邮件。
 
-ArtalkGo 支持 SMTP 协议、阿里云邮件推送、调用系统 sendmail 命令等。
+Artalk 支持 SMTP 协议、阿里云邮件推送、调用系统 sendmail 命令等。
 
 完整的 `email` 配置如下：
 
@@ -308,7 +308,7 @@ email:
 </div>
 ```
 
-ArtalkGo 内置许多预设的邮件模板，例如 `mail_tpl: "default"` 使用的就是：[/email-tpl/default.html](https://github.com/ArtalkJS/ArtalkGo/blob/master/email-tpl/default.html)
+Artalk 内置许多预设的邮件模板，例如 `mail_tpl: "default"` 使用的就是：[/email-tpl/default.html](https://github.com/ArtalkJS/Artalk/blob/master/email-tpl/default.html)
 
 ## 发向管理员的邮件
 
@@ -322,4 +322,4 @@ admin_notify:
 
 注：旧版 `email.mail_subject_to_admin` 配置项已弃用，请使用以上替代。
 
-不局限于邮件，ArtalkGo 支持多种方式向管理员发送通知，参考：[“多元推送”](./admin_notify.md#邮件通知)。
+不局限于邮件，Artalk 支持多种方式向管理员发送通知，参考：[“多元推送”](./admin_notify.md#邮件通知)。

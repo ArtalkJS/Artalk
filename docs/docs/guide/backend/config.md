@@ -4,37 +4,37 @@
 后端配置可以在侧边栏 “[控制中心](/guide/frontend/sidebar.md)” 直接修改，无需手动修改配置
 :::
 
-ArtalkGo 默认以工作目录下的 `artalk-go.yml` 作为配置文件，可使用参数 `-c` 来指定具体文件：
+Artalk 默认以工作目录下的 `artalk.yml` 作为配置文件，可使用参数 `-c` 来指定具体文件：
 
 ```bash
-artalk-go -c ./conf.yml
+artalk -c ./conf.yml
 ```
 
 ## 获取模版配置文件
 
-可参考一份「完整的配置文件」：[artalk-go.example.yml](https://github.com/ArtalkJS/ArtalkGo/blob/master/artalk-go.example.yml)
+可参考一份「完整的配置文件」：[artalk.example.yml](https://github.com/ArtalkJS/Artalk/blob/master/artalk.example.yml)
 
 #### 使用 gen 命令生成配置文件
 
-ArtalkGo 提供 `gen` 命令，你可以快速生成一份新的配置文件：
+Artalk 提供 `gen` 命令，你可以快速生成一份新的配置文件：
 
 ```bash
-artalk-go gen conf ./artalk-go.yml
+artalk gen conf ./artalk.yml
 ```
 
 #### 命令行下载配置文件
 
 ```bash
-curl -L https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/master/artalk-go.example.yml > artalk-go.yml
+curl -L https://raw.githubusercontent.com/ArtalkJS/Artalk/master/artalk.example.yml > artalk.yml
 ```
 
 ```bash
-wget -O artalk-go.yml https://raw.githubusercontent.com/ArtalkJS/ArtalkGo/master/artalk-go.example.yml
+wget -O artalk.yml https://raw.githubusercontent.com/ArtalkJS/Artalk/master/artalk.example.yml
 ```
 
 ## 加密密钥 `app_key`
 
-在 ArtalkGo 启动之前，你需要配置一个 `app_key` 用于对网站内容进行安全加密：
+在 Artalk 启动之前，你需要配置一个 `app_key` 用于对网站内容进行安全加密：
 
 ```yaml
 app_key: "<任意的字符>"
@@ -42,7 +42,7 @@ app_key: "<任意的字符>"
 
 ## 数据库 `db`
 
-ArtalkGo 支持连接多种数据库，支持 SQLite、MySQL、PostgreSQL、SQL Server 配置如下：
+Artalk 支持连接多种数据库，支持 SQLite、MySQL、PostgreSQL、SQL Server 配置如下：
 
 #### SQLite
 
@@ -51,7 +51,7 @@ SQLite 是轻型数据库，使用单个文件存储数据，无需额外运行�
 ```yaml
 db:
   type: "sqlite"
-  file: "./data/artalk-go.db"
+  file: "./data/artalk.db"
 ```
 
 #### MySQL / PostgreSQL / SQL Server
@@ -70,13 +70,13 @@ db:
   table_prefix: ""   # 表前缀 (例如："atk_")
 ```
 
-数据表将在 ArtalkGo 启动时自动完成创建，无需额外操作。
+数据表将在 Artalk 启动时自动完成创建，无需额外操作。
 
 ## 管理员 `admin_users`
 
 你需要配置管理员账户，这样才能通过「[控制中心](../frontend/sidebar.md)」对站点内容进行管理。
 
-ArtalkGo 支持多站点，你可以创建多个管理员账户，为其分配站点，让你的朋友们共用同一个后端程序。
+Artalk 支持多站点，你可以创建多个管理员账户，为其分配站点，让你的朋友们共用同一个后端程序。
 
 详情参考：[“管理员 × 多站点”](/guide/backend/multi-site.md)
 
@@ -98,7 +98,7 @@ trusted_domains:
 
 :::
 
-在侧边栏[控制中心](../frontend/sidebar.md#控制中心)「站点」选项卡 - 选择站点「修改 URL」，填入站点 URL 也具有相同的效果；添加多个 URL 可使用 `","` 英文逗号分隔，修改后请重启 ArtalkGo。
+在侧边栏[控制中心](../frontend/sidebar.md#控制中心)「站点」选项卡 - 选择站点「修改 URL」，填入站点 URL 也具有相同的效果；添加多个 URL 可使用 `","` 英文逗号分隔，修改后请重启 Artalk。
 
 可以将其关闭：
 
@@ -166,7 +166,7 @@ new Artalk({ site: "Artalk 官网" })
 
 ## 缓存配置 `cache`
 
-为了提高评论系统的响应速度和性能，ArtalkGo 内置一套缓存机制，并且默认开启，无需额外配置。但如果有需要，你也可以连接外部缓存服务器，支持 Redis 和 Memcache。
+为了提高评论系统的响应速度和性能，Artalk 内置一套缓存机制，并且默认开启，无需额外配置。但如果有需要，你也可以连接外部缓存服务器，支持 Redis 和 Memcache。
 
 ```yaml
 cache:
@@ -176,12 +176,12 @@ cache:
   server: ""      # 连接缓存服务器 (例如："localhost:6379")
 ```
 
-- **warm_up**：缓存预热功能。设置为 `true`，在 ArtalkGo 启动时会立刻对数据库内容进行全面缓存，如果你的评论数据较多，多达上万条，启动时间可能会延长。
+- **warm_up**：缓存预热功能。设置为 `true`，在 Artalk 启动时会立刻对数据库内容进行全面缓存，如果你的评论数据较多，多达上万条，启动时间可能会延长。
 - **type**：缓存类型。可选：`redis`, `memcache`, `builtin`。
 
 type 默认为 `builtin`，如遇特殊情况可将缓存关闭，将其设置为 `disabled`。
 
-注：如果在 ArtalkGo 程序外部修改数据库内容，需要刷新 ArtalkGo 缓存才能更新。
+注：如果在 Artalk 程序外部修改数据库内容，需要刷新 Artalk 缓存才能更新。
 
 ---
 
@@ -198,27 +198,27 @@ cache:
     db: 0          # 使用零号数据库
 ```
 
-技术细节：[ArtalkGo 缓存机制 时序图.png](/images/artalk-go/artalk-go-cache.png)
+技术细节：[Artalk 缓存机制 时序图.png](/images/artalk/artalk-cache.png)
 
-![](/images/artalk-go/artalk-go-cache.png)
+![](/images/artalk/artalk-cache.png)
 
 ## 监听地址 `host`
 
-ArtalkGo 的默认 HTTP 端口为 23366，你可以在配置文件中指定：
+Artalk 的默认 HTTP 端口为 23366，你可以在配置文件中指定：
 
 ```yaml
 host: "0.0.0.0"
 port: 23366
 ```
 
-配置 `host` 监听地址为 `0.0.0.0` 将 ArtalkGo 服务暴露到全网可访问范围，
+配置 `host` 监听地址为 `0.0.0.0` 将 Artalk 服务暴露到全网可访问范围，
 
-如果你只想让 ArtalkGo 仅本地能够访问，可将 `host` 配置为 `127.0.0.1`。
+如果你只想让 Artalk 仅本地能够访问，可将 `host` 配置为 `127.0.0.1`。
 
-命令行下启动 ArtalkGo 时，可以携带 `--host` 和 `--port` 参数分别对地址和端口进行指定，例如：
+命令行下启动 Artalk 时，可以携带 `--host` 和 `--port` 参数分别对地址和端口进行指定，例如：
 
 ```bash
-artalk-go server --host 127.0.0.1 --port 8080
+artalk server --host 127.0.0.1 --port 8080
 ```
 
 ## 加密传输 `ssl`
@@ -235,7 +235,7 @@ ssl:
 - `cert_path`：SSL 证书公钥文件路径。
 - `key_path`：SSL 证书私钥文件路径。
 
-你也可以直接反向代理 ArtalkGo 本地服务器，然后在例如 Nginx 启用 HTTPS。
+你也可以直接反向代理 Artalk 本地服务器，然后在例如 Nginx 启用 HTTPS。
 
 ## 时区配置 `timezone`
 
@@ -269,7 +269,7 @@ login_timeout: 259200
 ```yaml
 log:
   enabled: true # 总开关
-  filename: "./data/artalk-go.log" # 日志文件路径
+  filename: "./data/artalk.log" # 日志文件路径
 ```
 
 ## 调试模式 `debug`
@@ -282,7 +282,7 @@ debug: true
 
 ## 工作目录 `-w` 参数
 
-ArtalkGo 在不指定工作目录的情况下，会使用「程序启动时的目录」作为工作目录。
+Artalk 在不指定工作目录的情况下，会使用「程序启动时的目录」作为工作目录。
 
 ```bash
 pwd  # 显示当前目录路径
@@ -291,24 +291,24 @@ pwd  # 显示当前目录路径
 使用参数 `-w` 来指定工作目录，它通常是一个「绝对路径」，例如：
 
 ```bash
-artalk-go -w /root/artalk -c ./conf.yml
+artalk -w /root/artalk -c ./conf.yml
 ```
 
-注：`-c` 的相对路径会基于 `-w` 的路径，ArtalkGo 此时会读取 `/root/artalk/conf.yml` 作为配置文件。
+注：`-c` 的相对路径会基于 `-w` 的路径，Artalk 此时会读取 `/root/artalk/conf.yml` 作为配置文件。
 
 其次，在「配置文件中」使用的「相对路径」，也会基于「工作目录」。
 
 例如 `conf.yml` 中有这样的配置：
 
 ```yaml
-test_file: "./data/artalk-go.log"
+test_file: "./data/artalk.log"
 ```
 
-将读取 `/root/artalk/data/artalk-go.log`。
+将读取 `/root/artalk/data/artalk.log`。
 
 ::: tip
 
-配置文件相关代码：[/config/config.go](https://github.com/ArtalkJS/ArtalkGo/blob/master/config/config.go)
+配置文件相关代码：[/config/config.go](https://github.com/ArtalkJS/Artalk/blob/master/config/config.go)
 
 前往：[“前端配置”](/guide/frontend/config.md)
 :::

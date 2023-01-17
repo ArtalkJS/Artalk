@@ -1,6 +1,6 @@
 # 多元通知
 
-ArtalkGo v2.1.8+ 配置项：
+Artalk v2.1.8+ 配置项：
 
 - `notify` 弃用并变更为 `admin_notify`
 - `email.mail_subject_to_admin` 弃用并变更为 `admin_notify.email.mail_subject`

@@ -24,7 +24,7 @@ img_upload:
 
 首先，根据 [README.md](https://github.com/pluveto/upgit) 的说明，下载 Upgit 并完成你需要上传的目标图床的配置。
 
-然后在 ArtalkGo 的 `img_upload.upgit` 字段填入 Upgit 启动参数 (建议使用程序绝对路径)，例如：
+然后在 Artalk 的 `img_upload.upgit` 字段填入 Upgit 启动参数 (建议使用程序绝对路径)，例如：
 
 ```yaml
   upgit:
@@ -41,7 +41,7 @@ img_upload:
 
 ## path
 
-`img_upload.path` 为上传的图片文件「本地存放目录」路径，该目录会被 ArtalkGo 映射到可访问的：
+`img_upload.path` 为上传的图片文件「本地存放目录」路径，该目录会被 Artalk 映射到可访问的：
 
 ```
 http://<后端地址>/static/images/

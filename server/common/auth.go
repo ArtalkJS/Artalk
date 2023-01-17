@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
-	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 )

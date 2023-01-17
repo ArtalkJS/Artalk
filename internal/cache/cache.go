@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/allegro/bigcache"
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/eko/gocache/lib/v4/cache"

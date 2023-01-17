@@ -5,10 +5,10 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
-	"github.com/ArtalkJS/ArtalkGo/internal/query"
-	"github.com/ArtalkJS/ArtalkGo/internal/utils"
-	"github.com/ArtalkJS/ArtalkGo/server/middleware/cors"
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/ArtalkJS/Artalk/server/middleware/cors"
 )
 
 var CorsConf = &cors.Config{

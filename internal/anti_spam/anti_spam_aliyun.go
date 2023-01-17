@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/green"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"

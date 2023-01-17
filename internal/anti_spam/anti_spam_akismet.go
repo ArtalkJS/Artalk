@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/sirupsen/logrus"
 )
 

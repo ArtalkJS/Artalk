@@ -3,9 +3,9 @@ package artransfer
 import (
 	"encoding/json"
 
-	"github.com/ArtalkJS/ArtalkGo/internal/db"
-	"github.com/ArtalkJS/ArtalkGo/internal/entity"
-	"github.com/ArtalkJS/ArtalkGo/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/query"
 	"gorm.io/gorm"
 )
 

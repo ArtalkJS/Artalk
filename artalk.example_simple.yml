@@ -29,7 +29,7 @@ cache:
     username: ""
     password: ""
     db: 0
-
+trusted_domains: []
 ssl:
   enabled: false
   cert_path: ""
@@ -93,7 +93,7 @@ admin_notify:
   noise_mode: false
   email:
     enabled: true
-    mail_subject: "[{{site_name}}] Post \"{{page_title}}\" has new a comment"
+    mail_subject: '[{{site_name}}] Post "{{page_title}}" has new a comment'
   telegram:
     enabled: false
     api_token: ""

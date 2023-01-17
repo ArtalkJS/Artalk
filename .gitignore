@@ -32,21 +32,38 @@ Thumbs.db
 .tmp
 .env
 .vscode/*.log
-.history
 .release-env
-
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 .pnpm-store
 /sysroot
-node_modules
+.history
 
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# frontend
+node_modules
+/ui/**/dist
+
+# docs
+/docs/.vitepress/dist/
+
+# backend
 /artalk.yml
 /config.yml
 
-/local
 /bin
 /data
-/dist
+/local
 
-# always pull latest code and compile
+# always compile latest version
 /public/sidebar
 /public/dist

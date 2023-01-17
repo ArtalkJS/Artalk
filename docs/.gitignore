@@ -1,6 +1,0 @@
-node_modules
-.temp
-.cache
-.DS_Store
-.history
-docs/.vitepress/dist/

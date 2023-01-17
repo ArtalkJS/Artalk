@@ -60,6 +60,11 @@ func initConfig(cfgFile string, workDir string) {
 
 	if cfgFile == "" {
 		cfgFile = config.DEFAULT_CONF_FILE
+
+		// 默认配置文件名 "artalk-go.yml"（for 向下兼容）
+		if _, err := os.Stat("artalk-go.yml"); err == nil {
+			cfgFile = "artalk-go.yml"
+		}
 	}
 
 	// 自动生成新配置文件

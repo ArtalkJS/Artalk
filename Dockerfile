@@ -5,8 +5,7 @@ WORKDIR /source
 
 # install tools
 RUN set -ex \
-    && apk upgrade \
-    && apk add make git gcc musl-dev nodejs bash npm\
+    && apk add --no-cache make git gcc musl-dev nodejs bash npm\
     && npm install -g pnpm@7.25.0
 
 COPY . ./Artalk
@@ -14,7 +13,6 @@ COPY . ./Artalk
 # build
 RUN set -ex \
     && cd ./Artalk \
-    && git fetch --tags -f \
     && export VERSION=$(git describe --tags --abbrev=0) \
     && export COMMIT_SHA=$(git rev-parse --short HEAD) \
     && make all
@@ -30,15 +28,14 @@ ENV TZ ${TZ}
 
 COPY --from=builder /source/Artalk/bin/artalk /artalk
 
-RUN apk upgrade \
-    && apk add bash tzdata \
+RUN apk add --no-cache bash tzdata \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo ${TZ} > /etc/timezone
 
-# add alias
-RUN echo -e '#!/bin/bash\n/artalk -w / -c /data/artalk.yml "$@"' > /usr/bin/artalk \
-    && chmod +x /usr/bin/artalk \
-    && cp -p /usr/bin/artalk /usr/bin/artalk
+# move runner script to `/usr/bin/` and create alias
+COPY scripts/docker-artalk-runner.sh /usr/bin/artalk
+RUN chmod +x /usr/bin/artalk \
+    && ln -s /usr/bin/artalk /usr/bin/artalk-go
 
 VOLUME ["/data"]
 

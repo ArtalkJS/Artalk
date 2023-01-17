@@ -14,7 +14,7 @@ import (
 
 func Gen(genType string, specificPath string, overwrite bool) {
 	// 参数
-	if genType == "config" || genType == "conf" {
+	if genType == "config" || genType == "conf" || genType == "artalk.yml" {
 		genType = "artalk.example.yml"
 	}
 

@@ -10,6 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// 默认配置文件名
 const DEFAULT_CONF_FILE = "artalk.yml"
 
 var (
@@ -27,10 +28,6 @@ func GetCfgFileLoaded() string {
 
 // Init 初始化配置
 func Init(cfgFile string) {
-	if cfgFile == "" {
-		cfgFile = DEFAULT_CONF_FILE
-	}
-
 	// load yaml config
 	if err := kf.Load(file.Provider(cfgFile), parser); err != nil {
 		logrus.Errorln(err)

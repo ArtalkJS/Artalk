@@ -1,12 +1,8 @@
 #!/bin/bash
 set -e
 
-if [ ! -e /data/artalk.yml ] && [ "$1" != 'gen' ]; then
-    if [ ! -e /conf.yml ]; then
-        # Generate new config
-        artalk gen conf /data/artalk.yml
-        echo "$(date) [info] Generate new config file to '/data/artalk.yml'"
-    else
+if [ "$1" != 'gen' ] && ( [ ! -e /data/artalk.yml ] && [ ! -e /data/artalk-go.yml ] ); then
+    if [ -e /conf.yml ]; then
         # Move original config to `/data/` for upgrade (<= v2.1.8)
         cp /conf.yml /data/artalk.yml
         upMsg=""
@@ -19,8 +15,12 @@ if [ ! -e /data/artalk.yml ] && [ "$1" != 'gen' ]; then
         upMsg+=$'# and edit "/data/artalk.yml" for configuration.'
         echo "$upMsg" > /conf.yml
         echo "$(date) [info] Copy config file from '/conf.yml' to '/data/artalk.yml' for upgrade"
+    else
+        # Generate new config
+        artalk gen conf /data/artalk.yml
+        echo "$(date) [info] Generate new config file to '/data/artalk.yml'"
     fi
 fi
 
 # Run Artalk
-artalk "$@"
+/usr/bin/artalk "$@"

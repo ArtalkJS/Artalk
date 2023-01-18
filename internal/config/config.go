@@ -7,6 +7,7 @@ import "time"
 type Config struct {
 	AppKey         string                 `koanf:"app_key" json:"app_key"`                 // 加密密钥
 	Debug          bool                   `koanf:"debug" json:"debug"`                     // 调试模式
+	Locale         string                 `koanf:"locale" json:"locale"`                   // 语言
 	TimeZone       string                 `koanf:"timezone" json:"timezone"`               // 时区
 	Host           string                 `koanf:"host" json:"host"`                       // HTTP Server 监听 IP
 	Port           int                    `koanf:"port" json:"port"`                       // HTTP Server 监听 Port

@@ -8,6 +8,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -104,7 +105,7 @@ func CheckOrigin(c *fiber.Ctx, allowSite *entity.Site) (bool, error) {
 		// 从 Referer 获取 Origin
 		referer := string(c.Request().Header.Referer())
 		if referer == "" {
-			return false, common.RespError(c, "无效请求，Origin 无法获取")
+			return false, common.RespError(c, i18n.T("Invalid request")+", "+i18n.T("Unable to get Origin"))
 		}
 		origin = referer
 	}
@@ -122,7 +123,7 @@ func CheckOrigin(c *fiber.Ctx, allowSite *entity.Site) (bool, error) {
 		return true, nil
 	}
 
-	return false, common.RespError(c, "非法请求，请检查可信域名配置")
+	return false, common.RespError(c, i18n.T("Invalid request")+", "+i18n.T("Please check trusted_domains config"))
 }
 
 // 判断 Origin 是否被允许

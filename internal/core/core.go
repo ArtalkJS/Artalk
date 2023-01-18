@@ -8,6 +8,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/notify_launcher"
 
 	"github.com/rifflock/lfshook"
@@ -26,6 +27,7 @@ func LoadCore(cfgFile string, workDir string) {
 	firstLoad = false
 
 	initConfig(cfgFile, workDir)
+	initI18n()
 	initLog()
 	initCache()
 	initDB()
@@ -73,6 +75,10 @@ func initConfig(cfgFile string, workDir string) {
 	}
 
 	config.Init(cfgFile)
+}
+
+func initI18n() {
+	i18n.Init(config.Instance.Locale)
 }
 
 // 2. 初始化日志

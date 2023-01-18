@@ -8,6 +8,7 @@ import (
 )
 
 //go:embed public/*
+//go:embed i18n/*
 //go:embed artalk.example.yml
 var embedFS embed.FS
 

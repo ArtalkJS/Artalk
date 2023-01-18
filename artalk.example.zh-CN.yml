@@ -10,6 +10,9 @@ app_key: ""
 # 调试模式
 debug: false
 
+# 语言
+locale: "zh-CN"
+
 # 时间区域
 timezone: "Asia/Shanghai"
 

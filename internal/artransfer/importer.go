@@ -17,6 +17,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/araddon/dateparse"
@@ -31,7 +32,7 @@ func RunImportArtrans(payload []string) {
 
 	print("\n")
 	tableData := [][]interface{}{
-		{"数据迁移 - 导入"},
+		{"Artransfer - Import"},
 		{strings.ToUpper(name)},
 		{desc},
 	}
@@ -46,7 +47,7 @@ func RunImportArtrans(payload []string) {
 	//elapsed := time.Since(t1)
 
 	print("\n")
-	logInfo("导入执行结束") //，耗时: ", elapsed)
+	logInfo(i18n.T("Import completed")) //，耗时: ", elapsed)
 }
 
 type ImporterInfo struct {
@@ -81,7 +82,7 @@ func GetBasicParamsFrom(payload []string) *BasicParams {
 	})
 
 	if !basic.UrlResolver {
-		logWarn("目标站点 URL 解析器已关闭")
+		logWarn("Target site URL resolver disabled")
 	}
 
 	return &basic
@@ -111,7 +112,7 @@ func SiteReady(tSiteName string, tSiteUrls string) (entity.Site, error) {
 		site.Urls = tSiteUrls
 		err := query.CreateSite(&site)
 		if err != nil {
-			return entity.Site{}, errors.New("站点创建失败")
+			return entity.Site{}, errors.New("site creation failure")
 		}
 	} else {
 		// 追加 URL
@@ -141,7 +142,7 @@ func SiteReady(tSiteName string, tSiteUrls string) (entity.Site, error) {
 			site.Urls = strings.Join(rUrls, ",")
 			err := query.UpdateSite(&site)
 			if err != nil {
-				return entity.Site{}, errors.New("站点数据更新失败")
+				return entity.Site{}, errors.New("site data update failure")
 			}
 		}
 	}

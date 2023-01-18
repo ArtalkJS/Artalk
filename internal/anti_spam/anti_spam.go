@@ -17,10 +17,12 @@ import (
 
 var AntiSpamReplaceKeywords *[]string
 
+const LOG_TAG = "[Spam Interception] "
+
 func SyncSpamCheck(comment *entity.Comment, fiberCtx *fiber.Ctx) {
 	// 拦截评论
 	BlockCommentBy := func(blocker string) {
-		logrus.Info(fmt.Sprintf("[垃圾拦截] %s 成功拦截评论 ID=%d 内容=%s", blocker, comment.ID, strconv.Quote(comment.Content)))
+		logrus.Info(fmt.Sprintf(LOG_TAG+"%s Successful blocking of comments ID=%d CONT=%s", blocker, comment.ID, strconv.Quote(comment.Content)))
 		if comment.IsPending {
 			return
 		}
@@ -30,7 +32,7 @@ func SyncSpamCheck(comment *entity.Comment, fiberCtx *fiber.Ctx) {
 
 	// 拦截失败处理
 	BlockFailBy := func(blocker string, err error) {
-		logrus.Error(fmt.Sprintf("[垃圾拦截] %s 拦截发生错误 ID=%d 错误信息: %s", blocker, comment.ID, strconv.Quote(comment.Content)), err)
+		logrus.Error(fmt.Sprintf(LOG_TAG+"%s Interception error occurred ID=%d Err: %s", blocker, comment.ID, strconv.Quote(comment.Content)), err)
 	}
 
 	// 统一拦截处理
@@ -124,7 +126,7 @@ func SyncSpamCheck(comment *entity.Comment, fiberCtx *fiber.Ctx) {
 			for _, f := range keywordsConf.Files {
 				buf, err := ioutil.ReadFile(f)
 				if err != nil {
-					logrus.Error("关键词词库文件 " + f + " 加载失败")
+					logrus.Error("Keyword Pool File " + f + " Load failure")
 				} else {
 					fileContent := string(buf)
 					*AntiSpamReplaceKeywords = append(*AntiSpamReplaceKeywords, utils.SplitAndTrimSpace(fileContent, keywordsConf.FileSep)...)
@@ -150,7 +152,7 @@ func SyncSpamCheck(comment *entity.Comment, fiberCtx *fiber.Ctx) {
 		}
 
 		if !keywordsConf.Pending && replaced && keywordsConf.ReplacTo != "" {
-			logrus.Info(fmt.Sprintf("[垃圾拦截] 关键词替换评论 ID=%d 原始内容=%s 替换内容=%s", comment.ID, strconv.Quote(comment.Content), strconv.Quote(handleContent)))
+			logrus.Info(fmt.Sprintf(LOG_TAG+"Keyword Replacement Comments ID=%d Original=%s Processed=%s", comment.ID, strconv.Quote(comment.Content), strconv.Quote(handleContent)))
 
 			// 保存评论
 			comment.Content = handleContent

@@ -16,11 +16,11 @@ import (
 var serverCmd = &cobra.Command{
 	Use:     "server",
 	Aliases: []string{"serve"},
-	Short:   "启动服务器",
+	Short:   "Start the server",
 	Long:    Banner,
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		core.LoadCore(cfgFile, workDir) // 装载核心
+		core.LoadCore(cfgFile, workDir)
 
 		fmt.Println(Banner)
 		fmt.Print("-------------------------------\n\n")
@@ -62,6 +62,6 @@ var serverCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(serverCmd)
 
-	flagPV(serverCmd, "host", "", "0.0.0.0", "监听 IP")
-	flagPV(serverCmd, "port", "", 23366, "监听端口")
+	flagPV(serverCmd, "host", "", "0.0.0.0", "Listening IP")
+	flagPV(serverCmd, "port", "", 23366, "Listening port")
 }

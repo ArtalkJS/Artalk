@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//// 捷径函数 ////
+//// Shortcut Functions ////
 
 func flag(cmd *cobra.Command, name string, defaultVal interface{}, usage string) {
 	f := cmd.PersistentFlags()

@@ -89,7 +89,7 @@ func scan(dir string) []string {
 				return nil
 			}
 
-			extKeys := extractFormCode(codeStr)
+			extKeys := extractFromCode(codeStr)
 
 			if len(extKeys) > 0 {
 				result = append(result, extKeys...)
@@ -108,7 +108,7 @@ func scan(dir string) []string {
 	return result
 }
 
-func extractFormCode(src string) []string {
+func extractFromCode(src string) []string {
 	fileSet := token.NewFileSet()
 	f, err := parser.ParseFile(fileSet, "", src, 0)
 	if err != nil {

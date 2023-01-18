@@ -7,6 +7,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/blang/semver"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 	"github.com/sirupsen/logrus"
@@ -16,14 +17,14 @@ import (
 var upgradeCmd = &cobra.Command{
 	Use:     "upgrade",
 	Aliases: []string{"update"},
-	Short:   "升级到最新版",
-	Long:    "将 Artalk 升级到最新版本，\n更新源为 GitHub Releases，\n更新需要重启 Artalk 才能生效。",
+	Short:   "Upgrade to the latest version",
+	Long:    "Upgrade Artalk to the latest version, \n update source is GitHub Releases, \n update need to restart Artalk to take effect.",
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		// loadCore() // 装载核心
+		// loadCore()
 		core.LoadConfOnly(cfgFile, workDir)
 
-		logrus.Info("从 GitHub Release 检索更新中...")
+		logrus.Info(i18n.T("Searching for updates..."))
 
 		latest, found, err := selfupdate.DetectLatest("ArtalkJS/Artalk")
 		if err != nil {
@@ -34,13 +35,13 @@ var upgradeCmd = &cobra.Command{
 		if !ignoreVersionCheck {
 			v := semver.MustParse(strings.TrimPrefix(config.Version, "v"))
 			if !found || latest.Version.LTE(v) {
-				logrus.Println("当前已是最新版本 v" + v.String() + " 无需升级")
+				logrus.Println(i18n.T("The current version is the latest") + " (v" + v.String() + ")")
 				return
 			}
 		}
 
-		logrus.Info("发现新版本: v" + latest.Version.String())
-		logrus.Info("正在下载更新中...")
+		logrus.Info(i18n.T("Discover the new version") + ": v" + latest.Version.String())
+		logrus.Info(i18n.T("Downloading..."))
 
 		exe, err := os.Executable()
 		if err != nil {
@@ -48,10 +49,10 @@ var upgradeCmd = &cobra.Command{
 		}
 
 		if err := selfupdate.UpdateTo(latest.AssetURL, exe); err != nil {
-			logrus.Fatal("更新失败 ", err)
+			logrus.Fatal(i18n.T("Update failed")+" ", err)
 		}
 
-		logrus.Println("更新完毕")
+		logrus.Println(i18n.T("Update completed"))
 		fmt.Println("\n-------------------------------\n    v" +
 			latest.Version.String() +
 			"  Release Note\n" +

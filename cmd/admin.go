@@ -10,6 +10,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/sirupsen/logrus"
@@ -19,14 +20,13 @@ import (
 
 var adminCmd = &cobra.Command{
 	Use:   "admin",
-	Short: "创建管理员账号",
-	Long:  "根据提示创建管理员账号",
+	Short: "Create or edit an administrator account",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		core.LoadCore(cfgFile, workDir)
 
 		fmt.Println("--------------------------------")
-		fmt.Println("         管理员账户创建         ")
+		fmt.Println(" " + i18n.T("Create an admin account"))
 		fmt.Println("--------------------------------")
 
 		username, email, password, err := credentials()
@@ -41,7 +41,7 @@ var adminCmd = &cobra.Command{
 				logrus.Fatal(err)
 			}
 
-			logrus.Info("该账户已存在，密码修改成功")
+			logrus.Info(i18n.T("The account already exists and the password was changed successfully"))
 			return
 		}
 
@@ -49,7 +49,7 @@ var adminCmd = &cobra.Command{
 			Name:       username,
 			Email:      email,
 			IsAdmin:    true,
-			BadgeName:  "管理员",
+			BadgeName:  i18n.T("Admin"),
 			BadgeColor: "#FF6C00",
 		}
 		user.SetPasswordEncrypt(password)
@@ -84,17 +84,17 @@ func credentials() (string, string, string, error) {
 		return "", "", "", err
 	}
 	if !utils.ValidateEmail(strings.TrimSpace(email)) {
-		return "", "", "", errors.New("邮箱格式不合法")
+		return "", "", "", errors.New(i18n.T("Invalid email format"))
 	}
 
-	fmt.Print("Enter Password: ")
+	fmt.Print(i18n.T("Enter Password") + ": ")
 	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return "", "", "", err
 	}
 
 	fmt.Println()
-	fmt.Print("Retype Password: ")
+	fmt.Print(i18n.T("Retype Password") + ": ")
 	byteRePassword, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return "", "", "", err
@@ -106,7 +106,7 @@ func credentials() (string, string, string, error) {
 	rePassword := strings.TrimSpace(string(byteRePassword))
 
 	if rePassword != password {
-		return "", "", "", errors.New("输入的密码不一致")
+		return "", "", "", errors.New(i18n.T("Inconsistent password input"))
 	}
 
 	return strings.TrimSpace(username), strings.TrimSpace(email), password, nil

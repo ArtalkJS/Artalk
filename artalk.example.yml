@@ -6,7 +6,9 @@ port: 23366
 app_key: ""
 # Debug mode
 debug: false
-# Timezone. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+# Language (follow Unicode BCP 47)
+locale: "en"
+# Timezone (see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 timezone: "Asia/Shanghai"
 # Default site name
 site_default: "Default Site"

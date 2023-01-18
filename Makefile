@@ -43,6 +43,9 @@ test:
 test-coverage:
 	$(GOTEST) -cover ./...
 
+update-i18n:
+	go generate ./internal/i18n
+
 docker-build:
 	./scripts/docker-build.sh
 

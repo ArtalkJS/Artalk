@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/ArtalkJS/Artalk/internal/artransfer"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -53,10 +54,10 @@ func adminImport(c *fiber.Ctx) error {
 		user := common.GetUserByReq(c)
 		if sitName, isExist := payloadMap["t_name"]; isExist {
 			if !utils.ContainsStr(query.CookUser(&user).SiteNames, sitName) {
-				return common.RespError(c, "禁止导入的目标站点名")
+				return common.RespError(c, "Destination site name of prohibited import")
 			}
 		} else {
-			return common.RespError(c, "请填写目标站点名")
+			return common.RespError(c, "Please fill in the target site name")
 		}
 	}
 
@@ -92,14 +93,14 @@ func adminImportUpload(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
 	if err != nil {
 		logrus.Error(err)
-		return common.RespError(c, "文件获取失败")
+		return common.RespError(c, "File read failure")
 	}
 
 	// 打开文件
 	src, err := file.Open()
 	if err != nil {
 		logrus.Error(err)
-		return common.RespError(c, "文件打开失败")
+		return common.RespError(c, "File open failure")
 	}
 	defer src.Close()
 
@@ -107,13 +108,13 @@ func adminImportUpload(c *fiber.Ctx) error {
 	buf, err := io.ReadAll(src)
 	if err != nil {
 		logrus.Error(err)
-		return common.RespError(c, "文件读取失败")
+		return common.RespError(c, "File read failure")
 	}
 
 	tmpFile, err := os.CreateTemp("", "artalk-import-file-")
 	if err != nil {
 		logrus.Error(err)
-		return common.RespError(c, "临时文件创建失败")
+		return common.RespError(c, "Temporary file creation failure")
 	}
 
 	tmpFile.Write(buf)
@@ -134,7 +135,7 @@ func adminExport(c *fiber.Ctx) error {
 		return db
 	})
 	if err != nil {
-		common.RespError(c, "导出错误", common.Map{
+		common.RespError(c, i18n.T("Export error"), common.Map{
 			"err": err,
 		})
 	}

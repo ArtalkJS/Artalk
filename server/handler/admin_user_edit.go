@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -28,7 +29,7 @@ type ParamsAdminUserEdit struct {
 func AdminUserEdit(router fiber.Router) {
 	router.Post("/user-edit", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("No access"))
 		}
 
 		var p ParamsAdminUserEdit

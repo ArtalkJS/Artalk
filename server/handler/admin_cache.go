@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,7 +21,7 @@ func AdminCacheWarm(router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, "无权访问")
+			return common.RespError(c, i18n.T("No access"))
 		}
 
 		go func() {
@@ -48,7 +49,7 @@ func AdminCacheFlush(router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, "无权访问")
+			return common.RespError(c, i18n.T("No access"))
 		}
 
 		if p.FlushAll {
@@ -61,6 +62,6 @@ func AdminCacheFlush(router fiber.Router) {
 			})
 		}
 
-		return common.RespError(c, "参数错误")
+		return common.RespError(c, i18n.T("Invalid parameter"))
 	})
 }

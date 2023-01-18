@@ -6,6 +6,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -36,7 +37,7 @@ func AdminSiteEdit(router fiber.Router) {
 
 		// 站点操作权限检查
 		if !common.IsAdminHasSiteAccess(c, site.Name) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("No access"))
 		}
 
 		if strings.TrimSpace(p.Name) == "" {

@@ -6,6 +6,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -51,7 +52,7 @@ func AdminPageFetch(router fiber.Router) {
 		// 更新全部站点
 		if p.SiteName != "" {
 			if allPageFetching {
-				return common.RespError(c, "任务正在进行中，请稍等片刻")
+				return common.RespError(c, i18n.T("The task is in progress, please wait a moment"))
 			}
 
 			// 异步执行
@@ -86,7 +87,7 @@ func AdminPageFetch(router fiber.Router) {
 		}
 
 		if !common.IsAdminHasSiteAccess(c, page.SiteName) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("No access"))
 		}
 
 		if err := query.FetchPageFromURL(&page); err != nil {

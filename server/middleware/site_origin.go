@@ -41,7 +41,7 @@ func SiteOriginMiddleware() fiber.Handler {
 		// 请求站点名 == "__ATK_SITE_ALL" 时取消站点隔离
 		if siteName == config.ATK_SITE_ALL {
 			if !isSuperAdmin {
-				return common.RespError(c, "仅管理员查询允许取消站点隔离")
+				return common.RespError(c, "only admin can query sites with disable isolation")
 			}
 
 			siteAll = true
@@ -56,7 +56,7 @@ func SiteOriginMiddleware() fiber.Handler {
 
 			findSite := query.FindSite(siteName)
 			if findSite.IsEmpty() {
-				return common.RespError(c, fmt.Sprintf("未找到站点：`%s`，请在控制台创建站点", siteName), common.Map{
+				return common.RespError(c, fmt.Sprintf(i18n.T("Site not found")+": `%s`, "+i18n.T("Please create the site in the control panel"), siteName), common.Map{
 					"err_no_site": true,
 				})
 			}

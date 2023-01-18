@@ -6,6 +6,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -45,7 +46,7 @@ func AdminPageEdit(router fiber.Router) {
 		}
 
 		if !common.IsAdminHasSiteAccess(c, page.SiteName) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("No access"))
 		}
 
 		// 重命名合法性检测

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -14,7 +15,7 @@ type ParamsAdminUserDel struct {
 func AdminUserDel(router fiber.Router) {
 	router.Post("/user-del", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("No access"))
 		}
 
 		var p ParamsAdminUserDel

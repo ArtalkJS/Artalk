@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -19,7 +20,7 @@ func AdminSiteDel(router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, "禁止删除站点")
+			return common.RespError(c, i18n.T("No access"))
 		}
 
 		site := query.FindSiteByID(p.ID)

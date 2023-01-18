@@ -5,6 +5,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/email"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -50,7 +51,7 @@ func AdminCommentEdit(router fiber.Router) {
 		}
 
 		if !common.IsAdminHasSiteAccess(c, comment.SiteName) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("No access"))
 		}
 
 		// check params

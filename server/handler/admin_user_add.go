@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -25,7 +26,7 @@ type ParamsAdminUserAdd struct {
 func AdminUserAdd(router fiber.Router) {
 	router.Post("/user-add", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("No access"))
 		}
 
 		var p ParamsAdminUserAdd
@@ -34,7 +35,7 @@ func AdminUserAdd(router fiber.Router) {
 		}
 
 		if !query.FindUser(p.Name, p.Email).IsEmpty() {
-			return common.RespError(c, "用户已存在")
+			return common.RespError(c, i18n.T("User already exists"))
 		}
 
 		if !utils.ValidateEmail(p.Email) {
@@ -58,13 +59,13 @@ func AdminUserAdd(router fiber.Router) {
 			err := user.SetPasswordEncrypt(p.Password)
 			if err != nil {
 				logrus.Errorln(err)
-				return common.RespError(c, "密码设置失败")
+				return common.RespError(c, i18n.T("Failed to set password"))
 			}
 		}
 
 		err := query.CreateUser(&user)
 		if err != nil {
-			return common.RespError(c, "user 创建失败")
+			return common.RespError(c, "user "+i18n.T("Failed to create"))
 		}
 
 		return common.RespData(c, common.Map{

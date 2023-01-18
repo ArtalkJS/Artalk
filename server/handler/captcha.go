@@ -8,6 +8,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/captcha"
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -16,7 +17,7 @@ import (
 func Captcha(router fiber.Router) {
 	ca := router.Group("/captcha/", func(c *fiber.Ctx) error {
 		if !config.Instance.Captcha.Enabled {
-			return common.RespError(c, "验证码功能已关闭")
+			return common.RespError(c, "Captcha function is disabled")
 		}
 		return c.Next()
 	})
@@ -98,7 +99,7 @@ func captchaCheck(c *fiber.Ctx) error {
 		} else {
 			// 验证失败
 			common.OnCaptchaFail(c)
-			return common.RespError(c, "验证失败", common.Map{
+			return common.RespError(c, i18n.T("Verification failure"), common.Map{
 				"reason": reason,
 			})
 		}
@@ -117,7 +118,7 @@ func captchaCheck(c *fiber.Ctx) error {
 		// 验证码错误
 		common.DisposeImageCaptcha(ip)
 		common.OnCaptchaFail(c)
-		return common.RespError(c, "验证码错误", common.Map{
+		return common.RespError(c, i18n.T("Wrong Captcha"), common.Map{
 			"img_data": common.GetNewImageCaptchaBase64(ip),
 		})
 	}

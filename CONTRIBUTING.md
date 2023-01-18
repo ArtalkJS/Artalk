@@ -35,10 +35,10 @@ $ cd Artalk
 First, we need to install the dependencies for backend written in Go. Simply run the following command:
 
 ```sh
-make build
+make debug-build
 ```
 
-This will build both the frontend and backend.
+This will build both the frontend and backend, with debugging symbols.
 
 + **Frontend** will be built under `./ui/packages/artalk` and copied to `./public` directory.
 + **Backend** will be built under `./bin` directory.
@@ -51,7 +51,7 @@ If you want to run a demo site, you can use the following command:
 ./scripts/setup-example-site.sh
 ```
 
-This script sets up a local example site for testing, with Artalk integrated.
+This script sets up a local example site for testing at `local` folder, with Artalk integrated into its theme.
 
 After running this script, run:
 
@@ -62,3 +62,11 @@ After running this script, run:
 to start the artalk server.
 
 And open http://localhost:1313/ in your browser to view the example site.
+
+Here is the default admin account (only created in test mode):
+
+```
+name: "admin"
+email: "admin@test.com"
+password: "admin"
+```

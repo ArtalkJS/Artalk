@@ -1,0 +1,105 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.3
+
+executors:
+  base:
+    docker:
+      - image: cimg/base:stable
+  node:
+    docker:
+      - image: 'cimg/node:16.15.1'
+  go:
+    docker:
+      - image: cimg/go:1.19
+
+parameters:
+  trigger-app:
+    type: boolean
+    default: false
+  trigger-ui:
+    type: boolean
+    default: false
+  run-them-all:
+    type: boolean
+    default: false
+
+jobs:
+  ## Backend
+  test_app:
+      executor: go
+      working_directory: ~/go/src/github.com/ArtalkJS/Artalk
+      environment:
+        GO111MODULE: "on"
+      steps:
+        - checkout
+        - run:
+            name: "Print the Go version"
+            command: >
+              go version
+        - restore_cache:
+            keys:
+              - go-mod-1.19-{{ checksum "go.sum" }}
+        - run:
+            name: Install Dependencies
+            command: go mod download
+        - save_cache:
+            key: go-mod-1.19-{{ checksum "go.sum" }}
+            paths:
+              - "~/go/pkg/mod"
+        - run:
+            name: Run tests
+            command: |
+              mkdir -p /tmp/test-reports
+              gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+        - store_test_results:
+            path: /tmp/test-reports
+
+  ## Frontend
+  test_ui:
+      executor: node
+      steps:
+        - node/install
+        - checkout
+        - run:
+            name: Print the node version
+            command: node -v
+        - run:
+            name: Install pnpm
+            command: npm i -g pnpm@7.25.0
+        - run:
+            name: Install Dependencies
+            command: pnpm --dir ./ui install --frozen-lockfile
+        - run:
+            name: Build Artalk
+            command: pnpm --dir ./ui build:all
+
+  all_projects:
+      executor: base
+      steps:
+        - run:
+            command: |
+              echo "all"
+
+workflows:
+  build-app:
+    when:
+      or:
+        - << pipeline.parameters.trigger-app >>
+        - << pipeline.parameters.run-them-all >>
+    jobs:
+      - test_app
+
+  build-ui:
+    when:
+      or:
+        - << pipeline.parameters.trigger-ui >>
+        - << pipeline.parameters.run-them-all >>
+    jobs:
+      - test_ui
+
+  build-shared-other:
+    when: << pipeline.parameters.run-them-all >>
+    jobs:
+      - all_projects

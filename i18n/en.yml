@@ -1,0 +1,75 @@
+"Access denied":
+"Account":
+"Admin access required":
+"Admin":
+"Cannot reply to this comment":
+"Captcha required":
+"Checking for updates":
+"Comment count":
+"Comment failed":
+"Comment":
+"Config file read failed":
+"Confirm to continue?":
+"Contains invalid URL":
+"Create admin account":
+"Current version is the latest":
+"Downloading":
+"Email":
+"Enter {{name}}":
+"Export complete":
+"Export error":
+"File":
+"First comment":
+"Image exceeds {{file_size}} limit":
+"Image upload forbidden":
+"Import complete":
+"Invalid request":
+"Invalid request. Please check your `trusted_domains` config.":
+"Invalid {{name}}":
+"Link":
+"Login failed":
+"Name":
+"New version available":
+"Nickname":
+"No comment":
+"Notify":
+"Page fetch failed":
+"Page":
+"Parameter":
+"Parent comment":
+"Password update failed":
+"Password updated":
+"Password":
+"Please review":
+"Retype {{name}}":
+"Save failed":
+"Saving":
+"Services restart complete":
+"Site `{{name}}` not found. Please create it in control center.":
+"Site":
+"Sub-comment":
+"Target Site":
+"Task executing in background, please wait...":
+"Task in progress, please wait a moment":
+"Type":
+"URL Resolver":
+"Unable to get `{{name}}`":
+"Unspecified":
+"Unsupported formats":
+"Update complete":
+"Update failed":
+"Upload image via {{method}} failed":
+"User":
+"Username":
+"Verification failed":
+"Working directory retrieval failed":
+"Wrong captcha":
+"{{count}} items imported":
+"{{done}} of {{total}} done":
+"{{name}} already exists":
+"{{name}} cannot be empty":
+"{{name}} creation failed":
+"{{name}} deletion failed":
+"{{name}} is required":
+"{{name}} not found":
+"{{name}} save failed":

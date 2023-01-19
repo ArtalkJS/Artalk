@@ -1,30 +1,25 @@
+# https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
+
+# this allows you to use CircleCI's dynamic configuration
+# https://circleci.com/docs/2.0/dynamic-config/
+setup: true
+
+# the path-filtering orb is required to continue a pipeline based on
+# https://circleci.com/developer/orbs/orb/circleci/path-filtering
 orbs:
-  node: circleci/node@5.0.3
-jobs:
-  build:
-    docker:
-      - image: 'cimg/node:16.15.1'
-    steps:
-      - node/install
-      - checkout
-      - run:
-          name: Print the node version
-          command: node -v
-      - run:
-          name: Install pnpm
-          command: npm i -g pnpm@7.11.0
-      - run:
-          name: Install Dependencies
-          command: pnpm install --frozen-lockfile
-      - run:
-          name: Build Artalk
-          command: pnpm build:all
+  path-filtering: circleci/path-filtering@0.0.1
 
 workflows:
-  tests:
+  setup:
     jobs:
-      - build:
+      - path-filtering/filter:
+          mapping: |
+            (cmd|internal|server|pkg|test)/.*  trigger-app true
+            main.go|go.mod|go.sum|artalk.example.yml  trigger-app true
+            (ui)/.*  trigger-ui  true
+          base-revision: master  # git branch name
+          config-path: .circleci/conditional_config.yml
           filters:
             branches:
               ignore:

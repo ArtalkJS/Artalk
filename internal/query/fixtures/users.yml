@@ -1,0 +1,33 @@
+- id: 1000
+  name: admin
+  email: admin@qwqaq.com
+  link: https://qwqaq.com
+  password: 123456
+  badge_name: 管理员
+  badge_color: #fff
+  last_ip: 10.90.1.1
+  last_ua: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36
+  is_admin: true
+  is_in_conf: true
+  site_names:
+  receive_email: true
+  created_at: 2022-04-29 14:31:53
+  updated_at: 2022-04-29 14:31:53
+
+- id: 1001
+  name: userA
+  email: user_a@qwqaq.com
+  link: https://example.org/?user=A
+  last_ip: 10.90.2.101
+  last_ua: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36
+  created_at: 2022-04-29 14:36:47
+  updated_at: 2022-04-29 14:36:47
+
+- id: 1002
+  name: userB
+  email: user_b@qwqaq.com
+  link: https://example.org/?user=B
+  last_ip: 10.90.2.102
+  last_ua: Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1
+  created_at: 2022-04-29 14:36:47
+  updated_at: 2022-04-29 14:36:47

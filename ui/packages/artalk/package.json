@@ -1,0 +1,47 @@
+{
+  "name": "artalk",
+  "version": "2.4.4",
+  "backendMinVersion": "2.3.0",
+  "license": "LGPL-3.0",
+  "description": "A Selfhosted Comment System",
+  "keywords": [
+    "comment-system",
+    "comments-widget",
+    "comment",
+    "comments",
+    "blog"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArtalkJS/Artalk.git",
+    "directory": "ui/packages/artalk"
+  },
+  "homepage": "https://artalk.js.org",
+  "bugs": "https://github.com/ArtalkJS/Artalk/issue",
+  "main": "./dist/Artalk.js",
+  "unpkg": "./dist/Artalk.iife.js",
+  "jsdelivr": "./dist/Artalk.iife.js",
+  "module": "./dist/Artalk.es.js",
+  "types": "./dist/src/main.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "pnpm lint && vite build && pnpm build:lite && pnpm build:i18n",
+    "build:lite": "vite build --config vite-lite.config.ts",
+    "build:i18n": "node scripts/build-i18n.mjs",
+    "build:demo": "vite build --config vite-demo.config.ts",
+    "serve": "vite preview",
+    "deploy": "gh-pages -d deploy",
+    "predeploy": "pnpm build && pnpm build:demo && pnpm copy:deploy",
+    "copy:deploy": "cp -r dist deploy && cp CNAME deploy",
+    "lint": "eslint --ext .js,.ts src"
+  },
+  "devDependencies": {
+    "@types/marked": "4.0.6"
+  },
+  "dependencies": {
+    "hanabi": "^0.4.0",
+    "insane": "^2.6.2",
+    "marked": "^4.0.19",
+    "abortcontroller-polyfill": "^1.7.5"
+  }
+}

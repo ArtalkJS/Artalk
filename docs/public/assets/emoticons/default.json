@@ -1,0 +1,306 @@
+[
+  {
+    "name": "颜表情",
+    "type": "emoticon",
+    "items": [
+      { "key": "Hi", "val": "|´・ω・)ノ" },
+      { "key": "开心", "val": "ヾ(≧∇≦*)ゝ" },
+      { "key": "星星眼", "val": "(☆ω☆)" },
+      { "key": "掀桌", "val": "（╯‵□′）╯︵┴─┴" },
+      { "key": "流口水", "val": "￣﹃￣" },
+      { "key": "捂脸", "val": "(/ω＼)" },
+      { "key": "给跪", "val": "∠( ᐛ 」∠)＿" },
+      { "key": "哈？", "val": "(๑•̀ㅁ•́ฅ)" },
+      { "key": "斜眼", "val": "→_→" },
+      { "key": "加油", "val": "୧(๑•̀⌄•́๑)૭" },
+      { "key": "有木有WiFi", "val": "٩(ˊᗜˋ*)و" },
+      { "key": "前方高能预警", "val": "(ノ°ο°)ノ" },
+      { "key": "纳尼", "val": "(´இ皿இ｀)" },
+      { "key": "吓死惹", "val": "⌇●﹏●⌇" },
+      { "key": "已阅留爪", "val": "(ฅ´ω`ฅ)" },
+      { "key": "去吧大师球", "val": "(╯°A°)╯︵○○○" },
+      { "key": "太萌惹", "val": "φ(￣∇￣o)" },
+      { "key": "咦咦咦", "val": "ヾ(´･ ･｀｡)ノ\"" },
+      { "key": "气呼呼", "val": "( ง ᵒ̌皿ᵒ̌)ง⁼³₌₃" },
+      { "key": "我受到了惊吓", "val": "(ó﹏ò｡)" },
+      { "key": "什么鬼", "val": "Σ(っ °Д °;)っ" },
+      { "key": "摸摸头", "val": "( ,,´･ω･)ﾉ\"(´っω･｀｡)" },
+      { "key": "无奈", "val": "╮(╯▽╰)╭ " },
+      { "key": "脸红", "val": "o(*////▽////*)q " },
+      { "key": "悲哀", "val": "＞﹏＜" },
+      { "key": "静静地看着你", "val": "( ๑´•ω•) \"(ㆆᴗㆆ)" },
+      { "key": "不要哇", "val": "(｡•ˇ‸ˇ•｡)" }
+    ]
+  },
+  {
+    "name": "Emoji",
+    "type": "emoji",
+    "items": [
+      { "key": "", "val": "😀" },
+      { "key": "", "val": "😃" },
+      { "key": "", "val": "😄" },
+      { "key": "", "val": "😁" },
+      { "key": "", "val": "😆" },
+      { "key": "", "val": "😅" },
+      { "key": "", "val": "😂" },
+      { "key": "", "val": "😊" },
+      { "key": "", "val": "😉" },
+      { "key": "", "val": "👀" },
+      { "key": "", "val": "😌" },
+      { "key": "", "val": "😍" },
+      { "key": "", "val": "😘" },
+      { "key": "", "val": "😋" },
+      { "key": "", "val": "😜" },
+      { "key": "", "val": "😝" },
+      { "key": "", "val": "😎" },
+      { "key": "", "val": "😏" },
+      { "key": "", "val": "😒" },
+      { "key": "", "val": "😟" },
+      { "key": "", "val": "😕" },
+      { "key": "", "val": "😖" },
+      { "key": "", "val": "😫" },
+      { "key": "", "val": "😩" },
+      { "key": "", "val": "😠" },
+      { "key": "", "val": "😲" },
+      { "key": "", "val": "😵" },
+      { "key": "", "val": "😳" },
+      { "key": "", "val": "😱" },
+      { "key": "", "val": "😨" },
+      { "key": "", "val": "😢" },
+      { "key": "", "val": "😭" },
+      { "key": "", "val": "😷" },
+      { "key": "", "val": "✋" },
+      { "key": "", "val": "✌️" },
+      { "key": "", "val": "👊" },
+      { "key": "", "val": "👋" },
+      { "key": "", "val": "👏" },
+      { "key": "", "val": "👍" },
+      { "key": "", "val": "👎" },
+      { "key": "", "val": "❤️" },
+      { "key": "", "val": "🎉" },
+      { "key": "", "val": "🚀" }
+    ]
+  },
+  {
+    "name": "滑稽",
+    "type": "image",
+    "items": [
+      {
+        "key": "原味稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%8E%9F%E5%91%B3%E7%A8%BD.png"
+      },
+      {
+        "key": "还是算了",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%BF%98%E6%98%AF%E7%AE%97%E4%BA%86.png"
+      },
+      {
+        "key": "蓝纹稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%93%9D%E7%BA%B9%E7%A8%BD.jpg"
+      },
+      {
+        "key": "随稽应变",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E9%9A%8F%E7%A8%BD%E5%BA%94%E5%8F%98.jpg"
+      },
+      {
+        "key": "蠕动",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%A0%95%E5%8A%A8.gif"
+      },
+      {
+        "key": "束手无稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%9D%9F%E6%89%8B%E6%97%A0%E7%A8%BD.jpg"
+      },
+      {
+        "key": "微笑默叹以为妙绝",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%BE%AE%E7%AC%91%E9%BB%98%E5%8F%B9%E4%BB%A5%E4%B8%BA%E5%A6%99%E7%BB%9D.png"
+      },
+      {
+        "key": "喝嘤料",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%96%9D%E5%98%A4%E6%96%99.jpg"
+      },
+      {
+        "key": "暗中观察",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%9A%97%E4%B8%AD%E8%A7%82%E5%AF%9F.jpg"
+      },
+      {
+        "key": "高兴",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E9%AB%98%E5%85%B4.jpg"
+      },
+      {
+        "key": "惊稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%83%8A%E7%A8%BD.jpg"
+      },
+      {
+        "key": "可这和我的帅有什么关系",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%8F%AF%E8%BF%99%E5%92%8C%E6%88%91%E7%9A%84%E5%B8%85%E6%9C%89%E4%BB%80%E4%B9%88%E5%85%B3%E7%B3%BB.jpg"
+      },
+      {
+        "key": "狱稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E7%8B%B1%E7%A8%BD.jpg"
+      },
+      {
+        "key": "梆",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%A2%86.jpg"
+      },
+      {
+        "key": "吃鱼摆摆",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%90%83%E9%B1%BC%E6%91%86%E6%91%86.gif"
+      },
+      {
+        "key": "跃跃欲试 3",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%B7%83%E8%B7%83%E6%AC%B2%E8%AF%95_3.gif"
+      },
+      {
+        "key": "突然滑稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E7%AA%81%E7%84%B6%E6%BB%91%E7%A8%BD.jpg"
+      },
+      {
+        "key": "扶墙怂",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%89%B6%E5%A2%99%E6%80%82.jpg"
+      },
+      {
+        "key": "阔以",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E9%98%94%E4%BB%A5.jpg"
+      },
+      {
+        "key": "不得行",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E4%B8%8D%E5%BE%97%E8%A1%8C.jpg"
+      },
+      {
+        "key": "少儿不宜",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%B0%91%E5%84%BF%E4%B8%8D%E5%AE%9C.jpg"
+      },
+      {
+        "key": "稽日可期",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E7%A8%BD%E6%97%A5%E5%8F%AF%E6%9C%9F.jpg"
+      },
+      {
+        "key": "哎",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%93%8E.jpg"
+      },
+      {
+        "key": "别看丢人",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%88%AB%E7%9C%8B%E4%B8%A2%E4%BA%BA.jpg"
+      },
+      {
+        "key": "地稽 2",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%9C%B0%E7%A8%BD_2.jpg"
+      },
+      {
+        "key": "地稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%9C%B0%E7%A8%BD.jpg"
+      },
+      {
+        "key": "老阔有点扣",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%80%81%E9%98%94%E6%9C%89%E7%82%B9%E6%89%A3.gif"
+      },
+      {
+        "key": "啊哈哈",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%95%8A%E5%93%88%E5%93%88.jpg"
+      },
+      {
+        "key": "无稽可奈",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%97%A0%E7%A8%BD%E5%8F%AF%E5%A5%88.jpg"
+      },
+      {
+        "key": "老实巴交",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%80%81%E5%AE%9E%E5%B7%B4%E4%BA%A4.jpg"
+      },
+      {
+        "key": "紧张",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E7%B4%A7%E5%BC%A0.jpg"
+      },
+      {
+        "key": "摇摆稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%91%87%E6%91%86%E7%A8%BD.gif"
+      },
+      {
+        "key": "又不是不能用",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%8F%88%E4%B8%8D%E6%98%AF%E4%B8%8D%E8%83%BD%E7%94%A8.jpg"
+      },
+      {
+        "key": "一时滑稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E4%B8%80%E6%97%B6%E6%BB%91%E7%A8%BD.jpg"
+      },
+      {
+        "key": "无法接受",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%97%A0%E6%B3%95%E6%8E%A5%E5%8F%97.jpg"
+      },
+      {
+        "key": "嘤雄豪稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%98%A4%E9%9B%84%E8%B1%AA%E7%A8%BD.jpg"
+      },
+      {
+        "key": "相视双稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E7%9B%B8%E8%A7%86%E5%8F%8C%E7%A8%BD.jpg"
+      },
+      {
+        "key": "稽皮发麻",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E7%A8%BD%E7%9A%AE%E5%8F%91%E9%BA%BB.jpg"
+      },
+      {
+        "key": "地稽 3",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%9C%B0%E7%A8%BD_3.jpg"
+      },
+      {
+        "key": "地稽委屈",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%9C%B0%E7%A8%BD%E5%A7%94%E5%B1%88.jpg"
+      },
+      {
+        "key": "地稽抚摸",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%9C%B0%E7%A8%BD%E6%8A%9A%E6%91%B8.gif"
+      },
+      {
+        "key": "绝望",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E7%BB%9D%E6%9C%9B.jpg"
+      },
+      {
+        "key": "气稽败坏",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%B0%94%E7%A8%BD%E8%B4%A5%E5%9D%8F.jpg"
+      },
+      {
+        "key": "当场去世",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%BD%93%E5%9C%BA%E5%8E%BB%E4%B8%96.jpg"
+      },
+      {
+        "key": "喝酒",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%96%9D%E9%85%92.jpg"
+      },
+      {
+        "key": "老衲摆摊算命",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%80%81%E8%A1%B2%E6%91%86%E6%91%8A%E7%AE%97%E5%91%BD.gif"
+      },
+      {
+        "key": "老哥，稳",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%80%81%E5%93%A5%EF%BC%8C%E7%A8%B3.jpg"
+      },
+      {
+        "key": "自闭稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%87%AA%E9%97%AD%E7%A8%BD.jpg"
+      },
+      {
+        "key": "无话可说",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%97%A0%E8%AF%9D%E5%8F%AF%E8%AF%B4.jpg"
+      },
+      {
+        "key": "跃跃欲试",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%B7%83%E8%B7%83%E6%AC%B2%E8%AF%95.jpg"
+      },
+      {
+        "key": "跃跃欲试 2",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E8%B7%83%E8%B7%83%E6%AC%B2%E8%AF%95_2.jpg"
+      },
+      {
+        "key": "满脑子骚操作",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E6%BB%A1%E8%84%91%E5%AD%90%E9%AA%9A%E6%93%8D%E4%BD%9C.gif"
+      },
+      {
+        "key": "稽之舞",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E7%A8%BD%E4%B9%8B%E8%88%9E.gif"
+      },
+      {
+        "key": "将稽就稽",
+        "val": "https://gcore.jsdelivr.net/gh/qwqcode/huaji/%E5%B0%86%E7%A8%BD%E5%B0%B1%E7%A8%BD.gif"
+      }
+    ]
+  }
+]

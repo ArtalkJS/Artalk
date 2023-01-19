@@ -1,0 +1,50 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+      - run: git fetch --prune --unshallow --tags -f
+
+      - name: setup go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '^1.19.4'
+
+      # docker `golang-cross` image cache
+      # `cache-go-cross-v1-19-4`
+      - run: mkdir -p ~/docker-cache
+      - name: docker image cache
+        id: cache-go-cross-v1-19-4
+        uses: actions/cache@v2
+        with:
+          path: ~/docker-cache
+          # Adjust key to meet your cache time requirements e.g.
+          # ${{ hashFiles(*) }} can be useful here to invalidate
+          # cache on file changes
+          key: cache-go-cross-v1-19-4
+
+      - if: steps.cache-go-cross-v1-19-4.outputs.cache-hit != 'true'
+        run: |
+          docker pull ghcr.io/goreleaser/goreleaser-cross:v1.19.4
+          docker save -o ~/docker-cache/golang-cross.tar ghcr.io/goreleaser/goreleaser-cross:v1.19.4
+
+      - if: steps.cache-go-cross-v1-19-4.outputs.cache-hit == 'true'
+        run: docker load -i ~/docker-cache/golang-cross.tar
+
+      # build
+      - name: setup release environment
+        run: |-
+          cp artalk.example.yml artalk.yml
+          echo 'GITHUB_TOKEN=${{secrets.GORELEASER_ACCESS_TOKEN}}' > .release-env
+
+      - name: build and release publish
+        run: make release

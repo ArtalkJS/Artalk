@@ -11,7 +11,7 @@
 
 > 🌌 Golang 自托管评论系统
 
-[English](./README.en.md) / [官方文档](https://artalk.js.org) / [最新后端](https://github.com/ArtalkJS/ArtalkGo/releases) / [ArtalkGo](https://github.com/ArtalkJS/ArtalkGo)
+[English](./README.en.md) / [官方文档](https://artalk.js.org) / [最新版本](https://github.com/ArtalkJS/Artalk/releases)
 
 ---
 
@@ -68,10 +68,10 @@ new Artalk({
 
 ```bash
 docker run -d \
-  --name artalk-go \
+  --name artalk \
   -p 8080:23366 \
   -v $(pwd)/data:/data \
-  artalk/artalk-go
+  artalk/artalk
 ```
 
 ### Docker Compose
@@ -85,7 +85,7 @@ version: "3.5"
 services:
   artalk:
     container_name: artalk
-    image: artalk/artalk-go
+    image: artalk/artalk
     ports:
       - 8080:23366
     volumes:
@@ -114,7 +114,7 @@ docker-compose up -d
 
 ## TODOs 
 
-- [x] [Golang 后端](https://github.com/ArtalkJS/ArtalkGo)
+- [x] [Golang 后端](https://github.com/ArtalkJS/Artalk)
 - [x] 多数据库支持
   - [x] SQLite
   - [x] MySQL

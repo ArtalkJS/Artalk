@@ -1,5 +1,45 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Generated files
 .DS_Store
-node_modules/
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.heartbeat
+.idea
+*~
+.goutputstream*
+.c9revisions
+.settings
+.swp
+.tmp
+.env
+.vscode/*.log
+.release-env
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.pnpm-store
+/sysroot
+.history
 
 # Logs
 logs
@@ -9,15 +49,21 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-.history
+# frontend
+node_modules
+/ui/**/dist
 
-dist
-deploy
-local
+# docs
+/docs/.vitepress/dist/
+
+# backend
+/artalk.yml
+/config.yml
+
+/bin
+/data
+/local
+
+# always compile latest version
+/public/sidebar
+/public/dist

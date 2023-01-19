@@ -1,0 +1,17 @@
+<!-- CSS -->
+<link href="https://unpkg.com/artalk@2.4.4/dist/Artalk.css" rel="stylesheet">
+
+<!-- JS -->
+<script src="https://unpkg.com/artalk@2.4.4/dist/Artalk.js"></script>
+
+<!-- Artalk -->
+<div id="Comments"></div>
+<script>
+  new Artalk({
+    el:        '#Comments',              // 绑定元素的 Selector
+    pageKey:   '/post/1',                // 固定链接 (留空自动获取)
+    pageTitle: '关于引入 Artalk 这档子事', // 页面标题 (留空自动获取)
+    server:    'http://localhost:8080',  // 后端地址
+    site:      'Artalk 的博客',           // 你的站点名
+  })
+</script>

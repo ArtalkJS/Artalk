@@ -1,0 +1,155 @@
+# Goreleaser Config
+#
+# https://goreleaser.com/quick-start/
+# https://goreleaser.com/customization/
+# https://goreleaser.com/customization/templates/
+# https://goreleaser.com/customization/fury/
+# https://goreleaser.com/customization/announce/telegram/
+
+project_name: artalk
+
+env:
+  - GO111MODULE=on
+  - CGO_ENABLED=1
+
+before:
+  hooks:
+  # install dependencies
+  - make install
+  - make build-frontend
+  - make update
+
+# build multi-platform
+builds:
+  ## Amd 64
+
+  # Linux (amd_64)
+  - id: linux-amd64
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CC=gcc
+      - CXX=g++
+    binary: "{{.ProjectName}}"
+    main: ./main.go
+    ldflags: &common_ldflags |
+      -X github.com/ArtalkJS/Artalk/internal/config.Version={{.Version}}
+      -X github.com/ArtalkJS/Artalk/internal/config.CommitHash={{ .ShortCommit }}
+      -s -w
+
+  # Windows (amd_64)
+  - id: windows-amd64
+    goos:
+      - windows
+    goarch:
+      - amd64
+    env:
+      - CC=x86_64-w64-mingw32-gcc
+      - CXX=x86_64-w64-mingw32-g++
+    binary: "{{.ProjectName}}"
+    main: ./main.go
+    ldflags: *common_ldflags
+    flags:
+      # https://go-review.googlesource.com/c/go/+/224588/
+      # https://github.com/ArtalkJS/Artalk/issues/35
+      - -tags=timetzdata
+
+  # Darwin (amd_64)
+  - id: darwin-amd64
+    goos:
+      - darwin
+    goarch:
+      - amd64
+    env:
+      - CC=o64-clang
+      - CXX=o64-clang++
+    binary: "{{.ProjectName}}"
+    main: ./main.go
+    ldflags: *common_ldflags
+
+  ## Arm
+
+  # Linux (arm_v7)
+  - id: linux-armhf
+    goos:
+      - linux
+    goarch:
+      - arm
+    goarm:
+      - '7'
+    env:
+      - CC=arm-linux-gnueabihf-gcc
+      - CXX=arm-linux-gnueabihf-g++
+    binary: "{{.ProjectName}}"
+    main: ./main.go
+    ldflags: *common_ldflags
+
+  # Linux (arm_64)
+  - id: linux-arm64
+    goos:
+      - linux
+    goarch:
+      - arm64
+    env:
+      - CC=aarch64-linux-gnu-gcc
+      - CXX=aarch64-linux-gnu-g++
+    binary: "{{.ProjectName}}"
+    main: ./main.go
+    ldflags: *common_ldflags
+
+  # Darwin (arm_64)
+  - id: darwin-arm64
+    goos:
+      - darwin
+    goarch:
+      - arm64
+    env:
+      - CC=oa64-clang
+      - CXX=oa64-clang++
+    binary: "{{.ProjectName}}"
+    main: ./main.go
+    ldflags: *common_ldflags
+
+archives:
+  - id: artalk
+    builds:
+      - linux-amd64
+      - darwin-amd64
+      - windows-amd64
+      - linux-armhf
+      - linux-arm64
+      - darwin-arm64
+    name_template: "{{.ProjectName}}_v{{.Version}}_{{.Os}}_{{.Arch}}{{.Arm}}"
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    wrap_in_directory: true
+    files:
+      - README*
+      - LICENSE*
+      - artalk.yml
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{.Version}}-SNAPSHOT-{{.ShortCommit}}"
+
+# changelog
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+
+release:
+  github:
+    owner: ArtalkJS
+    name: Artalk
+  prerelease: auto
+  draft: true

@@ -1,0 +1,155 @@
+host: "0.0.0.0"
+port: 23366
+app_key: ""
+debug: false
+locale: "en"
+timezone: "Asia/Shanghai"
+site_default: "Default Site"
+login_timeout: 259200
+db:
+  type: "sqlite"
+  file: "./data/artalk.db"
+  table_prefix: ""
+  name: "artalk"
+  host: "localhost"
+  port: 3306
+  user: "root"
+  password: ""
+  charset: "utf8mb4"
+log:
+  enabled: true
+  filename: "./data/artalk.log"
+cache:
+  type: "builtin"
+  expires: 30
+  warm_up: false
+  server: ""
+  redis:
+    network: "tcp"
+    username: ""
+    password: ""
+    db: 0
+trusted_domains: []
+ssl:
+  enabled: false
+  cert_path: ""
+  key_path: ""
+admin_users:
+moderator:
+  pending_default: false
+  api_fail_block: false
+  akismet_key: ""
+  tencent:
+    enabled: false
+    secret_id: ""
+    secret_key: ""
+    region: "ap-guangzhou"
+  aliyun:
+    enabled: false
+    access_key_id: ""
+    access_key_secret: ""
+    region: "cn-shanghai"
+  keywords:
+    enabled: false
+    pending: false
+    files:
+    file_sep: "\n"
+    replac_to: "x"
+captcha:
+  enabled: true
+  always: false
+  action_limit: 3
+  action_reset: 60
+  geetest:
+    enabled: false
+    captcha_id: ""
+    captcha_key: ""
+email:
+  enabled: false
+  send_type: "smtp"
+  send_name: "{{reply_nick}}"
+  send_addr: "noreply@example.com"
+  mail_tpl: "default"
+  smtp:
+    host: "smtp.qq.com"
+    port: 587
+    username: "example@qq.com"
+    password: ""
+  ali_dm:
+    access_key_id: ""
+    access_key_secret: ""
+    account_name: "noreply@example.com"
+img_upload:
+  enabled: true
+  path: "./data/artalk-img/"
+  max_size: 5
+  public_path: null
+  upgit:
+    enabled: false
+    exec: "./upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
+    del_local: true
+admin_notify:
+  notify_tpl: "default"
+  noise_mode: false
+  email:
+    enabled: true
+    mail_subject: '[{{site_name}}] Post "{{page_title}}" has new a comment'
+  telegram:
+    enabled: false
+    api_token: ""
+    receivers:
+      - 7777777
+  bark:
+    enabled: false
+    server: "http://day.app/xxxxxxx/"
+  lark:
+    enabled: false
+    webhook_url: ""
+  webhook:
+    enabled: false
+    url: ""
+  ding_talk:
+    enabled: false
+    token: ""
+    secret: ""
+  slack:
+    enabled: false
+    oauth_token: ""
+    receivers:
+      - "CHANNEL_ID"
+  line:
+    enabled: false
+    channel_secret: ""
+    channel_access_token: ""
+    receivers:
+      - "USER_ID_1"
+      - "GROUP_ID_1"
+frontend:
+  placeholder: "What do you think?"
+  noComment: "No comments yet."
+  sendBtn: "Send"
+  editorTravel: true
+  darkMode: false
+  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
+  vote: true
+  voteDown: false
+  uaBadge: true
+  listSort: true
+  pvEl: "#ArtalkPV"
+  countEl: "#ArtalkCount"
+  preview: true
+  flatMode: "auto"
+  nestMax: 2
+  nestSort: DATE_ASC
+  gravatar:
+    mirror: "https://cravatar.cn/avatar/"
+    default: "mp"
+  pagination:
+    pageSize: 20
+    readMore: true
+    autoLoad: true
+  heightLimit:
+    content: 300
+    children: 400
+  reqTimeout: 15000
+  versionCheck: true

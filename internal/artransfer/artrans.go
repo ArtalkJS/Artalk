@@ -51,7 +51,7 @@ func ImportArtransByStr(basic *BasicParams, str string) {
 
 func ImportArtrans(basic *BasicParams, srcComments []entity.Artran) {
 	if len(srcComments) == 0 {
-		logFatal(i18n.T("No comment readable"))
+		logFatal(i18n.T("No comment"))
 		return
 	}
 
@@ -96,7 +96,7 @@ func ImportArtrans(basic *BasicParams, srcComments []entity.Artran) {
 	print("\n")
 
 	// 确认开始
-	if !Confirm(i18n.T("Confirm start?")) {
+	if !Confirm(i18n.T("Confirm to continue?")) {
 		os.Exit(0)
 	}
 

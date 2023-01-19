@@ -89,7 +89,7 @@ func AdminPageFetch(router fiber.Router) {
 		}
 
 		if err := query.FetchPageFromURL(&page); err != nil {
-			return common.RespError(c, i18n.T("Page fetch field")+": "+err.Error())
+			return common.RespError(c, i18n.T("Page fetch failed")+": "+err.Error())
 		}
 
 		return common.RespData(c, common.Map{

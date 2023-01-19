@@ -9,7 +9,7 @@
 "Comment failed":
 "Comment":
 "Config file read failed":
-"Confirm start?":
+"Confirm to continue?":
 "Contains invalid URL":
 "Create admin account":
 "Current version is the latest":
@@ -23,7 +23,6 @@
 "Image exceeds {{file_size}} limit":
 "Image upload forbidden":
 "Import complete":
-"Invalid URL for parameter `{{name}}`":
 "Invalid request":
 "Invalid request. Please check your `trusted_domains` config.":
 "Invalid {{name}}":
@@ -32,9 +31,9 @@
 "Name":
 "New version available":
 "Nickname":
-"No comment readable":
+"No comment":
 "Notify":
-"Page fetch field":
+"Page fetch failed":
 "Page":
 "Parameter":
 "Parent comment":

@@ -96,7 +96,7 @@ func RequiredBasicTargetSite(basic *BasicParams) error {
 		return errors.New(i18n.T("{{name}} is required", map[string]interface{}{"name": "t_url:<Target Site Root URL>"}))
 	}
 	if !utils.ValidateURL(basic.TargetSiteUrl) {
-		return errors.New(i18n.T("Invalid URL for parameter `{{name}}`", map[string]interface{}{"name": "t_url:<Target Site Root URL>"}))
+		return errors.New("invalid URL for parameter `t_url:<Target Site Root URL>`")
 	}
 
 	return nil

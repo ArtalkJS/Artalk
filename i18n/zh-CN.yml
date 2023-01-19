@@ -1,0 +1,75 @@
+"Access denied": 无权限
+"Account": 账户
+"Admin access required": 需要管理员权限
+"Admin": 管理员
+"Cannot reply to this comment": 无法回复此评论
+"Captcha required": 需要验证码
+"Checking for updates": 正在检查更新
+"Comment count": 评论数
+"Comment failed": 评论失败
+"Comment": 评论
+"Config file read failed": 配置文件读取失败
+"Confirm to continue?": 确认继续？
+"Contains invalid URL": 包含无效的 URL
+"Create admin account": 创建管理员账户
+"Current version is the latest": 当前版本已是最新的
+"Downloading": 下载中
+"Email": 邮箱
+"Enter {{name}}": 输入{{name}}
+"Export complete": 导出完毕
+"Export error": 导出失败
+"File": 文件
+"First comment": 第一条评论
+"Image exceeds {{file_size}} limit": 图片超过大小限制 {{file_size}}
+"Image upload forbidden": 禁止上传图片
+"Import complete": 导入完毕
+"Invalid request": 无效的请求
+"Invalid request. Please check your `trusted_domains` config.": 请求无效, 请检查 `trusted_domains` 配置项
+"Invalid {{name}}": 无效的{{name}}
+"Link": 链接
+"Login failed": 登陆失败
+"Name": 名称
+"New version available": 有更新可用
+"Nickname": 昵称
+"No comment": 无评论
+"Notify": 通知
+"Page fetch failed": 页面获取失败
+"Page": 页面
+"Parameter": 参数
+"Parent comment": 父评论
+"Password update failed": 密码修改失败
+"Password updated": 密码已修改
+"Password": 密码
+"Please review": 请过目
+"Retype {{name}}": 重新输入{{name}}
+"Save failed": 保存失败
+"Saving": 保存中
+"Services restart complete": 服务重启完毕
+"Site `{{name}}` not found. Please create it in control center.": 未找到站点：`{{name}}`，请在控制台创建站点
+"Site": 站点
+"Sub-comment": 子评论
+"Target Site": 目标站点
+"Task executing in background, please wait...": 任务已开始在后台执行，请稍后...
+"Task in progress, please wait a moment": 任务执行中，请稍后
+"Type": 类型
+"URL Resolver": URL 解析器
+"Unable to get `{{name}}`": 无法获取 `{{name}}`
+"Unspecified": 未指定
+"Unsupported formats": 不支持的格式
+"Update complete": 更新完毕
+"Update failed": 更新失败
+"Upload image via {{method}} failed": 通过 {{method}} 上传图片失败
+"User": 用户
+"Username": 用户名
+"Verification failed": 验证失败
+"Working directory retrieval failed": 工作目录获取失败
+"Wrong captcha": 验证码错误
+"{{count}} items imported": 已导入 {{count}} 个项目
+"{{done}} of {{total}} done": 已完成 {{done}} 共 {{total}} 个
+"{{name}} already exists": '{{name}}已存在'
+"{{name}} cannot be empty": '{{name}}不能为空'
+"{{name}} creation failed": '{{name}}创建失败'
+"{{name}} deletion failed": '{{name}}删除失败'
+"{{name}} is required": '{{name}}必须填写'
+"{{name}} not found": '{{name}}未找到'
+"{{name}} save failed": '{{name}}保存失败'

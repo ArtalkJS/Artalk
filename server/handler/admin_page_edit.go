@@ -6,6 +6,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -32,7 +33,7 @@ func AdminPageEdit(router fiber.Router) {
 		}
 
 		if strings.TrimSpace(p.Key) == "" {
-			return common.RespError(c, "page key 不能为空白字符")
+			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": "key"}))
 		}
 
 		// use site
@@ -41,17 +42,17 @@ func AdminPageEdit(router fiber.Router) {
 		// find page
 		var page = query.FindPageByID(p.ID)
 		if page.IsEmpty() {
-			return common.RespError(c, "page not found")
+			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
 		if !common.IsAdminHasSiteAccess(c, page.SiteName) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		// 重命名合法性检测
 		modifyKey := p.Key != page.Key
 		if modifyKey && !query.FindPage(p.Key, p.SiteName).IsEmpty() {
-			return common.RespError(c, "page 已存在，请换个 key")
+			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("Page")}))
 		}
 
 		// 预先删除缓存，防止修改主键原有 page_key 占用问题
@@ -73,7 +74,7 @@ func AdminPageEdit(router fiber.Router) {
 		}
 
 		if err := query.UpdatePage(&page); err != nil {
-			return common.RespError(c, "page save error")
+			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Page")}))
 		}
 
 		return common.RespData(c, common.Map{

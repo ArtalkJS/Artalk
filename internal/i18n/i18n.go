@@ -2,9 +2,9 @@ package i18n
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/pkged"
+	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
@@ -28,7 +28,7 @@ func Init(locale string) {
 	yaml.Unmarshal(yamlStr, &Locales)
 }
 
-func T(msg string, params ...interface{}) string {
+func T(msg string, params ...map[string]interface{}) string {
 	v, ok := Locales[msg]
 	if !ok || v == "" {
 		v = msg
@@ -36,9 +36,9 @@ func T(msg string, params ...interface{}) string {
 	return msgParams(v, params...)
 }
 
-func msgParams(msg string, params ...interface{}) string {
-	if strings.Contains(msg, "%") {
-		msg = fmt.Sprintf(msg, params...)
+func msgParams(msg string, params ...map[string]interface{}) string {
+	if len(params) > 0 {
+		return utils.RenderMustaches(msg, params[0])
 	}
 
 	return msg

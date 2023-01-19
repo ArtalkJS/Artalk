@@ -5,6 +5,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/email"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -46,19 +47,19 @@ func AdminCommentEdit(router fiber.Router) {
 		// find comment
 		comment := query.FindComment(p.ID)
 		if comment.IsEmpty() {
-			return common.RespError(c, "comment not found")
+			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 		}
 
 		if !common.IsAdminHasSiteAccess(c, comment.SiteName) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		// check params
 		if p.Email != "" && !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, "Invalid email")
+			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 		if p.Link != "" && !utils.ValidateURL(p.Link) {
-			return common.RespError(c, "Invalid link")
+			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
 		}
 
 		// content
@@ -116,7 +117,7 @@ func AdminCommentEdit(router fiber.Router) {
 		}
 
 		if err := query.UpdateComment(&comment); err != nil {
-			return common.RespError(c, "comment save error")
+			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
 		}
 
 		return common.RespData(c, common.Map{

@@ -31,14 +31,14 @@ func Init(cfgFile string) {
 	// load yaml config
 	if err := kf.Load(file.Provider(cfgFile), parser); err != nil {
 		logrus.Errorln(err)
-		logrus.Fatal("配置文件读取错误")
+		logrus.Fatal("Config file read error")
 	}
 
 	Instance = &Config{}
 
 	if err := kf.Unmarshal("", Instance); err != nil {
 		logrus.Errorln(err)
-		logrus.Fatal("配置文件解析错误")
+		logrus.Fatal("Config file parse error")
 	}
 
 	cfgFileLoaded = cfgFile
@@ -50,12 +50,12 @@ func Init(cfgFile string) {
 func postInit() {
 	// 检查 app_key 是否设置
 	if strings.TrimSpace(Instance.AppKey) == "" {
-		logrus.Fatal("请检查配置文件，并设置一个 app_key (任意字符串) 用于数据加密")
+		logrus.Fatal("Please check config file and set an `app_key` for data encryption")
 	}
 
 	// 设置时区
 	if strings.TrimSpace(Instance.TimeZone) == "" {
-		logrus.Fatal("请检查配置文件，并设置 timezone")
+		logrus.Fatal("Please check config file and set `timezone`")
 	}
 	denverLoc, _ := time.LoadLocation(Instance.TimeZone)
 	time.Local = denverLoc
@@ -63,7 +63,7 @@ func postInit() {
 	// 默认站点配置
 	Instance.SiteDefault = strings.TrimSpace(Instance.SiteDefault)
 	if Instance.SiteDefault == "" {
-		logrus.Fatal("请设置 SiteDefault 默认站点，不能为空")
+		logrus.Fatal("Please check config file and set `site_default`")
 	}
 
 	// 缓存配置
@@ -83,13 +83,13 @@ func postInit() {
 
 	/* 检查废弃需更新配置 */
 	if Instance.Captcha.ActionTimeout != 0 {
-		logrus.Warn("captcha.action_timeout 配置项已废弃，请使用 captcha.action_reset 代替")
+		logrus.Warn("The config option `captcha.action_timeout` is deprecated, please use `captcha.action_reset` instead")
 		if Instance.Captcha.ActionReset == 0 {
 			Instance.Captcha.ActionReset = Instance.Captcha.ActionTimeout
 		}
 	}
 	if len(Instance.AllowOrigins) != 0 {
-		logrus.Warn("allow_origins 配置项已废弃，请使用 trusted_domains 代替")
+		logrus.Warn("The config option `allow_origins` is deprecated, please use `trusted_domains` instead")
 		if len(Instance.TrustedDomains) == 0 {
 			Instance.TrustedDomains = Instance.AllowOrigins
 		}
@@ -97,7 +97,7 @@ func postInit() {
 
 	// @version < 2.2.0
 	if Instance.Notify != nil {
-		logrus.Warn("notify 配置项已废弃，请使用 admin_notify 代替")
+		logrus.Warn("The config option `notify` is deprecated, please use `admin_notify` instead")
 		Instance.AdminNotify = *Instance.Notify
 	}
 	if Instance.AdminNotify.Email == nil {
@@ -106,7 +106,7 @@ func postInit() {
 		}
 	}
 	if Instance.Email.MailSubjectToAdmin != "" {
-		logrus.Warn("email.mail_subject_to_admin 配置项已废弃，请使用 admin_notify.email.mail_subject 代替")
+		logrus.Warn("The config option `email.mail_subject_to_admin` is deprecated, please use `admin_notify.email.mail_subject` instead")
 		Instance.AdminNotify.Email.MailSubject = Instance.Email.MailSubjectToAdmin
 	}
 

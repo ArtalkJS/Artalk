@@ -56,7 +56,7 @@ func initConfig(cfgFile string, workDir string) {
 	// 切换工作目录
 	if workDir != "" {
 		if err := os.Chdir(workDir); err != nil {
-			logrus.Fatal("工作目录切换错误 ", err)
+			logrus.Fatal("Working directory change error: ", err)
 		}
 	}
 
@@ -137,7 +137,7 @@ func initLog() {
 func initCache() {
 	err := cache.OpenCache()
 	if err != nil {
-		logrus.Error("缓存初始化发生错误 ", err)
+		logrus.Error("[Cache] ", "Init cache error: ", err)
 		os.Exit(1)
 	}
 }

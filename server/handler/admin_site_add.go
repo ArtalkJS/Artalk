@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -23,24 +24,24 @@ func AdminSiteAdd(router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, "禁止创建站点")
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		if p.Urls != "" {
 			urls := utils.SplitAndTrimSpace(p.Urls, ",")
 			for _, url := range urls {
 				if !utils.ValidateURL(url) {
-					return common.RespError(c, "Invalid url exist")
+					return common.RespError(c, i18n.T("Contains invalid URL"))
 				}
 			}
 		}
 
 		if p.Name == config.ATK_SITE_ALL {
-			return common.RespError(c, "禁止使用保留关键字作为名称")
+			return common.RespError(c, "Prohibit the use of reserved keywords as names")
 		}
 
 		if !query.FindSite(p.Name).IsEmpty() {
-			return common.RespError(c, "site 已存在")
+			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("Site")}))
 		}
 
 		site := entity.Site{}
@@ -48,7 +49,7 @@ func AdminSiteAdd(router fiber.Router) {
 		site.Urls = p.Urls
 		err := query.CreateSite(&site)
 		if err != nil {
-			return common.RespError(c, "site 创建失败")
+			return common.RespError(c, i18n.T("{{name}} creation failed", Map{"name": i18n.T("Site")}))
 		}
 
 		// 刷新 CORS 可信域名

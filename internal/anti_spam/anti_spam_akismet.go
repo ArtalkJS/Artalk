@@ -68,16 +68,16 @@ func Akismet(params *AkismetParams, key string) (isPass bool, err error) {
 	respStr := string(respBody)
 
 	if config.Instance.Debug {
-		logrus.Info("akismet 垃圾检测响应 ", respStr)
+		logrus.Info("akismet Spam Detection Response ", respStr)
 	}
 
 	switch respStr {
 	case "true":
-		// 是垃圾评论
+		// is a spam comment
 		isPass = false
 		return isPass, nil
 	case "false":
-		// 不是垃圾评论
+		// not a spam comment
 		isPass = true
 		return isPass, nil
 	}

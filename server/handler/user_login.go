@@ -8,6 +8,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -34,7 +35,7 @@ func UserLogin(router fiber.Router) {
 		if p.Name == "" {
 			// 仅 Email 的查询
 			if !utils.ValidateEmail(p.Email) {
-				return common.RespError(c, "请输入正确的邮箱")
+				return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 			}
 			users := query.FindUsersByEmail(p.Email)
 			if len(users) == 1 {
@@ -46,7 +47,7 @@ func UserLogin(router fiber.Router) {
 				for _, u := range users {
 					userNames = append(userNames, u.Name)
 				}
-				return common.RespError(c, "需要选择用户名", common.Map{
+				return common.RespError(c, "Need to select username", common.Map{
 					// 前端需做处理让用户选择用户名，
 					// 之后再发起带 name 参数的请求
 					"need_name_select": userNames,
@@ -61,7 +62,7 @@ func UserLogin(router fiber.Router) {
 		common.RecordAction(c)
 
 		if user.IsEmpty() {
-			return common.RespError(c, "验证失败")
+			return common.RespError(c, i18n.T("Login failed"))
 		}
 
 		// 密码验证
@@ -90,7 +91,7 @@ func UserLogin(router fiber.Router) {
 		}
 
 		if !passwordOK {
-			return common.RespError(c, "验证失败")
+			return common.RespError(c, i18n.T("Login failed"))
 		}
 
 		jwtToken := common.LoginGetUserToken(user)

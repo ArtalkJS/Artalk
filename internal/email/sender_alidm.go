@@ -40,7 +40,7 @@ func (s *AliDMSender) Send(email Email) bool {
 
 	resp, err := client.SingleRequest(req)
 	if err != nil {
-		logrus.Error("[EMAIL] Aliyun DM 邮件发送失败 ", err)
+		logrus.Error("[Email] ", "Email sending failed via Aliyun DM", err)
 		return false
 	}
 

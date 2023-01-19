@@ -17,6 +17,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/araddon/dateparse"
@@ -31,7 +32,7 @@ func RunImportArtrans(payload []string) {
 
 	print("\n")
 	tableData := [][]interface{}{
-		{"数据迁移 - 导入"},
+		{"Artransfer - Import"},
 		{strings.ToUpper(name)},
 		{desc},
 	}
@@ -46,7 +47,7 @@ func RunImportArtrans(payload []string) {
 	//elapsed := time.Since(t1)
 
 	print("\n")
-	logInfo("导入执行结束") //，耗时: ", elapsed)
+	logInfo(i18n.T("Import complete")) //，耗时: ", elapsed)
 }
 
 type ImporterInfo struct {
@@ -81,7 +82,7 @@ func GetBasicParamsFrom(payload []string) *BasicParams {
 	})
 
 	if !basic.UrlResolver {
-		logWarn("目标站点 URL 解析器已关闭")
+		logWarn("Target site URL resolver disabled")
 	}
 
 	return &basic
@@ -89,13 +90,13 @@ func GetBasicParamsFrom(payload []string) *BasicParams {
 
 func RequiredBasicTargetSite(basic *BasicParams) error {
 	if basic.TargetSiteName == "" {
-		return errors.New("请附带参数 `t_name:<目标站点名称>`")
+		return errors.New(i18n.T("{{name}} is required", map[string]interface{}{"name": "t_name:<Target Site Name>"}))
 	}
 	if basic.TargetSiteUrl == "" {
-		return errors.New("请附带参数 `t_url:<目标站点根目录 URL>`")
+		return errors.New(i18n.T("{{name}} is required", map[string]interface{}{"name": "t_url:<Target Site Root URL>"}))
 	}
 	if !utils.ValidateURL(basic.TargetSiteUrl) {
-		return errors.New("参数 `t_url:<目标站点根目录 URL>` 必须为 URL 格式")
+		return errors.New("invalid URL for parameter `t_url:<Target Site Root URL>`")
 	}
 
 	return nil
@@ -111,7 +112,7 @@ func SiteReady(tSiteName string, tSiteUrls string) (entity.Site, error) {
 		site.Urls = tSiteUrls
 		err := query.CreateSite(&site)
 		if err != nil {
-			return entity.Site{}, errors.New("站点创建失败")
+			return entity.Site{}, errors.New("failed to create site")
 		}
 	} else {
 		// 追加 URL
@@ -141,7 +142,7 @@ func SiteReady(tSiteName string, tSiteUrls string) (entity.Site, error) {
 			site.Urls = strings.Join(rUrls, ",")
 			err := query.UpdateSite(&site)
 			if err != nil {
-				return entity.Site{}, errors.New("站点数据更新失败")
+				return entity.Site{}, errors.New("update site data failed")
 			}
 		}
 	}
@@ -162,15 +163,16 @@ func JsonFileReady(payload []string) (string, error) {
 	}
 
 	if jsonFile == "" {
-		return "", errors.New("请附带参数 `json_file:<JSON 数据文件路径>`")
+
+		return "", errors.New(i18n.T("{{name}} is required", map[string]interface{}{"name": "json_file:<JSON file path>"}))
 	}
 	if _, err := os.Stat(jsonFile); errors.Is(err, os.ErrNotExist) {
-		return "", errors.New("文件不存在，请检查参数 `json_file` 传入路径是否正确")
+		return "", errors.New(i18n.T("{{name}} not found", map[string]interface{}{"name": i18n.T("File")}))
 	}
 
 	buf, err := ioutil.ReadFile(jsonFile)
 	if err != nil {
-		return "", errors.New("json 文件打开失败：" + err.Error())
+		return "", errors.New("file open failed" + ": " + err.Error())
 	}
 
 	return string(buf), nil
@@ -297,13 +299,13 @@ func JsonDecodeFAS(str string, fasStructure interface{}) error {
 		var err error
 		str, err = TryConvertLineJsonToArr(str)
 		if err != nil {
-			return errors.New("JSON 不是 Array 类型，" + err.Error())
+			return errors.New("JSON of array type is required: " + err.Error())
 		}
 	}
 
 	err := json.Unmarshal([]byte(utils.JsonObjInArrAnyStr(str)), fasStructure) // lib.ToString()
 	if err != nil {
-		return errors.New("JSON 解析失败 " + err.Error())
+		return errors.New("failed to parse JSON: " + err.Error())
 	}
 
 	return nil

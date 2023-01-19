@@ -13,11 +13,11 @@ func UserLogout(router fiber.Router) {
 	router.Post("/logout", func(c *fiber.Ctx) error {
 
 		if !config.Instance.Cookie.Enabled {
-			return common.RespError(c, "API 未启用 Cookie")
+			return common.RespError(c, "API cookie disabled")
 		}
 
 		if common.GetJwtStrByReqCookie(c) == "" {
-			return common.RespError(c, "未登录，无需注销")
+			return common.RespError(c, "Not logged in yet, no need to log out")
 		}
 
 		// same as login, remove cookie

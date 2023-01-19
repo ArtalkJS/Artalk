@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/url"
 	"path"
 	"strings"
@@ -41,7 +40,7 @@ func SiteOriginMiddleware() fiber.Handler {
 		// 请求站点名 == "__ATK_SITE_ALL" 时取消站点隔离
 		if siteName == config.ATK_SITE_ALL {
 			if !isSuperAdmin {
-				return common.RespError(c, "仅管理员查询允许取消站点隔离")
+				return common.RespError(c, "Only admin can query sites with disable isolation")
 			}
 
 			siteAll = true
@@ -56,9 +55,12 @@ func SiteOriginMiddleware() fiber.Handler {
 
 			findSite := query.FindSite(siteName)
 			if findSite.IsEmpty() {
-				return common.RespError(c, fmt.Sprintf("未找到站点：`%s`，请在控制台创建站点", siteName), common.Map{
-					"err_no_site": true,
-				})
+				return common.RespError(c,
+					i18n.T("Site `{{name}}` not found. Please create it in control center.", map[string]interface{}{"name": siteName}),
+					common.Map{
+						"err_no_site": true,
+					},
+				)
 			}
 			site = &findSite
 			siteID = findSite.ID
@@ -105,7 +107,7 @@ func CheckOrigin(c *fiber.Ctx, allowSite *entity.Site) (bool, error) {
 		// 从 Referer 获取 Origin
 		referer := string(c.Request().Header.Referer())
 		if referer == "" {
-			return false, common.RespError(c, i18n.T("Invalid request")+", "+i18n.T("Unable to get Origin"))
+			return false, common.RespError(c, i18n.T("Invalid request")+", "+i18n.T("Unable to get `{{name}}`", map[string]interface{}{"name": "origin"}))
 		}
 		origin = referer
 	}
@@ -123,7 +125,7 @@ func CheckOrigin(c *fiber.Ctx, allowSite *entity.Site) (bool, error) {
 		return true, nil
 	}
 
-	return false, common.RespError(c, i18n.T("Invalid request")+", "+i18n.T("Please check trusted_domains config"))
+	return false, common.RespError(c, i18n.T("Invalid request. Please check your `trusted_domains` config."))
 }
 
 // 判断 Origin 是否被允许

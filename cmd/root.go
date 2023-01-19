@@ -12,14 +12,14 @@ import (
 var Version = config.Version + `/` + config.CommitHash
 
 var Banner = `
- ________  ________  _________  ________  ___       ___  __       
-|\   __  \|\   __  \|\___   ___\\   __  \|\  \     |\  \|\  \     
-\ \  \|\  \ \  \|\  \|___ \  \_\ \  \|\  \ \  \    \ \  \/  /|_   
- \ \   __  \ \   _  _\   \ \  \ \ \   __  \ \  \    \ \   ___  \  
-  \ \  \ \  \ \  \\  \|   \ \  \ \ \  \ \  \ \  \____\ \  \\ \  \ 
+ ________  ________  _________  ________  ___       ___  __
+|\   __  \|\   __  \|\___   ___\\   __  \|\  \     |\  \|\  \
+\ \  \|\  \ \  \|\  \|___ \  \_\ \  \|\  \ \  \    \ \  \/  /|_
+ \ \   __  \ \   _  _\   \ \  \ \ \   __  \ \  \    \ \   ___  \
+  \ \  \ \  \ \  \\  \|   \ \  \ \ \  \ \  \ \  \____\ \  \\ \  \
    \ \__\ \__\ \__\\ _\    \ \__\ \ \__\ \__\ \_______\ \__\\ \__\
     \|__|\|__|\|__|\|__|    \|__|  \|__|\|__|\|_______|\|__| \|__|
- 
+
 Artalk (` + Version + `)
 
  -> A Selfhosted Comment System.
@@ -49,13 +49,13 @@ func Execute() {
 
 func init() {
 	rootCmd.SetVersionTemplate("Artalk ({{printf \"%s\" .Version}})\n")
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "配置文件路径 (defaults are './artalk.yml')")
-	rootCmd.PersistentFlags().StringVarP(&workDir, "workdir", "w", "", "程序工作目录 (defaults are './')")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file path (defaults are './artalk.yml')")
+	rootCmd.PersistentFlags().StringVarP(&workDir, "workdir", "w", "", "program working directory (defaults are './')")
 
 	// Version Command
 	versionCmd := &cobra.Command{
 		Use:   "version",
-		Short: "输出版本信息",
+		Short: "Output Version Information",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println("Artalk (" + Version + ")")
 		},
@@ -65,7 +65,7 @@ func init() {
 	// Config Command
 	configCmd := &cobra.Command{
 		Use:   "config",
-		Short: "输出配置信息",
+		Short: "Output Config Information",
 		Run: func(cmd *cobra.Command, args []string) {
 			core.LoadConfOnly(cfgFile, workDir)
 			buf, _ := json.MarshalIndent(config.Instance, "", "    ")

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -18,7 +19,7 @@ func AdminVoteSync(router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, "无权访问")
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		query.VoteSync()

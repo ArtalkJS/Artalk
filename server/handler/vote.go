@@ -5,6 +5,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -60,12 +61,12 @@ func Vote(router fiber.Router) {
 		case isVoteComment:
 			comment = query.FindComment(p.TargetID)
 			if comment.IsEmpty() {
-				return common.RespError(c, "comment not found")
+				return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 			}
 		case isVotePage:
 			page = query.FindPageByID(p.TargetID)
 			if page.IsEmpty() {
-				return common.RespError(c, "page not found")
+				return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 			}
 		default:
 			return common.RespError(c, "unknown type")

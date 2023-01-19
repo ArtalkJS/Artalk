@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -19,17 +20,17 @@ func AdminSiteDel(router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, "禁止删除站点")
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		site := query.FindSiteByID(p.ID)
 		if site.IsEmpty() {
-			return common.RespError(c, "site 不存在")
+			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Site")}))
 		}
 
 		err := query.DelSite(&site)
 		if err != nil {
-			return common.RespError(c, "site 删除失败")
+			return common.RespError(c, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("Site")}))
 		}
 
 		// 刷新 CORS 可信域名

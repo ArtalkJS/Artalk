@@ -9,15 +9,15 @@ import (
 )
 
 var genCmd = &cobra.Command{
-	Use:   "gen <类型> <目标路径>",
-	Short: "生成一些内容",
-	Long:  "生成一些内容\n例如：artalk gen config ./artalk.yml",
+	Use:   "gen <TYPE> <DEST>",
+	Short: "A collection of several useful generators",
+	Long:  "Generate some content\ne.g. `artalk gen config ./artalk.yml`",
 	Args:  cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {
-		// 工作目录
+		// change working directory
 		if workDir != "" {
 			if err := os.Chdir(workDir); err != nil {
-				logrus.Fatal("工作目录切换错误 ", err)
+				logrus.Fatal("change working directory error ", err)
 			}
 		}
 

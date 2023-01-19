@@ -9,6 +9,7 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/artransfer"
 	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -17,13 +18,10 @@ import (
 var exportCmd = &cobra.Command{
 	Use:     "export",
 	Aliases: []string{},
-	Short:   "数据迁移 - 迁出",
-	Long: "\n# 数据迁移 - 迁出\n\n  将所有数据从 Artalk 导出，用作备份，或迁移至其他地方\n  打包所有数据并导出成 “Artalk 数据行囊 (Artrans)”，为数据迁移做准备\n" + `
-- 重新导入 Artalk，可执行: artalk import <数据行囊文件路径>
-- 文档：https://artalk.js.org/guide/transfer.html
-`,
+	Short:   "Artransfer - Export",
+	Long:    "\n# Artransfer - Export\n\n  See the documentation to learn more: https://artalk.js.org/guide/transfer.html",
 	Run: func(cmd *cobra.Command, args []string) {
-		core.LoadCore(cfgFile, workDir) // 装载核心
+		core.LoadCore(cfgFile, workDir)
 
 		jsonStr, err := artransfer.ExportArtransString()
 		if err != nil {
@@ -67,7 +65,7 @@ var exportCmd = &cobra.Command{
 				logrus.Fatal(err2)
 			}
 
-			logrus.Info("已导出 Artrans 文件：" + filename)
+			logrus.Info(i18n.T("Export complete") + ": " + filename)
 		}
 	},
 }

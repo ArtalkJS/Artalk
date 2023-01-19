@@ -6,6 +6,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/anti_spam"
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/notify_launcher"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
@@ -43,17 +44,17 @@ func CommentAdd(router fiber.Router) {
 		}
 
 		if strings.TrimSpace(p.Name) == "" {
-			return common.RespError(c, "昵称不能为空")
+			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Nickname")}))
 		}
 		if strings.TrimSpace(p.Email) == "" {
-			return common.RespError(c, "邮箱不能为空")
+			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Email")}))
 		}
 
 		if !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, "Invalid email")
+			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 		if p.Link != "" && !utils.ValidateURL(p.Link) {
-			return common.RespError(c, "Invalid link")
+			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
 		}
 
 		ip := c.IP()
@@ -83,13 +84,13 @@ func CommentAdd(router fiber.Router) {
 		if p.Rid != 0 {
 			parentComment = query.FindComment(p.Rid)
 			if parentComment.IsEmpty() {
-				return common.RespError(c, "找不到父评论")
+				return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Parent comment")}))
 			}
 			if parentComment.PageKey != p.PageKey {
-				return common.RespError(c, "与父评论的 pageKey 不一致")
+				return common.RespError(c, "Inconsistent with the page_key of the parent comment")
 			}
 			if !parentComment.IsAllowReply() {
-				return common.RespError(c, "不允许回复该评论")
+				return common.RespError(c, i18n.T("Cannot reply to this comment"))
 			}
 		}
 
@@ -97,7 +98,7 @@ func CommentAdd(router fiber.Router) {
 		user := query.FindCreateUser(p.Name, p.Email, p.Link)
 		if user.ID == 0 || page.Key == "" {
 			logrus.Error("Cannot get user or page")
-			return common.RespError(c, "评论失败")
+			return common.RespError(c, i18n.T("Comment failed"))
 		}
 
 		// update user
@@ -134,7 +135,7 @@ func CommentAdd(router fiber.Router) {
 		err := query.CreateComment(&comment)
 		if err != nil {
 			logrus.Error("Save Comment error: ", err)
-			return common.RespError(c, "评论失败")
+			return common.RespError(c, i18n.T("Comment failed"))
 		}
 
 		// 异步执行

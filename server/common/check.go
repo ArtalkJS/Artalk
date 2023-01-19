@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/gofiber/fiber/v2"
@@ -13,7 +14,7 @@ func CheckIsAllowed(c *fiber.Ctx, name string, email string, page entity.Page, s
 	// 如果用户是管理员，或者当前页只能管理员评论
 	if isAdminUser || page.AdminOnly {
 		if !CheckIsAdminReq(c) {
-			return false, RespError(c, "需要验证管理员身份", Map{"need_login": true})
+			return false, RespError(c, i18n.T("Admin access required"), Map{"need_login": true})
 		}
 	}
 

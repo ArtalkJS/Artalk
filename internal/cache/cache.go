@@ -66,7 +66,7 @@ func OpenCache() (err error) {
 		)
 
 	default:
-		logrus.Fatal("请检查配置文件 `cache.type` 无效缓存类型：", cacheType)
+		logrus.Fatal("Invalid cache type `" + cacheType + "`, please check config option `cache.type`")
 
 	}
 

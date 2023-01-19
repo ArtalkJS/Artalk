@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -32,7 +33,7 @@ func MarkRead(router fiber.Router) {
 		// all read
 		if p.AllRead {
 			if p.Name == "" || p.Email == "" {
-				return common.RespError(c, "need username and email")
+				return common.RespError(c, "username or email cannot be empty")
 			}
 
 			user := query.FindUser(p.Name, p.Email)
@@ -47,7 +48,7 @@ func MarkRead(router fiber.Router) {
 		// find notify
 		notify := query.FindNotifyByKey(p.NotifyKey)
 		if notify.IsEmpty() {
-			return common.RespError(c, "notify key is wrong")
+			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Notify")}))
 		}
 
 		if notify.IsRead {
@@ -57,7 +58,7 @@ func MarkRead(router fiber.Router) {
 		// update notify
 		err := query.NotifySetRead(&notify)
 		if err != nil {
-			return common.RespError(c, "notify save error")
+			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Notify")}))
 		}
 
 		return common.RespSuccess(c)

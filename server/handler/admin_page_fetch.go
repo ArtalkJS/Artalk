@@ -1,11 +1,10 @@
 package handler
 
 import (
-	"fmt"
-
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -37,7 +36,7 @@ func AdminPageFetch(router fiber.Router) {
 		if p.GetStatus {
 			if allPageFetching {
 				return common.RespData(c, common.Map{
-					"msg":         fmt.Sprintf("已完成 %d 共 %d 个", allPageFetchDone, allPageFetchTotal),
+					"msg":         i18n.T("{{done}} of {{total}} done", Map{"done": allPageFetchDone, "total": allPageFetchTotal}),
 					"is_progress": true,
 				})
 			} else {
@@ -51,7 +50,7 @@ func AdminPageFetch(router fiber.Router) {
 		// 更新全部站点
 		if p.SiteName != "" {
 			if allPageFetching {
-				return common.RespError(c, "任务正在进行中，请稍等片刻")
+				return common.RespError(c, i18n.T("Task in progress, please wait a moment"))
 			}
 
 			// 异步执行
@@ -82,15 +81,15 @@ func AdminPageFetch(router fiber.Router) {
 
 		page := query.FindPageByID(p.ID)
 		if page.IsEmpty() {
-			return common.RespError(c, "page not found")
+			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
 		if !common.IsAdminHasSiteAccess(c, page.SiteName) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		if err := query.FetchPageFromURL(&page); err != nil {
-			return common.RespError(c, "page fetch error: "+err.Error())
+			return common.RespError(c, i18n.T("Page fetch failed")+": "+err.Error())
 		}
 
 		return common.RespData(c, common.Map{

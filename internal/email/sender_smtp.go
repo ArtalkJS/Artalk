@@ -27,7 +27,7 @@ func (s *SmtpSender) Send(email Email) bool {
 
 	// 发送邮件
 	if err := s.dialer.DialAndSend(m); err != nil {
-		logrus.Error("[EMAIL] SMTP 邮件发送失败 ", err)
+		logrus.Error("[Email] ", "Email sending failed via SMTP ", err)
 		return false
 	}
 

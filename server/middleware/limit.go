@@ -4,6 +4,7 @@ import (
 	"path"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -74,7 +75,7 @@ func ActionLimitMiddleware(conf ActionLimitConf) fiber.Handler {
 				respData["img_data"] = common.GetNewImageCaptchaBase64(c.IP())
 			}
 
-			return common.RespError(c, "需要验证码", respData)
+			return common.RespError(c, i18n.T("Captcha required"), respData)
 		}
 
 		// 放行

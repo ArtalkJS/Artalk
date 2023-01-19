@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/pkged"
 	"github.com/sirupsen/logrus"
 )
@@ -25,12 +26,12 @@ func Gen(genType string, specificPath string, overwrite bool) {
 
 	file, err := pkged.FS().Open(strings.TrimPrefix(genType, "/"))
 	if err != nil {
-		logrus.Fatal("无效的内置资源: "+genType+" ", err)
+		logrus.Fatal("Invalid built-in resource `"+genType+"`: ", err)
 	}
 
 	buf, err := ioutil.ReadAll(file)
 	if err != nil {
-		logrus.Fatal("读取内置资源: "+genType+" 失败 ", err)
+		logrus.Fatal("Read built-in resources `"+genType+"` error: ", err)
 	}
 
 	// 自动生成 app_key
@@ -50,20 +51,20 @@ func Gen(genType string, specificPath string, overwrite bool) {
 	}
 
 	if CheckFileExist(absPath) && !overwrite {
-		logrus.Fatal("已存在文件: " + absPath)
+		logrus.Fatal(i18n.T("{{name}} already exists", map[string]interface{}{"name": i18n.T("File")}) + ": " + absPath)
 	}
 
 	dst, err := os.Create(absPath)
 	if err != nil {
-		logrus.Fatal("创建目标文件失败 ", err)
+		logrus.Fatal("Failed to create target file: ", err)
 	}
 	defer dst.Close()
 
 	if _, err = dst.Write(buf); err != nil {
-		logrus.Fatal("写入目标文件失败 ", err)
+		logrus.Fatal("Failed to write target file: ", err)
 	}
 
-	logrus.Info("生成文件: " + absPath)
+	logrus.Info("File Generated: " + absPath)
 }
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*")

@@ -45,7 +45,7 @@ func Aliyun(p AliyunParams) (isPass bool, err error) {
 	}
 
 	if textScanResp.GetHttpStatus() != 200 {
-		return false, errors.New("Respone got: " + strconv.Itoa(textScanResp.GetHttpStatus()))
+		return false, errors.New("response got: " + strconv.Itoa(textScanResp.GetHttpStatus()))
 	}
 
 	// Handle Respone
@@ -53,7 +53,7 @@ func Aliyun(p AliyunParams) (isPass bool, err error) {
 	respRaw := textScanResp.GetHttpContentString()
 	dataRaw := gjson.Get(respRaw, "data.0.results.0.suggestion")
 	if !dataRaw.Exists() {
-		return false, errors.New("Unexpected JSON: " + respRaw)
+		return false, errors.New("unexpected JSON: " + respRaw)
 	}
 
 	// Get Result

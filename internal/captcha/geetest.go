@@ -39,7 +39,7 @@ func GeetestCheck(paramsJSON string) (isPass bool, reason string, err error) {
 	var p GeetestParams
 	err = json.Unmarshal([]byte(paramsJSON), &p)
 	if err != nil {
-		return false, "", errors.New("Reqest params json parse err: " + err.Error())
+		return false, "", errors.New("request params json parse err: " + err.Error())
 	}
 
 	// 生成签名
@@ -58,7 +58,7 @@ func GeetestCheck(paramsJSON string) (isPass bool, reason string, err error) {
 	cli := http.Client{Timeout: time.Second * 5} // 5s 超时
 	resp, err := cli.PostForm(url, form_data)
 	if err != nil || resp.StatusCode != 200 {
-		return false, "", errors.New("服务接口异常: " + err.Error())
+		return false, "", errors.New("service interface exception: " + err.Error())
 	}
 
 	// 处理响应结果
@@ -67,7 +67,7 @@ func GeetestCheck(paramsJSON string) (isPass bool, reason string, err error) {
 
 	gResult := gjson.Get(resJson, "result")
 	if !gResult.Exists() {
-		return false, "", errors.New("响应结果不符合预期: " + resJson)
+		return false, "", errors.New("response results are not as expected: " + resJson)
 	}
 	result := gResult.String()
 

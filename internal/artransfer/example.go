@@ -3,7 +3,7 @@ package artransfer
 var ExampleImporter = &_ExampleImporter{
 	ImporterInfo: ImporterInfo{
 		Name: "example",
-		Desc: "从 Example 导入数据",
+		Desc: "Import data from <EXAMPLE>",
 		Note: "",
 	},
 }

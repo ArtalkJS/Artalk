@@ -125,7 +125,7 @@ func index(f fiber.Router) {
 func uploadedStatic(f fiber.Router) {
 	if config.Instance.ImgUpload.Path == "" {
 		config.Instance.ImgUpload.Path = "./data/artalk-img/"
-		logrus.Warn("图片上传功能 img_upload.path 未配置，使用默认值：" + config.Instance.ImgUpload.Path)
+		logrus.Warn("[Image Upload] img_upload.path is not configured, using the default value: " + config.Instance.ImgUpload.Path)
 	}
 
 	// 图片上传静态资源可访问路径

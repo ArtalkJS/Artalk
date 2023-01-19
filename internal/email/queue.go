@@ -24,7 +24,7 @@ func InitQueue() {
 					if email.LinkedNotify != nil {
 						// 标记关联评论邮件发送状态
 						if err := query.NotifySetEmailed(email.LinkedNotify); err != nil {
-							logrus.Errorf("[EMAIL] 标记关联评论邮件发送状态失败: %s", err)
+							logrus.Errorf("[Email] Flag associated comment email delivery status failed: %s", err)
 							continue
 						}
 					}

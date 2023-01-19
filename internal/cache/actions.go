@@ -49,7 +49,7 @@ func FindAndStoreCache(name string, dest interface{}, queryDBResult func() inter
 
 func FindCache(name string, dest interface{}) error {
 	if !config.Instance.Cache.Enabled {
-		return errors.New("缓存功能禁用")
+		return errors.New("cache disabled")
 	}
 
 	// `Get()` is Thread Safe, so no need to add Mutex
@@ -59,7 +59,7 @@ func FindCache(name string, dest interface{}) error {
 		return err
 	}
 
-	logrus.Debug("[缓存命中] " + name)
+	logrus.Debug("[Cache Hit] " + name)
 
 	return nil
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -31,29 +32,29 @@ func AdminSiteEdit(router fiber.Router) {
 
 		site := query.FindSiteByID(p.ID)
 		if site.IsEmpty() {
-			return common.RespError(c, "site 不存在")
+			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Site")}))
 		}
 
 		// 站点操作权限检查
 		if !common.IsAdminHasSiteAccess(c, site.Name) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		if strings.TrimSpace(p.Name) == "" {
-			return common.RespError(c, "site 名称不能为空白字符")
+			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": "name"}))
 		}
 
 		// 重命名合法性检测
 		modifyName := p.Name != site.Name
 		if modifyName && !query.FindSite(p.Name).IsEmpty() {
-			return common.RespError(c, "site 已存在，请换个名称")
+			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("Site")}))
 		}
 
 		// urls 合法性检测
 		if p.Urls != "" {
 			for _, url := range utils.SplitAndTrimSpace(p.Urls, ",") {
 				if !utils.ValidateURL(url) {
-					return common.RespError(c, "Invalid url exist")
+					return common.RespError(c, i18n.T("Contains invalid URL"))
 				}
 			}
 		}
@@ -85,7 +86,7 @@ func AdminSiteEdit(router fiber.Router) {
 
 		err := query.UpdateSite(&site)
 		if err != nil {
-			return common.RespError(c, "site 保存失败")
+			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Site")}))
 		}
 
 		// 刷新 CORS 可信域名

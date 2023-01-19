@@ -6,34 +6,32 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/artransfer"
 	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 var importCmd = &cobra.Command{
-	Use:     "import <数据行囊文件路径>",
+	Use:     "import <FILENAME>",
 	Aliases: []string{},
-	Short:   "数据迁移 - 迁入",
-	Long: "\n# 数据迁移 - 迁入\n\n  从其他评论系统迁移数据到 Artalk\n" + `
-- 导入前需要使用转换工具 Artransfer 将其他评论数据转为 Artrans 格式
-- 文档：https://artalk.js.org/guide/transfer.html
-`,
-	Args: cobra.MinimumNArgs(1),
+	Short:   "Artransfer - Import",
+	Long:    "\n# Artransfer - Import\n\n  See the documentation to learn more: https://artalk.js.org/guide/transfer.html",
+	Args:    cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		core.LoadCore(cfgFile, workDir) // 装载核心
+		core.LoadCore(cfgFile, workDir) // load core
 
 		parcelFile := args[0]
 		if _, err := os.Stat(parcelFile); errors.Is(err, os.ErrNotExist) {
-			logrus.Fatal("`数据行囊` 文件不存在，请检查路径是否正确")
+			logrus.Fatal(i18n.T("{{name}} not found", map[string]interface{}{"name": i18n.T("File")}))
 		}
 
 		payload := args[1:]
 		payload = append(payload, "json_file:"+parcelFile)
 
-		// 导入 Artrans
+		// import Artrans
 		artransfer.RunImportArtrans(payload)
 
-		logrus.Info("导入结束")
+		logrus.Info(i18n.T("Import complete"))
 	},
 }
 

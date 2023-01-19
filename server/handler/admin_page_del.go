@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -25,16 +26,16 @@ func AdminPageDel(router fiber.Router) {
 
 		page := query.FindPage(p.Key, p.SiteName)
 		if page.IsEmpty() {
-			return common.RespError(c, "page not found")
+			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
 		if !common.IsAdminHasSiteAccess(c, page.SiteName) {
-			return common.RespError(c, "无权操作")
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		err := query.DelPage(&page)
 		if err != nil {
-			return common.RespError(c, "Page 删除失败")
+			return common.RespError(c, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("Page")}))
 		}
 
 		return common.RespSuccess(c)

@@ -4,6 +4,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -159,6 +160,6 @@ func Stat(router fiber.Router) {
 			return common.RespData(c, query.CookAllPages(pages))
 		}
 
-		return common.RespError(c, "invalid type")
+		return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Type")}))
 	})
 }

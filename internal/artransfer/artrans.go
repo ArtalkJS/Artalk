@@ -51,12 +51,12 @@ func ImportArtransByStr(basic *BasicParams, str string) {
 
 func ImportArtrans(basic *BasicParams, srcComments []entity.Artran) {
 	if len(srcComments) == 0 {
-		logFatal(i18n.T("No comments were successfully read"))
+		logFatal(i18n.T("No comment readable"))
 		return
 	}
 
 	if basic.TargetSiteUrl != "" && !utils.ValidateURL(basic.TargetSiteUrl) {
-		logFatal(i18n.T("Target site URL is invalid"))
+		logFatal(i18n.T("Invalid {{name}}", map[string]interface{}{"name": i18n.T("Target Site") + " " + "URL"}))
 		return
 	}
 
@@ -64,7 +64,7 @@ func ImportArtrans(basic *BasicParams, srcComments []entity.Artran) {
 	print("# " + i18n.T("Please review") + ":\n\n")
 
 	// 第一条评论
-	PrintEncodeData(i18n.T("The first comment"), srcComments[0])
+	PrintEncodeData(i18n.T("First comment"), srcComments[0])
 
 	showTSiteName := basic.TargetSiteName
 	showTSiteUrl := basic.TargetSiteUrl
@@ -87,9 +87,9 @@ func ImportArtrans(basic *BasicParams, srcComments []entity.Artran) {
 	// }
 
 	PrintTable([][]interface{}{
-		{i18n.T("Target site name"), showTSiteName},
-		{i18n.T("Target site URL"), showTSiteUrl},
-		{i18n.T("Number of Comments"), fmt.Sprintf("%d", len(srcComments))},
+		{i18n.T("Target Site") + " " + i18n.T("Name"), showTSiteName},
+		{i18n.T("Target Site") + " URL", showTSiteUrl},
+		{i18n.T("Comment count"), fmt.Sprintf("%d", len(srcComments))},
 		{i18n.T("URL Resolver"), showUrlResolver},
 	})
 
@@ -198,7 +198,7 @@ func ImportArtrans(basic *BasicParams, srcComments []entity.Artran) {
 		importComments = append(importComments, nComment)
 	}
 
-	println(i18n.T("Saving..."))
+	println(i18n.T("Saving") + "...")
 
 	// Batch Insert
 	// @link https://gorm.io/docs/create.html#Batch-Insert
@@ -265,5 +265,5 @@ func ImportArtrans(basic *BasicParams, srcComments []entity.Artran) {
 		println()
 	}
 
-	logInfo(fmt.Sprintf("完成导入 %d 条数据", len(srcComments)))
+	logInfo(i18n.T("{{count}} items imported", map[string]interface{}{"count": len(srcComments)}))
 }

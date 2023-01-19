@@ -26,7 +26,7 @@ var adminCmd = &cobra.Command{
 		core.LoadCore(cfgFile, workDir)
 
 		fmt.Println("--------------------------------")
-		fmt.Println(" " + i18n.T("Create an admin account"))
+		fmt.Println(" " + i18n.T("Create admin account"))
 		fmt.Println("--------------------------------")
 
 		username, email, password, err := credentials()
@@ -41,7 +41,8 @@ var adminCmd = &cobra.Command{
 				logrus.Fatal(err)
 			}
 
-			logrus.Info(i18n.T("The account already exists and the password was changed successfully"))
+			logrus.Info(i18n.T("{{name}} already exists", map[string]interface{}{"name": i18n.T("Account")}) +
+				", " + i18n.T("Password updated"))
 			return
 		}
 
@@ -72,29 +73,29 @@ func init() {
 func credentials() (string, string, string, error) {
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Print("Enter Username: ")
+	fmt.Print(i18n.T("Enter {{name}}", map[string]interface{}{"name": i18n.T("Username")}) + ": ")
 	username, err := reader.ReadString('\n')
 	if err != nil {
 		return "", "", "", err
 	}
 
-	fmt.Print("Enter Email: ")
+	fmt.Print(i18n.T("Enter {{name}}", map[string]interface{}{"name": i18n.T("Email")}) + ": ")
 	email, err := reader.ReadString('\n')
 	if err != nil {
 		return "", "", "", err
 	}
 	if !utils.ValidateEmail(strings.TrimSpace(email)) {
-		return "", "", "", errors.New(i18n.T("Invalid email format"))
+		return "", "", "", errors.New("invalid email format")
 	}
 
-	fmt.Print(i18n.T("Enter Password") + ": ")
+	fmt.Print(i18n.T("Enter {{name}}", map[string]interface{}{"name": i18n.T("Password")}) + ": ")
 	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return "", "", "", err
 	}
 
 	fmt.Println()
-	fmt.Print(i18n.T("Retype Password") + ": ")
+	fmt.Print(i18n.T("Retype {{name}}", map[string]interface{}{"name": i18n.T("Password")}) + ": " + ": ")
 	byteRePassword, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return "", "", "", err
@@ -106,7 +107,7 @@ func credentials() (string, string, string, error) {
 	rePassword := strings.TrimSpace(string(byteRePassword))
 
 	if rePassword != password {
-		return "", "", "", errors.New(i18n.T("Inconsistent password input"))
+		return "", "", "", errors.New("inconsistent password input")
 	}
 
 	return strings.TrimSpace(username), strings.TrimSpace(email), password, nil

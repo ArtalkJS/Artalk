@@ -24,14 +24,14 @@ func AdminSiteAdd(router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, "Prohibit site creation")
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		if p.Urls != "" {
 			urls := utils.SplitAndTrimSpace(p.Urls, ",")
 			for _, url := range urls {
 				if !utils.ValidateURL(url) {
-					return common.RespError(c, "Invalid url exist")
+					return common.RespError(c, i18n.T("Contains invalid URL"))
 				}
 			}
 		}
@@ -41,7 +41,7 @@ func AdminSiteAdd(router fiber.Router) {
 		}
 
 		if !query.FindSite(p.Name).IsEmpty() {
-			return common.RespError(c, "site "+i18n.T("Already exists"))
+			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("Site")}))
 		}
 
 		site := entity.Site{}
@@ -49,7 +49,7 @@ func AdminSiteAdd(router fiber.Router) {
 		site.Urls = p.Urls
 		err := query.CreateSite(&site)
 		if err != nil {
-			return common.RespError(c, "site "+i18n.T("Failed to create"))
+			return common.RespError(c, i18n.T("{{name}} creation failed", Map{"name": i18n.T("Site")}))
 		}
 
 		// 刷新 CORS 可信域名

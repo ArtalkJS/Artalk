@@ -37,7 +37,7 @@ func ImgUpload(router fiber.Router) {
 	router.Post("/img-upload", func(c *fiber.Ctx) error {
 		// 功能开关 (管理员始终开启)
 		if !config.Instance.ImgUpload.Enabled && !common.CheckIsAdminReq(c) {
-			return common.RespError(c, i18n.T("Forbidden to upload images"), common.Map{
+			return common.RespError(c, i18n.T("Image upload forbidden"), common.Map{
 				"img_upload_enabled": false,
 			})
 		}
@@ -49,7 +49,7 @@ func ImgUpload(router fiber.Router) {
 		}
 
 		if !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, "Invalid email")
+			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 
 		// use site
@@ -66,7 +66,9 @@ func ImgUpload(router fiber.Router) {
 		// 图片大小限制 (Based on content length)
 		if config.Instance.ImgUpload.MaxSize != 0 {
 			if int64(c.Request().Header.ContentLength()) > config.Instance.ImgUpload.MaxSize*1024*1024 {
-				return common.RespError(c, i18n.T("Image size exceeds limit")+" "+fmt.Sprintf(" %dMB", config.Instance.ImgUpload.MaxSize))
+				return common.RespError(c, i18n.T("Image exceeds {{file_size}} limit", Map{
+					"file_size": fmt.Sprintf("%dMB", config.Instance.ImgUpload.MaxSize),
+				}))
 			}
 		}
 
@@ -74,14 +76,14 @@ func ImgUpload(router fiber.Router) {
 		file, err := c.FormFile("file")
 		if err != nil {
 			logrus.Error(err)
-			return common.RespError(c, "File red failure")
+			return common.RespError(c, "File read failed")
 		}
 
 		// 打开文件
 		src, err := file.Open()
 		if err != nil {
 			logrus.Error(err)
-			return common.RespError(c, "File open failure")
+			return common.RespError(c, "File open failed")
 		}
 		defer src.Close()
 
@@ -89,13 +91,15 @@ func ImgUpload(router fiber.Router) {
 		buf, err := io.ReadAll(src)
 		if err != nil {
 			logrus.Error(err)
-			return common.RespError(c, "File read failure")
+			return common.RespError(c, "File read failed")
 		}
 
 		// 大小限制 (Based on content read)
 		if config.Instance.ImgUpload.MaxSize != 0 {
 			if int64(len(buf)) > config.Instance.ImgUpload.MaxSize*1024*1024 {
-				return common.RespError(c, i18n.T("Image size exceeds limit")+" "+fmt.Sprintf("%dMB", config.Instance.ImgUpload.MaxSize))
+				return common.RespError(c, i18n.T("Image exceeds {{file_size}} limit", Map{
+					"file_size": fmt.Sprintf("%dMB", config.Instance.ImgUpload.MaxSize),
+				}))
 			}
 		}
 
@@ -127,21 +131,21 @@ func ImgUpload(router fiber.Router) {
 		// 创建图片目标文件
 		if err := utils.EnsureDir(config.Instance.ImgUpload.Path); err != nil {
 			logrus.Error(err)
-			return common.RespError(c, "Failed to create image storage folder")
+			return common.RespError(c, "Folder creation failed")
 		}
 
 		fileFullPath := strings.TrimSuffix(config.Instance.ImgUpload.Path, "/") + "/" + filename
 		dst, err := os.Create(fileFullPath)
 		if err != nil {
 			logrus.Error(err)
-			return common.RespError(c, "Image file creation failure")
+			return common.RespError(c, "File creation failed")
 		}
 		defer dst.Close()
 
 		// 写入图片文件
 		if _, err = dst.Write(buf); err != nil {
 			logrus.Error(err)
-			return common.RespError(c, "Image file write failure")
+			return common.RespError(c, "File write failed")
 		}
 
 		// 生成外部可访问链接
@@ -162,7 +166,7 @@ func ImgUpload(router fiber.Router) {
 				}
 
 				logrus.Error("[IMG_UPLOAD] [upgit] upgit output: ", upgitURL)
-				return common.RespError(c, "Image upload failed via upgit")
+				return common.RespError(c, i18n.T("Upload image via {{method}} failed", Map{"method": "upgit"}))
 			}
 
 			// 上传成功，删除本地文件

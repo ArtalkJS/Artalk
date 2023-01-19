@@ -192,7 +192,7 @@ func SendLark(title string, msg string) {
 	sendData := fmt.Sprintf(`{"msg_type":"text","content":{"text":%s}}`, strconv.Quote(msg))
 	result, err := http.Post(larkConf.WebhookURL, "application/json", strings.NewReader(sendData))
 	if err != nil {
-		logrus.Error("[飞书]", " 消息发送失败：", err)
+		logrus.Error("[飞书] ", "Failed to send msg:", err)
 		return
 	}
 
@@ -212,7 +212,7 @@ func SendBark(title string, msg string) {
 
 	result, err := http.Get(fmt.Sprintf("%s/%s/%s", strings.TrimSuffix(barkConf.Server, "/"), url.QueryEscape(title), url.QueryEscape(msg)))
 	if err != nil {
-		logrus.Error("[Bark]", " 消息发送失败：", err)
+		logrus.Error("[Bark] ", "Failed to send msg:", err)
 		return
 	}
 
@@ -247,7 +247,7 @@ func SendWebHook(subject string, body string, comment *entity.Comment, pComment 
 	jsonByte, _ := json.Marshal(reqData)
 	result, err := http.Post(webhookConf.URL, "application/json", bytes.NewReader(jsonByte))
 	if err != nil {
-		logrus.Error("[WebHook 推送]", " 消息发送失败：", err)
+		logrus.Error("[WebHook Push] ", "Failed to send msg:", err)
 		return
 	}
 

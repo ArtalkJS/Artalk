@@ -14,7 +14,7 @@ func CheckIsAllowed(c *fiber.Ctx, name string, email string, page entity.Page, s
 	// 如果用户是管理员，或者当前页只能管理员评论
 	if isAdminUser || page.AdminOnly {
 		if !CheckIsAdminReq(c) {
-			return false, RespError(c, i18n.T("Need to verify admin identity"), Map{"need_login": true})
+			return false, RespError(c, i18n.T("Admin access required"), Map{"need_login": true})
 		}
 	}
 

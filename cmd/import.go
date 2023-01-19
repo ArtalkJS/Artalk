@@ -22,7 +22,7 @@ var importCmd = &cobra.Command{
 
 		parcelFile := args[0]
 		if _, err := os.Stat(parcelFile); errors.Is(err, os.ErrNotExist) {
-			logrus.Fatal(i18n.T("The file does not exist, please check if the path is correct"))
+			logrus.Fatal(i18n.T("{{name}} not found", map[string]interface{}{"name": i18n.T("File")}))
 		}
 
 		payload := args[1:]
@@ -31,7 +31,7 @@ var importCmd = &cobra.Command{
 		// import Artrans
 		artransfer.RunImportArtrans(payload)
 
-		logrus.Info(i18n.T("Import completed"))
+		logrus.Info(i18n.T("Import complete"))
 	},
 }
 

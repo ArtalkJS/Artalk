@@ -43,7 +43,7 @@ func Tencent(p TencentParams) (isPass bool, err error) {
 	cpf.HttpProfile.Endpoint = "tms.tencentcloudapi.com"
 	client, err := tms.NewClient(credential, p.Region, cpf)
 	if err != nil {
-		return false, errors.New("NewClient calls error: " + err.Error())
+		return false, errors.New("func NewClient calls error: " + err.Error())
 	}
 
 	// Prepare Request Data
@@ -66,7 +66,7 @@ func Tencent(p TencentParams) (isPass bool, err error) {
 	// Send Request
 	response, err := client.TextModeration(request)
 	if _, hasErr := err.(*tErr.TencentCloudSDKError); hasErr {
-		return false, errors.New("An API error has returned: " + err.Error())
+		return false, errors.New("an API error has returned: " + err.Error())
 	}
 	if err != nil {
 		return false, err

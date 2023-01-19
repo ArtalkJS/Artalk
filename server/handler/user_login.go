@@ -35,7 +35,7 @@ func UserLogin(router fiber.Router) {
 		if p.Name == "" {
 			// 仅 Email 的查询
 			if !utils.ValidateEmail(p.Email) {
-				return common.RespError(c, i18n.T("Invalid email"))
+				return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 			}
 			users := query.FindUsersByEmail(p.Email)
 			if len(users) == 1 {

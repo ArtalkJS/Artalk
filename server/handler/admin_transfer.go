@@ -35,7 +35,7 @@ func adminImport(c *fiber.Ctx) error {
 	var payloadMapRaw map[string]interface{}
 	err := json.Unmarshal([]byte(p.Payload), &payloadMapRaw)
 	if err != nil {
-		return common.RespError(c, "payload 解析错误", common.Map{
+		return common.RespError(c, "Payload parsing error", common.Map{
 			"error": err,
 		})
 	}
@@ -93,14 +93,14 @@ func adminImportUpload(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
 	if err != nil {
 		logrus.Error(err)
-		return common.RespError(c, "File read failure")
+		return common.RespError(c, "File read failed")
 	}
 
 	// 打开文件
 	src, err := file.Open()
 	if err != nil {
 		logrus.Error(err)
-		return common.RespError(c, "File open failure")
+		return common.RespError(c, "File open failed")
 	}
 	defer src.Close()
 
@@ -108,13 +108,13 @@ func adminImportUpload(c *fiber.Ctx) error {
 	buf, err := io.ReadAll(src)
 	if err != nil {
 		logrus.Error(err)
-		return common.RespError(c, "File read failure")
+		return common.RespError(c, "File read failed")
 	}
 
 	tmpFile, err := os.CreateTemp("", "artalk-import-file-")
 	if err != nil {
 		logrus.Error(err)
-		return common.RespError(c, "Temporary file creation failure")
+		return common.RespError(c, "tmp file creation failed")
 	}
 
 	tmpFile.Write(buf)

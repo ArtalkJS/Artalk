@@ -34,7 +34,7 @@ func AdminPageGet(router fiber.Router) {
 		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 		if !common.IsAdminHasSiteAccess(c, p.SiteName) {
-			return common.RespError(c, i18n.T("No access"))
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		// 准备 query

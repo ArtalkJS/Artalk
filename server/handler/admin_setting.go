@@ -15,12 +15,12 @@ import (
 func AdminSettingGet(router fiber.Router) {
 	router.Post("/setting-get", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, i18n.T("No access"))
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		dat, err := os.ReadFile(config.GetCfgFileLoaded())
 		if err != nil {
-			return common.RespError(c, i18n.T("Config file failed to read"))
+			return common.RespError(c, i18n.T("Config file read failed"))
 		}
 
 		return common.RespData(c, string(dat))
@@ -35,7 +35,7 @@ type ParamsAdminSettingSave struct {
 func AdminSettingSave(router fiber.Router) {
 	router.Post("/setting-save", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, i18n.T("No access"))
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		var p ParamsAdminSettingSave
@@ -46,24 +46,24 @@ func AdminSettingSave(router fiber.Router) {
 		configFile := config.GetCfgFileLoaded()
 		f, err := os.Create(configFile)
 		if err != nil {
-			return common.RespError(c, i18n.T("Config file failed to read")+", "+err.Error())
+			return common.RespError(c, i18n.T("Config file read failed")+": "+err.Error())
 		}
 
 		defer f.Close()
 
 		_, err2 := f.WriteString(p.Data)
 		if err2 != nil {
-			return common.RespError(c, i18n.T("Failed to save")+", "+err2.Error())
+			return common.RespError(c, i18n.T("Save failed")+": "+err2.Error())
 		}
 
 		// 重启服务
 		workDir, err3 := os.Getwd()
 		if err3 != nil {
-			return common.RespError(c, i18n.T("Failed to get working directory")+", "+err3.Error())
+			return common.RespError(c, i18n.T("Working directory retrieval failed")+": "+err3.Error())
 		}
 		core.LoadCore(configFile, workDir)
 		common.ReloadCorsAllowOrigins() // 刷新 CORS 可信域名
-		logrus.Info(i18n.T("Service restart is complete"))
+		logrus.Info(i18n.T("Services restart complete"))
 
 		return common.RespSuccess(c)
 	})

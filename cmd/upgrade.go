@@ -24,7 +24,7 @@ var upgradeCmd = &cobra.Command{
 		// loadCore()
 		core.LoadConfOnly(cfgFile, workDir)
 
-		logrus.Info(i18n.T("Searching for updates..."))
+		logrus.Info(i18n.T("Checking for updates") + "...")
 
 		latest, found, err := selfupdate.DetectLatest("ArtalkJS/Artalk")
 		if err != nil {
@@ -35,13 +35,13 @@ var upgradeCmd = &cobra.Command{
 		if !ignoreVersionCheck {
 			v := semver.MustParse(strings.TrimPrefix(config.Version, "v"))
 			if !found || latest.Version.LTE(v) {
-				logrus.Println(i18n.T("The current version is the latest") + " (v" + v.String() + ")")
+				logrus.Println(i18n.T("Current version is the latest") + " (v" + v.String() + ")")
 				return
 			}
 		}
 
-		logrus.Info(i18n.T("Discover the new version") + ": v" + latest.Version.String())
-		logrus.Info(i18n.T("Downloading..."))
+		logrus.Info(i18n.T("New version available") + ": v" + latest.Version.String())
+		logrus.Info(i18n.T("Downloading") + "...")
 
 		exe, err := os.Executable()
 		if err != nil {
@@ -52,7 +52,7 @@ var upgradeCmd = &cobra.Command{
 			logrus.Fatal(i18n.T("Update failed")+" ", err)
 		}
 
-		logrus.Println(i18n.T("Update completed"))
+		logrus.Println(i18n.T("Update complete"))
 		fmt.Println("\n-------------------------------\n    v" +
 			latest.Version.String() +
 			"  Release Note\n" +

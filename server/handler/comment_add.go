@@ -44,17 +44,17 @@ func CommentAdd(router fiber.Router) {
 		}
 
 		if strings.TrimSpace(p.Name) == "" {
-			return common.RespError(c, "Nickname "+i18n.T("cannot be empty"))
+			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Nickname")}))
 		}
 		if strings.TrimSpace(p.Email) == "" {
-			return common.RespError(c, "Email "+i18n.T("cannot be empty"))
+			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Email")}))
 		}
 
 		if !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, i18n.T("Invalid email"))
+			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 		if p.Link != "" && !utils.ValidateURL(p.Link) {
-			return common.RespError(c, i18n.T("Invalid link"))
+			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
 		}
 
 		ip := c.IP()
@@ -84,13 +84,13 @@ func CommentAdd(router fiber.Router) {
 		if p.Rid != 0 {
 			parentComment = query.FindComment(p.Rid)
 			if parentComment.IsEmpty() {
-				return common.RespError(c, i18n.T("Father comment not found"))
+				return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Parent comment")}))
 			}
 			if parentComment.PageKey != p.PageKey {
-				return common.RespError(c, "Inconsistent with the pageKey of the parent comment")
+				return common.RespError(c, "Inconsistent with the page_key of the parent comment")
 			}
 			if !parentComment.IsAllowReply() {
-				return common.RespError(c, i18n.T("Not allowed to reply to this comment"))
+				return common.RespError(c, i18n.T("Cannot reply to this comment"))
 			}
 		}
 

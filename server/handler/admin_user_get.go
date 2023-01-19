@@ -24,7 +24,7 @@ type ResponseAdminUserGet struct {
 func AdminUserGet(router fiber.Router) {
 	router.Post("/user-get", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, i18n.T("No access"))
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		var p ParamsAdminUserGet

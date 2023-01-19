@@ -26,7 +26,7 @@ type ParamsAdminUserAdd struct {
 func AdminUserAdd(router fiber.Router) {
 	router.Post("/user-add", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, i18n.T("No access"))
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		var p ParamsAdminUserAdd
@@ -35,14 +35,14 @@ func AdminUserAdd(router fiber.Router) {
 		}
 
 		if !query.FindUser(p.Name, p.Email).IsEmpty() {
-			return common.RespError(c, i18n.T("User already exists"))
+			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("User")}))
 		}
 
 		if !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, "Invalid email")
+			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 		if p.Link != "" && !utils.ValidateURL(p.Link) {
-			return common.RespError(c, "Invalid link")
+			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
 		}
 
 		user := entity.User{}
@@ -59,13 +59,13 @@ func AdminUserAdd(router fiber.Router) {
 			err := user.SetPasswordEncrypt(p.Password)
 			if err != nil {
 				logrus.Errorln(err)
-				return common.RespError(c, i18n.T("Failed to set password"))
+				return common.RespError(c, i18n.T("Password update failed"))
 			}
 		}
 
 		err := query.CreateUser(&user)
 		if err != nil {
-			return common.RespError(c, "user "+i18n.T("Failed to create"))
+			return common.RespError(c, i18n.T("{{name}} creation failed", Map{"name": i18n.T("User")}))
 		}
 
 		return common.RespData(c, common.Map{

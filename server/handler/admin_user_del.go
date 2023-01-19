@@ -15,7 +15,7 @@ type ParamsAdminUserDel struct {
 func AdminUserDel(router fiber.Router) {
 	router.Post("/user-del", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, i18n.T("No access"))
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		var p ParamsAdminUserDel
@@ -25,12 +25,12 @@ func AdminUserDel(router fiber.Router) {
 
 		user := query.FindUserByID(p.ID)
 		if user.IsEmpty() {
-			return common.RespError(c, "user 不存在")
+			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("User")}))
 		}
 
 		err := query.DelUser(&user)
 		if err != nil {
-			return common.RespError(c, "user 删除失败")
+			return common.RespError(c, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("User")}))
 		}
 		return common.RespSuccess(c)
 	})

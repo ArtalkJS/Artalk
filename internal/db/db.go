@@ -33,7 +33,7 @@ func InitDB() {
 	var err error
 	db, err := OpenDB(config.Instance.DB.Type, config.Instance.DB.Dsn)
 	if err != nil {
-		logrus.Error("数据库初始化发生错误 ", err)
+		logrus.Error("[DB] ", "Init database error: ", err)
 		os.Exit(1)
 	}
 	SetDB(db)
@@ -53,7 +53,7 @@ func OpenDB(dbType config.DBType, dsn string) (*gorm.DB, error) {
 		switch dbType {
 		case config.TypeSQLite:
 			if dbConf.File == "" {
-				logrus.Fatal("请配置 db.file 指定一个 sqlite 数据库路径")
+				logrus.Fatal("Please set `db.file` option in config file to specify a sqlite database path")
 			}
 			dsn = dbConf.File
 		case config.TypePostgreSQL:
@@ -86,7 +86,7 @@ func OpenDB(dbType config.DBType, dsn string) (*gorm.DB, error) {
 		return OpenSqlServer(dsn)
 	}
 
-	return nil, errors.New(`不支持的数据库类型 "` + string(dbType) + `"`)
+	return nil, errors.New(`unsupported database type "` + string(dbType) + `"`)
 }
 
 func OpenSQLite(filename string) (*gorm.DB, error) {

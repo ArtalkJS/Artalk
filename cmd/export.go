@@ -65,7 +65,7 @@ var exportCmd = &cobra.Command{
 				logrus.Fatal(err2)
 			}
 
-			logrus.Info(i18n.T("Artrans file has been exported") + ": " + filename)
+			logrus.Info(i18n.T("Export complete") + ": " + filename)
 		}
 	},
 }

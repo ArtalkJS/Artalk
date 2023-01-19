@@ -17,7 +17,7 @@ import (
 func Captcha(router fiber.Router) {
 	ca := router.Group("/captcha/", func(c *fiber.Ctx) error {
 		if !config.Instance.Captcha.Enabled {
-			return common.RespError(c, "Captcha function is disabled")
+			return common.RespError(c, "Captcha disabled")
 		}
 		return c.Next()
 	})
@@ -88,8 +88,8 @@ func captchaCheck(c *fiber.Ctx) error {
 	if config.Instance.Captcha.Geetest.Enabled {
 		isPass, reason, err := captcha.GeetestCheck(inputVal)
 		if err != nil {
-			logrus.Error("[Geetest] 验证发生错误 ", err)
-			return common.RespError(c, "Geetest API 错误")
+			logrus.Error("[Geetest] Failed to verify: ", err)
+			return common.RespError(c, "Geetest API error")
 		}
 
 		if isPass {
@@ -99,7 +99,7 @@ func captchaCheck(c *fiber.Ctx) error {
 		} else {
 			// 验证失败
 			common.OnCaptchaFail(c)
-			return common.RespError(c, i18n.T("Verification failure"), common.Map{
+			return common.RespError(c, i18n.T("Verification failed"), common.Map{
 				"reason": reason,
 			})
 		}
@@ -118,7 +118,7 @@ func captchaCheck(c *fiber.Ctx) error {
 		// 验证码错误
 		common.DisposeImageCaptcha(ip)
 		common.OnCaptchaFail(c)
-		return common.RespError(c, i18n.T("Wrong Captcha"), common.Map{
+		return common.RespError(c, i18n.T("Wrong captcha"), common.Map{
 			"img_data": common.GetNewImageCaptchaBase64(ip),
 		})
 	}

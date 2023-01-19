@@ -66,7 +66,7 @@ func FetchPageFromURL(p *entity.Page) error {
 	url := cookedPage.URL
 
 	if url == "" {
-		return errors.New("URL is null")
+		return errors.New("URL cannot be null")
 	}
 
 	// 获取 URL 页面 title
@@ -77,7 +77,7 @@ func FetchPageFromURL(p *entity.Page) error {
 	}
 
 	if err := UpdatePage(p); err != nil {
-		logrus.Error("FetchURL 保存失败")
+		logrus.Error("Failed to save in FetchPage")
 		return err
 	}
 
@@ -86,8 +86,8 @@ func FetchPageFromURL(p *entity.Page) error {
 
 func GetTitleByURL(url string) (string, error) {
 	if !utils.ValidateURL(url) {
-		logrus.Error("URL " + url + " is invalid")
-		return "", errors.New("URL is invalid")
+		logrus.Error("Invalid URL: " + url)
+		return "", errors.New("invalid URL")
 	}
 
 	// Request the HTML page.

@@ -17,7 +17,7 @@ func UserLogout(router fiber.Router) {
 		}
 
 		if common.GetJwtStrByReqCookie(c) == "" {
-			return common.RespError(c, "Not logged in, no need to log out")
+			return common.RespError(c, "Not logged in yet, no need to log out")
 		}
 
 		// same as login, remove cookie

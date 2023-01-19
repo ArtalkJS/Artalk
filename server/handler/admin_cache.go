@@ -21,7 +21,7 @@ func AdminCacheWarm(router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, i18n.T("No access"))
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		go func() {
@@ -29,7 +29,7 @@ func AdminCacheWarm(router fiber.Router) {
 		}()
 
 		return common.RespData(c, common.Map{
-			"msg": "缓存预热任务已在后台开始执行，稍等片刻完成...",
+			"msg": i18n.T("Task executing in background, please wait..."),
 		})
 	})
 }
@@ -49,7 +49,7 @@ func AdminCacheFlush(router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(c) {
-			return common.RespError(c, i18n.T("No access"))
+			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		if p.FlushAll {
@@ -58,10 +58,10 @@ func AdminCacheFlush(router fiber.Router) {
 			}()
 
 			return common.RespData(c, common.Map{
-				"msg": "缓存清理任务已在后台开始执行，稍等片刻完成...",
+				"msg": i18n.T("Task executing in background, please wait..."),
 			})
 		}
 
-		return common.RespError(c, i18n.T("Invalid parameter"))
+		return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Parameter")}))
 	})
 }

@@ -126,7 +126,7 @@ func SyncSpamCheck(comment *entity.Comment, fiberCtx *fiber.Ctx) {
 			for _, f := range keywordsConf.Files {
 				buf, err := ioutil.ReadFile(f)
 				if err != nil {
-					logrus.Error("Keyword Pool File " + f + " Load failure")
+					logrus.Error("Failed to load Keyword Dictionary file:" + f)
 				} else {
 					fileContent := string(buf)
 					*AntiSpamReplaceKeywords = append(*AntiSpamReplaceKeywords, utils.SplitAndTrimSpace(fileContent, keywordsConf.FileSep)...)
@@ -140,7 +140,7 @@ func SyncSpamCheck(comment *entity.Comment, fiberCtx *fiber.Ctx) {
 		for _, keyword := range *AntiSpamReplaceKeywords {
 			if strings.Contains(handleContent, keyword) {
 				if keywordsConf.Pending {
-					BlockCommentBy("关键词")
+					BlockCommentBy("Keyword")
 					break
 				}
 

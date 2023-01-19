@@ -9,7 +9,7 @@ import (
 func AdminOnlyMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		if !common.CheckIsAdminReq(c) {
-			return common.RespError(c, i18n.T("Admin required"), common.Map{"need_login": true})
+			return common.RespError(c, i18n.T("Admin access required"), common.Map{"need_login": true})
 		}
 
 		return c.Next()

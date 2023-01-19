@@ -18,7 +18,7 @@ Then we'll setup the development environment.
 Run the following command to clone the repository:
 
 ```sh
-$ git clone https://github.com/ArtalkJS/Artalk
+git clone https://github.com/ArtalkJS/Artalk
 ```
 
 It is recommended to fork the repository first, and then clone the forked repository.
@@ -26,9 +26,8 @@ It is recommended to fork the repository first, and then clone the forked reposi
 Enter the directory:
 
 ```sh
-$ cd Artalk
+cd Artalk
 ```
-
 
 ### Build frontend and backend
 
@@ -40,8 +39,8 @@ make debug-build
 
 This will build both the frontend and backend, with debugging symbols.
 
-+ **Frontend** will be built under `./ui/packages/artalk` and copied to `./public` directory.
-+ **Backend** will be built under `./bin` directory.
+- **Frontend** will be built under `./ui/packages/artalk` and copied to `./public` directory.
+- **Backend** will be built under `./bin` directory.
 
 ### Optional: Use one-key script to run a demo site
 
@@ -61,12 +60,24 @@ After running this script, run:
 
 to start the artalk server.
 
-And open http://localhost:1313/ in your browser to view the example site.
+And open <http://localhost:1313/> in your browser to view the example site.
 
 Here is the default admin account (only created in test mode):
 
-```
+```yaml
 name: "admin"
 email: "admin@test.com"
 password: "admin"
 ```
+
+## Translation
+
+Artalk aims to be a multilingual project. If you would like to contribute to the translation, here are some tips:
+
+If you just write some new features or do some fixes/refactoring, use the following command to generate the translation template
+
+```sh
+go run ./internal/i18n/gen -w . -d .
+```
+
+If you're not a programmer and would like to help us improve the translation, you can edit the translation files directly in the `.i18n' directory and then submit a pull request.

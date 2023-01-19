@@ -1,10 +1,12 @@
 {
   "extends": ["config:base", "schedule:weekly"],
+  "automerge": false,
+  "major": {
+    "automerge": false
+  },
   "branchPrefix": "chore/",
   "labels": ["dependencies"],
+  "gomodTidy": true,
   "rangeStrategy": "bump",
-  "reviewers": [
-    "qwqcode",
-    "kecrily"
-  ]
+  "reviewers": []
 }

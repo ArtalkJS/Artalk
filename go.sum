@@ -544,8 +544,9 @@ github.com/tcnksm/go-gitconfig v0.1.2 h1:iiDhRitByXAEyjgBqsKi9QU4o2TNtv9kPP3RgPg
 github.com/tcnksm/go-gitconfig v0.1.2/go.mod h1:/8EhP4H7oJZdIPyT+/UIsG87kTzrzM4UsLGSItWYCpE=
 github.com/technoweenie/multipartstreamer v1.0.1 h1:XRztA5MXiR1TIRHxH2uNxXxaIkKQDeX7m2XsSOlQEnM=
 github.com/technoweenie/multipartstreamer v1.0.1/go.mod h1:jNVxdtShOxzAsukZwTSw6MDx5eUJoiEBsSvzDU9uzog=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.570 h1:aL8rFQfuQq3G+WeSG1RlPibbfBju024qPC4dli8oqu8=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.570/go.mod h1:7sCQWVkxcsR38nffDW057DRGk8mUjK1Ing/EFOK8s8Y=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.582 h1:Td+y4Y5xkPq5pa7DgMK09ycp5lPnx2UZ7GMLMvhW7Ns=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.582/go.mod h1:7sCQWVkxcsR38nffDW057DRGk8mUjK1Ing/EFOK8s8Y=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tms v1.0.570 h1:9aCzZ9NDu7UIf7yVuqPBK5dQZHViNyTbUSIsI2H66Pk=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tms v1.0.570/go.mod h1:jIUzBhvKj6TddPQXPK4gsHjDEWsP5MTP6TOMy0GiZts=
 github.com/tidwall/gjson v1.14.4 h1:uo0p8EbA09J7RQaflQ1aBRffTR7xedD2bcIVSYxLnkM=

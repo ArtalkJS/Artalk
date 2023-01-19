@@ -32,7 +32,7 @@ require (
 	github.com/spf13/cobra v1.6.1
 	github.com/steambap/captcha v1.4.1
 	github.com/stretchr/testify v1.8.1
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.570
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.582
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tms v1.0.570
 	github.com/tidwall/gjson v1.14.4
 	github.com/vmihailenco/msgpack v4.0.4+incompatible

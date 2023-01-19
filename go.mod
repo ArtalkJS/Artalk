@@ -17,7 +17,7 @@ require (
 	github.com/eko/gocache/store/redis/v4 v4.1.2
 	github.com/go-redis/redis/v8 v8.11.6-0.20220405070650-99c79f7041fc
 	github.com/go-testfixtures/testfixtures/v3 v3.8.1
-	github.com/gofiber/fiber/v2 v2.40.1
+	github.com/gofiber/fiber/v2 v2.41.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.4.3
 	github.com/jeremywohl/flatten v1.0.1
@@ -119,7 +119,7 @@ require (
 	github.com/ulikunitz/xz v0.5.11 // indirect
 	github.com/utahta/go-linenotify v0.5.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.41.0 // indirect
+	github.com/valyala/fasthttp v1.43.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	golang.org/x/exp v0.0.0-20221230185412-738e83a70c30 // indirect
 	golang.org/x/image v0.2.0 // indirect

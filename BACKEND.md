@@ -6,7 +6,7 @@
 
 [![CircleCI](https://circleci.com/gh/ArtalkJS/Artalk/tree/master.svg?style=svg)](https://circleci.com/gh/ArtalkJS/Artalk/tree/master)
 [![CI to Docker Hub](https://github.com/ArtalkJS/Artalk/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/ArtalkJS/Artalk/actions/workflows/dockerhub.yml) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk?ref=badge_shield)
-[![Docker Pulls](https://img.shields.io/docker/pulls/artalk/artalk?style=flat-square)](https://hub.docker.com/r/artalk/artalk)
+[![Docker Pulls](https://img.shields.io/docker/pulls/artalk/artalk-go?style=flat-square)](https://hub.docker.com/r/artalk/artalk-go)
 
 > Artalk: Golang backend of Artalk.
 

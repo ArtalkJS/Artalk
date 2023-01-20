@@ -2,7 +2,7 @@
 
 set -e
 
-IMAGE_NAME="artalk/artalk"
+IMAGE_NAME="artalk/artalk-go"
 VERSION=$(git describe --tags --abbrev=0)
 
 if [[ $* == *--push* ]]

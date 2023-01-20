@@ -77,19 +77,11 @@ new Artalk({
 ### Docker
 
 ```sh
-# Create a directory for Artalk
-mkdir Artalk
-cd Artalk
-
-# Download config template
-curl -L https://raw.githubusercontent.com/ArtalkJS/Artalk/master/artalk.example.yml > conf.yml
-
 docker run -d \
   --name artalk \
-  -p 0.0.0.0:8080:23366 \
-  -v $(pwd)/conf.yml:/conf.yml \
+  -p 8080:23366 \
   -v $(pwd)/data:/data \
-  artalk/artalk
+  artalk/artalk-go
 ```
 
 ### Docker Compose
@@ -106,11 +98,10 @@ version: "3.5"
 services:
   artalk:
     container_name: artalk
-    image: artalk/artalk
+    image: artalk/artalk-go
     ports:
       - 8080:23366
     volumes:
-      - ./conf.yml:/conf.yml
       - ./data:/data
 ```
 

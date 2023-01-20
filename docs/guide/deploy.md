@@ -9,7 +9,7 @@ docker run -d \
     --name artalk \
     -p 8080:23366 \
     -v $(pwd)/data:/data \
-    artalk/artalk
+    artalk/artalk-go
 ```
 
 > 假设域名 `http://your_domain` 已正确添加 DNS 记录并指向你的服务器 IP
@@ -88,7 +88,7 @@ version: "3.5"
 services:
   artalk:
     container_name: artalk
-    image: artalk/artalk
+    image: artalk/artalk-go
     ports:
       - 8080:23366
     volumes:

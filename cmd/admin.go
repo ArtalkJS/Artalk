@@ -95,7 +95,7 @@ func credentials() (string, string, string, error) {
 	}
 
 	fmt.Println()
-	fmt.Print(i18n.T("Retype {{name}}", map[string]interface{}{"name": i18n.T("Password")}) + ": " + ": ")
+	fmt.Print(i18n.T("Retype {{name}}", map[string]interface{}{"name": i18n.T("Password")}) + ": ")
 	byteRePassword, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return "", "", "", err

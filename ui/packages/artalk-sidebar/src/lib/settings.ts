@@ -41,13 +41,16 @@ export function createSettings() {
   function extractItemDescFromComment(nodePath: string|(string|number)[]) {
     if (Array.isArray(nodePath)) nodePath = nodePath.join('.')
     const nodeName = nodePath.split('.').slice(-1)[0]
-    const comment = (comments[nodePath] || '').trim()
+    let comment = (comments[nodePath] || '').trim()
+
+    // ignore comments begin and end with `--`
+    comment = comment.replace(/--(.*?)--/gm, '')
 
     let title = ''
     let subTitle = ''
     let opts: string[]|null = null
 
-    const stReg = /\(.*?\)$/gm
+    const stReg = /\(.*?\)/gm
     title = comment.replace(stReg, '').trim()
     const stFind = stReg.exec(comment)
     subTitle = stFind ? stFind[0].substring(1, stFind[0].length-1) : ''

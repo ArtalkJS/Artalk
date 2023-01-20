@@ -143,6 +143,26 @@ captcha:
     captcha_id: ""
     captcha_key: ""
 
+# 图片上传
+img_upload:
+  # 启用图片上传
+  enabled: true
+  # 图片存放路径
+  path: "./data/artalk-img/"
+  # 图片大小限制 (单位：MB)
+  max_size: 5
+  # 图片链接基础路径 (默认为 "/static/images/")
+  public_path: null
+  # Upgit 配置
+  # (使用 Upgit 将图片上传到 GitHub 或图床：https://github.com/pluveto/upgit)
+  upgit:
+    # 启用 Upgit
+    enabled: false
+    # 命令行参数
+    exec: "./upgit -c <upgit配置文件路径> -t /artalk-img"
+    # 上传后删除本地的图片
+    del_local: true
+
 # 邮件通知
 email:
   # 启用邮件通知
@@ -173,26 +193,6 @@ email:
     access_key_id: ""
     access_key_secret: ""
     account_name: "noreply@example.com"
-
-# 图片上传
-img_upload:
-  # 启用图片上传
-  enabled: true
-  # 图片存放路径
-  path: "./data/artalk-img/"
-  # 图片大小限制 (单位：MB)
-  max_size: 5
-  # 图片链接基础路径 (默认为 "/static/images/")
-  public_path: null
-  # Upgit 配置
-  # (使用 Upgit 将图片上传到 GitHub 或图床：https://github.com/pluveto/upgit)
-  upgit:
-    # 启用 Upgit
-    enabled: false
-    # 命令行参数
-    exec: "./upgit -c <upgit配置文件路径> -t /artalk-img"
-    # 上传后删除本地的图片
-    del_local: true
 
 # 多元推送
 admin_notify:

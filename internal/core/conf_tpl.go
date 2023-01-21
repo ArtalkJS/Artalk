@@ -15,7 +15,7 @@ func GetConfTpl(localeParam ...string) string {
 	if len(localeParam) > 0 {
 		locale = strings.TrimSpace(localeParam[0])
 	}
-	if locale == "" {
+	if locale == "" && config.Instance != nil {
 		locale = strings.TrimSpace(config.Instance.Locale)
 	}
 

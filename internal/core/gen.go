@@ -19,6 +19,7 @@ func Gen(genType string, specificPath string, overwrite bool) {
 	isGenConf := false
 	if genType == "config" || genType == "conf" || genType == "artalk.yml" {
 		isGenConf = true
+		genType = "artalk.yml"
 	}
 
 	// get generation content

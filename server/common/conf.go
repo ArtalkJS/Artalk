@@ -33,6 +33,9 @@ func GetApiPublicConfDataMap(c *fiber.Ctx) Map {
 	utils.CopyStruct(&frontendConfSrc, &frontendConf)
 
 	frontendConf["imgUpload"] = &imgUpload
+	if config.Instance.Locale != "" {
+		frontendConf["locale"] = config.Instance.Locale
+	}
 
 	return Map{
 		"img_upload":    imgUpload,

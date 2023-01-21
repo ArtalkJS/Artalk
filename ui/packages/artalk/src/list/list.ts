@@ -29,9 +29,10 @@ export default class List extends ListLite {
     // 操作按钮
     this.initListActionBtn()
 
+    const countNumHTML = '<span class="atk-comment-count-num">0</span>'
     this.$commentCount = this.$el.querySelector('.atk-comment-count')!
     this.$commentCount.innerHTML = this.$t('counter', {
-      count: '<span class="atk-comment-count-num">0</span>',
+      count: countNumHTML,
     })
     this.$commentCountNum = this.$commentCount.querySelector('.atk-comment-count-num')!
 
@@ -39,6 +40,13 @@ export default class List extends ListLite {
     this.$el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
 
     // event listen
+    this.ctx.on('conf-loaded', () => {
+      // i18n support when locale changed
+      this.$commentCount.innerHTML = this.$t('counter', {
+        count: countNumHTML,
+      })
+      this.refreshUI()
+    })
   }
 
   private initListActionBtn() {

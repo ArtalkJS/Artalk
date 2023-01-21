@@ -6,7 +6,7 @@ import messages from './i18n/messages'
 import 'artalk/dist/Artalk.css'
 import './style.scss'
 import App from './App.vue'
-import global, { createArtalkInstance, bootParams } from './global'
+import global, { createArtalkInstance, bootParams, getBootParams } from './global'
 
 // 初始化 Artalk
 global.setArtalk(createArtalkInstance())
@@ -23,7 +23,7 @@ app.use(router)
 // i18n
 const i18n = createI18n({
   legacy: false, // use i18n in Composition API
-  locale: 'zh-CN',
+  locale: getBootParams().locale || 'en',
   fallbackLocale: 'en',
   messages
 })

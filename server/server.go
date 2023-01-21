@@ -83,6 +83,7 @@ func admin(f fiber.Router) {
 
 		h.AdminSettingGet(admin)
 		h.AdminSettingSave(admin)
+		h.AdminSettingTpl(admin)
 
 		h.AdminTransfer(admin)
 	}

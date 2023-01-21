@@ -43,7 +43,7 @@ jobs:
       # build
       - name: setup release environment
         run: |-
-          cp artalk.example.yml artalk.yml
+          cp conf/artalk.example.yml artalk.yml
           echo 'GITHUB_TOKEN=${{secrets.GORELEASER_ACCESS_TOKEN}}' > .release-env
 
       - name: build and release publish

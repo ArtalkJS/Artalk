@@ -41,7 +41,7 @@ const pages = computed((): { [name: string]: PageItem } => {
         hide: true,
       },
       settings: {
-        label: t('setting'),
+        label: t('settings'),
         link: '/settings'
       }
     }

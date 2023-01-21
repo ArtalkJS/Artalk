@@ -1,20 +1,17 @@
-import YAML from 'yaml'
-import confTemplate from '../assets/artalk.example.yml?raw'
+import type YAML from 'yaml'
 
 type YAMLPair = {
   key?: { value: string, commentBefore: string, comment: string },
   value?: { commentBefore: string, comment: string, value?: any, items?: YAMLPair[] }
 }
 
-export function createSettings() {
+export function createSettings(yamlObj: any) {
   const customs = shallowRef<YAML.Document.Parsed<YAML.ParsedNode>>()
-
-  const yamlDocTpl = YAML.parseDocument(confTemplate)
 
   const comments: { [path: string]: string } = {}
   const defaultValues: { [path: string]: string } = {}
 
-  loop((yamlDocTpl as any).contents.items)
+  loop((yamlObj as any).contents.items)
 
   function loop(pairs: YAMLPair[], parent?: YAMLPair, path?: string[]) {
     pairs.forEach((item, index: number) => {
@@ -84,6 +81,6 @@ export function createSettings() {
 let instance: ReturnType<(typeof createSettings)>
 
 export default {
-  init: () => instance = createSettings(),
+  init: (yamlObj: any) => instance = createSettings(yamlObj),
   get: () => instance
 }

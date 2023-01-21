@@ -14,35 +14,30 @@ import (
 )
 
 func Gen(genType string, specificPath string, overwrite bool) {
-	// 参数
+
+	// check if generate config file
+	isGenConf := false
 	if genType == "config" || genType == "conf" || genType == "artalk.yml" {
-		genType = "artalk.example.yml"
+		isGenConf = true
 	}
 
-	genPath := filepath.Base(genType)
-	if specificPath != "" {
-		genPath = specificPath
-	}
-
-	file, err := pkged.FS().Open(strings.TrimPrefix(genType, "/"))
-	if err != nil {
-		logrus.Fatal("Invalid built-in resource `"+genType+"`: ", err)
-	}
-
-	buf, err := ioutil.ReadAll(file)
-	if err != nil {
-		logrus.Fatal("Read built-in resources `"+genType+"` error: ", err)
-	}
-
-	// 自动生成 app_key
-	if strings.Contains(filepath.Base(genType), "artalk.example.yml") {
-		str := string(buf)
+	// get generation content
+	var fileStr string
+	if isGenConf {
+		fileStr = GetConfTpl()
+		// gen random `app_key`
 		appKey := RandStringRunes(16)
-		str = strings.Replace(str, `app_key: ""`, fmt.Sprintf(`app_key: "%s"`, appKey), 1)
-		buf = []byte(str)
+		fileStr = strings.Replace(fileStr, `app_key: ""`, fmt.Sprintf(`app_key: "%s"`, appKey), 1)
+	} else {
+		fileStr = getEmbedFile(genType)
 	}
 
-	absPath, err := filepath.Abs(genPath)
+	genFullPath := filepath.Base(genType) // generate file in work dir
+	if specificPath != "" {
+		genFullPath = specificPath
+	}
+
+	absPath, err := filepath.Abs(genFullPath)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -60,7 +55,7 @@ func Gen(genType string, specificPath string, overwrite bool) {
 	}
 	defer dst.Close()
 
-	if _, err = dst.Write(buf); err != nil {
+	if _, err = dst.Write([]byte(fileStr)); err != nil {
 		logrus.Fatal("Failed to write target file: ", err)
 	}
 
@@ -80,4 +75,18 @@ func RandStringRunes(n int) string {
 func CheckFileExist(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
+}
+
+func getEmbedFile(filename string) string {
+	file, err := pkged.FS().Open(strings.TrimPrefix(filename, "/"))
+	if err != nil {
+		logrus.Fatal("Invalid built-in resource `"+filename+"`: ", err)
+	}
+
+	buf, err := ioutil.ReadAll(file)
+	if err != nil {
+		logrus.Fatal("Read built-in resources `"+filename+"` error: ", err)
+	}
+
+	return string(buf)
 }

@@ -23,7 +23,7 @@ app.use(router)
 // i18n
 const i18n = createI18n({
   legacy: false, // use i18n in Composition API
-  locale: 'en',
+  locale: 'zh-CN',
   fallbackLocale: 'en',
   messages
 })

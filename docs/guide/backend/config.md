@@ -12,7 +12,7 @@ artalk -c ./conf.yml
 
 ## 获取模版配置文件
 
-可参考一份「完整的配置文件」：[artalk.example.yml](https://github.com/ArtalkJS/Artalk/blob/master/artalk.example.yml)
+可参考一份「完整的配置文件」：[artalk.example.yml](https://github.com/ArtalkJS/Artalk/blob/master/conf/artalk.example.yml)
 
 #### 使用 gen 命令生成配置文件
 
@@ -25,11 +25,11 @@ artalk gen conf ./artalk.yml
 #### 命令行下载配置文件
 
 ```bash
-curl -L https://raw.githubusercontent.com/ArtalkJS/Artalk/master/artalk.example.yml > artalk.yml
+curl -L https://raw.githubusercontent.com/ArtalkJS/Artalk/master/conf/artalk.example.yml > artalk.yml
 ```
 
 ```bash
-wget -O artalk.yml https://raw.githubusercontent.com/ArtalkJS/Artalk/master/artalk.example.yml
+wget -O artalk.yml https://raw.githubusercontent.com/ArtalkJS/Artalk/master/conf/artalk.example.yml
 ```
 
 ## 加密密钥 `app_key`

@@ -2,6 +2,8 @@
 import { artalk, bootParams } from '../global'
 import type { UserData, UserDataForAdmin } from 'artalk/types/artalk-data'
 
+const { t } = useI18n()
+
 interface IUserEditData {
   name: string
   email: string
@@ -87,47 +89,47 @@ function submit() {
 <template>
   <div class="user-editor-layer">
     <div class="header">
-      <div class="title">用户{{ isCreateMode ? '创建' : '编辑' }}</div>
+      <div class="title">{{ isCreateMode ? t('userCreate') : t('userEdit') }}</div>
       <div v-if="!isCreateMode" class="close-btn" @click="close()">
         <i class="atk-icon atk-icon-close"></i>
       </div>
     </div>
     <div v-if="!isCreateMode" class="user-log">
-      <div><span>评论数</span>{{(user as any).comment_count}}</div>
-      <div><span>近期 IP</span>{{(user as any).last_ip || '无'}}</div>
-      <div><span>近期 UA</span>
-        <template v-if="showFullDetails || !(user as any).last_ua">{{(user as any).last_ua || '无'}}</template>
-        <template v-else><span @click="showFullDetails = true" style="cursor: pointer;color: var(--at-color-main)">查看</span></template>
+      <div><span>{{ t('comments') }}</span>{{(user as any).comment_count}}</div>
+      <div><span>{{ t('last') }} IP</span>{{(user as any).last_ip || '-'}}</div>
+      <div><span>{{ t('last') }} UA</span>
+        <template v-if="showFullDetails || !(user as any).last_ua">{{(user as any).last_ua || '-'}}</template>
+        <template v-else><span @click="showFullDetails = true" style="cursor: pointer;color: var(--at-color-main)">{{ t('Show') }}</span></template>
       </div>
     </div>
     <form v-if="user" class="atk-form" @submit.prevent="submit()">
-      <div class="atk-label required">名字</div>
+      <div class="atk-label required">{{ t('username') }}</div>
       <input v-model="user.name" type="text" placeholder="" autocomplete="off">
-      <div class="atk-label required">邮箱</div>
+      <div class="atk-label required">{{ t('email')  }}</div>
       <input v-model="user.email" type="text" placeholder="" autocomplete="off">
-      <div class="atk-label">链接</div>
+      <div class="atk-label">{{ t('link') }}</div>
       <input v-model="user.link" type="text" placeholder="" autocomplete="off">
-      <div class="atk-label">徽章文字</div>
+      <div class="atk-label">{{ t('badgeText') }}</div>
       <input v-model="user.badge_name" type="text" placeholder="" autocomplete="off">
-      <div class="atk-label">徽章颜色 (Color Hex)</div>
+      <div class="atk-label">{{ t('badgeColor') }} (Color Hex)</div>
       <input v-model="user.badge_color" type="text" placeholder="" autocomplete="off">
-      <div class="atk-label required">身份角色</div>
+      <div class="atk-label required">{{ t('role') }}</div>
       <select v-model="user.is_admin">
-        <option :value="false">普通用户</option>
-        <option :value="true">管理员</option>
+        <option :value="false">{{ t('normal') }}</option>
+        <option :value="true">{{ t('admin') }}</option>
       </select>
       <template v-if="user.is_admin">
-        <div class="atk-label required">密码</div>
-        <input v-model="user.password" type="text" :placeholder="isCreateMode ? '' : '(留空不修改密码)'" autocomplete="off">
-        <div class="atk-label">所属站点</div>
-        <input v-model="user.site_names_raw" type="text" placeholder="(留空无站点范围限制)" autocomplete="off">
+        <div class="atk-label required">{{ t('password') }}</div>
+        <input v-model="user.password" type="text" :placeholder="isCreateMode ? '' : `(${t('passwordEmptyHint')})`" autocomplete="off">
+        <div class="atk-label">{{ t('siteAttached') }}</div>
+        <input v-model="user.site_names_raw" type="text" :placeholder="`(${t('siteEmptyHint')})`" autocomplete="off">
       </template>
-      <div class="atk-label required">邮件通知</div>
+      <div class="atk-label required">{{ t('emailNotify') }}</div>
       <select v-model="user.receive_email">
-        <option :value="true">开启</option>
-        <option :value="false">关闭</option>
+        <option :value="true">{{ t('enabled') }}</option>
+        <option :value="false">{{ t('disabled') }}</option>
       </select>
-      <button type="submit" class="atk-btn">保存</button>
+      <button type="submit" class="atk-btn">{{ t('save') }}</button>
     </form>
     <LoadingLayer v-if="isLoading" />
   </div>

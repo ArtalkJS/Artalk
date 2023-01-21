@@ -8,6 +8,7 @@ type PageItem = { label: string, link: string, hide?: boolean }
 const router = useRouter()
 const route = useRoute()
 const nav = useNavStore()
+const { t } = useI18n()
 
 const { curtPage, curtTab, tabs, isSearchEnabled } = storeToRefs(nav)
 const { isAdmin } = storeToRefs(useUserStore())
@@ -18,36 +19,36 @@ const pages = computed((): { [name: string]: PageItem } => {
   if (isAdmin.value) {
     return {
       comments: {
-        label: '评论',
+        label: t('comment'),
         link: '/comments',
       },
       pages: {
-        label: '页面',
+        label: t('page'),
         link: '/pages',
       },
       users: {
-        label: '用户',
+        label: t('user'),
         link: '/users',
       },
       sites: {
-        label: '站点',
+        label: t('site'),
         link: '/sites',
         hide: true,
       },
       transfer: {
-        label: '迁移',
+        label: t('transfer'),
         link: '/transfer',
         hide: true,
       },
       settings: {
-        label: '设置',
+        label: t('settings'),
         link: '/settings'
       }
     }
   } else {
     return {
       comments: {
-        label: '评论',
+        label: t('comment'),
         link: '/comments',
       }
     }
@@ -159,7 +160,7 @@ function onSearchSubmit(evt: Event) {
       <div class="item back-btn" @click="hideSearch()">
         <div class="icon arrow"></div>
       </div>
-      <input ref="searchInputEl" type="text" placeholder="搜索关键字..." v-model="searchValue" required>
+      <input ref="searchInputEl" type="text" :placeholder="t('searchHint')" v-model="searchValue" required>
       <button type="submit" class="item search-btn"></button>
     </form>
   </div>

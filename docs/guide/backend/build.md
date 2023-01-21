@@ -10,7 +10,7 @@ git clone https://github.com/ArtalkJS/Artalk.git Artalk
 cd Artalk && make all
 
 # 配置文件
-cp artalk.example.yml artalk.yml
+cp conf/artalk.example.yml artalk.yml
 vim artalk.yml
 
 # 运行程序

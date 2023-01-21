@@ -1,20 +1,17 @@
-import YAML from 'yaml'
-import confTemplate from '../assets/artalk.example.yml?raw'
+import type YAML from 'yaml'
 
 type YAMLPair = {
   key?: { value: string, commentBefore: string, comment: string },
   value?: { commentBefore: string, comment: string, value?: any, items?: YAMLPair[] }
 }
 
-export function createSettings() {
+export function createSettings(yamlObj: any) {
   const customs = shallowRef<YAML.Document.Parsed<YAML.ParsedNode>>()
-
-  const yamlDocTpl = YAML.parseDocument(confTemplate)
 
   const comments: { [path: string]: string } = {}
   const defaultValues: { [path: string]: string } = {}
 
-  loop((yamlDocTpl as any).contents.items)
+  loop((yamlObj as any).contents.items)
 
   function loop(pairs: YAMLPair[], parent?: YAMLPair, path?: string[]) {
     pairs.forEach((item, index: number) => {
@@ -41,13 +38,16 @@ export function createSettings() {
   function extractItemDescFromComment(nodePath: string|(string|number)[]) {
     if (Array.isArray(nodePath)) nodePath = nodePath.join('.')
     const nodeName = nodePath.split('.').slice(-1)[0]
-    const comment = (comments[nodePath] || '').trim()
+    let comment = (comments[nodePath] || '').trim()
+
+    // ignore comments begin and end with `--`
+    comment = comment.replace(/--(.*?)--/gm, '')
 
     let title = ''
     let subTitle = ''
     let opts: string[]|null = null
 
-    const stReg = /\(.*?\)$/gm
+    const stReg = /\(.*?\)/gm
     title = comment.replace(stReg, '').trim()
     const stFind = stReg.exec(comment)
     subTitle = stFind ? stFind[0].substring(1, stFind[0].length-1) : ''
@@ -81,6 +81,6 @@ export function createSettings() {
 let instance: ReturnType<(typeof createSettings)>
 
 export default {
-  init: () => instance = createSettings(),
+  init: (yamlObj: any) => instance = createSettings(yamlObj),
   get: () => instance
 }

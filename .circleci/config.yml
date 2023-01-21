@@ -15,8 +15,8 @@ workflows:
     jobs:
       - path-filtering/filter:
           mapping: |
-            (cmd|internal|server|pkg|test)/.*  trigger-app true
-            main.go|go.mod|go.sum|artalk.example.yml  trigger-app true
+            (cmd|internal|server|pkg|test|conf)/.*  trigger-app true
+            main.go|go.mod|go.sum  trigger-app true
             (ui)/.*  trigger-ui  true
           base-revision: master  # git branch name
           config-path: .circleci/conditional_config.yml

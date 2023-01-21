@@ -25,7 +25,7 @@ export default class SystemApi extends ApiBase {
 
   /** 获取配置数据 */
   public async getSettings() {
-    const data = await this.POST<string>('/admin/setting-get')
+    const data = await this.POST<{custom: string, template: string}>('/admin/setting-get')
     return data
   }
 

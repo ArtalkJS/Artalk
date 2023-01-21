@@ -20,6 +20,8 @@ const editFieldVal = computed(() => {
   return String(editFieldKey ? site.value[editFieldKey.value!] || '' : '')
 })
 
+const { t } = useI18n()
+
 function close() {
   emit('close')
 }
@@ -98,8 +100,8 @@ function onFiledEditorNo() {
     </div>
     <div class="atk-main">
       <div class="atk-site-text-actions">
-        <div class="atk-item atk-rename-btn" @click="rename()">重命名</div>
-        <div class="atk-item atk-edit-url-btn" @click="editURL()">修改 URL</div>
+        <div class="atk-item atk-rename-btn" @click="rename()">{{ t('rename') }}</div>
+        <div class="atk-item atk-edit-url-btn" @click="editURL()">{{ t('edit') }} URL</div>
         <!--<div class="atk-item atk-export-btn">导出</div>
         <div class="atk-item atk-import-btn">导入</div>-->
       </div>

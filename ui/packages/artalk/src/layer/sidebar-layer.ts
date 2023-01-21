@@ -89,6 +89,7 @@ export default class SidebarLayer extends Component {
 
       if (conf.view) query.view = conf.view
       if (this.conf.darkMode) query.darkMode = '1'
+      if (typeof this.conf.locale === 'string') query.locale = this.conf.locale
 
       const urlParams = new URLSearchParams(query);
       this.iframeLoad(`${baseURL}?${urlParams.toString()}`)

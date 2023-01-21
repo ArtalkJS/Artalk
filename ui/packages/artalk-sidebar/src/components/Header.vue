@@ -8,6 +8,7 @@ import { artalk } from '../global'
 
 const nav = useNavStore()
 const user = useUserStore()
+const { t } = useI18n()
 const { site: curtSite, isAdmin, email } = storeToRefs(user)
 
 const userAvatarImgURL = computed(() =>
@@ -33,7 +34,7 @@ const userAvatarImgURL = computed(() =>
     </template>
 
     <div class="title">
-      <div class="text">{{ isAdmin ? '控制中心' : '通知中心' }}</div>
+      <div class="text">{{ isAdmin ? t('ctrlCenter') : t('msgCenter') }}</div>
     </div>
 
     <div class="close-btn"></div>

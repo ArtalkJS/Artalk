@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"net/http"
 	"os"
+	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
@@ -23,7 +25,10 @@ func AdminSettingGet(router fiber.Router) {
 			return common.RespError(c, i18n.T("Config file read failed"))
 		}
 
-		return common.RespData(c, string(dat))
+		return common.RespData(c, Map{
+			"custom":   string(dat),
+			"template": core.GetConfTpl(),
+		})
 	})
 }
 
@@ -66,5 +71,14 @@ func AdminSettingSave(router fiber.Router) {
 		logrus.Info(i18n.T("Services restart complete"))
 
 		return common.RespSuccess(c)
+	})
+}
+
+// POST /api/admin/setting-tpl
+func AdminSettingTpl(router fiber.Router) {
+	router.Post("/setting-tpl", func(c *fiber.Ctx) error {
+		locale := strings.TrimSpace(c.FormValue("locale"))
+		tpl := core.GetConfTpl(locale)
+		return c.Status(http.StatusOK).SendString(tpl)
 	})
 }

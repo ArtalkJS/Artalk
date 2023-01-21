@@ -1,19 +1,29 @@
 # Listen host
 host: "0.0.0.0"
+
 # Listen port
 port: 23366
-# Key for generation of JWT token
+
+# App Key (for generation of JWT token)
 app_key: ""
+
 # Debug mode
 debug: false
+
 # Language (follow Unicode BCP 47)
+# -- see https://www.techonthenet.com/js/language_tags.php --
 locale: "en"
-# Timezone (see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+# Timezone (follow IANA Time Zone Database)
+# -- see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones --
 timezone: "Asia/Shanghai"
-# Default site name
+
+# Default site name (create when app is first launched)
 site_default: "Default Site"
+
 # Login timeout (in seconds)
 login_timeout: 259200
+
 # Database
 db:
   # Database type ["sqlite", "mysql", "pgsql", "mssql"]
@@ -22,7 +32,7 @@ db:
   file: "./data/artalk.db"
   # Table prefix (e.g. "atk_")
   table_prefix: ""
-  # The following is not nessary for SQLite
+  # -- The following is not necessary for SQLite --
   # Database name
   name: "artalk"
   # Host address
@@ -42,6 +52,7 @@ log:
   enabled: true
   # Log file path
   filename: "./data/artalk.log"
+
 # Cache
 cache:
   # Cache type ["redis", "memcache", "builtin"]
@@ -50,6 +61,7 @@ cache:
   expires: 30
   # Cache warm up (warm up cache when program starts)
   warm_up: false
+  # -- The following is not necessary for `builtin` cache --
   # Cache server address (e.g. "localhost:6379")
   server: ""
   # Redis config
@@ -62,23 +74,24 @@ cache:
     password: ""
     # Redis database number (e.g. 0)
     db: 0
-# Trusted domains, e.g. ["https://artalk.example.com:23366"] add url of your site her
+
+# Trusted domains
+# -- e.g. ["https://artalk.example.com:23366"] add url of your site her --
 trusted_domains: []
+
 # SSL
 ssl:
   # Enable SSL
   enabled: false
-  # Certificate file path, e.g. "/etc/letsencrypt/live/example.com/fullchain.pem"
+  # Certificate file path
+  # (e.g. "/etc/letsencrypt/live/example.com/fullchain.pem")
   cert_path: ""
-  # Key file path, e.g. "/etc/letsencrypt/live/example.com/privkey.pem"
+  # Key file path
+  # (e.g. "/etc/letsencrypt/live/example.com/privkey.pem")
   key_path: ""
-# Admin users
-admin_users:
-  # Remove the following line comment symbol (#) to enable admin users
-  # - name: "admin"
-  #   email: "admin@example.com"
-  #   badge_color: "#FF6C00"
-# Comment examination before being public
+
+# Moderator
+# -- Comment examination before being public --
 moderator:
   # Default pending (new comments need to be approved by admin)
   pending_default: false
@@ -87,15 +100,17 @@ moderator:
   # Akismet Key
   # (Akismet anti-spam service, https://akismet.com)
   akismet_key: ""
-  # Auto review comments with Tencent Cloud Content Security
-  # (https://cloud.tencent.com/document/product/1124/64508)
+  # Tencent Cloud Content Security
+  # (Auto review comments with Tencent Cloud Content Security)
+  # -- see https://cloud.tencent.com/document/product/1124/64508 --
   tencent:
     enabled: false
     secret_id: ""
     secret_key: ""
     region: "ap-guangzhou"
-  # Auto review comments with Aliyun Content Security
-  # (https://help.aliyun.com/document_detail/28417.html)
+  # Aliyun Content Security
+  # (Auto review comments with Aliyun Content Security)
+  # -- see https://help.aliyun.com/document_detail/28417.html --
   aliyun:
     enabled: false
     access_key_id: ""
@@ -111,6 +126,7 @@ moderator:
     files:
     file_sep: "\n"
     replac_to: "x"
+
 # Captcha
 captcha:
   # Enable captcha
@@ -118,45 +134,19 @@ captcha:
   # Captcha is required always
   always: false
   # Captcha type ["geetest", "image"]
-  # The number of actions required to activate captcha
+  captcha_type: "image"
+  # Action limit
+  # (the number of actions required to activate captcha)
   action_limit: 3
-  # Timeout to reset action counter (unit: s, set to -1 to disable)
+  # Reset Timeout (timeout to reset action counter. unit: s, set to -1 to disable)
   action_reset: 60
   # Geetest (https://www.geetest.com)
   geetest:
     enabled: false
     captcha_id: ""
     captcha_key: ""
-# Mail notification
-email:
-  # Enable mail notification
-  enabled: false
-  # Send method ["smtp", "ali_dm", "sendmail"]
-  send_type: "smtp"
-  # Nick name of sender
-  send_name: "{{reply_nick}}"
-  # Email address of sender
-  send_addr: "noreply@example.com"
-  # Mail title
-  # Mail template file (set to file path to use custom template)
-  mail_tpl: "default"
-  # SMTP send (set to "smtp" to enable)
-  smtp:
-    # Email address of sender
-    host: "smtp.qq.com"
-    # Email port
-    port: 587
-    # Email address of sender
-    username: "example@qq.com"
-    # Password
-    password: ""
-  # Aliyun mail push
-  # (set send method to "ali_dm" to enable; see: https://help.aliyun.com/document_detail/29444.html)
-  ali_dm:
-    access_key_id: ""
-    access_key_secret: ""
-    account_name: "noreply@example.com"
-# Image upload for comment
+
+# Upload
 img_upload:
   # Enable image upload
   enabled: true
@@ -174,20 +164,52 @@ img_upload:
     exec: "./upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
     # Delete local image after upload success
     del_local: true
+
+# Email
+email:
+  # Enable email notification
+  enabled: false
+  # Send method ["smtp", "ali_dm", "sendmail"]
+  send_type: "smtp"
+  # Nick name of sender
+  send_name: "{{reply_nick}}"
+  # Email address of sender
+  send_addr: "noreply@example.com"
+  # Email subject
+  mail_subject: "[{{site_name}}] You got a reply from @{{reply_nick}}"
+  # Email template file (set to file path to use custom template)
+  mail_tpl: "default"
+  # SMTP send (set send method to "smtp" to enable)
+  smtp:
+    # Email address of sender
+    host: "smtp.qq.com"
+    # Email port
+    port: 587
+    # Email address of sender
+    username: "example@qq.com"
+    # Password
+    password: ""
+  # Aliyun mail push
+  # (set send method to "ali_dm" to enable; see: https://help.aliyun.com/document_detail/29444.html)
+  ali_dm:
+    access_key_id: ""
+    access_key_secret: ""
+    account_name: "noreply@example.com"
+
 # Multi-push
 admin_notify:
   # Notification template (set to file path to use custom template)
   notify_tpl: "default"
   # Noise mode
-  # noise_mode is disabled by default.
-  # When this option is set to `false`, only messages sent to the administrator will be notified,
-  # such as "user A" replies to "user B", the communication between these two users will not be notified to the administrator.
+  # -- noise_mode is disabled by default. --
+  # -- When this option is set to `false`, only messages sent to the administrator will be notified, --
+  # -- such as "user A" replies to "user B", the communication between these two users will not be notified to the administrator. --
   noise_mode: false
   # Notify admin
   email:
     # Enable (can be disabled when using other push methods)
     enabled: true
-    # Mail title (mail title sent to admin)
+    # Email subject (email subject sent to admin)
     mail_subject: '[{{site_name}}] Post "{{page_title}}" has new a comment'
   # Telegram
   telegram:
@@ -224,7 +246,8 @@ admin_notify:
     receivers:
       - "USER_ID_1"
       - "GROUP_ID_1"
-# Frontend config
+
+# UI Settings
 frontend:
   # Comment box placeholder
   placeholder: "What do you think?"
@@ -232,6 +255,7 @@ frontend:
   noComment: "No comments yet."
   # Text of the send button
   sendBtn: "Send"
+  # Movable comment box
   editorTravel: true
   # Dark mode
   darkMode: false

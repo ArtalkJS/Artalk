@@ -15,6 +15,8 @@ const inputEl = ref<HTMLInputElement|null>(null)
 const inputVal = ref('')
 const inputInvalid = ref(false)
 
+const { t } = useI18n()
+
 onMounted(() => {
   inputVal.value = props.initValue || ''
   window.setTimeout(() => inputEl.value?.focus(), 80)
@@ -59,7 +61,7 @@ async function submit(type: 'yes'|'no') {
         ref="inputEl"
         class="atk-main-input"
         type="text"
-        :placeholder="props.placeholder || '输入内容...'"
+        :placeholder="props.placeholder || t('inputHint')"
         autocomplete="off"
         v-model="inputVal"
         @input="onInput()"

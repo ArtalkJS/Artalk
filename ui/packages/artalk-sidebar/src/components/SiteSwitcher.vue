@@ -11,6 +11,7 @@ const { siteSwitcherShow: curtShow, sites } = storeToRefs(nav)
 const { site: curtSite } = storeToRefs(useUserStore())
 
 const router = useRouter()
+const { t } = useI18n()
 
 onMounted(() => {
   nav.refreshSites()
@@ -34,14 +35,14 @@ function switchSite(siteName: string) {
 
 const displaySites = computed(() => {
   const displays: IDisplaySite[] = []
-  displays.push({ label: '所有站点', name: '__ATK_SITE_ALL', logoText: '_' })
+  displays.push({ label: t('allSites'), name: '__ATK_SITE_ALL', logoText: '_' })
   sites.value.forEach((site) => {
     displays.push({
       label: site.name, name: site.name,
       logoText: site.name.substring(0, 1)
     })
   })
-  displays.push({ label: '站点管理', name: '__SITE_MANAGEMENT__', logoText: '+' })
+  displays.push({ label: t('siteManage'), name: '__SITE_MANAGEMENT__', logoText: '+' })
   return displays
 })
 

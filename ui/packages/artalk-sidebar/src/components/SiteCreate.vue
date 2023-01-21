@@ -2,6 +2,8 @@
 import { artalk } from '../global'
 import type { SiteData } from 'artalk/types/artalk-data'
 
+const { t } = useI18n()
+
 const props = defineProps<{
   initVal?: { name: string, urls: string }
 }>()
@@ -49,15 +51,15 @@ function close() {
 <template>
   <div class="atk-site-add">
     <div class="atk-header">
-      <div class="atk-title">新增站点</div>
+      <div class="atk-title">{{ t('createSite') }}</div>
       <div class="atk-close-btn" @click="close()">
         <i class="atk-icon atk-icon-close"></i>
       </div>
     </div>
     <form class="atk-form" @submit.prevent="submit()">
-      <input v-model="site.name" type="text" name="AtkSiteName" placeholder="站点名称" autocomplete="off">
-      <input v-model="site.urls" type="text" name="AtkSiteUrls" placeholder="站点 URL（多个用逗号隔开）" autocomplete="off">
-      <button type="submit" class="atk-btn" name="AtkSubmit">创建</button>
+      <input v-model="site.name" type="text" name="AtkSiteName" :placeholder="t('siteName')" autocomplete="off">
+      <input v-model="site.urls" type="text" name="AtkSiteUrls" :placeholder="`${t('siteUrls')} (${t('multiSepHint')})`" autocomplete="off">
+      <button type="submit" class="atk-btn" name="AtkSubmit">{{ t('add') }}</button>
     </form>
     <LoadingLayer v-if="isLoading" />
   </div>

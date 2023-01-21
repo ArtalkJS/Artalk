@@ -15,7 +15,8 @@ export function getBootParams() {
     user:       <LocalUser>JSON.parse(p.get('user') || '{}'),
     view:       p.get('view') || '',
     viewParams: <any>null,
-    darkMode:   p.get('darkMode') === '1'
+    darkMode:   p.get('darkMode') === '1',
+    locale:     p.get('locale') || '',
   }
 }
 

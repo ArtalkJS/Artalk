@@ -10,6 +10,7 @@
 import global, { bootParams, createArtalkInstance } from '../global'
 
 const router = useRouter()
+const { t } = useI18n()
 
 let userForm = ref({
   email:    '',
@@ -50,7 +51,7 @@ function login(username?: string) {
     if (e.data?.need_name_select) {
       userSelector.value = e.data?.need_name_select
     } else {
-      loginErr.value = e.msg || '登陆发生异常'
+      loginErr.value = e.msg || t('loginFailure')
     }
   })
 }
@@ -62,10 +63,10 @@ function login(username?: string) {
       <img class="logo" src="../assets/favicon.png" alt="logo" draggable="false" />
     </a>
     <form class="login-form" @submit.prevent="login()">
-      <input type="text" placeholder="邮箱" v-model="userForm.email" @focus="onFocus">
-      <input type="password" placeholder="密码" v-model="userForm.password" @focus="onFocus">
+      <input type="text" :placeholder="t('email')" v-model="userForm.email" @focus="onFocus">
+      <input type="password" :placeholder="t('password')" v-model="userForm.password" @focus="onFocus">
       <div v-if="!!loginErr" class="err-msg atk-fade-in">{{loginErr}}</div>
-      <button type="submit">登陆</button>
+      <button type="submit">{{ t('login') }}</button>
     </form>
     <div class="copyright">
       Powered by <a href="https://artalk.js.org" target="_blank">Artalk</a> (v{{version}} / {{buildHash}})
@@ -73,7 +74,7 @@ function login(username?: string) {
 
     <div v-if="userSelector" class="layer">
       <div class="user-selector atk-fade-in">
-        <div class="text">请选择您要登陆的账户：</div>
+        <div class="text">{{ t('loginSelectHint') }}</div>
         <div class="user-list">
           <div v-for="u in userSelector" class="item" @click="userSelector = null; login(u)">{{u}}</div>
         </div>

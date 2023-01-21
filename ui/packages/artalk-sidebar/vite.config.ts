@@ -20,7 +20,7 @@ export default defineConfig({
     vue(),
     Components({ resolvers: [HeadlessUiResolver()] }),
     AutoImport({
-      imports: ['vue', VueRouterAutoImports],
+      imports: ['vue', VueRouterAutoImports, 'vue-i18n'],
     }),
     (() => ({
       name: 'prod-vue-resolver',

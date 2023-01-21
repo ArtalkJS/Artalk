@@ -9,6 +9,7 @@ const nav = useNavStore()
 const router = useRouter()
 const { curtTab } = storeToRefs(nav)
 const users = ref<UserDataForAdmin[]>([])
+const { t } = useI18n()
 
 const pageSize = ref(30)
 const pageTotal = ref(0)
@@ -20,9 +21,9 @@ const editingUser = ref<UserDataForAdmin|undefined>()
 
 onMounted(() => {
   nav.updateTabs({
-    'all': '全部',
-    'admin': '管理员',
-    'create': '新增'
+    'all': t('all'),
+    'admin': t('admin'),
+    'create': t('create')
   }, 'all')
 
   watch(curtTab, (tab) => {
@@ -123,16 +124,16 @@ function delUser(user: UserDataForAdmin) {
             {{ user.name }}
             <span class="badge-grp">
               <span v-if="user.badge_name" class="badge" :style="{ backgroundColor: user.badge_color }">{{user.badge_name}}</span>
-              <span v-else-if="user.is_admin" class="badge admin" title="该用户具有管理员权限">管理员</span>
-              <span v-if="user.is_in_conf" class="badge in-conf" title="该用户存在于配置文件中">配置文件</span>
+              <span v-else-if="user.is_admin" class="badge admin" :title="t('userAdminHint')">{{ t('Admin') }}</span>
+              <span v-if="user.is_in_conf" class="badge in-conf" :title="t('userInConfHint')">{{ t('Config') }}</span>
             </span>
           </div>
           <div class="sub">{{ user.email }}</div>
         </div>
         <div class="user-actions">
-          <span @click="editUser(user)">编辑</span>
-          <span>评论 ({{user.comment_count}})</span>
-          <span @click="delUser(user)">删除</span>
+          <span @click="editUser(user)">{{ t('edit') }}</span>
+          <span>{{ t('comment') }} ({{user.comment_count}})</span>
+          <span @click="delUser(user)">{{ t('delete') }}</span>
         </div>
       </div>
     </div>

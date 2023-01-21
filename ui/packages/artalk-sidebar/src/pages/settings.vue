@@ -9,6 +9,7 @@ import LoadingLayer from '../components/LoadingLayer.vue'
 
 const nav = useNavStore()
 const router = useRouter()
+const { t } = useI18n()
 const { curtTab } = storeToRefs(nav)
 const settingsTpl = YAML.parseDocument(confTemplate)
 const isLoading = ref(false)
@@ -19,8 +20,8 @@ onBeforeMount(() => {
 
 onMounted(() => {
   nav.updateTabs({
-    'sites': '站点',
-    'transfer': '迁移',
+    'sites': t('site'),
+    'transfer': t('transfer'),
   })
 
   watch(curtTab, (tab) => {
@@ -38,24 +39,24 @@ function save() {
   try {
     yamlStr = settings.get().customs.value?.toString() || ''
   } catch (err) {
-    alert('配置文件生成失败：'+err)
+    alert('YAML export error: '+err)
     console.error(err)
     return
   }
 
   console.log(yamlStr)
   if (!yamlStr) {
-    alert('配置文件生成失败：数据为空')
+    alert('YAML export error: data is empty')
     return
   }
 
   if (isLoading.value) return
   isLoading.value = true
   artalk!.ctx.getApi().system.saveSettings(yamlStr).then(() => {
-    alert('设置保存成功')
+    alert(t('settingSaved'))
   }).catch((err) => {
     console.error(err)
-    alert('设置保存失败：'+err)
+    alert(t('settingSaveFailed')+': '+err)
   }).finally(() => {
     isLoading.value = false
   })
@@ -66,7 +67,7 @@ function save() {
   <div class="settings">
     <div class="act-bar">
       <div class="status-text"></div>
-      <button class="save-btn" @click="save()"><i class="atk-icon atk-icon-yes" /> 应用</button>
+      <button class="save-btn" @click="save()"><i class="atk-icon atk-icon-yes" /> {{ t('apply') }}</button>
       <LoadingLayer v-if="isLoading" />
     </div>
     <div class="pfs">
@@ -74,7 +75,7 @@ function save() {
         :tpl-data="settingsTpl.toJS()"
         :path="[]"
       />
-      <div class="notice">注：某些配置项可能需手动重启才能生效，详见 <a href="https://artalk.js.org/guide/backend/config.html" target="_blank">官方文档</a></div>
+      <div class="notice">{{ t('settingNotice') }}</div>
     </div>
   </div>
 </template>

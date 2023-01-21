@@ -16,6 +16,7 @@ const { page } = toRefs(props)
 const editFieldKey = ref<keyof PageData|null>(null)
 const editFieldVal = computed(() => String(editFieldKey ? page.value[editFieldKey.value!] || '' : ''))
 const isLoading = ref(false)
+const { t } = useI18n()
 
 function editTitle() {
   editFieldKey.value = 'title'
@@ -99,13 +100,13 @@ function onFiledEditorNo() {
 <template>
   <div class="atk-page-edit-layer">
     <div class="atk-page-main-actions">
-      <div class="atk-item atk-title-edit-btn" @click="editTitle()">标题修改</div>
-      <div class="atk-item atk-key-edit-btn" @click="editKey()">KEY 变更</div>
+      <div class="atk-item atk-title-edit-btn" @click="editTitle()">{{ t('editTitle') }}</div>
+      <div class="atk-item atk-key-edit-btn" @click="editKey()">{{ t('switchKey') }}</div>
       <div
         class="atk-item atk-admin-only-btn"
         :class="!page.admin_only ? 'atk-green' : 'atk-yellow'"
         @click="editAdminOnly()"
-      >{{ !page.admin_only ? '所有人可评' : '管理员可评' }}</div>
+      >{{ !page.admin_only ? t('commentAllowAll') : t('commentOnlyAdmin') }}</div>
     </div>
     <div class="atk-page-actions">
       <div class="atk-item atk-sync-btn" @click="sync()">

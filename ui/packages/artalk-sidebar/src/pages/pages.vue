@@ -10,6 +10,7 @@ const nav = useNavStore()
 const { site: curtSite } = storeToRefs(useUserStore())
 const pages = ref<PageData[]>([])
 const curtEditPageID = ref<number|null>(null)
+const { t } = useI18n()
 
 const pageSize = ref(20)
 const pageTotal = ref(0)
@@ -107,7 +108,7 @@ function startRefreshTaskWatchdog() {
 }
 
 function setRefreshTaskDone() {
-  refreshBtn.value.statusText = '更新完毕'
+  refreshBtn.value.statusText = t('updateComplete')
   window.setTimeout(() => {
     refreshBtn.value.isRun = false
   }, 1500)
@@ -116,7 +117,7 @@ function setRefreshTaskDone() {
 async function refreshAllPages() {
   if (refreshBtn.value.isRun) return
   refreshBtn.value.isRun = true
-  refreshBtn.value.statusText = '开始更新...'
+  refreshBtn.value.statusText = t('updateReady')
 
   // 发起任务
   try {
@@ -131,11 +132,11 @@ async function refreshAllPages() {
 }
 
 function cacheFlush() {
-  artalk!.ctx.getApi().admin.cacheFlushAll().then((d: any) => alert(d.msg)).catch(() => alert('操作失败'))
+  artalk!.ctx.getApi().admin.cacheFlushAll().then((d: any) => alert(d.msg)).catch(() => alert(t('opFailed')))
 }
 
 function cacheWarm() {
-  artalk!.ctx.getApi().admin.cacheWarmUp().then((d: any) => alert(d.msg)).catch(() => alert('操作失败'))
+  artalk!.ctx.getApi().admin.cacheWarmUp().then((d: any) => alert(d.msg)).catch(() => alert(t('opFailed')))
 }
 </script>
 
@@ -144,10 +145,10 @@ function cacheWarm() {
     <div class="atk-header-action-bar" :class="{ 'bordered': showActBarBorder }">
       <span class="atk-update-all-title-btn" @click="refreshAllPages()">
         <i class="atk-icon atk-icon-sync" :class="{'atk-rotate': refreshBtn.isRun}"></i>
-        <span class="atk-text">{{ refreshBtn.isRun ? refreshBtn.statusText : '更新标题' }}</span>
+        <span class="atk-text">{{ refreshBtn.isRun ? refreshBtn.statusText : t('updateTitle') }}</span>
       </span>
-      <span class="atk-cache-flush-all-btn" @click="cacheFlush()"><span class="atk-text">缓存清除</span></span>
-      <span class="atk-cache-warm-up-btn" @click="cacheWarm()"><span class="atk-text">缓存预热</span></span>
+      <span class="atk-cache-flush-all-btn" @click="cacheFlush()"><span class="atk-text">{{ t('cacheClear') }}</span></span>
+      <span class="atk-cache-warm-up-btn" @click="cacheWarm()"><span class="atk-text">{{ t('cacheWarm')  }}</span></span>
     </div>
     <div class="atk-page-list">
       <div v-for="(page) in pages" class="atk-page-item">

@@ -8,11 +8,12 @@ const sites = ref<SiteData[]>([])
 const curtEditSite = ref<SiteData|null>(null)
 const showSiteCreate = ref(false)
 const siteCreateInitVal = ref()
+const { t } = useI18n()
 
 onMounted(() => {
   nav.updateTabs({
 
-  }, '站点')
+  }, 'sites')
 
   nav.setPageLoading(true)
   artalk?.ctx.getApi().site.siteGet().then(gotSites => {
@@ -86,7 +87,7 @@ function onSiteItemRemove(id: number) {
 <template>
   <div class="atk-site-list">
     <div class="atk-header">
-      <div class="atk-title">共 {{ sites.length }} 个站点</div>
+      <div class="atk-title">{{ t('siteCount', { count: sites.length }) }}</div>
       <div class="atk-actions">
         <div class="atk-item atk-site-add-btn" @click="create()"><i class="atk-icon atk-icon-plus"></i></div>
       </div>

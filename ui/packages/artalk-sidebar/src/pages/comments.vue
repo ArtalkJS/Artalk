@@ -11,6 +11,7 @@ const user = useUserStore()
 const nav = useNavStore()
 const { curtTab } = storeToRefs(nav)
 const { site: curtSite } = storeToRefs(user)
+const { t } = useI18n()
 
 const search = ref('')
 
@@ -18,16 +19,16 @@ onMounted(() => {
   // 初始化导航条
   if (user.isAdmin) {
     nav.updateTabs({
-      admin_all: '全部',
-      admin_pending: '待审',
-      all: '个人',
+      admin_all: t('all'),
+      admin_pending: t('pending'),
+      all: t('personal'),
     }, 'admin_all')
   } else {
     nav.updateTabs({
-      mentions: '提及',
-      all: '全部',
-      mine: '我的',
-      pending: '待审',
+      mentions: t('mentions'),
+      all: t('all'),
+      mine: t('mine'),
+      pending: t('pending'),
     }, 'mentions')
   }
 
@@ -47,7 +48,7 @@ onMounted(() => {
   list.unreadHighlight = true
   list.scrollListenerAt = wrapEl.value
   list.pageMode = 'pagination'
-  list.noCommentText = '<div class="atk-sidebar-no-content">无内容</div>'
+  list.noCommentText = `<div class="atk-sidebar-no-content">${t('noContent')}</div>`
   list.renderComment = (comment) => {
     const pageURL = comment.getData().page_url
     comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)

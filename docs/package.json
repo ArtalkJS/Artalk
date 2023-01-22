@@ -16,6 +16,6 @@
   "devDependencies": {
     "markdown-it-for-inline": "^0.1.1",
     "sass": "^1.52.3",
-    "vitepress": "1.0.0-alpha.1"
+    "vitepress": "1.0.0-alpha.40"
   }
 }

@@ -174,9 +174,7 @@ export default defineConfig({
     },
 
     editLink: {
-      repo: 'ArtalkJS/Docs',
-      branch: 'master',
-      dir: 'docs',
+      pattern: 'https://github.com/ArtalkJS/Artalk/edit/master/docs/:path',
       text: '完善文档'
     },
   }

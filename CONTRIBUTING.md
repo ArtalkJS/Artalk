@@ -70,6 +70,22 @@ email: "admin@test.com"
 password: "admin"
 ```
 
+## Project Structure
+
+Artalk is a monorepo project, which means all the source code is in the same repository. However, the frontend and backend are separated. The frontend part is located in `./ui` directory.
+
+- `bin/` - The compiled binary files. This directory is ignored by git.
+- `cmd/` - The source code for the command line tools.
+- `conf/` - The sample configuration files.
+- `docs/` - The documentation site source code.
+- `i18n/` - The translation files.
+- `internal/` - The internal packages.
+- `local/` - The local example site. This directory is ignored by git.
+- `public/` - The static files. Built frontend files will be copied here.
+- `scripts/` - The scripts for development.
+- `server/` - The source code for the server.
+- `ui/` - The source code for the frontend.
+
 ## Translation
 
 Artalk aims to be a multilingual project. If you would like to contribute to the translation, here are some tips:

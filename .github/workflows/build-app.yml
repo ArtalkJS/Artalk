@@ -1,0 +1,77 @@
+name: Build App
+run-name: Build Go App and Publish
+
+on:
+  repository_dispatch:
+    types: [artalk-release]
+
+env:
+  GO_VERSION: '1.19.4'
+  PKG_NAME: 'github.com/ArtalkJS/Artalk'
+  DOCKER_IMG: ghcr.io/goreleaser/goreleaser-cross
+  CACHE_DIR: /tmp/cache/docker-image
+
+jobs:
+  build_publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Docker Image Cache
+        id: docker-cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CACHE_DIR }}
+          key: docker-image-go-cross-${{ env.GO_VERSION }}
+
+      - name: Pull Docker Image
+        if: steps.docker-cache.outputs.cache-hit != 'true'
+        run: |
+          docker pull "${DOCKER_IMG}:v${GO_VERSION}"
+          mkdir -p "${CACHE_DIR}"
+          docker save -o "${CACHE_DIR}/go-cross.tar" "${DOCKER_IMG}:v${GO_VERSION}"
+
+      - name: Restore Docker Image from Cache
+        if: steps.docker-cache.outputs.cache-hit == 'true'
+        run: docker load -i ${CACHE_DIR}/go-cross.tar
+
+      - name: Setup git-chglog
+        run: |
+            curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
+              | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
+            git-chglog --version
+
+      - name: Pre Build
+        run: |-
+          # get latest version by tag
+          VERSION=$(git describe --tags --abbrev=0)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+          # changelog
+          mkdir -p local
+          git-chglog ${VERSION} > local/release-notes.md
+
+          # copy config file
+          cp conf/artalk.example.yml artalk.yml
+
+          # github token
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" > local/.release-env
+
+      - name: Build and Release
+        run: |
+          docker run \
+            --rm \
+            --privileged \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v $(pwd)/sysroot:/sysroot \
+            -v $(pwd):/go/src/${PKG_NAME} \
+            -w /go/src/${PKG_NAME} \
+            -e CGO_ENABLED=1 \
+            --env-file local/.release-env \
+            ghcr.io/goreleaser/goreleaser-cross:v${GO_VERSION} \
+            release --release-notes local/release-notes.md

@@ -17,11 +17,12 @@ before:
   # install dependencies
   - make install
   - make build-frontend
-  - make update
 
 # build multi-platform
 builds:
-  ## Amd 64
+  ## ----------------------
+  ##        Linux
+  ## ----------------------
 
   # Linux (amd_64)
   - id: linux-amd64
@@ -30,8 +31,8 @@ builds:
     goarch:
       - amd64
     env:
-      - CC=gcc
-      - CXX=g++
+      - CC=x86_64-linux-gnu-gcc
+      - CXX=x86_64-linux-gnu-g++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: &common_ldflags |
@@ -39,40 +40,21 @@ builds:
       -X github.com/ArtalkJS/Artalk/internal/config.CommitHash={{ .ShortCommit }}
       -s -w
 
-  # Windows (amd_64)
-  - id: windows-amd64
+  # Linux (arm_64)
+  - id: linux-arm64
     goos:
-      - windows
+      - linux
     goarch:
-      - amd64
+      - arm64
     env:
-      - CC=x86_64-w64-mingw32-gcc
-      - CXX=x86_64-w64-mingw32-g++
+      - CC=aarch64-linux-gnu-gcc
+      - CXX=aarch64-linux-gnu-g++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
-    flags:
-      # https://go-review.googlesource.com/c/go/+/224588/
-      # https://github.com/ArtalkJS/Artalk/issues/35
-      - -tags=timetzdata
-
-  # Darwin (amd_64)
-  - id: darwin-amd64
-    goos:
-      - darwin
-    goarch:
-      - amd64
-    env:
-      - CC=o64-clang
-      - CXX=o64-clang++
-    binary: "{{.ProjectName}}"
-    main: ./main.go
-    ldflags: *common_ldflags
-
-  ## Arm
 
   # Linux (arm_v7)
-  - id: linux-armhf
+  - id: linux-arm7
     goos:
       - linux
     goarch:
@@ -86,15 +68,19 @@ builds:
     main: ./main.go
     ldflags: *common_ldflags
 
-  # Linux (arm_64)
-  - id: linux-arm64
+  ## ----------------------
+  ##        macOS
+  ## ----------------------
+
+  # Darwin (amd_64)
+  - id: darwin-amd64
     goos:
-      - linux
+      - darwin
     goarch:
-      - arm64
+      - amd64
     env:
-      - CC=aarch64-linux-gnu-gcc
-      - CXX=aarch64-linux-gnu-g++
+      - CC=o64-clang
+      - CXX=o64-clang++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
@@ -112,13 +98,50 @@ builds:
     main: ./main.go
     ldflags: *common_ldflags
 
+  ## ----------------------
+  ##         Win
+  ## ----------------------
+
+  # Win (amd_64)
+  - id: windows-amd64
+    goos:
+      - windows
+    goarch:
+      - amd64
+    env:
+      - CC=x86_64-w64-mingw32-gcc
+      - CXX=x86_64-w64-mingw32-g++
+    binary: "{{.ProjectName}}"
+    main: ./main.go
+    ldflags: *common_ldflags
+    flags:
+      # https://go-review.googlesource.com/c/go/+/224588/
+      # https://github.com/ArtalkJS/Artalk/issues/35
+      &win_common_flags |
+        -tags=timetzdata
+
+  # Win (arm_64)
+  - id: windows-arm64
+    goos:
+      - windows
+    goarch:
+      - arm64
+    env:
+      - CC=/llvm-mingw/llvm-mingw/bin/aarch64-w64-mingw32-gcc
+      - CXX=/llvm-mingw/llvm-mingw/bin/aarch64-w64-mingw32-g++
+    binary: "{{.ProjectName}}"
+    main: ./main.go
+    ldflags: *common_ldflags
+    flags: *win_common_flags
+
 archives:
   - id: artalk
     builds:
       - linux-amd64
       - darwin-amd64
       - windows-amd64
-      - linux-armhf
+      - windows-arm64
+      - linux-arm7
       - linux-arm64
       - darwin-arm64
     name_template: "{{.ProjectName}}_v{{.Version}}_{{.Os}}_{{.Arch}}{{.Arm}}"
@@ -138,18 +161,17 @@ checksum:
 snapshot:
   name_template: "{{.Version}}-SNAPSHOT-{{.ShortCommit}}"
 
-# changelog
-changelog:
-  sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
-      - '^chore:'
+# changelog:
+#   sort: asc
+#   filters:
+#     exclude:
+#       - '^docs:'
+#       - '^test:'
+#       - '^chore:'
 
 release:
   github:
     owner: ArtalkJS
     name: Artalk
   prerelease: auto
-  draft: true
+  draft: false

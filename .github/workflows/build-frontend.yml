@@ -1,0 +1,52 @@
+name: Build Frontend
+run-name: Build Frontend and Publish
+
+on:
+  repository_dispatch:
+    types: [artalk-release]
+
+jobs:
+  build_publish:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./ui  # set for building frontend
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Use pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 7
+
+    - name: Setup node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        registry-url: https://registry.npmjs.org/
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Build
+      run: pnpm build
+
+    - name: Publish
+      run: pnpm publish -F artalk --no-git-checks
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    # GitHub Packages
+    #
+    # Setup .npmrc file to publish to GitHub Packages
+    # - uses: actions/setup-node@v2
+    #   with:
+    #     registry-url: 'https://npm.pkg.github.com'
+    # # Publish to GitHub Packages
+    # - run: npm publish
+    #   env:
+    #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

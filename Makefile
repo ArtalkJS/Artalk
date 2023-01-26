@@ -1,12 +1,12 @@
-PACKAGE_NAME := github.com/ArtalkJS/Artalk
-BIN_NAME	 := ./bin/artalk
-VERSION      ?= $(shell git describe --tags --abbrev=0)
-COMMIT_HASH  := $(shell git rev-parse --short HEAD)
-DEV_VERSION  := dev-${COMMIT_HASH}
-GO_VERSION   ?= 1.19.4
+PKG_NAME    := github.com/ArtalkJS/Artalk
+BIN_NAME	:= ./bin/artalk
+VERSION     ?= $(shell git describe --tags --abbrev=0)
+COMMIT_HASH := $(shell git rev-parse --short HEAD)
+DEV_VERSION := dev-$(COMMIT_HASH)
 
-HAS_RICHGO   := $(shell which richgo)
-GOTEST       ?= $(if $(HAS_RICHGO), richgo test, go test)
+HAS_RICHGO  := $(shell which richgo)
+GOTEST      ?= $(if $(HAS_RICHGO), richgo test, go test)
+ARGS        ?= server
 
 all: install build
 
@@ -15,32 +15,28 @@ install:
 
 build: build-frontend
 	go build \
-    	-ldflags "-s -w -X github.com/ArtalkJS/Artalk/internal/config.Version=${VERSION} \
-        -X github.com/ArtalkJS/Artalk/internal/config.CommitHash=${COMMIT_HASH}" \
+    	-ldflags "-s -w -X $(PKG_NAME)/internal/config.Version=$(VERSION) \
+        -X $(PKG_NAME)/internal/config.CommitHash=$(COMMIT_HASH)" \
         -o $(BIN_NAME) \
-    	github.com/ArtalkJS/Artalk
+    	$(PKG_NAME)
 
 build-frontend:
 	./scripts/build-frontend.sh
 
 run: all
-	$(BIN_NAME) server $(ARGS)
+	$(BIN_NAME) $(ARGS)
 
-debug-build:
-	@if [ ! -f "pkged/pkged.go" ]; then \
-		make install; \
-	fi
-	@echo "Building Artalk ${VERSION} for debugging..."
+build-debug:
+	@echo "Building Artalk $(VERSION) for debugging..."
 	@go build \
-		-ldflags " \
-			-X github.com/ArtalkJS/Artalk/internal/config.Version=${VERSION} \
-			-X github.com/ArtalkJS/Artalk/internal/config.CommitHash=${COMMIT_HASH}" \
+		-ldflags "-X $(PKG_NAME)/internal/config.Version=$(VERSION) \
+		  -X $(PKG_NAME)/internal/config.CommitHash=$(COMMIT_HASH)" \
 		-gcflags "all=-N -l" \
 		-o $(BIN_NAME) \
-		github.com/ArtalkJS/Artalk
+		$(PKG_NAME)
 
-dev: debug-build
-	$(BIN_NAME) server $(ARGS)
+dev: build-debug
+	$(BIN_NAME) $(ARGS)
 
 test:
 	$(GOTEST) -timeout 20m ./internal/...
@@ -57,41 +53,6 @@ docker-build:
 docker-push:
 	./scripts/docker-build.sh --push
 
-release-dry-run:
-	@docker run \
-		--rm \
-		--privileged \
-		-e CGO_ENABLED=1 \
-		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v `pwd`:/go/src/$(PACKAGE_NAME) \
-		-v `pwd`/sysroot:/sysroot \
-		-w /go/src/$(PACKAGE_NAME) \
-		ghcr.io/goreleaser/goreleaser-cross:v${GO_VERSION} \
-		--rm-dist --skip-validate --skip-publish
-
-
-# https://hub.docker.com/r/troian/golang-cross
-# https://github.com/troian/golang-cross
-# https://goreleaser.com/cmd/goreleaser_release/
-# --skip-validate 参数跳过 git checks (由于 pkger 和 .release-env 文件生成)
-release:
-	@if [ ! -f ".release-env" ]; then \
-		echo "\033[91m.release-env is required for release\033[0m";\
-		exit 1;\
-	fi
-	docker run \
-		--rm \
-		--privileged \
-		-e CGO_ENABLED=1 \
-		--env-file .release-env \
-		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v `pwd`:/go/src/$(PACKAGE_NAME) \
-		-v `pwd`/sysroot:/sysroot \
-		-w /go/src/$(PACKAGE_NAME) \
-		ghcr.io/goreleaser/goreleaser-cross:v${GO_VERSION} \
-		release --rm-dist --skip-validate
-
-.PHONY: all install build debug-build build-frontend \
-	run dev test test-coverage \
-	docker-build docker-push \
-	release-dry-run release;
+.PHONY: all install build build-frontend build-debug \
+	dev test test-coverage update-i18n \
+	docker-build docker-push;

@@ -5,7 +5,7 @@
 <script lang="ts">
 import { defineComponent, watch, nextTick } from 'vue'
 import { useData, useRouter } from 'vitepress'
-import * as ArtalkCDN from '../../code/ArtalkCDN.json'
+import * as Version from '../../code/ArtalkVersion.json'
 
 let isFirstLoad = true
 
@@ -13,7 +13,7 @@ function loadArtalk() {
   const script = document.createElement('script')
   script.async = true
   script.defer = true
-  script.src = ArtalkCDN.JS
+  script.src = `https://npm.elemecdn.com/artalk@${Version.latest}/dist/Artalk.js`
   document.getElementsByTagName('head')[0].appendChild(script)
   return script
 }

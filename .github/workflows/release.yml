@@ -1,50 +1,93 @@
-name: Release Build
+name: 📦 Release New Version
+run-name: 📦 Release ${{ inputs.custom || inputs.semver }} by @${{ github.actor }}
 
 on:
-  push:
-    tags:
-      - v*
+  workflow_dispatch:
+    inputs:
+      semver:
+        type: choice
+        description: Which version you want to increment?
+        options:
+          - patch
+          - minor
+          - major
+        required: true
+      # custom:
+      #   description: 'Custom tag name (i.e v1.0.0-rc.1)'
+      #   required: false
+      #   default: ''
+
+env:
+  REPO_DISPATCH_EVENT_TYPE: 'artalk-release'
+  UI_NPM_PKG_FILE: 'ui/packages/artalk/package.json'
 
 jobs:
   release:
     runs-on: ubuntu-latest
-
     steps:
-      - name: checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
-      - run: git fetch --prune --unshallow --tags -f
 
-      - name: setup go
-        uses: actions/setup-go@v3
+      - name: Git Fetch
+        run: git fetch --prune --unshallow --tags -f
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          go-version: '^1.19.4'
+          node-version: 16.x
+          registry-url: https://registry.npmjs.org/
 
-      # docker `golang-cross` image cache
-      # `cache-go-cross-v1-19-4`
-      - run: mkdir -p ~/docker-cache
-      - name: docker image cache
-        id: cache-go-cross-v1-19-4
-        uses: actions/cache@v2
-        with:
-          path: ~/docker-cache
-          # Adjust key to meet your cache time requirements e.g.
-          # ${{ hashFiles(*) }} can be useful here to invalidate
-          # cache on file changes
-          key: cache-go-cross-v1-19-4
-
-      - if: steps.cache-go-cross-v1-19-4.outputs.cache-hit != 'true'
+      - name: Handle Version Number
         run: |
-          docker pull ghcr.io/goreleaser/goreleaser-cross:v1.19.4
-          docker save -o ~/docker-cache/golang-cross.tar ghcr.io/goreleaser/goreleaser-cross:v1.19.4
+          if [ ! -z "${{ inputs.custom }}" ]; then
+            next_version="${{ inputs.custom }}"
+          else
+            npm install -g semver
+            prev_version="$(git describe --tags --abbrev=0)"
+            echo "prev_version: ${prev_version}"
+            next_version="v$(semver --increment ${{ inputs.semver }} ${prev_version})"
+          fi
 
-      - if: steps.cache-go-cross-v1-19-4.outputs.cache-hit == 'true'
-        run: docker load -i ~/docker-cache/golang-cross.tar
+          if [[ ! "${next_version}" =~ ^v.* ]]; then
+            echo "[err] custom tag name must be v*."
+            exit 1
+          fi
 
-      # build
-      - name: setup release environment
-        run: |-
-          cp conf/artalk.example.yml artalk.yml
-          echo 'GITHUB_TOKEN=${{secrets.GORELEASER_ACCESS_TOKEN}}' > .release-env
+          echo "next_version: ${next_version}"
+          echo "VERSION=${next_version}" >> $GITHUB_ENV
 
-      - name: build and release publish
-        run: make release
+      - name: Setup git-chglog
+        run: |
+            curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
+              | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
+            git-chglog --version
+
+      - name: Version Changelog and Tagging
+        run: |
+          if [ ! $(git tag -l "${VERSION}") ]; then
+            # prepend changelog
+            changelog=$(git-chglog --next-tag "${VERSION}" "${VERSION}")
+            echo -e "${changelog}\n" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
+
+            # modify the version of `package.json`
+            perl -i -pe 's/"version": ".*?"/"version": "'${VERSION#v}'"/g' "${UI_NPM_PKG_FILE}"
+
+            # modify the version in docs
+            perl -pi -e 's#"latest"(\W+)?:(\W+)?".*?"#"latest": "'${VERSION#v}'"#g' docs/code/ArtalkVersion.json
+
+            # git commit and push
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git add CHANGELOG.md "${UI_NPM_PKG_FILE}"
+            git commit -m "chore: release ${VERSION}"
+            git tag "${VERSION}"
+
+            git push origin master "${VERSION}"
+          else
+            echo "skipped because git tag already exists."
+          fi
+
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          event-type: ${{ env.REPO_DISPATCH_EVENT_TYPE }}

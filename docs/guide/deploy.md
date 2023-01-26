@@ -123,7 +123,7 @@ docker-compose exec artalk bash # 进入容器
 
 ::: tip Artalk 最新版本
 
-当前 Artalk 前端最新版本号为： :ArtalkVersion:
+当前 Artalk 前端最新版本号为： **:ArtalkVersion:**
 
 若需升级前端，请将 URL 中的版本号数字部分替换即可。
 :::
@@ -134,34 +134,34 @@ Artalk 静态资源通过上游 [CDNJS](https://cdnjs.com/) 分发，国内有�
 
 **BootCDN (国内)**
 
-> https://cdn.bootcdn.net/ajax/libs/artalk/2.4.4/Artalk.js
+> https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.js
 >
-> https://cdn.bootcdn.net/ajax/libs/artalk/2.4.4/Artalk.css
+> https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
 
 
 **ElemeCDN (国内)**
 
-> https://npm.elemecdn.com/artalk@2.4.4/dist/Artalk.js
+> https://npm.elemecdn.com/artalk@:ArtalkVersion:/dist/Artalk.js
 >
-> https://npm.elemecdn.com/artalk@2.4.4/dist/Artalk.css
+> https://npm.elemecdn.com/artalk@:ArtalkVersion:/dist/Artalk.css
 
 **CDNJS**
 
-> https://cdnjs.cloudflare.com/ajax/libs/artalk/2.4.4/Artalk.js
+> https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.js
 >
-> https://cdnjs.cloudflare.com/ajax/libs/artalk/2.4.4/Artalk.css
+> https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
 
 **UNPKG**
 
-> https://unpkg.com/artalk@2.4.4/dist/Artalk.js
+> https://unpkg.com/artalk@:ArtalkVersion:/dist/Artalk.js
 > 
-> https://unpkg.com/artalk@2.4.4/dist/Artalk.css
+> https://unpkg.com/artalk@:ArtalkVersion:/dist/Artalk.css
 
 **JS DELIVR**
 
-> https://cdn.jsdelivr.net/npm/artalk@2.4.4/dist/Artalk.js
+> https://cdn.jsdelivr.net/npm/artalk@:ArtalkVersion:/dist/Artalk.js
 > 
-> https://cdn.jsdelivr.net/npm/artalk@2.4.4/dist/Artalk.css
+> https://cdn.jsdelivr.net/npm/artalk@:ArtalkVersion:/dist/Artalk.css
 
 ## ArtalkLite
 

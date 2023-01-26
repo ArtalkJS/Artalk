@@ -1,7 +1,6 @@
 import { defineConfig } from 'vitepress'
 import iterator from 'markdown-it-for-inline'
-import * as ArtalkCDN from '../code/ArtalkCDN.json'
-import * as Versions from '../code/ArtalkVersion.json'
+import * as Version from '../code/ArtalkVersion.json'
 
 export default defineConfig({
   title: 'Artalk',
@@ -12,7 +11,7 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.png' }],
     ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi' }],
     // artalk
-    ['link', { href: ArtalkCDN.CSS, rel: 'stylesheet' }],
+    ['link', { href: `https://npm.elemecdn.com/artalk@${Version.latest}/dist/Artalk.css`, rel: 'stylesheet' }],
     // ['script', { src: ArtalkCDN.JS }],
     // light gallery
     ['link', { href: 'https://npm.elemecdn.com/lightgallery@2.3.0/css/lightgallery.css', rel: 'stylesheet' }],
@@ -33,7 +32,11 @@ export default defineConfig({
     },
     config: (md) => {
       md.use(iterator, 'artalk_version', 'text', function (tokens, idx) {
-        tokens[idx].content = tokens[idx].content.replace(/:ArtalkVersion:/g, Versions.Artalk.replace(/^v/, ''));
+        tokens[idx].content = tokens[idx].content.replace(/:ArtalkVersion:/g, Version.latest)
+      });
+      md.use(iterator, 'artalk_version_link', 'link_open', (tokens, idx) => {
+          const href = tokens[idx].attrGet('href')
+          tokens[idx].attrSet('href', href.replace(/:ArtalkVersion:/g, Version.latest))
       });
     },
   },

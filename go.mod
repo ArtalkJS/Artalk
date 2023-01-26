@@ -15,7 +15,7 @@ require (
 	github.com/eko/gocache/store/bigcache/v4 v4.1.2
 	github.com/eko/gocache/store/memcache/v4 v4.1.2
 	github.com/eko/gocache/store/redis/v4 v4.1.2
-	github.com/go-redis/redis/v8 v8.11.6-0.20220405070650-99c79f7041fc
+	github.com/go-redis/redis/v8 805bfc2c6054
 	github.com/go-testfixtures/testfixtures/v3 v3.8.1
 	github.com/gofiber/fiber/v2 v2.40.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible

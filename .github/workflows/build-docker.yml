@@ -1,0 +1,116 @@
+name: Build Docker
+run-name: Build Docker Image and Publish
+
+on:
+  repository_dispatch:
+    types: [artalk-release]
+
+env:
+  DOCKER_IMG: artalk/artalk-go
+
+jobs:
+  build_publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Checkout latest release tag
+        run: |
+          # fetch tags
+          git fetch --prune --unshallow --tags -f
+
+          # checkout latest version
+          VERSION=$(git describe --tags --abbrev=0)
+          git checkout ${VERSION}
+
+          VERSION_SHORT="$(cut -d '.' -f 1,2 <<< ${VERSION#v})" # (i.e "v1.2.3" -> "1.2")
+          COMMIT_HASH="$(git rev-parse --short HEAD)"
+          COMMIT_HASH_FULL="$(git rev-parse HEAD)"
+
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "VERSION_SHORT=${VERSION_SHORT}" >> $GITHUB_ENV
+          echo "COMMIT_HASH=${COMMIT_HASH}" >> $GITHUB_ENV
+          echo "COMMIT_HASH_FULL=${COMMIT_HASH_FULL}" >> $GITHUB_ENV
+
+      # https://github.com/docker/login-action
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # https://github.com/docker/setup-qemu-action
+      - name: Setup QEMU
+        id: qemu
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: 'amd64,arm64'
+
+      # https://github.com/docker/setup-buildx-action
+      - name: Setup Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      # TODO: https://github.com/docker/metadata-action/pull/248
+      - name: Get Docker Tags and Labels
+        run: |
+          TAGS="${DOCKER_IMG}:latest,${DOCKER_IMG}:${VERSION#v},${DOCKER_IMG}:${VERSION_SHORT},${DOCKER_IMG}:sha-${COMMIT_HASH}"
+          echo "DOCKER_TAGS=${TAGS}" >> $GITHUB_ENV
+
+      # https://github.com/docker/metadata-action
+      - name: Gen docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ env.DOCKER_IMG }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+
+      # https://github.com/docker/build-push-action
+      - name: Build and Push
+        id: docker_build
+        uses: docker/build-push-action@v3
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: ./
+          file: ./Dockerfile
+          platforms: 'linux/amd64,linux/arm64'
+          push: true
+          # tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.DOCKER_TAGS }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      - name: Comment build info in commit
+        uses: actions/github-script@v6
+        env:
+          STDOUT: "🐳 Published new docker image: [${{ env.DOCKER_IMG }}](https://hub.docker.com/r/${{ env.DOCKER_IMG }}) (${{ env.VERSION }} / sha-${{ env.COMMIT_HASH }})"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: process.env.COMMIT_HASH_FULL, // context.sha
+              body: process.env.STDOUT
+            })
+
+      - name: Print image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}

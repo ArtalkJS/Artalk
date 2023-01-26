@@ -1,8 +1,3 @@
----
-prev: install.md
-next: config.md
----
-
 # ArtalkJS
 
 Artalk 拥有一个前端，[GitHub 代码仓库](https://github.com/ArtalkJS/Artalk)。

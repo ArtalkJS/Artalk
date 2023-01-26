@@ -1,7 +1,3 @@
----
-next: frontend/install.md
----
-
 # <span class="wave">👋</span> Hello Friend
 
 **Artalk** 是一款简洁的**自托管**评论系统，你可以在服务器上**轻松部署**并置入前端页面中。

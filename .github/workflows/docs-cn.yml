@@ -1,9 +1,11 @@
-name: China Mirror Deploy
+name: Docs CN Mirror Deploy
 
 on:
   push:
     branches:
-      - "master"
+      - master
+    paths:
+      - "docs/**"
 
 jobs:
   deploy:
@@ -13,18 +15,29 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./docs  # set for building docs
+        # set for building docs
+        working-directory: ./docs
 
     steps:
+    - name: Wait for other docs build to succeed
+      uses: lewagon/wait-on-check-action@v1.2.0
+      with:
+        running-workflow-name: 'Docs CN Mirror Deploy'
+        check-name: 'Build Docs'
+        ref: ${{ github.ref }}
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        allowed-conclusions: success,skipped,cancelled
+        wait-interval: 10
+
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Use pnpm
-      uses: pnpm/action-setup@v2.2.2
+      uses: pnpm/action-setup@v2
       with:
-        version: 7.2.1
+        version: 7
 
-    - name: Set node version to 16.x
+    - name: Setup node
       uses: actions/setup-node@v3
       with:
         node-version: 16.x
@@ -34,7 +47,7 @@ jobs:
     - name: Install dependencies
       run: pnpm install
 
-    - name: Build
+    - name: Build Docs
       run: pnpm docs:build
 
     - name: Deploy

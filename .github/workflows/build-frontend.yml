@@ -11,7 +11,8 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./ui  # set for building frontend
+        # set for building frontend
+        working-directory: ./ui
 
     steps:
     - name: Checkout Code

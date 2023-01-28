@@ -22,7 +22,25 @@ type ParamsAdminUserAdd struct {
 	BadgeColor   string `form:"badge_color"`
 }
 
-// POST /api/admin/user-add
+type ResponseAdminUserAdd struct {
+	User entity.CookedUserForAdmin `json:"user"`
+}
+
+// @Summary      User Add
+// @Description  Create a new user
+// @Tags         User
+// @Param        name           formData  string  true   "the user name"
+// @Param        email          formData  string  true   "the user email"
+// @Param        password       formData  string  false  "the user password"
+// @Param        link           formData  string  false  "the user link"
+// @Param        is_admin       formData  bool    true   "the user is an admin"
+// @Param        site_names     formData  string  false  "the site names associated with the user"
+// @Param        receive_email  formData  bool    true   "the user receive email"
+// @Param        badge_name     formData  string  false  "the user badge name"
+// @Param        badge_color    formData  string  false  "the user badge color (hex format)"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseAdminUserAdd}
+// @Router       /admin/user-add  [post]
 func AdminUserAdd(router fiber.Router) {
 	router.Post("/user-add", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
@@ -68,8 +86,8 @@ func AdminUserAdd(router fiber.Router) {
 			return common.RespError(c, i18n.T("{{name}} creation failed", Map{"name": i18n.T("User")}))
 		}
 
-		return common.RespData(c, common.Map{
-			"user": query.UserToCookedForAdmin(&user),
+		return common.RespData(c, ResponseAdminUserAdd{
+			User: query.UserToCookedForAdmin(&user),
 		})
 	})
 }

@@ -11,7 +11,13 @@ type ParamsAdminUserDel struct {
 	ID uint `form:"id" validate:"required"`
 }
 
-// POST /api/admin/user-del
+// @Summary      User Delete
+// @Description  Delete a specific user
+// @Tags         User
+// @Param        id             formData  string  true   "the user ID you want to delete"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/user-del  [post]
 func AdminUserDel(router fiber.Router) {
 	router.Post("/user-del", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {

@@ -1,0 +1,3385 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is an Artalk server.",
+        "title": "Artalk API",
+        "contact": {
+            "name": "API Support",
+            "url": "https://artalk.js.org",
+            "email": "artalkjs@gmail.com"
+        },
+        "license": {
+            "name": "LGPL-3.0",
+            "url": "https://github.com/ArtalkJS/Artalk/blob/master/LICENSE"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/api/",
+    "paths": {
+        "/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new comment",
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Comment Add",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the comment name",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment email",
+                        "name": "email",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment link",
+                        "name": "link",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment content",
+                        "name": "content",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment rid",
+                        "name": "rid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment ua",
+                        "name": "ua",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment page_key",
+                        "name": "page_key",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment page_title",
+                        "name": "page_title",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseAdd"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/cache-flush": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Flush Cache when application runs",
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Cache Flush",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "flush all cache",
+                        "name": "flush_all",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/cache-warm": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Cache warming helps you hit the cache on the user's first visit",
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Cache Warming",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/comment-del": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a specific comment",
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Comment Delete",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "the comment ID you want to delete",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/comment-edit": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit a specific comment",
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Comment Edit",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "the comment ID you want to edit",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment content",
+                        "name": "content",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment page_key",
+                        "name": "page_key",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment nick",
+                        "name": "nick",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment email",
+                        "name": "email",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment link",
+                        "name": "link",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment rid",
+                        "name": "rid",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment ua",
+                        "name": "ua",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the comment ip",
+                        "name": "ip",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "the comment is_collapsed",
+                        "name": "is_collapsed",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "the comment is_pending",
+                        "name": "is_pending",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "the comment is_pinned",
+                        "name": "is_pinned",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseCommentEdit"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/export": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Export data from Artalk",
+                "tags": [
+                    "Transfer"
+                ],
+                "summary": "Transfer Export",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "type": "object"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/import": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Import data to Artalk",
+                "tags": [
+                    "Transfer"
+                ],
+                "summary": "Transfer Import",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the transfer importer payload",
+                        "name": "payload",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/import-upload": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Upload a file to prepare to import",
+                "tags": [
+                    "Transfer"
+                ],
+                "summary": "Transfer Import Upload",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "upload file in preparation for import task",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/page-del": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a specific page",
+                "tags": [
+                    "Page"
+                ],
+                "summary": "Page Delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the page KEY you want to delete",
+                        "name": "key",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/page-edit": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit a specific page",
+                "tags": [
+                    "Page"
+                ],
+                "summary": "Page Edit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the page ID you want to edit",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "edit page key",
+                        "name": "key",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "edit page title",
+                        "name": "title",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "edit page admin_only option",
+                        "name": "admin_only",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseAdminPageEdit"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/page-fetch": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Fetch the data of a specific page",
+                "tags": [
+                    "Page"
+                ],
+                "summary": "Page Data Fetch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the page ID you want to fetch",
+                        "name": "key",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "which response data you want to receive",
+                        "name": "get_status",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/page-get": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a list of pages by some conditions",
+                "tags": [
+                    "Page"
+                ],
+                "summary": "Page List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "the limit for pagination",
+                        "name": "limit",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "the offset for pagination",
+                        "name": "offset",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseAdminPageGet"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/send-mail": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Send an email to test the email sender",
+                "tags": [
+                    "System"
+                ],
+                "summary": "Email Send",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the subject of email",
+                        "name": "subject",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the body of email",
+                        "name": "body",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the email address of the receiver",
+                        "name": "to_addr",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/setting-get": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get settings from app config file",
+                "tags": [
+                    "System"
+                ],
+                "summary": "Settings Get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseAdminSettingGet"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/setting-save": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Save settings to app config file",
+                "tags": [
+                    "System"
+                ],
+                "summary": "Settings Save",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the content of the config file in YAML format",
+                        "name": "data",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/setting-tpl": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get config templates in different languages for rendering the settings page in the frontend",
+                "tags": [
+                    "System"
+                ],
+                "summary": "Settings Template",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/site-add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new site",
+                "tags": [
+                    "Site"
+                ],
+                "summary": "Site Add",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the site name",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site urls",
+                        "name": "urls",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseAdminSiteAdd"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/site-del": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a specific site",
+                "tags": [
+                    "Site"
+                ],
+                "summary": "Site Delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the site ID you want to delete",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/site-edit": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit a specific site",
+                "tags": [
+                    "Site"
+                ],
+                "summary": "Site Edit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the site ID you want to edit",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "edit site name",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "edit site urls",
+                        "name": "urls",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseAdminSiteEdit"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/site-get": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a list of sites by some conditions",
+                "tags": [
+                    "Site"
+                ],
+                "summary": "Site List",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseAdminSiteGet"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/user-add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new user",
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Add",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the user name",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user password",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user link",
+                        "name": "link",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "the user is an admin",
+                        "name": "is_admin",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site names associated with the user",
+                        "name": "site_names",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "the user receive email",
+                        "name": "receive_email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user badge name",
+                        "name": "badge_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user badge color (hex format)",
+                        "name": "badge_color",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseAdminUserAdd"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/user-del": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a specific user",
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the user ID you want to delete",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/user-edit": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Edit a specific user",
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Edit",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the user ID you want to edit",
+                        "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user name",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user password",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user link",
+                        "name": "link",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "the user is an admin",
+                        "name": "is_admin",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site names associated with the user",
+                        "name": "site_names",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "the user receive email",
+                        "name": "receive_email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user badge name",
+                        "name": "badge_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user badge color (hex format)",
+                        "name": "badge_color",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseAdminUserEdit"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/user-get": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a list of users by some conditions",
+                "tags": [
+                    "User"
+                ],
+                "summary": "User List",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "the limit for pagination",
+                        "name": "limit",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "the offset for pagination",
+                        "name": "offset",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseAdminUserGet"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/vote-sync": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Sync the number of votes in the `comments` or `pages` data tables to keep them the same as the `votes` table",
+                "tags": [
+                    "Vote"
+                ],
+                "summary": "Vote Sync",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/captcha/check": {
+            "post": {
+                "description": "Verify user enters correct captcha code",
+                "tags": [
+                    "Captcha"
+                ],
+                "summary": "Captcha Check",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the captcha value to check",
+                        "name": "value",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "type": "object"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "img_data": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/captcha/get": {
+            "get": {
+                "description": "Get a base64 encoded captcha image or a HTML page to verify for user",
+                "tags": [
+                    "Captcha"
+                ],
+                "summary": "Captcha Get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "type": "object"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "img_data": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Get a base64 encoded captcha image or a HTML page to verify for user",
+                "tags": [
+                    "Captcha"
+                ],
+                "summary": "Captcha Get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "type": "object"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "img_data": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/captcha/refresh": {
+            "post": {
+                "description": "Get a base64 encoded captcha image or a HTML page to verify for user",
+                "tags": [
+                    "Captcha"
+                ],
+                "summary": "Captcha Get",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "type": "object"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "img_data": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/captcha/status": {
+            "post": {
+                "description": "Get the status of the user's captcha verification",
+                "tags": [
+                    "Captcha"
+                ],
+                "summary": "Captcha Status",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "type": "object"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "is_pass": {
+                                                            "type": "boolean"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/conf": {
+            "get": {
+                "description": "Get system configurations",
+                "tags": [
+                    "System"
+                ],
+                "summary": "Config",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/config.Config"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/get": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a list of comments by some conditions",
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Comment List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the comment page_key",
+                        "name": "page_key",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "the limit for pagination",
+                        "name": "limit",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "the offset for pagination",
+                        "name": "offset",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "enable flat_mode",
+                        "name": "flat_mode",
+                        "in": "formData"
+                    },
+                    {
+                        "enum": [
+                            "date_asc",
+                            "date_desc",
+                            "vote"
+                        ],
+                        "type": "string",
+                        "description": "sort by condition",
+                        "name": "sort_by",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "only show comments by admin",
+                        "name": "view_only_admin",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search keywords",
+                        "name": "search",
+                        "in": "formData"
+                    },
+                    {
+                        "enum": [
+                            "all",
+                            "mentions",
+                            "mine",
+                            "pending",
+                            "admin_all",
+                            "admin_pending"
+                        ],
+                        "type": "string",
+                        "description": "message center show type",
+                        "name": "type",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the username",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user email",
+                        "name": "email",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseGet"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/img-upload": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Upload image from this endpoint",
+                "tags": [
+                    "Upload"
+                ],
+                "summary": "Image Upload",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "upload file in preparation for import",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the username",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the page key",
+                        "name": "page_key",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the page title",
+                        "name": "page_title",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseImgUpload"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Login user by name or email",
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Login",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the username",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user password",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseLogin"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Multiple users with the same email address are matched",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "type": "object"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "need_name_select": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/login-status": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get user login status by header Authorization",
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Login Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the username",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user email",
+                        "name": "email",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user password",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseLoginStatus"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "description": "Logout current user (applies to cookie identification only)\nUser Logout",
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Logout",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/mark-read": {
+            "post": {
+                "description": "Mark specific notification as read for user",
+                "tags": [
+                    "Notify"
+                ],
+                "summary": "Notify Mark Read",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the notify key you want to mark as read",
+                        "name": "notify_key",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the username",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user email",
+                        "name": "email",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "the option if mark all user's notify as read",
+                        "name": "all_read",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/pv": {
+            "post": {
+                "description": "Log and get the number of page views",
+                "tags": [
+                    "PV"
+                ],
+                "summary": "Page View",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the page key",
+                        "name": "page_key",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the page title",
+                        "name": "page_title",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponsePV"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/stat": {
+            "post": {
+                "description": "Get the statistics of various data analysed",
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Statistics",
+                "parameters": [
+                    {
+                        "enum": [
+                            "latest_comments",
+                            "latest_pages",
+                            "pv_most_pages",
+                            "comment_most_pages",
+                            "page_pv",
+                            "site_pv",
+                            "page_comment",
+                            "site_comment",
+                            "rand_comments",
+                            "rand_pages"
+                        ],
+                        "type": "string",
+                        "description": "the type of statistics",
+                        "name": "type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "multiple page keys separated by commas",
+                        "name": "page_keys",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "the amount of items you want",
+                        "name": "limit",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.JSONResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/user-get": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get user info to prepare for login or check current user status",
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Info Get",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "the username",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user email",
+                        "name": "email",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseUserGet"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/version": {
+            "post": {
+                "description": "Get the version of Artalk",
+                "tags": [
+                    "System"
+                ],
+                "summary": "Version",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.ApiVersionData"
+                        }
+                    }
+                }
+            }
+        },
+        "/vote": {
+            "post": {
+                "description": "Vote for a specific comment or page",
+                "tags": [
+                    "Vote"
+                ],
+                "summary": "Vote",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "target comment or page ID you want to vote for",
+                        "name": "target_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "comment_up",
+                            "comment_down",
+                            "page_up",
+                            "page_down"
+                        ],
+                        "type": "string",
+                        "description": "the type of vote target",
+                        "name": "type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "the username",
+                        "name": "name",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the user email",
+                        "name": "email",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "the site name of your content scope",
+                        "name": "site_name",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/common.JSONResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/handler.ResponseVote"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "common.ApiVersionData": {
+            "type": "object",
+            "properties": {
+                "app": {
+                    "type": "string"
+                },
+                "commit_hash": {
+                    "type": "string"
+                },
+                "fe_min_version": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "common.JSONResult": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "description": "数据"
+                },
+                "extra": {
+                    "description": "数据"
+                },
+                "msg": {
+                    "description": "消息",
+                    "type": "string"
+                },
+                "success": {
+                    "description": "是否成功",
+                    "type": "boolean"
+                }
+            }
+        },
+        "common.Map": {
+            "type": "object",
+            "additionalProperties": true
+        },
+        "config.AdminEmailConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "description": "管理员总开关",
+                    "type": "boolean"
+                },
+                "mail_subject": {
+                    "description": "管理员邮件标题",
+                    "type": "string"
+                },
+                "mail_tpl": {
+                    "description": "管理员专用邮件模板",
+                    "type": "string"
+                }
+            }
+        },
+        "config.AdminNotifyConf": {
+            "type": "object",
+            "properties": {
+                "bark": {
+                    "description": "bark",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.NotifyBarkConf"
+                        }
+                    ]
+                },
+                "ding_talk": {
+                    "description": "钉钉",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.NotifyDingTalkConf"
+                        }
+                    ]
+                },
+                "email": {
+                    "description": "邮件通知",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.AdminEmailConf"
+                        }
+                    ]
+                },
+                "lark": {
+                    "description": "飞书",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.NotifyLarkConf"
+                        }
+                    ]
+                },
+                "line": {
+                    "description": "LINE",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.NotifyLINEConf"
+                        }
+                    ]
+                },
+                "noise_mode": {
+                    "description": "嘈杂模式 (非回复管理员的评论也发送通知)",
+                    "type": "boolean"
+                },
+                "notify_subject": {
+                    "description": "通知标题",
+                    "type": "string"
+                },
+                "notify_tpl": {
+                    "description": "通知模板",
+                    "type": "string"
+                },
+                "slack": {
+                    "description": "slack",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.NotifySlackConf"
+                        }
+                    ]
+                },
+                "telegram": {
+                    "description": "TG",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.NotifyTelegramConf"
+                        }
+                    ]
+                },
+                "webhook": {
+                    "description": "WebHook",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.NotifyWebHookConf"
+                        }
+                    ]
+                }
+            }
+        },
+        "config.AdminUserConf": {
+            "type": "object",
+            "properties": {
+                "badge_color": {
+                    "type": "string"
+                },
+                "badge_name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "receive_email": {
+                    "type": "boolean"
+                },
+                "sites": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "config.AliDMConf": {
+            "type": "object",
+            "properties": {
+                "access_key_id": {
+                    "type": "string"
+                },
+                "access_key_secret": {
+                    "type": "string"
+                },
+                "account_name": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.AliyunAntispamConf": {
+            "type": "object",
+            "properties": {
+                "access_key_id": {
+                    "type": "string"
+                },
+                "access_key_secret": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "region": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.CacheConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "description": "配置文件不允许修改",
+                    "type": "boolean"
+                },
+                "expires": {
+                    "description": "过期时间",
+                    "type": "integer"
+                },
+                "redis": {
+                    "$ref": "#/definitions/config.RedisConf"
+                },
+                "server": {
+                    "description": "缓存服务器",
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/config.CacheType"
+                },
+                "warm_up": {
+                    "description": "启动时缓存预热",
+                    "type": "boolean"
+                }
+            }
+        },
+        "config.CacheType": {
+            "type": "string",
+            "enum": [
+                "builtin",
+                "redis",
+                "memcache",
+                "disabled"
+            ],
+            "x-enum-comments": {
+                "CacheTypeBuiltin": "内建缓存",
+                "CacheTypeDisabled": "关闭缓存"
+            },
+            "x-enum-varnames": [
+                "CacheTypeBuiltin",
+                "CacheTypeRedis",
+                "CacheTypeMemcache",
+                "CacheTypeDisabled"
+            ]
+        },
+        "config.CaptchaConf": {
+            "type": "object",
+            "properties": {
+                "action_limit": {
+                    "type": "integer"
+                },
+                "action_reset": {
+                    "type": "integer"
+                },
+                "always": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "geetest": {
+                    "$ref": "#/definitions/config.GeetestConf"
+                }
+            }
+        },
+        "config.Config": {
+            "type": "object",
+            "properties": {
+                "admin_notify": {
+                    "description": "其他通知方式",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.AdminNotifyConf"
+                        }
+                    ]
+                },
+                "admin_users": {
+                    "description": "管理员账户",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/config.AdminUserConf"
+                    }
+                },
+                "app_key": {
+                    "description": "加密密钥",
+                    "type": "string"
+                },
+                "cache": {
+                    "description": "缓存",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.CacheConf"
+                        }
+                    ]
+                },
+                "captcha": {
+                    "description": "验证码",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.CaptchaConf"
+                        }
+                    ]
+                },
+                "cookie": {
+                    "description": "Cookie",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.CookieConf"
+                        }
+                    ]
+                },
+                "db": {
+                    "description": "数据文件",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.DBConf"
+                        }
+                    ]
+                },
+                "debug": {
+                    "description": "调试模式",
+                    "type": "boolean"
+                },
+                "email": {
+                    "description": "邮箱提醒",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.EmailConf"
+                        }
+                    ]
+                },
+                "frontend": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "host": {
+                    "description": "HTTP Server 监听 IP",
+                    "type": "string"
+                },
+                "img_upload": {
+                    "description": "图片上传",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.ImgUploadConf"
+                        }
+                    ]
+                },
+                "locale": {
+                    "description": "语言",
+                    "type": "string"
+                },
+                "log": {
+                    "description": "日志文件",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.LogConf"
+                        }
+                    ]
+                },
+                "login_timeout": {
+                    "description": "登陆超时",
+                    "type": "integer"
+                },
+                "moderator": {
+                    "description": "评论审查",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.ModeratorConf"
+                        }
+                    ]
+                },
+                "port": {
+                    "description": "HTTP Server 监听 Port",
+                    "type": "integer"
+                },
+                "site_default": {
+                    "description": "默认站点名（当请求无指定 site_name 时使用）",
+                    "type": "string"
+                },
+                "ssl": {
+                    "description": "SSL",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.SSLConf"
+                        }
+                    ]
+                },
+                "timezone": {
+                    "description": "时区",
+                    "type": "string"
+                },
+                "trusted_domains": {
+                    "description": "可信任的域名 (新)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "config.CookieConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "config.DBConf": {
+            "type": "object",
+            "properties": {
+                "charset": {
+                    "type": "string"
+                },
+                "dsn": {
+                    "description": "最高优先级",
+                    "type": "string"
+                },
+                "file": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "table_prefix": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/config.DBType"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.DBType": {
+            "type": "string",
+            "enum": [
+                "mysql",
+                "sqlite",
+                "pgsql",
+                "mssql"
+            ],
+            "x-enum-varnames": [
+                "TypeMySql",
+                "TypeSQLite",
+                "TypePostgreSQL",
+                "TypeMSSQL"
+            ]
+        },
+        "config.EmailConf": {
+            "type": "object",
+            "properties": {
+                "ali_dm": {
+                    "description": "阿里云邮件配置",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.AliDMConf"
+                        }
+                    ]
+                },
+                "enabled": {
+                    "description": "总开关",
+                    "type": "boolean"
+                },
+                "mail_subject": {
+                    "description": "邮件标题",
+                    "type": "string"
+                },
+                "mail_tpl": {
+                    "description": "邮件模板",
+                    "type": "string"
+                },
+                "send_addr": {
+                    "description": "发件人地址",
+                    "type": "string"
+                },
+                "send_name": {
+                    "description": "发件人名",
+                    "type": "string"
+                },
+                "send_type": {
+                    "description": "发送方式",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.EmailSenderType"
+                        }
+                    ]
+                },
+                "smtp": {
+                    "description": "SMTP 配置",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.SMTPConf"
+                        }
+                    ]
+                }
+            }
+        },
+        "config.EmailSenderType": {
+            "type": "string",
+            "enum": [
+                "smtp",
+                "ali_dm",
+                "sendmail"
+            ],
+            "x-enum-varnames": [
+                "TypeSMTP",
+                "TypeAliDM",
+                "TypeSendmail"
+            ]
+        },
+        "config.GeetestConf": {
+            "type": "object",
+            "properties": {
+                "captcha_id": {
+                    "type": "string"
+                },
+                "captcha_key": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "config.ImgUploadConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "description": "总开关",
+                    "type": "boolean"
+                },
+                "max_size": {
+                    "description": "图片大小限制",
+                    "type": "integer"
+                },
+                "path": {
+                    "description": "图片存放路径",
+                    "type": "string"
+                },
+                "public_path": {
+                    "description": "图片 URL 基础路径",
+                    "type": "string"
+                },
+                "quality": {
+                    "description": "图片质量",
+                    "type": "string"
+                },
+                "upgit": {
+                    "description": "upgit",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.UpgitConf"
+                        }
+                    ]
+                }
+            }
+        },
+        "config.KeyWordsAntispamConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "file_sep": {
+                    "type": "string"
+                },
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pending": {
+                    "type": "boolean"
+                },
+                "replac_to": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.LogConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "filename": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.ModeratorConf": {
+            "type": "object",
+            "properties": {
+                "akismet_key": {
+                    "type": "string"
+                },
+                "aliyun": {
+                    "$ref": "#/definitions/config.AliyunAntispamConf"
+                },
+                "api_fail_block": {
+                    "description": "API 请求错误仍然拦截",
+                    "type": "boolean"
+                },
+                "keywords": {
+                    "$ref": "#/definitions/config.KeyWordsAntispamConf"
+                },
+                "pending_default": {
+                    "type": "boolean"
+                },
+                "tencent": {
+                    "$ref": "#/definitions/config.TencentAntispamConf"
+                }
+            }
+        },
+        "config.NotifyBarkConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "server": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.NotifyDingTalkConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "secret": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.NotifyLINEConf": {
+            "type": "object",
+            "properties": {
+                "channel_access_token": {
+                    "type": "string"
+                },
+                "channel_secret": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "receivers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "config.NotifyLarkConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "webhook_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.NotifySlackConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "oauth_token": {
+                    "type": "string"
+                },
+                "receivers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "config.NotifyTelegramConf": {
+            "type": "object",
+            "properties": {
+                "api_token": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "receivers": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "config.NotifyWebHookConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.RedisConf": {
+            "type": "object",
+            "properties": {
+                "db": {
+                    "description": "Redis 默认数据库 0",
+                    "type": "integer"
+                },
+                "network": {
+                    "description": "tcp or unix",
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.SMTPConf": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.SSLConf": {
+            "type": "object",
+            "properties": {
+                "cert_path": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "key_path": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.TencentAntispamConf": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "secret_id": {
+                    "type": "string"
+                },
+                "secret_key": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.UpgitConf": {
+            "type": "object",
+            "properties": {
+                "del_local": {
+                    "description": "上传后删除本地的图片",
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "description": "启用 upgit",
+                    "type": "boolean"
+                },
+                "exec": {
+                    "description": "启动命令",
+                    "type": "string"
+                }
+            }
+        },
+        "entity.CookedComment": {
+            "type": "object",
+            "properties": {
+                "badge_color": {
+                    "type": "string"
+                },
+                "badge_name": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "content_marked": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "email_encrypted": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_allow_reply": {
+                    "type": "boolean"
+                },
+                "is_collapsed": {
+                    "type": "boolean"
+                },
+                "is_pending": {
+                    "type": "boolean"
+                },
+                "is_pinned": {
+                    "type": "boolean"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "nick": {
+                    "type": "string"
+                },
+                "page_key": {
+                    "type": "string"
+                },
+                "page_url": {
+                    "type": "string"
+                },
+                "rid": {
+                    "type": "integer"
+                },
+                "site_name": {
+                    "type": "string"
+                },
+                "ua": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "visible": {
+                    "type": "boolean"
+                },
+                "vote_down": {
+                    "type": "integer"
+                },
+                "vote_up": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.CookedNotify": {
+            "type": "object",
+            "properties": {
+                "comment_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_emailed": {
+                    "type": "boolean"
+                },
+                "is_read": {
+                    "type": "boolean"
+                },
+                "read_link": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.CookedPage": {
+            "type": "object",
+            "properties": {
+                "admin_only": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "pv": {
+                    "type": "integer"
+                },
+                "site_name": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "vote_down": {
+                    "type": "integer"
+                },
+                "vote_up": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.CookedSite": {
+            "type": "object",
+            "properties": {
+                "first_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "urls_raw": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.CookedUser": {
+            "type": "object",
+            "properties": {
+                "badge_color": {
+                    "type": "string"
+                },
+                "badge_name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_admin": {
+                    "type": "boolean"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "receive_email": {
+                    "type": "boolean"
+                },
+                "site_names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "site_names_raw": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.CookedUserForAdmin": {
+            "type": "object",
+            "properties": {
+                "badge_color": {
+                    "type": "string"
+                },
+                "badge_name": {
+                    "type": "string"
+                },
+                "comment_count": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_admin": {
+                    "type": "boolean"
+                },
+                "is_in_conf": {
+                    "type": "boolean"
+                },
+                "last_ip": {
+                    "type": "string"
+                },
+                "last_ua": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "receive_email": {
+                    "type": "boolean"
+                },
+                "site_names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "site_names_raw": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.ResponseAdd": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "$ref": "#/definitions/entity.CookedComment"
+                }
+            }
+        },
+        "handler.ResponseAdminPageEdit": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "$ref": "#/definitions/entity.CookedPage"
+                }
+            }
+        },
+        "handler.ResponseAdminPageGet": {
+            "type": "object",
+            "properties": {
+                "pages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.CookedPage"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.ResponseAdminSettingGet": {
+            "type": "object",
+            "properties": {
+                "custom": {
+                    "type": "string"
+                },
+                "template": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.ResponseAdminSiteAdd": {
+            "type": "object",
+            "properties": {
+                "site": {
+                    "$ref": "#/definitions/entity.CookedSite"
+                }
+            }
+        },
+        "handler.ResponseAdminSiteEdit": {
+            "type": "object",
+            "properties": {
+                "site": {
+                    "$ref": "#/definitions/entity.CookedSite"
+                }
+            }
+        },
+        "handler.ResponseAdminSiteGet": {
+            "type": "object",
+            "properties": {
+                "sites": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.CookedSite"
+                    }
+                }
+            }
+        },
+        "handler.ResponseAdminUserAdd": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/entity.CookedUserForAdmin"
+                }
+            }
+        },
+        "handler.ResponseAdminUserEdit": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/entity.CookedUserForAdmin"
+                }
+            }
+        },
+        "handler.ResponseAdminUserGet": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "type": "integer"
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.CookedUserForAdmin"
+                    }
+                }
+            }
+        },
+        "handler.ResponseCommentEdit": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "$ref": "#/definitions/entity.CookedComment"
+                }
+            }
+        },
+        "handler.ResponseGet": {
+            "type": "object",
+            "properties": {
+                "api_version": {
+                    "$ref": "#/definitions/common.ApiVersionData"
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.CookedComment"
+                    }
+                },
+                "conf": {
+                    "$ref": "#/definitions/common.Map"
+                },
+                "page": {
+                    "$ref": "#/definitions/entity.CookedPage"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "total_roots": {
+                    "type": "integer"
+                },
+                "unread": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.CookedNotify"
+                    }
+                },
+                "unread_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.ResponseImgUpload": {
+            "type": "object",
+            "properties": {
+                "img_file": {
+                    "type": "string"
+                },
+                "img_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.ResponseLogin": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/entity.CookedUser"
+                }
+            }
+        },
+        "handler.ResponseLoginStatus": {
+            "type": "object",
+            "properties": {
+                "is_admin": {
+                    "type": "boolean"
+                },
+                "is_login": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "handler.ResponsePV": {
+            "type": "object",
+            "properties": {
+                "pv": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.ResponseUserGet": {
+            "type": "object",
+            "properties": {
+                "is_login": {
+                    "type": "boolean"
+                },
+                "unread": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.CookedNotify"
+                    }
+                },
+                "unread_count": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/entity.CookedUser"
+                }
+            }
+        },
+        "handler.ResponseVote": {
+            "type": "object",
+            "properties": {
+                "down": {
+                    "type": "integer"
+                },
+                "up": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "\"Type 'Bearer TOKEN' to correctly set the API Key\"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

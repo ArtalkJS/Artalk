@@ -70,7 +70,7 @@ new Artalk({
   pageTitle: 'The title of your page',    // Page Title
   server:    'http://localhost:8080/api', // Server URL
   site:      'Site Name',
-  i18n:      'en-US'
+  locale:    'en'
 })
 ```
 
@@ -108,6 +108,10 @@ services:
 ```sh
 docker-compose up -d
 ```
+
+## Development
+
+see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Contributors
 

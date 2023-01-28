@@ -34,7 +34,7 @@ cd Artalk
 First, we need to install the dependencies for backend written in Go. Simply run the following command:
 
 ```sh
-make debug-build
+make build-debug
 ```
 
 This will build both the frontend and backend, with debugging symbols.

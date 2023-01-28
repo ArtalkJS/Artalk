@@ -15,7 +15,18 @@ type ParamsAdminSiteAdd struct {
 	Urls string `form:"urls"`
 }
 
-// POST /api/admin/site-add
+type ResponseAdminSiteAdd struct {
+	Site entity.CookedSite `json:"site"`
+}
+
+// @Summary      Site Add
+// @Description  Create a new site
+// @Tags         Site
+// @Param        name           formData  string  false  "the site name"
+// @Param        urls           formData  string  false  "the site urls"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteAdd}
+// @Router       /admin/site-add  [post]
 func AdminSiteAdd(router fiber.Router) {
 	router.Post("/site-add", func(c *fiber.Ctx) error {
 		var p ParamsAdminSiteAdd
@@ -55,8 +66,8 @@ func AdminSiteAdd(router fiber.Router) {
 		// 刷新 CORS 可信域名
 		common.ReloadCorsAllowOrigins()
 
-		return common.RespData(c, common.Map{
-			"site": query.CookSite(&site),
+		return common.RespData(c, ResponseAdminSiteAdd{
+			Site: query.CookSite(&site),
 		})
 	})
 }

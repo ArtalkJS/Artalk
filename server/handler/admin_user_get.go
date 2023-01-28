@@ -20,7 +20,14 @@ type ResponseAdminUserGet struct {
 	Users []entity.CookedUserForAdmin `json:"users"`
 }
 
-// POST /api/admin/user-get
+// @Summary      User List
+// @Description  Get a list of users by some conditions
+// @Tags         User
+// @Param        limit          formData  int     false  "the limit for pagination"
+// @Param        offset         formData  int     false  "the offset for pagination"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseAdminUserGet}
+// @Router       /admin/user-get  [post]
 func AdminUserGet(router fiber.Router) {
 	router.Post("/user-get", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {

@@ -11,7 +11,13 @@ type ParamsAdminSiteDel struct {
 	ID uint `form:"id" validate:"required"`
 }
 
-// POST /api/admin/site-del
+// @Summary      Site Delete
+// @Description  Delete a specific site
+// @Tags         Site
+// @Param        id             formData  string  true   "the site ID you want to delete"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/site-del  [post]
 func AdminSiteDel(router fiber.Router) {
 	router.Post("/site-del", func(c *fiber.Ctx) error {
 		var p ParamsAdminSiteDel

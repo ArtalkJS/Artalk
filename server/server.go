@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	_ "github.com/ArtalkJS/Artalk/docs/swagger"
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/pkged"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -11,10 +12,29 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
+	"github.com/gofiber/swagger"
 	"github.com/sirupsen/logrus"
 )
 
+// @Title          Artalk API
+// @Version        1.0
+// @Description    This is an Artalk server.
+// @BasePath  	   /api/
+
+// @Contact.name   API Support
+// @Contact.url    https://artalk.js.org
+// @Contact.email  artalkjs@gmail.com
+
+// @License.name   LGPL-3.0
+// @License.url    https://github.com/ArtalkJS/Artalk/blob/master/LICENSE
+
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @In   header
+// @Name Authorization
+// @Description  "Type 'Bearer TOKEN' to correctly set the API Key"
 func Init(app *fiber.App) {
+	swaggerDocs(app)
+
 	cors(app)
 	actionLimit(app)
 
@@ -131,4 +151,8 @@ func uploadedStatic(f fiber.Router) {
 
 	// 图片上传静态资源可访问路径
 	f.Static(config.IMG_UPLOAD_PUBLIC_PATH, config.Instance.ImgUpload.Path)
+}
+
+func swaggerDocs(f fiber.Router) {
+	f.Get("/swagger/*", swagger.HandlerDefault)
 }

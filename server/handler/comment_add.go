@@ -26,7 +26,6 @@ type ParamsAdd struct {
 	PageKey   string `form:"page_key" validate:"required"`
 	PageTitle string `form:"page_title"`
 
-	Token    string `form:"token"`
 	SiteName string
 	SiteID   uint
 }
@@ -35,7 +34,21 @@ type ResponseAdd struct {
 	Comment entity.CookedComment `json:"comment"`
 }
 
-// GET /api/add
+// @Summary      Comment Add
+// @Description  Create a new comment
+// @Tags         Comment
+// @Param        name           formData  string  false  "the comment name"
+// @Param        email          formData  string  false  "the comment email"
+// @Param        link           formData  string  false  "the comment link"
+// @Param        content        formData  string  true   "the comment content"
+// @Param        rid            formData  string  false  "the comment rid"
+// @Param        ua             formData  string  false  "the comment ua"
+// @Param        page_key       formData  string  true   "the comment page_key"
+// @Param        page_title     formData  string  false  "the comment page_title"
+// @Param        site_name      formData  string  false  "the site name of your content scope"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseAdd}
+// @Router       /add  [post]
 func CommentAdd(router fiber.Router) {
 	router.Post("/add", func(c *fiber.Ctx) error {
 		var p ParamsAdd

@@ -47,6 +47,9 @@ test-coverage:
 update-i18n:
 	go generate ./internal/i18n
 
+update-swagger:
+	swag init -g server/server.go --output ./docs/swagger
+
 docker-build:
 	./scripts/docker-build.sh
 

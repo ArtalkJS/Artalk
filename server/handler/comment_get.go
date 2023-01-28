@@ -41,11 +41,27 @@ type ResponseGet struct {
 	Page        entity.CookedPage      `json:"page"`
 	Unread      []entity.CookedNotify  `json:"unread"`
 	UnreadCount int                    `json:"unread_count"`
-	ApiVersion  common.Map             `json:"api_version"`
+	ApiVersion  common.ApiVersionData  `json:"api_version"`
 	Conf        common.Map             `json:"conf,omitempty"`
 }
 
-// POST /api/get
+// @Summary      Comment List
+// @Description  Get a list of comments by some conditions
+// @Tags         Comment
+// @Param        page_key        formData  string  true   "the comment page_key"
+// @Param        site_name       formData  string  false  "the site name of your content scope"
+// @Param        limit           formData  int     false  "the limit for pagination"
+// @Param        offset          formData  int     false  "the offset for pagination"
+// @Param        flat_mode       formData  bool    false  "enable flat_mode"
+// @Param        sort_by         formData  string  false  "sort by condition"  Enums(date_asc, date_desc, vote)
+// @Param        view_only_admin formData  bool    false  "only show comments by admin"
+// @Param        search          formData  string  false  "search keywords"
+// @Param        type            formData  string  false  "message center show type"  Enums(all, mentions, mine, pending, admin_all, admin_pending)
+// @Param        name            formData  string  false  "the username"
+// @Param        email           formData  string  false  "the user email"
+// @Security     ApiKeyAuth
+// @Success      200  {object}   common.JSONResult{data=ResponseGet}
+// @Router       /get  [post]
 func CommentGet(router fiber.Router) {
 	router.Post("/get", func(c *fiber.Ctx) error {
 		var p ParamsGet

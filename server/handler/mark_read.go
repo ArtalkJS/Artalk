@@ -19,7 +19,16 @@ type ParamsMarkRead struct {
 	SiteAll  bool
 }
 
-// POST /api/mark-read
+// @Summary      Notify Mark Read
+// @Description  Mark specific notification as read for user
+// @Tags         Notify
+// @Param        notify_key  formData  string  true   "the notify key you want to mark as read"
+// @Param        name        formData  string  false  "the username"
+// @Param        email       formData  string  false  "the user email"
+// @Param        all_read    formData  bool    false  "the option if mark all user's notify as read"
+// @Param        site_name   formData  string  false  "the site name of your content scope"
+// @Success      200  {object}  common.JSONResult
+// @Router       /mark-read  [post]
 func MarkRead(router fiber.Router) {
 	router.Post("/mark-read", func(c *fiber.Ctx) error {
 		var p ParamsMarkRead

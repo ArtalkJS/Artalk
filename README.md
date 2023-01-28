@@ -96,6 +96,10 @@ services:
 docker-compose up -d
 ```
 
+## Development
+
+see [CONTRIBUTING.md](./CONTRIBUTING.md)
+
 ## Contributors
 
 [![](https://contrib.rocks/image?repo=ArtalkJS/Artalk)](https://github.com/ArtalkJS/Artalk/graphs/contributors)

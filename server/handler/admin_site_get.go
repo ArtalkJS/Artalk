@@ -11,7 +11,16 @@ import (
 type ParamsAdminSiteGet struct {
 }
 
-// POST /api/admin/site-get
+type ResponseAdminSiteGet struct {
+	Sites []entity.CookedSite `json:"sites"`
+}
+
+// @Summary      Site List
+// @Description  Get a list of sites by some conditions
+// @Tags         Site
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteGet}
+// @Router       /admin/site-get  [post]
 func AdminSiteGet(router fiber.Router) {
 	router.Post("/site-get", func(c *fiber.Ctx) error {
 		var p ParamsAdminSiteGet
@@ -34,8 +43,8 @@ func AdminSiteGet(router fiber.Router) {
 			}
 		}
 
-		return common.RespData(c, common.Map{
-			"sites": sites,
+		return common.RespData(c, ResponseAdminSiteGet{
+			Sites: sites,
 		})
 	})
 }

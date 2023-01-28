@@ -13,7 +13,14 @@ type ParamsAdminPageDel struct {
 	SiteID   uint
 }
 
-// POST /api/admin/page-del
+// @Summary      Page Delete
+// @Description  Delete a specific page
+// @Tags         Page
+// @Param        key            formData  string  true   "the page KEY you want to delete"
+// @Param        site_name      formData  string  false  "the site name of your content scope"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/page-del  [post]
 func AdminPageDel(router fiber.Router) {
 	router.Post("/page-del", func(c *fiber.Ctx) error {
 		var p ParamsAdminPageDel

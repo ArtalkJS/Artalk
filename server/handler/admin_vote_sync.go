@@ -10,7 +10,12 @@ import (
 type ParamsAdminVoteSync struct {
 }
 
-// POST /api/admin/vote-sync
+// @Summary      Vote Sync
+// @Description  Sync the number of votes in the `comments` or `pages` data tables to keep them the same as the `votes` table
+// @Tags         Vote
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/vote-sync  [post]
 func AdminVoteSync(router fiber.Router) {
 	router.Post("/vote-sync", func(c *fiber.Ctx) error {
 		var p ParamsAdminVoteSync

@@ -8,12 +8,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GetApiVersionDataMap() Map {
-	return Map{
-		"app":            "artalk",
-		"version":        strings.TrimPrefix(config.Version, "v"),
-		"commit_hash":    config.CommitHash,
-		"fe_min_version": strings.TrimPrefix(config.FeMinVersion, "v"),
+type ApiVersionData struct {
+	App          string `json:"app"`
+	Version      string `json:"version"`
+	CommitHash   string `json:"commit_hash"`
+	FeMinVersion string `json:"fe_min_version"`
+}
+
+func GetApiVersionDataMap() ApiVersionData {
+	return ApiVersionData{
+		App:          "artalk",
+		Version:      strings.TrimPrefix(config.Version, "v"),
+		CommitHash:   config.CommitHash,
+		FeMinVersion: strings.TrimPrefix(config.FeMinVersion, "v"),
 	}
 }
 

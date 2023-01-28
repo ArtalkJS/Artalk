@@ -24,7 +24,15 @@ type ParamsStat struct {
 	SiteAll bool
 }
 
-// POST /api/stat
+// @Summary      Statistics
+// @Description  Get the statistics of various data analysed
+// @Tags         Statistics
+// @Param        type        formData  string  true   "the type of statistics"  Enums(latest_comments, latest_pages, pv_most_pages, comment_most_pages, page_pv, site_pv, page_comment, site_comment, rand_comments, rand_pages)
+// @Param        page_keys   formData  string  false  "multiple page keys separated by commas"
+// @Param        site_name   formData  string  false  "the site name of your content scope"
+// @Param        limit       formData  int     false  "the amount of items you want"
+// @Success      200  {object}  common.JSONResult
+// @Router       /stat  [post]
 func Stat(router fiber.Router) {
 	router.Post("/stat", func(c *fiber.Ctx) error {
 		var p ParamsStat

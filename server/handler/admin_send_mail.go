@@ -13,7 +13,15 @@ type ParamsAdminSendMail struct {
 	ToAddr  string `form:"to_addr" validate:"required"`
 }
 
-// POST /api/admin/send-mail
+// @Summary      Email Send
+// @Description  Send an email to test the email sender
+// @Tags         System
+// @Param        subject        formData  string  true  "the subject of email"
+// @Param        body           formData  string  true  "the body of email"
+// @Param        to_addr        formData  string  true  "the email address of the receiver"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/send-mail  [post]
 func AdminSendMail(router fiber.Router) {
 	router.Post("/send-mail", func(c *fiber.Ctx) error {
 		var p ParamsAdminSendMail

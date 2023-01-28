@@ -22,7 +22,15 @@ type ResponseAdminPageGet struct {
 	Pages []entity.CookedPage `json:"pages"`
 }
 
-// POST /api/admin/page-get
+// @Summary      Page List
+// @Description  Get a list of pages by some conditions
+// @Tags         Page
+// @Param        site_name      formData  string  false  "the site name of your content scope"
+// @Param        limit          formData  int     false  "the limit for pagination"
+// @Param        offset         formData  int     false  "the offset for pagination"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseAdminPageGet}
+// @Router       /admin/page-get  [post]
 func AdminPageGet(router fiber.Router) {
 	router.Post("/page-get", func(c *fiber.Ctx) error {
 		var p ParamsAdminPageGet

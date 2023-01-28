@@ -33,7 +33,29 @@ type ParamsCommentEdit struct {
 	IsPinned    bool   `form:"is_pinned"`
 }
 
-// POST /api/admin/comment-edit
+type ResponseCommentEdit struct {
+	Comment entity.CookedComment `json:"comment"`
+}
+
+// @Summary      Comment Edit
+// @Description  Edit a specific comment
+// @Tags         Comment
+// @Param        id             formData  int     true   "the comment ID you want to edit"
+// @Param        site_name      formData  string  false  "the site name of your content scope"
+// @Param        content        formData  string  false  "the comment content"
+// @Param        page_key       formData  string  false  "the comment page_key"
+// @Param        nick           formData  string  false  "the comment nick"
+// @Param        email          formData  string  false  "the comment email"
+// @Param        link           formData  string  false  "the comment link"
+// @Param        rid            formData  string  false  "the comment rid"
+// @Param        ua             formData  string  false  "the comment ua"
+// @Param        ip             formData  string  false  "the comment ip"
+// @Param        is_collapsed   formData  bool    false  "the comment is_collapsed"
+// @Param        is_pending     formData  bool    false  "the comment is_pending"
+// @Param        is_pinned      formData  bool    false  "the comment is_pinned"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseCommentEdit}
+// @Router       /admin/comment-edit [post]
 func AdminCommentEdit(router fiber.Router) {
 	router.Post("/comment-edit", func(c *fiber.Ctx) error {
 		var p ParamsCommentEdit
@@ -120,8 +142,8 @@ func AdminCommentEdit(router fiber.Router) {
 			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
 		}
 
-		return common.RespData(c, common.Map{
-			"comment": query.CookComment(&comment),
+		return common.RespData(c, ResponseCommentEdit{
+			Comment: query.CookComment(&comment),
 		})
 	})
 }

@@ -30,7 +30,11 @@ func Captcha(router fiber.Router) {
 	}
 }
 
-// 获取当前状态，是否需要验证
+// @Summary      Captcha Status
+// @Description  Get the status of the user's captcha verification
+// @Tags         Captcha
+// @Success      200  {object}  common.JSONResult{data=object{is_pass=bool}}
+// @Router       /captcha/status  [post]
 func captchaStatus(c *fiber.Ctx) error {
 	if common.IsReqNeedCaptchaCheck(c) {
 		return common.RespData(c, common.Map{"is_pass": false})
@@ -39,7 +43,13 @@ func captchaStatus(c *fiber.Ctx) error {
 	}
 }
 
-// 获取验证码
+// @Summary      Captcha Get
+// @Description  Get a base64 encoded captcha image or a HTML page to verify for user
+// @Tags         Captcha
+// @Success      200  {object}  common.JSONResult{data=object{img_data=string}}
+// @Router       /captcha/refresh  [post]
+// @Router       /captcha/get      [get]
+// @Router       /captcha/get      [post]
 func captchaGet(c *fiber.Ctx) error {
 	ip := c.IP()
 
@@ -72,7 +82,13 @@ type ParamsCaptchaCheck struct {
 	Value string `form:"value" validate:"required"`
 }
 
-// 验证
+// @Summary      Captcha Check
+// @Description  Verify user enters correct captcha code
+// @Tags         Captcha
+// @Param        value  formData  string  true  "the captcha value to check"
+// @Success      200  {object}  common.JSONResult
+// @Failure      400  {object}  common.JSONResult{data=object{img_data=string}}
+// @Router       /captcha/check [post]
 func captchaCheck(c *fiber.Ctx) error {
 	ip := c.IP()
 

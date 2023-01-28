@@ -4,7 +4,7 @@ host: "0.0.0.0"
 # Listen port
 port: 23366
 
-# App Key (for generation of JWT token)
+# App Key (for generation of JWT)
 app_key: ""
 
 # Debug mode

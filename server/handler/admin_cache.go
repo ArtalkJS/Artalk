@@ -10,9 +10,12 @@ import (
 type ParamsAdminCacheWarm struct {
 }
 
-// 缓存预热
-//
-// POST /api/admin/cache-warm
+// @Summary      Cache Warming
+// @Description  Cache warming helps you hit the cache on the user's first visit
+// @Tags         Cache
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/cache-warm  [post]
 func AdminCacheWarm(router fiber.Router) {
 	router.Post("/cache-warm", func(c *fiber.Ctx) error {
 		var p ParamsAdminCacheWarm
@@ -38,9 +41,13 @@ type ParamsAdminCacheFlush struct {
 	FlushAll bool `form:"flush_all"`
 }
 
-// 缓存清理
-//
-// POST /api/admin/cache-flush
+// @Summary      Cache Flush
+// @Description  Flush Cache when application runs
+// @Tags         Cache
+// @Param        flush_all      formData  int     false  "flush all cache" example(1)
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/cache-flush  [post]
 func AdminCacheFlush(router fiber.Router) {
 	router.Post("/cache-flush", func(c *fiber.Ctx) error {
 		var p ParamsAdminCacheFlush

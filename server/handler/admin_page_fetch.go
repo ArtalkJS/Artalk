@@ -22,7 +22,15 @@ var allPageFetching = false
 var allPageFetchDone = 0
 var allPageFetchTotal = 0
 
-// POST /api/admin/page-fetch
+// @Summary      Page Data Fetch
+// @Description  Fetch the data of a specific page
+// @Tags         Page
+// @Param        key            formData  string  true   "the page ID you want to fetch"
+// @Param        site_name      formData  string  false  "the site name of your content scope"
+// @Param        get_status     formData  bool    false  "which response data you want to receive"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/page-fetch  [post]
 func AdminPageFetch(router fiber.Router) {
 	router.Post("/page-fetch", func(c *fiber.Ctx) error {
 		var p ParamsAdminPageFetch

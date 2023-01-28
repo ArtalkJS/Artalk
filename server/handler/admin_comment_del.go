@@ -15,7 +15,14 @@ type ParamsCommentDel struct {
 	SiteAll  bool
 }
 
-// POST /api/admin/comment-del
+// @Summary      Comment Delete
+// @Description  Delete a specific comment
+// @Tags         Comment
+// @Param        id             formData  int     true  "the comment ID you want to delete"
+// @Param        site_name      formData  string  false "the site name of your content scope"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/comment-del  [post]
 func AdminCommentDel(router fiber.Router) {
 	router.Post("/comment-del", func(c *fiber.Ctx) error {
 		var p ParamsCommentDel

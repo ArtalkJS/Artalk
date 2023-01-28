@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
@@ -25,7 +26,26 @@ type ParamsAdminUserEdit struct {
 	BadgeColor   string `form:"badge_color"`
 }
 
-// POST /api/admin/user-edit
+type ResponseAdminUserEdit struct {
+	User entity.CookedUserForAdmin `json:"user"`
+}
+
+// @Summary      User Edit
+// @Description  Edit a specific user
+// @Tags         User
+// @Param        id             formData  string  true   "the user ID you want to edit"
+// @Param        name           formData  string  true   "the user name"
+// @Param        email          formData  string  true   "the user email"
+// @Param        password       formData  string  false  "the user password"
+// @Param        link           formData  string  false  "the user link"
+// @Param        is_admin       formData  bool    true   "the user is an admin"
+// @Param        site_names     formData  string  false  "the site names associated with the user"
+// @Param        receive_email  formData  bool    true   "the user receive email"
+// @Param        badge_name     formData  string  false  "the user badge name"
+// @Param        badge_color    formData  string  false  "the user badge color (hex format)"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseAdminUserEdit}
+// @Router       /admin/user-edit  [post]
 func AdminUserEdit(router fiber.Router) {
 	router.Post("/user-edit", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
@@ -78,8 +98,8 @@ func AdminUserEdit(router fiber.Router) {
 			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("User")}))
 		}
 
-		return common.RespData(c, common.Map{
-			"user": query.UserToCookedForAdmin(&user),
+		return common.RespData(c, ResponseAdminUserEdit{
+			User: query.UserToCookedForAdmin(&user),
 		})
 	})
 }

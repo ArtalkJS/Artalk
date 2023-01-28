@@ -26,6 +26,13 @@ type ParamsAdminImport struct {
 	Payload string `form:"payload"`
 }
 
+// @Summary      Transfer Import
+// @Description  Import data to Artalk
+// @Tags         Transfer
+// @Param        payload        formData  string  false  "the transfer importer payload"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/import  [post]
 func adminImport(c *fiber.Ctx) error {
 	var p ParamsAdminImport
 	if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -88,6 +95,13 @@ func adminImport(c *fiber.Ctx) error {
 	return nil
 }
 
+// @Summary      Transfer Import Upload
+// @Description  Upload a file to prepare to import
+// @Tags         Transfer
+// @Param        file           formData  file    true   "upload file in preparation for import task"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/import-upload  [post]
 func adminImportUpload(c *fiber.Ctx) error {
 	// 获取 Form
 	file, err := c.FormFile("file")
@@ -124,6 +138,12 @@ func adminImportUpload(c *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Transfer Export
+// @Description  Export data from Artalk
+// @Tags         Transfer
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=object{data=string}}
+// @Router       /admin/export  [post]
 func adminExport(c *fiber.Ctx) error {
 	jsonStr, err := artransfer.ExportArtransString(func(db *gorm.DB) *gorm.DB {
 		if !common.GetIsSuperAdmin(c) {

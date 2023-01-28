@@ -13,7 +13,7 @@ import (
 
 type ParamsVote struct {
 	TargetID uint   `form:"target_id" validate:"required"`
-	FullType string `form:"type"`
+	FullType string `form:"type" validate:"required"`
 
 	Name  string `form:"name"`
 	Email string `form:"email"`
@@ -23,7 +23,21 @@ type ParamsVote struct {
 	SiteAll  bool
 }
 
-// POST /api/vote
+type ResponseVote struct {
+	Up   int `json:"up"`
+	Down int `json:"down"`
+}
+
+// @Summary      Vote
+// @Description  Vote for a specific comment or page
+// @Tags         Vote
+// @Param        target_id  formData  int     true   "target comment or page ID you want to vote for"
+// @Param        type       formData  string  true   "the type of vote target"  Enums(comment_up, comment_down, page_up, page_down)
+// @Param        name       formData  string  false  "the username"
+// @Param        email      formData  string  false  "the user email"
+// @Param        site_name  formData  string  false  "the site name of your content scope"
+// @Success      200  {object}  common.JSONResult{data=ResponseVote}
+// @Router       /vote  [post]
 func Vote(router fiber.Router) {
 	router.Post("/vote", func(c *fiber.Ctx) error {
 		var p ParamsVote
@@ -111,9 +125,9 @@ func Vote(router fiber.Router) {
 
 			common.RecordAction(c)
 
-			return common.RespData(c, common.Map{
-				"up":   up,
-				"down": down,
+			return common.RespData(c, ResponseVote{
+				Up:   up,
+				Down: down,
 			})
 		}
 
@@ -125,9 +139,9 @@ func Vote(router fiber.Router) {
 
 		common.RecordAction(c)
 
-		return common.RespData(c, common.Map{
-			"up":   up,
-			"down": down,
+		return common.RespData(c, ResponseVote{
+			Up:   up,
+			Down: down,
 		})
 	})
 }

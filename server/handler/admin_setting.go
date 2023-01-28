@@ -13,7 +13,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// POST /api/admin/setting-get
+type ResponseAdminSettingGet struct {
+	Custom   string `json:"custom"`
+	Template string `json:"template"`
+}
+
+// @Summary      Settings Get
+// @Description  Get settings from app config file
+// @Tags         System
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseAdminSettingGet}
+// @Router       /admin/setting-get [post]
 func AdminSettingGet(router fiber.Router) {
 	router.Post("/setting-get", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
@@ -25,9 +35,9 @@ func AdminSettingGet(router fiber.Router) {
 			return common.RespError(c, i18n.T("Config file read failed"))
 		}
 
-		return common.RespData(c, Map{
-			"custom":   string(dat),
-			"template": core.GetConfTpl(),
+		return common.RespData(c, ResponseAdminSettingGet{
+			Custom:   string(dat),
+			Template: core.GetConfTpl(),
 		})
 	})
 }
@@ -36,7 +46,13 @@ type ParamsAdminSettingSave struct {
 	Data string `form:"data" validate:"required"`
 }
 
-// POST /api/admin/setting-save
+// @Summary      Settings Save
+// @Description  Save settings to app config file
+// @Tags         System
+// @Param        data           formData  string  true  "the content of the config file in YAML format"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult
+// @Router       /admin/setting-save [post]
 func AdminSettingSave(router fiber.Router) {
 	router.Post("/setting-save", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(c) {
@@ -74,7 +90,12 @@ func AdminSettingSave(router fiber.Router) {
 	})
 }
 
-// POST /api/admin/setting-tpl
+// @Summary      Settings Template
+// @Description  Get config templates in different languages for rendering the settings page in the frontend
+// @Tags         System
+// @Security     ApiKeyAuth
+// @Success      200  {object}  string
+// @Router       /admin/setting-tpl  [post]
 func AdminSettingTpl(router fiber.Router) {
 	router.Post("/setting-tpl", func(c *fiber.Ctx) error {
 		locale := strings.TrimSpace(c.FormValue("locale"))

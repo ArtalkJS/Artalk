@@ -15,7 +15,18 @@ type ParamsPV struct {
 	SiteAll  bool
 }
 
-// POST /api/pv
+type ResponsePV struct {
+	PV int `json:"pv"`
+}
+
+// @Summary      Page View
+// @Description  Log and get the number of page views
+// @Tags         PV
+// @Param        page_key    formData  string  true   "the page key"
+// @Param        page_title  formData  string  false  "the page title"
+// @Param        site_name   formData  string  false  "the site name of your content scope"
+// @Success      200  {object}  common.JSONResult{data=ResponsePV}
+// @Router       /pv  [post]
 func PV(router fiber.Router) {
 	router.Post("/pv", func(c *fiber.Ctx) error {
 		var p ParamsPV
@@ -35,8 +46,8 @@ func PV(router fiber.Router) {
 		page.PV++
 		query.UpdatePage(&page)
 
-		return common.RespData(c, common.Map{
-			"pv": page.PV,
+		return common.RespData(c, ResponsePV{
+			PV: page.PV,
 		})
 	})
 }

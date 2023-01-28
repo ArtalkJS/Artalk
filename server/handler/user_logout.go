@@ -8,7 +8,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// POST /api/logout
+// @Summary      User Logout
+// @Description  Logout current user (applies to cookie identification only)
+// @Description  User Logout
+// @Tags         User
+// @Success      200  {object}  common.JSONResult
+// @Router       /logout  [post]
 func UserLogout(router fiber.Router) {
 	router.Post("/logout", func(c *fiber.Ctx) error {
 

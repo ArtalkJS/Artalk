@@ -24,7 +24,21 @@ type ParamsAdminPageEdit struct {
 	AdminOnly bool   `form:"admin_only"`
 }
 
-// POST /api/admin/page-edit
+type ResponseAdminPageEdit struct {
+	Page entity.CookedPage `json:"page"`
+}
+
+// @Summary      Page Edit
+// @Description  Edit a specific page
+// @Tags         Page
+// @Param        id             formData  string  true   "the page ID you want to edit"
+// @Param        site_name      formData  string  false  "the site name of your content scope"
+// @Param        key            formData  string  false  "edit page key"
+// @Param        title          formData  string  false  "edit page title"
+// @Param        admin_only     formData  bool    false  "edit page admin_only option"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseAdminPageEdit}
+// @Router       /admin/page-edit  [post]
 func AdminPageEdit(router fiber.Router) {
 	router.Post("/page-edit", func(c *fiber.Ctx) error {
 		var p ParamsAdminPageEdit
@@ -77,8 +91,8 @@ func AdminPageEdit(router fiber.Router) {
 			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Page")}))
 		}
 
-		return common.RespData(c, common.Map{
-			"page": query.CookPage(&page),
+		return common.RespData(c, ResponseAdminPageEdit{
+			Page: query.CookPage(&page),
 		})
 	})
 }

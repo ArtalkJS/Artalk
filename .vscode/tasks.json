@@ -4,7 +4,7 @@
         {
             "label": "Build for debugging",
             "type": "shell",
-            "command": "make debug-build",
+            "command": "make build-debug",
             "group": {
                 "kind": "build",
                 "isDefault": true

@@ -22,7 +22,20 @@ type ParamsLogin struct {
 	Password string `form:"password" validate:"required"`
 }
 
-// POST /api/login
+type ResponseLogin struct {
+	Token string            `json:"token"`
+	User  entity.CookedUser `json:"user"`
+}
+
+// @Summary      User Login
+// @Description  Login user by name or email
+// @Tags         User
+// @Param        name      formData  string  false  "the username"
+// @Param        email     formData  string  true   "the user email"
+// @Param        password  formData  string  true   "the user password"
+// @Success      200  {object}  common.JSONResult{data=ResponseLogin}
+// @Failure      400  {object}  common.JSONResult{data=object{need_name_select=[]string}}  "Multiple users with the same email address are matched"
+// @Router       /login  [post]
 func UserLogin(router fiber.Router) {
 	router.Post("/login", func(c *fiber.Ctx) error {
 		var p ParamsLogin
@@ -97,9 +110,9 @@ func UserLogin(router fiber.Router) {
 		jwtToken := common.LoginGetUserToken(user)
 		setAuthCookie(c, jwtToken, time.Now().Add(time.Second*time.Duration(config.Instance.LoginTimeout)))
 
-		return common.RespData(c, common.Map{
-			"token": jwtToken,
-			"user":  query.CookUser(&user),
+		return common.RespData(c, ResponseLogin{
+			Token: jwtToken,
+			User:  query.CookUser(&user),
 		})
 	})
 }
@@ -109,7 +122,7 @@ func setAuthCookie(c *fiber.Ctx, jwtToken string, expires time.Time) {
 		return
 	}
 
-	// save jwt token to cookie
+	// save jwt to cookie
 	cookie := new(fiber.Cookie)
 	cookie.Name = config.COOKIE_KEY_ATK_AUTH
 	cookie.Value = jwtToken
@@ -138,9 +151,20 @@ type ParamsLoginStatus struct {
 	Email string `form:"email"`
 }
 
-// 获取当前登录状态
-//
-// POST /api/login-status
+type ResponseLoginStatus struct {
+	IsAdmin bool `json:"is_admin"`
+	IsLogin bool `json:"is_login"`
+}
+
+// @Summary      User Login Status
+// @Description  Get user login status by header Authorization
+// @Tags         User
+// @Param        name           formData  string  false  "the username"
+// @Param        email          formData  string  false  "the user email"
+// @Param        password       formData  string  true   "the user password"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseLoginStatus}
+// @Router       /login-status  [post]
 func UserLoginStatus(router fiber.Router) {
 	router.Post("/login-status", func(c *fiber.Ctx) error {
 		var p ParamsLoginStatus
@@ -153,9 +177,9 @@ func UserLoginStatus(router fiber.Router) {
 			isAdmin = query.IsAdminUserByNameEmail(p.Name, p.Email)
 		}
 
-		return common.RespData(c, common.Map{
-			"is_admin": isAdmin,
-			"is_login": common.CheckIsAdminReq(c),
+		return common.RespData(c, ResponseLoginStatus{
+			IsAdmin: isAdmin,
+			IsLogin: common.CheckIsAdminReq(c),
 		})
 	})
 }

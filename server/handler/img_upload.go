@@ -32,7 +32,23 @@ type ParamsImgUpload struct {
 	SiteAll bool
 }
 
-// POST /api/img-upl
+type ResponseImgUpload struct {
+	ImgFile string `json:"img_file"`
+	ImgURL  string `json:"img_url"`
+}
+
+// @Summary      Image Upload
+// @Description  Upload image from this endpoint
+// @Tags         Upload
+// @Param        file           formData  file    true   "upload file in preparation for import"
+// @Param        name           formData  string  true   "the username"
+// @Param        email          formData  string  true   "the user email"
+// @Param        page_key       formData  string  true   "the page key"
+// @Param        page_title     formData  string  false  "the page title"
+// @Param        site_name      formData  string  false  "the site name of your content scope"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseImgUpload}
+// @Router       /img-upload  [post]
 func ImgUpload(router fiber.Router) {
 	router.Post("/img-upload", func(c *fiber.Ctx) error {
 		// 功能开关 (管理员始终开启)
@@ -182,9 +198,9 @@ func ImgUpload(router fiber.Router) {
 		}
 
 		// 响应数据
-		return common.RespData(c, common.Map{
-			"img_file": filename,
-			"img_url":  imgURL,
+		return common.RespData(c, ResponseImgUpload{
+			ImgFile: filename,
+			ImgURL:  imgURL,
 		})
 	})
 }

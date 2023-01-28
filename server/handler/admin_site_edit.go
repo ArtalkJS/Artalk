@@ -22,7 +22,19 @@ type ParamsAdminSiteEdit struct {
 	Urls string `form:"urls"`
 }
 
-// POST /api/admin/site-edit
+type ResponseAdminSiteEdit struct {
+	Site entity.CookedSite `json:"site"`
+}
+
+// @Summary      Site Edit
+// @Description  Edit a specific site
+// @Tags         Site
+// @Param        id             formData  string  true   "the site ID you want to edit"
+// @Param        name           formData  string  false  "edit site name"
+// @Param        urls           formData  string  false  "edit site urls"
+// @Security     ApiKeyAuth
+// @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteEdit}
+// @Router       /admin/site-edit  [post]
 func AdminSiteEdit(router fiber.Router) {
 	router.Post("/site-edit", func(c *fiber.Ctx) error {
 		var p ParamsAdminSiteEdit
@@ -92,8 +104,8 @@ func AdminSiteEdit(router fiber.Router) {
 		// 刷新 CORS 可信域名
 		common.ReloadCorsAllowOrigins()
 
-		return common.RespData(c, common.Map{
-			"site": query.CookSite(&site),
+		return common.RespData(c, ResponseAdminSiteEdit{
+			Site: query.CookSite(&site),
 		})
 	})
 }

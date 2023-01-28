@@ -10,10 +10,13 @@
   "private": true,
   "scripts": {
     "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
-    "docs:serve": "vitepress serve"
+    "docs:build": "pnpm run swagger:build && vitepress build",
+    "docs:serve": "vitepress serve",
+    "swagger:build": "npx @redocly/cli build-docs --output public/http-api.html",
+    "swagger:serve": "npx @redocly/cli preview-docs"
   },
   "devDependencies": {
+    "@redocly/cli": "1.0.0-beta.122",
     "markdown-it-for-inline": "^0.1.1",
     "sass": "^1.52.3",
     "vitepress": "1.0.0-alpha.40"

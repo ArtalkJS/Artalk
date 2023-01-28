@@ -53,10 +53,6 @@ yarn-error.log*
 node_modules
 /ui/**/dist
 
-# docs
-/docs/.vitepress/dist/
-/docs/.vitepress/cache/
-
 # backend
 /artalk.yml
 /config.yml

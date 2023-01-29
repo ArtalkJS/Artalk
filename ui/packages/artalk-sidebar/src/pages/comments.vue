@@ -25,11 +25,11 @@ onMounted(() => {
     }, 'admin_all')
   } else {
     nav.updateTabs({
-      mentions: t('mentions'),
       all: t('all'),
+      mentions: t('mentions'),
       mine: t('mine'),
       pending: t('pending'),
-    }, 'mentions')
+    }, 'all')
   }
 
   watch(curtTab, (curtTab) => {

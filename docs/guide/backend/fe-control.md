@@ -32,7 +32,7 @@ new Artalk({
 })
 ```
 
-要在后端声明配置，你需要在 Artalk 的配置文件中添加 `frontend` 字段内容，例如 `artalk.yml` 添加：
+要在后端声明配置，你需要在 Artalk 的配置文件 `artalk.yml` 中添加 `frontend` 字段内容，例如：
 
 ```yaml
 frontend:

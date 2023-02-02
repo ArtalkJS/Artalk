@@ -24,15 +24,15 @@
 
 你能够在后端控制 [前端的配置](/guide/frontend/config)。
 
-这个功能处于「默认关闭」状态，首先你需要在前端启用它：
+这个功能处于「默认开启」状态，你也可以禁用它：
 
 ```diff
 new Artalk({
-+  useBackendConf: true,
++  useBackendConf: false,
 })
 ```
 
-然后，在后端 Artalk 的配置文件中添加 `frontend` 字段内容，例如 `artalk.yml` 添加：
+要在后端声明配置，你需要在 Artalk 的配置文件中添加 `frontend` 字段内容，例如 `artalk.yml` 添加：
 
 ```yaml
 frontend:

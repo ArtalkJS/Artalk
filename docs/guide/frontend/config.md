@@ -8,8 +8,8 @@
 new Artalk({ 你的配置... })
 ```
 
-- 默认配置：[defaults.ts](https://github.com/ArtalkJS/Artalk/blob/master/packages/artalk/src/defaults.ts)
-- 声明文件：[artalk-config.d.ts](https://github.com/ArtalkJS/Artalk/blob/master/packages/artalk/types/artalk-config.d.ts)
+- 默认配置：[defaults.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/src/defaults.ts)
+- 声明文件：[artalk-config.d.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/types/artalk-config.d.ts)
 
 ## 基本配置（必填项）
 
@@ -96,9 +96,9 @@ Artalk 支持多站点统一管理，此项用于站点隔离。
 
 目前 Artalk 内置 "zh-CN" (简体中文) 和 "en-US" (English)。
 
-你可以贡献其他语言，欢迎提交 PR：[@artalk/src/i18n/index.ts](https://github.com/ArtalkJS/Artalk/blob/master/packages/artalk/src/i18n/index.ts)
+你可以贡献其他语言，欢迎提交 PR：[@artalk/src/i18n/index.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/src/i18n/index.ts)
 
-可传入 Object 类型，按照 [@artalk/src/i18n/zh-CN.ts](https://github.com/ArtalkJS/Artalk/blob/master/packages/artalk/src/i18n/zh-CN.ts) 文件中对象的 Keys 编写自定义 locale 内容。
+可传入 Object 类型，按照 [@artalk/src/i18n/zh-CN.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/src/i18n/zh-CN.ts) 文件中对象的 Keys 编写自定义 locale 内容。
 
 详情参考：[多语言](./i18n.html)
 
@@ -179,7 +179,7 @@ Artalk 支持多站点统一管理，此项用于站点隔离。
 artalkInstance.setDarkMode(true)
 ```
 
-> 参考代码：“[index.html](https://github.com/ArtalkJS/Artalk/blob/master/packages/artalk/index.html#L97-L150)”
+> 参考代码：“[index.html](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/index.html#L97-L150)”
 
 可设置为 `"auto"`，Artalk 将监听 `(prefers-color-scheme: dark)` 根据用户操作系统判断自动切换暗黑模式。
 

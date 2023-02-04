@@ -99,6 +99,8 @@ declare module 'vue-router/auto' {
   export function onBeforeRouteLeave(guard: NavigationGuard<RouteNamedMap>): void
   export function onBeforeRouteUpdate(guard: NavigationGuard<RouteNamedMap>): void
 
+  export const RouterLink: RouterLinkTyped<RouteNamedMap>
+  
   // Experimental Data Fetching
 
   export function defineLoader<

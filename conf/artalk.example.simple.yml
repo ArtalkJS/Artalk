@@ -52,7 +52,7 @@ moderator:
   keywords:
     enabled: false
     pending: false
-    files:
+    files: []
     file_sep: "\n"
     replac_to: "x"
 captcha:

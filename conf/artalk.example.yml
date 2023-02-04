@@ -124,6 +124,7 @@ moderator:
     pending: false
     # Dictionary file (support multiple dictionary files)
     files:
+      - "./data/keywords_1.txt"
     file_sep: "\n"
     replac_to: "x"
 

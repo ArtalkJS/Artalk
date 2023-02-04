@@ -17,7 +17,7 @@ importers:
       eslint-plugin-compat: 4.0.2
       eslint-plugin-import: 2.26.0
       less: 4.1.3
-      postcss: 8.4.20
+      postcss: 8.4.21
       prettier: 2.7.1
       rollup: 2.79.1
       terser: 5.15.1
@@ -30,7 +30,7 @@ importers:
       '@types/node': 16.18.11
       '@typescript-eslint/eslint-plugin': 5.30.7_ajztsx63tredirfo2uychva7ba
       '@typescript-eslint/parser': 5.30.7_l36yidrw337hwf2rtnamh77lgq
-      autoprefixer: 10.4.13_postcss@8.4.20
+      autoprefixer: 10.4.13_postcss@8.4.21
       eslint: 8.33.0
       eslint-config-airbnb-base: 15.0.0_ga4sep7loct7ajt7pxcme7xdqu
       eslint-config-airbnb-typescript: 17.0.0_aqzxeclaytqdn5oe3glz7jatp4
@@ -39,7 +39,7 @@ importers:
       eslint-plugin-compat: 4.0.2_eslint@8.33.0
       eslint-plugin-import: 2.26.0_cw4vm4yperqwuyjqvd23adgfwm
       less: 4.1.3
-      postcss: 8.4.20
+      postcss: 8.4.21
       prettier: 2.7.1
       rollup: 2.79.1
       terser: 5.15.1
@@ -674,7 +674,7 @@ packages:
       '@vue/shared': 3.2.45
       estree-walker: 2.0.2
       magic-string: 0.25.9
-      postcss: 8.4.20
+      postcss: 8.4.21
       source-map: 0.6.1
 
   /@vue/compiler-ssr/3.2.45:
@@ -861,7 +861,7 @@ packages:
       '@babel/types': 7.19.4
     dev: true
 
-  /autoprefixer/10.4.13_postcss@8.4.20:
+  /autoprefixer/10.4.13_postcss@8.4.21:
     resolution: {integrity: sha512-49vKpMqcZYsJjwotvt4+h/BCjJVnhGwcLpDt5xkcaOG3eLrG/HUYLagrihYsQ+qrIBgIzX1Rw7a6L8I/ZA1Atg==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
@@ -873,7 +873,7 @@ packages:
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
-      postcss: 8.4.20
+      postcss: 8.4.21
       postcss-value-parser: 4.2.0
     dev: true
 
@@ -2549,8 +2549,8 @@ packages:
       source-map-js: 1.0.2
     dev: true
 
-  /postcss/8.4.20:
-    resolution: {integrity: sha512-6Q04AXR1212bXr5fh03u8aAwbLxAQNGQ/Q1LNa0VfOI06ZAlhPHtQvE4OIdpj4kLThXilalPnmDSOD65DcHt+g==}
+  /postcss/8.4.21:
+    resolution: {integrity: sha512-tP7u/Sn/dVxK2NnruI4H9BG+x+Wxz6oeZ1cJ8P6G/PZY0IKk4k/63TDsQf2kQq3+qoJeLm2kIBUNlZe3zgb4Zg==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       nanoid: 3.3.4

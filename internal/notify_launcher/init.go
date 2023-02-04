@@ -17,7 +17,7 @@ var NotifyCtx = context.Background()
 
 func Init() {
 	// 初始化邮件队列
-	email.InitQueue()
+	email.InitQueue(&config.Instance.Email)
 
 	// 初始化 Notify
 	Notify = notify.New()

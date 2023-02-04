@@ -16,6 +16,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
+	"golang.org/x/exp/slices"
 
 	"github.com/sirupsen/logrus"
 )
@@ -64,6 +65,7 @@ func SendNotify(comment *entity.Comment, pComment *entity.Comment) {
 	//  邮件通知管理员
 	// ==============
 	if isRootComment || isAdminNoiseModeOn {
+		toAddrSent := []string{} // 记录已发送的收件人地址（避免重复发送）
 		for _, admin := range query.GetAllAdmins() {
 			// 配置文件关闭管理员邮件接收
 			if isEmailToAdminOff {
@@ -90,6 +92,12 @@ func SendNotify(comment *entity.Comment, pComment *entity.Comment) {
 			if admin.SiteNames != "" && !utils.ContainsStr(query.CookUser(&admin).SiteNames, comment.SiteName) {
 				continue
 			}
+
+			// 该管理员地址已曾发送，避免重复发送
+			if slices.Contains(toAddrSent, admin.Email) {
+				continue
+			}
+			toAddrSent = append(toAddrSent, admin.Email)
 
 			// 该管理员单独设定关闭接收邮件
 			if !admin.ReceiveEmail {

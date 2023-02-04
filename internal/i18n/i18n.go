@@ -14,7 +14,7 @@ import (
 var Locales map[string]string
 
 func Init(locale string) {
-	if locale == "" {
+	if locale == "" { // default lang
 		locale = "en"
 	}
 

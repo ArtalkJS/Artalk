@@ -78,6 +78,12 @@ func initConfig(cfgFile string, workDir string) {
 }
 
 func initI18n() {
+	if config.Instance.Locale == "" {
+		config.Instance.Locale = "en"
+	} else if config.Instance.Locale == "zh" {
+		config.Instance.Locale = "zh-CN"
+	}
+
 	i18n.Init(config.Instance.Locale)
 }
 

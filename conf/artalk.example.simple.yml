@@ -94,6 +94,7 @@ admin_notify:
   email:
     enabled: true
     mail_subject: '[{{site_name}}] Post "{{page_title}}" has new a comment'
+    mail_tpl: "default"
   telegram:
     enabled: false
     api_token: ""

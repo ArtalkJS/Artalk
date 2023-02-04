@@ -211,6 +211,8 @@ admin_notify:
     enabled: true
     # Email subject (email subject sent to admin)
     mail_subject: '[{{site_name}}] Post "{{page_title}}" has new a comment'
+    # Admin email template file (set to file path to use custom template)
+    mail_tpl: "default"
   # Telegram
   telegram:
     enabled: false

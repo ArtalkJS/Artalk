@@ -206,6 +206,8 @@ admin_notify:
     enabled: true
     # 邮件标题 (发送给管理员的邮件标题)
     mail_subject: "[{{site_name}}] 您的文章「{{page_title}}」有新回复"
+    # 管理员邮件模板文件 (填入文件路径使用自定义模板)
+    mail_tpl: "default"
   # Telegram
   telegram:
     enabled: false

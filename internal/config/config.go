@@ -152,6 +152,7 @@ type EmailConf struct {
 	MailTpl            string          `koanf:"mail_tpl" json:"mail_tpl"`         // 邮件模板
 	SMTP               SMTPConf        `koanf:"smtp" json:"smtp"`                 // SMTP 配置
 	AliDM              AliDMConf       `koanf:"ali_dm" json:"ali_dm"`             // 阿里云邮件配置
+	Queue              EmailQueueConf  `koanf:"queue" json:"queue"`               // 邮件发送队列配置
 }
 
 type SMTPConf struct {
@@ -167,6 +168,10 @@ type AliDMConf struct {
 	AccessKeySecret string `koanf:"access_key_secret" json:"access_key_secret"`
 	AccountName     string `koanf:"account_name" json:"account_name"`
 	Region          string `koanf:"region" json:"region"`
+}
+
+type EmailQueueConf struct {
+	BufferSize int `koanf:"buffer_size" json:"buffer_size"` // Channel buffer size (default is zero that not create buffer)
 }
 
 type DBType string

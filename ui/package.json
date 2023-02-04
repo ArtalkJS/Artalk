@@ -30,7 +30,7 @@
     "typescript": "4.7.4",
     "vite": "3.1.8",
     "vite-plugin-dts": "1.5.0",
-    "vite-tsconfig-paths": "3.5.2"
+    "vite-tsconfig-paths": "3.6.0"
   },
   "browserslist": [
     "supports es6 and supports es6-class and supports es6-generators and supports es6-module-dynamic-import and supports es6-module and supports es6-number and supports es6-string-includes"

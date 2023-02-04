@@ -41,7 +41,7 @@ require (
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	github.com/yuin/goldmark v1.5.3
 	golang.org/x/crypto v0.4.0
-	golang.org/x/exp v0.0.0-20221230185412-738e83a70c30
+	golang.org/x/exp v0.0.0-20230203172020-98cc5a0785f9
 	golang.org/x/sync v0.1.0
 	golang.org/x/term v0.4.0
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df

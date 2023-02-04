@@ -29,7 +29,7 @@
     "terser": "5.15.1",
     "typescript": "4.7.4",
     "vite": "3.1.8",
-    "vite-plugin-dts": "1.5.0",
+    "vite-plugin-dts": "1.7.2",
     "vite-tsconfig-paths": "3.5.2"
   },
   "browserslist": [

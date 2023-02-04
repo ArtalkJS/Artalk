@@ -41,12 +41,24 @@ export default defineConfig({
     },
   },
 
+  locales: {
+    root: {
+      label: '简体中文',
+      lang: 'zh'
+    },
+    en: {
+      label: 'English',
+      lang: 'en',
+      link: '/en/'
+    }
+  },
+
   themeConfig: {
     sidebar: {
       "/guide/": [
         {
           text: "快速开始",
-          collapsible: true,
+          collapsed: false,
           items: [
             { text: '项目介绍', link: '/guide/intro.md' },
             { text: '程序部署', link: '/guide/deploy.md' },
@@ -55,7 +67,7 @@ export default defineConfig({
         },
         {
           text: "核心指南",
-          collapsible: true,
+          collapsed: false,
           items: [
             { text: '侧边栏', link: '/guide/frontend/sidebar.md' },
             { text: '邮件通知', link: '/guide/backend/email.md' },
@@ -71,7 +83,7 @@ export default defineConfig({
         },
         {
           text: "进阶扩展",
-          collapsible: true,
+          collapsed: false,
           items: [
             { text: '表情包', link: '/guide/frontend/emoticons.md' },
             { text: '浏览量统计', link: '/guide/frontend/pv.md' },
@@ -85,7 +97,6 @@ export default defineConfig({
         },
         {
           text: "配置文档",
-          collapsible: true,
           collapsed: true,
           items: [
             { text: '后端配置', link: '/guide/backend/config.md' },
@@ -94,7 +105,6 @@ export default defineConfig({
         },
         {
           text: "部署说明",
-          collapsible: true,
           collapsed: true,
           items: [
             { text: 'Docker', link: '/guide/backend/docker.md' },
@@ -106,7 +116,6 @@ export default defineConfig({
         },
         {
           text: '更多内容',
-          collapsible: true,
           collapsed: true,
           items: [
             { text: '安全防范', link: '/guide/security.md' },

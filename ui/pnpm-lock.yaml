@@ -4,7 +4,7 @@ importers:
 
   .:
     specifiers:
-      '@rollup/plugin-dynamic-import-vars': 1.4.4
+      '@rollup/plugin-dynamic-import-vars': 2.0.3
       '@types/node': 16.18.11
       '@typescript-eslint/eslint-plugin': 5.30.7
       '@typescript-eslint/parser': 5.30.7
@@ -26,7 +26,7 @@ importers:
       vite-plugin-dts: 1.5.0
       vite-tsconfig-paths: 3.5.2
     devDependencies:
-      '@rollup/plugin-dynamic-import-vars': 1.4.4_rollup@2.79.1
+      '@rollup/plugin-dynamic-import-vars': 2.0.3_rollup@2.79.1
       '@types/node': 16.18.11
       '@typescript-eslint/eslint-plugin': 5.30.7_ajztsx63tredirfo2uychva7ba
       '@typescript-eslint/parser': 5.30.7_l36yidrw337hwf2rtnamh77lgq
@@ -350,16 +350,19 @@ packages:
       fastq: 1.13.0
     dev: true
 
-  /@rollup/plugin-dynamic-import-vars/1.4.4_rollup@2.79.1:
-    resolution: {integrity: sha512-51BcU6ag9EeF09CtEsa5D/IHYo7KI42TR1Jc4doNzV1nHAiH7TvUi5vsLERFMjs9Gzy9K0otbZH/2wb0hpBhRA==}
-    engines: {node: '>= 10.0.0'}
+  /@rollup/plugin-dynamic-import-vars/2.0.3_rollup@2.79.1:
+    resolution: {integrity: sha512-0zQV0TDDewilU+7ZLmwc0u44SkeRxSxMdINBuX5isrQGJ6EdTjVL1TcnOZ9In99byaSGAQnHmSFw+6hm0E/jrw==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
-      rollup: ^1.20.0||^2.0.0
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
     dependencies:
-      '@rollup/pluginutils': 4.2.1
+      '@rollup/pluginutils': 5.0.2_rollup@2.79.1
       estree-walker: 2.0.2
-      fast-glob: 3.2.11
-      magic-string: 0.25.9
+      fast-glob: 3.2.12
+      magic-string: 0.27.0
       rollup: 2.79.1
     dev: true
 
@@ -383,6 +386,21 @@ packages:
       '@types/estree': 1.0.0
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    dev: true
+
+  /@rollup/pluginutils/5.0.2_rollup@2.79.1:
+    resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@types/estree': 1.0.0
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
+      rollup: 2.79.1
     dev: true
 
   /@rushstack/node-core-library/3.45.7:

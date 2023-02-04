@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"time"
@@ -62,7 +62,7 @@ func GeetestCheck(paramsJSON string) (isPass bool, reason string, err error) {
 	}
 
 	// 处理响应结果
-	resJsonBuf, _ := ioutil.ReadAll(resp.Body)
+	resJsonBuf, _ := io.ReadAll(resp.Body)
 	resJson := string(resJsonBuf)
 
 	gResult := gjson.Get(resJson, "result")

@@ -2,8 +2,8 @@ package anti_spam
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
@@ -124,7 +124,7 @@ func SyncSpamCheck(comment *entity.Comment, fiberCtx *fiber.Ctx) {
 			AntiSpamReplaceKeywords = &[]string{}
 			// 加载文件
 			for _, f := range keywordsConf.Files {
-				buf, err := ioutil.ReadFile(f)
+				buf, err := os.ReadFile(f)
 				if err != nil {
 					logrus.Error("Failed to load Keyword Dictionary file:" + f)
 				} else {

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"reflect"
@@ -170,7 +169,7 @@ func JsonFileReady(payload []string) (string, error) {
 		return "", errors.New(i18n.T("{{name}} not found", map[string]interface{}{"name": i18n.T("File")}))
 	}
 
-	buf, err := ioutil.ReadFile(jsonFile)
+	buf, err := os.ReadFile(jsonFile)
 	if err != nil {
 		return "", errors.New("file open failed" + ": " + err.Error())
 	}

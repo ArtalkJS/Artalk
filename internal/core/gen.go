@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -84,7 +84,7 @@ func getEmbedFile(filename string) string {
 		logrus.Fatal("Invalid built-in resource `"+filename+"`: ", err)
 	}
 
-	buf, err := ioutil.ReadAll(file)
+	buf, err := io.ReadAll(file)
 	if err != nil {
 		logrus.Fatal("Read built-in resources `"+filename+"` error: ", err)
 	}

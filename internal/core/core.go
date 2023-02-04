@@ -1,7 +1,7 @@
 package core
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 	"sync"
 
@@ -91,7 +91,7 @@ func initI18n() {
 func initLog() {
 	logrus.New()
 	if !config.Instance.Log.Enabled {
-		logrus.SetOutput(ioutil.Discard)
+		logrus.SetOutput(io.Discard)
 		return
 	}
 

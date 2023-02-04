@@ -89,7 +89,7 @@ docker pull artalk/artalk-go
 ```
 
 ::: tip
-升级可能会有配置文件等变动，请注意查看版本 Changelog，通常是在 [GitHub Release](https://github.com/ArtalkJS/Artalk/releases) 页面
+突破性变动请注意查看版本更新日志中的提示：[CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md)
 :::
 
 ## 拉取历史镜像

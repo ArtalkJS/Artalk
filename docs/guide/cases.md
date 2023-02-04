@@ -1,5 +1,15 @@
 # 🚀 案例展示
 
+### 开源项目
+
+- [Wiki.js](https://github.com/requarks/wiki/): A modern and powerful wiki app built on Node.js
+- [vuepress-theme-hope](https://github.com/vuepress-theme-hope/vuepress-theme-hope): A vuepress theme with tons of features
+- [hexo-theme-stellar](https://github.com/xaoxuu/hexo-theme-stellar): Elegant and powerful theme for Hexo
+- [FixIt Theme | Hugo](https://github.com/Lruihao/FixIt): A clean, elegant but advanced blog theme for Hugo
+- [hexo-theme-volantis](https://github.com/volantis-x/hexo-theme-volantis): A Wonderful Theme for Hexo
+- [hexo-theme-cards](https://github.com/ChrAlpha/hexo-theme-cards): Another Simple & Swift theme for Hexo
+- [hexo-theme-butterfly](https://github.com/jerryc127/hexo-theme-butterfly): A Hexo Theme: Butterfly
+
 ### 博客
 
 - [一蓑烟雨](https://easyf12.top/)
@@ -17,14 +27,6 @@
 - [青空之蓝](https://blog.ixk.me/)
 - [Monstx](https://blog.monsterx.cn/)
 - [QWQAQ](https://qwqaq.com/)
-
-### 主题
-
-- [hexo-theme-stellar](https://github.com/xaoxuu/hexo-theme-stellar): Elegant and powerful theme for Hexo.
-- [FixIt Theme | Hugo](https://github.com/Lruihao/FixIt): A clean, elegant but advanced blog theme for Hugo
-- [hexo-theme-volantis](https://github.com/volantis-x/hexo-theme-volantis): A Wonderful Theme for Hexo
-- [hexo-theme-cards](https://github.com/ChrAlpha/hexo-theme-cards): Another Simple & Swift theme for Hexo
-- [hexo-theme-butterfly](https://github.com/jerryc127/hexo-theme-butterfly): A Hexo Theme: Butterfly
 
 ::: tip
 

@@ -55,6 +55,9 @@ new Artalk({
 ## 普通方式部署
 
 1. 前往 [GitHub Release](https://github.com/ArtalkJS/Artalk/releases) 下载程序压缩包
+
+  > 注：我们已将 ArtalkGo 与主仓库合并，历史旧版可在[此页面](https://github.com/ArtalkJS/ArtalkGo/releases)查看，日后新版将在[新页面](https://github.com/ArtalkJS/Artalk/releases)发布。
+
 2. 提取压缩包：`tar -zxvf artalk_版本号_系统_架构.tar.gz`
 3. 运行程序 `./artalk server`
 4. 前端配置
@@ -65,8 +68,8 @@ new Artalk({
 
 **其它可选操作：**
 
-- [“反向代理端口到 80 / 443 (Nginx, Apache)”](/guide/backend/reverse-proxy.md)
-- ["持久化运作 (tmux, systemd, supervisor)"](/guide/backend/daemon.md)
+- [“反向代理端口到 80 / 443 (Nginx, Apache)”](./backend/reverse-proxy.md)
+- ["持久化运作 (tmux, systemd, supervisor)"](./backend/daemon.md)
 
 **附表：文件名释义表**
 
@@ -77,7 +80,7 @@ new Artalk({
 |artalk_linux_arm7.tar.gz|Linux|ARMv7|
 |artalk_windows_amd64.zip|Windows|x86_64|
 |artalk_darwin_arm64.tar.gz|macOS|Apple Silicon|
-|artalk_darwin_amd64.tar.gz|macOS|Intel Chip <sup>~~(什么狗屎)~~</sup>|
+|artalk_darwin_amd64.tar.gz|macOS|Intel Chip|
 
 ## Docker Compose 部署
 
@@ -113,7 +116,7 @@ docker-compose exec artalk bash # 进入容器
 
 :::
 
-> 详细可见：[“后端 · Docker”](/guide/backend/docker.md)
+> 详细可见：[“后端 · Docker”](./backend/docker.md)
 
 ## 自行编译并运行
 

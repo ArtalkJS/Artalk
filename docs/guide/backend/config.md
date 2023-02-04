@@ -1,8 +1,10 @@
 # 后端配置
 
-::: tip
-后端配置可以在侧边栏 “[控制中心](/guide/frontend/sidebar.md)” 直接修改，无需手动修改配置
-:::
+## 轻松配置
+
+推荐在侧边栏 “[控制中心](/guide/frontend/sidebar.md)” 通过图形界面修改配置，无需手动编辑配置文件。
+
+## 指定配置文件路径
 
 Artalk 默认以工作目录下的 `artalk.yml` 作为配置文件，可使用参数 `-c` 来指定具体文件：
 
@@ -12,24 +14,20 @@ artalk -c ./conf.yml
 
 ## 获取模版配置文件
 
-可参考一份「完整的配置文件」：[artalk.example.yml](https://github.com/ArtalkJS/Artalk/blob/master/conf/artalk.example.yml)
+可参考一份「完整的配置文件」：[artalk.example.zh-CN.yml](https://github.com/ArtalkJS/Artalk/blob/master/conf/artalk.example.zh-CN.yml)
 
 #### 使用 gen 命令生成配置文件
 
 Artalk 提供 `gen` 命令，你可以快速生成一份新的配置文件：
 
 ```bash
-artalk gen conf ./artalk.yml
+artalk gen conf -lang zh-CN ./artalk.yml
 ```
 
 #### 命令行下载配置文件
 
 ```bash
-curl -L https://raw.githubusercontent.com/ArtalkJS/Artalk/master/conf/artalk.example.yml > artalk.yml
-```
-
-```bash
-wget -O artalk.yml https://raw.githubusercontent.com/ArtalkJS/Artalk/master/conf/artalk.example.yml
+wget -O artalk.yml https://raw.githubusercontent.com/ArtalkJS/Artalk/master/conf/artalk.example.zh-CN.yml
 ```
 
 ## 加密密钥 `app_key`
@@ -39,6 +37,16 @@ wget -O artalk.yml https://raw.githubusercontent.com/ArtalkJS/Artalk/master/conf
 ```yaml
 app_key: "<任意的字符>"
 ```
+
+## 语言 `locale`
+
+设置 Artalk 的语言。遵循 Unicode BCP 47 规范，该项默认为 "zh-CN" (简体中文)。
+
+```yml
+locale: "zh-CN"
+```
+
+详情参考：[“多语言”](../frontend/i18n.md)
 
 ## 数据库 `db`
 
@@ -308,7 +316,7 @@ test_file: "./data/artalk.log"
 
 ::: tip
 
-配置文件相关代码：[/config/config.go](https://github.com/ArtalkJS/Artalk/blob/master/config/config.go)
+配置文件相关代码：[/internal/config/config.go](https://github.com/ArtalkJS/Artalk/blob/master/internal/config/config.go)
 
 前往：[“前端配置”](/guide/frontend/config.md)
 :::

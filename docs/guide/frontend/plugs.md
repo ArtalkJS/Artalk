@@ -14,4 +14,4 @@ Artalk.use((ctx) => {
 
 ## Context
 
-参考：[@artalk/types/context.d.ts](https://github.com/ArtalkJS/Artalk/blob/master/packages/artalk/types/context.d.ts)
+参考：[@artalk/types/context.d.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/types/context.d.ts)

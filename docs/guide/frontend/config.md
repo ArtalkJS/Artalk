@@ -1,15 +1,17 @@
 # 前端配置
 
-::: tip
-前端配置可以在侧边栏 “[控制中心](/guide/frontend/sidebar.md)” 直接修改，无需手动修改配置
-:::
-
 ```js
 new Artalk({ 你的配置... })
 ```
 
 - 默认配置：[defaults.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/src/defaults.ts)
 - 声明文件：[artalk-config.d.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/types/artalk-config.d.ts)
+
+## 轻松配置
+
+推荐在侧边栏 “[控制中心](/guide/frontend/sidebar.md)” 通过图形界面修改前端的配置，而无需在代码中对界面进行设定。
+
+注：前端的设定可能会被后端覆盖，更多内容参考：[“在后端控制前端”](/guide/backend/fe-control.md)
 
 ## 基本配置（必填项）
 
@@ -94,13 +96,9 @@ Artalk 支持多站点统一管理，此项用于站点隔离。
 
 遵循 Unicode BCP 47 规范，该项默认为 "zh-CN" (简体中文)。
 
-目前 Artalk 内置 "zh-CN" (简体中文) 和 "en-US" (English)。
+欢迎提交 PR 帮助翻译 Artalk 的多语言，为社区贡献一份力量！
 
-你可以贡献其他语言，欢迎提交 PR：[@artalk/src/i18n/index.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/src/i18n/index.ts)
-
-可传入 Object 类型，按照 [@artalk/src/i18n/zh-CN.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/src/i18n/zh-CN.ts) 文件中对象的 Keys 编写自定义 locale 内容。
-
-详情参考：[多语言](./i18n.html)
+详情参考：[“多语言”](./i18n.md)
 
 ## 请求
 

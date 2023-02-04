@@ -36,7 +36,7 @@
 
    不论是 Vue、React、Svelte 的前端项目，还是 WordPress、Typecho、Hexo 等博客系统，都可以快速引入 Artalk，结合诸位的聪明才智，我们相信 Artalk 能够自如应对各种业务场景。
 
-更多支持 / 计划的功能，详见：[“README.md”](https://github.com/ArtalkJS/Artalk#todos)。
+> 更多支持 / 计划的功能，详见：[“README.md”](https://github.com/ArtalkJS/Artalk#todos)。
 
 ## 用户体验
 
@@ -50,17 +50,7 @@
 
 「你所热爱的，就是你的生活？」用户体验不仅仅就访客而言，对于站点管理者，Artalk 也不乏人性化的设计。通过侧边栏集成管理[控制中心](./frontend/sidebar.md#控制中心)，管理员用户可以方便快捷地管理名下多个站点，所有数据通过规范化 API 交流并且异步处理，减少数据处理阻塞，降低服务资源占用。针对可能出现的垃圾评论，Artalk 支持自动拦截，降低管理者工作强度，也还站点以清净。
 
----
-
 我们希望 Artalk 不仅能实现评论系统应有的基础功能，更能成为搭建 **知识传播者和知识学习者交流思想** 桥梁的媒介，让知识不再局限于文本，帮助知识传播者创造其应有的价值。
-
-## 浏览器兼容性
-
-| <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" /><br/>Chrome | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" /><br/>Firefox | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" /><br/>Safari | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" /><br/>Opera |
-| --------- | --------- | --------- | --------- |
-| 51+ | 52+ | 10+ | 38+ |
-
-理论上兼容所有支持 ES6 (ES2015) 标准的现代浏览器，参考：[“ECMAScript 6 compatibility table”](https://kangax.github.io/compat-table/es6/)
 
 ## 社区理念
 
@@ -77,12 +67,14 @@ Artalk 社区是包容开放的社区，我们欢迎不同水平的人员帮助 
 我们作为开源精神的推崇者以及实践者，希望我们所创造的自由软件，都应该被自由的使用，自由的研究，自由的更改和自由的分享。本项目前后端代码使用第 3 版 GNU 宽通用公共许可证（[GNU Lesser General Public License V3](https://www.gnu.org/licenses/lgpl-3.0.html)）开源，文档请遵循知识共享许可协议 ([Creative Commons License](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh))。
 ::: tip 立即为社区贡献力量？
 
- - 维护 Artalk 前端（仓库地址 [@ArtalkJS/Artalk](https://github.com/ArtalkJS/Artalk)）
- - 维护 Artalk 后端（仓库地址 [@ArtalkJS/Artalk](https://github.com/ArtalkJS/Artalk)）
- - 完善 Artalk 文档（仓库地址 [@ArtalkJS/Docs](https://github.com/ArtalkJS/Docs)）
- - 改进数据迁移工具（仓库地址 [@ArtalkJS/Artransfer](https://github.com/ArtalkJS/Artransfer)）
- - 分享你的想法创意（下方留言 / [Discussions](https://github.com/ArtalkJS/Artalk/discussions)）
- - 编写相关社区项目（扩展插件 / 部署教程等）
+  - 浏览开发者资料（[开发文档](../develop/index.md) / [CONTRIBUTING.md](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)）
+  - 维护 Artalk 后端（代码仓库 [@ArtalkJS/Artalk:/](https://github.com/ArtalkJS/Artalk)）
+  - 维护 Artalk 前端（代码仓库 [@ArtalkJS/Artalk:/ui](https://github.com/ArtalkJS/Artalk/tree/master/ui)）
+  - 完善 Artalk 文档（代码仓库 [@ArtalkJS/Artalk:/docs](https://github.com/ArtalkJS/Artalk/tree/master/docs)）
+  - 翻译 多语言 i18n（前往查看 [多语言说明](./frontend/i18n.html)）
+  - 改进数据迁移工具（代码仓库 [@ArtalkJS/Artransfer](https://github.com/ArtalkJS/Artransfer)）
+  - 分享你的想法创意（下方留言 / [Discussions](https://github.com/ArtalkJS/Artalk/discussions)）
+  - 编写相关社区项目（扩展插件 / 部署教程等）
 
 :::
 

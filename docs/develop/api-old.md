@@ -1,5 +1,9 @@
 # HTTP API
 
+::: warning
+该 HTTP API 文档已过时
+:::
+
 ::: tip 无特殊说明时 API 调用响应格式
 
 | 字段名 | 类型 | 说明 |

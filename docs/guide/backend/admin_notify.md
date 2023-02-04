@@ -1,8 +1,12 @@
 # 多元推送
 
-你可以配置 `admin_notify`，让 Artalk 以多种方式通知管理员。
+Artalk 支持通过多元推送功能以多种方式发送管理员通知。
 
 支持 **Telegram**、**飞书**、**钉钉**、**Bark**、**Slack**、**LINE**，并且多种方式可以同时启用。
+
+你可以在[控制中心](/guide/frontend/sidebar.md#控制中心)找到「设置」界面修改此配置。
+
+## 配置文件
 
 完整的 `admin_notify` 配置如下：
 

@@ -54,36 +54,50 @@ export default defineConfig({
           ]
         },
         {
-          text: "前端",
+          text: "核心指南",
           collapsible: true,
           items: [
-            { text: '前端配置', link: '/guide/frontend/config.md' },
             { text: '侧边栏', link: '/guide/frontend/sidebar.md' },
+            { text: '邮件通知', link: '/guide/backend/email.md' },
+            { text: '多元推送', link: '/guide/backend/admin_notify.md' },
+            { text: '评论审核', link: '/guide/backend/moderator.md' },
+            { text: '验证码', link: '/guide/backend/captcha.md' },
+            { text: '图片上传', link: '/guide/backend/img-upload.md' },
+            { text: '账户与多站点', link: '/guide/backend/multi-site.md' },
+            { text: '解析相对路径', link: '/guide/backend/relative-path.md' },
+            { text: '如何配置界面', link: '/guide/backend/fe-control.md' },
+            { text: 'English (i18n)', link: '/guide/frontend/i18n.md' },
+          ]
+        },
+        {
+          text: "进阶扩展",
+          collapsible: true,
+          items: [
             { text: '表情包', link: '/guide/frontend/emoticons.md' },
             { text: '浏览量统计', link: '/guide/frontend/pv.md' },
             { text: 'Latex', link: '/guide/frontend/latex.md' },
             { text: '图片灯箱', link: '/guide/frontend/lightbox.md' },
-            { text: '多语言 (i18n)', link: '/guide/frontend/i18n.md' },
+            { text: '精简版本', link: '/guide/frontend/artalk-lite.md' },
+            { text: '插件开发', link: '/guide/frontend/plugs.md' },
             { text: '置入博客', link: '/guide/frontend/import-blog.md' },
             { text: '置入框架', link: '/guide/frontend/import-framework.md' },
-            { text: '精简版本', link: '/guide/frontend/artalk-lite.md' },
-            { text: '扩展插件', link: '/guide/frontend/plugs.md' },
           ],
         },
         {
-          text: '后端',
+          text: "配置文档",
           collapsible: true,
+          collapsed: true,
           items: [
             { text: '后端配置', link: '/guide/backend/config.md' },
+            { text: '前端配置', link: '/guide/frontend/config.md' },
+          ]
+        },
+        {
+          text: "部署说明",
+          collapsible: true,
+          collapsed: true,
+          items: [
             { text: 'Docker', link: '/guide/backend/docker.md' },
-            { text: '管理员 × 多站点', link: '/guide/backend/multi-site.md' },
-            { text: '邮件通知', link: '/guide/backend/email.md' },
-            { text: '多元推送', link: '/guide/backend/admin_notify.md' },
-            { text: '图片上传', link: '/guide/backend/img-upload.md' },
-            { text: '评论审核', link: '/guide/backend/moderator.md' },
-            { text: '验证码', link: '/guide/backend/captcha.md' },
-            { text: '在后端控制前端', link: '/guide/backend/fe-control.md' },
-            { text: '相对 / 绝对路径', link: '/guide/backend/relative-path.md' },
             { text: '守护进程', link: '/guide/backend/daemon.md' },
             { text: '反向代理', link: '/guide/backend/reverse-proxy.md' },
             { text: '编译构建', link: '/guide/backend/build.md' },
@@ -93,6 +107,7 @@ export default defineConfig({
         {
           text: '更多内容',
           collapsible: true,
+          collapsed: true,
           items: [
             { text: '安全防范', link: '/guide/security.md' },
             { text: '扩展阅读', link: '/guide/extras.md' },
@@ -125,7 +140,7 @@ export default defineConfig({
       },
       {
         text: '配置',
-        link: '/guide/frontend/config',
+        link: '/guide/backend/config',
       },
       {
         text: '迁移',
@@ -144,16 +159,8 @@ export default defineConfig({
         text: '传送',
         items: [
           {
-            text: '前端仓库',
+            text: '代码仓库',
             link: 'https://github.com/ArtalkJS/Artalk',
-          },
-          {
-            text: '后端仓库',
-            link: 'https://github.com/ArtalkJS/Artalk',
-          },
-          {
-            text: '文档仓库',
-            link: 'https://github.com/ArtalkJS/Docs',
           },
           {
             text: '文档镜像 (国内)',

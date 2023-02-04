@@ -14,4 +14,4 @@ The Artalk. Made with <span style="color: red;">♥️</span>.
 
 ## 关于本站
 
-该站点通过 [Netlify](https://www.netlify.com/) 对 [master](https://github.com/ArtalkJS/Docs) 分支进行自动部署。
+该站点通过 [Netlify](https://www.netlify.com/) 对 [Docs](https://github.com/ArtalkJS/Artalk/tree/master/docs) 目录进行自动部署。

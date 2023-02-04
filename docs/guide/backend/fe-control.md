@@ -1,8 +1,12 @@
 # 在后端控制前端
 
-你可以在后端完全控制前端的行为，我们推荐使用这种方式部署 Artalk。
+你可以在后端完全控制前端界面的行为（包括设定[前端的配置](/guide/frontend/config)），我们推荐使用这种方式部署 Artalk，并且这个特性「默认开启」。
 
-## 在前端引入内置的资源
+## 如何修改前端配置
+
+在侧边栏的[控制中心](/guide/frontend/sidebar.md#控制中心)提供了图形设置界面，你能快速轻松地对前端配置进行修改。
+
+## 在前端引入内置资源
 
 后端 Artalk 服务器中内置了可供前端引入的 JS 和 CSS 资源文件：
 
@@ -16,23 +20,15 @@
 
 > 提示：将 `<artalk_go_server>` 替换为你的 Artalk 服务器地址。
 
-这样如果升级后端 Artalk 程序，前端无需更换新版 ArtalkJS 的引入地址，来使之与后端程序兼容。
+这样能让前后端始终保持兼容性，而无需在程序升级后手动更换 Artalk 前端资源的引入地址。
 
-注：内置的前端 JS 和 CSS 始终与后端版本兼容，但不保证是最新的版本。
+## 进阶内容
 
-## 在后端控制前端的配置
+### 手动编辑配置文件
 
-你能够在后端控制 [前端的配置](/guide/frontend/config)。
+Artalk 提供图形界面简化配置，一般情况无需手动修改。
 
-这个功能处于「默认开启」状态，你也可以禁用它：
-
-```diff
-new Artalk({
-+  useBackendConf: false,
-})
-```
-
-要在后端声明配置，你需要在 Artalk 的配置文件 `artalk.yml` 中添加 `frontend` 字段内容，例如：
+在 Artalk 的配置文件 `artalk.yml` 中配置 `frontend` 字段来控制前端界面，例如：
 
 ```yaml
 frontend:
@@ -44,17 +40,29 @@ frontend:
   # 与前端配置项名称保持一致
 ```
 
-这样就无需在前端改动配置，前端的配置始终跟随后端。
+一份完整的后端 `frontend` 字段配置文件可供参考：[artalk.example.zh-CN.yml](https://github.com/ArtalkJS/Artalk/blob/master/conf/artalk.example.zh-CN.yml)
 
-一份完整的后端 `frontend` 字段配置文件可供参考：[artalk.frontend.example.yml](https://github.com/ArtalkJS/Artalk/blob/master/artalk.frontend.example.yml)
+### 关闭 “后端控制前端” 功能
 
-::: tip
+后端控制前端功能默认开启，我们不建议关闭该功能。
 
-如果你的表情包配置项 [emoticons](/guide/frontend/emoticons) 需传递 Object 而非 URL，可以将其转为 JSON 字符串，例如：
+在前端 `new Artalk({ ... })` 时定义的配置会被配置文件中的 `frontend` 字段配置所覆盖，但如果有需要也可以在前端禁用这个特性：
+
+```diff
+new Artalk({
++  useBackendConf: false,
+})
+```
+
+### 表情包配置
+
+建议 `frontend.emoticons` 填入表情包的 URL，而非 Object。
+
+参考文档：[“表情包”](/guide/frontend/emoticons)
+
+如需传递 Object，可以将其转为 JSON 字符串格式，例如：
 
 ```yaml
 frontend:
   emoticons: '{"表情": { "test": "tttt..." }}'
 ```
-
-:::

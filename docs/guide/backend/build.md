@@ -60,8 +60,8 @@ make docker-push
 
 ## DevOps
 
-后端构建目前已交给 [GitHub Actions](https://github.com/ArtalkJS/Artalk/actions) 自动完成
+程序构建目前已交给 [GitHub Actions](https://github.com/ArtalkJS/Artalk/actions) 自动完成
 
-|Docker 镜像构建|Release 编译|
-|-|-|
-|[![CI to Docker Hub](https://github.com/ArtalkJS/Artalk/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/ArtalkJS/Artalk/actions/workflows/dockerhub.yml)|[![Release Build](https://github.com/ArtalkJS/Artalk/actions/workflows/release.yml/badge.svg?branch=master)](https://github.com/ArtalkJS/Artalk/actions/workflows/release.yml)|
+|版本发布|Docker 镜像构建发布|二进制构建发布|前端构建发布|
+|-|-|-|-|
+|[![Release](https://github.com/ArtalkJS/Artalk/actions/workflows/release.yml/badge.svg?branch=master)](https://github.com/ArtalkJS/Artalk/actions/workflows/release.yml)|[![Build Docker](https://github.com/ArtalkJS/Artalk/actions/workflows/build-docker.yml/badge.svg)](https://github.com/ArtalkJS/Artalk/actions/workflows/build-docker.yml)|[![Release](https://github.com/ArtalkJS/Artalk/actions/workflows/build-app.yml/badge.svg?branch=master)](https://github.com/ArtalkJS/Artalk/actions/workflows/build-app.yml)|[![Release](https://github.com/ArtalkJS/Artalk/actions/workflows/build-frontend.yml/badge.svg?branch=master)](https://github.com/ArtalkJS/Artalk/actions/workflows/build-frontend.yml)|

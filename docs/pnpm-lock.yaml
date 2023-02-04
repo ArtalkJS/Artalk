@@ -1,13 +1,13 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@redocly/cli': 1.0.0-beta.122
+  '@redocly/cli': 1.0.0-beta.123
   markdown-it-for-inline: ^0.1.1
   sass: ^1.52.3
   vitepress: 1.0.0-alpha.45
 
 devDependencies:
-  '@redocly/cli': 1.0.0-beta.122
+  '@redocly/cli': 1.0.0-beta.123
   markdown-it-for-inline: 0.1.1
   sass: 1.52.3
   vitepress: 1.0.0-alpha.45_sass@1.52.3
@@ -548,12 +548,12 @@ packages:
       uri-js: 4.4.1
     dev: true
 
-  /@redocly/cli/1.0.0-beta.122:
-    resolution: {integrity: sha512-wf6y9Xz+RARv3aDtCO6+Qhc4ToLwhHoE070IvOkjFeK0wNFBGYj8Rv3gMLBzimePjclSlpcs+AHiYHTvSDfbQg==}
+  /@redocly/cli/1.0.0-beta.123:
+    resolution: {integrity: sha512-aTlqewdXj0LXjh38xJ5lfa380Nyu/cq9+CmfUKXk95/5BDkbJvOjTInxndsjB/KgKbOJlx0vnEoktms0aDhtNw==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
-      '@redocly/openapi-core': 1.0.0-beta.122
+      '@redocly/openapi-core': 1.0.0-beta.123
       assert-node-version: 1.0.3
       chokidar: 3.5.3
       colorette: 1.4.0
@@ -579,8 +579,8 @@ packages:
       - webpack
     dev: true
 
-  /@redocly/openapi-core/1.0.0-beta.122:
-    resolution: {integrity: sha512-oky8yeq0Bodw+lj+jxPP4PZPdsN+Fx71N0X5PPEGzMe8zBhFnOAXMR7auA02gHz7DhOnCZ7kTNV1KcftRtSRNg==}
+  /@redocly/openapi-core/1.0.0-beta.123:
+    resolution: {integrity: sha512-W6MbUWpb/VaV+Kf0c3jmMIJw3WwwF7iK5nAfcOS+ZwrlbxtIl37+1hEydFlJ209vCR9HL12PaMwdh2Vpihj6Jw==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@redocly/ajv': 8.11.0
@@ -1624,7 +1624,7 @@ packages:
       react-dom: ^16.8.4 || ^17.0.0
       styled-components: ^4.1.1 || ^5.1.1
     dependencies:
-      '@redocly/openapi-core': 1.0.0-beta.122
+      '@redocly/openapi-core': 1.0.0-beta.123
       classnames: 2.3.2
       decko: 1.2.0
       dompurify: 2.4.3

@@ -20,7 +20,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.41.0
 	github.com/gofiber/swagger v0.1.8
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/jedib0t/go-pretty/v6 v6.4.3
+	github.com/jedib0t/go-pretty/v6 v6.4.4
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/knadh/koanf v1.4.4
 	github.com/microcosm-cc/bluemonday v1.0.21

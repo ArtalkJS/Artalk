@@ -14,7 +14,7 @@
   "dependencies": {
     "artalk": "workspace: *",
     "pinia": "^2.0.30",
-    "vue": "^3.2.45",
+    "vue": "^3.2.47",
     "vue-i18n": "9",
     "vue-router": "^4.1.6",
     "yaml": "^2.1.3"

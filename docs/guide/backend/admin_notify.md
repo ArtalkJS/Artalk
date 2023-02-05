@@ -22,6 +22,7 @@ admin_notify:
   email:
     enabled: true # 当使用其他推送方式时，可以关闭管理员邮件通知
     mail_subject: "[{{site_name}}] 您的文章「{{page_title}}」有新回复"
+    mail_tpl: ""
   # Telegram
   telegram:
     enabled: false
@@ -65,17 +66,25 @@ admin_notify:
 
 ## 邮件通知
 
+通过邮件的方式向管理员发送消息通知。
+
 ```yaml
 admin_notify:
   enabled: true # 当使用其他推送方式时，可以关闭管理员邮件通知
   mail_subject: "[{{site_name}}] 您的文章「{{page_title}}」有新回复"
+  mail_tpl: ""
 ```
 
 当使用其他推送方式时，可以关闭管理员邮件通知。
 
-配置项 `mail_subject` 为发送给管理员的邮件标题。
-
 在这之前，你需要配置全局邮件发送功能：[参考此处](./email.md)。
+
+### 管理员邮件模板
+
+- 配置项 `mail_subject` 为发送给管理员的邮件标题。
+- 配置项 `mail_tpl` 为发送给管理员的邮件选用特定的[邮件模板](./email.md#邮件模板)（填写邮件模板文件路径）。
+  
+  (当该项留空时，将继承 `email.mail_tpl` 配置项)
 
 ## Telegram
 

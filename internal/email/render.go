@@ -125,7 +125,7 @@ func RenderEmailBody(notify *entity.Notify, isSendToAdmin bool) string {
 	tplName := config.Instance.Email.MailTpl
 
 	// 发送给管理员的邮件单独使用管理员邮件模板
-	if isSendToAdmin {
+	if isSendToAdmin && config.Instance.AdminNotify.Email.MailTpl != "" {
 		tplName = config.Instance.AdminNotify.Email.MailTpl
 	}
 

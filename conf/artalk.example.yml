@@ -213,7 +213,7 @@ admin_notify:
     # Email subject (email subject sent to admin)
     mail_subject: '[{{site_name}}] Post "{{page_title}}" has new a comment'
     # Admin email template file (set to file path to use custom template)
-    mail_tpl: "default"
+    mail_tpl: ""
   # Telegram
   telegram:
     enabled: false

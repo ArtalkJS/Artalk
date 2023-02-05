@@ -19,15 +19,15 @@ jobs:
         working-directory: ./docs
 
     steps:
-    - name: Wait for other docs build to succeed
-      uses: lewagon/wait-on-check-action@v1.2.0
-      with:
-        running-workflow-name: 'Docs CN Mirror Deploy'
-        check-name: 'Build Docs'
-        ref: ${{ github.ref }}
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        allowed-conclusions: success,skipped,cancelled
-        wait-interval: 10
+    # - name: Wait for other docs build to succeed
+    #   uses: lewagon/wait-on-check-action@v1.2.0
+    #   with:
+    #     running-workflow-name: 'Docs CN Mirror Deploy'
+    #     check-name: 'Build Docs'
+    #     ref: ${{ github.ref }}
+    #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+    #     allowed-conclusions: success,skipped,cancelled
+    #     wait-interval: 10
 
     - name: Checkout
       uses: actions/checkout@v3

@@ -60,7 +60,7 @@ make docker-push
 
 ## DevOps
 
-程序构建目前已交给 [GitHub Actions](https://github.com/ArtalkJS/Artalk/actions) 自动完成
+程序由 [GitHub Actions](https://github.com/ArtalkJS/Artalk/actions) 自动化构建
 
 |版本发布|Docker 镜像构建发布|二进制构建发布|前端构建发布|
 |-|-|-|-|

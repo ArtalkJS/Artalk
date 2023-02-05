@@ -7,6 +7,7 @@
 [![](https://img.shields.io/npm/v/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
 [![](https://img.shields.io/npm/dt/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
 [![](https://badgen.net/bundlephobia/minzip/artalk?style=flat-square)](https://bundlephobia.com/package/artalk)
+[![Docker Pulls](https://img.shields.io/docker/pulls/artalk/artalk-go?style=flat-square)](https://hub.docker.com/r/artalk/artalk-go)
 [![CircleCI](https://circleci.com/gh/ArtalkJS/Artalk/tree/master.svg?style=svg)](https://circleci.com/gh/ArtalkJS/Artalk/tree/master)
 
 > 🌌 Golang 自托管评论系统
@@ -19,7 +20,7 @@
 - 👨‍👧‍👦 安全 (自托管)
 - 🐳 易上手 (防脱发)
 - 🍱 Golang 后端 (快速 / 跨平台)
-- 🌊 Vanilla x TypeScript × Vite (纯天然 / 无依赖)
+- 🌊 Vanilla × TypeScript × Vite (纯天然 / 无依赖)
 
 ## 特性
 
@@ -51,6 +52,8 @@
 - Markdown：默认支持 MD 语法
 - 支持 Latex：提供集成 Katex 插件
 - 使用 [Vite](https://github.com/vitejs/vite)：属于开发者的极致体验
+
+更多内容请查看：[“**介绍文档**”](https://artalk.js.org/guide/intro.html)
 
 ## 食用方针
 
@@ -118,7 +121,7 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## TODOs 
 
-- [x] [Golang 后端](https://github.com/ArtalkJS/Artalk)
+- [x] Golang 后端
 - [x] 多数据库支持
   - [x] SQLite
   - [x] MySQL

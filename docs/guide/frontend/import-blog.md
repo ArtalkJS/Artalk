@@ -35,13 +35,12 @@
 </div>
 ```
 
-配置 `/config.yaml` 文件：
+配置 `/config.toml` 文件：
 
 ```yaml
-params:
-  artalk:
-    server: 'https://artalk.example.org'
-    site: '你的站点名'
+## artalk:
+    server = 'https://artalk.example.org'
+    site = '你的站点名'
 ```
 
 ## Hexo

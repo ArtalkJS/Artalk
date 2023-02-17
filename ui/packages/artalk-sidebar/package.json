@@ -7,9 +7,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm run fetch-conf-tpl && vue-tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "fetch-conf-tpl": "node scripts/fetch-conf-tpl.js"
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "artalk": "workspace: *",
@@ -24,7 +23,7 @@
     "@vue/tsconfig": "^0.1.3",
     "sass": "^1.58.0",
     "typescript": "^4.9.5",
-    "unplugin-auto-import": "^0.13.0",
+    "unplugin-auto-import": "^0.14.3",
     "unplugin-vue-components": "^0.23.0",
     "unplugin-vue-router": "^0.3.2",
     "vite": "^4.1.1",

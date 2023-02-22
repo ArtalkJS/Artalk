@@ -222,6 +222,6 @@ export interface ApiVersionData {
   /** API 程序 CommitHash */
   commit_hash: string
 
-    /** API 程序要求前端最小版本 */
+  /** API 程序要求前端最小版本 */
   fe_min_version: string
 }

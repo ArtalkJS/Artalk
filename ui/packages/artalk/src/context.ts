@@ -1,4 +1,3 @@
-import { marked as libMarked } from 'marked'
 import ArtalkConfig from '~/types/artalk-config'
 import { CommentData, NotifyData } from '~/types/artalk-data'
 import { Event } from '~/types/event'
@@ -9,9 +8,10 @@ import ContextApi from '../types/context'
 import Editor from './editor'
 import Comment from './comment'
 import ListLite from './list/list-lite'
+import * as marked from './lib/marked'
 import SidebarLayer, { SidebarShowPayload } from './layer/sidebar-layer'
 import CheckerLauncher, { CheckerCaptchaPayload, CheckerPayload } from './lib/checker'
-import Layer, { GetLayerWrap } from './layer'
+import { getLayerWrap } from './layer'
 import Api from './api'
 import List from './list'
 
@@ -27,11 +27,9 @@ export default class Context implements ContextApi {
   private checkerLauncher!: CheckerLauncher
 
   /* 运行参数 */
-  public cid: number // Context 唯一标识
   public conf: ArtalkConfig
   public user: User
   public $root: HTMLElement
-  public markedInstance?: typeof libMarked
   public markedReplacers: ((raw: string) => string)[] = []
 
   private commentList: Comment[] = [] // Note: 无层级结构 + 无须排列
@@ -40,12 +38,10 @@ export default class Context implements ContextApi {
   private eventList: Event[] = []
 
   public constructor(conf: ArtalkConfig, $root?: HTMLElement) {
-    this.cid = +new Date()
     this.conf = conf
     this.user = new User(this)
 
     this.$root = $root || document.createElement('div')
-    this.$root.setAttribute('atk-run-id', this.cid.toString())
     this.$root.classList.add('artalk')
     this.$root.innerHTML = ''
 
@@ -224,7 +220,7 @@ export default class Context implements ContextApi {
     this.$root.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
 
     // for layer
-    const { $wrap: $layerWrap } = GetLayerWrap(this)
+    const { $wrap: $layerWrap } = getLayerWrap()
     if ($layerWrap) $layerWrap.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
 
     // for sidebar
@@ -271,7 +267,7 @@ export default class Context implements ContextApi {
     else this.$root.classList.remove(darkModeClassName)
 
     // for Layer
-    const { $wrap: $layerWrap } = GetLayerWrap(this)
+    const { $wrap: $layerWrap } = getLayerWrap()
     if ($layerWrap) {
       if (darkMode) $layerWrap.classList.add(darkModeClassName)
       else $layerWrap.classList.remove(darkModeClassName)
@@ -297,8 +293,12 @@ export default class Context implements ContextApi {
     }
   }
 
-  public updateConf(conf: Partial<ArtalkConfig>): void {
-    this.conf = Utils.mergeDeep(this.conf, conf)
+  public updateConf(nConf: Partial<ArtalkConfig>): void {
+    this.conf = Utils.mergeDeep(this.conf, nConf)
     this.trigger('conf-loaded')
+  }
+
+  public getMarkedInstance() {
+    return marked.getInstance()
   }
 }

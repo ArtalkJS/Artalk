@@ -5,7 +5,8 @@ import katex from 'katex'
 
 // @link https://github.com/markedjs/marked/issues/1538#issuecomment-575838181
 Artalk.use((ctx) => {
-  if (!ctx.markedInstance) {
+  const markedInstance = ctx.getMarkedInstance()
+  if (!markedInstance) {
     console.log('[artalk-plugin-katex] no marked instance found')
     return
   }
@@ -33,7 +34,7 @@ Artalk.use((ctx) => {
   }
 
   // Marked render
-  const renderer = new ctx.markedInstance.Renderer() as any
+  const renderer = new markedInstance.Renderer() as any
 
   const orgListitem = renderer.listitem
   const orgParagraph = renderer.paragraph
@@ -62,7 +63,7 @@ Artalk.use((ctx) => {
     return text
   })
 
-  ctx.markedInstance.use({
+  markedInstance.use({
     renderer
   })
 })

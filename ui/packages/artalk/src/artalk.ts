@@ -1,29 +1,24 @@
 import './style/main.less'
 
-import ArtalkConfig from '~/types/artalk-config'
-import { EventPayloadMap, Handler } from '~/types/event'
-import ArtalkPlug from '~/types/plug'
-import Context from '~/types/context'
+import type ArtalkConfig from '~/types/artalk-config'
+import type { EventPayloadMap, Handler } from '~/types/event'
+import type ArtalkPlug from '~/types/plug'
+import type Context from '~/types/context'
 import ConcreteContext from './context'
 import defaults from './defaults'
-
-import ListLite from './list/list-lite'
-import CheckerLauncher from './lib/checker'
-import Editor from './editor'
-import List from './list'
-import SidebarLayer from './layer/sidebar-layer'
-
-import Layer from './layer'
-import * as Utils from './lib/utils'
-import * as Ui from './lib/ui'
+import { handelBaseConf } from './config'
+import Services from './service'
 import * as Stat from './lib/stat'
+import ListLite from './list/list-lite'
 
 /**
  * Artalk
  *
- * @website https://artalk.js.org
+ * @see https://artalk.js.org
  */
 export default class Artalk {
+  private static instance?: Artalk
+
   public static ListLite = ListLite
   public static readonly defaults: ArtalkConfig = defaults
 
@@ -31,144 +26,76 @@ export default class Artalk {
   public ctx!: Context
   public $root!: HTMLElement
 
-  /** Plugins (in global scope)  */
-  protected static Plugins: ArtalkPlug[] = [ Stat.PvCountWidget ]
-
-  /** Plugins (in a instance scope) */
-  protected instancePlugins: ArtalkPlug[] = []
+  /** Plugins */
+  protected static plugins: ArtalkPlug[] = [ Stat.PvCountWidget ]
 
   /** 禁用的组件 */
   public static DisabledComponents: string[] = []
 
-  constructor(customConf: Partial<ArtalkConfig>) {
-    /* 初始化基本配置 */
-    this.conf = Artalk.HandelBaseConf(customConf)
+  /** 构造函数 */
+  constructor(conf: Partial<ArtalkConfig>) {
+    if (Artalk.instance) return Artalk.instance.update(conf)
+
+    // 初始化基本配置
+    this.conf = handelBaseConf(conf)
     if (this.conf.el instanceof HTMLElement) this.$root = this.conf.el
 
-    /* 初始化 Context */
+    // 初始化 Context
     this.ctx = new ConcreteContext(this.conf, this.$root)
 
-    /* 初始化组件 */
-    this.initComponents()
-  }
-
-  /** 组件初始化 */
-  private initComponents() {
-    this.initLocale()
-    this.initLayer()
-    Utils.initMarked(this.ctx)
-
-    const Components: { [name: string]: () => void } = {
-      // CheckerLauncher
-      checkerLauncher: () => {
-        const checkerLauncher = new CheckerLauncher(this.ctx)
-        this.ctx.setCheckerLauncher(checkerLauncher)
-      },
-
-      // 编辑器
-      editor: () => {
-        const editor = new Editor(this.ctx)
-        this.ctx.setEditor(editor)
-        this.$root.appendChild(editor.$el)
-      },
-
-      // 评论列表
-      list: () => {
-        // 评论列表
-        const list = new List(this.ctx)
-        this.ctx.setList(list)
-        this.$root.appendChild(list.$el)
-
-        // 评论获取
-        list.fetchComments(0)
-      },
-
-      // 侧边栏 Layer
-      sidebarLayer: () => {
-        const sidebarLayer = new SidebarLayer(this.ctx)
-        this.ctx.setSidebarLayer(sidebarLayer)
-      },
-
-      // 默认事件绑定
-      eventsDefault: () => {
-        this.initEventBind()
-      }
-    }
-
-    // 组件初始化
-    Object.entries(Components).forEach(([name, initComponent]) => {
+    // 内建服务初始化
+    Object.entries(Services).forEach(([name, initService]) => {
       if (Artalk.DisabledComponents.includes(name)) return
-
-      initComponent()
+      initService(this.ctx)
     })
 
     // 插件初始化 (global scope)
-    Artalk.Plugins.forEach(plugin => {
+    Artalk.plugins.forEach(plugin => {
       if (typeof plugin === 'function')
         plugin(this.ctx)
     })
   }
 
-  /** 基本配置初始化 */
-  public static HandelBaseConf(customConf: Partial<ArtalkConfig>): ArtalkConfig {
-    // 合并默认配置
-    const conf: ArtalkConfig = Utils.mergeDeep(Artalk.defaults, customConf)
-
-    // 绑定元素
-    if (typeof conf.el === 'string' && !!conf.el) {
-      try {
-        const findEl = document.querySelector<HTMLElement>(conf.el)
-        if (!findEl) throw Error(`Target element "${conf.el}" was not found.`)
-        conf.el = findEl
-      } catch (e) {
-        console.error(e)
-        throw new Error('Please check your Artalk `el` config.')
-      }
-    }
-
-    // 服务器配置
-    conf.server = conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
-
-    // 默认 pageKey
-    if (!conf.pageKey) {
-      // @link http://bl.ocks.org/abernier/3070589
-      conf.pageKey = `${window.location.pathname}`
-    }
-
-    // 默认 pageTitle
-    if (!conf.pageTitle) {
-      conf.pageTitle = `${document.title}`
-    }
-
-    return conf
+  /** Init Artalk (单例模式) */
+  public static init(conf: Partial<ArtalkConfig>): Artalk {
+    if (this.instance) return this.instance.update(conf)
+    this.instance = new Artalk(conf)
+    return this.instance
   }
 
-  /** 事件绑定初始化 */
-  private initEventBind() {
-    // 锚点快速跳转评论
-    window.addEventListener('hashchange', () => {
-      this.ctx.listHashGotoCheck()
-    })
-
-    // 本地用户数据变更
-    this.ctx.on('user-changed', () => {
-      this.ctx.checkAdminShowEl()
-      this.ctx.listRefreshUI()
-    })
+  /** 设置暗黑模式 */
+  public setDarkMode(darkMode: boolean) {
+    this.ctx.setDarkMode(darkMode)
   }
 
-  /** 语言初始化 */
-  private initLocale() {
-    if (this.conf.locale === 'auto') { // 自适应语言
-      this.conf.locale = navigator.language
-    }
+  /** Use Plugin (plugin will be called in instance `use` func) */
+  public use(plugin: ArtalkPlug) {
+    Artalk.plugins.push(plugin)
+    if (typeof plugin === 'function') plugin(this.ctx)
   }
 
-  /** Layer 初始化 */
-  private initLayer() {
-    // 记录页面原始 Styles
-    Layer.BodyOrgOverflow = document.body.style.overflow
-    Layer.BodyOrgPaddingRight = document.body.style.paddingRight
+  /** Use Plugin (static method) */
+  public static use(plugin: ArtalkPlug) {
+    this.plugins.push(plugin)
+  }
+
+  /** Update config of Artalk */
+  public update(conf: Partial<ArtalkConfig>) {
+    if (!Artalk.instance) throw Error('cannot call `update` function before call `load`')
+    Artalk.instance.ctx.updateConf(conf)
+    return Artalk.instance
+  }
+
+  /** Reload comment list of Artalk */
+  public reload() {
+    this.ctx.listReload()
+  }
+
+  /** Destroy instance of Artalk */
+  public destroy() {
+    if (!Artalk.instance) throw Error('cannot call `destroy` function before call `load`')
+    //...
+    delete Artalk.instance
   }
 
   /** 监听事件 */
@@ -186,37 +113,15 @@ export default class Artalk {
     this.ctx.trigger(name, payload, 'external')
   }
 
-  /** 重新加载 */
-  public reload() {
-    this.ctx.listReload()
-  }
-
-  /** 设置暗黑模式 */
-  public setDarkMode(darkMode: boolean) {
-    this.ctx.setDarkMode(darkMode)
-  }
-
-  /** Use Plugin (specific instance) */
-  public use(plugin: ArtalkPlug) {
-    this.instancePlugins.push(plugin)
-    if (typeof plugin === 'function') plugin(this.ctx)
-  }
-
-  /** Use Plugin (static method for global scope) */
-  public static use(plugin: ArtalkPlug) {
-    this.Plugins.push(plugin)
-  }
-
-  /** @deprecated Please replace it with lowercase function name `use(...)`. */
-  public static Use(plugin: ArtalkPlug) {
-    this.use(plugin)
-    console.warn('`Use(...)` is deprecated, replace it with lowercase `use(...)`.')
-  }
-
   /** 装载数量统计元素 */
-  public static LoadCountWidget(customConf: Partial<ArtalkConfig>) {
-    const conf = this.HandelBaseConf(customConf)
-    const ctx = new ConcreteContext(conf)
+  public static loadCountWidget(conf: Partial<ArtalkConfig>) {
+    const ctx = new ConcreteContext(handelBaseConf(conf))
     Stat.initCountWidget({ ctx, pvAdd: false })
+  }
+
+  /** @deprecated Please use `loadCountWidget` instead */
+  public static LoadCountWidget(conf: Partial<ArtalkConfig>) {
+    console.warn('The method `LoadCountWidget` is deprecated, please use `loadCountWidget` instead.')
+    this.loadCountWidget(conf)
   }
 }

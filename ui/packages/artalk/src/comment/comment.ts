@@ -2,6 +2,7 @@ import { CommentData } from '~/types/artalk-data'
 import Context from '~/types/context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
+import marked from '../lib/marked'
 import UADetect from '../lib/detect'
 import CommentRender from './render'
 import CommentActions from './actions'
@@ -164,7 +165,7 @@ export default class Comment extends Component {
 
   /** 获取评论 markdown 解析后的内容 */
   public getContentMarked() {
-    return Utils.marked(this.ctx, this.data.content)
+    return marked(this.ctx, this.data.content)
   }
 
   /** 获取格式化后的日期 */

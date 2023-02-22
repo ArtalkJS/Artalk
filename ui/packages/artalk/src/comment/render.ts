@@ -1,5 +1,6 @@
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
+import marked from '../lib/marked'
 import ActionBtn from '../components/action-btn'
 import CommentHTML from './comment.html?raw'
 import Comment from './comment'
@@ -194,7 +195,7 @@ export default class CommentRender {
     const $nick = this.$replyTo.querySelector<HTMLElement>('.atk-nick')!
     $nick.innerText = `@${this.cConf.replyTo.nick}`
     $nick.onclick = () => { this.comment.getActions().goToReplyComment() }
-    let replyContent = Utils.marked(this.ctx, this.cConf.replyTo.content)
+    let replyContent = marked(this.ctx, this.cConf.replyTo.content)
     if (this.cConf.replyTo.is_collapsed) replyContent = `[${this.ctx.$t('collapsed')}]`
     this.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
     this.$body.prepend(this.$replyTo)

@@ -6,10 +6,10 @@
 
 ```bash
 docker run -d \
-    --restart=always \
     --name artalk \
     -p 8080:23366 \
     -v $(pwd)/data:/data \
+    --restart=always \
     artalk/artalk-go
 ```
 

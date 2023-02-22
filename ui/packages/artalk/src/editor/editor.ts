@@ -3,6 +3,7 @@ import Context from '~/types/context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
+import marked from '../lib/marked'
 
 import EditorHTML from './editor.html?raw'
 
@@ -163,7 +164,7 @@ export default class Editor extends Component {
   }
 
   public getContentMarked() {
-    return Utils.marked(this.ctx, this.getFinalContent())
+    return marked(this.ctx, this.getFinalContent())
   }
 
   public setContent(val: string) {

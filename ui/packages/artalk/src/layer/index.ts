@@ -1,4 +1,4 @@
-import Layer, { GetLayerWrap } from './layer'
+import Layer, { getLayerWrap } from './layer'
 
 export default Layer
-export { GetLayerWrap }
+export { getLayerWrap }

@@ -19,7 +19,7 @@ export default class Layer extends Component {
     super(ctx)
 
     this.name = name
-    const { $wrap, $mask } = GetLayerWrap(ctx)
+    const { $wrap, $mask } = getLayerWrap()
     this.$wrap = $wrap
     this.$mask = $mask
 
@@ -148,11 +148,11 @@ export default class Layer extends Component {
   }
 }
 
-export function GetLayerWrap(ctx: Context): { $wrap: HTMLElement, $mask: HTMLElement } {
-  let $wrap = document.querySelector<HTMLElement>(`.atk-layer-wrap#ctx-${ctx.cid}`)
+export function getLayerWrap(): { $wrap: HTMLElement, $mask: HTMLElement } {
+  let $wrap = document.querySelector<HTMLElement>(`.atk-layer-wrap`)
   if (!$wrap) {
     $wrap = Utils.createElement(
-      `<div class="atk-layer-wrap" id="ctx-${ctx.cid}" style="display: none;"><div class="atk-layer-mask"></div></div>`
+      `<div class="atk-layer-wrap" style="display: none;"><div class="atk-layer-mask"></div></div>`
     )
     document.body.appendChild($wrap)
   }

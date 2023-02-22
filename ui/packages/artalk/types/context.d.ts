@@ -1,4 +1,3 @@
-import { marked as libMarked } from 'marked'
 import ArtalkConfig from './artalk-config'
 import { CommentData, NotifyData } from './artalk-data'
 import { EventPayloadMap, Event, EventScopeType, Handler } from './event'
@@ -10,6 +9,7 @@ import Comment from '../src/comment'
 import ListLite from '../src/list/list-lite'
 import SidebarLayer, { SidebarShowPayload } from '../src/layer/sidebar-layer'
 import CheckerLauncher, { CheckerCaptchaPayload, CheckerPayload } from '../src/lib/checker'
+import type { TMarked } from '../src/lib/marked'
 
 /**
  * Context 接口
@@ -17,9 +17,6 @@ import CheckerLauncher, { CheckerCaptchaPayload, CheckerPayload } from '../src/l
  * (面向接口的编程)
  */
 export default interface ContextApi {
-  /** Context 唯一标识 */
-  cid: number
-
   /** Artalk 根元素对象 */
   $root: HTMLElement
 
@@ -30,7 +27,7 @@ export default interface ContextApi {
   user: User
 
   /** marked 依赖对象 */
-  markedInstance?: typeof libMarked
+  getMarkedInstance(): TMarked | undefined
 
   /** marked 内容替换器 */
   markedReplacers: ((raw: string) => string)[]

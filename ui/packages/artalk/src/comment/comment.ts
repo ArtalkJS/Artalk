@@ -4,7 +4,7 @@ import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import marked from '../lib/marked'
 import UADetect from '../lib/detect'
-import CommentRender from './render'
+import CommentUI from './render'
 import CommentActions from './actions'
 
 export interface CommentConf {
@@ -19,7 +19,7 @@ export interface CommentConf {
 }
 
 export default class Comment extends Component {
-  private renderInstance: CommentRender
+  private renderInstance: CommentUI
   private actionInstance: CommentActions
 
   private data: CommentData
@@ -45,7 +45,7 @@ export default class Comment extends Component {
     this.nestCurt = 1 // 现在已嵌套 n 层
 
     this.actionInstance = new CommentActions(this)
-    this.renderInstance = new CommentRender(this)
+    this.renderInstance = new CommentUI(this)
   }
 
   /** 渲染 UI */

@@ -9,6 +9,7 @@ docker run -d \
     --name artalk \
     -p 8080:23366 \
     -v $(pwd)/data:/data \
+    --restart=always \
     artalk/artalk-go
 ```
 
@@ -92,6 +93,7 @@ services:
   artalk:
     container_name: artalk
     image: artalk/artalk-go
+    restart: always
     ports:
       - 8080:23366
     volumes:

@@ -4,33 +4,33 @@ import { Checker } from '.'
 const AdminChecker: Checker = {
   inputType: 'password',
 
-  request(that, ctx, inputVal) {
+  request(checker, inputVal) {
     const data = {
-      name: that.ctx.user.data.nick,
-      email: that.ctx.user.data.email,
+      name: checker.getUser().data.nick,
+      email: checker.getUser().data.email,
       password: inputVal
     }
 
     return (async () => {
-      const resp = await that.ctx.getApi().user.login(data.name, data.email, data.password)
+      const resp = await checker.getApi().user.login(data.name, data.email, data.password)
       return resp.token
     })()
   },
 
-  body(that, ctx) {
-    return Utils.createElement(`<span>${that.ctx.$t('adminCheck')}</span>`)
+  body(checker) {
+    return Utils.createElement(`<span>${checker.getCtx().$t('adminCheck')}</span>`)
   },
 
-  onSuccess(that, ctx, userToken, inputVal, formEl) {
-    that.ctx.user.update({
+  onSuccess(checker, userToken, inputVal, formEl) {
+    checker.getUser().update({
       isAdmin: true,
       token: userToken
     })
-    that.ctx.trigger('user-changed', that.ctx.user.data)
-    that.ctx.listReload()
+    checker.getCtx().trigger('user-changed', checker.getUser().data)
+    checker.getCtx().listReload()
   },
 
-  onError(that, ctx, err, inputVal, formEl) {}
+  onError(checker, err, inputVal, formEl) {}
 }
 
 export default AdminChecker

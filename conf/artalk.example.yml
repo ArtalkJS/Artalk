@@ -260,8 +260,6 @@ frontend:
   sendBtn: "Send"
   # Movable comment box
   editorTravel: true
-  # Dark mode
-  darkMode: false
   # Emoticons
   emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
   # Vote button

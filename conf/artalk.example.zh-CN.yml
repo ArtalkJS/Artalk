@@ -256,8 +256,6 @@ frontend:
   sendBtn: "发送评论"
   # 评论框旅行
   editorTravel: true
-  # 暗黑模式
-  darkMode: false
   # 表情包
   emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
   # 投票按钮

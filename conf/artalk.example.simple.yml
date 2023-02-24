@@ -130,7 +130,6 @@ frontend:
   noComment: "No comments yet."
   sendBtn: "Send"
   editorTravel: true
-  darkMode: false
   emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
   vote: true
   voteDown: false

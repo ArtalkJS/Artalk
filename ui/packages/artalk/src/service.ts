@@ -8,6 +8,7 @@ import SidebarLayer from './layer/sidebar-layer'
 import { initMarked } from './lib/marked'
 import User from './lib/user'
 import ListLite from './list/list-lite'
+import * as DarkMode from './lib/dark-mode'
 
 /**
  * Services
@@ -83,6 +84,15 @@ const services = {
     ctx.on('user-changed', () => {
       ctx.checkAdminShowEl()
       ctx.listRefreshUI()
+    })
+  },
+
+  // 暗黑模式
+  darkMode(ctx: Context) {
+    DarkMode.syncDarkModeConf(ctx)
+
+    ctx.on('conf-loaded', () => {
+      DarkMode.syncDarkModeConf(ctx)
     })
   }
 }

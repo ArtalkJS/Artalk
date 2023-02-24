@@ -6,6 +6,7 @@ import type ContextApi from '~/types/context'
 import type { TInjectedServices } from './service'
 import getI18n, { I18n } from './i18n'
 import * as Utils from './lib/utils'
+import * as DarkMode from './lib/dark-mode'
 import Comment from './comment'
 import * as marked from './lib/marked'
 import { SidebarShowPayload } from './layer/sidebar-layer'
@@ -39,10 +40,6 @@ class Context implements ContextApi {
     this.$root.innerHTML = ''
 
     this.api = new Api(this)
-
-    this.on('conf-loaded', () => {
-      this.refreshDarkModeConf()
-    })
   }
 
   public inject(depName: string, obj: any) {
@@ -235,38 +232,7 @@ class Context implements ContextApi {
   }
 
   public setDarkMode(darkMode: boolean): void {
-    const darkModeClassName = 'atk-dark-mode'
-
-    this.conf.darkMode = darkMode
-
-    if (darkMode) this.$root.classList.add(darkModeClassName)
-    else this.$root.classList.remove(darkModeClassName)
-
-    // for Layer
-    const { $wrap: $layerWrap } = getLayerWrap()
-    if ($layerWrap) {
-      if (darkMode) $layerWrap.classList.add(darkModeClassName)
-      else $layerWrap.classList.remove(darkModeClassName)
-    }
-  }
-
-  private darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)')
-  private darkModeAutoFunc?: (evt: MediaQueryListEvent) => void
-  private refreshDarkModeConf(): void {
-    if (this.conf.darkMode === 'auto') {
-      // 自动切换暗黑模式，事件监听
-      this.setDarkMode(this.darkModeMedia.matches)
-      if (!this.darkModeAutoFunc) {
-        this.darkModeAutoFunc = (evt) => { this.setDarkMode(evt.matches) }
-        this.darkModeMedia.addEventListener('change', this.darkModeAutoFunc)
-      }
-    } else {
-      if (this.darkModeAutoFunc) {
-        // 解除事件监听绑定
-        this.darkModeMedia.removeEventListener('change', this.darkModeAutoFunc)
-      }
-      this.setDarkMode(this.conf.darkMode || false)
-    }
+    DarkMode.setDarkMode(this, darkMode)
   }
 
   public updateConf(nConf: Partial<ArtalkConfig>): void {

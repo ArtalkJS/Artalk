@@ -1,34 +1,28 @@
-import ArtalkConfig from '~/types/artalk-config'
-import { CommentData, NotifyData } from '~/types/artalk-data'
-import { Event } from '~/types/event'
+/* eslint-disable max-classes-per-file */
+import type ArtalkConfig from '~/types/artalk-config'
+import type { CommentData, NotifyData } from '~/types/artalk-data'
+import type { Event } from '~/types/event'
+import type ContextApi from '~/types/context'
+import type { TInjectedServices } from './service'
 import getI18n, { I18n } from './i18n'
-import User from './lib/user'
 import * as Utils from './lib/utils'
-import ContextApi from '../types/context'
-import Editor from './editor'
 import Comment from './comment'
-import ListLite from './list/list-lite'
 import * as marked from './lib/marked'
-import SidebarLayer, { SidebarShowPayload } from './layer/sidebar-layer'
-import CheckerLauncher, { CheckerCaptchaPayload, CheckerPayload } from './lib/checker'
+import { SidebarShowPayload } from './layer/sidebar-layer'
+import { CheckerCaptchaPayload, CheckerPayload } from './lib/checker'
 import { getLayerWrap } from './layer'
 import Api from './api'
 import List from './list'
 
+// Auto dependency injection
+interface Context extends TInjectedServices { }
+
 /**
  * Artalk Context
  */
-export default class Context implements ContextApi {
-  /* 持有同事类 */
-  private api!: Api
-  private editor!: Editor
-  private list?: ListLite
-  private sidebarLayer!: SidebarLayer
-  private checkerLauncher!: CheckerLauncher
-
+class Context implements ContextApi {
   /* 运行参数 */
   public conf: ArtalkConfig
-  public user: User
   public $root: HTMLElement
   public markedReplacers: ((raw: string) => string)[] = []
 
@@ -39,7 +33,6 @@ export default class Context implements ContextApi {
 
   public constructor(conf: ArtalkConfig, $root?: HTMLElement) {
     this.conf = conf
-    this.user = new User(this)
 
     this.$root = $root || document.createElement('div')
     this.$root.classList.add('artalk')
@@ -52,25 +45,8 @@ export default class Context implements ContextApi {
     })
   }
 
-  /* 设置持有的同事类 */
-  public setApi(api: Api): void {
-    this.api = api
-  }
-
-  public setEditor(editor: Editor): void {
-    this.editor = editor
-  }
-
-  public setList(list: ListLite): void {
-    this.list = list
-  }
-
-  public setSidebarLayer(sidebarLayer: SidebarLayer): void {
-    this.sidebarLayer = sidebarLayer
-  }
-
-  public setCheckerLauncher(checkerLauncher: CheckerLauncher): void {
-    this.checkerLauncher = checkerLauncher
+  public inject(depName: string, obj: any) {
+    this[depName] = obj
   }
 
   public getApi() {
@@ -302,3 +278,5 @@ export default class Context implements ContextApi {
     return marked.getInstance()
   }
 }
+
+export default Context

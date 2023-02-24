@@ -1,58 +1,79 @@
 import Context from '~/types/context'
 import CheckerLauncher from './lib/checker'
+import Api from './api'
 import Editor from './editor'
 import List from './list'
 import Layer from './layer'
 import SidebarLayer from './layer/sidebar-layer'
 import { initMarked } from './lib/marked'
+import User from './lib/user'
+import ListLite from './list/list-lite'
 
-type TService = (ctx: Context) => void
-
-export default {
+/**
+ * Services
+ *
+ * @description
+ * 当函数有返回值时，该值将自动添加到 Context 类作为一个 private 成员的值，
+ * 这个成员的名称与函数名对应。可在 Context 类中访问该对象（同事类）。
+ */
+const services = {
   // Markdown 组件
   markdown() {
     initMarked()
   },
 
+  // User Store
+  user(ctx: Context) {
+    const user = new User(ctx)
+    return user
+  },
+
+  // HTTP API client
+  api(ctx: Context) {
+    const api = new Api(ctx)
+    return api
+  },
+
   // CheckerLauncher
-  checkerLauncher(ctx) {
+  checkerLauncher(ctx: Context) {
     const checkerLauncher = new CheckerLauncher(ctx)
-    ctx.setCheckerLauncher(checkerLauncher)
+    return checkerLauncher
   },
 
   // 编辑器
-  editor(ctx) {
+  editor(ctx: Context) {
     const editor = new Editor(ctx)
-    ctx.setEditor(editor)
     ctx.$root.appendChild(editor.$el)
+    return editor
   },
 
   // 评论列表
-  list(ctx) {
+  list(ctx: Context): ListLite|undefined {
     // 评论列表
     const list = new List(ctx)
-    ctx.setList(list)
     ctx.$root.appendChild(list.$el)
 
     // 评论获取
     list.fetchComments(0)
+
+    return list
   },
 
   // 弹出层
-  layer(ctx) {
+  layer(ctx: Context) {
     // 记录页面原始 CSS 属性
     Layer.BodyOrgOverflow = document.body.style.overflow
     Layer.BodyOrgPaddingRight = document.body.style.paddingRight
   },
 
   // 侧边栏 Layer
-  sidebarLayer(ctx) {
+  sidebarLayer(ctx: Context) {
     const sidebarLayer = new SidebarLayer(ctx)
-    ctx.setSidebarLayer(sidebarLayer)
+    return sidebarLayer
   },
 
   // 默认事件绑定
-  eventsDefault(ctx) {
+  eventsDefault(ctx: Context) {
     // 锚点快速跳转评论
     window.addEventListener('hashchange', () => {
       ctx.listHashGotoCheck()
@@ -64,4 +85,14 @@ export default {
       ctx.listRefreshUI()
     })
   }
-} as { [name: string]: TService }
+}
+
+export default services
+
+// type tricks for dependency injection
+type TServiceImps = typeof services
+type TObjectWithFuncs = {[k: string]: (...args: any) => any}
+type TKeysOnlyReturn<T extends TObjectWithFuncs, V> = {[K in keyof T]: ReturnType<T[K]> extends V ? K : never}[keyof T]
+type TOmitConditions = TKeysOnlyReturn<TServiceImps, void>
+type TServiceInjectors = Omit<TServiceImps, TOmitConditions>
+export type TInjectedServices = {[K in keyof TServiceInjectors]: ReturnType<TServiceInjectors[K]>}

@@ -4,11 +4,9 @@ import { EventPayloadMap, Event, EventScopeType, Handler } from './event'
 import { internal as internalLocales, I18n } from '../src/i18n'
 import Api from '../src/api'
 import User from '../src/lib/user'
-import Editor from '../src/editor'
 import Comment from '../src/comment'
-import ListLite from '../src/list/list-lite'
-import SidebarLayer, { SidebarShowPayload } from '../src/layer/sidebar-layer'
-import CheckerLauncher, { CheckerCaptchaPayload, CheckerPayload } from '../src/lib/checker'
+import { SidebarShowPayload } from '../src/layer/sidebar-layer'
+import { CheckerCaptchaPayload, CheckerPayload } from '../src/lib/checker'
 import type { TMarked } from '../src/lib/marked'
 
 /**
@@ -21,9 +19,11 @@ export default interface ContextApi {
   $root: HTMLElement
 
   /** 配置对象 */
+  // TODO 修改为 getConf() 和 setConf()
   conf: ArtalkConfig
 
   /** 用户对象 */
+  // TODO 修改为 getUser()
   user: User
 
   /** marked 依赖对象 */
@@ -31,13 +31,6 @@ export default interface ContextApi {
 
   /** marked 内容替换器 */
   markedReplacers: ((raw: string) => string)[]
-
-  /* 设置持有的同事类 (中介者模式) */
-  setApi(api: Api): void
-  setEditor(editor: Editor): void
-  setList(list?: ListLite): void
-  setSidebarLayer(list: SidebarLayer): void
-  setCheckerLauncher(checkerLauncher: CheckerLauncher): void
 
   /** 获取 API 以供 HTTP 请求 */
   getApi(): Api

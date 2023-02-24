@@ -47,7 +47,7 @@ export default class Artalk {
     Object.entries(Services).forEach(([name, initService]) => {
       if (Artalk.DisabledComponents.includes(name)) return
       const obj = initService(this.ctx)
-      if (obj) this.ctx[name] = obj // auto inject deps to ctx
+      if (obj) this.ctx.inject(name as any, obj) // auto inject deps to ctx
     })
 
     // 插件初始化 (global scope)

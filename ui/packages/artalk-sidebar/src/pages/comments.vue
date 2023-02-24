@@ -42,7 +42,7 @@ onMounted(() => {
 
   // 初始化评论列表
   const list = new Artalk.ListLite(artalk!.ctx)
-  artalk!.ctx.setList(list)
+  artalk!.ctx.inject('list', list)
 
   list.flatMode = true
   list.unreadHighlight = true

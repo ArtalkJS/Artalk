@@ -45,6 +45,10 @@ class Context implements ContextApi {
     })
   }
 
+  public inject(depName: string, obj: any) {
+    this[depName] = obj
+  }
+
   public getApi() {
     return this.api
   }

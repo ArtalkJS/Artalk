@@ -8,6 +8,7 @@ import Comment from '../src/comment'
 import { SidebarShowPayload } from '../src/layer/sidebar-layer'
 import { CheckerCaptchaPayload, CheckerPayload } from '../src/lib/checker'
 import type { TMarked } from '../src/lib/marked'
+import type { TInjectedServices } from '../src/service'
 
 /**
  * Context 接口
@@ -17,6 +18,9 @@ import type { TMarked } from '../src/lib/marked'
 export default interface ContextApi {
   /** Artalk 根元素对象 */
   $root: HTMLElement
+
+  /** 依赖注入函数 */
+  inject<K extends keyof TInjectedServices>(depName: K, obj: TInjectedServices[K]): void
 
   /** 配置对象 */
   // TODO 修改为 getConf() 和 setConf()

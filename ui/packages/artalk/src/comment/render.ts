@@ -5,6 +5,7 @@ import CommentHTML from './comment.html?raw'
 import Comment from './comment'
 import RenderCtx from './render-ctx'
 import loadRenders from './renders'
+import * as HeightLimit from './height-limit'
 
 export default class CommentRender extends RenderCtx {
   public constructor(comment: Comment) {
@@ -33,90 +34,28 @@ export default class CommentRender extends RenderCtx {
 
   /** 内容限高检测 */
   public checkHeightLimit() {
-    this.checkHeightLimitArea('content') // 评论内容限高
-    this.checkHeightLimitArea('children') // 子评论部分限高（嵌套模式）
-  }
-
-  /** 目标内容限高检测 */
-  public checkHeightLimitArea(area: 'children'|'content') {
-    // 参数准备
-    const childrenMaxH = this.ctx.conf.heightLimit.children
     const contentMaxH = this.ctx.conf.heightLimit.content
+    const childrenMaxH = this.ctx.conf.heightLimit.children
 
-    if (area === 'children' && !childrenMaxH) return
-    if (area === 'content' && !contentMaxH) return
-
-    // 限高
-    let maxHeight: number
-    if (area === 'children') maxHeight = childrenMaxH!
-    if (area === 'content') maxHeight = contentMaxH!
-
-    // 检测指定元素
-    const checkEl = ($el?: HTMLElement|null) => {
-      if (!$el) return
-
-      // 是否超过高度
-      if (Utils.getHeight($el) > maxHeight) {
-        this.heightLimitAdd($el, maxHeight)
+    HeightLimit.check({
+      postExpandBtnClick: () => {
+        // 子评论数仅有 1，直接取消限高
+        const children = this.comment.getChildren()
+        if (children.length === 1) HeightLimit.disposeHeightLimit(children[0].getRender().$content)
       }
-    }
-
-    // 执行限高检测
-    if (area === 'children') {
-      checkEl(this.$childrenWrap)
-    } else if (area === 'content') {
-      checkEl(this.$content)
-      checkEl(this.$replyTo)
-
-      // 若有图片 · 图片加载完后再检测一次
-      Utils.onImagesLoaded(this.$content, () => {
-        checkEl(this.$content)
-      })
-      if (this.$replyTo) {
-        Utils.onImagesLoaded(this.$replyTo, () => {
-          checkEl(this.$replyTo)
-        })
-      }
-    }
-  }
-
-  /** 移除限高 */
-  private heightLimitRemove($el: HTMLElement) {
-    if (!$el) return
-    if (!$el.classList.contains('atk-height-limit')) return
-
-    $el.classList.remove('atk-height-limit')
-    Array.from($el.children).forEach((e) => {
-      if (e.classList.contains('atk-height-limit-btn')) e.remove()
-    })
-    $el.style.height = ''
-    $el.style.overflow = ''
+    }, [
+      // 评论内容限高
+      { el: this.$content, max: contentMaxH, imgContains: true },
+      { el: this.$replyTo, max: contentMaxH, imgContains: true },
+      // 子评论区域限高（仅嵌套模式）
+      { el: this.$childrenWrap, max: childrenMaxH, imgContains: false }
+    ])
   }
 
   /** 子评论区域移除限高 */
   public heightLimitRemoveForChildren() {
     if (!this.$childrenWrap) return
-    this.heightLimitRemove(this.$childrenWrap)
-  }
-
-  /** 内容限高区域新增 */
-  private heightLimitAdd($el: HTMLElement, maxHeight: number) {
-    if (!$el) return
-    if ($el.classList.contains('atk-height-limit')) return
-
-    $el.classList.add('atk-height-limit')
-    $el.style.height = `${maxHeight}px`
-    $el.style.overflow = 'hidden'
-    const $hideMoreOpenBtn = Utils.createElement(`<div class="atk-height-limit-btn">${this.ctx.$t('readMore')}</span>`)
-    $hideMoreOpenBtn.onclick = (e) => {
-      e.stopPropagation()
-      this.heightLimitRemove($el)
-
-      // 子评论数等于 1，直接取消限高
-      const children = this.comment.getChildren()
-      if (children.length === 1) children[0].getRender().heightLimitRemove(children[0].getRender().$content)
-    }
-    $el.append($hideMoreOpenBtn)
+    HeightLimit.disposeHeightLimit(this.$childrenWrap)
   }
 
   /** 渐出动画 */

@@ -31,6 +31,7 @@ module.exports = {
     '@typescript-eslint/lines-between-class-members': 0,
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-use-before-define': 0,
+    '@typescript-eslint/naming-convention': 0,
   },
   settings: {
     'import/resolver': {

@@ -34,8 +34,8 @@ require (
 	github.com/steambap/captcha v1.4.1
 	github.com/stretchr/testify v1.8.1
 	github.com/swaggo/swag v1.8.10
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.587
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tms v1.0.587
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.604
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tms v1.0.604
 	github.com/tidwall/gjson v1.14.4
 	github.com/vmihailenco/msgpack v4.0.4+incompatible
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2

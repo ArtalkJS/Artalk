@@ -11,6 +11,7 @@ Artalk 离不开社区的支持与帮助，**是你们让 Artalk 走得更远！
 - [Artalk 评论系统推荐 (By @inkss)](https://inkss.cn/blog/8f37d8c3/)
 - [Nuxt.js如何部署Artalk和遇到的问题 (By @子舒)](https://imhan.cn/posts/20220218/)
 - [宝塔安装过程大概记录 (By @xiamuguizhi)](https://github.com/ArtalkJS/Artalk/discussions/46)
+- [Vuepress配置评论插件为Artalk](https://wiki.eryajf.net/pages/b74c2b/)
 
 更多新版读物正在撰写当中（
 
@@ -30,6 +31,7 @@ Artalk v1 版本基于 [PHP 后端](https://github.com/ArtalkJS/ArtalkPHP)，部
 - [Hexo Next 主题添加 Artalk 评论系统 - 心底的河流](https://lhy.life/20201126-artalk-next/)
 - [Hexo 添加 Artalk 评论教程 - 我相信我可以](https://butterfly.imlete.cn/article/Hexo-Artalk.html)
 - [基于 Butterfly 主题添加 Artalk 评论系统 - 卓越科技的 Blog](https://blog.imzykj.cn/posts/93afb348/)
+
 
 ## 衍生品
 

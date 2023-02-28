@@ -48,6 +48,7 @@ onMounted(() => {
   list.unreadHighlight = true
   list.scrollListenerAt = wrapEl.value
   list.pageMode = 'pagination'
+  // list.pageSize = 20 // TODO consider fixed pageSize value in sidebar
   list.noCommentText = `<div class="atk-sidebar-no-content">${t('noContent')}</div>`
   list.renderComment = (comment) => {
     const pageURL = comment.getData().page_url

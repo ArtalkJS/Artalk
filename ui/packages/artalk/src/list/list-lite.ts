@@ -4,24 +4,31 @@ import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import Comment from '../comment'
-import Pagination from '../components/pagination'
-import ReadMoreBtn from '../components/read-more-btn'
+import PgHolder, { TPgMode } from './paginator'
 import * as ListNest from './list-nest'
+import * as ListUi from './list-ui'
 import { backendMinVersion, version as ARTALK_VERSION } from '../../package.json'
 
 export default class ListLite extends Component {
+  /** 列表评论集区域元素 */
   protected $commentsWrap: HTMLElement
 
+  /** 最后一次请求得到的列表数据 */
   protected data?: ListData
+
+  /** 是否处于加载中状态 */
   protected isLoading: boolean = false
 
-  public noCommentText?: string // 无评论时显示
+  /** 配置是否已加载 */
+  private confLoaded = false
+
+  /** 无评论显示文字 */
+  public noCommentText?: string
 
   /** 嵌套模式下的排序方式 */
   private _nestSortBy?: ListNest.SortByType
   public get nestSortBy() {
-    if (this._nestSortBy !== undefined) return this._nestSortBy
-    return this.ctx.conf.nestSort || 'DATE_ASC'
+    return this._nestSortBy || this.ctx.conf.nestSort || 'DATE_ASC'
   }
   public set nestSortBy(val: ListNest.SortByType) {
     this._nestSortBy = val
@@ -48,13 +55,17 @@ export default class ListLite extends Component {
   }
 
   /** 分页方式 */
-  public _pageMode?: 'pagination'|'read-more'
+  public _pageMode?: TPgMode
   public get pageMode() {
     return this._pageMode || (this.conf.pagination.readMore ? 'read-more' : 'pagination')
   }
   public set pageMode(val: 'pagination'|'read-more') {
     this._pageMode = val
+    this.pgHolder?.setMode(this._pageMode)
   }
+
+  /** 分页方式持有者 */
+  public pgHolder?: PgHolder
 
   /** 每页数量 (每次请求获取量) */
   private _pageSize?: number
@@ -65,18 +76,17 @@ export default class ListLite extends Component {
     this._pageSize = val
   }
 
-  public scrollListenerAt?: HTMLElement // 监听指定元素上的滚动
-  public repositionAt?: HTMLElement // 翻页归位到指定元素
+  /** 监听指定元素上的滚动 */
+  public scrollListenerAt?: HTMLElement
+  /** 翻页归位到指定元素 */
+  public repositionAt?: HTMLElement
 
-  protected pagination?: Pagination   // 分页条
-  protected readMoreBtn?: ReadMoreBtn // 阅读更多
-  protected autoLoadScrollEvent?: any // 自动加载滚动事件
-
+  // 一些 Hook 函数
   public renderComment?: (comment: Comment) => void
   public paramsEditor?: (params: any) => void
   public onAfterLoad?: (data: ListData) => void
 
-  // 未读标记
+  /** 未读标记 */
   protected unread: NotifyData[] = []
   public unreadHighlight?: boolean // 高亮未读
 
@@ -111,16 +121,23 @@ export default class ListLite extends Component {
     this.data = undefined
   }
 
+  public getLoading() {
+    return this.isLoading
+  }
+
   public getCommentsWrapEl() {
     return this.$commentsWrap
   }
 
-  /** 加载动画 */
+  /** 设置加载状态 */
   public setLoading(val: boolean, isFirstLoad: boolean = false) {
     this.isLoading = val
-    if (isFirstLoad) Ui.setLoading(val, this.$el)
-    else if (this.pageMode === 'read-more') this.readMoreBtn!.setLoading(val)
-    else if (this.pageMode === 'pagination') this.pagination!.setLoading(val)
+    if (isFirstLoad) {
+      Ui.setLoading(val, this.$el)
+      return
+    }
+
+    this.pgHolder?.setLoading(val)
   }
 
   /** 评论获取 */
@@ -144,6 +161,7 @@ export default class ListLite extends Component {
     // 请求评论数据
     let listData: ListData
     try {
+      // 执行请求
       listData = await this.ctx.getApi().comment
         .get(offset, this.pageSize, this.flatMode, this.paramsEditor)
     } catch (e: any) {
@@ -167,112 +185,55 @@ export default class ListLite extends Component {
     }
   }
 
-  private confLoaded = false
-
   protected onLoad(data: ListData, offset: number) {
     this.data = data
 
     // 装载后端提供的配置
     if (!this.confLoaded) {
-      if (this.conf.useBackendConf)
-        this.ctx.updateConf(data.conf.frontend_conf)
-      else
-        this.ctx.updateConf({})
+      // 仅应用一次配置
+      if (this.conf.useBackendConf) this.ctx.updateConf(data.conf.frontend_conf)
+      else this.ctx.updateConf({}) // 让事件监听 `on('conf-loaded')` 有效，与前者保持相同生命周期环节
       this.confLoaded = true
     }
 
-    // 版本检测
+    // 版本检测（前后端双向制约）
     const feMinVersion = data.api_version?.fe_min_version || '0.0.0'
-    if (this.ctx.conf.versionCheck && this.versionCheck('frontend', feMinVersion, ARTALK_VERSION)) return
-    if (this.ctx.conf.versionCheck && this.versionCheck('backend', backendMinVersion, data.api_version?.version)) return
+    if (this.ctx.conf.versionCheck && ListUi.versionCheckDialog(this, 'frontend', feMinVersion, ARTALK_VERSION)) return
+    if (this.ctx.conf.versionCheck && ListUi.versionCheckDialog(this, 'backend', backendMinVersion, data.api_version?.version)) return
 
     // 导入数据
     this.importComments(data.comments)
 
-    // 分页方式
-    this.refreshPagination(offset, (this.flatMode ? data.total : data.total_roots)) // 初始化
+    // 分页功能
+    this.refreshPagination(offset, (this.flatMode ? data.total : data.total_roots))
 
     // 加载后事件
     this.refreshUI()
 
+    // 未读消息提示功能
     this.ctx.updateNotifies(data.unread || [])
+
+    // 事件触发，列表已加载
     this.ctx.trigger('list-loaded')
 
+    // Hook 函数调用
     if (this.onAfterLoad) this.onAfterLoad(data)
   }
 
   /** 分页模式 */
   private refreshPagination(offset: number, total: number) {
-    const modePagination = (this.pageMode === 'pagination')
-    const modeReadMoreBtn = (this.pageMode === 'read-more')
-    const initialized = (modePagination) ? !!this.pagination : !!this.readMoreBtn
-
     // 初始化
-    if (!initialized) {
-      this.initPagination()
+    if (!this.pgHolder) {
+      this.pgHolder = new PgHolder({
+        list: this,
+        mode: this.pageMode,
+        pageSize: this.pageSize,
+        total
+      })
     }
 
     // 更新
-    if (modePagination) this.pagination!.update(offset, total)
-    if (modeReadMoreBtn) this.readMoreBtn!.update(offset, total)
-  }
-
-  private initPagination() {
-    // 加载更多按钮
-    if (this.pageMode === 'read-more') {
-      this.readMoreBtn = new ReadMoreBtn({
-        pageSize: this.pageSize,
-        onClick: async (o) => {
-          await this.fetchComments(o)
-        },
-        text: this.ctx.$t('loadMore'),
-      })
-      this.$el.append(this.readMoreBtn.$el)
-
-      // 滚动到底部自动加载
-      if (this.conf.pagination.autoLoad) {
-        // 添加滚动事件监听
-        const at = this.scrollListenerAt || document
-        if (this.autoLoadScrollEvent) at.removeEventListener('scroll', this.autoLoadScrollEvent) // 解除原有
-        this.autoLoadScrollEvent = () => {
-          if (this.pageMode !== 'read-more'
-            || !this.readMoreBtn?.hasMore
-            || this.isLoading
-          ) return
-
-          const $target = this.$el.querySelector<HTMLElement>('.atk-list-comments-wrap > .atk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
-          if ($target && Ui.isVisible($target, this.scrollListenerAt)) {
-            this.readMoreBtn.click() // 自动点击加载更多按钮
-          }
-        }
-        at.addEventListener('scroll', this.autoLoadScrollEvent)
-      }
-    }
-
-    // 分页条
-    if (this.pageMode === 'pagination') {
-      this.pagination = new Pagination((!this.flatMode ? this.data!.total_roots : this.data!.total), {
-        pageSize: this.pageSize,
-        onChange: async (o) => {
-          if (this.ctx.conf.editorTravel === true) {
-            this.ctx.editorTravelBack() // 防止评论框被吞
-          }
-
-          await this.fetchComments(o)
-
-          // 滚动到第一个评论的位置
-          if (this.repositionAt) {
-            const at = this.scrollListenerAt || window
-            at.scroll({
-              top: this.repositionAt ? Utils.getOffset(this.repositionAt).top : 0,
-              left: 0,
-            })
-          }
-        }
-      })
-
-      this.$el.append(this.pagination.$el)
-    }
+    this.pgHolder?.update(offset, total)
   }
 
   /** 错误处理 */
@@ -286,58 +247,17 @@ export default class ListLite extends Component {
 
     // 加载更多按钮显示错误
     if (offset !== 0 && this.pageMode === 'read-more') {
-      this.readMoreBtn?.showErr(this.$t('loadFail'))
+      this.pgHolder?.showErr(this.$t('loadFail'))
       return
     }
 
     // 显示错误对话框
-    const $err = Utils.createElement(`<span>${msg}，${this.$t('listLoadFailMsg')}<br/></span>`)
-
-    const $retryBtn = Utils.createElement(`<span style="cursor:pointer;">${this.$t('listRetry')}</span>`)
-    $retryBtn.onclick = () => (this.fetchComments(0))
-    $err.appendChild($retryBtn)
-
-    const adminBtn = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
-    $err.appendChild(adminBtn)
-    if (!this.ctx.user.data.isAdmin) adminBtn.classList.add('atk-hide')
-
-    let sidebarView = ''
-
-    // 找不到站点错误，打开侧边栏并填入创建站点表单
-    if (errData?.err_no_site) {
-      const viewLoadParam = {
-        create_name: this.ctx.conf.site,
-        create_urls: `${window.location.protocol}//${window.location.host}`
-      }
-      // TODO 真的是飞鸽传书啊
-      sidebarView = `sites|${JSON.stringify(viewLoadParam)}`
-    }
-
-    adminBtn.onclick = () => this.ctx.showSidebar({
-      view: sidebarView as any
-    })
-
-    Ui.setError(this.$el, $err)
+    Ui.setError(this.$el, ListUi.renderErrorDialog(this, msg, errData))
   }
 
   /** 刷新界面 */
   public refreshUI() {
-    // 无评论
-    const isNoComment = this.ctx.getCommentList().length <= 0
-    let $noComment = this.$commentsWrap.querySelector<HTMLElement>('.atk-list-no-comment')
-
-    if (isNoComment) {
-      if (!$noComment) {
-        $noComment = Utils.createElement('<div class="atk-list-no-comment"></div>')
-        $noComment.innerHTML = this.noCommentText || this.ctx.conf.noComment || this.ctx.$t('noComment')
-        this.$commentsWrap.appendChild($noComment)
-      }
-    } else {
-      $noComment?.remove()
-    }
-
-    // 仅管理员显示控制
-    this.ctx.checkAdminShowEl()
+    ListUi.refreshUI(this)
   }
 
   /** 重新加载列表 */
@@ -500,28 +420,5 @@ export default class ListLite extends Component {
         }
       })
     }
-  }
-
-  /** 版本检测 */
-  public versionCheck(name: 'frontend'|'backend', needVersion: string, curtVersion: string): boolean {
-    const needUpdate = Utils.versionCompare(needVersion, curtVersion) === 1
-    if (needUpdate) {
-      // 需要更新
-      const errEl = Utils.createElement(`<div>Artalk ${this.$t(name)}版本已过时，请更新以获得完整体验<br/>`
-      + `如果你是管理员，请前往 “<a href="https://artalk.js.org/" target="_blank">官方文档</a>” 获得帮助`
-      + `<br/><br/>`
-      + `<span style="color: var(--at-color-meta);">当前${this.$t(name)}版本 ${curtVersion}，需求版本 >= ${needVersion}</span><br/><br/>`
-      + `</div>`)
-      const ignoreBtn = Utils.createElement('<span style="cursor:pointer;">忽略</span>')
-      ignoreBtn.onclick = () => {
-        Ui.setError(this.$el.parentElement!, null)
-        this.ctx.conf.versionCheck = false
-        this.fetchComments(0)
-      }
-      errEl.append(ignoreBtn)
-      Ui.setError(this.$el.parentElement!, errEl, '<span class="atk-warn-title">Artalk Warn</span>')
-    }
-
-    return needUpdate
   }
 }

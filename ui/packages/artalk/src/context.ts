@@ -1,17 +1,18 @@
-/* eslint-disable max-classes-per-file */
 import type ArtalkConfig from '~/types/artalk-config'
 import type { CommentData, NotifyData } from '~/types/artalk-data'
 import type { Event } from '~/types/event'
 import type ContextApi from '~/types/context'
 import type { TInjectedServices } from './service'
-import getI18n, { I18n } from './i18n'
+
 import * as Utils from './lib/utils'
 import * as DarkMode from './lib/dark-mode'
-import Comment from './comment'
 import * as marked from './lib/marked'
-import { SidebarShowPayload } from './layer/sidebar-layer'
 import { CheckerCaptchaPayload, CheckerPayload } from './lib/checker'
+
+import * as I18n from './i18n'
 import { getLayerWrap } from './layer'
+import { SidebarShowPayload } from './layer/sidebar-layer'
+import Comment from './comment'
 import Api from './api'
 import List from './list'
 
@@ -227,8 +228,8 @@ class Context implements ContextApi {
   }
 
   /* i18n */
-  public $t(key: keyof I18n, args: {[key: string]: string} = {}): string {
-    return getI18n(this.conf.locale, key, args)
+  public $t(key: I18n.I18nKeys, args: {[key: string]: string} = {}): string {
+    return I18n.t(key, args)
   }
 
   public setDarkMode(darkMode: boolean): void {

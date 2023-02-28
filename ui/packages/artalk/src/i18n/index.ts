@@ -2,6 +2,7 @@ import en from './en'
 import zhCN from './zh-CN'
 
 export type I18n = typeof en
+export type I18nKeys = keyof I18n
 
 // @note the key of language is followed by `ISO 639`
 // https://en.wikipedia.org/wiki/ISO_639
@@ -22,9 +23,9 @@ export function defineLocaleExternal(lang: string, locale: I18n, aliases?: strin
 }
 
 /**
- * get a locale object by language name
+ * find a locale object by language name
  */
-function getLocaleSet(lang: string): I18n {
+export function findLocaleSet(lang: string): I18n {
   // normalize a key of language to `ISO 639`
   lang = lang.replace(
     /^([a-zA-Z]+)(-[a-zA-Z]+)?$/,
@@ -47,18 +48,28 @@ function getLocaleSet(lang: string): I18n {
 }
 
 /**
- * get a i18n message by key
+ * System locale setting
  */
-function getI18n(locale: I18n|string, key: keyof I18n, args: {[key: string]: string} = {}) {
-  if (typeof locale === 'string') {
-    locale = getLocaleSet(locale)
-  }
+let LocaleConf: I18n|string = 'en'
+let LocaleDict: I18n = findLocaleSet(LocaleConf) // en by default
 
-  let str = locale?.[key] || key
+/**
+ * Set system locale
+ */
+export function setLocale(locale: I18n|string) {
+  if (locale === LocaleConf) return
+  LocaleConf = locale
+  LocaleDict = (typeof locale === 'string') ? findLocaleSet(locale) : locale
+}
+
+/**
+ * Get an i18n message by key
+ */
+export function t(key: I18nKeys, args: {[key: string]: string} = {}) {
+  let str = LocaleDict?.[key] || key
   str = str.replace(/\{\s*(\w+?)\s*\}/g, (_, token) => args[token] || '')
 
   return str
 }
 
-export { getLocaleSet }
-export default getI18n
+export default t

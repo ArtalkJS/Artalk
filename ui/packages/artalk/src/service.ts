@@ -9,6 +9,7 @@ import { initMarked } from './lib/marked'
 import User from './lib/user'
 import ListLite from './list/list-lite'
 import * as DarkMode from './lib/dark-mode'
+import * as I18n from './i18n'
 
 /**
  * Services
@@ -93,6 +94,15 @@ const services = {
 
     ctx.on('conf-loaded', () => {
       DarkMode.syncDarkModeConf(ctx)
+    })
+  },
+
+  // I18n
+  i18n(ctx: Context) {
+    I18n.setLocale(ctx.conf.locale)
+
+    ctx.on('conf-loaded', () => {
+      I18n.setLocale(ctx.conf.locale)
     })
   }
 }

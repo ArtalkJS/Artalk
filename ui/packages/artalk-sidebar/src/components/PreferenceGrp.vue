@@ -78,6 +78,7 @@ function onHeadClick(evt: Event) {
     cursor: pointer;
 
     .title {
+      user-select: none;
       font-size: 1.4em;
       font-weight: bold;
       padding-left: 12px;

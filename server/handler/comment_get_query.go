@@ -225,6 +225,7 @@ func UseCfgFrontend(p *ParamsGet) {
 	}
 
 	// pagination
+	// TODO consider ignore pageSize configuration in sidebar
 	(func() {
 		pagination, isExist := feConf["pagination"]
 		if !isExist {

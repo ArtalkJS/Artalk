@@ -6,8 +6,8 @@ import dts from 'vite-plugin-dts'
 export default defineConfig({
   css: {
     preprocessorOptions: {
-      less: {
-         additionalData: `@import "./src/style/_variables.less";@import "./src/style/_extend.less";`
+      scss: {
+        additionalData: `@import "./src/style/_variables.scss";@import "./src/style/_extend.scss";`
      },
     },
   },

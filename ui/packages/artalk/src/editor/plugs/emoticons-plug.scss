@@ -3,7 +3,7 @@
   width: 100%;
 
   & > .atk-grp-wrap {
-    .atk-slim-scrollbar();
+    @extend .atk-slim-scrollbar;
     overflow-y: scroll;
     overflow-x: hidden;
     height: 100%; // calc(100% - 30px);
@@ -27,7 +27,7 @@
         padding: 5px;
         cursor: pointer;
         user-select: none;
-        border-radius: (@block-radius / 2);
+        border-radius: calc($block-radius / 2);
         font-size: 16px;
         min-width: 35px;
 
@@ -60,7 +60,7 @@
       float: left;
       display: block;
       cursor: pointer;
-      font-size: @font-size;
+      font-size: $font-size;
 
       &:hover,
       &.active {

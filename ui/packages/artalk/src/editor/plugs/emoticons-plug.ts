@@ -1,4 +1,4 @@
-import './emoticons-plug.less'
+import './emoticons-plug.scss'
 
 import * as Utils from '~/src/lib/utils'
 import * as Ui from '~/src/lib/ui'

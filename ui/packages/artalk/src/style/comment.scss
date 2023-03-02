@@ -51,7 +51,7 @@
     img {
       width: 50px;
       height: 50px;
-      border-radius: (@block-radius / 2);
+      border-radius: calc($block-radius / 2);
     }
   }
 
@@ -108,13 +108,13 @@
         }
       }
 
-      .badge() {
+      .badge {
         display: inline-block;
         color: var(--at-color-meta);
         background: var(--at-color-bg-grey);
         padding: 0px 6px;
         line-height: 17px;
-        border-radius: (@block-radius / 2);
+        border-radius: calc($block-radius / 2);
 
         &:not(:last-child) {
           margin-right: 6px;
@@ -126,18 +126,18 @@
       }
 
       .atk-badge {
-        .badge();
+        @extend .badge;
         color: #fff;
       }
 
       .atk-pinned-badge {
-        .badge();
+        @extend .badge;
         color: #fff;
         background: #f44336;
       }
 
       .atk-ua {
-        .badge()
+        @extend .badge;
       }
 
       .atk-ua-wrap {
@@ -164,7 +164,7 @@
           border: 3px solid var(--at-color-bg-grey);
           border-bottom: 0;
           padding: 5px 10px;
-          border-radius: @block-radius @block-radius 0 0;
+          border-radius: $block-radius $block-radius 0 0;
           margin-bottom: -5px;
         }
 
@@ -217,7 +217,7 @@
         padding: 10px 18px;
         display: block;
         background: var(--at-color-bg-grey);
-        border-radius: @block-radius;
+        border-radius: $block-radius;
 
         .atk-text {
           color: var(--at-color-meta);
@@ -291,7 +291,7 @@
     transform: translateX(-50%);
     cursor: pointer;
     border: 1px solid var(--at-color-border);
-    border-radius: @block-radius;
+    border-radius: $block-radius;
     background: var(--at-color-bg);
     padding: 1px 20px;
     font-size: 15px;

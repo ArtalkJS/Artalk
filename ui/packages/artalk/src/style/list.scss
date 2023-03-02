@@ -46,7 +46,7 @@
         padding: 0.6rem 0;
         border: 1px solid var(--at-color-border);
         text-align: center;
-        border-radius: @block-radius;
+        border-radius: $block-radius;
         white-space: nowrap;
         margin: 0;
         list-style: none;
@@ -179,8 +179,8 @@
     cursor: pointer;
     user-select: none;
     padding: 0 15px;
-    font-size: @font-size;
-    border-radius: @block-radius;
+    font-size: $font-size;
+    border-radius: $block-radius;
     border: 1px solid transparent;
     display: flex;
     height: 30px;

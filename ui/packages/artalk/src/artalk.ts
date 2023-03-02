@@ -1,4 +1,4 @@
-import './style/main.less'
+import './style/main.scss'
 
 import type ArtalkConfig from '~/types/artalk-config'
 import type { EventPayloadMap, Handler } from '~/types/event'

@@ -1,4 +1,4 @@
-import './preview-plug.less'
+import './preview-plug.scss'
 
 import Editor from '../editor'
 import EditorPlug from './editor-plug'

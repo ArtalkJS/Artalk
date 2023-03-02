@@ -1,19 +1,19 @@
-@header-height: 60px;
-@nav-height: 40px;
+$header-height: 60px;
+$nav-height: 40px;
 
 .atk-sidebar-layer {
-  @width: 430px;
+  $width: 430px;
   position: fixed;
   z-index: 99999;
   top: 0;
   right: 0;
-  width: @width;
+  width: $width;
   height: 100%;
   background: var(--at-color-bg);
   transition: transform 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-  transform: translate(@width, 0px);
+  transform: translate($width, 0px);
 
-  @media only screen and (max-width: @width) {
+  @media only screen and (max-width: $width) {
     & {
       width: 100%;
     }
@@ -37,8 +37,8 @@
     .atk-sidebar-close {
       display: flex;
       flex-direction: column;
-      width: @header-height;
-      height: @header-height;
+      width: $header-height;
+      height: $header-height;
       align-items: center;
       place-content: center;
       cursor: pointer;

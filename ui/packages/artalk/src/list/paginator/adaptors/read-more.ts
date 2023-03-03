@@ -49,5 +49,8 @@ export default <IReadMoreAdaptor>{
   },
   showErr(msg) {
     this.instance.showErr(msg)
+  },
+  next() {
+    this.instance.click()
   }
 }

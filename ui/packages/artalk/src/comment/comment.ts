@@ -132,7 +132,7 @@ export default class Comment extends Component {
       if (this.nestCurt < this.nestMax) {
         $children = this.getRender().renderChildrenWrap()
       } else {
-          $children = this.parent!.getChildrenEl()
+        $children = this.parent!.getChildrenEl()
       }
     }
 

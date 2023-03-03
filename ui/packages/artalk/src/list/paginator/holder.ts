@@ -48,4 +48,8 @@ export default class PgHolder {
       this.init()
     }
   }
+
+  public next() {
+    this.getAdaptor().next()
+  }
 }

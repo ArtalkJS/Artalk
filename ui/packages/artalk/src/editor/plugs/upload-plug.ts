@@ -53,12 +53,12 @@ export default class UploadPlug extends EditorPlug {
     // 拖拽图片
     // @link https://developer.mozilla.org/zh-CN/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
     // 阻止浏览器的默认释放行为
-    this.editor.$textarea.addEventListener('dragover', (evt) => {
+    this.editor.getUI().$textarea.addEventListener('dragover', (evt) => {
       evt.stopPropagation()
       evt.preventDefault()
     })
 
-    this.editor.$textarea.addEventListener('drop', (evt) => {
+    this.editor.getUI().$textarea.addEventListener('drop', (evt) => {
       const files = evt.dataTransfer?.files
       if (files?.length) {
         evt.preventDefault()
@@ -67,7 +67,7 @@ export default class UploadPlug extends EditorPlug {
     })
 
     // 粘贴图片
-    this.editor.$textarea.addEventListener('paste', (evt) => {
+    this.editor.getUI().$textarea.addEventListener('paste', (evt) => {
       const files = evt.clipboardData?.files
       if (files?.length) {
         evt.preventDefault()
@@ -88,7 +88,7 @@ export default class UploadPlug extends EditorPlug {
 
     // 插入图片前换一行
     let insertPrefix = '\n'
-    if (this.editor.$textarea.value.trim() === '') insertPrefix = ''
+    if (this.editor.getUI().$textarea.value.trim() === '') insertPrefix = ''
 
     // 插入占位加载文字
     const uploadPlaceholderTxt = `${insertPrefix}![](Uploading ${file.name}...)`
@@ -115,10 +115,10 @@ export default class UploadPlug extends EditorPlug {
       if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi(this.ctx, imgURL)
 
       // 上传成功插入图片
-      this.editor.setContent(this.editor.$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`))
+      this.editor.setContent(this.editor.getUI().$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`))
     } else {
       // 上传失败删除加载文字
-      this.editor.setContent(this.editor.$textarea.value.replace(uploadPlaceholderTxt, ''))
+      this.editor.setContent(this.editor.getUI().$textarea.value.replace(uploadPlaceholderTxt, ''))
     }
   }
 }

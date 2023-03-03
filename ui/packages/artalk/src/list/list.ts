@@ -131,8 +131,7 @@ export default class List extends ListLite {
     const comment = this.ctx.findComment(commentId)
     if (!comment) { // 若找不到评论
       // 自动翻页
-      if (this.readMoreBtn) this.readMoreBtn.click()
-      else if (this.pagination) this.pagination.next()
+      this.pgHolder?.next()
       return
     }
 

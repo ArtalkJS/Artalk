@@ -35,5 +35,8 @@ export default <IPaginationAdaptor>{
   },
   update(offset, total) {
     this.instance.update(offset, total)
+  },
+  next() {
+    this.instance.next()
   }
 }

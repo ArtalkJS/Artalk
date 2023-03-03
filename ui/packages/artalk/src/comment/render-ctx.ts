@@ -1,6 +1,5 @@
 import Comment from './comment'
 import ActionBtn from '../components/action-btn'
-import * as Utils from '../lib/utils'
 
 export default class RenderCtx {
   public comment: Comment

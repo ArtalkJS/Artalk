@@ -120,7 +120,7 @@ export default class Comment extends Component {
     childC.getRender().playFadeAnim()
 
     // 内容限高
-    childC.getRender().checkHeightLimitArea('content')
+    childC.getRender().checkHeightLimit()
   }
 
   /** 获取存放子评论的元素对象 */

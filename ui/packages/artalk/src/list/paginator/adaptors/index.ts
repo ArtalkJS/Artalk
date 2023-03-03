@@ -16,5 +16,6 @@ export interface IPgAdaptor<T> {
   createInstance(conf: IPgHolderConf): [T, HTMLElement]
   setLoading(val: boolean): void
   update(offset: number, total: number): void
+  next(): void
   showErr?(msg: string): void
 }

@@ -3,9 +3,8 @@ import Context from '~/types/context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
+import { render, EditorUI } from './editor-ui'
 import marked from '../lib/marked'
-
-import EditorHTML from './editor.html?raw'
 
 import EmoticonsPlug from './plugs/emoticons-plug'
 import UploadPlug from './plugs/upload-plug'
@@ -16,58 +15,33 @@ import HeaderInputPlug from './plugs/header-input-plug'
 export default class Editor extends Component {
   private get user() { return this.ctx.user }
 
-  public $header: HTMLElement
-  public $nick: HTMLInputElement
-  public $email: HTMLInputElement
-  public $link: HTMLInputElement
-  public get $inputs() {
-    return { nick: this.$nick, email: this.$email, link: this.$link }
-  }
+  private ui: EditorUI
 
-  public $textareaWrap: HTMLElement
-  public $textarea: HTMLTextAreaElement
-  public $bottom: HTMLElement
-  public $submitBtn: HTMLButtonElement
-  public $notifyWrap: HTMLElement
+  public get $inputs() {
+    return { nick: this.ui.$nick, email: this.ui.$email, link: this.ui.$link }
+  }
 
   // Editor 的不同状态
   private isTraveling = false
 
   /** 回复评论 */
   private replyComment: CommentData|null = null
-  private $sendReply: HTMLElement|null = null
   public get isReplyMode() { return this.replyComment !== null }
 
   /** 编辑评论 */
   private editComment: CommentData|null = null
-  private $editCancelBtn: HTMLElement|null = null
   public get isEditMode() { return this.editComment !== null }
 
   /** 启用的插件 */
   private readonly ENABLED_PLUGS = [ EmoticonsPlug, UploadPlug, PreviewPlug, HeaderInputPlug ]
   public plugList: { [name: string]: EditorPlug } = {}
   private openedPlugName: string|null = null
-  public $plugPanelWrap: HTMLElement
-  public $plugBtnWrap: HTMLElement
 
   public constructor(ctx: Context) {
     super(ctx)
 
-    this.$el = Utils.createElement(EditorHTML)
-
-    this.$header = this.$el.querySelector('.atk-header')!
-    this.$nick = this.$header.querySelector('[name="nick"]')!
-    this.$email = this.$header.querySelector('[name="email"]')!
-    this.$link = this.$header.querySelector('[name="link"]')!
-
-    this.$textareaWrap = this.$el.querySelector('.atk-textarea-wrap')!
-    this.$textarea = this.$el.querySelector('.atk-textarea')!
-    this.$bottom = this.$el.querySelector('.atk-bottom')!
-    this.$submitBtn = this.$el.querySelector('.atk-send-btn')!
-    this.$notifyWrap = this.$el.querySelector('.atk-notify-wrap')!
-
-    this.$plugBtnWrap = this.$el.querySelector('.atk-plug-btn-wrap')!
-    this.$plugPanelWrap = this.$el.querySelector('.atk-plug-panel-wrap')!
+    this.ui = render()
+    this.$el = this.ui.$el
 
     // 监听事件
     this.ctx.on('conf-loaded', () => {
@@ -80,6 +54,10 @@ export default class Editor extends Component {
     })
   }
 
+  public getUI() {
+    return this.ui
+  }
+
   private initLocalStorage() {
     const localContent = window.localStorage.getItem('ArtalkContent') || ''
     if (localContent.trim() !== '') {
@@ -87,7 +65,7 @@ export default class Editor extends Component {
       this.setContent(localContent)
     }
 
-    this.$textarea.addEventListener('input', () => (this.saveToLocalStorage()))
+    this.ui.$textarea.addEventListener('input', () => (this.saveToLocalStorage()))
   }
 
   private saveToLocalStorage() {
@@ -119,10 +97,10 @@ export default class Editor extends Component {
 
   private initTextarea() {
     // 占位符
-    this.$textarea.placeholder = this.ctx.conf.placeholder || this.$t('placeholder')
+    this.ui.$textarea.placeholder = this.ctx.conf.placeholder || this.$t('placeholder')
 
     // 修复按下 Tab 输入的内容
-    this.$textarea.addEventListener('keydown', (e) => {
+    this.ui.$textarea.addEventListener('keydown', (e) => {
       const keyCode = e.keyCode || e.which
 
       if (keyCode === 9) {
@@ -132,19 +110,19 @@ export default class Editor extends Component {
     })
 
     // 输入框高度随内容而变化
-    this.$textarea.addEventListener('input', () => {
+    this.ui.$textarea.addEventListener('input', () => {
       this.adjustTextareaHeight()
     })
   }
 
   private refreshSendBtnText() {
-    if (this.isEditMode) this.$submitBtn.innerText = this.$t('save')
-    else this.$submitBtn.innerText = this.ctx.conf.sendBtn || this.$t('send')
+    if (this.isEditMode) this.ui.$submitBtn.innerText = this.$t('save')
+    else this.ui.$submitBtn.innerText = this.ctx.conf.sendBtn || this.$t('send')
   }
 
   private initSubmitBtn() {
     this.refreshSendBtnText()
-    this.$submitBtn.addEventListener('click', () => (this.submit()))
+    this.ui.$submitBtn.addEventListener('click', () => (this.submit()))
   }
 
   /** 最终用于 submit 的数据 */
@@ -160,7 +138,7 @@ export default class Editor extends Component {
   }
 
   public getContentOriginal() {
-    return this.$textarea.value || '' // Tip: !!"0" === true
+    return this.ui.$textarea.value || '' // Tip: !!"0" === true
   }
 
   public getContentMarked() {
@@ -168,7 +146,7 @@ export default class Editor extends Component {
   }
 
   public setContent(val: string) {
-    this.$textarea.value = val
+    this.ui.$textarea.value = val
     this.saveToLocalStorage()
     if (this.plugList.preview) {
       ;(this.plugList.preview as PreviewPlug).updateContent()
@@ -182,28 +160,28 @@ export default class Editor extends Component {
 
   public insertContent(val: string) {
     if ((document as any).selection) {
-      this.$textarea.focus();
+      this.ui.$textarea.focus();
       (document as any).selection.createRange().text = val
-      this.$textarea.focus()
-    } else if (this.$textarea.selectionStart || this.$textarea.selectionStart === 0) {
-      const sStart = this.$textarea.selectionStart
-      const sEnd = this.$textarea.selectionEnd
-      const sT = this.$textarea.scrollTop
-      this.setContent(this.$textarea.value.substring(0, sStart) + val + this.$textarea.value.substring(sEnd, this.$textarea.value.length))
-      this.$textarea.focus()
-      this.$textarea.selectionStart = sStart + val.length
-      this.$textarea.selectionEnd = sStart + val.length
-      this.$textarea.scrollTop = sT
+      this.ui.$textarea.focus()
+    } else if (this.ui.$textarea.selectionStart || this.ui.$textarea.selectionStart === 0) {
+      const sStart = this.ui.$textarea.selectionStart
+      const sEnd = this.ui.$textarea.selectionEnd
+      const sT = this.ui.$textarea.scrollTop
+      this.setContent(this.ui.$textarea.value.substring(0, sStart) + val + this.ui.$textarea.value.substring(sEnd, this.ui.$textarea.value.length))
+      this.ui.$textarea.focus()
+      this.ui.$textarea.selectionStart = sStart + val.length
+      this.ui.$textarea.selectionEnd = sStart + val.length
+      this.ui.$textarea.scrollTop = sT
     } else {
-      this.$textarea.focus()
-      this.$textarea.value += val
+      this.ui.$textarea.focus()
+      this.ui.$textarea.value += val
     }
   }
 
   private adjustTextareaHeight() {
-    const diff = this.$textarea.offsetHeight - this.$textarea.clientHeight
-    this.$textarea.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
-    this.$textarea.style.height = `${this.$textarea.scrollHeight + diff}px`
+    const diff = this.ui.$textarea.offsetHeight - this.ui.$textarea.clientHeight
+    this.ui.$textarea.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
+    this.ui.$textarea.style.height = `${this.ui.$textarea.scrollHeight + diff}px`
   }
 
   /** 设置回复评论 */
@@ -211,13 +189,13 @@ export default class Editor extends Component {
     if (this.isEditMode) this.cancelEditComment()
     if (this.isReplyMode) this.cancelReply()
 
-    if (this.$sendReply === null) {
-      this.$sendReply = Utils.createElement(`<div class="atk-send-reply">${this.$t('reply')} <span class="atk-text"></span><span class="atk-cancel">×</span></div>`);
-      this.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
-      this.$sendReply.addEventListener('click', () => {
+    if (!this.ui.$sendReply) {
+      this.ui.$sendReply = Utils.createElement(`<div class="atk-send-reply">${this.$t('reply')} <span class="atk-text"></span><span class="atk-cancel">×</span></div>`);
+      this.ui.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
+      this.ui.$sendReply.addEventListener('click', () => {
         this.cancelReply()
       })
-      this.$textareaWrap.append(this.$sendReply)
+      this.ui.$textareaWrap.append(this.ui.$sendReply)
     }
     this.replyComment = commentData
 
@@ -225,16 +203,16 @@ export default class Editor extends Component {
       this.travel($comment)
     }
 
-    if (scroll) Ui.scrollIntoView(this.$el)
+    if (scroll) Ui.scrollIntoView(this.ui.$el)
 
-    this.$textarea.focus()
+    this.ui.$textarea.focus()
   }
 
   /** 取消回复评论 */
   public cancelReply() {
-    if (this.$sendReply !== null) {
-      this.$sendReply.remove()
-      this.$sendReply = null
+    if (this.ui.$sendReply) {
+      this.ui.$sendReply.remove()
+      this.ui.$sendReply = undefined
     }
     this.replyComment = null
 
@@ -248,64 +226,64 @@ export default class Editor extends Component {
     if (this.isEditMode) this.cancelEditComment()
     if (this.isReplyMode) this.cancelReply()
 
-    if (this.$editCancelBtn === null) {
-      this.$editCancelBtn = Utils.createElement(`<div class="atk-send-reply">${this.$t('editCancel')}<span class="atk-cancel">×</span></div>`);
-      this.$editCancelBtn.onclick = () => {
+    if (this.ui.$editCancelBtn === null) {
+      this.ui.$editCancelBtn = Utils.createElement(`<div class="atk-send-reply">${this.$t('editCancel')}<span class="atk-cancel">×</span></div>`);
+      this.ui.$editCancelBtn.onclick = () => {
         this.cancelEditComment()
       }
-      this.$textareaWrap.append(this.$editCancelBtn)
+      this.ui.$textareaWrap.append(this.ui.$editCancelBtn)
     }
     this.editComment = commentData
 
-    this.$header.style.display = 'none' // TODO 暂时隐藏
+    this.ui.$header.style.display = 'none' // TODO 暂时隐藏
 
     this.travel($comment)
 
-    this.$nick.value = commentData.nick
-    this.$email.value = commentData.email || ''
-    this.$link.value = commentData.link
+    this.ui.$nick.value = commentData.nick
+    this.ui.$email.value = commentData.email || ''
+    this.ui.$link.value = commentData.link
 
     this.setContent(commentData.content)
-    this.$textarea.focus()
+    this.ui.$textarea.focus()
 
     this.refreshSendBtnText()
   }
 
   /** 取消编辑评论 */
   public cancelEditComment() {
-    if (this.$editCancelBtn !== null) {
-      this.$editCancelBtn.remove()
-      this.$editCancelBtn = null
+    if (this.ui.$editCancelBtn) {
+      this.ui.$editCancelBtn.remove()
+      this.ui.$editCancelBtn = undefined
     }
 
     this.editComment = null
     this.travelBack()
 
-    this.$nick.value = this.user.data.nick
-    this.$email.value = this.user.data.email
-    this.$link.value = this.user.data.link
+    this.ui.$nick.value = this.user.data.nick
+    this.ui.$email.value = this.user.data.email
+    this.ui.$link.value = this.user.data.link
 
     this.setContent('')
     this.refreshSendBtnText()
-    this.$header.style.display = '' // TODO
+    this.ui.$header.style.display = '' // TODO
   }
 
   public showNotify(msg: string, type: "i"|"s"|"w"|"e") {
-    Ui.showNotify(this.$notifyWrap, msg, type)
+    Ui.showNotify(this.ui.$notifyWrap, msg, type)
   }
 
   public showLoading() {
-    Ui.showLoading(this.$el)
+    Ui.showLoading(this.ui.$el)
   }
 
   public hideLoading() {
-    Ui.hideLoading(this.$el)
+    Ui.hideLoading(this.ui.$el)
   }
 
   /** 点击评论提交按钮事件 */
   public async submit() {
     if (this.getFinalContent().trim() === '') {
-      this.$textarea.focus()
+      this.ui.$textarea.focus()
       return
     }
 
@@ -359,9 +337,9 @@ export default class Editor extends Component {
     try {
       const saveData = {
         content: this.getFinalContent(),
-        nick: this.$nick.value,
-        email: this.$email.value,
-        link: this.$link.value,
+        nick: this.ui.$nick.value,
+        email: this.ui.$email.value,
+        link: this.ui.$link.value,
       }
       const nComment = await this.ctx.getApi().comment.commentEdit({
         ...this.editComment, ...saveData
@@ -381,45 +359,45 @@ export default class Editor extends Component {
 
   /** 关闭评论 */
   public close() {
-    if (!this.$textareaWrap.querySelector('.atk-comment-closed'))
-      this.$textareaWrap.prepend(Utils.createElement(`<div class="atk-comment-closed">${this.$t('onlyAdminCanReply')}</div>`))
+    if (!this.ui.$textareaWrap.querySelector('.atk-comment-closed'))
+      this.ui.$textareaWrap.prepend(Utils.createElement(`<div class="atk-comment-closed">${this.$t('onlyAdminCanReply')}</div>`))
 
     if (!this.user.data.isAdmin) {
-      this.$textarea.style.display = 'none'
+      this.ui.$textarea.style.display = 'none'
       this.closePlugPanel()
-      this.$bottom.style.display = 'none'
+      this.ui.$bottom.style.display = 'none'
     } else {
       // 管理员一直打开评论
-      this.$textarea.style.display = ''
-      this.$bottom.style.display = ''
+      this.ui.$textarea.style.display = ''
+      this.ui.$bottom.style.display = ''
     }
   }
 
   /** 打开评论 */
   public open() {
-    this.$textareaWrap.querySelector('.atk-comment-closed')?.remove()
-    this.$textarea.style.display = ''
-    this.$bottom.style.display = ''
+    this.ui.$textareaWrap.querySelector('.atk-comment-closed')?.remove()
+    this.ui.$textarea.style.display = ''
+    this.ui.$bottom.style.display = ''
   }
 
   /** 移动评论框到置顶元素之后 */
   public travel($afterEl: HTMLElement) {
     if (this.isTraveling) return
     this.isTraveling = true
-    this.$el.after(Utils.createElement('<div class="atk-editor-travel-placeholder"></div>'))
+    this.ui.$el.after(Utils.createElement('<div class="atk-editor-travel-placeholder"></div>'))
 
     const $travelPlace = Utils.createElement('<div></div>')
     $afterEl.after($travelPlace)
-    $travelPlace.replaceWith(this.$el)
+    $travelPlace.replaceWith(this.ui.$el)
 
-    this.$el.classList.add('atk-fade-in') // 添加渐入动画
+    this.ui.$el.classList.add('atk-fade-in') // 添加渐入动画
   }
 
   /** 评论框归位 */
   public travelBack() {
     if (!this.isTraveling) return
     this.isTraveling = false
-    this.ctx.$root.querySelector('.atk-editor-travel-placeholder')?.replaceWith(this.$el)
+    this.ctx.$root.querySelector('.atk-editor-travel-placeholder')?.replaceWith(this.ui.$el)
 
     // 取消回复
     if (this.replyComment !== null) this.cancelReply()
@@ -428,10 +406,10 @@ export default class Editor extends Component {
   /** 插件初始化 */
   private initPlugs() {
     this.plugList = {}
-    this.$plugPanelWrap.innerHTML = ''
-    this.$plugPanelWrap.style.display = 'none'
+    this.ui.$plugPanelWrap.innerHTML = ''
+    this.ui.$plugPanelWrap.style.display = 'none'
     this.openedPlugName = null
-    this.$plugBtnWrap.innerHTML = ''
+    this.ui.$plugBtnWrap.innerHTML = ''
 
     const disabledPlugs: string[] = []
     if (!this.conf.imgUpload) disabledPlugs.push('upload')
@@ -452,10 +430,10 @@ export default class Editor extends Component {
       // 插件按钮
       const $btn = plug.getBtn()
       if ($btn) {
-        this.$plugBtnWrap.appendChild($btn)
+        this.ui.$plugBtnWrap.appendChild($btn)
         $btn.onclick = $btn.onclick || (() => {
           // 其他按钮去除 Active
-          this.$plugBtnWrap.querySelectorAll('.active').forEach(item => item.classList.remove('active'))
+          this.ui.$plugBtnWrap.querySelectorAll('.active').forEach(item => item.classList.remove('active'))
 
           // 若点击已打开的，则关闭打开的面板
           if (plugName === this.openedPlugName) {
@@ -474,7 +452,7 @@ export default class Editor extends Component {
         if ($panel) {
           $panel.setAttribute('data-plug-name', plugName)
           $panel.style.display = 'none'
-          this.$plugPanelWrap.appendChild($panel)
+          this.ui.$plugPanelWrap.appendChild($panel)
         }
       }
     })
@@ -495,7 +473,7 @@ export default class Editor extends Component {
       }
     })
 
-    this.$plugPanelWrap.style.display = ''
+    this.ui.$plugPanelWrap.style.display = ''
     this.openedPlugName = plugName
   }
 
@@ -508,7 +486,7 @@ export default class Editor extends Component {
 
     if (plug.onPanelHide) plug.onPanelHide()
 
-    this.$plugPanelWrap.style.display = 'none'
+    this.ui.$plugPanelWrap.style.display = 'none'
     this.openedPlugName = null
   }
 }

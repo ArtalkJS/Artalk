@@ -26,8 +26,8 @@ export default class PreviewPlug extends EditorPlug {
       const event = () => {
         this.updateContent()
       }
-      this.editor.$textarea.addEventListener('input', event)
-      this.editor.$textarea.addEventListener('change', event)
+      this.editor.getUI().$textarea.addEventListener('input', event)
+      this.editor.getUI().$textarea.addEventListener('change', event)
       this.isBind = true
     }
   }

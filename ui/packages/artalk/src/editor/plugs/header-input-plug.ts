@@ -14,11 +14,11 @@ export default class HeaderInputPlug extends EditorPlug {
     })
 
     // Link URL 自动补全协议
-    this.editor.$link.addEventListener('change', () => {
-      const link = this.editor.$link.value.trim()
+    this.editor.getUI().$link.addEventListener('change', () => {
+      const link = this.editor.getUI().$link.value.trim()
       if (!!link && !/^(http|https):\/\//.test(link)) {
-        this.editor.$link.value = `https://${link}`
-        this.ctx.user.update({ link: this.editor.$link.value })
+        this.editor.getUI().$link.value = `https://${link}`
+        this.ctx.user.update({ link: this.editor.getUI().$link.value })
       }
     })
   }
@@ -58,7 +58,7 @@ export default class HeaderInputPlug extends EditorPlug {
 
         // 自动填入 link
         if (data.user && data.user.link) {
-          this.editor.$link.value = data.user.link
+          this.editor.getUI().$link.value = data.user.link
           this.ctx.user.update({ link: data.user.link })
         }
       })

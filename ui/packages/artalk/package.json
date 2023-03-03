@@ -25,7 +25,7 @@
   "types": "./dist/src/main.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm lint && vite build && pnpm build:lite && pnpm build:i18n",
+    "build": "vite build && pnpm build:lite && pnpm build:i18n",
     "build:lite": "vite build --config vite-lite.config.ts",
     "build:i18n": "node scripts/build-i18n.mjs",
     "build:demo": "vite build --config vite-demo.config.ts",

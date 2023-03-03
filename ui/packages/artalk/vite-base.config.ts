@@ -2,8 +2,10 @@ import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { resolve } from 'path'
 import dts from 'vite-plugin-dts'
+import checker from 'vite-plugin-checker'
 
 export default defineConfig({
+  root: './',
   css: {
     preprocessorOptions: {
       scss: {
@@ -17,5 +19,10 @@ export default defineConfig({
       '~': resolve(__dirname),
     }
   },
-  plugins: [tsconfigPaths(), dts()],
+  plugins: [tsconfigPaths(), checker({
+    typescript: true,
+    eslint: {
+      lintCommand: 'eslint "./src/**/*.{js,ts}"',
+    },
+  }), dts(),],
 })

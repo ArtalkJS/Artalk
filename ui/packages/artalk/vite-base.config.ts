@@ -5,7 +5,7 @@ import dts from 'vite-plugin-dts'
 import checker from 'vite-plugin-checker'
 
 export default defineConfig({
-  root: './',
+  root: __dirname,
   css: {
     preprocessorOptions: {
       scss: {
@@ -19,10 +19,17 @@ export default defineConfig({
       '~': resolve(__dirname),
     }
   },
-  plugins: [tsconfigPaths(), checker({
-    typescript: true,
-    eslint: {
-      lintCommand: 'eslint "./src/**/*.{js,ts}"',
-    },
-  }), dts(),],
+  plugins: [
+    tsconfigPaths(),
+    checker({
+      typescript: true,
+      eslint: {
+        lintCommand: 'eslint "./src/**/*.{js,ts}"',
+      },
+    }),
+    dts({
+      // @see https://github.com/qmhc/vite-plugin-dts/blob/main/CHANGELOG.md#breaking-changes
+      copyDtsFiles: true
+    })
+  ],
 })

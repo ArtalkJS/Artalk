@@ -3,14 +3,15 @@ package query
 import (
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/utils"
-	"github.com/PuerkitoBio/goquery"
 	"github.com/sirupsen/logrus"
 )
 
@@ -102,28 +103,45 @@ func GetTitleByURL(url string) (string, error) {
 		return "", errors.New("status code error")
 	}
 
-	// Load the HTML document
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		logrus.Error(err)
 		return "", err
 	}
 
+	data := pageExtractFromHTML(body)
+	if data.RedirectURL != "" {
+		return GetTitleByURL(data.RedirectURL)
+	}
+
+	return data.Title, nil
+}
+
+// the data extracted from a page html
+type pageExtractData struct {
+	Title       string
+	RedirectURL string
+}
+
+func pageExtractFromHTML(html []byte) (data pageExtractData) {
 	// 读取页面 title
-	title := doc.Find("title").Text()
+	titleTagReg := regexp.MustCompile(`(?i)<title>(.*?)</title>`)
+	titleTagMatch := titleTagReg.FindSubmatch(html)
+	if len(titleTagMatch) > 1 {
+		data.Title = strings.TrimSpace(string(titleTagMatch[1]))
+	}
 
 	// 如果页面有跳转
-	val, exists := doc.Find(`meta[http-equiv="refresh"]`).Attr("content")
-	if exists {
+	redirectTagReg := regexp.MustCompile(`(?i)<meta.*?http-equiv="refresh.*?content="(.*?)".*?>`)
+	redirectTagMatch := redirectTagReg.FindSubmatch(html)
+	if len(redirectTagMatch) > 1 {
 		urlReg := regexp.MustCompile(`https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`)
-		match := urlReg.FindStringSubmatch(val)
+		match := urlReg.FindSubmatch(redirectTagMatch[1])
 		if len(match) > 0 {
-			redirectURL := match[0]
-			return GetTitleByURL(redirectURL)
+			data.RedirectURL = strings.TrimSpace(string(match[0]))
 		}
 	}
 
-	return title, nil
+	return data
 }
 
 // ===============

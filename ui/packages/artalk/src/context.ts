@@ -134,7 +134,7 @@ class Context implements ContextApi {
   }
 
   public listHashGotoCheck(): void {
-    if (!this.list || this.list !instanceof List) return
+    if (!this.list || !(this.list instanceof List)) return
     const list = this.list as List
 
     list.goToCommentDelay = false

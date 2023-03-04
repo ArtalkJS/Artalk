@@ -249,11 +249,11 @@ admin_notify:
 # 前端配置
 frontend:
   # 评论框占位文字
-  placeholder: "键入内容..."
+  placeholder: ""
   # 无评论显示文字
-  noComment: "「此时无声胜有声」"
+  noComment: ""
   # 发送按钮文字
-  sendBtn: "发送评论"
+  sendBtn: ""
   # 评论框旅行
   editorTravel: true
   # 表情包

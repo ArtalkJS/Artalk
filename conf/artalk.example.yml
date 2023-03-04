@@ -253,11 +253,11 @@ admin_notify:
 # UI Settings
 frontend:
   # Comment box placeholder
-  placeholder: "What do you think?"
+  placeholder: ""
   # Text to display when there is
-  noComment: "No comments yet."
+  noComment: ""
   # Text of the send button
-  sendBtn: "Send"
+  sendBtn: ""
   # Movable comment box
   editorTravel: true
   # Emoticons
@@ -284,7 +284,7 @@ frontend:
   nestSort: DATE_ASC
   # Gravatar
   gravatar:
-    mirror: "https://cravatar.cn/avatar/"
+    mirror: "https://www.gravatar.com/"
     default: "mp"
   # Comment pagination
   pagination:

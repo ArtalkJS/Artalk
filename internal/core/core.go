@@ -3,7 +3,9 @@ package core
 import (
 	"io"
 	"os"
+	"strconv"
 	"sync"
+	"unicode"
 
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/config"
@@ -80,6 +82,23 @@ func initConfig(cfgFile string, workDir string) {
 func initI18n() {
 	if config.Instance.Locale == "" {
 		config.Instance.Locale = "en"
+
+		// zh-CN default patch
+		// 判断配置文件中是否有中文，若有中文则将 locale 设置为 zh-CN
+		if confRaw, err := os.ReadFile(config.GetCfgFileLoaded()); err == nil {
+			containsHan := false
+			for _, runeValue := range string(confRaw) {
+				if unicode.Is(unicode.Han, runeValue) {
+					containsHan = true
+					break
+				}
+			}
+			if containsHan {
+				config.Instance.Locale = "zh-CN"
+			}
+		}
+
+		logrus.Warn("config `locale` is not set, now it is: " + strconv.Quote(config.Instance.Locale))
 	} else if config.Instance.Locale == "zh" {
 		config.Instance.Locale = "zh-CN"
 	}

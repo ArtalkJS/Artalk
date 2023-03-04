@@ -126,11 +126,11 @@ admin_notify:
       - "USER_ID_1"
       - "GROUP_ID_1"
 frontend:
-  placeholder: "What do you think?"
-  noComment: "No comments yet."
-  sendBtn: "Send"
+  placeholder: ""
+  noComment: ""
+  sendBtn: ""
   editorTravel: true
-  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
+  emoticons: ""
   vote: true
   voteDown: false
   uaBadge: true
@@ -142,7 +142,7 @@ frontend:
   nestMax: 2
   nestSort: DATE_ASC
   gravatar:
-    mirror: "https://cravatar.cn/avatar/"
+    mirror: "https://www.gravatar.com/"
     default: "mp"
   pagination:
     pageSize: 20

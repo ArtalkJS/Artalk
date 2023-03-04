@@ -29,6 +29,7 @@ export default class EmoticonsPlug extends EditorPlug {
 
     this.registerPanel(`<div class="atk-editor-plug-emoticons"></div>`)
     this.registerBtn(this.ctx.$t('emoticon'))
+    this.registerContentTransformer((raw) => this.transEmoticonImageText(raw))
 
     // 表情包预加载
     window.setTimeout(() => {

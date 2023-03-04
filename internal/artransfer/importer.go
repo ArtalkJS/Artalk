@@ -214,6 +214,7 @@ func UrlResolverGetPageKey(baseUrlRaw string, commentUrlRaw string) string {
 func ParseDate(s string) time.Time {
 	denverLoc, _ := time.LoadLocation(config.Instance.TimeZone) // 时区
 	time.Local = denverLoc
+	// TODO should be restricted to using only the RFC3339 standard time format
 	t, _ := dateparse.ParseIn(s, denverLoc)
 
 	return t

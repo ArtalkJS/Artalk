@@ -13,7 +13,7 @@ function onChange(value: boolean|string|number) {
   // 类型转换
   if (value === "true") value = true
   else if (value === "false") value = false
-  else if (!isNaN(Number(value))) value = Number(value)
+  else if (typeof value === 'string' && !isNaN(Number(value))) value = Number(value)
 
   settings.get().customs.value?.setIn(props.path, value)
 }

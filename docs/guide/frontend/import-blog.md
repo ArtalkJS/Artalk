@@ -35,7 +35,7 @@
 </div>
 ```
 
-配置 Hugo 配置文件：
+修改 Hugo 配置文件：
 
 ::: code-group
 

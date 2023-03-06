@@ -24,6 +24,7 @@ type Config struct {
 	Moderator      ModeratorConf          `koanf:"moderator" json:"moderator"`             // 评论审查
 	Captcha        CaptchaConf            `koanf:"captcha" json:"captcha"`                 // 验证码
 	Email          EmailConf              `koanf:"email" json:"email"`                     // 邮箱提醒
+	IPRegion       IPRegionConf           `koanf:"ip_region" json:"ip_region"`             // IP 归属地展示
 	ImgUpload      ImgUploadConf          `koanf:"img_upload" json:"img_upload"`           // 图片上传
 	AdminNotify    AdminNotifyConf        `koanf:"admin_notify" json:"admin_notify"`       // 其他通知方式
 	Notify         *AdminNotifyConf       `koanf:"notify" json:"-"`                        // @deprecated 已废弃 (请使用 AdminNotify)
@@ -212,6 +213,12 @@ type RedisConf struct {
 	Username string `koanf:"username" json:"username"`
 	Password string `koanf:"password" json:"password"`
 	DB       int    `koanf:"db" json:"db"` // Redis 默认数据库 0
+}
+
+type IPRegionConf struct {
+	Enabled   bool   `koanf:"enabled" json:"enabled"`     // 启用 IP 归属地展示
+	DBPath    string `koanf:"db_path" json:"db_path"`     // 数据文件路径
+	Precision string `koanf:"precision" json:"precision"` // 显示精度
 }
 
 type ImgUploadConf struct {

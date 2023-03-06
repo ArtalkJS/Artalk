@@ -51,20 +51,34 @@ function renderDate(ctx: RenderCtx) {
 }
 
 function renderUABadge(ctx: RenderCtx) {
+  if (!ctx.ctx.conf.uaBadge && !ctx.data.ip_region) return
+
+  let $uaWrap = ctx.$header.querySelector('atk-ua-wrap')
+  if (!$uaWrap) {
+    $uaWrap = Utils.createElement(`<span class="atk-ua-wrap"></span>`)
+    ctx.$header.append($uaWrap)
+  }
+
+  $uaWrap.innerHTML = ''
+
+  if (ctx.data.ip_region) {
+    const $regionBadge = Utils.createElement(`<span class="atk-region-badge"></span>`)
+    $regionBadge.innerText = ctx.data.ip_region
+    $uaWrap.append($regionBadge)
+  }
+
   if (ctx.ctx.conf.uaBadge) {
-    let $uaWrap = ctx.$header.querySelector('atk-ua-wrap')
-    if (!$uaWrap) {
-      $uaWrap = Utils.createElement(`<span class="atk-ua-wrap"></span>`)
-      ctx.$header.append($uaWrap)
+    const { browser, os } = ctx.comment.getUserUA()
+    if (String(browser).trim()) {
+      const $uaBrowser = Utils.createElement(`<span class="atk-ua ua-browser"></span>`)
+      $uaBrowser.innerText = browser
+      $uaWrap.append($uaBrowser)
     }
 
-    $uaWrap.innerHTML = ''
-    const $uaBrowser = Utils.createElement(`<span class="atk-ua ua-browser"></span>`)
-    const $usOS = Utils.createElement(`<span class="atk-ua ua-os"></span>`)
-    const uaInfo = ctx.comment.getUserUA()
-    $uaBrowser.innerText = uaInfo.browser
-    $usOS.innerText = uaInfo.os
-    $uaWrap.append($uaBrowser)
-    $uaWrap.append($usOS)
+    if (String(os).trim()) {
+      const $usOS = Utils.createElement(`<span class="atk-ua ua-os"></span>`)
+      $usOS.innerText = os
+      $uaWrap.append($usOS)
+    }
   }
 }

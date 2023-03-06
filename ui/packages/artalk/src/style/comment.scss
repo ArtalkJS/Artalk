@@ -130,6 +130,10 @@
         color: #fff;
       }
 
+      .atk-region-badge {
+        @extend .badge;
+      }
+
       .atk-pinned-badge {
         @extend .badge;
         color: #fff;

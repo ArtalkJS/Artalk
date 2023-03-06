@@ -22,7 +22,7 @@ importers:
       sass: 1.58.0
       terser: 5.16.3
       typescript: 4.9.5
-      vite: 4.1.1
+      vite: 4.1.4
       vite-plugin-checker: 0.5.6
       vite-plugin-dts: 2.0.2
       vite-tsconfig-paths: 4.0.5
@@ -45,9 +45,9 @@ importers:
       sass: 1.58.0
       terser: 5.16.3
       typescript: 4.9.5
-      vite: 4.1.1_mkuf2j6ljkdhmzhb56qdiwgxpe
-      vite-plugin-checker: 0.5.6_tdliyewd6avdihdzfzo6sjhney
-      vite-plugin-dts: 2.0.2_kbr5shrvbw73gka2oc6xalxhf4
+      vite: 4.1.4_mkuf2j6ljkdhmzhb56qdiwgxpe
+      vite-plugin-checker: 0.5.6_cfdl4wazd6oycwnwaoqzhfva44
+      vite-plugin-dts: 2.0.2_dtxluu5qyqjbef7rzkil7xjgw4
       vite-tsconfig-paths: 4.0.5_typescript@4.9.5
 
   packages/artalk:
@@ -75,7 +75,7 @@ importers:
       unplugin-auto-import: ^0.14.3
       unplugin-vue-components: ^0.23.0
       unplugin-vue-router: ^0.3.2
-      vite: ^4.1.1
+      vite: ^4.1.4
       vue: ^3.2.47
       vue-i18n: ^9.2.2
       vue-router: ^4.1.6
@@ -89,13 +89,13 @@ importers:
       vue-router: 4.1.6_vue@3.2.47
       yaml: 2.2.1
     devDependencies:
-      '@vitejs/plugin-vue': 4.0.0_vite@4.1.1+vue@3.2.47
+      '@vitejs/plugin-vue': 4.0.0_vite@4.1.4+vue@3.2.47
       '@vue/tsconfig': 0.1.3
       typescript: 4.9.5
       unplugin-auto-import: 0.14.3
       unplugin-vue-components: 0.23.0_vue@3.2.47
       unplugin-vue-router: 0.3.2_lavcef455lp3wtm2mcdrwhgymm
-      vite: 4.1.1
+      vite: 4.1.4
       vue-tsc: 1.0.24_typescript@4.9.5
 
   packages/plugin-katex:
@@ -1091,14 +1091,14 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@vitejs/plugin-vue/4.0.0_vite@4.1.1+vue@3.2.47:
+  /@vitejs/plugin-vue/4.0.0_vite@4.1.4+vue@3.2.47:
     resolution: {integrity: sha512-e0X4jErIxAB5oLtDqbHvHpJe/uWNkdpYV83AOG2xo2tEVSzCzewgJMtREZM30wXnM5ls90hxiOtAuVU6H5JgbA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.1.1
+      vite: 4.1.4
       vue: 3.2.47
     dev: true
 
@@ -3865,7 +3865,7 @@ packages:
     engines: {node: '>= 0.10'}
     dev: true
 
-  /vite-plugin-checker/0.5.6_tdliyewd6avdihdzfzo6sjhney:
+  /vite-plugin-checker/0.5.6_cfdl4wazd6oycwnwaoqzhfva44:
     resolution: {integrity: sha512-ftRyON0gORUHDxcDt2BErmsikKSkfvl1i2DoP6Jt2zDO9InfvM6tqO1RkXhSjkaXEhKPea6YOnhFaZxW3BzudQ==}
     engines: {node: '>=14.16'}
     peerDependencies:
@@ -3910,14 +3910,14 @@ packages:
       strip-ansi: 6.0.1
       tiny-invariant: 1.3.1
       typescript: 4.9.5
-      vite: 4.1.1_mkuf2j6ljkdhmzhb56qdiwgxpe
+      vite: 4.1.4_mkuf2j6ljkdhmzhb56qdiwgxpe
       vscode-languageclient: 7.0.0
       vscode-languageserver: 7.0.0
       vscode-languageserver-textdocument: 1.0.8
       vscode-uri: 3.0.7
     dev: true
 
-  /vite-plugin-dts/2.0.2_kbr5shrvbw73gka2oc6xalxhf4:
+  /vite-plugin-dts/2.0.2_dtxluu5qyqjbef7rzkil7xjgw4:
     resolution: {integrity: sha512-i3HBlrdqE2FQxQqrNwFj9P2ei/I7lt/d3Q8NOE1JCz/gNYhNf/oUeIJamIdWQUNQGhUd/Y6mtpm3kOYPw1gz8Q==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -3933,7 +3933,7 @@ packages:
       kolorist: 1.7.0
       magic-string: 0.29.0
       ts-morph: 17.0.1
-      vite: 4.1.1_mkuf2j6ljkdhmzhb56qdiwgxpe
+      vite: 4.1.4_mkuf2j6ljkdhmzhb56qdiwgxpe
     transitivePeerDependencies:
       - '@types/node'
       - rollup
@@ -3951,8 +3951,8 @@ packages:
       - typescript
     dev: true
 
-  /vite/4.1.1:
-    resolution: {integrity: sha512-LM9WWea8vsxhr782r9ntg+bhSFS06FJgCvvB0+8hf8UWtvaiDagKYWXndjfX6kGl74keHJUcpzrQliDXZlF5yg==}
+  /vite/4.1.4:
+    resolution: {integrity: sha512-3knk/HsbSTKEin43zHu7jTwYWv81f8kgAL99G5NWBcA1LKvtvcVAC4JjBH1arBunO9kQka+1oGbrMKOjk4ZrBg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -3984,8 +3984,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vite/4.1.1_mkuf2j6ljkdhmzhb56qdiwgxpe:
-    resolution: {integrity: sha512-LM9WWea8vsxhr782r9ntg+bhSFS06FJgCvvB0+8hf8UWtvaiDagKYWXndjfX6kGl74keHJUcpzrQliDXZlF5yg==}
+  /vite/4.1.4_mkuf2j6ljkdhmzhb56qdiwgxpe:
+    resolution: {integrity: sha512-3knk/HsbSTKEin43zHu7jTwYWv81f8kgAL99G5NWBcA1LKvtvcVAC4JjBH1arBunO9kQka+1oGbrMKOjk4ZrBg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:

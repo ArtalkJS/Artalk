@@ -33,13 +33,13 @@ func Init(dbPath string) {
 type Precision string
 
 const (
-	Province Precision = "Province"
-	City     Precision = "City"
-	Country  Precision = "Country"
+	Province Precision = "province"
+	City     Precision = "city"
+	Country  Precision = "country"
 )
 
 func IP2Region(ip string, precision Precision) string {
-	if searcher == nil {
+	if searcher == nil || strings.TrimSpace(ip) == "" {
 		return ""
 	}
 	if precision == "" {
@@ -76,7 +76,10 @@ func scraper(raw string, precision Precision) (r string) {
 	case Province:
 		return province
 	case City:
-		return strings.TrimSuffix(province+city, "0")
+		if city == province { // e.g. 重庆重庆
+			return province
+		}
+		return strings.TrimSuffix(province+""+city, "0")
 	}
 	return
 }

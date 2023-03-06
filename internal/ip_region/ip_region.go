@@ -46,6 +46,12 @@ func IP2Region(ip string, precision Precision) string {
 		precision = Province
 	}
 
+	// 多 IP 仅选第一个
+	ipSep := strings.Split(ip, ",")
+	if len(ipSep) > 1 {
+		ip = strings.TrimSpace(ipSep[0])
+	}
+
 	region, err := searcher.SearchByStr(ip)
 	if err != nil {
 		logrus.Error(err)

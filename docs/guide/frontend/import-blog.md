@@ -35,13 +35,25 @@
 </div>
 ```
 
-配置 `/config.toml` 文件：
+配置 Hugo 配置文件：
 
-```yaml
-## artalk:
-    server = 'https://artalk.example.org'
-    site = '你的站点名'
+::: code-group
+
+```toml [config.toml]
+[params.artalk]
+server = 'https://artalk.example.org'
+site = '你的站点名'
 ```
+
+
+```yaml [config.yaml]
+params:
+  artalk:
+    server: 'https://artalk.example.org'
+    site: '你的站点名'
+```
+
+:::
 
 ## Hexo
 

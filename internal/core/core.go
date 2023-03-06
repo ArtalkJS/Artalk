@@ -11,6 +11,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"github.com/ArtalkJS/Artalk/internal/ip_region"
 	"github.com/ArtalkJS/Artalk/internal/notify_launcher"
 
 	"github.com/rifflock/lfshook"
@@ -34,6 +35,7 @@ func LoadCore(cfgFile string, workDir string) {
 	initCache()
 	initDB()
 	notify_launcher.Init() // 初始化 Notify 发射台
+	initIPRegion()
 
 	// 首次 Load
 	if firstLoad {
@@ -172,4 +174,13 @@ func initDB() {
 	db.InitDB()
 	db.MigrateModels()
 	SyncFromConf()
+}
+
+func initIPRegion() {
+	irConf := config.Instance.IPRegion
+	if !irConf.Enabled {
+		return
+	}
+
+	ip_region.Init(irConf.DBPath) // 初始化 IP 归属地查询
 }

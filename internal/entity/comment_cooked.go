@@ -17,6 +17,7 @@ type CookedComment struct {
 	Rid            uint   `json:"rid"`
 	BadgeName      string `json:"badge_name"`
 	BadgeColor     string `json:"badge_color"`
+	IPRegion       string `json:"ip_region,omitempty"`
 	Visible        bool   `json:"visible"`
 	VoteUp         int    `json:"vote_up"`
 	VoteDown       int    `json:"vote_down"`

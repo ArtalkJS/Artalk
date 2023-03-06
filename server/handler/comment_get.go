@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/ip_region"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -180,6 +182,17 @@ func CommentGet(router fiber.Router) {
 		var unreadNotifies = []entity.CookedNotify{}
 		if p.User != nil {
 			unreadNotifies = query.CookAllNotifies(query.FindUnreadNotifies(p.User.ID))
+		}
+
+		// IP region query
+		if config.Instance.IPRegion.Enabled {
+			nCookedComments := []entity.CookedComment{}
+			for _, c := range cookedComments {
+				rawC := query.FindComment(c.ID)
+				c.IPRegion = ip_region.IP2Region(rawC.IP, ip_region.Precision(config.Instance.IPRegion.Precision))
+				nCookedComments = append(nCookedComments, c)
+			}
+			cookedComments = nCookedComments
 		}
 
 		resp := ResponseGet{

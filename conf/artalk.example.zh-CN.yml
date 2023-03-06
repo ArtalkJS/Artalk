@@ -143,6 +143,15 @@ captcha:
     captcha_id: ""
     captcha_key: ""
 
+# IP 归属地
+ip_region:
+  # 启用 IP 归属地展示
+  enabled: false
+  # 数据文件路径 (.xdb 格式)
+  db_path: "./data/ip2region.xdb"
+  # 显示精度 ["province", "city", "country"]
+  precision: "province"
+
 # 图片上传
 img_upload:
   # 启用图片上传

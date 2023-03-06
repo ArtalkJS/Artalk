@@ -44,6 +44,9 @@ export interface CommentData {
   /** 徽章颜色 */
   badge_color?: string
 
+  /** IP 归属地 */
+  ip_region?: string
+
   /** 是否允许回复 */
   is_allow_reply?: boolean
 

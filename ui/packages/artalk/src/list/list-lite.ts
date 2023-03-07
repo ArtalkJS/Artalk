@@ -8,6 +8,7 @@ import PgHolder, { TPgMode } from './paginator'
 import * as ListNest from './list-nest'
 import * as ListUi from './list-ui'
 import { backendMinVersion, version as ARTALK_VERSION } from '../../package.json'
+import { handleBackendRefConf } from '../config'
 
 export default class ListLite extends Component {
   /** 列表评论集区域元素 */
@@ -191,7 +192,8 @@ export default class ListLite extends Component {
     // 装载后端提供的配置
     if (!this.confLoaded) {
       // 仅应用一次配置
-      if (this.conf.useBackendConf) this.ctx.updateConf(data.conf.frontend_conf)
+      const backendRefConf = handleBackendRefConf(data.conf.frontend_conf)
+      if (this.conf.useBackendConf) this.ctx.updateConf(backendRefConf)
       else this.ctx.updateConf({}) // 让事件监听 `on('conf-loaded')` 有效，与前者保持相同生命周期环节
       this.confLoaded = true
     }

@@ -82,8 +82,9 @@ function save() {
 .settings {
   .notice {
     font-size: 13px;
-    background: #e5ecfa;
-    color: #1967d2;
+    background: var(--at-color-bg-light);
+    color: var(--at-color-light);
+    border-radius: 2px;
     text-align: center;
     padding: 8px 10px;
     margin-top: 10px;
@@ -101,7 +102,7 @@ function save() {
     width: 100%;
     bottom: 0;
     left: 0;
-    background: rgba(255, 255, 255, 0.831);
+    background: var(--at-color-bg-transl);
     border-top: 1px solid var(--at-color-border);
     padding: 0 20px;
 
@@ -111,12 +112,13 @@ function save() {
     }
 
     button {
-      font-size: 16px;
+      font-size: 14px;
       display: inline-flex;
       align-items: center;
       padding: 4px 16px;
       cursor: pointer;
       background: transparent;
+      border-radius: 2px;
       background: var(--at-color-main);
       color: #fff;
       border: 0;

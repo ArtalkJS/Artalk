@@ -66,7 +66,7 @@ function onHeadClick(evt: Event) {
 
 <style scoped lang="scss">
 .pf-grp {
-  background: #fff;
+  background: var(--at-color-bg);
   margin-bottom: 10px;
   border-radius: 4px;
 }
@@ -92,7 +92,7 @@ function onHeadClick(evt: Event) {
         content: '';
         height: 10px;
         width: 10px;
-        background: #B7DCFF;
+        background: rgba(136, 195, 250, 0.7);
       }
     }
   }
@@ -123,7 +123,7 @@ function onHeadClick(evt: Event) {
     padding: 0 10px 0 10px;
     margin-left: 4px;
     margin-top: 15px;
-    border-left: 2px solid #eee;
+    border-left: 2px solid var(--at-color-border);
   }
 }
 

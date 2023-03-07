@@ -47,7 +47,7 @@ const userAvatarImgURL = computed(() =>
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-bottom: 1px solid #eceff2;
+  border-bottom: 1px solid var(--at-color-border);
 
   .avatar {
     position: relative;
@@ -74,8 +74,8 @@ const userAvatarImgURL = computed(() =>
       cursor: pointer;
 
       &:hover, &.active {
-        background: #f4f4f4;
-        border-right: 1px solid #eceff2;
+        background: var(--at-color-bg-grey);
+        border-right: 1px solid var(--at-color-border);
       }
 
       &::after {
@@ -110,7 +110,7 @@ const userAvatarImgURL = computed(() =>
     .text {
       display: inline-block;
       position: relative;
-      color: #2a2e2e;
+      color: var(--at-color-deep);
       font-size: 20px;
 
       &::after {

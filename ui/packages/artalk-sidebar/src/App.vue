@@ -32,22 +32,41 @@ onBeforeMount(() => {
     }
   })
 })
+
+const darkMode = ref(bootParams.darkMode)
+
+;(function initDarkModeWatchMedia() {
+  if (!window.matchMedia) return
+  const query = window.matchMedia('(prefers-color-scheme: dark)')
+  query.addEventListener('change', (e) => {
+    darkMode.value = e.matches
+  })
+})()
 </script>
 
 <template>
-  <Header />
-  <Tab />
+  <div class="app-wrap artalk atk-sidebar" :class="{ 'atk-dark-mode': darkMode }">
+    <Header />
+    <Tab />
 
-  <div class="main artalk atk-sidebar">
-    <div ref="scrollableArea" class="atk-sidebar-inner">
-      <router-view />
+    <div class="main">
+      <div ref="scrollableArea" class="atk-sidebar-inner">
+        <router-view />
+      </div>
+      <LoadingLayer v-if="nav.isPageLoading" />
     </div>
-    <LoadingLayer v-if="nav.isPageLoading" />
   </div>
 </template>
 
 <style scoped lang="scss">
+.app-wrap {
+  background: var(--at-color-bg);
+  color: var(--at-color-font);
+}
+
 .main {
+  position: relative;
+
   .atk-sidebar-inner {
     overflow-y: auto;
     height: calc(100vh - 61px - 41px);

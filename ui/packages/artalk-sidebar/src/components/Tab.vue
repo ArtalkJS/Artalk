@@ -172,21 +172,32 @@ function onSearchSubmit(evt: Event) {
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-bottom: 1px solid #eceff2;
+  border-bottom: 1px solid var(--at-color-border);
   height: 41px;
 
   .icon {
     width: 17px;
     height: 100%;
+    background-color: var(--at-color-deep);
+    background-size: contain;
     background-repeat: no-repeat;
-    background-position: 50%;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+    mask-size: 100%;
+    -webkit-mask-size: 100%;
 
     &.menu {
-      background-image: url("data:image/svg+xml,%3Csvg width='14' height='11' viewBox='0 0 14 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg clip-path='url(%23clip0_1_2)'%3E%3Crect width='14' height='11' fill='white'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0 0H14V1H0V0ZM0 5H14V6H0V5ZM14 10H0V11H14V10Z' fill='black'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath id='clip0_1_2'%3E%3Crect width='14' height='11' fill='none'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E");
+      $menuImg: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M5 9H44V11.8182H5V9ZM5 23.0909H44V25.9091H5V23.0909ZM44 37.1818H5V40H44V37.1818Z' fill='black'/%3E%3C/svg%3E%0A");
+      mask-image: $menuImg;
+      -webkit-mask-image: $menuImg;
     }
 
     &.arrow {
-      background-image: url("data:image/svg+xml,%3Csvg width='9' height='14' viewBox='0 0 9 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='9' height='13' fill='none'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M7.52898 0L1 6.52898L1.17809 6.70707L1.17805 6.70711L7.52897 13.058L8.23608 12.3509L2.41418 6.52902L8.23609 0.707107L7.52898 0Z' fill='black'/%3E%3C/svg%3E");
+      $arrowImg: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M32.1433 7L15 24.4999L15.4676 24.9773L32.1433 42L34 40.1047L18.7133 24.5001L34 8.89529L32.1433 7Z' fill='black'/%3E%3C/svg%3E%0A");
+      mask-image: $arrowImg;
+      -webkit-mask-image: $arrowImg;
     }
   }
 
@@ -195,7 +206,7 @@ function onSearchSubmit(evt: Event) {
     align-items: center;
     height: 100%;
     padding: 0 20px;
-    border-right: 1px solid #eceff2;
+    border-right: 1px solid var(--at-color-border);
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
@@ -205,7 +216,7 @@ function onSearchSubmit(evt: Event) {
     }
 
     .text {
-      color: #2a2e2e;
+      color: var(--at-color-deep);
     }
   }
 
@@ -226,7 +237,7 @@ function onSearchSubmit(evt: Event) {
 
   .item {
     padding: 0 20px;
-    color: #757575;
+    color: var(--at-color-sub);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -235,17 +246,17 @@ function onSearchSubmit(evt: Event) {
     white-space: nowrap;
 
     &.active {
-      color: #2a2e2e;
+      color: var(--at-color-deep);
     }
 
     &:hover {
-      background: #f4f4f4;
+      background: var(--at-color-bg-grey);
     }
 
     &.search-btn {
       margin-left: auto;
       padding: 0 20px;
-      border-left: 1px solid #eceff2;
+      border-left: 1px solid var(--at-color-border);
 
       &::after {
         display: inline-block;
@@ -264,13 +275,13 @@ function onSearchSubmit(evt: Event) {
     position: absolute;
     height: 100%;
     width: 100%;
-    background: #fff;
+    background: var(--at-color-bg);
     display: flex;
     flex-direction: row;
 
     .back-btn {
       padding: 0 20px;
-      border-right: 1px solid #eceff2;
+      border-right: 1px solid var(--at-color-border);
     }
 
     input {
@@ -279,6 +290,7 @@ function onSearchSubmit(evt: Event) {
       outline: none;
       padding: 0 20px;
       font-size: 15px;
+      background: transparent;
     }
 
     .search-btn {

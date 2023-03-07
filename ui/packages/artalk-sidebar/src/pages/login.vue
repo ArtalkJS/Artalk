@@ -92,7 +92,7 @@ function login(username?: string) {
   justify-content: center;
   top: 0;
   left: 0;
-  background: #fff;
+  background: var(--at-color-bg);
   width: 100%;
   height: 100%;
 
@@ -103,6 +103,7 @@ function login(username?: string) {
     height: 50px;
     margin-bottom: 50px;
     margin-top: -50px;
+    border-radius: 2px;
   }
 
   .copyright {
@@ -124,7 +125,8 @@ function login(username?: string) {
   input {
     display: block;
     border: 0;
-    border-bottom: 1px solid #eee;
+    background: transparent;
+    border-bottom: 1px solid var(--at-color-border);
     padding: 0 20px;
     line-height: 40px;
     margin-bottom: 10px;
@@ -137,6 +139,7 @@ function login(username?: string) {
   button {
     color: #fff;
     background: #6e8392;
+    border-radius: 2px;
     cursor: pointer;
     border: 0;
     line-height: 35px;

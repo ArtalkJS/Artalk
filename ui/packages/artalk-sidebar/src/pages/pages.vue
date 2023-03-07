@@ -189,7 +189,7 @@ function cacheWarm() {
     align-items: center;
     overflow: hidden;
     padding: 10px 15px 0 15px;
-    background: #fff;
+    background: var(--at-color-bg);
     z-index: 10;
     border-bottom: 1px solid transparent;
     transition: .3s ease-out padding;

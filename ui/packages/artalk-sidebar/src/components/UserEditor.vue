@@ -143,7 +143,7 @@ function submit() {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: var(--at-color-bg);
   overflow-y: auto;
 }
 
@@ -154,7 +154,7 @@ function submit() {
   flex-direction: row;
   align-items: center;
   padding: 20px 20px 10px 20px;
-  background: rgba(255, 255, 255, 0.884);
+  background: var(--at-color-bg-transl);
 
   .title {
     margin-left: 10px;

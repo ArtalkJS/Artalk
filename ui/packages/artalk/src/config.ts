@@ -42,3 +42,24 @@ export function handelBaseConf(customConf: Partial<ArtalkConfig>): ArtalkConfig 
 
   return conf
 }
+
+export function handleBackendRefConf(conf: Partial<ArtalkConfig>) {
+  const DisabledKeys: (keyof ArtalkConfig)[] = [
+    'el', 'pageKey', 'pageTitle', 'server', 'site', 'darkMode'
+  ]
+  Object.keys(conf).forEach(k => {
+    if (DisabledKeys.includes(k as any)) delete conf[k]
+  })
+
+  // Patch: `emoticons` config string to json
+  if (conf.emoticons && typeof conf.emoticons === "string") {
+    conf.emoticons = conf.emoticons.trim()
+    if (conf.emoticons.startsWith("[") || conf.emoticons.startsWith("{")) {
+      conf.emoticons = JSON.parse(conf.emoticons) // pase json
+    } else if (conf.emoticons === "false") {
+      conf.emoticons = false
+    }
+  }
+
+  return conf
+}

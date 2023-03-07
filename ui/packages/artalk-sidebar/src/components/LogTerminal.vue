@@ -60,7 +60,7 @@ function back() {
     border-right: 1px solid var(--at-color-border);
     border-left: 1px solid transparent;
     &:hover {
-      background: #f4f4f4;
+      background: var(--at-color-bg-grey);
     }
   }
 
@@ -70,7 +70,7 @@ function back() {
     width: 100%;
     height: calc(100vh - 150px);
     border: 0;
-    background: #f4f4f4;
+    background: var(--at-color-bg-grey);
     border: 3px solid #eee;
   }
 }

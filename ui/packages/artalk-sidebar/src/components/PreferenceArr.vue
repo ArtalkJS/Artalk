@@ -82,13 +82,13 @@ function add() {
   padding: 2px 10px;
   cursor: pointer;
   border: 0;
-  color: #5f6369;
-  background: #f4f4f4;
+  color: var(--at-color-font);
+  background: var(--at-color-bg-grey);
   border-radius: 2px;
 
   &:hover {
-    color: #1967d2;
-    background: #e5ecfa;
+    color: var(--at-color-light);
+    background: var(--at-color-bg-light);
   }
 }
 </style>

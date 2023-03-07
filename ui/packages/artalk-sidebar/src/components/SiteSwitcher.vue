@@ -91,11 +91,11 @@ watch(curtShow, (value) => {
   left: calc((100% - 80%) / 2);
   top: 70px;
   pointer-events: all;
-  background: #FFF;
+  background: var(--at-color-bg);
   width: 80%;
   max-height: 40%;
   margin: 0 auto;
-  border: 1px solid #eceff2;
+  border: 1px solid var(--at-color-border);
   border-radius: 4px;
   overflow-y: auto;
   transition: all 0.2s ease;
@@ -126,13 +126,13 @@ watch(curtShow, (value) => {
       }
 
       .atk-site-name {
-        color: #2a2e2e;
+        color: var(--at-color-deep);
         font-size: 17px;
         margin-left: 7px;
       }
 
       &.atk-active, &:hover {
-        background: #F4F4F4;
+        background: var(--at-color-bg-grey);
       }
     }
   }

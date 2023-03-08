@@ -60,6 +60,9 @@ export default interface ArtalkConfig {
 
     /** 子评论区域限高 */
     children: number
+
+    /** 滚动限高 */
+    scrollable: boolean
   }
 
   /** 评论投票按钮 */

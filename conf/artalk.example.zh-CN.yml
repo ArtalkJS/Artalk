@@ -307,6 +307,8 @@ frontend:
     content: 300
     # 子评论区域限高 (单位：px)
     children: 400
+    # 滚动限高 (允许限高区域滚动)
+    scrollable: false
   # 请求超时 (单位：毫秒)
   reqTimeout: 15000
   # 版本检测

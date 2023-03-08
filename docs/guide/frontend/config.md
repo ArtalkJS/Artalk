@@ -418,6 +418,7 @@ pagination: {
 heightLimit: {
   content: 300, // 评论内容限高
   children: 400, // 子评论区域限高
+  scrollable: false, // 限高滚动
 }
 ```
 
@@ -436,6 +437,15 @@ heightLimit: {
 
 - 类型：`Number`
 - 默认值：`400`
+
+### heightLimit.scrollable
+
+**限高区域滚动**
+
+- 类型：`Boolean`
+- 默认：`false`
+
+允许限高区域滚动。
 
 ## 版本检测
 

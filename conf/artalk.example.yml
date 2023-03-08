@@ -300,6 +300,8 @@ frontend:
     content: 300
     # Sub-comment area height limit (unit: px)
     children: 400
+    # Scrollable (scrollable height limit area)
+    scrollable: false
   # Request timeout (unit: ms)
   reqTimeout: 15000
   # Version check

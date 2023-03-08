@@ -41,6 +41,7 @@ const defaults: ArtalkConfig = {
   heightLimit: {
     content: 300,
     children: 400,
+    scrollable: false,
   },
 
   imgUpload: true,

@@ -16,7 +16,7 @@
   --at-color-pink: #fa5a57;
   --at-color-yellow: #ff7c37;
   --at-color-green: #4caf50;
-  --at-color-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255));
+  --at-color-gradient: linear-gradient(180deg, transparent, rgba(255, 255, 255));
 
   &.atk-dark-mode {
     --at-color-font: #fff;
@@ -36,6 +36,6 @@
     --at-color-pink: #fa5a57;
     --at-color-yellow: #ff7c37;
     --at-color-green: #4caf50;
-    --at-color-gradient: linear-gradient(180deg, rgba(30, 34, 36, 0), rgba(30, 34, 36, 1));
+    --at-color-gradient: linear-gradient(180deg, transparent, rgba(30, 34, 36, 1));
   }
 }

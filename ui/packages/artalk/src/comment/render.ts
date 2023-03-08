@@ -34,15 +34,19 @@ export default class CommentRender extends RenderCtx {
 
   /** 内容限高检测 */
   public checkHeightLimit() {
-    const contentMaxH = this.ctx.conf.heightLimit.content
-    const childrenMaxH = this.ctx.conf.heightLimit.children
+    const conf = this.ctx.conf.heightLimit
+    if (!conf || !conf.content || !conf.children) return // 关闭限高
+
+    const contentMaxH = conf.content
+    const childrenMaxH = conf.children
 
     HeightLimit.check({
       postExpandBtnClick: () => {
         // 子评论数仅有 1，直接取消限高
         const children = this.comment.getChildren()
         if (children.length === 1) HeightLimit.disposeHeightLimit(children[0].getRender().$content)
-      }
+      },
+      scrollable: conf.scrollable
     }, [
       // 评论内容限高
       { el: this.$content, max: contentMaxH, imgContains: true },

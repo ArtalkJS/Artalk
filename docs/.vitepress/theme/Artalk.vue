@@ -13,7 +13,8 @@ function loadArtalk() {
   const script = document.createElement('script')
   script.async = true
   script.defer = true
-  script.src = `https://npm.elemecdn.com/artalk@${Version.latest}/dist/Artalk.js`
+  // script.src = `https://npm.elemecdn.com/artalk@${Version.latest}/dist/Artalk.js`
+  script.src = `https://artalk.qwqaq.com/dist/Artalk.js`
   document.getElementsByTagName('head')[0].appendChild(script)
   return script
 }

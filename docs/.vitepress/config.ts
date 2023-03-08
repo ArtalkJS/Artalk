@@ -11,7 +11,8 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.png' }],
     ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi' }],
     // artalk
-    ['link', { href: `https://npm.elemecdn.com/artalk@${Version.latest}/dist/Artalk.css`, rel: 'stylesheet' }],
+    // ['link', { href: `https://npm.elemecdn.com/artalk@${Version.latest}/dist/Artalk.css`, rel: 'stylesheet' }],
+    ['link', { href: `https://artalk.qwqaq.com/dist/Artalk.css`, rel: 'stylesheet' }],
     // ['script', { src: ArtalkCDN.JS }],
     // light gallery
     ['link', { href: 'https://npm.elemecdn.com/lightgallery@2.3.0/css/lightgallery.css', rel: 'stylesheet' }],

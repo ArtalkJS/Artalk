@@ -177,10 +177,19 @@ func initDB() {
 }
 
 func initIPRegion() {
-	irConf := config.Instance.IPRegion
+	irConf := &config.Instance.IPRegion
 	if !irConf.Enabled {
 		return
 	}
 
-	ip_region.Init(irConf.DBPath) // 初始化 IP 归属地查询
+	if irConf.DBPath == "" {
+		irConf.DBPath = "./data/ip2region.xdb"
+	}
+	if irConf.Precision == "" {
+		// 默认精确到省
+		irConf.Precision = string(ip_region.Province)
+	}
+
+	ip_region.Init(irConf.DBPath)                                 // 初始化 IP 归属地查询
+	ip_region.SetPrecision(ip_region.Precision(irConf.Precision)) // 精度设置
 }

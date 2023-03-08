@@ -189,7 +189,7 @@ func CommentGet(router fiber.Router) {
 			nCookedComments := []entity.CookedComment{}
 			for _, c := range cookedComments {
 				rawC := query.FindComment(c.ID)
-				c.IPRegion = ip_region.IP2Region(rawC.IP, ip_region.Precision(config.Instance.IPRegion.Precision))
+				c.IPRegion = ip_region.IP2Region(rawC.IP)
 				nCookedComments = append(nCookedComments, c)
 			}
 			cookedComments = nCookedComments

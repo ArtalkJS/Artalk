@@ -9,12 +9,17 @@ import (
 )
 
 var searcher *xdb.Searcher
+var precisionConf = Province
+
+type Precision string
+
+const (
+	Province Precision = "province"
+	City     Precision = "city"
+	Country  Precision = "country"
+)
 
 func Init(dbPath string) {
-	if dbPath == "" {
-		dbPath = "./data/ip2region.xdb"
-	}
-
 	// 1、从 dbPath 加载整个 xdb 到内存
 	cBuff, err := xdb.LoadContentFromFile(dbPath)
 	if err != nil {
@@ -30,20 +35,16 @@ func Init(dbPath string) {
 	}
 }
 
-type Precision string
+func SetPrecision(p Precision) {
+	precisionConf = p
+}
 
-const (
-	Province Precision = "province"
-	City     Precision = "city"
-	Country  Precision = "country"
-)
-
-func IP2Region(ip string, precision Precision) string {
+func IP2Region(ip string) string {
 	if searcher == nil || strings.TrimSpace(ip) == "" {
 		return ""
 	}
-	if precision == "" {
-		precision = Province
+	if precisionConf == "" {
+		precisionConf = Province
 	}
 
 	// 多 IP 仅选第一个
@@ -58,7 +59,7 @@ func IP2Region(ip string, precision Precision) string {
 		return ""
 	}
 
-	return scraper(region, precision)
+	return scraper(region, precisionConf)
 }
 
 func scraper(raw string, precision Precision) (r string) {

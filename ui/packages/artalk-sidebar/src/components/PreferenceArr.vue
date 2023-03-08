@@ -7,7 +7,11 @@ const props = defineProps<{
 }>()
 
 const ci = getCurrentInstance()
-const customValue = ref<string[]>(props.tplData)
+const customValue = ref<string[]>([])
+
+onMounted(() => {
+  update()
+})
 
 function update() {
   customValue.value = (settings.get().customs.value?.getIn(props.path) as any)?.items || []

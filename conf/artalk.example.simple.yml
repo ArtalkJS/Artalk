@@ -151,5 +151,6 @@ frontend:
   heightLimit:
     content: 300
     children: 400
+    scrollable: false
   reqTimeout: 15000
   versionCheck: true

@@ -4,6 +4,8 @@ import $t from '../i18n'
 export interface IHeightLimitConf {
   /** Post expand btn click */
   postExpandBtnClick?: (e: MouseEvent) => void
+  /** Allow Scroll */
+  scrollable?: boolean
 }
 
 export interface IHeightLimitRule {
@@ -21,22 +23,29 @@ export type THeightLimitRuleSet = IHeightLimitRule[]
 
 /** Check all elements below the max height limit */
 export function check(conf: IHeightLimitConf, rules: THeightLimitRuleSet) {
-  rules.forEach(rule => {
-    const _check = () => {
-      // 是否超过高度
-      if (!rule.el) return
-      if (Utils.getHeight(rule.el) > rule.max)
-        applyHeightLimit({
-          el: rule.el, maxHeight: rule.max,
-          postBtnClick: conf.postExpandBtnClick
-        })
+  rules.forEach(({
+    el, max: maxHeight, imgContains
+  }) => {
+    const _apply = () => {
+      if (!el) return
+      if (!conf.scrollable)
+        applyHeightLimit({ el, maxHeight, postBtnClick: conf.postExpandBtnClick })
+      else
+        applyScrollableHeightLimit({ el, maxHeight })
     }
 
+    // checking
+    const _check = () => {
+      if (el && Utils.getHeight(el) > maxHeight) _apply() // 是否超过高度
+    }
     _check() // check now
-    if (rule.imgContains && rule.el) // check again if img contains
-      Utils.onImagesLoaded(rule.el, () => _check())
+    if (imgContains && el) // check again if img contains
+      Utils.onImagesLoaded(el, () => _check())
   })
 }
+
+/** Height limit CSS class name */
+const HEIGHT_LIMIT_CSS = 'atk-height-limit'
 
 /** Apply height limit on an element and add expand btn */
 export function applyHeightLimit(obj: {
@@ -45,9 +54,10 @@ export function applyHeightLimit(obj: {
   postBtnClick?: (e: MouseEvent) => void
 }) {
   if (!obj.el) return
-  if (obj.el.classList.contains('atk-height-limit')) return
+  if (!obj.maxHeight) return
+  if (obj.el.classList.contains(HEIGHT_LIMIT_CSS)) return
 
-  obj.el.classList.add('atk-height-limit')
+  obj.el.classList.add(HEIGHT_LIMIT_CSS)
   obj.el.style.height = `${obj.maxHeight}px`
   obj.el.style.overflow = 'hidden'
 
@@ -65,12 +75,26 @@ export function applyHeightLimit(obj: {
 /** Dispose height limit on an element and remove expand btn */
 export function disposeHeightLimit($el: HTMLElement) {
   if (!$el) return
-  if (!$el.classList.contains('atk-height-limit')) return
+  if (!$el.classList.contains(HEIGHT_LIMIT_CSS)) return
 
-  $el.classList.remove('atk-height-limit')
+  $el.classList.remove(HEIGHT_LIMIT_CSS)
   Array.from($el.children).forEach((e) => {
     if (e.classList.contains('atk-height-limit-btn')) e.remove()
   })
   $el.style.height = ''
   $el.style.overflow = ''
+}
+
+/** Height limit scrollable CSS class name */
+const HEIGHT_LIMIT_SCROLL_CSS = 'atk-height-limit-scroll'
+
+/** Apply scrollable height limit */
+export function applyScrollableHeightLimit(obj: {
+  el: HTMLElement,
+  maxHeight: number
+}) {
+  if (!obj.el) return
+  if (obj.el.classList.contains(HEIGHT_LIMIT_SCROLL_CSS)) return
+  obj.el.classList.add(HEIGHT_LIMIT_SCROLL_CSS)
+  obj.el.style.height = `${obj.maxHeight}px`
 }

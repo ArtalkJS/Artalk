@@ -127,7 +127,7 @@ Artalk 支持多站点统一管理，此项用于站点隔离。
 设置为 `false` 关闭表情包功能。
 
 :::warning 请替换 CDN 资源
-很遗憾，JS DELIVR [在中国大陆的 ICP 牌照被吊销](https://github.com/jsdelivr/jsdelivr/issues/18348#issuecomment-997777996)，感谢 JS DELIVR 对社区的贡献 :heart:。
+JS DELIVR 在中国大陆的 [ICP 牌照已被吊销](https://github.com/jsdelivr/jsdelivr/issues/18348#issuecomment-997777996)。
 :::
 
 ## 界面

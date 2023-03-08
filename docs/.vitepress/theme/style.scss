@@ -140,3 +140,11 @@ img[atk-emoticon] {
 .custom-block.details > summary {
   cursor: pointer;
 }
+
+.vp-code-group .tabs > * {
+  color: var(--vp-c-text-1) !important;
+}
+
+.vp-code-group .tabs::after {
+  background-color: var(--vp-c-divider)
+}

@@ -4,13 +4,13 @@ specifiers:
   '@redocly/cli': 1.0.0-beta.123
   markdown-it-for-inline: ^0.1.1
   sass: ^1.58.3
-  vitepress: 1.0.0-alpha.49
+  vitepress: 1.0.0-alpha.50
 
 devDependencies:
   '@redocly/cli': 1.0.0-beta.123
   markdown-it-for-inline: 0.1.1
   sass: 1.58.3
-  vitepress: 1.0.0-alpha.49_sass@1.58.3
+  vitepress: 1.0.0-alpha.50_sass@1.58.3
 
 packages:
 
@@ -1961,8 +1961,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitepress/1.0.0-alpha.49_sass@1.58.3:
-    resolution: {integrity: sha512-3nUZJow4qL8NHRWYatqqVj45AJDxWst/TuOj+IbQRhxesEswa+Fpwayj9/FxzRzBl665fuiG5y+QeVhOeUm0OA==}
+  /vitepress/1.0.0-alpha.50_sass@1.58.3:
+    resolution: {integrity: sha512-6EdT6JIiHRD7KatKMfxCJ3J7aHlkMp67ZEcfYrMTLKAJ+K+qWs2p427udMHSenCOzVNLIikEC5v/rP3GOGWubQ==}
     hasBin: true
     dependencies:
       '@docsearch/css': 3.3.3

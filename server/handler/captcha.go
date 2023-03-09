@@ -53,10 +53,28 @@ func captchaStatus(c *fiber.Ctx) error {
 func captchaGet(c *fiber.Ctx) error {
 	ip := c.IP()
 
-	// ===========
-	//  Geetest
-	// ===========
-	if config.Instance.Captcha.Geetest.Enabled {
+	switch config.Instance.Captcha.CaptchaType {
+
+	case config.Turnstile:
+		// ===========
+		//  Turnstile
+		// ===========
+		pageFile, _ := captcha.GetPage("turnstile.html")
+		buf, _ := io.ReadAll(pageFile)
+
+		var page bytes.Buffer
+
+		t := template.New("")
+		t.Parse(string(buf))
+		t.Execute(&page, map[string]interface{}{"site_key": config.Instance.Captcha.Turnstile.SiteKey})
+
+		c.Set("Content-Type", "text/html")
+		return c.SendString(page.String())
+
+	case config.Geetest:
+		// ===========
+		//  Geetest
+		// ===========
 		pageFile, _ := captcha.GetPage("geetest.html")
 		buf, _ := io.ReadAll(pageFile)
 
@@ -68,14 +86,15 @@ func captchaGet(c *fiber.Ctx) error {
 
 		c.Set("Content-Type", "text/html")
 		return c.SendString(page.String())
-	}
 
-	// ===========
-	//  图片验证码
-	// ===========
-	return common.RespData(c, common.Map{
-		"img_data": common.GetNewImageCaptchaBase64(ip),
-	})
+	default:
+		// ===========
+		//  图片验证码
+		// ===========
+		return common.RespData(c, common.Map{
+			"img_data": common.GetNewImageCaptchaBase64(ip),
+		})
+	}
 }
 
 type ParamsCaptchaCheck struct {
@@ -98,10 +117,37 @@ func captchaCheck(c *fiber.Ctx) error {
 	}
 	inputVal := p.Value
 
-	// ===========
-	//  Geetest
-	// ===========
-	if config.Instance.Captcha.Geetest.Enabled {
+	switch config.Instance.Captcha.CaptchaType {
+	case config.Turnstile:
+		// ===========
+		//  Turnstile
+		// ===========
+		isPass, reason, err := captcha.TurnstileCheck(captcha.TurnstileParams{
+			SecreteKey: config.Instance.Captcha.Turnstile.SecretKey,
+			UserToken:  p.Value,
+			UserIP:     ip,
+		})
+		if err != nil {
+			logrus.Error("[Turnstile] Failed to verify: ", err)
+			return common.RespError(c, "Turnstile API error")
+		}
+
+		if isPass {
+			// 验证成功
+			common.OnCaptchaPass(c)
+			return common.RespSuccess(c)
+		} else {
+			// 验证失败
+			common.OnCaptchaFail(c)
+			return common.RespError(c, i18n.T("Verification failed"), common.Map{
+				"reason": reason,
+			})
+		}
+
+	case config.Geetest:
+		// ===========
+		//  Geetest
+		// ===========
 		isPass, reason, err := captcha.GeetestCheck(inputVal)
 		if err != nil {
 			logrus.Error("[Geetest] Failed to verify: ", err)
@@ -119,23 +165,24 @@ func captchaCheck(c *fiber.Ctx) error {
 				"reason": reason,
 			})
 		}
-	}
 
-	// ===========
-	//  图片验证码
-	// ===========
-	isPass := strings.ToLower(inputVal) == common.GetImageCaptchaRealCode(ip)
-	if isPass {
-		// 验证码正确
-		common.DisposeImageCaptcha(ip) // 销毁图片验证码
-		common.OnCaptchaPass(c)
-		return common.RespSuccess(c)
-	} else {
-		// 验证码错误
-		common.DisposeImageCaptcha(ip)
-		common.OnCaptchaFail(c)
-		return common.RespError(c, i18n.T("Wrong captcha"), common.Map{
-			"img_data": common.GetNewImageCaptchaBase64(ip),
-		})
+	default:
+		// ===========
+		//  图片验证码
+		// ===========
+		isPass := strings.ToLower(inputVal) == common.GetImageCaptchaRealCode(ip)
+		if isPass {
+			// 验证码正确
+			common.DisposeImageCaptcha(ip) // 销毁图片验证码
+			common.OnCaptchaPass(c)
+			return common.RespSuccess(c)
+		} else {
+			// 验证码错误
+			common.DisposeImageCaptcha(ip)
+			common.OnCaptchaFail(c)
+			return common.RespError(c, i18n.T("Wrong captcha"), common.Map{
+				"img_data": common.GetNewImageCaptchaBase64(ip),
+			})
+		}
 	}
 }

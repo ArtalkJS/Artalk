@@ -58,10 +58,13 @@ moderator:
 captcha:
   enabled: true
   always: false
+  captcha_type: "image"
   action_limit: 3
   action_reset: 60
+  turnstile:
+    site_key: ""
+    secret_key: ""
   geetest:
-    enabled: false
     captcha_id: ""
     captcha_key: ""
 email:

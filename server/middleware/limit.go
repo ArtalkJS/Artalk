@@ -66,7 +66,7 @@ func ActionLimitMiddleware(conf ActionLimitConf) fiber.Handler {
 				"need_captcha": true,
 			}
 
-			if config.Instance.Captcha.Geetest.Enabled {
+			if config.Instance.Captcha.CaptchaType != config.ImageCaptcha {
 				// iframe 验证模式
 				respData["iframe"] = true
 				// 前端新版不会再用到 img_data，给旧版响应 ArtalkFrontent out-of-date 图片

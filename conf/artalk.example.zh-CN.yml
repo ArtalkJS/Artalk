@@ -133,13 +133,19 @@ captcha:
   enabled: true
   # 总是需要验证码
   always: false
+  # 验证类型 ["image", "turnstile", "geetest"]
+  captcha_type: "image"
   # 激活验证码所需操作次数
   action_limit: 3
   # 重置操作计数器超时 (单位：s, 设为 -1 不重置)
   action_reset: 60
+  # Turnstile
+  # (https://www.cloudflare.com/products/turnstile/)
+  turnstile:
+    site_key: ""
+    secret_key: ""
   # Geetest 极验 (https://www.geetest.com)
   geetest:
-    enabled: false
     captcha_id: ""
     captcha_key: ""
 

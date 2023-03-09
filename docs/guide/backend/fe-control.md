@@ -6,6 +6,8 @@
 
 在侧边栏的[控制中心](/guide/frontend/sidebar.md#控制中心)提供了图形设置界面，你能快速轻松地对前端配置进行修改。
 
+<img src="../../images/sidebar/fe-setting.png" width="400px">
+
 ## 在前端引入内置资源
 
 后端 Artalk 服务器中内置了可供前端引入的 JS 和 CSS 资源文件：

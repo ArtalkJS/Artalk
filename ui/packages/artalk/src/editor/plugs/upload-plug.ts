@@ -33,12 +33,9 @@ export default class UploadPlug extends EditorPlug {
       $input.click() // 显示选择图片对话框
     }
 
-    this.ctx.on('conf-loaded', () => {
-      if (!this.ctx.conf.imgUpload) {
-        this.getBtn()!.setAttribute('atk-only-admin-show', '')
-        this.ctx.checkAdminShowEl()
-      }
-    })
+    if (!this.ctx.conf.imgUpload) {
+      this.getBtn()!.setAttribute('atk-only-admin-show', '')
+    }
 
     // 统一从 FileList 获取文件并上传图片方法
     const uploadFromFileList = (files?: FileList) => {

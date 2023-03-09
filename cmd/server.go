@@ -28,10 +28,15 @@ var serverCmd = &cobra.Command{
 		fmt.Print("-------------------------------\n\n")
 
 		// create fiber app
+		// @see https://docs.gofiber.io/api/fiber#config
 		app := fiber.New(fiber.Config{
 			// @see https://github.com/gofiber/fiber/issues/426
 			// @see https://github.com/gofiber/fiber/issues/185
 			Immutable: true,
+
+			// TODO add config to set ProxyHeader
+			ProxyHeader:        "X-Forwarded-For",
+			EnableIPValidation: true,
 		})
 
 		// logger

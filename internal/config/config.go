@@ -129,16 +129,31 @@ type KeyWordsAntispamConf struct {
 }
 
 type CaptchaConf struct {
-	Enabled       bool        `koanf:"enabled" json:"enabled"`
-	Always        bool        `koanf:"always" json:"always"`
-	ActionTimeout int         `koanf:"action_timeout" json:"-"` // @deprecated 已废弃 (请使用 ActionReset)
-	ActionReset   int         `koanf:"action_reset" json:"action_reset"`
-	ActionLimit   int         `koanf:"action_limit" json:"action_limit"`
-	Geetest       GeetestConf `koanf:"geetest" json:"geetest"`
+	Enabled       bool          `koanf:"enabled" json:"enabled"`
+	Always        bool          `koanf:"always" json:"always"`
+	CaptchaType   CaptchaType   `koanf:"captcha_type" json:"captcha_type"`
+	ActionTimeout int           `koanf:"action_timeout" json:"-"` // @deprecated 已废弃 (请使用 ActionReset)
+	ActionReset   int           `koanf:"action_reset" json:"action_reset"`
+	ActionLimit   int           `koanf:"action_limit" json:"action_limit"`
+	Turnstile     TurnstileConf `koanf:"turnstile" json:"turnstile"`
+	Geetest       GeetestConf   `koanf:"geetest" json:"geetest"`
+}
+
+type CaptchaType string
+
+const (
+	ImageCaptcha CaptchaType = "image"
+	Turnstile    CaptchaType = "turnstile"
+	Geetest      CaptchaType = "geetest"
+)
+
+type TurnstileConf struct {
+	SiteKey   string `koanf:"site_key" json:"site_key"`
+	SecretKey string `koanf:"secret_key" json:"secret_key"`
 }
 
 type GeetestConf struct {
-	Enabled    bool   `koanf:"enabled" json:"enabled"`
+	Enabled    bool   `koanf:"enabled" json:"-"` // @deprecated 已废弃 (请使用 captcha.captcha_type)
 	CaptchaID  string `koanf:"captcha_id" json:"captcha_id"`
 	CaptchaKey string `koanf:"captcha_key" json:"captcha_key"`
 }

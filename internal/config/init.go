@@ -123,4 +123,9 @@ func postInit() {
 	if Instance.Moderator.PendingDefault {
 		Instance.AdminNotify.NoiseMode = true
 	}
+
+	// 默认将验证码类型设置为 image
+	if strings.TrimSpace(string(Instance.Captcha.CaptchaType)) == "" {
+		Instance.Captcha.CaptchaType = ImageCaptcha
+	}
 }

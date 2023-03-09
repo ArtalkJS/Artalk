@@ -134,16 +134,20 @@ captcha:
   enabled: true
   # Captcha is required always
   always: false
-  # Captcha type ["geetest", "image"]
+  # Captcha type ["image", "turnstile", "geetest"]
   captcha_type: "image"
   # Action limit
   # (the number of actions required to activate captcha)
   action_limit: 3
   # Reset Timeout (timeout to reset action counter. unit: s, set to -1 to disable)
   action_reset: 60
+  # Turnstile
+  # (https://www.cloudflare.com/products/turnstile/)
+  turnstile:
+    site_key: ""
+    secret_key: ""
   # Geetest (https://www.geetest.com)
   geetest:
-    enabled: false
     captcha_id: ""
     captcha_key: ""
 

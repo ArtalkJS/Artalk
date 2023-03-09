@@ -83,8 +83,6 @@ export default class List extends ListLite {
       this.$openSidebarBtn.classList.add('atk-hide')
     }
 
-    // 仅管理员显示控制
-    this.ctx.checkAdminShowEl()
     this.$openSidebarBtn.querySelector<HTMLElement>('.atk-text')!
       .innerText = (!this.ctx.user.data.isAdmin) ? this.$t('msgCenter') : this.$t('ctrlCenter')
 

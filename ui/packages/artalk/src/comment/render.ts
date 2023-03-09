@@ -22,7 +22,7 @@ export default class CommentRender extends RenderCtx {
     this.$content = this.$body.querySelector('.atk-content')!
     this.$actions = this.$el.querySelector('.atk-actions')!
 
-    this.$el.setAttribute('data-comment-id', `${this.data.id}`)
+    this.$el.setAttribute('id', `atk-comment-${this.data.id}`)
 
     // call all renders
     loadRenders(this)

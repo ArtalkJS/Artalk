@@ -161,6 +161,7 @@ export default class List extends ListLite {
     else window.setTimeout(() => goTo(), 350)
 
     this.goToCommentFounded = true
+    this.goToCommentDelay = true // reset
   }
 
   /** 管理员设置页面信息 */

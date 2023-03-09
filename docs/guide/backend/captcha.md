@@ -15,11 +15,16 @@ Artalk 内置图片验证码功能，你可以配置操作频率限制，当超�
 captcha:
   enabled: true    # 总开关
   always: false    # 总是需要验证码
+  captcha_type: "image" # 验证类型 ["image", "turnstile", "geetest"]
   action_limit: 3  # 激活验证码所需操作次数
   action_reset: 60 # 重置操作计数器超时 (单位：s, 设为 -1 不重置)
-  # Geetest 极验
-  geetest: # https://www.geetest.com
-    enabled: false
+  # Turnstile
+  # (https://www.cloudflare.com/products/turnstile/)
+  turnstile:
+    site_key: ""
+    secret_key: ""
+  # Geetest 极验 (https://www.geetest.com)
+  geetest:
     captcha_id: ""
     captcha_key: ""
 ```
@@ -67,17 +72,40 @@ captcha:
 
 一个 IP 地址的一次「评论、投票、图片上传、密码验证」都算作一次「操作」。
 
-## Geetest 极验
+## Turnstile
 
-Artalk 支持接入 [Geetest 极验](https://www.geetest.com/adaptive-captcha) 第四代「行为验」，启用极验后，验证码将切换为滑动验证码。
+[Turnstile](https://www.cloudflare.com/zh-cn/products/turnstile/) 是 Cloudflare 推出的无感验证服务，可在 CF 后台申请获得 `site_key` 和 `secret_key`，之后在 Artalk 控制中心设置页填入 Key 并将 `captcha_type` 修改为 `turnstile` 即可。
 
-你需要在官网注册账号，并申请获得 `captcha_id` 和 `captcha_key`，并填入配置文件：
+图示：
+
+<img src="../../images/captcha/cf-turnstile-1.png" width="400px">
+
+<img src="../../images/captcha/cf-turnstile-2.png" width="400px">
+
+对应配置文件如下：
 
 ```yaml
 captcha:
   # 省略其他配置...
+  captcha_type: "turnstile"
+  turnstile:
+    site_key: ""
+    secret_key: ""
+```
+
+## Geetest 极验
+
+Artalk 支持接入 [Geetest 极验](https://www.geetest.com/adaptive-captcha) 第四代行为验。
+
+首先在 Geetest 官网注册账号申请获得 `captcha_id` 和 `captcha_key`，然后在 Artalk 控制中心修改配置，并将 `captcha_type` 修改为 `geetest` 即可。
+
+对应配置文件如下：
+
+```yaml
+captcha:
+  # 省略其他配置...
+  captcha_type: "geetest"
   geetest:
-    enabled: true
     captcha_id: ""
     captcha_key: ""
 ```

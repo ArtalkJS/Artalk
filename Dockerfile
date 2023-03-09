@@ -8,14 +8,19 @@ RUN set -ex \
     && apk add --no-cache make git gcc musl-dev nodejs bash npm\
     && npm install -g pnpm@7.25.0
 
-COPY . ./Artalk
+# download go deps
+# (cache by separating the downloading of deps)
+COPY go.mod go.sum ./
+RUN go mod download
+
+# copy source code
+COPY . .
 
 # build
 RUN set -ex \
-    && cd ./Artalk \
     && export VERSION=$(git describe --tags --abbrev=0) \
     && export COMMIT_SHA=$(git rev-parse --short HEAD) \
-    && make all
+    && make build
 
 ### build final image
 FROM alpine:3.17
@@ -26,7 +31,7 @@ ARG TZ="Asia/Shanghai"
 
 ENV TZ ${TZ}
 
-COPY --from=builder /source/Artalk/bin/artalk /artalk
+COPY --from=builder /source/bin/artalk /artalk
 
 RUN apk add --no-cache bash tzdata \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \

@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 	"io"
+	"os"
+	"os/signal"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
@@ -49,13 +51,25 @@ var serverCmd = &cobra.Command{
 		// init router
 		server.Init(app)
 
-		// listen
+		// graceful shutdown signal listen
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		go func() {
+			<-c
+			fmt.Println("Gracefully shutting down...")
+			_ = app.Shutdown()
+		}()
+
+		// socket listen
 		listenAddr := fmt.Sprintf("%s:%d", config.Instance.Host, config.Instance.Port)
 		if config.Instance.SSL.Enabled {
 			app.ListenTLS(listenAddr, config.Instance.SSL.CertPath, config.Instance.SSL.KeyPath)
 		} else {
 			app.Listen(listenAddr)
 		}
+
+		// graceful shutdown tasks
+		fmt.Println("Running cleanup tasks...")
 	},
 }
 

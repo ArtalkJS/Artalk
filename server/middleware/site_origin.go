@@ -113,12 +113,10 @@ func CheckOrigin(c *fiber.Ctx, allowSite *entity.Site) (bool, error) {
 	}
 
 	// 允许同源请求
-	host := string(c.Request().Host())
-	realHostUnderProxy := c.Get(fiber.HeaderXForwardedHost)
-	if realHostUnderProxy != "" {
-		host = realHostUnderProxy
-	}
-	allowURLs = append(allowURLs, string(c.Request().URI().Scheme())+"://"+host)
+	// c.Request().Host()、c.Request().URI().Scheme() 不能直接获取，
+	// 如果套一层代理将不能获得正确值。
+	// 使用 c.Protocol() 将读取 X-Forwarded-，应注意 header spoofing
+	allowURLs = append(allowURLs, c.Protocol()+"://"+c.Hostname())
 
 	// 判断 Origin 是否被允许
 	if GetIsAllowOrigin(origin, allowURLs) {

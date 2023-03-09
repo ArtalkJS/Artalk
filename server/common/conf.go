@@ -9,18 +9,16 @@ import (
 )
 
 type ApiVersionData struct {
-	App          string `json:"app"`
-	Version      string `json:"version"`
-	CommitHash   string `json:"commit_hash"`
-	FeMinVersion string `json:"fe_min_version"`
+	App        string `json:"app"`
+	Version    string `json:"version"`
+	CommitHash string `json:"commit_hash"`
 }
 
 func GetApiVersionDataMap() ApiVersionData {
 	return ApiVersionData{
-		App:          "artalk",
-		Version:      strings.TrimPrefix(config.Version, "v"),
-		CommitHash:   config.CommitHash,
-		FeMinVersion: strings.TrimPrefix(config.FeMinVersion, "v"),
+		App:        "artalk",
+		Version:    strings.TrimPrefix(config.Version, "v"),
+		CommitHash: config.CommitHash,
 	}
 }
 

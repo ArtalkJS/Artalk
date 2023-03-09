@@ -55,16 +55,17 @@ export function renderErrorDialog(list: ListLite, errMsg: string, errData?: any)
 }
 
 /** 版本检测弹窗 */
-export function versionCheckDialog(list: ListLite, name: 'frontend'|'backend', needVersion: string, curtVersion: string): boolean {
-  const needUpdate = Utils.versionCompare(needVersion, curtVersion) === 1
-  if (needUpdate) {
-    // 需要更新
-    const errEl = Utils.createElement(`<div>Artalk ${$t(name)}版本已过时，请更新以获得完整体验<br/>`
-    + `如果你是管理员，请前往 “<a href="https://artalk.js.org/" target="_blank">官方文档</a>” 获得帮助`
-    + `<br/><br/>`
-    + `<span style="color: var(--at-color-meta);">当前${$t(name)}版本 ${curtVersion}，需求版本 >= ${needVersion}</span><br/><br/>`
-    + `</div>`)
-    const ignoreBtn = Utils.createElement('<span style="cursor:pointer;">忽略</span>')
+export function versionCheckDialog(list: ListLite, feVer: string, beVer: string): boolean {
+  const comp = Utils.versionCompare(feVer, beVer)
+  const notSameVer = (comp !== 0)
+  if (notSameVer) {
+    const errEl = Utils.createElement(
+      `<div>请更新 Artalk ${comp < 0 ? $t('frontend') : $t('backend')}以获得完整体验 ` +
+      `(<a href="https://artalk.js.org/" target="_blank">帮助文档</a>)` +
+      `<br/><br/><span style="color: var(--at-color-meta);">` +
+      `当前版本：${$t('frontend')} ${feVer} / ${$t('backend')} ${beVer}` +
+      `</span><br/><br/></div>`)
+    const ignoreBtn = Utils.createElement('<span style="cursor:pointer">忽略</span>')
     ignoreBtn.onclick = () => {
       Ui.setError(list.$el.parentElement!, null)
       list.ctx.conf.versionCheck = false
@@ -72,7 +73,8 @@ export function versionCheckDialog(list: ListLite, name: 'frontend'|'backend', n
     }
     errEl.append(ignoreBtn)
     Ui.setError(list.$el.parentElement!, errEl, '<span class="atk-warn-title">Artalk Warn</span>')
+    return true
   }
 
-  return needUpdate
+  return false
 }

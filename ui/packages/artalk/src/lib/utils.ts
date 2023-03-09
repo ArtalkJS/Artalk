@@ -74,13 +74,13 @@ export function timeAgo(date: Date, ctx: Context) {
           // 计算相差秒数
           const leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
           const seconds = Math.round(leave3 / 1000)
+          if (seconds < 10) return ctx.$t('now')
           return `${seconds} ${ctx.$t('seconds')}`
         }
         return `${minutes} ${ctx.$t('minutes')}`
       }
       return `${hours} ${ctx.$t('hours')}`
     }
-    if (days < 0) return ctx.$t('now')
 
     if (days < 8) {
       return `${days} ${ctx.$t('days')}`

@@ -155,7 +155,7 @@ JS DELIVR 在中国大陆的 [ICP 牌照已被吊销](https://github.com/jsdeliv
 
 ### editorTravel
 
-**评论框旅行**
+**评论框穿梭**
 
 - 类型：`Boolean`
 - 默认值：`true`

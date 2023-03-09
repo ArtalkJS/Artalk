@@ -19,36 +19,36 @@ const pages = computed((): { [name: string]: PageItem } => {
   if (isAdmin.value) {
     return {
       comments: {
-        label: t('comment'),
+        label: 'comment',
         link: '/comments',
       },
       pages: {
-        label: t('page'),
+        label: 'page',
         link: '/pages',
       },
       users: {
-        label: t('user'),
+        label: 'user',
         link: '/users',
       },
       sites: {
-        label: t('site'),
+        label: 'site',
         link: '/sites',
         hide: true,
       },
       transfer: {
-        label: t('transfer'),
+        label: 'transfer',
         link: '/transfer',
         hide: true,
       },
       settings: {
-        label: t('settings'),
+        label: 'settings',
         link: '/settings'
       }
     }
   } else {
     return {
       comments: {
-        label: t('comment'),
+        label: 'comment',
         link: '/comments',
       }
     }
@@ -120,7 +120,7 @@ function onSearchSubmit(evt: Event) {
   <div class="tab">
     <div class="page" @click="toggleIndicator()">
       <div class="icon" :class="(indicator === 'tabs') ? 'menu' : 'arrow'"></div>
-      <div class="text">{{ pages[curtPage]?.label || '' }}</div>
+      <div class="text" v-if="pages[curtPage]?.label">{{ t(pages[curtPage].label) }}</div>
     </div>
 
     <div ref="tabListEl" class="tab-list">
@@ -131,7 +131,7 @@ function onSearchSubmit(evt: Event) {
           class="item"
           :class="{ active: curtTab === tabName }"
           @click="switchTab(tabName as string)"
-        >{{ tabLabel }}</div>
+        >{{ t(tabLabel) }}</div>
 
         <div
           v-if="isSearchEnabled"
@@ -148,7 +148,7 @@ function onSearchSubmit(evt: Event) {
           v-show="!page.hide"
           :class="{ active: pageName === curtPage }"
           @click="switchPage(pageName as string)"
-        >{{ page.label }}</div>
+        >{{ t(page.label) }}</div>
       </template>
     </div>
 

@@ -21,9 +21,9 @@ const editingUser = ref<UserDataForAdmin|undefined>()
 
 onMounted(() => {
   nav.updateTabs({
-    'all': t('all'),
-    'admin': t('admin'),
-    'create': t('create')
+    'all': 'all',
+    'admin': 'admin',
+    'create': 'create'
   }, 'all')
 
   watch(curtTab, (tab) => {

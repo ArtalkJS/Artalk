@@ -15,8 +15,8 @@ let settingsTpl = shallowReactive({ tpl: null as any })
 
 onMounted(() => {
   nav.updateTabs({
-    'sites': t('site'),
-    'transfer': t('transfer'),
+    'sites': 'site',
+    'transfer': 'transfer',
   })
 
   watch(curtTab, (tab) => {

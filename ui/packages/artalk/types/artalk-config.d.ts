@@ -26,7 +26,7 @@ export default interface ArtalkConfig {
   /** 发送按钮文字 */
   sendBtn: string
 
-  /** 评论框旅行（显示在待回复评论后面） */
+  /** 评论框穿梭（显示在待回复评论后面） */
   editorTravel: boolean
 
   /** 表情包 */

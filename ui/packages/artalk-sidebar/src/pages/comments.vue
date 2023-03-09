@@ -19,16 +19,16 @@ onMounted(() => {
   // 初始化导航条
   if (user.isAdmin) {
     nav.updateTabs({
-      admin_all: t('all'),
-      admin_pending: t('pending'),
-      all: t('personal'),
+      admin_all: 'all',
+      admin_pending: 'pending',
+      all: 'personal',
     }, 'admin_all')
   } else {
     nav.updateTabs({
-      all: t('all'),
-      mentions: t('mentions'),
-      mine: t('mine'),
-      pending: t('pending'),
+      all: 'all',
+      mentions: 'mentions',
+      mine: 'mine',
+      pending: 'pending',
     }, 'all')
   }
 

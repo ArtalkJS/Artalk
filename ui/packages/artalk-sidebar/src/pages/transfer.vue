@@ -30,8 +30,8 @@ const exportTaskStarted = ref(false)
 
 onMounted(() => {
   nav.updateTabs({
-    'import': t('import'),
-    'export': t('export'),
+    'import': 'import',
+    'export': 'export',
   }, 'import')
   watch(curtTab, (tab) => {
     if (tab === 'export') {

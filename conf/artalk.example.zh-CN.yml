@@ -263,7 +263,7 @@ frontend:
   noComment: ""
   # 发送按钮文字
   sendBtn: ""
-  # 评论框旅行
+  # 评论框穿梭
   editorTravel: true
   # 表情包
   emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"

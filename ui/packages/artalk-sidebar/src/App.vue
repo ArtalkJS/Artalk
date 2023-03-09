@@ -9,8 +9,18 @@ const user = useUserStore()
 const route = useRoute()
 const router = useRouter()
 const { scrollableArea } = storeToRefs(nav)
+const i18n = useI18n()
 
 onBeforeMount(() => {
+  // 获取语言
+  if (!global.getBootParams().locale) {
+    global.getArtalk().ctx.getApi().system.conf().then(resp => {
+      if (resp.locale && typeof resp.locale == 'string') {
+        i18n.locale.value = resp.locale
+      }
+    })
+  }
+
   if (bootParams.user?.email) {
     global.getArtalk().ctx.user.update(bootParams.user)
   } else {

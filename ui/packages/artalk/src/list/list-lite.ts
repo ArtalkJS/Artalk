@@ -7,7 +7,7 @@ import Comment from '../comment'
 import PgHolder, { TPgMode } from './paginator'
 import * as ListNest from './list-nest'
 import * as ListUi from './list-ui'
-import { backendMinVersion, version as ARTALK_VERSION } from '../../package.json'
+import { version as ARTALK_VERSION } from '../../package.json'
 import { handleBackendRefConf } from '../config'
 
 export default class ListLite extends Component {
@@ -198,10 +198,8 @@ export default class ListLite extends Component {
       this.confLoaded = true
     }
 
-    // 版本检测（前后端双向制约）
-    const feMinVersion = data.api_version?.fe_min_version || '0.0.0'
-    if (this.ctx.conf.versionCheck && ListUi.versionCheckDialog(this, 'frontend', feMinVersion, ARTALK_VERSION)) return
-    if (this.ctx.conf.versionCheck && ListUi.versionCheckDialog(this, 'backend', backendMinVersion, data.api_version?.version)) return
+    // 前后端版本一致性检测
+    if (this.ctx.conf.versionCheck && ListUi.versionCheckDialog(this, ARTALK_VERSION, data.api_version.version)) return
 
     // 导入数据
     this.importComments(data.comments)

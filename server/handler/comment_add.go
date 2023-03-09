@@ -7,6 +7,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"github.com/ArtalkJS/Artalk/internal/ip_region"
 	"github.com/ArtalkJS/Artalk/internal/notify_launcher"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
@@ -167,8 +168,15 @@ func CommentAdd(router fiber.Router) {
 			notify_launcher.SendNotify(&comment, &parentComment)
 		}()
 
+		cookedComment := query.CookComment(&comment)
+
+		// IP 归属地
+		if config.Instance.IPRegion.Enabled {
+			cookedComment.IPRegion = ip_region.IP2Region(comment.IP)
+		}
+
 		return common.RespData(c, ResponseAdd{
-			Comment: query.CookComment(&comment),
+			Comment: cookedComment,
 		})
 	})
 }

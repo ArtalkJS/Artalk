@@ -11,9 +11,18 @@ const customValue = computed(() => settings.get().customs.value?.getIn(props.pat
 
 function onChange(value: boolean|string|number) {
   // 类型转换
-  if (value === "true") value = true
-  else if (value === "false") value = false
-  else if (typeof value === 'string' && !isNaN(Number(value))) value = Number(value)
+  switch (typeof props.tplData) {
+    case "boolean":
+      if (value === "true") value = true
+      else if (value === "false") value = false
+      break
+    case "string":
+      value = String(value)
+      break
+    case "number":
+      if (!isNaN(Number(value))) value = Number(value)
+      break
+  }
 
   settings.get().customs.value?.setIn(props.path, value)
 }

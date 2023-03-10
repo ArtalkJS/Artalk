@@ -19,6 +19,15 @@ import * as I18n from './i18n'
  * 这个成员的名称与函数名对应。可在 Context 类中访问该对象（同事类）。
  */
 const services = {
+  // I18n
+  i18n(ctx: Context) {
+    I18n.setLocale(ctx.conf.locale)
+
+    ctx.on('conf-loaded', () => {
+      I18n.setLocale(ctx.conf.locale)
+    })
+  },
+
   // Markdown 组件
   markdown() {
     initMarked()
@@ -94,15 +103,6 @@ const services = {
 
     ctx.on('conf-loaded', () => {
       DarkMode.syncDarkModeConf(ctx)
-    })
-  },
-
-  // I18n
-  i18n(ctx: Context) {
-    I18n.setLocale(ctx.conf.locale)
-
-    ctx.on('conf-loaded', () => {
-      I18n.setLocale(ctx.conf.locale)
     })
   }
 }

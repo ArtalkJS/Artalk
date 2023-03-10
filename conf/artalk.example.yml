@@ -10,7 +10,7 @@ app_key: ""
 # Debug mode
 debug: false
 
-# Language (follow Unicode BCP 47)
+# Language (follow Unicode BCP 47) ["en", "zh-CN", "zh-TW", "jp"]
 # -- see https://www.techonthenet.com/js/language_tags.php --
 locale: "en"
 

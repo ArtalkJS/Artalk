@@ -91,7 +91,7 @@ Artalk.use((ctx) => {
 })
 ```
 
-详情见：[插件开发](../guide/frontend/plugs.md)
+详情见：[插件开发](./plugs.md)
 
 ## 夜间模式 `Artalk.setDarkMode`
 

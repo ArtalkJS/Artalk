@@ -43,6 +43,10 @@ func NewCaptcha(t config.CaptchaType) Captcha {
 	switch t {
 	case config.TypeTurnstile:
 		return NewTurnstileCaptcha(&config.Instance.Captcha.Turnstile)
+	case config.TypeReCaptcha:
+		return NewReCaptcha(&config.Instance.Captcha.ReCaptcha)
+	case config.TypeHCaptcha:
+		return NewHCaptcha(&config.Instance.Captcha.HCaptcha)
 	case config.TypeGeetest:
 		return NewGeetestCaptcha(&config.Instance.Captcha.Geetest)
 	default:

@@ -64,6 +64,12 @@ captcha:
   turnstile:
     site_key: ""
     secret_key: ""
+  recaptcha:
+    site_key: ""
+    secret_key: ""
+  hcaptcha:
+    site_key: ""
+    secret_key: ""
   geetest:
     captcha_id: ""
     captcha_key: ""

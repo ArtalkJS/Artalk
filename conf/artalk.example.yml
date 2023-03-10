@@ -134,7 +134,7 @@ captcha:
   enabled: true
   # Captcha is required always
   always: false
-  # Captcha type ["image", "turnstile", "geetest"]
+  # Captcha type ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
   captcha_type: "image"
   # Action limit
   # (the number of actions required to activate captcha)
@@ -144,6 +144,15 @@ captcha:
   # Turnstile
   # (https://www.cloudflare.com/products/turnstile/)
   turnstile:
+    site_key: ""
+    secret_key: ""
+  # reCaptcha
+  # (https://www.google.com/recaptcha/about/)
+  recaptcha:
+    site_key: ""
+    secret_key: ""
+  # hCaptcha (https://www.hcaptcha.com/)
+  hcaptcha:
     site_key: ""
     secret_key: ""
   # Geetest (https://www.geetest.com)

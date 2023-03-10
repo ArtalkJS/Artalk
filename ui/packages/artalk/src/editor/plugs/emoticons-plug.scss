@@ -28,8 +28,9 @@
         cursor: pointer;
         user-select: none;
         border-radius: calc($block-radius / 2);
-        font-size: 16px;
+        font-size: 15px;
         min-width: 35px;
+        margin: 2px;
 
         & > img {
           max-height: 100%;

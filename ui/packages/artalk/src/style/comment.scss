@@ -60,7 +60,7 @@
     margin-left: 63px;
 
     & > .atk-header {
-      line-height: 1;
+      line-height: 1.5;
       font-size: 13px;
       margin-bottom: .5em;
       overflow: hidden;
@@ -147,7 +147,6 @@
       .atk-ua-wrap {
         @media only screen and (max-width: 768px) {
           display: block;
-          margin-top: 5px;
         }
       }
     }

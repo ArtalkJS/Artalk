@@ -138,6 +138,10 @@ function cacheFlush() {
 function cacheWarm() {
   artalk!.ctx.getApi().admin.cacheWarmUp().then((d: any) => alert(d.msg)).catch(() => alert(t('opFailed')))
 }
+
+function openPage(url: string) {
+  window.open(url)
+}
 </script>
 
 <template>
@@ -153,8 +157,8 @@ function cacheWarm() {
     <div class="atk-page-list">
       <div v-for="(page) in pages" class="atk-page-item">
         <div class="atk-page-main">
-          <div class="atk-title">{{ page.title }}</div>
-          <div class="atk-sub">{{ page.url }}</div>
+          <div class="atk-title" @click="openPage(page.url)">{{ page.title }}</div>
+          <div class="atk-sub" @click="openPage(page.url)">{{ page.url }}</div>
         </div>
         <div class="atk-page-actions">
           <div class="atk-item atk-edit-btn" @click="editPage(page)">

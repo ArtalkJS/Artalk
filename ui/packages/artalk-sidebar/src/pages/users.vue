@@ -188,11 +188,11 @@ function delUser(user: UserDataForAdmin) {
             color: #fff;
 
             &.admin {
-              background: #ff6c00;
+              background: #0083FF;
             }
 
             &.in-conf {
-              background: #297bff;
+              background: #89b1a5;
             }
           }
         }

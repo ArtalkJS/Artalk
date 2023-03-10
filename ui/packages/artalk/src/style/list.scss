@@ -159,11 +159,13 @@
 }
 
 .atk-list-no-comment {
-  text-align: center;
   height: 150px;
-  line-height: 150px;
-  display: block;
+  display: flex;
   font-size: 19px;
+  justify-content: center;
+  align-items: center;
+  word-break: break-word;
+  text-align: center;
 }
 
 .atk-list-read-more {

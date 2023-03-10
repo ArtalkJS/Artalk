@@ -30,13 +30,14 @@
 
   code {
     font-family: $codeFont;
-    margin: 0 .3em;
-    padding: 0 .5em;
+    margin: 0 .05em;
+    padding: 0 .4em;
     display: inline-block;
+    vertical-align: middle;
     font-size: .9em;
     background-color: var(--at-color-bg-grey);
     color: var(--at-color-font);
-    border-radius: $block-radius;
+    border-radius: 2px;
   }
 
   pre {

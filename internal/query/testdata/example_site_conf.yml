@@ -41,7 +41,7 @@ admin_users:
     email: "admin@test.com"
     password: "admin"
     badge_name: "Admin"
-    badge_color: "#FF6C00"
+    badge_color: "#0083FF"
 moderator:
   pending_default: false
   api_fail_block: false

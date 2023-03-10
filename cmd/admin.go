@@ -51,7 +51,7 @@ var adminCmd = &cobra.Command{
 			Email:      email,
 			IsAdmin:    true,
 			BadgeName:  i18n.T("Admin"),
-			BadgeColor: "#FF6C00",
+			BadgeColor: "#0083FF",
 		}
 		user.SetPasswordEncrypt(password)
 

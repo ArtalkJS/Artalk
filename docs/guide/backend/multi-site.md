@@ -42,12 +42,12 @@ admin_users:
     email: "admin@example.com"
     password: ""
     badge_name: "管理员"
-    badge_color: "#FF6C00"
+    badge_color: "#0083FF"
   - name: "admin2"
     email: "admin2@example.com"
     password: ""
     badge_name: "小管理员"
-    badge_color: "#FF6C00"
+    badge_color: "#0083FF"
 ```
 
 每一项配置的解释：
@@ -89,14 +89,14 @@ admin_users:
     email: "super_admin@example.com"
     password: "(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
     badge_name: "超级管理员"
-    badge_color: "#FF6C00"
+    badge_color: "#0083ff"
     receive_email: false
 
   - name: "普通管理员1"
     email: "admin1@example.com"
     password: "(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
     badge_name: "管理员"
-    badge_color: "#FF6C00"
+    badge_color: "#0083ff"
     sites:
       - 站点名 A
       - 站点名 B
@@ -105,7 +105,7 @@ admin_users:
     email: "admin2@example.com"
     password: "(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
     badge_name: "管理员"
-    badge_color: "#FF6C00"
+    badge_color: "#0083ff"
     sites:
       - 站点名 C
       - 站点名 D

@@ -1,54 +1,53 @@
 <template>
-  <div></div>
+  <div ref="artalkEl" style="margin-top: 20px;"></div>
 </template>
 
-<script lang="ts">
-import { defineComponent, watch, nextTick } from 'vue'
+<script setup lang="ts">
+import { watch, nextTick, ref, onMounted } from 'vue'
 import { useData, useRouter } from 'vitepress'
-import * as Version from '../../code/ArtalkVersion.json'
 
-let isFirstLoad = true
+const artalkEl = ref<HTMLElement | null>(null)
 
-function loadArtalk() {
+const router = useRouter()
+const page = useData().page
+
+onMounted(() => {
   const script = document.createElement('script')
-  script.async = true
-  script.defer = true
-  // script.src = `https://npm.elemecdn.com/artalk@${Version.latest}/dist/Artalk.js`
   script.src = `https://artalk.qwqaq.com/dist/Artalk.js`
   document.getElementsByTagName('head')[0].appendChild(script)
-  return script
-}
+  script.onload = () => {
+    initArtalk(page.value)
+  }
+})
 
-function initArtalk(pageData: any) {
-  const pEl = document.querySelector<HTMLElement>('.VPDoc .container > .content > .content-container')
-  if (!pEl) return
-  let artalkEl = pEl.querySelector<HTMLElement>('#ArtalkComment')
-  if (artalkEl) artalkEl.remove()
-  artalkEl = document.createElement('div')
-  artalkEl.id = 'ArtalkComment'
-  artalkEl.style.marginTop = '20px'
-  pEl.appendChild(artalkEl)
+watch(() => router.route.data.relativePath, (path) => {
+  nextTick(() => {
+    Artalk.update(getArtalkConfByPage(page.value))
+    Artalk.reload()
+  })
+})
 
-  const conf = {
-    el:        '#ArtalkComment',
-    pageKey:   `https://artalk.js.org${location.pathname}`,
-    pageTitle:  pageData.title,
+function getArtalkConfByPage(page: any) {
+  return {
+    pageKey:   'https://artalk.js.org'+location.pathname,
+    pageTitle:  page.title,
     server:    'https://artalk.qwqaq.com',
     site:      'ArtalkDocs',
+  }
+}
+
+function initArtalk(page: any) {
+  Artalk.init({
+    el:        artalkEl.value,
     emoticons: '/assets/emoticons/default.json',
     gravatar:   {
       mirror: 'https://cravatar.cn/avatar/'
-    }
-  }
+    },
+    ...getArtalkConfByPage(page)
+  })
 
-  const artalk = (window as any).Artalk.init(conf);
-
-  confArtalk(artalk)
-}
-
-function confArtalk(artalk) {
-  // lightGallery
-  artalk.on('list-loaded', () => {
+  // 图片灯箱插件
+  Artalk.on('list-loaded', () => {
     document.querySelectorAll('.atk-comment .atk-content').forEach(($content) => {
       const imgEls = $content.querySelectorAll<HTMLImageElement>('img:not([atk-emoticon]):not([atk-lightbox])');
       imgEls.forEach((imgEl) => {
@@ -65,40 +64,20 @@ function confArtalk(artalk) {
     })
   })
 
-  // dark_mode
+  // 夜间模式
   const darkMode = document.querySelector('html').classList.contains('dark')
-  artalk.setDarkMode(darkMode)
+  Artalk.setDarkMode(darkMode)
 
-  // dark_mode 监听
   new MutationObserver((mList) => {
     mList.forEach((m) => {
       if (m.attributeName !== 'class') return
 
       // @ts-ignore
       const darkMode = m.target.classList.contains('dark')
-      artalk.setDarkMode(darkMode)
+      Artalk.setDarkMode(darkMode)
     })
   }).observe(document.querySelector('html'), { attributes: true })
 }
-
-export default defineComponent({
-  mounted: () => {
-    const pageData = useData().page.value
-    const router = useRouter()
-
-    loadArtalk().onload = () => {
-      initArtalk(pageData)
-      isFirstLoad = false
-    }
-
-    watch(() => router.route.data.relativePath, (path) => {
-      if (isFirstLoad) return
-      nextTick(() => {
-        initArtalk(pageData)
-      })
-    }, { immediate: false });
-  }
-})
 </script>
 
 <style>

@@ -10,6 +10,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <Layout />
-  <Artalk />
+  <Layout>
+    <template #doc-after>
+      <Artalk />
+    </template>
+  </Layout>
 </template>

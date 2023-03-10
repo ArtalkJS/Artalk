@@ -142,9 +142,9 @@ type CaptchaConf struct {
 type CaptchaType string
 
 const (
-	ImageCaptcha CaptchaType = "image"
-	Turnstile    CaptchaType = "turnstile"
-	Geetest      CaptchaType = "geetest"
+	TypeImage     CaptchaType = "image"
+	TypeTurnstile CaptchaType = "turnstile"
+	TypeGeetest   CaptchaType = "geetest"
 )
 
 type TurnstileConf struct {

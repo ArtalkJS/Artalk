@@ -2,7 +2,6 @@ package handler
 
 import (
 	"bytes"
-	"io"
 	"strings"
 	"text/template"
 
@@ -53,48 +52,41 @@ func captchaStatus(c *fiber.Ctx) error {
 func captchaGet(c *fiber.Ctx) error {
 	ip := c.IP()
 
-	switch config.Instance.Captcha.CaptchaType {
-
-	case config.Turnstile:
-		// ===========
-		//  Turnstile
-		// ===========
-		pageFile, _ := captcha.GetPage("turnstile.html")
-		buf, _ := io.ReadAll(pageFile)
-
-		var page bytes.Buffer
-
-		t := template.New("")
-		t.Parse(string(buf))
-		t.Execute(&page, map[string]interface{}{"site_key": config.Instance.Captcha.Turnstile.SiteKey})
-
-		c.Set("Content-Type", "text/html")
-		return c.SendString(page.String())
-
-	case config.Geetest:
-		// ===========
-		//  Geetest
-		// ===========
-		pageFile, _ := captcha.GetPage("geetest.html")
-		buf, _ := io.ReadAll(pageFile)
-
-		var page bytes.Buffer
-
-		t := template.New("")
-		t.Parse(string(buf))
-		t.Execute(&page, map[string]interface{}{"gt_id": config.Instance.Captcha.Geetest.CaptchaID})
-
-		c.Set("Content-Type", "text/html")
-		return c.SendString(page.String())
-
-	default:
-		// ===========
-		//  图片验证码
-		// ===========
+	// ==============
+	//  图片验证码
+	// ==============
+	if config.Instance.Captcha.CaptchaType == config.TypeImage {
 		return common.RespData(c, common.Map{
 			"img_data": common.GetNewImageCaptchaBase64(ip),
 		})
 	}
+
+	// ==============
+	//  iframe 验证码
+	// ==============
+	captchaType := config.Instance.Captcha.CaptchaType
+	ca := captcha.NewCaptcha(captchaType)
+
+	iframeHTML, err := captcha.GetIFrameHTML(captchaType)
+	if err != nil {
+		return common.RespError(c, "iframe load err: "+err.Error())
+	}
+
+	var buf bytes.Buffer
+
+	t := template.New("")
+	t.Parse(string(iframeHTML))
+	t.Execute(&buf, ca.PageParams())
+
+	// response html body
+	c.Set(fiber.HeaderContentType, "text/html")
+
+	// disable cache
+	c.Set(fiber.HeaderCacheControl, "no-cache, no-store, must-revalidate")
+	c.Set(fiber.HeaderPragma, "no-cache")
+	c.Set(fiber.HeaderExpires, "0")
+
+	return c.SendString(buf.String())
 }
 
 type ParamsCaptchaCheck struct {
@@ -117,59 +109,10 @@ func captchaCheck(c *fiber.Ctx) error {
 	}
 	inputVal := p.Value
 
-	switch config.Instance.Captcha.CaptchaType {
-	case config.Turnstile:
-		// ===========
-		//  Turnstile
-		// ===========
-		isPass, reason, err := captcha.TurnstileCheck(captcha.TurnstileParams{
-			SecreteKey: config.Instance.Captcha.Turnstile.SecretKey,
-			UserToken:  p.Value,
-			UserIP:     ip,
-		})
-		if err != nil {
-			logrus.Error("[Turnstile] Failed to verify: ", err)
-			return common.RespError(c, "Turnstile API error")
-		}
-
-		if isPass {
-			// 验证成功
-			common.OnCaptchaPass(c)
-			return common.RespSuccess(c)
-		} else {
-			// 验证失败
-			common.OnCaptchaFail(c)
-			return common.RespError(c, i18n.T("Verification failed"), common.Map{
-				"reason": reason,
-			})
-		}
-
-	case config.Geetest:
-		// ===========
-		//  Geetest
-		// ===========
-		isPass, reason, err := captcha.GeetestCheck(inputVal)
-		if err != nil {
-			logrus.Error("[Geetest] Failed to verify: ", err)
-			return common.RespError(c, "Geetest API error")
-		}
-
-		if isPass {
-			// 验证成功
-			common.OnCaptchaPass(c)
-			return common.RespSuccess(c)
-		} else {
-			// 验证失败
-			common.OnCaptchaFail(c)
-			return common.RespError(c, i18n.T("Verification failed"), common.Map{
-				"reason": reason,
-			})
-		}
-
-	default:
-		// ===========
-		//  图片验证码
-		// ===========
+	// ===========
+	//  图片验证码
+	// ===========
+	if config.Instance.Captcha.CaptchaType == config.TypeImage {
 		isPass := strings.ToLower(inputVal) == common.GetImageCaptchaRealCode(ip)
 		if isPass {
 			// 验证码正确
@@ -184,5 +127,28 @@ func captchaCheck(c *fiber.Ctx) error {
 				"img_data": common.GetNewImageCaptchaBase64(ip),
 			})
 		}
+	}
+
+	// ==============
+	//  iframe 验证码
+	// ==============
+	captchaType := config.Instance.Captcha.CaptchaType
+	ca := captcha.NewCaptcha(captchaType)
+	isPass, err := ca.Check(captcha.CaptchaPayload{
+		CheckValue: p.Value,
+		UserIP:     ip,
+	})
+
+	if isPass {
+		// 验证成功
+		common.OnCaptchaPass(c)
+		return common.RespSuccess(c)
+	} else {
+		// 验证失败
+		common.OnCaptchaFail(c)
+		logrus.Error("[Captcha] Failed to verify: ", err)
+		return common.RespError(c, i18n.T("Verification failed"), common.Map{
+			"detail": err.Error(),
+		})
 	}
 }

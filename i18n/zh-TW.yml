@@ -1,0 +1,75 @@
+"Access denied": 無權限
+"Account": 賬戶
+"Admin access required": 需要管理員權限
+"Admin": 管理員
+"Cannot reply to this comment": 無法回复此評論
+"Captcha required": 需要驗證碼
+"Checking for updates": 正在檢查更新
+"Comment count": 評論數
+"Comment failed": 評論失敗
+"Comment": 評論
+"Config file read failed": 配置文件讀取失敗
+"Confirm to continue?": 確認繼續？
+"Contains invalid URL": 包含無效的 URL
+"Create admin account": 創建管理員賬戶
+"Current version is the latest": 當前版本已是最新的
+"Downloading": 下載中
+"Email": 郵箱
+"Enter {{name}}": 輸入{{name}}
+"Export complete": 導出完畢
+"Export error": 導出失敗
+"File": 文件
+"First comment": 第一條評論
+"Image exceeds {{file_size}} limit": 圖片超過大小限制 {{file_size}}
+"Image upload forbidden": 禁止上傳圖片
+"Import complete": 導入完畢
+"Invalid request": 無效的請求
+"Invalid request. Please check your `trusted_domains` config.": 請求無效, 請檢查 `trusted_domains` 配置項
+"Invalid {{name}}": 無效的{{name}}
+"Link": 鏈接
+"Login failed": 登陸失敗
+"Name": 名稱
+"New version available": 有更新可用
+"Nickname": 暱稱
+"No comment": 無評論
+"Notify": 通知
+"Page fetch failed": 頁面獲取失敗
+"Page": 頁面
+"Parameter": 參數
+"Parent comment": 父評論
+"Password update failed": 密碼修改失敗
+"Password updated": 密碼已修改
+"Password": 密碼
+"Please review": 請過目
+"Retype {{name}}": 重新輸入{{name}}
+"Save failed": 保存失敗
+"Saving": 保存中
+"Services restart complete": 服務重啟完畢
+"Site `{{name}}` not found. Please create it in control center.": 未找到站點：`{{name}}`，請在控制台創建站點
+"Site": 站點
+"Sub-comment": 子評論
+"Target Site": 目標站點
+"Task executing in background, please wait...": 任務已開始在後台執行，請稍後...
+"Task in progress, please wait a moment": 任務執行中，請稍後
+"Type": 類型
+"URL Resolver": URL 解析器
+"Unable to get `{{name}}`": 無法獲取 `{{name}}`
+"Unspecified": 未指定
+"Unsupported formats": 不支持的格式
+"Update complete": 更新完畢
+"Update failed": 更新失敗
+"Upload image via {{method}} failed": 通過 {{method}} 上傳圖片失敗
+"User": 用戶
+"Username": 用戶名
+"Verification failed": 驗證失敗
+"Working directory retrieval failed": 工作目錄獲取失敗
+"Wrong captcha": 驗證碼錯誤
+"{{count}} items imported": 已導入 {{count}} 個項目
+"{{done}} of {{total}} done": 已完成 {{done}} 共 {{total}} 個
+"{{name}} already exists": '{{name}}已存在'
+"{{name}} cannot be empty": '{{name}}不能為空'
+"{{name}} creation failed": '{{name}}創建失敗'
+"{{name}} deletion failed": '{{name}}刪除失敗'
+"{{name}} is required": '{{name}}必須填寫'
+"{{name}} not found": '{{name}}未找到'
+"{{name}} save failed": '{{name}}保存失敗'

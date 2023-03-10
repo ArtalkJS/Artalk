@@ -82,7 +82,7 @@ export default class Artalk {
   /** Destroy instance of Artalk */
   public destroy() {
     if (!Artalk.instance) throw Error('cannot call `destroy` function before call `load`')
-    //...
+    Artalk.instance.$root.remove()
     delete Artalk.instance
   }
 

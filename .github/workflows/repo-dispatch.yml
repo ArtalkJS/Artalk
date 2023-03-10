@@ -1,0 +1,20 @@
+name: Repo Dispatch
+run-name: Dispatch event `${{ inputs.event_type }}` manually by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      event_type:
+        type: string
+        description: Event Type
+        required: true
+        default: ''
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          event-type: ${{ inputs.event_type }}

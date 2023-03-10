@@ -133,7 +133,7 @@ captcha:
   enabled: true
   # 总是需要验证码
   always: false
-  # 验证类型 ["image", "turnstile", "geetest"]
+  # 验证类型 ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
   captcha_type: "image"
   # 激活验证码所需操作次数
   action_limit: 3
@@ -142,6 +142,15 @@ captcha:
   # Turnstile
   # (https://www.cloudflare.com/products/turnstile/)
   turnstile:
+    site_key: ""
+    secret_key: ""
+  # reCaptcha
+  # (https://www.google.com/recaptcha/about/)
+  recaptcha:
+    site_key: ""
+    secret_key: ""
+  # hCaptcha (https://www.hcaptcha.com/)
+  hcaptcha:
     site_key: ""
     secret_key: ""
   # Geetest 极验 (https://www.geetest.com)

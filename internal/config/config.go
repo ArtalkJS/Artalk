@@ -136,6 +136,8 @@ type CaptchaConf struct {
 	ActionReset   int           `koanf:"action_reset" json:"action_reset"`
 	ActionLimit   int           `koanf:"action_limit" json:"action_limit"`
 	Turnstile     TurnstileConf `koanf:"turnstile" json:"turnstile"`
+	ReCaptcha     ReCaptchaConf `koanf:"recaptcha" json:"recaptcha"`
+	HCaptcha      HCaptchaConf  `koanf:"hcaptcha" json:"hcaptcha"`
 	Geetest       GeetestConf   `koanf:"geetest" json:"geetest"`
 }
 
@@ -144,10 +146,22 @@ type CaptchaType string
 const (
 	TypeImage     CaptchaType = "image"
 	TypeTurnstile CaptchaType = "turnstile"
+	TypeReCaptcha CaptchaType = "recaptcha"
+	TypeHCaptcha  CaptchaType = "hcaptcha"
 	TypeGeetest   CaptchaType = "geetest"
 )
 
 type TurnstileConf struct {
+	SiteKey   string `koanf:"site_key" json:"site_key"`
+	SecretKey string `koanf:"secret_key" json:"secret_key"`
+}
+
+type ReCaptchaConf struct {
+	SiteKey   string `koanf:"site_key" json:"site_key"`
+	SecretKey string `koanf:"secret_key" json:"secret_key"`
+}
+
+type HCaptchaConf struct {
 	SiteKey   string `koanf:"site_key" json:"site_key"`
 	SecretKey string `koanf:"secret_key" json:"secret_key"`
 }

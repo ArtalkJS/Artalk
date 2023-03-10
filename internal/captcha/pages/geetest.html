@@ -43,14 +43,12 @@
         if (json.success) {
           console.log("验证成功：" + json)
         } else {
-          if (json.msg) {
-              alert("验证失败：" + json.msg)
-          }
+          alert("验证失败：" + json.msg || '')
         }
       })
       .catch(function (err) {
           console.error(err)
-          alert("验证失败：" + err)
+          alert("后端 API 请求失败：" + err)
       });
     });
 

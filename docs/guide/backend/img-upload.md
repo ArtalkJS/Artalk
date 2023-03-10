@@ -76,7 +76,7 @@ http://<后端地址>/static/images/
 前端提供了配置项 `imgUploader`，你可以自定义前端图片上传时请求的 API，例如：
 
 ```js
-new Artalk({
+Artalk.init({
   imgUploader: async (file) => {
     const form = new FormData()
     form.set('file', file)

@@ -37,7 +37,7 @@ docker exec -it artalk artalk admin
 <!-- Artalk -->
 <div id="Comments"></div>
 <script>
-new Artalk({
+Artalk.init({
   el:        '#Comments',                // 绑定元素的 Selector
   pageKey:   '/post/1',                  // 固定链接 (留空自动获取)
   pageTitle: '关于引入 Artalk 的这档子事',  // 页面标题 (留空自动获取)
@@ -64,7 +64,7 @@ new Artalk({
 4. 前端配置
 
     ```js
-    new Artalk({ server: "http://your_domain:23366" })
+    Artalk.init({ server: "http://your_domain:23366" })
     ```
 
 **其它可选操作：**
@@ -184,15 +184,15 @@ pnpm add artalk
 import 'artalk/dist/Artalk.css'
 import Artalk from 'artalk'
 
-new Artalk({
+Artalk.init({
   // ...
 })
 ```
 
-## 何时引入、何时 new？
+## 何时引入、何时 init？
 
-- 可以在任意位置引入 JS 和 CSS 资源，但需确保 JS 引入在执行 `new Artalk({})` 前。
-- 执行 `new Artalk({ el: '#x' })` 时，需要确保 `<div id="x"></div>` 存在于页面当中。
+- 可以在任意位置引入 JS 和 CSS 资源，但需确保 JS 引入在执行 `Artalk.init({})` 前。
+- 执行 `Artalk.init({ el: '#x' })` 时，需要确保 `<div id="x"></div>` 存在于页面当中。
 
 可参考：[“前端框架引入”](./frontend/import-framework.md) / [“博客引入”](./frontend/import-blog.md)
 

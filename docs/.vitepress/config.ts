@@ -83,7 +83,7 @@ export default defineConfig({
           ]
         },
         {
-          text: "进阶扩展",
+          text: "进阶指南",
           collapsed: false,
           items: [
             { text: '表情包', link: '/guide/frontend/emoticons.md' },
@@ -92,9 +92,9 @@ export default defineConfig({
             { text: '图片灯箱', link: '/guide/frontend/lightbox.md' },
             { text: 'IP 归属地', link: '/guide/frontend/ip-region.md' },
             { text: '精简版本', link: '/guide/frontend/artalk-lite.md' },
-            { text: '插件开发', link: '/guide/frontend/plugs.md' },
             { text: '置入博客', link: '/guide/frontend/import-blog.md' },
             { text: '置入框架', link: '/guide/frontend/import-framework.md' },
+            { text: '开发文档', link: '/develop/index.md', },
           ],
         },
         {
@@ -132,8 +132,12 @@ export default defineConfig({
           text: '开发文档',
           items: [
             { text: '开发说明', link: '/develop/index.md', },
-            { text: 'HTTP API', link: '/develop/api.md', },
-            { text: 'Frontend Event', link: '/develop/event.md', },
+            { text: '前端 API', link: '/develop/fe-api.md', },
+            { text: '前端 Event', link: '/develop/event.md', },
+            { text: '插件开发', link: '/develop/plugs.md' },
+            { text: '🔬 HTTP API', link: 'https://artalk.js.org/http-api.html', },
+            { text: '📖 Contributing Guide', link: 'https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md' },
+            { text: '🔖 Code of Conduct', link: 'https://github.com/ArtalkJS/Artalk/blob/master/CODE_OF_CONDUCT.md' },
           ]
         }
       ]

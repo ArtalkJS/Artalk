@@ -56,7 +56,7 @@ sudo systemctl restart nginx
 配置前端：
 
 ```js
-new Artalk({ server: "http://artalk.your_domain.com" })
+Artalk.init({ server: "http://artalk.your_domain.com" })
 ```
 
 ::: tip

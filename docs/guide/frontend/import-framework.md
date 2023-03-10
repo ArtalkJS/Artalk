@@ -25,7 +25,7 @@ import Artalk from 'artalk'
 
 export default defineComponent({
   mounted: () => {
-    const artalk = new Artalk({
+    const artalk = Artalk.init({
       el:        this.$el,
       pageKey:   `${location.pathname}`,
       pageTitle: `${document.title}`,
@@ -56,7 +56,7 @@ export default class Artalk extends React.Component {
   el = createRef()
 
   componentDidMount () {
-    const artalk = new Artalk({
+    const artalk = Artalk.init({
       el: this.el.current,
       pageKey:   `${location.pathname}`,
       pageTitle: `${document.title}`,
@@ -84,7 +84,7 @@ import Artalk from 'artalk'
 let comments;
 
 onMount(() => {
-  new Artalk({
+  Artalk.init({
     el:        comments,
     pageKey:   `${location.pathname}`,
     pageTitle: `${document.title}`,

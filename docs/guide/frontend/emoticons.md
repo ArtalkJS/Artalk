@@ -64,7 +64,7 @@ Artalk 除了支持 OwO 格式外，还内置支持一种标准的表情包列�
 在前端配置表情包列表，例如：
 
 ```js
-new Artalk({
+Artalk.init({
     // 默认表情包列表，动态引入 ↓↓
     emoticons: "https://raw.githubusercontent.com/ArtalkJS/Emoticons/master/grps/default.json",
 })
@@ -75,7 +75,7 @@ new Artalk({
 你可以将 `emoticons` 设置为 `false` 来禁用表情包功能：
 
 ```js
-new Artalk({
+Artalk.init({
     emoticons: false
 })
 ```
@@ -88,7 +88,7 @@ new Artalk({
 将 `emoticons` 属性设置为表情包数据文件的 URL，当打开表情包列表时，Artalk 会动态引入。
 
 ```js
-new Artalk({
+Artalk.init({
     emoticons: "<表情包数据文件 URL>",
 })
 ```
@@ -100,7 +100,7 @@ new Artalk({
 相较于动态引入，可以将表情包列表对象，作为 Artalk 配置，静态保存在页面的 JS 代码中，避免动态加载：
 
 ```js
-new Artalk({
+Artalk.init({
     emoticons: [{
         "name": "颜表情",
         "type": "emoticon", // 字符类型
@@ -128,7 +128,7 @@ new Artalk({
 Artalk 支持 **动态**、**静态** 混合加载，例如：
 
 ```js
-new Artalk({
+Artalk.init({
     emoticons: [
         // 动态加载
         "https://raw.githubusercontent.com/DIYgod/OwO/master/demo/OwO.json", // OwO 格式表情包
@@ -151,7 +151,7 @@ new Artalk({
 Artalk 支持远程表情包资源中**嵌套引入**另外的表情包资源，例如：
 
 ```js
-new Artalk({
+Artalk.init({
     emoticons: [
         "https://example.org/表情包.json"
     ]

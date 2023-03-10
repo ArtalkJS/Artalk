@@ -1,7 +1,8 @@
 # 前端配置
 
 ```js
-new Artalk({ 你的配置... })
+Artalk.init({ 你的配置... })
+Artalk.update({ 更新配置... })
 ```
 
 - 默认配置：[defaults.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/src/defaults.ts)
@@ -164,22 +165,22 @@ JS DELIVR 在中国大陆的 [ICP 牌照已被吊销](https://github.com/jsdeliv
 
 ### darkMode
 
-**暗黑模式**
+**夜间模式**
 
 - 类型：`Boolean|"auto"`
 - 默认值：`false`
 
-当 Artalk 被 new 时会读取该值，并根据该值选择是否开启暗黑模式（可与博客主题配合使用）。
+当 Artalk 被 new 时会读取该值，并根据该值选择是否开启夜间模式（可与博客主题配合使用）。
 
 代码动态修改 darkMode：
 
 ```js
-artalkInstance.setDarkMode(true)
+Artalk.setDarkMode(true)
 ```
 
 > 参考代码：“[index.html](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/index.html#L97-L150)”
 
-可设置为 `"auto"`，Artalk 将监听 `(prefers-color-scheme: dark)` 根据用户操作系统判断自动切换暗黑模式。
+可设置为 `"auto"`，Artalk 将监听 `(prefers-color-scheme: dark)` 根据用户操作系统判断自动切换夜间模式。
 
 ### flatMode
 
@@ -297,7 +298,7 @@ pvEl 和 countEl 元素标签都可以设置 `data-page-key` 属性值，来指�
 自定义图片上传器，例如：
 
 ```js
-new Artalk({
+Artalk.init({
   imgUploader: async (file) => {
     const form = new FormData()
     form.set('file', file)
@@ -366,7 +367,7 @@ gravatar: {
 自定义用户头像图片链接生成，例如：
 
 ```js
-new Artalk({
+Artalk.init({
   avatarURLBuilder: (comment) => {
     return `/api/avatar?email=${comment.email_encrypted}`
   }

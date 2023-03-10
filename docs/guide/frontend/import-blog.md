@@ -16,7 +16,7 @@
 <div id="Comments"></div>
 
 <script>
-  new Artalk({
+  Artalk.init({
     el:        '#Comments',
     pageKey:   '{{ .Permalink }}',
     pageTitle: '{{ .Title }}',
@@ -66,7 +66,7 @@ params:
 <div id="Comments"></div>
 
 <script>
-  var artalk = new Artalk({
+  var artalk = Artalk.init({
     el: '#Comments',
     pageKey: '<%= page.permalink %>',
     pageTitle: '<%= page.title %>',
@@ -174,7 +174,7 @@ export default ({
 <!-- Artalk -->
 <div id="Comments"></div>
 <script>
- new Artalk({
+ Artalk.init({
    el:        '#Comments',
    pageKey:   '<?php $this->permalink() ?>',
    pageTitle: '<?php $this->title() ?>',
@@ -199,7 +199,7 @@ export default ({
 <!-- Artalk -->
 <div id="Comments"></div>
 <script>
- new Artalk({
+ Artalk.init({
    el:        '#Comments',
    pageKey:   '<?= addslashes(get_permalink()) ?>',
    pageTitle: '<?= addslashes(get_the_title()) ?>',

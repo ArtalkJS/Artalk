@@ -3,7 +3,7 @@
 Artalk 支持解析相对路径，因此你可以在前端页面进行如下配置：
 
 ```js
-new Artalk({
+Artalk.init({
   site: "举个栗子站点", // 你的站点名
   pageKey: "/relative-path/xx.html", // 使用相对路径
 })
@@ -45,7 +45,7 @@ new Artalk({
 区别于使用相对路径，你可以使用绝对路径，例如前端这样配置：
 
 ```js
-new Artalk({
+Artalk.init({
   pageKey: "https://your_domain.com/relative-path/xx.html", // 使用绝对路径
 })
 ```

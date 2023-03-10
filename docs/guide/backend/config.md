@@ -139,7 +139,7 @@ site_default: "Artalk 官网"
 然后在前端直接使用这个站点名：
 
 ```js
-new Artalk({ site: "Artalk 官网" })
+Artalk.init({ site: "Artalk 官网" })
 ```
 
 这样，你就无需在侧边栏的[控制中心](../frontend/sidebar.md#控制中心)手动创建站点。

@@ -48,10 +48,10 @@ frontend:
 
 后端控制前端功能默认开启，我们不建议关闭该功能。
 
-在前端 `new Artalk({ ... })` 时定义的配置会被配置文件中的 `frontend` 字段配置所覆盖，但如果有需要也可以在前端禁用这个特性：
+在前端 `Artalk.init({ ... })` 时定义的配置会被配置文件中的 `frontend` 字段配置所覆盖，但如果有需要也可以在前端禁用这个特性：
 
 ```diff
-new Artalk({
+Artalk.init({
 +  useBackendConf: false,
 })
 ```

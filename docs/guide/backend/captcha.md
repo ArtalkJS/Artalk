@@ -17,12 +17,21 @@ Artalk 内置图片验证码功能，你可以配置操作频率限制，当超�
 captcha:
   enabled: true    # 总开关
   always: false    # 总是需要验证码
-  captcha_type: "image" # 验证类型 ["image", "turnstile", "geetest"]
+  captcha_type: "image" # 验证码类型
   action_limit: 3  # 激活验证码所需操作次数
   action_reset: 60 # 重置操作计数器超时 (单位：s, 设为 -1 不重置)
   # Turnstile
   # (https://www.cloudflare.com/products/turnstile/)
   turnstile:
+    site_key: ""
+    secret_key: ""
+  # reCaptcha
+  # (https://www.google.com/recaptcha/about/)
+  recaptcha:
+    site_key: ""
+    secret_key: ""
+  # hCaptcha (https://www.hcaptcha.com/)
+  hcaptcha:
     site_key: ""
     secret_key: ""
   # Geetest 极验 (https://www.geetest.com)
@@ -32,6 +41,7 @@ captcha:
 ```
 
 - **always**：当该项为 `true` 时，总是需要输入验证码。
+- **captcha_type**：验证码类型，可选：`image`、`turnstile`、`recaptcha`、`hcaptcha`、`geetest`。
 - **action_limit**：激活评论所需的操作次数。
 - **action_reset**：当时间超过该值时会重置操作计数器，单位为秒，设为 `-1` 将永不重置。
 
@@ -97,7 +107,7 @@ captcha:
 
 ## reCAPTCHA
 
-[reCAPTCHA](https://developers.google.com/recaptcha) 是 Google 推出的验证服务，可在谷歌开发者后台申请获得 `site_key` 和 `secret_key`，之后在 Artalk 控制中心设置页填入 Key 并将 `captcha_type` 修改为 `recaptcha` 即可。
+[reCAPTCHA](https://developers.google.com/recaptcha) 是 Google 推出的验证服务，Artalk 支持接入 reCAPTCHA v3。可在谷歌开发者后台申请获得 `site_key` 和 `secret_key`，之后在 Artalk 控制中心设置页填入 Key 并将 `captcha_type` 修改为 `recaptcha` 即可。
 
 对应配置文件如下：
 

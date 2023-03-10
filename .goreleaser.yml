@@ -127,8 +127,8 @@ builds:
     goarch:
       - arm64
     env:
-      - CC=/llvm-mingw/llvm-mingw/bin/aarch64-w64-mingw32-gcc
-      - CXX=/llvm-mingw/llvm-mingw/bin/aarch64-w64-mingw32-g++
+      - CC=/llvm-mingw/bin/aarch64-w64-mingw32-gcc
+      - CXX=/llvm-mingw/bin/aarch64-w64-mingw32-g++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags

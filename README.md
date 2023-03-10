@@ -171,6 +171,8 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md)
 - [x] 验证码
   - [x] 图片验证码
   - [x] [Turnstile](https://www.cloudflare.com/products/turnstile/)
+  - [x] [ReCAPTCHA](https://www.google.com/recaptcha/about/)
+  - [x] [hCaptcha](https://www.hcaptcha.com/)
   - [x] [极验](https://www.geetest.com/)滑动验证码
 - [x] 反垃圾
   - [x] [Akismet](https://akismet.com/)

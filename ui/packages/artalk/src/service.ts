@@ -97,7 +97,7 @@ const services = {
     })
   },
 
-  // 暗黑模式
+  // 夜间模式
   darkMode(ctx: Context) {
     DarkMode.syncDarkModeConf(ctx)
 

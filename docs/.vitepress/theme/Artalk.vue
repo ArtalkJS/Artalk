@@ -41,7 +41,7 @@ function initArtalk(pageData: any) {
     }
   }
 
-  const artalk = new (window as any).Artalk(conf);
+  const artalk = (window as any).Artalk.init(conf);
 
   confArtalk(artalk)
 }

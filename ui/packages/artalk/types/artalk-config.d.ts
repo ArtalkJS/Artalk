@@ -80,7 +80,7 @@ export default interface ArtalkConfig {
   /** PV 数绑定元素 Selector */
   pvEl: string
 
-  /** 暗黑模式 */
+  /** 夜间模式 */
   darkMode: boolean|'auto'
 
   /** 请求超时（单位：秒） */

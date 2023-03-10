@@ -64,7 +64,7 @@ $ pnpm add artalk
 ```ts
 import Artalk from 'artalk'
 
-new Artalk({
+Artalk.init({
   el:        '#Comments',
   pageKey:   'http://your_domain/post/1', // Page Link
   pageTitle: 'The title of your page',    // Page Title

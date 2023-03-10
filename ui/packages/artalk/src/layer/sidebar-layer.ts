@@ -97,7 +97,7 @@ export default class SidebarLayer extends Component {
       this.$iframeWrap.append(this.$iframe)
       this.firstShow = false
     } else {
-      // 暗黑模式
+      // 夜间模式
       const isIframeSrcDarkMode = this.$iframe!.src.includes('darkMode=1')
 
       if (this.conf.darkMode && !isIframeSrcDarkMode)

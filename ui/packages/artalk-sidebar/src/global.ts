@@ -26,7 +26,7 @@ export function createArtalkInstance() {
   document.body.append(artalkEl)
 
   Artalk.DisabledComponents = ['list']
-  return new Artalk({
+  return Artalk.init({
     el: artalkEl,
     server: (import.meta.env.DEV) ? 'http://localhost:23366' : '../',
     pageKey: bootParams.pageKey,

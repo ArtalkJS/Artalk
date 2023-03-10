@@ -15,7 +15,7 @@ export function setDarkMode(ctx: Context, darkMode: boolean|'auto', alterConf = 
   }
 
   if (darkMode === 'auto') {
-    if (!darkModeAutoFunc) { // 自动切换暗黑模式，事件监听
+    if (!darkModeAutoFunc) { // 自动切换夜间模式，事件监听
       darkModeAutoFunc = (evt) => apply(evt.matches)
       darkModeMedia.addEventListener('change', darkModeAutoFunc)
     }

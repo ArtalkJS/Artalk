@@ -45,7 +45,7 @@
 - 自动保存：用户输入防丢功能
 - 自动填充：用户链接自动填充
 - 实时预览：评论内容实时预览
-- 暗黑模式：防止眼部疾病伤害
+- 夜间模式：防止眼部疾病伤害
 - 评论折叠：这个不打算给你康
 - 数据备份：防止评论数据丢失
 - 数据迁移：快速切换评论系统
@@ -60,7 +60,7 @@
 前往：[“**部署文档**”](https://artalk.js.org/guide/deploy.html)
 
 ```ts
-new Artalk({
+Artalk.init({
   el:     '#Comments',
   site:   'Artalk 的博客',
   server: 'https://artalk.example.com'

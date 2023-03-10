@@ -61,7 +61,7 @@ cat << EOF > ./local/example_site/layouts/partials/comments/comments.html
 <div id="Comments"></div>
 
 <script>
-  new Artalk({
+  Artalk.init({
     el:        '#Comments',
     pageKey:   '{{ .Permalink }}',
     pageTitle: '{{ .Title }}',

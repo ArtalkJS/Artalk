@@ -135,7 +135,7 @@ export default interface ContextApi {
   /** i18n 翻译 */
   $t(key: keyof I18n, args?: {[key: string]: string}): string
 
-  /** 设置暗黑模式 */
+  /** 设置夜间模式 */
   setDarkMode(darkMode: boolean): void
 
   /** 更新配置 */

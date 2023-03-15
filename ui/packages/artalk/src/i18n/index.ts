@@ -1,5 +1,6 @@
 import en from './en'
 import zhCN from './zh-CN'
+import { GLOBAL_LOCALES_KEY } from './external'
 
 export type I18n = typeof en
 export type I18nKeys = keyof I18n
@@ -11,15 +12,6 @@ export const internal = {
   'en': en,
   'en-US': en,
   'zh-CN': zhCN,
-}
-
-const GLOBAL_LOCALES_KEY = "ArtalkI18n";
-
-export function defineLocaleExternal(lang: string, locale: I18n, aliases?: string[]) {
-  if (!window[GLOBAL_LOCALES_KEY]) window[GLOBAL_LOCALES_KEY] = {}
-  window[GLOBAL_LOCALES_KEY][lang] = locale
-  if (aliases) aliases.forEach(l => { window[GLOBAL_LOCALES_KEY][l] = locale })
-  return locale
 }
 
 /**

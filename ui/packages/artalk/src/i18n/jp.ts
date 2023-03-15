@@ -1,4 +1,4 @@
-import { defineLocaleExternal } from '.'
+import { defineLocaleExternal } from './external'
 
 export default defineLocaleExternal('jp', {
   /* エディタ */

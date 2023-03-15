@@ -13,7 +13,7 @@ fs.rmSync(outDir, { recursive: true, force: true })
 const libraries = []
 
 fs.readdirSync(i18nPath).forEach(f => {
-  if (['index.ts'].includes(f)) return
+  if (['index.ts', 'external.ts'].includes(f)) return
 
   const filename = path.join(i18nPath, f)
   const lang = path.parse(filename).name

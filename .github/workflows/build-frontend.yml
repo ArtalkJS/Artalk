@@ -11,12 +11,16 @@ jobs:
 
     defaults:
       run:
-        # set for building frontend
-        working-directory: ./ui
+        working-directory: ./ui  # set for building frontend
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
+
+    - name: Checkout latest tag
+      run: |
+        git fetch --prune --unshallow --tags -f
+        git checkout $(git describe --tags --abbrev=0)
 
     - name: Use pnpm
       uses: pnpm/action-setup@v2
@@ -38,7 +42,7 @@ jobs:
       run: pnpm build
 
     - name: Publish
-      run: pnpm publish -F artalk --no-git-checks
+      run: pnpm publish -F artalk
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

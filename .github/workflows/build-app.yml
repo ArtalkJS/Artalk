@@ -18,9 +18,17 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: master
+
+      - name: Checkout latest tag
+        run: |
+          # fetch tags
+          git fetch --prune --unshallow --tags -f
+
+          # checkout latest version
+          VERSION=$(git describe --tags --abbrev=0)
+          git checkout ${VERSION}
+
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Docker Image Cache
         id: docker-cache
@@ -48,19 +56,16 @@ jobs:
 
       - name: Pre Build
         run: |-
-          # get latest version by tag
-          VERSION=$(git describe --tags --abbrev=0)
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          mkdir -p local
+
+          # github token
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" > local/.release-env
 
           # changelog
-          mkdir -p local
           git-chglog ${VERSION} > local/release-notes.md
 
           # copy config file
           cp conf/artalk.example.yml artalk.yml
-
-          # github token
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" > local/.release-env
 
       - name: Build and Release
         run: |

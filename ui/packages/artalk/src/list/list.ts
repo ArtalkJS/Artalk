@@ -5,6 +5,7 @@ import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import ListHTML from './list.html?raw'
 import ListLite from './list-lite'
+import * as ListUi from './list-ui'
 
 export default class List extends ListLite {
   private $closeCommentBtn!: HTMLElement
@@ -98,6 +99,10 @@ export default class List extends ListLite {
     // 评论列表排序 Dropdown 下拉选择层
     if (this.ctx.conf.listSort) {
       this.initDropdown()
+    } else {
+      ListUi.removeDropdown({
+        $dropdownWrap: this.$commentCount
+      })
     }
   }
 
@@ -192,63 +197,22 @@ export default class List extends ListLite {
     }
   }
 
-  private dropdownLoaded = false
-
   /** 初始化选择下拉层 */
   protected initDropdown() {
-    if (this.dropdownLoaded) return
-    this.dropdownLoaded = true
-
-    this.$dropdownWrap = this.$commentCount
-    this.$commentCount.classList.add('atk-dropdown-wrap')
-
-    // 插入图标
-    this.$dropdownWrap.append(Utils.createElement(`<span class="atk-arrow-down-icon"></span>`))
-
     const reloadUseParamsEditor = (func: (p: any) => void) => {
-      this.paramsEditor = (p) => { func(p) }
+      this.paramsEditor = func
       this.fetchComments(0)
     }
 
-    // 下拉列表
-    const dropdownList = [
-      [this.$t('sortLatest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'date_desc' }) }],
-      [this.$t('sortBest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'vote' }) }],
-      [this.$t('sortOldest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'date_asc' }) }],
-      [this.$t('sortAuthor'), () => { reloadUseParamsEditor(p => { p.view_only_admin = true }) }],
-    ]
-
-    // 列表项点击事件
-    let curtActive = 0 // 当前选中
-    const onItemClick = (i: number, $item: HTMLElement, name: string, action: Function) => {
-      action()
-
-      // set active
-      curtActive = i
-      $dropdown.querySelectorAll('.active').forEach((e) => { e.classList.remove('active') })
-      $item.classList.add('active')
-
-      // 关闭层 (临时消失，取消 :hover)
-      $dropdown.style.display = 'none'
-      setTimeout(() => { $dropdown.style.display = '' }, 80)
-    }
-
-    // 生成列表元素
-    const $dropdown = Utils.createElement(`<ul class="atk-dropdown atk-fade-in"></ul>`)
-    dropdownList.forEach((item, i) => {
-      const name = item[0] as string
-      const action = item[1] as Function
-
-      const $item = Utils.createElement(`<li class="atk-dropdown-item"><span></span></li>`)
-      const $link = $item.querySelector<HTMLElement>('span')!
-      $link.innerText = name
-      $link.onclick = () => { onItemClick(i, $item, name, action) }
-      $dropdown.append($item)
-
-      if (i === curtActive) $item.classList.add('active') // 默认选中项
+    ListUi.renderDropdown({
+      $dropdownWrap: this.$commentCount,
+      dropdownList: [
+        [this.$t('sortLatest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'date_desc' }) }],
+        [this.$t('sortBest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'vote' }) }],
+        [this.$t('sortOldest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'date_asc' }) }],
+        [this.$t('sortAuthor'), () => { reloadUseParamsEditor(p => { p.view_only_admin = true }) }],
+      ]
     })
-
-    this.$dropdownWrap.append($dropdown)
   }
 
   public updateUnread(notifies: NotifyData[]): void {

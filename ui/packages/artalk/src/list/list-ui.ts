@@ -1,6 +1,7 @@
 import ListLite from './list-lite'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
+import User from '../lib/user'
 import $t from '../i18n'
 
 /** 界面刷新 */
@@ -33,7 +34,7 @@ export function renderErrorDialog(list: ListLite, errMsg: string, errData?: any)
 
   const adminBtn = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
   errEl.appendChild(adminBtn)
-  if (!list.ctx.user.data.isAdmin) adminBtn.classList.add('atk-hide')
+  if (!User.data.isAdmin) adminBtn.classList.add('atk-hide')
 
   let sidebarView = ''
 

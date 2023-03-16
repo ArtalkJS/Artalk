@@ -55,7 +55,6 @@ export default class PageApi extends ApiBase {
   /** PV */
   public async pv() {
     const params: any = {
-      site_name: this.ctx.conf.site || '',
       page_key: this.ctx.conf.pageKey || '',
       page_title: this.ctx.conf.pageTitle || ''
     }
@@ -73,7 +72,6 @@ export default class PageApi extends ApiBase {
   ) {
     const params: any = {
       type,
-      site_name: this.ctx.conf.site || '',
     }
 
     if (pageKeys) params.page_keys = Array.isArray(pageKeys) ? pageKeys.join(',') : pageKeys

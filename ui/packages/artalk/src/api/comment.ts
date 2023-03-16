@@ -1,6 +1,7 @@
 import { CommentData, ListData } from '~/types/artalk-data'
 import * as Utils from '../lib/utils'
 import ApiBase from './api-base'
+import User from '../lib/user'
 
 /**
  * 评论 API
@@ -16,9 +17,9 @@ export default class CommentApi extends ApiBase {
     }
 
     if (flatMode) params.flat_mode = flatMode // 平铺模式
-    if (this.ctx.user.checkHasBasicUserInfo()) {
-      params.name = this.ctx.user.data.nick
-      params.email = this.ctx.user.data.email
+    if (User.checkHasBasicUserInfo()) {
+      params.name = User.data.nick
+      params.email = User.data.email
     }
 
     if (paramsEditor) paramsEditor(params)
@@ -68,14 +69,13 @@ export default class CommentApi extends ApiBase {
   /** 投票 */
   public async vote(targetID: number, type: string) {
     const params: any = {
-      site_name: this.ctx.conf.site || '',
       target_id: targetID,
       type,
     }
 
-    if (this.ctx.user.checkHasBasicUserInfo()) {
-      params.name = this.ctx.user.data.nick
-      params.email = this.ctx.user.data.email
+    if (User.checkHasBasicUserInfo()) {
+      params.name = User.data.nick
+      params.email = User.data.email
     }
 
     const data = await this.POST<any>('/vote', params)

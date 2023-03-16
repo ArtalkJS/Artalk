@@ -1,5 +1,6 @@
 import type { CommentData } from '~/types/artalk-data'
 import Editor from './editor'
+import User from '../lib/user'
 
 export interface SubmitManager {
   editor: Editor
@@ -65,7 +66,7 @@ interface CustomSubmit {
 
 // ================== Submit Add =======================
 function getSubmitAddParams(m: SubmitManager) {
-  const { nick, email, link } = m.editor.ctx.user.data
+  const { nick, email, link } = User.data
   const conf = m.editor.ctx.conf
   const reply = m.editor.getReplyManager()?.comment
 

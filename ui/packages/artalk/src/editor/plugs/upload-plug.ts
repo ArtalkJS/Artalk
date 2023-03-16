@@ -1,5 +1,6 @@
 import * as Utils from '@/lib/utils'
 import Editor from '../editor'
+import User from '../../lib/user'
 import EditorPlug from './editor-plug'
 
 export default class UploadPlug extends EditorPlug {
@@ -78,7 +79,7 @@ export default class UploadPlug extends EditorPlug {
     if (!fileExt || !this.allowImgExts.includes(fileExt[0])) return
 
     // 未登录提示
-    if (!this.ctx.user.checkHasBasicUserInfo()) {
+    if (!User.checkHasBasicUserInfo()) {
       this.editor.showNotify(this.ctx.$t('uploadLoginMsg'), 'w')
       return
     }

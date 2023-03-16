@@ -1,4 +1,5 @@
 import * as Utils from '../utils'
+import User from '../user'
 import { Checker } from '.'
 
 const AdminChecker: Checker = {
@@ -6,8 +7,8 @@ const AdminChecker: Checker = {
 
   request(checker, inputVal) {
     const data = {
-      name: checker.getUser().data.nick,
-      email: checker.getUser().data.email,
+      name: User.data.nick,
+      email: User.data.email,
       password: inputVal
     }
 
@@ -22,11 +23,11 @@ const AdminChecker: Checker = {
   },
 
   onSuccess(checker, userToken, inputVal, formEl) {
-    checker.getUser().update({
+    User.update({
       isAdmin: true,
       token: userToken
     })
-    checker.getCtx().trigger('user-changed', checker.getUser().data)
+    checker.getCtx().trigger('user-changed', User.data)
     checker.getCtx().listReload()
   },
 

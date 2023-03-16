@@ -1,11 +1,13 @@
 import Context from '~/types/context'
+import User from '../lib/user'
+import $t from '../i18n'
 
 /** 公共请求函数 */
 export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit, timeout?: number): Promise<any> {
   // JWT
-  if (ctx.user.data.token) {
+  if (User.data.token) {
     const headers = new Headers(init.headers) // 保留原有 headers
-    headers.set('Authorization', `Bearer ${ctx.user.data.token}`)
+    headers.set('Authorization', `Bearer ${User.data.token}`)
     init.headers = headers
   }
 
@@ -20,7 +22,7 @@ export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit,
   const isNoAccess = noAccessCodes.includes(respHttpCode)
 
   if (!resp.ok && !isNoAccess)
-    throw new Error(`${ctx.$t('reqGot')} ${respHttpCode}`)
+    throw new Error(`${$t('reqGot')} ${respHttpCode}`)
 
   // 解析获取响应的 json
   let json: any = await resp.json()
@@ -95,7 +97,7 @@ function timeoutFetch(ctx: Context, url: RequestInfo, ms: number, opts: RequestI
     promise.finally(() => { clearTimeout(timer) })
   }
   promise = promise.catch((err) => {
-    throw ((err || {}).name === 'AbortError') ? new Error(ctx.$t('reqAborted')) : err
+    throw ((err || {}).name === 'AbortError') ? new Error($t('reqAborted')) : err
   })
   return promise
 }

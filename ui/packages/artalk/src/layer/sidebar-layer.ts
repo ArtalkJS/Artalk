@@ -3,6 +3,7 @@ import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import SidebarHTML from './sidebar-layer.html?raw'
+import User from '../lib/user'
 import Layer from './layer'
 
 export interface SidebarShowPayload {
@@ -83,7 +84,7 @@ export default class SidebarLayer extends Component {
       const query: any = {
         pageKey: this.conf.pageKey,
         site: this.conf.site || '',
-        user: JSON.stringify(this.ctx.user.data),
+        user: JSON.stringify(User.data),
         time: +new Date()
       }
 

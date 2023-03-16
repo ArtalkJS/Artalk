@@ -10,6 +10,7 @@ import { handelBaseConf } from './config'
 import Services from './service'
 import * as Stat from './lib/stat'
 import ListLite from './list/list-lite'
+import Api from './api'
 
 /**
  * Artalk
@@ -153,7 +154,8 @@ export default class Artalk {
 
   /** Load count widget */
   public static loadCountWidget(conf: Partial<ArtalkConfig>) {
-    const ctx = new ConcreteContext(handelBaseConf(conf))
+    const ctx: Context = new ConcreteContext(handelBaseConf(conf))
+    ctx.inject('api', new Api(ctx))
     Stat.initCountWidget({ ctx, pvAdd: false })
   }
 

@@ -18,7 +18,7 @@
   "devDependencies": {
     "@redocly/cli": "1.0.0-beta.123",
     "markdown-it-for-inline": "^0.1.1",
-    "sass": "^1.58.3",
+    "sass": "^1.59.3",
     "vitepress": "1.0.0-alpha.50"
   }
 }

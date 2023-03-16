@@ -3,14 +3,14 @@ lockfileVersion: 5.4
 specifiers:
   '@redocly/cli': 1.0.0-beta.123
   markdown-it-for-inline: ^0.1.1
-  sass: ^1.58.3
+  sass: ^1.59.3
   vitepress: 1.0.0-alpha.50
 
 devDependencies:
   '@redocly/cli': 1.0.0-beta.123
   markdown-it-for-inline: 0.1.1
-  sass: 1.58.3
-  vitepress: 1.0.0-alpha.50_sass@1.58.3
+  sass: 1.59.3
+  vitepress: 1.0.0-alpha.50_sass@1.59.3
 
 packages:
 
@@ -632,7 +632,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.1.4_sass@1.58.3
+      vite: 4.1.4_sass@1.59.3
       vue: 3.2.47
     dev: true
 
@@ -1696,8 +1696,8 @@ packages:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
     dev: true
 
-  /sass/1.58.3:
-    resolution: {integrity: sha512-Q7RaEtYf6BflYrQ+buPudKR26/lH+10EmO9bBqbmPh/KeLqv8bjpTNqxe71ocONqXq+jYiCbpPUmQMS+JJPk4A==}
+  /sass/1.59.3:
+    resolution: {integrity: sha512-QCq98N3hX1jfTCoUAsF3eyGuXLsY7BCnCEg9qAact94Yc21npG2/mVOqoDvE0fCbWDqiM4WlcJQla0gWG2YlxQ==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
@@ -1927,7 +1927,7 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: true
 
-  /vite/4.1.4_sass@1.58.3:
+  /vite/4.1.4_sass@1.59.3:
     resolution: {integrity: sha512-3knk/HsbSTKEin43zHu7jTwYWv81f8kgAL99G5NWBcA1LKvtvcVAC4JjBH1arBunO9kQka+1oGbrMKOjk4ZrBg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -1956,12 +1956,12 @@ packages:
       postcss: 8.4.21
       resolve: 1.22.1
       rollup: 3.18.0
-      sass: 1.58.3
+      sass: 1.59.3
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
 
-  /vitepress/1.0.0-alpha.50_sass@1.58.3:
+  /vitepress/1.0.0-alpha.50_sass@1.59.3:
     resolution: {integrity: sha512-6EdT6JIiHRD7KatKMfxCJ3J7aHlkMp67ZEcfYrMTLKAJ+K+qWs2p427udMHSenCOzVNLIikEC5v/rP3GOGWubQ==}
     hasBin: true
     dependencies:
@@ -1972,7 +1972,7 @@ packages:
       '@vueuse/core': 9.13.0_vue@3.2.47
       body-scroll-lock: 4.0.0-beta.0
       shiki: 0.14.1
-      vite: 4.1.4_sass@1.58.3
+      vite: 4.1.4_sass@1.59.3
       vue: 3.2.47
     transitivePeerDependencies:
       - '@algolia/client-search'

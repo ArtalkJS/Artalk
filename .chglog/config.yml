@@ -15,6 +15,12 @@ options:
         - refactor
         - docs
   commit_groups:
+    title_order:
+      - feat
+      - fix
+      - perf
+      - refactor
+      - docs
     title_maps:
       feat: Features
       fix: Bug Fixes

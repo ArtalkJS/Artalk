@@ -1,4 +1,23 @@
 
+## [v2.5.1](https://github.com/ArtalkJS/Artalk/compare/v2.5.0...v2.5.1) (2023-03-16)
+
+### Features
+
+* **go:** upgrade golang to v1.20.2
+
+### Bug Fixes
+
+* **ui/count-widget:** context api undefined issue ([#464](https://github.com/ArtalkJS/Artalk/issues/464))
+* **ui/i18n:** duplicate packaging built-in language in the external script
+* **ui/paginator:** showErr func call issue
+* **ui/sort-dropdown:** dropdown menu disappears after call reload func ([#461](https://github.com/ArtalkJS/Artalk/issues/461))
+
+### Code Refactoring
+
+* **anti_spam/aliyun:** accessing aliyun green text api without sdk ([#459](https://github.com/ArtalkJS/Artalk/issues/459))
+* **ui/user:** modify user to standalone module ([#463](https://github.com/ArtalkJS/Artalk/issues/463))
+
+
 ## [v2.5.0](https://github.com/ArtalkJS/Artalk/compare/v2.4.4...v2.5.0) (2023-03-10)
 
 ### Features

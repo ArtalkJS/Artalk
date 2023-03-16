@@ -11,11 +11,11 @@
   },
   "devDependencies": {
     "@rollup/plugin-dynamic-import-vars": "2.0.3",
-    "@types/node": "18.14.6",
-    "@typescript-eslint/eslint-plugin": "5.54.1",
-    "@typescript-eslint/parser": "5.54.1",
-    "autoprefixer": "10.4.13",
-    "eslint": "8.35.0",
+    "@types/node": "18.15.3",
+    "@typescript-eslint/eslint-plugin": "5.55.0",
+    "@typescript-eslint/parser": "5.55.0",
+    "autoprefixer": "10.4.14",
+    "eslint": "8.36.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-airbnb-typescript": "17.0.0",
     "eslint-config-prettier": "8.7.0",
@@ -24,14 +24,14 @@
     "eslint-plugin-import": "2.27.5",
     "postcss": "8.4.21",
     "prettier": "2.8.4",
-    "rollup": "3.18.0",
-    "sass": "1.58.3",
-    "terser": "5.16.5",
+    "rollup": "3.19.1",
+    "sass": "1.59.3",
+    "terser": "5.16.6",
     "typescript": "4.9.5",
-    "vite": "4.1.4",
+    "vite": "4.2.0",
     "vite-plugin-checker": "0.5.6",
-    "vite-plugin-dts": "2.0.2",
-    "vite-tsconfig-paths": "4.0.5"
+    "vite-plugin-dts": "2.1.0",
+    "vite-tsconfig-paths": "4.0.7"
   },
   "browserslist": [
     "supports es6 and supports es6-class and supports es6-generators and supports es6-module-dynamic-import and supports es6-module and supports es6-number and supports es6-string-includes"

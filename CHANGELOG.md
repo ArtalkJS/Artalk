@@ -9,6 +9,8 @@
 * docker ci add support for building arm64 wheels
 * more functions to handle artalk lifecycle ([#426](https://github.com/ArtalkJS/Artalk/issues/426))
 * **ui:** add some static methods
+* **ui/height_limit:** support scrollable height limit area ([#451](https://github.com/ArtalkJS/Artalk/issues/451))
+* **ui/sidebar:** add dark mode support ([#450](https://github.com/ArtalkJS/Artalk/issues/450))
 * **captcha:** add support for reCAPTCHA and hCaptcha ([#456](https://github.com/ArtalkJS/Artalk/issues/456))
 * **captcha:** support turnstile captcha by cloudflare ([#453](https://github.com/ArtalkJS/Artalk/issues/453))
 * **i18n:** add i18n support for backend ([#343](https://github.com/ArtalkJS/Artalk/issues/343))
@@ -19,8 +21,14 @@
 ### Bug Fixes
 
 * **ui:** hash goto function check condition issue
+* **ui/conf:** avoid some conf overrides frontend from the backend ([#449](https://github.com/ArtalkJS/Artalk/issues/449))
+* **ui/editor:** disable img upload cannot hide its btn
+* **ui/i18n:** subscribe event priority issue
+* **ui/sidebar:** array type of preference initial data issue
+* **ui/sidebar:** array type config option cannot be shown
+* **ui/sidebar:** boolean type setting option save issue ([#431](https://github.com/ArtalkJS/Artalk/issues/431)) ([#444](https://github.com/ArtalkJS/Artalk/issues/444))
+* **ui/sidebar:** setting item save follow type of template
 * **lint:** add tsc check before vite compile ([#440](https://github.com/ArtalkJS/Artalk/issues/440))
-* **sidebar:** array type config option cannot be shown
 * **email:** duplicate sending with multiple admins using same email addrs ([#375](https://github.com/ArtalkJS/Artalk/issues/375))
 * **email:** email queue initialization issue ([#374](https://github.com/ArtalkJS/Artalk/issues/374))
 * **email:** failback to `email.mail_tpl` if `admin_notify.email.mail_tpl` is empty
@@ -32,6 +40,9 @@
 
 * improve some css styles
 * add graceful shutdown
+* **conf/i18n:** detect and change locale when config file contains chinese
+* **ui/list:** remove useless function call
+* **ui/sidebar:** improve sidebar i18n
 
 ### Code Refactoring
 
@@ -50,6 +61,15 @@
 * **comment:** separate comment ui renders from single file ([#427](https://github.com/ArtalkJS/Artalk/issues/427))
 * **style:** convert to use Sass as a style interpreter ([#439](https://github.com/ArtalkJS/Artalk/issues/439))
 * **ui:** automatic dependency injection ([#429](https://github.com/ArtalkJS/Artalk/issues/429))
+* **ui/checker:** simplify checker lifecycle function param table ([#428](https://github.com/ArtalkJS/Artalk/issues/428))
+* **ui/dark-mode:** separate dark mode logic into its own module ([#430](https://github.com/ArtalkJS/Artalk/issues/430))
+* **ui/editor:** modify editor ui to standalone module ([#441](https://github.com/ArtalkJS/Artalk/issues/441))
+* **ui/editor:** change functions of editor to standalone modules ([#443](https://github.com/ArtalkJS/Artalk/issues/443))
+* **ui/height-limit:** modify height limit function to standalone module ([#435](https://github.com/ArtalkJS/Artalk/issues/435))
+* **ui/i18n:** improve i18n function to standalone module ([#434](https://github.com/ArtalkJS/Artalk/issues/434))
+* **ui/list:** modify list pagination to standalone module ([#437](https://github.com/ArtalkJS/Artalk/issues/437))
+* **page/fetch:** remove goquery dependency when extracting page data ([#442](https://github.com/ArtalkJS/Artalk/issues/442))
+* **anti_spam/qcloud-tms:** implement qcloud tms api without sdk ([#438](https://github.com/ArtalkJS/Artalk/issues/438))
 
 ### Documentation
 

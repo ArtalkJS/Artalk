@@ -15,6 +15,7 @@ options:
         - refactor
         - docs
   commit_groups:
+    sort_by: Custom
     title_order:
       - feat
       - fix
@@ -28,7 +29,7 @@ options:
       refactor: Code Refactoring
       docs: Documentation
   header:
-    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
+    pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s\\/]*)\\))?\\:\\s(.*)$"
     pattern_maps:
       - Type
       - Scope

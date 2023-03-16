@@ -42,7 +42,7 @@ jobs:
       run: pnpm build
 
     - name: Publish
-      run: pnpm publish -F artalk
+      run: pnpm publish -F artalk --no-git-checks
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

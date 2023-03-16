@@ -20,7 +20,7 @@ importers:
       prettier: 2.8.4
       rollup: 3.18.0
       sass: 1.58.3
-      terser: 5.16.5
+      terser: 5.16.6
       typescript: 4.9.5
       vite: 4.1.4
       vite-plugin-checker: 0.5.6
@@ -43,9 +43,9 @@ importers:
       prettier: 2.8.4
       rollup: 3.18.0
       sass: 1.58.3
-      terser: 5.16.5
+      terser: 5.16.6
       typescript: 4.9.5
-      vite: 4.1.4_wcgvvl5yqdbo4t5o7rsuppxg44
+      vite: 4.1.4_qiixnkadpdi2n23r5rzxm64aqu
       vite-plugin-checker: 0.5.6_ktc7s6eodpohjmysachyymxf74
       vite-plugin-dts: 2.0.2_h37bxcmstsgcmwrqgewcpi4xyu
       vite-tsconfig-paths: 4.0.5_typescript@4.9.5
@@ -2902,8 +2902,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /terser/5.16.5:
-    resolution: {integrity: sha512-qcwfg4+RZa3YvlFh0qjifnzBHjKGNbtDo9yivMqMFDy9Q6FSaQWSB/j1xKhsoUFJIqDOM3TsN6D5xbrMrFcHbg==}
+  /terser/5.16.6:
+    resolution: {integrity: sha512-IBZ+ZQIA9sMaXmRZCUMDjNH0D5AQQfdn4WUjHL0+1lF4TP1IHRJbrhb6fNaXWikrYQTSkb7SLxkeXAiy1p7mbg==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
@@ -3218,7 +3218,7 @@ packages:
       strip-ansi: 6.0.1
       tiny-invariant: 1.3.1
       typescript: 4.9.5
-      vite: 4.1.4_wcgvvl5yqdbo4t5o7rsuppxg44
+      vite: 4.1.4_qiixnkadpdi2n23r5rzxm64aqu
       vscode-languageclient: 7.0.0
       vscode-languageserver: 7.0.0
       vscode-languageserver-textdocument: 1.0.8
@@ -3241,7 +3241,7 @@ packages:
       kolorist: 1.7.0
       magic-string: 0.29.0
       ts-morph: 17.0.1
-      vite: 4.1.4_wcgvvl5yqdbo4t5o7rsuppxg44
+      vite: 4.1.4_qiixnkadpdi2n23r5rzxm64aqu
     transitivePeerDependencies:
       - '@types/node'
       - rollup
@@ -3292,7 +3292,7 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vite/4.1.4_wcgvvl5yqdbo4t5o7rsuppxg44:
+  /vite/4.1.4_qiixnkadpdi2n23r5rzxm64aqu:
     resolution: {integrity: sha512-3knk/HsbSTKEin43zHu7jTwYWv81f8kgAL99G5NWBcA1LKvtvcVAC4JjBH1arBunO9kQka+1oGbrMKOjk4ZrBg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -3323,7 +3323,7 @@ packages:
       resolve: 1.22.1
       rollup: 3.18.0
       sass: 1.58.3
-      terser: 5.16.5
+      terser: 5.16.6
     optionalDependencies:
       fsevents: 2.3.2
     dev: true

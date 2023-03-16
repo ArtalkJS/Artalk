@@ -37,8 +37,9 @@ export default class PgHolder {
   }
 
   public showErr(msg: string) {
-    const func = this.getAdaptor().showErr
-    if (func) func(msg)
+    const that = this.getAdaptor()
+    const func = that.showErr
+    if (func) func.bind(that)(msg)
   }
 
   public setMode(val: TPgMode) {

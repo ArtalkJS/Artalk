@@ -177,6 +177,10 @@
     padding-bottom: 10px;
   }
 
+  &.atk-err .atk-text {
+    color: var(--at-color-red) !important;
+  }
+
   .atk-list-read-more-inner {
     cursor: pointer;
     user-select: none;
@@ -194,10 +198,6 @@
     margin-top: -15px;
     background: var(--at-color-bg);
     border-color: var(--at-color-border);
-
-    &.atk-err > .atk-text {
-      color: var(--at-color-red) !important;
-    }
 
     & > .atk-loading-icon {
       height: 15px;

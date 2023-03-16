@@ -35,8 +35,8 @@ const services = {
 
   // User Store
   user(ctx: Context) {
-    const user = new User(ctx)
-    return user
+    User.setContext(ctx)
+    return User
   },
 
   // HTTP API client

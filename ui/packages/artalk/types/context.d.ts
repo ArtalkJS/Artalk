@@ -22,13 +22,12 @@ export default interface ContextApi {
   /** 依赖注入函数 */
   inject<K extends keyof TInjectedServices>(depName: K, obj: TInjectedServices[K]): void
 
+  /** 获取依赖对象 */
+  get<K extends keyof TInjectedServices>(depName: K): TInjectedServices[K]
+
   /** 配置对象 */
   // TODO 修改为 getConf() 和 setConf()
   conf: ArtalkConfig
-
-  /** 用户对象 */
-  // TODO 修改为 getUser()
-  user: User
 
   /** marked 依赖对象 */
   getMarkedInstance(): TMarked | undefined

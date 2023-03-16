@@ -1,4 +1,5 @@
 import Editor from '../editor'
+import User from '../../lib/user'
 import EditorPlug from './editor-plug'
 
 export default class HeaderInputPlug extends EditorPlug {
@@ -18,7 +19,7 @@ export default class HeaderInputPlug extends EditorPlug {
       const link = this.editor.getUI().$link.value.trim()
       if (!!link && !/^(http|https):\/\//.test(link)) {
         this.editor.getUI().$link.value = `https://${link}`
-        this.ctx.user.update({ link: this.editor.getUI().$link.value })
+        User.update({ link: this.editor.getUI().$link.value })
       }
     })
   }
@@ -30,7 +31,7 @@ export default class HeaderInputPlug extends EditorPlug {
 
   /** 远程获取用户数据 */
   fetchUserInfo() {
-    this.ctx.user.logout()
+    User.logout()
 
     // 获取用户信息
     if (this.queryUserInfo.timeout) window.clearTimeout(this.queryUserInfo.timeout) // 清除待发出的请求
@@ -40,26 +41,26 @@ export default class HeaderInputPlug extends EditorPlug {
       this.queryUserInfo.timeout = null // 清理
 
       const {req, abort} = this.ctx.getApi().user.userGet(
-        this.ctx.user.data.nick, this.ctx.user.data.email
+        User.data.nick, User.data.email
       )
       this.queryUserInfo.abortFunc = abort
       req.then(data => {
         if (!data.is_login) {
-          this.ctx.user.logout()
+          User.logout()
         }
 
         // 未读消息更新
         this.ctx.updateNotifies(data.unread)
 
         // 若用户为管理员，执行登陆操作
-        if (this.ctx.user.checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {
+        if (User.checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {
           this.showLoginDialog()
         }
 
         // 自动填入 link
         if (data.user && data.user.link) {
           this.editor.getUI().$link.value = data.user.link
-          this.ctx.user.update({ link: data.user.link })
+          User.update({ link: data.user.link })
         }
       })
       .catch(() => {})

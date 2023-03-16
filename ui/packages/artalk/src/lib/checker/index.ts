@@ -57,7 +57,6 @@ export default class CheckerLauncher {
       get: (key) => (checkerStore[key]),
       getCtx: () => (this.ctx),
       getApi: () => (this.ctx.getApi()),
-      getUser: () => (this.ctx.user),
       getLayer: () => layer,
       hideInteractInput: () => {
         hideInteractInput = true
@@ -191,7 +190,6 @@ export interface CheckerCtx {
   set<K extends keyof CheckerStore>(key: K, val: CheckerStore[K]): void
   getCtx(): Context
   getApi(): Api
-  getUser(): User
   getLayer(): Layer
   hideInteractInput(): void
   triggerSuccess(): void

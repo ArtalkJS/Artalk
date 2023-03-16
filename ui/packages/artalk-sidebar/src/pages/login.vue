@@ -38,7 +38,7 @@ function login(username?: string) {
     username || '', userForm.value.email, userForm.value.password
   ).then((resp) => {
     const user = resp.user
-    global.getArtalk()!.ctx.user.update({
+    global.getArtalk()!.ctx.get('user').update({
       nick: user.name,
       email: user.email,
       link: user.link,

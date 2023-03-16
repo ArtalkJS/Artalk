@@ -1,4 +1,5 @@
 import Editor from './editor'
+import User from '../lib/user'
 import { createMover } from './mover'
 import { createPlugManager } from './plug-manager'
 import { createReplyManager } from './reply'
@@ -31,7 +32,7 @@ function localStorage(editor: Editor) {
 function header(editor: Editor) {
   const $inputs = editor.getHeaderInputEls()
   Object.entries($inputs).forEach(([key, $input]) => {
-    $input.value = editor.ctx.user.data[key] || ''
+    $input.value = User.data[key] || ''
     $input.addEventListener('input', () => onHeaderInput(editor, key, $input))
 
     // 设置 Placeholder
@@ -42,7 +43,7 @@ function header(editor: Editor) {
 function onHeaderInput(editor: Editor, field: string, $input: HTMLInputElement) {
   if (editor.isEditMode) return // 评论编辑模式，不修改个人信息
 
-  editor.ctx.user.update({
+  User.update({
     [field]: $input.value.trim()
   })
 

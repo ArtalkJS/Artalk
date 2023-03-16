@@ -4,6 +4,7 @@ import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import marked from '../lib/marked'
+import User from '../lib/user'
 import initEditorFuncs from './funcs'
 import { render, EditorUI } from './ui'
 import { PlugManager } from './plug-manager'
@@ -178,7 +179,7 @@ export default class Editor extends Component {
     if (!this.ui.$textareaWrap.querySelector('.atk-comment-closed'))
       this.ui.$textareaWrap.prepend(Utils.createElement(`<div class="atk-comment-closed">${this.$t('onlyAdminCanReply')}</div>`))
 
-    if (!this.ctx.user.data.isAdmin) {
+    if (!User.data.isAdmin) {
       this.ui.$textarea.style.display = 'none'
       this.closePlugPanel()
       this.ui.$bottom.style.display = 'none'

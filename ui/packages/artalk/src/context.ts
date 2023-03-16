@@ -39,12 +39,14 @@ class Context implements ContextApi {
     this.$root = $root || document.createElement('div')
     this.$root.classList.add('artalk')
     this.$root.innerHTML = ''
-
-    this.api = new Api(this)
   }
 
   public inject(depName: string, obj: any) {
     this[depName] = obj
+  }
+
+  public get(depName: string) {
+    return this[depName]
   }
 
   public getApi() {

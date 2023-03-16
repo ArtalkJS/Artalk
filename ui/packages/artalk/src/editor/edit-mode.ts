@@ -1,6 +1,7 @@
 import type { CommentData } from '~/types/artalk-data'
 import * as Utils from '../lib/utils'
 import Editor from './editor'
+import User from '../lib/user'
 
 export interface EditModeManager {
   editor: Editor
@@ -69,7 +70,7 @@ function cancelEdit(m: EditModeManager) {
   m.comment = undefined
   m.editor.travelBack()
 
-  const { nick, email, link } = m.editor.ctx.user.data
+  const { nick, email, link } = User.data
   ui.$nick.value = nick
   ui.$email.value = email
   ui.$link.value = link

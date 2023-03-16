@@ -3,6 +3,7 @@ import Context from '~/types/context'
 import { version as ARTALK_VERSION } from '../../package.json'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
+import User from '../lib/user'
 import ListHTML from './list.html?raw'
 import ListLite from './list-lite'
 import * as ListUi from './list-ui'
@@ -78,14 +79,14 @@ export default class List extends ListLite {
     this.$commentCountNum.innerText = String(Number(this.data?.total) || 0)
 
     // 已输入个人信息
-    if (!!this.ctx.user.data.nick && !!this.ctx.user.data.email) {
+    if (!!User.data.nick && !!User.data.email) {
       this.$openSidebarBtn.classList.remove('atk-hide')
     } else {
       this.$openSidebarBtn.classList.add('atk-hide')
     }
 
     this.$openSidebarBtn.querySelector<HTMLElement>('.atk-text')!
-      .innerText = (!this.ctx.user.data.isAdmin) ? this.$t('msgCenter') : this.$t('ctrlCenter')
+      .innerText = (!User.data.isAdmin) ? this.$t('msgCenter') : this.$t('ctrlCenter')
 
     // 关闭评论
     if (!!this.data && !!this.data.page && this.data.page.admin_only === true) {

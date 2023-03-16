@@ -1,6 +1,7 @@
 import { UserData, NotifyData, UserDataForAdmin } from '~/types/artalk-data'
 import ApiBase from './api-base'
 import { ToFormData } from './request'
+import User from '../lib/user'
 
 /**
  * 用户 API
@@ -12,8 +13,6 @@ export default class UserApi extends ApiBase {
       name, email, password
     }
 
-    if (this.ctx.conf.site) params.site_name = this.ctx.conf.site
-
     const data = await this.POST<any>('/login', params)
     return data as { token: string, user: UserData }
   }
@@ -22,7 +21,7 @@ export default class UserApi extends ApiBase {
   public userGet(name: string, email: string) {
     const ctrl = new AbortController()
     const params: any = {
-      name, email, site_name: (this.ctx.conf.site || '')
+      name, email
     }
 
     const req = this.Fetch(`/user-get`, {
@@ -45,8 +44,8 @@ export default class UserApi extends ApiBase {
   /** 用户 · 登录状态 */
   public async loginStatus() {
     const data = await this.POST<any>('/login-status', {
-      name: this.ctx.user.data.nick,
-      email: this.ctx.user.data.email
+      name: User.data.nick,
+      email: User.data.email
     })
     return (data || { is_login: false, is_admin: false }) as { is_login: boolean, is_admin: boolean }
   }
@@ -59,15 +58,14 @@ export default class UserApi extends ApiBase {
   /** 已读标记 */
   public markRead(notifyKey: string, readAll = false) {
     const params: any = {
-      site_name: this.ctx.conf.site || '',
       notify_key: notifyKey,
     }
 
     if (readAll) {
       delete params.notify_key
       params.read_all = true
-      params.name = this.ctx.user.data.nick
-      params.email = this.ctx.user.data.email
+      params.name = User.data.nick
+      params.email = User.data.email
     }
 
     return this.POST(`/mark-read`, params)

@@ -32,7 +32,7 @@ export default class Artalk {
   public static DisabledComponents: string[] = []
 
   constructor(conf: Partial<ArtalkConfig>) {
-    if (Artalk.instance) return Artalk.instance.update(conf)
+    if (Artalk.instance) Artalk.destroy()
 
     // 初始化基本配置
     this.conf = handelBaseConf(conf)
@@ -57,7 +57,7 @@ export default class Artalk {
 
   /** Init Artalk */
   public static init(conf: Partial<ArtalkConfig>): Artalk {
-    if (this.instance) return this.instance.update(conf) // 单例模式
+    if (this.instance) Artalk.destroy()
     this.instance = new Artalk(conf)
     return this.instance
   }

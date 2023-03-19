@@ -56,12 +56,14 @@ export default class UserApi extends ApiBase {
   }
 
   /** 已读标记 */
-  public markRead(notifyKey: string, readAll = false) {
+  public markRead(commentID: number, notifyKey: string, readAll = false) {
     const params: any = {
+      comment_id: commentID,
       notify_key: notifyKey,
     }
 
     if (readAll) {
+      delete params.comment_id
       delete params.notify_key
       params.read_all = true
       params.name = User.data.nick

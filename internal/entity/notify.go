@@ -1,11 +1,10 @@
 package entity
 
 import (
-	"fmt"
+	"math/rand"
 	"sync"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/utils"
 	"gorm.io/gorm"
 )
 
@@ -36,5 +35,10 @@ func (n *Notify) SetComment(comment Comment) {
 
 // 操作时的验证密钥（判断是否本人操作）
 func (n *Notify) GenerateKey() {
-	n.Key = utils.GetMD5Hash(fmt.Sprintf("%v %v %v", n.UserID, n.CommentID, time.Now().Unix()))
+	letterRunes := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
+	b := make([]rune, 5)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	n.Key = string(b)
 }

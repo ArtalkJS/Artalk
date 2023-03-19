@@ -63,7 +63,7 @@ func Gen(genType string, specificPath string, overwrite bool) {
 	logrus.Info("File Generated: " + absPath)
 }
 
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*")
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*1234567890")
 
 func RandStringRunes(n int) string {
 	b := make([]rune, n)

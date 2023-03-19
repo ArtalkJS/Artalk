@@ -142,7 +142,7 @@ export default class List extends ListLite {
     // 已阅 API
     const notifyKey = Utils.getQueryParam('atk_notify_key')
     if (notifyKey) {
-      this.ctx.getApi().user.markRead(notifyKey)
+      this.ctx.getApi().user.markRead(commentId, notifyKey)
         .then(() => {
           this.unread = this.unread.filter(o => o.comment_id !== commentId)
           this.updateUnread(this.unread)

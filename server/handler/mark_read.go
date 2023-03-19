@@ -8,6 +8,7 @@ import (
 )
 
 type ParamsMarkRead struct {
+	CommentID uint   `form:"comment_id"`
 	NotifyKey string `form:"notify_key"`
 
 	Name    string `form:"name"`
@@ -22,7 +23,8 @@ type ParamsMarkRead struct {
 // @Summary      Notify Mark Read
 // @Description  Mark specific notification as read for user
 // @Tags         Notify
-// @Param        notify_key  formData  string  true   "the notify key you want to mark as read"
+// @Param        comment_id  formData  int     true   "the comment id of the notify you want to mark as read"
+// @Param        notify_key  formData  string  true   "the key of the notify"
 // @Param        name        formData  string  false  "the username"
 // @Param        email       formData  string  false  "the user email"
 // @Param        all_read    formData  bool    false  "the option if mark all user's notify as read"
@@ -55,7 +57,7 @@ func MarkRead(router fiber.Router) {
 		}
 
 		// find notify
-		notify := query.FindNotifyByKey(p.NotifyKey)
+		notify := query.FindNotifyForComment(p.CommentID, p.NotifyKey)
 		if notify.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Notify")}))
 		}

@@ -174,9 +174,9 @@ func FindNotify(userID uint, commentID uint) entity.Notify {
 	return notify
 }
 
-func FindNotifyByKey(key string) entity.Notify {
+func FindNotifyForComment(commentID uint, key string) entity.Notify {
 	var notify entity.Notify
-	DB().Where(entity.Notify{Key: key}).First(&notify)
+	DB().Where(entity.Notify{CommentID: commentID, Key: key}).First(&notify)
 	return notify
 }
 

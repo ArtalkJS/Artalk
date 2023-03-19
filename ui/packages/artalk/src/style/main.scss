@@ -51,7 +51,7 @@
     line-height: $line-height;
     display: block;
     padding: 10px 15px;
-    white-space: pre-wrap;
+    white-space: pre-wrap !important;
     background-color: var(--at-color-bg-grey);
     color: var(--at-color-font);
     margin: 0;

@@ -1,4 +1,16 @@
 
+## [v2.5.2](https://github.com/ArtalkJS/Artalk/compare/v2.5.1...v2.5.2) (2023-03-19)
+
+### Bug Fixes
+
+* **ui:** destroy instance when calling init func twice
+
+### Performance Improvements
+
+* **notify:** shorten the length of notify key ([#466](https://github.com/ArtalkJS/Artalk/issues/466))
+* **style:** add `!important` for white-space css in code block ([#467](https://github.com/ArtalkJS/Artalk/issues/467))
+
+
 ## [v2.5.1](https://github.com/ArtalkJS/Artalk/compare/v2.5.0...v2.5.1) (2023-03-16)
 
 ### Features

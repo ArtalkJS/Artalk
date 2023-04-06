@@ -11,7 +11,6 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
-	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,7 +18,13 @@ var AntiSpamReplaceKeywords *[]string
 
 const LOG_TAG = "[Spam Interception] "
 
-func SyncSpamCheck(comment *entity.Comment, fiberCtx *fiber.Ctx) {
+type SpanCheckConf struct {
+	ReqReferer   string
+	ReqIP        string
+	ReqUserAgent string
+}
+
+func SyncSpamCheck(comment *entity.Comment, conf SpanCheckConf) {
 	// 拦截评论
 	BlockCommentBy := func(blocker string) {
 		logrus.Info(fmt.Sprintf(LOG_TAG+"%s Successful blocking of comments ID=%d CONT=%s", blocker, comment.ID, strconv.Quote(comment.Content)))
@@ -60,7 +65,7 @@ func SyncSpamCheck(comment *entity.Comment, fiberCtx *fiber.Ctx) {
 		siteURL = query.CookSite(&site).FirstUrl
 	}
 	if siteURL == "" { // 从 referer 中提取网站
-		if pr, err := url.Parse(string(fiberCtx.Request().Header.Referer())); err == nil && pr.Scheme != "" && pr.Host != "" {
+		if pr, err := url.Parse(conf.ReqReferer); err == nil && pr.Scheme != "" && pr.Host != "" {
 			siteURL = fmt.Sprintf("%s://%s", pr.Scheme, pr.Host)
 		}
 	}
@@ -71,8 +76,8 @@ func SyncSpamCheck(comment *entity.Comment, fiberCtx *fiber.Ctx) {
 		isPass, err := Akismet(&AkismetParams{
 			Blog: siteURL,
 
-			UserIP:    fiberCtx.IP(),
-			UserAgent: string(fiberCtx.Request().Header.UserAgent()),
+			UserIP:    conf.ReqIP,
+			UserAgent: string(conf.ReqUserAgent),
 
 			CommentType:        "comment",
 			CommentAuthor:      user.Name,

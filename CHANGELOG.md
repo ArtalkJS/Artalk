@@ -1,4 +1,15 @@
 
+## [v2.5.3](https://github.com/ArtalkJS/Artalk/compare/v2.5.2...v2.5.3) (2023-04-06)
+
+### Bug Fixes
+
+* **api/comment_add:** SIGSEGV crash in comment_add ([#478](https://github.com/ArtalkJS/Artalk/issues/478)) ([#481](https://github.com/ArtalkJS/Artalk/issues/481))
+
+### Performance Improvements
+
+* **ip_region:** add db file existence check and error message ([#482](https://github.com/ArtalkJS/Artalk/issues/482))
+
+
 ## [v2.5.2](https://github.com/ArtalkJS/Artalk/compare/v2.5.1...v2.5.2) (2023-03-19)
 
 ### Bug Fixes

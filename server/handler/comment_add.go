@@ -71,8 +71,12 @@ func CommentAdd(router fiber.Router) {
 			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
 		}
 
-		ip := c.IP()
-		ua := string(c.Request().Header.UserAgent())
+		var (
+			ip      = c.IP()
+			ua      = string(c.Request().Header.UserAgent())
+			referer = string(c.Request().Header.Referer())
+			isAdmin = common.CheckIsAdminReq(c)
+		)
 
 		// 允许传入修正后的 UA
 		if p.UA != "" {
@@ -140,7 +144,7 @@ func CommentAdd(router fiber.Router) {
 		}
 
 		// default comment type
-		if !common.CheckIsAdminReq(c) && config.Instance.Moderator.PendingDefault {
+		if !isAdmin && config.Instance.Moderator.PendingDefault {
 			// 不是管理员评论 && 配置开启评论默认待审
 			comment.IsPending = true
 		}
@@ -160,8 +164,12 @@ func CommentAdd(router fiber.Router) {
 			}
 
 			// 垃圾检测
-			if !common.CheckIsAdminReq(c) { // 忽略检查管理员
-				anti_spam.SyncSpamCheck(&comment, c) // 同步执行
+			if !isAdmin { // 忽略检查管理员
+				anti_spam.SyncSpamCheck(&comment, anti_spam.SpanCheckConf{
+					ReqReferer:   referer,
+					ReqIP:        ip,
+					ReqUserAgent: ua,
+				}) // 同步执行
 			}
 
 			// 通知发送

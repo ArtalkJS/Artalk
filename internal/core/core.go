@@ -1,6 +1,7 @@
 package core
 
 import (
+	"errors"
 	"io"
 	"os"
 	"strconv"
@@ -185,6 +186,14 @@ func initIPRegion() {
 	if irConf.DBPath == "" {
 		irConf.DBPath = "./data/ip2region.xdb"
 	}
+
+	// 检测配置文件是否存在
+	if _, err := os.Stat(irConf.DBPath); errors.Is(err, os.ErrNotExist) {
+		logrus.Error("未找到 IP 数据库文件：" + strconv.Quote(irConf.DBPath) + "，IP 归属地功能已禁用，" +
+			"参考链接：https://artalk.js.org/guide/frontend/ip-region.html")
+		return
+	}
+
 	if irConf.Precision == "" {
 		// 默认精确到省
 		irConf.Precision = string(ip_region.Province)

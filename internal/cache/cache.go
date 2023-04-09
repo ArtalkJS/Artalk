@@ -14,7 +14,7 @@ import (
 	bigcache_store "github.com/eko/gocache/store/bigcache/v4"
 	memcache_store "github.com/eko/gocache/store/memcache/v4"
 	redis_store "github.com/eko/gocache/store/redis/v4"
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 )
 
@@ -33,7 +33,7 @@ func OpenCache() (err error) {
 
 	case config.CacheTypeBuiltin:
 		// 内建缓存
-		bigcacheClient, err := bigcache.NewBigCache(bigcache.DefaultConfig(
+		bigcacheClient, err := bigcache.New(context.Background(), bigcache.DefaultConfig(
 			// Tip: 内建缓存过期时间是一样的，只有 Redis/Memcache 才能设置单个 item 的
 			time.Duration(config.Instance.Cache.GetExpiresTime()),
 		))

@@ -1828,8 +1828,15 @@ const docTemplate = `{
                 "summary": "Notify Mark Read",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "the comment id of the notify you want to mark as read",
+                        "name": "comment_id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
                         "type": "string",
-                        "description": "the notify key you want to mark as read",
+                        "description": "the key of the notify",
                         "name": "notify_key",
                         "in": "formData",
                         "required": true
@@ -2120,9 +2127,6 @@ const docTemplate = `{
                 "commit_hash": {
                     "type": "string"
                 },
-                "fe_min_version": {
-                    "type": "string"
-                },
                 "version": {
                     "type": "string"
                 }
@@ -2373,13 +2377,42 @@ const docTemplate = `{
                 "always": {
                     "type": "boolean"
                 },
+                "captcha_type": {
+                    "$ref": "#/definitions/config.CaptchaType"
+                },
                 "enabled": {
                     "type": "boolean"
                 },
                 "geetest": {
                     "$ref": "#/definitions/config.GeetestConf"
+                },
+                "hcaptcha": {
+                    "$ref": "#/definitions/config.HCaptchaConf"
+                },
+                "recaptcha": {
+                    "$ref": "#/definitions/config.ReCaptchaConf"
+                },
+                "turnstile": {
+                    "$ref": "#/definitions/config.TurnstileConf"
                 }
             }
+        },
+        "config.CaptchaType": {
+            "type": "string",
+            "enum": [
+                "image",
+                "turnstile",
+                "recaptcha",
+                "hcaptcha",
+                "geetest"
+            ],
+            "x-enum-varnames": [
+                "TypeImage",
+                "TypeTurnstile",
+                "TypeReCaptcha",
+                "TypeHCaptcha",
+                "TypeGeetest"
+            ]
         },
         "config.Config": {
             "type": "object",
@@ -2460,6 +2493,14 @@ const docTemplate = `{
                     "allOf": [
                         {
                             "$ref": "#/definitions/config.ImgUploadConf"
+                        }
+                    ]
+                },
+                "ip_region": {
+                    "description": "IP 归属地展示",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.IPRegionConf"
                         }
                     ]
                 },
@@ -2598,6 +2639,14 @@ const docTemplate = `{
                     "description": "邮件模板",
                     "type": "string"
                 },
+                "queue": {
+                    "description": "邮件发送队列配置",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/config.EmailQueueConf"
+                        }
+                    ]
+                },
                 "send_addr": {
                     "description": "发件人地址",
                     "type": "string"
@@ -2624,6 +2673,15 @@ const docTemplate = `{
                 }
             }
         },
+        "config.EmailQueueConf": {
+            "type": "object",
+            "properties": {
+                "buffer_size": {
+                    "description": "Channel buffer size (default is zero that not create buffer)",
+                    "type": "integer"
+                }
+            }
+        },
         "config.EmailSenderType": {
             "type": "string",
             "enum": [
@@ -2645,9 +2703,34 @@ const docTemplate = `{
                 },
                 "captcha_key": {
                     "type": "string"
+                }
+            }
+        },
+        "config.HCaptchaConf": {
+            "type": "object",
+            "properties": {
+                "secret_key": {
+                    "type": "string"
+                },
+                "site_key": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.IPRegionConf": {
+            "type": "object",
+            "properties": {
+                "db_path": {
+                    "description": "数据文件路径",
+                    "type": "string"
                 },
                 "enabled": {
+                    "description": "启用 IP 归属地展示",
                     "type": "boolean"
+                },
+                "precision": {
+                    "description": "显示精度",
+                    "type": "string"
                 }
             }
         },
@@ -2843,6 +2926,17 @@ const docTemplate = `{
                 }
             }
         },
+        "config.ReCaptchaConf": {
+            "type": "object",
+            "properties": {
+                "secret_key": {
+                    "type": "string"
+                },
+                "site_key": {
+                    "type": "string"
+                }
+            }
+        },
         "config.RedisConf": {
             "type": "object",
             "properties": {
@@ -2913,6 +3007,17 @@ const docTemplate = `{
                 }
             }
         },
+        "config.TurnstileConf": {
+            "type": "object",
+            "properties": {
+                "secret_key": {
+                    "type": "string"
+                },
+                "site_key": {
+                    "type": "string"
+                }
+            }
+        },
         "config.UpgitConf": {
             "type": "object",
             "properties": {
@@ -2953,6 +3058,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "ip_region": {
+                    "type": "string"
                 },
                 "is_allow_reply": {
                     "type": "boolean"

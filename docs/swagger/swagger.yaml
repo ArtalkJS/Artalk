@@ -6,8 +6,6 @@ definitions:
         type: string
       commit_hash:
         type: string
-      fe_min_version:
-        type: string
       version:
         type: string
     type: object
@@ -168,11 +166,33 @@ definitions:
         type: integer
       always:
         type: boolean
+      captcha_type:
+        $ref: '#/definitions/config.CaptchaType'
       enabled:
         type: boolean
       geetest:
         $ref: '#/definitions/config.GeetestConf'
+      hcaptcha:
+        $ref: '#/definitions/config.HCaptchaConf'
+      recaptcha:
+        $ref: '#/definitions/config.ReCaptchaConf'
+      turnstile:
+        $ref: '#/definitions/config.TurnstileConf'
     type: object
+  config.CaptchaType:
+    enum:
+    - image
+    - turnstile
+    - recaptcha
+    - hcaptcha
+    - geetest
+    type: string
+    x-enum-varnames:
+    - TypeImage
+    - TypeTurnstile
+    - TypeReCaptcha
+    - TypeHCaptcha
+    - TypeGeetest
   config.Config:
     properties:
       admin_notify:
@@ -220,6 +240,10 @@ definitions:
         allOf:
         - $ref: '#/definitions/config.ImgUploadConf'
         description: 图片上传
+      ip_region:
+        allOf:
+        - $ref: '#/definitions/config.IPRegionConf'
+        description: IP 归属地展示
       locale:
         description: 语言
         type: string
@@ -309,6 +333,10 @@ definitions:
       mail_tpl:
         description: 邮件模板
         type: string
+      queue:
+        allOf:
+        - $ref: '#/definitions/config.EmailQueueConf'
+        description: 邮件发送队列配置
       send_addr:
         description: 发件人地址
         type: string
@@ -323,6 +351,12 @@ definitions:
         allOf:
         - $ref: '#/definitions/config.SMTPConf'
         description: SMTP 配置
+    type: object
+  config.EmailQueueConf:
+    properties:
+      buffer_size:
+        description: Channel buffer size (default is zero that not create buffer)
+        type: integer
     type: object
   config.EmailSenderType:
     enum:
@@ -340,8 +374,25 @@ definitions:
         type: string
       captcha_key:
         type: string
+    type: object
+  config.HCaptchaConf:
+    properties:
+      secret_key:
+        type: string
+      site_key:
+        type: string
+    type: object
+  config.IPRegionConf:
+    properties:
+      db_path:
+        description: 数据文件路径
+        type: string
       enabled:
+        description: 启用 IP 归属地展示
         type: boolean
+      precision:
+        description: 显示精度
+        type: string
     type: object
   config.ImgUploadConf:
     properties:
@@ -468,6 +519,13 @@ definitions:
       url:
         type: string
     type: object
+  config.ReCaptchaConf:
+    properties:
+      secret_key:
+        type: string
+      site_key:
+        type: string
+    type: object
   config.RedisConf:
     properties:
       db:
@@ -514,6 +572,13 @@ definitions:
       secret_key:
         type: string
     type: object
+  config.TurnstileConf:
+    properties:
+      secret_key:
+        type: string
+      site_key:
+        type: string
+    type: object
   config.UpgitConf:
     properties:
       del_local:
@@ -542,6 +607,8 @@ definitions:
         type: string
       id:
         type: integer
+      ip_region:
+        type: string
       is_allow_reply:
         type: boolean
       is_collapsed:
@@ -1905,7 +1972,12 @@ paths:
     post:
       description: Mark specific notification as read for user
       parameters:
-      - description: the notify key you want to mark as read
+      - description: the comment id of the notify you want to mark as read
+        in: formData
+        name: comment_id
+        required: true
+        type: integer
+      - description: the key of the notify
         in: formData
         name: notify_key
         required: true

@@ -1,9 +1,13 @@
 {
-  "extends": ["config:base", "schedule:weekly"],
+  "extends": ["config:base", "schedule:monthly"],
   "automerge": false,
   "major": {
     "automerge": false
   },
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
+  "osvVulnerabilityAlerts": true,
   "branchPrefix": "chore/",
   "labels": ["dependencies"],
   "gomodTidy": true,

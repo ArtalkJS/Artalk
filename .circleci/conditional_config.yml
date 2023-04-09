@@ -9,7 +9,7 @@ executors:
       - image: cimg/base:stable
   node:
     docker:
-      - image: 'cimg/node:16.15.1'
+      - image: 'cimg/node:18.15.0'
   go:
     docker:
       - image: cimg/go:1.20
@@ -67,7 +67,7 @@ jobs:
             command: node -v
         - run:
             name: Install pnpm
-            command: npm i -g pnpm@7.25.0
+            command: npm i -g pnpm@8.1.1
         - run:
             name: Install Dependencies
             command: pnpm --dir ./ui install --frozen-lockfile

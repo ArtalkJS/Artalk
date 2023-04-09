@@ -1,4 +1,19 @@
 
+## [v2.5.4](https://github.com/ArtalkJS/Artalk/compare/v2.5.3...v2.5.4) (2023-04-09)
+
+### Features
+
+* **go:** upgrade golang to v1.20.3 and some deps ([#485](https://github.com/ArtalkJS/Artalk/issues/485))
+
+### Bug Fixes
+
+* **CI:** upgrade and pin node.js and pnpm version ([#484](https://github.com/ArtalkJS/Artalk/issues/484))
+
+### Documentation
+
+* update swagger docs and some deps
+
+
 ## [v2.5.3](https://github.com/ArtalkJS/Artalk/compare/v2.5.2...v2.5.3) (2023-04-06)
 
 ### Bug Fixes

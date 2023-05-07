@@ -123,8 +123,13 @@ func AdminCommentEdit(router fiber.Router) {
 			comment.PageKey = p.PageKey
 		}
 
-		comment.UA = p.UA
-		comment.IP = p.IP
+		if p.UA != "" {
+			comment.UA = p.UA
+		}
+		if p.IP != "" {
+			comment.IP = p.IP
+		}
+
 		comment.IsCollapsed = p.IsCollapsed
 		comment.IsPinned = p.IsPinned
 

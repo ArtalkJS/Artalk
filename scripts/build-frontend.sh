@@ -22,6 +22,8 @@ pnpm --dir ./ui build:all
 DIST_DIR="./public/dist"
 rm -rf ${DIST_DIR} && mkdir -p ${DIST_DIR}
 cp -r ./ui/packages/artalk/dist/{Artalk.css,Artalk.js} ${DIST_DIR}
+cp -r ./ui/packages/artalk/dist/{ArtalkLite.css,ArtalkLite.js} ${DIST_DIR}
+cp -r ./ui/packages/artalk/dist/i18n ${DIST_DIR}
 
 ## sidebar
 SIDEBAR_DIR="./public/sidebar"

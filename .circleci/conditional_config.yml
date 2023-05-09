@@ -67,7 +67,7 @@ jobs:
             command: node -v
         - run:
             name: Install pnpm
-            command: npm i -g pnpm@8.1.1
+            command: npm i -g pnpm@8.4.0
         - run:
             name: Install Dependencies
             command: pnpm --dir ./ui install --frozen-lockfile

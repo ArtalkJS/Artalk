@@ -48,13 +48,13 @@ async function Do(m: SubmitManager) {
     // submit error
     console.error(err)
     m.editor.showNotify(`${m.editor.$t('commentFail')}，${err.msg || String(err)}`, 'e')
+    return
+  } finally {
+    m.editor.hideLoading()
   }
 
-  // 复原编辑器
-  m.editor.reset()
-
+  m.editor.reset() // 复原编辑器
   m.editor.ctx.trigger('editor-submitted')
-  m.editor.hideLoading()
 }
 
 interface CustomSubmit {

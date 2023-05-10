@@ -302,12 +302,12 @@ frontend:
   nestMax: 2
   # 嵌套评论排序规则 ["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]
   nestSort: DATE_ASC
-  # 头像
+  # 头像 Gravatar
   gravatar:
-    # Gravatar 镜像地址
+    # API 地址
     mirror: "https://cravatar.cn/avatar/"
-    # 默认头像
-    default: "mp"
+    # API 参数
+    params: "d=mp&s=240"
   # 评论分页
   pagination:
     # 每页评论数

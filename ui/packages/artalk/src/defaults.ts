@@ -28,8 +28,8 @@ const defaults: ArtalkConfig = {
   pvEl: '#ArtalkPV',
 
   gravatar: {
-    default: 'mp',
     mirror: 'https://cravatar.cn/avatar/',
+    params: 'd=mp&s=240',
   },
 
   pagination: {

@@ -297,8 +297,10 @@ frontend:
   nestSort: DATE_ASC
   # Gravatar
   gravatar:
+    # API URL
     mirror: "https://www.gravatar.com/"
-    default: "mp"
+    # API parameters
+    params: "d=mp&s=240"
   # Comment pagination
   pagination:
     # Number of comments per page

@@ -11,9 +11,11 @@ const user = useUserStore()
 const { t } = useI18n()
 const { site: curtSite, isAdmin, email } = storeToRefs(user)
 
-const userAvatarImgURL = computed(() =>
-  `${(artalk?.ctx.conf.gravatar.mirror || '').replace(/\/$/, '')}/${MD5(email.value)}`
-  + `?d=${encodeURIComponent(artalk?.ctx.conf.gravatar.default || 'mp')}&s=80`)
+const userAvatarImgURL = computed(() => {
+  const conf = artalk?.ctx.conf?.gravatar
+  if (!conf) return ``
+  return `${conf.mirror.replace(/\/$/, '')}/${MD5(email.value)}?${conf.params.replace(/^\?/, '')}`
+})
 </script>
 
 <template>

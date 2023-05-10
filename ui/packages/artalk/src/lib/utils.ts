@@ -116,7 +116,8 @@ export function onImagesLoaded($container: HTMLElement, event: Function) {
 }
 
 export function getGravatarURL(ctx: Context, emailMD5: string) {
-  return `${(ctx.conf.gravatar.mirror).replace(/\/$/, '')}/${emailMD5}?d=${encodeURIComponent(ctx.conf.gravatar.default)}&s=80`
+  const { mirror, params } = ctx.conf.gravatar
+  return `${mirror.replace(/\/$/, '')}/${emailMD5}?${params.replace(/^\?/, '')}`
 }
 
 export function sleep(ms: number) {

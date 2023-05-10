@@ -34,10 +34,10 @@ export default interface ArtalkConfig {
 
   /** Gravatar 头像 */
   gravatar: {
-    /** 镜像 */
+    /** API 地址 */
     mirror: string
-    /** 默认头像（URL or Gravatar Type） */
-    default: string
+    /** API 参数 */
+    params: string
   }
 
   /** 头像链接生成器 */

@@ -152,7 +152,7 @@ frontend:
   nestSort: DATE_ASC
   gravatar:
     mirror: "https://www.gravatar.com/"
-    default: "mp"
+    params: "d=mp&s=240"
   pagination:
     pageSize: 20
     readMore: true

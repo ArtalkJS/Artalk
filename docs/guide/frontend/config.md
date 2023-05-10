@@ -350,12 +350,24 @@ gravatar: {
 >
 > loli：https://gravatar.loli.net/avatar/
 
-### gravatar.default
+### gravatar.params
 
-**默认头像**（URL or [Gravatar Type](http://cn.gravatar.org/site/implement/images/#default-image)）
+**Gravatar API 参数**
 
 - 类型：`String`
-- 默认值：`"mp"`
+- 默认值：`"d=mp&s=240"`
+
+例如，你可以通过该配置项设置默认头像 (`d=mp`) 和头像尺寸 (`s=240`)。
+
+参考：[Gravatar API 文档](http://cn.gravatar.org/site/implement/images/)
+
+该配置项格式为 HTTP Query。
+
+::: warning 更新注意
+
+v2.5.5 已废弃 `gravatar.default` 配置项，请使用 `gravatar.params` 替代。
+
+:::
 
 ### avatarURLBuilder
 

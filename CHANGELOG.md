@@ -1,4 +1,23 @@
 
+## [v2.5.5](https://github.com/ArtalkJS/Artalk/compare/v2.5.4...v2.5.5) (2023-05-10)
+
+### Features
+
+* **build:** add embedded fe lite and i18n scripts ([#493](https://github.com/ArtalkJS/Artalk/issues/493)) ([#505](https://github.com/ArtalkJS/Artalk/issues/505))
+* **go:** upgrade golang to v1.20.4 and some deps ([#506](https://github.com/ArtalkJS/Artalk/issues/506))
+* **gravatar:** add `gravatar.params` config option ([#508](https://github.com/ArtalkJS/Artalk/issues/508))
+
+### Bug Fixes
+
+* **api:** comment IP data loss after editing ([#504](https://github.com/ArtalkJS/Artalk/issues/504))
+* **editor:** prevent editor reset on comment failure ([#507](https://github.com/ArtalkJS/Artalk/issues/507))
+
+### BREAKING CHANGE
+
+
+The `gravatar.default` config option has been removed. Please use `gravatar.params` instead. The default value for `gravatar.params` is now `"d=mp&s=240"`.
+
+
 ## [v2.5.4](https://github.com/ArtalkJS/Artalk/compare/v2.5.3...v2.5.4) (2023-04-09)
 
 ### Features

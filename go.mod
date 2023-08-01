@@ -7,7 +7,7 @@ require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/bradfitz/gomemcache v0.0.0-20230124162541-5f7a7d875746
+	github.com/bradfitz/gomemcache v0.0.0-20230611145640-acc696258285
 	github.com/cheggaaa/pb/v3 v3.1.2
 	github.com/eko/gocache/lib/v4 v4.1.3
 	github.com/eko/gocache/store/bigcache/v4 v4.1.2

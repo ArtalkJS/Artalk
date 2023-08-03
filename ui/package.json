@@ -28,7 +28,7 @@
     "sass": "1.62.1",
     "terser": "5.17.2",
     "typescript": "5.0.4",
-    "vite": "4.3.5",
+    "vite": "4.3.9",
     "vite-plugin-checker": "0.6.0",
     "vite-plugin-dts": "2.3.0",
     "vite-tsconfig-paths": "4.2.0"

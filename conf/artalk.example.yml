@@ -298,7 +298,7 @@ frontend:
   # Gravatar
   gravatar:
     # API URL
-    mirror: "https://www.gravatar.com/"
+    mirror: "https://www.gravatar.com/avatar/"
     # API parameters
     params: "d=mp&s=240"
   # Comment pagination

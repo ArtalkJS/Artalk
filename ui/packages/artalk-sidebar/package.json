@@ -22,7 +22,7 @@
     "@vitejs/plugin-vue": "^4.2.1",
     "@vue/tsconfig": "^0.3.2",
     "typescript": "^5.0.4",
-    "unplugin-auto-import": "^0.15.3",
+    "unplugin-auto-import": "^0.16.6",
     "unplugin-vue-components": "^0.24.1",
     "unplugin-vue-router": "^0.6.3",
     "vite": "^4.3.5",

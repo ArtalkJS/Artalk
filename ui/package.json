@@ -22,7 +22,7 @@
     "eslint-import-resolver-typescript": "3.5.5",
     "eslint-plugin-compat": "4.1.4",
     "eslint-plugin-import": "2.27.5",
-    "postcss": "8.4.23",
+    "postcss": "8.4.28",
     "prettier": "2.8.8",
     "rollup": "3.21.5",
     "sass": "1.62.1",

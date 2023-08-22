@@ -62,17 +62,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      # TODO: https://github.com/docker/metadata-action/pull/248
-      - name: Get Docker Tags and Labels
-        run: |
-          TAGS="${DOCKER_IMG}:latest,${DOCKER_IMG}:${VERSION#v},${DOCKER_IMG}:${VERSION_SHORT},${DOCKER_IMG}:sha-${COMMIT_HASH}"
-          echo "DOCKER_TAGS=${TAGS}" >> $GITHUB_ENV
-
       # https://github.com/docker/metadata-action
       - name: Gen docker meta
         id: meta
         uses: docker/metadata-action@v4
         with:
+          context: git
           images: |
             ${{ env.DOCKER_IMG }}
           tags: |
@@ -92,8 +87,7 @@ jobs:
           file: ./Dockerfile
           platforms: 'linux/amd64,linux/arm64'
           push: true
-          # tags: ${{ steps.meta.outputs.tags }}
-          tags: ${{ env.DOCKER_TAGS }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache

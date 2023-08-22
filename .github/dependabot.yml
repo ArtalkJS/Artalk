@@ -15,6 +15,7 @@ updates:
       deps:
         patterns:
           - '*'
+    open-pull-requests-limit: 15
 
   - package-ecosystem: npm
     directory: /ui
@@ -27,6 +28,7 @@ updates:
         dependency-type: production
       dev-deps:
         dependency-type: development
+    open-pull-requests-limit: 15
 
   - package-ecosystem: npm
     directory: /docs
@@ -38,6 +40,7 @@ updates:
       deps:
         patterns:
           - '*'
+    open-pull-requests-limit: 15
 
   - package-ecosystem: docker
     directory: /
@@ -49,6 +52,7 @@ updates:
       deps:
         patterns:
           - '*'
+    open-pull-requests-limit: 15
 
   - package-ecosystem: github-actions
     directory: /.github/workflows
@@ -60,3 +64,4 @@ updates:
       deps:
         patterns:
           - '*'
+    open-pull-requests-limit: 15

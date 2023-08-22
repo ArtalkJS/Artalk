@@ -2,6 +2,7 @@
   "name": "docs",
   "version": "2.0.0",
   "description": "Artalk documentation",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/ArtalkJS/Artalk",
@@ -16,9 +17,9 @@
     "swagger:serve": "npx @redocly/cli preview-docs"
   },
   "devDependencies": {
-    "@redocly/cli": "1.0.0-beta.125",
+    "@redocly/cli": "1.0.2",
     "markdown-it-for-inline": "^0.1.1",
-    "sass": "^1.62.1",
-    "vitepress": "1.0.0-alpha.75"
+    "sass": "^1.66.1",
+    "vitepress": "1.0.0-rc.4"
   }
 }

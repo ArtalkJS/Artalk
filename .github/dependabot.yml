@@ -10,25 +10,25 @@ updates:
     schedule:
       interval: monthly
     commit-message:
-      prefix: "[go] "
+      prefix: "chore(deps/go): "
 
   - package-ecosystem: npm
     directory: /ui
     schedule:
       interval: monthly
     commit-message:
-      prefix: "[ui] "
+      prefix: "chore(deps/ui): "
 
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: monthly
     commit-message:
-      prefix: "[docker] "
+      prefix: "chore(deps/docker): "
 
   - package-ecosystem: github-actions
     directory: /.github/workflows
     schedule:
       interval: monthly
     commit-message:
-      prefix: "[ci] "
+      prefix: "chore(deps/ci): "

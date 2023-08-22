@@ -8,7 +8,7 @@ setup: true
 # the path-filtering orb is required to continue a pipeline based on
 # https://circleci.com/developer/orbs/orb/circleci/path-filtering
 orbs:
-  path-filtering: circleci/path-filtering@0.0.1
+  path-filtering: circleci/path-filtering@1.0.0
 
 workflows:
   setup:

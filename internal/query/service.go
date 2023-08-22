@@ -56,7 +56,7 @@ func GetPageAccessibleURL(p *entity.Page, s ...*entity.Site) string {
 				site = &findSite
 			}
 
-			if site != nil && !site.IsEmpty() {
+			if site != nil {
 				u1, e1 := url.Parse(CookSite(site).FirstUrl)
 				u2, e2 := url.Parse(p.Key)
 				if e1 == nil && e2 == nil {

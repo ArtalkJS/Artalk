@@ -1,0 +1,27 @@
+- id: 1000
+  user_id: 1000
+  comment_id: 1000
+  is_read: false
+  is_emailed: false
+  key: HL6VH
+
+- id: 1001
+  user_id: 1000
+  comment_id: 1001
+  is_read: true
+  is_emailed: true
+  key: DB7G8
+
+- id: 1002
+  user_id: 1001
+  comment_id: 1000
+  is_read: false
+  is_emailed: false
+  key: ZMTM4
+
+- id: 1003
+  user_id: 1001
+  comment_id: 1001
+  is_read: true
+  is_emailed: true
+  key: 93FHR

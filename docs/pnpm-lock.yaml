@@ -1,9 +1,13 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 devDependencies:
   '@redocly/cli':
-    specifier: 1.0.0-beta.125
-    version: 1.0.0-beta.125(core-js@3.30.2)(react-is@18.2.0)(webpack@5.82.0)
+    specifier: 1.0.2
+    version: 1.0.2(core-js@3.30.2)(react-is@18.2.0)(webpack@5.82.0)
   markdown-it-for-inline:
     specifier: ^0.1.1
     version: 0.1.1
@@ -565,12 +569,12 @@ packages:
       uri-js: 4.4.1
     dev: true
 
-  /@redocly/cli@1.0.0-beta.125(core-js@3.30.2)(react-is@18.2.0)(webpack@5.82.0):
-    resolution: {integrity: sha512-3n5wtCux2vtWdxPvLs5nvbiYiEz+gkAPs/1kC/df7tzBOZ3zld6onrwuBjhMKtzJbJ1B3i1yzrfJz0mMmoNrtQ==}
+  /@redocly/cli@1.0.2(core-js@3.30.2)(react-is@18.2.0)(webpack@5.82.0):
+    resolution: {integrity: sha512-IWuo5V2ZKSdvQMgNx05PHBlv1YvqJH3/nX52qslooEtqsvOaCUnZIm/aCd1zw2EW5Ub2+VLb51LqMt6mDF/9vQ==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
-      '@redocly/openapi-core': 1.0.0-beta.125
+      '@redocly/openapi-core': 1.0.2
       assert-node-version: 1.0.3
       chokidar: 3.5.3
       colorette: 1.4.0
@@ -582,6 +586,7 @@ packages:
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
       redoc: 2.0.0(core-js@3.30.2)(mobx@6.9.0)(react-dom@17.0.2)(react@17.0.2)(styled-components@5.3.3)(webpack@5.82.0)
+      semver: 7.5.4
       simple-websocket: 9.1.0
       styled-components: 5.3.3(react-dom@17.0.2)(react-is@18.2.0)(react@17.0.2)
       yargs: 17.0.1
@@ -596,8 +601,8 @@ packages:
       - webpack
     dev: true
 
-  /@redocly/openapi-core@1.0.0-beta.125:
-    resolution: {integrity: sha512-3kpvIP6nzqrXl59BXovm1aGcbqSJv37t9kjFxuEvsGZzVSUC8rGZl4tNEZ3Qfm+mbPs+XWDi/U43kf/u3bUCpw==}
+  /@redocly/openapi-core@1.0.2:
+    resolution: {integrity: sha512-53dzhmG2bsi/8rcAAgBKk9ZLMR035VHgN7oSM3+BM4UAIoNBg6lMC/ChHSf9zO+GrX5qtuWVPqHhjjMti3SAlQ==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@redocly/ajv': 8.11.0
@@ -1543,6 +1548,13 @@ packages:
       js-tokens: 4.0.0
     dev: true
 
+  /lru-cache@6.0.0:
+    resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
+    engines: {node: '>=10'}
+    dependencies:
+      yallist: 4.0.0
+    dev: true
+
   /lunr@2.3.9:
     resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
     dev: true
@@ -1917,7 +1929,7 @@ packages:
       react-dom: ^16.8.4 || ^17.0.0
       styled-components: ^4.1.1 || ^5.1.1
     dependencies:
-      '@redocly/openapi-core': 1.0.0-beta.125
+      '@redocly/openapi-core': 1.0.2
       classnames: 2.3.2
       core-js: 3.30.2
       decko: 1.2.0
@@ -2009,6 +2021,14 @@ packages:
   /semver@5.7.1:
     resolution: {integrity: sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==}
     hasBin: true
+    dev: true
+
+  /semver@7.5.4:
+    resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      lru-cache: 6.0.0
     dev: true
 
   /serialize-javascript@6.0.1:
@@ -2481,6 +2501,10 @@ packages:
   /y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
     engines: {node: '>=10'}
+    dev: true
+
+  /yallist@4.0.0:
+    resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
     dev: true
 
   /yaml-ast-parser@0.0.43:

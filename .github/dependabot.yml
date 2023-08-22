@@ -12,7 +12,7 @@ updates:
     commit-message:
       prefix: "[go] "
 
-  - package-ecosystem: pnpm
+  - package-ecosystem: npm
     directory: /ui
     schedule:
       interval: monthly

@@ -150,8 +150,8 @@ importers:
         version: 0.16.8
     devDependencies:
       '@types/katex':
-        specifier: 0.16.0
-        version: 0.16.0
+        specifier: 0.16.2
+        version: 0.16.2
 
   packages/plugin-lightbox:
     dependencies:
@@ -698,8 +698,8 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
-  /@types/katex@0.16.0:
-    resolution: {integrity: sha512-hz+S3nV6Mym5xPbT9fnO8dDhBFQguMYpY0Ipxv06JMi1ORgnEM4M1ymWDUhUNer3ElLmT583opRo4RzxKmh9jw==}
+  /@types/katex@0.16.2:
+    resolution: {integrity: sha512-dHsSjSlU/EWEEbeNADr3FtZZOAXPkFPUO457QCnoNqcZQXNqNEu/svQd0Nritvd3wNff4vvC/f4e6xgX3Llt8A==}
     dev: true
 
   /@types/marked@5.0.1:

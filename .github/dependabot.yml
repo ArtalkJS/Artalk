@@ -28,6 +28,17 @@ updates:
       dev-deps:
         dependency-type: development
 
+  - package-ecosystem: npm
+    directory: /docs
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "chore(deps/docs): "
+    groups:
+      deps:
+        patterns:
+          - '*'
+
   - package-ecosystem: docker
     directory: /
     schedule:

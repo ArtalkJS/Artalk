@@ -14,7 +14,7 @@ func TestFetchUserForComment(t *testing.T) {
 	realUser := FindUserByID(1001)
 
 	assert.False(t, associatedUser.IsEmpty(), "评论关联用户找不到")
-	assert.NotEqual(t, CookUser(&realUser), CookUser(&associatedUser), "评论关联用户数据不一致")
+	assert.Equal(t, CookUser(&realUser), CookUser(&associatedUser), "评论关联用户数据不一致")
 }
 
 func TestFetchPageForComment(t *testing.T) {
@@ -25,7 +25,7 @@ func TestFetchPageForComment(t *testing.T) {
 	associatedPage := FetchPageForComment(&comment)
 
 	assert.False(t, associatedPage.IsEmpty(), "评论关联页面找不到")
-	assert.NotEqual(t, CookPage(&realPage), CookPage(&associatedPage), "评论关联页面数据不一致")
+	assert.Equal(t, CookPage(&realPage), CookPage(&associatedPage), "评论关联页面数据不一致")
 }
 
 func TestFetchSiteForComment(t *testing.T) {
@@ -36,7 +36,7 @@ func TestFetchSiteForComment(t *testing.T) {
 	associatedSite := FetchSiteForComment(&comment)
 
 	assert.False(t, associatedSite.IsEmpty(), "评论关联站点找不到")
-	assert.NotEqual(t, CookSite(&realSite), CookSite(&associatedSite), "评论关联站点数据不一致")
+	assert.Equal(t, CookSite(&realSite), CookSite(&associatedSite), "评论关联站点数据不一致")
 }
 
 func TestFetchSiteForPage(t *testing.T) {
@@ -47,7 +47,7 @@ func TestFetchSiteForPage(t *testing.T) {
 	associatedSite := FetchSiteForPage(&page)
 
 	assert.False(t, associatedSite.IsEmpty(), "页面关联站点找不到")
-	assert.NotEqual(t, CookSite(&realSite), CookSite(&associatedSite), "页面关联站点数据不一致")
+	assert.Equal(t, CookSite(&realSite), CookSite(&associatedSite), "页面关联站点数据不一致")
 }
 
 func TestFetchCommentForNotify(t *testing.T) {
@@ -58,7 +58,7 @@ func TestFetchCommentForNotify(t *testing.T) {
 	associatedComment := FetchCommentForNotify(&notify)
 
 	assert.False(t, associatedComment.IsEmpty(), "通知关联评论找不到")
-	assert.NotEqual(t, CookComment(&realComment), CookComment(&associatedComment), "通知关联评论数据不一致")
+	assert.Equal(t, CookComment(&realComment), CookComment(&associatedComment), "通知关联评论数据不一致")
 }
 
 func TestFetchUserForNotify(t *testing.T) {
@@ -69,5 +69,5 @@ func TestFetchUserForNotify(t *testing.T) {
 	associatedUser := FetchUserForNotify(&notify)
 
 	assert.False(t, associatedUser.IsEmpty(), "通知关联用户找不到")
-	assert.NotEqual(t, CookUser(&realUser), CookUser(&associatedUser), "通知关联用户数据不一致")
+	assert.Equal(t, CookUser(&realUser), CookUser(&associatedUser), "通知关联用户数据不一致")
 }

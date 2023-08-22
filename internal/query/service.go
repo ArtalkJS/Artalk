@@ -42,17 +42,26 @@ func GetLinkToReplyByComment(c *entity.Comment, notifyKey ...string) string {
 // ===============
 
 // 获取可访问链接
-func GetPageAccessibleURL(p *entity.Page) string {
+func GetPageAccessibleURL(p *entity.Page, s ...*entity.Site) string {
 	if p.AccessibleURL == "" {
 		acURL := p.Key
 
 		// 若 pageKey 为相对路径，生成相对于 site.FirstUrl 配置的 URL
 		if !utils.ValidateURL(p.Key) {
-			site := FetchSiteForPage(p)
-			u1, e1 := url.Parse(CookSite(&site).FirstUrl)
-			u2, e2 := url.Parse(p.Key)
-			if e1 == nil && e2 == nil {
-				acURL = u1.ResolveReference(u2).String()
+			var site *entity.Site
+			if len(s) > 0 {
+				site = s[0]
+			} else {
+				findSite := FetchSiteForPage(p)
+				site = &findSite
+			}
+
+			if site != nil && !site.IsEmpty() {
+				u1, e1 := url.Parse(CookSite(site).FirstUrl)
+				u2, e2 := url.Parse(p.Key)
+				if e1 == nil && e2 == nil {
+					acURL = u1.ResolveReference(u2).String()
+				}
 			}
 		}
 

@@ -172,7 +172,6 @@ func RenotifyWhenPendingModified(comment *entity.Comment) {
 		return // 邮件已经发送过，则不再重复发送
 	}
 
-	notify.SetComment(*comment)
 	query.NotifySetInitial(&notify)
 
 	// 邮件通知

@@ -1,8 +1,6 @@
 package entity
 
 import (
-	"sync"
-
 	"gorm.io/gorm"
 )
 
@@ -12,9 +10,7 @@ type Page struct {
 	Title     string
 	AdminOnly bool
 
-	SiteName  string    `gorm:"index;size:255"`
-	Site      Site      `gorm:"-"`
-	Once_Site sync.Once `gorm:"-"`
+	SiteName string `gorm:"index;size:255"`
 
 	AccessibleURL string
 

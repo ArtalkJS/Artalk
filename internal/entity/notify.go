@@ -2,7 +2,6 @@ package entity
 
 import (
 	"math/rand"
-	"sync"
 	"time"
 
 	"gorm.io/gorm"
@@ -20,17 +19,10 @@ type Notify struct {
 	EmailAt   *time.Time
 
 	Key string `gorm:"index;size:255"`
-
-	Comment      Comment   `gorm:"-"`
-	Once_Comment sync.Once `gorm:"-"`
 }
 
 func (n Notify) IsEmpty() bool {
 	return n.ID == 0
-}
-
-func (n *Notify) SetComment(comment Comment) {
-	n.Comment = comment
 }
 
 // 操作时的验证密钥（判断是否本人操作）

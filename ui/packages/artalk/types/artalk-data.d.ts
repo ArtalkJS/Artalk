@@ -185,6 +185,9 @@ export interface UserDataForAdmin extends UserData {
 
   /** 评论数 */
   comment_count: number
+
+  /** 密码 */
+  password: string
 }
 
 export interface NotifyData {

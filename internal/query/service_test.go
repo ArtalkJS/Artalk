@@ -26,15 +26,14 @@ func Test_GetPageAccessibleURL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := entity.Site{}
-			s.ID = uint(1010)
+			s := &entity.Site{}
 			s.Urls = tt.siteUrls
 			p := &entity.Page{
-				Key:  tt.pageKey,
-				Site: s,
+				Key:      tt.pageKey,
+				SiteName: s.Name,
 			}
 
-			if got := GetPageAccessibleURL(p); got != tt.want {
+			if got := GetPageAccessibleURL(p, s); got != tt.want {
 				t.Errorf("GetPageAccessibleURL() = %v, want %v", got, tt.want)
 			}
 		})

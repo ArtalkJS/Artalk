@@ -53,7 +53,6 @@ func SendNotify(comment *entity.Comment, pComment *entity.Comment) {
 			}
 
 			notify := query.FindCreateNotify(pComment.UserID, comment.ID)
-			notify.SetComment(*comment)
 			query.NotifySetInitial(&notify)
 
 			// 邮件通知
@@ -105,7 +104,6 @@ func SendNotify(comment *entity.Comment, pComment *entity.Comment) {
 			}
 
 			notify := query.FindCreateNotify(admin.ID, comment.ID)
-			notify.SetComment(*comment)
 			query.NotifySetInitial(&notify)
 
 			// 发送邮件给管理员

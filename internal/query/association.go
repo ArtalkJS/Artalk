@@ -9,36 +9,15 @@ import (
 // ===============
 
 func FetchUserForComment(c *entity.Comment) entity.User {
-	if c.User.IsEmpty() {
-		c.Once_User.Do(func() {
-			user := FindUserByID(c.UserID)
-			c.User = user
-		})
-	}
-
-	return c.User
+	return FindUserByID(c.UserID)
 }
 
 func FetchPageForComment(c *entity.Comment) entity.Page {
-	if c.Page.IsEmpty() {
-		c.Once_Page.Do(func() {
-			page := FindPage(c.PageKey, c.SiteName)
-			c.Page = page
-		})
-	}
-
-	return c.Page
+	return FindPage(c.PageKey, c.SiteName)
 }
 
 func FetchSiteForComment(c *entity.Comment) entity.Site {
-	if c.Site.IsEmpty() {
-		c.Once_Site.Do(func() {
-			site := FindSite(c.SiteName)
-			c.Site = site
-		})
-	}
-
-	return c.Site
+	return FindSite(c.SiteName)
 }
 
 // ===============
@@ -46,14 +25,7 @@ func FetchSiteForComment(c *entity.Comment) entity.Site {
 // ===============
 
 func FetchSiteForPage(p *entity.Page) entity.Site {
-	if p.Site.IsEmpty() {
-		p.Once_Site.Do(func() {
-			site := FindSite(p.SiteName)
-			p.Site = site
-		})
-	}
-
-	return p.Site
+	return FindSite(p.SiteName)
 }
 
 // ===============
@@ -61,14 +33,7 @@ func FetchSiteForPage(p *entity.Page) entity.Site {
 // ===============
 
 func FetchCommentForNotify(n *entity.Notify) entity.Comment {
-	if n.Comment.IsEmpty() {
-		n.Once_Comment.Do(func() {
-			comment := FindComment(n.CommentID)
-			n.Comment = comment
-		})
-	}
-
-	return n.Comment
+	return FindComment(n.CommentID)
 }
 
 // 获取接收通知的用户

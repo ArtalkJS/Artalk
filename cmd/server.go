@@ -68,9 +68,9 @@ var serverCmd = &cobra.Command{
 		// socket listen
 		listenAddr := fmt.Sprintf("%s:%d", config.Instance.Host, config.Instance.Port)
 		if config.Instance.SSL.Enabled {
-			app.ListenTLS(listenAddr, config.Instance.SSL.CertPath, config.Instance.SSL.KeyPath)
+			logrus.Fatal(app.ListenTLS(listenAddr, config.Instance.SSL.CertPath, config.Instance.SSL.KeyPath))
 		} else {
-			app.Listen(listenAddr)
+			logrus.Fatal(app.Listen(listenAddr))
 		}
 
 		// graceful shutdown tasks

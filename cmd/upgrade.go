@@ -8,61 +8,60 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/blang/semver"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-var upgradeCmd = &cobra.Command{
-	Use:     "upgrade",
-	Aliases: []string{"update"},
-	Short:   "Upgrade to the latest version",
-	Long:    "Upgrade Artalk to the latest version, \n update source is GitHub Releases, \n update need to restart Artalk to take effect.",
-	Args:    cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
-		// loadCore()
-		core.LoadConfOnly(cfgFile, workDir)
+func NewUpgradeCommand(app *core.App) *cobra.Command {
+	upgradeCmd := &cobra.Command{
+		Use:     "upgrade",
+		Aliases: []string{"update"},
+		Short:   "Upgrade to the latest version",
+		Long:    "Upgrade Artalk to the latest version, \n update source is GitHub Releases, \n update need to restart Artalk to take effect.",
+		Args:    cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			// core.LoadConfOnly(cfgFile, workDir)
 
-		logrus.Info(i18n.T("Checking for updates") + "...")
+			log.Info(i18n.T("Checking for updates") + "...")
 
-		latest, found, err := selfupdate.DetectLatest("ArtalkJS/Artalk")
-		if err != nil {
-			logrus.Fatal("Error occurred while detecting version: ", err)
-		}
-
-		ignoreVersionCheck, _ := cmd.Flags().GetBool("force")
-		if !ignoreVersionCheck {
-			v := semver.MustParse(strings.TrimPrefix(config.Version, "v"))
-			if !found || latest.Version.LTE(v) {
-				logrus.Println(i18n.T("Current version is the latest") + " (v" + v.String() + ")")
-				return
+			latest, found, err := selfupdate.DetectLatest("ArtalkJS/Artalk")
+			if err != nil {
+				log.Fatal("Error occurred while detecting version: ", err)
 			}
-		}
 
-		logrus.Info(i18n.T("New version available") + ": v" + latest.Version.String())
-		logrus.Info(i18n.T("Downloading") + "...")
+			ignoreVersionCheck, _ := cmd.Flags().GetBool("force")
+			if !ignoreVersionCheck {
+				v := semver.MustParse(strings.TrimPrefix(config.Version, "v"))
+				if !found || latest.Version.LTE(v) {
+					log.Println(i18n.T("Current version is the latest") + " (v" + v.String() + ")")
+					return
+				}
+			}
 
-		exe, err := os.Executable()
-		if err != nil {
-			logrus.Fatal("Could not locate executable path ", err)
-		}
+			log.Info(i18n.T("New version available") + ": v" + latest.Version.String())
+			log.Info(i18n.T("Downloading") + "...")
 
-		if err := selfupdate.UpdateTo(latest.AssetURL, exe); err != nil {
-			logrus.Fatal(i18n.T("Update failed")+" ", err)
-		}
+			exe, err := os.Executable()
+			if err != nil {
+				log.Fatal("Could not locate executable path ", err)
+			}
 
-		logrus.Println(i18n.T("Update complete"))
-		fmt.Println("\n-------------------------------\n    v" +
-			latest.Version.String() +
-			"  Release Note\n" +
-			"-------------------------------\n\n" +
-			latest.ReleaseNotes)
-	},
-}
+			if err := selfupdate.UpdateTo(latest.AssetURL, exe); err != nil {
+				log.Fatal(i18n.T("Update failed")+" ", err)
+			}
 
-func init() {
-	rootCmd.AddCommand(upgradeCmd)
+			log.Println(i18n.T("Update complete"))
+			fmt.Println("\n-------------------------------\n    v" +
+				latest.Version.String() +
+				"  Release Note\n" +
+				"-------------------------------\n\n" +
+				latest.ReleaseNotes)
+		},
+	}
 
 	flagPV(upgradeCmd, "force", "f", false, "Force upgrade ignore version comparison.")
+
+	return upgradeCmd
 }

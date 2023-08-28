@@ -2,9 +2,9 @@ package email
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	aliyun_email "github.com/qwqcode/go-aliyun-email"
 	"github.com/samber/lo"
-	"github.com/sirupsen/logrus"
 )
 
 // AliDMSender implements Sender
@@ -21,7 +21,7 @@ func NewAliDMSender(conf *config.AliDMConf) *AliDMSender {
 	}
 }
 
-func (s *AliDMSender) Send(email Email) bool {
+func (s *AliDMSender) Send(email *Email) bool {
 	client := aliyun_email.NewClient(
 		s.conf.AccessKeyId,
 		s.conf.AccessKeySecret,
@@ -40,13 +40,11 @@ func (s *AliDMSender) Send(email Email) bool {
 
 	resp, err := client.SingleRequest(req)
 	if err != nil {
-		logrus.Error("[Email] ", "Email sending failed via Aliyun DM", err)
+		log.Error("[Email] ", "Email sending failed via Aliyun DM", err)
 		return false
 	}
 
-	if config.Instance.Debug {
-		logrus.Debug(resp)
-	}
+	log.Debug(resp)
 
 	return true
 }

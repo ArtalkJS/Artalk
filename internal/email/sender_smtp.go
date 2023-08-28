@@ -2,7 +2,7 @@ package email
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/sirupsen/logrus"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"gopkg.in/gomail.v2"
 )
 
@@ -22,12 +22,12 @@ func NewSmtpSender(smtp *config.SMTPConf) *SmtpSender {
 	}
 }
 
-func (s *SmtpSender) Send(email Email) bool {
+func (s *SmtpSender) Send(email *Email) bool {
 	m := getCookedEmail(email)
 
 	// 发送邮件
 	if err := s.dialer.DialAndSend(m); err != nil {
-		logrus.Error("[Email] ", "Email sending failed via SMTP ", err)
+		log.Error("[Email] ", "Email sending failed via SMTP ", err)
 		return false
 	}
 

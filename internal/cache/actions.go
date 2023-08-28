@@ -1,16 +1,13 @@
 package cache
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"strings"
-	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/eko/gocache/lib/v4/store"
-	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/singleflight"
 )
 
@@ -48,46 +45,46 @@ func FindAndStoreCache(name string, dest interface{}, queryDBResult func() inter
 }
 
 func FindCache(name string, dest interface{}) error {
-	if !config.Instance.Cache.Enabled {
-		return errors.New("cache disabled")
+	if std == nil {
+		return fmt.Errorf("cache not initialize")
 	}
 
 	// `Get()` is Thread Safe, so no need to add Mutex
 	// @see https://github.com/go-redis/redis/issues/23
-	_, err := CACHE.Get(Ctx, name, dest)
+	_, err := std.Get(ctx, name, dest)
 	if err != nil {
 		return err
 	}
 
-	logrus.Debug("[Cache Hit] " + name)
+	log.Debug("[Cache Hit] " + name)
 
 	return nil
 }
 
 func StoreCache(name string, source interface{}) error {
-	if !config.Instance.Cache.Enabled {
-		return nil
+	if std == nil {
+		return fmt.Errorf("cache not initialize")
 	}
 
 	// `Set()` is Thread Safe too, no need to add Mutex either
-	err := CACHE.Set(Ctx, name, source,
-		store.WithExpiration(time.Duration(config.Instance.Cache.GetExpiresTime())),
+	err := std.Set(ctx, name, source,
+		store.WithExpiration(ttl),
 	)
 	if err != nil {
 		return err
 	}
 
-	logrus.Debug("[写入缓存] " + name)
+	log.Debug("[写入缓存] " + name)
 
 	return nil
 }
 
 func DelCache(name string) error {
-	if !config.Instance.Cache.Enabled {
-		return nil
+	if std == nil {
+		return fmt.Errorf("cache not initialize")
 	}
 
-	return CACHE.Delete(Ctx, name)
+	return std.Delete(ctx, name)
 }
 
 func UserCacheSave(user *entity.User) error {

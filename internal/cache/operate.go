@@ -5,23 +5,24 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/sirupsen/logrus"
+	"github.com/ArtalkJS/Artalk/internal/log"
+	"gorm.io/gorm"
 )
 
 // 缓存预热
-func CacheWarmUp() {
+func CacheWarmUp(db *gorm.DB) {
 	// Users
 	{
 		start := time.Now()
 
 		var items []entity.User
-		DB().Find(&items)
+		db.Find(&items)
 
 		for _, item := range items {
 			UserCacheSave(&item)
 		}
 
-		logrus.Debug(fmt.Sprintf("[Users] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
+		log.Debug(fmt.Sprintf("[Users] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
 	}
 
 	// Sites
@@ -29,13 +30,13 @@ func CacheWarmUp() {
 		start := time.Now()
 
 		var items []entity.Site
-		DB().Find(&items)
+		db.Find(&items)
 
 		for _, item := range items {
 			SiteCacheSave(&item)
 		}
 
-		logrus.Debug(fmt.Sprintf("[Sites] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
+		log.Debug(fmt.Sprintf("[Sites] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
 	}
 
 	// Pages
@@ -43,13 +44,13 @@ func CacheWarmUp() {
 		start := time.Now()
 
 		var items []entity.Page
-		DB().Find(&items)
+		db.Find(&items)
 
 		for _, item := range items {
 			PageCacheSave(&item)
 		}
 
-		logrus.Debug(fmt.Sprintf("[Pages] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
+		log.Debug(fmt.Sprintf("[Pages] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
 	}
 
 	// Comments
@@ -57,22 +58,22 @@ func CacheWarmUp() {
 		start := time.Now()
 
 		var items []entity.Comment
-		DB().Find(&items)
+		db.Find(&items)
 
 		for _, item := range items {
 			CommentCacheSave(&item)
 		}
 
-		logrus.Debug(fmt.Sprintf("[Comments] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
+		log.Debug(fmt.Sprintf("[Comments] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
 	}
 }
 
 // 清空缓存
-func CacheFlushAll() {
+func CacheFlushAll(db *gorm.DB) {
 	// Users
 	{
 		var items []entity.User
-		DB().Find(&items)
+		db.Find(&items)
 
 		for _, item := range items {
 			UserCacheDel(&item)
@@ -82,7 +83,7 @@ func CacheFlushAll() {
 	// Sites
 	{
 		var items []entity.Site
-		DB().Find(&items)
+		db.Find(&items)
 
 		for _, item := range items {
 			SiteCacheDel(&item)
@@ -92,7 +93,7 @@ func CacheFlushAll() {
 	// Pages
 	{
 		var items []entity.Page
-		DB().Find(&items)
+		db.Find(&items)
 
 		for _, item := range items {
 			PageCacheDel(&item)
@@ -102,7 +103,7 @@ func CacheFlushAll() {
 	// Comments
 	{
 		var items []entity.Comment
-		DB().Find(&items)
+		db.Find(&items)
 
 		for _, item := range items {
 			CommentCacheDel(&item)

@@ -2,30 +2,32 @@ package cache
 
 import (
 	"context"
+	"log"
 	"strings"
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/allegro/bigcache/v3"
 	"github.com/bradfitz/gomemcache/memcache"
-	"github.com/eko/gocache/lib/v4/cache"
+	lib_cache "github.com/eko/gocache/lib/v4/cache"
 	"github.com/eko/gocache/lib/v4/marshaler"
 	"github.com/eko/gocache/lib/v4/store"
 	bigcache_store "github.com/eko/gocache/store/bigcache/v4"
 	memcache_store "github.com/eko/gocache/store/memcache/v4"
 	redis_store "github.com/eko/gocache/store/redis/v4"
 	"github.com/redis/go-redis/v9"
-	"github.com/sirupsen/logrus"
 )
 
 var (
-	CACHE *marshaler.Marshaler
+	std *marshaler.Marshaler
+	ttl time.Duration
 )
 
-var Ctx = context.Background()
+var ctx = context.Background()
 
-func OpenCache() (err error) {
-	cacheType := config.Instance.Cache.Type
+func OpenCache(conf config.CacheConf) (err error) {
+	cacheType := conf.Type
+	ttl = time.Duration(conf.GetExpiresTime())
 
 	var cacheStore store.StoreInterface
 
@@ -35,7 +37,7 @@ func OpenCache() (err error) {
 		// 内建缓存
 		bigcacheClient, err := bigcache.New(context.Background(), bigcache.DefaultConfig(
 			// Tip: 内建缓存过期时间是一样的，只有 Redis/Memcache 才能设置单个 item 的
-			time.Duration(config.Instance.Cache.GetExpiresTime()),
+			ttl,
 		))
 		if err != nil {
 			return err
@@ -45,39 +47,44 @@ func OpenCache() (err error) {
 	case config.CacheTypeRedis:
 		// Redis
 		network := "tcp"
-		if config.Instance.Cache.Redis.Network != "" {
-			network = config.Instance.Cache.Redis.Network
+		if conf.Redis.Network != "" {
+			network = conf.Redis.Network
 		}
 
 		cacheStore = redis_store.NewRedis(redis.NewClient(&redis.Options{
 			Network:  network,
-			Addr:     config.Instance.Cache.Server,
-			Username: config.Instance.Cache.Redis.Username,
-			Password: config.Instance.Cache.Redis.Password,
-			DB:       config.Instance.Cache.Redis.DB,
+			Addr:     conf.Server,
+			Username: conf.Redis.Username,
+			Password: conf.Redis.Password,
+			DB:       conf.Redis.DB,
 		}))
 
 	case config.CacheTypeMemcache:
 		// Memcache
-		servers := strings.Split(config.Instance.Cache.Server, ",")
+		servers := strings.Split(conf.Server, ",")
 		cacheStore = memcache_store.NewMemcache(
 			memcache.New(servers...),
-			store.WithExpiration(time.Duration(config.Instance.Cache.GetExpiresTime())),
+			store.WithExpiration(ttl),
 		)
 
 	default:
-		logrus.Fatal("Invalid cache type `" + cacheType + "`, please check config option `cache.type`")
+		log.Fatal("Invalid cache type `" + cacheType + "`, please check config option `cache.type`")
 
 	}
 
-	cacheInstance := cache.New[any](cacheStore)
+	cacheInstance := lib_cache.New[any](cacheStore)
 
 	// marshaler wrapper
 	// marshaler using VmihailencoMsgpack
 	// @link https://github.com/vmihailenco/msgpack
 	// Benchmarks
 	// @link https://github.com/alecthomas/go_serialization_benchmarks
-	CACHE = marshaler.New(cacheInstance)
+	std = marshaler.New(cacheInstance)
 
 	return
+}
+
+func CloseCache() {
+	// std.Clear(Ctx)
+	std = nil
 }

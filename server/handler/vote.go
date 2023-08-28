@@ -3,10 +3,9 @@ package handler
 import (
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -38,7 +37,7 @@ type ResponseVote struct {
 // @Param        site_name  formData  string  false  "the site name of your content scope"
 // @Success      200  {object}  common.JSONResult{data=ResponseVote}
 // @Router       /vote  [post]
-func Vote(router fiber.Router) {
+func Vote(app *core.App, router fiber.Router) {
 	router.Post("/vote", func(c *fiber.Ctx) error {
 		var p ParamsVote
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -51,7 +50,7 @@ func Vote(router fiber.Router) {
 		// find user
 		var user entity.User
 		if p.Name != "" && p.Email != "" {
-			user = query.FindCreateUser(p.Name, p.Email, "")
+			user = app.Dao().FindCreateUser(p.Name, p.Email, "")
 		}
 
 		ip := c.IP()
@@ -73,12 +72,12 @@ func Vote(router fiber.Router) {
 
 		switch {
 		case isVoteComment:
-			comment = query.FindComment(p.TargetID)
+			comment = app.Dao().FindComment(p.TargetID)
 			if comment.IsEmpty() {
 				return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 			}
 		case isVotePage:
-			page = query.FindPageByID(p.TargetID)
+			page = app.Dao().FindPageByID(p.TargetID)
 			if page.IsEmpty() {
 				return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 			}
@@ -92,38 +91,36 @@ func Vote(router fiber.Router) {
 			case isVoteComment:
 				comment.VoteUp = up
 				comment.VoteDown = down
-				query.UpdateComment(&comment)
+				app.Dao().UpdateComment(&comment)
 			case isVotePage:
 				page.VoteUp = up
 				page.VoteDown = down
-				query.UpdatePage(&page)
+				app.Dao().UpdatePage(&page)
 			}
 		}
 
 		createNew := func(t string) error {
 			// create new vote record
-			_, err := query.NewVote(p.TargetID, entity.VoteType(t), user.ID, string(c.Request().Header.UserAgent()), ip)
+			_, err := app.Dao().NewVote(p.TargetID, entity.VoteType(t), user.ID, string(c.Request().Header.UserAgent()), ip)
 
 			return err
 		}
 
 		// un-vote
-		var avaliableVotes []entity.Vote
-		db.DB().Where("target_id = ? AND type LIKE ? AND ip = ?", p.TargetID, voteTo+"%", ip).Find(&avaliableVotes)
-		if len(avaliableVotes) > 0 {
-			for _, v := range avaliableVotes {
-				db.DB().Unscoped().Delete(&v)
+		var availableVotes []entity.Vote
+		app.Dao().DB().Where("target_id = ? AND type LIKE ? AND ip = ?", p.TargetID, voteTo+"%", ip).Find(&availableVotes)
+		if len(availableVotes) > 0 {
+			for _, v := range availableVotes {
+				app.Dao().DB().Unscoped().Delete(&v)
 			}
 
-			avaVoteType := strings.TrimPrefix(strings.TrimPrefix(string(avaliableVotes[0].Type), "comment_"), "page_")
+			avaVoteType := strings.TrimPrefix(strings.TrimPrefix(string(availableVotes[0].Type), "comment_"), "page_")
 			if voteType != avaVoteType {
 				createNew(p.FullType)
 			}
 
-			up, down := query.GetVoteNumUpDown(p.TargetID, voteTo)
+			up, down := app.Dao().GetVoteNumUpDown(p.TargetID, voteTo)
 			save(up, down)
-
-			common.RecordAction(c)
 
 			return common.RespData(c, ResponseVote{
 				Up:   up,
@@ -134,10 +131,8 @@ func Vote(router fiber.Router) {
 		createNew(p.FullType)
 
 		// sync
-		up, down := query.GetVoteNumUpDown(p.TargetID, voteTo)
+		up, down := app.Dao().GetVoteNumUpDown(p.TargetID, voteTo)
 		save(up, down)
-
-		common.RecordAction(c)
 
 		return common.RespData(c, ResponseVote{
 			Up:   up,

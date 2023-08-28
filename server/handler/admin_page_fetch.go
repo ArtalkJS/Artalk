@@ -2,13 +2,12 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
-	"github.com/sirupsen/logrus"
 )
 
 type ParamsAdminPageFetch struct {
@@ -31,7 +30,7 @@ var allPageFetchTotal = 0
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult
 // @Router       /admin/page-fetch  [post]
-func AdminPageFetch(router fiber.Router) {
+func AdminPageFetch(app *core.App, router fiber.Router) {
 	router.Post("/page-fetch", func(c *fiber.Ctx) error {
 		var p ParamsAdminPageFetch
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -67,7 +66,7 @@ func AdminPageFetch(router fiber.Router) {
 				allPageFetchDone = 0
 				allPageFetchTotal = 0
 				var pages []entity.Page
-				db := db.DB().Model(&entity.Page{})
+				db := app.Dao().DB().Model(&entity.Page{})
 				if p.SiteName != config.ATK_SITE_ALL {
 					db = db.Where(&entity.Page{SiteName: p.SiteName})
 				}
@@ -75,8 +74,8 @@ func AdminPageFetch(router fiber.Router) {
 
 				allPageFetchTotal = len(pages)
 				for _, p := range pages {
-					if err := query.FetchPageFromURL(&p); err != nil {
-						logrus.Error(c, "[api_admin_page_fetch] page fetch error: "+err.Error())
+					if err := app.Dao().FetchPageFromURL(&p); err != nil {
+						log.Error(c, "[api_admin_page_fetch] page fetch error: "+err.Error())
 					} else {
 						allPageFetchDone++
 					}
@@ -87,21 +86,21 @@ func AdminPageFetch(router fiber.Router) {
 			return common.RespSuccess(c)
 		}
 
-		page := query.FindPageByID(p.ID)
+		page := app.Dao().FindPageByID(p.ID)
 		if page.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
-		if !common.IsAdminHasSiteAccess(c, page.SiteName) {
+		if !common.IsAdminHasSiteAccess(app, c, page.SiteName) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
-		if err := query.FetchPageFromURL(&page); err != nil {
+		if err := app.Dao().FetchPageFromURL(&page); err != nil {
 			return common.RespError(c, i18n.T("Page fetch failed")+": "+err.Error())
 		}
 
 		return common.RespData(c, common.Map{
-			"page": query.CookPage(&page),
+			"page": app.Dao().CookPage(&page),
 		})
 	})
 }

@@ -6,20 +6,18 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
 // 获取评论查询实例
-func GetCommentQuery(c *fiber.Ctx, p ParamsGet, siteID uint, scopes ...func(*gorm.DB) *gorm.DB) *gorm.DB {
-	q := db.DB().Model(&entity.Comment{})
+func GetCommentQuery(app *core.App, c *fiber.Ctx, p ParamsGet, siteID uint, scopes ...func(*gorm.DB) *gorm.DB) *gorm.DB {
+	q := app.Dao().DB().Model(&entity.Comment{})
 
-	q.Scopes(SiteIsolationScope(c, p), AllowedComment(c, p))
+	q.Scopes(SiteIsolationScope(app, c, p), AllowedComment(app, c, p))
 	q.Order(GetSortRuleSQL(p.SortBy, "created_at DESC")) // 排序规则
 	q.Scopes(scopes...)
 
@@ -31,8 +29,8 @@ func GetCommentQuery(c *fiber.Ctx, p ParamsGet, siteID uint, scopes ...func(*gor
 
 		// 只看管理员功能
 		if p.ViewOnlyAdmin {
-			adminIDs := query.GetAllAdminIDs() // 获取管理员列表
-			q.Where("user_id IN ?", adminIDs)  // 只允许管理员 user_id
+			adminIDs := app.Dao().GetAllAdminIDs() // 获取管理员列表
+			q.Where("user_id IN ?", adminIDs)      // 只允许管理员 user_id
 		}
 
 		q.Where("page_key = ?", p.PageKey)
@@ -48,16 +46,16 @@ func GetCommentQuery(c *fiber.Ctx, p ParamsGet, siteID uint, scopes ...func(*gor
 
 		// admin_only 检测
 		if strings.HasPrefix(p.Type, "admin_") {
-			if !p.IsAdminReq || !common.IsAdminHasSiteAccess(c, p.SiteName) {
+			if !p.IsAdminReq || !common.IsAdminHasSiteAccess(app, c, p.SiteName) {
 				return q.Where("id = 0")
 			}
 		}
 
 		switch p.Type {
 		case "all":
-			q.Where("rid IN (?) OR user_id = ?", query.GetUserAllCommentIDs(user.ID), user.ID)
+			q.Where("rid IN (?) OR user_id = ?", app.Dao().GetUserAllCommentIDs(user.ID), user.ID)
 		case "mentions":
-			q.Where("rid IN (?) AND user_id != ?", query.GetUserAllCommentIDs(user.ID), user.ID)
+			q.Where("rid IN (?) AND user_id != ?", app.Dao().GetUserAllCommentIDs(user.ID), user.ID)
 		case "mine":
 			q.Where("user_id = ?", user.ID)
 		case "pending":
@@ -82,9 +80,9 @@ func RootComments() func(db *gorm.DB) *gorm.DB {
 }
 
 // 允许的评论
-func AllowedComment(c *fiber.Ctx, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+func AllowedComment(app *core.App, c *fiber.Ctx, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		if common.CheckIsAdminReq(c) {
+		if common.CheckIsAdminReq(app, c) {
 			return db // 管理员显示全部
 		}
 
@@ -97,9 +95,9 @@ func AllowedComment(c *fiber.Ctx, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func AllowedCommentChecker(c *fiber.Ctx, p ParamsGet) func(*entity.Comment) bool {
+func AllowedCommentChecker(app *core.App, c *fiber.Ctx, p ParamsGet) func(*entity.Comment) bool {
 	return func(comment *entity.Comment) bool {
-		if common.CheckIsAdminReq(c) {
+		if common.CheckIsAdminReq(app, c) {
 			return true // 管理员显示全部
 		}
 
@@ -117,9 +115,9 @@ func AllowedCommentChecker(c *fiber.Ctx, p ParamsGet) func(*entity.Comment) bool
 	}
 }
 
-func SiteIsolationChecker(c *fiber.Ctx, p ParamsGet) func(*entity.Comment) bool {
+func SiteIsolationChecker(app *core.App, c *fiber.Ctx, p ParamsGet) func(*entity.Comment) bool {
 	return func(comment *entity.Comment) bool {
-		if common.CheckIsAdminReq(c) && p.SiteAll {
+		if common.CheckIsAdminReq(app, c) && p.SiteAll {
 			return true // 仅管理员支持取消站点隔离
 		}
 
@@ -132,9 +130,9 @@ func SiteIsolationChecker(c *fiber.Ctx, p ParamsGet) func(*entity.Comment) bool 
 }
 
 // 站点隔离
-func SiteIsolationScope(c *fiber.Ctx, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+func SiteIsolationScope(app *core.App, c *fiber.Ctx, p ParamsGet) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		if common.CheckIsAdminReq(c) && p.SiteAll {
+		if common.CheckIsAdminReq(app, c) && p.SiteAll {
 			return db // 仅管理员支持取消站点隔离
 		}
 
@@ -164,9 +162,9 @@ func CountComments(db *gorm.DB) int64 {
 }
 
 // 评论搜索
-func CommentSearchScope(p ParamsGet) func(d *gorm.DB) *gorm.DB {
+func CommentSearchScope(app *core.App, p ParamsGet) func(d *gorm.DB) *gorm.DB {
 	var userIds []uint
-	db.DB().Model(&entity.User{}).Where(
+	app.Dao().DB().Model(&entity.User{}).Where(
 		"LOWER(name) = LOWER(?) OR LOWER(email) = LOWER(?)", p.Search, p.Search,
 	).Pluck("id", &userIds)
 
@@ -194,13 +192,13 @@ func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
 }
 
 // 插入置顶的评论
-func prependPinnedComments(c *fiber.Ctx, p ParamsGet, comments *[]entity.Comment) {
+func prependPinnedComments(app *core.App, c *fiber.Ctx, p ParamsGet, comments *[]entity.Comment) {
 	if p.IsMsgCenter || p.Offset != 0 {
 		return // 通知中心关闭置顶 & 仅在分页的首页加入置顶评论
 	}
 
 	pinnedComments := []entity.Comment{}
-	GetCommentQuery(c, p, p.SiteID).Where("is_pinned = ?", true).Find(&pinnedComments)
+	GetCommentQuery(app, c, p, p.SiteID).Where("is_pinned = ?", true).Find(&pinnedComments)
 	if len(pinnedComments) == 0 {
 		return // 没有置顶评论
 	}
@@ -218,8 +216,8 @@ func prependPinnedComments(c *fiber.Ctx, p ParamsGet, comments *[]entity.Comment
 }
 
 // 处理来自配置文件的 fronted 配置项
-func UseCfgFrontend(p *ParamsGet) {
-	feConf := config.Instance.Frontend
+func UseCfgFrontend(app *core.App, p *ParamsGet) {
+	feConf := app.Conf().Frontend
 	if feConf == nil || reflect.ValueOf(feConf).Kind() != reflect.Map {
 		return
 	}

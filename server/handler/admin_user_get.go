@@ -1,10 +1,9 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -28,9 +27,9 @@ type ResponseAdminUserGet struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminUserGet}
 // @Router       /admin/user-get  [post]
-func AdminUserGet(router fiber.Router) {
+func AdminUserGet(app *core.App, router fiber.Router) {
 	router.Post("/user-get", func(c *fiber.Ctx) error {
-		if !common.GetIsSuperAdmin(c) {
+		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
@@ -40,7 +39,7 @@ func AdminUserGet(router fiber.Router) {
 		}
 
 		// 准备 query
-		q := db.DB().Model(&entity.User{}).Order("created_at DESC")
+		q := app.Dao().DB().Model(&entity.User{}).Order("created_at DESC")
 
 		// 总共条数
 		var total int64
@@ -66,7 +65,7 @@ func AdminUserGet(router fiber.Router) {
 
 		var cookedUsers []entity.CookedUserForAdmin
 		for _, u := range users {
-			cookedUsers = append(cookedUsers, query.UserToCookedForAdmin(&u))
+			cookedUsers = append(cookedUsers, app.Dao().UserToCookedForAdmin(&u))
 		}
 
 		return common.RespData(c, ResponseAdminUserGet{

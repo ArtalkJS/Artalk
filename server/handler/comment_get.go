@@ -1,10 +1,8 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/ip_region"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -64,7 +62,7 @@ type ResponseGet struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}   common.JSONResult{data=ResponseGet}
 // @Router       /get  [post]
-func CommentGet(router fiber.Router) {
+func CommentGet(app *core.App, router fiber.Router) {
 	router.Post("/get", func(c *fiber.Ctx) error {
 		var p ParamsGet
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -75,12 +73,12 @@ func CommentGet(router fiber.Router) {
 		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 		// handle params
-		UseCfgFrontend(&p)
+		UseCfgFrontend(app, &p)
 
 		// find page
 		var page entity.Page
 		if !p.SiteAll {
-			page = query.FindPage(p.PageKey, p.SiteName)
+			page = app.Dao().FindPage(p.PageKey, p.SiteName)
 			if page.IsEmpty() { // if page not found
 				page = entity.Page{
 					Key:      p.PageKey,
@@ -92,12 +90,12 @@ func CommentGet(router fiber.Router) {
 		// find user
 		var user entity.User
 		if p.Name != "" && p.Email != "" {
-			user = query.FindUser(p.Name, p.Email)
+			user = app.Dao().FindUser(p.Name, p.Email)
 			p.User = &user // init params user field
 		}
 
 		// check if admin
-		if common.CheckIsAdminReq(c) {
+		if common.CheckIsAdminReq(app, c) {
 			p.IsAdminReq = true
 		}
 
@@ -122,18 +120,18 @@ func CommentGet(router fiber.Router) {
 
 		// search function
 		if p.Search != "" {
-			findScopes = append(findScopes, CommentSearchScope(p))
+			findScopes = append(findScopes, CommentSearchScope(app, p))
 		}
 
 		// get comments for the first query
 		var comments []entity.Comment
-		GetCommentQuery(c, p, p.SiteID, findScopes...).Scopes(Paginate(p.Offset, p.Limit)).Find(&comments)
+		GetCommentQuery(app, c, p, p.SiteID, findScopes...).Scopes(Paginate(p.Offset, p.Limit)).Find(&comments)
 
 		// prepend the pinned comments
-		prependPinnedComments(c, p, &comments)
+		prependPinnedComments(app, c, p, &comments)
 
 		// cook
-		cookedComments := query.CookAllComments(comments)
+		cookedComments := app.Dao().CookAllComments(comments)
 
 		switch {
 		case !p.FlatMode:
@@ -143,8 +141,8 @@ func CommentGet(router fiber.Router) {
 
 			// 获取 comment 子评论
 			for _, parent := range cookedComments { // TODO: Read more children, pagination for children comment
-				children := query.FindCommentChildren(parent.ID, SiteIsolationChecker(c, p), AllowedCommentChecker(c, p))
-				cookedComments = append(cookedComments, query.CookAllComments(children)...)
+				children := app.Dao().FindCommentChildren(parent.ID, SiteIsolationChecker(app, c, p), AllowedCommentChecker(app, c, p))
+				cookedComments = append(cookedComments, app.Dao().CookAllComments(children)...)
 			}
 
 		case p.FlatMode:
@@ -158,38 +156,38 @@ func CommentGet(router fiber.Router) {
 					continue
 				}
 
-				rComment := query.FindComment(comment.Rid, SiteIsolationChecker(c, p)) // 查找被回复的评论
+				rComment := app.Dao().FindComment(comment.Rid, SiteIsolationChecker(app, c, p)) // 查找被回复的评论
 				if rComment.IsEmpty() {
 					continue
 				}
 
-				rCooked := query.CookComment(&rComment)
+				rCooked := app.Dao().CookComment(&rComment)
 				rCooked.Visible = false // 设置为不可见
 				cookedComments = append(cookedComments, rCooked)
 			}
 		}
 
 		// count comments
-		total := CountComments(GetCommentQuery(c, p, p.SiteID))
-		totalRoots := CountComments(GetCommentQuery(c, p, p.SiteID, RootComments()))
+		total := CountComments(GetCommentQuery(app, c, p, p.SiteID))
+		totalRoots := CountComments(GetCommentQuery(app, c, p, p.SiteID, RootComments()))
 
 		// mark all as read in msg center
 		if p.IsMsgCenter {
-			query.UserNotifyMarkAllAsRead(p.User.ID)
+			app.Dao().UserNotifyMarkAllAsRead(p.User.ID)
 		}
 
 		// unread notifies
 		var unreadNotifies = []entity.CookedNotify{}
 		if p.User != nil {
-			unreadNotifies = query.CookAllNotifies(query.FindUnreadNotifies(p.User.ID))
+			unreadNotifies = app.Dao().CookAllNotifies(app.Dao().FindUnreadNotifies(p.User.ID))
 		}
 
 		// IP region query
-		if config.Instance.IPRegion.Enabled {
+		if app.Conf().IPRegion.Enabled {
 			nCookedComments := []entity.CookedComment{}
 			for _, c := range cookedComments {
-				rawC := query.FindComment(c.ID)
-				c.IPRegion = ip_region.IP2Region(rawC.IP)
+				rawC := app.Dao().FindComment(c.ID)
+				c.IPRegion = core.AppService[*core.IPRegionService](app).Query(rawC.IP)
 				nCookedComments = append(nCookedComments, c)
 			}
 			cookedComments = nCookedComments
@@ -199,14 +197,14 @@ func CommentGet(router fiber.Router) {
 			Comments:    cookedComments,
 			Total:       total,
 			TotalRoots:  totalRoots,
-			Page:        query.CookPage(&page),
+			Page:        app.Dao().CookPage(&page),
 			Unread:      unreadNotifies,
 			UnreadCount: len(unreadNotifies),
 			ApiVersion:  common.GetApiVersionDataMap(),
 		}
 
 		if p.Offset == 0 {
-			resp.Conf = common.GetApiPublicConfDataMap(c)
+			resp.Conf = common.GetApiPublicConfDataMap(app, c)
 		}
 
 		return common.RespData(c, resp)

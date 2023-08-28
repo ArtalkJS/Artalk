@@ -3,7 +3,7 @@ package handler
 import (
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -14,10 +14,10 @@ import (
 // @Tags         User
 // @Success      200  {object}  common.JSONResult
 // @Router       /logout  [post]
-func UserLogout(router fiber.Router) {
+func UserLogout(app *core.App, router fiber.Router) {
 	router.Post("/logout", func(c *fiber.Ctx) error {
 
-		if !config.Instance.Cookie.Enabled {
+		if !app.Conf().Cookie.Enabled {
 			return common.RespError(c, "API cookie disabled")
 		}
 
@@ -26,7 +26,7 @@ func UserLogout(router fiber.Router) {
 		}
 
 		// same as login, remove cookie
-		setAuthCookie(c, "", time.Now().AddDate(0, 0, -1))
+		setAuthCookie(app, c, "", time.Now().AddDate(0, 0, -1))
 
 		return common.RespSuccess(c)
 	})

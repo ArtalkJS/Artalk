@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -36,7 +36,7 @@ type ResponseLogin struct {
 // @Success      200  {object}  common.JSONResult{data=ResponseLogin}
 // @Failure      400  {object}  common.JSONResult{data=object{need_name_select=[]string}}  "Multiple users with the same email address are matched"
 // @Router       /login  [post]
-func UserLogin(router fiber.Router) {
+func UserLogin(app *core.App, router fiber.Router) {
 	router.Post("/login", func(c *fiber.Ctx) error {
 		var p ParamsLogin
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -50,7 +50,7 @@ func UserLogin(router fiber.Router) {
 			if !utils.ValidateEmail(p.Email) {
 				return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 			}
-			users := query.FindUsersByEmail(p.Email)
+			users := app.Dao().FindUsersByEmail(p.Email)
 			if len(users) == 1 {
 				// 仅有一个 email 匹配的用户
 				user = users[0]
@@ -68,11 +68,8 @@ func UserLogin(router fiber.Router) {
 			}
 		} else {
 			// Name + Email 的精准查询
-			user = query.FindUser(p.Name, p.Email) // name = ? AND email = ?
+			user = app.Dao().FindUser(p.Name, p.Email) // name = ? AND email = ?
 		}
-
-		// record action for limiting action
-		common.RecordAction(c)
 
 		if user.IsEmpty() {
 			return common.RespError(c, i18n.T("Login failed"))
@@ -107,18 +104,18 @@ func UserLogin(router fiber.Router) {
 			return common.RespError(c, i18n.T("Login failed"))
 		}
 
-		jwtToken := common.LoginGetUserToken(user)
-		setAuthCookie(c, jwtToken, time.Now().Add(time.Second*time.Duration(config.Instance.LoginTimeout)))
+		jwtToken := common.LoginGetUserToken(user, app.Conf().AppKey, app.Conf().LoginTimeout)
+		setAuthCookie(app, c, jwtToken, time.Now().Add(time.Second*time.Duration(app.Conf().LoginTimeout)))
 
 		return common.RespData(c, ResponseLogin{
 			Token: jwtToken,
-			User:  query.CookUser(&user),
+			User:  app.Dao().CookUser(&user),
 		})
 	})
 }
 
-func setAuthCookie(c *fiber.Ctx, jwtToken string, expires time.Time) {
-	if !config.Instance.Cookie.Enabled {
+func setAuthCookie(app *core.App, c *fiber.Ctx, jwtToken string, expires time.Time) {
+	if !app.Conf().Cookie.Enabled {
 		return
 	}
 
@@ -165,7 +162,7 @@ type ResponseLoginStatus struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseLoginStatus}
 // @Router       /login-status  [post]
-func UserLoginStatus(router fiber.Router) {
+func UserLoginStatus(app *core.App, router fiber.Router) {
 	router.Post("/login-status", func(c *fiber.Ctx) error {
 		var p ParamsLoginStatus
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -174,12 +171,12 @@ func UserLoginStatus(router fiber.Router) {
 
 		isAdmin := false
 		if p.Email != "" && p.Name != "" {
-			isAdmin = query.IsAdminUserByNameEmail(p.Name, p.Email)
+			isAdmin = app.Dao().IsAdminUserByNameEmail(p.Name, p.Email)
 		}
 
 		return common.RespData(c, ResponseLoginStatus{
 			IsAdmin: isAdmin,
-			IsLogin: common.CheckIsAdminReq(c),
+			IsLogin: common.CheckIsAdminReq(app, c),
 		})
 	})
 }

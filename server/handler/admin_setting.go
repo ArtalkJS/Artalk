@@ -8,9 +8,9 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
-	"github.com/sirupsen/logrus"
 )
 
 type ResponseAdminSettingGet struct {
@@ -24,20 +24,20 @@ type ResponseAdminSettingGet struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminSettingGet}
 // @Router       /admin/setting-get [post]
-func AdminSettingGet(router fiber.Router) {
+func AdminSettingGet(app *core.App, router fiber.Router) {
 	router.Post("/setting-get", func(c *fiber.Ctx) error {
-		if !common.GetIsSuperAdmin(c) {
+		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
-		dat, err := os.ReadFile(config.GetCfgFileLoaded())
+		dat, err := os.ReadFile(app.Conf().GetCfgFileLoaded())
 		if err != nil {
 			return common.RespError(c, i18n.T("Config file read failed"))
 		}
 
 		return common.RespData(c, ResponseAdminSettingGet{
 			Custom:   string(dat),
-			Template: core.GetConfTpl(),
+			Template: app.ConfTpl(),
 		})
 	})
 }
@@ -53,9 +53,9 @@ type ParamsAdminSettingSave struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult
 // @Router       /admin/setting-save [post]
-func AdminSettingSave(router fiber.Router) {
+func AdminSettingSave(app *core.App, router fiber.Router) {
 	router.Post("/setting-save", func(c *fiber.Ctx) error {
-		if !common.GetIsSuperAdmin(c) {
+		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
@@ -64,7 +64,7 @@ func AdminSettingSave(router fiber.Router) {
 			return resp
 		}
 
-		configFile := config.GetCfgFileLoaded()
+		configFile := app.Conf().GetCfgFileLoaded()
 		f, err := os.Create(configFile)
 		if err != nil {
 			return common.RespError(c, i18n.T("Config file read failed")+": "+err.Error())
@@ -78,13 +78,10 @@ func AdminSettingSave(router fiber.Router) {
 		}
 
 		// 重启服务
-		workDir, err3 := os.Getwd()
-		if err3 != nil {
-			return common.RespError(c, i18n.T("Working directory retrieval failed")+": "+err3.Error())
-		}
-		core.LoadCore(configFile, workDir)
-		common.ReloadCorsAllowOrigins() // 刷新 CORS 可信域名
-		logrus.Info(i18n.T("Services restart complete"))
+		app.Restart()
+
+		common.ReloadCorsAllowOrigins(app) // 刷新 CORS 可信域名
+		log.Info(i18n.T("Services restart complete"))
 
 		return common.RespSuccess(c)
 	})
@@ -96,10 +93,10 @@ func AdminSettingSave(router fiber.Router) {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  string
 // @Router       /admin/setting-tpl  [post]
-func AdminSettingTpl(router fiber.Router) {
+func AdminSettingTpl(app *core.App, router fiber.Router) {
 	router.Post("/setting-tpl", func(c *fiber.Ctx) error {
 		locale := strings.TrimSpace(c.FormValue("locale"))
-		tpl := core.GetConfTpl(locale)
+		tpl := config.Template(locale)
 		return c.Status(http.StatusOK).SendString(tpl)
 	})
 }

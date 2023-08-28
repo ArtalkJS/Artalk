@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -16,19 +17,19 @@ type ParamsAdminCacheWarm struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult
 // @Router       /admin/cache-warm  [post]
-func AdminCacheWarm(router fiber.Router) {
+func AdminCacheWarm(app *core.App, router fiber.Router) {
 	router.Post("/cache-warm", func(c *fiber.Ctx) error {
 		var p ParamsAdminCacheWarm
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
-		if !common.GetIsSuperAdmin(c) {
+		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		go func() {
-			cache.CacheWarmUp()
+			cache.CacheWarmUp(app.Dao().DB())
 		}()
 
 		return common.RespData(c, common.Map{
@@ -48,20 +49,20 @@ type ParamsAdminCacheFlush struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult
 // @Router       /admin/cache-flush  [post]
-func AdminCacheFlush(router fiber.Router) {
+func AdminCacheFlush(app *core.App, router fiber.Router) {
 	router.Post("/cache-flush", func(c *fiber.Ctx) error {
 		var p ParamsAdminCacheFlush
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
-		if !common.GetIsSuperAdmin(c) {
+		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		if p.FlushAll {
 			go func() {
-				cache.CacheFlushAll()
+				cache.CacheFlushAll(app.Dao().DB())
 			}()
 
 			return common.RespData(c, common.Map{

@@ -4,10 +4,9 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/cache"
-	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -35,20 +34,20 @@ type ResponseAdminSiteEdit struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteEdit}
 // @Router       /admin/site-edit  [post]
-func AdminSiteEdit(router fiber.Router) {
+func AdminSiteEdit(app *core.App, router fiber.Router) {
 	router.Post("/site-edit", func(c *fiber.Ctx) error {
 		var p ParamsAdminSiteEdit
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
-		site := query.FindSiteByID(p.ID)
+		site := app.Dao().FindSiteByID(p.ID)
 		if site.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Site")}))
 		}
 
 		// 站点操作权限检查
-		if !common.IsAdminHasSiteAccess(c, site.Name) {
+		if !common.IsAdminHasSiteAccess(app, c, site.Name) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
@@ -58,7 +57,7 @@ func AdminSiteEdit(router fiber.Router) {
 
 		// 重命名合法性检测
 		modifyName := p.Name != site.Name
-		if modifyName && !query.FindSite(p.Name).IsEmpty() {
+		if modifyName && !app.Dao().FindSite(p.Name).IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("Site")}))
 		}
 
@@ -79,16 +78,16 @@ func AdminSiteEdit(router fiber.Router) {
 			var comments []entity.Comment
 			var pages []entity.Page
 
-			db.DB().Where("site_name = ?", site.Name).Find(&comments)
-			db.DB().Where("site_name = ?", site.Name).Find(&pages)
+			app.Dao().DB().Where("site_name = ?", site.Name).Find(&comments)
+			app.Dao().DB().Where("site_name = ?", site.Name).Find(&pages)
 
 			for _, comment := range comments {
 				comment.SiteName = p.Name
-				query.UpdateComment(&comment)
+				app.Dao().UpdateComment(&comment)
 			}
 			for _, page := range pages {
 				page.SiteName = p.Name
-				query.UpdatePage(&page)
+				app.Dao().UpdatePage(&page)
 			}
 		}
 
@@ -96,16 +95,16 @@ func AdminSiteEdit(router fiber.Router) {
 		site.Name = p.Name
 		site.Urls = p.Urls
 
-		err := query.UpdateSite(&site)
+		err := app.Dao().UpdateSite(&site)
 		if err != nil {
 			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Site")}))
 		}
 
 		// 刷新 CORS 可信域名
-		common.ReloadCorsAllowOrigins()
+		common.ReloadCorsAllowOrigins(app)
 
 		return common.RespData(c, ResponseAdminSiteEdit{
-			Site: query.CookSite(&site),
+			Site: app.Dao().CookSite(&site),
 		})
 	})
 }

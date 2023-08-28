@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -27,7 +27,7 @@ type ResponseUserGet struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseUserGet}
 // @Router       /user-get  [post]
-func UserGet(router fiber.Router) {
+func UserGet(app *core.App, router fiber.Router) {
 	router.Post("/user-get", func(c *fiber.Ctx) error {
 		var p ParamsUserGet
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -35,9 +35,9 @@ func UserGet(router fiber.Router) {
 		}
 
 		// login status
-		isLogin := !common.GetUserByReq(c).IsEmpty()
+		isLogin := !common.GetUserByReq(app, c).IsEmpty()
 
-		user := query.FindUser(p.Name, p.Email)
+		user := app.Dao().FindUser(p.Name, p.Email)
 		if user.IsEmpty() {
 			return common.RespData(c, ResponseUserGet{
 				User:        nil,
@@ -48,9 +48,9 @@ func UserGet(router fiber.Router) {
 		}
 
 		// unread notifies
-		unreadNotifies := query.CookAllNotifies(query.FindUnreadNotifies(user.ID))
+		unreadNotifies := app.Dao().CookAllNotifies(app.Dao().FindUnreadNotifies(user.ID))
 
-		cockedUser := query.CookUser(&user)
+		cockedUser := app.Dao().CookUser(&user)
 
 		return common.RespData(c, ResponseUserGet{
 			User:        &cockedUser,

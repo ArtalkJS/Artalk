@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -31,7 +31,7 @@ type ParamsMarkRead struct {
 // @Param        site_name   formData  string  false  "the site name of your content scope"
 // @Success      200  {object}  common.JSONResult
 // @Router       /mark-read  [post]
-func MarkRead(router fiber.Router) {
+func MarkRead(app *core.App, router fiber.Router) {
 	router.Post("/mark-read", func(c *fiber.Ctx) error {
 		var p ParamsMarkRead
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -47,8 +47,8 @@ func MarkRead(router fiber.Router) {
 				return common.RespError(c, "username or email cannot be empty")
 			}
 
-			user := query.FindUser(p.Name, p.Email)
-			err := query.UserNotifyMarkAllAsRead(user.ID)
+			user := app.Dao().FindUser(p.Name, p.Email)
+			err := app.Dao().UserNotifyMarkAllAsRead(user.ID)
 			if err != nil {
 				return common.RespError(c, err.Error())
 			}
@@ -57,7 +57,7 @@ func MarkRead(router fiber.Router) {
 		}
 
 		// find notify
-		notify := query.FindNotifyForComment(p.CommentID, p.NotifyKey)
+		notify := app.Dao().FindNotifyForComment(p.CommentID, p.NotifyKey)
 		if notify.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Notify")}))
 		}
@@ -67,7 +67,7 @@ func MarkRead(router fiber.Router) {
 		}
 
 		// update notify
-		err := query.NotifySetRead(&notify)
+		err := app.Dao().NotifySetRead(&notify)
 		if err != nil {
 			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Notify")}))
 		}

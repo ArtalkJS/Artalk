@@ -1,13 +1,13 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
-	"github.com/sirupsen/logrus"
 )
 
 type ParamsAdminUserAdd struct {
@@ -41,9 +41,9 @@ type ResponseAdminUserAdd struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminUserAdd}
 // @Router       /admin/user-add  [post]
-func AdminUserAdd(router fiber.Router) {
+func AdminUserAdd(app *core.App, router fiber.Router) {
 	router.Post("/user-add", func(c *fiber.Ctx) error {
-		if !common.GetIsSuperAdmin(c) {
+		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
@@ -52,7 +52,7 @@ func AdminUserAdd(router fiber.Router) {
 			return resp
 		}
 
-		if !query.FindUser(p.Name, p.Email).IsEmpty() {
+		if !app.Dao().FindUser(p.Name, p.Email).IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("User")}))
 		}
 
@@ -76,18 +76,18 @@ func AdminUserAdd(router fiber.Router) {
 		if p.Password != "" {
 			err := user.SetPasswordEncrypt(p.Password)
 			if err != nil {
-				logrus.Errorln(err)
+				log.Errorln(err)
 				return common.RespError(c, i18n.T("Password update failed"))
 			}
 		}
 
-		err := query.CreateUser(&user)
+		err := app.Dao().CreateUser(&user)
 		if err != nil {
 			return common.RespError(c, i18n.T("{{name}} creation failed", Map{"name": i18n.T("User")}))
 		}
 
 		return common.RespData(c, ResponseAdminUserAdd{
-			User: query.UserToCookedForAdmin(&user),
+			User: app.Dao().UserToCookedForAdmin(&user),
 		})
 	})
 }

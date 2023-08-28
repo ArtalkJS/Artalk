@@ -1,10 +1,9 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -31,7 +30,7 @@ type ResponseAdminPageGet struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminPageGet}
 // @Router       /admin/page-get  [post]
-func AdminPageGet(router fiber.Router) {
+func AdminPageGet(app *core.App, router fiber.Router) {
 	router.Post("/page-get", func(c *fiber.Ctx) error {
 		var p ParamsAdminPageGet
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -41,12 +40,12 @@ func AdminPageGet(router fiber.Router) {
 		// use site
 		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
-		if !common.IsAdminHasSiteAccess(c, p.SiteName) {
+		if !common.IsAdminHasSiteAccess(app, c, p.SiteName) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		// 准备 query
-		q := db.DB().Model(&entity.Page{}).Order("created_at DESC")
+		q := app.Dao().DB().Model(&entity.Page{}).Order("created_at DESC")
 		if !p.SiteAll { // 不是查的所有站点
 			q = q.Where("site_name = ?", p.SiteName)
 		}
@@ -64,7 +63,7 @@ func AdminPageGet(router fiber.Router) {
 
 		var cookedPages []entity.CookedPage
 		for _, p := range pages {
-			cookedPages = append(cookedPages, query.CookPage(&p))
+			cookedPages = append(cookedPages, app.Dao().CookPage(&p))
 		}
 
 		return common.RespData(c, ResponseAdminPageGet{

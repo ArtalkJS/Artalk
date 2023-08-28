@@ -1,19 +1,25 @@
 package server
 
 import (
+	"fmt"
+	"io"
 	"net/http"
 
 	_ "github.com/ArtalkJS/Artalk/docs/swagger"
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/pkged"
 	"github.com/ArtalkJS/Artalk/server/common"
 	h "github.com/ArtalkJS/Artalk/server/handler"
 	"github.com/ArtalkJS/Artalk/server/middleware"
+	"github.com/ArtalkJS/Artalk/server/middleware/limiter"
+	"github.com/ArtalkJS/Artalk/server/middleware/site_origin"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	fiber_logger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
 	"github.com/gofiber/swagger"
-	"github.com/sirupsen/logrus"
 )
 
 // @Title          Artalk API
@@ -32,89 +38,127 @@ import (
 // @In   header
 // @Name Authorization
 // @Description  "Type 'Bearer TOKEN' to correctly set the API Key"
-func Init(app *fiber.App) {
-	swaggerDocs(app)
+func Serve(app *core.App) (*fiber.App, error) {
+	// create fiber app
+	// @see https://docs.gofiber.io/api/fiber#config
+	fb := fiber.New(fiber.Config{
+		// @see https://github.com/gofiber/fiber/issues/426
+		// @see https://github.com/gofiber/fiber/issues/185
+		Immutable: true,
 
-	cors(app)
-	actionLimit(app)
+		// TODO add config to set ProxyHeader
+		ProxyHeader:        "X-Forwarded-For",
+		EnableIPValidation: true,
+	})
 
-	if config.Instance.Debug {
-		app.Use(pprof.New())
+	// logger
+	fb.Use(fiber_logger.New(fiber_logger.Config{
+		Format: "[${status}] ${method} ${path} ${latency} ${ip} ${reqHeader:X-Request-ID} ${referer} ${ua}\n",
+		Output: io.Discard,
+		Done: func(c *fiber.Ctx, logString []byte) {
+			statusOK := c.Response().StatusCode() >= 200 && c.Response().StatusCode() <= 302
+			if !statusOK {
+				log.StandardLogger().WriterLevel(log.ErrorLevel).Write(logString)
+			} else {
+				log.StandardLogger().WriterLevel(log.DebugLevel).Write(logString)
+			}
+		},
+	}))
+
+	swaggerDocs(fb)
+
+	cors(app, fb)
+	actionLimit(app, fb)
+
+	if app.Conf().Debug {
+		fb.Use(pprof.New())
 	}
 
-	api := app.Group("/api", middleware.SiteOriginMiddleware())
+	api := fb.Group("/api", site_origin.SiteOriginMiddleware(app))
 	{
-		h.CommentAdd(api)
-		h.CommentGet(api)
-		h.Vote(api)
-		h.PV(api)
-		h.Stat(api)
-		h.MarkRead(api)
-		h.ImgUpload(api)
+		h.CommentAdd(app, api)
+		h.CommentGet(app, api)
+		h.Vote(app, api)
+		h.PV(app, api)
+		h.Stat(app, api)
+		h.MarkRead(app, api)
+		h.ImgUpload(app, api)
 
-		h.Conf(api)
-		h.Version(api)
+		h.Conf(app, api)
+		h.Version(app, api)
 
 		// captcha
-		h.Captcha(api)
+		h.Captcha(app, api)
 
 		// user
-		h.UserGet(api)
-		h.UserLogin(api)
-		h.UserLoginStatus(api)
-		h.UserLogout(api)
+		h.UserGet(app, api)
+		h.UserLogin(app, api)
+		h.UserLoginStatus(app, api)
+		h.UserLogout(app, api)
 
 		// admin
-		admin(api)
+		admin(app, api)
 	}
 
-	index(app)
+	index(fb)
 
-	static(app)
-	uploadedStatic(app)
+	static(fb)
+	uploadedStatic(app, fb)
+
+	app.OnTerminate().Add(func(e *core.TerminateEvent) error {
+		_ = fb.Shutdown()
+		return nil
+	})
+
+	listenAddr := fmt.Sprintf("%s:%d", app.Conf().Host, app.Conf().Port)
+	if app.Conf().SSL.Enabled {
+		return fb, fb.ListenTLS(listenAddr, app.Conf().SSL.CertPath, app.Conf().SSL.KeyPath)
+	} else {
+		return fb, fb.Listen(listenAddr)
+	}
 }
 
-func admin(f fiber.Router) {
-	admin := f.Group("/admin", middleware.AdminOnlyMiddleware())
+func admin(app *core.App, f fiber.Router) {
+	admin := f.Group("/admin", middleware.AdminOnlyMiddleware(app))
 	{
-		h.AdminCommentEdit(admin)
-		h.AdminCommentDel(admin)
+		h.AdminCommentEdit(app, admin)
+		h.AdminCommentDel(app, admin)
 
-		h.AdminPageGet(admin)
-		h.AdminPageEdit(admin)
-		h.AdminPageDel(admin)
-		h.AdminPageFetch(admin)
+		h.AdminPageGet(app, admin)
+		h.AdminPageEdit(app, admin)
+		h.AdminPageDel(app, admin)
+		h.AdminPageFetch(app, admin)
 
-		h.AdminSiteGet(admin)
-		h.AdminSiteAdd(admin)
-		h.AdminSiteEdit(admin)
-		h.AdminSiteDel(admin)
+		h.AdminSiteGet(app, admin)
+		h.AdminSiteAdd(app, admin)
+		h.AdminSiteEdit(app, admin)
+		h.AdminSiteDel(app, admin)
 
-		h.AdminUserGet(admin)
-		h.AdminUserAdd(admin)
-		h.AdminUserEdit(admin)
-		h.AdminUserDel(admin)
+		h.AdminUserGet(app, admin)
+		h.AdminUserAdd(app, admin)
+		h.AdminUserEdit(app, admin)
+		h.AdminUserDel(app, admin)
 
-		h.AdminCacheWarm(admin)
-		h.AdminCacheFlush(admin)
+		h.AdminCacheWarm(app, admin)
+		h.AdminCacheFlush(app, admin)
 
-		h.AdminSendMail(admin)
-		h.AdminVoteSync(admin)
+		h.AdminSendMail(app, admin)
+		h.AdminVoteSync(app, admin)
 
-		h.AdminSettingGet(admin)
-		h.AdminSettingSave(admin)
-		h.AdminSettingTpl(admin)
+		h.AdminSettingGet(app, admin)
+		h.AdminSettingSave(app, admin)
+		h.AdminSettingTpl(app, admin)
 
-		h.AdminTransfer(admin)
+		h.AdminTransfer(app, admin)
 	}
 }
 
-func cors(f fiber.Router) {
-	f.Use(middleware.CorsMiddleware())
+func cors(app *core.App, f fiber.Router) {
+	f.Use(middleware.CorsMiddleware(app))
 }
 
-func actionLimit(f fiber.Router) {
-	f.Use(middleware.ActionLimitMiddleware(middleware.ActionLimitConf{
+func actionLimit(app *core.App, f fiber.Router) {
+	f.Use(limiter.ActionLimitMiddleware(app, limiter.ActionLimitConf{
 		// 启用操作限制路径白名单
 		ProtectPaths: []string{
 			"/api/add",
@@ -143,14 +187,9 @@ func index(f fiber.Router) {
 	})
 }
 
-func uploadedStatic(f fiber.Router) {
-	if config.Instance.ImgUpload.Path == "" {
-		config.Instance.ImgUpload.Path = "./data/artalk-img/"
-		logrus.Warn("[Image Upload] img_upload.path is not configured, using the default value: " + config.Instance.ImgUpload.Path)
-	}
-
+func uploadedStatic(app *core.App, f fiber.Router) {
 	// 图片上传静态资源可访问路径
-	f.Static(config.IMG_UPLOAD_PUBLIC_PATH, config.Instance.ImgUpload.Path)
+	f.Static(config.IMG_UPLOAD_PUBLIC_PATH, app.Conf().ImgUpload.Path)
 }
 
 func swaggerDocs(f fiber.Router) {

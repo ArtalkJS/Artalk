@@ -2,10 +2,9 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -33,7 +32,7 @@ type ParamsStat struct {
 // @Param        limit       formData  int     false  "the amount of items you want"
 // @Success      200  {object}  common.JSONResult
 // @Router       /stat  [post]
-func Stat(router fiber.Router) {
+func Stat(app *core.App, router fiber.Router) {
 	router.Post("/stat", func(c *fiber.Ctx) error {
 		var p ParamsStat
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -59,7 +58,7 @@ func Stat(router fiber.Router) {
 			return d.Model(&entity.Comment{}).Where("site_name = ? AND is_pending = ?", p.SiteName, false)
 		}
 		QueryOrderRand := func(d *gorm.DB) *gorm.DB {
-			if config.Instance.DB.Type == config.TypeSQLite {
+			if app.Conf().DB.Type == config.TypeSQLite {
 				return d.Order("RANDOM()") // SQLite case
 			} else {
 				return d.Order("RAND()")
@@ -70,49 +69,49 @@ func Stat(router fiber.Router) {
 		case "latest_comments":
 			// 最新评论
 			var comments []entity.Comment
-			db.DB().Scopes(QueryComments).
+			app.Dao().DB().Scopes(QueryComments).
 				Order("created_at DESC").
 				Limit(p.Limit).
 				Find(&comments)
 
-			return common.RespData(c, query.CookAllComments(comments))
+			return common.RespData(c, app.Dao().CookAllComments(comments))
 
 		case "latest_pages":
 			// 最新页面
 			var pages []entity.Page
-			db.DB().Scopes(QueryPages).
+			app.Dao().DB().Scopes(QueryPages).
 				Order("created_at DESC").
 				Limit(p.Limit).
 				Find(&pages)
 
-			return common.RespData(c, query.CookAllPages(pages))
+			return common.RespData(c, app.Dao().CookAllPages(pages))
 
 		case "pv_most_pages":
 			// PV 数最多的页面
 			var pages []entity.Page
-			db.DB().Scopes(QueryPages).
+			app.Dao().DB().Scopes(QueryPages).
 				Order("pv DESC").
 				Limit(p.Limit).
 				Find(&pages)
 
-			return common.RespData(c, query.CookAllPages(pages))
+			return common.RespData(c, app.Dao().CookAllPages(pages))
 
 		case "comment_most_pages":
 			// 评论数最多的页面
 			var pages []entity.Page
-			db.DB().Raw(
+			app.Dao().DB().Raw(
 				"SELECT * FROM pages p WHERE p.site_name = ? ORDER BY (SELECT COUNT(*) FROM comments c WHERE c.page_key = p.key AND c.is_pending = ?) DESC LIMIT ?",
 				p.SiteName, false, p.Limit,
 			).Find(&pages)
 
-			return common.RespData(c, query.CookAllPages(pages))
+			return common.RespData(c, app.Dao().CookAllPages(pages))
 
 		case "page_pv":
 			// 查询页面的 PV 数
 			keys := utils.SplitAndTrimSpace(p.PageKeys, ",")
 			pvs := map[string]int{}
 			for _, k := range keys {
-				page := query.FindPage(k, p.SiteName)
+				page := app.Dao().FindPage(k, p.SiteName)
 				if !page.IsEmpty() {
 					pvs[k] = page.PV
 				} else {
@@ -125,7 +124,7 @@ func Stat(router fiber.Router) {
 		case "site_pv":
 			// 全站 PV 数
 			var pv int64
-			db.DB().Raw("SELECT SUM(pv) FROM pages WHERE site_name = ?", p.SiteName).Row().Scan(&pv)
+			app.Dao().DB().Raw("SELECT SUM(pv) FROM pages WHERE site_name = ?", p.SiteName).Row().Scan(&pv)
 
 			return common.RespData(c, pv)
 
@@ -135,7 +134,7 @@ func Stat(router fiber.Router) {
 			counts := map[string]int64{}
 			for _, k := range keys {
 				var count int64
-				db.DB().Scopes(QueryComments).Where("page_key = ?", k).Count(&count)
+				app.Dao().DB().Scopes(QueryComments).Where("page_key = ?", k).Count(&count)
 
 				counts[k] = count
 			}
@@ -145,27 +144,27 @@ func Stat(router fiber.Router) {
 		case "site_comment":
 			// 全站评论数
 			var count int64
-			db.DB().Scopes(QueryComments).Count(&count)
+			app.Dao().DB().Scopes(QueryComments).Count(&count)
 
 			return common.RespData(c, count)
 
 		case "rand_comments":
 			// 随机评论
 			var comments []entity.Comment
-			db.DB().Scopes(QueryComments, QueryOrderRand).
+			app.Dao().DB().Scopes(QueryComments, QueryOrderRand).
 				Limit(p.Limit).
 				Find(&comments)
 
-			return common.RespData(c, query.CookAllComments(comments))
+			return common.RespData(c, app.Dao().CookAllComments(comments))
 
 		case "rand_pages":
 			// 随机页面
 			var pages []entity.Page
-			db.DB().Scopes(QueryPages, QueryOrderRand).
+			app.Dao().DB().Scopes(QueryPages, QueryOrderRand).
 				Limit(p.Limit).
 				Find(&pages)
 
-			return common.RespData(c, query.CookAllPages(pages))
+			return common.RespData(c, app.Dao().CookAllPages(pages))
 		}
 
 		return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Type")}))

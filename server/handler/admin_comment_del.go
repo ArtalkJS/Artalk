@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -23,7 +23,7 @@ type ParamsCommentDel struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult
 // @Router       /admin/comment-del  [post]
-func AdminCommentDel(router fiber.Router) {
+func AdminCommentDel(app *core.App, router fiber.Router) {
 	router.Post("/comment-del", func(c *fiber.Ctx) error {
 		var p ParamsCommentDel
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -34,22 +34,22 @@ func AdminCommentDel(router fiber.Router) {
 		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 		// find comment
-		comment := query.FindComment(p.ID)
+		comment := app.Dao().FindComment(p.ID)
 		if comment.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 		}
 
-		if !common.IsAdminHasSiteAccess(c, comment.SiteName) {
+		if !common.IsAdminHasSiteAccess(app, c, comment.SiteName) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		// 删除主评论
-		if err := query.DelComment(&comment); err != nil {
+		if err := app.Dao().DelComment(&comment); err != nil {
 			return common.RespError(c, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("Comment")}))
 		}
 
 		// 删除子评论
-		if err := query.DelCommentChildren(comment.ID); err != nil {
+		if err := app.Dao().DelCommentChildren(comment.ID); err != nil {
 			return common.RespError(c, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("Sub-comment")}))
 		}
 

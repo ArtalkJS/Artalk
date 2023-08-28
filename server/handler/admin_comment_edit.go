@@ -3,10 +3,9 @@ package handler
 import (
 	"strconv"
 
-	"github.com/ArtalkJS/Artalk/internal/email"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -56,7 +55,7 @@ type ResponseCommentEdit struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseCommentEdit}
 // @Router       /admin/comment-edit [post]
-func AdminCommentEdit(router fiber.Router) {
+func AdminCommentEdit(app *core.App, router fiber.Router) {
 	router.Post("/comment-edit", func(c *fiber.Ctx) error {
 		var p ParamsCommentEdit
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -67,12 +66,12 @@ func AdminCommentEdit(router fiber.Router) {
 		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 		// find comment
-		comment := query.FindComment(p.ID)
+		comment := app.Dao().FindComment(p.ID)
 		if comment.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 		}
 
-		if !common.IsAdminHasSiteAccess(c, comment.SiteName) {
+		if !common.IsAdminHasSiteAccess(app, c, comment.SiteName) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
@@ -97,7 +96,7 @@ func AdminCommentEdit(router fiber.Router) {
 		}
 
 		// merge user
-		originalUser := query.FetchUserForComment(&comment)
+		originalUser := app.Dao().FetchUserForComment(&comment)
 		if p.Nick == "" {
 			p.Nick = originalUser.Name
 		}
@@ -106,7 +105,7 @@ func AdminCommentEdit(router fiber.Router) {
 		}
 
 		// find or save new user
-		user := query.FindCreateUser(p.Nick, p.Email, p.Link)
+		user := app.Dao().FindCreateUser(p.Nick, p.Email, p.Link)
 		if user.ID != comment.UserID {
 			comment.UserID = user.ID
 		}
@@ -114,12 +113,12 @@ func AdminCommentEdit(router fiber.Router) {
 		// user link update
 		if p.Link != "" && p.Link != user.Link {
 			user.Link = p.Link
-			query.UpdateUser(&user)
+			app.Dao().UpdateUser(&user)
 		}
 
 		// pageKey
 		if p.PageKey != "" && p.PageKey != comment.PageKey {
-			query.FindCreatePage(p.PageKey, "", p.SiteName)
+			app.Dao().FindCreatePage(p.PageKey, "", p.SiteName)
 			comment.PageKey = p.PageKey
 		}
 
@@ -139,27 +138,27 @@ func AdminCommentEdit(router fiber.Router) {
 
 			// 待审状态被修改为 false，则重新发送邮件通知
 			if !comment.IsPending {
-				RenotifyWhenPendingModified(&comment)
+				RenotifyWhenPendingModified(app, &comment)
 			}
 		}
 
-		if err := query.UpdateComment(&comment); err != nil {
+		if err := app.Dao().UpdateComment(&comment); err != nil {
 			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
 		}
 
 		return common.RespData(c, ResponseCommentEdit{
-			Comment: query.CookComment(&comment),
+			Comment: app.Dao().CookComment(&comment),
 		})
 	})
 }
 
-func RenotifyWhenPendingModified(comment *entity.Comment) {
+func RenotifyWhenPendingModified(app *core.App, comment *entity.Comment) {
 	if comment.Rid == 0 {
 		return // Root 评论不发送通知，因为这个评论已经被管理员看到了
 	}
 
-	pComment := query.FindComment(comment.Rid)
-	if query.FetchUserForComment(&pComment).IsAdmin {
+	pComment := app.Dao().FindComment(comment.Rid)
+	if app.Dao().FetchUserForComment(&pComment).IsAdmin {
 		return // 回复对象是管理员，则不再发送通知，因为已经看到了
 	}
 
@@ -167,13 +166,13 @@ func RenotifyWhenPendingModified(comment *entity.Comment) {
 		return // 自己回复自己，不通知
 	}
 
-	notify := query.FindCreateNotify(pComment.UserID, comment.ID)
+	notify := app.Dao().FindCreateNotify(pComment.UserID, comment.ID)
 	if notify.IsEmailed {
 		return // 邮件已经发送过，则不再重复发送
 	}
 
-	query.NotifySetInitial(&notify)
+	app.Dao().NotifySetInitial(&notify)
 
 	// 邮件通知
-	email.AsyncSend(&notify)
+	core.AppService[*core.EmailService](app).AsyncSend(&notify)
 }

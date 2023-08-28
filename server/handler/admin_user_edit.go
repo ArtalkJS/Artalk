@@ -2,9 +2,9 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -46,9 +46,9 @@ type ResponseAdminUserEdit struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminUserEdit}
 // @Router       /admin/user-edit  [post]
-func AdminUserEdit(router fiber.Router) {
+func AdminUserEdit(app *core.App, router fiber.Router) {
 	router.Post("/user-edit", func(c *fiber.Ctx) error {
-		if !common.GetIsSuperAdmin(c) {
+		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
@@ -57,7 +57,7 @@ func AdminUserEdit(router fiber.Router) {
 			return resp
 		}
 
-		user := query.FindUserByID(p.ID)
+		user := app.Dao().FindUserByID(p.ID)
 		if user.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("User")}))
 		}
@@ -66,7 +66,7 @@ func AdminUserEdit(router fiber.Router) {
 		modifyName := p.Name != user.Name
 		modifyEmail := p.Email != user.Email
 
-		if modifyName && modifyEmail && !query.FindUser(p.Name, p.Email).IsEmpty() {
+		if modifyName && modifyEmail && !app.Dao().FindUser(p.Name, p.Email).IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("User")}))
 		}
 
@@ -93,13 +93,13 @@ func AdminUserEdit(router fiber.Router) {
 		user.BadgeName = p.BadgeName
 		user.BadgeColor = p.BadgeColor
 
-		err := query.UpdateUser(&user)
+		err := app.Dao().UpdateUser(&user)
 		if err != nil {
 			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("User")}))
 		}
 
 		return common.RespData(c, ResponseAdminUserEdit{
-			User: query.UserToCookedForAdmin(&user),
+			User: app.Dao().UserToCookedForAdmin(&user),
 		})
 	})
 }

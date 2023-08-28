@@ -12,11 +12,12 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
-	"github.com/sirupsen/logrus"
 )
 
 type ParamsImgUpload struct {
@@ -49,10 +50,10 @@ type ResponseImgUpload struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseImgUpload}
 // @Router       /img-upload  [post]
-func ImgUpload(router fiber.Router) {
+func ImgUpload(app *core.App, router fiber.Router) {
 	router.Post("/img-upload", func(c *fiber.Ctx) error {
 		// 功能开关 (管理员始终开启)
-		if !config.Instance.ImgUpload.Enabled && !common.CheckIsAdminReq(c) {
+		if !app.Conf().ImgUpload.Enabled && !common.CheckIsAdminReq(app, c) {
 			return common.RespError(c, i18n.T("Image upload forbidden"), common.Map{
 				"img_upload_enabled": false,
 			})
@@ -71,19 +72,16 @@ func ImgUpload(router fiber.Router) {
 		// use site
 		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
-		// 记录请求次数 (for 请求频率限制)
-		common.RecordAction(c)
-
 		// find page
 		// page := entity.FindPage(p.PageKey, p.PageTitle)
 		// ip := c.RealIP()
 		// ua := c.Request().UserAgent()
 
 		// 图片大小限制 (Based on content length)
-		if config.Instance.ImgUpload.MaxSize != 0 {
-			if int64(c.Request().Header.ContentLength()) > config.Instance.ImgUpload.MaxSize*1024*1024 {
+		if app.Conf().ImgUpload.MaxSize != 0 {
+			if int64(c.Request().Header.ContentLength()) > app.Conf().ImgUpload.MaxSize*1024*1024 {
 				return common.RespError(c, i18n.T("Image exceeds {{file_size}} limit", Map{
-					"file_size": fmt.Sprintf("%dMB", config.Instance.ImgUpload.MaxSize),
+					"file_size": fmt.Sprintf("%dMB", app.Conf().ImgUpload.MaxSize),
 				}))
 			}
 		}
@@ -91,14 +89,14 @@ func ImgUpload(router fiber.Router) {
 		// 获取 Form
 		file, err := c.FormFile("file")
 		if err != nil {
-			logrus.Error(err)
+			log.Error(err)
 			return common.RespError(c, "File read failed")
 		}
 
 		// 打开文件
 		src, err := file.Open()
 		if err != nil {
-			logrus.Error(err)
+			log.Error(err)
 			return common.RespError(c, "File open failed")
 		}
 		defer src.Close()
@@ -106,15 +104,15 @@ func ImgUpload(router fiber.Router) {
 		// 读取文件
 		buf, err := io.ReadAll(src)
 		if err != nil {
-			logrus.Error(err)
+			log.Error(err)
 			return common.RespError(c, "File read failed")
 		}
 
 		// 大小限制 (Based on content read)
-		if config.Instance.ImgUpload.MaxSize != 0 {
-			if int64(len(buf)) > config.Instance.ImgUpload.MaxSize*1024*1024 {
+		if app.Conf().ImgUpload.MaxSize != 0 {
+			if int64(len(buf)) > app.Conf().ImgUpload.MaxSize*1024*1024 {
 				return common.RespError(c, i18n.T("Image exceeds {{file_size}} limit", Map{
-					"file_size": fmt.Sprintf("%dMB", config.Instance.ImgUpload.MaxSize),
+					"file_size": fmt.Sprintf("%dMB", app.Conf().ImgUpload.MaxSize),
 				}))
 			}
 		}
@@ -145,51 +143,51 @@ func ImgUpload(router fiber.Router) {
 		filename := t.Format("20060102-150405.000") + mineToExts[fileMine]
 
 		// 创建图片目标文件
-		if err := utils.EnsureDir(config.Instance.ImgUpload.Path); err != nil {
-			logrus.Error(err)
+		if err := utils.EnsureDir(app.Conf().ImgUpload.Path); err != nil {
+			log.Error(err)
 			return common.RespError(c, "Folder creation failed")
 		}
 
-		fileFullPath := strings.TrimSuffix(config.Instance.ImgUpload.Path, "/") + "/" + filename
+		fileFullPath := strings.TrimSuffix(app.Conf().ImgUpload.Path, "/") + "/" + filename
 		dst, err := os.Create(fileFullPath)
 		if err != nil {
-			logrus.Error(err)
+			log.Error(err)
 			return common.RespError(c, "File creation failed")
 		}
 		defer dst.Close()
 
 		// 写入图片文件
 		if _, err = dst.Write(buf); err != nil {
-			logrus.Error(err)
+			log.Error(err)
 			return common.RespError(c, "File write failed")
 		}
 
 		// 生成外部可访问链接
-		baseURL := config.Instance.ImgUpload.PublicPath
+		baseURL := app.Conf().ImgUpload.PublicPath
 		if baseURL == "" {
 			baseURL = config.IMG_UPLOAD_PUBLIC_PATH
 		}
 		imgURL := path.Join(baseURL, filename)
 
 		// 使用 upgit
-		if config.Instance.ImgUpload.Upgit.Enabled {
-			upgitURL := execUpgitUpload(fileFullPath)
+		if app.Conf().ImgUpload.Upgit.Enabled {
+			upgitURL := execUpgitUpload(app.Conf().ImgUpload.Upgit.Exec, fileFullPath)
 			if upgitURL == "" || !utils.ValidateURL(upgitURL) {
 				// 上传失败，删除源图片文件
 				var err = os.Remove(fileFullPath)
 				if err != nil {
-					logrus.Error(err)
+					log.Error(err)
 				}
 
-				logrus.Error("[IMG_UPLOAD] [upgit] upgit output: ", upgitURL)
+				log.Error("[IMG_UPLOAD] [upgit] upgit output: ", upgitURL)
 				return common.RespError(c, i18n.T("Upload image via {{method}} failed", Map{"method": "upgit"}))
 			}
 
 			// 上传成功，删除本地文件
-			if config.Instance.ImgUpload.Upgit.DelLocal {
+			if app.Conf().ImgUpload.Upgit.DelLocal {
 				var err = os.Remove(fileFullPath)
 				if err != nil {
-					logrus.Error(err)
+					log.Error(err)
 				}
 			}
 
@@ -206,11 +204,11 @@ func ImgUpload(router fiber.Router) {
 }
 
 // 调用 upgit 上传图片获得 URL
-func execUpgitUpload(filename string) string {
+func execUpgitUpload(execCommand string, filename string) string {
 	LogTag := "[IMG_UPLOAD] [upgit] "
 
 	// 处理参数
-	cmdStrSplitted := strings.Split(config.Instance.ImgUpload.Upgit.Exec, " ")
+	cmdStrSplitted := strings.Split(execCommand, " ")
 	execApp := cmdStrSplitted[0]
 	execArgs := []string{}
 	for i, arg := range cmdStrSplitted {
@@ -225,7 +223,7 @@ func execUpgitUpload(filename string) string {
 	stdout, _ := cmd.StdoutPipe()
 
 	if err := cmd.Start(); err != nil {
-		logrus.Error(LogTag, "cmd.Start: ", err)
+		log.Error(LogTag, "cmd.Start: ", err)
 		return ""
 	}
 
@@ -233,10 +231,10 @@ func execUpgitUpload(filename string) string {
 	if err := cmd.Wait(); err != nil {
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
-				logrus.Error(LogTag, "Exit Status: ", status.ExitStatus())
+				log.Error(LogTag, "Exit Status: ", status.ExitStatus())
 			}
 		} else {
-			logrus.Error(LogTag, "cmd.Wait: ", err)
+			log.Error(LogTag, "cmd.Wait: ", err)
 		}
 
 		return ""

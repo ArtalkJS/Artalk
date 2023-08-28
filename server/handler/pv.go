@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/query"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -27,7 +27,7 @@ type ResponsePV struct {
 // @Param        site_name   formData  string  false  "the site name of your content scope"
 // @Success      200  {object}  common.JSONResult{data=ResponsePV}
 // @Router       /pv  [post]
-func PV(router fiber.Router) {
+func PV(app *core.App, router fiber.Router) {
 	router.Post("/pv", func(c *fiber.Ctx) error {
 		var p ParamsPV
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -38,13 +38,13 @@ func PV(router fiber.Router) {
 		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 		// find page
-		page := query.FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
+		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
 
 		// ip := c.RealIP()
 		// ua := c.Request().UserAgent()
 
 		page.PV++
-		query.UpdatePage(&page)
+		app.Dao().UpdatePage(&page)
 
 		return common.RespData(c, ResponsePV{
 			PV: page.PV,

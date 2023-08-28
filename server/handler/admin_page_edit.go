@@ -4,10 +4,9 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/cache"
-	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -39,7 +38,7 @@ type ResponseAdminPageEdit struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminPageEdit}
 // @Router       /admin/page-edit  [post]
-func AdminPageEdit(router fiber.Router) {
+func AdminPageEdit(app *core.App, router fiber.Router) {
 	router.Post("/page-edit", func(c *fiber.Ctx) error {
 		var p ParamsAdminPageEdit
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -54,18 +53,18 @@ func AdminPageEdit(router fiber.Router) {
 		common.UseSite(c, &p.SiteName, &p.SiteID, nil)
 
 		// find page
-		var page = query.FindPageByID(p.ID)
+		var page = app.Dao().FindPageByID(p.ID)
 		if page.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
-		if !common.IsAdminHasSiteAccess(c, page.SiteName) {
+		if !common.IsAdminHasSiteAccess(app, c, page.SiteName) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		// 重命名合法性检测
 		modifyKey := p.Key != page.Key
-		if modifyKey && !query.FindPage(p.Key, p.SiteName).IsEmpty() {
+		if modifyKey && !app.Dao().FindPage(p.Key, p.SiteName).IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("Page")}))
 		}
 
@@ -77,22 +76,22 @@ func AdminPageEdit(router fiber.Router) {
 		if modifyKey {
 			// 相关性数据修改
 			var comments []entity.Comment
-			db.DB().Where("page_key = ?", page.Key).Find(&comments)
+			app.Dao().DB().Where("page_key = ?", page.Key).Find(&comments)
 
 			for _, comment := range comments {
 				comment.PageKey = p.Key
-				query.UpdateComment(&comment)
+				app.Dao().UpdateComment(&comment)
 			}
 
 			page.Key = p.Key
 		}
 
-		if err := query.UpdatePage(&page); err != nil {
+		if err := app.Dao().UpdatePage(&page); err != nil {
 			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Page")}))
 		}
 
 		return common.RespData(c, ResponseAdminPageEdit{
-			Page: query.CookPage(&page),
+			Page: app.Dao().CookPage(&page),
 		})
 	})
 }

@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -21,21 +21,21 @@ type ResponseAdminSiteGet struct {
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteGet}
 // @Router       /admin/site-get  [post]
-func AdminSiteGet(router fiber.Router) {
+func AdminSiteGet(app *core.App, router fiber.Router) {
 	router.Post("/site-get", func(c *fiber.Ctx) error {
 		var p ParamsAdminSiteGet
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
-		allSites := query.FindAllSitesCooked()
+		allSites := app.Dao().FindAllSitesCooked()
 		sites := allSites
 
 		// 非超级管理员仅显示分配的站点
-		if !common.GetIsSuperAdmin(c) {
+		if !common.GetIsSuperAdmin(app, c) {
 			sites = []entity.CookedSite{}
-			user := common.GetUserByReq(c)
-			userCooked := query.CookUser(&user)
+			user := common.GetUserByReq(app, c)
+			userCooked := app.Dao().CookUser(&user)
 			for _, s := range allSites {
 				if utils.ContainsStr(userCooked.SiteNames, s.Name) {
 					sites = append(sites, s)

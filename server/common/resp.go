@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/gofiber/fiber/v2"
-	"github.com/sirupsen/logrus"
 )
 
 // JSONResult JSON 响应数据结构
@@ -69,8 +69,8 @@ func RespError(c *fiber.Ctx, msg string, data ...Map) error {
 	})
 }
 
-func LogWithHttpInfo(c *fiber.Ctx) *logrus.Entry {
-	fields := logrus.Fields{}
+func LogWithHttpInfo(c *fiber.Ctx) *log.Entry {
+	fields := log.Fields{}
 
 	req := c.Request()
 	res := c.Response()
@@ -92,5 +92,5 @@ func LogWithHttpInfo(c *fiber.Ctx) *logrus.Entry {
 	fields["status"] = res.StatusCode()
 	//fields["headers"] = req.Header
 
-	return logrus.WithFields(fields)
+	return log.WithFields(fields)
 }

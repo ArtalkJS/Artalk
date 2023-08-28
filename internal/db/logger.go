@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"

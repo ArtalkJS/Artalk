@@ -1,7 +1,7 @@
 package captcha
 
 import (
-	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -11,33 +11,35 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-const HCAPTCHA_API = "https://api.hcaptcha.com/siteverify"
+const TURNSTILE_API = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 
-type HCaptcha struct {
+var _ Checker = (*TurnstileChecker)(nil)
+
+type TurnstileChecker struct {
+	User       *User
 	SiteKey    string
 	SecreteKey string
 }
 
-var _ Captcha = (*HCaptcha)(nil)
-
-func NewHCaptcha(conf *config.HCaptchaConf) *HCaptcha {
-	return &HCaptcha{
+func NewTurnstileChecker(conf *config.TurnstileConf, user *User) *TurnstileChecker {
+	return &TurnstileChecker{
+		User:       user,
 		SiteKey:    conf.SiteKey,
 		SecreteKey: conf.SecretKey,
 	}
 }
 
-func (c *HCaptcha) Check(p CaptchaPayload) (bool, error) {
+func (c *TurnstileChecker) Check(value string) (bool, error) {
 	// 构建 POST 请求的参数
 	values := make(url.Values)
 	values.Add("secret", c.SecreteKey)
-	values.Add("response", p.CheckValue)
-	if p.UserIP != "" {
-		values.Add("remoteip", p.UserIP)
+	values.Add("response", value)
+	if c.User.IP != "" {
+		values.Add("remoteip", c.User.IP)
 	}
 
 	// 发送 POST 请求
-	url := HCAPTCHA_API
+	url := TURNSTILE_API
 	cli := http.Client{Timeout: time.Second * 10} // 10s 超时
 	resp, err := cli.PostForm(url, values)
 	if err != nil || resp.StatusCode != 200 {
@@ -53,12 +55,16 @@ func (c *HCaptcha) Check(p CaptchaPayload) (bool, error) {
 		return true, nil
 	} else {
 		// 验证失败
-		return false, errors.New("err reason: " + gjson.GetBytes(respBuf, "error-codes").String())
+		return false, fmt.Errorf("err reason: %s", gjson.GetBytes(respBuf, "error-codes").String())
 	}
 }
 
-func (c *HCaptcha) PageParams() Map {
-	return Map{
+func (c *TurnstileChecker) Type() CaptchaType {
+	return IFrame
+}
+
+func (c *TurnstileChecker) Get() ([]byte, error) {
+	return RenderIFrame("turnstile.html", Map{
 		"site_key": c.SiteKey,
-	}
+	})
 }

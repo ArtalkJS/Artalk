@@ -2,7 +2,7 @@ package captcha
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -14,15 +14,17 @@ import (
 
 const GEETEST_API string = "http://gcaptcha4.geetest.com"
 
-type GeetestCaptcha struct {
+var _ Checker = (*GeetestCaptchaChecker)(nil)
+
+type GeetestCaptchaChecker struct {
+	User       *User
 	CaptchaID  string
 	CaptchaKey string
 }
 
-var _ Captcha = (*GeetestCaptcha)(nil)
-
-func NewGeetestCaptcha(conf *config.GeetestConf) *GeetestCaptcha {
-	return &GeetestCaptcha{
+func NewGeetestChecker(conf *config.GeetestConf, user *User) *GeetestCaptchaChecker {
+	return &GeetestCaptchaChecker{
+		User:       user,
 		CaptchaID:  conf.CaptchaID,
 		CaptchaKey: conf.CaptchaKey,
 	}
@@ -36,9 +38,9 @@ type GeetestParams struct {
 	CaptchaOutput string `json:"captcha_output"`
 }
 
-func (c *GeetestCaptcha) Check(p CaptchaPayload) (bool, error) {
+func (c *GeetestCaptchaChecker) Check(value string) (bool, error) {
 	var ck GeetestParams
-	if err := json.Unmarshal([]byte(p.CheckValue), &ck); err != nil {
+	if err := json.Unmarshal([]byte(value), &ck); err != nil {
 		return false, err
 	}
 
@@ -70,12 +72,16 @@ func (c *GeetestCaptcha) Check(p CaptchaPayload) (bool, error) {
 		return true, nil
 	} else {
 		// 验证失败
-		return false, errors.New("err reason: " + gjson.GetBytes(respBuf, "reason").String())
+		return false, fmt.Errorf("err reason: %s", gjson.GetBytes(respBuf, "reason").String())
 	}
 }
 
-func (c *GeetestCaptcha) PageParams() Map {
-	return Map{
+func (c *GeetestCaptchaChecker) Type() CaptchaType {
+	return IFrame
+}
+
+func (c *GeetestCaptchaChecker) Get() ([]byte, error) {
+	return RenderIFrame("geetest.html", Map{
 		"gt_id": c.CaptchaID,
-	}
+	})
 }

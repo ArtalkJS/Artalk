@@ -1,7 +1,7 @@
 package captcha
 
 import (
-	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -11,33 +11,35 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-const RECAPTCHA_API = "https://www.google.com/recaptcha/api/siteverify"
+const HCAPTCHA_API = "https://api.hcaptcha.com/siteverify"
 
-type ReCaptcha struct {
+var _ Checker = (*HCaptchaChecker)(nil)
+
+type HCaptchaChecker struct {
+	User       *User
 	SiteKey    string
 	SecreteKey string
 }
 
-var _ Captcha = (*ReCaptcha)(nil)
-
-func NewReCaptcha(conf *config.ReCaptchaConf) *ReCaptcha {
-	return &ReCaptcha{
+func NewHCaptchaChecker(conf *config.HCaptchaConf, user *User) *HCaptchaChecker {
+	return &HCaptchaChecker{
+		User:       user,
 		SiteKey:    conf.SiteKey,
 		SecreteKey: conf.SecretKey,
 	}
 }
 
-func (c *ReCaptcha) Check(p CaptchaPayload) (bool, error) {
+func (c *HCaptchaChecker) Check(value string) (bool, error) {
 	// 构建 POST 请求的参数
 	values := make(url.Values)
 	values.Add("secret", c.SecreteKey)
-	values.Add("response", p.CheckValue)
-	if p.UserIP != "" {
-		values.Add("remoteip", p.UserIP)
+	values.Add("response", value)
+	if c.User.IP != "" {
+		values.Add("remoteip", c.User.IP)
 	}
 
 	// 发送 POST 请求
-	url := RECAPTCHA_API
+	url := HCAPTCHA_API
 	cli := http.Client{Timeout: time.Second * 10} // 10s 超时
 	resp, err := cli.PostForm(url, values)
 	if err != nil || resp.StatusCode != 200 {
@@ -53,12 +55,16 @@ func (c *ReCaptcha) Check(p CaptchaPayload) (bool, error) {
 		return true, nil
 	} else {
 		// 验证失败
-		return false, errors.New("err reason: " + gjson.GetBytes(respBuf, "error-codes").String())
+		return false, fmt.Errorf("err reason: %s", gjson.GetBytes(respBuf, "error-codes").String())
 	}
 }
 
-func (c *ReCaptcha) PageParams() Map {
-	return Map{
+func (c *HCaptchaChecker) Type() CaptchaType {
+	return IFrame
+}
+
+func (c *HCaptchaChecker) Get() ([]byte, error) {
+	return RenderIFrame("hcaptcha.html", Map{
 		"site_key": c.SiteKey,
-	}
+	})
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"log"
 
 	"github.com/ArtalkJS/Artalk/cmd"
 	"github.com/ArtalkJS/Artalk/internal/pkged"
@@ -14,5 +15,10 @@ var embedFS embed.FS
 
 func main() {
 	pkged.SetFS(embedFS)
-	cmd.Execute()
+
+	app := cmd.New()
+
+	if err := app.Launch(); err != nil {
+		log.Fatal(err)
+	}
 }

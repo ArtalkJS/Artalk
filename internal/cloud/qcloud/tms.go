@@ -2,7 +2,7 @@ package qcloud
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -41,12 +41,12 @@ func TMS(conf TmsConf) (bool, error) {
 	if data.Response.Error != nil {
 		errMsg := data.Response.Error.Message
 		reqID := data.Response.RequestId
-		return false, errors.New("响应错误 err_msg=" + strconv.Quote(errMsg) + " request_id=" + reqID)
+		return false, fmt.Errorf("响应错误 err_msg=%s request_id= %s", strconv.Quote(errMsg), reqID)
 	}
 
 	suggestion := data.Response.Suggestion
 	if suggestion == "" {
-		return false, errors.New("suggestion value is empty")
+		return false, fmt.Errorf("suggestion value is empty")
 	}
 
 	return (suggestion == "Pass"), nil

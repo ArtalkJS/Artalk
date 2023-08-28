@@ -2,7 +2,7 @@ package aliyun
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 )
 
 type GreenTextConf struct {
@@ -42,10 +42,10 @@ func GreenText(conf GreenTextConf) (bool, error) {
 	}
 
 	if data.Code != 200 {
-		return false, errors.New(data.Msg)
+		return false, fmt.Errorf(data.Msg)
 	}
 	if len(data.Data) < 1 || len(data.Data[0].Results) < 1 {
-		return false, errors.New("not expected response: " + string(body))
+		return false, fmt.Errorf("not expected response: %s", string(body))
 	}
 
 	return (data.Data[0].Results[0].Suggestion == "pass"), nil

@@ -3,19 +3,28 @@ package artransfer
 import (
 	"encoding/json"
 
-	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"gorm.io/gorm"
 )
 
-func ExportArtransString(dbScopes ...func(*gorm.DB) *gorm.DB) (string, error) {
+type ExportParams struct {
+	SiteNameScope []string `json:"site_name_scope"`
+}
+
+func exportArtrans(dao *dao.Dao, params *ExportParams) (string, error) {
 	comments := []entity.Comment{}
-	db.DB().Scopes(dbScopes...).Find(&comments)
+
+	dao.DB().Scopes(func(db *gorm.DB) *gorm.DB {
+		if len(params.SiteNameScope) > 0 {
+			db = db.Where("site_name IN (?)", params.SiteNameScope)
+		}
+		return db
+	}).Find(&comments)
 
 	artrans := []entity.Artran{}
 	for _, c := range comments {
-		ct := query.CommentToArtran(&c)
+		ct := dao.CommentToArtran(&c)
 		artrans = append(artrans, ct)
 	}
 

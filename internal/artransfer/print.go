@@ -3,14 +3,14 @@ package artransfer
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/sirupsen/logrus"
 )
 
+// package-level 全局变量
 // TODO 只支持单线执行，同时请求两个地方会出问题
 var HttpOutput func(continueRun bool, text string)
 var Assumeyes bool = false
@@ -21,7 +21,7 @@ func logError(a ...interface{}) {
 		return
 	}
 
-	logrus.Error(a...)
+	log.Error(a...)
 }
 
 func logFatal(a ...interface{}) {
@@ -30,7 +30,7 @@ func logFatal(a ...interface{}) {
 		return
 	}
 
-	logrus.Fatal(a...)
+	log.Fatal(a...)
 }
 
 func logWarn(a ...interface{}) {
@@ -39,7 +39,7 @@ func logWarn(a ...interface{}) {
 		return
 	}
 
-	logrus.Warn(a...)
+	log.Warn(a...)
 }
 
 func logInfo(a ...interface{}) {
@@ -48,7 +48,7 @@ func logInfo(a ...interface{}) {
 		return
 	}
 
-	logrus.Info(a...)
+	log.Info(a...)
 }
 
 func print(a ...interface{}) {
@@ -68,7 +68,7 @@ func println(a ...interface{}) {
 	print(fmt.Sprintln(a...))
 }
 
-func PrintTable(rows [][]interface{}) {
+func printTable(rows [][]interface{}) {
 	if HttpOutput != nil {
 		println("-------------------------")
 		for _, row := range rows {
@@ -99,15 +99,15 @@ func PrintTable(rows [][]interface{}) {
 	println(t.Render())
 }
 
-func PrintEncodeData(dataType string, val interface{}) {
-	print(SprintEncodeData(dataType, val))
+func printEncodeData(dataType string, val interface{}) {
+	print(sprintEncodeData(dataType, val))
 }
 
-func SprintEncodeData(dataType string, val interface{}) string {
+func sprintEncodeData(dataType string, val interface{}) string {
 	return fmt.Sprintf("[%s]\n\n   %#v\n\n", dataType, val)
 }
 
-func Confirm(s string) bool {
+func confirm(s string) bool {
 	if Assumeyes {
 		printf("%s [y/n]: y", s)
 		return true

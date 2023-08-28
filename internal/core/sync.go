@@ -3,18 +3,16 @@ package core
 import (
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/query"
 )
 
-func SyncFromConf() {
+func (app *App) syncFromConf() {
 	// 初始化默认站点
-	query.FindCreateSite(config.Instance.SiteDefault)
+	app.Dao().FindCreateSite(app.Conf().SiteDefault)
 
 	// 导入配置文件的管理员用户
-	for _, admin := range config.Instance.AdminUsers {
-		user := query.FindUser(admin.Name, admin.Email)
+	for _, admin := range app.Conf().AdminUsers {
+		user := app.Dao().FindUser(admin.Name, admin.Email)
 		receiveEmail := true // 默认允许接收邮件
 		if admin.ReceiveEmail != nil {
 			receiveEmail = *admin.ReceiveEmail
@@ -33,7 +31,7 @@ func SyncFromConf() {
 				ReceiveEmail: receiveEmail,
 				SiteNames:    strings.Join(admin.Sites, ","),
 			}
-			query.CreateUser(&user)
+			app.dao.CreateUser(&user)
 		} else {
 			// update
 			user.Name = admin.Name
@@ -46,7 +44,7 @@ func SyncFromConf() {
 			user.IsInConf = true
 			user.ReceiveEmail = receiveEmail
 			user.SiteNames = strings.Join(admin.Sites, ",")
-			query.UpdateUser(&user)
+			app.dao.UpdateUser(&user)
 		}
 	}
 
@@ -55,7 +53,7 @@ func SyncFromConf() {
 	// lib.DB.Model(&User{}).Where(&User{IsInConf: true}).Find(&dbAdminUsers)
 	// for _, dbU := range dbAdminUsers {
 	// 	isUserExist := func() bool {
-	// 		for _, confU := range config.Instance.AdminUsers {
+	// 		for _, confU := range app.Conf().AdminUsers {
 	// 			// 忽略大小写比较
 	// 			if strings.EqualFold(confU.Name, dbU.Name) && strings.EqualFold(confU.Email, dbU.Email) {
 	// 				return true

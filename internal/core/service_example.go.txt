@@ -1,0 +1,19 @@
+package core
+
+var _ Service = (*ExampleService)(nil)
+
+type ExampleService struct {
+	app *App
+}
+
+func NewExampleService(app *App) *ExampleService {
+	return &ExampleService{app: app}
+}
+
+func (s *ExampleService) Init() error {
+	return nil
+}
+
+func (s *ExampleService) Dispose() error {
+	return nil
+}

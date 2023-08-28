@@ -1,18 +1,18 @@
-package query
+package dao
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 )
 
-func DelComment(comment *entity.Comment) error {
+func (dao *Dao) DelComment(comment *entity.Comment) error {
 	// 清除 notify
-	if err := DB().Unscoped().Where("comment_id = ?", comment.ID).Delete(&entity.Notify{}).Error; err != nil {
+	if err := dao.DB().Unscoped().Where("comment_id = ?", comment.ID).Delete(&entity.Notify{}).Error; err != nil {
 		return err
 	}
 
 	// 清除 vote
-	if err := DB().Unscoped().Where(
+	if err := dao.DB().Unscoped().Where(
 		"target_id = ? AND (type = ? OR type = ?)",
 		comment.ID,
 		string(entity.VoteTypeCommentUp),
@@ -22,7 +22,7 @@ func DelComment(comment *entity.Comment) error {
 	}
 
 	// 删除 comment
-	err := DB().Unscoped().Delete(comment).Error
+	err := dao.DB().Unscoped().Delete(comment).Error
 	if err != nil {
 		return err
 	}
@@ -34,11 +34,11 @@ func DelComment(comment *entity.Comment) error {
 }
 
 // 删除所有子评论
-func DelCommentChildren(parentID uint) error {
+func (dao *Dao) DelCommentChildren(parentID uint) error {
 	var rErr error
-	children := FindCommentChildren(parentID)
+	children := dao.FindCommentChildren(parentID)
 	for _, c := range children {
-		err := DelComment(&c)
+		err := dao.DelComment(&c)
 		if err != nil {
 			rErr = err
 		}
@@ -46,22 +46,22 @@ func DelCommentChildren(parentID uint) error {
 	return rErr
 }
 
-func DelPage(page *entity.Page) error {
-	err := DB().Unscoped().Delete(page).Error
+func (dao *Dao) DelPage(page *entity.Page) error {
+	err := dao.DB().Unscoped().Delete(page).Error
 	if err != nil {
 		return err
 	}
 
 	// 删除所有相关内容
 	var comments []entity.Comment
-	DB().Where("page_key = ? AND site_name = ?", page.Key, page.SiteName).Find(&comments)
+	dao.DB().Where("page_key = ? AND site_name = ?", page.Key, page.SiteName).Find(&comments)
 
 	for _, c := range comments {
-		DelComment(&c)
+		dao.DelComment(&c)
 	}
 
 	// 删除 vote
-	DB().Unscoped().Where(
+	dao.DB().Unscoped().Where(
 		"target_id = ? AND (type = ? OR type = ?)",
 		page.ID,
 		string(entity.VoteTypePageUp),
@@ -74,17 +74,17 @@ func DelPage(page *entity.Page) error {
 	return nil
 }
 
-func DelSite(site *entity.Site) error {
-	err := DB().Unscoped().Delete(&site).Error
+func (dao *Dao) DelSite(site *entity.Site) error {
+	err := dao.DB().Unscoped().Delete(&site).Error
 	if err != nil {
 		return err
 	}
 
 	// 删除所有相关内容
 	var pages []entity.Page
-	DB().Where("site_name = ?", site.Name).Find(&pages)
+	dao.DB().Where("site_name = ?", site.Name).Find(&pages)
 	for _, p := range pages {
-		DelPage(&p)
+		dao.DelPage(&p)
 	}
 
 	// 删除缓存
@@ -93,18 +93,18 @@ func DelSite(site *entity.Site) error {
 	return nil
 }
 
-func DelUser(user *entity.User) error {
-	err := DB().Unscoped().Delete(&user).Error
+func (dao *Dao) DelUser(user *entity.User) error {
+	err := dao.DB().Unscoped().Delete(&user).Error
 	if err != nil {
 		return err
 	}
 
 	// 删除所有相关内容
 	var comments []entity.Comment
-	DB().Where("user_id = ?", user.ID).Find(&comments)
+	dao.DB().Where("user_id = ?", user.ID).Find(&comments)
 	for _, c := range comments {
-		DelComment(&c)           // 删除主评论
-		DelCommentChildren(c.ID) // 删除子评论
+		dao.DelComment(&c)           // 删除主评论
+		dao.DelCommentChildren(c.ID) // 删除子评论
 	}
 
 	// 删除缓存

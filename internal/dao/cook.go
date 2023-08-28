@@ -1,4 +1,4 @@
-package query
+package dao
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/entity"
@@ -9,9 +9,9 @@ import (
 //  Comment
 // ===============
 
-func CookComment(c *entity.Comment) entity.CookedComment {
-	user := FetchUserForComment(c)
-	page := FetchPageForComment(c)
+func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
+	user := dao.FetchUserForComment(c)
+	page := dao.FetchPageForComment(c)
 
 	markedContent, _ := utils.Marked(c.Content)
 
@@ -36,23 +36,23 @@ func CookComment(c *entity.Comment) entity.CookedComment {
 		VoteUp:         c.VoteUp,
 		VoteDown:       c.VoteDown,
 		PageKey:        c.PageKey,
-		PageURL:        GetPageAccessibleURL(&page),
+		PageURL:        dao.GetPageAccessibleURL(&page),
 		SiteName:       c.SiteName,
 	}
 }
 
-func CookAllComments(comments []entity.Comment) []entity.CookedComment {
+func (dao *Dao) CookAllComments(comments []entity.Comment) []entity.CookedComment {
 	cookedComments := []entity.CookedComment{}
 	for _, c := range comments {
-		cookedComments = append(cookedComments, CookComment(&c))
+		cookedComments = append(cookedComments, dao.CookComment(&c))
 	}
 	return cookedComments
 }
 
-func CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEmail {
-	user := FetchUserForComment(c)
-	page := FetchPageForComment(c)
-	site := FetchSiteForComment(c)
+func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEmail {
+	user := dao.FetchUserForComment(c)
+	page := dao.FetchPageForComment(c)
+	site := dao.FetchSiteForComment(c)
 	content, _ := utils.Marked(c.Content)
 
 	return entity.CookedCommentForEmail{
@@ -66,9 +66,9 @@ func CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEmail {
 		Time:       c.CreatedAt.Local().Format("15:04:05"),
 		PageKey:    c.PageKey,
 		PageTitle:  page.Title,
-		Page:       CookPage(&page),
+		Page:       dao.CookPage(&page),
 		SiteName:   c.SiteName,
-		Site:       CookSite(&site),
+		Site:       dao.CookSite(&site),
 		CookedComment: entity.CookedComment{
 			ID:             c.ID,
 			EmailEncrypted: utils.GetMD5Hash(user.Email),
@@ -85,10 +85,10 @@ func CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEmail {
 	}
 }
 
-func CommentToArtran(c *entity.Comment) entity.Artran {
-	user := FetchUserForComment(c)
-	page := FetchPageForComment(c)
-	site := FetchSiteForComment(c)
+func (dao *Dao) CommentToArtran(c *entity.Comment) entity.Artran {
+	user := dao.FetchUserForComment(c)
+	page := dao.FetchPageForComment(c)
+	site := dao.FetchSiteForComment(c)
 
 	return entity.Artran{
 		ID:            utils.ToString(c.ID),
@@ -120,12 +120,12 @@ func CommentToArtran(c *entity.Comment) entity.Artran {
 //  Page
 // ===============
 
-func CookPage(p *entity.Page) entity.CookedPage {
+func (dao *Dao) CookPage(p *entity.Page) entity.CookedPage {
 	return entity.CookedPage{
 		ID:        p.ID,
 		AdminOnly: p.AdminOnly,
 		Key:       p.Key,
-		URL:       GetPageAccessibleURL(p),
+		URL:       dao.GetPageAccessibleURL(p),
 		Title:     p.Title,
 		SiteName:  p.SiteName,
 		VoteUp:    p.VoteUp,
@@ -134,10 +134,10 @@ func CookPage(p *entity.Page) entity.CookedPage {
 	}
 }
 
-func CookAllPages(pages []entity.Page) []entity.CookedPage {
+func (dao *Dao) CookAllPages(pages []entity.Page) []entity.CookedPage {
 	cookedPages := []entity.CookedPage{}
 	for _, p := range pages {
-		cookedPages = append(cookedPages, CookPage(&p))
+		cookedPages = append(cookedPages, dao.CookPage(&p))
 	}
 	return cookedPages
 }
@@ -146,7 +146,7 @@ func CookAllPages(pages []entity.Page) []entity.CookedPage {
 //  Site
 // ===============
 
-func CookSite(s *entity.Site) entity.CookedSite {
+func (dao *Dao) CookSite(s *entity.Site) entity.CookedSite {
 	splitUrls := utils.SplitAndTrimSpace(s.Urls, ",")
 	firstUrl := ""
 	if len(splitUrls) > 0 {
@@ -162,12 +162,12 @@ func CookSite(s *entity.Site) entity.CookedSite {
 	}
 }
 
-func FindAllSitesCooked() []entity.CookedSite {
-	sites := FindAllSites()
+func (dao *Dao) FindAllSitesCooked() []entity.CookedSite {
+	sites := dao.FindAllSites()
 
 	var cookedSites []entity.CookedSite
 	for _, s := range sites {
-		cookedSites = append(cookedSites, CookSite(&s))
+		cookedSites = append(cookedSites, dao.CookSite(&s))
 	}
 
 	return cookedSites
@@ -177,7 +177,7 @@ func FindAllSitesCooked() []entity.CookedSite {
 //  User
 // ===============
 
-func CookUser(u *entity.User) entity.CookedUser {
+func (dao *Dao) CookUser(u *entity.User) entity.CookedUser {
 	splitSites := utils.SplitAndTrimSpace(u.SiteNames, ",")
 
 	return entity.CookedUser{
@@ -194,10 +194,10 @@ func CookUser(u *entity.User) entity.CookedUser {
 	}
 }
 
-func UserToCookedForAdmin(u *entity.User) entity.CookedUserForAdmin {
-	cookedUser := CookUser(u)
+func (dao *Dao) UserToCookedForAdmin(u *entity.User) entity.CookedUserForAdmin {
+	cookedUser := dao.CookUser(u)
 	var commentCount int64
-	DB().Model(&entity.Comment{}).Where("user_id = ?", u.ID).Count(&commentCount)
+	dao.DB().Model(&entity.Comment{}).Where("user_id = ?", u.ID).Count(&commentCount)
 
 	return entity.CookedUserForAdmin{
 		CookedUser:   cookedUser,
@@ -212,21 +212,21 @@ func UserToCookedForAdmin(u *entity.User) entity.CookedUserForAdmin {
 //  Notify
 // ===============
 
-func CookNotify(n *entity.Notify) entity.CookedNotify {
+func (dao *Dao) CookNotify(n *entity.Notify) entity.CookedNotify {
 	return entity.CookedNotify{
 		ID:        n.ID,
 		UserID:    n.UserID,
 		CommentID: n.CommentID,
 		IsRead:    n.IsRead,
 		IsEmailed: n.IsEmailed,
-		ReadLink:  GetReadLinkByNotify(n),
+		ReadLink:  dao.GetReadLinkByNotify(n),
 	}
 }
 
-func CookAllNotifies(notifies []entity.Notify) []entity.CookedNotify {
+func (dao *Dao) CookAllNotifies(notifies []entity.Notify) []entity.CookedNotify {
 	cookedNotifies := []entity.CookedNotify{}
 	for _, n := range notifies {
-		cookedNotifies = append(cookedNotifies, CookNotify(&n))
+		cookedNotifies = append(cookedNotifies, dao.CookNotify(&n))
 	}
 	return cookedNotifies
 }

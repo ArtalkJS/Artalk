@@ -1,7 +1,6 @@
-package query
+package dao
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,8 +10,8 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/utils"
-	"github.com/sirupsen/logrus"
 )
 
 // ===============
@@ -20,9 +19,9 @@ import (
 // ===============
 
 // 获取评论回复链接
-func GetLinkToReplyByComment(c *entity.Comment, notifyKey ...string) string {
-	page := FetchPageForComment(c)
-	rawURL := GetPageAccessibleURL(&page)
+func (dao *Dao) GetLinkToReplyByComment(c *entity.Comment, notifyKey ...string) string {
+	page := dao.FetchPageForComment(c)
+	rawURL := dao.GetPageAccessibleURL(&page)
 
 	// 请求 query
 	queryMap := map[string]string{
@@ -42,7 +41,7 @@ func GetLinkToReplyByComment(c *entity.Comment, notifyKey ...string) string {
 // ===============
 
 // 获取可访问链接
-func GetPageAccessibleURL(p *entity.Page, s ...*entity.Site) string {
+func (dao *Dao) GetPageAccessibleURL(p *entity.Page, s ...*entity.Site) string {
 	if p.AccessibleURL == "" {
 		acURL := p.Key
 
@@ -52,12 +51,12 @@ func GetPageAccessibleURL(p *entity.Page, s ...*entity.Site) string {
 			if len(s) > 0 {
 				site = s[0]
 			} else {
-				findSite := FetchSiteForPage(p)
+				findSite := dao.FetchSiteForPage(p)
 				site = &findSite
 			}
 
 			if site != nil {
-				u1, e1 := url.Parse(CookSite(site).FirstUrl)
+				u1, e1 := url.Parse(dao.CookSite(site).FirstUrl)
 				u2, e2 := url.Parse(p.Key)
 				if e1 == nil && e2 == nil {
 					acURL = u1.ResolveReference(u2).String()
@@ -71,12 +70,12 @@ func GetPageAccessibleURL(p *entity.Page, s ...*entity.Site) string {
 	return p.AccessibleURL
 }
 
-func FetchPageFromURL(p *entity.Page) error {
-	cookedPage := CookPage(p)
+func (dao *Dao) FetchPageFromURL(p *entity.Page) error {
+	cookedPage := dao.CookPage(p)
 	url := cookedPage.URL
 
 	if url == "" {
-		return errors.New("URL cannot be null")
+		return fmt.Errorf("URL cannot be null")
 	}
 
 	// 获取 URL 页面 title
@@ -86,8 +85,8 @@ func FetchPageFromURL(p *entity.Page) error {
 		p.Title = title
 	}
 
-	if err := UpdatePage(p); err != nil {
-		logrus.Error("Failed to save in FetchPage")
+	if err := dao.UpdatePage(p); err != nil {
+		log.Error("Failed to save in FetchPage")
 		return err
 	}
 
@@ -96,20 +95,20 @@ func FetchPageFromURL(p *entity.Page) error {
 
 func GetTitleByURL(url string) (string, error) {
 	if !utils.ValidateURL(url) {
-		logrus.Error("Invalid URL: " + url)
-		return "", errors.New("invalid URL")
+		log.Error("Invalid URL: " + url)
+		return "", fmt.Errorf("invalid URL")
 	}
 
 	// Request the HTML page.
 	res, err := http.Get(url)
 	if err != nil {
-		logrus.Error(err)
+		log.Error(err)
 		return "", err
 	}
 	defer res.Body.Close()
 	if res.StatusCode != 200 {
-		logrus.Error(fmt.Sprintf("status code error: %d '%s' '%s'", res.StatusCode, res.Status, url))
-		return "", errors.New("status code error")
+		log.Error(fmt.Sprintf("status code error: %d '%s' '%s'", res.StatusCode, res.Status, url))
+		return "", fmt.Errorf("status code error")
 	}
 
 	body, err := io.ReadAll(res.Body)
@@ -157,56 +156,56 @@ func pageExtractFromHTML(html []byte) (data pageExtractData) {
 //  Notify
 // ===============
 
-func NotifySetInitial(n *entity.Notify) error {
+func (dao *Dao) NotifySetInitial(n *entity.Notify) error {
 	n.IsRead = false
 	n.IsEmailed = false
-	return DB().Save(n).Error
+	return dao.DB().Save(n).Error
 }
 
-func NotifySetRead(n *entity.Notify) error {
+func (dao *Dao) NotifySetRead(n *entity.Notify) error {
 	n.IsRead = true
 	nowTime := time.Now()
 	n.ReadAt = &nowTime
-	return DB().Save(n).Error
+	return dao.DB().Save(n).Error
 }
 
-func NotifySetEmailed(n *entity.Notify) error {
+func (dao *Dao) NotifySetEmailed(n *entity.Notify) error {
 	n.IsEmailed = true
 	nowTime := time.Now()
 	n.EmailAt = &nowTime
-	return DB().Save(n).Error
+	return dao.DB().Save(n).Error
 }
 
-func GetReadLinkByNotify(n *entity.Notify) string {
-	c := FetchCommentForNotify(n)
+func (dao *Dao) GetReadLinkByNotify(n *entity.Notify) string {
+	c := dao.FetchCommentForNotify(n)
 
-	return GetLinkToReplyByComment(&c, n.Key)
+	return dao.GetLinkToReplyByComment(&c, n.Key)
 }
 
 // ===============
 //	Vote
 // ===============
 
-func VoteSync() {
+func (dao *Dao) VoteSync() {
 	var comments []entity.Comment
-	DB().Find(&comments)
+	dao.DB().Find(&comments)
 
 	for _, c := range comments {
-		voteUp := GetVoteNum(c.ID, string(entity.VoteTypeCommentUp))
-		voteDown := GetVoteNum(c.ID, string(entity.VoteTypeCommentDown))
+		voteUp := dao.GetVoteNum(c.ID, string(entity.VoteTypeCommentUp))
+		voteDown := dao.GetVoteNum(c.ID, string(entity.VoteTypeCommentDown))
 		c.VoteUp = int(voteUp)
 		c.VoteDown = int(voteDown)
-		UpdateComment(&c)
+		dao.UpdateComment(&c)
 	}
 
 	var pages []entity.Page
-	DB().Find(&pages)
+	dao.DB().Find(&pages)
 
 	for _, p := range pages {
-		voteUp := GetVoteNum(p.ID, string(entity.VoteTypePageUp))
-		voteDown := GetVoteNum(p.ID, string(entity.VoteTypePageDown))
+		voteUp := dao.GetVoteNum(p.ID, string(entity.VoteTypePageUp))
+		voteDown := dao.GetVoteNum(p.ID, string(entity.VoteTypePageDown))
 		p.VoteUp = voteUp
 		p.VoteDown = voteDown
-		UpdatePage(&p)
+		dao.UpdatePage(&p)
 	}
 }

@@ -3,9 +3,9 @@ package i18n
 import (
 	"fmt"
 
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/pkged"
 	"github.com/ArtalkJS/Artalk/internal/utils"
-	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
 
@@ -20,7 +20,7 @@ func Init(locale string) {
 
 	yamlStr, err := pkged.FS().ReadFile(fmt.Sprintf("i18n/%s.yml", locale))
 	if err != nil {
-		logrus.Warn("invalid locale config please check, now it is set to `en`")
+		log.Warn("invalid locale config please check, now it is set to `en`")
 		Init("en")
 		return
 	}

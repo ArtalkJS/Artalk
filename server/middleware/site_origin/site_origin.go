@@ -1,4 +1,4 @@
-package middleware
+package site_origin
 
 import (
 	"net/url"
@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -21,7 +21,7 @@ var SiteOriginSkips = []string{
 }
 
 // 站点隔离 & Origin 控制
-func SiteOriginMiddleware() fiber.Handler {
+func SiteOriginMiddleware(app *core.App) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		// 忽略白名单
 		for _, p := range SiteOriginSkips {
@@ -35,7 +35,7 @@ func SiteOriginMiddleware() fiber.Handler {
 		var site *entity.Site = nil
 
 		siteAll := false
-		isSuperAdmin := common.GetIsSuperAdmin(c)
+		isSuperAdmin := common.GetIsSuperAdmin(app, c)
 
 		// 请求站点名 == "__ATK_SITE_ALL" 时取消站点隔离
 		if siteName == config.ATK_SITE_ALL {
@@ -47,13 +47,13 @@ func SiteOriginMiddleware() fiber.Handler {
 		} else {
 			// 请求站点名为空，使用默认 site
 			if siteName == "" {
-				siteName = strings.TrimSpace(config.Instance.SiteDefault)
+				siteName = strings.TrimSpace(app.Conf().SiteDefault)
 				if siteName != "" {
-					query.FindCreateSite(siteName) // 默认站点不存在则创建
+					app.Dao().FindCreateSite(siteName) // 默认站点不存在则创建
 				}
 			}
 
-			findSite := query.FindSite(siteName)
+			findSite := app.Dao().FindSite(siteName)
 			if findSite.IsEmpty() {
 				return common.RespError(c,
 					i18n.T("Site `{{name}}` not found. Please create it in control center.", map[string]interface{}{"name": siteName}),
@@ -68,7 +68,7 @@ func SiteOriginMiddleware() fiber.Handler {
 
 		// 检测 Origin 合法性 (防止跨域的 CSRF 攻击)
 		if !isSuperAdmin { // 管理员忽略 Origin 检测
-			if isOK, resp := CheckOrigin(c, site); !isOK {
+			if isOK, resp := CheckOrigin(app, c, site); !isOK {
 				return resp
 			}
 		}
@@ -85,14 +85,14 @@ func SiteOriginMiddleware() fiber.Handler {
 // 检测 Origin 合法性
 // 防止跨域的 CSRF 攻击
 // @see https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
-func CheckOrigin(c *fiber.Ctx, allowSite *entity.Site) (bool, error) {
+func CheckOrigin(app *core.App, c *fiber.Ctx, allowSite *entity.Site) (bool, error) {
 	// 可信来源 URL
 	allowURLs := []string{}
 
 	// 用户配置
-	allowURLs = append(allowURLs, config.Instance.TrustedDomains...) // 允许配置文件域名
+	allowURLs = append(allowURLs, app.Conf().TrustedDomains...) // 允许配置文件域名
 	if allowSite != nil {
-		allowURLs = append(allowURLs, query.CookSite(allowSite).Urls...) // 允许数据库站点 URLs 中的域名
+		allowURLs = append(allowURLs, app.Dao().CookSite(allowSite).Urls...) // 允许数据库站点 URLs 中的域名
 	}
 	if utils.ContainsStr(allowURLs, "*") {
 		return true, nil // 列表中出现通配符关闭控制

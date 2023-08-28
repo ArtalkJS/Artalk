@@ -1,9 +1,9 @@
 package entity
 
 import (
-	"math/rand"
 	"time"
 
+	"github.com/ArtalkJS/Artalk/internal/utils"
 	"gorm.io/gorm"
 )
 
@@ -27,10 +27,5 @@ func (n Notify) IsEmpty() bool {
 
 // 操作时的验证密钥（判断是否本人操作）
 func (n *Notify) GenerateKey() {
-	letterRunes := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
-	b := make([]rune, 5)
-	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
-	}
-	n.Key = string(b)
+	n.Key = utils.PseudorandomStringWithAlphabet(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890")
 }

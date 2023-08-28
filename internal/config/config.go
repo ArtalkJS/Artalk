@@ -1,9 +1,12 @@
 package config
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 // Config 配置
-// @link https://godoc.org/github.com/mitchellh/mapstructure
+// @link https://github.com/knadh/koanf
 type Config struct {
 	AppKey         string                 `koanf:"app_key" json:"app_key"`                 // 加密密钥
 	Debug          bool                   `koanf:"debug" json:"debug"`                     // 调试模式
@@ -14,7 +17,6 @@ type Config struct {
 	DB             DBConf                 `koanf:"db" json:"db"`                           // 数据文件
 	Cache          CacheConf              `koanf:"cache" json:"cache"`                     // 缓存
 	Log            LogConf                `koanf:"log" json:"log"`                         // 日志文件
-	AllowOrigins   []string               `koanf:"allow_origins" json:"-"`                 // @deprecated 已废弃 (请使用 TrustedDomains)
 	TrustedDomains []string               `koanf:"trusted_domains" json:"trusted_domains"` // 可信任的域名 (新)
 	SSL            SSLConf                `koanf:"ssl" json:"ssl"`                         // SSL
 	SiteDefault    string                 `koanf:"site_default" json:"site_default"`       // 默认站点名（当请求无指定 site_name 时使用）
@@ -27,8 +29,20 @@ type Config struct {
 	IPRegion       IPRegionConf           `koanf:"ip_region" json:"ip_region"`             // IP 归属地展示
 	ImgUpload      ImgUploadConf          `koanf:"img_upload" json:"img_upload"`           // 图片上传
 	AdminNotify    AdminNotifyConf        `koanf:"admin_notify" json:"admin_notify"`       // 其他通知方式
-	Notify         *AdminNotifyConf       `koanf:"notify" json:"-"`                        // @deprecated 已废弃 (请使用 AdminNotify)
 	Frontend       map[string]interface{} `koanf:"frontend" json:"frontend"`
+
+	// deprecated options
+	// (only for unmarshal, please not reference)
+	// ---------------------------
+
+	AllowOrigins []string         `koanf:"allow_origins" json:"-"` // @deprecated 已废弃 (请使用 TrustedDomains)
+	Notify       *AdminNotifyConf `koanf:"notify" json:"-"`        // @deprecated 已废弃 (请使用 AdminNotify)
+
+	// system runtime produce data
+	// ---------------------------
+
+	mux     sync.RWMutex
+	cfgFile string
 }
 
 type DBConf struct {
@@ -249,6 +263,14 @@ type IPRegionConf struct {
 	DBPath    string `koanf:"db_path" json:"db_path"`     // 数据文件路径
 	Precision string `koanf:"precision" json:"precision"` // 显示精度
 }
+
+type IPRegionPrecision string
+
+const (
+	IPRegionProvince IPRegionPrecision = "province"
+	IPRegionCity     IPRegionPrecision = "city"
+	IPRegionCountry  IPRegionPrecision = "country"
+)
 
 type ImgUploadConf struct {
 	Enabled    bool      `koanf:"enabled" json:"enabled"`         // 总开关

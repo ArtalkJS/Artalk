@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 )
@@ -23,7 +23,7 @@ type jwtCustomClaims struct {
 	jwt.StandardClaims
 }
 
-func LoginGetUserToken(user entity.User) string {
+func LoginGetUserToken(user entity.User, key string, ttl int) string {
 	// Set custom claims
 	claims := &jwtCustomClaims{
 		UserID:  user.ID,
@@ -31,7 +31,7 @@ func LoginGetUserToken(user entity.User) string {
 		Email:   user.Email,
 		IsAdmin: user.IsAdmin,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Second * time.Duration(config.Instance.LoginTimeout)).Unix(), // 过期时间
+			ExpiresAt: time.Now().Add(time.Second * time.Duration(ttl)).Unix(), // 过期时间
 		},
 	}
 
@@ -39,7 +39,7 @@ func LoginGetUserToken(user entity.User) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte(config.Instance.AppKey))
+	t, err := token.SignedString([]byte(key))
 	if err != nil {
 		return ""
 	}
@@ -48,14 +48,11 @@ func LoginGetUserToken(user entity.User) string {
 }
 
 func GetJwtStrByReqCookie(c *fiber.Ctx) string {
-	if !config.Instance.Cookie.Enabled {
-		return ""
-	}
 	cookie := c.Cookies(config.COOKIE_KEY_ATK_AUTH)
 	return cookie
 }
 
-func GetJwtInstanceByReq(c *fiber.Ctx) *jwt.Token {
+func GetJwtInstanceByReq(app *core.App, c *fiber.Ctx) *jwt.Token {
 	token := c.Query("token")
 	if token == "" {
 		token = c.FormValue("token")
@@ -64,7 +61,7 @@ func GetJwtInstanceByReq(c *fiber.Ctx) *jwt.Token {
 		token = c.Get(fiber.HeaderAuthorization)
 		token = strings.TrimPrefix(token, "Bearer ")
 	}
-	if token == "" {
+	if token == "" && app.Conf().Cookie.Enabled {
 		token = GetJwtStrByReqCookie(c)
 	}
 	if token == "" {
@@ -76,7 +73,7 @@ func GetJwtInstanceByReq(c *fiber.Ctx) *jwt.Token {
 			return nil, fmt.Errorf("unexpected jwt signing method=%v", t.Header["alg"])
 		}
 
-		return []byte(config.Instance.AppKey), nil // 密钥
+		return []byte(app.Conf().AppKey), nil // 密钥
 	})
 	if err != nil {
 		return nil
@@ -85,7 +82,7 @@ func GetJwtInstanceByReq(c *fiber.Ctx) *jwt.Token {
 	return jwt
 }
 
-func GetUserByJwt(jwt *jwt.Token) entity.User {
+func GetUserByJwt(app *core.App, jwt *jwt.Token) entity.User {
 	if jwt == nil {
 		return entity.User{}
 	}
@@ -94,14 +91,14 @@ func GetUserByJwt(jwt *jwt.Token) entity.User {
 	tmp, _ := json.Marshal(jwt.Claims)
 	_ = json.Unmarshal(tmp, &claims)
 
-	user := query.FindUserByID(claims.UserID)
+	user := app.Dao().FindUserByID(claims.UserID)
 
 	return user
 }
 
-func GetUserByReq(c *fiber.Ctx) entity.User {
-	jwt := GetJwtInstanceByReq(c)
-	user := GetUserByJwt(jwt)
+func GetUserByReq(app *core.App, c *fiber.Ctx) entity.User {
+	jwt := GetJwtInstanceByReq(app, c)
+	user := GetUserByJwt(app, jwt)
 
 	return user
 }

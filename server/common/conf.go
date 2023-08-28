@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/gofiber/fiber/v2"
 )
@@ -22,14 +23,14 @@ func GetApiVersionDataMap() ApiVersionData {
 	}
 }
 
-func GetApiPublicConfDataMap(c *fiber.Ctx) Map {
-	isAdmin := CheckIsAdminReq(c)
-	imgUpload := config.Instance.ImgUpload.Enabled
+func GetApiPublicConfDataMap(app *core.App, c *fiber.Ctx) Map {
+	isAdmin := CheckIsAdminReq(app, c)
+	imgUpload := app.Conf().ImgUpload.Enabled
 	if isAdmin {
 		imgUpload = true // 管理员始终允许上传图片
 	}
 
-	frontendConfSrc := config.Instance.Frontend
+	frontendConfSrc := app.Conf().Frontend
 	if frontendConfSrc == nil {
 		frontendConfSrc = make(map[string]interface{})
 	}
@@ -38,8 +39,8 @@ func GetApiPublicConfDataMap(c *fiber.Ctx) Map {
 	utils.CopyStruct(&frontendConfSrc, &frontendConf)
 
 	frontendConf["imgUpload"] = &imgUpload
-	if config.Instance.Locale != "" {
-		frontendConf["locale"] = config.Instance.Locale
+	if app.Conf().Locale != "" {
+		frontendConf["locale"] = app.Conf().Locale
 	}
 
 	return Map{

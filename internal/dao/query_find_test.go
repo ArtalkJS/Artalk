@@ -1,13 +1,15 @@
-package query
+package dao_test
 
 import (
 	"testing"
 
+	"github.com/ArtalkJS/Artalk/test"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFindComment(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
 	type args struct {
 		id uint
@@ -31,7 +33,7 @@ func TestFindComment(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := FindComment(tt.args.id)
+			got := app.Dao().FindComment(tt.args.id)
 			assert.Equal(t, tt.wants.id, got.ID)
 			assert.Equal(t, tt.wants.rid, got.Rid)
 			assert.Equal(t, tt.wants.user_id, got.UserID)
@@ -45,38 +47,41 @@ func TestFindComment(t *testing.T) {
 }
 
 func TestFindCommentChildrenShallow(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
 	t.Run("Children Found", func(t *testing.T) {
-		result := FindCommentChildrenShallow(1001)
+		result := app.Dao().FindCommentChildrenShallow(1001)
 		assert.Equal(t, 2, len(result))
 	})
 
 	t.Run("No Children Found", func(t *testing.T) {
-		result := FindCommentChildrenShallow(1005)
+		result := app.Dao().FindCommentChildrenShallow(1005)
 		assert.Empty(t, result)
 	})
 }
 
 func TestFindCommentChildren(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
 	t.Run("Children Found", func(t *testing.T) {
-		result := FindCommentChildren(1000)
+		result := app.Dao().FindCommentChildren(1000)
 		assert.Equal(t, 4, len(result))
 	})
 
 	t.Run("No Children Found", func(t *testing.T) {
-		result := FindCommentChildren(1005)
+		result := app.Dao().FindCommentChildren(1005)
 		assert.Empty(t, result)
 	})
 }
 
 func TestFindUser(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
 	t.Run("User Found", func(t *testing.T) {
-		result := FindUser("admin", "admin@qwqaq.com")
+		result := app.Dao().FindUser("admin", "admin@qwqaq.com")
 		assert.False(t, result.IsEmpty())
 		assert.Equal(t, uint(1000), result.ID)
 		assert.Equal(t, "admin", result.Name)
@@ -88,16 +93,17 @@ func TestFindUser(t *testing.T) {
 	})
 
 	t.Run("User not Found", func(t *testing.T) {
-		result := FindUser("NoUser", "NoUser@example.org")
+		result := app.Dao().FindUser("NoUser", "NoUser@example.org")
 		assert.True(t, result.IsEmpty())
 	})
 }
 
 func TestFindUserByID(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
 	t.Run("User Found", func(t *testing.T) {
-		result := FindUserByID(1000)
+		result := app.Dao().FindUserByID(1000)
 		assert.False(t, result.IsEmpty())
 		assert.Equal(t, uint(1000), result.ID)
 		assert.Equal(t, "admin", result.Name)
@@ -109,16 +115,17 @@ func TestFindUserByID(t *testing.T) {
 	})
 
 	t.Run("User not Found", func(t *testing.T) {
-		result := FindUserByID(9999)
+		result := app.Dao().FindUserByID(9999)
 		assert.True(t, result.IsEmpty())
 	})
 }
 
 func TestFindPage(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
 	t.Run("Page Found", func(t *testing.T) {
-		result := FindPage("/site_b/1001.html", "Site B")
+		result := app.Dao().FindPage("/site_b/1001.html", "Site B")
 		assert.False(t, result.IsEmpty())
 		assert.Equal(t, uint(1001), result.ID)
 		assert.Equal(t, "测试页面标题 1001", result.Title)
@@ -126,16 +133,17 @@ func TestFindPage(t *testing.T) {
 	})
 
 	t.Run("Page not Found", func(t *testing.T) {
-		result := FindPage("/NotExistPage", "NotExistSite")
+		result := app.Dao().FindPage("/NotExistPage", "NotExistSite")
 		assert.True(t, result.IsEmpty())
 	})
 }
 
 func TestFindPageByID(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
 	t.Run("Page Found", func(t *testing.T) {
-		result := FindPageByID(1001)
+		result := app.Dao().FindPageByID(1001)
 		assert.False(t, result.IsEmpty())
 		assert.Equal(t, uint(1001), result.ID)
 		assert.Equal(t, "测试页面标题 1001", result.Title)
@@ -143,16 +151,17 @@ func TestFindPageByID(t *testing.T) {
 	})
 
 	t.Run("Page not Found", func(t *testing.T) {
-		result := FindPageByID(9999)
+		result := app.Dao().FindPageByID(9999)
 		assert.True(t, result.IsEmpty())
 	})
 }
 
 func TestFindSite(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
 	t.Run("Site Found", func(t *testing.T) {
-		result := FindSite("Site A")
+		result := app.Dao().FindSite("Site A")
 		assert.False(t, result.IsEmpty())
 		assert.Equal(t, uint(1000), result.ID)
 		assert.Equal(t, "Site A", result.Name)
@@ -160,16 +169,17 @@ func TestFindSite(t *testing.T) {
 	})
 
 	t.Run("Site not Found", func(t *testing.T) {
-		result := FindSite("NotExistSite")
+		result := app.Dao().FindSite("NotExistSite")
 		assert.True(t, result.IsEmpty())
 	})
 }
 
 func TestFindSiteByID(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
 	t.Run("Site Found", func(t *testing.T) {
-		result := FindSiteByID(1000)
+		result := app.Dao().FindSiteByID(1000)
 		assert.False(t, result.IsEmpty())
 		assert.Equal(t, uint(1000), result.ID)
 		assert.Equal(t, "Site A", result.Name)
@@ -177,33 +187,37 @@ func TestFindSiteByID(t *testing.T) {
 	})
 
 	t.Run("Site not Found", func(t *testing.T) {
-		result := FindSiteByID(9999)
+		result := app.Dao().FindSiteByID(9999)
 		assert.True(t, result.IsEmpty())
 	})
 }
 
 func TestFindAllSites(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
-	allSites := FindAllSites()
+	allSites := app.Dao().FindAllSites()
 	assert.GreaterOrEqual(t, len(allSites), 1)
 }
 
 func TestGetAllAdmins(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
-	allAdmins := GetAllAdmins()
+	allAdmins := app.Dao().GetAllAdmins()
 	assert.GreaterOrEqual(t, len(allAdmins), 1)
 }
 
 func TestIsAdminUser(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
-	assert.Equal(t, true, IsAdminUser(1000))
+	assert.Equal(t, true, app.Dao().IsAdminUser(1000))
 }
 
 func TestIsAdminUserByNameEmail(t *testing.T) {
-	reloadTestDatabase()
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
 
-	assert.Equal(t, true, IsAdminUserByNameEmail("admin", "admin@qwqaq.com"))
+	assert.Equal(t, true, app.Dao().IsAdminUserByNameEmail("admin", "admin@qwqaq.com"))
 }

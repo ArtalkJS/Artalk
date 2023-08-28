@@ -1,121 +1,261 @@
 package artransfer
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"net/url"
 	"os"
-	"reflect"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
-	"unicode/utf8"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/query"
 	"github.com/ArtalkJS/Artalk/internal/utils"
-	"github.com/araddon/dateparse"
+	"github.com/cheggaaa/pb/v3"
 )
 
-func RunImportArtrans(payload []string) {
-	basic := GetBasicParamsFrom(payload)
-
-	name := ArtransImporter.ImporterInfo.Name
-	desc := ArtransImporter.ImporterInfo.Desc
-	note := ArtransImporter.ImporterInfo.Note
-
-	print("\n")
-	tableData := [][]interface{}{
-		{"Artransfer - Import"},
-		{strings.ToUpper(name)},
-		{desc},
-	}
-	if note != "" {
-		tableData = append(tableData, []interface{}{note})
-	}
-	PrintTable(tableData)
-	print("\n")
-
-	//t1 := time.Now()
-	ArtransImporter.Run(basic, payload)
-	//elapsed := time.Since(t1)
-
-	print("\n")
-	logInfo(i18n.T("Import complete")) //，耗时: ", elapsed)
-}
-
-type ImporterInfo struct {
-	Name string
-	Desc string
-	Note string
-}
-
-func GetImporterInfo(instance interface{}) ImporterInfo {
-	var info ImporterInfo
-	j, _ := json.Marshal(instance)
-	json.Unmarshal(j, &info)
-	return info
-}
-
-type BasicParams struct {
+type ImportParams struct {
 	TargetSiteName string
 	TargetSiteUrl  string
-
-	UrlResolver bool
+	UrlResolver    bool
+	JsonFile       string
+	JsonData       string
 }
 
-func GetBasicParamsFrom(payload []string) *BasicParams {
-	basic := BasicParams{}
+func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran) {
+	if len(comments) == 0 {
+		logFatal(i18n.T("No comment"))
+		return
+	}
 
-	basic.UrlResolver = false // 默认关闭
+	if params.TargetSiteUrl != "" && !utils.ValidateURL(params.TargetSiteUrl) {
+		logFatal(i18n.T("Invalid {{name}}", map[string]interface{}{"name": i18n.T("Target Site") + " " + "URL"}))
+		return
+	}
 
-	GetParamsFrom(payload).To(map[string]interface{}{
-		"t_name":         &basic.TargetSiteName,
-		"t_url":          &basic.TargetSiteUrl,
-		"t_url_resolver": &basic.UrlResolver,
+	// 汇总
+	print("# " + i18n.T("Please review") + ":\n\n")
+
+	// 第一条评论
+	printEncodeData(i18n.T("First comment"), comments[0])
+
+	showTSiteName := params.TargetSiteName
+	showTSiteUrl := params.TargetSiteUrl
+	if showTSiteName == "" {
+		showTSiteName = i18n.T("Unspecified")
+
+	}
+	if showTSiteUrl == "" {
+		showTSiteUrl = i18n.T("Unspecified")
+	}
+
+	// 目标站点名和目标站点URL都不为空，才开启 URL 解析器
+	showUrlResolver := "off"
+	if params.UrlResolver {
+		showUrlResolver = "on"
+	}
+	// if basic.TargetSiteName != "" && basic.TargetSiteUrl != "" {
+	// 	basic.UrlResolver = true
+	// 	showUrlResolver = "on"
+	// }
+
+	printTable([][]interface{}{
+		{i18n.T("Target Site") + " " + i18n.T("Name"), showTSiteName},
+		{i18n.T("Target Site") + " URL", showTSiteUrl},
+		{i18n.T("Comment count"), fmt.Sprintf("%d", len(comments))},
+		{i18n.T("URL Resolver"), showUrlResolver},
 	})
 
-	if !basic.UrlResolver {
-		logWarn("Target site URL resolver disabled")
+	print("\n")
+
+	// 确认开始
+	if !confirm(i18n.T("Confirm to continue?")) {
+		os.Exit(0)
 	}
 
-	return &basic
-}
+	// 准备导入评论
+	print("\n")
 
-func RequiredBasicTargetSite(basic *BasicParams) error {
-	if basic.TargetSiteName == "" {
-		return errors.New(i18n.T("{{name}} is required", map[string]interface{}{"name": "t_name:<Target Site Name>"}))
-	}
-	if basic.TargetSiteUrl == "" {
-		return errors.New(i18n.T("{{name}} is required", map[string]interface{}{"name": "t_url:<Target Site Root URL>"}))
-	}
-	if !utils.ValidateURL(basic.TargetSiteUrl) {
-		return errors.New("invalid URL for parameter `t_url:<Target Site Root URL>`")
+	importComments := []*entity.Comment{}
+	srcIdToIndexMap := map[string]uint{} // 源 ID 映射表 srcID => index
+	createdDates := map[int]time.Time{}
+	updatedDates := map[int]time.Time{}
+
+	// 解析 comments
+	for i, c := range comments {
+		srcIdToIndexMap[c.ID] = uint(i + 1) // 防 0 出没
 	}
 
-	return nil
+	for i, c := range comments {
+		siteName := c.SiteName
+		siteUrls := c.SiteUrls
+
+		if params.TargetSiteName != "" {
+			siteName = params.TargetSiteName
+		}
+		if params.TargetSiteUrl != "" {
+			siteUrls = params.TargetSiteUrl
+		}
+
+		// 准备 site
+		site, sErr := siteReady(dao, siteName, siteUrls)
+		if sErr != nil {
+			logFatal(sErr)
+			return
+		}
+
+		// 准备 user
+		user := dao.FindCreateUser(c.Nick, c.Email, c.Link)
+		if !user.IsAdmin {
+			userModified := false
+			if c.BadgeName != "" && c.BadgeName != user.BadgeName {
+				user.BadgeName = c.BadgeName
+				userModified = true
+			}
+			if c.BadgeColor != "" && c.BadgeColor != user.BadgeColor {
+				user.BadgeColor = c.BadgeColor
+				userModified = true
+			}
+			if userModified {
+				dao.UpdateUser(&user)
+			}
+		}
+
+		// 准备 page
+		nPageKey := c.PageKey
+		if params.UrlResolver { // 使用 URL 解析器
+			splittedURLs := utils.SplitAndTrimSpace(params.TargetSiteUrl, ",")
+			nPageKey = urlResolverGetPageKey(splittedURLs[0], c.PageKey)
+		}
+
+		page := dao.FindCreatePage(nPageKey, c.PageTitle, site.Name)
+
+		adminOnlyVal := c.PageAdminOnly == utils.ToString(true)
+		if page.AdminOnly != adminOnlyVal {
+			page.AdminOnly = adminOnlyVal
+			dao.UpdatePage(&page)
+		}
+
+		voteUp, _ := strconv.Atoi(c.VoteUp)
+		voteDown, _ := strconv.Atoi(c.VoteDown)
+
+		// 创建新 comment 实例
+		nComment := entity.Comment{
+			Rid: srcIdToIndexMap[c.Rid], // [-1-] rid => index+1
+
+			Content: c.Content,
+
+			UA: c.UA,
+			IP: c.IP,
+
+			IsCollapsed: c.IsCollapsed == utils.ToString(true),
+			IsPending:   c.IsPending == utils.ToString(true),
+			IsPinned:    c.IsPinned == utils.ToString(true),
+
+			VoteUp:   voteUp,
+			VoteDown: voteDown,
+
+			UserID:   user.ID,
+			PageKey:  page.Key,
+			SiteName: site.Name,
+		}
+
+		// 时间还原
+		createdDates[i] = parseDate(c.CreatedAt)
+		if c.UpdatedAt != "" {
+			updatedDates[i] = parseDate(c.UpdatedAt)
+		} else {
+			updatedDates[i] = parseDate(c.CreatedAt)
+		}
+
+		importComments = append(importComments, &nComment)
+	}
+
+	println(i18n.T("Saving") + "...")
+
+	// Batch Insert
+	// @link https://gorm.io/docs/create.html#Batch-Insert
+	dao.DB().CreateInBatches(&importComments, 100)
+
+	// ID 变更映射表 index => new_db_id
+	indexToDbIdMap := map[uint]uint{}
+	for i, savedComment := range importComments {
+		indexToDbIdMap[uint(i+1)] = savedComment.ID
+	}
+
+	// 进度条
+	var bar *pb.ProgressBar
+	if HttpOutput == nil {
+		bar = pb.StartNew(len(comments))
+	}
+
+	total := len(comments)
+
+	for i, savedComment := range importComments {
+		// 日期恢复
+		// @see https://gorm.io/zh_CN/docs/conventions.html#CreatedAt
+		// @see https://github.com/go-gorm/gorm/issues/4827#issuecomment-960480148 无语...
+		// TODO
+		// savedComment.CreatedAt = createdDates[i] // 无效
+		// savedComment.UpdatedAt = updatedDates[i]
+
+		updateData := map[string]interface{}{
+			"CreatedAt": createdDates[i],
+			"UpdatedAt": updatedDates[i],
+		}
+
+		// Rid 重建
+		if savedComment.Rid != 0 {
+			updateData["Rid"] = indexToDbIdMap[savedComment.Rid] // [-2-] index+1 => db_new_id
+		}
+
+		dao.DB().Model(&savedComment).Updates(updateData)
+
+		// Vote 重建 (伪投票)
+		if savedComment.VoteUp > 0 {
+			for i := 0; i < savedComment.VoteUp; i++ {
+				dao.NewVote(savedComment.ID, entity.VoteTypeCommentUp, 0, "", "")
+			}
+		}
+		if savedComment.VoteDown > 0 {
+			for i := 0; i < savedComment.VoteDown; i++ {
+				dao.NewVote(savedComment.ID, entity.VoteTypeCommentDown, 0, "", "")
+			}
+		}
+
+		if bar != nil {
+			bar.Increment()
+		}
+		if HttpOutput != nil && i%50 == 0 {
+			print(fmt.Sprintf("%.0f%%... ", float64(i)/float64(total)*100))
+		}
+	}
+
+	if bar != nil {
+		bar.Finish()
+	}
+	if HttpOutput != nil {
+		println()
+	}
+
+	logInfo(i18n.T("{{count}} items imported", map[string]interface{}{"count": len(comments)}))
 }
 
 // 站点准备
-func SiteReady(tSiteName string, tSiteUrls string) (entity.Site, error) {
-	site := query.FindSite(tSiteName)
+func siteReady(dao *dao.Dao, tSiteName string, tSiteUrls string) (*entity.Site, error) {
+	site := dao.FindSite(tSiteName)
 	if site.IsEmpty() {
 		// 创建新站点
 		site = entity.Site{}
 		site.Name = tSiteName
 		site.Urls = tSiteUrls
-		err := query.CreateSite(&site)
+		err := dao.CreateSite(&site)
 		if err != nil {
-			return entity.Site{}, errors.New("failed to create site")
+			return nil, fmt.Errorf("failed to create site")
 		}
 	} else {
 		// 追加 URL
-		siteCooked := query.CookSite(&site)
+		siteCooked := dao.CookSite(&site)
 
 		urlExist := func(tUrl string) bool {
 			for _, u := range siteCooked.Urls {
@@ -139,206 +279,12 @@ func SiteReady(tSiteName string, tSiteUrls string) (entity.Site, error) {
 			// 保存
 			rUrls = append(rUrls, siteCooked.Urls...)
 			site.Urls = strings.Join(rUrls, ",")
-			err := query.UpdateSite(&site)
+			err := dao.UpdateSite(&site)
 			if err != nil {
-				return entity.Site{}, errors.New("update site data failed")
+				return nil, fmt.Errorf("update site data failed")
 			}
 		}
 	}
 
-	return site, nil
-}
-
-func JsonFileReady(payload []string) (string, error) {
-	var jsonFile, jsonData string
-	GetParamsFrom(payload).To(map[string]interface{}{
-		"json_file": &jsonFile,
-		"json_data": &jsonData,
-	})
-
-	// 直接给 JSON 内容，不去读取文件
-	if jsonData != "" {
-		return jsonData, nil
-	}
-
-	if jsonFile == "" {
-
-		return "", errors.New(i18n.T("{{name}} is required", map[string]interface{}{"name": "json_file:<JSON file path>"}))
-	}
-	if _, err := os.Stat(jsonFile); errors.Is(err, os.ErrNotExist) {
-		return "", errors.New(i18n.T("{{name}} not found", map[string]interface{}{"name": i18n.T("File")}))
-	}
-
-	buf, err := os.ReadFile(jsonFile)
-	if err != nil {
-		return "", errors.New("file open failed" + ": " + err.Error())
-	}
-
-	return string(buf), nil
-}
-
-// PageKey (commentUrlVal 不确定是否为完整 URL 还是一个 path)
-//
-// @examples
-// ("https://github.com", "/1.html")                => "https://github.com/1.html"
-// ("https://github.com", "https://xxx.com/1.html") => "https://github.com/1.html"
-// ("https://github.com/", "/1.html")               => "https://github.com/1.html"
-// ("", "/1.html")                                  => "/1.html"
-// ("", "https://xxx.com/1.html")                   => "https://xxx.com/1.html"
-// ("https://github.com/233", "/1/")                => "https://github.com/1/"
-func UrlResolverGetPageKey(baseUrlRaw string, commentUrlRaw string) string {
-	if baseUrlRaw == "" {
-		return commentUrlRaw
-	}
-
-	baseUrl, err := url.Parse(baseUrlRaw)
-	if err != nil {
-		return commentUrlRaw
-	}
-
-	commentUrl, err := url.Parse(commentUrlRaw)
-	if err != nil {
-		return commentUrlRaw
-	}
-
-	// "https://artalk.js.org/guide/describe.html?233" => "/guide/describe.html?233"
-	commentUrl.Scheme = ""
-	commentUrl.Host = ""
-
-	// 解决拼接路径中的相对地址，例如：https://atk.xxx/abc/../artalk => https://atk.xxx/artalk
-	url := baseUrl.ResolveReference(commentUrl)
-
-	return url.String()
-}
-
-func ParseDate(s string) time.Time {
-	denverLoc, _ := time.LoadLocation(config.Instance.TimeZone) // 时区
-	time.Local = denverLoc
-	// TODO should be restricted to using only the RFC3339 standard time format
-	t, _ := dateparse.ParseIn(s, denverLoc)
-
-	return t
-}
-
-type _getParamsTo struct {
-	To func(variables map[string]interface{})
-}
-
-func GetParamsFrom(payload []string) _getParamsTo {
-	a := _getParamsTo{}
-	a.To = func(variables map[string]interface{}) {
-		for _, pVal := range payload {
-			for fromName, toVar := range variables {
-				if !strings.HasPrefix(pVal, fromName+":") {
-					continue
-				}
-
-				valStr := strings.TrimPrefix(pVal, fromName+":")
-
-				switch reflect.ValueOf(toVar).Interface().(type) {
-				case *string:
-					*toVar.(*string) = valStr
-				case *bool:
-					*toVar.(*bool) = strings.EqualFold(valStr, "true")
-				case *int:
-					num, err := strconv.Atoi(valStr)
-					if err != nil {
-						*toVar.(*int) = num
-					}
-				}
-				break
-			}
-		}
-	}
-	return a
-}
-
-func GetArrayParamsFrom(payload []string, key string) []string {
-	arr := []string{}
-	for _, pVal := range payload {
-		if strings.HasPrefix(pVal, key+":") {
-			arr = append(arr, strings.TrimPrefix(pVal, key+":"))
-		}
-	}
-
-	return arr
-}
-
-func CheckIfJsonArr(str string) bool {
-	x := bytes.TrimSpace([]byte(str))
-	return len(x) > 0 && x[0] == '['
-}
-
-func CheckIfJsonObj(str string) bool {
-	x := bytes.TrimSpace([]byte(str))
-	return len(x) > 0 && x[0] == '{'
-}
-
-func TryConvertLineJsonToArr(str string) (string, error) {
-	// 尝试将一行一行的 Obj 转成 Arr
-	arrTmp := []map[string]interface{}{}
-	for _, line := range strings.Split(strings.TrimSpace(str), "\n") {
-		var tmp map[string]interface{}
-		err := json.Unmarshal([]byte(line), &tmp)
-		if err != nil {
-			return "", err
-		}
-		arrTmp = append(arrTmp, tmp)
-	}
-	r, err := json.Marshal(arrTmp)
-	if err != nil {
-		return "", err
-	}
-	return string(r), nil
-}
-
-// Json Decode (FAS: Fields All String Type)
-// 解析 json 为字段全部是 string 类型的 struct
-func JsonDecodeFAS(str string, fasStructure interface{}) error {
-	if !CheckIfJsonArr(str) {
-		var err error
-		str, err = TryConvertLineJsonToArr(str)
-		if err != nil {
-			return errors.New("JSON of array type is required: " + err.Error())
-		}
-	}
-
-	err := json.Unmarshal([]byte(utils.JsonObjInArrAnyStr(str)), fasStructure) // lib.ToString()
-	if err != nil {
-		return errors.New("failed to parse JSON: " + err.Error())
-	}
-
-	return nil
-}
-
-func HideJsonLongText(key string, text string) string {
-	r := regexp.MustCompile(key + `:"(.+?)"`)
-	sm := r.FindStringSubmatch(text)
-	postText := ""
-	if len(sm) > 0 {
-		postText = sm[1]
-	}
-
-	text = r.ReplaceAllString(text, fmt.Sprintf(key+": <!-- 省略 %d 个字符 -->", utf8.RuneCountInString(postText)))
-	return text
-}
-
-// 传入 ID 变更表 (原始ID => 数据库已存在记录的ID) rid 将根据此替换
-func RebuildRid(idChanges map[uint]uint) {
-	for _, newId := range idChanges {
-		nComment := query.FindComment(newId)
-		if nComment.Rid == 0 {
-			continue
-		}
-		if newId, isExist := idChanges[nComment.Rid]; isExist {
-			nComment.Rid = newId
-			err := query.UpdateComment(&nComment)
-			if err != nil {
-				logError(fmt.Sprintf("[rid 更新] new_id:%d new_rid:%d", nComment.ID, newId), err)
-			}
-		}
-	}
-
-	print("\n")
-	logInfo("RID 重构完毕")
+	return &site, nil
 }

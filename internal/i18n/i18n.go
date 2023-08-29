@@ -2,6 +2,7 @@ package i18n
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/pkged"
@@ -18,11 +19,18 @@ func Init(locale string) {
 		locale = "en"
 	}
 
-	yamlStr, err := pkged.FS().ReadFile(fmt.Sprintf("i18n/%s.yml", locale))
+	read := func(l string) ([]byte, error) {
+		file, err := pkged.FS().Open(fmt.Sprintf("i18n/%s.yml", l))
+		if err != nil {
+			return nil, err
+		}
+		return io.ReadAll(file)
+	}
+
+	yamlStr, err := read(locale)
 	if err != nil {
 		log.Warn("invalid locale config please check, now it is set to `en`")
-		Init("en")
-		return
+		yamlStr, _ = read("en")
 	}
 
 	yaml.Unmarshal(yamlStr, &Locales)

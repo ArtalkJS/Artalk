@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 )
 
@@ -28,7 +27,7 @@ func (dao *Dao) DelComment(comment *entity.Comment) error {
 	}
 
 	// 删除缓存
-	cache.CommentCacheDel(comment)
+	dao.cache.CommentCacheDel(comment)
 
 	return nil
 }
@@ -69,7 +68,7 @@ func (dao *Dao) DelPage(page *entity.Page) error {
 	).Delete(&entity.Vote{})
 
 	// 删除缓存
-	cache.PageCacheDel(page)
+	dao.cache.PageCacheDel(page)
 
 	return nil
 }
@@ -88,7 +87,7 @@ func (dao *Dao) DelSite(site *entity.Site) error {
 	}
 
 	// 删除缓存
-	cache.SiteCacheDel(site)
+	dao.cache.SiteCacheDel(site)
 
 	return nil
 }
@@ -108,7 +107,7 @@ func (dao *Dao) DelUser(user *entity.User) error {
 	}
 
 	// 删除缓存
-	cache.UserCacheDel(user)
+	dao.cache.UserCacheDel(user)
 
 	return nil
 }

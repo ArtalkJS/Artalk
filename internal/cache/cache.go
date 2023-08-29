@@ -26,12 +26,11 @@ var (
 var ctx = context.Background()
 
 func OpenCache(conf config.CacheConf) (err error) {
-	cacheType := conf.Type
 	ttl = time.Duration(conf.GetExpiresTime())
 
 	var cacheStore store.StoreInterface
 
-	switch cacheType {
+	switch conf.Type {
 
 	case config.CacheTypeBuiltin:
 		// 内建缓存
@@ -68,7 +67,7 @@ func OpenCache(conf config.CacheConf) (err error) {
 		)
 
 	default:
-		log.Fatal("Invalid cache type `" + cacheType + "`, please check config option `cache.type`")
+		log.Fatal(`Invalid cache type "` + conf.Type + `", please check config option "cache.type"`)
 
 	}
 

@@ -3,7 +3,6 @@ package handler
 import (
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -69,7 +68,7 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 		}
 
 		// 预先删除缓存，防止修改主键原有 page_key 占用问题
-		cache.PageCacheDel(&page)
+		app.Dao().Cache().PageCacheDel(&page)
 
 		page.Title = p.Title
 		page.AdminOnly = p.AdminOnly

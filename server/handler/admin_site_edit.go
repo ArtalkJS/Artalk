@@ -3,7 +3,6 @@ package handler
 import (
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -71,7 +70,7 @@ func AdminSiteEdit(app *core.App, router fiber.Router) {
 		}
 
 		// 预先删除缓存，防止修改主键原有 site_name 占用问题
-		cache.SiteCacheDel(&site)
+		app.Dao().Cache().SiteCacheDel(&site)
 
 		// 同步变更 site_name
 		if modifyName {

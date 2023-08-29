@@ -42,10 +42,10 @@ func NewFromFile(cfgFile string) *Config {
 
 	// patch config
 	{
+		conf.historyPatch()
 		conf.normalPatch()
 		conf.i18nPatch()
 		conf.ipRegionPatch()
-		conf.historyPatch()
 	}
 
 	return conf
@@ -86,10 +86,6 @@ func (conf *Config) normalPatch() {
 	if conf.Cache.Type == "" {
 		// 默认使用内建缓存
 		conf.Cache.Type = CacheTypeBuiltin
-	}
-	if conf.Cache.Type != CacheTypeDisabled {
-		// 非缓存禁用模式，Enabled = true
-		conf.Cache.Enabled = true
 	}
 
 	// 配置文件 alias 处理

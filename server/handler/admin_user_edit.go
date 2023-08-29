@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -78,7 +77,7 @@ func AdminUserEdit(app *core.App, router fiber.Router) {
 		}
 
 		// 删除原有缓存
-		cache.UserCacheDel(&user)
+		app.Dao().Cache().UserCacheDel(&user)
 
 		// 修改 user
 		user.Name = p.Name

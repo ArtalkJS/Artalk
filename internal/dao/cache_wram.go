@@ -1,4 +1,4 @@
-package cache
+package dao
 
 import (
 	"fmt"
@@ -6,20 +6,19 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/log"
-	"gorm.io/gorm"
 )
 
 // 缓存预热
-func CacheWarmUp(db *gorm.DB) {
+func (dao *Dao) CacheWarmUp() {
 	// Users
 	{
 		start := time.Now()
 
 		var items []entity.User
-		db.Find(&items)
+		dao.DB().Find(&items)
 
 		for _, item := range items {
-			UserCacheSave(&item)
+			dao.cache.UserCacheSave(&item)
 		}
 
 		log.Debug(fmt.Sprintf("[Users] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
@@ -30,10 +29,10 @@ func CacheWarmUp(db *gorm.DB) {
 		start := time.Now()
 
 		var items []entity.Site
-		db.Find(&items)
+		dao.DB().Find(&items)
 
 		for _, item := range items {
-			SiteCacheSave(&item)
+			dao.cache.SiteCacheSave(&item)
 		}
 
 		log.Debug(fmt.Sprintf("[Sites] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
@@ -44,10 +43,10 @@ func CacheWarmUp(db *gorm.DB) {
 		start := time.Now()
 
 		var items []entity.Page
-		db.Find(&items)
+		dao.DB().Find(&items)
 
 		for _, item := range items {
-			PageCacheSave(&item)
+			dao.cache.PageCacheSave(&item)
 		}
 
 		log.Debug(fmt.Sprintf("[Pages] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
@@ -58,10 +57,10 @@ func CacheWarmUp(db *gorm.DB) {
 		start := time.Now()
 
 		var items []entity.Comment
-		db.Find(&items)
+		dao.DB().Find(&items)
 
 		for _, item := range items {
-			CommentCacheSave(&item)
+			dao.cache.CommentCacheSave(&item)
 		}
 
 		log.Debug(fmt.Sprintf("[Comments] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
@@ -69,44 +68,44 @@ func CacheWarmUp(db *gorm.DB) {
 }
 
 // 清空缓存
-func CacheFlushAll(db *gorm.DB) {
+func (dao *Dao) CacheFlushAll() {
 	// Users
 	{
 		var items []entity.User
-		db.Find(&items)
+		dao.DB().Find(&items)
 
 		for _, item := range items {
-			UserCacheDel(&item)
+			dao.cache.UserCacheDel(&item)
 		}
 	}
 
 	// Sites
 	{
 		var items []entity.Site
-		db.Find(&items)
+		dao.DB().Find(&items)
 
 		for _, item := range items {
-			SiteCacheDel(&item)
+			dao.cache.SiteCacheDel(&item)
 		}
 	}
 
 	// Pages
 	{
 		var items []entity.Page
-		db.Find(&items)
+		dao.DB().Find(&items)
 
 		for _, item := range items {
-			PageCacheDel(&item)
+			dao.cache.PageCacheDel(&item)
 		}
 	}
 
 	// Comments
 	{
 		var items []entity.Comment
-		db.Find(&items)
+		dao.DB().Find(&items)
 
 		for _, item := range items {
-			CommentCacheDel(&item)
+			dao.cache.CommentCacheDel(&item)
 		}
 	}
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/dao"
+	"github.com/ArtalkJS/Artalk/internal/dao/dao_cache"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/hook"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -76,20 +77,31 @@ func (app *App) Bootstrap() error {
 		LogFile:   app.Conf().Log.Filename,
 	})
 
-	// cache
-	if err := app.initCache(); err != nil {
-		return err
-	}
-
 	// DAO
-	if err := app.initDao(); err != nil {
-		return err
+	if app.dao == nil {
+		if err := app.initDao(); err != nil {
+			return err
+		}
 	}
 
-	// 缓存预热
-	if app.Conf().Cache.Enabled && app.Conf().Cache.WarmUp {
-		cache.CacheWarmUp(app.dao.DB())
+	// cache
+	if app.Conf().Cache.Enabled {
+		// cache
+		if err := app.initCache(); err != nil {
+			return err
+		}
+
+		// load cache plugin on dao
+		app.dao.SetCache(dao_cache.New())
+
+		// 缓存预热
+		if app.Conf().Cache.WarmUp {
+			app.Dao().CacheWarmUp()
+		}
 	}
+
+	// keep config file and databases consistent
+	app.syncFromConf()
 
 	// 初始化 services（请勿依赖初始化顺序）
 	for name, s := range *app.service {
@@ -188,17 +200,20 @@ func (app *App) initCache() error {
 }
 
 func (app *App) initDao() error {
+	// create new db instance
 	dbInstance, err := db.NewDB(app.conf.DB)
 	if err != nil {
 		return fmt.Errorf("db init err: %w", err)
 	}
 
-	app.dao = dao.NewDao(dbInstance)
-
-	db.MigrateModels(dbInstance)
-	app.syncFromConf()
+	// create new dao instance
+	app.SetDao(dao.NewDao(dbInstance))
 
 	return nil
+}
+
+func (app *App) SetDao(dao *dao.Dao) {
+	app.dao = dao
 }
 
 // -------------------------------------------------------------------

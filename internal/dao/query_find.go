@@ -8,10 +8,21 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/entity"
 )
 
+// TODO modify strange function parameter table
+func (dao *Dao) FindAndStoreCache(name string, dest interface{}, queryDBResult func() interface{}) error {
+	if dao.cache == nil {
+		// directly call queryDB while cache is disabled
+		_ = queryDBResult()
+		return nil
+	}
+
+	return cache.FindAndStoreCache(name, dest, queryDBResult)
+}
+
 func (dao *Dao) FindComment(id uint, checkers ...func(*entity.Comment) bool) entity.Comment {
 	var comment entity.Comment
 
-	cache.FindAndStoreCache(fmt.Sprintf("comment#id=%d", id), &comment, func() interface{} {
+	dao.FindAndStoreCache(fmt.Sprintf("comment#id=%d", id), &comment, func() interface{} {
 		dao.DB().Where("id = ?", id).First(&comment)
 		return &comment
 	})
@@ -31,7 +42,7 @@ func (dao *Dao) FindCommentChildrenShallow(parentID uint, checkers ...func(*enti
 	var children []entity.Comment
 	var childIDs []uint
 
-	cache.FindAndStoreCache(fmt.Sprintf("parent-comments#pid=%d", parentID), &childIDs, func() interface{} {
+	dao.FindAndStoreCache(fmt.Sprintf("parent-comments#pid=%d", parentID), &childIDs, func() interface{} {
 		dao.DB().Model(&entity.Comment{}).Where(&entity.Comment{Rid: parentID}).Select("id").Find(&childIDs)
 		return &childIDs
 	})
@@ -67,7 +78,7 @@ func (dao *Dao) FindUser(name string, email string) entity.User {
 	var user entity.User
 
 	// 查询缓存
-	cache.FindAndStoreCache(fmt.Sprintf("user#name=%s;email=%s", strings.ToLower(name), strings.ToLower(email)), &user, func() interface{} {
+	dao.FindAndStoreCache(fmt.Sprintf("user#name=%s;email=%s", strings.ToLower(name), strings.ToLower(email)), &user, func() interface{} {
 		// 不区分大小写
 		dao.DB().Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?)", name, email).First(&user)
 		return &user
@@ -81,7 +92,7 @@ func (dao *Dao) FindUserIdsByEmail(email string) []uint {
 	var userIds = []uint{}
 
 	// 查询缓存
-	cache.FindAndStoreCache(fmt.Sprintf("user_id#email=%s", strings.ToLower(email)), &userIds, func() interface{} {
+	dao.FindAndStoreCache(fmt.Sprintf("user_id#email=%s", strings.ToLower(email)), &userIds, func() interface{} {
 		dao.DB().Model(&entity.User{}).Where("LOWER(email) = LOWER(?)", email).Pluck("id", &userIds)
 
 		return &userIds
@@ -107,7 +118,7 @@ func (dao *Dao) FindUserByID(id uint) entity.User {
 	var user entity.User
 
 	// 查询缓存
-	cache.FindAndStoreCache(fmt.Sprintf("user#id=%d", id), &user, func() interface{} {
+	dao.FindAndStoreCache(fmt.Sprintf("user#id=%d", id), &user, func() interface{} {
 		dao.DB().Where("id = ?", id).First(&user)
 		return &user
 	})
@@ -118,7 +129,7 @@ func (dao *Dao) FindUserByID(id uint) entity.User {
 func (dao *Dao) FindPage(key string, siteName string) entity.Page {
 	var page entity.Page
 
-	cache.FindAndStoreCache(fmt.Sprintf("page#key=%s;site_name=%s", key, siteName), &page, func() interface{} {
+	dao.FindAndStoreCache(fmt.Sprintf("page#key=%s;site_name=%s", key, siteName), &page, func() interface{} {
 		dao.DB().Where(&entity.Page{Key: key, SiteName: siteName}).First(&page)
 		return &page
 	})
@@ -129,7 +140,7 @@ func (dao *Dao) FindPage(key string, siteName string) entity.Page {
 func (dao *Dao) FindPageByID(id uint) entity.Page {
 	var page entity.Page
 
-	cache.FindAndStoreCache(fmt.Sprintf("page#id=%d", id), &page, func() interface{} {
+	dao.FindAndStoreCache(fmt.Sprintf("page#id=%d", id), &page, func() interface{} {
 		dao.DB().Where("id = ?", id).First(&page)
 		return &page
 	})
@@ -141,7 +152,7 @@ func (dao *Dao) FindSite(name string) entity.Site {
 	var site entity.Site
 
 	// 查询缓存
-	cache.FindAndStoreCache(fmt.Sprintf("site#name=%s", name), &site, func() interface{} {
+	dao.FindAndStoreCache(fmt.Sprintf("site#name=%s", name), &site, func() interface{} {
 		dao.DB().Where("name = ?", name).First(&site)
 		return &site
 	})
@@ -152,7 +163,7 @@ func (dao *Dao) FindSite(name string) entity.Site {
 func (dao *Dao) FindSiteByID(id uint) entity.Site {
 	var site entity.Site
 
-	cache.FindAndStoreCache(fmt.Sprintf("site#id=%d", id), &site, func() interface{} {
+	dao.FindAndStoreCache(fmt.Sprintf("site#id=%d", id), &site, func() interface{} {
 		dao.DB().Where("id = ?", id).First(&site)
 		return &site
 	})

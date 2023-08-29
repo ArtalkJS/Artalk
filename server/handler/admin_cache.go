@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -28,8 +27,12 @@ func AdminCacheWarm(app *core.App, router fiber.Router) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
+		if !app.Conf().Cache.Enabled {
+			return common.RespError(c, "cache disabled")
+		}
+
 		go func() {
-			cache.CacheWarmUp(app.Dao().DB())
+			app.Dao().CacheWarmUp()
 		}()
 
 		return common.RespData(c, common.Map{
@@ -60,9 +63,13 @@ func AdminCacheFlush(app *core.App, router fiber.Router) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
+		if !app.Conf().Cache.Enabled {
+			return common.RespError(c, "cache disabled")
+		}
+
 		if p.FlushAll {
 			go func() {
-				cache.CacheFlushAll(app.Dao().DB())
+				app.Dao().CacheFlushAll()
 			}()
 
 			return common.RespData(c, common.Map{

@@ -52,6 +52,8 @@ log:
 
 # 缓存
 cache:
+  # 启用缓存
+  enabled: false
   # 缓存类型 ["redis", "memcache", "builtin"]
   type: "builtin"
   # 缓存过期时间 (单位：分钟)

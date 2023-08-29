@@ -18,7 +18,9 @@ func (dao *Dao) CacheWarmUp() {
 		dao.DB().Find(&items)
 
 		for _, item := range items {
-			dao.cache.UserCacheSave(&item)
+			dao.CacheAction(func(cache *DaoCache) {
+				cache.UserCacheSave(&item)
+			})
 		}
 
 		log.Debug(fmt.Sprintf("[Users] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
@@ -32,7 +34,9 @@ func (dao *Dao) CacheWarmUp() {
 		dao.DB().Find(&items)
 
 		for _, item := range items {
-			dao.cache.SiteCacheSave(&item)
+			dao.CacheAction(func(cache *DaoCache) {
+				cache.SiteCacheSave(&item)
+			})
 		}
 
 		log.Debug(fmt.Sprintf("[Sites] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
@@ -46,7 +50,9 @@ func (dao *Dao) CacheWarmUp() {
 		dao.DB().Find(&items)
 
 		for _, item := range items {
-			dao.cache.PageCacheSave(&item)
+			dao.CacheAction(func(cache *DaoCache) {
+				cache.PageCacheSave(&item)
+			})
 		}
 
 		log.Debug(fmt.Sprintf("[Pages] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
@@ -60,7 +66,10 @@ func (dao *Dao) CacheWarmUp() {
 		dao.DB().Find(&items)
 
 		for _, item := range items {
-			dao.cache.CommentCacheSave(&item)
+			dao.CacheAction(func(cache *DaoCache) {
+				cache.CommentCacheSave(&item)
+
+			})
 		}
 
 		log.Debug(fmt.Sprintf("[Comments] 缓存完毕 (共 %d 个，耗时：%s)", len(items), time.Since(start)))
@@ -75,7 +84,9 @@ func (dao *Dao) CacheFlushAll() {
 		dao.DB().Find(&items)
 
 		for _, item := range items {
-			dao.cache.UserCacheDel(&item)
+			dao.CacheAction(func(cache *DaoCache) {
+				cache.UserCacheDel(&item)
+			})
 		}
 	}
 
@@ -85,7 +96,9 @@ func (dao *Dao) CacheFlushAll() {
 		dao.DB().Find(&items)
 
 		for _, item := range items {
-			dao.cache.SiteCacheDel(&item)
+			dao.CacheAction(func(cache *DaoCache) {
+				cache.SiteCacheDel(&item)
+			})
 		}
 	}
 
@@ -95,7 +108,9 @@ func (dao *Dao) CacheFlushAll() {
 		dao.DB().Find(&items)
 
 		for _, item := range items {
-			dao.cache.PageCacheDel(&item)
+			dao.CacheAction(func(cache *DaoCache) {
+				cache.PageCacheDel(&item)
+			})
 		}
 	}
 
@@ -105,7 +120,9 @@ func (dao *Dao) CacheFlushAll() {
 		dao.DB().Find(&items)
 
 		for _, item := range items {
-			dao.cache.CommentCacheDel(&item)
+			dao.CacheAction(func(cache *DaoCache) {
+				cache.CommentCacheDel(&item)
+			})
 		}
 	}
 }

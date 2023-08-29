@@ -9,31 +9,38 @@ import (
 )
 
 var (
-	CacheFindGroup = new(singleflight.Group)
+	cacheFindStoreGroup = new(singleflight.Group)
 )
 
-func FindAndStoreCache(name string, dest interface{}, queryDBResult func() interface{}) error {
-	// SingleFlight 防止缓存击穿 (Cache breakdown)
-	v, err, _ := CacheFindGroup.Do(name, func() (interface{}, error) {
-		err := FindCache(name, dest)
+func (c *Cache) QueryDBWithCache(name string, dest any, queryDB func()) error {
+	// use SingleFlight to prevent Cache Breakdown
+	v, err, _ := cacheFindStoreGroup.Do(name, func() (any, error) {
+		// query cache
+		err := c.FindCache(name, dest)
 
-		// cache hit 直接返回结果
-		if err == nil {
-			return dest, nil
+		if err != nil { // cache miss
+
+			// call queryDB() the dest value will be updated
+			queryDB()
+
+			if err := c.StoreCache(name, dest); err != nil {
+				return nil, err
+			}
+
+			// because queryDB() had update dest value,
+			// no need to update it again, so return nil
+			return nil, nil
 		}
 
-		// cache miss 查数据库
-		result := queryDBResult()
-		if err := StoreCache(name, result); err != nil {
-			return nil, err
-		}
-		return result, nil
+		return dest, nil
 	})
 
 	if err != nil {
 		return err
 	}
 
+	// update dest value only if cache hit,
+	// if cache miss, dest has been updated in queryDB()
 	if v != nil {
 		reflect.ValueOf(dest).Elem().Set(reflect.ValueOf(v).Elem()) // similar to `*dest = &v`
 	}
@@ -41,15 +48,10 @@ func FindAndStoreCache(name string, dest interface{}, queryDBResult func() inter
 	return nil
 }
 
-func FindCache(name string, dest interface{}) error {
-	if std == nil {
-		// return fmt.Errorf("cache not initialize")
-		return nil
-	}
-
+func (c *Cache) FindCache(name string, dest any) error {
 	// `Get()` is Thread Safe, so no need to add Mutex
 	// @see https://github.com/go-redis/redis/issues/23
-	_, err := std.Get(ctx, name, dest)
+	_, err := c.marshal.Get(c.ctx, name, dest)
 	if err != nil {
 		return err
 	}
@@ -59,15 +61,10 @@ func FindCache(name string, dest interface{}) error {
 	return nil
 }
 
-func StoreCache(name string, source interface{}) error {
-	if std == nil {
-		// return fmt.Errorf("cache not initialize")
-		return nil
-	}
-
+func (c *Cache) StoreCache(name string, source any) error {
 	// `Set()` is Thread Safe too, no need to add Mutex either
-	err := std.Set(ctx, name, source,
-		store.WithExpiration(ttl),
+	err := c.marshal.Set(c.ctx, name, source,
+		store.WithExpiration(c.ttl),
 	)
 	if err != nil {
 		return err
@@ -78,11 +75,6 @@ func StoreCache(name string, source interface{}) error {
 	return nil
 }
 
-func DelCache(name string) error {
-	if std == nil {
-		// return fmt.Errorf("cache not initialize")
-		return nil
-	}
-
-	return std.Delete(ctx, name)
+func (c *Cache) DelCache(name string) error {
+	return c.marshal.Delete(c.ctx, name)
 }

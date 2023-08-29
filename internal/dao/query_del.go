@@ -27,7 +27,9 @@ func (dao *Dao) DelComment(comment *entity.Comment) error {
 	}
 
 	// 删除缓存
-	dao.cache.CommentCacheDel(comment)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.CommentCacheDel(comment)
+	})
 
 	return nil
 }
@@ -68,7 +70,9 @@ func (dao *Dao) DelPage(page *entity.Page) error {
 	).Delete(&entity.Vote{})
 
 	// 删除缓存
-	dao.cache.PageCacheDel(page)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.PageCacheDel(page)
+	})
 
 	return nil
 }
@@ -87,7 +91,9 @@ func (dao *Dao) DelSite(site *entity.Site) error {
 	}
 
 	// 删除缓存
-	dao.cache.SiteCacheDel(site)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.SiteCacheDel(site)
+	})
 
 	return nil
 }
@@ -107,7 +113,9 @@ func (dao *Dao) DelUser(user *entity.User) error {
 	}
 
 	// 删除缓存
-	dao.cache.UserCacheDel(user)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.UserCacheDel(user)
+	})
 
 	return nil
 }

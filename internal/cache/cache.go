@@ -18,15 +18,29 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var (
-	std *marshaler.Marshaler
-	ttl time.Duration
-)
+type Cache struct {
+	ttl      time.Duration
+	ctx      context.Context
+	cancel   context.CancelFunc
+	instance *lib_cache.Cache[any]
+	marshal  *marshaler.Marshaler
+}
 
-var ctx = context.Background()
+func (cache *Cache) Close() {
+	cache.cancel()
+	cache.marshal = nil
+	cache.instance = nil
+}
 
-func OpenCache(conf config.CacheConf) (err error) {
-	ttl = time.Duration(conf.GetExpiresTime())
+func New(conf config.CacheConf) (*Cache, error) {
+	// create new context
+	ctx, cancel := context.WithCancel(context.Background())
+
+	cache := &Cache{
+		ttl:    time.Duration(conf.GetExpiresTime()),
+		ctx:    ctx,
+		cancel: cancel,
+	}
 
 	var cacheStore store.StoreInterface
 
@@ -36,10 +50,10 @@ func OpenCache(conf config.CacheConf) (err error) {
 		// 内建缓存
 		bigcacheClient, err := bigcache.New(context.Background(), bigcache.DefaultConfig(
 			// Tip: 内建缓存过期时间是一样的，只有 Redis/Memcache 才能设置单个 item 的
-			ttl,
+			cache.ttl,
 		))
 		if err != nil {
-			return err
+			return nil, err
 		}
 		cacheStore = bigcache_store.NewBigcache(bigcacheClient) // No options provided (as second argument)
 
@@ -63,7 +77,7 @@ func OpenCache(conf config.CacheConf) (err error) {
 		servers := strings.Split(conf.Server, ",")
 		cacheStore = memcache_store.NewMemcache(
 			memcache.New(servers...),
-			store.WithExpiration(ttl),
+			store.WithExpiration(cache.ttl),
 		)
 
 	default:
@@ -71,19 +85,14 @@ func OpenCache(conf config.CacheConf) (err error) {
 
 	}
 
-	cacheInstance := lib_cache.New[any](cacheStore)
+	cache.instance = lib_cache.New[any](cacheStore)
 
 	// marshaler wrapper
 	// marshaler using VmihailencoMsgpack
 	// @link https://github.com/vmihailenco/msgpack
 	// Benchmarks
 	// @link https://github.com/alecthomas/go_serialization_benchmarks
-	std = marshaler.New(cacheInstance)
+	cache.marshal = marshaler.New(cache.instance)
 
-	return
-}
-
-func CloseCache() {
-	// std.Clear(Ctx)
-	std = nil
+	return cache, nil
 }

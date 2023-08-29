@@ -26,7 +26,9 @@ func (dao *Dao) CreateSite(site *entity.Site) error {
 	}
 
 	// 制备缓存
-	dao.cache.SiteCacheSave(site)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.SiteCacheSave(site)
+	})
 
 	return nil
 }
@@ -53,7 +55,9 @@ func (dao *Dao) CreateUser(user *entity.User) error {
 	}
 
 	// 制备缓存
-	dao.cache.UserCacheSave(user)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.UserCacheSave(user)
+	})
 
 	return nil
 }
@@ -80,7 +84,9 @@ func (dao *Dao) CreatePage(page *entity.Page) error {
 	}
 
 	// 制备缓存
-	dao.cache.PageCacheSave(page)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.PageCacheSave(page)
+	})
 
 	return nil
 }
@@ -92,7 +98,9 @@ func (dao *Dao) CreateComment(comment *entity.Comment) error {
 	}
 
 	// 制备缓存
-	dao.cache.CommentCacheSave(comment)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.CommentCacheSave(comment)
+	})
 
 	return nil
 }

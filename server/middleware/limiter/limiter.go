@@ -1,6 +1,8 @@
 package limiter
 
 import (
+	"path"
+
 	"github.com/ArtalkJS/Artalk/internal/captcha"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -78,4 +80,13 @@ func ActionLimitMiddleware(app *core.App, conf ActionLimitConf) fiber.Handler {
 			return common.RespError(c, i18n.T("Captcha required"), respData)
 		}
 	}
+}
+
+func isProtectPath(pathTarget string, protectPaths []string) bool {
+	for _, p := range protectPaths {
+		if path.Clean(pathTarget) == path.Clean(p) {
+			return true
+		}
+	}
+	return false
 }

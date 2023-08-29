@@ -119,7 +119,7 @@ func CheckOrigin(app *core.App, c *fiber.Ctx, allowSite *entity.Site) (bool, err
 	allowURLs = append(allowURLs, c.Protocol()+"://"+c.Hostname())
 
 	// 判断 Origin 是否被允许
-	if GetIsAllowOrigin(origin, allowURLs) {
+	if isOriginAllowed(origin, allowURLs) {
 		return true, nil
 	}
 
@@ -129,7 +129,7 @@ func CheckOrigin(app *core.App, c *fiber.Ctx, allowSite *entity.Site) (bool, err
 // 判断 Origin 是否被允许
 // origin is 'schema://hostname:port',
 // allowURLs is a collection of url strings
-func GetIsAllowOrigin(origin string, allowURLs []string) bool {
+func isOriginAllowed(origin string, allowURLs []string) bool {
 	// Origin 合法性检测
 	originP, err := url.Parse(origin)
 	if err != nil || originP.Scheme == "" || originP.Host == "" {

@@ -29,7 +29,7 @@ func Test_GetIsAllowOrigin(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetIsAllowOrigin(tt.origin, tt.allowURLs); got != tt.want {
+			if got := isOriginAllowed(tt.origin, tt.allowURLs); got != tt.want {
 				t.Errorf("GetIsAllowOrigin() = %v, want %v", got, tt.want)
 			}
 		})

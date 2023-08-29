@@ -110,6 +110,7 @@ func Serve(app *core.App) (*fiber.App, error) {
 		return nil
 	})
 
+	// listen serves HTTP requests
 	listenAddr := fmt.Sprintf("%s:%d", app.Conf().Host, app.Conf().Port)
 	if app.Conf().SSL.Enabled {
 		return fb, fb.ListenTLS(listenAddr, app.Conf().SSL.CertPath, app.Conf().SSL.KeyPath)

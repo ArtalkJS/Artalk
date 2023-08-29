@@ -1,13 +1,13 @@
 package pkged
 
-import "embed"
+import "io/fs"
 
-var fs embed.FS
+var f fs.FS
 
-func SetFS(embedFs embed.FS) {
-	fs = embedFs
+func SetFS(embedFs fs.FS) {
+	f = embedFs
 }
 
-func FS() embed.FS {
-	return fs
+func FS() fs.FS {
+	return f
 }

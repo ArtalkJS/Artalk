@@ -39,9 +39,6 @@ func AdminSiteDel(app *core.App, router fiber.Router) {
 			return common.RespError(c, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("Site")}))
 		}
 
-		// 刷新 CORS 可信域名
-		common.ReloadCorsAllowOrigins(app)
-
 		return common.RespSuccess(c)
 	})
 }

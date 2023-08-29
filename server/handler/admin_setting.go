@@ -80,7 +80,6 @@ func AdminSettingSave(app *core.App, router fiber.Router) {
 		// 重启服务
 		app.Restart()
 
-		common.ReloadCorsAllowOrigins(app) // 刷新 CORS 可信域名
 		log.Info(i18n.T("Services restart complete"))
 
 		return common.RespSuccess(c)

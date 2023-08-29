@@ -11,7 +11,6 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/dao/dao_cache"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/hook"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -19,10 +18,9 @@ import (
 )
 
 type App struct {
-	conf *config.Config
-	dao  *dao.Dao
-	// cache   *cache.Cache
-	i18n    *log.Logger
+	conf    *config.Config
+	dao     *dao.Dao
+	cache   *cache.Cache
 	service *map[string]Service
 
 	onTerminate *hook.Hook[*TerminateEvent]
@@ -92,7 +90,7 @@ func (app *App) Bootstrap() error {
 		}
 
 		// load cache plugin on dao
-		app.dao.SetCache(dao_cache.New())
+		app.dao.SetCache(dao.NewCacheAdaptor(app.Cache()))
 
 		// 缓存预热
 		if app.Conf().Cache.WarmUp {
@@ -114,17 +112,21 @@ func (app *App) Bootstrap() error {
 }
 
 func (app *App) ResetBootstrapState() error {
+	// close database
 	if app.Dao() != nil {
-		sqlDB, _ := app.dao.DB().DB()
+		sqlDB, _ := app.Dao().DB().DB()
 		if err := sqlDB.Close(); err != nil {
 			return err
 		}
 	}
 
+	// close cache
+	if app.Cache() != nil {
+		app.Cache().Close()
+	}
+
 	app.dao = nil
-	// app.cache = nil
-	cache.CloseCache()
-	app.i18n = nil
+	app.cache = nil
 
 	// call service release funcs
 	for name, s := range *app.service {
@@ -159,6 +161,10 @@ func (app *App) Dao() *dao.Dao {
 	return app.dao
 }
 
+func (app *App) Cache() *cache.Cache {
+	return app.cache
+}
+
 func (app *App) Service(name string) Service {
 	return (*app.service)[name]
 }
@@ -191,10 +197,12 @@ func (app *App) Restart() error {
 }
 
 func (app *App) initCache() error {
-	err := cache.OpenCache(app.conf.Cache)
+	cache, err := cache.New(app.conf.Cache)
 	if err != nil {
 		return err
 	}
+
+	app.cache = cache
 
 	return nil
 }

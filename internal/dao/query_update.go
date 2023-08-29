@@ -15,7 +15,9 @@ func (dao *Dao) UpdateComment(comment *entity.Comment) error {
 		log.Error("Update Comment error: ", err)
 	}
 	// 更新缓存
-	dao.cache.CommentCacheSave(comment)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.CommentCacheSave(comment)
+	})
 	return err
 }
 
@@ -24,7 +26,9 @@ func (dao *Dao) UpdateSite(site *entity.Site) error {
 	if err != nil {
 		log.Error("Update Site error: ", err)
 	}
-	dao.cache.SiteCacheSave(site)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.SiteCacheSave(site)
+	})
 	return err
 }
 
@@ -33,7 +37,9 @@ func (dao *Dao) UpdateUser(user *entity.User) error {
 	if err != nil {
 		log.Error("Update User error: ", err)
 	}
-	dao.cache.UserCacheSave(user)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.UserCacheSave(user)
+	})
 	return err
 }
 
@@ -42,7 +48,9 @@ func (dao *Dao) UpdatePage(page *entity.Page) error {
 	if err != nil {
 		log.Error("Update Page error: ", err)
 	}
-	dao.cache.PageCacheSave(page)
+	dao.CacheAction(func(cache *DaoCache) {
+		cache.PageCacheSave(page)
+	})
 	return err
 }
 

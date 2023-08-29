@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/utils"
@@ -70,7 +71,9 @@ func AdminSiteEdit(app *core.App, router fiber.Router) {
 		}
 
 		// 预先删除缓存，防止修改主键原有 site_name 占用问题
-		app.Dao().Cache().SiteCacheDel(&site)
+		app.Dao().CacheAction(func(cache *dao.DaoCache) {
+			cache.SiteCacheDel(&site)
+		})
 
 		// 同步变更 site_name
 		if modifyName {

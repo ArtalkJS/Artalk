@@ -1,13 +1,14 @@
 package dao
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/dao/dao_cache"
 	"gorm.io/gorm"
 )
 
 type Dao struct {
-	db    *gorm.DB
-	cache *dao_cache.Cache
+	db *gorm.DB
+
+	// please access cache instance by invoking CacheAction func
+	cache *DaoCache
 }
 
 func NewDao(db *gorm.DB) *Dao {
@@ -30,10 +31,12 @@ func (dao *Dao) Clone() *Dao {
 	return &clone
 }
 
-func (dao *Dao) SetCache(cache *dao_cache.Cache) {
+func (dao *Dao) SetCache(cache *DaoCache) {
 	dao.cache = cache
 }
 
-func (dao *Dao) Cache() *dao_cache.Cache {
-	return dao.cache
+func (dao *Dao) CacheAction(fn func(cache *DaoCache)) {
+	if dao.cache != nil {
+		fn(dao.cache)
+	}
 }

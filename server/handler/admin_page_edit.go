@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/server/common"
@@ -68,7 +69,9 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 		}
 
 		// 预先删除缓存，防止修改主键原有 page_key 占用问题
-		app.Dao().Cache().PageCacheDel(&page)
+		app.Dao().CacheAction(func(cache *dao.DaoCache) {
+			cache.PageCacheDel(&page)
+		})
 
 		page.Title = p.Title
 		page.AdminOnly = p.AdminOnly

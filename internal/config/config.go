@@ -62,7 +62,7 @@ type DBConf struct {
 }
 
 type CacheConf struct {
-	Enabled bool      // 配置文件不允许修改
+	Enabled bool      `koanf:"enabled" json:"enabled"`
 	Type    CacheType `koanf:"type" json:"type"`
 	Expires int       `koanf:"expires" json:"expires"` // 过期时间
 	WarmUp  bool      `koanf:"warm_up" json:"warm_up"` // 启动时缓存预热
@@ -233,7 +233,6 @@ const (
 	CacheTypeBuiltin  CacheType = "builtin" // 内建缓存
 	CacheTypeRedis    CacheType = "redis"
 	CacheTypeMemcache CacheType = "memcache"
-	CacheTypeDisabled CacheType = "disabled" // 关闭缓存
 )
 
 type EmailSenderType string

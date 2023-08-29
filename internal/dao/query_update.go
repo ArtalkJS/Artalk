@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/log"
 )
@@ -16,7 +15,7 @@ func (dao *Dao) UpdateComment(comment *entity.Comment) error {
 		log.Error("Update Comment error: ", err)
 	}
 	// 更新缓存
-	cache.CommentCacheSave(comment)
+	dao.cache.CommentCacheSave(comment)
 	return err
 }
 
@@ -25,7 +24,7 @@ func (dao *Dao) UpdateSite(site *entity.Site) error {
 	if err != nil {
 		log.Error("Update Site error: ", err)
 	}
-	cache.SiteCacheSave(site)
+	dao.cache.SiteCacheSave(site)
 	return err
 }
 
@@ -34,7 +33,7 @@ func (dao *Dao) UpdateUser(user *entity.User) error {
 	if err != nil {
 		log.Error("Update User error: ", err)
 	}
-	cache.UserCacheSave(user)
+	dao.cache.UserCacheSave(user)
 	return err
 }
 
@@ -43,7 +42,7 @@ func (dao *Dao) UpdatePage(page *entity.Page) error {
 	if err != nil {
 		log.Error("Update Page error: ", err)
 	}
-	cache.PageCacheSave(page)
+	dao.cache.PageCacheSave(page)
 	return err
 }
 

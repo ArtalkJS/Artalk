@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/log"
 )
@@ -27,7 +26,7 @@ func (dao *Dao) CreateSite(site *entity.Site) error {
 	}
 
 	// 制备缓存
-	cache.SiteCacheSave(site)
+	dao.cache.SiteCacheSave(site)
 
 	return nil
 }
@@ -54,7 +53,7 @@ func (dao *Dao) CreateUser(user *entity.User) error {
 	}
 
 	// 制备缓存
-	cache.UserCacheSave(user)
+	dao.cache.UserCacheSave(user)
 
 	return nil
 }
@@ -81,7 +80,7 @@ func (dao *Dao) CreatePage(page *entity.Page) error {
 	}
 
 	// 制备缓存
-	cache.PageCacheSave(page)
+	dao.cache.PageCacheSave(page)
 
 	return nil
 }
@@ -93,7 +92,7 @@ func (dao *Dao) CreateComment(comment *entity.Comment) error {
 	}
 
 	// 制备缓存
-	cache.CommentCacheSave(comment)
+	dao.cache.CommentCacheSave(comment)
 
 	return nil
 }

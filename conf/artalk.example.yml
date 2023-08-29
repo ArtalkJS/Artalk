@@ -55,6 +55,8 @@ log:
 
 # Cache
 cache:
+  # Enable cache
+  enabled: false
   # Cache type ["redis", "memcache", "builtin"]
   type: "builtin"
   # Cache expiration time (in minutes)

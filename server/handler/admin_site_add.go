@@ -63,9 +63,6 @@ func AdminSiteAdd(app *core.App, router fiber.Router) {
 			return common.RespError(c, i18n.T("{{name}} creation failed", Map{"name": i18n.T("Site")}))
 		}
 
-		// 刷新 CORS 可信域名
-		common.ReloadCorsAllowOrigins(app)
-
 		return common.RespData(c, ResponseAdminSiteAdd{
 			Site: app.Dao().CookSite(&site),
 		})

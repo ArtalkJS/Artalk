@@ -89,9 +89,6 @@ func adminImport(app *core.App) func(c *fiber.Ctx) error {
 		}
 		artransfer.RunImportArtrans(app.Dao(), artransfer.ArrToImportParams(payloadArr))
 
-		// 刷新 CORS 可信域名
-		common.ReloadCorsAllowOrigins(app)
-
 		return nil
 	}
 }

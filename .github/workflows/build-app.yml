@@ -62,7 +62,7 @@ jobs:
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" > local/.release-env
 
           # changelog
-          git-chglog ${VERSION} > local/release-notes.md
+          git-chglog --config .github/chglog/config.yml ${VERSION} > local/release-notes.md
 
           # copy config file
           cp conf/artalk.example.yml artalk.yml

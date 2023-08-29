@@ -13,6 +13,7 @@ log:
 
 # 缓存
 cache:
+  enabled: false
   type: "disabled" # 支持 redis, memcache, builtin (自带缓存)
   expires: 30     # 缓存过期时间 (单位：分钟)
   warm_up: false  # 程序启动时预热缓存

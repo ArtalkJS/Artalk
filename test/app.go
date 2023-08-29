@@ -3,6 +3,7 @@ package test
 import (
 	"os"
 	"path"
+	"path/filepath"
 	"runtime"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
@@ -10,6 +11,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/db"
 	"github.com/ArtalkJS/Artalk/internal/pkged"
+	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/go-testfixtures/testfixtures/v3"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -28,23 +30,32 @@ func (t *TestApp) Cleanup() error {
 
 func NewTestApp() (*TestApp, error) {
 	// change WorkDir run on project root
-	_, filename, _, _ := runtime.Caller(0)
-	rootDir := path.Join(path.Dir(filename), "..")
-	if err := os.Chdir(rootDir); err != nil {
-		panic(err)
+	{
+		_, filename, _, _ := runtime.Caller(0)
+		rootDir := path.Join(path.Dir(filename), "..")
+		if err := os.Chdir(rootDir); err != nil {
+			panic(err)
+		}
 	}
 
 	// load assets fs
 	dir := os.DirFS("./")
 	pkged.SetFS(dir)
 
+	// prepare db folder
+	const dbFile = "./data/test.db"
+	utils.EnsureDir(filepath.Dir(dbFile))
+
 	// open a sqlite db
-	dbInstance, err := gorm.Open(sqlite.Open("./data/test.db"), &gorm.Config{
+	dbInstance, err := gorm.Open(sqlite.Open(dbFile), &gorm.Config{
 		Logger: db.NewGormLogger(),
 	})
 	if err != nil {
 		return nil, err
 	}
+
+	// cerate dao instance (will migrate database table)
+	dao := dao.NewDao(dbInstance)
 
 	// get pure sql.DB instance
 	sqlDB, err := dbInstance.DB()
@@ -73,8 +84,8 @@ func NewTestApp() (*TestApp, error) {
 	// create app instance
 	app := core.NewApp(conf)
 
-	// init dao
-	app.SetDao(dao.NewDao(dbInstance))
+	// set dao
+	app.SetDao(dao)
 
 	// bootstrap
 	if err := app.Bootstrap(); err != nil {

@@ -7,10 +7,18 @@ import (
 type Dao struct {
 	db *gorm.DB
 
-	// please access cache instance by invoking CacheAction func
+	// Cache to speed up database query
+	//
+	// Please access the cache instance by invoking the `CacheAction` func.
+	//
+	// As the cache could be nil.
+	// Therefore, it is necessary to check if the cache is not nil before referencing it.
 	cache *DaoCache
 }
 
+// Create new dao instance
+//
+// This function will auto migrate database tables
 func NewDao(db *gorm.DB) *Dao {
 	dao := &Dao{
 		db: db,
@@ -23,12 +31,6 @@ func NewDao(db *gorm.DB) *Dao {
 
 func (dao *Dao) DB() *gorm.DB {
 	return dao.db
-}
-
-func (dao *Dao) Clone() *Dao {
-	clone := *dao
-
-	return &clone
 }
 
 func (dao *Dao) SetCache(cache *DaoCache) {

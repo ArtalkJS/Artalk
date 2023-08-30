@@ -44,6 +44,10 @@ test:
 test-coverage:
 	$(GOTEST) -cover ./...
 
+test-coverage-html:
+	$(GOTEST) -v -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out
+
 update-i18n:
 	go generate ./internal/i18n
 
@@ -57,5 +61,5 @@ docker-push:
 	./scripts/docker-build.sh --push
 
 .PHONY: all install build build-frontend build-debug \
-	dev test test-coverage update-i18n \
+	dev test test-coverage test-coverage-html update-i18n \
 	docker-build docker-push;

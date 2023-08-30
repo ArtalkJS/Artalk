@@ -20,7 +20,7 @@ func (dao *Dao) QueryDBWithCache(name string, dest any, queryDB func()) error {
 func (dao *Dao) FindComment(id uint, checkers ...func(*entity.Comment) bool) entity.Comment {
 	var comment entity.Comment
 
-	dao.QueryDBWithCache(fmt.Sprintf("comment#id=%d", id), &comment, func() {
+	dao.QueryDBWithCache(fmt.Sprintf(CommentByIDKey, id), &comment, func() {
 		dao.DB().Where("id = ?", id).First(&comment)
 	})
 
@@ -39,7 +39,7 @@ func (dao *Dao) FindCommentChildrenShallow(parentID uint, checkers ...func(*enti
 	var children []entity.Comment
 	var childIDs []uint
 
-	dao.QueryDBWithCache(fmt.Sprintf("parent-comments#pid=%d", parentID), &childIDs, func() {
+	dao.QueryDBWithCache(fmt.Sprintf(CommentChildIDsByIDKey, parentID), &childIDs, func() {
 		dao.DB().Model(&entity.Comment{}).Where(&entity.Comment{Rid: parentID}).Select("id").Find(&childIDs)
 	})
 
@@ -74,7 +74,7 @@ func (dao *Dao) FindUser(name string, email string) entity.User {
 	var user entity.User
 
 	// 查询缓存
-	dao.QueryDBWithCache(fmt.Sprintf("user#name=%s;email=%s", strings.ToLower(name), strings.ToLower(email)), &user, func() {
+	dao.QueryDBWithCache(fmt.Sprintf(UserByNameEmailKey, strings.ToLower(name), strings.ToLower(email)), &user, func() {
 		// 不区分大小写
 		dao.DB().Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?)", name, email).First(&user)
 	})
@@ -87,7 +87,7 @@ func (dao *Dao) FindUserIdsByEmail(email string) []uint {
 	var userIds = []uint{}
 
 	// 查询缓存
-	dao.QueryDBWithCache(fmt.Sprintf("user_id#email=%s", strings.ToLower(email)), &userIds, func() {
+	dao.QueryDBWithCache(fmt.Sprintf(UserIDByEmailKey, strings.ToLower(email)), &userIds, func() {
 		dao.DB().Model(&entity.User{}).Where("LOWER(email) = LOWER(?)", email).Pluck("id", &userIds)
 	})
 
@@ -121,7 +121,7 @@ func (dao *Dao) FindUserByID(id uint) entity.User {
 func (dao *Dao) FindPage(key string, siteName string) entity.Page {
 	var page entity.Page
 
-	dao.QueryDBWithCache(fmt.Sprintf("page#key=%s;site_name=%s", key, siteName), &page, func() {
+	dao.QueryDBWithCache(fmt.Sprintf(PageByKeySiteNameKey, key, siteName), &page, func() {
 		dao.DB().Where(&entity.Page{Key: key, SiteName: siteName}).First(&page)
 	})
 
@@ -131,7 +131,7 @@ func (dao *Dao) FindPage(key string, siteName string) entity.Page {
 func (dao *Dao) FindPageByID(id uint) entity.Page {
 	var page entity.Page
 
-	dao.QueryDBWithCache(fmt.Sprintf("page#id=%d", id), &page, func() {
+	dao.QueryDBWithCache(fmt.Sprintf(PageByIDKey, id), &page, func() {
 		dao.DB().Where("id = ?", id).First(&page)
 	})
 
@@ -142,7 +142,7 @@ func (dao *Dao) FindSite(name string) entity.Site {
 	var site entity.Site
 
 	// 查询缓存
-	dao.QueryDBWithCache(fmt.Sprintf("site#name=%s", name), &site, func() {
+	dao.QueryDBWithCache(fmt.Sprintf(SiteByNameKey, name), &site, func() {
 		dao.DB().Where("name = ?", name).First(&site)
 	})
 
@@ -152,7 +152,7 @@ func (dao *Dao) FindSite(name string) entity.Site {
 func (dao *Dao) FindSiteByID(id uint) entity.Site {
 	var site entity.Site
 
-	dao.QueryDBWithCache(fmt.Sprintf("site#id=%d", id), &site, func() {
+	dao.QueryDBWithCache(fmt.Sprintf(SiteByIDKey, id), &site, func() {
 		dao.DB().Where("id = ?", id).First(&site)
 	})
 

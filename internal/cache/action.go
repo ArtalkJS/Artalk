@@ -13,6 +13,10 @@ var (
 )
 
 func (c *Cache) QueryDBWithCache(name string, dest any, queryDB func()) error {
+	if reflect.TypeOf(dest).Kind() != reflect.Ptr {
+		panic("The 'dest' param in 'QueryDBWithCache' func is expected to pointer type to update its data.")
+	}
+
 	// use SingleFlight to prevent Cache Breakdown
 	v, err, _ := cacheFindStoreGroup.Do(name, func() (any, error) {
 		// query cache
@@ -23,7 +27,7 @@ func (c *Cache) QueryDBWithCache(name string, dest any, queryDB func()) error {
 			// call queryDB() the dest value will be updated
 			queryDB()
 
-			if err := c.StoreCache(name, dest); err != nil {
+			if err := c.StoreCache(dest, name); err != nil {
 				return nil, err
 			}
 
@@ -40,7 +44,7 @@ func (c *Cache) QueryDBWithCache(name string, dest any, queryDB func()) error {
 	}
 
 	// update dest value only if cache hit,
-	// if cache miss, dest has been updated in queryDB()
+	// if cache miss, `dest` has been updated in `queryDB()` so no need to set again
 	if v != nil {
 		reflect.ValueOf(dest).Elem().Set(reflect.ValueOf(v).Elem()) // similar to `*dest = &v`
 	}
@@ -53,28 +57,34 @@ func (c *Cache) FindCache(name string, dest any) error {
 	// @see https://github.com/go-redis/redis/issues/23
 	_, err := c.marshal.Get(c.ctx, name, dest)
 	if err != nil {
+		log.Debug("[CacheMis] " + name)
 		return err
 	}
 
-	log.Debug("[Cache Hit] " + name)
-
+	log.Debug("[CacheHit] " + name)
 	return nil
 }
 
-func (c *Cache) StoreCache(name string, source any) error {
-	// `Set()` is Thread Safe too, no need to add Mutex either
-	err := c.marshal.Set(c.ctx, name, source,
-		store.WithExpiration(c.ttl),
-	)
-	if err != nil {
-		return err
+func (c *Cache) StoreCache(source any, name ...string) (err error) {
+	for _, n := range name {
+		log.Debug("[StoreCache] " + n)
+
+		// `Set()` is Thread Safe, no need to add Mutex
+		if setErr := c.marshal.Set(c.ctx, n, source,
+			store.WithExpiration(c.ttl),
+		); setErr != nil {
+			err = setErr
+		}
 	}
-
-	log.Debug("[写入缓存] " + name)
-
-	return nil
+	return
 }
 
-func (c *Cache) DelCache(name string) error {
-	return c.marshal.Delete(c.ctx, name)
+func (c *Cache) DelCache(name ...string) (err error) {
+	for _, n := range name {
+		log.Debug("[DelCache] " + n)
+		if delErr := c.marshal.Delete(c.ctx, n); delErr != nil {
+			err = delErr
+		}
+	}
+	return
 }

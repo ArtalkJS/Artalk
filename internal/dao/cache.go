@@ -6,6 +6,19 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"golang.org/x/exp/slices"
+)
+
+const (
+	UserByIDKey            = "user#id=%d"
+	UserByNameEmailKey     = "user#name=%s;email=%s"
+	UserIDByEmailKey       = "user_id#email=%s"
+	SiteByIDKey            = "site#id=%d"
+	SiteByNameKey          = "site#name=%s"
+	PageByIDKey            = "page#id=%d"
+	PageByKeySiteNameKey   = "page#key=%s;site_name=%s"
+	CommentByIDKey         = "comment#id=%d"
+	CommentChildIDsByIDKey = "comment_child_ids#id=%d"
 )
 
 type DaoCache struct {
@@ -17,119 +30,89 @@ func NewCacheAdaptor(cache *cache.Cache) *DaoCache {
 }
 
 func (c *DaoCache) UserCacheSave(user *entity.User) error {
-	// 缓存 ID
-	err := c.StoreCache(fmt.Sprintf("user#id=%d", user.ID), user)
-	if err != nil {
-		return err
-	}
-
-	// 缓存 Name x Email
-	err = c.StoreCache(fmt.Sprintf("user#name=%s;email=%s", strings.ToLower(user.Name), strings.ToLower(user.Email)), user)
-	if err != nil {
-		return err
-	}
-
-	return err
+	return c.StoreCache(user,
+		fmt.Sprintf(UserByIDKey, user.ID),
+		fmt.Sprintf(UserByNameEmailKey, strings.ToLower(user.Name), strings.ToLower(user.Email)),
+	)
 }
 
 func (c *DaoCache) UserCacheDel(user *entity.User) {
-	c.DelCache(fmt.Sprintf("user#id=%d", user.ID))
-	c.DelCache(fmt.Sprintf("user#name=%s;email=%s", strings.ToLower(user.Name), strings.ToLower(user.Email)))
+	c.DelCache(
+		fmt.Sprintf(UserByIDKey, user.ID),
+		fmt.Sprintf(UserByNameEmailKey, strings.ToLower(user.Name), strings.ToLower(user.Email)),
+	)
 }
 
 func (c *DaoCache) SiteCacheSave(site *entity.Site) error {
-	// 缓存 ID
-	err := c.StoreCache(fmt.Sprintf("site#id=%d", site.ID), site)
-	if err != nil {
-		return err
-	}
-
-	// 缓存 Name
-	err = c.StoreCache(fmt.Sprintf("site#name=%s", site.Name), site)
-	if err != nil {
-		return err
-	}
-
-	return err
+	return c.StoreCache(site,
+		fmt.Sprintf(SiteByIDKey, site.ID),
+		fmt.Sprintf(SiteByNameKey, site.Name),
+	)
 }
 
 func (c *DaoCache) SiteCacheDel(site *entity.Site) {
-	c.DelCache(fmt.Sprintf("site#id=%d", site.ID))
-	c.DelCache(fmt.Sprintf("site#name=%s", site.Name))
+	c.DelCache(fmt.Sprintf(SiteByIDKey, site.ID))
+	c.DelCache(fmt.Sprintf(SiteByNameKey, site.Name))
 }
 
 func (c *DaoCache) PageCacheSave(page *entity.Page) error {
-	// 缓存 ID
-	err := c.StoreCache(fmt.Sprintf("page#id=%d", page.ID), page)
-	if err != nil {
-		return err
-	}
-
-	// 缓存 Key x SiteName
-	err = c.StoreCache(fmt.Sprintf("page#key=%s;site_name=%s", page.Key, page.SiteName), page)
-	if err != nil {
-		return err
-	}
-
-	return err
+	return c.StoreCache(page,
+		fmt.Sprintf(PageByIDKey, page.ID),
+		fmt.Sprintf(PageByKeySiteNameKey, page.Key, page.SiteName),
+	)
 }
 
 func (c *DaoCache) PageCacheDel(page *entity.Page) {
-	c.DelCache(fmt.Sprintf("page#id=%d", page.ID))
-	c.DelCache(fmt.Sprintf("page#key=%s;site_name=%s", page.Key, page.SiteName))
+	c.DelCache(
+		fmt.Sprintf(PageByIDKey, page.ID),
+		fmt.Sprintf(PageByKeySiteNameKey, page.Key, page.SiteName),
+	)
 }
 
-func (c *DaoCache) CommentCacheSave(comment *entity.Comment) error {
-	// 缓存 ID
-	err := c.StoreCache(fmt.Sprintf("comment#id=%d", comment.ID), comment)
-	if err != nil {
-		return err
+func (c *DaoCache) CommentCacheSave(comment *entity.Comment) (err error) {
+	if storeErr := c.StoreCache(comment, fmt.Sprintf(CommentByIDKey, comment.ID)); storeErr != nil {
+		err = storeErr
 	}
-
-	// 缓存 Rid
-	if comment.Rid != 0 {
-		c.ChildCommentCacheSave(comment.Rid, comment.ID)
+	if storeErr := c.ChildCommentCacheSave(comment); storeErr != nil {
+		err = storeErr
 	}
-
-	return err
+	return
 }
 
 func (c *DaoCache) CommentCacheDel(comment *entity.Comment) {
-	c.DelCache(fmt.Sprintf("comment#id=%d", comment.ID))
-
-	// 清除 Rid 缓存
-	c.ChildCommentCacheDel(comment.ID)
-	if comment.Rid != 0 {
-		c.ChildCommentCacheDel(comment.Rid)
-	}
+	c.DelCache(fmt.Sprintf(CommentByIDKey, comment.ID))
+	c.ChildCommentCacheDel(comment)
 }
 
 // 缓存 父ID=>子ID 评论数据
-func (c *DaoCache) ChildCommentCacheSave(parentID uint, childID uint) {
-	var cacheName = fmt.Sprintf("parent-comments#pid=%d", parentID)
+func (c *DaoCache) ChildCommentCacheSave(comment *entity.Comment) error {
+	if comment.Rid == 0 {
+		// 若 comment 为根评论，则创建初始空数据，无子评论
+		return c.StoreCache([]uint{}, fmt.Sprintf(CommentChildIDsByIDKey, comment.ID))
+	}
+
+	// 若 comment 为子评论（Rid 不为空，Rid 为父 ID），
+	// 则为父评论的 “子评论 ID 列表” 追加 “子评论 ID”
+	parentID := comment.Rid
+	childID := comment.ID
+
+	var cacheName = fmt.Sprintf(CommentChildIDsByIDKey, parentID)
 
 	var childIDs []uint
-	err := c.FindCache(cacheName, &childIDs)
-	if err != nil || childIDs == nil {
-		childIDs = []uint{}
-	}
+	c.FindCache(cacheName, &childIDs)
 
-	isExist := false
-	for _, i := range childIDs {
-		if i == childID {
-			isExist = true
-			break
-		}
-	}
-
-	// append if Not exist
-	if !isExist {
+	// append if childID Not contains
+	if !slices.Contains(childIDs, childID) {
 		childIDs = append(childIDs, childID)
 	}
 
-	c.StoreCache(cacheName, childIDs)
+	return c.StoreCache(childIDs, cacheName)
 }
 
-func (c *DaoCache) ChildCommentCacheDel(parentID uint) {
-	c.DelCache(fmt.Sprintf("parent-comments#pid=%d", parentID))
+func (c *DaoCache) ChildCommentCacheDel(comment *entity.Comment) {
+	c.DelCache(fmt.Sprintf(CommentChildIDsByIDKey, comment.ID))
+	if comment.Rid != 0 {
+		c.DelCache(fmt.Sprintf(CommentChildIDsByIDKey, comment.Rid))
+		// TODO 从 slice 中 remove 并更新缓存而不是直接删除缓存，删除缓存会导致重新查询 db 而性能下降
+	}
 }

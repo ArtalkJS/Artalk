@@ -4,13 +4,14 @@ import (
 	"fmt"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/db/logger"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
 
 func NewDB(conf config.DBConf) (*gorm.DB, error) {
 	gormConfig := &gorm.Config{
-		Logger: NewGormLogger(),
+		Logger: logger.NewGormLogger(),
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix: conf.TablePrefix,
 		},
@@ -35,4 +36,16 @@ func NewDB(conf config.DBConf) (*gorm.DB, error) {
 	}
 
 	return nil, fmt.Errorf("unsupported database type %s", conf.Type)
+}
+
+func NewTestDB() (*gorm.DB, error) {
+	return OpenSQLite("file::memory:?cache=shared", &gorm.Config{})
+}
+
+func CloseDB(db *gorm.DB) error {
+	ddb, err := db.DB()
+	if err != nil {
+		return err
+	}
+	return ddb.Close()
 }

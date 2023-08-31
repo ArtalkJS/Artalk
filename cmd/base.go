@@ -62,8 +62,7 @@ func New() *ArtalkCmd {
 	}
 
 	cmd.RootCmd.SetVersionTemplate("Artalk ({{printf \"%s\" .Version}})\n")
-	cmd.RootCmd.PersistentFlags().StringVarP(&cmd.cfgFile, "config", "c", "", "config file path (defaults are './artalk.yml')")
-	cmd.RootCmd.PersistentFlags().StringVarP(&cmd.workDir, "workdir", "w", "", "program working directory (defaults are './')")
+	cmd.eagerParseFlags() // parse base flags
 
 	// 切换工作目录
 	if cmd.workDir != "" {
@@ -77,6 +76,15 @@ func New() *ArtalkCmd {
 	cmd.App = core.NewApp(config)
 
 	return cmd
+}
+
+// Parses the global app flags before calling atk.RootCmd.Execute().
+// so we can have all flags ready for use on initialization.
+func (atk *ArtalkCmd) eagerParseFlags() error {
+	atk.RootCmd.PersistentFlags().StringVarP(&atk.cfgFile, "config", "c", "", "config file path (defaults are './artalk.yml')")
+	atk.RootCmd.PersistentFlags().StringVarP(&atk.workDir, "workdir", "w", "", "program working directory (defaults are './')")
+
+	return atk.RootCmd.ParseFlags(os.Args[1:])
 }
 
 func (atk *ArtalkCmd) addCommand(cmd *cobra.Command) {

@@ -20,7 +20,7 @@ func NewEmailService(app *App) *EmailService {
 }
 
 func (e *EmailService) Init() error {
-	e.queue = email.NewQueue(&email.EmailConf{
+	e.queue = email.NewQueue(email.EmailConf{
 		EmailConf: e.app.Conf().Email,
 		OnSendSuccess: func(email *email.Email) {
 			if email.LinkedNotify == nil {

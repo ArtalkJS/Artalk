@@ -12,7 +12,7 @@ import (
 )
 
 func newTestDao(t *testing.T) (*dao.Dao, *gorm.DB) {
-	db, err := db.OpenSQLite("file::memory:?cache=shared", &gorm.Config{})
+	db, err := db.NewTestDB()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -22,13 +22,17 @@ func newTestDao(t *testing.T) (*dao.Dao, *gorm.DB) {
 }
 
 func TestBase(t *testing.T) {
-	d, _ := newTestDao(t)
-	assert.NotNil(t, d)
+	dao, ddb := newTestDao(t)
+	defer db.CloseDB(ddb)
+
+	assert.NotNil(t, dao)
 }
 
 func TestDB(t *testing.T) {
-	d, db := newTestDao(t)
-	assert.Equal(t, db, d.DB())
+	dao, ddb := newTestDao(t)
+	defer db.CloseDB(ddb)
+
+	assert.Equal(t, ddb, dao.DB())
 }
 
 func newTestCache(t *testing.T) *cache.Cache {

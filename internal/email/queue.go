@@ -14,14 +14,14 @@ type EmailConf struct {
 }
 
 type EmailQueue struct {
-	conf   *EmailConf
+	conf   EmailConf
 	ch     chan *Email
 	mux    sync.Mutex
 	closed bool
 }
 
 // Initialize Email Queue
-func NewQueue(conf *EmailConf) *EmailQueue {
+func NewQueue(conf EmailConf) *EmailQueue {
 	queue := &EmailQueue{
 		conf: conf,
 	}

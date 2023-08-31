@@ -9,13 +9,13 @@ import (
 
 // AliDMSender implements Sender
 type AliDMSender struct {
-	conf *config.AliDMConf
+	conf config.AliDMConf
 }
 
 var _ Sender = (*AliDMSender)(nil)
 
 // NewAliDMSender 阿里云邮件推送
-func NewAliDMSender(conf *config.AliDMConf) *AliDMSender {
+func NewAliDMSender(conf config.AliDMConf) *AliDMSender {
 	return &AliDMSender{
 		conf: conf,
 	}

@@ -2,8 +2,10 @@ package core
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"runtime"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -15,6 +17,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/hook"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/ArtalkJS/Artalk/internal/pkged"
 )
 
 type App struct {
@@ -66,7 +69,7 @@ func (app *App) Bootstrap() error {
 	time.Local = denverLoc
 
 	// i18n
-	i18n.Init(app.Conf().Locale)
+	app.initI18n()
 
 	// log
 	log.LoadGlobal(log.Options{
@@ -129,9 +132,11 @@ func (app *App) ResetBootstrapState() error {
 	app.cache = nil
 
 	// call service release funcs
-	for name, s := range *app.service {
-		if err := s.Dispose(); err != nil {
-			return fmt.Errorf("service %s release error: %w", name, err)
+	if app.service != nil {
+		for name, s := range *app.service {
+			if err := s.Dispose(); err != nil {
+				return fmt.Errorf("service %s release error: %w", name, err)
+			}
 		}
 	}
 	app.service = &map[string]Service{}
@@ -149,9 +154,13 @@ func AppInject[T Service](app *App, service T) {
 	app.Inject(genServiceName[T](), service)
 }
 
-// func (app *BaseApp) Cache() *cache.Cache {
-// 	return app.cache
-// }
+func (app *App) Service(name string) Service {
+	return (*app.service)[name]
+}
+
+func AppService[T Service](app *App) T {
+	return app.Service(genServiceName[T]()).(T)
+}
 
 func (app *App) Conf() *config.Config {
 	return app.conf
@@ -161,16 +170,12 @@ func (app *App) Dao() *dao.Dao {
 	return app.dao
 }
 
+func (app *App) SetDao(dao *dao.Dao) {
+	app.dao = dao
+}
+
 func (app *App) Cache() *cache.Cache {
 	return app.cache
-}
-
-func (app *App) Service(name string) Service {
-	return (*app.service)[name]
-}
-
-func AppService[T Service](app *App) T {
-	return app.Service(genServiceName[T]()).(T)
 }
 
 func (app *App) Restart() error {
@@ -196,6 +201,32 @@ func (app *App) Restart() error {
 	return nil
 }
 
+func (app *App) ConfTpl() string {
+	if app.Conf() == nil {
+		return config.Template("en")
+	}
+	return config.Template(strings.TrimSpace(app.Conf().Locale))
+}
+
+// -------------------------------------------------------------------
+//  Internal Initializations
+// -------------------------------------------------------------------
+
+func (app *App) initI18n() {
+	if pkged.FS() == nil {
+		log.Warn("i18n locales not load because the embed fs not found")
+		return
+	}
+
+	i18n.Load(app.Conf().Locale, func(locale string) ([]byte, error) {
+		file, err := pkged.FS().Open(fmt.Sprintf("i18n/%s.yml", locale))
+		if err != nil {
+			return nil, err
+		}
+		return io.ReadAll(file)
+	})
+}
+
 func (app *App) initCache() error {
 	cache, err := cache.New(app.conf.Cache)
 	if err != nil {
@@ -218,10 +249,6 @@ func (app *App) initDao() error {
 	app.SetDao(dao.NewDao(dbInstance))
 
 	return nil
-}
-
-func (app *App) SetDao(dao *dao.Dao) {
-	app.dao = dao
 }
 
 // -------------------------------------------------------------------

@@ -82,12 +82,14 @@ func adminImport(app *core.App) func(c *fiber.Ctx) error {
 			`<style>* { font-family: Menlo, Consolas, Monaco, monospace;word-wrap: break-word;white-space: pre-wrap;font-size: 13px; }</style>
 		<script>function scroll() { if (!!document.body) { document.body.scrollTo(0, 999999999999); } }</script>`))
 
-		artransfer.Assumeyes = true
 		artransfer.HttpOutput = func(continueRun bool, text string) {
 			buf.Write([]byte(text))
 			buf.Write([]byte("<script>scroll();</script>"))
 		}
-		artransfer.RunImportArtrans(app.Dao(), artransfer.ArrToImportParams(payloadArr))
+
+		params := artransfer.ArrToImportParams(payloadArr)
+		params.Assumeyes = true
+		artransfer.RunImportArtrans(app.Dao(), params)
 
 		return nil
 	}

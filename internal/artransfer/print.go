@@ -13,7 +13,6 @@ import (
 // package-level 全局变量
 // TODO 只支持单线执行，同时请求两个地方会出问题
 var HttpOutput func(continueRun bool, text string)
-var Assumeyes bool = false
 
 func logError(a ...interface{}) {
 	if HttpOutput != nil {
@@ -108,11 +107,6 @@ func sprintEncodeData(dataType string, val interface{}) string {
 }
 
 func confirm(s string) bool {
-	if Assumeyes {
-		printf("%s [y/n]: y", s)
-		return true
-	}
-
 	r := bufio.NewReader(os.Stdin)
 
 	for {

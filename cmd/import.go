@@ -28,7 +28,9 @@ func NewImportCommand(app *core.App) *cobra.Command {
 			payload = append(payload, "json_file:"+parcelFile)
 
 			// import Artrans
-			artransfer.RunImportArtrans(app.Dao(), artransfer.ArrToImportParams(payload))
+			params := artransfer.ArrToImportParams(payload)
+			params.Assumeyes, _ = cmd.Flags().GetBool("assumeyes")
+			artransfer.RunImportArtrans(app.Dao(), params)
 
 			log.Info(i18n.T("Import complete"))
 		},

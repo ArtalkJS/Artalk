@@ -55,6 +55,7 @@ func ArrToImportParams(arr []string) *ImportParams {
 		"t_url_resolver": &params.UrlResolver,
 		"json_file":      &params.JsonFile,
 		"json_data":      &params.JsonData,
+		"assumeyes":      &params.Assumeyes,
 	})
 
 	return &params

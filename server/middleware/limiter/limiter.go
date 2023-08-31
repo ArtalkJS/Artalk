@@ -19,7 +19,7 @@ const LimiterLocalKey = "limiter"
 
 // 操作限制 中间件
 func ActionLimitMiddleware(app *core.App, conf ActionLimitConf) fiber.Handler {
-	limiter := limiter.NewLimiter(app, &limiter.LimiterConf{
+	limiter := limiter.NewLimiter(&limiter.LimiterConf{
 		AlwaysMode:          app.Conf().Captcha.Always,
 		MaxActionDuringTime: app.Conf().Captcha.ActionLimit,
 		ResetTimeout:        app.Conf().Captcha.ActionReset,

@@ -2,7 +2,6 @@ package limiter
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/cache/simple_cache"
-	"github.com/ArtalkJS/Artalk/internal/core"
 )
 
 // 操作次数限制器（根据 IP）
@@ -32,7 +31,7 @@ type LimiterConf struct {
 	ResetTimeout        int  // 重置超时，单位 s (当你想当评论 n 次后一直需要验证码，可以将时间设置得足够大，或是 -1)
 }
 
-func NewLimiter(app *core.App, conf *LimiterConf) *Limiter {
+func NewLimiter(conf *LimiterConf) *Limiter {
 	if conf.MaxActionDuringTime <= 0 {
 		conf.AlwaysMode = true
 	}

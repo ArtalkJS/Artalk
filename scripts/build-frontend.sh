@@ -11,8 +11,8 @@ then
     export VOLTA_HOME="${HOME}/.volta"
     export PATH="${VOLTA_HOME}/bin:${PATH}"
 
-    volta install node@18.15.0
-    volta install pnpm@8.4.0
+    volta install node@18.17.1
+    volta install pnpm@8.7.0
 fi
 
 pnpm --dir ./ui install --frozen-lockfile

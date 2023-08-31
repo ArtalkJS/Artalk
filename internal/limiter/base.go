@@ -8,7 +8,7 @@ import (
 //
 // 关键函数：
 //
-//  1. IsNeedVerify(ip)
+//  1. IsPass(ip)
 //     请求启用了 Limiter 的页面时，
 //     判断操作次数是否过限，若超过限制则响应 need_captcha
 //
@@ -43,17 +43,14 @@ func NewLimiter(conf *LimiterConf) *Limiter {
 }
 
 // 请求是否需要验证码
+//
+// Notice: call IsPass will trigger a write operation.
 func (l *Limiter) IsPass(ip string) bool {
 	// =======================
 	//  总是需要验证码模式
 	// =======================
 	if l.conf.AlwaysMode {
-		if l.isVerified(ip) { // 第一次请求一定为 false，需要验证码
-			l.setVerified(ip, false) // 放行一次，立即失效，需要重新输入验证码
-			return true
-		} else {
-			return false
-		}
+		return l.isVerified(ip)
 	}
 
 	// =======================
@@ -64,7 +61,7 @@ func (l *Limiter) IsPass(ip string) bool {
 		// 配置了过期时间，并且操作在时间窗口外（操作超时了）则执行 Reset
 		// 若未配置超时时间，则永不会超时，即用不会执行 Reset
 		if l.isTimeoutSinceLastAction(ip) {
-			l.ResetLog(ip) // 重置计数
+			l.ResetLog(ip) // 重置计数 (write)
 			return true    // 放行
 		}
 
@@ -78,8 +75,9 @@ func (l *Limiter) IsPass(ip string) bool {
 // 记录操作
 // (请勿在 IsNeedVerify 函数被调用之前执行 Log)
 func (l *Limiter) Log(ip string) {
-	l.increaseCount(ip) // 操作次数 +1
-	l.logTime(ip)       // 更新最后操作时间
+	l.increaseCount(ip)      // 操作次数 +1
+	l.logTime(ip)            // 更新最后操作时间
+	l.setVerified(ip, false) // 重置已验证状态为 false
 }
 
 // 重置操作记录

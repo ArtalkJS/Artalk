@@ -59,6 +59,9 @@ func NewUpgradeCommand(app *core.App) *cobra.Command {
 				"-------------------------------\n\n" +
 				latest.ReleaseNotes)
 		},
+		Annotations: map[string]string{
+			BootModeKey: MODE_MINI_BOOT,
+		},
 	}
 
 	flagPV(upgradeCmd, "force", "f", false, "Force upgrade ignore version comparison.")

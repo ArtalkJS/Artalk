@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// TODO 该命令需要支持不启动 app 就能执行
 func NewGenCommand(app *core.App) *cobra.Command {
 	genCmd := &cobra.Command{
 		Use:   "gen <TYPE> <DEST>",
@@ -30,6 +29,9 @@ func NewGenCommand(app *core.App) *cobra.Command {
 			isForce, _ = cmd.Flags().GetBool("force")
 
 			core.Gen(args[0], specificPath, isForce)
+		},
+		Annotations: map[string]string{
+			BootModeKey: MODE_MINI_BOOT,
 		},
 	}
 

@@ -51,7 +51,8 @@ func ActionLimitMiddleware(app *core.App, conf ActionLimitConf) fiber.Handler {
 			err := c.Next()
 
 			// 若为保护路径
-			if isProtectPath(c.Path(), conf.ProtectPaths) {
+			if isProtectPath(c.Path(), conf.ProtectPaths) &&
+				c.Method() != fiber.MethodOptions { // 忽略 Options 请求
 				limiter.Log(ip)
 			}
 

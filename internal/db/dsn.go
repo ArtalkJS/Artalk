@@ -21,14 +21,23 @@ func getDsnByConf(conf config.DBConf) string {
 			conf.Name,
 			conf.Port)
 
-	case config.TypeMySql, config.TypeMSSQL:
-		dsn = fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
+	case config.TypeMySql:
+		dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local",
 			conf.User,
 			conf.Password,
 			conf.Host,
 			conf.Port,
 			conf.Name,
 			conf.Charset,
+		)
+
+	case config.TypeMSSQL:
+		dsn = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s",
+			conf.User,
+			conf.Password,
+			conf.Host,
+			conf.Port,
+			conf.Name,
 		)
 	}
 

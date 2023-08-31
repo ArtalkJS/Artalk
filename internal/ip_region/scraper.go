@@ -33,7 +33,8 @@ func regionScraper(raw string, precision config.IPRegionPrecision) string {
 
 	var (
 		country  = sep[0]
-		province = strings.TrimSuffix(sep[2], "省")
+		_        = sep[1] // Area
+		province = strings.TrimSuffix(strings.TrimSuffix(sep[2], "省"), "市")
 		city     = strings.TrimSuffix(sep[3], "市")
 		// isp      = sep[4]
 	)

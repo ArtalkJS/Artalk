@@ -19,12 +19,12 @@ type Sender interface {
 	Send(email *Email) bool
 }
 
-func NewSender(conf *EmailConf) Sender {
+func NewSender(conf EmailConf) Sender {
 	switch conf.SendType {
 	case config.TypeSMTP:
-		return NewSmtpSender(&conf.SMTP)
+		return NewSmtpSender(conf.SMTP)
 	case config.TypeAliDM:
-		return NewAliDMSender(&conf.AliDM)
+		return NewAliDMSender(conf.AliDM)
 	case config.TypeSendmail:
 		return NewCmdSender()
 	default:

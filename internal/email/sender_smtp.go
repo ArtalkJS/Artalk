@@ -14,7 +14,7 @@ type SmtpSender struct {
 var _ Sender = (*SmtpSender)(nil)
 
 // NewSmtpSender SMTP
-func NewSmtpSender(smtp *config.SMTPConf) *SmtpSender {
+func NewSmtpSender(smtp config.SMTPConf) *SmtpSender {
 	d := gomail.NewDialer(smtp.Host, smtp.Port, smtp.Username, smtp.Password)
 
 	return &SmtpSender{

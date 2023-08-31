@@ -14,7 +14,7 @@ type Config struct {
 	TimeZone       string                 `koanf:"timezone" json:"timezone"`               // 时区
 	Host           string                 `koanf:"host" json:"host"`                       // HTTP Server 监听 IP
 	Port           int                    `koanf:"port" json:"port"`                       // HTTP Server 监听 Port
-	DB             DBConf                 `koanf:"db" json:"db"`                           // 数据文件
+	DB             DBConf                 `koanf:"db" json:"db"`                           // 数据库配置
 	Cache          CacheConf              `koanf:"cache" json:"cache"`                     // 缓存
 	Log            LogConf                `koanf:"log" json:"log"`                         // 日志文件
 	TrustedDomains []string               `koanf:"trusted_domains" json:"trusted_domains"` // 可信任的域名 (新)

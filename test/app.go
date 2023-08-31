@@ -9,7 +9,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/db"
+	db_logger "github.com/ArtalkJS/Artalk/internal/db/logger"
 	"github.com/ArtalkJS/Artalk/internal/pkged"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/go-testfixtures/testfixtures/v3"
@@ -48,7 +48,7 @@ func NewTestApp() (*TestApp, error) {
 
 	// open a sqlite db
 	dbInstance, err := gorm.Open(sqlite.Open(dbFile), &gorm.Config{
-		Logger: db.NewGormLogger(),
+		Logger: db_logger.NewGormLogger(),
 	})
 	if err != nil {
 		return nil, err

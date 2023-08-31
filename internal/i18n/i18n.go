@@ -1,11 +1,7 @@
 package i18n
 
 import (
-	"fmt"
-	"io"
-
 	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/internal/pkged"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"gopkg.in/yaml.v3"
 )
@@ -14,24 +10,18 @@ import (
 
 var Locales map[string]string
 
-func Init(locale string) {
+func Load(locale string, localeProvider func(locale string) ([]byte, error)) {
 	if locale == "" { // default lang
 		locale = "en"
 	}
 
-	read := func(l string) ([]byte, error) {
-		file, err := pkged.FS().Open(fmt.Sprintf("i18n/%s.yml", l))
-		if err != nil {
-			return nil, err
-		}
-		return io.ReadAll(file)
-	}
-
-	yamlStr, err := read(locale)
+	yamlStr, err := localeProvider(locale)
 	if err != nil {
 		log.Warn("invalid locale config please check, now it is set to `en`")
-		yamlStr, _ = read("en")
+		yamlStr, _ = localeProvider("en")
 	}
+
+	clear(Locales) // clear map before unmarshal
 
 	yaml.Unmarshal(yamlStr, &Locales)
 }

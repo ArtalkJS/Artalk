@@ -20,6 +20,7 @@ type ImportParams struct {
 	UrlResolver    bool
 	JsonFile       string
 	JsonData       string
+	Assumeyes      bool // Automatically answer yes for all questions.
 }
 
 func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran) {
@@ -69,7 +70,7 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 	print("\n")
 
 	// 确认开始
-	if !confirm(i18n.T("Confirm to continue?")) {
+	if !params.Assumeyes && !confirm(i18n.T("Confirm to continue?")) {
 		os.Exit(0)
 	}
 

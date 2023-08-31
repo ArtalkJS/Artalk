@@ -16,6 +16,9 @@ func NewConfigCommand(app *core.App) *cobra.Command {
 			buf, _ := json.MarshalIndent(app.Conf(), "", "    ")
 			fmt.Println(string(buf))
 		},
+		Annotations: map[string]string{
+			BootModeKey: MODE_MINI_BOOT,
+		},
 	}
 
 	return configCmd

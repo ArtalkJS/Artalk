@@ -38,7 +38,9 @@ func (e *EmailService) Init() error {
 }
 
 func (e *EmailService) Dispose() error {
-	e.queue.Close()
+	if e.queue != nil {
+		e.queue.Close()
+	}
 
 	return nil
 }

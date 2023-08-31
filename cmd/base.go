@@ -39,6 +39,13 @@ type ArtalkCmd struct {
 	RootCmd *cobra.Command
 }
 
+const BootModeKey = "BootMode"
+
+const (
+	MODE_FULL_BOOT = "FULL_BOOT"
+	MODE_MINI_BOOT = "MINI_BOOT"
+)
+
 func New() *ArtalkCmd {
 	cmd := &ArtalkCmd{
 		RootCmd: &cobra.Command{
@@ -72,29 +79,43 @@ func New() *ArtalkCmd {
 	return cmd
 }
 
-func (atk *ArtalkCmd) mountCommands() {
-	atk.RootCmd.AddCommand(NewServeCommand(atk.App))
-	atk.RootCmd.AddCommand(NewAdminCommand(atk.App))
-	atk.RootCmd.AddCommand(NewExportCommand(atk.App))
-	atk.RootCmd.AddCommand(NewImportCommand(atk.App))
+func (atk *ArtalkCmd) addCommand(cmd *cobra.Command) {
+	originalPreRunFunc := cmd.PreRun
 
-	// TODO running without bootstrapped env
-	atk.RootCmd.AddCommand(NewConfigCommand(atk.App))
-	atk.RootCmd.AddCommand(NewGenCommand(atk.App))
-	atk.RootCmd.AddCommand(NewUpgradeCommand(atk.App))
-	atk.RootCmd.AddCommand(NewVersionCommand(atk.App))
+	cmd.PreRun = func(cmd *cobra.Command, args []string) {
+		// ================
+		//  APP Bootstrap
+		// ================
+		if cmd.Annotations[BootModeKey] != string(MODE_MINI_BOOT) {
+			if err := atk.Bootstrap(); err != nil {
+				panic(err)
+			}
+		}
+
+		if originalPreRunFunc != nil {
+			originalPreRunFunc(cmd, args) // extends original pre-run logic
+		}
+	}
+
+	atk.RootCmd.AddCommand(cmd)
+}
+
+func (atk *ArtalkCmd) mountCommands() {
+	atk.addCommand(NewServeCommand(atk.App))
+	atk.addCommand(NewAdminCommand(atk.App))
+	atk.addCommand(NewExportCommand(atk.App))
+	atk.addCommand(NewImportCommand(atk.App))
+	atk.addCommand(NewConfigCommand(atk.App))
+	atk.addCommand(NewGenCommand(atk.App))
+	atk.addCommand(NewUpgradeCommand(atk.App))
+	atk.addCommand(NewVersionCommand(atk.App))
 }
 
 func (atk *ArtalkCmd) Launch() error {
-	// mount system commands
+	// ===================
+	//  1. Prepare Commands
+	// ===================
 	atk.mountCommands()
-
-	// ===================
-	//  1. App Bootstrap
-	// ===================
-	if err := atk.Bootstrap(); err != nil {
-		return err
-	}
 
 	done := make(chan bool, 1) // shutdown signal
 

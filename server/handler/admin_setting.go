@@ -78,7 +78,9 @@ func AdminSettingSave(app *core.App, router fiber.Router) {
 		}
 
 		// 重启服务
-		app.Restart()
+		if err := app.Restart(); err != nil {
+			return common.RespError(c, i18n.T("Restart failed: {{err}}", map[string]interface{}{"err": err.Error()}))
+		}
 
 		log.Info(i18n.T("Services restart complete"))
 

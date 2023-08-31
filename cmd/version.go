@@ -14,6 +14,9 @@ func NewVersionCommand(app *core.App) *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println("Artalk (" + Version + ")")
 		},
+		Annotations: map[string]string{
+			BootModeKey: MODE_MINI_BOOT,
+		},
 	}
 
 	return versionCmd

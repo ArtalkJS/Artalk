@@ -3,11 +3,8 @@ package core
 import (
 	"fmt"
 	"io"
-	"os"
-	"runtime"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/cache"
@@ -179,22 +176,13 @@ func (app *App) Cache() *cache.Cache {
 }
 
 func (app *App) Restart() error {
-	if runtime.GOOS == "windows" {
-		return fmt.Errorf("restart is not supported on windows")
-	}
-
-	execPath, err := os.Executable()
-	if err != nil {
+	// optimistically reset the app bootstrap state
+	if err := app.ResetBootstrapState(); err != nil {
 		return err
 	}
 
-	// optimistically reset the app bootstrap state
-	app.ResetBootstrapState()
-
-	if err := syscall.Exec(execPath, os.Args, os.Environ()); err != nil {
-		// restart the app bootstrap state
-		app.Bootstrap()
-
+	// re-bootstrap
+	if err := app.Bootstrap(); err != nil {
 		return err
 	}
 

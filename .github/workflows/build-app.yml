@@ -30,23 +30,25 @@ jobs:
 
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
-      - name: Docker Image Cache
-        id: docker-cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.CACHE_DIR }}
-          key: docker-image-go-cross-${{ env.GO_VERSION }}
+      # disable cache because the err `no space left on device`
+      # - name: Docker Image Cache
+      #   id: docker-cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.CACHE_DIR }}
+      #     key: docker-image-go-cross-${{ env.GO_VERSION }}
 
       - name: Pull Docker Image
-        if: steps.docker-cache.outputs.cache-hit != 'true'
+        # if: steps.docker-cache.outputs.cache-hit != 'true'
         run: |
           docker pull "${DOCKER_IMG}:v${GO_VERSION}"
-          mkdir -p "${CACHE_DIR}"
-          docker save -o "${CACHE_DIR}/go-cross.tar" "${DOCKER_IMG}:v${GO_VERSION}"
 
-      - name: Restore Docker Image from Cache
-        if: steps.docker-cache.outputs.cache-hit == 'true'
-        run: docker load -i ${CACHE_DIR}/go-cross.tar
+          # mkdir -p "${CACHE_DIR}"
+          # docker save -o "${CACHE_DIR}/go-cross.tar" "${DOCKER_IMG}:v${GO_VERSION}"
+
+      # - name: Restore Docker Image from Cache
+      #   if: steps.docker-cache.outputs.cache-hit == 'true'
+      #   run: docker load -i ${CACHE_DIR}/go-cross.tar
 
       - name: Setup git-chglog
         run: |

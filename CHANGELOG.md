@@ -1,4 +1,68 @@
 
+## [v2.6.0](https://github.com/ArtalkJS/Artalk/compare/v2.5.5...v2.6.0) (2023-09-01)
+
+### Features
+
+* **config:** support load env variables as config ([#564](https://github.com/ArtalkJS/Artalk/issues/564))
+* **go:** upgrade golang to v1.21.0 and some deps ([#543](https://github.com/ArtalkJS/Artalk/issues/543))
+* **hook:** add hook pkg
+* **simple_cache:** a simple thread-safe cache with sync.Map
+* **utils:** add common random utils
+
+### Bug Fixes
+
+* **cache:** child comment ids store after comment updated
+* **cmd:** fix parse root cmd global flags
+* **config:** fix ip region patch
+* **db:** fix dsn strings for mysql connections ([#541](https://github.com/ArtalkJS/Artalk/issues/541))
+* **limiter:** limiter log ignore options method req
+* **limiter:** fix limiter always mode
+* **log:** add missing log for web server listen func ([#556](https://github.com/ArtalkJS/Artalk/issues/556))
+* **ui:** fix plug cannot disable issue ([#563](https://github.com/ArtalkJS/Artalk/issues/563))
+
+### Performance Improvements
+
+* **cmd:** support command mini boot mode
+
+### Code Refactoring
+
+* **CI:** replace using `docker/metadata-action` for the docker push ([#545](https://github.com/ArtalkJS/Artalk/issues/545))
+* **CI:** replace renovate with github dependabot ([#546](https://github.com/ArtalkJS/Artalk/issues/546))
+* **anti_spam:** refactor anti_spam pkg
+* **artransfer:** refactor artransfer pkg
+* **cache:** remove cached fields in struct to save memory ([#555](https://github.com/ArtalkJS/Artalk/issues/555))
+* **cache:** cache code tidy-up
+* **cache:** refactor cache pkg
+* **cache:** refactor cache pkg
+* **cache:** refactor cache pkg
+* **captcha:** refactor captcha pkg
+* **cloud:** refactor cloud pkg
+* **cmd:** refactor cmd pkg
+* **conf:** better config.NewFromFile with error handle
+* **config:** refactor config pkg
+* **core:** refactor core pkg
+* **core:** better AppService func with error handle
+* **cors:** refactor cors middleware
+* **dao:** refactor dao pkg
+* **dao_cache:** add dao_cache pkg
+* **db:** refactor db pkg
+* **email:** refactor email pkg
+* **i18n:** refactor i18n pkg
+* **ip_region:** refactor ip_region pkg
+* **limiter:** add limiter pkg
+* **log:** create common log pkg
+* **main:** refactor main.go
+* **notify:** add notify_pusher pkg
+* **server/common:** refactor server/common pkg
+* **server/handler:** refactor server/handler pkg
+* **server/middleware:** refactor server/middleware pkg
+* **test:** create common test pkg
+
+### Documentation
+
+* **extras:** add deploy guide for fly.io ([#520](https://github.com/ArtalkJS/Artalk/issues/520))
+
+
 ## [v2.5.5](https://github.com/ArtalkJS/Artalk/compare/v2.5.4...v2.5.5) (2023-05-10)
 
 ### Features

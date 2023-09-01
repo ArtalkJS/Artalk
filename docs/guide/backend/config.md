@@ -12,6 +12,21 @@ Artalk 默认以工作目录下的 `artalk.yml` 作为配置文件，可使用�
 artalk -c ./conf.yml
 ```
 
+## 通过环境变量配置
+
+Artalk读取以`ATK_`为前缀的环境变量，并按照以下规则将其与配置文件中的配置项对应:
+
+ - `_`转为`.`
+ - `-`,`__`转为`_`
+
+e.g.
+```
+ATK_HOST               -> host
+ATK_LOGIN-TIMEOUT      -> login_timeout
+ATK_DB_TYPE            -> db.type
+ATK_ADMIN_USERS_0_NAME -> admin_users[0].name
+```
+
 ## 获取模版配置文件
 
 可参考一份「完整的配置文件」：[artalk.example.zh-CN.yml](https://github.com/ArtalkJS/Artalk/blob/master/conf/artalk.example.zh-CN.yml)

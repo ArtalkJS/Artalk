@@ -86,9 +86,19 @@ func (c *DaoCache) CommentCacheDel(comment *entity.Comment) {
 
 // 缓存 父ID=>子ID 评论数据
 func (c *DaoCache) ChildCommentCacheSave(comment *entity.Comment) error {
+	// 若 comment 为根评论
 	if comment.Rid == 0 {
-		// 若 comment 为根评论，则创建初始空数据，无子评论
-		return c.StoreCache([]uint{}, fmt.Sprintf(CommentChildIDsByIDKey, comment.ID))
+		// 查询是否有缓存数据
+		// 若无缓存数据，则创建初始空数据，无子评论
+		// 若有缓存数据，说明 comment 是 update 操作，则不更改
+		cacheName := fmt.Sprintf(CommentChildIDsByIDKey, comment.ID)
+		var childIDs []uint
+		if err := c.FindCache(cacheName, &childIDs); err != nil {
+			// 无缓存，则初始化
+			return c.StoreCache([]uint{}, cacheName)
+		}
+
+		return nil
 	}
 
 	// 若 comment 为子评论（Rid 不为空，Rid 为父 ID），

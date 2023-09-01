@@ -61,6 +61,10 @@ func (app *App) Bootstrap() error {
 	mutex.Lock()
 	defer mutex.Unlock()
 
+	if app.Conf() == nil {
+		return fmt.Errorf("app.conf cannot be nil while bootstrap")
+	}
+
 	// 时区设置
 	denverLoc, _ := time.LoadLocation(app.Conf().TimeZone)
 	time.Local = denverLoc
@@ -175,6 +179,10 @@ func AppService[T Service](app *App) (T, error) {
 
 func (app *App) Conf() *config.Config {
 	return app.conf
+}
+
+func (app *App) SetConf(conf *config.Config) {
+	app.conf = conf
 }
 
 func (app *App) Dao() *dao.Dao {

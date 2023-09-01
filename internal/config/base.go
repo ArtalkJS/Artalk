@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -20,13 +21,12 @@ func New() *Config {
 }
 
 // 从文件中创建配置实例
-func NewFromFile(cfgFile string) *Config {
+func NewFromFile(cfgFile string) (*Config, error) {
 	kf := koanf.New(".")
 
 	// load yaml config
 	if err := kf.Load(file.Provider(cfgFile), yaml.Parser()); err != nil {
-		log.Errorln(err)
-		log.Fatal("Config file read error")
+		return nil, fmt.Errorf("config file read error: %w", err)
 	}
 
 	// create new config instance
@@ -36,8 +36,7 @@ func NewFromFile(cfgFile string) *Config {
 
 	// use koanf parser to decode config file to instance
 	if err := kf.Unmarshal("", conf); err != nil {
-		log.Errorln(err)
-		log.Fatal("Config file parse error")
+		return nil, fmt.Errorf("config file parse error: %w", err)
 	}
 
 	// patch config
@@ -48,39 +47,34 @@ func NewFromFile(cfgFile string) *Config {
 		conf.ipRegionPatch()
 	}
 
-	return conf
+	return conf, nil
 }
 
 func (conf *Config) GetCfgFileLoaded() string {
 	return conf.cfgFile
 }
 
-// 配置检验
-// (该函数将在程序 bootstrap 时被调用)
-func (conf *Config) Validate() {
-	conf.mux.Lock()
-	defer conf.mux.Unlock()
-
+// 配置修补
+func (conf *Config) normalPatch() {
 	// 检查 app_key 是否设置
 	if strings.TrimSpace(conf.AppKey) == "" {
-		log.Fatal("Please check config file and set an `app_key` for data encryption")
+		conf.AppKey = utils.RandomString(16)
+		log.Warn("config `app_key` is not set, now it is random value")
 	}
 
 	// 检查时区
-	if strings.TrimSpace(conf.TimeZone) == "" {
-		log.Fatal("Please check config file and set `timezone`")
+	conf.TimeZone = strings.TrimSpace(conf.TimeZone)
+	if conf.TimeZone == "" {
+		conf.TimeZone = "Local"
+		log.Warn("config `timezone` is not set, now it is: " + strconv.Quote(conf.TimeZone))
 	}
 
 	// 默认站点配置
-	if strings.TrimSpace(conf.SiteDefault) == "" {
-		log.Fatal("Please check config file and set `site_default`")
-	}
-
-}
-
-// 配置修补
-func (conf *Config) normalPatch() {
 	conf.SiteDefault = strings.TrimSpace(conf.SiteDefault)
+	if conf.SiteDefault == "" {
+		conf.SiteDefault = "Default Site"
+		log.Warn("config `site_default` is not set, now it is: " + strconv.Quote(conf.SiteDefault))
+	}
 
 	// 缓存配置
 	if conf.Cache.Type == "" {

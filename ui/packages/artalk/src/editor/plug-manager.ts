@@ -46,7 +46,7 @@ export function createPlugManager(editor: Editor): PlugManager {
   const DISABLED = getDisabledPlugNames(editor.conf)
 
   ENABLED_PLUGS
-    .filter(p => !DISABLED.includes(p.name)) // 禁用的插件
+    .filter(p => !DISABLED.includes(p.Name)) // 禁用的插件
     .forEach((Plug) => {
       initPlugItem(ctx, Plug)
     })

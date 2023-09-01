@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -138,7 +140,10 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 
 			// 待审状态被修改为 false，则重新发送邮件通知
 			if !comment.IsPending {
-				RenotifyWhenPendingModified(app, &comment)
+				if err := RenotifyWhenPendingModified(app, &comment); err != nil {
+					log.Error("[RenotifyWhenPendingModified] error: ", err)
+					return common.RespError(c, "Renotify Err: "+err.Error())
+				}
 			}
 		}
 
@@ -152,7 +157,7 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 	})
 }
 
-func RenotifyWhenPendingModified(app *core.App, comment *entity.Comment) {
+func RenotifyWhenPendingModified(app *core.App, comment *entity.Comment) (err error) {
 	if comment.Rid == 0 {
 		return // Root 评论不发送通知，因为这个评论已经被管理员看到了
 	}
@@ -171,8 +176,17 @@ func RenotifyWhenPendingModified(app *core.App, comment *entity.Comment) {
 		return // 邮件已经发送过，则不再重复发送
 	}
 
-	app.Dao().NotifySetInitial(&notify)
+	// 设置通知为未读状态
+	if err := app.Dao().NotifySetInitial(&notify); err != nil {
+		return fmt.Errorf("func NotifySetInitial err: %w", err)
+	}
 
 	// 邮件通知
-	core.AppService[*core.EmailService](app).AsyncSend(&notify)
+	emailService, err := core.AppService[*core.EmailService](app)
+	if err != nil {
+		return err
+	}
+	emailService.AsyncSend(&notify)
+
+	return
 }

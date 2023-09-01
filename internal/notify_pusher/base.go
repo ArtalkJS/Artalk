@@ -19,7 +19,7 @@ type NotifyPusherConf struct {
 	Dao *dao.Dao
 	// bridge func to email push
 	EmailPush   func(notify *entity.Notify) error
-	EmailRender func() *email.Render
+	EmailRender func() (*email.Render, error)
 }
 
 type NotifyPusher struct {

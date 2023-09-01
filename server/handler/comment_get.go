@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -184,13 +185,19 @@ func CommentGet(app *core.App, router fiber.Router) {
 
 		// IP region query
 		if app.Conf().IPRegion.Enabled {
-			nCookedComments := []entity.CookedComment{}
-			for _, c := range cookedComments {
-				rawC := app.Dao().FindComment(c.ID)
-				c.IPRegion = core.AppService[*core.IPRegionService](app).Query(rawC.IP)
-				nCookedComments = append(nCookedComments, c)
+			ipRegionService, err := core.AppService[*core.IPRegionService](app)
+			if err == nil {
+				nCookedComments := []entity.CookedComment{}
+				for _, c := range cookedComments {
+					rawC := app.Dao().FindComment(c.ID)
+
+					c.IPRegion = ipRegionService.Query(rawC.IP)
+					nCookedComments = append(nCookedComments, c)
+				}
+				cookedComments = nCookedComments
+			} else {
+				log.Error("[IPRegionService] err: ", err)
 			}
-			cookedComments = nCookedComments
 		}
 
 		resp := ResponseGet{

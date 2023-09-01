@@ -60,10 +60,34 @@ func TestAppInjectAndService(t *testing.T) {
 	AppInject[*MockService](app, mockService)
 
 	// get
-	gotService := AppService[*MockService](app)
-	assert.NotNil(t, gotService)
+	gotService, err := AppService[*MockService](app)
+	if assert.NoError(t, err) {
+		assert.NotNil(t, gotService)
+		assert.Equal(t, mockService, gotService)
+	}
 
-	assert.Equal(t, mockService, gotService)
+	// err test
+	t.Run("AccessNilApp", func(t *testing.T) {
+		var app *App
+		_, err := AppService[*MockService](app)
+		assert.Error(t, err)
+	})
+
+	t.Run("AccessNilService", func(t *testing.T) {
+		app := &App{
+			service: &map[string]Service{},
+		}
+		_, err := AppService[*MockService](app)
+		assert.Error(t, err)
+	})
+
+	t.Run("AccessNilServicesMap", func(t *testing.T) {
+		app := &App{
+			service: nil,
+		}
+		_, err := AppService[*MockService](app)
+		assert.Error(t, err)
+	})
 }
 
 func TestApp_OnTerminate(t *testing.T) {

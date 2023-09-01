@@ -16,7 +16,7 @@
     "vue": "^3.3.4",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.4",
-    "yaml": "^2.3.1"
+    "yaml": "^2.3.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.3.3",

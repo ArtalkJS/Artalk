@@ -136,7 +136,6 @@ func (app *App) ResetBootstrapState() error {
 			}
 		}
 	}
-	app.service = &map[string]Service{}
 
 	return nil
 }
@@ -151,12 +150,27 @@ func AppInject[T Service](app *App, service T) {
 	app.Inject(genServiceName[T](), service)
 }
 
-func (app *App) Service(name string) Service {
-	return (*app.service)[name]
+func (app *App) Service(name string) (Service, error) {
+	if app.service == nil {
+		return nil, fmt.Errorf("services map is nil")
+	}
+	if _, isExits := (*app.service)[name]; !isExits {
+		return nil, fmt.Errorf("service %s not found", name)
+	}
+	return (*app.service)[name], nil
 }
 
-func AppService[T Service](app *App) T {
-	return app.Service(genServiceName[T]()).(T)
+func AppService[T Service](app *App) (T, error) {
+	if app == nil {
+		var zero T
+		return zero, fmt.Errorf("app is nil")
+	}
+	service, err := app.Service(genServiceName[T]())
+	if err != nil {
+		var zero T
+		return zero, err
+	}
+	return service.(T), nil
 }
 
 func (app *App) Conf() *config.Config {

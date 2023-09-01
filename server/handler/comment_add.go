@@ -160,24 +160,37 @@ func CommentAdd(app *core.App, router fiber.Router) {
 			// 垃圾检测
 			if !isAdmin { // 忽略检查管理员
 				// 同步执行
-				core.AppService[*core.AntiSpamService](app).CheckAndBlock(&anti_spam.CheckData{
-					Comment:      &comment,
-					ReqReferer:   referer,
-					ReqIP:        ip,
-					ReqUserAgent: ua,
-				})
+				if antiSpamService, err := core.AppService[*core.AntiSpamService](app); err == nil {
+					antiSpamService.CheckAndBlock(&anti_spam.CheckData{
+						Comment:      &comment,
+						ReqReferer:   referer,
+						ReqIP:        ip,
+						ReqUserAgent: ua,
+					})
+				} else {
+					log.Error("[AntiSpamService] err: ", err)
+				}
 			}
 
 			// 通知发送
-			core.AppService[*core.NotifyService](app).Push(&comment, &parentComment)
+			if notifyService, err := core.AppService[*core.NotifyService](app); err == nil {
+				if err := notifyService.Push(&comment, &parentComment); err != nil {
+					log.Error("[NotifyService] notify push err: ", err)
+				}
+			} else {
+				log.Error("[NotifyService] err: ", err)
+			}
 		}()
 
 		cookedComment := app.Dao().CookComment(&comment)
 
 		// IP 归属地
 		if app.Conf().IPRegion.Enabled {
-
-			cookedComment.IPRegion = core.AppService[*core.IPRegionService](app).Query(comment.IP)
+			if ipRegionService, err := core.AppService[*core.IPRegionService](app); err == nil {
+				cookedComment.IPRegion = ipRegionService.Query(comment.IP)
+			} else {
+				log.Error("[IPRegionService] err: ", err)
+			}
 		}
 
 		return common.RespData(c, ResponseAdd{

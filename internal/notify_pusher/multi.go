@@ -50,7 +50,11 @@ func (pusher *NotifyPusher) getAdminNotifySubjectBody(comment *entity.Comment, t
 
 	notify := pusher.dao.FindCreateNotify(toUserID, comment.ID)
 
-	render := pusher.conf.EmailRender()
+	render, err := pusher.conf.EmailRender()
+	if err != nil {
+		log.Error("pusher.conf.EmailRender err,", err)
+		return "", ""
+	}
 	if render == nil {
 		log.Error("pusher.conf.EmailRender cannot be nil")
 		return "", ""

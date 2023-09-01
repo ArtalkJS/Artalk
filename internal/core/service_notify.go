@@ -22,11 +22,19 @@ func (s *NotifyService) Init() error {
 		AdminNotifyConf: s.app.Conf().AdminNotify,
 		Dao:             s.app.Dao(),
 		EmailPush: func(notify *entity.Notify) error {
-			AppService[*EmailService](s.app).AsyncSend(notify)
+			emailService, err := AppService[*EmailService](s.app)
+			if err != nil {
+				return err
+			}
+			emailService.AsyncSend(notify)
 			return nil
 		},
-		EmailRender: func() *email.Render {
-			return AppService[*EmailService](s.app).GetRender()
+		EmailRender: func() (*email.Render, error) {
+			emailService, err := AppService[*EmailService](s.app)
+			if err != nil {
+				return nil, err
+			}
+			return emailService.GetRender(), nil
 		},
 	})
 

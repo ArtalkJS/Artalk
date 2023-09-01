@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -33,7 +34,12 @@ func AdminSendMail(app *core.App, router fiber.Router) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
-		core.AppService[*core.EmailService](app).AsyncSendTo(p.Subject, p.Body, p.ToAddr)
+		emailService, err := core.AppService[*core.EmailService](app)
+		if err != nil {
+			log.Error("[EmailService] err: ", err)
+			return common.RespError(c, "EmailService err: "+err.Error())
+		}
+		emailService.AsyncSendTo(p.Subject, p.Body, p.ToAddr)
 
 		return common.RespSuccess(c)
 	})

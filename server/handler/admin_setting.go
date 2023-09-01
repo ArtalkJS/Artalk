@@ -77,6 +77,14 @@ func AdminSettingSave(app *core.App, router fiber.Router) {
 			return common.RespError(c, i18n.T("Save failed")+": "+err2.Error())
 		}
 
+		// 应用新配置文件
+		conf, err := config.NewFromFile(configFile)
+		if err != nil {
+			return common.RespError(c, "Config instance err: "+err.Error())
+		}
+
+		app.SetConf(conf)
+
 		// 重启服务
 		if err := app.Restart(); err != nil {
 			return common.RespError(c, i18n.T("Restart failed: {{err}}", map[string]interface{}{"err": err.Error()}))

@@ -72,7 +72,11 @@ func New() *ArtalkCmd {
 	}
 
 	// initialize app instance
-	config := getConfig(cmd.cfgFile)
+	config, err := getConfig(cmd.cfgFile)
+	if err != nil {
+		log.Fatal("Config fail: ", err)
+	}
+
 	cmd.App = core.NewApp(config)
 
 	return cmd
@@ -158,7 +162,7 @@ func (atk *ArtalkCmd) Launch() error {
 }
 
 // 获取配置
-func getConfig(cfgFile string) *config.Config {
+func getConfig(cfgFile string) (*config.Config, error) {
 	// 尝试查找配置文件
 	if cfgFile == "" {
 		cfgFile = config.RetrieveConfigFile()
@@ -170,8 +174,7 @@ func getConfig(cfgFile string) *config.Config {
 		core.Gen("config", cfgFile, false)
 	}
 
-	conf := config.NewFromFile(cfgFile)
-	return conf
+	return config.NewFromFile(cfgFile)
 }
 
 // -------------------------------------------------------------------

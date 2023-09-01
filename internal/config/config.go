@@ -1,7 +1,6 @@
 package config
 
 import (
-	"sync"
 	"time"
 )
 
@@ -41,7 +40,6 @@ type Config struct {
 	// system runtime produce data
 	// ---------------------------
 
-	mux     sync.RWMutex
 	cfgFile string
 }
 

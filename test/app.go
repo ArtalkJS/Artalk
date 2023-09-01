@@ -79,7 +79,10 @@ func NewTestApp() (*TestApp, error) {
 	}
 
 	// create config instance
-	conf := config.NewFromFile("./test/testdata/model_test_conf.yml")
+	conf, err := config.NewFromFile("./test/testdata/model_test_conf.yml")
+	if err != nil {
+		return nil, err
+	}
 
 	// create app instance
 	app := core.NewApp(conf)

@@ -13,6 +13,7 @@ Artalk 离不开社区的支持与帮助，**是你们让 Artalk 走得更远！
 - [宝塔安装过程大概记录 (By @xiamuguizhi)](https://github.com/ArtalkJS/Artalk/discussions/46)
 - [Vuepress配置评论插件为Artalk](https://wiki.eryajf.net/pages/b74c2b/)
 - [Fly.io 部署 Artalk 评论系统](https://wayjam.me/posts/artalk-deploy-on-flyio/)
+- [Railway.app 部署 Artalk 评论系统](https://blog.moraxyc.com/post/eidb8276/)
 
 更多新版读物正在撰写当中（
 

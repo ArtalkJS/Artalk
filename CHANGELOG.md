@@ -1,4 +1,16 @@
 
+## [v2.6.1](https://github.com/ArtalkJS/Artalk/compare/v2.6.0...v2.6.1) (2023-09-11)
+
+### Bug Fixes
+
+* **captcha:** image captcha base64 response issue ([#575](https://github.com/ArtalkJS/Artalk/issues/575))
+
+### Documentation
+
+* **config:** add info about env variables ([#566](https://github.com/ArtalkJS/Artalk/issues/566))
+* **extras:** add deploy guide for railway.app ([#567](https://github.com/ArtalkJS/Artalk/issues/567))
+
+
 ## [v2.6.0](https://github.com/ArtalkJS/Artalk/compare/v2.5.5...v2.6.0) (2023-09-01)
 
 ### Features

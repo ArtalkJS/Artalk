@@ -70,7 +70,7 @@ func ActionLimitMiddleware(app *core.App, conf ActionLimitConf) fiber.Handler {
 			case captcha.Image:
 				// 图片验证码
 				img, _ := cap.Get()
-				respData["img_data"] = img
+				respData["img_data"] = string(img)
 			case captcha.IFrame:
 				// iFrame 验证模式
 				respData["iframe"] = true

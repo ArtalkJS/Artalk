@@ -14,17 +14,21 @@ artalk -c ./conf.yml
 
 ## 通过环境变量配置
 
-Artalk读取以`ATK_`为前缀的环境变量，并按照以下规则将其与配置文件中的配置项对应:
+Artalk 读取以 `ATK_` 为前缀的环境变量，并且全部大写，配置项子节点用单下划线表示，配置名带下划线的用双下划线表示：
 
- - `_`转为`.`
- - `-`,`__`转为`_`
+  - `_` (单下划线) 转为 `.` 表示子节点
+  - `__` (双下划线) 转为 `_` 表示配置名的下划线
 
 e.g.
-```
-ATK_HOST               -> host
-ATK_LOGIN-TIMEOUT      -> login_timeout
-ATK_DB_TYPE            -> db.type
-ATK_ADMIN_USERS_0_NAME -> admin_users[0].name
+
+```bash
+ATK_TIMEZONE             -> timezone
+ATK_LOGIN__TIMEOUT       -> login_timeout
+ATK_SITE__DEFAULT        -> site_default
+ATK_DB_TYPE              -> db.type
+ATK_DB_TABLE__PREFIX     -> db.table_prefix
+ATK_CACHE_REDIS_USERNAME -> cache.redis.username
+ATK_ADMIN_USERS_0_NAME   -> admin_users[0].name
 ```
 
 ## 获取模版配置文件

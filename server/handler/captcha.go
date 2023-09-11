@@ -64,7 +64,7 @@ func captchaGet(app *core.App) func(c *fiber.Ctx) error {
 		switch cap.Type() {
 		case captcha.Image:
 			return common.RespData(c, common.Map{
-				"img_data": got,
+				"img_data": string(got),
 			})
 
 		case captcha.IFrame:
@@ -128,7 +128,7 @@ func captchaCheck(app *core.App) func(c *fiber.Ctx) error {
 				}
 
 				return common.RespError(c, i18n.T("Wrong captcha"), common.Map{
-					"img_data": img,
+					"img_data": string(img),
 				})
 			}
 		case captcha.IFrame:

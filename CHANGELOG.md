@@ -1,4 +1,15 @@
 
+## [v2.6.2](https://github.com/ArtalkJS/Artalk/compare/v2.6.1...v2.6.2) (2023-09-12)
+
+### Bug Fixes
+
+* **cmd:** remove app instance creation when mini boot ([#577](https://github.com/ArtalkJS/Artalk/issues/577))
+
+### Performance Improvements
+
+* **style:** modify `z-index` less than 5 ([#578](https://github.com/ArtalkJS/Artalk/issues/578))
+
+
 ## [v2.6.1](https://github.com/ArtalkJS/Artalk/compare/v2.6.0...v2.6.1) (2023-09-11)
 
 ### Bug Fixes

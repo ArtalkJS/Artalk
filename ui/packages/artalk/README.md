@@ -24,4 +24,4 @@ Please make sure to read the [Contributing Guide](https://github.com/ArtalkJS/Ar
 
 ## License
 
-[LGPL-3.0](https://github.com/ArtalkJS/Artalk/blob/master/LICENSE)
+[MIT](https://github.com/ArtalkJS/Artalk/blob/master/LICENSE)

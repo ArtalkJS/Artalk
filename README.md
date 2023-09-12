@@ -219,7 +219,7 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## License
 
-[LGPL-3.0](./LICENSE)
+[MIT](./LICENSE)
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk?ref=badge_shield)
 

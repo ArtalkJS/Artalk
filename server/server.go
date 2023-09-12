@@ -31,7 +31,7 @@ import (
 // @Contact.url    https://artalk.js.org
 // @Contact.email  artalkjs@gmail.com
 
-// @License.name   LGPL-3.0
+// @License.name   MIT
 // @License.url    https://github.com/ArtalkJS/Artalk/blob/master/LICENSE
 
 // @SecurityDefinitions.apikey ApiKeyAuth

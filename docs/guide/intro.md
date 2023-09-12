@@ -64,7 +64,7 @@ Artalk 社区是包容开放的社区，我们欢迎不同水平的人员帮助 
 
 “More action, less talk”，Artalk 社区不欢迎无意义的争论，我们希望社区成员和谐共处、为社区发展出谋划策。在提出问题前，你应当读过《[提问的智慧](https://lug.ustc.edu.cn/wiki/doc/smart-questions/)》，这可能决定了你最终是否能得到有用的回答。在表达观点前，你应当具备基本的礼仪，比如保持平和的态度、使用得体的语言，切忌恶语相向、冷嘲热讽、不尊重他人信仰和立场等。
 
-我们作为开源精神的推崇者以及实践者，希望我们所创造的自由软件，都应该被自由的使用，自由的研究，自由的更改和自由的分享。本项目前后端代码使用第 3 版 GNU 宽通用公共许可证（[GNU Lesser General Public License V3](https://www.gnu.org/licenses/lgpl-3.0.html)）开源，文档请遵循知识共享许可协议 ([Creative Commons License](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh))。
+我们作为开源精神的推崇者以及实践者，希望我们所创造的自由软件，都应该被自由的使用，自由的研究，自由的更改和自由的分享。本项目前后端代码使用 [MIT](https://github.com/ArtalkJS/Artalk/blob/master/LICENSE) 协议开源，文档请遵循知识共享许可协议 ([Creative Commons License](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh))。
 ::: tip 立即为社区贡献力量？
 
   - 浏览开发者资料（[开发文档](../develop/index.md) / [CONTRIBUTING.md](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)）

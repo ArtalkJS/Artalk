@@ -1,7 +1,7 @@
 {
   "name": "@artalk/artalk-sidebar",
   "version": "1.0.2",
-  "license": "LGPL-3.0",
+  "license": "MIT",
   "description": "The sidebar of artalk",
   "private": true,
   "type": "module",

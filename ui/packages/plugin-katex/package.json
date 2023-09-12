@@ -1,7 +1,7 @@
 {
   "name": "@artalk/plugin-katex",
   "version": "0.1.5",
-  "license": "LGPL-3.0",
+  "license": "MIT",
   "description": "The katex plugin for artalk",
   "main": "./dist/artalk-plugin-katex.js",
   "module": "./dist/artalk-plugin-katex.es.js",

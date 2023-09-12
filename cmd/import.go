@@ -5,13 +5,12 @@ import (
 	"os"
 
 	"github.com/ArtalkJS/Artalk/internal/artransfer"
-	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/spf13/cobra"
 )
 
-func NewImportCommand(app *core.App) *cobra.Command {
+func NewImportCommand(app *ArtalkCmd) *cobra.Command {
 	importCmd := &cobra.Command{
 		Use:     "import <FILENAME>",
 		Aliases: []string{},

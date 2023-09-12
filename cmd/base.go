@@ -62,22 +62,16 @@ func New() *ArtalkCmd {
 	}
 
 	cmd.RootCmd.SetVersionTemplate("Artalk ({{printf \"%s\" .Version}})\n")
-	cmd.eagerParseFlags() // parse base flags
 
-	// 切换工作目录
+	// Parse base flags
+	cmd.eagerParseFlags()
+
+	// Change work directory
 	if cmd.workDir != "" {
 		if err := os.Chdir(cmd.workDir); err != nil {
 			log.Fatal("Working directory change error: ", err)
 		}
 	}
-
-	// initialize app instance
-	config, err := getConfig(cmd.cfgFile)
-	if err != nil {
-		log.Fatal("Config fail: ", err)
-	}
-
-	cmd.App = core.NewApp(config)
 
 	return cmd
 }
@@ -99,7 +93,17 @@ func (atk *ArtalkCmd) addCommand(cmd *cobra.Command) {
 		//  APP Bootstrap
 		// ================
 		if cmd.Annotations[BootModeKey] != string(MODE_MINI_BOOT) {
-			if err := atk.Bootstrap(); err != nil {
+			// Load config
+			config, err := getConfig(atk.cfgFile)
+			if err != nil {
+				log.Fatal("Config fail: ", err)
+			}
+
+			// Create new instance
+			atk.App = core.NewApp(config)
+
+			// Bootstrap APP
+			if err := atk.App.Bootstrap(); err != nil {
 				panic(err)
 			}
 		}
@@ -113,14 +117,14 @@ func (atk *ArtalkCmd) addCommand(cmd *cobra.Command) {
 }
 
 func (atk *ArtalkCmd) mountCommands() {
-	atk.addCommand(NewServeCommand(atk.App))
-	atk.addCommand(NewAdminCommand(atk.App))
-	atk.addCommand(NewExportCommand(atk.App))
-	atk.addCommand(NewImportCommand(atk.App))
-	atk.addCommand(NewConfigCommand(atk.App))
-	atk.addCommand(NewGenCommand(atk.App))
-	atk.addCommand(NewUpgradeCommand(atk.App))
-	atk.addCommand(NewVersionCommand(atk.App))
+	atk.addCommand(NewServeCommand(atk))
+	atk.addCommand(NewAdminCommand(atk))
+	atk.addCommand(NewExportCommand(atk))
+	atk.addCommand(NewImportCommand(atk))
+	atk.addCommand(NewConfigCommand())
+	atk.addCommand(NewGenCommand())
+	atk.addCommand(NewUpgradeCommand())
+	atk.addCommand(NewVersionCommand())
 }
 
 func (atk *ArtalkCmd) Launch() error {
@@ -156,24 +160,29 @@ func (atk *ArtalkCmd) Launch() error {
 	// ===================
 	//  3. App Cleanups
 	// ===================
-	return atk.OnTerminate().Trigger(&core.TerminateEvent{
-		App: atk.App,
-	})
+	if atk.App != nil {
+		return atk.App.OnTerminate().Trigger(&core.TerminateEvent{
+			App: atk.App,
+		})
+	}
+
+	return nil
 }
 
-// 获取配置
+// Create new config instance by specific config filename
 func getConfig(cfgFile string) (*config.Config, error) {
-	// 尝试查找配置文件
+	// Retrieve config file by default names when specific filename is empty
 	if cfgFile == "" {
 		cfgFile = config.RetrieveConfigFile()
 	}
 
-	// 自动生成新配置文件
+	// Generate new config file when retrieve failed
 	if cfgFile == "" {
 		cfgFile = config.CONF_DEFAULT_FILENAMES[0]
 		core.Gen("config", cfgFile, false)
 	}
 
+	// Create new config instance and return
 	return config.NewFromFile(cfgFile)
 }
 

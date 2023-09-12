@@ -50,12 +50,12 @@ If you want to run a demo site, you can use the following command:
 ./scripts/setup-example-site.sh
 ```
 
-This script sets up a local example site for testing at `local` folder, with Artalk integrated into its theme.
+This script sets up a local example site for testing at `data` folder, with Artalk integrated into its theme.
 
 After running this script, run:
 
 ```sh
-./bin/artalk server -c ./local/local.yml
+./bin/artalk server -c ./data/artalk.yml
 ```
 
 to start the artalk server.
@@ -80,7 +80,7 @@ Artalk is a monorepo project, which means all the source code is in the same rep
 - `docs/` - The documentation site source code.
 - `i18n/` - The translation files.
 - `internal/` - The internal packages.
-- `local/` - The local example site. This directory is ignored by git.
+- `data/` - The local data. This directory is ignored by git.
 - `public/` - The static files. Built frontend files will be copied here.
 - `scripts/` - The scripts for development.
 - `server/` - The source code for the server.

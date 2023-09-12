@@ -8,7 +8,7 @@
             "mode": "exec",
             "program": "${workspaceFolder}/bin/artalk",
             "preLaunchTask": "Build for debugging",
-            "args": ["server", "-c", "${workspaceFolder}/local/local.yml"]
+            "args": ["server", "-c", "${workspaceFolder}/data/artalk.yml"]
         }
     ],
 }

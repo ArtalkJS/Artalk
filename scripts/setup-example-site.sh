@@ -5,7 +5,7 @@
 # with Artalk integrated.
 # Build frontend and backend before running this script.
 # After running this script, run:
-#   ./bin/artalk server -c ./local/local.yml
+#   ./bin/artalk server -c ./data/artalk.yml
 # to start the comment server.
 # And open http://localhost:1313/ in your browser to view the example site.
 #
@@ -25,35 +25,35 @@ if ! [ -f "./public/dist/Artalk.css" ]; then
   exit 1
 fi
 
-mkdir -p ./local
+mkdir -p ./data
 
-# copy internal/query/testdata/example_site_conf.yml to ./local/local.yml if it does not exist
-if ! [ -f "./local/artalk.yml" ]; then
-  echo "Copying internal/query/testdata/example_site_conf.yml to ./local/artalk.yml"
-  cp ./internal/query/testdata/example_site_conf.yml ./local/local.yml
+# copy test/testdata/example_site_conf.yml to ./data/artalk.yml if it does not exist
+if ! [ -f "./data/artalk.yml" ]; then
+  echo "Copying test/testdata/example_site_conf.yml to ./data/artalk.yml"
+  cp ./test/testdata/example_site_conf.yml ./data/artalk.yml
 fi
 
-# clean up local/example_site if it exists
-if [ -d "./local/example_site" ]; then
-  echo "Cleaning up local/example_site"
-  rm -rfd ./local/example_site
+# clean up data/example_site if it exists
+if [ -d "./data/example_site" ]; then
+  echo "Cleaning up data/example_site"
+  rm -rfd ./data/example_site
 fi
 
-echo "Setting up local/example_site"
+echo "Setting up data/example_site"
 # create a new example site
-hugo new site ./local/example_site
+hugo new site ./data/example_site
 
 # copy the theme to the example site
 theme_repo="https://github.com/ph-ph/chalk"
-theme_dir="./local/example_site/themes/chalk"
+theme_dir="./data/example_site/themes/chalk"
 echo "Cloning theme from ${theme_repo} to ${theme_dir}"
 git clone ${theme_repo} ${theme_dir}
 
 
 # create comment partial
-echo "Creating comment partial in local/example_site"
-mkdir -p ./local/example_site/layouts/partials/comments
-cat << EOF > ./local/example_site/layouts/partials/comments/comments.html
+echo "Creating comment partial in data/example_site"
+mkdir -p ./data/example_site/layouts/partials/comments
+cat << EOF > ./data/example_site/layouts/partials/comments/comments.html
 <link href="/lib/artalk/Artalk.css" rel="stylesheet">
 <script src="/lib/artalk/Artalk.js"></script>
 
@@ -72,12 +72,12 @@ cat << EOF > ./local/example_site/layouts/partials/comments/comments.html
 EOF
 
 # patch ${single_template}, insert code before last </article> tag
-single_template=local/example_site/themes/chalk/layouts/_default/single.html
+single_template=data/example_site/themes/chalk/layouts/_default/single.html
 echo "Patching ${single_template}"
 sed -i '/<\/article>/i {{ partial "comments/comments.html" . }}' ./${single_template}
 
 # update the example site config
-cat << EOF > ./local/example_site/config.toml
+cat << EOF > ./data/example_site/config.toml
 baseURL = 'http://example.org/'
 languageCode = 'en-us'
 title = 'My New Hugo Site'
@@ -100,14 +100,14 @@ EOF
 
 # copy ./public/dist/Artalk.css/js to /lib/artalk/Artalk.css/js
 echo "Copying ./public/dist/Artalk.css/js to /lib/artalk/Artalk.css/js"
-mkdir -p ./local/example_site/static/lib/artalk
-cp ./public/dist/Artalk.css ./local/example_site/static/lib/artalk/Artalk.css
-cp ./public/dist/Artalk.js ./local/example_site/static/lib/artalk/Artalk.js
+mkdir -p ./data/example_site/static/lib/artalk
+cp ./public/dist/Artalk.css ./data/example_site/static/lib/artalk/Artalk.css
+cp ./public/dist/Artalk.js ./data/example_site/static/lib/artalk/Artalk.js
 
 # create a post in the example site
-echo "Creating a post in local/example_site"
-mkdir -p ./local/example_site/content/posts
-cat << EOF > ./local/example_site/content/posts/my-first-post.md
+echo "Creating a post in data/example_site"
+mkdir -p ./data/example_site/content/posts
+cat << EOF > ./data/example_site/content/posts/my-first-post.md
 ---
 title: "My First Post"
 ---
@@ -172,7 +172,7 @@ EOF
 
 
 # run the example site
-echo "Running local/example_site"
-pushd ./local/example_site
+echo "Running data/example_site"
+pushd ./data/example_site
 hugo server
 popd

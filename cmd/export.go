@@ -8,14 +8,13 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/artransfer"
-	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/spf13/cobra"
 )
 
-func NewExportCommand(app *core.App) *cobra.Command {
+func NewExportCommand(app *ArtalkCmd) *cobra.Command {
 	exportCmd := &cobra.Command{
 		Use:     "export",
 		Aliases: []string{},

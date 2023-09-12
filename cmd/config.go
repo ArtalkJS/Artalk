@@ -4,16 +4,26 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/spf13/cobra"
 )
 
-func NewConfigCommand(app *core.App) *cobra.Command {
+func NewConfigCommand() *cobra.Command {
 	configCmd := &cobra.Command{
 		Use:   "config",
 		Short: "Output Config Information",
 		Run: func(cmd *cobra.Command, args []string) {
-			buf, _ := json.MarshalIndent(app.Conf(), "", "    ")
+			// Get config filename from cmd flags
+			filename, _ := cmd.Flags().GetString("config")
+
+			// Get new config instance
+			config, err := getConfig(filename)
+			if err != nil {
+				log.Fatal("Config fail: ", err)
+			}
+
+			// Output JSON of config
+			buf, _ := json.MarshalIndent(config, "", "    ")
 			fmt.Println(string(buf))
 		},
 		Annotations: map[string]string{

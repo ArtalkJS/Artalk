@@ -3,11 +3,10 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/spf13/cobra"
 )
 
-func NewVersionCommand(app *core.App) *cobra.Command {
+func NewVersionCommand() *cobra.Command {
 	versionCmd := &cobra.Command{
 		Use:   "version",
 		Short: "Output version information",

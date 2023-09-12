@@ -7,7 +7,6 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/log"
@@ -16,7 +15,7 @@ import (
 	"golang.org/x/term"
 )
 
-func NewAdminCommand(app *core.App) *cobra.Command {
+func NewAdminCommand(app *ArtalkCmd) *cobra.Command {
 	adminCmd := &cobra.Command{
 		Use:   "admin",
 		Short: "Create or edit an administrator account",

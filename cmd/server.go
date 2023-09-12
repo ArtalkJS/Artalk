@@ -3,14 +3,13 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/server"
 
 	"github.com/spf13/cobra"
 )
 
-func NewServeCommand(app *core.App) *cobra.Command {
+func NewServeCommand(app *ArtalkCmd) *cobra.Command {
 	var serverCmd = &cobra.Command{
 		Use:     "server",
 		Aliases: []string{"serve"},
@@ -22,7 +21,7 @@ func NewServeCommand(app *core.App) *cobra.Command {
 			fmt.Print("-------------------------------\n\n")
 
 			// init fiber app
-			_, err := server.Serve(app)
+			_, err := server.Serve(app.App)
 			if err != nil {
 				log.Fatalln(err)
 			}

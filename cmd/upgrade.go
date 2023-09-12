@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/blang/semver"
@@ -14,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewUpgradeCommand(app *core.App) *cobra.Command {
+func NewUpgradeCommand() *cobra.Command {
 	upgradeCmd := &cobra.Command{
 		Use:     "upgrade",
 		Aliases: []string{"update"},
@@ -22,8 +21,6 @@ func NewUpgradeCommand(app *core.App) *cobra.Command {
 		Long:    "Upgrade Artalk to the latest version, \n update source is GitHub Releases, \n update need to restart Artalk to take effect.",
 		Args:    cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			// core.LoadConfOnly(cfgFile, workDir)
-
 			log.Info(i18n.T("Checking for updates") + "...")
 
 			latest, found, err := selfupdate.DetectLatest("ArtalkJS/Artalk")
@@ -53,11 +50,12 @@ func NewUpgradeCommand(app *core.App) *cobra.Command {
 			}
 
 			log.Println(i18n.T("Update complete"))
-			fmt.Println("\n-------------------------------\n    v" +
-				latest.Version.String() +
-				"  Release Note\n" +
-				"-------------------------------\n\n" +
-				latest.ReleaseNotes)
+			fmt.Printf("\n"+
+				"-------------------------------\n"+
+				"    v%s  Release Note\n"+
+				"-------------------------------\n\n"+
+				"%s\n",
+				latest.Version.String(), latest.ReleaseNotes)
 		},
 		Annotations: map[string]string{
 			BootModeKey: MODE_MINI_BOOT,

@@ -134,7 +134,7 @@
   top: 0;
   left: 0;
   background: var(--at-color-bg);
-  z-index: 10;
+  z-index: 4;
   align-items: center;
   justify-content: center;
   flex-flow: column;
@@ -144,7 +144,6 @@
 /* Loading */
 .atk-loading {
   @extend .atk-full-layer;
-  z-index: 11;
 }
 
 .atk-loading-spinner {

@@ -1,6 +1,5 @@
 .atk-main-editor {
   $editor-padding: 10px;
-  z-index: 5;
   position: relative;
   overflow: hidden;
   background: var(--at-color-bg);
@@ -180,7 +179,7 @@
   }
 
   & > .atk-notify-wrap {
-    z-index: 9;
+    z-index: 3;
     position: absolute;
     right: -2px;
     bottom: 40px;

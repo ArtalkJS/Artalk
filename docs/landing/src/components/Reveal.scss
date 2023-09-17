@@ -1,0 +1,23 @@
+.reveal {
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translate3d(0,100%,0);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateZ(0);
+    }
+  }
+  opacity: 0;
+
+  &.animate {
+    animation-name: fadeInUp;
+    animation-iteration-count: 1;
+  }
+
+  &.show {
+    opacity: 1;
+  }
+}

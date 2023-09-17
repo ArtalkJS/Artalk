@@ -1,0 +1,46 @@
+.safe.feature {
+  main {
+    margin-top: 80px;
+  }
+
+  .data-icon {
+    margin: 80px 0;
+    margin-left: 80px;
+  }
+
+  &.visible {
+    @keyframes dataIconTextAnim {
+      from {
+        transform: translateX(-40%);
+        opacity: 0;
+      }
+    }
+
+    @keyframes dataIconBgAnim {
+      from {
+        opacity: 0;
+        transform: translate(40%, -50%);
+      }
+    }
+
+    @keyframes dataIconFrameAnim {
+      from {
+        transform: translateX(20%);
+      }
+    }
+
+    .data-icon {
+      .bg {
+        animation: 1s cubic-bezier(0.25, 1, 0.5, 1) dataIconBgAnim;
+      }
+
+      .text {
+        animation: 1s cubic-bezier(0.25, 1, 0.5, 1) dataIconTextAnim;
+      }
+
+      .frame {
+        animation: 1s cubic-bezier(0.25, 1, 0.5, 1) dataIconFrameAnim;
+      }
+    }
+  }
+}

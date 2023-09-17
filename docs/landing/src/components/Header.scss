@@ -1,0 +1,45 @@
+.app-header {
+  z-index: 999;
+  position: sticky;
+  top: 0;
+  left: 0;
+  transition: background .2s ease;
+
+  .container {
+    height: 70px;
+    display: flex;
+    flex-direction: row;
+    place-items: center;
+    justify-content: space-between;
+  }
+
+  &.fixed {
+    border-bottom: 1px solid #f4f4f4;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .brand {
+    color: #0071E3;
+    font-size: 25px;
+    font-weight: 700;
+  }
+
+  .links {
+    display: flex;
+    flex-direction: row;
+    place-items: center;
+    justify-content: space-between;
+
+    .link-item {
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+
+      &:not(:last-child) {
+        margin-right: 40px;
+      }
+    }
+  }
+}
+
+

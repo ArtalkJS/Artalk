@@ -1,0 +1,126 @@
+@import "include-media";
+
+$breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
+
+@include media(">lg", "<xxl") {
+  .feature {
+    .feature-title {
+      padding: 0 40px;
+    }
+
+    .content {
+      padding: 0 75px;
+
+      main {
+        width: 50%;
+      }
+
+      aside {
+      }
+    }
+  }
+}
+
+@include media("<=md") {
+  .app-header {
+    padding: 0 25px;
+  }
+
+  .app-header .links .link-item:not(:last-child) {
+    margin-right: 24px
+  }
+
+  .slogan .text {
+    zoom: .8;
+    width: 90%;
+  }
+
+  .slogan .btns {
+    display: flex;
+    flex-direction: column;
+
+    .btn:not(:last-child) {
+      margin-right: 0;
+      margin-bottom: 20px;
+    }
+  }
+
+  .feature {
+    padding: 0 30px;
+
+    .content {
+      padding: 0;
+      flex-direction: column;
+
+      main {
+        width: 100%;
+      }
+
+      aside {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        place-items: center;
+        width: 100%;
+
+        svg {
+          zoom: .8;
+        }
+      }
+    }
+  }
+
+  .full.feature .func-list .row {
+    display: flex;
+    flex-direction: column;
+    transform: translateX(0) !important;
+
+    .item {
+      &:not(:last-child) {
+        margin-bottom: 40px;
+      }
+
+      width: 100%;
+      padding: 30px 40px;
+    }
+  }
+
+  .feature.quick .airplane-wrap {
+    margin-left: -50px;
+  }
+
+  .full.feature .folder-icon {
+    margin-top: 0;
+  }
+
+  .func.feature .content .ship-icon {
+    margin-top: 0;
+  }
+
+  .app-learn-more-link {
+    flex-direction: column;
+
+    .prompt {
+      margin-bottom: 20px;
+    }
+  }
+
+  .safe.feature .data-icon {
+    zoom: .5;
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+
+  .safe.feature main {
+    margin: 0;
+  }
+
+  .func.feature .func-grps {
+    padding: 0;
+    column-count: 1;
+  }
+
+  .feature-desc {
+    text-align: left;
+  }
+}

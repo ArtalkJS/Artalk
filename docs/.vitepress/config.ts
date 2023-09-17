@@ -189,12 +189,15 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/ArtalkJS/Artalk' }
     ],
 
-    algolia: {
-      appId: 'BH4D9OD16A',
-      apiKey: '37ab96e3f5a774cbbf0571b035b42adb',
-      indexName: 'artalk-js',
-      searchParameters: {
-        facetFilters: ['lang:zh-CN']
+    search: {
+      provider: 'algolia',
+      options: {
+        appId: '2WNJ32WVTY',
+        apiKey: '6c6ebc345a87b738264f19095b78c91c',
+        indexName: 'artalk-js',
+        searchParameters: {
+          facetFilters: ['lang:zh-CN']
+        }
       }
     },
 

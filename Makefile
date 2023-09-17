@@ -52,6 +52,7 @@ update-i18n:
 	go generate ./internal/i18n
 
 update-swagger:
+	go install github.com/swaggo/swag/cmd/swag@latest
 	swag init -g server/server.go --output ./docs/swagger
 
 docker-build:

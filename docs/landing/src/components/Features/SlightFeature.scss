@@ -1,0 +1,70 @@
+.feature.slight {
+  .progress-wrap {
+    width: 100%;
+    margin-top: 80px;
+    margin-bottom: 50px;
+
+    .progress {
+      margin-bottom: 15px;
+      position: relative;
+      height: 24px;
+      width: 100%;
+      background: #D9D9D9;
+      border-radius: 80px;
+      overflow: hidden;
+
+      .bar {
+        position: absolute;
+        height: 100%;
+        width: 0%;
+        background: #77B255;
+        transition: all 800ms cubic-bezier(0.230, 1.000, 0.320, 1.000);
+      }
+    }
+
+    .text {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      place-items: center;
+      padding: 0 5px;
+      font-size: 23px;
+
+      .size {
+        color: #77B255;
+        font-weight: bold;
+      }
+
+      .percent {
+        color: #67757F;
+      }
+    }
+  }
+
+  &.visible {
+    .leaf-wrap {
+      @keyframes windAnim {
+        from {
+          opacity: 0;
+          filter: blur(10px);
+          transform: translate(-40%, 35%) rotate(20deg);
+        }
+        to {
+        }
+      }
+      .wind {
+        animation: windAnim .5s cubic-bezier(0.230, 1.000, 0.320, 1.000);
+      }
+
+      @keyframes leafAnim {
+        0% {
+          transform: translate(-10%, -10%) rotate(10deg);
+        }
+      }
+
+      .leaf {
+        animation: leafAnim 1s cubic-bezier(0.250, 0.460, 0.450, 0.940);
+      }
+    }
+  }
+}

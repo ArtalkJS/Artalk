@@ -9,7 +9,7 @@
             "email": "artalkjs@gmail.com"
         },
         "license": {
-            "name": "LGPL-3.0",
+            "name": "MIT",
             "url": "https://github.com/ArtalkJS/Artalk/blob/master/LICENSE"
         },
         "version": "1.0"
@@ -337,19 +337,12 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "type": "object"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "data": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "string"
                                                 }
-                                            ]
+                                            }
                                         }
                                     }
                                 }
@@ -1251,19 +1244,12 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "type": "object"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "img_data": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                            "type": "object",
+                                            "properties": {
+                                                "img_data": {
+                                                    "type": "string"
                                                 }
-                                            ]
+                                            }
                                         }
                                     }
                                 }
@@ -1292,19 +1278,12 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "type": "object"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "img_data": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                            "type": "object",
+                                            "properties": {
+                                                "img_data": {
+                                                    "type": "string"
                                                 }
-                                            ]
+                                            }
                                         }
                                     }
                                 }
@@ -1331,19 +1310,12 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "type": "object"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "img_data": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                            "type": "object",
+                                            "properties": {
+                                                "img_data": {
+                                                    "type": "string"
                                                 }
-                                            ]
+                                            }
                                         }
                                     }
                                 }
@@ -1372,19 +1344,12 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "type": "object"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "img_data": {
-                                                            "type": "string"
-                                                        }
-                                                    }
+                                            "type": "object",
+                                            "properties": {
+                                                "img_data": {
+                                                    "type": "string"
                                                 }
-                                            ]
+                                            }
                                         }
                                     }
                                 }
@@ -1413,19 +1378,12 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "type": "object"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "is_pass": {
-                                                            "type": "boolean"
-                                                        }
-                                                    }
+                                            "type": "object",
+                                            "properties": {
+                                                "is_pass": {
+                                                    "type": "boolean"
                                                 }
-                                            ]
+                                            }
                                         }
                                     }
                                 }
@@ -1715,22 +1673,15 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "allOf": [
-                                                {
-                                                    "type": "object"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "need_name_select": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "type": "string"
-                                                            }
-                                                        }
+                                            "type": "object",
+                                            "properties": {
+                                                "need_name_select": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
                                                     }
                                                 }
-                                            ]
+                                            }
                                         }
                                     }
                                 }
@@ -2316,7 +2267,6 @@
             "type": "object",
             "properties": {
                 "enabled": {
-                    "description": "配置文件不允许修改",
                     "type": "boolean"
                 },
                 "expires": {
@@ -2344,18 +2294,15 @@
             "enum": [
                 "builtin",
                 "redis",
-                "memcache",
-                "disabled"
+                "memcache"
             ],
             "x-enum-comments": {
-                "CacheTypeBuiltin": "内建缓存",
-                "CacheTypeDisabled": "关闭缓存"
+                "CacheTypeBuiltin": "内建缓存"
             },
             "x-enum-varnames": [
                 "CacheTypeBuiltin",
                 "CacheTypeRedis",
-                "CacheTypeMemcache",
-                "CacheTypeDisabled"
+                "CacheTypeMemcache"
             ]
         },
         "config.CaptchaConf": {
@@ -2454,7 +2401,7 @@
                     ]
                 },
                 "db": {
-                    "description": "数据文件",
+                    "description": "数据库配置",
                     "allOf": [
                         {
                             "$ref": "#/definitions/config.DBConf"

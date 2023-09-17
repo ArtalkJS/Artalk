@@ -11,15 +11,17 @@
   "private": true,
   "scripts": {
     "docs:dev": "vitepress dev",
-    "docs:build": "pnpm run swagger:build && vitepress build",
+    "docs:build": "pnpm swagger:build && vitepress build && pnpm landing:build",
     "docs:serve": "vitepress serve",
+    "landing:build": "pnpm -C ./landing --frozen-lockfile i && pnpm -C ./landing build && pnpm landing:merge",
+    "landing:merge": "cp -rf ./landing/dist/* ./.vitepress/dist",
     "swagger:build": "npx @redocly/cli build-docs --output public/http-api.html",
     "swagger:serve": "npx @redocly/cli preview-docs"
   },
   "devDependencies": {
-    "@redocly/cli": "1.0.2",
+    "@redocly/cli": "1.1.0",
     "markdown-it-for-inline": "^0.1.1",
-    "sass": "^1.66.1",
-    "vitepress": "1.0.0-rc.4"
+    "sass": "^1.67.0",
+    "vitepress": "1.0.0-rc.14"
   }
 }

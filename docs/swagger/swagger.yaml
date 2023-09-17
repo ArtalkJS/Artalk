@@ -127,7 +127,6 @@ definitions:
   config.CacheConf:
     properties:
       enabled:
-        description: 配置文件不允许修改
         type: boolean
       expires:
         description: 过期时间
@@ -148,16 +147,13 @@ definitions:
     - builtin
     - redis
     - memcache
-    - disabled
     type: string
     x-enum-comments:
       CacheTypeBuiltin: 内建缓存
-      CacheTypeDisabled: 关闭缓存
     x-enum-varnames:
     - CacheTypeBuiltin
     - CacheTypeRedis
     - CacheTypeMemcache
-    - CacheTypeDisabled
   config.CaptchaConf:
     properties:
       action_limit:
@@ -222,7 +218,7 @@ definitions:
       db:
         allOf:
         - $ref: '#/definitions/config.DBConf'
-        description: 数据文件
+        description: 数据库配置
       debug:
         description: 调试模式
         type: boolean
@@ -892,7 +888,7 @@ info:
     url: https://artalk.js.org
   description: This is an Artalk server.
   license:
-    name: LGPL-3.0
+    name: MIT
     url: https://github.com/ArtalkJS/Artalk/blob/master/LICENSE
   title: Artalk API
   version: "1.0"
@@ -1092,12 +1088,10 @@ paths:
             - $ref: '#/definitions/common.JSONResult'
             - properties:
                 data:
-                  allOf:
-                  - type: object
-                  - properties:
-                      data:
-                        type: string
-                    type: object
+                  properties:
+                    data:
+                      type: string
+                  type: object
               type: object
       security:
       - ApiKeyAuth: []
@@ -1642,12 +1636,10 @@ paths:
             - $ref: '#/definitions/common.JSONResult'
             - properties:
                 data:
-                  allOf:
-                  - type: object
-                  - properties:
-                      img_data:
-                        type: string
-                    type: object
+                  properties:
+                    img_data:
+                      type: string
+                  type: object
               type: object
       summary: Captcha Check
       tags:
@@ -1664,12 +1656,10 @@ paths:
             - $ref: '#/definitions/common.JSONResult'
             - properties:
                 data:
-                  allOf:
-                  - type: object
-                  - properties:
-                      img_data:
-                        type: string
-                    type: object
+                  properties:
+                    img_data:
+                      type: string
+                  type: object
               type: object
       summary: Captcha Get
       tags:
@@ -1685,12 +1675,10 @@ paths:
             - $ref: '#/definitions/common.JSONResult'
             - properties:
                 data:
-                  allOf:
-                  - type: object
-                  - properties:
-                      img_data:
-                        type: string
-                    type: object
+                  properties:
+                    img_data:
+                      type: string
+                  type: object
               type: object
       summary: Captcha Get
       tags:
@@ -1707,12 +1695,10 @@ paths:
             - $ref: '#/definitions/common.JSONResult'
             - properties:
                 data:
-                  allOf:
-                  - type: object
-                  - properties:
-                      img_data:
-                        type: string
-                    type: object
+                  properties:
+                    img_data:
+                      type: string
+                  type: object
               type: object
       summary: Captcha Get
       tags:
@@ -1728,12 +1714,10 @@ paths:
             - $ref: '#/definitions/common.JSONResult'
             - properties:
                 data:
-                  allOf:
-                  - type: object
-                  - properties:
-                      is_pass:
-                        type: boolean
-                    type: object
+                  properties:
+                    is_pass:
+                      type: boolean
+                  type: object
               type: object
       summary: Captcha Status
       tags:
@@ -1911,14 +1895,12 @@ paths:
             - $ref: '#/definitions/common.JSONResult'
             - properties:
                 data:
-                  allOf:
-                  - type: object
-                  - properties:
-                      need_name_select:
-                        items:
-                          type: string
-                        type: array
-                    type: object
+                  properties:
+                    need_name_select:
+                      items:
+                        type: string
+                      type: array
+                  type: object
               type: object
       summary: User Login
       tags:

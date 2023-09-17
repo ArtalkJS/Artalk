@@ -1,0 +1,21 @@
+.app-footer {
+  margin: 80px auto;
+  padding-top: 50px;
+  text-align: center;
+  border-top: 1px solid #f4f4f4;
+
+  .brand {
+    color: #0071E3;
+    font-size: 25px;
+    font-weight: 700;
+  }
+
+  .copyright {
+    margin: 20px 0;
+    font-size: 20px;
+
+    .red {
+      color: #DD2E44;
+    }
+  }
+}

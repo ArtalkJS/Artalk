@@ -5,7 +5,6 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/email"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/dingding"
@@ -17,9 +16,9 @@ import (
 type NotifyPusherConf struct {
 	config.AdminNotifyConf
 	Dao *dao.Dao
-	// bridge func to email push
-	EmailPush   func(notify *entity.Notify) error
-	EmailRender func() (*email.Render, error)
+
+	// Provide a custom function to bridge the gap between Notify pusher and Email pusher
+	EmailPush func(notify *entity.Notify) error
 }
 
 type NotifyPusher struct {
@@ -30,7 +29,6 @@ type NotifyPusher struct {
 }
 
 func NewNotifyPusher(conf *NotifyPusherConf) *NotifyPusher {
-	// 初始化 Notify
 	pusher := &NotifyPusher{
 		conf:   conf,
 		dao:    conf.Dao,

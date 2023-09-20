@@ -66,8 +66,14 @@ func (app *App) Bootstrap() error {
 	}
 
 	// 时区设置
-	denverLoc, _ := time.LoadLocation(app.Conf().TimeZone)
-	time.Local = denverLoc
+	timezone := app.Conf().TimeZone
+	if timezone != "" {
+		if local, err := time.LoadLocation(timezone); err == nil {
+			time.Local = local
+		} else {
+			return fmt.Errorf("timezone load error: %w (please check config or system env)", err)
+		}
+	}
 
 	// i18n
 	app.initI18n()

@@ -1,4 +1,27 @@
 
+## [v2.6.3](https://github.com/ArtalkJS/Artalk/compare/v2.6.2...v2.6.3) (2023-09-20)
+
+### Features
+
+* **config:** add `db.ssl` to enable db ssl mode ([#587](https://github.com/ArtalkJS/Artalk/issues/587))
+
+### Bug Fixes
+
+* **notify_tpl:** fix template render result in notify case
+
+### Performance Improvements
+
+* **config:** add error message for timezone setting ([#586](https://github.com/ArtalkJS/Artalk/issues/586))
+
+### Code Refactoring
+
+* **renderer:** abstract func of template renderer for multi-cases ([#585](https://github.com/ArtalkJS/Artalk/issues/585))
+
+### Documentation
+
+* new landing page
+
+
 ## [v2.6.2](https://github.com/ArtalkJS/Artalk/compare/v2.6.1...v2.6.2) (2023-09-12)
 
 ### Bug Fixes

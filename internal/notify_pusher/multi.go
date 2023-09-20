@@ -49,7 +49,7 @@ func (pusher *NotifyPusher) getAdminNotifySubjectBody(comment *entity.Comment, t
 	// 	coContent = coContent + "..."
 	// }
 
-	render := renderer.NewRenderer(pusher.dao, renderer.TYPE_NOTIFY, pusher.conf.NotifyTpl)
+	render := renderer.NewRenderer(pusher.dao, renderer.TYPE_NOTIFY, renderer.NewTplFileLoader(pusher.conf.NotifyTpl))
 	notify := pusher.dao.FindCreateNotify(toUserID, comment.ID)
 
 	var subject string

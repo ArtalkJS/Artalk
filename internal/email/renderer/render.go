@@ -17,9 +17,9 @@ type RenderStrategy interface {
 }
 
 type Renderer struct {
-	dao      *dao.Dao
-	strategy RenderStrategy
-	tpl      string
+	dao        *dao.Dao
+	strategy   RenderStrategy
+	defaultTpl string
 }
 
 func (r *Renderer) Render(notify *entity.Notify, customTpl ...string) string {
@@ -27,7 +27,7 @@ func (r *Renderer) Render(notify *entity.Notify, customTpl ...string) string {
 	if len(customTpl) > 0 {
 		tpl = customTpl[0]
 	} else {
-		tpl = r.tpl
+		tpl = r.defaultTpl
 	}
 
 	extra := getNotifyExtraData(r.dao, notify)
@@ -36,13 +36,15 @@ func (r *Renderer) Render(notify *entity.Notify, customTpl ...string) string {
 	return r.strategy.Render(tpl, params, notify, extra)
 }
 
-func NewRenderer(dao *dao.Dao, renderType RenderType, defaultTplName string) *Renderer {
-	renderer := &Renderer{
+func NewRenderer(dao *dao.Dao, renderType RenderType, defaultTemplateLoader TemplateLoader) *Renderer {
+	r := &Renderer{
 		dao: dao,
 	}
 
-	// Retrieve template
-	renderer.tpl = getTplByName(renderType, defaultTplName)
+	// load default template
+	if defaultTemplateLoader != nil {
+		r.defaultTpl = defaultTemplateLoader.Load(renderType)
+	}
 
 	// Render type
 	var renderStrategies = map[RenderType]func() RenderStrategy{
@@ -56,10 +58,10 @@ func NewRenderer(dao *dao.Dao, renderType RenderType, defaultTplName string) *Re
 
 	// Set render strategy
 	if strategyFunc, ok := renderStrategies[renderType]; ok {
-		renderer.strategy = strategyFunc()
+		r.strategy = strategyFunc()
 	} else {
-		renderer.strategy = NewEmailRenderStrategy() // Default
+		r.strategy = NewEmailRenderStrategy() // Default
 	}
 
-	return renderer
+	return r
 }

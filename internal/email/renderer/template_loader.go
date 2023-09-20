@@ -11,6 +11,41 @@ import (
 //  Template Loader
 // -------------------------------------------------------------------
 
+type TemplateLoader interface {
+	Load(tplType RenderType) string
+}
+
+// Creates a new default template loader
+//
+// tplName parameter is the template name,
+// if tplName is empty, it will load the default template,
+// or you can specify a custom template name.
+// it will load the template from internal or external, first look up external, then internal.
+func NewTplFileLoader(tplName string) TemplateLoader {
+	return &DefaultTemplateLoader{tplName: tplName}
+}
+
+// The default template loader
+var _ TemplateLoader = (*DefaultTemplateLoader)(nil)
+
+type DefaultTemplateLoader struct {
+	tplName string
+}
+
+func (l *DefaultTemplateLoader) Load(tplType RenderType) string {
+	// retrieve external template
+	if tpl, err := getExternalTpl(l.tplName); err == nil {
+		return tpl
+	}
+
+	// retrieve internal template
+	return getInternalTpl(tplType, l.tplName)
+}
+
+// -------------------------------------------------------------------
+//  Internal Template Loader
+// -------------------------------------------------------------------
+
 //go:embed email_tpl/*
 //go:embed notify_tpl/*
 var internalTpl embed.FS
@@ -19,17 +54,6 @@ var internalTpl embed.FS
 var tplType2BasePath = map[RenderType]string{
 	TYPE_EMAIL:  "email_tpl",
 	TYPE_NOTIFY: "notify_tpl",
-}
-
-// Get template by specified template type and template name
-func getTplByName(tplType RenderType, tplName string) string {
-	// retrieve external template
-	if tpl, err := getExternalTpl(tplName); err == nil {
-		return tpl
-	}
-
-	// retrieve internal template
-	return getInternalTpl(tplType, tplName)
 }
 
 // Get internal template
@@ -59,6 +83,10 @@ func getInternalTpl(tplType RenderType, tplName string) string {
 
 	return contents
 }
+
+// -------------------------------------------------------------------
+//  External Template Loader
+// -------------------------------------------------------------------
 
 // Get external template
 func getExternalTpl(filename string) (string, error) {

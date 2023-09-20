@@ -75,7 +75,7 @@ func (e *EmailService) GetRenderer(useAdminTplParam ...bool) *renderer.Renderer 
 	}
 
 	// create new email render instance
-	return renderer.NewRenderer(e.app.Dao(), renderer.TYPE_EMAIL, mailTplName)
+	return renderer.NewRenderer(e.app.Dao(), renderer.TYPE_EMAIL, renderer.NewTplFileLoader(mailTplName))
 }
 
 func (e *EmailService) AsyncSend(notify *entity.Notify) {

@@ -12,7 +12,7 @@ type Page struct {
 
 	SiteName string `gorm:"index;size:255"`
 
-	AccessibleURL string
+	AccessibleURL string `gorm:"-"`
 
 	VoteUp   int
 	VoteDown int

@@ -29,6 +29,7 @@ func TestGetDsnByConf(t *testing.T) {
 				Password: "password",
 				Name:     "dbname",
 				Port:     5432,
+				SSL:      false,
 			},
 			expected: "host=localhost user=user password=password dbname=dbname port=5432 sslmode=disable",
 		},
@@ -42,11 +43,12 @@ func TestGetDsnByConf(t *testing.T) {
 				Name:     "dbname",
 				Port:     3306,
 				Charset:  "utf8",
+				SSL:      false,
 			},
-			expected: "user:password@tcp(localhost:3306)/dbname?charset=utf8&parseTime=True&loc=Local",
+			expected: "user:password@tcp(localhost:3306)/dbname?charset=utf8&parseTime=True&loc=Local&tls=false",
 		},
 		{
-			name: "DB configuration",
+			name: "SQL Server configuration",
 			conf: config.DBConf{
 				Type:     config.TypeMSSQL,
 				Host:     "localhost",

@@ -57,6 +57,7 @@ type DBConf struct {
 
 	TablePrefix string `koanf:"table_prefix" json:"table_prefix"`
 	Charset     string `koanf:"charset" json:"charset"`
+	SSL         bool   `koanf:"ssl" json:"ssl"`
 }
 
 type CacheConf struct {

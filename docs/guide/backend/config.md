@@ -95,9 +95,22 @@ db:
   password: ""       # 密码
   charset: "utf8mb4" # 编码格式
   table_prefix: ""   # 表前缀 (例如："atk_")
+  ssl: false         # 启用 SSL
 ```
 
 数据表将在 Artalk 启动时自动完成创建，无需额外操作。
+
+#### 数据库连接字符串 (DSN)
+
+如有需要，你还可以手动配置 `db.dsn` 来指定数据库连接字符串，例如：
+
+```yaml
+db:
+  type: "mysql"
+  dsn: "mysql://myuser:mypassword@localhost:3306/mydatabase?tls=skip-verify"
+```
+
+更多内容参考：[@go-sql-driver/mysql:README.md](https://github.com/go-sql-driver/mysql)
 
 ## 管理员 `admin_users`
 
@@ -191,12 +204,13 @@ Artalk.init({ site: "Artalk 官网" })
 
 详情参考：[“后端 · 验证码”](/guide/backend/captcha.md)
 
-## 缓存配置 `cache`
+## 高速缓存 `cache`
 
-为了提高评论系统的响应速度和性能，Artalk 内置一套缓存机制，并且默认开启，无需额外配置。但如果有需要，你也可以连接外部缓存服务器，支持 Redis 和 Memcache。
+为节省内存资源占用，缓存默认关闭。如果你对网站性能有较高要求，请手动开启。你还可以连接外部缓存服务器，支持 Redis 和 Memcache。
 
 ```yaml
 cache:
+  enabled: true   # 启用缓存 (默认关闭)
   type: "builtin" # 支持 redis, memcache, builtin (自带缓存)
   expires: 30     # 缓存过期时间 (单位：分钟)
   warm_up: false  # 程序启动时预热缓存
@@ -204,9 +218,7 @@ cache:
 ```
 
 - **warm_up**：缓存预热功能。设置为 `true`，在 Artalk 启动时会立刻对数据库内容进行全面缓存，如果你的评论数据较多，多达上万条，启动时间可能会延长。
-- **type**：缓存类型。可选：`redis`, `memcache`, `builtin`。
-
-type 默认为 `builtin`，如遇特殊情况可将缓存关闭，将其设置为 `disabled`。
+- **type**：缓存类型，默认为 `builtin`。可选：`redis`, `memcache`, `builtin`。
 
 注：如果在 Artalk 程序外部修改数据库内容，需要刷新 Artalk 缓存才能更新。
 
@@ -225,9 +237,8 @@ cache:
     db: 0          # 使用零号数据库
 ```
 
-技术细节：[Artalk 缓存机制 时序图.png](/images/artalk/artalk-cache.png)
-
-![](/images/artalk/artalk-cache.png)
+<!-- 技术细节：[Artalk 缓存机制 时序图.png](/images/artalk/artalk-cache.png) -->
+<!-- ![](/images/artalk/artalk-cache.png) -->
 
 ## 监听地址 `host`
 

@@ -16,6 +16,7 @@ db:
   user: "root"
   password: ""
   charset: "utf8mb4"
+  ssl: false
 log:
   enabled: true
   filename: "./data/artalk.log"
@@ -35,7 +36,6 @@ ssl:
   enabled: false
   cert_path: ""
   key_path: ""
-admin_users:
 moderator:
   pending_default: false
   api_fail_block: false
@@ -53,7 +53,8 @@ moderator:
   keywords:
     enabled: false
     pending: false
-    files: []
+    files:
+      - "./data/keywords_1.txt"
     file_sep: "\n"
     replac_to: "x"
 captcha:
@@ -74,6 +75,15 @@ captcha:
   geetest:
     captcha_id: ""
     captcha_key: ""
+img_upload:
+  enabled: true
+  path: "./data/artalk-img/"
+  max_size: 5
+  public_path: null
+  upgit:
+    enabled: false
+    exec: "./upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
+    del_local: true
 email:
   enabled: false
   send_type: "smtp"
@@ -90,15 +100,6 @@ email:
     access_key_id: ""
     access_key_secret: ""
     account_name: "noreply@example.com"
-img_upload:
-  enabled: true
-  path: "./data/artalk-img/"
-  max_size: 5
-  public_path: null
-  upgit:
-    enabled: false
-    exec: "./upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
-    del_local: true
 admin_notify:
   notify_tpl: "default"
   noise_mode: false
@@ -141,7 +142,7 @@ frontend:
   noComment: ""
   sendBtn: ""
   editorTravel: true
-  emoticons: ""
+  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
   vote: true
   voteDown: false
   uaBadge: true
@@ -153,7 +154,7 @@ frontend:
   nestMax: 2
   nestSort: DATE_ASC
   gravatar:
-    mirror: "https://www.gravatar.com/"
+    mirror: "https://www.gravatar.com/avatar/"
     params: "d=mp&s=240"
   pagination:
     pageSize: 20

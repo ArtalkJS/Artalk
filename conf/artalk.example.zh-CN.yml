@@ -42,6 +42,8 @@ db:
   charset: "utf8mb4"
   # 表前缀 (例如："atk_")
   table_prefix: ""
+  # 启用 SSL
+  ssl: false
 
 # 日志
 log:

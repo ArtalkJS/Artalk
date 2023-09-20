@@ -4,10 +4,10 @@ import (
 	"html"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/email/renderer"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/notify_pusher/sender"
+	"github.com/ArtalkJS/Artalk/internal/template"
 )
 
 func (pusher *NotifyPusher) multiPush(comment *entity.Comment, pComment *entity.Comment) {
@@ -49,7 +49,7 @@ func (pusher *NotifyPusher) getAdminNotifySubjectBody(comment *entity.Comment, t
 	// 	coContent = coContent + "..."
 	// }
 
-	render := renderer.NewRenderer(pusher.dao, renderer.TYPE_NOTIFY, renderer.NewTplFileLoader(pusher.conf.NotifyTpl))
+	render := template.NewRenderer(pusher.dao, template.TYPE_NOTIFY, template.NewFileLoader(pusher.conf.NotifyTpl))
 	notify := pusher.dao.FindCreateNotify(toUserID, comment.ID)
 
 	var subject string

@@ -1,4 +1,4 @@
-package renderer
+package template
 
 import (
 	"bytes"
@@ -21,7 +21,7 @@ type TemplateLoader interface {
 // if tplName is empty, it will load the default template,
 // or you can specify a custom template name.
 // it will load the template from internal or external, first look up external, then internal.
-func NewTplFileLoader(tplName string) TemplateLoader {
+func NewFileLoader(tplName string) TemplateLoader {
 	return &DefaultTemplateLoader{tplName: tplName}
 }
 

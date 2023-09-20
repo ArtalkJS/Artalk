@@ -1,4 +1,4 @@
-package renderer_test
+package template_test
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/email/renderer"
+	"github.com/ArtalkJS/Artalk/internal/template"
 	"github.com/ArtalkJS/Artalk/test"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,39 +23,39 @@ func TestNewRenderer(t *testing.T) {
 
 		tests := []struct {
 			name                  string
-			renderType            renderer.RenderType
-			defaultTemplateLoader func() renderer.TemplateLoader
+			renderType            template.RenderType
+			defaultTemplateLoader func() template.TemplateLoader
 			expectedDefaultResult string
 		}{
 			{
 				name:                  "EmailDefaultTplFile",
-				renderType:            renderer.TYPE_EMAIL,
-				defaultTemplateLoader: func() renderer.TemplateLoader { return renderer.NewTplFileLoader("") },
+				renderType:            template.TYPE_EMAIL,
+				defaultTemplateLoader: func() template.TemplateLoader { return template.NewFileLoader("") },
 				expectedDefaultResult: "",
 			},
 			{
 				name:                  "NotifyDefaultTplFile",
-				renderType:            renderer.TYPE_NOTIFY,
-				defaultTemplateLoader: func() renderer.TemplateLoader { return renderer.NewTplFileLoader("") },
+				renderType:            template.TYPE_NOTIFY,
+				defaultTemplateLoader: func() template.TemplateLoader { return template.NewFileLoader("") },
 				expectedDefaultResult: "",
 			},
 			{
 				name:                  "CustomEmailTplByFileLoader",
-				renderType:            renderer.TYPE_EMAIL,
-				defaultTemplateLoader: func() renderer.TemplateLoader { return renderer.NewTplFileLoader(customTplFile) },
+				renderType:            template.TYPE_EMAIL,
+				defaultTemplateLoader: func() template.TemplateLoader { return template.NewFileLoader(customTplFile) },
 				expectedDefaultResult: "[Site A] You got a reply from @admin: <p>Hello Artalk, 你好 Artalk!</p>",
 			},
 			{
 				name:                  "CustomNotifyTplByFileLoader",
-				renderType:            renderer.TYPE_NOTIFY,
-				defaultTemplateLoader: func() renderer.TemplateLoader { return renderer.NewTplFileLoader(customTplFile) },
+				renderType:            template.TYPE_NOTIFY,
+				defaultTemplateLoader: func() template.TemplateLoader { return template.NewFileLoader(customTplFile) },
 				expectedDefaultResult: "[Site A] You got a reply from @admin: Hello Artalk, 你好 Artalk!",
 			},
 		}
 
 		for _, tt := range tests {
 			t.Run(string(tt.renderType), func(t *testing.T) {
-				renderer := renderer.NewRenderer(app.Dao(), tt.renderType, tt.defaultTemplateLoader())
+				renderer := template.NewRenderer(app.Dao(), tt.renderType, tt.defaultTemplateLoader())
 				tNotify := app.Dao().FindNotify(1000, 1000)
 
 				// Test render default tpl with template loader
@@ -72,13 +72,13 @@ func TestNewRenderer(t *testing.T) {
 	t.Run("CustomTemplateRender", func(t *testing.T) {
 		tests := []struct {
 			name                 string
-			renderType           renderer.RenderType
+			renderType           template.RenderType
 			customTpl            string
 			expectedCustomResult string
 		}{
 			{
 				name:                 "CustomTplByString",
-				renderType:           renderer.TYPE_EMAIL,
+				renderType:           template.TYPE_EMAIL,
 				customTpl:            "[{{site_name}}] You got a reply from @{{reply_nick}}",
 				expectedCustomResult: "[Site A] You got a reply from @admin",
 			},
@@ -86,7 +86,7 @@ func TestNewRenderer(t *testing.T) {
 
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
-				renderer := renderer.NewRenderer(app.Dao(), tt.renderType, nil)
+				renderer := template.NewRenderer(app.Dao(), tt.renderType, nil)
 				tNotify := app.Dao().FindNotify(1000, 1000)
 
 				// Test custom tpl

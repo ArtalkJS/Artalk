@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/email"
-	"github.com/ArtalkJS/Artalk/internal/email/renderer"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/ArtalkJS/Artalk/internal/template"
 )
 
 var _ Service = (*EmailService)(nil)
@@ -46,21 +46,7 @@ func (e *EmailService) Dispose() error {
 	return nil
 }
 
-func (e *EmailService) AsyncSendTo(subject string, body string, toAddr string) {
-	if !e.app.Conf().Email.Enabled {
-		return
-	}
-
-	e.queue.Push(&email.Email{
-		FromAddr: e.app.Conf().Email.SendAddr,
-		FromName: e.app.Conf().Email.SendName,
-		ToAddr:   toAddr,
-		Subject:  subject,
-		Body:     body,
-	})
-}
-
-func (e *EmailService) GetRenderer(useAdminTplParam ...bool) *renderer.Renderer {
+func (e *EmailService) GetRenderer(useAdminTplParam ...bool) *template.Renderer {
 	useAdminTpl := false
 	if len(useAdminTplParam) > 0 {
 		useAdminTpl = useAdminTplParam[0]
@@ -75,7 +61,21 @@ func (e *EmailService) GetRenderer(useAdminTplParam ...bool) *renderer.Renderer 
 	}
 
 	// create new email render instance
-	return renderer.NewRenderer(e.app.Dao(), renderer.TYPE_EMAIL, renderer.NewTplFileLoader(mailTplName))
+	return template.NewRenderer(e.app.Dao(), template.TYPE_EMAIL, template.NewFileLoader(mailTplName))
+}
+
+func (e *EmailService) AsyncSendTo(subject string, body string, toAddr string) {
+	if !e.app.Conf().Email.Enabled {
+		return
+	}
+
+	e.queue.Push(&email.Email{
+		FromAddr: e.app.Conf().Email.SendAddr,
+		FromName: e.app.Conf().Email.SendName,
+		ToAddr:   toAddr,
+		Subject:  subject,
+		Body:     body,
+	})
 }
 
 func (e *EmailService) AsyncSend(notify *entity.Notify) {

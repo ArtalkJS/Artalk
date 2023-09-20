@@ -310,7 +310,7 @@ email:
 </div>
 ```
 
-Artalk 内置许多预设的邮件模板，例如 `mail_tpl: "default"` 使用的就是：[@ArtalkJS/Artalk:/internal/email/email_tpl/default.html](https://github.com/ArtalkJS/Artalk/blob/master/internal/email/email_tpl/default.html)
+Artalk 内置许多预设的邮件模板，例如 `mail_tpl: "default"` 使用的就是：[@ArtalkJS/Artalk:/internal/template/email_tpl/default.html](https://github.com/ArtalkJS/Artalk/blob/master/internal/template/email_tpl/default.html)
 
 ## 发向管理员的邮件
 

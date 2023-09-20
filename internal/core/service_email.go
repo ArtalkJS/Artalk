@@ -6,6 +6,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/email"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/ArtalkJS/Artalk/internal/template"
 )
 
 var _ Service = (*EmailService)(nil)
@@ -45,21 +46,7 @@ func (e *EmailService) Dispose() error {
 	return nil
 }
 
-func (e *EmailService) AsyncSendTo(subject string, body string, toAddr string) {
-	if !e.app.Conf().Email.Enabled {
-		return
-	}
-
-	e.queue.Push(&email.Email{
-		FromAddr: e.app.Conf().Email.SendAddr,
-		FromName: e.app.Conf().Email.SendName,
-		ToAddr:   toAddr,
-		Subject:  subject,
-		Body:     body,
-	})
-}
-
-func (e *EmailService) GetRender(useAdminTplParam ...bool) *email.Render {
+func (e *EmailService) GetRenderer(useAdminTplParam ...bool) *template.Renderer {
 	useAdminTpl := false
 	if len(useAdminTplParam) > 0 {
 		useAdminTpl = useAdminTplParam[0]
@@ -74,9 +61,21 @@ func (e *EmailService) GetRender(useAdminTplParam ...bool) *email.Render {
 	}
 
 	// create new email render instance
-	render := email.NewRender(e.app.Dao(), mailTplName)
+	return template.NewRenderer(e.app.Dao(), template.TYPE_EMAIL, template.NewFileLoader(mailTplName))
+}
 
-	return render
+func (e *EmailService) AsyncSendTo(subject string, body string, toAddr string) {
+	if !e.app.Conf().Email.Enabled {
+		return
+	}
+
+	e.queue.Push(&email.Email{
+		FromAddr: e.app.Conf().Email.SendAddr,
+		FromName: e.app.Conf().Email.SendName,
+		ToAddr:   toAddr,
+		Subject:  subject,
+		Body:     body,
+	})
 }
 
 func (e *EmailService) AsyncSend(notify *entity.Notify) {
@@ -85,15 +84,15 @@ func (e *EmailService) AsyncSend(notify *entity.Notify) {
 	}
 
 	receiveUser := e.app.Dao().FetchUserForNotify(notify)
-	render := e.GetRender(receiveUser.IsAdmin)
+	renderer := e.GetRenderer(receiveUser.IsAdmin)
 
 	// render email body
-	mailBody := render.RenderEmailBody(notify)
+	mailBody := renderer.Render(notify)
 	mailSubject := ""
 	if !receiveUser.IsAdmin {
-		mailSubject = render.RenderCommon(e.app.Conf().Email.MailSubject, notify)
+		mailSubject = renderer.Render(notify, e.app.Conf().Email.MailSubject)
 	} else {
-		mailSubject = render.RenderCommon(e.app.Conf().AdminNotify.Email.MailSubject, notify)
+		mailSubject = renderer.Render(notify, e.app.Conf().AdminNotify.Email.MailSubject)
 	}
 
 	log.Debug(time.Now(), " "+receiveUser.Email)
@@ -101,7 +100,7 @@ func (e *EmailService) AsyncSend(notify *entity.Notify) {
 	// add email send task to queue
 	e.queue.Push(&email.Email{
 		FromAddr:     e.app.Conf().Email.SendAddr,
-		FromName:     render.RenderCommon(e.app.Conf().Email.SendName, notify),
+		FromName:     renderer.Render(notify, e.app.Conf().Email.SendName),
 		ToAddr:       receiveUser.Email,
 		Subject:      mailSubject,
 		Body:         mailBody,

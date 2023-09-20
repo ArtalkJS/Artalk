@@ -79,6 +79,7 @@ email:
   send_type: "smtp"
   send_name: "{{reply_nick}}"
   send_addr: "noreply@example.com"
+  mail_subject: "[{{site_name}}] You got a reply from @{{reply_nick}}"
   mail_tpl: "default"
   smtp:
     host: "smtp.qq.com"

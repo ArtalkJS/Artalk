@@ -1,7 +1,6 @@
 package core
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/email"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/notify_pusher"
 )
@@ -28,13 +27,6 @@ func (s *NotifyService) Init() error {
 			}
 			emailService.AsyncSend(notify)
 			return nil
-		},
-		EmailRender: func() (*email.Render, error) {
-			emailService, err := AppService[*EmailService](s.app)
-			if err != nil {
-				return nil, err
-			}
-			return emailService.GetRender(), nil
 		},
 	})
 

@@ -1,4 +1,4 @@
-package email
+package template
 
 import "testing"
 
@@ -17,7 +17,7 @@ func TestHandleEmoticonsImgTagsForNotify(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := HandleEmoticonsImgTagsForNotify(tt.give); got != tt.want {
+			if got := handleEmoticonsImgTagsForNotify(tt.give); got != tt.want {
 				t.Errorf("HandleEmoticonsImgTagsForNotify() = %v, want %v", got, tt.want)
 			}
 		})

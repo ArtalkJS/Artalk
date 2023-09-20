@@ -7,6 +7,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/notify_pusher/sender"
+	"github.com/ArtalkJS/Artalk/internal/template"
 )
 
 func (pusher *NotifyPusher) multiPush(comment *entity.Comment, pComment *entity.Comment) {
@@ -48,24 +49,15 @@ func (pusher *NotifyPusher) getAdminNotifySubjectBody(comment *entity.Comment, t
 	// 	coContent = coContent + "..."
 	// }
 
+	render := template.NewRenderer(pusher.dao, template.TYPE_NOTIFY, template.NewFileLoader(pusher.conf.NotifyTpl))
 	notify := pusher.dao.FindCreateNotify(toUserID, comment.ID)
 
-	render, err := pusher.conf.EmailRender()
-	if err != nil {
-		log.Error("pusher.conf.EmailRender err,", err)
-		return "", ""
-	}
-	if render == nil {
-		log.Error("pusher.conf.EmailRender cannot be nil")
-		return "", ""
-	}
-
-	subject := ""
+	var subject string
 	if pusher.conf.NotifySubject != "" {
-		subject = render.RenderCommon(pusher.conf.NotifySubject, &notify, "notify")
+		subject = render.Render(&notify, pusher.conf.NotifySubject)
 	}
 
-	body := render.RenderNotifyBody(&notify)
+	body := render.Render(&notify)
 	if comment.IsPending {
 		body = "[待审状态评论]\n\n" + body
 	}

@@ -45,6 +45,8 @@ db:
   password: ""
   # Database charset
   charset: "utf8mb4"
+  # SSL mode
+  ssl: false
 
 # Logging
 log:

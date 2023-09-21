@@ -3,7 +3,6 @@ package handler
 import (
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/anti_spam"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -161,7 +160,7 @@ func CommentAdd(app *core.App, router fiber.Router) {
 			if !isAdmin { // 忽略检查管理员
 				// 同步执行
 				if antiSpamService, err := core.AppService[*core.AntiSpamService](app); err == nil {
-					antiSpamService.CheckAndBlock(&anti_spam.CheckData{
+					antiSpamService.CheckAndBlock(&core.AntiSpamCheckPayload{
 						Comment:      &comment,
 						ReqReferer:   referer,
 						ReqIP:        ip,

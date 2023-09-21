@@ -115,4 +115,55 @@ func TestAntiSpam(t *testing.T) {
 			assert.Equal(t, "---\n****\n---", updatedContent)
 		})
 	})
+
+	t.Run("MockChecker Error Return", func(t *testing.T) {
+		t.Run("ApiFailBlock=true", func(t *testing.T) {
+			checker := &mockChecker{}
+			antiSpam := NewAntiSpam(&AntiSpamConf{
+				ModeratorConf: config.ModeratorConf{
+					ApiFailBlock: true,
+				},
+			})
+
+			mockCheckerErr = true // pretend api fail
+			pass := antiSpam.checkerTrigger(checker, &CheckerParams{})
+			assert.False(t, pass, "should be blocked when api fail")
+		})
+
+		t.Run("ApiFailBlock=false", func(t *testing.T) {
+			checker := &mockChecker{}
+			antiSpam := NewAntiSpam(&AntiSpamConf{
+				ModeratorConf: config.ModeratorConf{
+					ApiFailBlock: false,
+				},
+			})
+
+			mockCheckerErr = true // pretend api fail
+			pass := antiSpam.checkerTrigger(checker, &CheckerParams{})
+			assert.True(t, pass, "should not be blocked when api fail")
+		})
+	})
+}
+
+// -------------------------------------------------------------------
+//  Mock Checker
+// -------------------------------------------------------------------
+
+var mockCheckerErr = false
+
+var _ Checker = (*mockChecker)(nil)
+
+type mockChecker struct {
+}
+
+func (c *mockChecker) Name() string {
+	return "test"
+}
+
+func (c *mockChecker) Check(params *CheckerParams) (bool, error) {
+	if mockCheckerErr {
+		return false, fmt.Errorf("test error")
+	}
+
+	return true, nil
 }

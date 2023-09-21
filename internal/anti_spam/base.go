@@ -63,7 +63,9 @@ func (as AntiSpam) checkerTrigger(checker Checker, params *CheckerParams) bool {
 	}
 
 	if !pass {
-		as.conf.OnBlockComment(params.CommentID)
+		if as.conf.OnBlockComment != nil {
+			as.conf.OnBlockComment(params.CommentID)
+		}
 
 		log.Debug(LOG_TAG, fmt.Sprintf("[%s] Successful blocking of comments ID=%d CONT=%s",
 			checker.Name(), params.CommentID, strconv.Quote(params.Content)))
@@ -113,7 +115,9 @@ func (as AntiSpam) getEnabledCheckers() []Checker {
 			ReplaceTo: as.conf.Keywords.ReplacTo,
 			Mode:      kwCheckerMode,
 			OnUpdateComment: func(commentID uint, content string) {
-				as.conf.OnUpdateComment(commentID, content)
+				if as.conf.OnUpdateComment != nil {
+					as.conf.OnUpdateComment(commentID, content)
+				}
 			},
 		}))
 

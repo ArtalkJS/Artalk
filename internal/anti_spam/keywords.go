@@ -25,7 +25,7 @@ type KeywordsCheckerConf struct {
 	FileSep         string
 	ReplaceTo       string
 	Mode            KwCheckerMode
-	OnUpdateComment func(commentID uint, content string) error
+	OnUpdateComment func(commentID uint, content string)
 }
 
 type KeywordsChecker struct {
@@ -45,7 +45,9 @@ func (*KeywordsChecker) Name() string {
 }
 
 func (c *KeywordsChecker) Check(p *CheckerParams) (bool, error) {
-	c.loadKeywords()
+	if err := c.loadKeywords(); err != nil {
+		return false, err
+	}
 
 	isContains := false
 	content := p.Content
@@ -61,7 +63,8 @@ func (c *KeywordsChecker) Check(p *CheckerParams) (bool, error) {
 		}
 	}
 
-	if c.conf.Mode == KwCheckerModeReplace {
+	switch c.conf.Mode {
+	case KwCheckerModeReplace:
 		if isContains {
 			log.Info(LOG_TAG, fmt.Sprintf("keyword replace comment id=%d original=%s processed=%s",
 				p.CommentID, strconv.Quote(p.Content), strconv.Quote(content)))
@@ -73,13 +76,12 @@ func (c *KeywordsChecker) Check(p *CheckerParams) (bool, error) {
 		}
 
 		return true, nil
-	}
 
-	if c.conf.Mode == KwCheckerModeBlock {
+	case KwCheckerModeBlock:
 		return !isContains, nil
 	}
 
-	return true, nil
+	return false, fmt.Errorf("unknown mode: %d", c.conf.Mode)
 }
 
 func (c *KeywordsChecker) loadKeywords() error {

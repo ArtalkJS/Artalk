@@ -10,11 +10,13 @@ import (
 
 type EmailConf struct {
 	config.EmailConf
+	Sender        Sender
 	OnSendSuccess func(email *Email)
 }
 
 type EmailQueue struct {
 	conf   EmailConf
+	sender Sender
 	ch     chan *Email
 	mux    sync.Mutex
 	closed bool
@@ -31,25 +33,36 @@ func NewQueue(conf EmailConf) *EmailQueue {
 
 	log.Debug("[Email] Email Queue initialize complete")
 
+	// init email sender
+	if conf.Sender != nil {
+		queue.sender = conf.Sender
+	} else {
+		if sender, err := NewSender(queue.conf); err != nil {
+			queue.sender = sender
+		} else {
+			log.Error("[Email] Email Sender initialize failed: ", err)
+		}
+	}
+
 	// init queue worker
-	go queue.worker()
+	go func() {
+		for email := range queue.ch {
+			queue.handleEmail(email)
+		}
+	}()
 
 	return queue
 }
 
-func (q *EmailQueue) worker() {
-	for email := range q.ch {
-		q.handleEmail(email)
-	}
-}
-
 func (q *EmailQueue) handleEmail(email *Email) {
-	sender := NewSender(q.conf)
-
 	log.Debug(fmt.Sprintf("[Email] Sending an email %+v: ", email))
 
-	// send email
-	if isOK := sender.Send(email); isOK {
+	if q.sender == nil {
+		log.Error("[Email] Email Sender is nil")
+		return
+	}
+
+	if isOK := q.sender.Send(email); isOK {
 		if q.conf.OnSendSuccess != nil {
 			q.conf.OnSendSuccess(email)
 		}

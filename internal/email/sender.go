@@ -1,6 +1,8 @@
 package email
 
 import (
+	"fmt"
+
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 )
@@ -19,15 +21,15 @@ type Sender interface {
 	Send(email *Email) bool
 }
 
-func NewSender(conf EmailConf) Sender {
+func NewSender(conf EmailConf) (Sender, error) {
 	switch conf.SendType {
 	case config.TypeSMTP:
-		return NewSmtpSender(conf.SMTP)
+		return NewSmtpSender(conf.SMTP), nil
 	case config.TypeAliDM:
-		return NewAliDMSender(conf.AliDM)
+		return NewAliDMSender(conf.AliDM), nil
 	case config.TypeSendmail:
-		return NewCmdSender()
+		return NewCmdSender(), nil
 	default:
-		panic("Unknown email sender type")
+		return nil, fmt.Errorf("unknown email sender type")
 	}
 }

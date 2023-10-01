@@ -30,7 +30,7 @@ jobs:
     #     wait-interval: 10
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Use pnpm
       uses: pnpm/action-setup@v2

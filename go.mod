@@ -9,10 +9,10 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/bradfitz/gomemcache v0.0.0-20230611145640-acc696258285
 	github.com/cheggaaa/pb/v3 v3.1.4
-	github.com/eko/gocache/lib/v4 v4.1.4
-	github.com/eko/gocache/store/bigcache/v4 v4.2.0
-	github.com/eko/gocache/store/memcache/v4 v4.2.0
-	github.com/eko/gocache/store/redis/v4 v4.2.0
+	github.com/eko/gocache/lib/v4 v4.1.5
+	github.com/eko/gocache/store/bigcache/v4 v4.2.1
+	github.com/eko/gocache/store/memcache/v4 v4.2.1
+	github.com/eko/gocache/store/redis/v4 v4.2.1
 	github.com/fatih/color v1.15.0
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
 	github.com/gofiber/fiber/v2 v2.49.2
@@ -25,7 +25,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.25
 	github.com/nikoksr/notify v0.41.0
 	github.com/qwqcode/go-aliyun-email v0.0.0-20180120030821-cb6e7b1382bf
-	github.com/redis/go-redis/v9 v9.1.0
+	github.com/redis/go-redis/v9 v9.2.1
 	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/samber/lo v1.38.1
@@ -34,7 +34,7 @@ require (
 	github.com/steambap/captcha v1.4.1
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/swag v1.16.2
-	github.com/tidwall/gjson v1.16.0
+	github.com/tidwall/gjson v1.17.0
 	github.com/vmihailenco/msgpack v4.0.4+incompatible
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	github.com/yuin/goldmark v1.5.6
@@ -129,6 +129,8 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.50.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
+	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	go.opentelemetry.io/otel v1.18.0 // indirect
 	go.opentelemetry.io/otel/trace v1.18.0 // indirect
 	golang.org/x/image v0.12.0 // indirect

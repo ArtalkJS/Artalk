@@ -19,9 +19,9 @@
     "swagger:serve": "npx @redocly/cli preview-docs"
   },
   "devDependencies": {
-    "@redocly/cli": "1.1.0",
+    "@redocly/cli": "1.2.0",
     "markdown-it-for-inline": "^0.1.1",
-    "sass": "^1.67.0",
-    "vitepress": "1.0.0-rc.14"
+    "sass": "^1.68.0",
+    "vitepress": "1.0.0-rc.20"
   }
 }

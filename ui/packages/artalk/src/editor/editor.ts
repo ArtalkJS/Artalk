@@ -43,6 +43,9 @@ export default class Editor extends Component {
   public setSubmitManager(m: SubmitManager) { this.submitManager = m }
   public getSubmitManager() { return this.submitManager }
 
+  /** 已加载功能的 unmount 函数 */
+  private unmountFuncs: (() => void)[] = []
+
   public constructor(ctx: Context) {
     super(ctx)
 
@@ -52,7 +55,12 @@ export default class Editor extends Component {
 
     // event listen
     this.ctx.on('conf-loaded', () => {
-      initEditorFuncs(this) // init editor funcs
+      // call unmount funcs
+      // (this will only be called while conf reloaded, not be called at first time)
+      this.unmountFuncs?.forEach((unmount) => !!unmount && unmount())
+
+      // call init will return unmount funcs and save it
+      this.unmountFuncs = initEditorFuncs(this) // init editor funcs
     })
   }
 
@@ -170,7 +178,7 @@ export default class Editor extends Component {
 
   /** 点击评论提交按钮事件 */
   public async submit() {
-    if (!this.submitManager) return
+    if (!this.submitManager) throw Error('submitManger not initialized')
     await this.submitManager.do()
   }
 

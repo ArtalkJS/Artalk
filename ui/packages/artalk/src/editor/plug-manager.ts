@@ -37,7 +37,7 @@ export function createPlugManager(editor: Editor): PlugManager {
     getTransformedContent: (r) => getTransformedContent(ctx, r),
   }
 
-  // handle ui
+  // handle ui, clear and reset the plug btns and plug panels
   editor.getUI().$plugPanelWrap.innerHTML = ''
   editor.getUI().$plugPanelWrap.style.display = 'none'
   editor.getUI().$plugBtnWrap.innerHTML = ''

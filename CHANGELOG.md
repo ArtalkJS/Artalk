@@ -1,4 +1,21 @@
 
+## [v2.6.4](https://github.com/ArtalkJS/Artalk/compare/v2.6.3...v2.6.4) (2023-10-12)
+
+### Features
+
+* **go:** upgrade golang to v1.21.3 and some deps
+
+### Bug Fixes
+
+* **editor:** fix duplicate event binding when update conf ([#605](https://github.com/ArtalkJS/Artalk/issues/605))
+* **email:** sender not initialized correctly
+* **style:** fix copyright text overlay on send button ([#607](https://github.com/ArtalkJS/Artalk/issues/607))
+
+### Code Refactoring
+
+* **anti_spam:** refactor anti_spam pkg and add unit test ([#589](https://github.com/ArtalkJS/Artalk/issues/589))
+
+
 ## [v2.6.3](https://github.com/ArtalkJS/Artalk/compare/v2.6.2...v2.6.3) (2023-09-20)
 
 ### Features

@@ -37,7 +37,7 @@ func NewQueue(conf EmailConf) *EmailQueue {
 	if conf.Sender != nil {
 		queue.sender = conf.Sender
 	} else {
-		if sender, err := NewSender(queue.conf); err != nil {
+		if sender, err := NewSender(queue.conf); err == nil {
 			queue.sender = sender
 		} else {
 			log.Error("[Email] Email Sender initialize failed: ", err)

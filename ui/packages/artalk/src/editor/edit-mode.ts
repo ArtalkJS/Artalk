@@ -82,7 +82,9 @@ function cancelEdit(m: EditModeManager) {
 }
 
 function initEditModeSubmit(m: EditModeManager) {
-  m.editor.getSubmitManager()!.registerCustom({
+  const submitManger = m.editor.getSubmitManager()
+  if (!submitManger) throw Error("submitManager not initialized")
+  submitManger.registerCustom({
     activeCond: () => !!m.comment, // active this custom submit when edit mode
     req: async () => {
       const saveData = {

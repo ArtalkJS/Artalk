@@ -132,14 +132,10 @@
   }
 
   & > .atk-list-footer {
-    z-index: 1;
-    position: absolute;
-    bottom: 5px;
-    right: 0;
+    float: right;
 
     @media only screen and (max-width: 768px) {
-      position: relative;
-      margin-top: 10px;
+      float: initial;
       text-align: center;
     }
 
@@ -148,7 +144,6 @@
       font-size: 12px;
       color: var(--at-color-meta);
       padding-right: 15px;
-      margin-top: 5px;
 
       a {
         color: var(--at-color-main);

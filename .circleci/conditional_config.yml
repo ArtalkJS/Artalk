@@ -12,7 +12,7 @@ executors:
       - image: 'cimg/node:18.17.1'
   go:
     docker:
-      - image: cimg/go:1.21.0
+      - image: cimg/go:1.21.3
 
 parameters:
   trigger-app:
@@ -40,12 +40,12 @@ jobs:
               go version
         - restore_cache:
             keys:
-              - go-mod-1.21.0-{{ checksum "go.sum" }}
+              - go-mod-1.21.3-{{ checksum "go.sum" }}
         - run:
             name: Install Dependencies
             command: go mod download
         - save_cache:
-            key: go-mod-1.21.0-{{ checksum "go.sum" }}
+            key: go-mod-1.21.3-{{ checksum "go.sum" }}
             paths:
               - "~/go/pkg/mod"
         - run:

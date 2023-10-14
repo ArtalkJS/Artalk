@@ -4,49 +4,129 @@ import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import marked from '../lib/marked'
-import User from '../lib/user'
-import initEditorFuncs from './funcs'
 import { render, EditorUI } from './ui'
-import { PlugManager } from './plug-manager'
-import { Mover } from './mover'
-import { ReplyManager } from './reply'
-import { EditModeManager } from './edit-mode'
-import { SubmitManager } from './submit'
+import PlugManager from './plug-manager'
+import MoverPlug from './core/mover-plug'
+import ReplyPlug from './core/reply-plug'
+import EditPlug from './core/edit-plug'
+import SubmitPlug from './core/submit-plug'
+import ClosablePlug from './core/closable-plug'
 
-export default class Editor extends Component {
-  /** 界面 */
+interface Editor extends Component {
+  getUI(): EditorUI
+  getPlugs(): PlugManager | undefined
+
+  /**
+   * Get the header input elements
+   */
+  getHeaderInputEls(): Record<string, HTMLInputElement>
+
+  /**
+   * Set content
+   */
+  setContent(val: string): void
+
+  /**
+   * Insert content
+   */
+  insertContent(val: string): void
+
+  /**
+   * Get the final content
+   *
+   * This function returns the raw content or the content transformed through a plugin hook.
+   */
+  getFinalContent(): string
+
+  /**
+   * Get the raw content which is inputed by user
+   */
+  getContentRaw(): string
+
+  /**
+   * Get the HTML format content which is rendered by marked (a markdown parser)
+   */
+  getContentMarked(): string
+
+  /**
+   * Focus editor
+   */
+  focus(): void
+
+  /**
+   * Reset editor
+   */
+  reset(): void
+
+  /**
+   * Submit comment
+   */
+  submit(): void
+
+  /**
+   * Move editor to the position after the specified element
+   */
+  move($after: HTMLElement): void
+
+  /**
+   * Move editor to the original position
+   */
+  moveBack(): void
+
+  /**
+   * Close comment editor which prevent user from submitting (but admin excluded)
+   */
+  close(): void
+
+  /**
+   * Open comment editor which allow user to submit (only be called while editor is closed)
+   */
+  open(): void
+
+  /**
+   * Show notification message
+   */
+  showNotify(msg: string, type: "i" | "s" | "w" | "e"): void
+
+  /**
+   * Show loading on editor
+   */
+  showLoading(): void
+
+  /**
+   * Hide loading on editor
+   */
+  hideLoading(): void
+
+  /**
+   * Start replaying a comment
+   */
+  setReply(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
+
+  /**
+   * Cancel replaying the comment
+   */
+  cancelReply(): void
+
+  /**
+   * Start editing a comment
+   */
+  setEditComment(commentData: CommentData, $comment: HTMLElement): void
+
+  /**
+   * Cancel editing the comment
+   */
+  cancelEditComment(): void
+}
+
+class Editor extends Component {
   private ui: EditorUI
-  public getUI() { return this.ui }
+  getUI() { return this.ui }
 
-  /** 插件管理器 */
   private plugs?: PlugManager
-  public getPlugs() { return this.plugs }
-  public setPlugs(p: PlugManager) { this.plugs = p }
+  getPlugs() { return this.plugs }
 
-  /** 评论框移动 */
-  private mover?: Mover
-  public setMover(m: Mover) { this.mover = m }
-
-  /** 回复评论 */
-  private reply?: ReplyManager
-  public setReplyManager(m: ReplyManager) { this.reply = m }
-  public getReplyManager() { return this.reply }
-  public get isReplyMode() { return !!this.reply?.comment }
-
-  /** 编辑评论 */
-  private editMode?: EditModeManager
-  public setEditModeManager(m: EditModeManager) { this.editMode = m }
-  public get isEditMode() { return !!this.editMode?.comment }
-
-  /** 提交评论 */
-  private submitManager?: SubmitManager
-  public setSubmitManager(m: SubmitManager) { this.submitManager = m }
-  public getSubmitManager() { return this.submitManager }
-
-  /** 已加载功能的 unmount 函数 */
-  private unmountFuncs: (() => void)[] = []
-
-  public constructor(ctx: Context) {
+  constructor(ctx: Context) {
     super(ctx)
 
     // init editor ui
@@ -55,31 +135,24 @@ export default class Editor extends Component {
 
     // event listen
     this.ctx.on('conf-loaded', () => {
-      // call unmount funcs
+      // trigger unmount event will call all plugs' unmount function
       // (this will only be called while conf reloaded, not be called at first time)
-      this.unmountFuncs?.forEach((unmount) => !!unmount && unmount())
+      this.plugs?.triggerUnmounted()
 
-      // call init will return unmount funcs and save it
-      this.unmountFuncs = initEditorFuncs(this) // init editor funcs
+      // initialize editor plugs
+      this.plugs = new PlugManager(this)
+
+      // trigger event for plug initialization
+      this.plugs.triggerMounted()
     })
   }
 
-  public getHeaderInputEls() {
+  getHeaderInputEls() {
     return { nick: this.ui.$nick, email: this.ui.$email, link: this.ui.$link }
   }
 
-  public saveToLocalStorage() {
-    window.localStorage.setItem('ArtalkContent', this.getContentOriginal().trim())
-  }
-
-  public refreshSendBtnText() {
-    if (this.isEditMode) this.ui.$submitBtn.innerText = this.$t('save')
-    else this.ui.$submitBtn.innerText = this.ctx.conf.sendBtn || this.$t('send')
-  }
-
-  /** 最终用于 submit 的数据 */
-  public getFinalContent() {
-    let content = this.getContentOriginal()
+  getFinalContent() {
+    let content = this.getContentRaw()
 
     // plug hook: final content transformer
     if (this.plugs) content = this.plugs.getTransformedContent(content)
@@ -87,28 +160,22 @@ export default class Editor extends Component {
     return content
   }
 
-  public getContentOriginal() {
-    return this.ui.$textarea.value || '' // Tip: !!"0" === true
+  getContentRaw() {
+    return this.ui.$textarea.value || ''
   }
 
-  public getContentMarked() {
+  getContentMarked() {
     return marked(this.ctx, this.getFinalContent())
   }
 
-  public setContent(val: string) {
+  setContent(val: string) {
     this.ui.$textarea.value = val
-    this.saveToLocalStorage()
 
     // plug hook: content updated
-    if (this.plugs) this.plugs.triggerContentUpdatedEvt(val)
-
-    // 延迟执行防止无效
-    window.setTimeout(() => {
-      this.adjustTextareaHeight()
-    }, 80)
+    this.plugs?.triggerContentUpdatedEvt(val)
   }
 
-  public insertContent(val: string) {
+  insertContent(val: string) {
     if ((document as any).selection) {
       this.ui.$textarea.focus();
       (document as any).selection.createRange().text = val
@@ -128,100 +195,65 @@ export default class Editor extends Component {
     }
   }
 
-  public adjustTextareaHeight() {
-    const diff = this.ui.$textarea.offsetHeight - this.ui.$textarea.clientHeight
-    this.ui.$textarea.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
-    this.ui.$textarea.style.height = `${this.ui.$textarea.scrollHeight + diff}px`
-  }
-
-  public focus() {
+  focus() {
     this.ui.$textarea.focus()
   }
 
-  public reset() {
+  reset() {
     this.setContent('')
     this.cancelReply()
     this.cancelEditComment()
   }
 
-  /** 设置回复评论 */
-  public setReply(commentData: CommentData, $comment: HTMLElement, scroll = true) {
-    this.reply?.setReply(commentData, $comment, scroll)
+  setReply(commentData: CommentData, $comment: HTMLElement, scroll = true) {
+    this.plugs?.get(ReplyPlug)?.setReply(commentData, $comment, scroll)
   }
 
-  /** 取消回复评论 */
-  public cancelReply() {
-    this.reply?.cancelReply()
+  cancelReply() {
+    this.plugs?.get(ReplyPlug)?.cancelReply()
   }
 
-  /** 设置编辑评论 */
-  public setEditComment(commentData: CommentData, $comment: HTMLElement) {
-    this.editMode?.setEdit(commentData, $comment)
+  setEditComment(commentData: CommentData, $comment: HTMLElement) {
+    this.plugs?.get(EditPlug)?.edit(commentData, $comment)
   }
 
-  /** 取消编辑评论 */
-  public cancelEditComment() {
-    this.editMode?.cancelEdit()
+  cancelEditComment() {
+    this.plugs?.get(EditPlug)?.cancelEdit()
   }
 
-  public showNotify(msg: string, type: "i"|"s"|"w"|"e") {
+  showNotify(msg: string, type: any) {
     Ui.showNotify(this.ui.$notifyWrap, msg, type)
   }
 
-  public showLoading() {
+  showLoading() {
     Ui.showLoading(this.ui.$el)
   }
 
-  public hideLoading() {
+  hideLoading() {
     Ui.hideLoading(this.ui.$el)
   }
 
-  /** 点击评论提交按钮事件 */
-  public async submit() {
-    if (!this.submitManager) throw Error('submitManger not initialized')
-    await this.submitManager.do()
+  async submit() {
+    const submitPlug = this.plugs?.get(SubmitPlug)
+    if (!submitPlug) throw Error('submitManger not initialized')
+    await submitPlug.do()
   }
 
-  /** 关闭评论 */
-  public close() {
-    if (!this.ui.$textareaWrap.querySelector('.atk-comment-closed'))
-      this.ui.$textareaWrap.prepend(Utils.createElement(`<div class="atk-comment-closed">${this.$t('onlyAdminCanReply')}</div>`))
-
-    if (!User.data.isAdmin) {
-      this.ui.$textarea.style.display = 'none'
-      this.closePlugPanel()
-      this.ui.$bottom.style.display = 'none'
-    } else {
-      // 管理员一直打开评论
-      this.ui.$textarea.style.display = ''
-      this.ui.$bottom.style.display = ''
-    }
+  close() {
+    this.plugs?.get(ClosablePlug)?.close()
   }
 
-  /** 打开评论 */
-  public open() {
-    this.ui.$textareaWrap.querySelector('.atk-comment-closed')?.remove()
-    this.ui.$textarea.style.display = ''
-    this.ui.$bottom.style.display = ''
+  open() {
+    this.plugs?.get(ClosablePlug)?.open()
   }
 
-  /** 移动评论框到置顶元素之后 */
-  public travel($afterEl: HTMLElement) {
-    this.mover?.move($afterEl)
+  move($after: HTMLElement) {
+    this.plugs?.get(MoverPlug)?.move($after)
   }
 
-  /** 评论框归位 */
-  public travelBack() {
-    this.mover?.back()
-  }
-
-  /** 展开插件面板 */
-  public openPlugPanel(plugName: string) {
-    this.plugs?.openPlugPanel(plugName)
-  }
-
-  /** 收起插件面板 */
-  public closePlugPanel() {
-    this.plugs?.closePlugPanel()
+  moveBack() {
+    this.plugs?.get(MoverPlug)?.back()
   }
 }
+
+export default Editor

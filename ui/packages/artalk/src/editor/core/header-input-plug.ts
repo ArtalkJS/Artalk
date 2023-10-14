@@ -1,14 +1,12 @@
 import Editor from '../editor'
 import User from '../../lib/user'
-import EditorPlug from './editor-plug'
+import EditorPlug from '../editor-plug'
 
 export default class HeaderInputPlug extends EditorPlug {
-  public static Name = 'headerInput'
-
   public constructor(editor: Editor) {
     super(editor)
 
-    this.registerHeaderInputEvt((key, $input) => {
+    this.kit.useHeaderInput((key, $input) => {
       if (key === 'nick' || key === 'email') {
         this.fetchUserInfo()
       }
@@ -40,7 +38,7 @@ export default class HeaderInputPlug extends EditorPlug {
     this.queryUserInfo.timeout = window.setTimeout(() => {
       this.queryUserInfo.timeout = null // 清理
 
-      const {req, abort} = this.ctx.getApi().user.userGet(
+      const {req, abort} = this.editor.ctx.getApi().user.userGet(
         User.data.nick, User.data.email
       )
       this.queryUserInfo.abortFunc = abort
@@ -50,7 +48,7 @@ export default class HeaderInputPlug extends EditorPlug {
         }
 
         // 未读消息更新
-        this.ctx.updateNotifies(data.unread)
+        this.editor.ctx.updateNotifies(data.unread)
 
         // 若用户为管理员，执行登陆操作
         if (User.checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {
@@ -71,7 +69,7 @@ export default class HeaderInputPlug extends EditorPlug {
   }
 
   showLoginDialog() {
-    this.ctx.checkAdmin({
+    this.editor.ctx.checkAdmin({
       onSuccess: () => {
       }
     })

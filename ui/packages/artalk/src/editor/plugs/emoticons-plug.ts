@@ -3,7 +3,7 @@ import './emoticons-plug.scss'
 import * as Utils from '~/src/lib/utils'
 import * as Ui from '~/src/lib/ui'
 import { EmoticonListData, EmoticonGrpData } from '~/types/artalk-data'
-import EditorPlug from './editor-plug'
+import EditorPlug from '../editor-plug'
 import Editor from '../editor'
 
 type OwOFormatType = {
@@ -14,10 +14,6 @@ type OwOFormatType = {
 }
 
 export default class EmoticonsPlug extends EditorPlug {
-  public static Name = 'emoticons'
-
-  declare protected $panel: HTMLElement
-
   public emoticons: EmoticonListData = []
   public loadingTask: Promise<void>|null = null
 
@@ -27,35 +23,33 @@ export default class EmoticonsPlug extends EditorPlug {
   public constructor(public editor: Editor) {
     super(editor)
 
-    this.registerPanel(`<div class="atk-editor-plug-emoticons"></div>`)
-    this.registerBtn(this.ctx.$t('emoticon'))
-    this.registerContentTransformer((raw) => this.transEmoticonImageText(raw))
+    this.kit.usePanel(`<div class="atk-editor-plug-emoticons"></div>`)
+    this.kit.useBtn(this.editor.ctx.$t('emoticon'))
+    this.kit.useContentTransformer((raw) => this.transEmoticonImageText(raw))
+    this.kit.usePanelShow(() => {
+      ;(async () => {
+        await this.loadEmoticonsData()
+
+        // 初始化元素
+        if (!this.isImgLoaded) {
+          this.initEmoticonsList()
+          this.isImgLoaded = true
+        }
+
+        // 延迟执行，防止无法读取高度
+        setTimeout(() => {
+          this.changeListHeight()
+        }, 30)
+      })()
+    })
+    this.kit.usePanelHide(() => {
+      this.$panel!.parentElement!.style.height = ''
+    })
 
     // 表情包预加载
     window.setTimeout(() => {
       this.loadEmoticonsData()
     }, 1000) // 延迟 1s 加载
-  }
-
-  public onPanelShow() {
-    ;(async () => {
-      await this.loadEmoticonsData()
-
-      // 初始化元素
-      if (!this.isImgLoaded) {
-        this.initEmoticonsList()
-        this.isImgLoaded = true
-      }
-
-      // 延迟执行，防止无法读取高度
-      setTimeout(() => {
-        this.changeListHeight()
-      }, 30)
-    })()
-  }
-
-  public onPanelHide() {
-    this.$panel.parentElement!.style.height = ''
   }
 
   isListLoaded = false
@@ -70,9 +64,9 @@ export default class EmoticonsPlug extends EditorPlug {
 
     // 数据处理
     this.loadingTask = (async () => {
-      Ui.showLoading(this.$panel)
-      this.emoticons = await this.handleData(this.ctx.conf.emoticons)
-      Ui.hideLoading(this.$panel)
+      Ui.showLoading(this.$panel!)
+      this.emoticons = await this.handleData(this.editor.ctx.conf.emoticons)
+      Ui.hideLoading(this.$panel!)
       this.loadingTask = null
       this.isListLoaded = true
     })()
@@ -85,8 +79,8 @@ export default class EmoticonsPlug extends EditorPlug {
     }
 
     if (!Array.isArray(data)) {
-      Ui.setError(this.$panel, "表情包数据必须为 Array/Object/String 类型")
-      Ui.hideLoading(this.$panel)
+      Ui.setError(this.$panel!, "表情包数据必须为 Array/Object/String 类型")
+      Ui.hideLoading(this.$panel!)
       return []
     }
 
@@ -143,8 +137,8 @@ export default class EmoticonsPlug extends EditorPlug {
       const json = await resp.json()
       return json
     } catch (err) {
-      Ui.hideLoading(this.$panel)
-      Ui.setError(this.$panel, `表情加载失败 ${String(err)}`)
+      Ui.hideLoading(this.$panel!)
+      Ui.setError(this.$panel!, `表情加载失败 ${String(err)}`)
       return []
     }
   }
@@ -204,7 +198,7 @@ export default class EmoticonsPlug extends EditorPlug {
   private initEmoticonsList() {
     // 表情列表
     this.$grpWrap = Utils.createElement(`<div class="atk-grp-wrap"></div>`)
-    this.$panel.append(this.$grpWrap)
+    this.$panel!.append(this.$grpWrap)
 
     this.emoticons.forEach((grp, index) => {
       const $grp = Utils.createElement(`<div class="atk-grp" style="display: none;"></div>`)
@@ -241,7 +235,7 @@ export default class EmoticonsPlug extends EditorPlug {
     // 表情分类切换 bar
     if (this.emoticons.length > 1) {
       this.$grpSwitcher = Utils.createElement(`<div class="atk-grp-switcher"></div>`)
-      this.$panel.append(this.$grpSwitcher)
+      this.$panel!.append(this.$grpSwitcher)
       this.emoticons.forEach((grp, index) => {
         const $item = Utils.createElement('<span />')
         $item.innerText = grp.name

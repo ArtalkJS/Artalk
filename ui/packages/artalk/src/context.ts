@@ -165,11 +165,11 @@ class Context implements ContextApi {
   }
 
   public editorTravel($el: HTMLElement): void {
-    this.editor.travel($el)
+    this.editor.move($el)
   }
 
   public editorTravelBack(): void {
-    this.editor.travelBack()
+    this.editor.moveBack()
   }
 
   /* 侧边栏 */

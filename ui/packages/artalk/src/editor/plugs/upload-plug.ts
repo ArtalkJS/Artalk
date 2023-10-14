@@ -1,11 +1,9 @@
 import * as Utils from '@/lib/utils'
 import Editor from '../editor'
 import User from '../../lib/user'
-import EditorPlug from './editor-plug'
+import EditorPlug from '../editor-plug'
 
 export default class UploadPlug extends EditorPlug {
-  public static Name = 'upload'
-
   public $imgUploadInput?: HTMLInputElement
 
   /** 允许的图片格式 */
@@ -19,7 +17,7 @@ export default class UploadPlug extends EditorPlug {
     this.$imgUploadInput.style.display = 'none'
     this.$imgUploadInput.accept = this.allowImgExts.map(o => `.${o}`).join(',')
 
-    const $btn = this.registerBtn(`${this.ctx.$t('image')}`)
+    const $btn = this.kit.useBtn(`${this.editor.ctx.$t('image')}`)
     $btn.after(this.$imgUploadInput)
     $btn.onclick = () => {
       // 选择图片
@@ -34,8 +32,8 @@ export default class UploadPlug extends EditorPlug {
       $input.click() // 显示选择图片对话框
     }
 
-    if (!this.ctx.conf.imgUpload) {
-      this.getBtn()!.setAttribute('atk-only-admin-show', '')
+    if (!this.editor.ctx.conf.imgUpload) {
+      this.$btn!.setAttribute('atk-only-admin-show', '')
     }
 
     // 统一从 FileList 获取文件并上传图片方法
@@ -80,7 +78,7 @@ export default class UploadPlug extends EditorPlug {
 
     // 未登录提示
     if (!User.checkHasBasicUserInfo()) {
-      this.editor.showNotify(this.ctx.$t('uploadLoginMsg'), 'w')
+      this.editor.showNotify(this.editor.ctx.$t('uploadLoginMsg'), 'w')
       return
     }
 
@@ -95,22 +93,22 @@ export default class UploadPlug extends EditorPlug {
     // 上传图片
     let resp: any
     try {
-      if (!this.ctx.conf.imgUploader) {
+      if (!this.editor.ctx.conf.imgUploader) {
         // 使用 Artalk 进行图片上传
-        resp = await this.ctx.getApi().upload.imgUpload(file)
+        resp = await this.editor.ctx.getApi().upload.imgUpload(file)
       } else {
         // 使用自定义的图片上传器
-        resp = {img_url: await this.ctx.conf.imgUploader(file)}
+        resp = {img_url: await this.editor.ctx.conf.imgUploader(file)}
       }
     } catch (err: any) {
       console.error(err)
-      this.editor.showNotify(`${this.ctx.$t('uploadFail')}，${err.msg}`, 'e')
+      this.editor.showNotify(`${this.editor.ctx.$t('uploadFail')}，${err.msg}`, 'e')
     }
     if (!!resp && resp.img_url) {
       let imgURL = resp.img_url as string
 
       // 若为相对路径，加上 artalk server
-      if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi(this.ctx, imgURL)
+      if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi(this.editor.ctx, imgURL)
 
       // 上传成功插入图片
       this.editor.setContent(this.editor.getUI().$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`))

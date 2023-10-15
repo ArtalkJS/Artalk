@@ -1,6 +1,6 @@
 import type ArtalkConfig from '~/types/artalk-config'
 import type { CommentData, NotifyData } from '~/types/artalk-data'
-import type { Event } from '~/types/event'
+import type { EventPayloadMap } from '~/types/event'
 import type ContextApi from '~/types/context'
 import type { TInjectedServices } from './service'
 
@@ -15,6 +15,7 @@ import { SidebarShowPayload } from './layer/sidebar-layer'
 import Comment from './comment'
 import Api from './api'
 import List from './list'
+import EventManager from './lib/event-manager'
 
 // Auto dependency injection
 interface Context extends TInjectedServices { }
@@ -30,8 +31,8 @@ class Context implements ContextApi {
 
   private commentList: Comment[] = [] // Note: 无层级结构 + 无须排列
 
-  /* 订阅者模式 */
-  private eventList: Event[] = []
+  /* Event Manager */
+  private events = new EventManager<EventPayloadMap>()
 
   public constructor(conf: ArtalkConfig, $root?: HTMLElement) {
     this.conf = conf
@@ -206,23 +207,17 @@ class Context implements ContextApi {
     })
   }
 
-  /* 订阅模式 */
-  public on(name: any, handler: any, scope: any = 'internal') {
-    this.eventList.push({ name, handler, scope })
+  /* Events */
+  public on(name: any, handler: any) {
+    this.events.on(name, handler)
   }
 
-  public off(name: any, handler: any, scope: any = 'internal') {
-    this.eventList = this.eventList.filter((evt) => {
-      if (handler) return !(evt.name === name && evt.handler === handler && evt.scope === scope)
-      return !(evt.name === name && evt.scope === scope) // 删除全部相同 name event
-    })
+  public off(name: any, handler: any) {
+    this.events.off(name, handler)
   }
 
-  public trigger(name: any, payload?: any, scope?: any) {
-    this.eventList
-      .filter((evt) => evt.name === name && (scope ? (evt.scope === scope) : true))
-      .map((evt) => evt.handler)
-      .forEach((handler) => handler(payload))
+  public trigger(name: any, payload?: any) {
+    this.events.trigger(name, payload)
   }
 
   /* i18n */

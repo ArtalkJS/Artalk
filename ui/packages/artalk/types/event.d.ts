@@ -13,16 +13,3 @@ export interface EventPayloadMap {
   'sidebar-show': undefined        // 侧边栏显示
   'sidebar-hide': undefined        // 侧边栏隐藏
 }
-
-// ============================================
-export interface Handler<P> {
-  (payload: P): void
-}
-
-export type EventScopeType = 'internal'|'external'
-
-export interface Event<K extends keyof EventPayloadMap = keyof EventPayloadMap> {
-  name: keyof EventPayloadMap
-  handler: Handler<EventPayloadMap[K]>
-  scope: EventScopeType
-}

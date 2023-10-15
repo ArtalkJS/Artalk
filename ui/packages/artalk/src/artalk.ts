@@ -1,9 +1,10 @@
 import './style/main.scss'
 
 import type ArtalkConfig from '~/types/artalk-config'
-import type { EventPayloadMap, Handler } from '~/types/event'
+import type { EventPayloadMap } from '~/types/event'
 import type ArtalkPlug from '~/types/plug'
 import type Context from '~/types/context'
+import type { EventHandler } from './lib/event-manager'
 import ConcreteContext from './context'
 import defaults from './defaults'
 import { handelBaseConf } from './config'
@@ -90,18 +91,18 @@ export default class Artalk {
   }
 
   /** Add an event listener */
-  public on<K extends keyof EventPayloadMap>(name: K, handler: Handler<EventPayloadMap[K]>) {
-    this.ctx.on(name, handler, 'external')
+  public on<K extends keyof EventPayloadMap>(name: K, handler: EventHandler<EventPayloadMap[K]>) {
+    this.ctx.on(name, handler)
   }
 
   /** Remove an event listener */
-  public off<K extends keyof EventPayloadMap>(name: K, handler: Handler<EventPayloadMap[K]>) {
-    this.ctx.off(name, handler, 'external')
+  public off<K extends keyof EventPayloadMap>(name: K, handler: EventHandler<EventPayloadMap[K]>) {
+    this.ctx.off(name, handler)
   }
 
   /** Trigger an event */
   public trigger<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K]) {
-    this.ctx.trigger(name, payload, 'external')
+    this.ctx.trigger(name, payload)
   }
 
   /** Set dark mode */
@@ -135,12 +136,12 @@ export default class Artalk {
   }
 
   /** Add an event listener */
-  public static on<K extends keyof EventPayloadMap>(name: K, handler: Handler<EventPayloadMap[K]>) {
+  public static on<K extends keyof EventPayloadMap>(name: K, handler: EventHandler<EventPayloadMap[K]>) {
     this.instance?.on(name, handler)
   }
 
   /** Remove an event listener */
-  public static off<K extends keyof EventPayloadMap>(name: K, handler: Handler<EventPayloadMap[K]>) {
+  public static off<K extends keyof EventPayloadMap>(name: K, handler: EventHandler<EventPayloadMap[K]>) {
     this.instance?.off(name, handler)
   }
 

@@ -107,11 +107,8 @@ export default interface ContextApi {
   /** 编辑器 - 显示提示消息 */
   editorShowNotify(msg: string, type: "i" | "s" | "w" | "e"): void
 
-  /** 评论框 - 位置移动 */
-  editorTravel($el: HTMLElement): void
-
-  /** 评论框 - 位置回归 */
-  editorTravelBack(): void
+  /** 评论框 - 复原 UI */
+  editorResetUI(): void
 
   /** 验证码检测 */
   checkCaptcha(payload: CheckerCaptchaPayload): void

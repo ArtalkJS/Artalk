@@ -4,6 +4,7 @@ import Editor from '../editor'
 import User from '../../lib/user'
 import EditorPlug from '../editor-plug'
 import SubmitPlug from './submit-plug'
+import MoverPlug from './mover-plug'
 
 export default class EditPlug extends EditorPlug {
   private comment?: CommentData
@@ -27,7 +28,7 @@ export default class EditPlug extends EditorPlug {
         activeCond: () => !!this.comment, // active this custom submit when edit mode
         req: async () => {
           const saveData = {
-            content: this.editor.getFinalContent(),
+            content: this.editor.getContentFinal(),
             nick: this.editor.getUI().$nick.value,
             email: this.editor.getUI().$email.value,
             link: this.editor.getUI().$link.value,
@@ -66,7 +67,7 @@ export default class EditPlug extends EditorPlug {
 
     ui.$header.style.display = 'none' // TODO support modify header information
 
-    this.editor.move($comment)
+    this.editor.getPlugs()?.get(MoverPlug)?.move($comment)
 
     ui.$nick.value = comment.nick || ''
     ui.$email.value = comment.email || ''
@@ -89,7 +90,7 @@ export default class EditPlug extends EditorPlug {
     }
 
     this.comment = undefined
-    this.editor.moveBack()
+    this.editor.getPlugs()?.get(MoverPlug)?.back()
 
     const { nick, email, link } = User.data
     ui.$nick.value = nick

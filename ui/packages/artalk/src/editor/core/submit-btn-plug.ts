@@ -1,6 +1,5 @@
 import Editor from '../editor'
 import EditorPlug from '../editor-plug'
-import EditPlug from './edit-plug'
 
 export default class SubmitBtnPlug extends EditorPlug {
   constructor(editor: Editor) {

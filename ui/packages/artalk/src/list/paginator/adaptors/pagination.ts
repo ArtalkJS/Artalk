@@ -13,7 +13,7 @@ export default <IPaginationAdaptor>{
       pageSize: conf.pageSize,
       onChange: async (o) => {
         if (conf.list.conf.editorTravel === true)
-          conf.list.ctx.editorTravelBack() // 防止评论框被吞
+          conf.list.ctx.editorResetUI() // 防止评论框被吞
 
         await conf.list.fetchComments(o)
 

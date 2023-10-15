@@ -36,7 +36,7 @@ interface Editor extends Component {
    *
    * This function returns the raw content or the content transformed through a plugin hook.
    */
-  getFinalContent(): string
+  getContentFinal(): string
 
   /**
    * Get the raw content which is inputed by user
@@ -59,19 +59,16 @@ interface Editor extends Component {
   reset(): void
 
   /**
+   * Reset editor UI
+   *
+   * call it will move editor to the initial position
+   */
+  resetUI(): void
+
+  /**
    * Submit comment
    */
   submit(): void
-
-  /**
-   * Move editor to the position after the specified element
-   */
-  move($after: HTMLElement): void
-
-  /**
-   * Move editor to the original position
-   */
-  moveBack(): void
 
   /**
    * Close comment editor which prevent user from submitting (but admin excluded)
@@ -151,7 +148,7 @@ class Editor extends Component {
     return { nick: this.ui.$nick, email: this.ui.$email, link: this.ui.$link }
   }
 
-  getFinalContent() {
+  getContentFinal() {
     let content = this.getContentRaw()
 
     // plug hook: final content transformer
@@ -165,7 +162,7 @@ class Editor extends Component {
   }
 
   getContentMarked() {
-    return marked(this.ctx, this.getFinalContent())
+    return marked(this.ctx, this.getContentFinal())
   }
 
   setContent(val: string) {
@@ -203,6 +200,11 @@ class Editor extends Component {
     this.setContent('')
     this.cancelReply()
     this.cancelEditComment()
+  }
+
+  resetUI() {
+    // move editor to the initial position
+    this.plugs?.get(MoverPlug)?.back()
   }
 
   setReply(commentData: CommentData, $comment: HTMLElement, scroll = true) {
@@ -245,14 +247,6 @@ class Editor extends Component {
 
   open() {
     this.plugs?.get(ClosablePlug)?.open()
-  }
-
-  move($after: HTMLElement) {
-    this.plugs?.get(MoverPlug)?.move($after)
-  }
-
-  moveBack() {
-    this.plugs?.get(MoverPlug)?.back()
   }
 }
 

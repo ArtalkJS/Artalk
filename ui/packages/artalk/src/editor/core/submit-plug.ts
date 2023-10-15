@@ -19,7 +19,7 @@ export default class SubmitPlug extends EditorPlug {
   }
 
   async do() {
-    if (this.editor.getFinalContent().trim() === '') {
+    if (this.editor.getContentFinal().trim() === '') {
       this.editor.focus()
       return
     }
@@ -76,7 +76,7 @@ export default class SubmitPlug extends EditorPlug {
     const reply = this.editor.getPlugs()?.get(ReplyPlug)?.getComment()
 
     return {
-      content: this.editor.getFinalContent(),
+      content: this.editor.getContentFinal(),
       nick, email, link,
       rid: (!reply) ? 0 : reply.id,
       page_key: (!reply) ? conf.pageKey : reply.page_key,

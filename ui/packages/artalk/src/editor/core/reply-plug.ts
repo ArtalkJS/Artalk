@@ -3,6 +3,7 @@ import Editor from '../editor'
 import * as Utils from '../../lib/utils'
 import * as Ui from '../../lib/ui'
 import EditorPlug from '../editor-plug'
+import MoverPlug from './mover-plug'
 
 export default class ReplyPlug extends EditorPlug {
   private comment?: CommentData
@@ -35,7 +36,7 @@ export default class ReplyPlug extends EditorPlug {
     }
 
     this.comment = commentData
-    this.editor.move($comment)
+    this.editor.getPlugs()?.get(MoverPlug)?.move($comment)
 
     if (scroll) Ui.scrollIntoView(ui.$el)
 
@@ -52,6 +53,6 @@ export default class ReplyPlug extends EditorPlug {
     }
     this.comment = undefined
 
-    this.editor.moveBack()
+    this.editor.getPlugs()?.get(MoverPlug)?.back()
   }
 }

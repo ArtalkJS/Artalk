@@ -1,6 +1,7 @@
 import ArtalkConfig from './artalk-config'
 import { CommentData, NotifyData } from './artalk-data'
-import { EventPayloadMap, Event, EventScopeType, Handler } from './event'
+import type { EventPayloadMap } from './event'
+import type { EventManagerFuncs } from '../src/lib/event-manager'
 import { internal as internalLocales, I18n } from '../src/i18n'
 import Api from '../src/api'
 import User from '../src/lib/user'
@@ -15,7 +16,7 @@ import type { TInjectedServices } from '../src/service'
  *
  * (面向接口的编程)
  */
-export default interface ContextApi {
+export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** Artalk 根元素对象 */
   $root: HTMLElement
 
@@ -118,15 +119,6 @@ export default interface ContextApi {
 
   /** 管理员显示元素可见性更新 */
   checkAdminShowEl(): void
-
-  /** 订阅注册 */
-  on<K extends keyof EventPayloadMap>(name: K, handler: Handler<EventPayloadMap[K]>, scope?: EventScopeType): void
-
-  /** 订阅取消 */
-  off<K extends keyof EventPayloadMap>(name: K, handler?: Handler<EventPayloadMap[K]>, scope?: EventScopeType): void
-
-  /** 订阅发布 */
-  trigger<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K], scope?: EventScopeType): void
 
   /** i18n 翻译 */
   $t(key: keyof I18n, args?: {[key: string]: string}): string

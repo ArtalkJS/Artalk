@@ -11,17 +11,19 @@ export default class HeaderPlug extends EditorPlug {
   constructor(editor: Editor) {
     super(editor)
 
-    const inputFuncs: {[name: string]: () => void} = {}
+    const inputEventFns: {[name: string]: () => void} = {}
+
+    // the input event
+    const onInput = ($input: HTMLInputElement, key: string) => () => {
+      if (editor.getPlugs()?.get(EditPlug)?.getIsEditMode()) return // 评论编辑模式，不修改个人信息
+
+      User.update({ [key]: $input.value.trim() })
+
+      // trigger header input event
+      editor.getPlugs()?.triggerHeaderInputEvt(key, $input)
+    }
 
     this.kit.useMounted(() => {
-      // the input event
-      const onInput = ($input: HTMLInputElement, key: string) => () => {
-        if (editor.getPlugs()?.get(EditPlug)?.getIsEditMode()) return // 评论编辑模式，不修改个人信息
-
-        User.update({ [key]: $input.value.trim() })
-        editor.getPlugs()?.triggerHeaderInputEvt(key, $input)
-      }
-
       // set placeholder and sync header input value
       Object.entries(this.$inputs).forEach(([key, $input]) => {
         $input.placeholder = `${editor.$t(key as any)}`
@@ -30,14 +32,14 @@ export default class HeaderPlug extends EditorPlug {
 
       // bind the event
       Object.entries(this.$inputs).forEach(([key, $input]) => {
-        $input.addEventListener('input', inputFuncs[key] = onInput($input, key))
+        $input.addEventListener('input', inputEventFns[key] = onInput($input, key))
       })
     })
 
     this.kit.useUnmounted(() => {
       // unmount the event
       Object.entries(this.$inputs).forEach(([key, $input]) => {
-        $input.removeEventListener('input', inputFuncs[key])
+        $input.removeEventListener('input', inputEventFns[key])
       })
     })
   }

@@ -14,13 +14,13 @@ type OwOFormatType = {
 }
 
 export default class EmoticonsPlug extends EditorPlug {
-  public emoticons: EmoticonListData = []
-  public loadingTask: Promise<void>|null = null
+  private emoticons: EmoticonListData = []
+  private loadingTask: Promise<void>|null = null
 
-  public $grpWrap!: HTMLElement
-  public $grpSwitcher!: HTMLElement
+  private $grpWrap!: HTMLElement
+  private $grpSwitcher!: HTMLElement
 
-  public constructor(public editor: Editor) {
+  constructor(editor: Editor) {
     super(editor)
 
     this.kit.usePanel(`<div class="atk-editor-plug-emoticons"></div>`)
@@ -52,8 +52,8 @@ export default class EmoticonsPlug extends EditorPlug {
     }, 1000) // 延迟 1s 加载
   }
 
-  isListLoaded = false
-  isImgLoaded = false
+  private isListLoaded = false
+  private isImgLoaded = false
 
   public async loadEmoticonsData() {
     if (this.isListLoaded) return

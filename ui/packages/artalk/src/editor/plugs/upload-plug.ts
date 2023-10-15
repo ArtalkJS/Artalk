@@ -3,19 +3,19 @@ import Editor from '../editor'
 import User from '../../lib/user'
 import EditorPlug from '../editor-plug'
 
+/** 允许的图片格式 */
+const AllowImgExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']
+
 export default class UploadPlug extends EditorPlug {
-  public $imgUploadInput?: HTMLInputElement
+  private $imgUploadInput?: HTMLInputElement
 
-  /** 允许的图片格式 */
-  allowImgExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']
-
-  public constructor(editor: Editor) {
+  constructor(editor: Editor) {
     super(editor)
 
     this.$imgUploadInput = document.createElement('input')
     this.$imgUploadInput.type = 'file'
     this.$imgUploadInput.style.display = 'none'
-    this.$imgUploadInput.accept = this.allowImgExts.map(o => `.${o}`).join(',')
+    this.$imgUploadInput.accept = AllowImgExts.map(o => `.${o}`).join(',')
 
     const $btn = this.kit.useBtn(`${this.editor.ctx.$t('image')}`)
     $btn.after(this.$imgUploadInput)
@@ -72,9 +72,9 @@ export default class UploadPlug extends EditorPlug {
     })
   }
 
-  public async uploadImg(file: File) {
+  async uploadImg(file: File) {
     const fileExt = /[^.]+$/.exec(file.name)
-    if (!fileExt || !this.allowImgExts.includes(fileExt[0])) return
+    if (!fileExt || !AllowImgExts.includes(fileExt[0])) return
 
     // 未登录提示
     if (!User.checkHasBasicUserInfo()) {

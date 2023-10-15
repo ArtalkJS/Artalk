@@ -164,12 +164,8 @@ class Context implements ContextApi {
     this.editor.showNotify(msg, type)
   }
 
-  public editorTravel($el: HTMLElement): void {
-    this.editor.travel($el)
-  }
-
-  public editorTravelBack(): void {
-    this.editor.travelBack()
+  public editorResetUI(): void {
+    this.editor.resetUI()
   }
 
   /* 侧边栏 */

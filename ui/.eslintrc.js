@@ -32,6 +32,8 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-use-before-define': 0,
     '@typescript-eslint/naming-convention': 0,
+    '@typescript-eslint/no-useless-constructor': 0,
+    '@typescript-eslint/no-unused-expressions': 0, // for `func && func()` expressions
   },
   settings: {
     'import/resolver': {

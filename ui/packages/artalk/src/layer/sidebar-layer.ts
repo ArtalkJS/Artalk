@@ -45,7 +45,7 @@ export default class SidebarLayer extends Component {
       this.layer.afterHide = () => {
         // 防止评论框被吞
         if (this.ctx.conf.editorTravel === true) {
-          this.ctx.editorTravelBack()
+          this.ctx.editorResetUI()
         }
       }
     }

@@ -41,6 +41,8 @@ export default class Artalk {
     // 初始化 Context
     this.ctx = new ConcreteContext(this.conf, this.$root)
 
+    this.ctx.getApi()
+
     // 内建服务初始化
     Object.entries(Services).forEach(([name, initService]) => {
       if (Artalk.DisabledComponents.includes(name)) return

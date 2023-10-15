@@ -1,172 +1,169 @@
 import type ArtalkConfig from '~/types/artalk-config'
+import MoverPlug from './core/mover-plug'
 import EmoticonsPlug from './plugs/emoticons-plug'
 import UploadPlug from './plugs/upload-plug'
 import PreviewPlug from './plugs/preview-plug'
-import HeaderInputPlug from './plugs/header-input-plug'
-import EditorPlug from './plugs/editor-plug'
+import HeaderInputPlug from './core/header-input-plug'
+import EditorPlug from './editor-plug'
 import Editor from './editor'
+import LocalStoragePlug from './core/local-storage-plug'
+import HeaderPlug from './core/header-plug'
+import TextareaPlug from './core/textarea-plug'
+import SubmitBtnPlug from './core/submit-btn-plug'
+import SubmitPlug from './core/submit-plug'
+import ReplyPlug from './core/reply-plug'
+import EditPlug from './core/edit-plug'
+import ClosablePlug from './core/closable-plug'
 
 /** The default enabled plugs */
-const ENABLED_PLUGS = [ EmoticonsPlug, UploadPlug, PreviewPlug, HeaderInputPlug ]
+const ENABLED_PLUGS: (typeof EditorPlug)[] = [
+  // Core
+  LocalStoragePlug,
+  HeaderPlug, HeaderInputPlug, TextareaPlug,
+  SubmitPlug, SubmitBtnPlug,
+  MoverPlug, ReplyPlug, EditPlug,
+  ClosablePlug,
 
-/** Context of an editor plug manager */
-export interface PlugManager {
-  editor: Editor
-  plugList: { [name: string]: EditorPlug }
-  openedPlugName: string|null
+  // Extensions
+  EmoticonsPlug, UploadPlug, PreviewPlug
+]
 
-  openPlugPanel(plugName: string): void
-  closePlugPanel(): void
+export default class PlugManager {
+  plugs: EditorPlug[] = []
+  openedPlug: EditorPlug|null = null
 
-  triggerHeaderInputEvt(field: string, $input: HTMLInputElement): void
-  triggerContentUpdatedEvt(content: string): void
-  getTransformedContent(raw: string): string
-}
+  constructor(
+    public editor: Editor
+  ) {
+    // handle ui, clear and reset the plug btns and plug panels
+    editor.getUI().$plugPanelWrap.innerHTML = ''
+    editor.getUI().$plugPanelWrap.style.display = 'none'
+    editor.getUI().$plugBtnWrap.innerHTML = ''
 
-/** Create an editor plug manager */
-export function createPlugManager(editor: Editor): PlugManager {
-  const ctx: PlugManager = {
-    editor,
-    plugList: {},
-    openedPlugName: null,
-    openPlugPanel: (p: string) => openPlugPanel(ctx, p),
-    closePlugPanel: () => closePlugPanel(ctx),
+    // init the all enabled plugs
+    const DISABLED = getDisabledPlugByConf(editor.conf)
 
-    triggerHeaderInputEvt: (f, $) => triggerHeaderInputEvt(ctx, f, $),
-    triggerContentUpdatedEvt: (c) => triggerContentUpdatedEvt(ctx, c),
-    getTransformedContent: (r) => getTransformedContent(ctx, r),
+    ENABLED_PLUGS
+      .filter(p => !DISABLED.includes(p)) // 禁用的插件
+      .forEach((Plug) => {
+        // create the plug instance
+        this.plugs.push(new Plug(this.editor))
+      })
+
+    // load the plug UI
+    this.plugs.forEach((plug) => {
+      this.loadPlugUI(plug)
+    })
   }
 
-  // handle ui, clear and reset the plug btns and plug panels
-  editor.getUI().$plugPanelWrap.innerHTML = ''
-  editor.getUI().$plugPanelWrap.style.display = 'none'
-  editor.getUI().$plugBtnWrap.innerHTML = ''
+  /** Load the plug btn and plug panel on editor ui */
+  private loadPlugUI(plug: EditorPlug) {
+    const $btn = plug.$btn
+    if (!$btn) return
+    this.editor.getUI().$plugBtnWrap.appendChild($btn)
 
-  // init the all enabled plugs
-  const DISABLED = getDisabledPlugNames(editor.conf)
+    // bind the event when click plug btn
+    $btn.onclick = $btn.onclick || (() => {
+      // removing the active class from all the buttons
+      this.editor.getUI().$plugBtnWrap
+        .querySelectorAll('.active')
+        .forEach(item => item.classList.remove('active'))
 
-  ENABLED_PLUGS
-    .filter(p => !DISABLED.includes(p.Name)) // 禁用的插件
-    .forEach((Plug) => {
-      initPlugItem(ctx, Plug)
+      // if the plug is not the same as the openedPlug,
+      if (plug !== this.openedPlug) {
+        // then open the plug current clicked plug panel
+        this.openPlugPanel(plug)
+
+        // add active class for current plug panel
+        $btn.classList.add('active')
+      } else {
+        // then close the plug
+        this.closePlugPanel()
+      }
     })
 
-  return ctx
+    // initialization of plug panel
+    const $panel = plug.$panel
+    if ($panel) {
+      $panel.style.display = 'none'
+      this.editor.getUI().$plugPanelWrap.appendChild($panel)
+    }
+  }
+
+  get<T extends typeof EditorPlug>(plug: T) {
+    return this.plugs.find(p => p instanceof plug) as InstanceType<T> | undefined;
+  }
+
+  /** Open the editor plug panel */
+  openPlugPanel(plug: EditorPlug) {
+    this.plugs.forEach((aPlug) => {
+      const plugPanel = aPlug.$panel
+      if (!plugPanel) return
+
+      if (aPlug === plug) {
+        plugPanel.style.display = ''
+        plug.onPanelShow && plug.onPanelShow()
+      } else {
+        plugPanel.style.display = 'none'
+        plug.onPanelHide && plug.onPanelHide()
+      }
+    })
+
+    this.editor.getUI().$plugPanelWrap.style.display = ''
+    this.openedPlug = plug
+  }
+
+  /** Close the editor plug panel */
+  closePlugPanel() {
+    if (!this.openedPlug) return
+
+    this.openedPlug.onPanelHide && this.openedPlug.onPanelHide()
+
+    this.editor.getUI().$plugPanelWrap.style.display = 'none'
+    this.openedPlug = null
+  }
+
+  /** Get the content which is transformed by plugs */
+  getTransformedContent(rawContent: string) {
+    let result = rawContent
+    this.plugs.forEach((aPlug) => {
+      if (!aPlug.contentTransformer) return
+      result = aPlug.contentTransformer(result)
+    })
+    return result
+  }
+
+  // -------------------------------------------------------------------
+  //  Events
+  // -------------------------------------------------------------------
+
+  /** Trigger event when mounted */
+  triggerMounted() {
+    this.plugs.forEach((aPlug) => aPlug.onMounted && aPlug.onMounted())
+  }
+
+  /** Trigger event when unmounted */
+  triggerUnmounted() {
+    this.plugs.forEach((aPlug) => aPlug.onUnmounted && aPlug.onUnmounted())
+  }
+
+  /** Trigger event when editor header input changed */
+  triggerHeaderInputEvt(field: string, $input: HTMLInputElement) {
+    this.plugs.forEach((aPlug) => aPlug.onHeaderInput && aPlug.onHeaderInput(field, $input))
+  }
+
+  /** Trigger event when editor content updated */
+  triggerContentUpdatedEvt(content: string) {
+    this.plugs.forEach((aPlug) => aPlug.onContentUpdated && aPlug.onContentUpdated(content))
+  }
 }
 
 /** Get the name list of disabled plugs */
-function getDisabledPlugNames(conf: ArtalkConfig) {
+function getDisabledPlugByConf(conf: ArtalkConfig): (typeof EditorPlug)[] {
   return [
-    {k: 'upload', v: conf.imgUpload},
-    {k: 'emoticons', v: conf.emoticons},
-    {k: 'preview', v: conf.preview}
+    {k: UploadPlug, v: conf.imgUpload},
+    {k: EmoticonsPlug, v: conf.emoticons},
+    {k: PreviewPlug, v: conf.preview},
+    {k: MoverPlug, v: conf.editorTravel},
   ].filter(n => !n.v).flatMap(n => n.k)
-}
-
-/** Initialization of a plug item */
-function initPlugItem(ctx: PlugManager, Plug: typeof ENABLED_PLUGS[number]) {
-  const plugName = Plug.Name
-
-  // create the plug instance
-  const plug = new Plug(ctx.editor)
-  ctx.plugList[plugName] = plug
-
-  // gen plug ui
-  genPlugBtn(ctx, plugName, plug)
-}
-
-/** Gen the plug btn (and plug panel) on editor ui */
-function genPlugBtn(ctx: PlugManager, plugName: string, plug: EditorPlug) {
-  const $btn = plug.getBtn()
-  if (!$btn) return
-  ctx.editor.getUI().$plugBtnWrap.appendChild($btn)
-  $btn.onclick = $btn.onclick || (() => {
-    // the event when click plug btn
-
-    // removing the active class from all the buttons
-    ctx.editor.getUI().$plugBtnWrap
-      .querySelectorAll('.active')
-      .forEach(item => item.classList.remove('active'))
-
-
-    // if the plugName is the same as the openedPlugName, then close the plugPanel
-    if (plugName === ctx.openedPlugName) {
-      closePlugPanel(ctx)
-      return
-    }
-
-    // open the plug current clicked plug panel
-    openPlugPanel(ctx, plugName)
-
-    // add active class for current plug panel
-    $btn.classList.add('active')
-  })
-
-  // initialization of plug panel
-  const $panel = plug.getPanel()
-  if ($panel) {
-    $panel.setAttribute('data-plug-name', plugName)
-    $panel.style.display = 'none'
-    ctx.editor.getUI().$plugPanelWrap.appendChild($panel)
-  }
-}
-
-/** Open the editor plug panel */
-function openPlugPanel(ctx: PlugManager, plugName: string) {
-  Object.entries(ctx.plugList).forEach(([aPlugName, plug]) => {
-    const plugPanel = plug.getPanel()
-    if (!plugPanel) return
-
-    if (aPlugName === plugName) {
-      plugPanel.style.display = ''
-      if (plug.onPanelShow) plug.onPanelShow()
-    } else {
-      plugPanel.style.display = 'none'
-      if (plug.onPanelHide) plug.onPanelHide()
-    }
-  })
-
-  ctx.editor.getUI().$plugPanelWrap.style.display = ''
-  ctx.openedPlugName = plugName
-}
-
-/** Close the editor plug panel */
-function closePlugPanel(ctx: PlugManager) {
-  if (!ctx.openedPlugName) return
-
-  const plug = ctx.plugList[ctx.openedPlugName]
-  if (!plug) return
-
-  if (plug.onPanelHide) plug.onPanelHide()
-
-  ctx.editor.getUI().$plugPanelWrap.style.display = 'none'
-  ctx.openedPlugName = null
-}
-
-// ============== Events ====================
-
-/** Trigger event when editor header input changed */
-function triggerHeaderInputEvt(ctx: PlugManager, field: string, $input: HTMLInputElement) {
-  Object.entries(ctx.plugList).forEach(([plugName, plug]) => {
-    if (!plug.onHeaderInput) return
-    plug.onHeaderInput(field, $input)
-  })
-}
-
-/** Trigger event when editor content updated */
-function triggerContentUpdatedEvt(ctx: PlugManager, content: string) {
-  Object.entries(ctx.plugList).forEach(([plugName, plug]) => {
-    if (!plug.onContentUpdated) return
-    plug.onContentUpdated(content)
-  })
-}
-
-/** Get the content which is transformed by plugs */
-function getTransformedContent(ctx: PlugManager, rawContent: string) {
-  let result = rawContent
-  Object.entries(ctx.plugList).forEach(([plugName, plug]) => {
-    if (!plug.contentTransformer) return
-    result = plug.contentTransformer(result)
-  })
-  return result
 }

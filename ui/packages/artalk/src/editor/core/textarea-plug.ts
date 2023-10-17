@@ -1,29 +1,30 @@
-import Editor from '../editor'
+import $t from '@/i18n'
 import EditorPlug from '../editor-plug'
+import PlugKit from '../plug-kit'
 
 export default class TextareaPlug extends EditorPlug {
-  constructor(editor: Editor) {
-    super(editor)
+  constructor(kit: PlugKit) {
+    super(kit)
 
     const onKeydown = (e: KeyboardEvent) => this.onKeydown(e)
     const onInput = () => this.onInput()
 
     this.kit.useMounted(() => {
       // 占位符
-      editor.getUI().$textarea.placeholder = editor.ctx.conf.placeholder || editor.$t('placeholder')
+      this.kit.useUI().$textarea.placeholder = this.kit.useConf().placeholder || $t('placeholder')
 
       // bind the event
-      editor.getUI().$textarea.addEventListener('keydown', onKeydown)
-      editor.getUI().$textarea.addEventListener('input', onInput)
+      this.kit.useUI().$textarea.addEventListener('keydown', onKeydown)
+      this.kit.useUI().$textarea.addEventListener('input', onInput)
     })
 
     this.kit.useUnmounted(() => {
       // unmount the event
-      editor.getUI().$textarea.removeEventListener('keydown', onKeydown)
-      editor.getUI().$textarea.removeEventListener('input', onInput)
+      this.kit.useUI().$textarea.removeEventListener('keydown', onKeydown)
+      this.kit.useUI().$textarea.removeEventListener('input', onInput)
     })
 
-    this.kit.useContentUpdated(() => {
+    this.kit.useEvents().on('content-updated', () => {
       // delay 80ms to prevent invalid execution
       window.setTimeout(() => {
         this.adaptiveHeightByContent()
@@ -37,18 +38,18 @@ export default class TextareaPlug extends EditorPlug {
 
     if (keyCode === 9) {
       e.preventDefault()
-      this.editor.insertContent('\t')
+      this.kit.useEditor().insertContent('\t')
     }
   }
 
   private onInput() {
-    this.editor.getPlugs()?.triggerContentUpdatedEvt(this.editor.getContentRaw())
+    this.kit.useEvents().trigger('content-updated', this.kit.useEditor().getContentRaw())
   }
 
   // Resize the textarea height by content
   public adaptiveHeightByContent() {
-    const diff = this.editor.getUI().$textarea.offsetHeight - this.editor.getUI().$textarea.clientHeight
-    this.editor.getUI().$textarea.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
-    this.editor.getUI().$textarea.style.height = `${this.editor.getUI().$textarea.scrollHeight + diff}px`
+    const diff = this.kit.useUI().$textarea.offsetHeight - this.kit.useUI().$textarea.clientHeight
+    this.kit.useUI().$textarea.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
+    this.kit.useUI().$textarea.style.height = `${this.kit.useUI().$textarea.scrollHeight + diff}px`
   }
 }

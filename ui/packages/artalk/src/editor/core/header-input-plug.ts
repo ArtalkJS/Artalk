@@ -1,24 +1,23 @@
-import Editor from '../editor'
-import User from '../../lib/user'
+import User from '@/lib/user'
 import EditorPlug from '../editor-plug'
+import PlugKit from '../plug-kit'
 
 export default class HeaderInputPlug extends EditorPlug {
-  constructor(editor: Editor) {
-    super(editor)
+  constructor(kit: PlugKit) {
+    super(kit)
 
-    this.kit.useHeaderInput((key, $input) => {
-      if (key === 'nick' || key === 'email') {
+    this.kit.useEvents().on('header-input', (({ field, $input }) => {
+      if (field === 'nick' || field === 'email')
         this.fetchUserInfo()
-      }
-    })
+    }))
 
     const onLinkInputChange = () => this.onLinkInputChange()
 
     this.kit.useMounted(() => {
-      this.editor.getUI().$link.addEventListener('change', onLinkInputChange)
+      this.kit.useUI().$link.addEventListener('change', onLinkInputChange)
     })
     this.kit.useUnmounted(() => {
-      this.editor.getUI().$link.addEventListener('change', onLinkInputChange)
+      this.kit.useUI().$link.addEventListener('change', onLinkInputChange)
     })
   }
 
@@ -38,7 +37,7 @@ export default class HeaderInputPlug extends EditorPlug {
     this.queryUserInfo.timeout = window.setTimeout(() => {
       this.queryUserInfo.timeout = null // 清理
 
-      const {req, abort} = this.editor.ctx.getApi().user.userGet(
+      const {req, abort} = this.kit.useApi().user.userGet(
         User.data.nick, User.data.email
       )
       this.queryUserInfo.abortFunc = abort
@@ -48,19 +47,19 @@ export default class HeaderInputPlug extends EditorPlug {
         }
 
         // 未读消息更新
-        this.editor.ctx.updateNotifies(data.unread)
+        this.kit.useGlobalCtx().updateNotifies(data.unread)
 
         // 若用户为管理员，执行登陆操作
         if (User.checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {
           // 显示登录窗口
-          this.editor.ctx.checkAdmin({
+          this.kit.useGlobalCtx().checkAdmin({
             onSuccess: () => {}
           })
         }
 
         // 自动填入 link
         if (data.user && data.user.link) {
-          this.editor.getUI().$link.value = data.user.link
+          this.kit.useUI().$link.value = data.user.link
           User.update({ link: data.user.link })
         }
       })
@@ -73,10 +72,10 @@ export default class HeaderInputPlug extends EditorPlug {
 
   private onLinkInputChange() {
     // Link URL 自动补全协议
-    const link = this.editor.getUI().$link.value.trim()
+    const link = this.kit.useUI().$link.value.trim()
     if (!!link && !/^(http|https):\/\//.test(link)) {
-      this.editor.getUI().$link.value = `https://${link}`
-      User.update({ link: this.editor.getUI().$link.value })
+      this.kit.useUI().$link.value = `https://${link}`
+      User.update({ link: this.kit.useUI().$link.value })
     }
   }
 }

@@ -1,7 +1,8 @@
 import type { CommentData } from '~/types/artalk-data'
-import * as Utils from '../../lib/utils'
-import Editor from '../editor'
-import User from '../../lib/user'
+import $t from '@/i18n'
+import * as Utils from '@/lib/utils'
+import User from '@/lib/user'
+import PlugKit from '../plug-kit'
 import EditorPlug from '../editor-plug'
 import SubmitPlug from './submit-plug'
 import MoverPlug from './mover-plug'
@@ -17,29 +18,29 @@ export default class EditPlug extends EditorPlug {
     return !!this.comment
   }
 
-  constructor(editor: Editor) {
-    super(editor)
+  constructor(kit: PlugKit) {
+    super(kit)
 
     this.kit.useMounted(() => {
-      const submitPlug = this.editor.getPlugs()?.get(SubmitPlug)
+      const submitPlug = this.kit.useDeps(SubmitPlug)
       if (!submitPlug) throw Error("SubmitPlug not initialized")
 
       submitPlug.registerCustom({
         activeCond: () => !!this.comment, // active this custom submit when edit mode
         req: async () => {
           const saveData = {
-            content: this.editor.getContentFinal(),
-            nick: this.editor.getUI().$nick.value,
-            email: this.editor.getUI().$email.value,
-            link: this.editor.getUI().$link.value,
+            content: this.kit.useEditor().getContentFinal(),
+            nick: this.kit.useUI().$nick.value,
+            email: this.kit.useUI().$email.value,
+            link: this.kit.useUI().$link.value,
           }
-          const nComment = await this.editor.ctx.getApi().comment.commentEdit({
+          const nComment = await this.kit.useApi().comment.commentEdit({
             ...this.comment, ...saveData
           })
           return nComment
         },
         post: (nComment: CommentData) => {
-          this.editor.ctx.updateComment(nComment)
+          this.kit.useGlobalCtx().updateComment(nComment)
         }
       })
     })
@@ -47,13 +48,13 @@ export default class EditPlug extends EditorPlug {
 
   edit(comment: CommentData, $comment: HTMLElement) {
     this.cancelEdit()
-    this.editor.cancelReply()
+    this.kit.useEditor().cancelReply()
 
-    const ui = this.editor.getUI()
+    const ui = this.kit.useUI()
     if (!ui.$editCancelBtn) {
       const $btn = Utils.createElement(
         `<div class="atk-send-reply">` +
-          `${this.editor.$t('editCancel')} ` +
+          `${$t('editCancel')} ` +
           `<span class="atk-cancel">×</span>` +
         `</div>`
       )
@@ -67,22 +68,22 @@ export default class EditPlug extends EditorPlug {
 
     ui.$header.style.display = 'none' // TODO support modify header information
 
-    this.editor.getPlugs()?.get(MoverPlug)?.move($comment)
+    this.kit.useDeps(MoverPlug)?.move($comment)
 
     ui.$nick.value = comment.nick || ''
     ui.$email.value = comment.email || ''
     ui.$link.value = comment.link || ''
 
-    this.editor.setContent(comment.content)
+    this.kit.useEditor().setContent(comment.content)
     ui.$textarea.focus()
 
-    this.updateSubmitBtnText(this.editor.$t('save'))
+    this.updateSubmitBtnText($t('save'))
   }
 
   cancelEdit() {
     if (!this.comment) return
 
-    const ui = this.editor.getUI()
+    const ui = this.kit.useUI()
 
     if (ui.$editCancelBtn) {
       ui.$editCancelBtn.remove()
@@ -90,14 +91,14 @@ export default class EditPlug extends EditorPlug {
     }
 
     this.comment = undefined
-    this.editor.getPlugs()?.get(MoverPlug)?.back()
+    this.kit.useDeps(MoverPlug)?.back()
 
     const { nick, email, link } = User.data
     ui.$nick.value = nick
     ui.$email.value = email
     ui.$link.value = link
 
-    this.editor.setContent('')
+    this.kit.useEditor().setContent('')
     this.restoreSubmitBtnText()
 
     ui.$header.style.display = '' // TODO support modify header information
@@ -110,11 +111,11 @@ export default class EditPlug extends EditorPlug {
   private originalSubmitBtnText = 'Send'
 
   private updateSubmitBtnText(text: string) {
-    this.originalSubmitBtnText = this.editor.getUI().$submitBtn.innerText
-    this.editor.getUI().$submitBtn.innerText = text
+    this.originalSubmitBtnText = this.kit.useUI().$submitBtn.innerText
+    this.kit.useUI().$submitBtn.innerText = text
   }
 
   private restoreSubmitBtnText() {
-    this.editor.getUI().$submitBtn.innerText = this.originalSubmitBtnText
+    this.kit.useUI().$submitBtn.innerText = this.originalSubmitBtnText
   }
 }

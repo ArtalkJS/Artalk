@@ -1,39 +1,27 @@
-import type ArtalkConfig from '~/types/artalk-config'
-import MoverPlug from './core/mover-plug'
-import EmoticonsPlug from './plugs/emoticons-plug'
-import UploadPlug from './plugs/upload-plug'
-import PreviewPlug from './plugs/preview-plug'
-import HeaderInputPlug from './core/header-input-plug'
+import type EditorApi from '~/types/editor'
 import EditorPlug from './editor-plug'
-import Editor from './editor'
-import LocalStoragePlug from './core/local-storage-plug'
-import HeaderPlug from './core/header-plug'
-import TextareaPlug from './core/textarea-plug'
-import SubmitBtnPlug from './core/submit-btn-plug'
-import SubmitPlug from './core/submit-plug'
-import ReplyPlug from './core/reply-plug'
-import EditPlug from './core/edit-plug'
-import ClosablePlug from './core/closable-plug'
+import EventManager from '../lib/event-manager'
+import PlugKit from './plug-kit'
+import { ENABLED_PLUGS, getDisabledPlugByConf } from './plug-enabled'
 
-/** The default enabled plugs */
-const ENABLED_PLUGS: (typeof EditorPlug)[] = [
-  // Core
-  LocalStoragePlug,
-  HeaderPlug, HeaderInputPlug, TextareaPlug,
-  SubmitPlug, SubmitBtnPlug,
-  MoverPlug, ReplyPlug, EditPlug,
-  ClosablePlug,
+export interface EditorEventPayloadMap {
+  'mounted': undefined
+  'unmounted': undefined
+  'header-input': { field: string, $input: HTMLInputElement }
+  'content-updated': string
+  'panel-show': EditorPlug
+  'panel-hide': EditorPlug
+  'panel-close': undefined
+}
 
-  // Extensions
-  EmoticonsPlug, UploadPlug, PreviewPlug
-]
-
-export default class PlugManager {
-  plugs: EditorPlug[] = []
-  openedPlug: EditorPlug|null = null
+class PlugManager {
+  private plugs: EditorPlug[] = []
+  private openedPlug: EditorPlug|null = null
+  private events = new EventManager<EditorEventPayloadMap>()
+  getEvents() { return this.events }
 
   constructor(
-    public editor: Editor
+    public editor: EditorApi
   ) {
     // handle ui, clear and reset the plug btns and plug panels
     editor.getUI().$plugPanelWrap.innerHTML = ''
@@ -47,13 +35,17 @@ export default class PlugManager {
       .filter(p => !DISABLED.includes(p)) // 禁用的插件
       .forEach((Plug) => {
         // create the plug instance
-        this.plugs.push(new Plug(this.editor))
+        const kit = new PlugKit(this)
+        this.plugs.push(new Plug(kit))
       })
 
     // load the plug UI
     this.plugs.forEach((plug) => {
       this.loadPlugUI(plug)
     })
+
+    // bind events
+    this.events.on('panel-close', () => this.closePlugPanel())
   }
 
   /** Load the plug btn and plug panel on editor ui */
@@ -102,10 +94,10 @@ export default class PlugManager {
 
       if (aPlug === plug) {
         plugPanel.style.display = ''
-        plug.onPanelShow && plug.onPanelShow()
+        this.events.trigger('panel-show', plug)
       } else {
         plugPanel.style.display = 'none'
-        plug.onPanelHide && plug.onPanelHide()
+        this.events.trigger('panel-hide', plug)
       }
     })
 
@@ -117,9 +109,8 @@ export default class PlugManager {
   closePlugPanel() {
     if (!this.openedPlug) return
 
-    this.openedPlug.onPanelHide && this.openedPlug.onPanelHide()
-
     this.editor.getUI().$plugPanelWrap.style.display = 'none'
+    this.events.trigger('panel-hide', this.openedPlug)
     this.openedPlug = null
   }
 
@@ -132,38 +123,6 @@ export default class PlugManager {
     })
     return result
   }
-
-  // -------------------------------------------------------------------
-  //  Events
-  // -------------------------------------------------------------------
-
-  /** Trigger event when mounted */
-  triggerMounted() {
-    this.plugs.forEach((aPlug) => aPlug.onMounted && aPlug.onMounted())
-  }
-
-  /** Trigger event when unmounted */
-  triggerUnmounted() {
-    this.plugs.forEach((aPlug) => aPlug.onUnmounted && aPlug.onUnmounted())
-  }
-
-  /** Trigger event when editor header input changed */
-  triggerHeaderInputEvt(field: string, $input: HTMLInputElement) {
-    this.plugs.forEach((aPlug) => aPlug.onHeaderInput && aPlug.onHeaderInput(field, $input))
-  }
-
-  /** Trigger event when editor content updated */
-  triggerContentUpdatedEvt(content: string) {
-    this.plugs.forEach((aPlug) => aPlug.onContentUpdated && aPlug.onContentUpdated(content))
-  }
 }
 
-/** Get the name list of disabled plugs */
-function getDisabledPlugByConf(conf: ArtalkConfig): (typeof EditorPlug)[] {
-  return [
-    {k: UploadPlug, v: conf.imgUpload},
-    {k: EmoticonsPlug, v: conf.emoticons},
-    {k: PreviewPlug, v: conf.preview},
-    {k: MoverPlug, v: conf.editorTravel},
-  ].filter(n => !n.v).flatMap(n => n.k)
-}
+export default PlugManager

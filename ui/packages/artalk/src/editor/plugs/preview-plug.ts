@@ -1,36 +1,37 @@
 import './preview-plug.scss'
 
-import Editor from '../editor'
+import $t from '@/i18n'
 import EditorPlug from '../editor-plug'
+import PlugKit from '../plug-kit'
 
 export default class PreviewPlug extends EditorPlug {
   private isPlugPanelShow = false
 
-  constructor(editor: Editor) {
-    super(editor)
+  constructor(kit: PlugKit) {
+    super(kit)
 
-    this.kit.usePanel(`<div class="atk-editor-plug-preview"></div>`)
+    this.usePanel(`<div class="atk-editor-plug-preview"></div>`)
 
     // initialize plug button
-    let btnText = this.editor.$t('preview')
-    if (this.editor.ctx.getMarkedInstance()) btnText += ` <i title="Markdown is supported"><svg class="markdown" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M14.85 3H1.15C.52 3 0 3.52 0 4.15v7.69C0 12.48.52 13 1.15 13h13.69c.64 0 1.15-.52 1.15-1.15v-7.7C16 3.52 15.48 3 14.85 3zM9 11H7V8L5.5 9.92 4 8v3H2V5h2l1.5 2L7 5h2v6zm2.99.5L9.5 8H11V5h2v3h1.5l-2.51 3.5z"></path></svg></i>`
-    this.kit.useBtn(btnText)
+    let btnText = $t('preview')
+    if (this.kit.useGlobalCtx().getMarkedInstance()) btnText += ` <i title="Markdown is supported"><svg class="markdown" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M14.85 3H1.15C.52 3 0 3.52 0 4.15v7.69C0 12.48.52 13 1.15 13h13.69c.64 0 1.15-.52 1.15-1.15v-7.7C16 3.52 15.48 3 14.85 3zM9 11H7V8L5.5 9.92 4 8v3H2V5h2l1.5 2L7 5h2v6zm2.99.5L9.5 8H11V5h2v3h1.5l-2.51 3.5z"></path></svg></i>`
+    this.useBtn(btnText)
 
     // function to update content
-    this.kit.useContentUpdated((content) => {
+    this.kit.useEvents().on('content-updated', (content) => {
       this.isPlugPanelShow && this.updateContent()
     })
 
-    this.kit.usePanelShow(() => {
+    this.usePanelShow(() => {
       this.isPlugPanelShow = true
       this.updateContent()
     })
-    this.kit.usePanelHide(() => {
+    this.usePanelHide(() => {
       this.isPlugPanelShow = false
     })
   }
 
   updateContent() {
-    this.$panel!.innerHTML = this.editor.getContentMarked()
+    this.$panel!.innerHTML = this.kit.useEditor().getContentMarked()
   }
 }

@@ -1,7 +1,7 @@
 import type { CommentData } from '~/types/artalk-data'
+import type EditorApi from '~/types/editor'
 import type Context from '~/types/context'
 import Component from '../lib/component'
-import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 import marked from '../lib/marked'
 import { render, EditorUI } from './ui'
@@ -12,111 +12,7 @@ import EditPlug from './core/edit-plug'
 import SubmitPlug from './core/submit-plug'
 import ClosablePlug from './core/closable-plug'
 
-interface Editor extends Component {
-  getUI(): EditorUI
-  getPlugs(): PlugManager | undefined
-
-  /**
-   * Get the header input elements
-   */
-  getHeaderInputEls(): Record<string, HTMLInputElement>
-
-  /**
-   * Set content
-   */
-  setContent(val: string): void
-
-  /**
-   * Insert content
-   */
-  insertContent(val: string): void
-
-  /**
-   * Get the final content
-   *
-   * This function returns the raw content or the content transformed through a plugin hook.
-   */
-  getContentFinal(): string
-
-  /**
-   * Get the raw content which is inputed by user
-   */
-  getContentRaw(): string
-
-  /**
-   * Get the HTML format content which is rendered by marked (a markdown parser)
-   */
-  getContentMarked(): string
-
-  /**
-   * Focus editor
-   */
-  focus(): void
-
-  /**
-   * Reset editor
-   */
-  reset(): void
-
-  /**
-   * Reset editor UI
-   *
-   * call it will move editor to the initial position
-   */
-  resetUI(): void
-
-  /**
-   * Submit comment
-   */
-  submit(): void
-
-  /**
-   * Close comment editor which prevent user from submitting (but admin excluded)
-   */
-  close(): void
-
-  /**
-   * Open comment editor which allow user to submit (only be called while editor is closed)
-   */
-  open(): void
-
-  /**
-   * Show notification message
-   */
-  showNotify(msg: string, type: "i" | "s" | "w" | "e"): void
-
-  /**
-   * Show loading on editor
-   */
-  showLoading(): void
-
-  /**
-   * Hide loading on editor
-   */
-  hideLoading(): void
-
-  /**
-   * Start replaying a comment
-   */
-  setReply(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
-
-  /**
-   * Cancel replaying the comment
-   */
-  cancelReply(): void
-
-  /**
-   * Start editing a comment
-   */
-  setEditComment(commentData: CommentData, $comment: HTMLElement): void
-
-  /**
-   * Cancel editing the comment
-   */
-  cancelEditComment(): void
-}
-
-class Editor extends Component {
+class Editor extends Component implements EditorApi {
   private ui: EditorUI
   getUI() { return this.ui }
 
@@ -134,13 +30,13 @@ class Editor extends Component {
     this.ctx.on('conf-loaded', () => {
       // trigger unmount event will call all plugs' unmount function
       // (this will only be called while conf reloaded, not be called at first time)
-      this.plugs?.triggerUnmounted()
+      this.plugs?.getEvents().trigger('unmounted')
 
       // initialize editor plugs
       this.plugs = new PlugManager(this)
 
       // trigger event for plug initialization
-      this.plugs.triggerMounted()
+      this.plugs.getEvents().trigger('mounted')
     })
   }
 
@@ -169,7 +65,7 @@ class Editor extends Component {
     this.ui.$textarea.value = val
 
     // plug hook: content updated
-    this.plugs?.triggerContentUpdatedEvt(val)
+    this.plugs?.getEvents().trigger('content-updated', val)
   }
 
   insertContent(val: string) {

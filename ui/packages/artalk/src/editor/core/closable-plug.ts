@@ -1,31 +1,32 @@
 import User from '@/lib/user'
 import * as Utils from '@/lib/utils'
-import Editor from '../editor'
+import $t from '@/i18n'
 import EditorPlug from '../editor-plug'
+import PlugKit from '../plug-kit'
 
 export default class ClosablePlug extends EditorPlug {
-  constructor(editor: Editor) {
-    super(editor)
+  constructor(kit: PlugKit) {
+    super(kit)
   }
 
   close() {
-    if (!this.editor.getUI().$textareaWrap.querySelector('.atk-comment-closed'))
-      this.editor.getUI().$textareaWrap.prepend(Utils.createElement(`<div class="atk-comment-closed">${this.editor.$t('onlyAdminCanReply')}</div>`))
+    if (!this.kit.useUI().$textareaWrap.querySelector('.atk-comment-closed'))
+      this.kit.useUI().$textareaWrap.prepend(Utils.createElement(`<div class="atk-comment-closed">${$t('onlyAdminCanReply')}</div>`))
 
     if (!User.data.isAdmin) {
-      this.editor.getUI().$textarea.style.display = 'none'
-      this.editor.getPlugs()?.closePlugPanel()
-      this.editor.getUI().$bottom.style.display = 'none'
+      this.kit.useUI().$textarea.style.display = 'none'
+      this.kit.useEvents().trigger('panel-close')
+      this.kit.useUI().$bottom.style.display = 'none'
     } else {
       // 管理员一直打开评论
-      this.editor.getUI().$textarea.style.display = ''
-      this.editor.getUI().$bottom.style.display = ''
+      this.kit.useUI().$textarea.style.display = ''
+      this.kit.useUI().$bottom.style.display = ''
     }
   }
 
   open() {
-    this.editor.getUI().$textareaWrap.querySelector('.atk-comment-closed')?.remove()
-    this.editor.getUI().$textarea.style.display = ''
-    this.editor.getUI().$bottom.style.display = ''
+    this.kit.useUI().$textareaWrap.querySelector('.atk-comment-closed')?.remove()
+    this.kit.useUI().$textarea.style.display = ''
+    this.kit.useUI().$bottom.style.display = ''
   }
 }

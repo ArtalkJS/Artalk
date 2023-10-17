@@ -1,7 +1,4 @@
-export interface EventHandler<P> {
-  (payload: P): void
-}
-
+export type EventHandler<T> = (payload: T) => void
 export interface Event<PayloadMap, K extends keyof PayloadMap = keyof PayloadMap> {
   name: K
   handler: EventHandler<PayloadMap[K]>
@@ -35,9 +32,9 @@ export default class EventManager<PayloadMap> implements EventManagerFuncs<Paylo
   /**
    * Trigger an event with an optional payload
    */
-  public trigger<K extends keyof PayloadMap>(name: K, payload: PayloadMap[K]) {
+  public trigger<K extends keyof PayloadMap>(name: K, payload?: PayloadMap[K]) {
     this.events
       .filter((evt) => evt.name === name && typeof evt.handler === 'function')
-      .forEach((evt) => evt.handler(payload))
+      .forEach((evt) => evt.handler(payload!))
   }
 }

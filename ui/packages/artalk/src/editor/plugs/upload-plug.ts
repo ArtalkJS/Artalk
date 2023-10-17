@@ -1,6 +1,7 @@
 import * as Utils from '@/lib/utils'
-import Editor from '../editor'
+import $t from '@/i18n'
 import User from '../../lib/user'
+import PlugKit from '../plug-kit'
 import EditorPlug from '../editor-plug'
 
 /** 允许的图片格式 */
@@ -9,15 +10,15 @@ const AllowImgExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']
 export default class UploadPlug extends EditorPlug {
   private $imgUploadInput?: HTMLInputElement
 
-  constructor(editor: Editor) {
-    super(editor)
+  constructor(kit: PlugKit) {
+    super(kit)
 
     this.$imgUploadInput = document.createElement('input')
     this.$imgUploadInput.type = 'file'
     this.$imgUploadInput.style.display = 'none'
     this.$imgUploadInput.accept = AllowImgExts.map(o => `.${o}`).join(',')
 
-    const $btn = this.kit.useBtn(`${this.editor.ctx.$t('image')}`)
+    const $btn = this.useBtn(`${$t('image')}`)
     $btn.after(this.$imgUploadInput)
     $btn.onclick = () => {
       // 选择图片
@@ -32,7 +33,7 @@ export default class UploadPlug extends EditorPlug {
       $input.click() // 显示选择图片对话框
     }
 
-    if (!this.editor.ctx.conf.imgUpload) {
+    if (!this.kit.useConf().imgUpload) {
       this.$btn!.setAttribute('atk-only-admin-show', '')
     }
 
@@ -49,12 +50,12 @@ export default class UploadPlug extends EditorPlug {
     // 拖拽图片
     // @link https://developer.mozilla.org/zh-CN/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
     // 阻止浏览器的默认释放行为
-    this.editor.getUI().$textarea.addEventListener('dragover', (evt) => {
+    this.kit.useUI().$textarea.addEventListener('dragover', (evt) => {
       evt.stopPropagation()
       evt.preventDefault()
     })
 
-    this.editor.getUI().$textarea.addEventListener('drop', (evt) => {
+    this.kit.useUI().$textarea.addEventListener('drop', (evt) => {
       const files = evt.dataTransfer?.files
       if (files?.length) {
         evt.preventDefault()
@@ -63,7 +64,7 @@ export default class UploadPlug extends EditorPlug {
     })
 
     // 粘贴图片
-    this.editor.getUI().$textarea.addEventListener('paste', (evt) => {
+    this.kit.useUI().$textarea.addEventListener('paste', (evt) => {
       const files = evt.clipboardData?.files
       if (files?.length) {
         evt.preventDefault()
@@ -78,43 +79,44 @@ export default class UploadPlug extends EditorPlug {
 
     // 未登录提示
     if (!User.checkHasBasicUserInfo()) {
-      this.editor.showNotify(this.editor.ctx.$t('uploadLoginMsg'), 'w')
+      this.kit.useEditor().showNotify($t('uploadLoginMsg'), 'w')
       return
     }
 
     // 插入图片前换一行
     let insertPrefix = '\n'
-    if (this.editor.getUI().$textarea.value.trim() === '') insertPrefix = ''
+    if (this.kit.useUI().$textarea.value.trim() === '') insertPrefix = ''
 
     // 插入占位加载文字
     const uploadPlaceholderTxt = `${insertPrefix}![](Uploading ${file.name}...)`
-    this.editor.insertContent(uploadPlaceholderTxt)
+    this.kit.useEditor().insertContent(uploadPlaceholderTxt)
 
     // 上传图片
     let resp: any
     try {
-      if (!this.editor.ctx.conf.imgUploader) {
+      const customUploaderFn = this.kit.useConf().imgUploader
+      if (!customUploaderFn) {
         // 使用 Artalk 进行图片上传
-        resp = await this.editor.ctx.getApi().upload.imgUpload(file)
+        resp = await this.kit.useApi().upload.imgUpload(file)
       } else {
         // 使用自定义的图片上传器
-        resp = {img_url: await this.editor.ctx.conf.imgUploader(file)}
+        resp = {img_url: await customUploaderFn(file)}
       }
     } catch (err: any) {
       console.error(err)
-      this.editor.showNotify(`${this.editor.ctx.$t('uploadFail')}，${err.msg}`, 'e')
+      this.kit.useEditor().showNotify(`${$t('uploadFail')}，${err.msg}`, 'e')
     }
     if (!!resp && resp.img_url) {
       let imgURL = resp.img_url as string
 
       // 若为相对路径，加上 artalk server
-      if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi(this.editor.ctx, imgURL)
+      if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi(this.kit.useGlobalCtx(), imgURL)
 
       // 上传成功插入图片
-      this.editor.setContent(this.editor.getUI().$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`))
+      this.kit.useEditor().setContent(this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`))
     } else {
       // 上传失败删除加载文字
-      this.editor.setContent(this.editor.getUI().$textarea.value.replace(uploadPlaceholderTxt, ''))
+      this.kit.useEditor().setContent(this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, ''))
     }
   }
 }

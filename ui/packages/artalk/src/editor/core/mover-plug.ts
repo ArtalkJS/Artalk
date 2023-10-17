@@ -1,19 +1,19 @@
-import Editor from '../editor'
-import * as Utils from '../../lib/utils'
+import * as Utils from '@/lib/utils'
 import EditorPlug from '../editor-plug'
+import PlugKit from '../plug-kit'
 
 export default class MoverPlug extends EditorPlug {
   private isMoved = false
 
-  constructor(editor: Editor) {
-    super(editor)
+  constructor(kit: PlugKit) {
+    super(kit)
   }
 
   move(afterEl: HTMLElement) {
     if (this.isMoved) return
     this.isMoved = true
 
-    const editorEl = this.editor.getUI().$el
+    const editorEl = this.kit.useUI().$el
 
     editorEl.after(Utils.createElement('<div class="atk-editor-travel-placeholder"></div>'))
 
@@ -27,8 +27,8 @@ export default class MoverPlug extends EditorPlug {
   back() {
     if (!this.isMoved) return
     this.isMoved = false
-    this.editor.ctx.$root.querySelector('.atk-editor-travel-placeholder')?.replaceWith(this.editor.getUI().$el)
+    this.kit.useGlobalCtx().$root.querySelector('.atk-editor-travel-placeholder')?.replaceWith(this.kit.useUI().$el)
 
-    this.editor.cancelReply()  // 取消回复
+    this.kit.useEditor().cancelReply()  // 取消回复
   }
 }

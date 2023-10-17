@@ -1,10 +1,11 @@
 import './emoticons-plug.scss'
 
-import * as Utils from '~/src/lib/utils'
-import * as Ui from '~/src/lib/ui'
 import { EmoticonListData, EmoticonGrpData } from '~/types/artalk-data'
+import * as Utils from '@/lib/utils'
+import * as Ui from '@/lib/ui'
+import $t from '@/i18n'
 import EditorPlug from '../editor-plug'
-import Editor from '../editor'
+import PlugKit from '../plug-kit'
 
 type OwOFormatType = {
   [key: string] : {
@@ -20,13 +21,13 @@ export default class EmoticonsPlug extends EditorPlug {
   private $grpWrap!: HTMLElement
   private $grpSwitcher!: HTMLElement
 
-  constructor(editor: Editor) {
-    super(editor)
+  constructor(kit: PlugKit) {
+    super(kit)
 
-    this.kit.usePanel(`<div class="atk-editor-plug-emoticons"></div>`)
-    this.kit.useBtn(this.editor.ctx.$t('emoticon'))
-    this.kit.useContentTransformer((raw) => this.transEmoticonImageText(raw))
-    this.kit.usePanelShow(() => {
+    this.usePanel(`<div class="atk-editor-plug-emoticons"></div>`)
+    this.useBtn($t('emoticon'))
+    this.useContentTransformer((raw) => this.transEmoticonImageText(raw))
+    this.usePanelShow(() => {
       ;(async () => {
         await this.loadEmoticonsData()
 
@@ -42,7 +43,7 @@ export default class EmoticonsPlug extends EditorPlug {
         }, 30)
       })()
     })
-    this.kit.usePanelHide(() => {
+    this.usePanelHide(() => {
       this.$panel!.parentElement!.style.height = ''
     })
 
@@ -65,7 +66,7 @@ export default class EmoticonsPlug extends EditorPlug {
     // 数据处理
     this.loadingTask = (async () => {
       Ui.showLoading(this.$panel!)
-      this.emoticons = await this.handleData(this.editor.ctx.conf.emoticons)
+      this.emoticons = await this.handleData(this.kit.useConf().emoticons)
       Ui.hideLoading(this.$panel!)
       this.loadingTask = null
       this.isListLoaded = true
@@ -224,9 +225,9 @@ export default class EmoticonsPlug extends EditorPlug {
 
         $item.onclick = () => {
           if (grp.type === 'image') {
-            this.editor.insertContent(`:[${item.key}]`)
+            this.kit.useEditor().insertContent(`:[${item.key}]`)
           } else {
-            this.editor.insertContent(item.val || '')
+            this.kit.useEditor().insertContent(item.val || '')
           }
         }
       })

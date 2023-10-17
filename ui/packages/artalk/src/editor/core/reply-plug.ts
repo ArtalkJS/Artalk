@@ -1,15 +1,16 @@
 import type { CommentData } from '~/types/artalk-data'
-import Editor from '../editor'
-import * as Utils from '../../lib/utils'
-import * as Ui from '../../lib/ui'
+import * as Utils from '@/lib/utils'
+import * as Ui from '@/lib/ui'
+import $t from '@/i18n'
 import EditorPlug from '../editor-plug'
 import MoverPlug from './mover-plug'
+import PlugKit from '../plug-kit'
 
 export default class ReplyPlug extends EditorPlug {
   private comment?: CommentData
 
-  constructor(editor: Editor) {
-    super(editor)
+  constructor(kit: PlugKit) {
+    super(kit)
   }
 
   getComment() {
@@ -17,26 +18,26 @@ export default class ReplyPlug extends EditorPlug {
   }
 
   setReply(commentData: CommentData, $comment: HTMLElement, scroll = true) {
-    this.editor.cancelEditComment()
+    this.kit.useEditor().cancelEditComment()
     this.cancelReply()
 
-    const ui = this.editor.getUI()
+    const ui = this.kit.useUI()
     if (!ui.$sendReply) {
       ui.$sendReply = Utils.createElement(
         `<div class="atk-send-reply">` +
-          `${this.editor.$t('reply')} ` +
+          `${$t('reply')} ` +
           `<span class="atk-text"></span><span class="atk-cancel">×</span>` +
         `</div>`
       )
       ui.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
       ui.$sendReply.addEventListener('click', () => {
-        this.editor.cancelReply()
+        this.kit.useEditor().cancelReply()
       })
       ui.$textareaWrap.append(ui.$sendReply)
     }
 
     this.comment = commentData
-    this.editor.getPlugs()?.get(MoverPlug)?.move($comment)
+    this.kit.useDeps(MoverPlug)?.move($comment)
 
     if (scroll) Ui.scrollIntoView(ui.$el)
 
@@ -46,13 +47,13 @@ export default class ReplyPlug extends EditorPlug {
   cancelReply() {
     if (!this.comment) return
 
-    const ui = this.editor.getUI()
+    const ui = this.kit.useUI()
     if (ui.$sendReply) {
       ui.$sendReply.remove()
       ui.$sendReply = undefined
     }
     this.comment = undefined
 
-    this.editor.getPlugs()?.get(MoverPlug)?.back()
+    this.kit.useDeps(MoverPlug)?.back()
   }
 }

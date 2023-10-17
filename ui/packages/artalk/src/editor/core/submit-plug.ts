@@ -1,8 +1,9 @@
 import type { CommentData } from '~/types/artalk-data'
-import Editor from '../editor'
-import User from '../../lib/user'
+import $t from '@/i18n'
+import User from '@/lib/user'
 import EditorPlug from '../editor-plug'
 import ReplyPlug from './reply-plug'
+import PlugKit from '../plug-kit'
 
 interface CustomSubmit {
   activeCond: () => void
@@ -14,20 +15,20 @@ interface CustomSubmit {
 export default class SubmitPlug extends EditorPlug {
   customs: CustomSubmit[] = []
 
-  constructor(editor: Editor) {
-    super(editor)
+  constructor(kit: PlugKit) {
+    super(kit)
   }
 
   async do() {
-    if (this.editor.getContentFinal().trim() === '') {
-      this.editor.focus()
+    if (this.kit.useEditor().getContentFinal().trim() === '') {
+      this.kit.useEditor().focus()
       return
     }
 
     const custom = this.customs.find(o => o.activeCond())
 
-    this.editor.ctx.trigger('editor-submit')
-    this.editor.showLoading()
+    this.kit.useGlobalCtx().trigger('editor-submit')
+    this.kit.useEditor().showLoading()
 
     try {
       // pre submit
@@ -45,14 +46,14 @@ export default class SubmitPlug extends EditorPlug {
     } catch (err: any) {
       // submit error
       console.error(err)
-      this.editor.showNotify(`${this.editor.$t('commentFail')}，${err.msg || String(err)}`, 'e')
+      this.kit.useEditor().showNotify(`${$t('commentFail')}，${err.msg || String(err)}`, 'e')
       return
     } finally {
-      this.editor.hideLoading()
+      this.kit.useEditor().hideLoading()
     }
 
-    this.editor.reset() // 复原编辑器
-    this.editor.ctx.trigger('editor-submitted')
+    this.kit.useEditor().reset() // 复原编辑器
+    this.kit.useGlobalCtx().trigger('editor-submitted')
   }
 
   registerCustom(c: CustomSubmit) {
@@ -64,7 +65,7 @@ export default class SubmitPlug extends EditorPlug {
   // -------------------------------------------------------------------
 
   private async reqAdd() {
-    const nComment = await this.editor.ctx.getApi().comment.add({
+    const nComment = await this.kit.useApi().comment.add({
       ...this.getSubmitAddParams()
     })
     return nComment
@@ -72,11 +73,11 @@ export default class SubmitPlug extends EditorPlug {
 
   private getSubmitAddParams() {
     const { nick, email, link } = User.data
-    const conf = this.editor.ctx.conf
-    const reply = this.editor.getPlugs()?.get(ReplyPlug)?.getComment()
+    const conf = this.kit.useConf()
+    const reply = this.kit.useDeps(ReplyPlug)?.getComment()
 
     return {
-      content: this.editor.getContentFinal(),
+      content: this.kit.useEditor().getContentFinal(),
       nick, email, link,
       rid: (!reply) ? 0 : reply.id,
       page_key: (!reply) ? conf.pageKey : reply.page_key,
@@ -87,12 +88,12 @@ export default class SubmitPlug extends EditorPlug {
 
   private postSubmitAdd(commentNew: CommentData) {
     // 回复不同页面的评论，跳转到新页面
-    const replyComment = this.editor.getPlugs()?.get(ReplyPlug)?.getComment()
-    const conf = this.editor.ctx.conf
+    const replyComment = this.kit.useDeps(ReplyPlug)?.getComment()
+    const conf = this.kit.useConf()
     if (!!replyComment && replyComment.page_key !== conf.pageKey) {
       window.open(`${replyComment.page_url}#atk-comment-${commentNew.id}`)
     }
 
-    this.editor.ctx.insertComment(commentNew)
+    this.kit.useGlobalCtx().insertComment(commentNew)
   }
 }

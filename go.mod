@@ -15,7 +15,7 @@ require (
 	github.com/eko/gocache/store/redis/v4 v4.2.1
 	github.com/fatih/color v1.15.0
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
-	github.com/gofiber/fiber/v2 v2.49.2
+	github.com/gofiber/fiber/v2 v2.50.0
 	github.com/gofiber/swagger v0.1.13
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/jedib0t/go-pretty/v6 v6.4.8

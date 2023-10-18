@@ -9,7 +9,7 @@ import ConcreteContext from './context'
 import defaults from './defaults'
 import { handelBaseConf } from './config'
 import Services from './service'
-import * as Stat from './lib/stat'
+import * as Stat from './plugins/stat'
 import ListLite from './list/list-lite'
 import Api from './api'
 

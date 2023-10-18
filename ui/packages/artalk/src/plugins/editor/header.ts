@@ -1,7 +1,6 @@
 import User from '@/lib/user'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
-import EditPlug from './state-edit'
 import PlugKit from './_kit'
 
 export default class HeaderPlug extends EditorPlug {
@@ -16,7 +15,7 @@ export default class HeaderPlug extends EditorPlug {
 
     // the input event
     const onInput = ($input: HTMLInputElement, key: string) => () => {
-      if (this.kit.useDeps(EditPlug)?.getIsEditMode()) return // 评论编辑模式，不修改个人信息
+      if (this.kit.useEditor().getState() === 'edit') return // 评论编辑模式，不修改个人信息
 
       User.update({ [key]: $input.value.trim() })
 

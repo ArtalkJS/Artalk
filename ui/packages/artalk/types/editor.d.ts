@@ -40,6 +40,11 @@ export interface EditorApi extends Component {
   getContentMarked(): string
 
   /**
+   * Get editor current state
+   */
+  getState(): EditorState
+
+  /**
    * Focus editor
    */
   focus(): void

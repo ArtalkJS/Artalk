@@ -12,13 +12,13 @@ export default class ClosablePlug extends EditorPlug {
     this.kit.useEvents().on('editor-close', () => this.close())
   }
 
-  open() {
+  private open() {
     this.kit.useUI().$textareaWrap.querySelector('.atk-comment-closed')?.remove()
     this.kit.useUI().$textarea.style.display = ''
     this.kit.useUI().$bottom.style.display = ''
   }
 
-  close() {
+  private close() {
     if (!this.kit.useUI().$textareaWrap.querySelector('.atk-comment-closed'))
       this.kit.useUI().$textareaWrap.prepend(Utils.createElement(`<div class="atk-comment-closed">${$t('onlyAdminCanReply')}</div>`))
 

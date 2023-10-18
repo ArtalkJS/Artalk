@@ -13,6 +13,7 @@ class Editor extends Component implements EditorApi {
 
   getUI() { return this.ui }
   getPlugs() { return this.ctx.get('editorPlugs') }
+  getState() { return this.state.get() }
 
   constructor(ctx: Context) {
     super(ctx)

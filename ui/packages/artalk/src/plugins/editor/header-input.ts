@@ -21,9 +21,9 @@ export default class HeaderInputPlug extends EditorPlug {
     })
   }
 
-  private queryUserInfo = {
-    timeout: <number|null>null,
-    abortFunc: <(() => void)|null>null
+  private query = {
+    timer: <number|null>null,
+    abortFn: <(() => void)|null>null
   }
 
   /** 远程获取用户数据 */
@@ -31,16 +31,16 @@ export default class HeaderInputPlug extends EditorPlug {
     User.logout()
 
     // 获取用户信息
-    if (this.queryUserInfo.timeout) window.clearTimeout(this.queryUserInfo.timeout) // 清除待发出的请求
-    if (this.queryUserInfo.abortFunc) this.queryUserInfo.abortFunc() // 之前发出未完成的请求立刻中止
+    if (this.query.timer) window.clearTimeout(this.query.timer) // 清除待发出的请求
+    if (this.query.abortFn) this.query.abortFn() // 之前发出未完成的请求立刻中止
 
-    this.queryUserInfo.timeout = window.setTimeout(() => {
-      this.queryUserInfo.timeout = null // 清理
+    this.query.timer = window.setTimeout(() => {
+      this.query.timer = null // 清理
 
       const {req, abort} = this.kit.useApi().user.userGet(
         User.data.nick, User.data.email
       )
-      this.queryUserInfo.abortFunc = abort
+      this.query.abortFn = abort
       req.then(data => {
         if (!data.is_login) {
           User.logout()
@@ -65,7 +65,7 @@ export default class HeaderInputPlug extends EditorPlug {
       })
       .catch(() => {})
       .finally(() => {
-        this.queryUserInfo.abortFunc = null // 清理
+        this.query.abortFn = null // 清理
       })
     }, 400) // 延迟执行，减少请求次数
   }

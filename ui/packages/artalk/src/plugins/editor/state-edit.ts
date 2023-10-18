@@ -9,14 +9,6 @@ import SubmitPlug from './submit'
 export default class EditPlug extends EditorPlug {
   private comment?: CommentData
 
-  getComment() {
-    return this.comment
-  }
-
-  getIsEditMode() {
-    return !!this.comment
-  }
-
   constructor(kit: PlugKit) {
     super(kit)
 

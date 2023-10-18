@@ -9,6 +9,11 @@ export default class EditorStateManager {
   private stateCurt: EditorState = 'normal'
   private stateUnmountFn: (() => void)|null = null
 
+  /** Get current state */
+  get() {
+    return this.stateCurt
+  }
+
   /**
    * Switch editor state
    *

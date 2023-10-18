@@ -5,7 +5,6 @@ import User from '@/lib/user'
 import PlugKit from './_kit'
 import EditorPlug from './_plug'
 import SubmitPlug from './submit'
-import MoverPlug from './mover'
 
 export default class EditPlug extends EditorPlug {
   private comment?: CommentData
@@ -66,7 +65,7 @@ export default class EditPlug extends EditorPlug {
         `</div>`
       )
       $btn.onclick = () => {
-        this.cancelEdit()
+        this.kit.useEditor().resetState()
       }
       ui.$textareaWrap.append($btn)
       ui.$editCancelBtn = $btn
@@ -96,7 +95,6 @@ export default class EditPlug extends EditorPlug {
     }
 
     this.comment = undefined
-    this.kit.useDeps(MoverPlug)?.back()
 
     const { nick, email, link } = User.data
     ui.$nick.value = nick

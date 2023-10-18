@@ -1,14 +1,15 @@
 import type ArtalkConfig from '~/types/artalk-config'
 import EditorPlug from './_plug'
 import LocalStoragePlug from './local-storage'
-import HeaderPlug from './header'
 import TextareaPlug from './textarea'
 import SubmitBtnPlug from './submit-btn'
 import SubmitPlug from './submit'
 import ReplyPlug from './state-reply'
 import EditPlug from './state-edit'
 import ClosablePlug from './closable'
-import HeaderInputPlug from './header-input'
+import HeaderEvent from './header-event'
+import HeaderUser from './header-user'
+import HeaderLink from './header-link'
 import MoverPlug from './mover'
 import EmoticonsPlug from './emoticons'
 import UploadPlug from './upload'
@@ -18,7 +19,8 @@ import PreviewPlug from './preview'
 export const ENABLED_PLUGS: (typeof EditorPlug)[] = [
   // Core
   LocalStoragePlug,
-  HeaderPlug, HeaderInputPlug, TextareaPlug,
+  HeaderEvent, HeaderUser, HeaderLink,
+  TextareaPlug,
   SubmitPlug, SubmitBtnPlug,
   MoverPlug, ReplyPlug, EditPlug,
   ClosablePlug,

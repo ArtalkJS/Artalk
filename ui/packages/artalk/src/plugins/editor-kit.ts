@@ -9,6 +9,7 @@ export interface EditorEventPayloadMap {
   'mounted': undefined
   'unmounted': undefined
   'header-input': { field: string, $input: HTMLInputElement }
+  'header-change': { field: string, $input: HTMLInputElement }
   'content-updated': string
   'panel-show': EditorPlug
   'panel-hide': EditorPlug

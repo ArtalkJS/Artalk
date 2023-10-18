@@ -4,8 +4,8 @@ import * as Utils from '@/lib/utils'
 import User from '@/lib/user'
 import PlugKit from './_kit'
 import EditorPlug from './_plug'
-import SubmitPlug from './submit-plug'
-import MoverPlug from './mover-plug'
+import SubmitPlug from './submit'
+import MoverPlug from './mover'
 
 export default class EditPlug extends EditorPlug {
   private comment?: CommentData

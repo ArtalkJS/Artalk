@@ -1,7 +1,7 @@
 import User from '@/lib/user'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
-import EditPlug from './edit-plug'
+import EditPlug from './edit'
 import PlugKit from './_kit'
 
 export default class HeaderPlug extends EditorPlug {

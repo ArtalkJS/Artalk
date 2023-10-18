@@ -2,7 +2,7 @@ import type { CommentData } from '~/types/artalk-data'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
 import PlugKit from './_kit'
-import SubmitAddPreset from './submit-add-preset'
+import SubmitAddPreset from './submit-add'
 
 interface CustomSubmit {
   activeCond: () => void

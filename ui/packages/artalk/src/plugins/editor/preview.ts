@@ -1,4 +1,4 @@
-import './preview-plug.scss'
+import './preview.scss'
 
 import $t from '@/i18n'
 import EditorPlug from './_plug'

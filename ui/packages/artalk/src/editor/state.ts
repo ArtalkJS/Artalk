@@ -1,7 +1,7 @@
 import type { EditorState } from '~/types/editor'
 import type { CommentData } from '~/types/artalk-data'
 import type Editor from './editor'
-import MoverPlug from '../plugins/editor/mover-plug'
+import MoverPlug from '../plugins/editor/mover'
 
 export default class EditorStateManager {
   constructor(private editor: Editor) {}

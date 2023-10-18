@@ -4,8 +4,8 @@ import * as Ui from '@/lib/ui'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
 import PlugKit from './_kit'
-import SubmitPlug from './submit-plug'
-import SubmitAddPreset from './submit-add-preset'
+import SubmitPlug from './submit'
+import SubmitAddPreset from './submit-add'
 
 export default class ReplyPlug extends EditorPlug {
   private comment?: CommentData

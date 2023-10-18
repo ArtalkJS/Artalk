@@ -1,11 +1,13 @@
-import { CommentData } from './artalk-data'
+import { CommentData, PageData } from './artalk-data'
 import { LocalUser } from './artalk-config'
 
 /** EventName to EventPayload Type */
 export interface EventPayloadMap {
+  'inited': undefined              // Artalk 初始化后
   'list-load': undefined           // 评论加载时
   'list-loaded': undefined         // 评论装载后
   'list-inserted': CommentData     // 评论插入后
+  'page-loaded': PageData          // 页面数据更新后
   'editor-submit': undefined       // 编辑器提交时
   'editor-submitted': undefined    // 编辑器提交后
   'user-changed': LocalUser        // 本地用户数据变更时

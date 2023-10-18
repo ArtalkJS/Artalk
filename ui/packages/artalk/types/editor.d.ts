@@ -60,16 +60,6 @@ export default interface Editor extends Component {
   submit(): void
 
   /**
-   * Close comment editor which prevent user from submitting (but admin excluded)
-   */
-  close(): void
-
-  /**
-   * Open comment editor which allow user to submit (only be called while editor is closed)
-   */
-  open(): void
-
-  /**
    * Show notification message
    */
   showNotify(msg: string, type: "i" | "s" | "w" | "e"): void

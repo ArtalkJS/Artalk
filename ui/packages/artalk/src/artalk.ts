@@ -57,6 +57,8 @@ export default class Artalk {
       if (typeof plugin === 'function')
         plugin(this.ctx)
     })
+
+    this.ctx.trigger('inited')
   }
 
   /** Init Artalk */

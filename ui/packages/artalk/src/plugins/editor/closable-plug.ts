@@ -7,6 +7,15 @@ import PlugKit from './_kit'
 export default class ClosablePlug extends EditorPlug {
   constructor(kit: PlugKit) {
     super(kit)
+
+    this.kit.useEvents().on('editor-open', () => this.open())
+    this.kit.useEvents().on('editor-close', () => this.close())
+  }
+
+  open() {
+    this.kit.useUI().$textareaWrap.querySelector('.atk-comment-closed')?.remove()
+    this.kit.useUI().$textarea.style.display = ''
+    this.kit.useUI().$bottom.style.display = ''
   }
 
   close() {
@@ -22,11 +31,5 @@ export default class ClosablePlug extends EditorPlug {
       this.kit.useUI().$textarea.style.display = ''
       this.kit.useUI().$bottom.style.display = ''
     }
-  }
-
-  open() {
-    this.kit.useUI().$textareaWrap.querySelector('.atk-comment-closed')?.remove()
-    this.kit.useUI().$textarea.style.display = ''
-    this.kit.useUI().$bottom.style.display = ''
   }
 }

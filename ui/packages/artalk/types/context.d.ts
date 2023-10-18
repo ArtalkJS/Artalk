@@ -93,12 +93,6 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 隐藏侧边栏 */
   hideSidebar(): void
 
-  /** 编辑器 - 关闭评论 */
-  editorClose(): void
-
-  /** 编辑器 - 打开评论 */
-  editorOpen(): void
-
   /** 编辑器 - 显示加载 */
   editorShowLoading(): void
 

@@ -1,4 +1,4 @@
-import { ListData, CommentData, NotifyData } from '~/types/artalk-data'
+import { ListData, CommentData, NotifyData, PageData } from '~/types/artalk-data'
 import Context from '~/types/context'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
@@ -215,6 +215,7 @@ export default class ListLite extends Component {
 
     // 事件触发，列表已加载
     this.ctx.trigger('list-loaded')
+    this.ctx.trigger('page-loaded', data.page)
 
     // Hook 函数调用
     if (this.onAfterLoad) this.onAfterLoad(data)
@@ -420,5 +421,28 @@ export default class ListLite extends Component {
         }
       })
     }
+  }
+
+  public updatePageData(page: PageData) {
+    if (!this.data) throw new Error('update fail since page data empty')
+    this.data.page = { ...page }
+    this.ctx.trigger('page-loaded', page)
+  }
+
+  /** 管理员设置页面信息 */
+  public adminPageEditSave(page: PageData) {
+    if (!this.data || !this.data.page) return
+
+    this.ctx.editorShowLoading()
+    this.ctx.getApi().page.pageEdit(page)
+      .then((respPage) => {
+        this.updatePageData(respPage)
+      })
+      .catch(err => {
+        this.ctx.editorShowNotify(`${this.$t('editFail')}: ${err.msg || String(err)}`, 'e')
+      })
+      .finally(() => {
+        this.ctx.editorHideLoading()
+      })
   }
 }

@@ -13,7 +13,6 @@ import MoverPlug from '../plugins/editor/mover-plug'
 import ReplyPlug from '../plugins/editor/reply-plug'
 import EditPlug from '../plugins/editor/edit-plug'
 import SubmitPlug from '../plugins/editor/submit-plug'
-import ClosablePlug from '../plugins/editor/closable-plug'
 
 class Editor extends Component implements EditorApi {
   private ui: EditorUI
@@ -138,14 +137,6 @@ class Editor extends Component implements EditorApi {
     const submitPlug = this.getPlugs()?.get(SubmitPlug)
     if (!submitPlug) throw Error('submitManger not initialized')
     await submitPlug.do()
-  }
-
-  close() {
-    this.getPlugs()?.get(ClosablePlug)?.close()
-  }
-
-  open() {
-    this.getPlugs()?.get(ClosablePlug)?.open()
   }
 }
 

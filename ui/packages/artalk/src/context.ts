@@ -145,14 +145,6 @@ class Context implements ContextApi {
   }
 
   /* 编辑器 */
-  public editorOpen(): void {
-    this.editor.open()
-  }
-
-  public editorClose(): void {
-    this.editor.close()
-  }
-
   public editorShowLoading(): void {
     this.editor.showLoading()
   }

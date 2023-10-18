@@ -13,6 +13,9 @@ export interface EditorEventPayloadMap {
   'panel-show': EditorPlug
   'panel-hide': EditorPlug
   'panel-close': undefined
+
+  'editor-close': undefined
+  'editor-open': undefined
 }
 
 export const EditorKit: ArtalkPlug = (ctx) => {

@@ -9,7 +9,6 @@ import ListLite from './list-lite'
 import * as ListUi from './list-ui'
 
 export default class List extends ListLite {
-  private $closeCommentBtn!: HTMLElement
   private $openSidebarBtn!: HTMLElement
   private $unreadBadge!: HTMLElement
   private $commentCount!: HTMLElement
@@ -56,19 +55,10 @@ export default class List extends ListLite {
   private initListActionBtn() {
     // 侧边栏呼出按钮
     this.$openSidebarBtn = this.$el.querySelector('[data-action="open-sidebar"]')!
-    this.$closeCommentBtn = this.$el.querySelector('[data-action="admin-close-comment"]')!
     this.$unreadBadge = this.$el.querySelector('.atk-unread-badge')!
 
     this.$openSidebarBtn.addEventListener('click', () => {
       this.ctx.showSidebar()
-    })
-
-    // 关闭评论按钮
-    this.$closeCommentBtn.addEventListener('click', () => {
-      if (!this.data) return
-
-      this.data.page.admin_only = !this.data.page.admin_only
-      this.adminPageEditSave()
     })
   }
 
@@ -87,15 +77,6 @@ export default class List extends ListLite {
 
     this.$openSidebarBtn.querySelector<HTMLElement>('.atk-text')!
       .innerText = (!User.data.isAdmin) ? this.$t('msgCenter') : this.$t('ctrlCenter')
-
-    // 关闭评论
-    if (!!this.data && !!this.data.page && this.data.page.admin_only === true) {
-      this.ctx.editorClose()
-      this.$closeCommentBtn.innerHTML = this.$t('openComment')
-    } else {
-      this.ctx.editorOpen()
-      this.$closeCommentBtn.innerHTML = this.$t('closeComment')
-    }
 
     // 评论列表排序 Dropdown 下拉选择层
     if (this.ctx.conf.listSort) {
@@ -168,25 +149,6 @@ export default class List extends ListLite {
 
     this.goToCommentFounded = true
     this.goToCommentDelay = true // reset
-  }
-
-  /** 管理员设置页面信息 */
-  public adminPageEditSave () {
-    if (!this.data || !this.data.page) return
-
-    this.ctx.editorShowLoading()
-    this.ctx.getApi().page.pageEdit(this.data.page)
-      .then((page) => {
-        if (this.data)
-          this.data.page = { ...page }
-        this.refreshUI()
-      })
-      .catch(err => {
-        this.ctx.editorShowNotify(`${this.$t('editFail')}: ${err.msg || String(err)}`, 'e')
-      })
-      .finally(() => {
-        this.ctx.editorHideLoading()
-      })
   }
 
   public showUnreadBadge(count: number) {

@@ -1,8 +1,9 @@
+import type ArtalkPlug from '~/types/plug'
 import type EditorApi from '~/types/editor'
-import EditorPlug from './editor-plug'
-import EventManager from '../lib/event-manager'
-import PlugKit from './plug-kit'
-import { ENABLED_PLUGS, getDisabledPlugByConf } from './plug-enabled'
+import EventManager from '@/lib/event-manager'
+import { ENABLED_PLUGS, getDisabledPlugByConf } from './editor'
+import EditorPlug from './editor/_plug'
+import PlugKit from './editor/_kit'
 
 export interface EditorEventPayloadMap {
   'mounted': undefined
@@ -14,20 +15,29 @@ export interface EditorEventPayloadMap {
   'panel-close': undefined
 }
 
-class PlugManager {
+export const EditorKit: ArtalkPlug = (ctx) => {
+  const editor = ctx.get('editor')
+
+  // handle ui, clear and reset the plug btns and plug panels
+  editor.getUI().$plugPanelWrap.innerHTML = ''
+  editor.getUI().$plugPanelWrap.style.display = 'none'
+  editor.getUI().$plugBtnWrap.innerHTML = ''
+
+  const editorPlugs = new PlugManager(editor)
+  ctx.inject('editorPlugs', editorPlugs)
+}
+
+export class PlugManager {
   private plugs: EditorPlug[] = []
   private openedPlug: EditorPlug|null = null
   private events = new EventManager<EditorEventPayloadMap>()
+
+  getPlugs() { return this.plugs }
   getEvents() { return this.events }
 
   constructor(
     public editor: EditorApi
   ) {
-    // handle ui, clear and reset the plug btns and plug panels
-    editor.getUI().$plugPanelWrap.innerHTML = ''
-    editor.getUI().$plugPanelWrap.style.display = 'none'
-    editor.getUI().$plugBtnWrap.innerHTML = ''
-
     // init the all enabled plugs
     const DISABLED = getDisabledPlugByConf(editor.conf)
 
@@ -124,5 +134,3 @@ class PlugManager {
     return result
   }
 }
-
-export default PlugManager

@@ -1,8 +1,8 @@
 import './preview-plug.scss'
 
 import $t from '@/i18n'
-import EditorPlug from '../editor-plug'
-import PlugKit from '../plug-kit'
+import EditorPlug from './_plug'
+import PlugKit from './_kit'
 
 export default class PreviewPlug extends EditorPlug {
   private isPlugPanelShow = false

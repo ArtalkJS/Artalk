@@ -5,19 +5,20 @@ import Component from '../lib/component'
 import * as Ui from '../lib/ui'
 import marked from '../lib/marked'
 import { render, EditorUI } from './ui'
-import PlugManager from './plug-manager'
-import MoverPlug from './core/mover-plug'
-import ReplyPlug from './core/reply-plug'
-import EditPlug from './core/edit-plug'
-import SubmitPlug from './core/submit-plug'
-import ClosablePlug from './core/closable-plug'
+
+// Plugin Deps
+// TODO make hooks for plugins, rather than directly call the function of plugins
+// like: onMounted, onUnmounted, onContentUpdated, onReply, onEdit, onBeforeSubmit, onSubmit, onSubmitted, onBeforeClose, onClosed, onBeforeOpen, onOpened
+import MoverPlug from '../plugins/editor/mover-plug'
+import ReplyPlug from '../plugins/editor/reply-plug'
+import EditPlug from '../plugins/editor/edit-plug'
+import SubmitPlug from '../plugins/editor/submit-plug'
+import ClosablePlug from '../plugins/editor/closable-plug'
 
 class Editor extends Component implements EditorApi {
   private ui: EditorUI
   getUI() { return this.ui }
-
-  private plugs?: PlugManager
-  getPlugs() { return this.plugs }
+  getPlugs() { return this.ctx.get('editorPlugs') }
 
   constructor(ctx: Context) {
     super(ctx)
@@ -26,17 +27,18 @@ class Editor extends Component implements EditorApi {
     this.ui = render()
     this.$el = this.ui.$el
 
+    let confLoaded = false
+
     // event listen
     this.ctx.on('conf-loaded', () => {
       // trigger unmount event will call all plugs' unmount function
       // (this will only be called while conf reloaded, not be called at first time)
-      this.plugs?.getEvents().trigger('unmounted')
-
-      // initialize editor plugs
-      this.plugs = new PlugManager(this)
+      confLoaded && this.getPlugs()?.getEvents().trigger('unmounted')
 
       // trigger event for plug initialization
-      this.plugs.getEvents().trigger('mounted')
+      this.getPlugs()?.getEvents().trigger('mounted')
+
+      confLoaded = true
     })
   }
 
@@ -48,7 +50,8 @@ class Editor extends Component implements EditorApi {
     let content = this.getContentRaw()
 
     // plug hook: final content transformer
-    if (this.plugs) content = this.plugs.getTransformedContent(content)
+    const plugs = this.getPlugs()
+    if (plugs) content = plugs.getTransformedContent(content)
 
     return content
   }
@@ -65,7 +68,7 @@ class Editor extends Component implements EditorApi {
     this.ui.$textarea.value = val
 
     // plug hook: content updated
-    this.plugs?.getEvents().trigger('content-updated', val)
+    this.getPlugs()?.getEvents().trigger('content-updated', val)
   }
 
   insertContent(val: string) {
@@ -100,23 +103,23 @@ class Editor extends Component implements EditorApi {
 
   resetUI() {
     // move editor to the initial position
-    this.plugs?.get(MoverPlug)?.back()
+    this.getPlugs()?.get(MoverPlug)?.back()
   }
 
   setReply(commentData: CommentData, $comment: HTMLElement, scroll = true) {
-    this.plugs?.get(ReplyPlug)?.setReply(commentData, $comment, scroll)
+    this.getPlugs()?.get(ReplyPlug)?.setReply(commentData, $comment, scroll)
   }
 
   cancelReply() {
-    this.plugs?.get(ReplyPlug)?.cancelReply()
+    this.getPlugs()?.get(ReplyPlug)?.cancelReply()
   }
 
   setEditComment(commentData: CommentData, $comment: HTMLElement) {
-    this.plugs?.get(EditPlug)?.edit(commentData, $comment)
+    this.getPlugs()?.get(EditPlug)?.edit(commentData, $comment)
   }
 
   cancelEditComment() {
-    this.plugs?.get(EditPlug)?.cancelEdit()
+    this.getPlugs()?.get(EditPlug)?.cancelEdit()
   }
 
   showNotify(msg: string, type: any) {
@@ -132,17 +135,17 @@ class Editor extends Component implements EditorApi {
   }
 
   async submit() {
-    const submitPlug = this.plugs?.get(SubmitPlug)
+    const submitPlug = this.getPlugs()?.get(SubmitPlug)
     if (!submitPlug) throw Error('submitManger not initialized')
     await submitPlug.do()
   }
 
   close() {
-    this.plugs?.get(ClosablePlug)?.close()
+    this.getPlugs()?.get(ClosablePlug)?.close()
   }
 
   open() {
-    this.plugs?.get(ClosablePlug)?.open()
+    this.getPlugs()?.get(ClosablePlug)?.open()
   }
 }
 

@@ -1,11 +1,9 @@
 import type { CommentData } from './artalk-data'
 import Component from '../src/lib/component'
 import { EditorUI } from '../src/editor/ui'
-import PlugManager from '../src/editor/plug-manager'
 
 export default interface Editor extends Component {
   getUI(): EditorUI
-  getPlugs(): PlugManager | undefined
 
   /**
    * Get the header input elements

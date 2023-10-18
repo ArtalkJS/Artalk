@@ -1,7 +1,5 @@
-import EditorApi from '~/types/editor'
-import * as Utils from '@/lib/utils'
-import EditorPlug from "./editor-plug"
-import PlugManager from './plug-manager'
+import { PlugManager } from '../editor-kit'
+import EditorPlug from "./_plug"
 
 /**
  * PlugKit provides a set of methods to help you develop editor plug

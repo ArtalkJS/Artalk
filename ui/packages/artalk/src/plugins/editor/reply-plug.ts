@@ -2,9 +2,9 @@ import type { CommentData } from '~/types/artalk-data'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import $t from '@/i18n'
-import EditorPlug from '../editor-plug'
+import EditorPlug from './_plug'
 import MoverPlug from './mover-plug'
-import PlugKit from '../plug-kit'
+import PlugKit from './_kit'
 
 export default class ReplyPlug extends EditorPlug {
   private comment?: CommentData

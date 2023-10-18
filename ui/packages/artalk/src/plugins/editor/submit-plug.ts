@@ -1,9 +1,9 @@
 import type { CommentData } from '~/types/artalk-data'
 import $t from '@/i18n'
 import User from '@/lib/user'
-import EditorPlug from '../editor-plug'
+import EditorPlug from './_plug'
 import ReplyPlug from './reply-plug'
-import PlugKit from '../plug-kit'
+import PlugKit from './_kit'
 
 interface CustomSubmit {
   activeCond: () => void

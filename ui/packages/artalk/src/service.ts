@@ -10,6 +10,7 @@ import User from './lib/user'
 import ListLite from './list/list-lite'
 import * as DarkMode from './lib/dark-mode'
 import * as I18n from './i18n'
+import { PlugManager } from './plugins/editor-kit'
 
 /**
  * Services
@@ -104,6 +105,16 @@ const services = {
     ctx.on('conf-loaded', () => {
       DarkMode.syncDarkModeConf(ctx)
     })
+  },
+
+  // Extra Service
+  // -----------------------------------------
+  // Only for type check
+  // Not inject to ctx immediately,
+  // but can be injected by other occasions
+
+  editorPlugs(): PlugManager|undefined {
+    return undefined
   }
 }
 

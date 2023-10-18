@@ -1,8 +1,8 @@
 import * as Utils from '@/lib/utils'
+import User from '@/lib/user'
 import $t from '@/i18n'
-import User from '../../lib/user'
-import PlugKit from '../plug-kit'
-import EditorPlug from '../editor-plug'
+import PlugKit from './_kit'
+import EditorPlug from './_plug'
 
 /** 允许的图片格式 */
 const AllowImgExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']

@@ -9,6 +9,7 @@ import ConcreteContext from './context'
 import defaults from './defaults'
 import { handelBaseConf } from './config'
 import Services from './service'
+import { DefaultPlugins } from './plugins'
 import * as Stat from './plugins/stat'
 import ListLite from './list/list-lite'
 import Api from './api'
@@ -29,7 +30,7 @@ export default class Artalk {
   public $root!: HTMLElement
 
   /** Plugins */
-  protected static plugins: ArtalkPlug[] = [ Stat.PvCountWidget ]
+  protected static plugins: ArtalkPlug[] = [ ...DefaultPlugins ]
   public static DisabledComponents: string[] = []
 
   constructor(conf: Partial<ArtalkConfig>) {

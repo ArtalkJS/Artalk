@@ -1,6 +1,6 @@
 import User from '@/lib/user'
-import EditorPlug from '../editor-plug'
-import PlugKit from '../plug-kit'
+import EditorPlug from './_plug'
+import PlugKit from './_kit'
 
 export default class HeaderInputPlug extends EditorPlug {
   constructor(kit: PlugKit) {

@@ -1,6 +1,6 @@
 import $t from '@/i18n'
-import EditorPlug from '../editor-plug'
-import PlugKit from '../plug-kit'
+import EditorPlug from './_plug'
+import PlugKit from './_kit'
 
 export default class SubmitBtnPlug extends EditorPlug {
   constructor(kit: PlugKit) {

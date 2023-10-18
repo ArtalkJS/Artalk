@@ -1,5 +1,5 @@
 import * as Utils from '@/lib/utils'
-import PlugKit from './plug-kit'
+import PlugKit from './_kit'
 
 /**
  * Editor 插件

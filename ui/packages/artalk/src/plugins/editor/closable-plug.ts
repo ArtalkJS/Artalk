@@ -1,8 +1,8 @@
 import User from '@/lib/user'
 import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
-import EditorPlug from '../editor-plug'
-import PlugKit from '../plug-kit'
+import EditorPlug from './_plug'
+import PlugKit from './_kit'
 
 export default class ClosablePlug extends EditorPlug {
   constructor(kit: PlugKit) {

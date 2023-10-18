@@ -1,9 +1,8 @@
 import User from '@/lib/user'
 import $t from '@/i18n'
-import Editor from '../editor'
-import EditorPlug from '../editor-plug'
+import EditorPlug from './_plug'
 import EditPlug from './edit-plug'
-import PlugKit from '../plug-kit'
+import PlugKit from './_kit'
 
 export default class HeaderPlug extends EditorPlug {
   private get $inputs() {

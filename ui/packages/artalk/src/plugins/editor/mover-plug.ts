@@ -1,6 +1,6 @@
 import * as Utils from '@/lib/utils'
-import EditorPlug from '../editor-plug'
-import PlugKit from '../plug-kit'
+import EditorPlug from './_plug'
+import PlugKit from './_kit'
 
 export default class MoverPlug extends EditorPlug {
   private isMoved = false

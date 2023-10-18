@@ -13,7 +13,7 @@ export default class EditorStateManager {
   get() {
     return this.stateCurt
   }
-
+  
   /**
    * Switch editor state
    *

@@ -8,8 +8,17 @@ export default class ClosablePlug extends EditorPlug {
   constructor(kit: PlugKit) {
     super(kit)
 
-    this.kit.useEvents().on('editor-open', () => this.open())
-    this.kit.useEvents().on('editor-close', () => this.close())
+    const onOpen = () => this.open()
+    const onClose = () => this.close()
+
+    this.kit.useMounted(() => {
+      this.kit.useEvents().on('editor-open', onOpen)
+      this.kit.useEvents().on('editor-close', onClose)
+    })
+    this.kit.useUnmounted(() => {
+      this.kit.useEvents().off('editor-open', onOpen)
+      this.kit.useEvents().off('editor-close', onClose)
+    })
   }
 
   private open() {

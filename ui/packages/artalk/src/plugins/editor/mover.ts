@@ -1,14 +1,9 @@
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import EditorPlug from './_plug'
-import PlugKit from './_kit'
 
 export default class MoverPlug extends EditorPlug {
   private isMoved = false
-
-  constructor(kit: PlugKit) {
-    super(kit)
-  }
 
   move(afterEl: HTMLElement) {
     if (this.isMoved) return

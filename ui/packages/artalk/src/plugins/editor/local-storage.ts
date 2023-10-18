@@ -8,6 +8,10 @@ export default class LocalStoragePlug extends EditorPlug {
   constructor(kit: PlugKit) {
     super(kit)
 
+    const onContentUpdated = () => {
+      this.save()
+    }
+
     this.kit.useMounted(() => {
       // load editor content from localStorage when init
       const localContent = window.localStorage.getItem(LocalStorageKey) || ''
@@ -15,13 +19,13 @@ export default class LocalStoragePlug extends EditorPlug {
         this.kit.useEditor().showNotify($t('restoredMsg'), 'i')
         this.kit.useEditor().setContent(localContent)
       }
+
+      // bind event
+      this.kit.useEvents().on('content-updated', onContentUpdated)
     })
 
     this.kit.useUnmounted(() => {
-    })
-
-    this.kit.useEvents().on('content-updated', () => {
-      this.save()
+      this.kit.useEvents().off('content-updated', onContentUpdated)
     })
   }
 

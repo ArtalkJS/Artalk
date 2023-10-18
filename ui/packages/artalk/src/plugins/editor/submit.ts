@@ -20,8 +20,15 @@ export default class SubmitPlug extends EditorPlug {
 
     this.defaultPreset = new SubmitAddPreset(this.kit)
 
-    // invoke `do()` when event `editor-submit` is triggered
-    this.kit.useGlobalCtx().on('editor-submit', () => this.do())
+    const onEditorSubmit = () => this.do()
+
+    this.kit.useMounted(() => {
+      // invoke `do()` when event `editor-submit` is triggered
+      this.kit.useGlobalCtx().on('editor-submit', onEditorSubmit)
+    })
+    this.kit.useUnmounted(() => {
+      this.kit.useGlobalCtx().off('editor-submit', onEditorSubmit)
+    })
   }
 
   registerCustom(c: CustomSubmit) {

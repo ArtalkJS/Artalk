@@ -7,15 +7,6 @@ export default class HeaderUser extends EditorPlug {
   constructor(kit: PlugKit) {
     super(kit)
 
-    Object.entries(this.kit.useEditor().getHeaderInputEls())
-      .forEach(([key, $input]) => {
-        // set placeholder
-        $input.placeholder = `${$t(key as any)}`
-
-        // sync header values from User.data
-        $input.value = User.data[key] || ''
-      })
-
     const onInput = ({ $input, field }: { $input: HTMLInputElement, field: string }) => {
       if (this.kit.useEditor().getState() === 'edit')
         return // TODO prevent execute when editing, since update comment.user not support
@@ -28,8 +19,17 @@ export default class HeaderUser extends EditorPlug {
         this.fetchUserInfo() // must after update user data, since fetchUserInfo() will use User.data
     }
 
-    // bind events
     this.kit.useMounted(() => {
+      Object.entries(this.kit.useEditor().getHeaderInputEls())
+        .forEach(([key, $input]) => {
+          // set placeholder
+          $input.placeholder = `${$t(key as any)}`
+
+          // sync header values from User.data
+          $input.value = User.data[key] || ''
+        })
+
+      // bind events
       this.kit.useEvents().on('header-input', onInput)
     })
 

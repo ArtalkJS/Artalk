@@ -1,21 +1,16 @@
 import type { CommentData } from '~/types/artalk-data'
-import type EditorApi from '~/types/editor'
+import type { EditorApi, EditorState } from '~/types/editor'
 import type Context from '~/types/context'
 import Component from '../lib/component'
 import * as Ui from '../lib/ui'
 import marked from '../lib/marked'
 import { render, EditorUI } from './ui'
-
-// Plugin Deps
-// TODO make hooks for plugins, rather than directly call the function of plugins
-// like: onMounted, onUnmounted, onContentUpdated, onReply, onEdit, onBeforeSubmit, onSubmit, onSubmitted, onBeforeClose, onClosed, onBeforeOpen, onOpened
-import MoverPlug from '../plugins/editor/mover-plug'
-import ReplyPlug from '../plugins/editor/reply-plug'
-import EditPlug from '../plugins/editor/edit-plug'
-import SubmitPlug from '../plugins/editor/submit-plug'
+import EditorStateManager from './state'
 
 class Editor extends Component implements EditorApi {
   private ui: EditorUI
+  private state: EditorStateManager
+
   getUI() { return this.ui }
   getPlugs() { return this.ctx.get('editorPlugs') }
 
@@ -25,6 +20,9 @@ class Editor extends Component implements EditorApi {
     // init editor ui
     this.ui = render()
     this.$el = this.ui.$el
+
+    // init state manager
+    this.state = new EditorStateManager(this)
 
     let confLoaded = false
 
@@ -96,29 +94,19 @@ class Editor extends Component implements EditorApi {
 
   reset() {
     this.setContent('')
-    this.cancelReply()
-    this.cancelEditComment()
+    this.resetState()
   }
 
-  resetUI() {
-    // move editor to the initial position
-    this.getPlugs()?.get(MoverPlug)?.back()
+  resetState() {
+    this.state.switch('normal')
   }
 
-  setReply(commentData: CommentData, $comment: HTMLElement, scroll = true) {
-    this.getPlugs()?.get(ReplyPlug)?.setReply(commentData, $comment, scroll)
+  setReply(comment: CommentData, $comment: HTMLElement) {
+    this.state.switch('reply', { comment, $comment })
   }
 
-  cancelReply() {
-    this.getPlugs()?.get(ReplyPlug)?.cancelReply()
-  }
-
-  setEditComment(commentData: CommentData, $comment: HTMLElement) {
-    this.getPlugs()?.get(EditPlug)?.edit(commentData, $comment)
-  }
-
-  cancelEditComment() {
-    this.getPlugs()?.get(EditPlug)?.cancelEdit()
+  setEditComment(comment: CommentData, $comment: HTMLElement) {
+    this.state.switch('edit', { comment, $comment })
   }
 
   showNotify(msg: string, type: any) {
@@ -133,10 +121,8 @@ class Editor extends Component implements EditorApi {
     Ui.hideLoading(this.ui.$el)
   }
 
-  async submit() {
-    const submitPlug = this.getPlugs()?.get(SubmitPlug)
-    if (!submitPlug) throw Error('submitManger not initialized')
-    await submitPlug.do()
+  submit() {
+    this.ctx.trigger('editor-submit')
   }
 }
 

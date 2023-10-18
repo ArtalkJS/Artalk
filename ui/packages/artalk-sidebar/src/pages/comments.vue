@@ -54,7 +54,7 @@ onMounted(() => {
     const pageURL = comment.getData().page_url
     comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
     comment.getConf().onReplyBtnClick = () => {
-      artalk!.ctx.replyComment(comment.getData(), comment.getEl(), true)
+      artalk!.ctx.replyComment(comment.getData(), comment.getEl())
     }
   }
   list.paramsEditor = (params) => {

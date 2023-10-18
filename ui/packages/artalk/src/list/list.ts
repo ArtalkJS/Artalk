@@ -95,9 +95,7 @@ export default class List extends ListLite {
     if (!this.goToCommentFounded) this.checkGoToCommentByUrlHash()
 
     // 防止评论框被吞
-    if (this.ctx.conf.editorTravel === true) {
-      this.ctx.editorResetUI()
-    }
+    this.ctx.editorResetState()
   }
 
   private goToCommentFounded = false

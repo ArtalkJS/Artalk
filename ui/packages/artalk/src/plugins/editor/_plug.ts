@@ -1,3 +1,5 @@
+import type { CommentData } from '~/types/artalk-data'
+import type { EditorState } from '~/types/editor'
 import * as Utils from '@/lib/utils'
 import PlugKit from './_kit'
 
@@ -8,6 +10,8 @@ interface EditorPlug {
   $btn?: HTMLElement
   $panel?: HTMLElement
   contentTransformer?(rawContent: string): string
+  editorStateEffectWhen?: EditorState
+  editorStateEffect?(comment: CommentData): () => void
 }
 
 class EditorPlug {
@@ -45,6 +49,12 @@ class EditorPlug {
     this.kit.useEvents().on('panel-hide', (aPlug) => {
       if (aPlug === this) func()
     })
+  }
+
+  /** Use editor state modifier */
+  useEditorStateEffect(stateName: EditorState, effectFn: (comment: CommentData) => () => void) {
+    this.editorStateEffectWhen = stateName
+    this.editorStateEffect = effectFn
   }
 }
 

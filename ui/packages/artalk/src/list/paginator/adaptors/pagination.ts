@@ -12,8 +12,7 @@ export default <IPaginationAdaptor>{
     const instance = new Pagination(conf.total, {
       pageSize: conf.pageSize,
       onChange: async (o) => {
-        if (conf.list.conf.editorTravel === true)
-          conf.list.ctx.editorResetUI() // 防止评论框被吞
+        conf.list.ctx.editorResetState() // 防止评论框被吞
 
         await conf.list.fetchComments(o)
 

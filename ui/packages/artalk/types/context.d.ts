@@ -61,16 +61,10 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   updateComment(commentData: CommentData): void
 
   /** 评论回复 */
-  replyComment(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
-
-  /** 取消回复评论 */
-  cancelReplyComment(): void
+  replyComment(commentData: CommentData, $comment: HTMLElement): void
 
   /** 编辑评论 */
   editComment(commentData: CommentData, $comment: HTMLElement): void
-
-  /** 取消编辑评论 */
-  cancelEditComment(): void
 
   /** 更新通知数据 */
   updateNotifies(notifies: NotifyData[]): void
@@ -102,8 +96,8 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 编辑器 - 显示提示消息 */
   editorShowNotify(msg: string, type: "i" | "s" | "w" | "e"): void
 
-  /** 评论框 - 复原 UI */
-  editorResetUI(): void
+  /** 评论框 - 复原状态 */
+  editorResetState(): void
 
   /** 验证码检测 */
   checkCaptcha(payload: CheckerCaptchaPayload): void

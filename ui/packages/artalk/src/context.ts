@@ -103,20 +103,12 @@ class Context implements ContextApi {
     this.list?.updateComment(commentData)
   }
 
-  public replyComment(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void {
-    this.editor.setReply(commentData, $comment, scroll)
-  }
-
-  public cancelReplyComment(): void {
-    this.editor.cancelReply()
+  public replyComment(commentData: CommentData, $comment: HTMLElement): void {
+    this.editor.setReply(commentData, $comment)
   }
 
   public editComment(commentData: CommentData, $comment: HTMLElement): void {
     this.editor.setEditComment(commentData, $comment)
-  }
-
-  public cancelEditComment(): void {
-    this.editor.cancelEditComment()
   }
 
   public updateNotifies(notifies: NotifyData[]): void {
@@ -157,8 +149,8 @@ class Context implements ContextApi {
     this.editor.showNotify(msg, type)
   }
 
-  public editorResetUI(): void {
-    this.editor.resetUI()
+  public editorResetState(): void {
+    this.editor.resetState()
   }
 
   /* 侧边栏 */

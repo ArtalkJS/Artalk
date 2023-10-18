@@ -21,6 +21,16 @@ export default class EditPlug extends EditorPlug {
   constructor(kit: PlugKit) {
     super(kit)
 
+    // add effect when state switch to `edit`
+    this.useEditorStateEffect('edit', (comment) => {
+      this.edit(comment)
+
+      return () => {
+        this.cancelEdit()
+      }
+    })
+
+    // register submit preset
     this.kit.useMounted(() => {
       const submitPlug = this.kit.useDeps(SubmitPlug)
       if (!submitPlug) throw Error("SubmitPlug not initialized")
@@ -46,10 +56,7 @@ export default class EditPlug extends EditorPlug {
     })
   }
 
-  edit(comment: CommentData, $comment: HTMLElement) {
-    this.cancelEdit()
-    this.kit.useEditor().cancelReply()
-
+  private edit(comment: CommentData) {
     const ui = this.kit.useUI()
     if (!ui.$editCancelBtn) {
       const $btn = Utils.createElement(
@@ -68,8 +75,6 @@ export default class EditPlug extends EditorPlug {
 
     ui.$header.style.display = 'none' // TODO support modify header information
 
-    this.kit.useDeps(MoverPlug)?.move($comment)
-
     ui.$nick.value = comment.nick || ''
     ui.$email.value = comment.email || ''
     ui.$link.value = comment.link || ''
@@ -80,7 +85,7 @@ export default class EditPlug extends EditorPlug {
     this.updateSubmitBtnText($t('save'))
   }
 
-  cancelEdit() {
+  private cancelEdit() {
     if (!this.comment) return
 
     const ui = this.kit.useUI()

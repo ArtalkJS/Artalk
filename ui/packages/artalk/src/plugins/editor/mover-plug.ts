@@ -1,4 +1,5 @@
 import * as Utils from '@/lib/utils'
+import * as Ui from '@/lib/ui'
 import EditorPlug from './_plug'
 import PlugKit from './_kit'
 
@@ -22,13 +23,13 @@ export default class MoverPlug extends EditorPlug {
     $travelPlace.replaceWith(editorEl)
 
     editorEl.classList.add('atk-fade-in') // 添加渐入动画
+
+    Ui.scrollIntoView(editorEl)
   }
 
   back() {
     if (!this.isMoved) return
     this.isMoved = false
     this.kit.useGlobalCtx().$root.querySelector('.atk-editor-travel-placeholder')?.replaceWith(this.kit.useUI().$el)
-
-    this.kit.useEditor().cancelReply()  // 取消回复
   }
 }

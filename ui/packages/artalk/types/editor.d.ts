@@ -2,7 +2,9 @@ import type { CommentData } from './artalk-data'
 import Component from '../src/lib/component'
 import { EditorUI } from '../src/editor/ui'
 
-export default interface Editor extends Component {
+export type EditorState = 'reply' | 'edit' | 'normal'
+
+export interface EditorApi extends Component {
   getUI(): EditorUI
 
   /**
@@ -52,7 +54,7 @@ export default interface Editor extends Component {
    *
    * call it will move editor to the initial position
    */
-  resetUI(): void
+  resetState(): void
 
   /**
    * Submit comment
@@ -80,17 +82,9 @@ export default interface Editor extends Component {
   setReply(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
 
   /**
-   * Cancel replaying the comment
-   */
-  cancelReply(): void
-
-  /**
    * Start editing a comment
    */
   setEditComment(commentData: CommentData, $comment: HTMLElement): void
-
-  /**
-   * Cancel editing the comment
-   */
-  cancelEditComment(): void
 }
+
+export default EditorApi

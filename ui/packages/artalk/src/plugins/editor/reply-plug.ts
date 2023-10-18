@@ -3,24 +3,61 @@ import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
-import MoverPlug from './mover-plug'
 import PlugKit from './_kit'
+import SubmitPlug from './submit-plug'
+import SubmitAddPreset from './submit-add-preset'
 
 export default class ReplyPlug extends EditorPlug {
   private comment?: CommentData
 
   constructor(kit: PlugKit) {
     super(kit)
+
+    // add effect when state switch to `reply`
+    this.useEditorStateEffect('reply', (commentData) => {
+      this.setReply(commentData)
+
+      return () => {
+        this.cancelReply()
+      }
+    })
+
+    // register submit preset
+    this.kit.useEvents().on('mounted', () => {
+      const submitPlug = this.kit.useDeps(SubmitPlug)
+      if (!submitPlug) throw Error("SubmitPlug not initialized")
+
+      const defaultPreset = new SubmitAddPreset(this.kit)
+
+      submitPlug.registerCustom({
+        activeCond: () => !!this.comment, // active this custom submit when reply mode
+        req: async () => {
+          if (!this.comment) throw new Error('reply comment cannot be empty')
+
+          const nComment = await this.kit.useApi().comment.add({
+            ...defaultPreset.getSubmitAddParams(),
+            rid: this.comment.id,
+            page_key: this.comment.page_key,
+            page_title: undefined,
+            site_name: this.comment.site_name
+          })
+
+          return nComment
+        },
+        post: (nComment: CommentData) => {
+          // open another page when reply comment is not the same pageKey
+          const conf = this.kit.useConf()
+          if (nComment.page_key !== conf.pageKey) {
+            window.open(`${nComment.page_url}#atk-comment-${nComment.id}`)
+          }
+
+          defaultPreset.postSubmitAdd(nComment)
+        }
+      })
+    })
   }
 
-  getComment() {
-    return this.comment
-  }
-
-  setReply(commentData: CommentData, $comment: HTMLElement, scroll = true) {
-    this.kit.useEditor().cancelEditComment()
-    this.cancelReply()
-
+  private setReply(commentData: CommentData) {
     const ui = this.kit.useUI()
     if (!ui.$sendReply) {
       ui.$sendReply = Utils.createElement(
@@ -31,20 +68,17 @@ export default class ReplyPlug extends EditorPlug {
       )
       ui.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
       ui.$sendReply.addEventListener('click', () => {
-        this.kit.useEditor().cancelReply()
+        this.kit.useEditor().resetState()
       })
       ui.$textareaWrap.append(ui.$sendReply)
     }
 
     this.comment = commentData
-    this.kit.useDeps(MoverPlug)?.move($comment)
-
-    if (scroll) Ui.scrollIntoView(ui.$el)
 
     ui.$textarea.focus()
   }
 
-  cancelReply() {
+  private cancelReply() {
     if (!this.comment) return
 
     const ui = this.kit.useUI()
@@ -53,7 +87,5 @@ export default class ReplyPlug extends EditorPlug {
       ui.$sendReply = undefined
     }
     this.comment = undefined
-
-    this.kit.useDeps(MoverPlug)?.back()
   }
 }

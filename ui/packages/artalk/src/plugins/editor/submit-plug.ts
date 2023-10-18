@@ -1,9 +1,8 @@
 import type { CommentData } from '~/types/artalk-data'
 import $t from '@/i18n'
-import User from '@/lib/user'
 import EditorPlug from './_plug'
-import ReplyPlug from './reply-plug'
 import PlugKit from './_kit'
+import SubmitAddPreset from './submit-add-preset'
 
 interface CustomSubmit {
   activeCond: () => void
@@ -13,13 +12,23 @@ interface CustomSubmit {
 }
 
 export default class SubmitPlug extends EditorPlug {
-  customs: CustomSubmit[] = []
+  private customs: CustomSubmit[] = []
+  private defaultPreset: SubmitAddPreset
 
   constructor(kit: PlugKit) {
     super(kit)
+
+    this.defaultPreset = new SubmitAddPreset(this.kit)
+
+    // invoke `do()` when event `editor-submit` is triggered
+    this.kit.useGlobalCtx().on('editor-submit', () => this.do())
   }
 
-  async do() {
+  registerCustom(c: CustomSubmit) {
+    this.customs.push(c)
+  }
+
+  private async do() {
     if (this.kit.useEditor().getContentFinal().trim() === '') {
       this.kit.useEditor().focus()
       return
@@ -27,7 +36,6 @@ export default class SubmitPlug extends EditorPlug {
 
     const custom = this.customs.find(o => o.activeCond())
 
-    this.kit.useGlobalCtx().trigger('editor-submit')
     this.kit.useEditor().showLoading()
 
     try {
@@ -38,11 +46,11 @@ export default class SubmitPlug extends EditorPlug {
 
       // submit request
       if (custom?.req) nComment = await custom.req()
-      else nComment = await this.reqAdd()
+      else nComment = await this.defaultPreset.reqAdd()
 
       // post submit
       if (custom?.post) custom.post(nComment)
-      else this.postSubmitAdd(nComment)
+      else this.defaultPreset.postSubmitAdd(nComment)
     } catch (err: any) {
       // submit error
       console.error(err)
@@ -54,46 +62,5 @@ export default class SubmitPlug extends EditorPlug {
 
     this.kit.useEditor().reset() // 复原编辑器
     this.kit.useGlobalCtx().trigger('editor-submitted')
-  }
-
-  registerCustom(c: CustomSubmit) {
-    this.customs.push(c)
-  }
-
-  // -------------------------------------------------------------------
-  //  Submit CommentAdd
-  // -------------------------------------------------------------------
-
-  private async reqAdd() {
-    const nComment = await this.kit.useApi().comment.add({
-      ...this.getSubmitAddParams()
-    })
-    return nComment
-  }
-
-  private getSubmitAddParams() {
-    const { nick, email, link } = User.data
-    const conf = this.kit.useConf()
-    const reply = this.kit.useDeps(ReplyPlug)?.getComment()
-
-    return {
-      content: this.kit.useEditor().getContentFinal(),
-      nick, email, link,
-      rid: (!reply) ? 0 : reply.id,
-      page_key: (!reply) ? conf.pageKey : reply.page_key,
-      page_title: (!reply) ? conf.pageTitle : undefined,
-      site_name: (!reply) ? conf.site : reply.site_name
-    }
-  }
-
-  private postSubmitAdd(commentNew: CommentData) {
-    // 回复不同页面的评论，跳转到新页面
-    const replyComment = this.kit.useDeps(ReplyPlug)?.getComment()
-    const conf = this.kit.useConf()
-    if (!!replyComment && replyComment.page_key !== conf.pageKey) {
-      window.open(`${replyComment.page_url}#atk-comment-${commentNew.id}`)
-    }
-
-    this.kit.useGlobalCtx().insertComment(commentNew)
   }
 }

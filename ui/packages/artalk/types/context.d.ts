@@ -66,8 +66,11 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 编辑评论 */
   editComment(commentData: CommentData, $comment: HTMLElement): void
 
-  /** 更新通知数据 */
-  updateNotifies(notifies: NotifyData[]): void
+  /** 获取未读列表 */
+  getUnreadList(): NotifyData[]
+
+  /** 更新未读通知数据 */
+  updateUnreadList(unreadList: NotifyData[]): void
 
   /** 列表 - 重新加载数据 */
   listReload(): void

@@ -50,6 +50,10 @@ export default class List extends ListLite {
       refreshCountNumEl()
       this.refreshUI()
     })
+
+    this.ctx.on('unread-updated', (unreadList) => {
+      this.showUnreadBadge(unreadList.length || 0)
+    })
   }
 
   private initListActionBtn() {
@@ -114,19 +118,12 @@ export default class List extends ListLite {
     const comment = this.ctx.findComment(commentId)
     if (!comment) { // 若找不到评论
       // 自动翻页
+      // TODO 自动范围改为直接跳转到计算后的页面
       this.pgHolder?.next()
       return
     }
 
-    // 已阅 API
-    const notifyKey = Utils.getQueryParam('atk_notify_key')
-    if (notifyKey) {
-      this.ctx.getApi().user.markRead(commentId, notifyKey)
-        .then(() => {
-          this.unread = this.unread.filter(o => o.comment_id !== commentId)
-          this.updateUnread(this.unread)
-        })
-    }
+    this.ctx.trigger('list-goto', commentId)
 
     // 若父评论存在 “子评论部分” 限高，取消限高
     comment.getParents().forEach((p) => {
@@ -174,10 +171,5 @@ export default class List extends ListLite {
         [this.$t('sortAuthor'), () => { reloadUseParamsEditor(p => { p.view_only_admin = true }) }],
       ]
     })
-  }
-
-  public updateUnread(notifies: NotifyData[]): void {
-    super.updateUnread(notifies)
-    this.showUnreadBadge(notifies?.length || 0)
   }
 }

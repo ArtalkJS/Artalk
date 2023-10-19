@@ -113,7 +113,7 @@ export default class SidebarLayer extends Component {
 
     // 清空 unread
     setTimeout(() => {
-      this.ctx.updateNotifies([])
+      this.ctx.updateUnreadList([])
     }, 0)
 
     this.ctx.trigger('sidebar-show')

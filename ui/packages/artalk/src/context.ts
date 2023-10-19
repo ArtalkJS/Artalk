@@ -30,6 +30,7 @@ class Context implements ContextApi {
   public markedReplacers: ((raw: string) => string)[] = []
 
   private commentList: Comment[] = [] // Note: 无层级结构 + 无须排列
+  private unreadList: NotifyData[] = []
 
   /* Event Manager */
   private events = new EventManager<EventPayloadMap>()
@@ -111,8 +112,13 @@ class Context implements ContextApi {
     this.editor.setEditComment(commentData, $comment)
   }
 
-  public updateNotifies(notifies: NotifyData[]): void {
-    this.list?.updateUnread(notifies)
+  public getUnreadList() {
+    return this.unreadList
+  }
+
+  public updateUnreadList(notifies: NotifyData[]): void {
+    this.unreadList = notifies
+    this.trigger('unread-updated', notifies)
   }
 
   /* 评论列表 */

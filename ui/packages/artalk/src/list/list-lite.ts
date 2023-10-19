@@ -10,6 +10,7 @@ import * as ListNest from './list-nest'
 import * as ListUi from './list-ui'
 import { handleBackendRefConf } from '../config'
 
+// TODO public 的可配置成员字段放到一个 Options 对象，而不是直接暴露，很混乱
 export default class ListLite extends Component {
   /** 列表评论集区域元素 */
   protected $commentsWrap: HTMLElement
@@ -87,8 +88,6 @@ export default class ListLite extends Component {
   public paramsEditor?: (params: any) => void
   public onAfterLoad?: (data: ListData) => void
 
-  /** 未读标记 */
-  protected unread: NotifyData[] = []
   public unreadHighlight?: boolean // 高亮未读
 
   constructor (ctx: Context) {
@@ -214,7 +213,7 @@ export default class ListLite extends Component {
     this.refreshUI()
 
     // 未读消息提示功能
-    this.ctx.updateNotifies(data.unread || [])
+    this.ctx.updateUnreadList(data.unread || [])
 
     // 事件触发，列表已加载
     this.ctx.trigger('list-loaded')
@@ -401,28 +400,6 @@ export default class ListLite extends Component {
     const comment = this.ctx.findComment(commentData.id)
     if (comment) {
       comment.setData(commentData)
-    }
-  }
-
-  /** 更新未读数据 */
-  public updateUnread(notifies: NotifyData[]) {
-    this.unread = notifies
-
-    // 高亮评论
-    if (this.unreadHighlight === true) {
-      this.ctx.getCommentList().forEach((comment) => {
-        const notify = this.unread.find(o => o.comment_id === comment.getID())
-        if (notify) {
-          comment.getRender().setUnread(true)
-          comment.getRender().setOpenAction(() => {
-            window.open(notify.read_link)
-            this.unread = this.unread.filter(o => o.comment_id !== comment.getID()) // remove
-            this.ctx.updateNotifies(this.unread)
-          })
-        } else {
-          comment.getRender().setUnread(false)
-        }
-      })
     }
   }
 

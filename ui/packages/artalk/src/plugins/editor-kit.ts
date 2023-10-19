@@ -34,6 +34,12 @@ export class PlugManager {
   getPlugs() { return this.plugs }
   getEvents() { return this.events }
 
+  private clear() {
+    this.plugs = []
+    this.events = new EventManager()
+    if (this.openedPlug) this.closePlugPanel()
+  }
+
   constructor(
     public editor: EditorApi
   ) {
@@ -44,8 +50,7 @@ export class PlugManager {
       confLoaded && this.getEvents().trigger('unmounted')
 
       // reset the plugs
-      this.plugs = []
-      if (this.openedPlug) this.closePlugPanel()
+      this.clear()
 
       // init the all enabled plugs
       const DISABLED = getDisabledPlugByConf(this.editor.ctx.conf)

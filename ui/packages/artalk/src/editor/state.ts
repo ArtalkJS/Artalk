@@ -1,5 +1,6 @@
 import type { EditorState } from '~/types/editor'
 import type { CommentData } from '~/types/artalk-data'
+import * as Ui from '@/lib/ui'
 import type Editor from './editor'
 import Mover from '../plugins/editor/mover'
 
@@ -34,6 +35,7 @@ export default class EditorStateManager {
     if (state !== 'normal' && payload) {
       // move editor position
       this.editor.getPlugs()?.get(Mover)?.move(payload.$comment)
+      Ui.scrollIntoView(this.editor.getUI().$el)
 
       const plugin = this.editor.getPlugs()?.getPlugs().find(p => p.editorStateEffectWhen === state)
       if (plugin && plugin.editorStateEffect) {

@@ -1,5 +1,4 @@
 import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
 import EditorPlug from './_plug'
 
 export default class Mover extends EditorPlug {
@@ -18,8 +17,6 @@ export default class Mover extends EditorPlug {
     $travelPlace.replaceWith(editorEl)
 
     editorEl.classList.add('atk-fade-in') // 添加渐入动画
-
-    Ui.scrollIntoView(editorEl)
   }
 
   back() {

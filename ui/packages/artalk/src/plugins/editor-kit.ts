@@ -37,31 +37,29 @@ export class PlugManager {
   constructor(
     public editor: EditorApi
   ) {
-    // init the all enabled plugs
-    const DISABLED = getDisabledPlugByConf(editor.conf)
-
-    ENABLED_PLUGS
-      .filter(p => !DISABLED.includes(p)) // 禁用的插件
-      .forEach((Plug) => {
-        // create the plug instance
-        const kit = new PlugKit(this)
-        this.plugs.push(new Plug(kit))
-      })
-
-    // bind events
-    this.initEvents()
-  }
-
-  private initEvents() {
     let confLoaded = false // config not loaded at first time
     this.editor.ctx.on('conf-loaded', () => {
       // trigger unmount event will call all plugs' unmount function
       // (this will only be called while conf reloaded, not be called at first time)
       confLoaded && this.getEvents().trigger('unmounted')
 
+      // reset the plugs
+      this.plugs = []
+      if (this.openedPlug) this.closePlugPanel()
+
+      // init the all enabled plugs
+      const DISABLED = getDisabledPlugByConf(this.editor.ctx.conf)
+
+      ENABLED_PLUGS
+        .filter(p => !DISABLED.includes(p)) // 禁用的插件
+        .forEach((Plug) => {
+          // create the plug instance
+          const kit = new PlugKit(this)
+          this.plugs.push(new Plug(kit))
+        })
+
       // trigger event for plug initialization
       this.getEvents().trigger('mounted')
-
       confLoaded = true
 
       // refresh the plug UI

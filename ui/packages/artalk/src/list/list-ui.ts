@@ -12,7 +12,7 @@ export function refreshUI(list: ListLite) {
     if (isNoComment) {
       if (!$noComment) {
         $noComment = Utils.createElement('<div class="atk-list-no-comment"></div>')
-        $noComment.innerHTML = list.noCommentText || list.ctx.conf.noComment || list.ctx.$t('noComment')
+        $noComment.innerHTML = list.getOptions().noCommentText || list.ctx.conf.noComment || list.ctx.$t('noComment')
         list.getCommentsWrapEl().appendChild($noComment)
       }
     } else {

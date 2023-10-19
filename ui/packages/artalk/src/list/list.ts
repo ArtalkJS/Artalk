@@ -8,6 +8,8 @@ import ListHTML from './list.html?raw'
 import ListLite from './list-lite'
 import * as ListUi from './list-ui'
 
+// TODO combine ListLite with List rather than inherit
+// Move the extended part to A Standalone Plugin
 export default class List extends ListLite {
   private $openSidebarBtn!: HTMLElement
   private $unreadBadge!: HTMLElement
@@ -25,7 +27,7 @@ export default class List extends ListLite {
     this.$el = el
 
     // 分页模式
-    this.repositionAt = this.$el
+    this.options.repositionAt = this.$el
 
     // 操作按钮
     this.initListActionBtn()
@@ -125,6 +127,8 @@ export default class List extends ListLite {
 
     this.ctx.trigger('list-goto', commentId)
 
+    // TODO after list-goto is triggered, more execution should be moved to event handler in other plugins
+
     // 若父评论存在 “子评论部分” 限高，取消限高
     comment.getParents().forEach((p) => {
       p.getRender().heightLimitRemoveForChildren()
@@ -156,9 +160,10 @@ export default class List extends ListLite {
   }
 
   /** 初始化选择下拉层 */
+  // TODO separate to a standalone plugin named ListDropdown
   protected initDropdown() {
     const reloadUseParamsEditor = (func: (p: any) => void) => {
-      this.paramsEditor = func
+      this.options.paramsEditor = func
       this.fetchComments(0)
     }
 

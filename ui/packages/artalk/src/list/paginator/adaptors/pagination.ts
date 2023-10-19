@@ -17,10 +17,11 @@ export default <IPaginationAdaptor>{
         await conf.list.fetchComments(o)
 
         // 滚动到第一个评论的位置
-        if (conf.list.repositionAt) {
-          const at = conf.list.scrollListenerAt || window
+        const repositionAt = conf.list.getOptions().repositionAt
+        if (repositionAt) {
+          const at = conf.list.getOptions().scrollListenerAt || window
           at.scroll({
-            top: conf.list.repositionAt ? Utils.getOffset(conf.list.repositionAt).top : 0,
+            top: repositionAt ? Utils.getOffset(repositionAt).top : 0,
             left: 0,
           })
         }

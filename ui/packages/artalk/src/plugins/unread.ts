@@ -7,7 +7,7 @@ export const Unread: ArtalkPlugin = (ctx) => {
     if (!list) return
 
     // comment unread highlight
-    if (list.unreadHighlight === true) {
+    if (list.getOptions().unreadHighlight === true) {
       ctx.getCommentList().forEach((comment) => {
         const notify = unreadList.find(o => o.comment_id === comment.getID())
 

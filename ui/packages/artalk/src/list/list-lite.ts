@@ -10,8 +10,46 @@ import * as ListNest from './list-nest'
 import * as ListUi from './list-ui'
 import { handleBackendRefConf } from '../config'
 
+interface ListOptions {
+  /** Flat mode */
+  flatMode?: boolean
+
+  /** Pagination mode */
+  pageMode?: TPgMode
+
+  /** Page size */
+  pageSize?: number
+
+  /** 监听指定元素上的滚动 */
+  scrollListenerAt?: HTMLElement
+
+  /** 翻页归位到指定元素 */
+  repositionAt?: HTMLElement
+
+  /** 启用列表未读高亮 */
+  unreadHighlight?: boolean
+
+  /** Sort condition in nest mode */
+  nestSortBy?: ListNest.SortByType
+
+  /** Text to show when no comment */
+  noCommentText?: string
+
+  // 一些 Hook 函数
+  // ----------------
+  renderComment?: (comment: Comment) => void
+  paramsEditor?: (params: any) => void
+  onAfterLoad?: (data: ListData) => void
+}
+
 // TODO public 的可配置成员字段放到一个 Options 对象，而不是直接暴露，很混乱
 export default class ListLite extends Component {
+  /** The options of List */
+  protected options: ListOptions = {}
+  getOptions() {
+    return this.options
+  }
+
   /** 列表评论集区域元素 */
   protected $commentsWrap: HTMLElement
 
@@ -24,23 +62,15 @@ export default class ListLite extends Component {
   /** 配置是否已加载 */
   private confLoaded = false
 
-  /** 无评论显示文字 */
-  public noCommentText?: string
-
   /** 嵌套模式下的排序方式 */
-  private _nestSortBy?: ListNest.SortByType
-  public get nestSortBy() {
-    return this._nestSortBy || this.ctx.conf.nestSort || 'DATE_ASC'
-  }
-  public set nestSortBy(val: ListNest.SortByType) {
-    this._nestSortBy = val
+  private getNestSortBy(): ListNest.SortByType {
+    return this.options.nestSortBy || this.ctx.conf.nestSort || 'DATE_ASC'
   }
 
   /** 平铺模式 */
-  private _flatMode?:boolean
-  public get flatMode() {
-    if (this._flatMode !== undefined)
-      return this._flatMode
+  private getFlatMode(): boolean {
+    if (this.options.flatMode !== undefined)
+      return this.options.flatMode
 
     // 配置开启平铺模式
     if (this.ctx.conf.flatMode === true || Number(this.ctx.conf.nestMax) <= 1)
@@ -52,46 +82,29 @@ export default class ListLite extends Component {
 
     return false
   }
-  public set flatMode(val: boolean) {
-    this._flatMode = val
-  }
-
-  /** 分页方式 */
-  public _pageMode?: TPgMode
-  public get pageMode() {
-    return this._pageMode || (this.conf.pagination.readMore ? 'read-more' : 'pagination')
-  }
-  public set pageMode(val: 'pagination'|'read-more') {
-    this._pageMode = val
-    this.pgHolder?.setMode(this._pageMode)
-  }
 
   /** 分页方式持有者 */
   public pgHolder?: PgHolder
 
+  /** 分页方式 */
+  private getPageMode(): TPgMode {
+    return this.options.pageMode || (this.conf.pagination.readMore ? 'read-more' : 'pagination')
+  }
+
+  private setPageMode(mode: TPgMode) {
+    this.options.pageMode = mode
+    this.pgHolder?.setMode(mode)
+  }
+
   /** 每页数量 (每次请求获取量) */
-  private _pageSize?: number
-  public get pageSize() {
-    return this._pageSize || this.conf.pagination.pageSize
-  }
-  public set pageSize(val: number) {
-    this._pageSize = val
+  private getPageSize(): number {
+    return this.options.pageSize || this.conf.pagination.pageSize
   }
 
-  /** 监听指定元素上的滚动 */
-  public scrollListenerAt?: HTMLElement
-  /** 翻页归位到指定元素 */
-  public repositionAt?: HTMLElement
-
-  // 一些 Hook 函数
-  public renderComment?: (comment: Comment) => void
-  public paramsEditor?: (params: any) => void
-  public onAfterLoad?: (data: ListData) => void
-
-  public unreadHighlight?: boolean // 高亮未读
-
-  constructor (ctx: Context) {
+  constructor (ctx: Context, options: ListOptions = {}) {
     super(ctx)
+
+    this.options = options
 
     // 初始化元素
     this.$el = Utils.createElement(
@@ -154,7 +167,8 @@ export default class ListLite extends Component {
     this.ctx.trigger('list-load')
 
     // 清空评论（按钮加载更多的第一页、每次加载分页页面）
-    if ((this.pageMode === 'read-more' && isFirstLoad) || this.pageMode === 'pagination') {
+    const pageMode = this.getPageMode()
+    if ((pageMode === 'read-more' && isFirstLoad) || pageMode === 'pagination') {
       this.ctx.clearAllComments()
     }
 
@@ -163,7 +177,7 @@ export default class ListLite extends Component {
     try {
       // 执行请求
       listData = await this.ctx.getApi().comment
-        .get(offset, this.pageSize, this.flatMode, this.paramsEditor)
+        .get(offset, this.getPageSize(), this.getFlatMode(), this.options.paramsEditor)
     } catch (e: any) {
       this.onError(e.msg || String(e), offset, e.data)
       throw e
@@ -195,7 +209,7 @@ export default class ListLite extends Component {
     this.importComments(data.comments)
 
     // 分页功能
-    this.refreshPagination(offset, (this.flatMode ? data.total : data.total_roots))
+    this.refreshPagination(offset, (this.getFlatMode() ? data.total : data.total_roots))
 
     // 加载后事件
     this.refreshUI()
@@ -210,7 +224,7 @@ export default class ListLite extends Component {
     this.ctx.trigger('list-loaded')
 
     // Hook 函数调用
-    if (this.onAfterLoad) this.onAfterLoad(data)
+    this.options.onAfterLoad && this.options.onAfterLoad(data)
   }
 
   private loadConf(data: ListData) {
@@ -235,8 +249,8 @@ export default class ListLite extends Component {
     if (!this.pgHolder) {
       this.pgHolder = new PgHolder({
         list: this,
-        mode: this.pageMode,
-        pageSize: this.pageSize,
+        mode: this.getPageMode(),
+        pageSize: this.getPageSize(),
         total
       })
     }
@@ -255,7 +269,7 @@ export default class ListLite extends Component {
     console.error(msg)
 
     // 加载更多按钮显示错误
-    if (offset !== 0 && this.pageMode === 'read-more') {
+    if (offset !== 0 && this.getPageMode() === 'read-more') {
       this.pgHolder?.showErr(this.$t('loadFail'))
       return
     }
@@ -279,9 +293,9 @@ export default class ListLite extends Component {
     if (!ctxData) ctxData = this.ctx.getCommentDataList()
 
     const comment = new Comment(this.ctx, cData, {
-      isFlatMode: this.flatMode,
+      isFlatMode: this.getFlatMode(),
       afterRender: () => {
-        if (this.renderComment) this.renderComment(comment)
+        this.options.renderComment && this.options.renderComment(comment)
       },
       onDelete: (c: Comment) => {
         this.ctx.deleteComment(c)
@@ -301,7 +315,7 @@ export default class ListLite extends Component {
 
   /** 导入评论 */
   public importComments(srcData: CommentData[]) {
-    if (this.flatMode) {
+    if (this.getFlatMode()) {
       srcData.forEach((commentData: CommentData) => {
         this.putCommentFlatMode(commentData, srcData, 'append')
       })
@@ -313,7 +327,7 @@ export default class ListLite extends Component {
   // 导入评论 · 嵌套模式
   private importCommentsNest(srcData: CommentData[]) {
     // 遍历 root 评论
-    const rootNodes = ListNest.makeNestCommentNodeList(srcData, this.nestSortBy, this.conf.nestMax)
+    const rootNodes = ListNest.makeNestCommentNodeList(srcData, this.getNestSortBy(), this.conf.nestMax)
     rootNodes.forEach((rootNode: ListNest.CommentNode) => {
       const rootC = this.createComment(rootNode.comment, srcData)
 
@@ -362,7 +376,7 @@ export default class ListLite extends Component {
 
   /** 新增评论 · 首部添加 */
   public insertComment(commentData: CommentData) {
-    if (!this.flatMode) {
+    if (!this.getFlatMode()) {
       // 嵌套模式
       const comment = this.createComment(commentData)
 
@@ -373,7 +387,7 @@ export default class ListLite extends Component {
         // 子评论 新增
         const parent = this.ctx.findComment(commentData.rid)
         if (parent) {
-          parent.putChild(comment, (this.nestSortBy === 'DATE_ASC' ? 'append' : 'prepend'))
+          parent.putChild(comment, (this.getNestSortBy() === 'DATE_ASC' ? 'append' : 'prepend'))
 
           // 若父评论存在 “子评论部分” 限高，取消限高
           comment.getParents().forEach((p) => {

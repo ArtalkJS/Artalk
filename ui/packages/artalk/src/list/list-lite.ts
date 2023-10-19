@@ -1,4 +1,4 @@
-import { ListData, CommentData, NotifyData, PageData } from '~/types/artalk-data'
+import { ListData, CommentData } from '~/types/artalk-data'
 import Context from '~/types/context'
 import type ArtalkConfig from '~/types/artalk-config'
 import Component from '../lib/component'
@@ -189,6 +189,31 @@ export default class ListLite extends Component {
     this.data = data
 
     // 装载后端提供的配置
+    this.loadConf(data)
+
+    // 导入数据
+    this.importComments(data.comments)
+
+    // 分页功能
+    this.refreshPagination(offset, (this.flatMode ? data.total : data.total_roots))
+
+    // 加载后事件
+    this.refreshUI()
+
+    // 更新页面数据
+    this.ctx.updatePage(data.page)
+
+    // 未读消息提示功能
+    this.ctx.updateUnreadList(data.unread || [])
+
+    // 事件触发，列表已加载
+    this.ctx.trigger('list-loaded')
+
+    // Hook 函数调用
+    if (this.onAfterLoad) this.onAfterLoad(data)
+  }
+
+  private loadConf(data: ListData) {
     if (!this.confLoaded) { // 仅应用一次配置
       let conf: Partial<ArtalkConfig> = {
         apiVersion: data.api_version.version
@@ -202,25 +227,6 @@ export default class ListLite extends Component {
       this.ctx.updateConf(conf)
       this.confLoaded = true
     }
-
-    // 导入数据
-    this.importComments(data.comments)
-
-    // 分页功能
-    this.refreshPagination(offset, (this.flatMode ? data.total : data.total_roots))
-
-    // 加载后事件
-    this.refreshUI()
-
-    // 未读消息提示功能
-    this.ctx.updateUnreadList(data.unread || [])
-
-    // 事件触发，列表已加载
-    this.ctx.trigger('list-loaded')
-    this.ctx.trigger('page-loaded', data.page)
-
-    // Hook 函数调用
-    if (this.onAfterLoad) this.onAfterLoad(data)
   }
 
   /** 分页模式 */
@@ -293,7 +299,7 @@ export default class ListLite extends Component {
     return comment
   }
 
-  /** 导入评论 · 通过请求数据 */
+  /** 导入评论 */
   public importComments(srcData: CommentData[]) {
     if (this.flatMode) {
       srcData.forEach((commentData: CommentData) => {
@@ -398,31 +404,6 @@ export default class ListLite extends Component {
   /** 更新评论 */
   public updateComment(commentData: CommentData) {
     const comment = this.ctx.findComment(commentData.id)
-    if (comment) {
-      comment.setData(commentData)
-    }
-  }
-
-  public updatePageData(page: PageData) {
-    if (!this.data) throw new Error('update fail since page data empty')
-    this.data.page = { ...page }
-    this.ctx.trigger('page-loaded', page)
-  }
-
-  /** 管理员设置页面信息 */
-  public adminPageEditSave(page: PageData) {
-    if (!this.data || !this.data.page) return
-
-    this.ctx.editorShowLoading()
-    this.ctx.getApi().page.pageEdit(page)
-      .then((respPage) => {
-        this.updatePageData(respPage)
-      })
-      .catch(err => {
-        this.ctx.editorShowNotify(`${this.$t('editFail')}: ${err.msg || String(err)}`, 'e')
-      })
-      .finally(() => {
-        this.ctx.editorHideLoading()
-      })
+    comment && comment.setData(commentData)
   }
 }

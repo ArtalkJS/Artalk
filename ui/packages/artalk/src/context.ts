@@ -1,5 +1,5 @@
 import type ArtalkConfig from '~/types/artalk-config'
-import type { CommentData, NotifyData } from '~/types/artalk-data'
+import type { CommentData, NotifyData, PageData } from '~/types/artalk-data'
 import type { EventPayloadMap } from '~/types/event'
 import type ContextApi from '~/types/context'
 import type { TInjectedServices } from './service'
@@ -30,6 +30,7 @@ class Context implements ContextApi {
   public markedReplacers: ((raw: string) => string)[] = []
 
   private commentList: Comment[] = [] // Note: 无层级结构 + 无须排列
+  private page?: PageData
   private unreadList: NotifyData[] = []
 
   /* Event Manager */
@@ -112,6 +113,7 @@ class Context implements ContextApi {
     this.editor.setEditComment(commentData, $comment)
   }
 
+  /** 未读通知 */
   public getUnreadList() {
     return this.unreadList
   }
@@ -119,6 +121,16 @@ class Context implements ContextApi {
   public updateUnreadList(notifies: NotifyData[]): void {
     this.unreadList = notifies
     this.trigger('unread-updated', notifies)
+  }
+
+  /** 页面数据 */
+  getPage(): PageData|undefined {
+    return this.page
+  }
+
+  updatePage(pageData: PageData): void {
+    this.page = pageData
+    this.trigger('page-loaded', pageData)
   }
 
   /* 评论列表 */

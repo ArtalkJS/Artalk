@@ -1,5 +1,5 @@
 import ArtalkConfig from './artalk-config'
-import { CommentData, NotifyData } from './artalk-data'
+import { CommentData, NotifyData, PageData } from './artalk-data'
 import type { EventPayloadMap } from './event'
 import type { EventManagerFuncs } from '../src/lib/event-manager'
 import { internal as internalLocales, I18n } from '../src/i18n'
@@ -65,6 +65,12 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
 
   /** 编辑评论 */
   editComment(commentData: CommentData, $comment: HTMLElement): void
+
+  /** 获取页面数据 */
+  getPage(): PageData|undefined
+
+  /** 更新页面数据 */
+  updatePage(pageData: PageData): void
 
   /** 获取未读列表 */
   getUnreadList(): NotifyData[]

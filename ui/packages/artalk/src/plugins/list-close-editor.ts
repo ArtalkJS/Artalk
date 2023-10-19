@@ -1,5 +1,6 @@
 import type ContextApi from '~/types/context'
 import type ArtalkPlug from '~/types/plug'
+import { PageData } from '~/types/artalk-data'
 import $t from '@/i18n'
 
 function ensureListEditor(ctx: ContextApi) {
@@ -24,10 +25,11 @@ export const ListCloseEditor: ArtalkPlug = (ctx) => {
 
     // bind editor close button click event
     $closeCommentBtn.addEventListener('click', () => {
-      const listData = list.getData()!
+      const page = ctx.getPage()
+      if (!page) throw new Error('Page data not found')
 
-      listData.page.admin_only = !listData.page.admin_only
-      list.adminPageEditSave(listData.page)
+      page.admin_only = !page.admin_only
+      adminPageEditSave(ctx, page)
     })
   })
 
@@ -46,4 +48,19 @@ export const ListCloseEditor: ArtalkPlug = (ctx) => {
       $closeCommentBtn && ($closeCommentBtn.innerHTML = $t('closeComment'))
     }
   })
+}
+
+/** 管理员设置页面信息 */
+function adminPageEditSave(ctx: ContextApi, page: PageData) {
+  ctx.editorShowLoading()
+  ctx.getApi().page.pageEdit(page)
+    .then((respPage) => {
+      ctx.updatePage(respPage)
+    })
+    .catch(err => {
+      ctx.editorShowNotify(`${$t('editFail')}: ${err.msg || String(err)}`, 'e')
+    })
+    .finally(() => {
+      ctx.editorHideLoading()
+    })
 }

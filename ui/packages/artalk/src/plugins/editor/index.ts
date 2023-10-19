@@ -1,40 +1,40 @@
 import type ArtalkConfig from '~/types/artalk-config'
 import EditorPlug from './_plug'
-import LocalStoragePlug from './local-storage'
-import TextareaPlug from './textarea'
-import SubmitBtnPlug from './submit-btn'
-import SubmitPlug from './submit'
-import ReplyPlug from './state-reply'
-import EditPlug from './state-edit'
-import ClosablePlug from './closable'
+import LocalStorage from './local-storage'
+import Textarea from './textarea'
+import SubmitBtn from './submit-btn'
+import Submit from './submit'
+import StateReply from './state-reply'
+import StateEdit from './state-edit'
+import Closable from './closable'
 import HeaderEvent from './header-event'
 import HeaderUser from './header-user'
 import HeaderLink from './header-link'
-import MoverPlug from './mover'
-import EmoticonsPlug from './emoticons'
-import UploadPlug from './upload'
-import PreviewPlug from './preview'
+import Mover from './mover'
+import Emoticons from './emoticons'
+import Upload from './upload'
+import Preview from './preview'
 
 /** The default enabled plugs */
 export const ENABLED_PLUGS: (typeof EditorPlug)[] = [
   // Core
-  LocalStoragePlug,
+  LocalStorage,
   HeaderEvent, HeaderUser, HeaderLink,
-  TextareaPlug,
-  SubmitPlug, SubmitBtnPlug,
-  MoverPlug, ReplyPlug, EditPlug,
-  ClosablePlug,
+  Textarea,
+  Submit, SubmitBtn,
+  Mover, StateReply, StateEdit,
+  Closable,
 
   // Extensions
-  EmoticonsPlug, UploadPlug, PreviewPlug
+  Emoticons, Upload, Preview
 ]
 
 /** Get the name list of disabled plugs */
 export function getDisabledPlugByConf(conf: ArtalkConfig): (typeof EditorPlug)[] {
   return [
-    {k: UploadPlug, v: conf.imgUpload},
-    {k: EmoticonsPlug, v: conf.emoticons},
-    {k: PreviewPlug, v: conf.preview},
-    {k: MoverPlug, v: conf.editorTravel},
+    {k: Upload, v: conf.imgUpload},
+    {k: Emoticons, v: conf.emoticons},
+    {k: Preview, v: conf.preview},
+    {k: Mover, v: conf.editorTravel},
   ].filter(n => !n.v).flatMap(n => n.k)
 }

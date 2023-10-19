@@ -1,7 +1,7 @@
 import EditorPlug from './_plug'
 import PlugKit from './_kit'
 
-export default class HeaderPlug extends EditorPlug {
+export default class HeaderEvent extends EditorPlug {
   private get $inputs() {
     return this.kit.useEditor().getHeaderInputEls()
   }

@@ -1,7 +1,7 @@
 import type { EditorState } from '~/types/editor'
 import type { CommentData } from '~/types/artalk-data'
 import type Editor from './editor'
-import MoverPlug from '../plugins/editor/mover'
+import Mover from '../plugins/editor/mover'
 
 export default class EditorStateManager {
   constructor(private editor: Editor) {}
@@ -13,7 +13,7 @@ export default class EditorStateManager {
   get() {
     return this.stateCurt
   }
-  
+
   /**
    * Switch editor state
    *
@@ -27,13 +27,13 @@ export default class EditorStateManager {
       this.stateUnmountFn = null
 
       // move editor back to the initial position
-      this.editor.getPlugs()?.get(MoverPlug)?.back()
+      this.editor.getPlugs()?.get(Mover)?.back()
     }
 
     // invoke effect function and save unmount function
     if (state !== 'normal' && payload) {
       // move editor position
-      this.editor.getPlugs()?.get(MoverPlug)?.move(payload.$comment)
+      this.editor.getPlugs()?.get(Mover)?.move(payload.$comment)
 
       const plugin = this.editor.getPlugs()?.getPlugs().find(p => p.editorStateEffectWhen === state)
       if (plugin && plugin.editorStateEffect) {

@@ -2,7 +2,7 @@ import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import EditorPlug from './_plug'
 
-export default class MoverPlug extends EditorPlug {
+export default class Mover extends EditorPlug {
   private isMoved = false
 
   move(afterEl: HTMLElement) {

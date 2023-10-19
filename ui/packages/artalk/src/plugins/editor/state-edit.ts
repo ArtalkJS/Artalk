@@ -4,9 +4,9 @@ import * as Utils from '@/lib/utils'
 import User from '@/lib/user'
 import PlugKit from './_kit'
 import EditorPlug from './_plug'
-import SubmitPlug from './submit'
+import Submit from './submit'
 
-export default class EditPlug extends EditorPlug {
+export default class StateEdit extends EditorPlug {
   private comment?: CommentData
 
   constructor(kit: PlugKit) {
@@ -23,7 +23,7 @@ export default class EditPlug extends EditorPlug {
 
     // register submit preset
     this.kit.useMounted(() => {
-      const submitPlug = this.kit.useDeps(SubmitPlug)
+      const submitPlug = this.kit.useDeps(Submit)
       if (!submitPlug) throw Error("SubmitPlug not initialized")
 
       submitPlug.registerCustom({

@@ -4,7 +4,7 @@ import PlugKit from './_kit'
 
 const LocalStorageKey = 'ArtalkContent'
 
-export default class LocalStoragePlug extends EditorPlug {
+export default class LocalStorage extends EditorPlug {
   constructor(kit: PlugKit) {
     super(kit)
 

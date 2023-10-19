@@ -14,7 +14,7 @@ type OwOFormatType = {
   }
 }
 
-export default class EmoticonsPlug extends EditorPlug {
+export default class Emoticons extends EditorPlug {
   private emoticons: EmoticonListData = []
   private loadingTask: Promise<void>|null = null
 

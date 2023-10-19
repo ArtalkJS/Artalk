@@ -2,7 +2,7 @@ import $t from '@/i18n'
 import EditorPlug from './_plug'
 import PlugKit from './_kit'
 
-export default class TextareaPlug extends EditorPlug {
+export default class Textarea extends EditorPlug {
   constructor(kit: PlugKit) {
     super(kit)
 

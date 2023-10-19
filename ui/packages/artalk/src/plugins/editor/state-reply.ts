@@ -4,10 +4,10 @@ import * as Ui from '@/lib/ui'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
 import PlugKit from './_kit'
-import SubmitPlug from './submit'
+import Submit from './submit'
 import SubmitAddPreset from './submit-add'
 
-export default class ReplyPlug extends EditorPlug {
+export default class StateReply extends EditorPlug {
   private comment?: CommentData
 
   constructor(kit: PlugKit) {
@@ -24,7 +24,7 @@ export default class ReplyPlug extends EditorPlug {
 
     // register submit preset
     this.kit.useEvents().on('mounted', () => {
-      const submitPlug = this.kit.useDeps(SubmitPlug)
+      const submitPlug = this.kit.useDeps(Submit)
       if (!submitPlug) throw Error("SubmitPlug not initialized")
 
       const defaultPreset = new SubmitAddPreset(this.kit)

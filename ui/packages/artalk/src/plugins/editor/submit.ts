@@ -11,7 +11,7 @@ interface CustomSubmit {
   post?: (nComment: CommentData) => void
 }
 
-export default class SubmitPlug extends EditorPlug {
+export default class Submit extends EditorPlug {
   private customs: CustomSubmit[] = []
   private defaultPreset: SubmitAddPreset
 

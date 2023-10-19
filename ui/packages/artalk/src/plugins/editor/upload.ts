@@ -7,7 +7,7 @@ import EditorPlug from './_plug'
 /** 允许的图片格式 */
 const AllowImgExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']
 
-export default class UploadPlug extends EditorPlug {
+export default class Upload extends EditorPlug {
   private $imgUploadInput?: HTMLInputElement
 
   constructor(kit: PlugKit) {

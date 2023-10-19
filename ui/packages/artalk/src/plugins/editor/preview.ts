@@ -4,7 +4,7 @@ import $t from '@/i18n'
 import EditorPlug from './_plug'
 import PlugKit from './_kit'
 
-export default class PreviewPlug extends EditorPlug {
+export default class Preview extends EditorPlug {
   private isPlugPanelShow = false
 
   constructor(kit: PlugKit) {

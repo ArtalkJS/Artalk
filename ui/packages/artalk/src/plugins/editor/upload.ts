@@ -13,11 +13,18 @@ export default class UploadPlug extends EditorPlug {
   constructor(kit: PlugKit) {
     super(kit)
 
+    this.kit.useMounted(() => this.init())
+
+    this.initDragImg()
+  }
+
+  private init() {
     this.$imgUploadInput = document.createElement('input')
     this.$imgUploadInput.type = 'file'
     this.$imgUploadInput.style.display = 'none'
     this.$imgUploadInput.accept = AllowImgExts.map(o => `.${o}`).join(',')
 
+    // TODO Use btn cannot refresh when mounted event is triggered
     const $btn = this.useBtn(`${$t('image')}`)
     $btn.after(this.$imgUploadInput)
     $btn.onclick = () => {
@@ -36,7 +43,9 @@ export default class UploadPlug extends EditorPlug {
     if (!this.kit.useConf().imgUpload) {
       this.$btn!.setAttribute('atk-only-admin-show', '')
     }
+  }
 
+  private initDragImg() {
     // 统一从 FileList 获取文件并上传图片方法
     const uploadFromFileList = (files?: FileList) => {
       if (!files) return
@@ -50,26 +59,37 @@ export default class UploadPlug extends EditorPlug {
     // 拖拽图片
     // @link https://developer.mozilla.org/zh-CN/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
     // 阻止浏览器的默认释放行为
-    this.kit.useUI().$textarea.addEventListener('dragover', (evt) => {
+    const onDragover = (evt: Event) => {
       evt.stopPropagation()
       evt.preventDefault()
-    })
+    }
 
-    this.kit.useUI().$textarea.addEventListener('drop', (evt) => {
+    const onDrop = (evt: DragEvent) => {
       const files = evt.dataTransfer?.files
       if (files?.length) {
         evt.preventDefault()
         uploadFromFileList(files)
       }
-    })
+    }
 
     // 粘贴图片
-    this.kit.useUI().$textarea.addEventListener('paste', (evt) => {
+    const onPaste = (evt: ClipboardEvent) => {
       const files = evt.clipboardData?.files
       if (files?.length) {
         evt.preventDefault()
         uploadFromFileList(files)
       }
+    }
+
+    this.kit.useMounted(() => {
+      this.kit.useUI().$textarea.addEventListener('dragover', onDragover)
+      this.kit.useUI().$textarea.addEventListener('drop', onDrop)
+      this.kit.useUI().$textarea.addEventListener('paste', onPaste)
+    })
+    this.kit.useUnmounted(() => {
+      this.kit.useUI().$textarea.removeEventListener('dragover', onDragover)
+      this.kit.useUI().$textarea.removeEventListener('drop', onDrop)
+      this.kit.useUI().$textarea.removeEventListener('paste', onPaste)
     })
   }
 

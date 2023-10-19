@@ -22,11 +22,6 @@ export interface EditorEventPayloadMap {
 export const EditorKit: ArtalkPlug = (ctx) => {
   const editor = ctx.get('editor')
 
-  // handle ui, clear and reset the plug btns and plug panels
-  editor.getUI().$plugPanelWrap.innerHTML = ''
-  editor.getUI().$plugPanelWrap.style.display = 'none'
-  editor.getUI().$plugBtnWrap.innerHTML = ''
-
   const editorPlugs = new PlugManager(editor)
   ctx.inject('editorPlugs', editorPlugs)
 }
@@ -53,23 +48,47 @@ export class PlugManager {
         this.plugs.push(new Plug(kit))
       })
 
-    // load the plug UI
-    this.plugs.forEach((plug) => {
-      this.loadPlugUI(plug)
+    // bind events
+    this.initEvents()
+  }
+
+  private initEvents() {
+    let confLoaded = false // config not loaded at first time
+    this.editor.ctx.on('conf-loaded', () => {
+      // trigger unmount event will call all plugs' unmount function
+      // (this will only be called while conf reloaded, not be called at first time)
+      confLoaded && this.getEvents().trigger('unmounted')
+
+      // trigger event for plug initialization
+      this.getEvents().trigger('mounted')
+
+      confLoaded = true
+
+      // refresh the plug UI
+      this.loadPluginUI()
     })
 
-    // bind events
     this.events.on('panel-close', () => this.closePlugPanel())
   }
 
+  private loadPluginUI() {
+    // handle ui, clear and reset the plug btns and plug panels
+    this.editor.getUI().$plugPanelWrap.innerHTML = ''
+    this.editor.getUI().$plugPanelWrap.style.display = 'none'
+    this.editor.getUI().$plugBtnWrap.innerHTML = ''
+
+    // load the plug UI
+    this.plugs.forEach((plug) => this.loadPluginItem(plug))
+  }
+
   /** Load the plug btn and plug panel on editor ui */
-  private loadPlugUI(plug: EditorPlug) {
+  private loadPluginItem(plug: EditorPlug) {
     const $btn = plug.$btn
     if (!$btn) return
     this.editor.getUI().$plugBtnWrap.appendChild($btn)
 
     // bind the event when click plug btn
-    $btn.onclick = $btn.onclick || (() => {
+    !$btn.onclick && ($btn.onclick = () => {
       // removing the active class from all the buttons
       this.editor.getUI().$plugBtnWrap
         .querySelectorAll('.active')

@@ -24,20 +24,6 @@ class Editor extends Component implements EditorApi {
 
     // init state manager
     this.state = new EditorStateManager(this)
-
-    let confLoaded = false
-
-    // event listen
-    this.ctx.on('conf-loaded', () => {
-      // trigger unmount event will call all plugs' unmount function
-      // (this will only be called while conf reloaded, not be called at first time)
-      confLoaded && this.getPlugs()?.getEvents().trigger('unmounted')
-
-      // trigger event for plug initialization
-      this.getPlugs()?.getEvents().trigger('mounted')
-
-      confLoaded = true
-    })
   }
 
   getHeaderInputEls() {

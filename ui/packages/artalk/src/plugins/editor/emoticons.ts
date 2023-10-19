@@ -24,8 +24,12 @@ export default class EmoticonsPlug extends EditorPlug {
   constructor(kit: PlugKit) {
     super(kit)
 
-    this.usePanel(`<div class="atk-editor-plug-emoticons"></div>`)
-    this.useBtn($t('emoticon'))
+    this.kit.useMounted(() => {
+      this.usePanel(`<div class="atk-editor-plug-emoticons"></div>`)
+      this.useBtn($t('emoticon'))
+    })
+    this.kit.useUnmounted(() => {})
+
     this.useContentTransformer((raw) => this.transEmoticonImageText(raw))
     this.usePanelShow(() => {
       ;(async () => {

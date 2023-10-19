@@ -1,5 +1,6 @@
 import { ListData, CommentData, NotifyData, PageData } from '~/types/artalk-data'
 import Context from '~/types/context'
+import type ArtalkConfig from '~/types/artalk-config'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
@@ -7,7 +8,6 @@ import Comment from '../comment'
 import PgHolder, { TPgMode } from './paginator'
 import * as ListNest from './list-nest'
 import * as ListUi from './list-ui'
-import { version as ARTALK_VERSION } from '../../package.json'
 import { handleBackendRefConf } from '../config'
 
 export default class ListLite extends Component {
@@ -190,16 +190,19 @@ export default class ListLite extends Component {
     this.data = data
 
     // 装载后端提供的配置
-    if (!this.confLoaded) {
-      // 仅应用一次配置
-      const backendRefConf = handleBackendRefConf(data.conf.frontend_conf)
-      if (this.conf.useBackendConf) this.ctx.updateConf(backendRefConf)
-      else this.ctx.updateConf({}) // 让事件监听 `on('conf-loaded')` 有效，与前者保持相同生命周期环节
+    if (!this.confLoaded) { // 仅应用一次配置
+      let conf: Partial<ArtalkConfig> = {
+        apiVersion: data.api_version.version
+      }
+
+      // reference conf from backend
+      if (this.conf.useBackendConf) {
+        conf = { ...conf, ...handleBackendRefConf(data.conf.frontend_conf) }
+      }
+
+      this.ctx.updateConf(conf)
       this.confLoaded = true
     }
-
-    // 前后端版本一致性检测
-    if (this.ctx.conf.versionCheck && ListUi.versionCheckDialog(this, ARTALK_VERSION, data.api_version.version)) return
 
     // 导入数据
     this.importComments(data.comments)

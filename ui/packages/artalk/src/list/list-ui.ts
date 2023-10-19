@@ -1,6 +1,5 @@
 import ListLite from './list-lite'
 import * as Utils from '../lib/utils'
-import * as Ui from '../lib/ui'
 import User from '../lib/user'
 import $t from '../i18n'
 
@@ -52,31 +51,6 @@ export function renderErrorDialog(list: ListLite, errMsg: string, errData?: any)
   })
 
   return errEl
-}
-
-/** 版本检测弹窗 */
-export function versionCheckDialog(list: ListLite, feVer: string, beVer: string): boolean {
-  const comp = Utils.versionCompare(feVer, beVer)
-  const notSameVer = (comp !== 0)
-  if (notSameVer) {
-    const errEl = Utils.createElement(
-      `<div>请更新 Artalk ${comp < 0 ? $t('frontend') : $t('backend')}以获得完整体验 ` +
-      `(<a href="https://artalk.js.org/" target="_blank">帮助文档</a>)` +
-      `<br/><br/><span style="color: var(--at-color-meta);">` +
-      `当前版本：${$t('frontend')} ${feVer} / ${$t('backend')} ${beVer}` +
-      `</span><br/><br/></div>`)
-    const ignoreBtn = Utils.createElement('<span style="cursor:pointer">忽略</span>')
-    ignoreBtn.onclick = () => {
-      Ui.setError(list.$el.parentElement!, null)
-      list.ctx.conf.versionCheck = false
-      list.fetchComments(0)
-    }
-    errEl.append(ignoreBtn)
-    Ui.setError(list.$el.parentElement!, errEl, '<span class="atk-warn-title">Artalk Warn</span>')
-    return true
-  }
-
-  return false
 }
 
 /** 评论排序方式选择下拉菜单 */

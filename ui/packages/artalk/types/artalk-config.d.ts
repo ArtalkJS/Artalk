@@ -115,6 +115,9 @@ export default interface ArtalkConfig {
 
   /** 语言本地化 */
   locale: I18n|string
+
+  /** 后端版本 (系统数据，用户不允许更改) */
+  apiVersion?: string
 }
 
 /**

@@ -1,4 +1,4 @@
-import type ArtalkPlug from '~/types/plug'
+import type ArtalkPlugin from '~/types/plugin'
 import type { EditorApi } from '~/types/editor'
 import EventManager from '@/lib/event-manager'
 import { ENABLED_PLUGS, getDisabledPlugByConf } from './editor'
@@ -19,7 +19,7 @@ export interface EditorEventPayloadMap {
   'editor-open': undefined
 }
 
-export const EditorKit: ArtalkPlug = (ctx) => {
+export const EditorKit: ArtalkPlugin = (ctx) => {
   const editor = ctx.get('editor')
 
   const editorPlugs = new PlugManager(editor)

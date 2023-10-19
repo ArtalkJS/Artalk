@@ -1,7 +1,7 @@
-import ArtalkPlug from '~/types/plug'
+import ArtalkPlugin from '~/types/plugin'
 import * as Utils from '@/lib/utils'
 
-export const Unread: ArtalkPlug = (ctx) => {
+export const Unread: ArtalkPlugin = (ctx) => {
   ctx.on('unread-updated', (unreadList) => {
     const list = ctx.get('list')
     if (!list) return

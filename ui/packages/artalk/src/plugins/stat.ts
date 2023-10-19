@@ -1,5 +1,5 @@
 import ContextApi from '~/types/context'
-import ArtalkPlug from '~/types/plug'
+import ArtalkPlugin from '~/types/plugin'
 
 export interface CountConf {
   ctx: ContextApi
@@ -8,7 +8,7 @@ export interface CountConf {
   pvAdd?: boolean
 }
 
-export const PvCountWidget: ArtalkPlug = (ctx: ContextApi) => {
+export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
   if (!ctx.conf.useBackendConf) {
     // 不使用后端配置，在 Artalk 实例被创建后，立刻初始化
     initCountWidget({ ctx, pvAdd: true })

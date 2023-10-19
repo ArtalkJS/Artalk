@@ -1,4 +1,4 @@
-import type ArtalkPlug from '~/types/plug'
+import type ArtalkPlugin from '~/types/plugin'
 import { version as ARTALK_VERSION } from '~/package.json'
 import type ListLite from '@/list/list-lite'
 import * as Ui from '@/lib/ui'
@@ -7,7 +7,7 @@ import $t from '@/i18n'
 
 let IgnoreVersionCheck = false
 
-export const VersionCheck: ArtalkPlug = (ctx) => {
+export const VersionCheck: ArtalkPlugin = (ctx) => {
   ctx.on('conf-loaded', () => {
     const list = ctx.get('list')
     if (list && ctx.conf.apiVersion && ctx.conf.versionCheck && !IgnoreVersionCheck)

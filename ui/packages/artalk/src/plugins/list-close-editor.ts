@@ -1,5 +1,5 @@
 import type ContextApi from '~/types/context'
-import type ArtalkPlug from '~/types/plug'
+import type ArtalkPlugin from '~/types/plugin'
 import { PageData } from '~/types/artalk-data'
 import $t from '@/i18n'
 
@@ -13,7 +13,7 @@ function ensureListEditor(ctx: ContextApi) {
   return { list, editor }
 }
 
-export const ListCloseEditor: ArtalkPlug = (ctx) => {
+export const ListCloseEditor: ArtalkPlugin = (ctx) => {
   let $closeCommentBtn: HTMLElement|undefined
 
   // on Artalk inited

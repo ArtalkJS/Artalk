@@ -1,10 +1,10 @@
-import ArtalkPlug from '~/types/plug'
+import ArtalkPlugin from '~/types/plugin'
 import { EditorKit } from './editor-kit'
 import * as Stat from './stat'
 import { ListCloseEditor } from './list-close-editor'
 import { VersionCheck } from './version-check'
 import { Unread } from './unread'
 
-export const DefaultPlugins: ArtalkPlug[] = [
+export const DefaultPlugins: ArtalkPlugin[] = [
   EditorKit, Stat.PvCountWidget, ListCloseEditor, VersionCheck, Unread
 ]

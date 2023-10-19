@@ -2,7 +2,7 @@ import './style/main.scss'
 
 import type ArtalkConfig from '~/types/artalk-config'
 import type { EventPayloadMap } from '~/types/event'
-import type ArtalkPlug from '~/types/plug'
+import type ArtalkPlugin from '~/types/plugin'
 import type Context from '~/types/context'
 import type { EventHandler } from './lib/event-manager'
 import ConcreteContext from './context'
@@ -30,7 +30,7 @@ export default class Artalk {
   public $root!: HTMLElement
 
   /** Plugins */
-  protected static plugins: ArtalkPlug[] = [ ...DefaultPlugins ]
+  protected static plugins: ArtalkPlugin[] = [ ...DefaultPlugins ]
   public static DisabledComponents: string[] = []
 
   constructor(conf: Partial<ArtalkConfig>) {
@@ -69,7 +69,7 @@ export default class Artalk {
   }
 
   /** Use Plugin (plugin will be called in instance `use` func) */
-  public use(plugin: ArtalkPlug) {
+  public use(plugin: ArtalkPlugin) {
     Artalk.plugins.push(plugin)
     if (typeof plugin === 'function') plugin(this.ctx)
   }
@@ -118,7 +118,7 @@ export default class Artalk {
   // ===========================
 
   /** Use Plugin (static method) */
-  public static use(plugin: ArtalkPlug) {
+  public static use(plugin: ArtalkPlugin) {
     this.plugins.push(plugin)
     if (this.instance && typeof plugin === 'function') plugin(this.instance.ctx)
   }

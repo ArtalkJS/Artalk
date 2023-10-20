@@ -13,8 +13,6 @@ import * as I18n from './i18n'
 import { getLayerWrap } from './layer'
 import { SidebarShowPayload } from './layer/sidebar-layer'
 import Comment from './comment'
-import Api from './api'
-import List from './list'
 import EventManager from './lib/event-manager'
 
 // Auto dependency injection
@@ -61,6 +59,10 @@ class Context implements ContextApi {
     return this.commentList
   }
 
+  public clearCommentList() {
+    this.commentList = []
+  }
+
   public getCommentDataList() {
     return this.commentList.map(c => c.getData())
   }
@@ -69,32 +71,12 @@ class Context implements ContextApi {
     return this.commentList.find(c => c.getData().id === id)
   }
 
-  public deleteComment(_comment: number|Comment) {
-    let comment: Comment
-    if (typeof _comment === 'number') {
-      const findComment = this.findComment(_comment)
-      if (!findComment) throw Error(`Comment ${_comment} cannot be found`)
-      comment = findComment
-    } else comment = _comment
-
-    comment.getEl().remove()
-    this.commentList.splice(this.commentList.indexOf(comment), 1)
-
-    if (this.list) {
-      const listData = this.list.getData()
-      if (listData) listData.total -= 1 // 评论数减 1
-
-      this.list.refreshUI()
-    }
+  public deleteComment(id: number) {
+    this.list?.deleteComment(id)
   }
 
   public clearAllComments() {
-    if (this.list) {
-      this.list.getCommentsWrapEl().innerHTML = ''
-      this.list.clearData()
-    }
-
-    this.commentList = []
+    this.list?.clearAllComments()
   }
 
   public insertComment(commentData: CommentData) {
@@ -140,18 +122,6 @@ class Context implements ContextApi {
 
   public reload(): void {
     this.listReload()
-  }
-
-  public listRefreshUI(): void {
-    this.list?.refreshUI()
-  }
-
-  public listHashGotoCheck(): void {
-    if (!this.list || !(this.list instanceof List)) return
-    const list = this.list as List
-
-    list.goToCommentDelay = false
-    list.checkGoToCommentByUrlHash()
   }
 
   /* 编辑器 */

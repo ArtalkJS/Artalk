@@ -41,11 +41,11 @@ export const ListCloseEditor: ArtalkPlugin = (ctx) => {
     if (page?.admin_only === true) {
       // then close editor
       editor.getPlugs()?.getEvents().trigger('editor-close')
-      $closeCommentBtn && ($closeCommentBtn.innerHTML = $t('openComment'))
+      $closeCommentBtn && ($closeCommentBtn.innerText = $t('openComment'))
     } else {
       // the open editor
       editor.getPlugs()?.getEvents().trigger('editor-open')
-      $closeCommentBtn && ($closeCommentBtn.innerHTML = $t('closeComment'))
+      $closeCommentBtn && ($closeCommentBtn.innerText = $t('closeComment'))
     }
   })
 }

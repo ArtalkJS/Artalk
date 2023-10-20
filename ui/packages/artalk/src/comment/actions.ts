@@ -50,9 +50,6 @@ export default class CommentActions {
 
       // 刷新当前 Comment UI
       this.comment.setData(data)
-
-      // 刷新 List UI
-      this.ctx.listRefreshUI()
     }).catch((err) => {
       console.error(err)
       btnElem.setError(this.ctx.$t('editFail'))

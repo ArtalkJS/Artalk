@@ -1,180 +1,342 @@
-import { ListData, NotifyData } from '~/types/artalk-data'
+import { ListData, CommentData } from '~/types/artalk-data'
 import Context from '~/types/context'
-import { version as ARTALK_VERSION } from '../../package.json'
+import type ArtalkConfig from '~/types/artalk-config'
+import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
-import User from '../lib/user'
+import Comment from '../comment/comment'
+import type { ListOptions } from './list-options'
+import PgHolder, { TPgMode } from './paginator'
+import * as ListNest from './list-nest'
 import ListHTML from './list.html?raw'
-import ListLite from './list-lite'
-import * as ListUi from './list-ui'
+import ListLayout from './layout'
+import { handleBackendRefConf } from '../config'
 
-// TODO combine ListLite with List rather than inherit
-// Move the extended part to A Standalone Plugin
-export default class List extends ListLite {
-  private $openSidebarBtn!: HTMLElement
-  private $unreadBadge!: HTMLElement
-  private $commentCount!: HTMLElement
-  private $commentCountNum!: HTMLElement
-  private $dropdownWrap?: HTMLElement
+export default class List extends Component {
+  /** The options of List */
+  protected options: ListOptions = {}
 
-  constructor (ctx: Context) {
-    const el = Utils.createElement(ListHTML)
+  protected layout: ListLayout
 
+  /** 列表评论集区域元素 */
+  $commentsWrap?: HTMLElement
+
+  /** 最后一次请求得到的列表数据 */
+  protected data?: ListData
+
+  /** 是否处于加载中状态 */
+  protected isLoading: boolean = false
+
+  /** 配置是否已加载 */
+  private confLoaded = false
+
+  /** 分页方式持有者 */
+  public pgHolder?: PgHolder
+
+  constructor (ctx: Context, options: ListOptions = {}) {
     super(ctx)
 
-    // 把 listLite $el 变为子元素
-    el.querySelector('.atk-list-body')!.append(this.$el)
-    this.$el = el
+    this.options = options
 
-    // 分页模式
-    this.options.repositionAt = this.$el
+    this.initBaseEl()
 
-    // 操作按钮
-    this.initListActionBtn()
+    // init layout manager
+    this.layout = new ListLayout({
+      $commentsWrap: this.$commentsWrap!,
+      nestSortBy: this.getNestSortBy(),
+      nestMax: this.ctx.conf.nestMax,
+      flatMode: this.getFlatMode(),
+      createComment: (d, c) => this.createComment(d, c),
+      findComment: (id) => this.ctx.findComment(id),
+      getCommentDataList: () => this.ctx.getCommentDataList()
+    })
 
-    const countNumHTML = '<span class="atk-comment-count-num">0</span>'
-    this.$commentCount = this.$el.querySelector('.atk-comment-count')!
-
-    const refreshCountNumEl = () => {
-      this.$commentCount.innerHTML = this.$t('counter', {
-        count: countNumHTML,
-      })
-      this.$commentCountNum = this.$commentCount.querySelector('.atk-comment-count-num')!
-    }
-    refreshCountNumEl()
-
-    // copyright
-    this.$el.querySelector<HTMLElement>('.atk-copyright')!.innerHTML = `Powered By <a href="https://artalk.js.org" target="_blank" title="Artalk v${ARTALK_VERSION}">Artalk</a>`
-
-    // event listen
+    // 事件监听
     this.ctx.on('conf-loaded', () => {
-      // i18n support when locale changed
-      refreshCountNumEl()
-      this.refreshUI()
     })
 
-    this.ctx.on('unread-updated', (unreadList) => {
-      this.showUnreadBadge(unreadList.length || 0)
+    this.ctx.on('list-loaded', () => {
+      // 防止评论框被吞
+      this.ctx.editorResetState()
     })
   }
 
-  private initListActionBtn() {
-    // 侧边栏呼出按钮
-    this.$openSidebarBtn = this.$el.querySelector('[data-action="open-sidebar"]')!
-    this.$unreadBadge = this.$el.querySelector('.atk-unread-badge')!
-
-    this.$openSidebarBtn.addEventListener('click', () => {
-      this.ctx.showSidebar()
-    })
+  getOptions() {
+    return this.options
   }
 
-  /** 刷新界面 */
-  public refreshUI() {
-    super.refreshUI()
+  /** 嵌套模式下的排序方式 */
+  getNestSortBy(): ListNest.SortByType {
+    return this.options.nestSortBy || this.ctx.conf.nestSort || 'DATE_ASC'
+  }
 
-    this.$commentCountNum.innerText = String(Number(this.data?.total) || 0)
+  /** 平铺模式 */
+  getFlatMode(): boolean {
+    if (this.options.flatMode !== undefined)
+      return this.options.flatMode
 
-    // 已输入个人信息
-    if (!!User.data.nick && !!User.data.email) {
-      this.$openSidebarBtn.classList.remove('atk-hide')
-    } else {
-      this.$openSidebarBtn.classList.add('atk-hide')
+    // 配置开启平铺模式
+    if (this.ctx.conf.flatMode === true || Number(this.ctx.conf.nestMax) <= 1)
+      return true
+
+    // 自动判断启用平铺模式
+    if (this.ctx.conf.flatMode === 'auto' && window.matchMedia("(max-width: 768px)").matches)
+      return true
+
+    return false
+  }
+
+  /** 分页方式 */
+  getPageMode(): TPgMode {
+    return this.options.pageMode || (this.conf.pagination.readMore ? 'read-more' : 'pagination')
+  }
+
+  /** 每页数量 (每次请求获取量) */
+  getPageSize(): number {
+    return this.options.pageSize || this.conf.pagination.pageSize
+  }
+
+  public getData() {
+    return this.data
+  }
+
+  public clearData() {
+    this.data = undefined
+  }
+
+  public getLoading() {
+    return this.isLoading
+  }
+
+  public getCommentsWrapEl() {
+    return this.$commentsWrap!
+  }
+
+  private initBaseEl() {
+    this.$el = Utils.createElement(
+      `<div class="atk-list-lite">
+        <div class="atk-list-comments-wrap"></div>
+      </div>`)
+    this.$commentsWrap = this.$el.querySelector('.atk-list-comments-wrap')!
+
+    if (!this.options.liteMode) {
+      const el = Utils.createElement(ListHTML)
+      el.querySelector('.atk-list-body')!.append(this.$el) // 把 list 的 $el 变为子元素
+      this.$el = el
+
+      this.options.repositionAt = this.$el // 更新翻页归位元素
+    }
+  }
+
+  /** 设置加载状态 */
+  public setLoading(val: boolean, isFirstLoad: boolean = false) {
+    this.isLoading = val
+    if (isFirstLoad) {
+      Ui.setLoading(val, this.$el)
+      return
     }
 
-    this.$openSidebarBtn.querySelector<HTMLElement>('.atk-text')!
-      .innerText = (!User.data.isAdmin) ? this.$t('msgCenter') : this.$t('ctrlCenter')
+    this.pgHolder?.setLoading(val)
+  }
 
-    // 评论列表排序 Dropdown 下拉选择层
-    if (this.ctx.conf.listSort) {
-      this.initDropdown()
-    } else {
-      ListUi.removeDropdown({
-        $dropdownWrap: this.$commentCount
-      })
+  /** 评论获取 */
+  public async fetchComments(offset: number) {
+    if (this.isLoading) return
+
+    const isFirstLoad = (offset === 0)
+    const setLoading = (val: boolean) => this.setLoading(val, isFirstLoad)
+
+    // 加载动画
+    setLoading(true)
+
+    // 事件通知（开始加载评论）
+    this.ctx.trigger('list-load')
+
+    // 清空评论（按钮加载更多的第一页、每次加载分页页面）
+    const pageMode = this.getPageMode()
+    if ((pageMode === 'read-more' && isFirstLoad) || pageMode === 'pagination') {
+      this.clearAllComments()
+    }
+
+    // 请求评论数据
+    let listData: ListData
+    try {
+      // 执行请求
+      listData = await this.ctx.getApi().comment
+        .get(offset, this.getPageSize(), this.getFlatMode(), this.options.paramsEditor)
+    } catch (e: any) {
+      this.onError(e.msg || String(e), offset, e.data)
+      throw e
+    } finally {
+      setLoading(false)
+    }
+
+    // 清除原有错误
+    Ui.setError(this.$el, null)
+
+    // 装载数据
+    try {
+      this.onLoad(listData, offset)
+    } catch (e: any) {
+      this.onError(String(e), offset)
+      throw e
+    } finally {
+      setLoading(false)
     }
   }
 
   protected onLoad(data: ListData, offset: number) {
-    super.onLoad(data, offset)
+    this.data = data
 
-    // 检测锚点跳转
-    if (!this.goToCommentFounded) this.checkGoToCommentByUrlHash()
+    // 装载后端提供的配置
+    this.loadConf(data)
 
-    // 防止评论框被吞
-    this.ctx.editorResetState()
+    // 导入数据
+    this.importComments(data.comments)
+
+    // 分页功能
+    this.loadPagination(offset, (this.getFlatMode() ? data.total : data.total_roots))
+
+    // 更新页面数据
+    this.ctx.updatePage(data.page)
+
+    // 未读消息提示功能
+    this.ctx.updateUnreadList(data.unread || [])
+
+    // 事件触发，列表已加载
+    this.ctx.trigger('list-loaded')
   }
 
-  private goToCommentFounded = false
-  public goToCommentDelay = true
+  private loadConf(data: ListData) {
+    if (!this.confLoaded) { // 仅应用一次配置
+      let conf: Partial<ArtalkConfig> = {
+        apiVersion: data.api_version.version
+      }
 
-  /** 跳到评论项位置 - 根据 `location.hash` */
-  public checkGoToCommentByUrlHash() {
-    let commentId = Number(Utils.getQueryParam('atk_comment')) // same as backend GetReplyLink()
-    if (!commentId) {
-      const match = window.location.hash.match(/#atk-comment-([0-9]+)/)
-      if (!match || !match[1] || Number.isNaN(Number(match[1]))) return
-      commentId = Number(match[1])
+      // reference conf from backend
+      if (this.conf.useBackendConf) {
+        conf = { ...conf, ...handleBackendRefConf(data.conf.frontend_conf) }
+      }
+
+      this.ctx.updateConf(conf)
+      this.confLoaded = true
     }
-    if (!commentId) return
+  }
 
-    const comment = this.ctx.findComment(commentId)
-    if (!comment) { // 若找不到评论
-      // 自动翻页
-      // TODO 自动范围改为直接跳转到计算后的页面
-      this.pgHolder?.next()
+  /** 分页模式 */
+  private loadPagination(offset: number, total: number) {
+    // 初始化
+    if (!this.pgHolder) {
+      this.pgHolder = new PgHolder({
+        list: this,
+        mode: this.getPageMode(),
+        pageSize: this.getPageSize(),
+        total
+      })
+    }
+
+    // 更新
+    this.pgHolder?.update(offset, total)
+  }
+
+  /** 错误处理 */
+  protected onError(msg: any, offset: number, errData?: any) {
+    if (!this.confLoaded) {
+      this.ctx.updateConf({})
+    }
+
+    msg = String(msg)
+    console.error(msg)
+
+    // 加载更多按钮显示错误
+    if (offset !== 0 && this.getPageMode() === 'read-more') {
+      this.pgHolder?.showErr(this.$t('loadFail'))
       return
     }
 
-    this.ctx.trigger('list-goto', commentId)
-
-    // TODO after list-goto is triggered, more execution should be moved to event handler in other plugins
-
-    // 若父评论存在 “子评论部分” 限高，取消限高
-    comment.getParents().forEach((p) => {
-      p.getRender().heightLimitRemoveForChildren()
+    // 显示错误对话框
+    this.ctx.trigger('list-error', {
+      msg, data: errData
     })
-
-    const goTo = () => {
-      Ui.scrollIntoView(comment.getEl(), false)
-
-      comment.getEl().classList.remove('atk-flash-once')
-      window.setTimeout(() => {
-        comment.getEl().classList.add('atk-flash-once')
-      }, 150)
-    }
-
-    if (!this.goToCommentDelay) goTo()
-    else window.setTimeout(() => goTo(), 350)
-
-    this.goToCommentFounded = true
-    this.goToCommentDelay = true // reset
   }
 
-  public showUnreadBadge(count: number) {
-    if (count > 0) {
-      this.$unreadBadge.innerText = `${Number(count || 0)}`
-      this.$unreadBadge.style.display = 'block'
-    } else {
-      this.$unreadBadge.style.display = 'none'
-    }
+  /** 重新加载列表 */
+  public reload() {
+    this.fetchComments(0)
   }
 
-  /** 初始化选择下拉层 */
-  // TODO separate to a standalone plugin named ListDropdown
-  protected initDropdown() {
-    const reloadUseParamsEditor = (func: (p: any) => void) => {
-      this.options.paramsEditor = func
-      this.fetchComments(0)
-    }
-
-    ListUi.renderDropdown({
-      $dropdownWrap: this.$commentCount,
-      dropdownList: [
-        [this.$t('sortLatest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'date_desc' }) }],
-        [this.$t('sortBest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'vote' }) }],
-        [this.$t('sortOldest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'date_asc' }) }],
-        [this.$t('sortAuthor'), () => { reloadUseParamsEditor(p => { p.view_only_admin = true }) }],
-      ]
+  /** 创建新评论 */
+  private createComment(comment: CommentData, ctxComments: CommentData[]): Comment {
+    const instance = new Comment(this.ctx, comment, {
+      isFlatMode: this.getFlatMode(),
+      afterRender: () => {
+        const renderCommentFn = this.options.renderComment
+        renderCommentFn && renderCommentFn(instance)
+      },
+      onDelete: (c: Comment) => {
+        this.deleteComment(c.getID())
+      },
+      replyTo: (comment.rid ? ctxComments.find(c => c.id === comment.rid) : undefined)
     })
+
+    // 渲染元素
+    instance.render()
+
+    // 放入 comment 总表中
+    this.ctx.getCommentList().push(instance)
+
+    return instance
+  }
+
+  /** 导入评论 */
+  public importComments(srcData: CommentData[]) {
+    this.layout.import(srcData)
+  }
+
+  /** 新增评论 · 首部添加 */
+  public insertComment(commentData: CommentData) {
+    this.layout.insert(commentData)
+
+    // 评论数增加 1
+    if (this.data) this.data.total += 1
+
+    // 评论新增后
+    this.ctx.trigger('list-loaded')
+    this.ctx.trigger('list-inserted', commentData)
+  }
+
+  /** 更新评论 */
+  public updateComment(commentData: CommentData) {
+    const comment = this.ctx.findComment(commentData.id)
+    comment && comment.setData(commentData)
+
+    this.ctx.trigger('list-loaded')
+  }
+
+  /** 删除评论 */
+  public deleteComment(id: number) {
+    const comment = this.ctx.findComment(id)
+    if (!comment) throw Error(`Comment ${id} cannot be found`)
+
+    comment.getEl().remove()
+
+    const list = this.ctx.getCommentList()
+    list.splice(list.indexOf(comment), 1)
+
+    // 评论数减 1
+    if (this.data) this.data.total -= 1
+
+    // 评论删除后
+    this.ctx.trigger('list-loaded')
+    this.ctx.trigger('list-deleted', comment.getData())
+  }
+
+  /** 删除全部评论 */
+  public clearAllComments() {
+    this.getCommentsWrapEl().innerHTML = ''
+    this.clearData()
+
+    this.ctx.clearCommentList()
+    this.ctx.trigger('list-loaded')
   }
 }

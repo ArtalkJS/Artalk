@@ -41,7 +41,8 @@ onMounted(() => {
   })
 
   // 初始化评论列表
-  const list = new Artalk.ListLite(artalk!.ctx, {
+  const list = new Artalk.List(artalk!.ctx, {
+    liteMode: true,
     flatMode: true,
     unreadHighlight: true,
     scrollListenerAt: wrapEl.value,

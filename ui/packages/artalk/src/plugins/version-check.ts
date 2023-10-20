@@ -1,6 +1,6 @@
 import type ArtalkPlugin from '~/types/plugin'
 import { version as ARTALK_VERSION } from '~/package.json'
-import type ListLite from '@/list/list-lite'
+import type List from '~/src/list/list'
 import * as Ui from '@/lib/ui'
 import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
@@ -15,7 +15,7 @@ export const VersionCheck: ArtalkPlugin = (ctx) => {
   })
 }
 
-function versionCheck(list: ListLite, feVer: string, beVer: string) {
+function versionCheck(list: List, feVer: string, beVer: string) {
   const comp = Utils.versionCompare(feVer, beVer)
   const sameVer = (comp === 0)
   if (sameVer) return

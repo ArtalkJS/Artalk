@@ -11,7 +11,7 @@ import { handelBaseConf } from './config'
 import Services from './service'
 import { DefaultPlugins } from './plugins'
 import * as Stat from './plugins/stat'
-import ListLite from './list/list-lite'
+import List from './list/list'
 import Api from './api'
 
 /**
@@ -22,7 +22,7 @@ import Api from './api'
 export default class Artalk {
   private static instance?: Artalk
 
-  public static ListLite = ListLite
+  public static List = List
   public static readonly defaults: ArtalkConfig = defaults
 
   public conf!: ArtalkConfig
@@ -89,6 +89,7 @@ export default class Artalk {
   /** Destroy instance of Artalk */
   public destroy() {
     if (!Artalk.instance) throw Error('cannot call `destroy` function before call `load`')
+    this.ctx.trigger('destroy')
     Artalk.instance.$root.remove()
     delete Artalk.instance
   }

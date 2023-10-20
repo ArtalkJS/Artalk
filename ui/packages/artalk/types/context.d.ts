@@ -42,6 +42,9 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 获取评论实例对象列表 */
   getCommentList(): Comment[]
 
+  /** 清空评论数据列表 */
+  clearCommentList(): void
+
   /** 获取评论数据列表 */
   getCommentDataList(): CommentData[]
 
@@ -49,7 +52,7 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   findComment(id: number): Comment|undefined
 
   /** 删除评论 */
-  deleteComment(comment: number|Comment): void
+  deleteComment(id: number): void
 
   /** 清空评论 */
   clearAllComments(): void
@@ -83,12 +86,6 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
 
   /** 列表 - 重新加载数据 (别名) */
   reload(): void
-
-  /** 列表 - UI 更新 */
-  listRefreshUI(): void
-
-  /** 列表 - HashGoto 功能检测 */
-  listHashGotoCheck(): void
 
   /** 显示侧边栏 */
   showSidebar(payload?: SidebarShowPayload): void

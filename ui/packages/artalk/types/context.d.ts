@@ -1,5 +1,5 @@
 import ArtalkConfig from './artalk-config'
-import { CommentData, NotifyData } from './artalk-data'
+import { CommentData, NotifyData, PageData } from './artalk-data'
 import type { EventPayloadMap } from './event'
 import type { EventManagerFuncs } from '../src/lib/event-manager'
 import { internal as internalLocales, I18n } from '../src/i18n'
@@ -42,6 +42,9 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 获取评论实例对象列表 */
   getCommentList(): Comment[]
 
+  /** 清空评论数据列表 */
+  clearCommentList(): void
+
   /** 获取评论数据列表 */
   getCommentDataList(): CommentData[]
 
@@ -49,7 +52,7 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   findComment(id: number): Comment|undefined
 
   /** 删除评论 */
-  deleteComment(comment: number|Comment): void
+  deleteComment(id: number): void
 
   /** 清空评论 */
   clearAllComments(): void
@@ -61,19 +64,22 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   updateComment(commentData: CommentData): void
 
   /** 评论回复 */
-  replyComment(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
-
-  /** 取消回复评论 */
-  cancelReplyComment(): void
+  replyComment(commentData: CommentData, $comment: HTMLElement): void
 
   /** 编辑评论 */
   editComment(commentData: CommentData, $comment: HTMLElement): void
 
-  /** 取消编辑评论 */
-  cancelEditComment(): void
+  /** 获取页面数据 */
+  getPage(): PageData|undefined
 
-  /** 更新通知数据 */
-  updateNotifies(notifies: NotifyData[]): void
+  /** 更新页面数据 */
+  updatePage(pageData: PageData): void
+
+  /** 获取未读列表 */
+  getUnreadList(): NotifyData[]
+
+  /** 更新未读通知数据 */
+  updateUnreadList(unreadList: NotifyData[]): void
 
   /** 列表 - 重新加载数据 */
   listReload(): void
@@ -81,23 +87,11 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 列表 - 重新加载数据 (别名) */
   reload(): void
 
-  /** 列表 - UI 更新 */
-  listRefreshUI(): void
-
-  /** 列表 - HashGoto 功能检测 */
-  listHashGotoCheck(): void
-
   /** 显示侧边栏 */
   showSidebar(payload?: SidebarShowPayload): void
 
   /** 隐藏侧边栏 */
   hideSidebar(): void
-
-  /** 编辑器 - 关闭评论 */
-  editorClose(): void
-
-  /** 编辑器 - 打开评论 */
-  editorOpen(): void
 
   /** 编辑器 - 显示加载 */
   editorShowLoading(): void
@@ -108,8 +102,8 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 编辑器 - 显示提示消息 */
   editorShowNotify(msg: string, type: "i" | "s" | "w" | "e"): void
 
-  /** 评论框 - 复原 UI */
-  editorResetUI(): void
+  /** 评论框 - 复原状态 */
+  editorResetState(): void
 
   /** 验证码检测 */
   checkCaptcha(payload: CheckerCaptchaPayload): void

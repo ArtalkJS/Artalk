@@ -41,27 +41,30 @@ onMounted(() => {
   })
 
   // 初始化评论列表
-  const list = new Artalk.ListLite(artalk!.ctx)
+  const list = new Artalk.List(artalk!.ctx, {
+    liteMode: true,
+    flatMode: true,
+    unreadHighlight: true,
+    scrollListenerAt: wrapEl.value,
+    pageMode: 'pagination',
+    // pageSize: 20 // TODO consider fixed pageSize value in sidebar
+    noCommentText: `<div class="atk-sidebar-no-content">${t('noContent')}</div>`,
+    renderComment: (comment) => {
+      const pageURL = comment.getData().page_url
+      comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
+      comment.getConf().onReplyBtnClick = () => {
+        artalk!.ctx.replyComment(comment.getData(), comment.getEl())
+      }
+    },
+    paramsEditor: (params) => {
+      params.type = curtTab.value // 列表数据类型
+      params.site_name = curtSite.value // 站点名
+      if (search.value) params.search = search.value
+    }
+  })
+
   artalk!.ctx.inject('list', list)
 
-  list.flatMode = true
-  list.unreadHighlight = true
-  list.scrollListenerAt = wrapEl.value
-  list.pageMode = 'pagination'
-  // list.pageSize = 20 // TODO consider fixed pageSize value in sidebar
-  list.noCommentText = `<div class="atk-sidebar-no-content">${t('noContent')}</div>`
-  list.renderComment = (comment) => {
-    const pageURL = comment.getData().page_url
-    comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
-    comment.getConf().onReplyBtnClick = () => {
-      artalk!.ctx.replyComment(comment.getData(), comment.getEl(), true)
-    }
-  }
-  list.paramsEditor = (params) => {
-    params.type = curtTab.value // 列表数据类型
-    params.site_name = curtSite.value // 站点名
-    if (search.value) params.search = search.value
-  }
   artalk!.on('list-inserted', (data) => {
     wrapEl.value!.scrollTo(0, 0)
   })

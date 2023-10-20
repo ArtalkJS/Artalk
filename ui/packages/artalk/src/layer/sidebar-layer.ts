@@ -44,9 +44,7 @@ export default class SidebarLayer extends Component {
       this.layer = new Layer(this.ctx, 'sidebar', this.$el)
       this.layer.afterHide = () => {
         // 防止评论框被吞
-        if (this.ctx.conf.editorTravel === true) {
-          this.ctx.editorResetUI()
-        }
+        this.ctx.editorResetState()
       }
     }
     this.layer.show()
@@ -115,7 +113,7 @@ export default class SidebarLayer extends Component {
 
     // 清空 unread
     setTimeout(() => {
-      this.ctx.updateNotifies([])
+      this.ctx.updateUnreadList([])
     }, 0)
 
     this.ctx.trigger('sidebar-show')

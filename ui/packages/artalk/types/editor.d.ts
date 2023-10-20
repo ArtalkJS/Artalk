@@ -1,11 +1,11 @@
 import type { CommentData } from './artalk-data'
 import Component from '../src/lib/component'
 import { EditorUI } from '../src/editor/ui'
-import PlugManager from '../src/editor/plug-manager'
 
-export default interface Editor extends Component {
+export type EditorState = 'reply' | 'edit' | 'normal'
+
+export interface EditorApi extends Component {
   getUI(): EditorUI
-  getPlugs(): PlugManager | undefined
 
   /**
    * Get the header input elements
@@ -40,6 +40,11 @@ export default interface Editor extends Component {
   getContentMarked(): string
 
   /**
+   * Get editor current state
+   */
+  getState(): EditorState
+
+  /**
    * Focus editor
    */
   focus(): void
@@ -54,22 +59,12 @@ export default interface Editor extends Component {
    *
    * call it will move editor to the initial position
    */
-  resetUI(): void
+  resetState(): void
 
   /**
    * Submit comment
    */
   submit(): void
-
-  /**
-   * Close comment editor which prevent user from submitting (but admin excluded)
-   */
-  close(): void
-
-  /**
-   * Open comment editor which allow user to submit (only be called while editor is closed)
-   */
-  open(): void
 
   /**
    * Show notification message
@@ -92,17 +87,9 @@ export default interface Editor extends Component {
   setReply(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
 
   /**
-   * Cancel replaying the comment
-   */
-  cancelReply(): void
-
-  /**
    * Start editing a comment
    */
   setEditComment(commentData: CommentData, $comment: HTMLElement): void
-
-  /**
-   * Cancel editing the comment
-   */
-  cancelEditComment(): void
 }
+
+export default EditorApi

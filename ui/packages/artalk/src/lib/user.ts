@@ -31,7 +31,11 @@ class User {
     this.ctx?.trigger('user-changed', this.data)
   }
 
-  /** 注销，清除用户登录状态 */
+  /**
+   * Logout
+   *
+   * @description Logout will clear login status, but not clear user data (nick, email, link)
+   */
   public logout() {
     this.update({
       token: '',

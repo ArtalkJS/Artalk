@@ -18,7 +18,7 @@ export default function renderReplyTo(ctx: RenderCtx) {
   $nick.innerText = `@${ctx.cConf.replyTo.nick}`
   $nick.onclick = () => { ctx.comment.getActions().goToReplyComment() }
   let replyContent = marked(ctx.ctx, ctx.cConf.replyTo.content)
-  if (ctx.cConf.replyTo.is_collapsed) replyContent = `[${ctx.ctx.$t('collapsed')}]`
+  if (ctx.cConf.replyTo.is_collapsed) replyContent = `[${Utils.htmlEncode(ctx.ctx.$t('collapsed'))}]`
   ctx.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
   ctx.$body.prepend(ctx.$replyTo)
 }

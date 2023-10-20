@@ -28,6 +28,7 @@ module.exports = {
     'no-lonely-if': 0,
     'prefer-destructuring': 0,
     'import/no-cycle': 0,
+    'import/prefer-default-export': 0,
     '@typescript-eslint/lines-between-class-members': 0,
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-use-before-define': 0,

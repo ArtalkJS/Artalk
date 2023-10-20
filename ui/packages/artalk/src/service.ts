@@ -2,14 +2,14 @@ import Context from '~/types/context'
 import CheckerLauncher from './lib/checker'
 import Api from './api'
 import Editor from './editor/editor'
-import List from './list'
 import Layer from './layer'
 import SidebarLayer from './layer/sidebar-layer'
 import { initMarked } from './lib/marked'
 import User from './lib/user'
-import ListLite from './list/list-lite'
+import List from './list/list'
 import * as DarkMode from './lib/dark-mode'
 import * as I18n from './i18n'
+import { PlugManager } from './plugins/editor-kit'
 
 /**
  * Services
@@ -59,7 +59,7 @@ const services = {
   },
 
   // 评论列表
-  list(ctx: Context): ListLite|undefined {
+  list(ctx: Context): List|undefined {
     // 评论列表
     const list = new List(ctx)
     ctx.$root.appendChild(list.$el)
@@ -85,15 +85,9 @@ const services = {
 
   // 默认事件绑定
   eventsDefault(ctx: Context) {
-    // 锚点快速跳转评论
-    window.addEventListener('hashchange', () => {
-      ctx.listHashGotoCheck()
-    })
-
     // 本地用户数据变更
     ctx.on('user-changed', () => {
       ctx.checkAdminShowEl()
-      ctx.listRefreshUI()
     })
   },
 
@@ -104,6 +98,16 @@ const services = {
     ctx.on('conf-loaded', () => {
       DarkMode.syncDarkModeConf(ctx)
     })
+  },
+
+  // Extra Service
+  // -----------------------------------------
+  // Only for type check
+  // Not inject to ctx immediately,
+  // but can be injected by other occasions
+
+  editorPlugs(): PlugManager|undefined {
+    return undefined
   }
 }
 

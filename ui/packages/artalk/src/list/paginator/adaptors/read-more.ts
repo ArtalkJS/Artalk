@@ -23,7 +23,7 @@ export default <IReadMoreAdaptor>{
     // 滚动到底部自动加载
     if (conf.list.conf.pagination.autoLoad) {
       // 添加滚动事件监听
-      const at = conf.list.scrollListenerAt || document
+      const at = conf.list.getOptions().scrollListenerAt || document
       if (this.autoLoadScrollEvent) at.removeEventListener('scroll', this.autoLoadScrollEvent) // 解除原有
       this.autoLoadScrollEvent = () => {
         if (conf.mode !== 'read-more'
@@ -32,7 +32,7 @@ export default <IReadMoreAdaptor>{
         ) return
 
         const $target = conf.list.$el.querySelector<HTMLElement>('.atk-list-comments-wrap > .atk-comment-wrap:nth-last-child(3)') // 获取倒数第3个评论元素
-        if ($target && Ui.isVisible($target, conf.list.scrollListenerAt)) {
+        if ($target && Ui.isVisible($target, conf.list.getOptions().scrollListenerAt)) {
           readMoreBtn.click() // 自动点击加载更多按钮
         }
       }

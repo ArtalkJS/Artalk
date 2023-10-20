@@ -21,7 +21,7 @@ export default function renderContent(ctx: RenderCtx) {
     </div>`)
   ctx.$body.insertAdjacentElement('beforeend', collapsedInfoEl)
 
-  const contentShowBtn = collapsedInfoEl.querySelector('.atk-show-btn')!
+  const contentShowBtn = collapsedInfoEl.querySelector<HTMLElement>('.atk-show-btn')!
   contentShowBtn.addEventListener('click', (e) => {
     e.stopPropagation() // 防止穿透
 
@@ -29,11 +29,11 @@ export default function renderContent(ctx: RenderCtx) {
       ctx.$content.innerHTML = ctx.comment.getContentMarked()
       ctx.$content.classList.remove('atk-hide')
       Ui.playFadeInAnim(ctx.$content)
-      contentShowBtn.innerHTML = ctx.ctx.$t('collapse')
+      contentShowBtn.innerText = ctx.ctx.$t('collapse')
     } else {
       ctx.$content.innerHTML = ''
       ctx.$content.classList.add('atk-hide')
-      contentShowBtn.innerHTML = ctx.ctx.$t('expand')
+      contentShowBtn.innerText = ctx.ctx.$t('expand')
     }
   })
 }

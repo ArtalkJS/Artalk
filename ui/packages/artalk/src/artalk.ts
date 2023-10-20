@@ -2,15 +2,16 @@ import './style/main.scss'
 
 import type ArtalkConfig from '~/types/artalk-config'
 import type { EventPayloadMap } from '~/types/event'
-import type ArtalkPlug from '~/types/plug'
+import type ArtalkPlugin from '~/types/plugin'
 import type Context from '~/types/context'
 import type { EventHandler } from './lib/event-manager'
 import ConcreteContext from './context'
 import defaults from './defaults'
 import { handelBaseConf } from './config'
 import Services from './service'
-import * as Stat from './lib/stat'
-import ListLite from './list/list-lite'
+import { DefaultPlugins } from './plugins'
+import * as Stat from './plugins/stat'
+import List from './list/list'
 import Api from './api'
 
 /**
@@ -21,7 +22,7 @@ import Api from './api'
 export default class Artalk {
   private static instance?: Artalk
 
-  public static ListLite = ListLite
+  public static List = List
   public static readonly defaults: ArtalkConfig = defaults
 
   public conf!: ArtalkConfig
@@ -29,7 +30,7 @@ export default class Artalk {
   public $root!: HTMLElement
 
   /** Plugins */
-  protected static plugins: ArtalkPlug[] = [ Stat.PvCountWidget ]
+  protected static plugins: ArtalkPlugin[] = [ ...DefaultPlugins ]
   public static DisabledComponents: string[] = []
 
   constructor(conf: Partial<ArtalkConfig>) {
@@ -56,6 +57,8 @@ export default class Artalk {
       if (typeof plugin === 'function')
         plugin(this.ctx)
     })
+
+    this.ctx.trigger('inited')
   }
 
   /** Init Artalk */
@@ -66,7 +69,7 @@ export default class Artalk {
   }
 
   /** Use Plugin (plugin will be called in instance `use` func) */
-  public use(plugin: ArtalkPlug) {
+  public use(plugin: ArtalkPlugin) {
     Artalk.plugins.push(plugin)
     if (typeof plugin === 'function') plugin(this.ctx)
   }
@@ -86,6 +89,7 @@ export default class Artalk {
   /** Destroy instance of Artalk */
   public destroy() {
     if (!Artalk.instance) throw Error('cannot call `destroy` function before call `load`')
+    this.ctx.trigger('destroy')
     Artalk.instance.$root.remove()
     delete Artalk.instance
   }
@@ -115,7 +119,7 @@ export default class Artalk {
   // ===========================
 
   /** Use Plugin (static method) */
-  public static use(plugin: ArtalkPlug) {
+  public static use(plugin: ArtalkPlugin) {
     this.plugins.push(plugin)
     if (this.instance && typeof plugin === 'function') plugin(this.instance.ctx)
   }

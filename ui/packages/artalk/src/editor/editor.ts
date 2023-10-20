@@ -1,23 +1,19 @@
 import type { CommentData } from '~/types/artalk-data'
-import type EditorApi from '~/types/editor'
+import type { EditorApi, EditorState } from '~/types/editor'
 import type Context from '~/types/context'
 import Component from '../lib/component'
 import * as Ui from '../lib/ui'
 import marked from '../lib/marked'
 import { render, EditorUI } from './ui'
-import PlugManager from './plug-manager'
-import MoverPlug from './core/mover-plug'
-import ReplyPlug from './core/reply-plug'
-import EditPlug from './core/edit-plug'
-import SubmitPlug from './core/submit-plug'
-import ClosablePlug from './core/closable-plug'
+import EditorStateManager from './state'
 
 class Editor extends Component implements EditorApi {
   private ui: EditorUI
-  getUI() { return this.ui }
+  private state: EditorStateManager
 
-  private plugs?: PlugManager
-  getPlugs() { return this.plugs }
+  getUI() { return this.ui }
+  getPlugs() { return this.ctx.get('editorPlugs') }
+  getState() { return this.state.get() }
 
   constructor(ctx: Context) {
     super(ctx)
@@ -26,18 +22,8 @@ class Editor extends Component implements EditorApi {
     this.ui = render()
     this.$el = this.ui.$el
 
-    // event listen
-    this.ctx.on('conf-loaded', () => {
-      // trigger unmount event will call all plugs' unmount function
-      // (this will only be called while conf reloaded, not be called at first time)
-      this.plugs?.getEvents().trigger('unmounted')
-
-      // initialize editor plugs
-      this.plugs = new PlugManager(this)
-
-      // trigger event for plug initialization
-      this.plugs.getEvents().trigger('mounted')
-    })
+    // init state manager
+    this.state = new EditorStateManager(this)
   }
 
   getHeaderInputEls() {
@@ -48,7 +34,8 @@ class Editor extends Component implements EditorApi {
     let content = this.getContentRaw()
 
     // plug hook: final content transformer
-    if (this.plugs) content = this.plugs.getTransformedContent(content)
+    const plugs = this.getPlugs()
+    if (plugs) content = plugs.getTransformedContent(content)
 
     return content
   }
@@ -65,7 +52,7 @@ class Editor extends Component implements EditorApi {
     this.ui.$textarea.value = val
 
     // plug hook: content updated
-    this.plugs?.getEvents().trigger('content-updated', val)
+    this.getPlugs()?.getEvents().trigger('content-updated', val)
   }
 
   insertContent(val: string) {
@@ -94,29 +81,19 @@ class Editor extends Component implements EditorApi {
 
   reset() {
     this.setContent('')
-    this.cancelReply()
-    this.cancelEditComment()
+    this.resetState()
   }
 
-  resetUI() {
-    // move editor to the initial position
-    this.plugs?.get(MoverPlug)?.back()
+  resetState() {
+    this.state.switch('normal')
   }
 
-  setReply(commentData: CommentData, $comment: HTMLElement, scroll = true) {
-    this.plugs?.get(ReplyPlug)?.setReply(commentData, $comment, scroll)
+  setReply(comment: CommentData, $comment: HTMLElement) {
+    this.state.switch('reply', { comment, $comment })
   }
 
-  cancelReply() {
-    this.plugs?.get(ReplyPlug)?.cancelReply()
-  }
-
-  setEditComment(commentData: CommentData, $comment: HTMLElement) {
-    this.plugs?.get(EditPlug)?.edit(commentData, $comment)
-  }
-
-  cancelEditComment() {
-    this.plugs?.get(EditPlug)?.cancelEdit()
+  setEditComment(comment: CommentData, $comment: HTMLElement) {
+    this.state.switch('edit', { comment, $comment })
   }
 
   showNotify(msg: string, type: any) {
@@ -131,18 +108,8 @@ class Editor extends Component implements EditorApi {
     Ui.hideLoading(this.ui.$el)
   }
 
-  async submit() {
-    const submitPlug = this.plugs?.get(SubmitPlug)
-    if (!submitPlug) throw Error('submitManger not initialized')
-    await submitPlug.do()
-  }
-
-  close() {
-    this.plugs?.get(ClosablePlug)?.close()
-  }
-
-  open() {
-    this.plugs?.get(ClosablePlug)?.open()
+  submit() {
+    this.ctx.trigger('editor-submit')
   }
 }
 

@@ -1,5 +1,5 @@
 import type ArtalkConfig from '~/types/artalk-config'
-import type { CommentData, NotifyData } from '~/types/artalk-data'
+import type { CommentData, NotifyData, PageData } from '~/types/artalk-data'
 import type { EventPayloadMap } from '~/types/event'
 import type ContextApi from '~/types/context'
 import type { TInjectedServices } from './service'
@@ -13,8 +13,6 @@ import * as I18n from './i18n'
 import { getLayerWrap } from './layer'
 import { SidebarShowPayload } from './layer/sidebar-layer'
 import Comment from './comment'
-import Api from './api'
-import List from './list'
 import EventManager from './lib/event-manager'
 
 // Auto dependency injection
@@ -30,6 +28,8 @@ class Context implements ContextApi {
   public markedReplacers: ((raw: string) => string)[] = []
 
   private commentList: Comment[] = [] // Note: 无层级结构 + 无须排列
+  private page?: PageData
+  private unreadList: NotifyData[] = []
 
   /* Event Manager */
   private events = new EventManager<EventPayloadMap>()
@@ -59,6 +59,10 @@ class Context implements ContextApi {
     return this.commentList
   }
 
+  public clearCommentList() {
+    this.commentList = []
+  }
+
   public getCommentDataList() {
     return this.commentList.map(c => c.getData())
   }
@@ -67,32 +71,12 @@ class Context implements ContextApi {
     return this.commentList.find(c => c.getData().id === id)
   }
 
-  public deleteComment(_comment: number|Comment) {
-    let comment: Comment
-    if (typeof _comment === 'number') {
-      const findComment = this.findComment(_comment)
-      if (!findComment) throw Error(`Comment ${_comment} cannot be found`)
-      comment = findComment
-    } else comment = _comment
-
-    comment.getEl().remove()
-    this.commentList.splice(this.commentList.indexOf(comment), 1)
-
-    if (this.list) {
-      const listData = this.list.getData()
-      if (listData) listData.total -= 1 // 评论数减 1
-
-      this.list.refreshUI()
-    }
+  public deleteComment(id: number) {
+    this.list?.deleteComment(id)
   }
 
   public clearAllComments() {
-    if (this.list) {
-      this.list.getCommentsWrapEl().innerHTML = ''
-      this.list.clearData()
-    }
-
-    this.commentList = []
+    this.list?.clearAllComments()
   }
 
   public insertComment(commentData: CommentData) {
@@ -103,24 +87,32 @@ class Context implements ContextApi {
     this.list?.updateComment(commentData)
   }
 
-  public replyComment(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void {
-    this.editor.setReply(commentData, $comment, scroll)
-  }
-
-  public cancelReplyComment(): void {
-    this.editor.cancelReply()
+  public replyComment(commentData: CommentData, $comment: HTMLElement): void {
+    this.editor.setReply(commentData, $comment)
   }
 
   public editComment(commentData: CommentData, $comment: HTMLElement): void {
     this.editor.setEditComment(commentData, $comment)
   }
 
-  public cancelEditComment(): void {
-    this.editor.cancelEditComment()
+  /** 未读通知 */
+  public getUnreadList() {
+    return this.unreadList
   }
 
-  public updateNotifies(notifies: NotifyData[]): void {
-    this.list?.updateUnread(notifies)
+  public updateUnreadList(notifies: NotifyData[]): void {
+    this.unreadList = notifies
+    this.trigger('unread-updated', notifies)
+  }
+
+  /** 页面数据 */
+  getPage(): PageData|undefined {
+    return this.page
+  }
+
+  updatePage(pageData: PageData): void {
+    this.page = pageData
+    this.trigger('page-loaded', pageData)
   }
 
   /* 评论列表 */
@@ -132,27 +124,7 @@ class Context implements ContextApi {
     this.listReload()
   }
 
-  public listRefreshUI(): void {
-    this.list?.refreshUI()
-  }
-
-  public listHashGotoCheck(): void {
-    if (!this.list || !(this.list instanceof List)) return
-    const list = this.list as List
-
-    list.goToCommentDelay = false
-    list.checkGoToCommentByUrlHash()
-  }
-
   /* 编辑器 */
-  public editorOpen(): void {
-    this.editor.open()
-  }
-
-  public editorClose(): void {
-    this.editor.close()
-  }
-
   public editorShowLoading(): void {
     this.editor.showLoading()
   }
@@ -165,8 +137,8 @@ class Context implements ContextApi {
     this.editor.showNotify(msg, type)
   }
 
-  public editorResetUI(): void {
-    this.editor.resetUI()
+  public editorResetState(): void {
+    this.editor.resetState()
   }
 
   /* 侧边栏 */

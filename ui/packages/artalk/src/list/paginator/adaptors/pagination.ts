@@ -12,16 +12,16 @@ export default <IPaginationAdaptor>{
     const instance = new Pagination(conf.total, {
       pageSize: conf.pageSize,
       onChange: async (o) => {
-        if (conf.list.conf.editorTravel === true)
-          conf.list.ctx.editorResetUI() // 防止评论框被吞
+        conf.list.ctx.editorResetState() // 防止评论框被吞
 
         await conf.list.fetchComments(o)
 
         // 滚动到第一个评论的位置
-        if (conf.list.repositionAt) {
-          const at = conf.list.scrollListenerAt || window
+        const repositionAt = conf.list.getOptions().repositionAt
+        if (repositionAt) {
+          const at = conf.list.getOptions().scrollListenerAt || window
           at.scroll({
-            top: conf.list.repositionAt ? Utils.getOffset(conf.list.repositionAt).top : 0,
+            top: repositionAt ? Utils.getOffset(repositionAt).top : 0,
             left: 0,
           })
         }

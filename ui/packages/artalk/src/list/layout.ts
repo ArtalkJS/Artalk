@@ -1,7 +1,7 @@
 import type { CommentData, ListData } from '~/types/artalk-data'
 import * as Ui from '@/lib/ui'
 import Comment from '../comment/comment'
-import * as ListNest from './list-nest'
+import * as ListNest from './nest'
 
 export interface LayoutOptions {
   $commentsWrap: HTMLElement

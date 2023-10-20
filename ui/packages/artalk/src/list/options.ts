@@ -1,5 +1,5 @@
 import type { TPgMode } from './paginator'
-import type { SortByType } from './list-nest'
+import type { SortByType } from './nest'
 import type Comment from '../comment/comment'
 
 export interface ListOptions {

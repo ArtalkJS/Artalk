@@ -132,7 +132,7 @@
   }
 
   & > .atk-list-footer {
-    float: right;
+    text-align: right;
 
     @media only screen and (max-width: 768px) {
       float: initial;

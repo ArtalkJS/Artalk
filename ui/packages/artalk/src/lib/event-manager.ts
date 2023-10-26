@@ -1,11 +1,14 @@
 export type EventHandler<T> = (payload: T) => void
-export interface Event<PayloadMap, K extends keyof PayloadMap = keyof PayloadMap> {
+export interface Event<PayloadMap, K extends keyof PayloadMap = keyof PayloadMap> extends EventOptions {
   name: K
   handler: EventHandler<PayloadMap[K]>
 }
+export interface EventOptions {
+  once?: boolean
+}
 
 export interface EventManagerFuncs<PayloadMap> {
-  on<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>): void
+  on<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>, opts?: EventOptions): void
   off<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>): void
   trigger<K extends keyof PayloadMap>(name: K, payload?: PayloadMap[K]): void
 }
@@ -16,8 +19,8 @@ export default class EventManager<PayloadMap> implements EventManagerFuncs<Paylo
   /**
    * Add an event listener for a specific event name
    */
-  public on<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>) {
-    this.events.push({ name, handler: handler as EventHandler<PayloadMap[keyof PayloadMap]> })
+  public on<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>, opts: EventOptions = {}) {
+    this.events.push({ name, handler: handler as EventHandler<PayloadMap[keyof PayloadMap]>, ...opts })
   }
 
   /**
@@ -35,6 +38,9 @@ export default class EventManager<PayloadMap> implements EventManagerFuncs<Paylo
   public trigger<K extends keyof PayloadMap>(name: K, payload?: PayloadMap[K]) {
     this.events
       .filter((evt) => evt.name === name && typeof evt.handler === 'function')
-      .forEach((evt) => evt.handler(payload!))
+      .forEach((evt) => {
+        evt.handler(payload!)
+        if (evt.once) this.off(name, evt.handler)
+      })
   }
 }

@@ -83,7 +83,7 @@ export default class Artalk {
 
   /** Reload comment list of Artalk */
   public reload() {
-    this.ctx.listReload()
+    this.ctx.reload()
   }
 
   /** Destroy instance of Artalk */

@@ -1,11 +1,9 @@
 import ArtalkConfig from './artalk-config'
-import { CommentData, NotifyData, PageData } from './artalk-data'
+import { CommentData, DataManagerApi, ListFetchParams } from './artalk-data'
 import type { EventPayloadMap } from './event'
 import type { EventManagerFuncs } from '../src/lib/event-manager'
-import { internal as internalLocales, I18n } from '../src/i18n'
+import { I18n } from '../src/i18n'
 import Api from '../src/api'
-import User from '../src/lib/user'
-import Comment from '../src/comment'
 import { SidebarShowPayload } from '../src/layer/sidebar-layer'
 import { CheckerCaptchaPayload, CheckerPayload } from '../src/lib/checker'
 import type { TMarked } from '../src/lib/marked'
@@ -39,29 +37,8 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 获取 API 以供 HTTP 请求 */
   getApi(): Api
 
-  /** 获取评论实例对象列表 */
-  getCommentList(): Comment[]
-
-  /** 清空评论数据列表 */
-  clearCommentList(): void
-
-  /** 获取评论数据列表 */
-  getCommentDataList(): CommentData[]
-
-  /** 查找评论 */
-  findComment(id: number): Comment|undefined
-
-  /** 删除评论 */
-  deleteComment(id: number): void
-
-  /** 清空评论 */
-  clearAllComments(): void
-
-  /** 插入评论 */
-  insertComment(commentData: CommentData): void
-
-  /** 更新评论 */
-  updateComment(commentData: CommentData): void
+  /** 获取数据管理器对象 */
+  getData(): DataManagerApi
 
   /** 评论回复 */
   replyComment(commentData: CommentData, $comment: HTMLElement): void
@@ -69,23 +46,14 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 编辑评论 */
   editComment(commentData: CommentData, $comment: HTMLElement): void
 
-  /** 获取页面数据 */
-  getPage(): PageData|undefined
+  /** 获取评论数据 */
+  fetch(params: Partial<ListFetchParams>): void
 
-  /** 更新页面数据 */
-  updatePage(pageData: PageData): void
-
-  /** 获取未读列表 */
-  getUnreadList(): NotifyData[]
-
-  /** 更新未读通知数据 */
-  updateUnreadList(unreadList: NotifyData[]): void
-
-  /** 列表 - 重新加载数据 */
-  listReload(): void
-
-  /** 列表 - 重新加载数据 (别名) */
+  /** 重载评论数据 */
   reload(): void
+
+  /** 列表滚动到第一个评论的位置 */
+  listGotoFirst(): void
 
   /** 显示侧边栏 */
   showSidebar(payload?: SidebarShowPayload): void

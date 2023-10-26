@@ -1,34 +1,56 @@
 import ArtalkPlugin from '~/types/plugin'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
-import Comment from '@/comment/comment'
 
 export const ListGoto: ArtalkPlugin = (ctx) => {
-  const check = (delayGoto = true) => {
+  let delayGoto = true
+
+  const check = () => {
     const list = ctx.get('list')
     if (!list) return
 
     const commentID = extractCommentID()
     if (!commentID) return
 
-    // 自动翻页
-    const comment = ctx.findComment(commentID)
-    if (!comment) { // 若找不到评论
-      // TODO 自动范围改为直接跳转到计算后的页面
-      list.pgHolder?.next()
-      return
-    }
-
     // trigger event
     ctx.trigger('list-goto', commentID)
 
-    // goto comment
-    gotoComment(comment, delayGoto)
+    // reset delayGoto
+    delayGoto = true
   }
 
   // bind events
   ctx.on('list-loaded', () => { check() })
-  window.addEventListener('hashchange', () => { check(false) })
+  window.addEventListener('hashchange', () => {
+    delayGoto = false
+    check()
+  })
+
+  ctx.on('list-goto', (commentID) => {
+    const list = ctx.get('list')
+    if (!list) return
+
+    // TODO remove get from list
+    const comment = list.getCommentNodes().find(c => c.getID() === commentID)
+    if (!comment) return
+
+    // 若父评论存在 “子评论部分” 限高，取消限高
+    comment.getParents().forEach((p) => {
+      p.getRender().heightLimitRemoveForChildren()
+    })
+
+    const goTo = () => {
+      Ui.scrollIntoView(comment.getEl(), false)
+
+      comment.getEl().classList.remove('atk-flash-once')
+      window.setTimeout(() => {
+        comment.getEl().classList.add('atk-flash-once')
+      }, 150)
+    }
+
+    if (!delayGoto) goTo()
+    else window.setTimeout(() => goTo(), 350)
+  })
 }
 
 function extractCommentID(): number|null {
@@ -43,23 +65,4 @@ function extractCommentID(): number|null {
   }
 
   return commentId || null
-}
-
-function gotoComment(comment: Comment, delayGoto: boolean = true) {
-  // 若父评论存在 “子评论部分” 限高，取消限高
-  comment.getParents().forEach((p) => {
-    p.getRender().heightLimitRemoveForChildren()
-  })
-
-  const goTo = () => {
-    Ui.scrollIntoView(comment.getEl(), false)
-
-    comment.getEl().classList.remove('atk-flash-once')
-    window.setTimeout(() => {
-      comment.getEl().classList.add('atk-flash-once')
-    }, 150)
-  }
-
-  if (!delayGoto) goTo()
-  else window.setTimeout(() => goTo(), 350)
 }

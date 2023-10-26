@@ -48,11 +48,10 @@ export default class ListLayout {
       rootC.getRender().playFadeAnim()
 
       // 加载子评论
-      const that = this
-      ;(function loadChildren(parentC: Comment, parentNode: ListNest.CommentNode) {
+      const loadChildren = (parentC: Comment, parentNode: ListNest.CommentNode) => {
         parentNode.children.forEach((node: ListNest.CommentNode) => {
           const childD = node.comment
-          const childC = that.options.createComment(childD, srcData)
+          const childC = this.options.createComment(childD, srcData)
 
           // 插入到父评论中
           parentC.putChild(childC)
@@ -60,7 +59,8 @@ export default class ListLayout {
           // 递归加载子评论
           loadChildren(childC, node)
         })
-      })(rootC, rootNode)
+      }
+      loadChildren(rootC, rootNode)
 
       // 限高检测
       rootC.getRender().checkHeightLimit()

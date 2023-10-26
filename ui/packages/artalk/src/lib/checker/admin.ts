@@ -28,7 +28,7 @@ const AdminChecker: Checker = {
       token: userToken
     })
     checker.getCtx().trigger('user-changed', User.data)
-    checker.getCtx().listReload()
+    checker.getCtx().reload()
   },
 
   onError(checker, err, inputVal, formEl) {}

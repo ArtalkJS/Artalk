@@ -1,5 +1,5 @@
 import type ArtalkConfig from '~/types/artalk-config'
-import type { CommentData, NotifyData, PageData } from '~/types/artalk-data'
+import type { CommentData, ListFetchParams } from '~/types/artalk-data'
 import type { EventPayloadMap } from '~/types/event'
 import type ContextApi from '~/types/context'
 import type { TInjectedServices } from './service'
@@ -9,11 +9,12 @@ import * as DarkMode from './lib/dark-mode'
 import * as marked from './lib/marked'
 import { CheckerCaptchaPayload, CheckerPayload } from './lib/checker'
 
+import { DataManager } from './data'
 import * as I18n from './i18n'
 import { getLayerWrap } from './layer'
 import { SidebarShowPayload } from './layer/sidebar-layer'
-import Comment from './comment'
 import EventManager from './lib/event-manager'
+import { handelBaseConf } from './config'
 
 // Auto dependency injection
 interface Context extends TInjectedServices { }
@@ -24,12 +25,9 @@ interface Context extends TInjectedServices { }
 class Context implements ContextApi {
   /* 运行参数 */
   public conf: ArtalkConfig
+  public data: DataManager
   public $root: HTMLElement
   public markedReplacers: ((raw: string) => string)[] = []
-
-  private commentList: Comment[] = [] // Note: 无层级结构 + 无须排列
-  private page?: PageData
-  private unreadList: NotifyData[] = []
 
   /* Event Manager */
   private events = new EventManager<EventPayloadMap>()
@@ -40,6 +38,8 @@ class Context implements ContextApi {
     this.$root = $root || document.createElement('div')
     this.$root.classList.add('artalk')
     this.$root.innerHTML = ''
+
+    this.data = new DataManager(this.events)
   }
 
   public inject(depName: string, obj: any) {
@@ -54,37 +54,8 @@ class Context implements ContextApi {
     return this.api
   }
 
-  /* 评论操作 */
-  public getCommentList() {
-    return this.commentList
-  }
-
-  public clearCommentList() {
-    this.commentList = []
-  }
-
-  public getCommentDataList() {
-    return this.commentList.map(c => c.getData())
-  }
-
-  public findComment(id: number): Comment|undefined {
-    return this.commentList.find(c => c.getData().id === id)
-  }
-
-  public deleteComment(id: number) {
-    this.list?.deleteComment(id)
-  }
-
-  public clearAllComments() {
-    this.list?.clearAllComments()
-  }
-
-  public insertComment(commentData: CommentData) {
-    this.list?.insertComment(commentData)
-  }
-
-  public updateComment(commentData: CommentData): void {
-    this.list?.updateComment(commentData)
+  public getData() {
+    return this.data
   }
 
   public replyComment(commentData: CommentData, $comment: HTMLElement): void {
@@ -95,33 +66,18 @@ class Context implements ContextApi {
     this.editor.setEditComment(commentData, $comment)
   }
 
-  /** 未读通知 */
-  public getUnreadList() {
-    return this.unreadList
-  }
-
-  public updateUnreadList(notifies: NotifyData[]): void {
-    this.unreadList = notifies
-    this.trigger('unread-updated', notifies)
-  }
-
-  /** 页面数据 */
-  getPage(): PageData|undefined {
-    return this.page
-  }
-
-  updatePage(pageData: PageData): void {
-    this.page = pageData
-    this.trigger('page-loaded', pageData)
-  }
-
-  /* 评论列表 */
-  public listReload(): void {
-    this.list?.reload()
+  public fetch(params: Partial<ListFetchParams>): void {
+    this.data.fetchComments(params)
   }
 
   public reload(): void {
-    this.listReload()
+    this.data.fetchComments({
+      offset: 0,
+    })
+  }
+
+  public listGotoFirst(): void {
+    this.trigger('list-goto-first')
   }
 
   /* 编辑器 */
@@ -202,8 +158,8 @@ class Context implements ContextApi {
   }
 
   public updateConf(nConf: Partial<ArtalkConfig>): void {
-    this.conf = Utils.mergeDeep(this.conf, nConf)
-    this.trigger('conf-loaded')
+    this.conf = Utils.mergeDeep(this.conf, handelBaseConf(nConf))
+    this.trigger('conf-loaded', this.conf)
   }
 
   public getMarkedInstance() {

@@ -99,6 +99,10 @@ export default class Pagination {
     this.change(page)
   }
 
+  public getHasMore() {
+    return this.page + 1 <= this.maxPage
+  }
+
   public change(page: number) {
     this.page = page
     this.conf.onChange(this.offset)

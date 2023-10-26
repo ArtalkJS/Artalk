@@ -1,7 +1,7 @@
 import ArtalkPlugin from '~/types/plugin'
 import { EditorKit } from './editor-kit'
 import * as Stat from './stat'
-import { ListCloseEditor } from './list-close-editor'
+import { ListWithEditor } from './list-with-editor'
 import { VersionCheck } from './version-check'
 import { Unread } from './unread'
 import { ListCount } from './list-count'
@@ -13,11 +13,16 @@ import { ListNoComment } from './list-no-comment'
 import { ListDropdown } from './list-dropdown'
 import { ListTimeTicking } from './list-time-ticking'
 import { ListErrorDialog } from './list-error-dialog'
+import { ListLoading } from './list-loading'
+import { ListFetch } from './list-fetch'
+import { ListReachBottom } from './list-reach-bottom'
+import { ListGotoFirst } from './list-goto-first'
 
 const ListPlugins: ArtalkPlugin[] = [
-  ListCloseEditor, ListCount, ListSidebarBtn,
+  ListFetch, ListLoading,
+  ListWithEditor, ListCount, ListSidebarBtn,
   ListUnreadBadge, ListDropdown, ListGoto, ListNoComment, ListCopyright,
-  ListTimeTicking, ListErrorDialog
+  ListTimeTicking, ListErrorDialog, ListReachBottom, ListGotoFirst,
 ]
 
 export const DefaultPlugins: ArtalkPlugin[] = [

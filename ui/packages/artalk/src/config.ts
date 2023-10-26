@@ -40,6 +40,14 @@ export function handelBaseConf(customConf: Partial<ArtalkConfig>): ArtalkConfig 
     conf.locale = navigator.language
   }
 
+  // flatMode
+  if (conf.flatMode === true || Number(conf.nestMax) <= 1)
+    conf.flatMode = true
+
+  // 自动判断启用平铺模式
+  if (conf.flatMode === 'auto')
+    conf.flatMode = window.matchMedia("(max-width: 768px)").matches
+
   return conf
 }
 

@@ -2,14 +2,14 @@ import ArtalkPlugin from '~/types/plugin'
 import * as Utils from '@/lib/utils'
 
 export const Unread: ArtalkPlugin = (ctx) => {
-  ctx.on('unread-updated', (unreadList) => {
+  ctx.on('unreads-updated', (unreads) => {
     const list = ctx.get('list')
     if (!list) return
 
     // comment unread highlight
-    if (list.getOptions().unreadHighlight === true) {
-      ctx.getCommentList().forEach((comment) => {
-        const notify = unreadList.find(o => o.comment_id === comment.getID())
+    if (ctx.conf.listUnreadHighlight === true) {
+      list.getCommentNodes().forEach((comment) => {
+        const notify = unreads.find(o => o.comment_id === comment.getID())
 
         if (notify) {
           // if comment contains in unread list
@@ -18,7 +18,7 @@ export const Unread: ArtalkPlugin = (ctx) => {
             window.open(notify.read_link)
 
             // remove notify which has been read
-            ctx.updateUnreadList(unreadList.filter(o => o.comment_id !== comment.getID()))
+            ctx.getData().updateUnreads(unreads.filter(o => o.comment_id !== comment.getID()))
           })
         } else {
           // comment not in unread list
@@ -35,7 +35,7 @@ export const Unread: ArtalkPlugin = (ctx) => {
       ctx.getApi().user.markRead(commentID, notifyKey)
         .then(() => {
           // remove from unread list
-          ctx.updateUnreadList(ctx.getUnreadList().filter(o => o.comment_id !== commentID))
+          ctx.getData().updateUnreads(ctx.getData().getUnreads().filter(o => o.comment_id !== commentID))
         })
     }
   })

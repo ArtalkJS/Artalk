@@ -30,7 +30,7 @@ function versionCheck(list: List, feVer: string, beVer: string) {
   ignoreBtn.onclick = () => {
     Ui.setError(list.$el.parentElement!, null)
     IgnoreVersionCheck = true
-    list.fetchComments(0)
+    list.ctx.fetch({ offset: 0 })
   }
   errEl.append(ignoreBtn)
   Ui.setError(list.$el.parentElement!, errEl, '<span class="atk-warn-title">Artalk Warn</span>')

@@ -56,11 +56,6 @@ const services = {
     const list = new List(ctx)
     ctx.$root.appendChild(list.$el)
 
-    ctx.on('inited', () => {
-      // 评论获取
-      ctx.fetch({ offset: 0 })
-    })
-
     return list
   },
 

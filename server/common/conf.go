@@ -46,5 +46,6 @@ func GetApiPublicConfDataMap(app *core.App, c *fiber.Ctx) Map {
 	return Map{
 		"img_upload":    imgUpload,
 		"frontend_conf": frontendConf,
+		"version":       GetApiVersionDataMap(),
 	}
 }

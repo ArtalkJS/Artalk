@@ -1,6 +1,5 @@
 import type ArtalkPlugin from '~/types/plugin'
 import ContextApi from '~/types/context'
-import List from '@/list/list'
 import * as Utils from '../../lib/utils'
 import * as Ui from '../../lib/ui'
 import User from '../../lib/user'

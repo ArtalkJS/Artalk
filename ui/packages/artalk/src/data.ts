@@ -49,12 +49,12 @@ export class DataManager implements DataManagerApi {
     this.events.trigger('list-loaded', this.comments)
   }
 
-  loadComments(comments: CommentData[]) {
-    this.events.trigger('list-load', comments)
+  loadComments(partialComments: CommentData[]) {
+    this.events.trigger('list-load', partialComments)
 
-    this.comments = comments
+    this.comments.push(...partialComments)
 
-    this.events.trigger('list-loaded', comments)
+    this.events.trigger('list-loaded', this.comments)
   }
 
   insertComment(comment: CommentData) {

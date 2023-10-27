@@ -19,11 +19,17 @@ export const Goto: ArtalkPlugin = (ctx) => {
     delayGoto = true
   }
 
-  // bind events
-  ctx.on('list-loaded', () => { check() })
-  window.addEventListener('hashchange', () => {
+  const hashChangeHandler = () => {
     delayGoto = false
     check()
+  }
+  ctx.on('inited', () => {
+    window.addEventListener('hashchange', hashChangeHandler)
+    ctx.on('list-loaded', check)
+  })
+  ctx.on('destroy', () => {
+    window.removeEventListener('hashchange', hashChangeHandler)
+    ctx.off('list-loaded', check)
   })
 
   ctx.on('list-goto', (commentID) => {

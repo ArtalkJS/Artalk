@@ -63,6 +63,10 @@ export default class List extends Component {
       this.getListLayout().import(comments)
     })
 
+    this.ctx.on('list-loaded', (comments) => {
+      if (comments.length === 0) this.$commentsWrap.innerHTML = ''
+    })
+
     // When comment insert
     this.ctx.on('comment-inserted', (comment) => {
       this.getListLayout().insert(comment)

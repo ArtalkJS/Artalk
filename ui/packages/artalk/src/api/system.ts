@@ -1,17 +1,29 @@
 import ArtalkConfig from '~/types/artalk-config'
 import ApiBase from './api-base'
-import { handleBackendRefConf } from '../config'
+
+interface ApiVersionInfo {
+  app: string
+  version: string
+  commit_hash: string
+}
+
+interface SystemConfResp {
+  frontend_conf: Partial<ArtalkConfig>
+  version: ApiVersionInfo
+}
 
 /**
  * 系统 API
  */
 export default class SystemApi extends ApiBase {
   /** 获取配置 */
-  public async conf() {
+  public async conf(): Promise<SystemConfResp> {
     const data = await this.POST<any>(`/conf`)
-    const conf = (data.frontend_conf || {}) as ArtalkConfig
 
-    return handleBackendRefConf(conf)
+    return {
+      frontend_conf: data.frontend_conf,
+      version: data.version,
+    }
   }
 
   /** 获取配置数据 */

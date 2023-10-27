@@ -1,6 +1,6 @@
 import type { CommentData, ListData } from '~/types'
 import * as Utils from '../lib/utils'
-import ApiBase from './api-base'
+import ApiBase from './_base'
 import User from '../lib/user'
 
 /**
@@ -10,8 +10,8 @@ export default class CommentApi extends ApiBase {
   /** 评论 · 获取 */
   public get(offset: number, pageSize: number, flatMode?: boolean, paramsEditor?: (params: any) => void) {
     const params: any = {
-      page_key: this.ctx.conf.pageKey,
-      site_name: this.ctx.conf.site || '',
+      page_key: this.options.pageKey,
+      site_name: this.options.siteName,
       limit: pageSize,
       offset,
     }

@@ -4,7 +4,7 @@ import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '~/
 import type { EventHandler } from './lib/event-manager'
 import ConcreteContext from './context'
 import defaults from './defaults'
-import { handelBaseConf } from './config'
+import { convertApiOptions, handelBaseConf } from './config'
 import Services from './service'
 import { DefaultPlugins } from './plugins'
 import * as Stat from './plugins/stat'
@@ -37,8 +37,6 @@ export default class Artalk {
 
     // 初始化 Context
     this.ctx = new ConcreteContext(this.conf, this.$root)
-
-    this.ctx.getApi()
 
     // 内建服务初始化
     Object.entries(Services).forEach(([name, initService]) => {
@@ -156,14 +154,13 @@ export default class Artalk {
 
   /** Load count widget */
   public static loadCountWidget(conf: Partial<ArtalkConfig>) {
+    // TODO remove creating context (not necessary)
     const ctx: ContextApi = new ConcreteContext(handelBaseConf(conf))
-    ctx.inject('api', new Api(ctx))
+    ctx.inject('api', createApi(ctx))
     Stat.initCountWidget({ ctx, pvAdd: false })
   }
+}
 
-  /** @deprecated Please use `loadCountWidget` instead */
-  public static LoadCountWidget(conf: Partial<ArtalkConfig>) {
-    console.warn('The method `LoadCountWidget` is deprecated, please use `loadCountWidget` instead.')
-    this.loadCountWidget(conf)
-  }
+export function createApi(ctx: ContextApi) {
+  return new Api(convertApiOptions(ctx, ctx.conf))
 }

@@ -1,4 +1,4 @@
-import type { SidebarShowPayload, EventPayloadMap, ArtalkConfig, CommentData, DataManagerApi, ListFetchParams } from '.'
+import type { SidebarShowPayload, EventPayloadMap, ArtalkConfig, CommentData, DataManagerApi, ListFetchParams, NotifyLevel } from '.'
 import type { EventManagerFuncs } from '../src/lib/event-manager'
 import type { I18n } from '../src/i18n'
 import type Api from '../src/api'
@@ -62,7 +62,7 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   editorHideLoading(): void
 
   /** 编辑器 - 显示提示消息 */
-  editorShowNotify(msg: string, type: "i" | "s" | "w" | "e"): void
+  editorShowNotify(msg: string, type: NotifyLevel): void
 
   /** 评论框 - 复原状态 */
   editorResetState(): void

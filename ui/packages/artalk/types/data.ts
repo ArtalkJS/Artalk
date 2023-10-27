@@ -266,3 +266,5 @@ export interface DataManagerApi {
   getPage(): PageData|undefined
   updatePage(pageData: PageData): void
 }
+
+export type NotifyLevel = "i" | "s" | "w" | "e"

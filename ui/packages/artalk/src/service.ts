@@ -9,6 +9,7 @@ import List from './list/list'
 import * as DarkMode from './lib/dark-mode'
 import * as I18n from './i18n'
 import { PlugManager } from './plugins/editor-kit'
+import { createApi } from './artalk'
 
 /**
  * Services
@@ -33,8 +34,7 @@ const services = {
 
   // HTTP API client
   api(ctx: ContextApi) {
-    const api = new Api(ctx)
-    return api
+    return createApi(ctx)
   },
 
   // CheckerLauncher

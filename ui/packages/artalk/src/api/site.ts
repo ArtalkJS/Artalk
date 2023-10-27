@@ -1,5 +1,5 @@
 import type { SiteData } from '~/types'
-import ApiBase from './api-base'
+import ApiBase from './_base'
 
 /**
  * 站点 API

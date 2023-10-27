@@ -7,6 +7,7 @@ export interface CountConf {
   pvAdd?: boolean
 }
 
+// TODO losing the coupling between `PvCountWidget` and `ContextApi`, only keep the `api` and `conf` (only needed in `PvCountWidget`)
 export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
   ctx.on('conf-loaded', () => {
     initCountWidget({ ctx, pvAdd: true })

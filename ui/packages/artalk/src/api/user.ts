@@ -1,6 +1,6 @@
 import type { UserData, NotifyData, UserDataForAdmin } from '~/types'
-import ApiBase from './api-base'
-import { ToFormData } from './request'
+import ApiBase from './_base'
+import { ToFormData } from './_request'
 import User from '../lib/user'
 
 /**

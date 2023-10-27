@@ -1,4 +1,6 @@
-import type { ArtalkConfig } from '~/types'
+import type { ArtalkConfig, ContextApi } from '~/types'
+import type { ApiOptions } from './api/_options'
+import Api from './api'
 import * as Utils from './lib/utils'
 import Defaults from './defaults'
 
@@ -70,4 +72,30 @@ export function handleBackendRefConf(conf: Partial<ArtalkConfig>) {
   }
 
   return conf
+}
+
+export function convertApiOptions(ctx: ContextApi, conf: Partial<ArtalkConfig>): ApiOptions {
+  return {
+    baseURL: `${conf.server}/api`,
+    siteName: conf.site || '',
+    pageKey: conf.pageKey || '',
+    pageTitle: conf.pageTitle || '',
+    timeout: conf.reqTimeout,
+
+    onNeedCheckAdmin(payload) {
+      ctx.checkAdmin({
+        onSuccess: () => { payload.recall() },
+        onCancel: () => { payload.reject() },
+      })
+    },
+
+    onNeedCheckCaptcha(payload) {
+      ctx.checkCaptcha({
+        imgData: payload.data.imgData,
+        iframe: payload.data.iframe,
+        onSuccess: () => { payload.recall() },
+        onCancel: () => { payload.reject() },
+      })
+    },
+  }
 }

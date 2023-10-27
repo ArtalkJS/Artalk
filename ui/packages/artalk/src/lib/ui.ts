@@ -1,3 +1,4 @@
+import type { NotifyLevel } from '~/types'
 import * as Utils from './utils'
 
 /** 显示加载 */
@@ -75,7 +76,7 @@ export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true) {
 export function showNotify(
   wrapElem: HTMLElement,
   msg: string,
-  type: 's' | 'e' | 'w' | 'i',
+  type: NotifyLevel,
 ) {
   const colors = { s: '#57d59f', e: '#ff6f6c', w: '#ffc721', i: '#2ebcfc' }
   const timeout = 3000 // 持续显示时间 ms

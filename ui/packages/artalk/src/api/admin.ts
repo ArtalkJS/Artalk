@@ -1,4 +1,4 @@
-import ApiBase from './api-base'
+import ApiBase from './_base'
 
 /**
  * 管理员 API

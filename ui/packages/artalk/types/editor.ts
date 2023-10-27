@@ -1,4 +1,4 @@
-import type { CommentData } from './data'
+import type { CommentData, NotifyLevel } from '.'
 import Component from '../src/lib/component'
 import { EditorUI } from '../src/editor/ui'
 
@@ -69,7 +69,7 @@ export interface EditorApi extends Component {
   /**
    * Show notification message
    */
-  showNotify(msg: string, type: "i" | "s" | "w" | "e"): void
+  showNotify(msg: string, type: NotifyLevel): void
 
   /**
    * Show loading on editor

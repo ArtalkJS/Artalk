@@ -1,5 +1,5 @@
-import { ToFormData } from './request'
-import ApiBase from './api-base'
+import { ToFormData } from './_request'
+import ApiBase from './_base'
 import User from '../lib/user'
 
 /**
@@ -11,7 +11,7 @@ export default class UploadApi extends ApiBase {
     const params: any = {
       name: User.data.nick,
       email: User.data.email,
-      page_key: this.ctx.conf.pageKey,
+      page_key: this.options.pageKey,
     }
 
     const form = ToFormData(params)

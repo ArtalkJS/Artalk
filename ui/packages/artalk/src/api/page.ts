@@ -1,5 +1,5 @@
 import type { PageData, CommentData } from '~/types'
-import ApiBase from './api-base'
+import ApiBase from './_base'
 
 /**
  * 页面 API
@@ -24,7 +24,7 @@ export default class PageApi extends ApiBase {
       key: data.key,
       title: data.title,
       admin_only: data.admin_only,
-      site_name: data.site_name || this.ctx.conf.site,
+      site_name: data.site_name || this.options.siteName,
     }
 
     const d = await this.POST<any>('/admin/page-edit', params)
@@ -55,8 +55,8 @@ export default class PageApi extends ApiBase {
   /** PV */
   public async pv() {
     const params: any = {
-      page_key: this.ctx.conf.pageKey || '',
-      page_title: this.ctx.conf.pageTitle || ''
+      page_key: this.options.pageKey || '',
+      page_title: this.options.pageTitle || ''
     }
 
     const p = await this.POST<any>('/pv', params)

@@ -29,10 +29,7 @@ export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   conf: ArtalkConfig
 
   /** marked 依赖对象 */
-  getMarkedInstance(): TMarked | undefined
-
-  /** marked 内容替换器 */
-  markedReplacers: ((raw: string) => string)[]
+  getMarked(): TMarked | undefined
 
   /** 获取 API 以供 HTTP 请求 */
   getApi(): Api

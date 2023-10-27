@@ -4,7 +4,6 @@ import Api from './api'
 import Editor from './editor/editor'
 import Layer from './layer'
 import SidebarLayer from './layer/sidebar-layer'
-import { initMarked } from './lib/marked'
 import User from './lib/user'
 import List from './list/list'
 import * as DarkMode from './lib/dark-mode'
@@ -14,9 +13,7 @@ import { PlugManager } from './plugins/editor-kit'
 /**
  * Services
  *
- * @description
- * 当函数有返回值时，该值将自动添加到 Context 类作为一个 private 成员的值，
- * 这个成员的名称与函数名对应。可在 Context 类中访问该对象（同事类）。
+ * @description Call these services by `ctx.get('serviceName')` or `ctx.serviceName`
  */
 const services = {
   // I18n
@@ -26,11 +23,6 @@ const services = {
     ctx.on('conf-loaded', () => {
       I18n.setLocale(ctx.conf.locale)
     })
-  },
-
-  // Markdown 组件
-  markdown() {
-    initMarked()
   },
 
   // User Store

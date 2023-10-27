@@ -5,7 +5,7 @@ import katex from 'katex'
 
 // @link https://github.com/markedjs/marked/issues/1538#issuecomment-575838181
 Artalk.use((ctx) => {
-  const markedInstance = ctx.getMarkedInstance()
+  const markedInstance = ctx.getMarked()
   if (!markedInstance) {
     console.log('[artalk-plugin-katex] no marked instance found')
     return
@@ -48,19 +48,21 @@ Artalk.use((ctx) => {
   renderer.codespan = (code: string) => orgCodespan(replaceMathWithIds(code))
   renderer.text = (text: string) => orgText(replaceMathWithIds(text)) // Inline level, maybe unneded
 
-  ctx.markedReplacers.push((text) => {
-    text = text.replace(/(__atk_katext_id_\d+__)/g, (_match, capture) => {
-      const v = mathExpressions[capture]
-      const type = v.type
-      let expression = v.expression
+  ctx.updateConf({
+    markedReplacers: [(text) => {
+      text = text.replace(/(__atk_katext_id_\d+__)/g, (_match, capture) => {
+        const v = mathExpressions[capture]
+        const type = v.type
+        let expression = v.expression
 
-      // replace <br/> tag to \n
-      expression = expression.replace(/<br\s*\/?>/mg, "\n")
+        // replace <br/> tag to \n
+        expression = expression.replace(/<br\s*\/?>/mg, "\n")
 
-      return katex.renderToString(expression, { displayMode: type === 'block' })
-    })
+        return katex.renderToString(expression, { displayMode: type === 'block' })
+      })
 
-    return text
+      return text
+    }]
   })
 
   markedInstance.use({

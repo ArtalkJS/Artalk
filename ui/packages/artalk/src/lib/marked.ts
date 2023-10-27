@@ -1,9 +1,11 @@
 import { marked as libMarked } from 'marked'
 import insane from 'insane'
 import hanabi from 'hanabi'
-import Context from '~/types/context'
+
+type Replacer = (raw: string) => string
 
 let instance: (typeof libMarked)|undefined
+let replacers: Replacer[] = []
 
 export type TMarked = typeof libMarked
 
@@ -58,8 +60,12 @@ export function initMarked() {
   instance = nMarked
 }
 
+export function setReplacers(arr: Replacer[]) {
+  replacers = arr
+}
+
 /** 解析 markdown */
-export default function marked(ctx: Context, src: string): string {
+export default function marked(src: string): string {
   let markedContent = getInstance()?.parse(src)
   if (!markedContent) {
     // 无 Markdown 模式简单处理
@@ -125,7 +131,7 @@ export default function marked(ctx: Context, src: string): string {
   })
 
   // 内容替换器
-  ctx.markedReplacers.forEach((replacer) => {
+  replacers.forEach((replacer) => {
     if (typeof replacer === 'function') dest = replacer(dest)
   })
 

@@ -45,7 +45,7 @@ class Editor extends Component implements EditorApi {
   }
 
   getContentMarked() {
-    return marked(this.ctx, this.getContentFinal())
+    return marked(this.getContentFinal())
   }
 
   setContent(val: string) {

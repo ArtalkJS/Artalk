@@ -165,7 +165,7 @@ export default class Comment extends Component {
 
   /** 获取评论 markdown 解析后的内容 */
   public getContentMarked() {
-    return marked(this.ctx, this.data.content)
+    return marked(this.data.content)
   }
 
   /** 获取格式化后的日期 */

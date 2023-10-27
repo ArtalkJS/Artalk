@@ -27,7 +27,6 @@ class Context implements ContextApi {
   public conf: ArtalkConfig
   public data: DataManager
   public $root: HTMLElement
-  public markedReplacers: ((raw: string) => string)[] = []
 
   /* Event Manager */
   private events = new EventManager<EventPayloadMap>()
@@ -162,7 +161,7 @@ class Context implements ContextApi {
     this.trigger('conf-loaded', this.conf)
   }
 
-  public getMarkedInstance() {
+  public getMarked() {
     return marked.getInstance()
   }
 }

@@ -119,6 +119,9 @@ export default interface ArtalkConfig {
   /** 后端版本 (系统数据，用户不允许更改) */
   apiVersion?: string
 
+  /** Replacer for marked */
+  markedReplacers?: ((raw: string) => string)[]
+
   /** 列表请求参数修改器 */
   listFetchParamsModifier?: (params: any) => void
 

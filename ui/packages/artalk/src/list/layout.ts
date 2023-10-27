@@ -9,15 +9,15 @@ export interface LayoutOptions {
   nestMax: number
   flatMode: boolean
 
-  createComment(comment: CommentData, ctxComments: CommentData[]): Comment
-  findComment(id: number): Comment|undefined
+  createCommentNode(comment: CommentData, ctxComments: CommentData[]): Comment
+  findCommentNode(id: number): Comment|undefined
   getCommentDataList(): CommentData[]
 }
 
 export default class ListLayout {
   constructor(private options: LayoutOptions) {}
 
-  // TODO refactor if syntax to strategy pattern
+  // TODO refactor `if syntax` to strategy pattern
   import(comments: CommentData[]) {
     if (this.options.flatMode) {
       comments.forEach((commentData: CommentData) => {
@@ -41,18 +41,17 @@ export default class ListLayout {
     // 遍历 root 评论
     const rootNodes = ListNest.makeNestCommentNodeList(srcData, this.options.nestSortBy, this.options.nestMax)
     rootNodes.forEach((rootNode: ListNest.CommentNode) => {
-      const rootC = this.options.createComment(rootNode.comment, srcData)
+      const rootC = this.options.createCommentNode(rootNode.comment, srcData)
 
       // 显示并播放渐入动画
       this.options.$commentsWrap?.appendChild(rootC.getEl())
       rootC.getRender().playFadeAnim()
 
       // 加载子评论
-      const that = this
-      ;(function loadChildren(parentC: Comment, parentNode: ListNest.CommentNode) {
+      const loadChildren = (parentC: Comment, parentNode: ListNest.CommentNode) => {
         parentNode.children.forEach((node: ListNest.CommentNode) => {
           const childD = node.comment
-          const childC = that.options.createComment(childD, srcData)
+          const childC = this.options.createCommentNode(childD, srcData)
 
           // 插入到父评论中
           parentC.putChild(childC)
@@ -60,7 +59,8 @@ export default class ListLayout {
           // 递归加载子评论
           loadChildren(childC, node)
         })
-      })(rootC, rootNode)
+      }
+      loadChildren(rootC, rootNode)
 
       // 限高检测
       rootC.getRender().checkHeightLimit()
@@ -70,7 +70,7 @@ export default class ListLayout {
   /** 导入评论 · 平铺模式 */
   private putCommentFlatMode(cData: CommentData, ctxData: CommentData[], insertMode: 'append'|'prepend') {
     if (cData.is_collapsed) cData.is_allow_reply = false
-    const comment = this.options.createComment(cData, ctxData)
+    const comment = this.options.createCommentNode(cData, ctxData)
 
     // 可见评论添加到界面
     // 注：不可见评论用于显示 “引用内容”
@@ -88,14 +88,14 @@ export default class ListLayout {
 
   private insertCommentNest(commentData: CommentData) {
     // 嵌套模式
-    const comment = this.options.createComment(commentData, this.options.getCommentDataList())
+    const comment = this.options.createCommentNode(commentData, this.options.getCommentDataList())
 
     if (commentData.rid === 0) {
       // root评论 新增
       this.options.$commentsWrap?.prepend(comment.getEl())
     } else {
       // 子评论 新增
-      const parent = this.options.findComment(commentData.rid)
+      const parent = this.options.findCommentNode(commentData.rid)
       if (parent) {
         parent.putChild(comment, (this.options.nestSortBy === 'DATE_ASC' ? 'append' : 'prepend'))
 

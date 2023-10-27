@@ -2,9 +2,9 @@ import ArtalkPlugin from '~/types/plugin'
 import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
 
-export const ListDropdown: ArtalkPlugin = (ctx) => {
+export const Dropdown: ArtalkPlugin = (ctx) => {
   const reloadUseParamsEditor = (func: (p: any) => void) => {
-    ctx.get('list')!.getOptions().paramsEditor = func // TODO impl common request manager instead of list
+    ctx.conf.listFetchParamsModifier = func
     ctx.reload()
   }
 

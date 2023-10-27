@@ -1,7 +1,7 @@
 import ArtalkPlugin from '~/types/plugin'
 import $t from '@/i18n'
 
-export const ListSidebarBtn: ArtalkPlugin = (ctx) => {
+export const SidebarBtn: ArtalkPlugin = (ctx) => {
   let $openSidebarBtn: HTMLElement|null = null
 
   ctx.on('conf-loaded', () => {

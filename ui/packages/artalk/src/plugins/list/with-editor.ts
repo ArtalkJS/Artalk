@@ -13,7 +13,7 @@ function ensureListEditor(ctx: ContextApi) {
   return { list, editor }
 }
 
-export const ListCloseEditor: ArtalkPlugin = (ctx) => {
+export const WithEditor: ArtalkPlugin = (ctx) => {
   let $closeCommentBtn: HTMLElement|undefined
 
   // on Artalk inited
@@ -25,7 +25,7 @@ export const ListCloseEditor: ArtalkPlugin = (ctx) => {
 
     // bind editor close button click event
     $closeCommentBtn.addEventListener('click', () => {
-      const page = ctx.getPage()
+      const page = ctx.getData().getPage()
       if (!page) throw new Error('Page data not found')
 
       page.admin_only = !page.admin_only
@@ -48,6 +48,11 @@ export const ListCloseEditor: ArtalkPlugin = (ctx) => {
       $closeCommentBtn && ($closeCommentBtn.innerText = $t('closeComment'))
     }
   })
+
+  ctx.on('list-loaded', (comments) => {
+    // 防止评论框被吞
+    ctx.editorResetState()
+  })
 }
 
 /** 管理员设置页面信息 */
@@ -55,7 +60,7 @@ function adminPageEditSave(ctx: ContextApi, page: PageData) {
   ctx.editorShowLoading()
   ctx.getApi().page.pageEdit(page)
     .then((respPage) => {
-      ctx.updatePage(respPage)
+      ctx.getData().updatePage(respPage)
     })
     .catch(err => {
       ctx.editorShowNotify(`${$t('editFail')}: ${err.msg || String(err)}`, 'e')

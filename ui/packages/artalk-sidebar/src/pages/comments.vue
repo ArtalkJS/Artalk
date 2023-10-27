@@ -33,54 +33,51 @@ onMounted(() => {
   }
 
   watch(curtTab, (curtTab) => {
-    list.fetchComments(0)
+    artalk!.ctx.fetch({
+      offset: 0
+    })
   })
 
   watch(curtSite, (value) => {
-    list.reload()
+    artalk!.ctx.reload()
   })
 
-  // 初始化评论列表
-  const list = new Artalk.List(artalk!.ctx, {
-    liteMode: true,
-    flatMode: true,
-    unreadHighlight: true,
-    scrollListenerAt: wrapEl.value,
-    pageMode: 'pagination',
-    // pageSize: 20 // TODO consider fixed pageSize value in sidebar
-    noCommentText: `<div class="atk-sidebar-no-content">${t('noContent')}</div>`,
-    renderComment: (comment) => {
-      const pageURL = comment.getData().page_url
-      comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
-      comment.getConf().onReplyBtnClick = () => {
-        artalk!.ctx.replyComment(comment.getData(), comment.getEl())
-      }
+  artalk!.ctx.updateConf({
+    noComment: `<div class="atk-sidebar-no-content">${t('noContent')}</div>`,
+    pagination: {
+      pageSize: 20,
+      readMore: false,
+      autoLoad: false,
     },
-    paramsEditor: (params) => {
+    listUnreadHighlight: true,
+    listFetchParamsModifier: (params) => {
       params.type = curtTab.value // 列表数据类型
       params.site_name = curtSite.value // 站点名
       if (search.value) params.search = search.value
+    },
+    listScrollListenerAt: wrapEl.value,
+  })
+
+  artalk!.ctx.on('comment-rendered', (comment) => {
+    const pageURL = comment.getData().page_url
+    comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
+    comment.getConf().onReplyBtnClick = () => {
+      artalk!.ctx.replyComment(comment.getData(), comment.getEl())
     }
   })
 
-  artalk!.ctx.inject('list', list)
+  artalk!.reload()
 
-  artalk!.on('list-inserted', (data) => {
-    wrapEl.value!.scrollTo(0, 0)
-  })
-
-  list.reload()
-
-  listEl.value?.append(list.$el)
+  listEl.value?.append(artalk!.ctx.get('list')!.$el)
 
   // 搜索功能
   nav.enableSearch((value: string) => {
     search.value = value
-    list.reload()
+    artalk!.reload()
   }, () => {
     if (search.value === '') return
     search.value = ''
-    list.reload()
+    artalk!.reload()
   })
 })
 </script>

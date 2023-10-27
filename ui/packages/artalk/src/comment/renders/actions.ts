@@ -1,114 +1,114 @@
 import * as Utils from '../../lib/utils'
 import ActionBtn from '../../components/action-btn'
-import RenderCtx from '../render-ctx'
+import Render from '../render'
 
 /**
  * 评论操作按钮界面
  */
-export default function renderActions(ctx: RenderCtx) {
+export default function renderActions(r: Render) {
   Object.entries({
     renderVote, renderReply,
     // 管理员操作
     renderCollapse, renderModerator, renderPin, renderEdit, renderDel
   }).forEach(([name, render]) => {
-    render(ctx)
+    render(r)
   })
 }
 
 
 // 操作按钮 - 投票
-function renderVote(ctx: RenderCtx) {
-  if (!ctx.ctx.conf.vote) return // 关闭投票功能
+function renderVote(r: Render) {
+  if (!r.ctx.conf.vote) return // 关闭投票功能
 
   // 赞同按钮
-  ctx.voteBtnUp = new ActionBtn(ctx.ctx, () => `${ctx.ctx.$t('voteUp')} (${ctx.data.vote_up || 0})`).appendTo(ctx.$actions)
-  ctx.voteBtnUp.setClick(() => {
-    ctx.comment.getActions().vote('up')
+  r.voteBtnUp = new ActionBtn(r.ctx, () => `${r.ctx.$t('voteUp')} (${r.data.vote_up || 0})`).appendTo(r.$actions)
+  r.voteBtnUp.setClick(() => {
+    r.comment.getActions().vote('up')
   })
 
   // 反对按钮
-  if (ctx.ctx.conf.voteDown) {
-    ctx.voteBtnDown = new ActionBtn(ctx.ctx, () => `${ctx.ctx.$t('voteDown')} (${ctx.data.vote_down || 0})`).appendTo(ctx.$actions)
-    ctx.voteBtnDown.setClick(() => {
-      ctx.comment.getActions().vote('down')
+  if (r.ctx.conf.voteDown) {
+    r.voteBtnDown = new ActionBtn(r.ctx, () => `${r.ctx.$t('voteDown')} (${r.data.vote_down || 0})`).appendTo(r.$actions)
+    r.voteBtnDown.setClick(() => {
+      r.comment.getActions().vote('down')
     })
   }
 }
 
 // 操作按钮 - 回复
-function renderReply(ctx: RenderCtx) {
-  if (!ctx.data.is_allow_reply) return // 不允许回复
+function renderReply(r: Render) {
+  if (!r.data.is_allow_reply) return // 不允许回复
 
-  const replyBtn = Utils.createElement(`<span>${ctx.ctx.$t('reply')}</span>`)
-  ctx.$actions.append(replyBtn)
+  const replyBtn = Utils.createElement(`<span>${r.ctx.$t('reply')}</span>`)
+  r.$actions.append(replyBtn)
   replyBtn.addEventListener('click', (e) => {
     e.stopPropagation() // 防止穿透
-    if (!ctx.cConf.onReplyBtnClick) {
-      ctx.ctx.replyComment(ctx.data, ctx.$el)
+    if (!r.cConf.onReplyBtnClick) {
+      r.ctx.replyComment(r.data, r.$el)
     } else {
-      ctx.cConf.onReplyBtnClick()
+      r.cConf.onReplyBtnClick()
     }
   })
 }
 
 // 操作按钮 - 折叠
-function renderCollapse(ctx: RenderCtx) {
-  const collapseBtn = new ActionBtn(ctx.ctx, {
-    text: () => (ctx.data.is_collapsed ? ctx.ctx.$t('expand') : ctx.ctx.$t('collapse')),
+function renderCollapse(r: Render) {
+  const collapseBtn = new ActionBtn(r.ctx, {
+    text: () => (r.data.is_collapsed ? r.ctx.$t('expand') : r.ctx.$t('collapse')),
     adminOnly: true
   })
-  collapseBtn.appendTo(ctx.$actions)
+  collapseBtn.appendTo(r.$actions)
   collapseBtn.setClick(() => {
-    ctx.comment.getActions().adminEdit('collapsed', collapseBtn)
+    r.comment.getActions().adminEdit('collapsed', collapseBtn)
   })
 }
 
 // 操作按钮 - 审核
-function renderModerator(ctx: RenderCtx) {
-  const pendingBtn = new ActionBtn(ctx.ctx, {
-    text: () => (ctx.data.is_pending ? ctx.ctx.$t('pending') : ctx.ctx.$t('approved')),
+function renderModerator(r: Render) {
+  const pendingBtn = new ActionBtn(r.ctx, {
+    text: () => (r.data.is_pending ? r.ctx.$t('pending') : r.ctx.$t('approved')),
     adminOnly: true
   })
-  pendingBtn.appendTo(ctx.$actions)
+  pendingBtn.appendTo(r.$actions)
   pendingBtn.setClick(() => {
-    ctx.comment.getActions().adminEdit('pending', pendingBtn)
+    r.comment.getActions().adminEdit('pending', pendingBtn)
   })
 }
 
 // 操作按钮 - 置顶
-function renderPin(ctx: RenderCtx) {
-  const pinnedBtn = new ActionBtn(ctx.ctx, {
-    text: () => (ctx.data.is_pinned ? ctx.ctx.$t('unpin') : ctx.ctx.$t('pin')),
+function renderPin(r: Render) {
+  const pinnedBtn = new ActionBtn(r.ctx, {
+    text: () => (r.data.is_pinned ? r.ctx.$t('unpin') : r.ctx.$t('pin')),
     adminOnly: true
   })
-  pinnedBtn.appendTo(ctx.$actions)
+  pinnedBtn.appendTo(r.$actions)
   pinnedBtn.setClick(() => {
-    ctx.comment.getActions().adminEdit('pinned', pinnedBtn)
+    r.comment.getActions().adminEdit('pinned', pinnedBtn)
   })
 }
 
 // 操作按钮 - 编辑
-function renderEdit(ctx: RenderCtx) {
-  const editBtn = new ActionBtn(ctx.ctx, {
-    text: ctx.ctx.$t('edit'),
+function renderEdit(r: Render) {
+  const editBtn = new ActionBtn(r.ctx, {
+    text: r.ctx.$t('edit'),
     adminOnly: true
   })
-  editBtn.appendTo(ctx.$actions)
+  editBtn.appendTo(r.$actions)
   editBtn.setClick(() => {
-    ctx.ctx.editComment(ctx.data, ctx.$el)
+    r.ctx.editComment(r.data, r.$el)
   })
 }
 
 // 操作按钮 - 删除
-function renderDel(ctx: RenderCtx) {
-  const delBtn = new ActionBtn(ctx.ctx, {
-    text: ctx.ctx.$t('delete'),
+function renderDel(r: Render) {
+  const delBtn = new ActionBtn(r.ctx, {
+    text: r.ctx.$t('delete'),
     confirm: true,
-    confirmText: ctx.ctx.$t('deleteConfirm'),
+    confirmText: r.ctx.$t('deleteConfirm'),
     adminOnly: true,
   })
-  delBtn.appendTo(ctx.$actions)
+  delBtn.appendTo(r.$actions)
   delBtn.setClick(() => {
-    ctx.comment.getActions().adminDelete(delBtn)
+    r.comment.getActions().adminDelete(delBtn)
   })
 }

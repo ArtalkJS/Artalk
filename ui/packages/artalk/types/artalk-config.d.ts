@@ -118,6 +118,14 @@ export default interface ArtalkConfig {
 
   /** 后端版本 (系统数据，用户不允许更改) */
   apiVersion?: string
+
+  /** 列表请求参数修改器 */
+  listFetchParamsModifier?: (params: any) => void
+
+  // TODO consider merge list related config into one object, or flatten all to keep simple (keep consistency)
+  listLiteMode?: boolean
+  listUnreadHighlight?: boolean
+  listScrollListenerAt?: HTMLElement
 }
 
 /**

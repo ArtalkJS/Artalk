@@ -41,7 +41,7 @@ export default class StateEdit extends EditorPlug {
           return nComment
         },
         post: (nComment: CommentData) => {
-          this.kit.useGlobalCtx().updateComment(nComment)
+          this.kit.useGlobalCtx().getData().updateComment(nComment)
         }
       })
     })

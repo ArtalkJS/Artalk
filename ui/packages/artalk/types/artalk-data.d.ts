@@ -228,3 +228,41 @@ export interface ApiVersionData {
   /** API 程序 CommitHash */
   commit_hash: string
 }
+
+export interface ListFetchParams {
+  offset: number
+  limit: number
+  flatMode: boolean
+  onSuccess?: (data: ListData) => void
+  onError?: (err: any) => void
+}
+
+export interface ListLastFetchData {
+  params: ListFetchParams
+  data?: ListData
+}
+
+export interface DataManagerApi {
+  getLoading(): boolean
+  setLoading(val: boolean): void
+
+  getListLastFetch(): ListLastFetchData|undefined
+  setListLastFetch(val: ListLastFetchData): void
+
+  getComments(): CommentData[]
+  findComment(id: number): CommentData|undefined
+
+  fetchComments(params: Partial<ListFetchParams>): void
+  loadComments(comments: CommentData[]): void
+  clearComments(): void
+
+  insertComment(comment: CommentData): void
+  updateComment(comment: CommentData): void
+  deleteComment(id: number): void
+
+  getUnreads(): NotifyData[]
+  updateUnreads(unreads: NotifyData[]): void
+
+  getPage(): PageData|undefined
+  updatePage(pageData: PageData): void
+}

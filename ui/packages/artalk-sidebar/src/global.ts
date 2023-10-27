@@ -1,6 +1,7 @@
 import Artalk from 'artalk'
 import type { LocalUser } from 'artalk/types/artalk-config'
 import { useUserStore } from './stores/user'
+const { t } = useI18n()
 
 export let artalk: Artalk|null = null
 
@@ -25,14 +26,13 @@ export function createArtalkInstance() {
   artalkEl.style.display = 'none'
   document.body.append(artalkEl)
 
-  Artalk.DisabledComponents = ['list']
   return Artalk.init({
     el: artalkEl,
     server: (import.meta.env.DEV) ? 'http://localhost:23366' : '../',
     pageKey: bootParams.pageKey,
     site: bootParams.site,
     darkMode: bootParams.darkMode,
-    useBackendConf: true
+    useBackendConf: true,
   })
 }
 

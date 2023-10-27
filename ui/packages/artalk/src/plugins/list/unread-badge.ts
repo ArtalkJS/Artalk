@@ -1,6 +1,6 @@
 import ArtalkPlugin from '~/types/plugin'
 
-export const ListUnreadBadge: ArtalkPlugin = (ctx) => {
+export const UnreadBadge: ArtalkPlugin = (ctx) => {
   let $unreadBadge: HTMLElement|null = null
 
   const showUnreadBadge = (count: number) => {
@@ -21,7 +21,7 @@ export const ListUnreadBadge: ArtalkPlugin = (ctx) => {
     $unreadBadge = list.$el.querySelector<HTMLElement>('.atk-unread-badge')
   })
 
-  ctx.on('unread-updated', (unreadList) => {
-    showUnreadBadge(unreadList.length || 0)
+  ctx.on('unreads-updated', (unreads) => {
+    showUnreadBadge(unreads.length || 0)
   })
 }

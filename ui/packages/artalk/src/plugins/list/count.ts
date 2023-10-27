@@ -2,7 +2,7 @@ import ArtalkPlugin from '~/types/plugin'
 import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
 
-export const ListCount: ArtalkPlugin = (ctx) => {
+export const Count: ArtalkPlugin = (ctx) => {
   const refreshCountNumEl = () => {
     const list = ctx.get('list')
     if (!list) return

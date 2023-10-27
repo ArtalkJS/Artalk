@@ -1,6 +1,6 @@
 import type ArtalkPlugin from '~/types/plugin'
 
-export const ListReachBottom: ArtalkPlugin = (ctx) => {
+export const ReachBottom: ArtalkPlugin = (ctx) => {
   const scrollEvtAt = document.documentElement // TODO support ref ctx.conf
   let observer: IntersectionObserver|null = null
 

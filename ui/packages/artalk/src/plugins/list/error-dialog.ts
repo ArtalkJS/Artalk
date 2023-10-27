@@ -1,12 +1,12 @@
 import type ArtalkPlugin from '~/types/plugin'
 import ContextApi from '~/types/context'
 import List from '@/list/list'
-import * as Utils from '../lib/utils'
-import * as Ui from '../lib/ui'
-import User from '../lib/user'
-import $t from '../i18n'
+import * as Utils from '../../lib/utils'
+import * as Ui from '../../lib/ui'
+import User from '../../lib/user'
+import $t from '../../i18n'
 
-export const ListErrorDialog: ArtalkPlugin = (ctx) => {
+export const ErrorDialog: ArtalkPlugin = (ctx) => {
   ctx.on('list-fetch', () => {
     const list = ctx.get('list')
     if (!list) return

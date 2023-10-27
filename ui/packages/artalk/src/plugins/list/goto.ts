@@ -2,7 +2,7 @@ import ArtalkPlugin from '~/types/plugin'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 
-export const ListGoto: ArtalkPlugin = (ctx) => {
+export const Goto: ArtalkPlugin = (ctx) => {
   let delayGoto = true
 
   const check = () => {

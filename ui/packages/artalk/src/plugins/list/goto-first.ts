@@ -2,7 +2,7 @@ import type ArtalkPlugin from '~/types/plugin'
 import * as Utils from '@/lib/utils'
 
 /** List scroll to the first comment */
-export const ListGotoFirst: ArtalkPlugin = (ctx) => {
+export const GotoFirst: ArtalkPlugin = (ctx) => {
   const handler = () => {
     const list = ctx.get('list')
     if (!list) return

@@ -1,7 +1,7 @@
 import type ArtalkPlugin from '~/types/plugin'
 import * as Ui from '@/lib/ui'
 
-export const ListLoading: ArtalkPlugin = (ctx) => {
+export const Loading: ArtalkPlugin = (ctx) => {
   ctx.on('list-fetch', (p) => {
     const list = ctx.get('list')
     if (!list) return

@@ -1,7 +1,7 @@
 import ArtalkPlugin from '~/types/plugin'
 import { version as ARTALK_VERSION } from '~/package.json'
 
-export const ListCopyright: ArtalkPlugin = (ctx) => {
+export const Copyright: ArtalkPlugin = (ctx) => {
   ctx.on('conf-loaded', () => {
     const list = ctx.get('list')
     if (!list) return

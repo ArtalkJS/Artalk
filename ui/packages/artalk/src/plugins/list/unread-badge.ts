@@ -1,6 +1,6 @@
 import ArtalkPlugin from '~/types/plugin'
 
-export const ListUnreadBadge: ArtalkPlugin = (ctx) => {
+export const UnreadBadge: ArtalkPlugin = (ctx) => {
   let $unreadBadge: HTMLElement|null = null
 
   const showUnreadBadge = (count: number) => {

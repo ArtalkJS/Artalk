@@ -1,7 +1,7 @@
 import type ArtalkPlugin from '~/types/plugin'
 import * as Utils from '@/lib/utils'
 
-export const ListNoComment: ArtalkPlugin = (ctx) => {
+export const NoComment: ArtalkPlugin = (ctx) => {
   ctx.on('list-loaded', (comments) => {
     const list = ctx.get('list')!
 

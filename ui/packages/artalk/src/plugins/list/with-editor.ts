@@ -13,7 +13,7 @@ function ensureListEditor(ctx: ContextApi) {
   return { list, editor }
 }
 
-export const ListWithEditor: ArtalkPlugin = (ctx) => {
+export const WithEditor: ArtalkPlugin = (ctx) => {
   let $closeCommentBtn: HTMLElement|undefined
 
   // on Artalk inited

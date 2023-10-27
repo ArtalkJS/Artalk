@@ -2,7 +2,7 @@ import type ArtalkPlugin from '~/types/plugin'
 import * as Utils from '@/lib/utils'
 
 /** 评论时间自动更新 */
-export const ListTimeTicking: ArtalkPlugin = (ctx) => {
+export const TimeTicking: ArtalkPlugin = (ctx) => {
   let timer: number|null = null
 
   ctx.on('inited', () => {

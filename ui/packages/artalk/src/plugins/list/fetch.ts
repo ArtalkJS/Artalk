@@ -2,9 +2,9 @@ import type ArtalkConfig from '~/types/artalk-config'
 import type { ListFetchParams } from '~/types/artalk-data'
 import type ContextApi from '~/types/context'
 import type ArtalkPlugin from '~/types/plugin'
-import { handleBackendRefConf } from '../config'
+import { handleBackendRefConf } from '../../config'
 
-export const ListFetch: ArtalkPlugin = (ctx) => {
+export const Fetch: ArtalkPlugin = (ctx) => {
   ctx.on('list-fetch', (_params) => {
     if (ctx.getData().getLoading()) return
 

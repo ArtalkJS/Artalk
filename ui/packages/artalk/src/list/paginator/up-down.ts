@@ -1,5 +1,4 @@
 import PaginationComponent from '@/components/pagination'
-import * as Utils from '@/lib/utils'
 import { Paginator, IPgHolderOpt } from '.'
 
 /**

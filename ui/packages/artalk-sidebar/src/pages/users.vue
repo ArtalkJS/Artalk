@@ -2,13 +2,13 @@
 import { useNavStore } from '../stores/nav'
 import { artalk, bootParams } from '../global'
 import Pagination from '../components/Pagination.vue'
-import type { UserDataForAdmin } from 'artalk/types/artalk-data'
+import type { ArtalkType } from 'artalk'
 import { storeToRefs } from 'pinia'
 
 const nav = useNavStore()
 const router = useRouter()
 const { curtTab } = storeToRefs(nav)
-const users = ref<UserDataForAdmin[]>([])
+const users = ref<ArtalkType.UserDataForAdmin[]>([])
 const { t } = useI18n()
 
 const pageSize = ref(30)
@@ -17,7 +17,7 @@ const pagination = ref<InstanceType<typeof Pagination>>()
 const curtType = ref('all')
 
 const addingUser = ref(false)
-const editingUser = ref<UserDataForAdmin|undefined>()
+const editingUser = ref<ArtalkType.UserDataForAdmin|undefined>()
 
 onMounted(() => {
   nav.updateTabs({
@@ -65,7 +65,7 @@ function onChangePage(offset: number) {
   reqUsers(offset)
 }
 
-function editUser(user: UserDataForAdmin) {
+function editUser(user: ArtalkType.UserDataForAdmin) {
   if (user.is_in_conf) {
     alert('暂不支持在线编辑配置文件中的用户，请手动修改配置文件')
     return
@@ -75,7 +75,7 @@ function editUser(user: UserDataForAdmin) {
   editingUser.value = user
 }
 
-function updateUser(user: UserDataForAdmin) {
+function updateUser(user: ArtalkType.UserDataForAdmin) {
   const index = users.value.findIndex(u => u.id === user.id)
   if (index != -1) {
     // 修改用户
@@ -97,7 +97,7 @@ function closeEditUser() {
   editingUser.value = undefined
 }
 
-function delUser(user: UserDataForAdmin) {
+function delUser(user: ArtalkType.UserDataForAdmin) {
   if (window.confirm(`该操作将删除 用户："${user.name}" 邮箱："${user.email}" 所有评论，包括其评论下面他人的回复评论，是否继续？`)) {
     artalk!.ctx.getApi().user.userDel(user.id)
       .then(() => {

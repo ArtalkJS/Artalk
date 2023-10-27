@@ -1,4 +1,4 @@
-import type { CommentData, ListData } from '~/types/artalk-data'
+import type { CommentData } from '~/types'
 import * as Ui from '@/lib/ui'
 import Comment from '../comment/comment'
 import * as ListNest from './nest'

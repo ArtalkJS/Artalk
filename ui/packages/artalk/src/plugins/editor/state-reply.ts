@@ -1,4 +1,4 @@
-import type { CommentData } from '~/types/artalk-data'
+import type { CommentData } from '~/types'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import $t from '@/i18n'

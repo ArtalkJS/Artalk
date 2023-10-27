@@ -1,4 +1,4 @@
-import type ArtalkConfig from '~/types/artalk-config'
+import type { ArtalkConfig } from '~/types'
 import * as Utils from './lib/utils'
 import Defaults from './defaults'
 

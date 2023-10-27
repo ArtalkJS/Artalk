@@ -1,4 +1,4 @@
-import ArtalkPlugin from '~/types/plugin'
+import type { ArtalkPlugin } from '~/types'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 

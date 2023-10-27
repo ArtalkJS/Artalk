@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { artalk } from '../global'
-import type { PageData } from 'artalk/types/artalk-data'
+import type { ArtalkType } from 'artalk'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 import Pagination from '../components/Pagination.vue'
 
 const nav = useNavStore()
 const { site: curtSite } = storeToRefs(useUserStore())
-const pages = ref<PageData[]>([])
+const pages = ref<ArtalkType.PageData[]>([])
 const curtEditPageID = ref<number|null>(null)
 const { t } = useI18n()
 
@@ -53,7 +53,7 @@ function scrollHandler() {
   showActBarBorder.value = (nav.scrollableArea!.scrollTop > 10)
 }
 
-function editPage(page: PageData) {
+function editPage(page: ArtalkType.PageData) {
   curtEditPageID.value = page.id
 }
 
@@ -73,7 +73,7 @@ function onChangePage(offset: number) {
   reqPages(offset)
 }
 
-function onPageItemUpdate(page: PageData) {
+function onPageItemUpdate(page: ArtalkType.PageData) {
   const index = pages.value.findIndex(p => p.id === page.id)
   if (index != -1) {
     const orgPage = pages.value[index]

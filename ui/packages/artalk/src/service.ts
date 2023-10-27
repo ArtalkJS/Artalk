@@ -1,4 +1,4 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import CheckerLauncher from './lib/checker'
 import Api from './api'
 import Editor from './editor/editor'
@@ -17,7 +17,7 @@ import { PlugManager } from './plugins/editor-kit'
  */
 const services = {
   // I18n
-  i18n(ctx: Context) {
+  i18n(ctx: ContextApi) {
     I18n.setLocale(ctx.conf.locale)
 
     ctx.on('conf-loaded', () => {
@@ -26,32 +26,32 @@ const services = {
   },
 
   // User Store
-  user(ctx: Context) {
+  user(ctx: ContextApi) {
     User.setContext(ctx)
     return User
   },
 
   // HTTP API client
-  api(ctx: Context) {
+  api(ctx: ContextApi) {
     const api = new Api(ctx)
     return api
   },
 
   // CheckerLauncher
-  checkerLauncher(ctx: Context) {
+  checkerLauncher(ctx: ContextApi) {
     const checkerLauncher = new CheckerLauncher(ctx)
     return checkerLauncher
   },
 
   // 编辑器
-  editor(ctx: Context) {
+  editor(ctx: ContextApi) {
     const editor = new Editor(ctx)
     ctx.$root.appendChild(editor.$el)
     return editor
   },
 
   // 评论列表
-  list(ctx: Context): List|undefined {
+  list(ctx: ContextApi): List|undefined {
     // 评论列表
     const list = new List(ctx)
     ctx.$root.appendChild(list.$el)
@@ -60,20 +60,20 @@ const services = {
   },
 
   // 弹出层
-  layer(ctx: Context) {
+  layer(ctx: ContextApi) {
     // 记录页面原始 CSS 属性
     Layer.BodyOrgOverflow = document.body.style.overflow
     Layer.BodyOrgPaddingRight = document.body.style.paddingRight
   },
 
   // 侧边栏 Layer
-  sidebarLayer(ctx: Context) {
+  sidebarLayer(ctx: ContextApi) {
     const sidebarLayer = new SidebarLayer(ctx)
     return sidebarLayer
   },
 
   // 默认事件绑定
-  eventsDefault(ctx: Context) {
+  eventsDefault(ctx: ContextApi) {
     // 本地用户数据变更
     ctx.on('user-changed', () => {
       ctx.checkAdminShowEl()
@@ -81,7 +81,7 @@ const services = {
   },
 
   // 夜间模式
-  darkMode(ctx: Context) {
+  darkMode(ctx: ContextApi) {
     DarkMode.syncDarkModeConf(ctx)
 
     ctx.on('conf-loaded', () => {

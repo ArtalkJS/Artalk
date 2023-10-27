@@ -1,5 +1,4 @@
-import type { EditorState } from '~/types/editor'
-import type { CommentData } from '~/types/artalk-data'
+import type { EditorState, CommentData } from '~/types'
 import * as Ui from '@/lib/ui'
 import type Editor from './editor'
 import Mover from '../plugins/editor/mover'

@@ -1,4 +1,4 @@
-import ArtalkPlugin from '~/types/plugin'
+import type { ArtalkPlugin } from '~/types'
 import $t from '@/i18n'
 
 export const SidebarBtn: ArtalkPlugin = (ctx) => {

@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import type { SiteData } from 'artalk/types/artalk-data'
+import type { ArtalkType } from 'artalk'
 import { artalk } from '../global'
 
 const props = defineProps<{
-  site: SiteData
+  site: ArtalkType.SiteData
 }>()
 
 const emit = defineEmits<{
   (evt: 'close'): void
-  (evt: 'update', page: SiteData): void
+  (evt: 'update', page: ArtalkType.SiteData): void
   (evt: 'remove', id: number): void
 }>()
 
 const { site } = toRefs(props)
 const isLoading = ref(false)
-const editFieldKey = ref<keyof SiteData|null>(null)
+const editFieldKey = ref<keyof ArtalkType.SiteData|null>(null)
 const editFieldVal = computed(() => {
   if (editFieldKey.value === 'urls') return site.value.urls_raw || ''
   return String(editFieldKey ? site.value[editFieldKey.value!] || '' : '')
@@ -58,7 +58,7 @@ function del() {
 async function onFieldEditorYes(val: string) {
   if (editFieldVal.value !== val) {
     isLoading.value = true
-    let s: SiteData
+    let s: ArtalkType.SiteData
     try {
       s = await artalk!.ctx.getApi().site.siteEdit({ ...site.value, [editFieldKey.value as any]: val })
     } catch (err: any) {

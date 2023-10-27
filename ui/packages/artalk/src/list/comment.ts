@@ -1,8 +1,7 @@
-import { CommentData } from '~/types/artalk-data'
-import Context from '~/types/context'
+import type { ContextApi, CommentData } from '~/types'
 import Comment from '../comment/comment'
 
-export function createComment(ctx: Context, comment: CommentData, ctxComments: CommentData[]): Comment {
+export function createComment(ctx: ContextApi, comment: CommentData, ctxComments: CommentData[]): Comment {
   const instance = new Comment(ctx, comment, {
     isFlatMode: ctx.getData().getListLastFetch()?.params.flatMode!,
     afterRender: () => {

@@ -1,14 +1,13 @@
-import ArtalkConfig from '~/types/artalk-config'
-import Context from '~/types/context'
+import type { ArtalkConfig, ContextApi } from '~/types'
 import { I18n } from '../i18n'
 
 export default abstract class Component {
   public $el!: HTMLElement
 
-  public ctx: Context
+  public ctx: ContextApi
   public readonly conf: ArtalkConfig
 
-  public constructor(ctx: Context) {
+  public constructor(ctx: ContextApi) {
     this.ctx = ctx
     this.conf = ctx.conf
   }

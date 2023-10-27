@@ -1,4 +1,4 @@
-import ArtalkConfig from "~/types/artalk-config"
+import type { ArtalkConfig } from '~/types'
 
 const defaults: ArtalkConfig = {
   el: '',

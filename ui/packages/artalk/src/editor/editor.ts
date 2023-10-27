@@ -1,6 +1,4 @@
-import type { CommentData } from '~/types/artalk-data'
-import type { EditorApi, EditorState } from '~/types/editor'
-import type Context from '~/types/context'
+import type { CommentData, ContextApi, EditorApi } from '~/types'
 import Component from '../lib/component'
 import * as Ui from '../lib/ui'
 import marked from '../lib/marked'
@@ -15,7 +13,7 @@ class Editor extends Component implements EditorApi {
   getPlugs() { return this.ctx.get('editorPlugs') }
   getState() { return this.state.get() }
 
-  constructor(ctx: Context) {
+  constructor(ctx: ContextApi) {
     super(ctx)
 
     // init editor ui

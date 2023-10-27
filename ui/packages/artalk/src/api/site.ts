@@ -1,4 +1,4 @@
-import { SiteData } from '~/types/artalk-data'
+import type { SiteData } from '~/types'
 import ApiBase from './api-base'
 
 /**

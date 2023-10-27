@@ -1,4 +1,4 @@
-import { CommentData, ListData } from '~/types/artalk-data'
+import type { CommentData, ListData } from '~/types'
 import * as Utils from '../lib/utils'
 import ApiBase from './api-base'
 import User from '../lib/user'

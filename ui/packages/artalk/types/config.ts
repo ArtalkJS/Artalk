@@ -1,7 +1,7 @@
 import { I18n } from '~/src/i18n'
-import { CommentData } from './artalk-data'
+import { CommentData } from './data'
 
-export default interface ArtalkConfig {
+export interface ArtalkConfig {
   /** 装载元素 */
   el: string|HTMLElement
 

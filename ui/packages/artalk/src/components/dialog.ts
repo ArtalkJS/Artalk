@@ -1,4 +1,4 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import * as Utils from '../lib/utils'
 
 type BtnClickHandler = (btnEl: HTMLElement, dialog: Dialog) => boolean|void
@@ -7,12 +7,12 @@ type BtnClickHandler = (btnEl: HTMLElement, dialog: Dialog) => boolean|void
  * 对话框
  */
 export default class Dialog {
-  public ctx: Context
+  public ctx: ContextApi
   public $el: HTMLElement
   public $content: HTMLElement
   public $actions: HTMLElement
 
-  constructor (ctx: Context, contentEl: HTMLElement) {
+  constructor (ctx: ContextApi, contentEl: HTMLElement) {
     this.ctx = ctx
 
     this.$el = Utils.createElement(

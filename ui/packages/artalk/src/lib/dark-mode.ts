@@ -1,14 +1,14 @@
-import type Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import { getLayerWrap } from '../layer'
 
 const darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)')
 let darkModeAutoFunc: (evt: MediaQueryListEvent) => void
 
-export function syncDarkModeConf(ctx: Context) {
+export function syncDarkModeConf(ctx: ContextApi) {
   setDarkMode(ctx, ctx.conf.darkMode, false) // ref `conf.darkMode` data, so no need to `alterConf`
 }
 
-export function setDarkMode(ctx: Context, darkMode: boolean|'auto', alterConf = true) {
+export function setDarkMode(ctx: ContextApi, darkMode: boolean|'auto', alterConf = true) {
   const apply = (d: boolean) => {
     updateClassName(ctx, d)
     if (alterConf) alterCtxConf(ctx, d)
@@ -30,12 +30,12 @@ export function setDarkMode(ctx: Context, darkMode: boolean|'auto', alterConf = 
   }
 }
 
-function alterCtxConf(ctx: Context, darkMode: boolean) {
+function alterCtxConf(ctx: ContextApi, darkMode: boolean) {
   ctx.conf.darkMode = darkMode
 }
 
 const DarkModeClassName = 'atk-dark-mode'
-export function updateClassName(ctx: Context, darkMode: boolean) {
+export function updateClassName(ctx: ContextApi, darkMode: boolean) {
   if (darkMode) ctx.$root.classList.add(DarkModeClassName)
   else ctx.$root.classList.remove(DarkModeClassName)
 

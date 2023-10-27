@@ -1,4 +1,4 @@
-import type { ListFetchParams } from '~/types/artalk-data'
+import type { ListFetchParams } from '~/types'
 import ReadMoreBtn from '@/components/read-more-btn'
 import $t from '@/i18n'
 import { Paginator, IPgHolderOpt } from '.'

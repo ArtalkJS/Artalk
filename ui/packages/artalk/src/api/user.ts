@@ -1,4 +1,4 @@
-import { UserData, NotifyData, UserDataForAdmin } from '~/types/artalk-data'
+import type { UserData, NotifyData, UserDataForAdmin } from '~/types'
 import ApiBase from './api-base'
 import { ToFormData } from './request'
 import User from '../lib/user'

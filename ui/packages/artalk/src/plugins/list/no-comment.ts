@@ -1,4 +1,4 @@
-import type ArtalkPlugin from '~/types/plugin'
+import type { ArtalkPlugin } from '~/types'
 import * as Utils from '@/lib/utils'
 
 export const NoComment: ArtalkPlugin = (ctx) => {

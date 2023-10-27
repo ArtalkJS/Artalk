@@ -1,11 +1,10 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import Dialog from '@/components/dialog'
 import Layer from '@/layer'
 import * as Utils from '../utils'
 import CaptchaChecker from './captcha'
 import AdminChecker from './admin'
 import type Api from '../../api'
-import type User from '../user'
 
 export interface CheckerCaptchaPayload extends CheckerPayload {
   imgData?: string
@@ -22,10 +21,10 @@ export interface CheckerPayload {
  * Checker 发射台
  */
 export default class CheckerLauncher {
-  public ctx: Context
+  public ctx: ContextApi
   public launched: Checker[] = []
 
-  constructor(ctx: Context) {
+  constructor(ctx: ContextApi) {
     this.ctx = ctx
   }
 
@@ -188,7 +187,7 @@ interface CheckerStore {
 export interface CheckerCtx {
   get<K extends keyof CheckerStore>(key: K): CheckerStore[K]
   set<K extends keyof CheckerStore>(key: K, val: CheckerStore[K]): void
-  getCtx(): Context
+  getCtx(): ContextApi
   getApi(): Api
   getLayer(): Layer
   hideInteractInput(): void

@@ -1,6 +1,6 @@
 import type Comment from '~/src/comment'
-import { CommentData, ListData, ListFetchParams, NotifyData, PageData } from './artalk-data'
-import ArtalkConfig, { LocalUser } from './artalk-config'
+import { CommentData, ListData, ListFetchParams, NotifyData, PageData } from './data'
+import { ArtalkConfig, LocalUser } from './config'
 
 interface ErrorData { msg: string, data?: any }
 interface ListFetchedArgs { params: Partial<ListFetchParams>, data?: ListData, error?: ErrorData }

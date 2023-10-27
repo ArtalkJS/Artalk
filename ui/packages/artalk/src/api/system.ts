@@ -1,4 +1,4 @@
-import ArtalkConfig from '~/types/artalk-config'
+import type { ArtalkConfig } from '~/types'
 import ApiBase from './api-base'
 
 interface ApiVersionInfo {

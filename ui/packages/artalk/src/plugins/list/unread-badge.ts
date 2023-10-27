@@ -1,4 +1,4 @@
-import ArtalkPlugin from '~/types/plugin'
+import type { ArtalkPlugin } from '~/types'
 
 export const UnreadBadge: ArtalkPlugin = (ctx) => {
   let $unreadBadge: HTMLElement|null = null

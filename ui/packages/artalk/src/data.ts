@@ -1,5 +1,4 @@
-import type { NotifyData, PageData, CommentData, DataManagerApi, ListFetchParams, ListLastFetchData } from '~/types/artalk-data'
-import type { EventPayloadMap } from '~/types/event'
+import type { NotifyData, PageData, CommentData, DataManagerApi, ListFetchParams, ListLastFetchData, EventPayloadMap } from '~/types'
 import EventManager from './lib/event-manager'
 
 export class DataManager implements DataManagerApi {

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { artalk } from '../global'
-import type { SiteData } from 'artalk/types/artalk-data'
+import type { ArtalkType } from 'artalk'
 
 type TabsObj = {[name: string]: string}
 
@@ -9,7 +9,7 @@ export const useNavStore = defineStore('nav', () => {
   const tabs = ref<TabsObj>({})
 
   const curtPage = ref('comments')
-  const sites = ref<SiteData[]>([])
+  const sites = ref<ArtalkType.SiteData[]>([])
   const siteSwitcherShow = ref(false)
 
   const isSearchEnabled = ref(false)

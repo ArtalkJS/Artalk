@@ -1,5 +1,4 @@
-import { CommentData } from '~/types/artalk-data'
-import Context from '~/types/context'
+import type { CommentData, ContextApi } from '~/types'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import marked from '../lib/marked'
@@ -31,7 +30,7 @@ export default class Comment extends Component {
   private nestCurt: number // 当前嵌套层数
   private nestMax: number  // 最大嵌套层数
 
-  constructor(ctx: Context, data: CommentData, conf: CommentConf) {
+  constructor(ctx: ContextApi, data: CommentData, conf: CommentConf) {
     super(ctx)
 
     // 最大嵌套数

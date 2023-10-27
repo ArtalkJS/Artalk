@@ -1,12 +1,12 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import Api from '.'
 import { POST, Fetch } from './request'
 
 abstract class ApiBase {
   protected api: Api
-  protected ctx: Context
+  protected ctx: ContextApi
 
-  constructor(api: Api, ctx: Context) {
+  constructor(api: Api, ctx: ContextApi) {
     this.api = api
     this.ctx = ctx
   }

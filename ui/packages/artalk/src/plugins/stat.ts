@@ -1,5 +1,4 @@
-import ContextApi from '~/types/context'
-import ArtalkPlugin from '~/types/plugin'
+import type { ContextApi, ArtalkPlugin } from '~/types'
 
 export interface CountConf {
   ctx: ContextApi

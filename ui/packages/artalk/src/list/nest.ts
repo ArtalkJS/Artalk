@@ -1,4 +1,4 @@
-import { CommentData } from '~/types/artalk-data'
+import type { CommentData } from '~/types'
 
 export type CommentNode = {
   id: number

@@ -1,5 +1,5 @@
-import ArtalkConfig from './artalk-config'
-import { CommentData, DataManagerApi, ListFetchParams } from './artalk-data'
+import { ArtalkConfig } from './config'
+import { CommentData, DataManagerApi, ListFetchParams } from './data'
 import type { EventPayloadMap } from './event'
 import type { EventManagerFuncs } from '../src/lib/event-manager'
 import { I18n } from '../src/i18n'
@@ -14,7 +14,7 @@ import type { TInjectedServices } from '../src/service'
  *
  * (面向接口的编程)
  */
-export default interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
+export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** Artalk 根元素对象 */
   $root: HTMLElement
 

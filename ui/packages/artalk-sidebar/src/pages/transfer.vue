@@ -2,7 +2,6 @@
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 import { artalk } from '../global'
-import type { SiteData } from 'artalk/types/artalk-data'
 import { storeToRefs } from 'pinia';
 
 const nav = useNavStore()

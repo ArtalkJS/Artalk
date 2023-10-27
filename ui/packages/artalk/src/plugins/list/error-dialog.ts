@@ -1,5 +1,4 @@
-import type ArtalkPlugin from '~/types/plugin'
-import ContextApi from '~/types/context'
+import type { ArtalkPlugin, ContextApi } from '~/types'
 import * as Utils from '../../lib/utils'
 import * as Ui from '../../lib/ui'
 import User from '../../lib/user'

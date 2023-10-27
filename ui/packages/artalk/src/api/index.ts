@@ -1,4 +1,4 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 
 import comment from './comment'
@@ -17,12 +17,12 @@ const ApiComponents = {
 }
 
 class Api {
-  protected ctx: Context
+  protected ctx: ContextApi
   public get baseURL() {
     return `${this.ctx.conf.server}/api`
   }
 
-  constructor (ctx: Context) {
+  constructor (ctx: ContextApi) {
     this.ctx = ctx
 
     Object.entries(ApiComponents).forEach(([key, ApiComponent]) => {

@@ -1,8 +1,7 @@
-import { LocalUser } from "~/types/artalk-config"
-import Context from '~/types/context'
+import type { LocalUser, ContextApi } from '~/types'
 
 class User {
-  public ctx?: Context
+  public ctx?: ContextApi
   public data: LocalUser
 
   public constructor() {
@@ -17,7 +16,7 @@ class User {
     }
   }
 
-  public setContext(ctx: Context) {
+  public setContext(ctx: ContextApi) {
     this.ctx = ctx
   }
 

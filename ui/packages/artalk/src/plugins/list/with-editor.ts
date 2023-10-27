@@ -1,6 +1,4 @@
-import type ContextApi from '~/types/context'
-import type ArtalkPlugin from '~/types/plugin'
-import { PageData } from '~/types/artalk-data'
+import type { ContextApi, ArtalkPlugin, PageData } from '~/types'
 import $t from '@/i18n'
 
 function ensureListEditor(ctx: ContextApi) {

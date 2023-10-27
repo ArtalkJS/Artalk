@@ -1,4 +1,4 @@
-import type { CommentData } from '~/types/artalk-data'
+import type { CommentData } from '~/types'
 import User from '@/lib/user'
 import PlugKit from './_kit'
 

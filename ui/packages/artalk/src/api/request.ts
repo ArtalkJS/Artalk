@@ -1,9 +1,9 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import User from '../lib/user'
 import $t from '../i18n'
 
 /** 公共请求函数 */
-export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit, timeout?: number): Promise<any> {
+export async function Fetch(ctx: ContextApi, input: RequestInfo, init: RequestInit, timeout?: number): Promise<any> {
   // JWT
   if (User.data.token) {
     const headers = new Headers(init.headers) // 保留原有 headers
@@ -61,7 +61,7 @@ export async function Fetch(ctx: Context, input: RequestInfo, init: RequestInit,
 }
 
 /** 公共 POST 请求 */
-export async function POST<T>(ctx: Context, url: string, data?: {[key: string]: any}) {
+export async function POST<T>(ctx: ContextApi, url: string, data?: {[key: string]: any}) {
   const init: RequestInit = {
     method: 'POST',
   }
@@ -88,7 +88,7 @@ export function ToFormData(object: {[key: string]: any}): FormData {
 }
 
 /** 我靠，fetch 一个 timeout，都要丑陋的实现 */
-function timeoutFetch(ctx: Context, url: RequestInfo, ms: number, opts: RequestInit) {
+function timeoutFetch(ctx: ContextApi, url: RequestInfo, ms: number, opts: RequestInit) {
   const controller = new AbortController()
   opts.signal?.addEventListener('abort', () => controller.abort()) // 保留原有 signal 功能
   let promise = fetch(url, { ...opts, signal: controller.signal })

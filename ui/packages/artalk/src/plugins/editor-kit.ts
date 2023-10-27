@@ -1,5 +1,4 @@
-import type ArtalkPlugin from '~/types/plugin'
-import type { EditorApi } from '~/types/editor'
+import type { EditorApi, ArtalkPlugin } from '~/types'
 import EventManager from '@/lib/event-manager'
 import { ENABLED_PLUGS, getDisabledPlugByConf } from './editor'
 import EditorPlug from './editor/_plug'

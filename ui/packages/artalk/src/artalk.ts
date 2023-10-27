@@ -1,9 +1,6 @@
 import './style/main.scss'
 
-import type ArtalkConfig from '~/types/artalk-config'
-import type { EventPayloadMap } from '~/types/event'
-import type ArtalkPlugin from '~/types/plugin'
-import type Context from '~/types/context'
+import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '~/types'
 import type { EventHandler } from './lib/event-manager'
 import ConcreteContext from './context'
 import defaults from './defaults'
@@ -11,7 +8,6 @@ import { handelBaseConf } from './config'
 import Services from './service'
 import { DefaultPlugins } from './plugins'
 import * as Stat from './plugins/stat'
-import List from './list/list'
 import Api from './api'
 
 /**
@@ -22,11 +18,10 @@ import Api from './api'
 export default class Artalk {
   private static instance?: Artalk
 
-  public static List = List
   public static readonly defaults: ArtalkConfig = defaults
 
   public conf!: ArtalkConfig
-  public ctx!: Context
+  public ctx!: ContextApi
   public $root!: HTMLElement
 
   /** Plugins */
@@ -161,7 +156,7 @@ export default class Artalk {
 
   /** Load count widget */
   public static loadCountWidget(conf: Partial<ArtalkConfig>) {
-    const ctx: Context = new ConcreteContext(handelBaseConf(conf))
+    const ctx: ContextApi = new ConcreteContext(handelBaseConf(conf))
     ctx.inject('api', new Api(ctx))
     Stat.initCountWidget({ ctx, pvAdd: false })
   }

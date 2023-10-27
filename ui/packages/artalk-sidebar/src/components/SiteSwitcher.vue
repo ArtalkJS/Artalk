@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { SiteData } from 'artalk/types/artalk-data'
 import { storeToRefs } from 'pinia';
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'

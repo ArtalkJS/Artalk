@@ -1,7 +1,4 @@
-import type ArtalkConfig from '~/types/artalk-config'
-import type { CommentData, ListFetchParams } from '~/types/artalk-data'
-import type { EventPayloadMap } from '~/types/event'
-import type ContextApi from '~/types/context'
+import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPayloadMap } from '~/types'
 import type { TInjectedServices } from './service'
 
 import * as Utils from './lib/utils'

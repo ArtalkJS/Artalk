@@ -1,6 +1,6 @@
 import './emoticons.scss'
 
-import { EmoticonListData, EmoticonGrpData } from '~/types/artalk-data'
+import type { EmoticonListData, EmoticonGrpData } from '~/types'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import $t from '@/i18n'

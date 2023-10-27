@@ -1,4 +1,4 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
@@ -17,7 +17,7 @@ export default class SidebarLayer extends Component {
   public $iframeWrap: HTMLElement
   public $iframe?: HTMLIFrameElement
 
-  constructor(ctx: Context) {
+  constructor(ctx: ContextApi) {
     super(ctx)
 
     this.$el = Utils.createElement(SidebarHTML)

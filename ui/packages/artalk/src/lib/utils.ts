@@ -1,4 +1,4 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 
 export function createElement<E extends HTMLElement = HTMLElement>(htmlStr: string = ''): E {
   const div = document.createElement('div')
@@ -55,7 +55,7 @@ export function dateFormat(date: Date) {
   return `${vYear}-${vMonth}-${vDay}`
 }
 
-export function timeAgo(date: Date, ctx: Context) {
+export function timeAgo(date: Date, ctx: ContextApi) {
   try {
     const oldTime = date.getTime()
     const currTime = new Date().getTime()
@@ -115,7 +115,7 @@ export function onImagesLoaded($container: HTMLElement, event: Function) {
   }
 }
 
-export function getGravatarURL(ctx: Context, emailMD5: string) {
+export function getGravatarURL(ctx: ContextApi, emailMD5: string) {
   const { mirror, params } = ctx.conf.gravatar
   return `${mirror.replace(/\/$/, '')}/${emailMD5}?${params.replace(/^\?/, '')}`
 }
@@ -185,7 +185,7 @@ export function isValidURL(urlRaw: string) {
 }
 
 /** 获取基于 conf.server 的 URL */
-export function getURLBasedOnApi(ctx: Context, path: string) {
+export function getURLBasedOnApi(ctx: ContextApi, path: string) {
   return getURLBasedOn(ctx.conf.server, path)
 }
 

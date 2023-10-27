@@ -1,4 +1,4 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import CommentNode from '../comment/comment'
@@ -16,7 +16,7 @@ export default class List extends Component {
   getCommentNodes() { return this.commentNodes }
 
   // TODO remove options and use ctx.conf instead
-  constructor (ctx: Context) {
+  constructor (ctx: ContextApi) {
     super(ctx)
 
     // Init base element

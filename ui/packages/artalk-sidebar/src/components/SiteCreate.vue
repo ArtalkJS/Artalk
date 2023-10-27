@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { artalk } from '../global'
-import type { SiteData } from 'artalk/types/artalk-data'
+import type { ArtalkType } from 'artalk'
 
 const { t } = useI18n()
 
@@ -10,7 +10,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (evt: 'close'): void
-  (evt: 'done', siteNew: SiteData): void
+  (evt: 'done', siteNew: ArtalkType.SiteData): void
 }>()
 
 const isLoading = ref(false)
@@ -31,7 +31,7 @@ async function submit() {
   if (siteName === '') { alert('请输入站点名称'); return }
 
   isLoading.value = true
-  let s: SiteData
+  let s: ArtalkType.SiteData
   try {
     s = await artalk!.ctx.getApi().site.siteAdd(siteName, siteUrls)
   } catch (err: any) {

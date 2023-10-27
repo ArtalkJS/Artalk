@@ -1,4 +1,4 @@
-import { PageData, CommentData } from '~/types/artalk-data'
+import type { PageData, CommentData } from '~/types'
 import ApiBase from './api-base'
 
 /**

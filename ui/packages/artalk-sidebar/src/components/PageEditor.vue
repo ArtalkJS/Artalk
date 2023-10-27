@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import type { PageData } from 'artalk/types/artalk-data'
+import type { ArtalkType } from 'artalk'
 import { artalk } from '../global'
 
 const props = defineProps<{
-  page: PageData
+  page: ArtalkType.PageData
 }>()
 
 const emit = defineEmits<{
   (evt: 'close'): void
-  (evt: 'update', page: PageData): void
+  (evt: 'update', page: ArtalkType.PageData): void
   (evt: 'remove', id: number): void
 }>()
 
 const { page } = toRefs(props)
-const editFieldKey = ref<keyof PageData|null>(null)
+const editFieldKey = ref<keyof ArtalkType.PageData|null>(null)
 const editFieldVal = computed(() => String(editFieldKey ? page.value[editFieldKey.value!] || '' : ''))
 const isLoading = ref(false)
 const { t } = useI18n()
@@ -28,7 +28,7 @@ function editKey() {
 
 async function editAdminOnly() {
   isLoading.value = true
-  let p: PageData
+  let p: ArtalkType.PageData
   try {
     p = await artalk!.ctx.getApi().page.pageEdit({ ...page.value, admin_only: !page.value.admin_only })
   } catch (err: any) {
@@ -41,7 +41,7 @@ async function editAdminOnly() {
 
 async function sync() {
   isLoading.value = true
-  let p: PageData
+  let p: ArtalkType.PageData
   try {
     p = (await artalk!.ctx.getApi().page.pageFetch(page.value.id)).page
   } catch (err: any) {
@@ -76,7 +76,7 @@ function close() {
 async function onFieldEditorYes(val: string) {
   if (editFieldVal.value !== val) {
     isLoading.value = true
-    let p: PageData
+    let p: ArtalkType.PageData
     try {
       p = await artalk!.ctx.getApi().page.pageEdit({ ...page.value, [editFieldKey.value as any]: val })
     } catch (err: any) {

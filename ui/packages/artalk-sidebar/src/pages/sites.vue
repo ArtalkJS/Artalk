@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useNavStore } from '../stores/nav'
 import { artalk, bootParams } from '../global'
-import type { SiteData } from 'artalk/types/artalk-data'
+import type { ArtalkType } from 'artalk'
 
 const nav = useNavStore()
-const sites = ref<SiteData[]>([])
-const curtEditSite = ref<SiteData|null>(null)
+const sites = ref<ArtalkType.SiteData[]>([])
+const curtEditSite = ref<ArtalkType.SiteData|null>(null)
 const showSiteCreate = ref(false)
 const siteCreateInitVal = ref()
 const { t } = useI18n()
@@ -42,7 +42,7 @@ function create() {
 const sitesGrouped = computed(() => {
   if (sites.value.length === 0) return []
 
-  const grp: SiteData[][] = []
+  const grp: ArtalkType.SiteData[][] = []
   let j = -1
   for (let i = 0; i < sites.value.length; i++) {
     const item = sites.value[i]
@@ -55,18 +55,18 @@ const sitesGrouped = computed(() => {
   return grp
 })
 
-function edit(site: SiteData) {
+function edit(site: ArtalkType.SiteData) {
   showSiteCreate.value = false
   curtEditSite.value = site
 }
 
-function onNewSiteCreated(siteNew: SiteData) {
+function onNewSiteCreated(siteNew: ArtalkType.SiteData) {
   sites.value.push(siteNew)
   showSiteCreate.value = false
   nav.refreshSites()
 }
 
-function onSiteItemUpdate(site: SiteData) {
+function onSiteItemUpdate(site: ArtalkType.SiteData) {
   const index = sites.value.findIndex(s => s.id === site.id)
   if (index != -1) {
     const orgSite = sites.value[index]

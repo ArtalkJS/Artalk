@@ -1,5 +1,4 @@
-import type { CommentData } from '~/types/artalk-data'
-import type { EditorState } from '~/types/editor'
+import type { CommentData, EditorState } from '~/types'
 import * as Utils from '@/lib/utils'
 import PlugKit from './_kit'
 

@@ -1,4 +1,4 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
@@ -15,7 +15,7 @@ export default class Layer extends Component {
 
   public afterHide?: Function
 
-  constructor (ctx: Context, name: string, el?: HTMLElement) {
+  constructor (ctx: ContextApi, name: string, el?: HTMLElement) {
     super(ctx)
 
     this.name = name

@@ -1,4 +1,4 @@
-import type ArtalkPlugin from '~/types/plugin'
+import type { ArtalkPlugin } from '~/types'
 import * as Ui from '@/lib/ui'
 
 export const Loading: ArtalkPlugin = (ctx) => {

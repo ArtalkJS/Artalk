@@ -1,5 +1,5 @@
 import Artalk from 'artalk'
-import type { LocalUser } from 'artalk/types/artalk-config'
+import type { ArtalkType } from 'artalk'
 import { useUserStore } from './stores/user'
 const { t } = useI18n()
 
@@ -13,7 +13,7 @@ export function getBootParams() {
   return {
     pageKey:    p.get('pageKey') || '',
     site:       p.get('site') || '',
-    user:       <LocalUser>JSON.parse(p.get('user') || '{}'),
+    user:       <ArtalkType.LocalUser>JSON.parse(p.get('user') || '{}'),
     view:       p.get('view') || '',
     viewParams: <any>null,
     darkMode:   p.get('darkMode') === '1',

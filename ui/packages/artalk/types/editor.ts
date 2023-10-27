@@ -1,4 +1,4 @@
-import type { CommentData } from './artalk-data'
+import type { CommentData } from './data'
 import Component from '../src/lib/component'
 import { EditorUI } from '../src/editor/ui'
 

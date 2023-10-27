@@ -1,4 +1,4 @@
-import Context from '~/types/context'
+import type { ContextApi } from '~/types'
 import * as Utils from '../lib/utils'
 
 interface ActionBtnConf {
@@ -19,7 +19,7 @@ interface ActionBtnConf {
  * 通用操作按钮
  */
 export default class ActionBtn {
-  private ctx: Context
+  private ctx: ContextApi
   private conf: ActionBtnConf
   public $el: HTMLElement
 
@@ -33,7 +33,7 @@ export default class ActionBtn {
   public confirmRecTimer?: number // 确认消息复原定时器
 
   /** 构造函数 */
-  constructor(ctx: Context, conf: ActionBtnConf|string|(() => string)) {
+  constructor(ctx: ContextApi, conf: ActionBtnConf|string|(() => string)) {
     this.ctx = ctx
     this.$el = Utils.createElement(`<span class="atk-common-action-btn"></span>`)
 

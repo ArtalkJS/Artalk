@@ -1,5 +1,4 @@
-import type ArtalkConfig from '~/types/artalk-config'
-import type ArtalkPlugin from '~/types/plugin'
+import type { ArtalkConfig, ArtalkPlugin } from '~/types'
 import { handleBackendRefConf } from '@/config'
 
 export const ConfRemoter: ArtalkPlugin = (ctx) => {

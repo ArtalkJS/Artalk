@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { artalk, bootParams } from '../global'
-import type { UserData, UserDataForAdmin } from 'artalk/types/artalk-data'
+import type { ArtalkType } from 'artalk'
 
 const { t } = useI18n()
 
@@ -22,7 +22,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (evt: 'close'): void
-  (evt: 'update', user: UserDataForAdmin): void
+  (evt: 'update', user: ArtalkType.UserDataForAdmin): void
 }>()
 
 const user = ref<IUserEditData>()

@@ -72,14 +72,6 @@ const services = {
     return sidebarLayer
   },
 
-  // 默认事件绑定
-  eventsDefault(ctx: ContextApi) {
-    // 本地用户数据变更
-    ctx.on('user-changed', () => {
-      ctx.checkAdminShowEl()
-    })
-  },
-
   // 夜间模式
   darkMode(ctx: ContextApi) {
     DarkMode.syncDarkModeConf(ctx)

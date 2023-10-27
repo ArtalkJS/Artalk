@@ -1,4 +1,4 @@
-import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPayloadMap } from '~/types'
+import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPayloadMap, SidebarShowPayload } from '~/types'
 import type { TInjectedServices } from './service'
 
 import * as Utils from './lib/utils'
@@ -8,8 +8,7 @@ import { CheckerCaptchaPayload, CheckerPayload } from './lib/checker'
 
 import { DataManager } from './data'
 import * as I18n from './i18n'
-import { getLayerWrap } from './layer'
-import { SidebarShowPayload } from './layer/sidebar-layer'
+
 import EventManager from './lib/event-manager'
 import { handelBaseConf } from './config'
 
@@ -67,9 +66,7 @@ class Context implements ContextApi {
   }
 
   public reload(): void {
-    this.data.fetchComments({
-      offset: 0,
-    })
+    this.data.fetchComments({ offset: 0 })
   }
 
   public listGotoFirst(): void {
@@ -109,26 +106,6 @@ class Context implements ContextApi {
 
   public checkCaptcha(payload: CheckerCaptchaPayload): void {
     this.checkerLauncher.checkCaptcha(payload)
-  }
-
-  public checkAdminShowEl() {
-    const items: HTMLElement[] = []
-
-    this.$root.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
-
-    // for layer
-    const { $wrap: $layerWrap } = getLayerWrap()
-    if ($layerWrap) $layerWrap.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
-
-    // for sidebar
-    // TODO: 这个其实应该写在 packages/artalk-sidebar 里面的
-    const $sidebarEl = document.querySelector<HTMLElement>('.atk-sidebar')
-    if ($sidebarEl) $sidebarEl.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => items.push(item))
-
-    items.forEach(($item: HTMLElement) => {
-      if (this.user.data.isAdmin) $item.classList.remove('atk-hide')
-      else $item.classList.add('atk-hide')
-    })
   }
 
   /* Events */

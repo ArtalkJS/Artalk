@@ -5,9 +5,11 @@ import { EditorKit } from './editor-kit'
 import { ListPlugins } from './list'
 import { PvCountWidget } from './stat'
 import { VersionCheck } from './version-check'
+import { AdminOnlyElem } from './admin-only-elem'
 
 export const DefaultPlugins: ArtalkPlugin[] = [
   ConfRemoter,
-  Markdown, EditorKit, ...ListPlugins,
+  Markdown, EditorKit, AdminOnlyElem,
+  ...ListPlugins,
   PvCountWidget, VersionCheck
 ]

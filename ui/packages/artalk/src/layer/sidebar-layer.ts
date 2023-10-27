@@ -1,14 +1,10 @@
-import type { ContextApi } from '~/types'
+import type { ContextApi, SidebarShowPayload } from '~/types'
 import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import SidebarHTML from './sidebar-layer.html?raw'
 import User from '../lib/user'
 import Layer from './layer'
-
-export interface SidebarShowPayload {
-  view?: 'comments'|'sites'|'pages'|'transfer'
-}
 
 export default class SidebarLayer extends Component {
   public layer?: Layer

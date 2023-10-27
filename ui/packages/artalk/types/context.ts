@@ -1,11 +1,8 @@
-import { ArtalkConfig } from './config'
-import { CommentData, DataManagerApi, ListFetchParams } from './data'
-import type { EventPayloadMap } from './event'
+import type { SidebarShowPayload, EventPayloadMap, ArtalkConfig, CommentData, DataManagerApi, ListFetchParams } from '.'
 import type { EventManagerFuncs } from '../src/lib/event-manager'
-import { I18n } from '../src/i18n'
-import Api from '../src/api'
-import { SidebarShowPayload } from '../src/layer/sidebar-layer'
-import { CheckerCaptchaPayload, CheckerPayload } from '../src/lib/checker'
+import type { I18n } from '../src/i18n'
+import type Api from '../src/api'
+import type { CheckerCaptchaPayload, CheckerPayload } from '../src/lib/checker'
 import type { TMarked } from '../src/lib/marked'
 import type { TInjectedServices } from '../src/service'
 
@@ -25,7 +22,7 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   get<K extends keyof TInjectedServices>(depName: K): TInjectedServices[K]
 
   /** 配置对象 */
-  // TODO 修改为 getConf() 和 setConf()
+  // TODO 修改为 getConf() 和 setConf() 并且返回拷贝而不是引用
   conf: ArtalkConfig
 
   /** marked 依赖对象 */
@@ -75,9 +72,6 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
 
   /** 管理员检测 */
   checkAdmin(payload: CheckerPayload): void
-
-  /** 管理员显示元素可见性更新 */
-  checkAdminShowEl(): void
 
   /** i18n 翻译 */
   $t(key: keyof I18n, args?: {[key: string]: string}): string

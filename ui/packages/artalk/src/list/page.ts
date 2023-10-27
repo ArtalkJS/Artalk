@@ -12,11 +12,13 @@ function createPaginatorByConf(conf: ArtalkConfig): Paginator {
 
 function getPageDataByLastData(ctx: ContextApi): { offset: number, total: number } {
   const last = ctx.getData().getListLastFetch()
-  if (!last) return { offset: 0, total: 0 }
-  return {
-    offset: last.params.offset,
-    total: last.params.flatMode ? last.data!.total : last.data!.total_roots
-  }
+  const r = { offset: 0, total: 0 }
+  if (!last) return r
+
+  r.offset = last.params.offset
+  if (last.data) r.total = last.params.flatMode ? last.data.total : last.data.total_roots
+
+  return r
 }
 
 export const initListPaginatorFunc = (ctx: ContextApi) => {

@@ -1,39 +1,39 @@
 import * as Utils from '../../lib/utils'
 import * as Ui from '../../lib/ui'
-import RenderCtx from '../render-ctx'
+import Render from '../render'
 
 /**
  * 评论内容界面
  */
-export default function renderContent(ctx: RenderCtx) {
-  if (!ctx.data.is_collapsed) {
-    ctx.$content.innerHTML = ctx.comment.getContentMarked()
-    ctx.$content.classList.remove('atk-hide', 'atk-collapsed')
+export default function renderContent(r: Render) {
+  if (!r.data.is_collapsed) {
+    r.$content.innerHTML = r.comment.getContentMarked()
+    r.$content.classList.remove('atk-hide', 'atk-collapsed')
     return
   }
 
   // 内容 & 折叠
-  ctx.$content.classList.add('atk-hide', 'atk-type-collapsed')
+  r.$content.classList.add('atk-hide', 'atk-type-collapsed')
   const collapsedInfoEl = Utils.createElement(`
     <div class="atk-collapsed">
-      <span class="atk-text">${ctx.ctx.$t('collapsedMsg')}</span>
-      <span class="atk-show-btn">${ctx.ctx.$t('expand')}</span>
+      <span class="atk-text">${r.ctx.$t('collapsedMsg')}</span>
+      <span class="atk-show-btn">${r.ctx.$t('expand')}</span>
     </div>`)
-  ctx.$body.insertAdjacentElement('beforeend', collapsedInfoEl)
+  r.$body.insertAdjacentElement('beforeend', collapsedInfoEl)
 
   const contentShowBtn = collapsedInfoEl.querySelector<HTMLElement>('.atk-show-btn')!
   contentShowBtn.addEventListener('click', (e) => {
     e.stopPropagation() // 防止穿透
 
-    if (ctx.$content.classList.contains('atk-hide')) {
-      ctx.$content.innerHTML = ctx.comment.getContentMarked()
-      ctx.$content.classList.remove('atk-hide')
-      Ui.playFadeInAnim(ctx.$content)
-      contentShowBtn.innerText = ctx.ctx.$t('collapse')
+    if (r.$content.classList.contains('atk-hide')) {
+      r.$content.innerHTML = r.comment.getContentMarked()
+      r.$content.classList.remove('atk-hide')
+      Ui.playFadeInAnim(r.$content)
+      contentShowBtn.innerText = r.ctx.$t('collapse')
     } else {
-      ctx.$content.innerHTML = ''
-      ctx.$content.classList.add('atk-hide')
-      contentShowBtn.innerText = ctx.ctx.$t('expand')
+      r.$content.innerHTML = ''
+      r.$content.classList.add('atk-hide')
+      contentShowBtn.innerText = r.ctx.$t('expand')
     }
   })
 }

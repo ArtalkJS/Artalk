@@ -2,29 +2,28 @@ import ArtalkPlugin from '~/types/plugin'
 import * as Utils from '@/lib/utils'
 
 export const Unread: ArtalkPlugin = (ctx) => {
-  ctx.on('unreads-updated', (unreads) => {
+  ctx.on('comment-rendered', (comment) => {
     const list = ctx.get('list')
     if (!list) return
 
     // comment unread highlight
     if (ctx.conf.listUnreadHighlight === true) {
-      list.getCommentNodes().forEach((comment) => {
-        const notify = unreads.find(o => o.comment_id === comment.getID())
+      const unreads = ctx.getData().getUnreads()
+      const notify = unreads.find(o => o.comment_id === comment.getID())
 
-        if (notify) {
-          // if comment contains in unread list
-          comment.getRender().setUnread(true)
-          comment.getRender().setOpenAction(() => {
-            window.open(notify.read_link)
+      if (notify) {
+        // if comment contains in unread list
+        comment.getRender().setUnread(true)
+        comment.getRender().setOpenAction(() => {
+          window.open(notify.read_link)
 
-            // remove notify which has been read
-            ctx.getData().updateUnreads(unreads.filter(o => o.comment_id !== comment.getID()))
-          })
-        } else {
-          // comment not in unread list
-          comment.getRender().setUnread(false)
-        }
-      })
+          // remove notify which has been read
+          ctx.getData().updateUnreads(unreads.filter(o => o.comment_id !== comment.getID()))
+        })
+      } else {
+        // comment not in unread list
+        comment.getRender().setUnread(false)
+      }
     }
   })
 

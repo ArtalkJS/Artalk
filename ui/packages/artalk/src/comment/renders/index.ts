@@ -1,4 +1,4 @@
-import RenderCtx from '../render-ctx'
+import Render from '../render'
 import Avatar from './avatar'
 import Header from './header'
 import Content from './content'
@@ -12,8 +12,8 @@ const Renders = {
   ReplyTo, Pending, Actions
 }
 
-export default function loadRenders(ctx: RenderCtx) {
+export default function loadRenders(r: Render) {
   Object.entries(Renders).forEach(([ name, render ]) => {
-    render(ctx)
+    render(r)
   })
 }

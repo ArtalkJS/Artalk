@@ -1,31 +1,31 @@
 import * as Utils from '../../lib/utils'
-import RenderCtx from '../render-ctx'
+import Render from '../render'
 
 /**
  * 评论头部界面
  */
-export default function renderHeader(ctx: RenderCtx) {
+export default function renderHeader(r: Render) {
   Object.entries({
     renderNick, renderVerifyBadge, renderDate, renderUABadge
   }).forEach(([name, render]) => {
-    render(ctx)
+    render(r)
   })
 }
 
-function renderNick(ctx: RenderCtx) {
-  ctx.$headerNick = ctx.$el.querySelector<HTMLElement>('.atk-nick')!
+function renderNick(r: Render) {
+  r.$headerNick = r.$el.querySelector<HTMLElement>('.atk-nick')!
 
-  if (ctx.data.link) {
+  if (r.data.link) {
     const $nickA = Utils.createElement<HTMLLinkElement>('<a target="_blank" rel="noreferrer noopener nofollow"></a>')
-    $nickA.innerText = ctx.data.nick
-    $nickA.href = Utils.isValidURL(ctx.data.link) ? ctx.data.link : `https://${ctx.data.link}`
-    ctx.$headerNick.append($nickA)
+    $nickA.innerText = r.data.nick
+    $nickA.href = Utils.isValidURL(r.data.link) ? r.data.link : `https://${r.data.link}`
+    r.$headerNick.append($nickA)
   } else {
-    ctx.$headerNick.innerText = ctx.data.nick
+    r.$headerNick.innerText = r.data.nick
   }
 }
 
-function renderVerifyBadge(ctx: RenderCtx) {
+function renderVerifyBadge(ctx: Render) {
   ctx.$headerBadgeWrap = ctx.$el.querySelector<HTMLElement>('.atk-badge-wrap')!
   ctx.$headerBadgeWrap.innerHTML = ''
 
@@ -44,13 +44,13 @@ function renderVerifyBadge(ctx: RenderCtx) {
   }
 }
 
-function renderDate(ctx: RenderCtx) {
+function renderDate(ctx: Render) {
   const $date = ctx.$el.querySelector<HTMLElement>('.atk-date')!
   $date.innerText = ctx.comment.getDateFormatted()
   $date.setAttribute('data-atk-comment-date', String(+new Date(ctx.data.date)))
 }
 
-function renderUABadge(ctx: RenderCtx) {
+function renderUABadge(ctx: Render) {
   if (!ctx.ctx.conf.uaBadge && !ctx.data.ip_region) return
 
   let $uaWrap = ctx.$header.querySelector('atk-ua-wrap')

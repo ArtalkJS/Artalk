@@ -1,5 +1,5 @@
 import type { ArtalkConfig, ArtalkPlugin } from '~/types'
-import { handleBackendRefConf } from '@/config'
+import { handleConfFormServer } from '@/config'
 
 export const ConfRemoter: ArtalkPlugin = (ctx) => {
   let confLoaded = false
@@ -15,7 +15,7 @@ export const ConfRemoter: ArtalkPlugin = (ctx) => {
       // reference conf from backend
       if (ctx.conf.useBackendConf) {
         if (!data.frontend_conf) throw new Error('The remote backend does not respond to the frontend conf, but `useBackendConf` conf is enabled')
-        conf = { ...conf, ...handleBackendRefConf(data.frontend_conf) }
+        conf = { ...conf, ...handleConfFormServer(data.frontend_conf) }
       }
 
       ctx.updateConf(conf)

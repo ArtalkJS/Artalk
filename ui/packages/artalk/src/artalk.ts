@@ -4,7 +4,7 @@ import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '~/
 import type { EventHandler } from './lib/event-manager'
 import ConcreteContext from './context'
 import defaults from './defaults'
-import { convertApiOptions, handelBaseConf } from './config'
+import { handelCustomConf, convertApiOptions } from './config'
 import Services from './service'
 import { DefaultPlugins } from './plugins'
 import * as Stat from './plugins/stat'
@@ -32,7 +32,7 @@ export default class Artalk {
     if (Artalk.instance) Artalk.destroy()
 
     // 初始化基本配置
-    this.conf = handelBaseConf(conf)
+    this.conf = handelCustomConf(conf)
     if (this.conf.el instanceof HTMLElement) this.$root = this.conf.el
 
     // 初始化 Context
@@ -153,14 +153,15 @@ export default class Artalk {
   }
 
   /** Load count widget */
-  public static loadCountWidget(conf: Partial<ArtalkConfig>) {
-    // TODO remove creating context (not necessary)
-    const ctx: ContextApi = new ConcreteContext(handelBaseConf(conf))
-    ctx.inject('api', createApi(ctx))
-    Stat.initCountWidget({ ctx, pvAdd: false })
-  }
-}
+  public static loadCountWidget(c: Partial<ArtalkConfig>) {
+    const conf = handelCustomConf(c)
 
-export function createApi(ctx: ContextApi) {
-  return new Api(convertApiOptions(ctx, ctx.conf))
+    Stat.initCountWidget({
+      getApi: () => new Api(convertApiOptions(conf)),
+      pageKey: conf.pageKey,
+      countEl: conf.countEl,
+      pvEl: conf.pvEl,
+      pvAdd: false
+    })
+  }
 }

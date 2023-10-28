@@ -1,5 +1,6 @@
 import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPayloadMap, SidebarShowPayload } from '~/types'
 import type { TInjectedServices } from './service'
+import Api from './api'
 
 import * as Utils from './lib/utils'
 import * as DarkMode from './lib/dark-mode'
@@ -10,7 +11,7 @@ import { DataManager } from './data'
 import * as I18n from './i18n'
 
 import EventManager from './lib/event-manager'
-import { handelBaseConf } from './config'
+import { convertApiOptions, handelCustomConf } from './config'
 
 // Auto dependency injection
 interface Context extends TInjectedServices { }
@@ -46,7 +47,7 @@ class Context implements ContextApi {
   }
 
   public getApi() {
-    return this.api
+    return new Api(convertApiOptions(this.conf, this))
   }
 
   public getData() {
@@ -131,7 +132,7 @@ class Context implements ContextApi {
   }
 
   public updateConf(nConf: Partial<ArtalkConfig>): void {
-    this.conf = Utils.mergeDeep(this.conf, handelBaseConf(nConf))
+    this.conf = Utils.mergeDeep(this.conf, handelCustomConf(nConf))
     this.trigger('conf-loaded', this.conf)
   }
 

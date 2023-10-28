@@ -1,13 +1,15 @@
 import type { ArtalkConfig, ContextApi } from '~/types'
 import type { ApiOptions } from './api/_options'
-import Api from './api'
 import * as Utils from './lib/utils'
 import Defaults from './defaults'
 
-export default { handelBaseConf }
-
-/** 基本配置初始化 */
-export function handelBaseConf(customConf: Partial<ArtalkConfig>): ArtalkConfig {
+/**
+ * Merges the user custom config with the default config
+ *
+ * @param customConf - The custom config object which is provided by the user
+ * @returns The config for Artalk instance creation
+ */
+export function handelCustomConf(customConf: Partial<ArtalkConfig>): ArtalkConfig {
   // 合并默认配置
   const conf: ArtalkConfig = Utils.mergeDeep(Defaults, customConf)
 
@@ -53,7 +55,13 @@ export function handelBaseConf(customConf: Partial<ArtalkConfig>): ArtalkConfig 
   return conf
 }
 
-export function handleBackendRefConf(conf: Partial<ArtalkConfig>) {
+/**
+ * Handle the config which is provided by the server
+ *
+ * @param conf - The Server response config for control the frontend of Artalk remotely
+ * @returns The config for Artalk instance creation
+ */
+export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
   const DisabledKeys: (keyof ArtalkConfig)[] = [
     'el', 'pageKey', 'pageTitle', 'server', 'site', 'darkMode'
   ]
@@ -74,7 +82,14 @@ export function handleBackendRefConf(conf: Partial<ArtalkConfig>) {
   return conf
 }
 
-export function convertApiOptions(ctx: ContextApi, conf: Partial<ArtalkConfig>): ApiOptions {
+/**
+ * Convert Artalk Config to ApiOptions for Api client
+ *
+ * @param conf - Artalk config
+ * @param ctx - If `ctx` not provided, `checkAdmin` and `checkCaptcha` will be disabled
+ * @returns ApiOptions for Api client instance creation
+ */
+export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi): ApiOptions {
   return {
     baseURL: `${conf.server}/api`,
     siteName: conf.site || '',
@@ -83,14 +98,14 @@ export function convertApiOptions(ctx: ContextApi, conf: Partial<ArtalkConfig>):
     timeout: conf.reqTimeout,
 
     onNeedCheckAdmin(payload) {
-      ctx.checkAdmin({
+      ctx?.checkAdmin({
         onSuccess: () => { payload.recall() },
         onCancel: () => { payload.reject() },
       })
     },
 
     onNeedCheckCaptcha(payload) {
-      ctx.checkCaptcha({
+      ctx?.checkCaptcha({
         imgData: payload.data.imgData,
         iframe: payload.data.iframe,
         onSuccess: () => { payload.recall() },

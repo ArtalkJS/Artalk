@@ -1,6 +1,5 @@
 import type { ContextApi } from '~/types'
 import CheckerLauncher from './lib/checker'
-import Api from './api'
 import Editor from './editor/editor'
 import Layer from './layer'
 import SidebarLayer from './layer/sidebar-layer'
@@ -9,7 +8,6 @@ import List from './list/list'
 import * as DarkMode from './lib/dark-mode'
 import * as I18n from './i18n'
 import { PlugManager } from './plugins/editor-kit'
-import { createApi } from './artalk'
 
 /**
  * Services
@@ -30,11 +28,6 @@ const services = {
   user(ctx: ContextApi) {
     User.setContext(ctx)
     return User
-  },
-
-  // HTTP API client
-  api(ctx: ContextApi) {
-    return createApi(ctx)
   },
 
   // CheckerLauncher

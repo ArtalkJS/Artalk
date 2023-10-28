@@ -8,7 +8,6 @@ export const TimeTicking: ArtalkPlugin = (ctx) => {
   ctx.on('inited', () => {
     timer = window.setInterval(() => {
       const list = ctx.get('list')
-      if (!list) return
 
       list.$el.querySelectorAll<HTMLElement>('[data-atk-comment-date]').forEach(el => {
         const date = el.getAttribute('data-atk-comment-date')

@@ -6,9 +6,6 @@ export const Goto: ArtalkPlugin = (ctx) => {
   let delayGoto = true
 
   const check = () => {
-    const list = ctx.get('list')
-    if (!list) return
-
     const commentID = extractCommentID()
     if (!commentID) return
 
@@ -34,7 +31,6 @@ export const Goto: ArtalkPlugin = (ctx) => {
 
   ctx.on('list-goto', (commentID) => {
     const list = ctx.get('list')
-    if (!list) return
 
     // TODO remove get from list
     const comment = list.getCommentNodes().find(c => c.getID() === commentID)

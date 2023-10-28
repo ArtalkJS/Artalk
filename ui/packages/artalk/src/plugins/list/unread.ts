@@ -3,9 +3,6 @@ import * as Utils from '@/lib/utils'
 
 export const Unread: ArtalkPlugin = (ctx) => {
   ctx.on('comment-rendered', (comment) => {
-    const list = ctx.get('list')
-    if (!list) return
-
     // comment unread highlight
     if (ctx.conf.listUnreadHighlight === true) {
       const unreads = ctx.getData().getUnreads()

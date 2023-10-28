@@ -10,7 +10,7 @@ let IgnoreVersionCheck = false
 export const VersionCheck: ArtalkPlugin = (ctx) => {
   ctx.on('conf-loaded', () => {
     const list = ctx.get('list')
-    if (list && ctx.conf.apiVersion && ctx.conf.versionCheck && !IgnoreVersionCheck)
+    if (ctx.conf.apiVersion && ctx.conf.versionCheck && !IgnoreVersionCheck)
       versionCheck(list, ARTALK_VERSION, ctx.conf.apiVersion)
   })
 }

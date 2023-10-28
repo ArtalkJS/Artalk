@@ -5,7 +5,6 @@ import * as Utils from '@/lib/utils'
 export const GotoFirst: ArtalkPlugin = (ctx) => {
   const handler = () => {
     const list = ctx.get('list')
-    if (!list) return
 
     // TODO support set custom value to replace (`window`, `list.$el`) with (`conf.xxxAt`, `conf.list.repositionAt`)
     ;(ctx.conf.listScrollListenerAt || window).scroll({

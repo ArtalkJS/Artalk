@@ -5,7 +5,6 @@ import $t from '@/i18n'
 export const Count: ArtalkPlugin = (ctx) => {
   const refreshCountNumEl = () => {
     const list = ctx.get('list')
-    if (!list) return
 
     const $count = list.$el.querySelector('.atk-comment-count .atk-text')
     if (!$count) return

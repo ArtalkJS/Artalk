@@ -6,7 +6,6 @@ export const ReachBottom: ArtalkPlugin = (ctx) => {
 
   ctx.on('inited', () => {
     const list = ctx.get('list')
-    if (!list) return
 
     // use IntersectionObserver to detect reach bottom
     const $target = list.$el.querySelector<HTMLElement>('.atk-list-comments-wrap')

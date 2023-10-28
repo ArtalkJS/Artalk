@@ -1,23 +1,13 @@
 import type { ContextApi, ArtalkPlugin, PageData } from '~/types'
 import $t from '@/i18n'
 
-function ensureListEditor(ctx: ContextApi) {
-  const list = ctx.get('list')
-  const editor = ctx.get('editor')
-
-  if (!list) throw new Error('List instance not found')
-  if (!editor) throw new Error('Editor instance not found')
-
-  return { list, editor }
-}
-
 export const WithEditor: ArtalkPlugin = (ctx) => {
   let $closeCommentBtn: HTMLElement|undefined
 
   // on Artalk inited
   // (after all components had mounted)
   ctx.on('inited', () => {
-    const { list } = ensureListEditor(ctx)
+    const list = ctx.get('list')
 
     $closeCommentBtn = list.$el.querySelector<HTMLElement>('[data-action="admin-close-comment"]')!
 
@@ -33,7 +23,7 @@ export const WithEditor: ArtalkPlugin = (ctx) => {
 
   // on comment list loaded (it will include page data update)
   ctx.on('page-loaded', (page) => {
-    const { editor } = ensureListEditor(ctx)
+    const editor = ctx.get('editor')
 
     // if page comment is closed
     if (page?.admin_only === true) {

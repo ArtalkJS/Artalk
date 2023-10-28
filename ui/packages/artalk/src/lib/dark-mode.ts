@@ -5,13 +5,12 @@ const darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)')
 let darkModeAutoFunc: (evt: MediaQueryListEvent) => void
 
 export function syncDarkModeConf(ctx: ContextApi) {
-  setDarkMode(ctx, ctx.conf.darkMode, false) // ref `conf.darkMode` data, so no need to `alterConf`
+  setDarkMode(ctx, ctx.conf.darkMode)
 }
 
-export function setDarkMode(ctx: ContextApi, darkMode: boolean|'auto', alterConf = true) {
+export function setDarkMode(ctx: ContextApi, darkMode: boolean|'auto') {
   const apply = (d: boolean) => {
     updateClassName(ctx, d)
-    if (alterConf) alterCtxConf(ctx, d)
   }
 
   if (darkMode === 'auto') {
@@ -28,10 +27,6 @@ export function setDarkMode(ctx: ContextApi, darkMode: boolean|'auto', alterConf
 
     apply(darkMode)
   }
-}
-
-function alterCtxConf(ctx: ContextApi, darkMode: boolean) {
-  ctx.conf.darkMode = darkMode
 }
 
 const DarkModeClassName = 'atk-dark-mode'

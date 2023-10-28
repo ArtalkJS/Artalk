@@ -7,7 +7,6 @@ import $t from '../../i18n'
 export const ErrorDialog: ArtalkPlugin = (ctx) => {
   ctx.on('list-fetch', () => {
     const list = ctx.get('list')
-    if (!list) return
 
     // clear the original error when a new fetch is triggered
     Ui.setError(list.$el, null)
@@ -15,7 +14,6 @@ export const ErrorDialog: ArtalkPlugin = (ctx) => {
 
   ctx.on('list-error', (err) => {
     const list = ctx.get('list')
-    if (!list) return
     Ui.setError(list.$el, renderErrorDialog(ctx, err.msg, err.data))
   })
 }

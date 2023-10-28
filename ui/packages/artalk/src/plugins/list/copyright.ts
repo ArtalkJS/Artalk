@@ -4,7 +4,6 @@ import { version as ARTALK_VERSION } from '~/package.json'
 export const Copyright: ArtalkPlugin = (ctx) => {
   ctx.on('conf-loaded', () => {
     const list = ctx.get('list')
-    if (!list) return
 
     const $copyright = list.$el.querySelector<HTMLElement>('.atk-copyright')
     if (!$copyright) return

@@ -6,7 +6,6 @@ export const SidebarBtn: ArtalkPlugin = (ctx) => {
 
   ctx.on('conf-loaded', () => {
     const list = ctx.get('list')
-    if (!list) return
 
     $openSidebarBtn = list.$el.querySelector<HTMLElement>('[data-action="open-sidebar"]')
     if (!$openSidebarBtn) return

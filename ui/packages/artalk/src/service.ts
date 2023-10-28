@@ -5,7 +5,7 @@ import Layer from './layer'
 import SidebarLayer from './layer/sidebar-layer'
 import User from './lib/user'
 import List from './list/list'
-import * as DarkMode from './lib/dark-mode'
+
 import * as I18n from './i18n'
 import { PlugManager } from './plugins/editor-kit'
 
@@ -44,11 +44,9 @@ const services = {
   },
 
   // 评论列表
-  list(ctx: ContextApi): List|undefined {
-    // 评论列表
+  list(ctx: ContextApi): List {
     const list = new List(ctx)
     ctx.$root.appendChild(list.$el)
-
     return list
   },
 
@@ -63,15 +61,6 @@ const services = {
   sidebarLayer(ctx: ContextApi) {
     const sidebarLayer = new SidebarLayer(ctx)
     return sidebarLayer
-  },
-
-  // 夜间模式
-  darkMode(ctx: ContextApi) {
-    DarkMode.syncDarkModeConf(ctx)
-
-    ctx.on('conf-loaded', () => {
-      DarkMode.syncDarkModeConf(ctx)
-    })
   },
 
   // Extra Service

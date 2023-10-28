@@ -26,7 +26,6 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
   // Init paginator when conf loaded
   ctx.on('conf-loaded', (conf) => {
     const list = ctx.get('list')
-    if (!list) return
 
     if (paginator) paginator.dispose() // if had been init, dispose it
 

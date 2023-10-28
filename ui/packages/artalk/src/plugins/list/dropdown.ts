@@ -22,7 +22,6 @@ export const Dropdown: ArtalkPlugin = (ctx) => {
 
   ctx.on('conf-loaded', () => {
     const list = ctx.get('list')
-    if (!list) return
 
     const $count = list.$el.querySelector<HTMLElement>('.atk-comment-count')
     if (!$count) return

@@ -1,6 +1,6 @@
 import $t from '@/i18n'
+import type PlugKit from './_kit'
 import EditorPlug from './_plug'
-import PlugKit from './_kit'
 
 const LocalStorageKey = 'ArtalkContent'
 

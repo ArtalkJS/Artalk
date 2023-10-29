@@ -1,4 +1,4 @@
-import { I18n } from '.'
+import type { I18n } from '.'
 
 const zhCN: I18n = {
   /* Editor */

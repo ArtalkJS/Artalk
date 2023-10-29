@@ -1,7 +1,7 @@
 import User from '@/lib/user'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
-import PlugKit from './_kit'
+import type PlugKit from './_kit'
 
 export default class HeaderUser extends EditorPlug {
   constructor(kit: PlugKit) {

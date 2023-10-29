@@ -1,5 +1,5 @@
 import * as Utils from '../../lib/utils'
-import Render from '../render'
+import type Render from '../render'
 
 /**
  * 层级嵌套模式显示 AT 界面

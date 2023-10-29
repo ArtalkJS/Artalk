@@ -1,6 +1,6 @@
 import User from '@/lib/user'
 import EditorPlug from './_plug'
-import PlugKit from './_kit'
+import type PlugKit from './_kit'
 
 export default class HeaderLink extends EditorPlug {
   constructor(kit: PlugKit) {

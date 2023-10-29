@@ -1,5 +1,5 @@
 import EditorPlug from './_plug'
-import PlugKit from './_kit'
+import type PlugKit from './_kit'
 
 export default class HeaderEvent extends EditorPlug {
   private get $inputs() {

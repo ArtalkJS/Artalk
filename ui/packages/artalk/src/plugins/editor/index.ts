@@ -1,5 +1,5 @@
 import type { ArtalkConfig } from '~/types'
-import EditorPlug from './_plug'
+import type EditorPlug from './_plug'
 import LocalStorage from './local-storage'
 import Textarea from './textarea'
 import SubmitBtn from './submit-btn'

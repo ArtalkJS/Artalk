@@ -1,6 +1,6 @@
 import * as Utils from '../utils'
 import User from '../user'
-import { Checker } from '.'
+import type { Checker } from '.'
 
 const AdminChecker: Checker = {
   inputType: 'password',

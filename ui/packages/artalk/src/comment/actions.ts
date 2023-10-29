@@ -1,4 +1,4 @@
-import Comment from './comment'
+import type Comment from './comment'
 import ActionBtn from '../components/action-btn'
 
 export default class CommentActions {

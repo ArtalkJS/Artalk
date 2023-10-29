@@ -3,7 +3,7 @@ import './preview.scss'
 import * as marked from '@/lib/marked'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
-import PlugKit from './_kit'
+import type PlugKit from './_kit'
 
 export default class Preview extends EditorPlug {
   private isPlugPanelShow = false

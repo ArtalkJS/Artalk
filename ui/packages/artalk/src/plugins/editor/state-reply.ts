@@ -3,7 +3,7 @@ import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
-import PlugKit from './_kit'
+import type PlugKit from './_kit'
 import Submit from './submit'
 import SubmitAddPreset from './submit-add'
 

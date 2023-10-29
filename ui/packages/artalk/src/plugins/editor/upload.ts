@@ -1,7 +1,7 @@
 import * as Utils from '@/lib/utils'
 import User from '@/lib/user'
 import $t from '@/i18n'
-import PlugKit from './_kit'
+import type PlugKit from './_kit'
 import EditorPlug from './_plug'
 
 /** 允许的图片格式 */

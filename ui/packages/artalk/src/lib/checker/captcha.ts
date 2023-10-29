@@ -1,5 +1,5 @@
 
-import { Checker } from '.'
+import type { Checker } from '.'
 import * as render from './captcha-renders'
 
 const CaptchaChecker: Checker = {

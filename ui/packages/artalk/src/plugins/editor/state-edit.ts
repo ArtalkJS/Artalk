@@ -2,7 +2,7 @@ import type { CommentData } from '~/types'
 import $t from '@/i18n'
 import * as Utils from '@/lib/utils'
 import User from '@/lib/user'
-import PlugKit from './_kit'
+import type PlugKit from './_kit'
 import EditorPlug from './_plug'
 import Submit from './submit'
 

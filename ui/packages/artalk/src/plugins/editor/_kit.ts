@@ -1,5 +1,5 @@
-import { PlugManager } from '../editor-kit'
-import EditorPlug from "./_plug"
+import type { PlugManager } from '../editor-kit'
+import type EditorPlug from "./_plug"
 
 /**
  * PlugKit provides a set of methods to help you develop editor plug

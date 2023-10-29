@@ -1,5 +1,5 @@
 import * as Utils from '../../lib/utils'
-import Render from '../render'
+import type Render from '../render'
 
 /**
  * 待审核状态界面

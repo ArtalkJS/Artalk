@@ -1,6 +1,6 @@
 import * as Utils from '../../lib/utils'
 import ActionBtn from '../../components/action-btn'
-import Render from '../render'
+import type Render from '../render'
 
 /**
  * 评论操作按钮界面

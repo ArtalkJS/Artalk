@@ -1,6 +1,6 @@
 import * as Utils from '../../lib/utils'
 import * as Ui from '../../lib/ui'
-import Render from '../render'
+import type Render from '../render'
 
 /**
  * 评论内容界面

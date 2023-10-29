@@ -1,4 +1,4 @@
-import Render from '../render'
+import type Render from '../render'
 import Avatar from './avatar'
 import Header from './header'
 import Content from './content'

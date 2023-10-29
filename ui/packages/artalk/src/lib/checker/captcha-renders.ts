@@ -1,6 +1,6 @@
 import * as Utils from '../utils'
 import * as Ui from '../ui'
-import { CheckerCtx } from '.'
+import type { CheckerCtx } from '.'
 
 /** 图片验证码 */
 export function imgBody(checker: CheckerCtx) {

@@ -1,6 +1,6 @@
 import * as Utils from '../../lib/utils'
 import marked from '../../lib/marked'
-import Render from '../render'
+import type Render from '../render'
 
 /**
  * 回复的对象界面

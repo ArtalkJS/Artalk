@@ -27,7 +27,6 @@ module.exports = {
     'spaced-comment': 0,
     'no-lonely-if': 0,
     'prefer-destructuring': 0,
-    'import/no-cycle': 0,
     'import/prefer-default-export': 0,
     '@typescript-eslint/lines-between-class-members': 0,
     '@typescript-eslint/no-unused-vars': 'off',

@@ -1,7 +1,7 @@
 import type { CommentData } from '~/types'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
-import PlugKit from './_kit'
+import type PlugKit from './_kit'
 import SubmitAddPreset from './submit-add'
 
 interface CustomSubmit {

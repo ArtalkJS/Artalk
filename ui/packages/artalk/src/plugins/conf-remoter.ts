@@ -22,6 +22,9 @@ function loadConf(ctx: ContextApi) {
       conf = { ...conf, ...handleConfFormServer(data.frontend_conf) }
     }
 
+    // apply conf modifier
+    ctx.conf.remoteConfModifier && ctx.conf.remoteConfModifier(conf)
+
     ctx.updateConf(conf)
     confLoaded = true
   }).catch((err) => {
@@ -34,6 +37,7 @@ function loadConf(ctx: ContextApi) {
     throw err
   }).then(() => {
     // 评论获取
+    if (ctx.conf.remoteConfModifier) return // only auto fetch when no remoteConfModifier
     ctx.fetch({ offset: 0 })
   }).catch(() => {})
 }

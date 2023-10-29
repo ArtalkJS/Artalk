@@ -15,7 +15,7 @@ Artalk.use((ctx) => {
   ctx.on('list-loaded', () => {
     const $imgLinks: HTMLAnchorElement[] = []
 
-    ctx.getCommentList().forEach(comment => {
+    ctx.get('list').getCommentNodes().forEach(comment => {
       const $content = comment.getRender().$content
       $content.querySelectorAll<HTMLImageElement>(
         `img:not([atk-emoticon]):not([${LOADED_ATTR}])`

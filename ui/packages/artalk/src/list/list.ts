@@ -15,22 +15,11 @@ export default class List extends Component {
   protected commentNodes: CommentNode[] = []
   getCommentNodes() { return this.commentNodes }
 
-  // TODO remove options and use ctx.conf instead
   constructor (ctx: ContextApi) {
     super(ctx)
 
     // Init base element
-    this.$el = Utils.createElement(
-      `<div class="atk-list-lite">
-        <div class="atk-list-comments-wrap"></div>
-      </div>`)
-
-    if (!this.ctx.conf.listLiteMode) {
-      const el = Utils.createElement(ListHTML)
-      el.querySelector('.atk-list-body')!.append(this.$el) // 把 list 的 $el 变为子元素
-      this.$el = el
-    }
-
+    this.$el = Utils.createElement(ListHTML)
     this.$commentsWrap = this.$el.querySelector('.atk-list-comments-wrap')!
 
     // Init paginator

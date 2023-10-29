@@ -41,7 +41,10 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
     })
 
     // mount paginator dom
-    list.$el.append($paginator)
+    list.$commentsWrap.after($paginator)
+
+    // update paginator info
+    paginator?.update(offset, total)
   })
 
   // When list loaded
@@ -69,13 +72,15 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
     const comment = ctx.getData().findComment(commentID)
     if (!!comment || !paginator?.getHasMore()) return
 
-    // TODO 自动范围改为直接跳转到计算后的页面
-    paginator?.next()
-
     // wait for list loaded
     ctx.on('list-loaded', () => {
       autoSwitchPageForFindComment(commentID) // recursive, until comment found or no more page
     }, { once: true })
+
+    // TODO 自动范围改为直接跳转到计算后的页面
+    setTimeout(() => {
+      paginator?.next()
+    }, 80)
   }
 
   ctx.on('list-goto', (commentID) => {

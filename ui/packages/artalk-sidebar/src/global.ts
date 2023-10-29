@@ -1,7 +1,6 @@
 import Artalk from 'artalk'
 import type { ArtalkType } from 'artalk'
 import { useUserStore } from './stores/user'
-const { t } = useI18n()
 
 export let artalk: Artalk|null = null
 
@@ -33,6 +32,16 @@ export function createArtalkInstance() {
     site: bootParams.site,
     darkMode: bootParams.darkMode,
     useBackendConf: true,
+    remoteConfModifier: (conf) => {
+      conf.noComment = `<div class="atk-sidebar-no-content">No Content</div>` // TODO i18n t('noComment')
+      conf.flatMode = true
+      conf.pagination = {
+        pageSize: 20,
+        readMore: false,
+        autoLoad: false,
+      }
+      conf.listUnreadHighlight = true
+    }
   })
 }
 

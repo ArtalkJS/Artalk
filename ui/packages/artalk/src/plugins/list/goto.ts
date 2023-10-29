@@ -29,12 +29,14 @@ export const Goto: ArtalkPlugin = (ctx) => {
     ctx.off('list-loaded', check)
   })
 
+  let foundID = 0
   ctx.on('list-goto', (commentID) => {
-    const list = ctx.get('list')
+    if (foundID === commentID) return
 
-    // TODO remove get from list
-    const comment = list.getCommentNodes().find(c => c.getID() === commentID)
+    const comment = ctx.get('list').getCommentNodes().find(c => c.getID() === commentID)
     if (!comment) return
+
+    foundID = commentID
 
     // 若父评论存在 “子评论部分” 限高，取消限高
     comment.getParents().forEach((p) => {

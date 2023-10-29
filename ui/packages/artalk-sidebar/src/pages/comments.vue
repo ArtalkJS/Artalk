@@ -66,9 +66,21 @@ onMounted(() => {
     }
   })
 
+  artalk!.ctx.updateConf({
+    listFetchParamsModifier: (params) => {
+      params.type = curtTab.value // 列表数据类型
+      params.site_name = curtSite.value // 站点名
+      if (search.value) params.search = search.value
+    },
+  })
+
   artalk!.reload()
 
-  listEl.value?.append(artalk!.ctx.get('list')!.$el)
+  const $el = artalk!.ctx.get('list')!.$el
+  $el.querySelector<HTMLElement>('.atk-list-header')!.style.display = 'none'
+  $el.querySelector<HTMLElement>('.atk-list-footer')!.style.display = 'none'
+
+  listEl.value?.append($el)
 
   // 搜索功能
   nav.enableSearch((value: string) => {

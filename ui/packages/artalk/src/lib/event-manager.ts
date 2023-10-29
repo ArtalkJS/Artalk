@@ -37,10 +37,11 @@ export default class EventManager<PayloadMap> implements EventManagerFuncs<Paylo
    */
   public trigger<K extends keyof PayloadMap>(name: K, payload?: PayloadMap[K]) {
     this.events
+      .slice(0) // make a copy, in case listeners are removed while iterating
       .filter((evt) => evt.name === name && typeof evt.handler === 'function')
       .forEach((evt) => {
-        evt.handler(payload!)
         if (evt.once) this.off(name, evt.handler)
+        evt.handler(payload!)
       })
   }
 }

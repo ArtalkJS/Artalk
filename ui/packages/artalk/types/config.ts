@@ -126,7 +126,7 @@ export interface ArtalkConfig {
   listFetchParamsModifier?: (params: any) => void
 
   // TODO consider merge list related config into one object, or flatten all to keep simple (keep consistency)
-  listLiteMode?: boolean
+  remoteConfModifier?: (conf: Partial<ArtalkConfig>) => void
   listUnreadHighlight?: boolean
   listScrollListenerAt?: HTMLElement
 }

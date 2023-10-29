@@ -2,10 +2,18 @@ import type { ArtalkPlugin } from '~/types'
 import { getLayerWrap } from '@/layer'
 
 export const AdminOnlyElem: ArtalkPlugin = (ctx) => {
-  ctx.on('user-changed', (user) => {
-    applyAdminOnlyEls(user.isAdmin, getAdminOnlyEls({
+  const scanApply = () => {
+    applyAdminOnlyEls(ctx.get('user').data.isAdmin, getAdminOnlyEls({
       $root: ctx.$root
     }))
+  }
+
+  ctx.on('list-loaded', () => {
+    scanApply()
+  })
+
+  ctx.on('user-changed', (user) => {
+    scanApply()
   })
 }
 

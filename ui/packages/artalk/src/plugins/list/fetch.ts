@@ -3,12 +3,14 @@ import type { ListFetchParams, ArtalkPlugin } from '~/types'
 export const Fetch: ArtalkPlugin = (ctx) => {
   ctx.on('list-fetch', (_params) => {
     if (ctx.getData().getLoading()) return
+    ctx.getData().setLoading(true)
 
     const params: ListFetchParams = {
       // default params
       offset: 0,
       limit: ctx.conf.pagination.pageSize,
       flatMode: ctx.conf.flatMode as boolean, // always be boolean because had been handled in Artalk.init
+      paramsModifier: ctx.conf.listFetchParamsModifier,
       ..._params
     }
 
@@ -18,7 +20,7 @@ export const Fetch: ArtalkPlugin = (ctx) => {
     })
 
     ctx.getApi().comment
-      .get(params.offset, params.limit, params.flatMode)
+      .get(params.offset, params.limit, params.flatMode, params.paramsModifier)
       .then((data) => {
         // Must before all other function call and event trigger,
         // because it will depend on the lastData
@@ -54,6 +56,9 @@ export const Fetch: ArtalkPlugin = (ctx) => {
         ctx.trigger('list-fetched', { params, error })
 
         throw e
+      })
+      .finally(() => {
+        ctx.getData().setLoading(false)
       })
   })
 }

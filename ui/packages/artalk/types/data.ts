@@ -233,6 +233,7 @@ export interface ListFetchParams {
   offset: number
   limit: number
   flatMode: boolean
+  paramsModifier?: (p: any) => void
   onSuccess?: (data: ListData) => void
   onError?: (err: any) => void
 }

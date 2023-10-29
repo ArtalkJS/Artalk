@@ -30,8 +30,6 @@ export default class Dialog {
     // 内容
     this.$content = this.$el.querySelector('.atk-layer-dialog-content')!
     this.$content.appendChild(contentEl)
-
-    return this
   }
 
   /** 按钮 · 确定 */

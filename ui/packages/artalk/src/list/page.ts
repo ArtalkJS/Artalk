@@ -54,7 +54,7 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
   // When list fetch
   ctx.on('list-fetch', (params) => {
     // if clear comments when fetch new page data
-    if (paginator?.getIsClearComments(params)) {
+    if (ctx.getData().getComments().length > 0 && paginator?.getIsClearComments(params)) {
       ctx.getData().clearComments()
     }
   })

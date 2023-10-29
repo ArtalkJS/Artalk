@@ -42,22 +42,6 @@ onMounted(() => {
     artalk!.ctx.reload()
   })
 
-  artalk!.ctx.updateConf({
-    noComment: `<div class="atk-sidebar-no-content">${t('noContent')}</div>`,
-    pagination: {
-      pageSize: 20,
-      readMore: false,
-      autoLoad: false,
-    },
-    listUnreadHighlight: true,
-    listFetchParamsModifier: (params) => {
-      params.type = curtTab.value // 列表数据类型
-      params.site_name = curtSite.value // 站点名
-      if (search.value) params.search = search.value
-    },
-    listScrollListenerAt: wrapEl.value,
-  })
-
   artalk!.ctx.on('comment-rendered', (comment) => {
     const pageURL = comment.getData().page_url
     comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
@@ -72,6 +56,7 @@ onMounted(() => {
       params.site_name = curtSite.value // 站点名
       if (search.value) params.search = search.value
     },
+    scrollRelativeTo: () => wrapEl.value!,
   })
 
   artalk!.reload()

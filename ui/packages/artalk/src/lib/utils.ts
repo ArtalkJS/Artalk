@@ -29,11 +29,20 @@ export function getQueryParam(name: string) {
   return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }
 
-export function getOffset(el: HTMLElement) {
+export function getOffset(el: HTMLElement, relativeTo: HTMLElement | Window = window) {
   const rect = el.getBoundingClientRect()
+  let topOffset = rect.top
+  let leftOffset = rect.left
+
+  if (relativeTo instanceof HTMLElement) {
+    const relativeRect = relativeTo.getBoundingClientRect()
+    topOffset -= relativeRect.top
+    leftOffset -= relativeRect.left
+  }
+
   return {
-    top: rect.top + window.scrollY,
-    left: rect.left + window.scrollX
+    top: topOffset + window.scrollY,
+    left: leftOffset + window.scrollX
   }
 }
 

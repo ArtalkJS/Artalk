@@ -34,7 +34,9 @@ export default class EditorStateManager {
     if (state !== 'normal' && payload) {
       // move editor position
       this.editor.getPlugs()?.get(Mover)?.move(payload.$comment)
-      Ui.scrollIntoView(this.editor.getUI().$el)
+
+      const $relative = this.editor.ctx.conf.scrollRelativeTo && this.editor.ctx.conf.scrollRelativeTo()
+      Ui.scrollIntoView(this.editor.getUI().$el, true, $relative)
 
       const plugin = this.editor.getPlugs()?.getPlugs().find(p => p.editorStateEffectWhen === state)
       if (plugin && plugin.editorStateEffect) {

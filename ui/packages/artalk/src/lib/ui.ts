@@ -54,22 +54,27 @@ export function isVisible(el: HTMLElement, viewport: HTMLElement = document.docu
 }
 
 /** 滚动到元素中心 */
-export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true) {
-  const top =
-    Utils.getOffset(elem).top +
-    Utils.getHeight(elem) / 2 -
-    document.documentElement.clientHeight / 2
+export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true, relativeTo?: HTMLElement) {
+  let top: number
 
-  if (enableAnim) {
-    window.scroll({
-      top: top > 0 ? top : 0,
-      left: 0,
-      // behavior: 'smooth',
-    })
+  if (relativeTo) {
+    console.log(relativeTo)
+    const containerRect = relativeTo.getBoundingClientRect()
+    const elementRect = elem.getBoundingClientRect()
+    top = elementRect.top - containerRect.top + relativeTo.scrollTop
+    top += Utils.getHeight(relativeTo) / 2 - Utils.getHeight(elem) / 2
   } else {
-    // 无动画
-    window.scroll(0, top > 0 ? top : 0)
+    top = Utils.getOffset(elem).top + Utils.getHeight(elem) / 2 - document.documentElement.clientHeight / 2
   }
+
+  const scrollOptions: ScrollToOptions = {
+    top, left: 0,
+    // behavior: enableAnim ? 'smooth' : 'instant',
+    behavior: 'instant'
+  }
+
+  if (relativeTo) relativeTo.scroll(scrollOptions)
+  else window.scroll(scrollOptions)
 }
 
 /** 显示消息 */

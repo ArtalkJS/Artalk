@@ -128,7 +128,7 @@ export interface ArtalkConfig {
   // TODO consider merge list related config into one object, or flatten all to keep simple (keep consistency)
   remoteConfModifier?: (conf: Partial<ArtalkConfig>) => void
   listUnreadHighlight?: boolean
-  listScrollListenerAt?: HTMLElement
+  scrollRelativeTo?: () => HTMLElement
 }
 
 /**

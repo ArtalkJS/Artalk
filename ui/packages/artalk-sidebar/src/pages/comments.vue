@@ -62,8 +62,11 @@ onMounted(() => {
   artalk!.reload()
 
   const $el = artalk!.ctx.get('list')!.$el
-  $el.querySelector<HTMLElement>('.atk-list-header')!.style.display = 'none'
-  $el.querySelector<HTMLElement>('.atk-list-footer')!.style.display = 'none'
+
+  // @ts-ignore
+  $el.querySelector<HTMLElement>('.atk-list-header').style.display = 'none'
+  // @ts-ignore
+  $el.querySelector<HTMLElement>('.atk-list-footer').style.display = 'none'
 
   listEl.value?.append($el)
 

@@ -1,12 +1,11 @@
-import { syncDarkModeConf } from '@/lib/dark-mode'
 import type { ArtalkPlugin } from '~/types'
 
 export const DarkMode: ArtalkPlugin = (ctx) => {
   ctx.on('inited', () => {
-    syncDarkModeConf(ctx)
+    ctx.setDarkMode(ctx.conf.darkMode)
   })
 
   ctx.on('conf-loaded', () => {
-    syncDarkModeConf(ctx)
+    ctx.setDarkMode(ctx.conf.darkMode)
   })
 }

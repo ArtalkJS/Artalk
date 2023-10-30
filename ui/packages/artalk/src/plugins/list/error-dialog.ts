@@ -11,8 +11,11 @@ export const ErrorDialog: ArtalkPlugin = (ctx) => {
   })
 
   ctx.on('list-error', (err) => {
-    showErrorDialog(ctx, err.msg, err.data, () => {
-      ctx.fetch({ offset: 0 })
+    showErrorDialog({
+      $err: ctx.get('list').$el,
+      errMsg: err.msg,
+      errData: err.data,
+      retryFn: () => ctx.fetch({ offset: 0 })
     })
   })
 }

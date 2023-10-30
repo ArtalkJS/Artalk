@@ -1,12 +1,13 @@
-import * as Utils from '../utils'
-import * as Ui from '../ui'
+import $t from '@/i18n'
+import * as Utils from '@/lib/utils'
+import * as Ui from '@/lib/ui'
 import type { CheckerCtx } from '.'
 
 /** 图片验证码 */
 export function imgBody(checker: CheckerCtx) {
   // 图片验证方式
   const elem = Utils.createElement(
-    `<span><img class="atk-captcha-img" src="${checker.get('img_data') || ''}">${checker.getCtx().$t('captchaCheck')}</span>`
+    `<span><img class="atk-captcha-img" src="${checker.get('img_data') || ''}">${$t('captchaCheck')}</span>`
   );
 
   // 刷新验证码
@@ -29,7 +30,7 @@ export function iframeBody(checker: CheckerCtx) {
   const $iframe = Utils.createElement<HTMLIFrameElement>(`<iframe class="atk-fade-in"></iframe>`)
   $iframe.style.display = 'none'
   Ui.showLoading($iframeWrap, { transparentBg: true })
-  $iframe.src = `${checker.getCtx().conf.server}/api/captcha/get?t=${+new Date()}`
+  $iframe.src = `${checker.getOpts().getIframeURLBase() || ''}/api/captcha/get?t=${+new Date()}`
   $iframe.onload = () => {
     $iframe.style.display = ''
     Ui.hideLoading($iframeWrap)
@@ -49,7 +50,7 @@ export function iframeBody(checker: CheckerCtx) {
     if (stop) return
     let isPass = false
     try {
-      const resp = await checker.getCtx().getApi().captcha.captchaStatus()
+      const resp = await checker.getApi().captcha.captchaStatus()
       isPass = resp.is_pass
     } catch { isPass = false }
     if (isPass) {

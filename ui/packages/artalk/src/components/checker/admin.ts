@@ -1,5 +1,6 @@
-import * as Utils from '../utils'
-import User from '../user'
+import $t from '@/i18n'
+import * as Utils from '@/lib/utils'
+import User from '@/lib/user'
 import type { Checker } from '.'
 
 const AdminChecker: Checker = {
@@ -19,7 +20,7 @@ const AdminChecker: Checker = {
   },
 
   body(checker) {
-    return Utils.createElement(`<span>${checker.getCtx().$t('adminCheck')}</span>`)
+    return Utils.createElement(`<span>${$t('adminCheck')}</span>`)
   },
 
   onSuccess(checker, userToken, inputVal, formEl) {
@@ -27,8 +28,7 @@ const AdminChecker: Checker = {
       isAdmin: true,
       token: userToken
     })
-    checker.getCtx().trigger('user-changed', User.data)
-    checker.getCtx().reload()
+    checker.getOpts().onReload()
   },
 
   onError(checker, err, inputVal, formEl) {}

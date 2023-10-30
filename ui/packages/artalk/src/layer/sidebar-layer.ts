@@ -37,7 +37,7 @@ export default class SidebarLayer extends Component {
 
     // 获取 Layer
     if (this.layer == null) {
-      this.layer = new Layer(this.ctx, 'sidebar', this.$el)
+      this.layer = new Layer('sidebar', this.$el)
       this.layer.afterHide = () => {
         // 防止评论框被吞
         this.ctx.editorResetState()
@@ -73,7 +73,10 @@ export default class SidebarLayer extends Component {
 
       // 准备 Iframe 参数
       const baseURL = (import.meta.env.DEV)  ? 'http://localhost:23367/'
-        : Utils.getURLBasedOnApi(this.ctx, '/sidebar/')
+        : Utils.getURLBasedOnApi({
+          base: this.ctx.conf.server,
+          path: '/sidebar/',
+        })
 
       const query: any = {
         pageKey: this.conf.pageKey,

@@ -1,34 +1,35 @@
-import type { ContextApi } from '~/types'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import User from '@/lib/user'
 import $t from '@/i18n'
 
-export function showErrorDialog(ctx: ContextApi, errMsg: string, errData?: any, retryFn?: () => void) {
-  const errEl = Utils.createElement(`<span>${errMsg}，${$t('listLoadFailMsg')}<br/></span>`)
+export interface ErrorDialogOptions {
+  $err: HTMLElement
 
-  const $retryBtn = Utils.createElement(`<span style="cursor:pointer;">${$t('listRetry')}</span>`)
-  $retryBtn.onclick = () => retryFn && retryFn()
-  errEl.appendChild($retryBtn)
+  errMsg: string
+  errData?: any
+  retryFn?: () => void
 
-  const adminBtn = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
-  errEl.appendChild(adminBtn)
-  if (!User.data.isAdmin) adminBtn.classList.add('atk-hide')
+  onOpenSidebar?: () => void
+}
 
-  let sidebarView = ''
+export function showErrorDialog(opts: ErrorDialogOptions) {
+  const errEl = Utils.createElement(`<span>${opts.errMsg}，${$t('listLoadFailMsg')}<br/></span>`)
 
-  // 找不到站点错误，打开侧边栏并填入创建站点表单
-  if (errData?.err_no_site) {
-    const viewLoadParam = {
-      create_name: ctx.conf.site,
-      create_urls: `${window.location.protocol}//${window.location.host}`
-    }
-    sidebarView = `sites|${JSON.stringify(viewLoadParam)}`
+  if (opts.retryFn) {
+    const $retryBtn = Utils.createElement(`<span style="cursor:pointer;">${$t('listRetry')}</span>`)
+    $retryBtn.onclick = () => opts.retryFn && opts.retryFn()
+    errEl.appendChild($retryBtn)
   }
 
-  adminBtn.onclick = () => ctx.showSidebar({
-    view: sidebarView as any
-  })
+  if (opts.onOpenSidebar) {
+    const $openSidebar = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
+    errEl.appendChild($openSidebar)
+    if (!User.data.isAdmin) { // only display if user is admin
+      $openSidebar.classList.add('atk-hide')
+    }
+    $openSidebar.onclick = () => opts.onOpenSidebar && opts.onOpenSidebar()
+  }
 
-  Ui.setError(ctx.get('list').$el, errEl)
+  Ui.setError(opts.$err, errEl)
 }

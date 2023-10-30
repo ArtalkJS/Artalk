@@ -30,8 +30,22 @@ function loadConf(ctx: ContextApi) {
   }).catch((err) => {
     ctx.updateConf({})
 
-    showErrorDialog(ctx, err.msg || String(err), err.data, () => {
-      loadConf(ctx)
+    let sidebarOpenView = ''
+
+    // if response err_no_site, modify the sidebar open view to create site
+    if (err.data?.err_no_site) {
+      const viewLoadParam = { create_name: ctx.conf.site, create_urls: `${window.location.protocol}//${window.location.host}` }
+      sidebarOpenView = `sites|${JSON.stringify(viewLoadParam)}`
+    }
+
+    showErrorDialog({
+      $err: ctx.get('list').$el,
+      errMsg: err.msg || String(err),
+      errData: err.data,
+      retryFn: () => loadConf(ctx),
+      onOpenSidebar:() => ctx.showSidebar({
+        view: sidebarOpenView as any
+      })
     })
 
     throw err

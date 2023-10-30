@@ -1,9 +1,9 @@
-import type { ContextApi } from '~/types'
-import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 
-export default class Layer extends Component {
+export default class Layer {
+  private $el: HTMLElement
+
   private name: string
   private $wrap: HTMLElement
   private $mask: HTMLElement
@@ -15,9 +15,7 @@ export default class Layer extends Component {
 
   public afterHide?: Function
 
-  constructor (ctx: ContextApi, name: string, el?: HTMLElement) {
-    super(ctx)
-
+  constructor(name: string, el?: HTMLElement) {
     this.name = name
     const { $wrap, $mask } = getLayerWrap()
     this.$wrap = $wrap
@@ -68,7 +66,7 @@ export default class Layer extends Component {
     this.pageBodyScrollBarHide()
   }
 
-  hide () {
+  hide() {
     if (this.afterHide) this.afterHide()
     this.$wrap.classList.add('atk-fade-out')
     this.$el.style.display = 'none'
@@ -86,7 +84,7 @@ export default class Layer extends Component {
     }, 200)
   }
 
-  setMaskClickHide (enable: boolean) {
+  setMaskClickHide(enable: boolean) {
     this.maskClickHideEnable = enable
   }
 

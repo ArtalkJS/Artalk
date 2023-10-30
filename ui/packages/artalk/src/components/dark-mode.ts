@@ -1,16 +1,11 @@
-import type { ContextApi } from '~/types'
 import { getLayerWrap } from '../layer'
 
 const darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)')
 let darkModeAutoFunc: (evt: MediaQueryListEvent) => void
 
-export function syncDarkModeConf(ctx: ContextApi) {
-  setDarkMode(ctx, ctx.conf.darkMode)
-}
-
-export function setDarkMode(ctx: ContextApi, darkMode: boolean|'auto') {
+export function setDarkMode($el: HTMLElement, darkMode: boolean|'auto') {
   const apply = (d: boolean) => {
-    updateClassName(ctx, d)
+    updateClassName($el, d)
   }
 
   if (darkMode === 'auto') {
@@ -30,9 +25,9 @@ export function setDarkMode(ctx: ContextApi, darkMode: boolean|'auto') {
 }
 
 const DarkModeClassName = 'atk-dark-mode'
-export function updateClassName(ctx: ContextApi, darkMode: boolean) {
-  if (darkMode) ctx.$root.classList.add(DarkModeClassName)
-  else ctx.$root.classList.remove(DarkModeClassName)
+function updateClassName($el: HTMLElement, darkMode: boolean) {
+  if (darkMode) $el.classList.add(DarkModeClassName)
+  else $el.classList.remove(DarkModeClassName)
 
   // for Layer
   const { $wrap: $layerWrap } = getLayerWrap()

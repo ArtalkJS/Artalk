@@ -1,5 +1,3 @@
-import type { ContextApi } from '~/types'
-
 export function createElement<E extends HTMLElement = HTMLElement>(htmlStr: string = ''): E {
   const div = document.createElement('div')
   div.innerHTML = htmlStr.trim()
@@ -64,7 +62,7 @@ export function dateFormat(date: Date) {
   return `${vYear}-${vMonth}-${vDay}`
 }
 
-export function timeAgo(date: Date, ctx: ContextApi) {
+export function timeAgo(date: Date, $t: Function = (n: string) => n) {
   try {
     const oldTime = date.getTime()
     const currTime = new Date().getTime()
@@ -83,17 +81,17 @@ export function timeAgo(date: Date, ctx: ContextApi) {
           // 计算相差秒数
           const leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
           const seconds = Math.round(leave3 / 1000)
-          if (seconds < 10) return ctx.$t('now')
-          return `${seconds} ${ctx.$t('seconds')}`
+          if (seconds < 10) return $t('now')
+          return `${seconds} ${$t('seconds')}`
         }
-        return `${minutes} ${ctx.$t('minutes')}`
+        return `${minutes} ${$t('minutes')}`
       }
-      return `${hours} ${ctx.$t('hours')}`
+      return `${hours} ${$t('hours')}`
     }
-    if (days < 0) return ctx.$t('now')
+    if (days < 0) return $t('now')
 
     if (days < 8) {
-      return `${days} ${ctx.$t('days')}`
+      return `${days} ${$t('days')}`
     }
 
     return dateFormat(date)
@@ -124,9 +122,8 @@ export function onImagesLoaded($container: HTMLElement, event: Function) {
   }
 }
 
-export function getGravatarURL(ctx: ContextApi, emailMD5: string) {
-  const { mirror, params } = ctx.conf.gravatar
-  return `${mirror.replace(/\/$/, '')}/${emailMD5}?${params.replace(/^\?/, '')}`
+export function getGravatarURL(opts: { params: string, mirror: string, emailMD5: string }) {
+  return `${opts.mirror.replace(/\/$/, '')}/${opts.emailMD5}?${opts.params.replace(/^\?/, '')}`
 }
 
 export function sleep(ms: number) {
@@ -194,8 +191,8 @@ export function isValidURL(urlRaw: string) {
 }
 
 /** 获取基于 conf.server 的 URL */
-export function getURLBasedOnApi(ctx: ContextApi, path: string) {
-  return getURLBasedOn(ctx.conf.server, path)
+export function getURLBasedOnApi(opts: { base: string, path: string }) {
+  return getURLBasedOn(opts.base, opts.path)
 }
 
 /** 获取基于某个 baseURL 的 URL */

@@ -1,6 +1,6 @@
 import * as Utils from '../lib/utils'
 
-export interface ReadMoreBtnConf {
+export interface ReadMoreBtnOptions {
   /** 回调函数 */
   onClick: (offset: number) => void
 
@@ -13,7 +13,7 @@ export interface ReadMoreBtnConf {
  * 阅读更多按钮
  */
 export default class ReadMoreBtn {
-  public conf: ReadMoreBtnConf
+  public opts: ReadMoreBtnOptions
   public $el: HTMLElement
   private $loading: HTMLElement
   private $text: HTMLElement
@@ -23,12 +23,12 @@ export default class ReadMoreBtn {
 
   /** 是否有更多内容 */
   get hasMore() {
-    return this.total > (this.offset + this.conf.pageSize)
+    return this.total > (this.offset + this.opts.pageSize)
   }
 
-  public constructor(conf: ReadMoreBtnConf) {
-    this.conf = conf
-    this.origText = this.conf.text || this.origText
+  public constructor(opts: ReadMoreBtnOptions) {
+    this.opts = opts
+    this.origText = this.opts.text || this.origText
 
     this.$el = Utils.createElement(
     `<div class="atk-list-read-more" style="display: none;">
@@ -45,7 +45,7 @@ export default class ReadMoreBtn {
   }
 
   click() {
-    if (this.hasMore) this.conf.onClick(this.offset + this.conf.pageSize)
+    if (this.hasMore) this.opts.onClick(this.offset + this.opts.pageSize)
     this.checkDisabled()
   }
 

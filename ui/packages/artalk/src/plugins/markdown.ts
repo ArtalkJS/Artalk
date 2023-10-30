@@ -4,7 +4,7 @@ import * as marked from '@/lib/marked'
 export const Markdown: ArtalkPlugin = (ctx) => {
   marked.initMarked()
 
-  if (ctx.conf.markedReplacers) {
-    marked.setReplacers(ctx.conf.markedReplacers)
-  }
+  ctx.on('conf-loaded', (conf) => {
+    if (conf.markedReplacers) marked.setReplacers(conf.markedReplacers)
+  })
 }

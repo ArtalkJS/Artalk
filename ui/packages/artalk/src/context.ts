@@ -3,9 +3,9 @@ import type { TInjectedServices } from './service'
 import Api from './api'
 
 import * as Utils from './lib/utils'
-import * as DarkMode from './lib/dark-mode'
+import * as DarkMode from './components/dark-mode'
 import * as marked from './lib/marked'
-import { CheckerCaptchaPayload, CheckerPayload } from './lib/checker'
+import { CheckerCaptchaPayload, CheckerPayload } from './components/checker'
 
 import { DataManager } from './data'
 import * as I18n from './i18n'
@@ -127,8 +127,8 @@ class Context implements ContextApi {
     return I18n.t(key, args)
   }
 
-  public setDarkMode(darkMode: boolean): void {
-    DarkMode.setDarkMode(this, darkMode)
+  public setDarkMode(darkMode: boolean|'auto'): void {
+    DarkMode.setDarkMode(this.$root, darkMode)
   }
 
   public updateConf(nConf: Partial<ArtalkConfig>): void {

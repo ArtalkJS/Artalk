@@ -1,7 +1,7 @@
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
 
-export interface PaginationConf {
+export interface PaginationOptions {
   /** 每页条数 */
   pageSize: number
 
@@ -10,7 +10,7 @@ export interface PaginationConf {
 }
 
 export default class Pagination {
-  private conf: PaginationConf
+  private opts: PaginationOptions
   public total: number
   public $el: HTMLElement
   public $input: HTMLInputElement
@@ -20,7 +20,7 @@ export default class Pagination {
 
   public page: number = 1
   get pageSize(): number {
-    return this.conf.pageSize
+    return this.opts.pageSize
   }
   get offset(): number {
     return this.pageSize * (this.page - 1)
@@ -29,9 +29,9 @@ export default class Pagination {
     return Math.ceil(this.total / this.pageSize)
   }
 
-  public constructor(total: number, conf: PaginationConf) {
+  public constructor(total: number, opts: PaginationOptions) {
     this.total = total
-    this.conf = conf
+    this.opts = opts
 
     this.$el = Utils.createElement(
       `<div class="atk-pagination-wrap">
@@ -105,7 +105,7 @@ export default class Pagination {
 
   public change(page: number) {
     this.page = page
-    this.conf.onChange(this.offset)
+    this.opts.onChange(this.offset)
     this.setInput(page)
     this.checkDisabled()
   }

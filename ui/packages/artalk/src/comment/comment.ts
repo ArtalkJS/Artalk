@@ -159,7 +159,11 @@ export default class Comment extends Component {
 
   /** 获取 Gravatar 头像 URL */
   public getGravatarURL() {
-    return Utils.getGravatarURL(this.ctx, this.data.email_encrypted)
+    return Utils.getGravatarURL({
+      mirror: this.ctx.conf.gravatar.mirror,
+      params: this.ctx.conf.gravatar.params,
+      emailMD5: this.data.email_encrypted,
+    })
   }
 
   /** 获取评论 markdown 解析后的内容 */
@@ -169,7 +173,7 @@ export default class Comment extends Component {
 
   /** 获取格式化后的日期 */
   public getDateFormatted() {
-    return Utils.timeAgo(new Date(this.data.date), this.ctx)
+    return Utils.timeAgo(new Date(this.data.date), this.ctx.$t)
   }
 
   /** 获取用户 UserAgent 信息 */

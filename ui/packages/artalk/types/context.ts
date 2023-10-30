@@ -1,10 +1,10 @@
+import type { TInjectedServices } from '@/service'
+import type { CheckerCaptchaPayload, CheckerPayload } from '@/components/checker'
+import type { EventManagerFuncs } from '@/lib/event-manager'
+import type { TMarked } from '@/lib/marked'
+import type { I18n } from '@/i18n'
+import type Api from '@/api'
 import type { SidebarShowPayload, EventPayloadMap, ArtalkConfig, CommentData, DataManagerApi, ListFetchParams, NotifyLevel } from '.'
-import type { EventManagerFuncs } from '../src/lib/event-manager'
-import type { I18n } from '../src/i18n'
-import type Api from '../src/api'
-import type { CheckerCaptchaPayload, CheckerPayload } from '../src/lib/checker'
-import type { TMarked } from '../src/lib/marked'
-import type { TInjectedServices } from '../src/service'
 
 /**
  * Context 接口
@@ -77,7 +77,7 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   $t(key: keyof I18n, args?: {[key: string]: string}): string
 
   /** 设置夜间模式 */
-  setDarkMode(darkMode: boolean): void
+  setDarkMode(darkMode: boolean|'auto'): void
 
   /** 更新配置 */
   updateConf(conf: Partial<ArtalkConfig>): void

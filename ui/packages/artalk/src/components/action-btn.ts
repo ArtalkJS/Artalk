@@ -1,7 +1,7 @@
-import type { ContextApi } from '~/types'
+import $t from '@/i18n'
 import * as Utils from '../lib/utils'
 
-interface ActionBtnConf {
+interface ActionBtnOptions {
   /** 按钮文字 (动态/静态) */
   text: (() => string) | string
 
@@ -19,8 +19,7 @@ interface ActionBtnConf {
  * 通用操作按钮
  */
 export default class ActionBtn {
-  private ctx: ContextApi
-  private conf: ActionBtnConf
+  private opts: ActionBtnOptions
   public $el: HTMLElement
 
   public isLoading = false // 正在加载
@@ -33,15 +32,14 @@ export default class ActionBtn {
   public confirmRecTimer?: number // 确认消息复原定时器
 
   /** 构造函数 */
-  constructor(ctx: ContextApi, conf: ActionBtnConf|string|(() => string)) {
-    this.ctx = ctx
+  constructor(opts: ActionBtnOptions|string|(() => string)) {
     this.$el = Utils.createElement(`<span class="atk-common-action-btn"></span>`)
 
-    this.conf = (typeof conf !== 'object') ? ({ text: conf }) : conf
+    this.opts = (typeof opts !== 'object') ? ({ text: opts }) : opts
     this.$el.innerText = this.getText()
 
     // 仅管理员可操作
-    if (this.conf.adminOnly) this.$el.setAttribute('atk-only-admin-show', '')
+    if (this.opts.adminOnly) this.$el.setAttribute('atk-only-admin-show', '')
   }
 
   /** 将按钮装载到指定元素 */
@@ -52,7 +50,7 @@ export default class ActionBtn {
 
   /** 获取按钮文字（动态/静态） */
   private getText() {
-    return (typeof this.conf.text === 'string') ? this.conf.text : this.conf.text()
+    return (typeof this.opts.text === 'string') ? this.opts.text : this.opts.text()
   }
 
   /** 设置点击事件 */
@@ -66,7 +64,7 @@ export default class ActionBtn {
       }
 
       // 操作确认
-      if (this.conf.confirm && !this.isMessaging) {
+      if (this.opts.confirm && !this.isMessaging) {
         const confirmRestore = () => {
           this.isConfirming = false
           this.$el.classList.remove('atk-btn-confirm')
@@ -76,7 +74,7 @@ export default class ActionBtn {
         if (!this.isConfirming) {
           this.isConfirming = true
           this.$el.classList.add('atk-btn-confirm')
-          this.$el.innerText = this.conf.confirmText || this.ctx.$t('actionConfirm')
+          this.$el.innerText = this.opts.confirmText || $t('actionConfirm')
           this.confirmRecTimer = window.setTimeout(() => confirmRestore(), 5000)
           return
         }
@@ -99,7 +97,7 @@ export default class ActionBtn {
 
   /** 文字刷新（动态/静态） */
   public updateText(text?: (() => string) | string) {
-    if (text) this.conf.text = text
+    if (text) this.opts.text = text
     this.setLoading(false)
     this.$el.innerText = this.getText()
   }
@@ -110,7 +108,7 @@ export default class ActionBtn {
     this.isLoading = value
     if (value) {
       this.$el.classList.add('atk-btn-loading')
-      this.$el.innerText = loadingText || `${this.ctx.$t('loading')}...`
+      this.$el.innerText = loadingText || `${$t('loading')}...`
     } else {
       this.$el.classList.remove('atk-btn-loading')
       this.$el.innerText = this.getText()

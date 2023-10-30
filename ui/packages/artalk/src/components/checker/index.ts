@@ -1,10 +1,10 @@
-import type { ContextApi } from '~/types'
+import type Api from '@/api'
 import Dialog from '@/components/dialog'
 import Layer from '@/layer'
-import * as Utils from '../utils'
+import $t from '@/i18n'
+import * as Utils from '@/lib/utils'
 import CaptchaChecker from './captcha'
 import AdminChecker from './admin'
-import type Api from '../../api'
 
 export interface CheckerCaptchaPayload extends CheckerPayload {
   imgData?: string
@@ -17,16 +17,19 @@ export interface CheckerPayload {
   onCancel?: () => void
 }
 
+export interface CheckerLauncherOptions {
+  getApi: () => Api
+  getIframeURLBase: () => string
+  onReload: () => void
+}
+
 /**
  * Checker 发射台
  */
 export default class CheckerLauncher {
-  public ctx: ContextApi
   public launched: Checker[] = []
 
-  constructor(ctx: ContextApi) {
-    this.ctx = ctx
-  }
+  constructor(private opts: CheckerLauncherOptions) { }
 
   public checkCaptcha(payload: CheckerCaptchaPayload) {
     this.fire(CaptchaChecker, payload, (ctx) => {
@@ -44,7 +47,7 @@ export default class CheckerLauncher {
     this.launched.push(checker)
 
     // 创建层
-    const layer = new Layer(this.ctx, `checker-${new Date().getTime()}`)
+    const layer = new Layer(`checker-${new Date().getTime()}`)
     layer.setMaskClickHide(false)
     layer.show()
 
@@ -54,8 +57,8 @@ export default class CheckerLauncher {
     const checkerCtx: CheckerCtx = {
       set: (key, val) => { checkerStore[key] = val },
       get: (key) => (checkerStore[key]),
-      getCtx: () => (this.ctx),
-      getApi: () => (this.ctx.getApi()),
+      getOpts: () => (this.opts),
+      getApi: () => (this.opts.getApi()),
       getLayer: () => layer,
       hideInteractInput: () => {
         hideInteractInput = true
@@ -97,7 +100,7 @@ export default class CheckerLauncher {
     }
 
     let btnTextOrg: string | undefined
-    const dialog = new Dialog(this.ctx, formEl)
+    const dialog = new Dialog(formEl)
 
     // 确认按钮
     dialog.setYes((btnEl) => {
@@ -114,7 +117,7 @@ export default class CheckerLauncher {
         btnEl.classList.remove('error')
       }
 
-      btnEl.innerText = `${this.ctx.$t('loading')}...`
+      btnEl.innerText = `${$t('loading')}...`
 
       // 发送请求
       checker
@@ -187,7 +190,7 @@ interface CheckerStore {
 export interface CheckerCtx {
   get<K extends keyof CheckerStore>(key: K): CheckerStore[K]
   set<K extends keyof CheckerStore>(key: K, val: CheckerStore[K]): void
-  getCtx(): ContextApi
+  getOpts(): CheckerLauncherOptions
   getApi(): Api
   getLayer(): Layer
   hideInteractInput(): void

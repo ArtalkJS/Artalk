@@ -1,12 +1,14 @@
-import type { LocalUser, ContextApi } from '~/types'
+import type { LocalUser } from '~/types'
+
+const LOCAL_USER_KEY = 'ArtalkUser'
 
 class User {
-  public ctx?: ContextApi
-  public data: LocalUser
+  data: LocalUser
+  onUserChanged: ((user: LocalUser) => void) | null = null
 
-  public constructor() {
+  constructor() {
     // 从 localStorage 导入
-    const localUser = JSON.parse(window.localStorage.getItem('ArtalkUser') || '{}')
+    const localUser = JSON.parse(window.localStorage.getItem(LOCAL_USER_KEY) || '{}')
     this.data = {
       nick: localUser.nick || '',
       email: localUser.email || '',
@@ -16,18 +18,18 @@ class User {
     }
   }
 
-  public setContext(ctx: ContextApi) {
-    this.ctx = ctx
-  }
-
   /** 保存用户到 localStorage 中 */
-  public update(obj: Partial<LocalUser> = {}) {
+  update(obj: Partial<LocalUser> = {}) {
     Object.entries(obj).forEach(([key, value]) => {
       this.data[key] = value
     })
 
-    window.localStorage.setItem('ArtalkUser', JSON.stringify(this.data))
-    this.ctx?.trigger('user-changed', this.data)
+    window.localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(this.data))
+    this.onUserChanged && this.onUserChanged(this.data)
+  }
+
+  public setOnUserChanged(fn: ((user: LocalUser) => void) | null) {
+    this.onUserChanged = fn
   }
 
   /**
@@ -35,7 +37,7 @@ class User {
    *
    * @description Logout will clear login status, but not clear user data (nick, email, link)
    */
-  public logout() {
+  logout() {
     this.update({
       token: '',
       isAdmin: false
@@ -43,7 +45,7 @@ class User {
   }
 
   /** 是否已填写基本用户信息 */
-  public checkHasBasicUserInfo() {
+  checkHasBasicUserInfo() {
     return !!this.data.nick && !!this.data.email
   }
 }

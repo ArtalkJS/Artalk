@@ -130,7 +130,10 @@ export default class Upload extends EditorPlug {
       let imgURL = resp.img_url as string
 
       // 若为相对路径，加上 artalk server
-      if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi(this.kit.useGlobalCtx(), imgURL)
+      if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi({
+        base: this.kit.useConf().server,
+        path: imgURL,
+      })
 
       // 上传成功插入图片
       this.kit.useEditor().setContent(this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`))

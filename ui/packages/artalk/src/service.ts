@@ -1,5 +1,5 @@
 import type { ContextApi } from '~/types'
-import CheckerLauncher from './lib/checker'
+import CheckerLauncher from './components/checker'
 import Editor from './editor/editor'
 import Layer from './layer'
 import SidebarLayer from './layer/sidebar-layer'
@@ -26,13 +26,19 @@ const services = {
 
   // User Store
   user(ctx: ContextApi) {
-    User.setContext(ctx)
+    User.setOnUserChanged((user) => {
+      ctx?.trigger('user-changed', user)
+    })
     return User
   },
 
   // CheckerLauncher
   checkerLauncher(ctx: ContextApi) {
-    const checkerLauncher = new CheckerLauncher(ctx)
+    const checkerLauncher = new CheckerLauncher({
+      getApi: () => ctx.getApi(),
+      getIframeURLBase: () => ctx.conf.server,
+      onReload: () => ctx.reload()
+    })
     return checkerLauncher
   },
 

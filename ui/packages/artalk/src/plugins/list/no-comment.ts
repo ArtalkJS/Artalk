@@ -1,5 +1,6 @@
 import type { ArtalkPlugin } from '~/types'
 import * as Utils from '@/lib/utils'
+import { sanitize } from '@/lib/sanitizer'
 
 export const NoComment: ArtalkPlugin = (ctx) => {
   ctx.on('list-loaded', (comments) => {
@@ -13,8 +14,8 @@ export const NoComment: ArtalkPlugin = (ctx) => {
       if (!$noComment) {
         $noComment = Utils.createElement('<div class="atk-list-no-comment"></div>')
 
-        // TODO POTENTIAL SECURITY RISK: prefer use insane to filter html tags before set innerHTML
-        $noComment.innerHTML = list.ctx.conf.noComment || list.ctx.$t('noComment')
+        // sanitize before set innerHTML
+        $noComment.innerHTML = sanitize(list.ctx.conf.noComment || list.ctx.$t('noComment'))
         list.getCommentsWrapEl().appendChild($noComment)
       }
     } else {

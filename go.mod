@@ -15,17 +15,17 @@ require (
 	github.com/eko/gocache/store/redis/v4 v4.2.1
 	github.com/fatih/color v1.15.0
 	github.com/go-testfixtures/testfixtures/v3 v3.9.0
-	github.com/gofiber/fiber/v2 v2.49.2
-	github.com/gofiber/swagger v0.1.13
+	github.com/gofiber/fiber/v2 v2.50.0
+	github.com/gofiber/swagger v0.1.14
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/jedib0t/go-pretty/v6 v6.4.8
+	github.com/jedib0t/go-pretty/v6 v6.4.9
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/knadh/koanf v1.5.0
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20231008093706-3ef87ff7272b
-	github.com/microcosm-cc/bluemonday v1.0.25
+	github.com/microcosm-cc/bluemonday v1.0.26
 	github.com/nikoksr/notify v0.41.0
 	github.com/qwqcode/go-aliyun-email v0.0.0-20180120030821-cb6e7b1382bf
-	github.com/redis/go-redis/v9 v9.2.1
+	github.com/redis/go-redis/v9 v9.3.0
 	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/samber/lo v1.38.1
@@ -37,7 +37,7 @@ require (
 	github.com/tidwall/gjson v1.17.0
 	github.com/vmihailenco/msgpack v4.0.4+incompatible
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
-	github.com/yuin/goldmark v1.5.6
+	github.com/yuin/goldmark v1.6.0
 	golang.org/x/crypto v0.14.0
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d
 	golang.org/x/sync v0.4.0
@@ -45,7 +45,7 @@ require (
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.2
-	gorm.io/driver/postgres v1.5.3
+	gorm.io/driver/postgres v1.5.4
 	gorm.io/driver/sqlite v1.5.4
 	gorm.io/driver/sqlserver v1.5.2
 	gorm.io/gorm v1.25.5

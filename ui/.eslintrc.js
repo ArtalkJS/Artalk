@@ -43,7 +43,5 @@ module.exports = {
     'polyfills': [
       'AbortController'
     ]
-  },
-  // @see https://stackoverflow.com/questions/63118405/how-to-fix-eslintrc-the-file-does-not-match-your-project-config
-  ignorePatterns: ['.eslintrc.js'],
+  }
 }

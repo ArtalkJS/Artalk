@@ -146,8 +146,8 @@ importers:
         specifier: 'workspace: *'
         version: link:../artalk
       katex:
-        specifier: ^0.16.8
-        version: 0.16.8
+        specifier: ^0.16.9
+        version: 0.16.9
     devDependencies:
       '@types/katex':
         specifier: 0.16.0
@@ -2285,8 +2285,8 @@ packages:
       graceful-fs: 4.2.11
     dev: true
 
-  /katex@0.16.8:
-    resolution: {integrity: sha512-ftuDnJbcbOckGY11OO+zg3OofESlbR5DRl2cmN8HeWeeFIV7wTXvAOx8kEjZjobhA+9wh2fbKeO6cdcA9Mnovg==}
+  /katex@0.16.9:
+    resolution: {integrity: sha512-fsSYjWS0EEOwvy81j3vRA8TEAhQhKiqO+FQaKWp0m39qwOzHVBgAUBIXWj1pB+O2W3fIpNa6Y9KSKCVbfPhyAQ==}
     hasBin: true
     dependencies:
       commander: 8.3.0

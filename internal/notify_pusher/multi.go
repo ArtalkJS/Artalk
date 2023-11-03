@@ -16,7 +16,13 @@ func (pusher *NotifyPusher) multiPush(comment *entity.Comment, pComment *entity.
 	}
 
 	// 通知消息
-	firstAdminUser := pusher.dao.GetAllAdminIDs()[0]
+	allAdmins := pusher.dao.GetAllAdminIDs()
+	if len(allAdmins) == 0 {
+		log.Warn("Multi push disabled: no admin user found")
+		return
+	}
+
+	firstAdminUser := allAdmins[0]
 	subject, body := pusher.getAdminNotifySubjectBody(comment, firstAdminUser)
 
 	log.Debug(time.Now(), " 多元推送")

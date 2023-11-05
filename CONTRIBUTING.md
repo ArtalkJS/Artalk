@@ -29,22 +29,41 @@ Enter the directory:
 cd Artalk
 ```
 
-### Build frontend and backend
+### Build Backend
 
-First, we need to install the dependencies for backend written in Go. Simply run the following command:
+First, you need to install the dependencies for the backend written in Go. Simply run the `make install` command to install the dependencies.
 
-```sh
-make build-debug
-```
+Then, run the `make dev` to build and run `./bin/artalk`, and you can pass startup parameters to the program using `ARGS="version" make dev`.
 
-This will build both the frontend and backend, with debugging symbols.
+This will build the backend with debugging symbols. The binary file will be placed under the `./bin` directory.
 
-- **Frontend** will be built under `./ui/packages/artalk` and copied to `./public` directory.
-- **Backend** will be built under `./bin` directory.
+The backend program will run by default on port `23366`. You can access it through a browser at `http://localhost:23366`. It's recommended not to change this port number for testing the backend program.
 
-### Optional: Use one-key script to run a demo site
+## Build Frontend
 
-If you want to run a demo site, you can use the following command:
+First, you need to install the dependencies for the frontend. Simply run the `cd ui && pnpm install` command to install the dependencies.
+
+Then, run the `cd ui && pnpm dev` to build and run the frontend, and you can pass startup parameters to the program using `ARGS="--port 5173" pnpm dev`.
+
+The frontend program will run by default on port `5173`, and you can access it in a browser at `http://localhost:5173`. The frontend testing client will, by default, request the backend on port `23366`, so it's essential to keep the backend on this port.
+
+The frontend program is divided into the main program and a sidebar program, with the sidebar program running on a separate port, which is `23367`.
+
+## Development Workflow
+
+In most cases, to set up a complete development instance, you need to navigate to the Artalk Repo directory and then execute `make dev`. This will run the backend on port `23366`. Then, execute `cd ui && pnpm dev`, which will run the frontend on port `5173`. You can optionally execute `pnpm dev:sidebar` to run the sidebar frontend on port `23367`. For frontend development, you need to access `http://localhost:5173` in your browser to perform your development and testing.
+
+When you make changes to the frontend code, you can build the complete frontend program using `cd ui && pnpm build:all`. The JavaScript and CSS code can be found in `ui/packages/artalk/dist`.
+
+When you make changes to the backend code, running `make all` will build the complete backend program. Note that since the backend program also embeds the frontend code, the `scripts/build-frontend.sh` script will run during backend program building, which includes the embedded frontend main program and sidebar frontend program. If you are interested, you can explore the complete frontend build process in the `Makefile` code.
+
+Additionally, there is automated CI on GitHub for building. You can find the relevant code in the `.github/workflows` directory.
+
+### Optional: Use a One-Key Script to Run a Demo Site
+
+When you access `http://localhost:5173` during frontend development, you will get a minimalist interface that only contains the Artalk program interface and not a real blog environment. If you want to make testing closer to a real environment, you can create a demo blog site using the following steps.
+
+Run the following command:
 
 ```sh
 ./scripts/setup-example-site.sh
@@ -69,6 +88,14 @@ name: "admin"
 email: "admin@test.com"
 password: "admin"
 ```
+
+### Testing
+
+The backend Go program can be tested by running `make test` for unit testing. The test results will be outputted in the terminal. You can also execute `test-coverage` to check the code test coverage.
+
+Frontend testing is conducted using Playwright for end-to-end (E2E) testing. To start the E2E testing, run `make test-frontend-e2e`.
+
+Both frontend and backend testing are automated and will be performed during Git pull requests and as part of the build process using CircleCI or GitHub Actions.
 
 ## Project Structure
 

@@ -16,6 +16,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitReturns": true,
-    "types": ["vite/client"]
+    "types": ["vite/client", "node"]
   }
 }

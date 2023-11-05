@@ -65,3 +65,6 @@ node_modules
 # always compile latest version
 /public/sidebar
 /public/dist
+
+playwright-report
+test-results

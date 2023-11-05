@@ -61,6 +61,9 @@ docker-build:
 docker-push:
 	./scripts/docker-build.sh --push
 
+test-frontend-e2e:
+	./scripts/frontend-e2e-test.sh $(if $(REPORT), --show-report)
+
 .PHONY: all install build build-frontend build-debug \
 	dev test test-coverage test-coverage-html update-i18n \
-	docker-build docker-push;
+	docker-build docker-push test-frontend-e2e;

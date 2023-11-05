@@ -33,7 +33,9 @@
     "deploy": "gh-pages -d deploy",
     "predeploy": "pnpm build && pnpm build:demo && pnpm copy:deploy",
     "copy:deploy": "cp -r dist deploy && cp CNAME deploy",
-    "lint": "eslint --ext .js,.ts src"
+    "lint": "eslint --ext .js,.ts src",
+    "test:e2e": "playwright test",
+    "test:report": "playwright show-report"
   },
   "devDependencies": {
     "@types/marked": "5.0.1"

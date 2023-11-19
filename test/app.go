@@ -39,8 +39,8 @@ func NewTestApp() (*TestApp, error) {
 	}
 
 	// load assets fs
-	dir := os.DirFS("./")
-	pkged.SetFS(dir)
+	dirFS := os.DirFS("./")
+	pkged.SetFS(dirFS)
 
 	// prepare db folder
 	const dbFile = "./data/test.db"
@@ -65,7 +65,7 @@ func NewTestApp() (*TestApp, error) {
 
 	// fixtures config
 	fixtures, err := testfixtures.New(
-		testfixtures.Database(sqlDB),              // You database connection
+		testfixtures.Database(sqlDB),              // Database connection
 		testfixtures.Dialect("sqlite"),            // Available: "postgresql", "timescaledb", "mysql", "mariadb", "sqlite" and "sqlserver"
 		testfixtures.Directory("./test/fixtures"), // The directory containing the YAML files
 	)

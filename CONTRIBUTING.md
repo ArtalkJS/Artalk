@@ -39,7 +39,7 @@ This will build the backend with debugging symbols. The binary file will be plac
 
 The backend program will run by default on port `23366`. You can access it through a browser at `http://localhost:23366`. It's recommended not to change this port number for testing the backend program.
 
-## Build Frontend
+### Build Frontend
 
 First, you need to install the dependencies for the frontend. Simply run the `cd ui && pnpm install` command to install the dependencies.
 
@@ -49,7 +49,7 @@ The frontend program will run by default on port `5173`, and you can access it i
 
 The frontend program is divided into the main program and a sidebar program, with the sidebar program running on a separate port, which is `23367`.
 
-## Development Workflow
+### Development Workflow
 
 In most cases, to set up a complete development instance, you need to navigate to the Artalk Repo directory and then execute `make dev`. This will run the backend on port `23366`. Then, execute `cd ui && pnpm dev`, which will run the frontend on port `5173`. You can optionally execute `pnpm dev:sidebar` to run the sidebar frontend on port `23367`. For frontend development, you need to access `http://localhost:5173` in your browser to perform your development and testing.
 
@@ -89,7 +89,7 @@ email: "admin@test.com"
 password: "admin"
 ```
 
-### Testing
+## Testing
 
 The backend Go program can be tested by running `make test` for unit testing. The test results will be outputted in the terminal. You can also execute `test-coverage` to check the code test coverage.
 

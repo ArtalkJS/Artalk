@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   node: circleci/node@5.0.3
+  codecov: codecov/codecov@3.3.0
 
 executors:
   base:
@@ -52,9 +53,12 @@ jobs:
             name: Run tests
             command: |
               mkdir -p /tmp/test-reports
-              gotestsum --junitfile /tmp/test-reports/unit-tests.xml
+              gotestsum --junitfile /tmp/test-reports/unit-tests.xml -- -coverprofile=/tmp/test-reports/coverage.out ./...
         - store_test_results:
             path: /tmp/test-reports
+        - codecov/upload:
+            flags: go
+            file: /tmp/test-reports/coverage.out
 
   ## Frontend
   test_ui:

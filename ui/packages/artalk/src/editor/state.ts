@@ -33,7 +33,9 @@ export default class EditorStateManager {
     // invoke effect function and save unmount function
     if (state !== 'normal' && payload) {
       // move editor position
-      this.editor.getPlugs()?.get(Mover)?.move(payload.$comment)
+      let moveAfterEl = payload.$comment
+      if (!this.editor.conf.flatMode) moveAfterEl = moveAfterEl.querySelector<HTMLElement>('.atk-footer')!
+      this.editor.getPlugs()?.get(Mover)?.move(moveAfterEl)
 
       const $relative = this.editor.ctx.conf.scrollRelativeTo && this.editor.ctx.conf.scrollRelativeTo()
       Ui.scrollIntoView(this.editor.getUI().$el, true, $relative)

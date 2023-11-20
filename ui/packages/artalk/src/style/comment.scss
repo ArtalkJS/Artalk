@@ -41,7 +41,7 @@
 
 .atk-comment {
   display: block;
-  padding: 12px 10px;
+  padding: 10px;
 
   & > .atk-avatar {
     display: block;
@@ -239,23 +239,21 @@
     }
 
     & > .atk-footer {
-      margin-top: 12px;
+      margin-top: 5px;
 
       .atk-actions {
         display: flex;
         flex-direction: row;
         align-items: center;
         flex-wrap: wrap;
-        margin-bottom: -15px;
 
         & > span {
           color: var(--at-color-meta);
           font-size: 13px;
-          line-height: 15px;
+          line-height: 25px;
           display: inline-flex;
           cursor: pointer;
           user-select: none;
-          margin-bottom: 15px;
 
           &.atk-error, &.atk-error:hover {
             color: var(--at-color-red);
@@ -340,11 +338,11 @@
     border-left: 1px dashed transparent;
     border-bottom-color: transparent;
     &:not(:last-child) {
-      margin-bottom: 5px;
+      margin-bottom: 10px;
     }
 
     & > .atk-comment {
-      padding: 4px 0;
+      padding: 0;
 
       & > .atk-avatar img {
         width: 36px;

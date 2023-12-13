@@ -15,8 +15,8 @@ Artalk 离不开社区的支持与帮助，**是你们让 Artalk 走得更远！
 - [Fly.io 部署 Artalk 评论系统](https://wayjam.me/posts/artalk-deploy-on-flyio/)
 - [Railway.app 部署 Artalk 评论系统](https://blog.moraxyc.com/post/eidb8276/)
 - [Render.com 部署Artalk自托管评论系统](https://www.leenhawk.com/posts/3932123804/)
-- 
-更多新版读物正在撰写当中（
+
+更多新版读物正在撰写当中...
 
 ## Artalk v1
 

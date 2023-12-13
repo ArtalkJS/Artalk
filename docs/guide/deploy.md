@@ -144,12 +144,6 @@ Artalk 静态资源通过上游 [CDNJS](https://cdnjs.com/) 分发，国内有�
 > https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
 
 
-**ElemeCDN (国内)**
-
-> https://npm.elemecdn.com/artalk@:ArtalkVersion:/dist/Artalk.js
->
-> https://npm.elemecdn.com/artalk@:ArtalkVersion:/dist/Artalk.css
-
 **CDNJS**
 
 > https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.js
@@ -172,7 +166,7 @@ Artalk 静态资源通过上游 [CDNJS](https://cdnjs.com/) 分发，国内有�
 
 可选择精简版 [ArtalkLite](./frontend/artalk-lite.md)：体积更小、更简约。
 
-## Node 环境
+## NPM 生态
 
 ```bash
 pnpm add artalk

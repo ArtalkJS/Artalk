@@ -4,9 +4,7 @@
 
 数据行囊（Artrans）是 Artalk 持久化数据保存规范格式。
 
-Artran = Art + Ran (艺术 + 奔跑)
-
-即 “奔跑的艺术”，又称~~艺术之润~~ Ran 为 Run 的过去式，代表已经润了（
+Artran = Art + Ran (艺术 + 润)
 
 ::: details Artran 格式定义
 

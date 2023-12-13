@@ -6,9 +6,8 @@ export const GotoFirst: ArtalkPlugin = (ctx) => {
   const handler = () => {
     const list = ctx.get('list')
 
-    // TODO support set custom value to replace (`window`, `list.$el`) with (`conf.xxxAt`, `conf.list.repositionAt`)
-    const $relative = (ctx.conf.scrollRelativeTo && ctx.conf.scrollRelativeTo()) || window
-    $relative.scroll({
+    const $relative = ctx.conf.scrollRelativeTo && ctx.conf.scrollRelativeTo()
+    ;($relative || window).scroll({
       top: Utils.getOffset(list.$el, $relative).top,
       left: 0,
     })

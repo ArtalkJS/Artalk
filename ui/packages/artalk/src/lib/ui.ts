@@ -58,13 +58,14 @@ export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true, re
   let top: number
 
   if (relativeTo) {
-    console.log(relativeTo)
     const containerRect = relativeTo.getBoundingClientRect()
     const elementRect = elem.getBoundingClientRect()
     top = elementRect.top - containerRect.top + relativeTo.scrollTop
     top += Utils.getHeight(relativeTo) / 2 - Utils.getHeight(elem) / 2
   } else {
-    top = Utils.getOffset(elem).top + Utils.getHeight(elem) / 2 - document.documentElement.clientHeight / 2
+    const rect = elem.getBoundingClientRect()
+    const elemTop = rect.top + window.scrollY
+    top = elemTop - (window.innerHeight / 2 - rect.height / 2)
   }
 
   const scrollOptions: ScrollToOptions = {

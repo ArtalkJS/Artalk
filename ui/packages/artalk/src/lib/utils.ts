@@ -27,20 +27,25 @@ export function getQueryParam(name: string) {
   return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }
 
-export function getOffset(el: HTMLElement, relativeTo: HTMLElement | Window = window) {
-  const rect = el.getBoundingClientRect()
-  let topOffset = rect.top
-  let leftOffset = rect.left
-
-  if (relativeTo instanceof HTMLElement) {
-    const relativeRect = relativeTo.getBoundingClientRect()
-    topOffset -= relativeRect.top
-    leftOffset -= relativeRect.left
+export function getOffset(el: HTMLElement, relativeTo?: HTMLElement) {
+  const getOffsetRecursive = (element: HTMLElement): { top: number, left: number } => {
+    const rect = element.getBoundingClientRect()
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+    return {
+      top: rect.top + scrollTop,
+      left: rect.left + scrollLeft
+    }
   }
 
+  const elOffset = getOffsetRecursive(el)
+  if (!relativeTo) return elOffset
+
+  const relativeToOffset = getOffsetRecursive(relativeTo)
+
   return {
-    top: topOffset + window.scrollY,
-    left: leftOffset + window.scrollX
+    top: elOffset.top - relativeToOffset.top,
+    left: elOffset.left - relativeToOffset.left
   }
 }
 

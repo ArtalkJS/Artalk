@@ -145,7 +145,7 @@ frontend:
   emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
   vote: true
   voteDown: false
-  uaBadge: true
+  uaBadge: false
   listSort: true
   pvEl: "#ArtalkPV"
   countEl: "#ArtalkCount"

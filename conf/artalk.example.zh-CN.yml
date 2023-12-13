@@ -291,7 +291,7 @@ frontend:
   # 反对按钮
   voteDown: false
   # 用户 UA 徽标
-  uaBadge: true
+  uaBadge: false
   # 评论排序功能
   listSort: true
   # 页面 PV 绑定元素

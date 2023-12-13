@@ -284,7 +284,7 @@ frontend:
   # Dislike button
   voteDown: false
   # User UA badge
-  uaBadge: true
+  uaBadge: false
   # Comment sorting
   listSort: true
   # Page PV binding element

@@ -72,6 +72,16 @@ func TestCache(t *testing.T) {
 		}
 	})
 
+	t.Run("GC not expired", func(t *testing.T) {
+		cache := NewWithGCThold(1)
+		cache.Set("key", "value")
+		cache.GC(false)
+		_, ok := cache.Get("key")
+		if !ok {
+			t.Error("cache should not be expired")
+		}
+	})
+
 	t.Run("GC thold not reached", func(t *testing.T) {
 		cache := NewWithGCThold(2)
 		cache.Set("key", "value", 1*time.Millisecond)

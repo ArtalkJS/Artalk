@@ -60,4 +60,15 @@ func TestCache(t *testing.T) {
 			t.Error("cache should be deleted")
 		}
 	})
+
+	t.Run("GC", func(t *testing.T) {
+		cache := New()
+		cache.Set("key", "value", 1*time.Millisecond)
+		time.Sleep(2 * time.Millisecond)
+		cache.GC()
+		_, ok := cache.Get("key")
+		if ok {
+			t.Error("cache should be expired")
+		}
+	})
 }

@@ -33,7 +33,7 @@ func (c *Cache) Set(key string, value interface{}, expirationParam ...time.Durat
 func (c *Cache) Get(key string) (interface{}, bool) {
 	if val, found := c.data.Load(key); found {
 		entry := val.(cacheEntry)
-		if entry.expiration.IsZero() || entry.expiration.After(time.Now()) {
+		if !isExpired(entry) {
 			return entry.value, true
 		}
 		c.data.Delete(key)
@@ -43,4 +43,19 @@ func (c *Cache) Get(key string) (interface{}, bool) {
 
 func (c *Cache) Delete(key string) {
 	c.data.Delete(key)
+}
+
+func (c* Cache) GC() {
+	c.data.Range(func(key, value interface{}) bool {
+		entry := value.(cacheEntry)
+		if !isExpired(entry) {
+			return true
+		}
+		c.data.Delete(key)
+		return true
+	})
+}
+
+func isExpired(entry cacheEntry) bool {
+	return !entry.expiration.IsZero() && entry.expiration.Before(time.Now())
 }

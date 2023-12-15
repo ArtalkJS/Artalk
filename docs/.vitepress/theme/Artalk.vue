@@ -5,6 +5,7 @@
 <script setup lang="ts">
 import { watch, nextTick, ref, onMounted } from 'vue'
 import { useData, useRouter } from 'vitepress'
+import Artalk from 'artalk'
 
 const artalkEl = ref<HTMLElement | null>(null)
 
@@ -12,12 +13,7 @@ const router = useRouter()
 const page = useData().page
 
 onMounted(() => {
-  const script = document.createElement('script')
-  script.src = `https://artalk.qwqaq.com/dist/Artalk.js`
-  document.getElementsByTagName('head')[0].appendChild(script)
-  script.onload = () => {
-    initArtalk(page.value)
-  }
+  initArtalk(getArtalkConfByPage(page))
 })
 
 watch(() => router.route.data.relativePath, (path) => {
@@ -36,14 +32,14 @@ function getArtalkConfByPage(page: any) {
   }
 }
 
-function initArtalk(page: any) {
+function initArtalk(conf: any) {
   Artalk.init({
     el:        artalkEl.value,
     emoticons: '/assets/emoticons/default.json',
     gravatar:   {
       mirror: 'https://cravatar.cn/avatar/'
     },
-    ...getArtalkConfByPage(page)
+    ...conf
   })
 
   // 图片灯箱插件

@@ -23,5 +23,8 @@
     "markdown-it-for-inline": "^0.1.1",
     "sass": "^1.67.0",
     "vitepress": "1.0.0-rc.14"
+  },
+  "dependencies": {
+    "artalk": "^2.6.4"
   }
 }

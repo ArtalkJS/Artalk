@@ -2,11 +2,9 @@ import type { ArtalkConfig, ArtalkPlugin, ContextApi } from '~/types'
 import { handleConfFormServer } from '@/config'
 import { showErrorDialog } from '../components/error-dialog'
 
-let confLoaded = false
-
 export const ConfRemoter: ArtalkPlugin = (ctx) => {
   ctx.on('inited', () => {
-    if (!confLoaded) loadConf(ctx)
+    loadConf(ctx)
   })
 }
 
@@ -26,7 +24,6 @@ function loadConf(ctx: ContextApi) {
     ctx.conf.remoteConfModifier && ctx.conf.remoteConfModifier(conf)
 
     ctx.updateConf(conf)
-    confLoaded = true
   }).catch((err) => {
     ctx.updateConf({})
 

@@ -3,7 +3,6 @@ import type { TInjectedServices } from './service'
 import Api from './api'
 
 import * as Utils from './lib/utils'
-import * as DarkMode from './components/dark-mode'
 import * as marked from './lib/marked'
 import { CheckerCaptchaPayload, CheckerPayload } from './components/checker'
 
@@ -128,7 +127,10 @@ class Context implements ContextApi {
   }
 
   public setDarkMode(darkMode: boolean|'auto'): void {
-    DarkMode.setDarkMode(this.$root, darkMode)
+    // prevent trigger 'conf-loaded' to improve performance
+    // this.updateConf({ ...this.conf, darkMode })
+    this.conf.darkMode = darkMode
+    this.trigger('dark-mode-changed', darkMode)
   }
 
   public updateConf(nConf: Partial<ArtalkConfig>): void {

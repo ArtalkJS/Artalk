@@ -1,49 +1,63 @@
 <template>
-  <div ref="artalkEl" style="margin-top: 20px;"></div>
+  <ClientOnly>
+    <div ref="el" style="margin-top: 20px;"></div>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import { watch, nextTick, ref, onMounted } from 'vue'
+import { watch, nextTick, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useData, useRouter } from 'vitepress'
-import Artalk from 'artalk'
+import type Artalk from 'artalk'
 
-const artalkEl = ref<HTMLElement | null>(null)
+const el = ref<HTMLElement | null>(null)
 
 const router = useRouter()
 const page = useData().page
 
+let artalk: Artalk
+
 onMounted(() => {
-  initArtalk(getArtalkConfByPage(page))
+  initArtalk(getConfByPage())
 })
 
-watch(() => router.route.data.relativePath, (path) => {
+watch(() => router.route.data.relativePath, () => {
   nextTick(() => {
-    Artalk.update(getArtalkConfByPage(page.value))
-    Artalk.reload()
+    artalk.update(getConfByPage())
+    artalk.reload()
   })
 })
 
-function getArtalkConfByPage(page: any) {
+onBeforeUnmount(() => {
+  artalk.destroy()
+})
+
+function initArtalk(conf: any) {
+  import('artalk').then(({ default: Artalk }) => {
+    artalk = Artalk.init({
+      el:        el.value,
+      emoticons: '/assets/emoticons/default.json',
+      gravatar:   {
+        mirror: 'https://cravatar.cn/avatar/'
+      },
+      ...conf
+    })
+  }).then(() => {
+    loadExtraFuncs()
+  })
+}
+
+function getConfByPage() {
   return {
     pageKey:   'https://artalk.js.org'+location.pathname,
-    pageTitle:  page.title,
+    pageTitle:  page.value.title,
     server:    'https://artalk.qwqaq.com',
     site:      'ArtalkDocs',
   }
 }
 
-function initArtalk(conf: any) {
-  Artalk.init({
-    el:        artalkEl.value,
-    emoticons: '/assets/emoticons/default.json',
-    gravatar:   {
-      mirror: 'https://cravatar.cn/avatar/'
-    },
-    ...conf
-  })
-
+function loadExtraFuncs() {
   // 图片灯箱插件
-  Artalk.on('list-loaded', () => {
+  artalk.on('list-loaded', () => {
     document.querySelectorAll('.atk-comment .atk-content').forEach(($content) => {
       const imgEls = $content.querySelectorAll<HTMLImageElement>('img:not([atk-emoticon]):not([atk-lightbox])');
       imgEls.forEach((imgEl) => {
@@ -62,7 +76,7 @@ function initArtalk(conf: any) {
 
   // 夜间模式
   const darkMode = document.querySelector('html').classList.contains('dark')
-  Artalk.setDarkMode(darkMode)
+  artalk.setDarkMode(darkMode)
 
   new MutationObserver((mList) => {
     mList.forEach((m) => {
@@ -70,7 +84,7 @@ function initArtalk(conf: any) {
 
       // @ts-ignore
       const darkMode = m.target.classList.contains('dark')
-      Artalk.setDarkMode(darkMode)
+      artalk.setDarkMode(darkMode)
     })
   }).observe(document.querySelector('html'), { attributes: true })
 }

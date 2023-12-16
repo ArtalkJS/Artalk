@@ -99,6 +99,26 @@ NexT 主题可以安装 [Hexo NexT 主题的 Artalk 插件](https://github.com/l
 
 :::
 
+## VitePress
+
+可参考：[@ArtalkJS/Artalk:/docs/.vitepress](https://github.com/ArtalkJS/Artalk/tree/master/docs/.vitepress)
+
+- `config.ts` 修改配置引入 CSS 资源
+- `theme/Artalk.vue` 创建组件
+- `theme/index.ts` 注册组件
+- `theme/Layout.vue` 使用组件
+
+注：由于文档将进行 SSR 渲染，因此需通过 `import()` 函数异步引入 Artalk，否则会导致构建失败。
+
+```ts
+import('artalk').then(({ default: Artalk }) => {
+  artalk = Artalk.init({
+    //...
+  })
+})
+```
+
+参考文件：[.vitepress/theme/Artalk.vue](https://github.com/ArtalkJS/Artalk/blob/master/docs/.vitepress/theme/Artalk.vue)
 
 ## VuePress
 

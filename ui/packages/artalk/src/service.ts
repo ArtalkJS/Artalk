@@ -1,13 +1,14 @@
 import type { ContextApi } from '~/types'
 import CheckerLauncher from './components/checker'
 import Editor from './editor/editor'
-import Layer from './layer'
 import SidebarLayer from './layer/sidebar-layer'
+
 import User from './lib/user'
 import List from './list/list'
 
 import * as I18n from './i18n'
 import { PlugManager } from './plugins/editor-kit'
+import { LayerManager } from './layer/layer-manager'
 
 /**
  * Services
@@ -32,9 +33,15 @@ const services = {
     return User
   },
 
+  // 弹出层
+  layerManager(ctx: ContextApi) {
+    return new LayerManager(ctx)
+  },
+
   // CheckerLauncher
   checkerLauncher(ctx: ContextApi) {
     const checkerLauncher = new CheckerLauncher({
+      getCtx: () => ctx,
       getApi: () => ctx.getApi(),
       getIframeURLBase: () => ctx.conf.server,
       onReload: () => ctx.reload()
@@ -54,13 +61,6 @@ const services = {
     const list = new List(ctx)
     ctx.$root.appendChild(list.$el)
     return list
-  },
-
-  // 弹出层
-  layer(ctx: ContextApi) {
-    // 记录页面原始 CSS 属性
-    Layer.BodyOrgOverflow = document.body.style.overflow
-    Layer.BodyOrgPaddingRight = document.body.style.paddingRight
   },
 
   // 侧边栏 Layer

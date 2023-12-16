@@ -1,7 +1,8 @@
 import type Api from '@/api'
 import Dialog from '@/components/dialog'
-import Layer from '@/layer'
 import $t from '@/i18n'
+import type { ContextApi } from '~/types'
+import type { Layer } from '@/layer'
 import * as Utils from '@/lib/utils'
 import CaptchaChecker from './captcha'
 import AdminChecker from './admin'
@@ -18,6 +19,7 @@ export interface CheckerPayload {
 }
 
 export interface CheckerLauncherOptions {
+  getCtx: () => ContextApi
   getApi: () => Api
   getIframeURLBase: () => string
   onReload: () => void
@@ -27,8 +29,6 @@ export interface CheckerLauncherOptions {
  * Checker 发射台
  */
 export default class CheckerLauncher {
-  public launched: Checker[] = []
-
   constructor(private opts: CheckerLauncherOptions) { }
 
   public checkCaptcha(payload: CheckerCaptchaPayload) {
@@ -43,12 +43,8 @@ export default class CheckerLauncher {
   }
 
   public fire(checker: Checker, payload: CheckerPayload, postFire?: (c: CheckerCtx) => void) {
-    if (this.launched.includes(checker)) return // 阻止同时 fire 相同的 checker
-    this.launched.push(checker)
-
-    // 创建层
-    const layer = new Layer(`checker-${new Date().getTime()}`)
-    layer.setMaskClickHide(false)
+    // 显示层
+    const layer = this.opts.getCtx().get('layerManager').create(`checker-${new Date().getTime()}`)
     layer.show()
 
     // 构建 Checker 的上下文
@@ -58,8 +54,7 @@ export default class CheckerLauncher {
       set: (key, val) => { checkerStore[key] = val },
       get: (key) => (checkerStore[key]),
       getOpts: () => (this.opts),
-      getApi: () => (this.opts.getApi()),
-      getLayer: () => layer,
+      getApi: () => this.opts.getApi(),
       hideInteractInput: () => {
         hideInteractInput = true
       },
@@ -167,8 +162,7 @@ export default class CheckerLauncher {
 
   // 关闭 checker 对话框
   private close(checker: Checker, layer: Layer) {
-    layer.disposeNow()
-    this.launched = this.launched.filter(c => c !== checker)
+    layer.destroy()
   }
 }
 
@@ -192,7 +186,6 @@ export interface CheckerCtx {
   set<K extends keyof CheckerStore>(key: K, val: CheckerStore[K]): void
   getOpts(): CheckerLauncherOptions
   getApi(): Api
-  getLayer(): Layer
   hideInteractInput(): void
   triggerSuccess(): void
   cancel(): void

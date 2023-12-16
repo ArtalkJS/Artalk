@@ -167,7 +167,15 @@ func ImgUpload(app *core.App, router fiber.Router) {
 		if baseURL == "" {
 			baseURL = config.IMG_UPLOAD_PUBLIC_PATH
 		}
-		imgURL := path.Join(baseURL, filename)
+
+		var imgURL string
+		if utils.ValidateURL(baseURL) {
+			// full url
+			imgURL = strings.TrimSuffix(baseURL, "/") + "/" + filename
+		} else {
+			// relative path
+			imgURL = path.Join(baseURL, filename)
+		}
 
 		// 使用 upgit
 		if app.Conf().ImgUpload.Upgit.Enabled {

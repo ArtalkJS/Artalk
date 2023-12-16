@@ -4,7 +4,7 @@ import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import SidebarHTML from './sidebar-layer.html?raw'
 import User from '../lib/user'
-import Layer from './layer'
+import type { Layer } from './layer'
 
 export default class SidebarLayer extends Component {
   public layer?: Layer
@@ -36,73 +36,31 @@ export default class SidebarLayer extends Component {
     this.$el.style.transform = '' // 动画清除，防止二次打开失效
 
     // 获取 Layer
-    if (this.layer == null) {
-      this.layer = new Layer('sidebar', this.$el)
-      this.layer.afterHide = () => {
-        // 防止评论框被吞
-        this.ctx.editorResetState()
-      }
-    }
-    this.layer.show()
-
-    // viewWrap 滚动条归位
-    // this.$viewWrap.scrollTo(0, 0)
+    this.initLayer()
+    this.layer!.show()
 
     // 管理员身份验证 (若身份失效，弹出验证窗口)
-    ;(async () => {
-      const resp = await this.ctx.getApi().user.loginStatus()
-      if (resp.is_admin && !resp.is_login) {
-        this.layer?.hide()
-        this.firstShow = true
-
-        this.ctx.checkAdmin({
-          onSuccess: () => {
-            setTimeout(() => {
-              this.show(conf)
-            }, 500)
-          },
-          onCancel: () => {}
-        })
-      }
-    })()
+    this.authCheck({
+      onSuccess: () => this.show(conf) // retry show after auth check
+    })
 
     // 第一次加载
     if (this.firstShow) {
       this.$iframeWrap.innerHTML = ''
-      this.$iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
-
-      // 准备 Iframe 参数
-      const baseURL = (import.meta.env.DEV)  ? 'http://localhost:23367/'
-        : Utils.getURLBasedOnApi({
-          base: this.ctx.conf.server,
-          path: '/sidebar/',
-        })
-
-      const query: any = {
-        pageKey: this.conf.pageKey,
-        site: this.conf.site || '',
-        user: JSON.stringify(User.data),
-        time: +new Date()
-      }
-
-      if (conf.view) query.view = conf.view
-      if (this.conf.darkMode) query.darkMode = '1'
-      if (typeof this.conf.locale === 'string') query.locale = this.conf.locale
-
-      const urlParams = new URLSearchParams(query);
-      this.iframeLoad(`${baseURL}?${urlParams.toString()}`)
-
+      this.$iframe = this.createIframe(conf.view)
       this.$iframeWrap.append(this.$iframe)
       this.firstShow = false
     } else {
+      const $iframe = this.$iframe!
+
       // 夜间模式
-      const isIframeSrcDarkMode = this.$iframe!.src.includes('darkMode=1')
+      const isIframeSrcDarkMode = $iframe.src.includes('darkMode=1')
 
       if (this.conf.darkMode && !isIframeSrcDarkMode)
-        this.iframeLoad(`${this.$iframe!.src}&darkMode=1`)
+        this.iframeLoad($iframe, `${this.$iframe!.src}&darkMode=1`)
 
       if (!this.conf.darkMode && isIframeSrcDarkMode)
-        this.iframeLoad(this.$iframe!.src.replace('&darkMode=1', ''))
+        this.iframeLoad($iframe, this.$iframe!.src.replace('&darkMode=1', ''))
     }
 
     // 执行滑动显示动画
@@ -128,14 +86,69 @@ export default class SidebarLayer extends Component {
     this.ctx.trigger('sidebar-hide')
   }
 
-  private iframeLoad(src: string) {
-    if (!this.$iframe) return
+  // --------------------------------------------------
 
-    this.$iframe.src = src
+  private async authCheck(opts: { onSuccess: () => void }) {
+    const resp = await this.ctx.getApi().user.loginStatus()
+    if (resp.is_admin && !resp.is_login) {
+      this.firstShow = true
+
+      this.ctx.checkAdmin({
+        onSuccess: () => {
+          setTimeout(() => {
+            opts.onSuccess()
+          }, 500)
+        },
+        onCancel: () => {
+          this.hide()
+        }
+      })
+    }
+  }
+
+  private initLayer() {
+    if (this.layer) return
+
+    this.layer = this.ctx.get('layerManager').create('sidebar', this.$el)
+    this.layer.setOnAfterHide(() => {
+      // 防止评论框被吞
+      this.ctx.editorResetState()
+    })
+  }
+
+  private createIframe(view?: string) {
+    const $iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
+
+    // 准备 Iframe 参数
+    const baseURL = (import.meta.env.DEV)  ? 'http://localhost:23367/'
+      : Utils.getURLBasedOnApi({
+        base: this.ctx.conf.server,
+        path: '/sidebar/',
+      })
+
+    const query: any = {
+      pageKey: this.conf.pageKey,
+      site: this.conf.site || '',
+      user: JSON.stringify(User.data),
+      time: +new Date()
+    }
+
+    if (view) query.view = view
+    if (this.conf.darkMode) query.darkMode = '1'
+    if (typeof this.conf.locale === 'string') query.locale = this.conf.locale
+
+    const urlParams = new URLSearchParams(query);
+    this.iframeLoad($iframe, `${baseURL}?${urlParams.toString()}`)
+
+    return $iframe
+  }
+
+  private iframeLoad($iframe: HTMLIFrameElement, src: string) {
+    $iframe.src = src
 
     // 加载动画
     Ui.showLoading(this.$iframeWrap)
-    this.$iframe.onload = () => {
+    $iframe.onload = () => {
       Ui.hideLoading(this.$iframeWrap)
     }
   }

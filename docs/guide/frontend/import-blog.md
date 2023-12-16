@@ -102,63 +102,13 @@ NexT 主题可以安装 [Hexo NexT 主题的 Artalk 插件](https://github.com/l
 
 ## VuePress
 
-以 [VuePress v2](https://github.com/vuepress/vuepress-next) 为例，继承默认主题 `@vuepress/theme-default`
+（待补充）
 
-可参考：[“/.vuepress/theme/Artalk.vue”](https://github.com/ArtalkJS/Docs/blob/eef37bca8cc0c9973bf121fdef4014dcd940f104/docs/.vuepress/theme/Artalk.vue) 创建 Artalk 评论组件。
+::: tip 提示
 
-在 `/.vuepress/theme/clientAppEnhance.ts` 文件中全局注册组件：
+可参考：[“置入框架”](./import-framework.md)
 
-```ts
-import { defineClientAppEnhance } from '@vuepress/client'
-
-import Artalk from './Artalk.vue'
-
-export default defineClientAppEnhance(({ app, router, siteData }) => {
-  app.component('Artalk', Artalk)
-})
-```
-
-主题布局 `/.vuepress/theme/Layout.vue`：
-
-```vue
-<template>
-  <Layout>
-    <template #page-bottom>
-      <div class="page-meta">
-        <!-- Artalk -->
-        <Artalk />
-      </div>
-    </template>
-  </Layout>
-</template>
-
-<script lang="ts">
-import { defineComponent, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
-import Layout from '@vuepress/theme-default/lib/client/layouts/Layout.vue'
-
-export default defineComponent({
-  components: { Layout },
-  mounted: () => {
-  }
-})
-</script>
-```
-
-主题配置文件 `/.vuepress/theme/index.ts`：
-
-```ts
-import { path } from '@vuepress/utils'
-
-export default ({
-  name: 'vuepress-theme-local',
-  extends: '@vuepress/theme-default',
-  layouts: {
-    Layout: path.resolve(__dirname, 'Layout.vue'),
-  },
-  clientAppEnhanceFiles: path.resolve(__dirname, 'clientAppEnhance.ts'),
-})
-```
+:::
 
 ## Typecho
 

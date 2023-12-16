@@ -14,49 +14,84 @@ Vue 3 + TypeScript 例：
 
 ```vue
 <template>
-  <div class="artalk-comments"></div>
+  <view ref="el"></view>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import 'artalk/dist/Artalk.css'
-
-import { defineComponent } from 'vue'
 import Artalk from 'artalk'
 
-export default defineComponent({
-  mounted: () => {
-    const artalk = Artalk.init({
-      el:        this.$el,
-      pageKey:   `${location.pathname}`,
-      pageTitle: `${document.title}`,
-      server:    'http://localhost:8080',
-      site:      'Artalk 的博客',
-      // ...
-    })
-  }
+const el = ref<HTMLElement>()
+const route = useRoute()
+
+let artalk: Artalk
+
+onMounted(() => {
+  artalk = Artalk.init({
+    el:        el.value,
+    pageKey:   route.path,
+    pageTitle: `${document.title}`,
+    server:    'http://localhost:8080',
+    site:      'Artalk 的博客',
+    // ...
+  })
+})
+
+onBeforeUnmount(() => {
+  artalk.destroy()
 })
 </script>
 ```
 
-::: tip 提示
-
-VuePress 可参考：[“VuePress 引入”](./import-blog.md#vuepress)
-
-:::
-
 ## React
 
-```jsx
-import 'artalk/dist/Artalk.css'
+```tsx
+import React, { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
+import 'artalk/dist/Artalk.css';
+import Artalk from 'artalk';
 
+const ArtalkComment = () => {
+  const el = useRef(null);
+  const location = useLocation();
+  let artalk = null;
+
+  useEffect(() => {
+    artalk = new Artalk({
+      el: el.current,
+      pageKey: location.pathname,
+      pageTitle: document.title,
+      server: 'http://localhost:8080',
+      site: 'Artalk 的博客',
+      // ...
+    });
+
+    return () => {
+      if (artalk) {
+        artalk.destroy();
+      }
+    };
+  }, [location.pathname]);
+
+  return <div ref={el}></div>;
+};
+
+export default ArtalkComment;
+```
+
+```jsx
 import React, { createRef } from 'react'
+import 'artalk/dist/Artalk.css'
 import Artalk from 'artalk'
 
 export default class Artalk extends React.Component {
   el = createRef()
+  artalk = null
 
-  componentDidMount () {
-    const artalk = Artalk.init({
+  componentDidMount() {
+    this.artalk = Artalk.init({
       el: this.el.current,
       pageKey:   `${location.pathname}`,
       pageTitle: `${document.title}`,
@@ -66,9 +101,13 @@ export default class Artalk extends React.Component {
     })
   }
 
-  render () {
+  componentWillUnmount() {
+    this.artalk?.destroy()
+  }
+
+  render() {
     return (
-      <div ref={this.el} class="artalk-comments" />
+      <div ref={this.el} />
     )
   }
 }
@@ -78,22 +117,30 @@ export default class Artalk extends React.Component {
 
 ```html
 <script>
-import 'artalk/dist/Artalk.css'
-import Artalk from 'artalk'
+  import { onMount, onDestroy } from 'svelte';
+  import 'artalk/dist/Artalk.css';
+  import Artalk from 'artalk';
 
-let comments;
+  let el;
+  let artalk;
 
-onMount(() => {
-  Artalk.init({
-    el:        comments,
-    pageKey:   `${location.pathname}`,
-    pageTitle: `${document.title}`,
-    server:    'http://localhost:8080',
-    site:      'Artalk 的博客',
-    // ...
-  })
-})
+  onMount(() => {
+    artalk = Artalk.init({
+      el: el,
+      pageKey: location.pathname,
+      pageTitle: document.title,
+      server: 'http://localhost:8080',
+      site: 'Artalk 的博客',
+      // ...
+    });
+
+    onDestroy(() => {
+      if (artalk) {
+        artalk.destroy();
+      }
+    });
+  });
 </script>
 
-<div bind:this={comments} class="artalk-comments"></div>
+<div bind:this={el}></div>
 ```

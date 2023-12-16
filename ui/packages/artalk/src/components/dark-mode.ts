@@ -1,11 +1,9 @@
-import { getLayerWrap } from '../layer'
-
 const darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)')
 let darkModeAutoFunc: (evt: MediaQueryListEvent) => void
 
-export function setDarkMode($el: HTMLElement, darkMode: boolean|'auto') {
+export function applyDarkMode($els: HTMLElement[], darkMode: boolean|'auto') {
   const apply = (d: boolean) => {
-    updateClassName($el, d)
+    $els.forEach($el => updateClassName($el, d))
   }
 
   if (darkMode === 'auto') {
@@ -24,15 +22,9 @@ export function setDarkMode($el: HTMLElement, darkMode: boolean|'auto') {
   }
 }
 
-const DarkModeClassName = 'atk-dark-mode'
+export const DarkModeClassName = 'atk-dark-mode'
+
 function updateClassName($el: HTMLElement, darkMode: boolean) {
   if (darkMode) $el.classList.add(DarkModeClassName)
   else $el.classList.remove(DarkModeClassName)
-
-  // for Layer
-  const { $wrap: $layerWrap } = getLayerWrap()
-  if ($layerWrap) {
-    if (darkMode) $layerWrap.classList.add(DarkModeClassName)
-    else $layerWrap.classList.remove(DarkModeClassName)
-  }
 }

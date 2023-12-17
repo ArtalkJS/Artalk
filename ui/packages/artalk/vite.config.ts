@@ -9,6 +9,7 @@ export default Utils.mergeDeep(baseConf, defineConfig({
     outDir: resolve(__dirname, "dist"),
     minify: 'terser',
     emptyOutDir: false,
+    sourcemap: true,
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
       name: 'Artalk',

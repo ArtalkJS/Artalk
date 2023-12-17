@@ -1,4 +1,17 @@
 
+## [v2.7.1](https://github.com/ArtalkJS/Artalk/compare/v2.7.0...v2.7.1) (2023-12-17)
+
+### Bug Fixes
+
+* **build:** generate source maps to ease debugging
+* **cout-widget:** `loadCountWidget` issue
+* **ui:** static method export issue in JS module ([#669](https://github.com/ArtalkJS/Artalk/issues/669))
+
+### Documentation
+
+* **i18n:** add translation of update notice
+
+
 ## [v2.7.0](https://github.com/ArtalkJS/Artalk/compare/v2.6.4...v2.7.0) (2023-12-17)
 
 ### Features

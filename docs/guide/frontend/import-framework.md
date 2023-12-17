@@ -1,6 +1,6 @@
 # 置入框架
 
-## 引入 Artalk
+## 安装 Artalk
 
 通过包管理工具引入 Artalk，推荐使用 [pnpm](https://pnpm.io/zh/)
 
@@ -18,7 +18,7 @@ Vue 3 + TypeScript 例：
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import 'artalk/dist/Artalk.css'
 import Artalk from 'artalk'
@@ -39,7 +39,7 @@ onMounted(() => {
   })
 })
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
   artalk.destroy()
 })
 </script>

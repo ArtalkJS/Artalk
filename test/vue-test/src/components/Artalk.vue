@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Artalk from 'artalk'
 import 'artalk/dist/Artalk.css'
@@ -8,6 +8,10 @@ const el = ref<HTMLElement>()
 const route = useRoute()
 
 let artalk: Artalk
+
+Artalk.use((ctx) => {
+  ctx.fetch
+})
 
 onMounted(() => {
   artalk = Artalk.init({
@@ -18,7 +22,7 @@ onMounted(() => {
   })
 })
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
   artalk.destroy()
 })
 </script>

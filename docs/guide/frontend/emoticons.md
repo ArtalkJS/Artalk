@@ -9,7 +9,7 @@ frontend:
 
 ## 表情包预设
 
-Artalk 社区提供许多表情包预设，你能够挑选几套喜欢的表情包，仅需简单的配置，轻松添加到你的评论系统中，前往仓库：[“@ArtalkJS/Emoticons”](https://github.com/ArtalkJS/Emoticons)。
+Artalk 社区提供许多表情包预设，你能够挑选几套喜欢的表情包，仅需简单的配置，轻松添加到你的评论系统中，前往仓库：[@ArtalkJS/Emoticons](https://github.com/ArtalkJS/Emoticons)。
 
 ## 格式支持
 
@@ -57,7 +57,7 @@ Artalk 除了支持 OwO 格式外，还内置支持一种标准的表情包列�
 
 ::: warning
 
-前端的配置将默认被后端覆盖，详情参考：[“在后端控制前端”](/guide/backend/fe-control.html)
+前端的配置将默认被后端覆盖，详情参考：[在后端控制前端](/guide/backend/fe-control.html)
 
 :::
 

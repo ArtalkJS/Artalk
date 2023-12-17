@@ -63,7 +63,7 @@ moderator:
 
 ## 腾讯云文本内容安全
 
-可参考：[“腾讯云文档”](https://cloud.tencent.com/document/product/1124/64508)
+可参考：[腾讯云文档](https://cloud.tencent.com/document/product/1124/64508)
 
 开通「文本内容安全」后，在「访问管理」-「API 密钥管理」新增具有权限的 Secret，然后填入配置：
 
@@ -78,7 +78,7 @@ moderator:
 
 ## 阿里云内容安全
 
-可参考：[“阿里云文档”](https://help.aliyun.com/document_detail/28417.html)
+可参考：[阿里云文档](https://help.aliyun.com/document_detail/28417.html)
 
 开通「阿里云内容安全」后，阿里云后台创建 Access Key 并填入配置：
 

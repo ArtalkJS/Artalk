@@ -1,18 +1,19 @@
 # 前端配置
 
 ```js
-Artalk.init({ 你的配置... })
-Artalk.update({ 更新配置... })
+const artalk = Artalk.init({ ... })
+
+artalk.update({ ... })
 ```
 
 - 默认配置：[defaults.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/src/defaults.ts)
-- 声明文件：[artalk-config.d.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/types/artalk-config.d.ts)
+- 声明文件：[config.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/types/config.ts)
 
 ## 轻松配置
 
 推荐在侧边栏 “[控制中心](/guide/frontend/sidebar.md)” 通过图形界面修改前端的配置，而无需在代码中对界面进行设定。
 
-注：前端的设定可能会被后端覆盖，更多内容参考：[“在后端控制前端”](/guide/backend/fe-control.md)
+注：前端的设定可能会被后端覆盖，更多内容参考：[在后端控制前端](/guide/backend/fe-control.md)
 
 ## 基本配置（必填项）
 
@@ -36,7 +37,7 @@ Artalk.update({ 更新配置... })
 
 可以填写由博客系统生成的 `固定链接`，但建议使用相对路径以便日后切换域名。
 
-参考：[“关于使用相对 / 绝对路径”](/guide/backend/relative-path.md)
+参考：[关于使用相对 / 绝对路径](/guide/backend/relative-path.md)
 
 ### pageTitle
 
@@ -84,7 +85,7 @@ Artalk 支持多站点统一管理，此项用于站点隔离。
 
 可以在后端的配置文件中定义前端的配置，让前端配置始终跟随后端。
 
-详情可参考：[“在后端控制前端”](/guide/backend/fe-control)
+详情可参考：[在后端控制前端](/guide/backend/fe-control)
 
 ## 国际化 (i18n)
 
@@ -99,7 +100,7 @@ Artalk 支持多站点统一管理，此项用于站点隔离。
 
 欢迎提交 PR 帮助翻译 Artalk 的多语言，为社区贡献一份力量！
 
-详情参考：[“多语言”](./i18n.md)
+详情参考：[多语言](./i18n.md)
 
 ## 请求
 
@@ -121,7 +122,7 @@ Artalk 支持多站点统一管理，此项用于站点隔离。
 - 类型：`Object|Array|String|Boolean`
 - 默认值："[https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json](https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json)"
 
-详细内容：[“前端 · 表情包”](/guide/frontend/emoticons.md)
+详细内容：[前端 · 表情包](/guide/frontend/emoticons.md)
 
 更新兼容 [OwO 格式](https://github.com/DIYgod/OwO)，支持 URL 动态加载。
 
@@ -175,7 +176,7 @@ JS DELIVR 在中国大陆的 [ICP 牌照已被吊销](https://github.com/jsdeliv
 代码动态修改 darkMode：
 
 ```js
-Artalk.setDarkMode(true)
+artalk.setDarkMode(true)
 ```
 
 > 参考代码：“[index.html](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/index.html#L97-L150)”
@@ -268,7 +269,7 @@ pvEl 和 countEl 元素标签都可以设置 `data-page-key` 属性值，来指�
 **显示用户的 UserAgent 信息徽标**
 
 - 类型：`Boolean`
-- 默认值：`true`
+- 默认值：`false`
 
 ### listSort
 

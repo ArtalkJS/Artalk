@@ -12,13 +12,13 @@
 
 :::tip
 
-执行 `./artalk upgrade -f` 携带参数 `-f` 来进行同版本号的补充更新。
+执行 `./artalk upgrade -f` 携带参数 `-f` 执行强制更新。
 
 :::
 
 ## Docker 升级
 
-可参考：[“Docker · 升级”](./docker.md#升级)
+可参考：[Docker · 升级](./docker.md#升级)
 
 ## 普通方式
 

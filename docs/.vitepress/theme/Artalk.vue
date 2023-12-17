@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch, nextTick, ref, onMounted, onBeforeUnmount } from 'vue'
+import { watch, nextTick, ref, onMounted, onUnmounted } from 'vue'
 import { useData, useRouter } from 'vitepress'
 import type Artalk from 'artalk'
 
@@ -27,7 +27,7 @@ watch(() => router.route.data.relativePath, () => {
   })
 })
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
   artalk.destroy()
 })
 

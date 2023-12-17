@@ -2,9 +2,7 @@
 
 ## 数据行囊
 
-数据行囊（Artrans）是 Artalk 持久化数据保存规范格式。
-
-Artran = Art + Ran (艺术 + 润)
+数据行囊（Artrans = Art + Ran）是 Artalk 持久化数据保存规范格式。
 
 ::: details Artran 格式定义
 
@@ -59,7 +57,7 @@ Artran = Art + Ran (艺术 + 润)
 
 转换为 `.artrans` 格式的数据文件可以导入 Artalk：
 
-- **前端导入**：你可在「[控制中心](./frontend/sidebar.md#控制中心)」找到「迁移」选项卡，并根据提示导入 Artrans。
+- **控制中心导入**：你可在「[控制中心](./frontend/sidebar.md#控制中心)」找到「迁移」选项卡，并根据提示导入 Artrans。
 - **命令行导入**：执行 `artalk import -h` 查阅帮助文档。
 
 ## 获取源数据
@@ -211,4 +209,4 @@ artalk export | gzip -9 | ssh username@remote_ip "cat > ~/backup/artrans.gz"
 
 目前已支持将 Typecho、WordPress、Valine、Waline、Disqus、Commento、Twikoo 等类型的数据转为 Artrans，但鉴于评论系统的多样性，虽然我们已经对上述类型数据做了适配，但仍然还有许多并未兼容。如果你恰巧正在使用未被适配的评论系统，你除了等待 Artalk 官方支持之外，还可以尝试了解 Artrans 数据格式后自主编写评论数据导入导出工具。如果你觉得自己的工具写得不错，我们十分乐意将其收录在内，让我们共同创造一个能够在不同评论系统之间自由切换的工具。
 
-前往：[“Artransfer 迁移工具代码仓库”](https://github.com/ArtalkJS/Artransfer)
+前往：[Artransfer 迁移工具代码仓库](https://github.com/ArtalkJS/Artransfer)

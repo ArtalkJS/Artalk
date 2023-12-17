@@ -324,4 +324,4 @@ admin_notify:
 
 注：旧版 `email.mail_subject_to_admin` 配置项已弃用，请使用以上替代。
 
-不局限于邮件，Artalk 支持多种方式向管理员发送通知，参考：[“多元推送”](./admin_notify.md#邮件通知)。
+不局限于邮件，Artalk 支持多种方式向管理员发送通知，参考：[多元推送](./admin_notify.md#邮件通知)。

@@ -113,7 +113,7 @@ admin_notify:
 
 ![](/images/notify/tg-2.png)
 
-详情可参考：[“Bots: An introduction for developers - Telegram”](https://core.telegram.org/bots)
+详情可参考：[Bots: An introduction for developers - Telegram](https://core.telegram.org/bots)
 
 ::: tip
 
@@ -151,7 +151,7 @@ admin_notify:
 
 <img src="/images/notify/lark-3.png" width="400px">
 
-可参考：[“飞书帮助中心文档”](https://www.feishu.cn/hc/zh-CN/articles/360024984973)
+可参考：[飞书帮助中心文档](https://www.feishu.cn/hc/zh-CN/articles/360024984973)
 
 ## 钉钉
 
@@ -164,7 +164,7 @@ admin_notify:
     secret: ""
 ```
 
-可参考：[“钉钉开放文档”](https://open.dingtalk.com/document/robots/custom-robot-access)
+可参考：[钉钉开放文档](https://open.dingtalk.com/document/robots/custom-robot-access)
 
 ## Bark
 
@@ -227,7 +227,7 @@ admin_notify:
 {{link_to_reply}}
 ```
 
-可用变量和邮件模板相同，可参考：[“邮件模版”](./email.md#邮件模板)
+可用变量和邮件模板相同，可参考：[邮件模版](./email.md#邮件模板)
 
 ## 嘈杂模式 `noise_mode`
 
@@ -264,7 +264,7 @@ admin_notify:
 |`notify_subject`|通知标题     |String| 对应 admin_notify.notify_subject 配置项 |
 |`notify_body`   |通知内容     |String| 根据 admin_notify.notify_tpl 模版渲染 |
 |`comment`       |评论内容     |Object| 新创建的评论数据对象 |
-|`parent_comment`|评论回复的目标|Object| Root 根节点评论类型改项为 null |
+|`parent_comment`|评论回复的目标|Object| 如果是根节点评论值为 null |
 
 **Body 数据样本**
 

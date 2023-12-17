@@ -60,7 +60,7 @@ Artalk.init({
 
 建议 `frontend.emoticons` 填入表情包的 URL，而非 Object。
 
-参考文档：[“表情包”](/guide/frontend/emoticons)
+参考文档：[表情包](/guide/frontend/emoticons)
 
 如需传递 Object，可以将其转为 JSON 字符串格式，例如：
 

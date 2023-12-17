@@ -36,7 +36,7 @@
 
    不论是 Vue、React、Svelte 的前端项目，还是 WordPress、Typecho、Hexo 等博客系统，都可以快速引入 Artalk，结合诸位的聪明才智，我们相信 Artalk 能够自如应对各种业务场景。
 
-> 更多支持 / 计划的功能，详见：[“README.md”](https://github.com/ArtalkJS/Artalk#todos)。
+> 更多支持 / 计划的功能，详见：[README.md](https://github.com/ArtalkJS/Artalk#todos)。
 
 ## 用户体验
 
@@ -64,7 +64,7 @@ Artalk 社区是包容开放的社区，我们欢迎不同水平的人员帮助 
 
 “More action, less talk”，Artalk 社区不欢迎无意义的争论，我们希望社区成员和谐共处、为社区发展出谋划策。在提出问题前，你应当读过《[提问的智慧](https://lug.ustc.edu.cn/wiki/doc/smart-questions/)》，这可能决定了你最终是否能得到有用的回答。在表达观点前，你应当具备基本的礼仪，比如保持平和的态度、使用得体的语言，切忌恶语相向、冷嘲热讽、不尊重他人信仰和立场等。
 
-我们作为开源精神的推崇者以及实践者，希望我们所创造的自由软件，都应该被自由的使用，自由的研究，自由的更改和自由的分享。本项目前后端代码使用 [MIT](https://github.com/ArtalkJS/Artalk/blob/master/LICENSE) 协议开源，文档请遵循知识共享许可协议 ([Creative Commons License](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh))。
+我们作为开源精神的推崇者以及实践者，希望我们所创造的自由软件，都应该被自由的使用，自由的研究，自由的更改和自由的分享。本项目主程序使用 [MIT](https://github.com/ArtalkJS/Artalk/blob/master/LICENSE) 协议开源，文档使用 [CC](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh) 许可协议。
 ::: tip 立即为社区贡献力量？
 
   - 浏览开发者资料（[开发文档](../develop/index.md) / [CONTRIBUTING.md](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)）

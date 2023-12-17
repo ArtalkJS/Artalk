@@ -55,13 +55,19 @@
 - 支持 Latex：提供集成 Katex 插件
 - 使用 [Vite](https://github.com/vitejs/vite)：属于开发者的极致体验
 
-更多内容请查看：[“**介绍文档**”](https://artalk.js.org/guide/intro.html)
+更多内容请查看：[**介绍文档**](https://artalk.js.org/guide/intro.html)
 
-## 食用方针
+## 安装
 
-前往：[“**部署文档**”](https://artalk.js.org/guide/deploy.html)
+参考：[**部署文档**](https://artalk.js.org/guide/deploy.html)
+
+```bash
+npm install artalk
+```
 
 ```ts
+import Artalk from 'artalk'
+
 Artalk.init({
   el:     '#Comments',
   site:   'Artalk 的博客',
@@ -76,6 +82,7 @@ docker run -d \
   --name artalk \
   -p 8080:23366 \
   -v $(pwd)/data:/data \
+  --restart=always \
   artalk/artalk-go
 ```
 
@@ -91,6 +98,7 @@ services:
   artalk:
     container_name: artalk
     image: artalk/artalk-go
+    restart: always
     ports:
       - 8080:23366
     volumes:

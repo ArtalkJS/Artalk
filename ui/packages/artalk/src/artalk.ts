@@ -49,11 +49,6 @@ export default class Artalk {
     this.ctx.trigger('inited')
   }
 
-  /** Use Plugin (plugin will be called in instance `use` func) */
-  public use(plugin: ArtalkPlugin) {
-    if (typeof plugin === 'function') plugin(this.ctx)
-  }
-
   /** Update config of Artalk */
   public update(conf: Partial<ArtalkConfig>) {
     this.ctx.updateConf(conf)
@@ -103,8 +98,9 @@ export default class Artalk {
     return new Artalk(conf)
   }
 
-  /** Use Plugin for all instances */
+  /** Use plugin, the plugin will be used when Artalk.init */
   public static use(plugin: ArtalkPlugin) {
+    if (GlobalPlugins.includes(plugin)) return
     GlobalPlugins.push(plugin)
   }
 

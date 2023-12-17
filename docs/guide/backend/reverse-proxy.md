@@ -1,5 +1,25 @@
 # 反向代理
 
+## Caddy
+
+**/etc/caddy/Caddyfile**
+
+```nginx
+artalk.your_domain.com {
+  tls /etc/caddy/ssl/cert.pem /etc/caddy/ssl/cert.key
+
+  reverse_proxy http://localhost:23366 {
+    header_up X-Forwarded-For {header.X-Forwarded-For}
+  }
+}
+```
+
+执行重载命令：
+
+```sh
+sudo systemctl reload caddy
+```
+
 ## Nginx
 
 假定：
@@ -66,16 +86,6 @@ Artalk.init({ server: "http://artalk.your_domain.com" })
 
 尤其是运行在 Docker 容器内的 artalk，注意检查 IP 和端口是否能够被 Nginx 正常访问
 :::
-
-## Caddy
-
-创建 Caddyfile：
-
-```
-artalk.your_domain.com {
-  reverse_proxy / http://localhost:23366
-}
-```
 
 ## Apache
 

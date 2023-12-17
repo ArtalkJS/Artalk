@@ -51,14 +51,11 @@ Artalk.init({
 
 在控制台，你可以根据喜好配置评论系统、[将评论迁移到 Artalk](./transfer.md)。
 
-祝贺！你已成功完成 Artalk 部署 🥳
+🥳 你已成功完成 Artalk 部署！
 
 ## 普通方式部署
 
 1. 前往 [GitHub Release](https://github.com/ArtalkJS/Artalk/releases) 下载程序压缩包
-
-  > 注：我们已将 ArtalkGo 与主仓库合并，历史旧版可在[此页面](https://github.com/ArtalkJS/ArtalkGo/releases)查看，日后新版将在[新页面](https://github.com/ArtalkJS/Artalk/releases)发布。
-
 2. 提取压缩包：`tar -zxvf artalk_版本号_系统_架构.tar.gz`
 3. 运行程序 `./artalk server`
 4. 前端配置
@@ -67,25 +64,16 @@ Artalk.init({
     Artalk.init({ server: "http://your_domain:23366" })
     ```
 
-**其它可选操作：**
+**进一步操作：**
 
-- [“反向代理端口到 80 / 443 (Nginx, Apache)”](./backend/reverse-proxy.md)
-- ["持久化运作 (tmux, systemd, supervisor)"](./backend/daemon.md)
+- [守护进程 (Systemd, Supervisor)](./backend/daemon.md)
+- [反向代理 (Caddy, Nginx, Apache)](./backend/reverse-proxy.md)
 
-**附表：文件名释义表**
+如果有需要，你还可以自行编译程序，参考：[后端构建](./backend/build.md)。
 
-|文件名|操作系统|CPU 架构|
-|:-|:-:|:-:|
-|artalk_linux_amd64.tar.gz|Linux|x86_64|
-|artalk_linux_arm64.tar.gz|Linux|ARM64|
-|artalk_linux_arm7.tar.gz|Linux|ARMv7|
-|artalk_windows_amd64.zip|Windows|x86_64|
-|artalk_darwin_arm64.tar.gz|macOS|Apple Silicon|
-|artalk_darwin_amd64.tar.gz|macOS|Intel Chip|
+## Compose 部署
 
-## Docker Compose 部署
-
-提供 docker-compose.yaml 文件可供参考：
+**compose.yaml**
 
 ```yaml
 version: "3.5"
@@ -100,7 +88,7 @@ services:
       - ./data:/data
 ```
 
-在与配置文件相同的目录执行命令创建容器：
+执行命令创建容器：
 
 ```bash
 docker-compose up -d
@@ -118,11 +106,7 @@ docker-compose exec artalk bash # 进入容器
 
 :::
 
-> 详细可见：[“后端 · Docker”](./backend/docker.md)
-
-## 自行编译并运行
-
-可参考：[“后端构建”](./backend/build.md)
+可参考：[Docker 部署文档](./backend/docker.md)
 
 ## CDN 资源
 
@@ -135,7 +119,21 @@ docker-compose exec artalk bash # 进入容器
 
 Artalk 后端程序内嵌了前端 JS、CSS 文件，使用公共 CDN 资源请注意前后端版本的兼容性。
 
-Artalk 静态资源通过上游 [CDNJS](https://cdnjs.com/) 分发，国内有许多镜像可供选择：
+Artalk 静态资源通过上游 CDNJS 分发，以下镜像资源可供选择：
+
+**CDNJS**
+
+> https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.js
+>
+> https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
+
+**Staticfile CDN (国内)**
+
+> https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.js
+>
+> https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.css
+
+::: details 查看更多
 
 **BootCDN (国内)**
 
@@ -143,12 +141,11 @@ Artalk 静态资源通过上游 [CDNJS](https://cdnjs.com/) 分发，国内有�
 >
 > https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
 
+**75CDN (国内)**
 
-**CDNJS**
-
-> https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.js
+> https://lib.baomitu.com/artalk/:ArtalkVersion:/Artalk.js
 >
-> https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
+> https://lib.baomitu.com/artalk/:ArtalkVersion:/Artalk.css
 
 **UNPKG**
 
@@ -162,11 +159,9 @@ Artalk 静态资源通过上游 [CDNJS](https://cdnjs.com/) 分发，国内有�
 > 
 > https://cdn.jsdelivr.net/npm/artalk@:ArtalkVersion:/dist/Artalk.css
 
-## ArtalkLite
+:::
 
-可选择精简版 [ArtalkLite](./frontend/artalk-lite.md)：体积更小、更简约。
-
-## NPM 生态
+## Node 项目
 
 ```bash
 pnpm add artalk
@@ -183,13 +178,20 @@ Artalk.init({
 })
 ```
 
-## 何时引入、何时 init？
+可参考：
 
-- 可以在任意位置引入 JS 和 CSS 资源，但需确保 JS 引入在执行 `Artalk.init({})` 前。
-- 执行 `Artalk.init({ el: '#x' })` 时，需要确保 `<div id="x"></div>` 存在于页面当中。
-
-可参考：[“前端框架引入”](./frontend/import-framework.md) / [“博客引入”](./frontend/import-blog.md)
+- [置入框架文档](./frontend/import-framework.md)
+- [置入博客文档](./frontend/import-blog.md)
+- [前端 API](../develop/fe-api.md)
 
 ## 数据导入
 
-从其他评论系统导入数据：[“数据迁移”](./transfer.md)
+从其他评论系统导入数据：[数据迁移](./transfer.md)
+
+## ArtalkLite
+
+可选择精简版 [ArtalkLite](./frontend/artalk-lite.md)：体积更小、更简约。
+
+## 开发环境
+
+可参考：[开发者指南](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)

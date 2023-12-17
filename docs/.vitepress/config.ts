@@ -50,7 +50,8 @@ export default defineConfig({
     en: {
       label: 'English',
       lang: 'en',
-      link: '/en/'
+      link: 'https://artalk-js-org.translate.goog/guide/intro?_x_tr_sl=auto&_x_tr_tl=en-US&_x_tr_hl=en-US&_x_tr_pto=wapp'
+      // link: '/en/'
     }
   },
 
@@ -94,6 +95,7 @@ export default defineConfig({
             { text: '精简版本', link: '/guide/frontend/artalk-lite.md' },
             { text: '置入博客', link: '/guide/frontend/import-blog.md' },
             { text: '置入框架', link: '/guide/frontend/import-framework.md' },
+            { text: '前端 API', link: '/develop/fe-api.md', },
             { text: '开发文档', link: '/develop/index.md', },
           ],
         },
@@ -109,11 +111,11 @@ export default defineConfig({
           text: "部署说明",
           collapsed: true,
           items: [
-            { text: 'Docker', link: '/guide/backend/docker.md' },
             { text: '守护进程', link: '/guide/backend/daemon.md' },
             { text: '反向代理', link: '/guide/backend/reverse-proxy.md' },
             { text: '编译构建', link: '/guide/backend/build.md' },
             { text: '程序升级', link: '/guide/backend/update.md' },
+            { text: 'Docker', link: '/guide/backend/docker.md' },
           ]
         },
         {

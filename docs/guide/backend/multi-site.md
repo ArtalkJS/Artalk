@@ -26,7 +26,7 @@ docker exec -it artalk artalk admin
 
 ## 站点的创建和管理
 
-你可以在侧边栏「[控制中心](../frontend/sidebar.md#控制中心)」创建多个站点，管理站点和快速切换站点，详情可参考：[“侧边栏”](/guide/frontend/sidebar.html)。
+你可以在侧边栏「[控制中心](../frontend/sidebar.md#控制中心)」创建多个站点，管理站点和快速切换站点，详情可参考：[侧边栏](/guide/frontend/sidebar.html)。
 
 ## 管理员配置
 
@@ -66,7 +66,7 @@ admin_users:
 
   然后配置填写：`"(bcrypt)$2y$10$ti4vZYIrxVN8rLcY..."`，以 `(bcrypt)` 开头。
 
-  命令解释参考：[“Compute bcrypt hash from command line”](https://unix.stackexchange.com/questions/307994/compute-bcrypt-hash-from-command-line#answer-419855)
+  命令解释参考：[Compute bcrypt hash from command line](https://unix.stackexchange.com/questions/307994/compute-bcrypt-hash-from-command-line#answer-419855)
 
 - **badge_name**：用户显示的头衔徽标文字。
 - **badge_color**：用户显示的头衔徽标背景颜色。

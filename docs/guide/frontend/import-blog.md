@@ -4,6 +4,11 @@
 
 <<< @/code/quick-start/cdn.html
 
+#### 什么时候执行 `Artalk.init({})`？
+
+- 可以在任意位置引入 JS 和 CSS 资源，但需确保 JS 引入在执行 `Artalk.init({})` 前。
+- 执行 `Artalk.init({ el: '#artalk' })` 前需要确保 `<div id="artalk"></div>` 在页面当中。
+
 ## Hugo
 
 创建模板文件 `/主题目录/layouts/partials/comment/artalk.html`：
@@ -108,7 +113,7 @@ NexT 主题可以安装 [Hexo NexT 主题的 Artalk 插件](https://github.com/l
 - `theme/index.ts` 注册组件
 - `theme/Layout.vue` 使用组件
 
-注：由于文档将进行 SSR 渲染，因此需通过 `import()` 函数异步引入 Artalk，否则会导致构建失败。
+注：SSG 应用需通过 `import()` 函数异步引入 Artalk，否则会导致构建失败。
 
 ```ts
 import('artalk').then(({ default: Artalk }) => {
@@ -126,7 +131,7 @@ import('artalk').then(({ default: Artalk }) => {
 
 ::: tip 提示
 
-可参考：[“置入框架”](./import-framework.md)
+可参考：[置入框架](./import-framework.md)
 
 :::
 

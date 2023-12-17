@@ -41,7 +41,7 @@ img_upload:
 
 频率限制跟随 `captcha` 验证码配置，当超出限制将弹出验证码。
 
-可参考：[“后端 · 验证码”](/guide/backend/captcha.md)
+可参考：[后端 · 验证码](/guide/backend/captcha.md)
 
 ## path
 

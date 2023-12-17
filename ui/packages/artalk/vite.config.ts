@@ -18,7 +18,10 @@ export default Utils.mergeDeep(baseConf, defineConfig({
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => (/\.css$/.test(assetInfo.name || '') ? "Artalk.css" : "[name].[ext]"),
-        exports: 'named'
+
+        // @see https://github.com/rollup/rollup/issues/587
+        //  and https://github.com/rollup/rollup/pull/631/files
+        exports: 'named',
       }
     }
   },

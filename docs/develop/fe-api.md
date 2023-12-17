@@ -12,7 +12,7 @@ npm install artalk
 
 ## 创建实例 `init`
 
-`Artalk.init` 函数和 `new Artalk` 等价，调用该函数将创建并得到一个 Artalk 的实例化对象，可用于后续操作。
+调用该函数将创建并得到一个 Artalk 的实例化对象，可用于后续操作。
 
 ```js
 import Artalk from 'artalk'

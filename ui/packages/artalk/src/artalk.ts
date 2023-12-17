@@ -3,7 +3,6 @@ import './style/main.scss'
 import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '~/types'
 import type { EventHandler } from './lib/event-manager'
 import ConcreteContext from './context'
-import defaults from './defaults'
 import { handelCustomConf, convertApiOptions } from './config'
 import Services from './service'
 import { DefaultPlugins } from './plugins'
@@ -89,9 +88,6 @@ export default class Artalk {
   // ===========================
   //       Static Members
   // ===========================
-
-  /** Default Configs */
-  public static readonly defaults: ArtalkConfig = defaults
 
   /** Init Artalk */
   public static init(conf: Partial<ArtalkConfig>): Artalk {

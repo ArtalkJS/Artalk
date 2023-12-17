@@ -25,6 +25,6 @@
     "vitepress": "1.0.0-rc.14"
   },
   "dependencies": {
-    "artalk": "^2.6.4"
+    "artalk": "^2.7.0"
   }
 }

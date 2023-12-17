@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   artalk:
-    specifier: ^2.6.4
-    version: 2.6.4
+    specifier: ^2.7.0
+    version: 2.7.0
 
 devDependencies:
   '@redocly/cli':
@@ -2074,8 +2074,8 @@ packages:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
     dev: true
 
-  /artalk@2.6.4:
-    resolution: {integrity: sha512-26mnU1gL7aoM2g5i0AkgPgwoQ7+xvbkqbs9xs+ZFdT6BMeyC1lpMVIPLLui7VIRtJnJAq6sUQxMb4Lq6F2AVZA==}
+  /artalk@2.7.0:
+    resolution: {integrity: sha512-eV25c1vw0GtGmobh3W2bCjlIKxEd+k3u7WQ0IgC1ULd9PYCdwRMKjN7K+W+qlkUMVm2Kf4ti0Luouu07aE3sIw==}
     dependencies:
       abortcontroller-polyfill: 1.7.5
       hanabi: 0.4.0

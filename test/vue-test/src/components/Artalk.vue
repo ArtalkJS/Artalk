@@ -9,10 +9,6 @@ const route = useRoute()
 
 let artalk: Artalk
 
-Artalk.use((ctx) => {
-  ctx.fetch
-})
-
 onMounted(() => {
   artalk = Artalk.init({
     el: el.value,

@@ -78,4 +78,7 @@ export default {
   deleteFail: 'Delete Failed',
   reqGot: 'Request got',
   reqAborted: 'Request timed out or terminated unexpectedly',
+  updateMsg: 'Please update Artalk {name} to get the full experience',
+  currentVersion: 'Current Version',
+  ignore: 'Ignore',
 }

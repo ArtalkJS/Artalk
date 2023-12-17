@@ -21,12 +21,11 @@ function versionCheck(list: List, feVer: string, beVer: string) {
   if (sameVer) return
 
   const errEl = Utils.createElement(
-    `<div>请更新 Artalk ${comp < 0 ? $t('frontend') : $t('backend')}以获得完整体验 ` +
-    `(<a href="https://artalk.js.org/" target="_blank">帮助文档</a>)` +
+    `<div>${$t('updateMsg', { name: (comp < 0) ? $t('frontend') : $t('backend') })}` +
     `<br/><br/><span style="color: var(--at-color-meta);">` +
-    `当前版本：${$t('frontend')} ${feVer} / ${$t('backend')} ${beVer}` +
+    `${$t('currentVersion')}: ${$t('frontend')} ${feVer} / ${$t('backend')} ${beVer}` +
     `</span><br/><br/></div>`)
-  const ignoreBtn = Utils.createElement('<span style="cursor:pointer">忽略</span>')
+  const ignoreBtn = Utils.createElement(`<span style="cursor:pointer">${$t('ignore')}</span>`)
   ignoreBtn.onclick = () => {
     Ui.setError(list.$el.parentElement!, null)
     IgnoreVersionCheck = true

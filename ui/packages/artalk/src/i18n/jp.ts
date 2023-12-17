@@ -80,4 +80,7 @@ export default defineLocaleExternal('jp', {
   deleteFail: '削除に失敗しました',
   reqGot: 'リクエストを取得しました',
   reqAborted: 'リクエストがタイムアウトしたか、予期せず終了した',
+  updateMsg: 'フルな体験をするためには、Artalk {name} をアップデートしてください',
+  currentVersion: '現在のバージョン',
+  ignore: '無視する',
 }, ['jp-JP'])

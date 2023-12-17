@@ -80,6 +80,9 @@ const zhCN: I18n = {
   deleteFail: '删除失败',
   reqGot: '请求响应',
   reqAborted: '请求超时或意外终止',
+  updateMsg: '请更新 Artalk {name} 以获得完整体验',
+  currentVersion: '当前版本',
+  ignore: '忽略',
 }
 
 export default zhCN

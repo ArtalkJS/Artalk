@@ -80,4 +80,7 @@ export default defineLocaleExternal('zh-TW', {
   deleteFail: '刪除失敗',
   reqGot: '請求響應',
   reqAborted: '請求超時或意外終止',
+  updateMsg: '請更新 Artalk {name} 以獲得完整體驗',
+  currentVersion: '當前版本',
+  ignore: '忽略',
 })

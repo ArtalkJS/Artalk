@@ -1,4 +1,57 @@
 
+## [v2.7.0](https://github.com/ArtalkJS/Artalk/compare/v2.6.4...v2.7.0) (2023-12-17)
+
+### Features
+
+* **ui:** support `scrollRelativeTo` config option
+* **ui/test:** add end-to-end (e2e) testing using Playwright
+
+### Bug Fixes
+
+* **api/img-upload:** `public_path` config enables the use of full url ([#659](https://github.com/ArtalkJS/Artalk/issues/659)) ([#664](https://github.com/ArtalkJS/Artalk/issues/664))
+* **lifecycle:** create multi-instances at the same time ([#660](https://github.com/ArtalkJS/Artalk/issues/660)) ([#663](https://github.com/ArtalkJS/Artalk/issues/663))
+* **notify_pusher:** panic when admin ids array is empty ([#634](https://github.com/ArtalkJS/Artalk/issues/634))
+* **style/list:** replace `float` to `text-align` in footer part ([#619](https://github.com/ArtalkJS/Artalk/issues/619))
+* **ui:** scroll to the center of the viewport issue
+* **ui/conf:** sanitize `noComment` conf option for security ([#624](https://github.com/ArtalkJS/Artalk/issues/624))
+* **ui/dark-mode:** `setDarkMode` cannot save to instance config ([#661](https://github.com/ArtalkJS/Artalk/issues/661))
+* **ui/editor:** fix position of the comment box when replying ([#643](https://github.com/ArtalkJS/Artalk/issues/643)) ([#648](https://github.com/ArtalkJS/Artalk/issues/648))
+
+### Performance Improvements
+
+* **cache:** implement GC feature for simple_cache pkg ([#656](https://github.com/ArtalkJS/Artalk/issues/656))
+
+### Code Refactoring
+
+* **editor:** refactor editor plugin manager ([#609](https://github.com/ArtalkJS/Artalk/issues/609))
+* **editor:** refactor plug kit and events ([#613](https://github.com/ArtalkJS/Artalk/issues/613))
+* **ui:** reduce coupling with `ContextApi`
+* **ui:** separate standalone admin-only-elem checker
+* **ui/api:** loose coupling between `Api` and `Context`
+* **ui/conf:** loose coupling between config and list fetch
+* **ui/event:** refactor core event manager ([#611](https://github.com/ArtalkJS/Artalk/issues/611))
+* **ui/layer:** better layer implements and independence ([#662](https://github.com/ArtalkJS/Artalk/issues/662))
+* **ui/list:** separate list into standalone components ([#618](https://github.com/ArtalkJS/Artalk/issues/618))
+* **ui/marked:** separate markdown related codes
+* **ui/marked:** loose coupling with `marked` func
+* **ui/plugin:** further divide functionality into plugins ([#615](https://github.com/ArtalkJS/Artalk/issues/615))
+* **ui/stat:** losing coupling of `CountWidget`
+* **ui/types:** better `ArtalkType` import and export ([#620](https://github.com/ArtalkJS/Artalk/issues/620))
+
+### Documentation
+
+* revise and add more examples
+* provide clearer and more detailed instructions in CONTRIBUTING.md
+* **conf:** disable `frontend.uaBadge` config option by default
+* **deploy:** add deployment guide for render.com ([#649](https://github.com/ArtalkJS/Artalk/issues/649))
+* **import:** update the examples in import-framework.md ([#665](https://github.com/ArtalkJS/Artalk/issues/665))
+
+### BREAKING CHANGE
+
+
+The following top-level functions exported by the 'artalk' npm package have been deprecated: `Artalk.update`, `Artalk.reload`, and `Artalk.destroy`. These methods now require invocation on an instance created by either `Artalk.init` or `new Artalk`. Please utilize instance-level methods instead, such as `artalkInstance.update`. For more information, refer to  [the documentation](https://artalk.js.org/guide/frontend/import-framework.html). The update was implemented to enable the concurrent creation of multiple instances, adapting to situations where Vue components are simultaneously referenced across various pages. Initially, only a singular instance was permitted to mitigate memory leak concerns. However, this proved limiting for scenarios involving the caching of multiple component instances through 'keep-alive.' To better suit intricate SPA application needs, the choice was made to permit the creation of multiple independent instances. It's crucial to remember to manually invoke the `artalk.destroy` method when releasing components to avoid memory leaks (Issue [#660](https://github.com/ArtalkJS/Artalk/issues/660)).
+
+
 ## [v2.6.4](https://github.com/ArtalkJS/Artalk/compare/v2.6.3...v2.6.4) (2023-10-12)
 
 ### Features

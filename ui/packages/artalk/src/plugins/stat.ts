@@ -32,12 +32,15 @@ export async function initCountWidget(opt: CountOptions) {
   }
 
   // PV
-  const curtPagePvNum = opt.pvAdd ? await opt.getApi().page.pv() : NaN
+  const initialData = opt.pvAdd ? {
+    [opt.pageKey]: (await opt.getApi().page.pv()) // pv+1 and get pv count
+  } : undefined
+
   if (opt.pvEl && document.querySelector(opt.pvEl)) {
     refreshStatCount(opt, {
       query: 'page_pv',
       numEl: opt.pvEl,
-      data: { [opt.pageKey]: curtPagePvNum },
+      data: initialData,
     })
   }
 }
@@ -54,16 +57,16 @@ async function refreshStatCount(
 ) {
   let data: CountData = args.data || {}
 
-  // Get page keys from DOM
-  let pageKeys = Array.from(document.querySelectorAll(args.numEl))
+  // Get page keys which will be queried
+  let queryPageKeys = Array.from(document.querySelectorAll(args.numEl))
     .map((e) => e.getAttribute('data-page-key') || opt.pageKey)
-    .filter((e) => Number.isNaN(data[e])) // filter out keys that already have data
+    .filter((k) => typeof data[k] !== 'number') // filter out keys that already have data
 
-  pageKeys = [...new Set(pageKeys)] // deduplicate
+  queryPageKeys = [...new Set(queryPageKeys)] // deduplicate
 
   // Fetch count data from server
-  if (pageKeys.length > 0) {
-    const res = await opt.getApi().page.stat(args.query, pageKeys) as CountData
+  if (queryPageKeys.length > 0) {
+    const res = await opt.getApi().page.stat(args.query, queryPageKeys) as CountData
     data = { ...data, ...res }
   }
 

@@ -26,7 +26,7 @@ var Banner = `
 
 Artalk (` + Version + `)
 
- -> A Selfhosted Comment System.
+ -> A self-hosted Comment System.
  -> https://artalk.js.org
 `
 

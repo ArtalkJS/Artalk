@@ -6,7 +6,7 @@ titleTemplate: 自托管评论系统
 
 hero:
   name: Artalk
-  text: The Selfhosted Comment System
+  text: A self-hosted Comment System
   tagline: 轻量、安全、易上手的自托管评论系统
   actions:
     - theme: brand

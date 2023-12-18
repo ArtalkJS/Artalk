@@ -64,7 +64,7 @@ export default class StateEdit extends EditorPlug {
     }
     this.comment = comment
 
-    ui.$header.style.display = 'none' // TODO support modify header information
+    ui.$header.style.display = 'none' // TODO: support modify header information
 
     ui.$nick.value = comment.nick || ''
     ui.$email.value = comment.email || ''
@@ -96,7 +96,7 @@ export default class StateEdit extends EditorPlug {
     this.kit.useEditor().setContent('')
     this.restoreSubmitBtnText()
 
-    ui.$header.style.display = '' // TODO support modify header information
+    ui.$header.style.display = '' // TODO: support modify header information
   }
 
   // -------------------------------------------------------------------

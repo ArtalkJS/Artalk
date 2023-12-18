@@ -67,7 +67,7 @@ export default class List extends Component {
       if (!node) { console.error(`comment node id=${comment.id} not found`);return }
       node.getEl().remove()
       this.commentNodes = this.commentNodes.filter(c => c.getID() !== comment.id)
-      // TODO remove child nodes
+      // TODO: remove child nodes
     })
 
     // When comment update

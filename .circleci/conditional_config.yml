@@ -10,16 +10,13 @@ executors:
       - image: cimg/base:stable
   node:
     docker:
-      - image: 'cimg/node:18.17.1'
+      - image: 'cimg/node:18.19.0'
   go:
     docker:
       - image: cimg/go:1.21.3
 
 parameters:
   trigger-app:
-    type: boolean
-    default: false
-  trigger-ui:
     type: boolean
     default: false
   run-them-all:
@@ -60,25 +57,6 @@ jobs:
             flags: go
             file: /tmp/test-reports/coverage.out
 
-  ## Frontend
-  test_ui:
-      executor: node
-      steps:
-        - node/install
-        - checkout
-        - run:
-            name: Print the node version
-            command: node -v
-        - run:
-            name: Install pnpm
-            command: npm i -g pnpm@8.7.0
-        - run:
-            name: Install Dependencies
-            command: pnpm --dir ./ui install --frozen-lockfile
-        - run:
-            name: Build Artalk
-            command: pnpm --dir ./ui build:all
-
   all_projects:
       executor: base
       steps:
@@ -94,14 +72,6 @@ workflows:
         - << pipeline.parameters.run-them-all >>
     jobs:
       - test_app
-
-  build-ui:
-    when:
-      or:
-        - << pipeline.parameters.trigger-ui >>
-        - << pipeline.parameters.run-them-all >>
-    jobs:
-      - test_ui
 
   build-shared-other:
     when: << pipeline.parameters.run-them-all >>

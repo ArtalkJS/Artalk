@@ -46,6 +46,7 @@
   "unpkg": "./dist/Artalk.iife.js",
   "module": "./dist/Artalk.es.js",
   "types": "./dist/src/main.d.ts",
+  "files": ["dist"],
   "scripts": {
     "build": "vite build && pnpm build:lite && pnpm build:i18n",
     "build:demo": "vite build --config vite-demo.config.ts",

@@ -22,7 +22,7 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   get<K extends keyof TInjectedServices>(depName: K): TInjectedServices[K]
 
   /** 配置对象 */
-  // TODO 修改为 getConf() 和 setConf() 并且返回拷贝而不是引用
+  // TODO: 修改为 getConf() 和 setConf() 并且返回拷贝而不是引用
   conf: ArtalkConfig
 
   /** marked 依赖对象 */

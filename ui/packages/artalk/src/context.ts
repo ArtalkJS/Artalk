@@ -70,7 +70,7 @@ class Context implements ContextApi {
   }
 
   public listGotoFirst(): void {
-    this.trigger('list-goto-first')
+    this.events.trigger('list-goto-first')
   }
 
   /* 编辑器 */
@@ -130,12 +130,12 @@ class Context implements ContextApi {
     // prevent trigger 'conf-loaded' to improve performance
     // this.updateConf({ ...this.conf, darkMode })
     this.conf.darkMode = darkMode
-    this.trigger('dark-mode-changed', darkMode)
+    this.events.trigger('dark-mode-changed', darkMode)
   }
 
   public updateConf(nConf: Partial<ArtalkConfig>): void {
     this.conf = Utils.mergeDeep(this.conf, handelCustomConf(nConf))
-    this.trigger('conf-loaded', this.conf)
+    this.events.trigger('conf-loaded', this.conf)
   }
 
   public getMarked() {

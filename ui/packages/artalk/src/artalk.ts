@@ -2,12 +2,13 @@ import './style/main.scss'
 
 import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '~/types'
 import type { EventHandler } from './lib/event-manager'
-import ConcreteContext from './context'
+import Context from './context'
 import { handelCustomConf, convertApiOptions } from './config'
 import Services from './service'
 import { DefaultPlugins } from './plugins'
 import * as Stat from './plugins/stat'
 import Api from './api'
+import type { TInjectedServices } from './service'
 
 /** Global Plugins for all instances */
 const GlobalPlugins: ArtalkPlugin[] = [ ...DefaultPlugins ]
@@ -31,12 +32,12 @@ export default class Artalk {
     if (this.conf.el instanceof HTMLElement) this.$root = this.conf.el
 
     // Init Context
-    this.ctx = new ConcreteContext(this.conf, this.$root)
+    this.ctx = new Context(this.conf, this.$root)
 
     // Init Services
     Object.entries(Services).forEach(([name, initService]) => {
       const obj = initService(this.ctx)
-      if (obj) this.ctx.inject(name as any, obj) // auto inject deps to ctx
+      if (obj) this.ctx.inject(name as keyof TInjectedServices, obj) // auto inject deps to ctx
     })
 
     // Init Plugins

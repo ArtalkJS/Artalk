@@ -17,7 +17,7 @@ export interface LayoutOptions {
 export default class ListLayout {
   constructor(private options: LayoutOptions) {}
 
-  // TODO refactor `if syntax` to strategy pattern
+  // TODO: refactor `if syntax` to strategy pattern
   import(comments: CommentData[]) {
     if (this.options.flatMode) {
       comments.forEach((commentData: CommentData) => {

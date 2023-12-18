@@ -3,7 +3,6 @@ import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import SidebarHTML from './sidebar-layer.html?raw'
-import User from '../lib/user'
 import type { Layer } from './layer'
 
 export default class SidebarLayer extends Component {
@@ -129,7 +128,7 @@ export default class SidebarLayer extends Component {
     const query: any = {
       pageKey: this.conf.pageKey,
       site: this.conf.site || '',
-      user: JSON.stringify(User.data),
+      user: JSON.stringify(this.ctx.get('user').getData()),
       time: +new Date()
     }
 

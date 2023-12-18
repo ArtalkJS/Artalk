@@ -1,7 +1,7 @@
-const win = (window as any) || {}
-const nav = navigator || {}
-
 function Detect(userAgent?: string) {
+  const win = (window as any) || {}
+  const nav = navigator || {}
+
   const u = String(userAgent || nav.userAgent)
   const dest = {
     os: '',

@@ -1,5 +1,4 @@
 import * as Utils from '@/lib/utils'
-import User from '@/lib/user'
 import $t from '@/i18n'
 import type PlugKit from './_kit'
 import EditorPlug from './_plug'
@@ -24,7 +23,7 @@ export default class Upload extends EditorPlug {
     this.$imgUploadInput.style.display = 'none'
     this.$imgUploadInput.accept = AllowImgExts.map(o => `.${o}`).join(',')
 
-    // TODO Use btn cannot refresh when mounted event is triggered
+    // TODO: Use btn cannot refresh when mounted event is triggered
     const $btn = this.useBtn(`${$t('image')}`)
     $btn.after(this.$imgUploadInput)
     $btn.onclick = () => {
@@ -98,7 +97,7 @@ export default class Upload extends EditorPlug {
     if (!fileExt || !AllowImgExts.includes(fileExt[0])) return
 
     // 未登录提示
-    if (!User.checkHasBasicUserInfo()) {
+    if (!this.kit.useUser().checkHasBasicUserInfo()) {
       this.kit.useEditor().showNotify($t('uploadLoginMsg'), 'w')
       return
     }

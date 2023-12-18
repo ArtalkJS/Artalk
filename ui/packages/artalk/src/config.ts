@@ -99,6 +99,11 @@ export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi)
     pageKey: conf.pageKey || '',
     pageTitle: conf.pageTitle || '',
     timeout: conf.reqTimeout,
+    apiToken: ctx?.get('user').getData().token,
+    userInfo: ctx?.get('user').checkHasBasicUserInfo() ? {
+      name: ctx?.get('user').getData().nick,
+      email: ctx?.get('user').getData().email,
+    } : undefined,
 
     onNeedCheckAdmin(payload) {
       ctx?.checkAdmin({

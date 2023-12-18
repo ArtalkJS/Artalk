@@ -1,0 +1,4 @@
+/.vitepress/dist/
+/.vitepress/.temp/
+/.vitepress/cache/
+/public/http-api.html

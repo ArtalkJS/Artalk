@@ -15,7 +15,11 @@ export default class PlugKit {
     return this.plugs.editor
   }
 
-  /** Use the context of global */
+  /**
+   * Use the context of global
+   *
+   * @deprecated The calls to this function should be reduced as much as possible
+   */
   useGlobalCtx() {
     return this.plugs.editor.ctx
   }
@@ -28,6 +32,11 @@ export default class PlugKit {
   /** Use the http api client */
   useApi() {
     return this.plugs.editor.ctx.getApi()
+  }
+
+  /** Use the user manager */
+  useUser() {
+    return this.plugs.editor.ctx.get('user')
   }
 
   /** Use the ui of editor */

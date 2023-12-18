@@ -77,7 +77,7 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
       autoSwitchPageForFindComment(commentID) // recursive, until comment found or no more page
     }, { once: true })
 
-    // TODO 自动范围改为直接跳转到计算后的页面
+    // TODO: 自动范围改为直接跳转到计算后的页面
     setTimeout(() => {
       paginator?.next()
     }, 80)

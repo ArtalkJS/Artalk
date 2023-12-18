@@ -4,6 +4,11 @@ export interface ApiOptions {
   pageKey: string
   pageTitle: string
   timeout?: number
+  apiToken?: string
+  userInfo?: {
+    name: string
+    email: string
+  }
 
   // -------------------------------------------------------------------
   //  Hooks

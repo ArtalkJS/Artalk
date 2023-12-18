@@ -1,7 +1,6 @@
 import type { CommentData, ListData } from '~/types'
 import * as Utils from '../lib/utils'
 import ApiBase from './_base'
-import User from '../lib/user'
 
 /**
  * 评论 API
@@ -17,10 +16,8 @@ export default class CommentApi extends ApiBase {
     }
 
     if (flatMode) params.flat_mode = flatMode // 平铺模式
-    if (User.checkHasBasicUserInfo()) {
-      params.name = User.data.nick
-      params.email = User.data.email
-    }
+
+    this.withUserInfo(params)
 
     if (paramsEditor) paramsEditor(params)
 
@@ -73,10 +70,7 @@ export default class CommentApi extends ApiBase {
       type,
     }
 
-    if (User.checkHasBasicUserInfo()) {
-      params.name = User.data.nick
-      params.email = User.data.email
-    }
+    this.withUserInfo(params)
 
     const data = await this.POST<any>('/vote', params)
     return (data as {up: number, down: number})

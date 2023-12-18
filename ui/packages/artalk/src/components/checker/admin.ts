@@ -1,6 +1,5 @@
 import $t from '@/i18n'
 import * as Utils from '@/lib/utils'
-import User from '@/lib/user'
 import type { Checker } from '.'
 
 const AdminChecker: Checker = {
@@ -8,8 +7,8 @@ const AdminChecker: Checker = {
 
   request(checker, inputVal) {
     const data = {
-      name: User.data.nick,
-      email: User.data.email,
+      name: checker.getUser().getData().nick,
+      email: checker.getUser().getData().email,
       password: inputVal
     }
 
@@ -24,7 +23,7 @@ const AdminChecker: Checker = {
   },
 
   onSuccess(checker, userToken, inputVal, formEl) {
-    User.update({
+    checker.getUser().update({
       isAdmin: true,
       token: userToken
     })

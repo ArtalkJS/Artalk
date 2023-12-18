@@ -17,7 +17,6 @@ workflows:
           mapping: |
             (cmd|internal|server|pkg|test|conf)/.*  trigger-app true
             main.go|go.mod|go.sum  trigger-app true
-            (ui)/.*  trigger-ui  true
           base-revision: master  # git branch name
           config-path: .circleci/conditional_config.yml
           filters:

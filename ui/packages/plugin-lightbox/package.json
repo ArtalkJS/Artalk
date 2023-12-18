@@ -13,6 +13,6 @@
     "publish": "pnpm publish --access=public"
   },
   "dependencies": {
-    "artalk": "workspace: *"
+    "artalk": "workspace:^"
   }
 }

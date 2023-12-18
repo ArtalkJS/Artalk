@@ -38,7 +38,7 @@
     "test:report": "playwright show-report"
   },
   "devDependencies": {
-    "@types/marked": "5.0.1"
+    "@types/marked": "5.0.2"
   },
   "dependencies": {
     "abortcontroller-polyfill": "^1.7.5",

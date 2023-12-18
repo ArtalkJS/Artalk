@@ -2,11 +2,16 @@ import type { LocalUser } from '~/types'
 
 const LOCAL_USER_KEY = 'ArtalkUser'
 
-class User {
-  data: LocalUser
-  onUserChanged: ((user: LocalUser) => void) | null = null
+interface UserOpts {
+  onUserChanged?: (user: LocalUser) => void
+}
 
-  constructor() {
+class User {
+  private data: LocalUser
+
+  constructor(
+    private opts: UserOpts
+  ) {
     // 从 localStorage 导入
     const localUser = JSON.parse(window.localStorage.getItem(LOCAL_USER_KEY) || '{}')
     this.data = {
@@ -18,6 +23,10 @@ class User {
     }
   }
 
+  getData() {
+    return this.data
+  }
+
   /** 保存用户到 localStorage 中 */
   update(obj: Partial<LocalUser> = {}) {
     Object.entries(obj).forEach(([key, value]) => {
@@ -25,11 +34,7 @@ class User {
     })
 
     window.localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(this.data))
-    this.onUserChanged && this.onUserChanged(this.data)
-  }
-
-  public setOnUserChanged(fn: ((user: LocalUser) => void) | null) {
-    this.onUserChanged = fn
+    this.opts.onUserChanged && this.opts.onUserChanged(this.data)
   }
 
   /**
@@ -50,6 +55,4 @@ class User {
   }
 }
 
-const UserInstance = new User()
-
-export default UserInstance
+export default User

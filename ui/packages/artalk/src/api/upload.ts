@@ -1,6 +1,5 @@
 import { ToFormData } from './_request'
 import ApiBase from './_base'
-import User from '../lib/user'
 
 /**
  * 上传 API
@@ -9,10 +8,10 @@ export default class UploadApi extends ApiBase {
   /** 图片上传 */
   public async imgUpload(file: File) {
     const params: any = {
-      name: User.data.nick,
-      email: User.data.email,
       page_key: this.options.pageKey,
     }
+
+    this.withUserInfo(params)
 
     const form = ToFormData(params)
     form.set('file', file)

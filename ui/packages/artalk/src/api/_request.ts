@@ -1,15 +1,14 @@
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 
 import { ApiOptions } from './_options'
-import User from '../lib/user'
 import $t from '../i18n'
 
 /** 公共请求函数 */
 export async function Fetch(opts: ApiOptions, input: RequestInfo, init: RequestInit, timeout?: number): Promise<any> {
   // JWT
-  if (User.data.token) {
+  if (opts.apiToken) {
     const headers = new Headers(init.headers) // 保留原有 headers
-    headers.set('Authorization', `Bearer ${User.data.token}`)
+    headers.set('Authorization', `Bearer ${opts.apiToken}`)
     init.headers = headers
   }
 

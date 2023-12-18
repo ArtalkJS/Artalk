@@ -47,9 +47,9 @@ export function createArtalkInstance() {
 
 export function importUserDataFromArtalkInstance() {
   if (!artalk) throw Error("the artalk instance is not exist")
-  if (!artalk.ctx.get('user').data.email) throw Error("the user data in artalk instance is invalid")
+  if (!artalk.ctx.get('user').getData().email) throw Error("the user data in artalk instance is invalid")
 
-  const userData = artalk.ctx.get('user').data
+  const userData = artalk.ctx.get('user').getData()
   useUserStore().$patch((state) => {
     state.site = '__ATK_SITE_ALL'
     state.name = userData.nick

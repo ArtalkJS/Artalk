@@ -24,7 +24,7 @@ export const Fetch: ArtalkPlugin = (ctx) => {
       .then((data) => {
         // Must before all other function call and event trigger,
         // because it will depend on the lastData
-        // TODO this is global variable, easy to use, but not good, consider to refactor.
+        // TODO: this is global variable, easy to use, but not good, consider to refactor.
         // refactor work is hard, because it is used in many places.
         ctx.getData().setListLastFetch({ params, data })
 

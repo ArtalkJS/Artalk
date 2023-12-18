@@ -1,7 +1,7 @@
 import type { ArtalkPlugin } from '~/types'
 
 export const ReachBottom: ArtalkPlugin = (ctx) => {
-  const scrollEvtAt = document // TODO support ref ctx.conf
+  const scrollEvtAt = document // TODO: support ref ctx.conf
   let observer: IntersectionObserver|null = null
 
   const setupObserver = ($target: HTMLElement) => {

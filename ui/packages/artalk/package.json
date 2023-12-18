@@ -2,7 +2,7 @@
   "name": "artalk",
   "version": "2.7.1",
   "license": "MIT",
-  "description": "A Selfhosted Comment System",
+  "description": "A self-hosted comment system",
   "keywords": [
     "comment-system",
     "comments-widget",

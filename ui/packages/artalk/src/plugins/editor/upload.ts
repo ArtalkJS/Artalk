@@ -23,7 +23,7 @@ export default class Upload extends EditorPlug {
     this.$imgUploadInput.style.display = 'none'
     this.$imgUploadInput.accept = AllowImgExts.map(o => `.${o}`).join(',')
 
-    // TODO Use btn cannot refresh when mounted event is triggered
+    // TODO: Use btn cannot refresh when mounted event is triggered
     const $btn = this.useBtn(`${$t('image')}`)
     $btn.after(this.$imgUploadInput)
     $btn.onclick = () => {

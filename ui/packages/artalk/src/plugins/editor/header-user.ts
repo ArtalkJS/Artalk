@@ -8,7 +8,7 @@ export default class HeaderUser extends EditorPlug {
 
     const onInput = ({ $input, field }: { $input: HTMLInputElement, field: string }) => {
       if (this.kit.useEditor().getState() === 'edit')
-        return // TODO prevent execute when editing, since update comment.user not support
+        return // TODO: prevent execute when editing, since update comment.user not support
 
       // update user data
       this.kit.useUser().update({ [field]: $input.value.trim() })
@@ -72,7 +72,7 @@ export default class HeaderUser extends EditorPlug {
    * @param data The response data from server
    */
   private onUserInfoFetched(
-    data: any // TODO fix type
+    data: any // TODO: fix type
   ) {
     // If api response is not login, logout
     if (!data.is_login) this.kit.useUser().logout()

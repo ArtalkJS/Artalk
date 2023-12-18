@@ -2,11 +2,11 @@
 layout: home
 
 title: Artalk
-titleTemplate: The Selfhosted Comment System
+titleTemplate: A Self-hosted Comment System
 
 hero:
   name: Artalk
-  text: The Selfhosted Comment System
+  text: A Self-hosted Comment System
   tagline: Elevate your online conversations with a comment system that embodies the trifecta of lightness, security, and refinement.
   actions:
     - theme: brand
@@ -30,4 +30,3 @@ features:
     title: Flexible
     details: Use Golang to interpret the excellence of multiple platforms
 ---
-

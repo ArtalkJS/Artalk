@@ -3,6 +3,7 @@ import Dialog from '@/components/dialog'
 import $t from '@/i18n'
 import type { ContextApi } from '~/types'
 import type { Layer } from '@/layer'
+import type User from '@/lib/user'
 import * as Utils from '@/lib/utils'
 import CaptchaChecker from './captcha'
 import AdminChecker from './admin'
@@ -54,6 +55,7 @@ export default class CheckerLauncher {
       set: (key, val) => { checkerStore[key] = val },
       get: (key) => (checkerStore[key]),
       getOpts: () => (this.opts),
+      getUser: () => (this.opts.getCtx().get('user')),
       getApi: () => this.opts.getApi(),
       hideInteractInput: () => {
         hideInteractInput = true
@@ -186,6 +188,7 @@ export interface CheckerCtx {
   set<K extends keyof CheckerStore>(key: K, val: CheckerStore[K]): void
   getOpts(): CheckerLauncherOptions
   getApi(): Api
+  getUser(): User
   hideInteractInput(): void
   triggerSuccess(): void
   cancel(): void

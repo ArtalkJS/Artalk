@@ -143,7 +143,8 @@ export default class Emoticons extends EditorPlug {
       return json
     } catch (err) {
       Ui.hideLoading(this.$panel!)
-      Ui.setError(this.$panel!, `表情加载失败 ${String(err)}`)
+      console.error('[Emoticons] Load Failed:', err)
+      Ui.setError(this.$panel!, `${$t('emoticon')}${$t('loadFail')} ${String(err)}`)
       return []
     }
   }

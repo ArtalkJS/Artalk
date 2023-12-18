@@ -1,6 +1,5 @@
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
-import User from '@/lib/user'
 import $t from '@/i18n'
 
 export interface ErrorDialogOptions {
@@ -25,9 +24,6 @@ export function showErrorDialog(opts: ErrorDialogOptions) {
   if (opts.onOpenSidebar) {
     const $openSidebar = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
     errEl.appendChild($openSidebar)
-    if (!User.data.isAdmin) { // only display if user is admin
-      $openSidebar.classList.add('atk-hide')
-    }
     $openSidebar.onclick = () => opts.onOpenSidebar && opts.onOpenSidebar()
   }
 

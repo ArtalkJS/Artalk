@@ -1,7 +1,6 @@
 import type { CommentData } from '~/types'
 import $t from '@/i18n'
 import * as Utils from '@/lib/utils'
-import User from '@/lib/user'
 import type PlugKit from './_kit'
 import EditorPlug from './_plug'
 import Submit from './submit'
@@ -88,7 +87,7 @@ export default class StateEdit extends EditorPlug {
 
     this.comment = undefined
 
-    const { nick, email, link } = User.data
+    const { nick, email, link } = this.kit.useUser().getData()
     ui.$nick.value = nick
     ui.$email.value = email
     ui.$link.value = link

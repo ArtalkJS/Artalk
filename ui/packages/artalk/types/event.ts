@@ -34,7 +34,7 @@ export interface EventPayloadMap {
   'editor-submitted': undefined    // 编辑器提交后
   'user-changed': LocalUser        // 本地用户数据变更时
   'conf-loaded': ArtalkConfig      // Artalk 配置变更时
-  'dark-mode-changed': boolean     // 深色模式变更时
+  'dark-mode-changed': boolean|'auto' // 深色模式变更时
   'sidebar-show': undefined        // 侧边栏显示
   'sidebar-hide': undefined        // 侧边栏隐藏
 }

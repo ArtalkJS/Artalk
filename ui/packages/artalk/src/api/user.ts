@@ -1,7 +1,6 @@
 import type { UserData, NotifyData, UserDataForAdmin } from '~/types'
 import ApiBase from './_base'
 import { ToFormData } from './_request'
-import User from '../lib/user'
 
 /**
  * 用户 API
@@ -43,10 +42,7 @@ export default class UserApi extends ApiBase {
 
   /** 用户 · 登录状态 */
   public async loginStatus() {
-    const data = await this.POST<any>('/login-status', {
-      name: User.data.nick,
-      email: User.data.email
-    })
+    const data = await this.POST<any>('/login-status', this.withUserInfo({}))
     return (data || { is_login: false, is_admin: false }) as { is_login: boolean, is_admin: boolean }
   }
 
@@ -66,8 +62,7 @@ export default class UserApi extends ApiBase {
       delete params.comment_id
       delete params.notify_key
       params.read_all = true
-      params.name = User.data.nick
-      params.email = User.data.email
+      this.withUserInfo(params)
     }
 
     return this.POST(`/mark-read`, params)

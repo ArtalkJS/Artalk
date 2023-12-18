@@ -1,0 +1,19 @@
+<script setup>
+import DefaultTheme from 'vitepress/theme'
+import { onMounted } from 'vue'
+import Artalk from './Artalk.vue'
+import './style.scss'
+
+const { Layout } = DefaultTheme
+
+onMounted(() => {
+})
+</script>
+
+<template>
+  <Layout>
+    <template #doc-after>
+      <Artalk />
+    </template>
+  </Layout>
+</template>

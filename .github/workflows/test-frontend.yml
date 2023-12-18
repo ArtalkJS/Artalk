@@ -34,6 +34,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
+          cache-dependency-path: './ui/pnpm-lock.yaml'
 
       - name: Install Dependencies
         run: pnpm --dir ./ui install --frozen-lockfile

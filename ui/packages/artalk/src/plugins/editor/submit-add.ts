@@ -1,5 +1,4 @@
 import type { CommentData } from '~/types'
-import User from '@/lib/user'
 import type PlugKit from './_kit'
 
 export default class SubmitAddPreset {
@@ -13,7 +12,7 @@ export default class SubmitAddPreset {
   }
 
   getSubmitAddParams() {
-    const { nick, email, link } = User.data
+    const { nick, email, link } = this.kit.useUser().getData()
     const conf = this.kit.useConf()
 
     return {

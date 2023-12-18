@@ -6,7 +6,7 @@ export const SidebarBtn: ArtalkPlugin = (ctx) => {
 
   const syncByUser = () => {
     if (!$openSidebarBtn) return
-    const user = ctx.get('user').data
+    const user = ctx.get('user').getData()
 
     // 已输入个人信息
     if (!!user.nick && !!user.email) {

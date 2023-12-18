@@ -40,9 +40,9 @@ function loadConf(ctx: ContextApi) {
       errMsg: err.msg || String(err),
       errData: err.data,
       retryFn: () => loadConf(ctx),
-      onOpenSidebar:() => ctx.showSidebar({
+      onOpenSidebar:() => ctx.get('user').getData().isAdmin ? ctx.showSidebar({
         view: sidebarOpenView as any
-      })
+      }) : undefined // only show open sidebar button when user is admin
     })
 
     throw err

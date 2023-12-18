@@ -1,4 +1,3 @@
-import User from '@/lib/user'
 import EditorPlug from './_plug'
 import type PlugKit from './_kit'
 
@@ -25,7 +24,7 @@ export default class HeaderLink extends EditorPlug {
     const link = this.kit.useUI().$link.value.trim()
     if (!!link && !/^(http|https):\/\//.test(link)) {
       this.kit.useUI().$link.value = `https://${link}`
-      User.update({ link: this.kit.useUI().$link.value })
+      this.kit.useUser().update({ link: this.kit.useUI().$link.value })
     }
   }
 }

@@ -1,4 +1,3 @@
-import User from '@/lib/user'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
 import type PlugKit from './_kit'
@@ -12,7 +11,7 @@ export default class HeaderUser extends EditorPlug {
         return // TODO prevent execute when editing, since update comment.user not support
 
       // update user data
-      User.update({ [field]: $input.value.trim() })
+      this.kit.useUser().update({ [field]: $input.value.trim() })
 
       // remote fetch user info
       if (field === 'nick' || field === 'email')
@@ -26,7 +25,7 @@ export default class HeaderUser extends EditorPlug {
           $input.placeholder = `${$t(key as any)}`
 
           // sync header values from User.data
-          $input.value = User.data[key] || ''
+          $input.value = this.kit.useUser().getData()[key] || ''
         })
 
       // bind events
@@ -47,7 +46,7 @@ export default class HeaderUser extends EditorPlug {
    * Fetch user info from server
    */
   private fetchUserInfo() {
-    User.logout() // clear login status
+    this.kit.useUser().logout() // clear login status
 
     if (this.query.timer) window.clearTimeout(this.query.timer) // clear the not executed timeout task
     if (this.query.abortFn) this.query.abortFn() // abort the last request (if request is pending not finished)
@@ -56,7 +55,7 @@ export default class HeaderUser extends EditorPlug {
       this.query.timer = null // clear the timer (clarify the timer is executing)
 
       const {req, abort} = this.kit.useApi().user.userGet(
-        User.data.nick, User.data.email
+        this.kit.useUser().getData().nick, this.kit.useUser().getData().email
       )
       this.query.abortFn = abort
       req.then(data => this.onUserInfoFetched(data))
@@ -76,13 +75,13 @@ export default class HeaderUser extends EditorPlug {
     data: any // TODO fix type
   ) {
     // If api response is not login, logout
-    if (!data.is_login) User.logout()
+    if (!data.is_login) this.kit.useUser().logout()
 
     // Update unread notifies
     this.kit.useGlobalCtx().getData().updateUnreads(data.unread)
 
     // If user is admin and not login,
-    if (User.checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {
+    if (this.kit.useUser().checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {
       // then show login window
       this.kit.useGlobalCtx().checkAdmin({
         onSuccess: () => {}
@@ -92,7 +91,7 @@ export default class HeaderUser extends EditorPlug {
     // Auto fill user link from server
     if (data.user && data.user.link) {
       this.kit.useUI().$link.value = data.user.link
-      User.update({ link: data.user.link })
+      this.kit.useUser().update({ link: data.user.link })
     }
   }
 }

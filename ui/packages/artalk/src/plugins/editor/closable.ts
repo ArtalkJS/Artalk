@@ -1,4 +1,3 @@
-import User from '@/lib/user'
 import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
 import EditorPlug from './_plug'
@@ -31,7 +30,7 @@ export default class Closable extends EditorPlug {
     if (!this.kit.useUI().$textareaWrap.querySelector('.atk-comment-closed'))
       this.kit.useUI().$textareaWrap.prepend(Utils.createElement(`<div class="atk-comment-closed">${$t('onlyAdminCanReply')}</div>`))
 
-    if (!User.data.isAdmin) {
+    if (!this.kit.useUser().getData().isAdmin) {
       this.kit.useUI().$textarea.style.display = 'none'
       this.kit.useEvents().trigger('panel-close')
       this.kit.useUI().$bottom.style.display = 'none'

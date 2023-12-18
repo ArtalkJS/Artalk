@@ -3,12 +3,12 @@ import CheckerLauncher from './components/checker'
 import Editor from './editor/editor'
 import SidebarLayer from './layer/sidebar-layer'
 
-import User from './lib/user'
 import List from './list/list'
 
 import * as I18n from './i18n'
 import { PlugManager } from './plugins/editor-kit'
 import { LayerManager } from './layer/layer-manager'
+import User from './lib/user'
 
 /**
  * Services
@@ -27,10 +27,12 @@ const services = {
 
   // User Store
   user(ctx: ContextApi) {
-    User.setOnUserChanged((user) => {
-      ctx?.trigger('user-changed', user)
+    const user = new User({
+      onUserChanged: (data) => {
+        ctx.trigger('user-changed', data)
+      }
     })
-    return User
+    return user
   },
 
   // 弹出层

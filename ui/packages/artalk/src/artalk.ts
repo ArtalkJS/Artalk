@@ -37,7 +37,7 @@ export default class Artalk {
     // Init Services
     Object.entries(Services).forEach(([name, initService]) => {
       const obj = initService(this.ctx)
-      if (obj) this.ctx.inject(<keyof TInjectedServices>name, obj) // auto inject deps to ctx
+      if (obj) this.ctx.inject(name as keyof TInjectedServices, obj) // auto inject deps to ctx
     })
 
     // Init Plugins

@@ -26,7 +26,7 @@ var Banner = `
 
 Artalk (` + Version + `)
 
- -> A self-hosted Comment System.
+ -> A Self-hosted Comment System.
  -> https://artalk.js.org
 `
 
@@ -50,7 +50,7 @@ func New() *ArtalkCmd {
 	cmd := &ArtalkCmd{
 		RootCmd: &cobra.Command{
 			Use:     "artalk",
-			Short:   "Artalk: Your self-hosted comment system",
+			Short:   "Artalk: A self-hosted comment system",
 			Long:    Banner,
 			Version: Version,
 			Run: func(cmd *cobra.Command, args []string) {

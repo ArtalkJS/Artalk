@@ -4,7 +4,7 @@
 
 # Artalk
 
-> A self-hosted Comment System
+> A Self-hosted Comment System
 
 ## Links
 

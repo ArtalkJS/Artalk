@@ -150,6 +150,21 @@ func (conf *Config) i18nPatch() {
 	} else if conf.Locale == "zh" {
 		conf.Locale = "zh-CN"
 	}
+
+	// Case Convert
+	// follow Unicode BCP 47
+	// @see https://www.techonthenet.com/js/language_tags.php
+	parts := strings.Split(conf.Locale, "-")
+	if len(parts) == 2 {
+		conf.Locale = strings.ToLower(parts[0]) + "-" + strings.ToUpper(parts[1])
+	} else if len(parts) == 1 {
+		conf.Locale = strings.ToLower(parts[0])
+	}
+
+	// Temporary convert `en-*` to `en`
+	if parts[0] == "en" {
+		conf.Locale = "en"
+	}
 }
 
 // IP属地功能配置修补

@@ -25,6 +25,15 @@
       "default": "./dist/Artalk.es.js"
     },
     "./dist/*": "./dist/*",
+    "./dist/Artalk": "./dist/Artalk.js",
+    "./dist/Artalk.es": "./dist/Artalk.es.js",
+    "./dist/Artalk.iife": "./dist/Artalk.iife.js",
+    "./dist/ArtalkLite": "./dist/ArtalkLite.js",
+    "./dist/ArtalkLite.es": "./dist/ArtalkLite.es.js",
+    "./dist/ArtalkLite.iife": "./dist/ArtalkLite.iife.js",
+    "./dist/i18n/jp": "./dist/i18n/jp.js",
+    "./dist/i18n/zh-TW": "./dist/i18n/zh-TW.js",
+    "./i18n/*": "./dist/i18n/*",
     "./lite/*": {
       "types": "./dist/src/main.d.ts",
       "require": "./dist/ArtalkLite.js",

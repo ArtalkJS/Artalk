@@ -12,7 +12,7 @@ Artalk.use((ctx) => {
   }
 
   let i = 0
-  const nextID = () => `__atk_katext_id_${i++}__`
+  const nextID = () => `__atk_katex_id_${i++}__`
   const mathExpressions: { [key: string]: { type: 'block' | 'inline', expression: string } } = {}
 
   function replaceMathWithIds(text: string) {
@@ -46,11 +46,11 @@ Artalk.use((ctx) => {
   renderer.paragraph = (text: string) => orgParagraph(replaceMathWithIds(text))
   renderer.tablecell = (content: string, flags: any) => orgTablecell(replaceMathWithIds(content), flags)
   renderer.codespan = (code: string) => orgCodespan(replaceMathWithIds(code))
-  renderer.text = (text: string) => orgText(replaceMathWithIds(text)) // Inline level, maybe unneded
+  renderer.text = (text: string) => orgText(replaceMathWithIds(text)) // Inline level, maybe unneeded
 
   ctx.updateConf({
     markedReplacers: [(text) => {
-      text = text.replace(/(__atk_katext_id_\d+__)/g, (_match, capture) => {
+      text = text.replace(/(__atk_katex_id_\d+__)/g, (_match, capture) => {
         const v = mathExpressions[capture]
         const type = v.type
         let expression = v.expression

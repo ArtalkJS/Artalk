@@ -1,10 +1,2 @@
-# VitePress
 .vitepress/dist/**
 .vitepress/cache/**
-
-# Landing page
-public/landing/
-public/index.html
-
-# Swagger output
-public/http-api.html

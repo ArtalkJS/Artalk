@@ -10,7 +10,7 @@
   },
   "private": true,
   "scripts": {
-    "swagger:build": "npx @redocly/cli build-docs --output ../docs/public/http-api.html",
+    "swagger:build": "npx @redocly/cli build-docs --output ./dist/http-api.html",
     "swagger:serve": "npx @redocly/cli preview-docs"
   },
   "devDependencies": {

@@ -3,7 +3,8 @@
   "private": true,
   "homepage": "https://artalk.js.org",
   "scripts": {
-    "docs:build": "pnpm -filter=docs-landing build && pnpm -r swagger:build && pnpm -r docs:build"
+    "docs:build": "pnpm -F=docs-landing build && pnpm -F=docs-swagger swagger:build && pnpm -F=docs docs:build && pnpm docs:patch",
+    "docs:patch": "cp -rf docs/{landing/dist/*,swagger/dist/*} docs/docs/.vitepress/dist"
   },
   "packageManager": "pnpm@8.12.1"
 }

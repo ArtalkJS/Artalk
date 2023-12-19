@@ -46,7 +46,9 @@
   "unpkg": "./dist/Artalk.iife.js",
   "module": "./dist/Artalk.es.js",
   "types": "./dist/src/main.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "vite build && pnpm build:lite && pnpm build:i18n",
     "build:demo": "vite build --config vite-demo.config.ts",
@@ -56,7 +58,7 @@
     "predeploy": "pnpm build && pnpm build:demo && pnpm copy:deploy",
     "deploy": "gh-pages -d deploy",
     "dev": "vite",
-    "lint": "eslint --ext .js,.ts src",
+    "lint": "eslint --ext .js,.ts src --fix",
     "serve": "vite preview",
     "test:e2e": "playwright test",
     "test:report": "playwright show-report"

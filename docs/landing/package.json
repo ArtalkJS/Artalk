@@ -1,11 +1,16 @@
 {
-  "name": "landing",
+  "name": "docs-landing",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArtalkJS/Artalk",
+    "directory": "docs/landing"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && cp -rf ./dist/* ../docs/public/",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -14,19 +19,19 @@
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.11.0"
+    "react-icons": "^4.12.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "@vitejs/plugin-react-swc": "^3.3.2",
-    "eslint": "^8.45.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.3",
-    "sass": "^1.67.0",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "sass": "^1.69.5",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10"
   }
 }

@@ -4,9 +4,8 @@ extends:
   - recommended
 
 apis:
-  artalk@v1:
-    root: ./swagger/swagger.json
-    rules: []
+  artalk@v2:
+    root: ./swagger.json
 
 theme:
   openapi:

@@ -41,23 +41,23 @@ definitions:
     properties:
       bark:
         allOf:
-        - $ref: '#/definitions/config.NotifyBarkConf'
+          - $ref: "#/definitions/config.NotifyBarkConf"
         description: bark
       ding_talk:
         allOf:
-        - $ref: '#/definitions/config.NotifyDingTalkConf'
+          - $ref: "#/definitions/config.NotifyDingTalkConf"
         description: 钉钉
       email:
         allOf:
-        - $ref: '#/definitions/config.AdminEmailConf'
+          - $ref: "#/definitions/config.AdminEmailConf"
         description: 邮件通知
       lark:
         allOf:
-        - $ref: '#/definitions/config.NotifyLarkConf'
+          - $ref: "#/definitions/config.NotifyLarkConf"
         description: 飞书
       line:
         allOf:
-        - $ref: '#/definitions/config.NotifyLINEConf'
+          - $ref: "#/definitions/config.NotifyLINEConf"
         description: LINE
       noise_mode:
         description: 嘈杂模式 (非回复管理员的评论也发送通知)
@@ -70,15 +70,15 @@ definitions:
         type: string
       slack:
         allOf:
-        - $ref: '#/definitions/config.NotifySlackConf'
+          - $ref: "#/definitions/config.NotifySlackConf"
         description: slack
       telegram:
         allOf:
-        - $ref: '#/definitions/config.NotifyTelegramConf'
+          - $ref: "#/definitions/config.NotifyTelegramConf"
         description: TG
       webhook:
         allOf:
-        - $ref: '#/definitions/config.NotifyWebHookConf'
+          - $ref: "#/definitions/config.NotifyWebHookConf"
         description: WebHook
     type: object
   config.AdminUserConf:
@@ -132,28 +132,28 @@ definitions:
         description: 过期时间
         type: integer
       redis:
-        $ref: '#/definitions/config.RedisConf'
+        $ref: "#/definitions/config.RedisConf"
       server:
         description: 缓存服务器
         type: string
       type:
-        $ref: '#/definitions/config.CacheType'
+        $ref: "#/definitions/config.CacheType"
       warm_up:
         description: 启动时缓存预热
         type: boolean
     type: object
   config.CacheType:
     enum:
-    - builtin
-    - redis
-    - memcache
+      - builtin
+      - redis
+      - memcache
     type: string
     x-enum-comments:
       CacheTypeBuiltin: 内建缓存
     x-enum-varnames:
-    - CacheTypeBuiltin
-    - CacheTypeRedis
-    - CacheTypeMemcache
+      - CacheTypeBuiltin
+      - CacheTypeRedis
+      - CacheTypeMemcache
   config.CaptchaConf:
     properties:
       action_limit:
@@ -163,68 +163,68 @@ definitions:
       always:
         type: boolean
       captcha_type:
-        $ref: '#/definitions/config.CaptchaType'
+        $ref: "#/definitions/config.CaptchaType"
       enabled:
         type: boolean
       geetest:
-        $ref: '#/definitions/config.GeetestConf'
+        $ref: "#/definitions/config.GeetestConf"
       hcaptcha:
-        $ref: '#/definitions/config.HCaptchaConf'
+        $ref: "#/definitions/config.HCaptchaConf"
       recaptcha:
-        $ref: '#/definitions/config.ReCaptchaConf'
+        $ref: "#/definitions/config.ReCaptchaConf"
       turnstile:
-        $ref: '#/definitions/config.TurnstileConf'
+        $ref: "#/definitions/config.TurnstileConf"
     type: object
   config.CaptchaType:
     enum:
-    - image
-    - turnstile
-    - recaptcha
-    - hcaptcha
-    - geetest
+      - image
+      - turnstile
+      - recaptcha
+      - hcaptcha
+      - geetest
     type: string
     x-enum-varnames:
-    - TypeImage
-    - TypeTurnstile
-    - TypeReCaptcha
-    - TypeHCaptcha
-    - TypeGeetest
+      - TypeImage
+      - TypeTurnstile
+      - TypeReCaptcha
+      - TypeHCaptcha
+      - TypeGeetest
   config.Config:
     properties:
       admin_notify:
         allOf:
-        - $ref: '#/definitions/config.AdminNotifyConf'
+          - $ref: "#/definitions/config.AdminNotifyConf"
         description: 其他通知方式
       admin_users:
         description: 管理员账户
         items:
-          $ref: '#/definitions/config.AdminUserConf'
+          $ref: "#/definitions/config.AdminUserConf"
         type: array
       app_key:
         description: 加密密钥
         type: string
       cache:
         allOf:
-        - $ref: '#/definitions/config.CacheConf'
+          - $ref: "#/definitions/config.CacheConf"
         description: 缓存
       captcha:
         allOf:
-        - $ref: '#/definitions/config.CaptchaConf'
+          - $ref: "#/definitions/config.CaptchaConf"
         description: 验证码
       cookie:
         allOf:
-        - $ref: '#/definitions/config.CookieConf'
+          - $ref: "#/definitions/config.CookieConf"
         description: Cookie
       db:
         allOf:
-        - $ref: '#/definitions/config.DBConf'
+          - $ref: "#/definitions/config.DBConf"
         description: 数据库配置
       debug:
         description: 调试模式
         type: boolean
       email:
         allOf:
-        - $ref: '#/definitions/config.EmailConf'
+          - $ref: "#/definitions/config.EmailConf"
         description: 邮箱提醒
       frontend:
         additionalProperties: true
@@ -234,25 +234,25 @@ definitions:
         type: string
       img_upload:
         allOf:
-        - $ref: '#/definitions/config.ImgUploadConf'
+          - $ref: "#/definitions/config.ImgUploadConf"
         description: 图片上传
       ip_region:
         allOf:
-        - $ref: '#/definitions/config.IPRegionConf'
+          - $ref: "#/definitions/config.IPRegionConf"
         description: IP 归属地展示
       locale:
         description: 语言
         type: string
       log:
         allOf:
-        - $ref: '#/definitions/config.LogConf'
+          - $ref: "#/definitions/config.LogConf"
         description: 日志文件
       login_timeout:
         description: 登陆超时
         type: integer
       moderator:
         allOf:
-        - $ref: '#/definitions/config.ModeratorConf'
+          - $ref: "#/definitions/config.ModeratorConf"
         description: 评论审查
       port:
         description: HTTP Server 监听 Port
@@ -262,7 +262,7 @@ definitions:
         type: string
       ssl:
         allOf:
-        - $ref: '#/definitions/config.SSLConf'
+          - $ref: "#/definitions/config.SSLConf"
         description: SSL
       timezone:
         description: 时区
@@ -298,27 +298,27 @@ definitions:
       table_prefix:
         type: string
       type:
-        $ref: '#/definitions/config.DBType'
+        $ref: "#/definitions/config.DBType"
       user:
         type: string
     type: object
   config.DBType:
     enum:
-    - mysql
-    - sqlite
-    - pgsql
-    - mssql
+      - mysql
+      - sqlite
+      - pgsql
+      - mssql
     type: string
     x-enum-varnames:
-    - TypeMySql
-    - TypeSQLite
-    - TypePostgreSQL
-    - TypeMSSQL
+      - TypeMySql
+      - TypeSQLite
+      - TypePostgreSQL
+      - TypeMSSQL
   config.EmailConf:
     properties:
       ali_dm:
         allOf:
-        - $ref: '#/definitions/config.AliDMConf'
+          - $ref: "#/definitions/config.AliDMConf"
         description: 阿里云邮件配置
       enabled:
         description: 总开关
@@ -331,7 +331,7 @@ definitions:
         type: string
       queue:
         allOf:
-        - $ref: '#/definitions/config.EmailQueueConf'
+          - $ref: "#/definitions/config.EmailQueueConf"
         description: 邮件发送队列配置
       send_addr:
         description: 发件人地址
@@ -341,11 +341,11 @@ definitions:
         type: string
       send_type:
         allOf:
-        - $ref: '#/definitions/config.EmailSenderType'
+          - $ref: "#/definitions/config.EmailSenderType"
         description: 发送方式
       smtp:
         allOf:
-        - $ref: '#/definitions/config.SMTPConf'
+          - $ref: "#/definitions/config.SMTPConf"
         description: SMTP 配置
     type: object
   config.EmailQueueConf:
@@ -356,14 +356,14 @@ definitions:
     type: object
   config.EmailSenderType:
     enum:
-    - smtp
-    - ali_dm
-    - sendmail
+      - smtp
+      - ali_dm
+      - sendmail
     type: string
     x-enum-varnames:
-    - TypeSMTP
-    - TypeAliDM
-    - TypeSendmail
+      - TypeSMTP
+      - TypeAliDM
+      - TypeSendmail
   config.GeetestConf:
     properties:
       captcha_id:
@@ -409,7 +409,7 @@ definitions:
         type: string
       upgit:
         allOf:
-        - $ref: '#/definitions/config.UpgitConf'
+          - $ref: "#/definitions/config.UpgitConf"
         description: upgit
     type: object
   config.KeyWordsAntispamConf:
@@ -439,16 +439,16 @@ definitions:
       akismet_key:
         type: string
       aliyun:
-        $ref: '#/definitions/config.AliyunAntispamConf'
+        $ref: "#/definitions/config.AliyunAntispamConf"
       api_fail_block:
         description: API 请求错误仍然拦截
         type: boolean
       keywords:
-        $ref: '#/definitions/config.KeyWordsAntispamConf'
+        $ref: "#/definitions/config.KeyWordsAntispamConf"
       pending_default:
         type: boolean
       tencent:
-        $ref: '#/definitions/config.TencentAntispamConf'
+        $ref: "#/definitions/config.TencentAntispamConf"
     type: object
   config.NotifyBarkConf:
     properties:
@@ -748,18 +748,18 @@ definitions:
   handler.ResponseAdd:
     properties:
       comment:
-        $ref: '#/definitions/entity.CookedComment'
+        $ref: "#/definitions/entity.CookedComment"
     type: object
   handler.ResponseAdminPageEdit:
     properties:
       page:
-        $ref: '#/definitions/entity.CookedPage'
+        $ref: "#/definitions/entity.CookedPage"
     type: object
   handler.ResponseAdminPageGet:
     properties:
       pages:
         items:
-          $ref: '#/definitions/entity.CookedPage'
+          $ref: "#/definitions/entity.CookedPage"
         type: array
       total:
         type: integer
@@ -774,29 +774,29 @@ definitions:
   handler.ResponseAdminSiteAdd:
     properties:
       site:
-        $ref: '#/definitions/entity.CookedSite'
+        $ref: "#/definitions/entity.CookedSite"
     type: object
   handler.ResponseAdminSiteEdit:
     properties:
       site:
-        $ref: '#/definitions/entity.CookedSite'
+        $ref: "#/definitions/entity.CookedSite"
     type: object
   handler.ResponseAdminSiteGet:
     properties:
       sites:
         items:
-          $ref: '#/definitions/entity.CookedSite'
+          $ref: "#/definitions/entity.CookedSite"
         type: array
     type: object
   handler.ResponseAdminUserAdd:
     properties:
       user:
-        $ref: '#/definitions/entity.CookedUserForAdmin'
+        $ref: "#/definitions/entity.CookedUserForAdmin"
     type: object
   handler.ResponseAdminUserEdit:
     properties:
       user:
-        $ref: '#/definitions/entity.CookedUserForAdmin'
+        $ref: "#/definitions/entity.CookedUserForAdmin"
     type: object
   handler.ResponseAdminUserGet:
     properties:
@@ -804,33 +804,33 @@ definitions:
         type: integer
       users:
         items:
-          $ref: '#/definitions/entity.CookedUserForAdmin'
+          $ref: "#/definitions/entity.CookedUserForAdmin"
         type: array
     type: object
   handler.ResponseCommentEdit:
     properties:
       comment:
-        $ref: '#/definitions/entity.CookedComment'
+        $ref: "#/definitions/entity.CookedComment"
     type: object
   handler.ResponseGet:
     properties:
       api_version:
-        $ref: '#/definitions/common.ApiVersionData'
+        $ref: "#/definitions/common.ApiVersionData"
       comments:
         items:
-          $ref: '#/definitions/entity.CookedComment'
+          $ref: "#/definitions/entity.CookedComment"
         type: array
       conf:
-        $ref: '#/definitions/common.Map'
+        $ref: "#/definitions/common.Map"
       page:
-        $ref: '#/definitions/entity.CookedPage'
+        $ref: "#/definitions/entity.CookedPage"
       total:
         type: integer
       total_roots:
         type: integer
       unread:
         items:
-          $ref: '#/definitions/entity.CookedNotify'
+          $ref: "#/definitions/entity.CookedNotify"
         type: array
       unread_count:
         type: integer
@@ -847,7 +847,7 @@ definitions:
       token:
         type: string
       user:
-        $ref: '#/definitions/entity.CookedUser'
+        $ref: "#/definitions/entity.CookedUser"
     type: object
   handler.ResponseLoginStatus:
     properties:
@@ -867,12 +867,12 @@ definitions:
         type: boolean
       unread:
         items:
-          $ref: '#/definitions/entity.CookedNotify'
+          $ref: "#/definitions/entity.CookedNotify"
         type: array
       unread_count:
         type: integer
       user:
-        $ref: '#/definitions/entity.CookedUser'
+        $ref: "#/definitions/entity.CookedUser"
     type: object
   handler.ResponseVote:
     properties:
@@ -897,78 +897,78 @@ paths:
     post:
       description: Create a new comment
       parameters:
-      - description: the comment name
-        in: formData
-        name: name
-        type: string
-      - description: the comment email
-        in: formData
-        name: email
-        type: string
-      - description: the comment link
-        in: formData
-        name: link
-        type: string
-      - description: the comment content
-        in: formData
-        name: content
-        required: true
-        type: string
-      - description: the comment rid
-        in: formData
-        name: rid
-        type: string
-      - description: the comment ua
-        in: formData
-        name: ua
-        type: string
-      - description: the comment page_key
-        in: formData
-        name: page_key
-        required: true
-        type: string
-      - description: the comment page_title
-        in: formData
-        name: page_title
-        type: string
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
+        - description: the comment name
+          in: formData
+          name: name
+          type: string
+        - description: the comment email
+          in: formData
+          name: email
+          type: string
+        - description: the comment link
+          in: formData
+          name: link
+          type: string
+        - description: the comment content
+          in: formData
+          name: content
+          required: true
+          type: string
+        - description: the comment rid
+          in: formData
+          name: rid
+          type: string
+        - description: the comment ua
+          in: formData
+          name: ua
+          type: string
+        - description: the comment page_key
+          in: formData
+          name: page_key
+          required: true
+          type: string
+        - description: the comment page_title
+          in: formData
+          name: page_title
+          type: string
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdd'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseAdd"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Comment Add
       tags:
-      - Comment
+        - Comment
   /admin/cache-flush:
     post:
       description: Flush Cache when application runs
       parameters:
-      - description: flush all cache
-        example: 1
-        in: formData
-        name: flush_all
-        type: integer
+        - description: flush all cache
+          example: 1
+          in: formData
+          name: flush_all
+          type: integer
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Cache Flush
       tags:
-      - Cache
+        - Cache
   /admin/cache-warm:
     post:
       description: Cache warming helps you hit the cache on the user's first visit
@@ -976,107 +976,107 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Cache Warming
       tags:
-      - Cache
+        - Cache
   /admin/comment-del:
     post:
       description: Delete a specific comment
       parameters:
-      - description: the comment ID you want to delete
-        in: formData
-        name: id
-        required: true
-        type: integer
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
+        - description: the comment ID you want to delete
+          in: formData
+          name: id
+          required: true
+          type: integer
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Comment Delete
       tags:
-      - Comment
+        - Comment
   /admin/comment-edit:
     post:
       description: Edit a specific comment
       parameters:
-      - description: the comment ID you want to edit
-        in: formData
-        name: id
-        required: true
-        type: integer
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
-      - description: the comment content
-        in: formData
-        name: content
-        type: string
-      - description: the comment page_key
-        in: formData
-        name: page_key
-        type: string
-      - description: the comment nick
-        in: formData
-        name: nick
-        type: string
-      - description: the comment email
-        in: formData
-        name: email
-        type: string
-      - description: the comment link
-        in: formData
-        name: link
-        type: string
-      - description: the comment rid
-        in: formData
-        name: rid
-        type: string
-      - description: the comment ua
-        in: formData
-        name: ua
-        type: string
-      - description: the comment ip
-        in: formData
-        name: ip
-        type: string
-      - description: the comment is_collapsed
-        in: formData
-        name: is_collapsed
-        type: boolean
-      - description: the comment is_pending
-        in: formData
-        name: is_pending
-        type: boolean
-      - description: the comment is_pinned
-        in: formData
-        name: is_pinned
-        type: boolean
+        - description: the comment ID you want to edit
+          in: formData
+          name: id
+          required: true
+          type: integer
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
+        - description: the comment content
+          in: formData
+          name: content
+          type: string
+        - description: the comment page_key
+          in: formData
+          name: page_key
+          type: string
+        - description: the comment nick
+          in: formData
+          name: nick
+          type: string
+        - description: the comment email
+          in: formData
+          name: email
+          type: string
+        - description: the comment link
+          in: formData
+          name: link
+          type: string
+        - description: the comment rid
+          in: formData
+          name: rid
+          type: string
+        - description: the comment ua
+          in: formData
+          name: ua
+          type: string
+        - description: the comment ip
+          in: formData
+          name: ip
+          type: string
+        - description: the comment is_collapsed
+          in: formData
+          name: is_collapsed
+          type: boolean
+        - description: the comment is_pending
+          in: formData
+          name: is_pending
+          type: boolean
+        - description: the comment is_pinned
+          in: formData
+          name: is_pinned
+          type: boolean
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseCommentEdit'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseCommentEdit"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Comment Edit
       tags:
-      - Comment
+        - Comment
   /admin/export:
     post:
       description: Export data from Artalk
@@ -1085,206 +1085,206 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  properties:
-                    data:
-                      type: string
-                  type: object
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    properties:
+                      data:
+                        type: string
+                    type: object
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Transfer Export
       tags:
-      - Transfer
+        - Transfer
   /admin/import:
     post:
       description: Import data to Artalk
       parameters:
-      - description: the transfer importer payload
-        in: formData
-        name: payload
-        type: string
+        - description: the transfer importer payload
+          in: formData
+          name: payload
+          type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Transfer Import
       tags:
-      - Transfer
+        - Transfer
   /admin/import-upload:
     post:
       description: Upload a file to prepare to import
       parameters:
-      - description: upload file in preparation for import task
-        in: formData
-        name: file
-        required: true
-        type: file
+        - description: upload file in preparation for import task
+          in: formData
+          name: file
+          required: true
+          type: file
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Transfer Import Upload
       tags:
-      - Transfer
+        - Transfer
   /admin/page-del:
     post:
       description: Delete a specific page
       parameters:
-      - description: the page KEY you want to delete
-        in: formData
-        name: key
-        required: true
-        type: string
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
+        - description: the page KEY you want to delete
+          in: formData
+          name: key
+          required: true
+          type: string
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Page Delete
       tags:
-      - Page
+        - Page
   /admin/page-edit:
     post:
       description: Edit a specific page
       parameters:
-      - description: the page ID you want to edit
-        in: formData
-        name: id
-        required: true
-        type: string
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
-      - description: edit page key
-        in: formData
-        name: key
-        type: string
-      - description: edit page title
-        in: formData
-        name: title
-        type: string
-      - description: edit page admin_only option
-        in: formData
-        name: admin_only
-        type: boolean
+        - description: the page ID you want to edit
+          in: formData
+          name: id
+          required: true
+          type: string
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
+        - description: edit page key
+          in: formData
+          name: key
+          type: string
+        - description: edit page title
+          in: formData
+          name: title
+          type: string
+        - description: edit page admin_only option
+          in: formData
+          name: admin_only
+          type: boolean
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminPageEdit'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseAdminPageEdit"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Page Edit
       tags:
-      - Page
+        - Page
   /admin/page-fetch:
     post:
       description: Fetch the data of a specific page
       parameters:
-      - description: the page ID you want to fetch
-        in: formData
-        name: key
-        required: true
-        type: string
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
-      - description: which response data you want to receive
-        in: formData
-        name: get_status
-        type: boolean
+        - description: the page ID you want to fetch
+          in: formData
+          name: key
+          required: true
+          type: string
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
+        - description: which response data you want to receive
+          in: formData
+          name: get_status
+          type: boolean
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Page Data Fetch
       tags:
-      - Page
+        - Page
   /admin/page-get:
     post:
       description: Get a list of pages by some conditions
       parameters:
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
-      - description: the limit for pagination
-        in: formData
-        name: limit
-        type: integer
-      - description: the offset for pagination
-        in: formData
-        name: offset
-        type: integer
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
+        - description: the limit for pagination
+          in: formData
+          name: limit
+          type: integer
+        - description: the offset for pagination
+          in: formData
+          name: offset
+          type: integer
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminPageGet'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseAdminPageGet"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Page List
       tags:
-      - Page
+        - Page
   /admin/send-mail:
     post:
       description: Send an email to test the email sender
       parameters:
-      - description: the subject of email
-        in: formData
-        name: subject
-        required: true
-        type: string
-      - description: the body of email
-        in: formData
-        name: body
-        required: true
-        type: string
-      - description: the email address of the receiver
-        in: formData
-        name: to_addr
-        required: true
-        type: string
+        - description: the subject of email
+          in: formData
+          name: subject
+          required: true
+          type: string
+        - description: the body of email
+          in: formData
+          name: body
+          required: true
+          type: string
+        - description: the email address of the receiver
+          in: formData
+          name: to_addr
+          required: true
+          type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Email Send
       tags:
-      - System
+        - System
   /admin/setting-get:
     post:
       description: Get settings from app config file
@@ -1293,38 +1293,39 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminSettingGet'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseAdminSettingGet"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Settings Get
       tags:
-      - System
+        - System
   /admin/setting-save:
     post:
       description: Save settings to app config file
       parameters:
-      - description: the content of the config file in YAML format
-        in: formData
-        name: data
-        required: true
-        type: string
+        - description: the content of the config file in YAML format
+          in: formData
+          name: data
+          required: true
+          type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Settings Save
       tags:
-      - System
+        - System
   /admin/setting-tpl:
     post:
-      description: Get config templates in different languages for rendering the settings
+      description:
+        Get config templates in different languages for rendering the settings
         page in the frontend
       responses:
         "200":
@@ -1332,88 +1333,88 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Settings Template
       tags:
-      - System
+        - System
   /admin/site-add:
     post:
       description: Create a new site
       parameters:
-      - description: the site name
-        in: formData
-        name: name
-        type: string
-      - description: the site urls
-        in: formData
-        name: urls
-        type: string
+        - description: the site name
+          in: formData
+          name: name
+          type: string
+        - description: the site urls
+          in: formData
+          name: urls
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminSiteAdd'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseAdminSiteAdd"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Site Add
       tags:
-      - Site
+        - Site
   /admin/site-del:
     post:
       description: Delete a specific site
       parameters:
-      - description: the site ID you want to delete
-        in: formData
-        name: id
-        required: true
-        type: string
+        - description: the site ID you want to delete
+          in: formData
+          name: id
+          required: true
+          type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Site Delete
       tags:
-      - Site
+        - Site
   /admin/site-edit:
     post:
       description: Edit a specific site
       parameters:
-      - description: the site ID you want to edit
-        in: formData
-        name: id
-        required: true
-        type: string
-      - description: edit site name
-        in: formData
-        name: name
-        type: string
-      - description: edit site urls
-        in: formData
-        name: urls
-        type: string
+        - description: the site ID you want to edit
+          in: formData
+          name: id
+          required: true
+          type: string
+        - description: edit site name
+          in: formData
+          name: name
+          type: string
+        - description: edit site urls
+          in: formData
+          name: urls
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminSiteEdit'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseAdminSiteEdit"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Site Edit
       tags:
-      - Site
+        - Site
   /admin/site-get:
     post:
       description: Get a list of sites by some conditions
@@ -1422,287 +1423,291 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminSiteGet'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseAdminSiteGet"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Site List
       tags:
-      - Site
+        - Site
   /admin/user-add:
     post:
       description: Create a new user
       parameters:
-      - description: the user name
-        in: formData
-        name: name
-        required: true
-        type: string
-      - description: the user email
-        in: formData
-        name: email
-        required: true
-        type: string
-      - description: the user password
-        in: formData
-        name: password
-        type: string
-      - description: the user link
-        in: formData
-        name: link
-        type: string
-      - description: the user is an admin
-        in: formData
-        name: is_admin
-        required: true
-        type: boolean
-      - description: the site names associated with the user
-        in: formData
-        name: site_names
-        type: string
-      - description: the user receive email
-        in: formData
-        name: receive_email
-        required: true
-        type: boolean
-      - description: the user badge name
-        in: formData
-        name: badge_name
-        type: string
-      - description: the user badge color (hex format)
-        in: formData
-        name: badge_color
-        type: string
+        - description: the user name
+          in: formData
+          name: name
+          required: true
+          type: string
+        - description: the user email
+          in: formData
+          name: email
+          required: true
+          type: string
+        - description: the user password
+          in: formData
+          name: password
+          type: string
+        - description: the user link
+          in: formData
+          name: link
+          type: string
+        - description: the user is an admin
+          in: formData
+          name: is_admin
+          required: true
+          type: boolean
+        - description: the site names associated with the user
+          in: formData
+          name: site_names
+          type: string
+        - description: the user receive email
+          in: formData
+          name: receive_email
+          required: true
+          type: boolean
+        - description: the user badge name
+          in: formData
+          name: badge_name
+          type: string
+        - description: the user badge color (hex format)
+          in: formData
+          name: badge_color
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminUserAdd'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseAdminUserAdd"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: User Add
       tags:
-      - User
+        - User
   /admin/user-del:
     post:
       description: Delete a specific user
       parameters:
-      - description: the user ID you want to delete
-        in: formData
-        name: id
-        required: true
-        type: string
+        - description: the user ID you want to delete
+          in: formData
+          name: id
+          required: true
+          type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: User Delete
       tags:
-      - User
+        - User
   /admin/user-edit:
     post:
       description: Edit a specific user
       parameters:
-      - description: the user ID you want to edit
-        in: formData
-        name: id
-        required: true
-        type: string
-      - description: the user name
-        in: formData
-        name: name
-        required: true
-        type: string
-      - description: the user email
-        in: formData
-        name: email
-        required: true
-        type: string
-      - description: the user password
-        in: formData
-        name: password
-        type: string
-      - description: the user link
-        in: formData
-        name: link
-        type: string
-      - description: the user is an admin
-        in: formData
-        name: is_admin
-        required: true
-        type: boolean
-      - description: the site names associated with the user
-        in: formData
-        name: site_names
-        type: string
-      - description: the user receive email
-        in: formData
-        name: receive_email
-        required: true
-        type: boolean
-      - description: the user badge name
-        in: formData
-        name: badge_name
-        type: string
-      - description: the user badge color (hex format)
-        in: formData
-        name: badge_color
-        type: string
+        - description: the user ID you want to edit
+          in: formData
+          name: id
+          required: true
+          type: string
+        - description: the user name
+          in: formData
+          name: name
+          required: true
+          type: string
+        - description: the user email
+          in: formData
+          name: email
+          required: true
+          type: string
+        - description: the user password
+          in: formData
+          name: password
+          type: string
+        - description: the user link
+          in: formData
+          name: link
+          type: string
+        - description: the user is an admin
+          in: formData
+          name: is_admin
+          required: true
+          type: boolean
+        - description: the site names associated with the user
+          in: formData
+          name: site_names
+          type: string
+        - description: the user receive email
+          in: formData
+          name: receive_email
+          required: true
+          type: boolean
+        - description: the user badge name
+          in: formData
+          name: badge_name
+          type: string
+        - description: the user badge color (hex format)
+          in: formData
+          name: badge_color
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminUserEdit'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseAdminUserEdit"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: User Edit
       tags:
-      - User
+        - User
   /admin/user-get:
     post:
       description: Get a list of users by some conditions
       parameters:
-      - description: the limit for pagination
-        in: formData
-        name: limit
-        type: integer
-      - description: the offset for pagination
-        in: formData
-        name: offset
-        type: integer
+        - description: the limit for pagination
+          in: formData
+          name: limit
+          type: integer
+        - description: the offset for pagination
+          in: formData
+          name: offset
+          type: integer
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminUserGet'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseAdminUserGet"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: User List
       tags:
-      - User
+        - User
   /admin/vote-sync:
     post:
-      description: Sync the number of votes in the `comments` or `pages` data tables
+      description:
+        Sync the number of votes in the `comments` or `pages` data tables
         to keep them the same as the `votes` table
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Vote Sync
       tags:
-      - Vote
+        - Vote
   /captcha/check:
     post:
       description: Verify user enters correct captcha code
       parameters:
-      - description: the captcha value to check
-        in: formData
-        name: value
-        required: true
-        type: string
+        - description: the captcha value to check
+          in: formData
+          name: value
+          required: true
+          type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
         "400":
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  properties:
-                    img_data:
-                      type: string
-                  type: object
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    properties:
+                      img_data:
+                        type: string
+                    type: object
+                type: object
       summary: Captcha Check
       tags:
-      - Captcha
+        - Captcha
   /captcha/get:
     get:
-      description: Get a base64 encoded captcha image or a HTML page to verify for
+      description:
+        Get a base64 encoded captcha image or a HTML page to verify for
         user
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  properties:
-                    img_data:
-                      type: string
-                  type: object
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    properties:
+                      img_data:
+                        type: string
+                    type: object
+                type: object
       summary: Captcha Get
       tags:
-      - Captcha
+        - Captcha
     post:
-      description: Get a base64 encoded captcha image or a HTML page to verify for
+      description:
+        Get a base64 encoded captcha image or a HTML page to verify for
         user
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  properties:
-                    img_data:
-                      type: string
-                  type: object
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    properties:
+                      img_data:
+                        type: string
+                    type: object
+                type: object
       summary: Captcha Get
       tags:
-      - Captcha
+        - Captcha
   /captcha/refresh:
     post:
-      description: Get a base64 encoded captcha image or a HTML page to verify for
+      description:
+        Get a base64 encoded captcha image or a HTML page to verify for
         user
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  properties:
-                    img_data:
-                      type: string
-                  type: object
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    properties:
+                      img_data:
+                        type: string
+                    type: object
+                type: object
       summary: Captcha Get
       tags:
-      - Captcha
+        - Captcha
   /captcha/status:
     post:
       description: Get the status of the user's captcha verification
@@ -1711,17 +1716,17 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  properties:
-                    is_pass:
-                      type: boolean
-                  type: object
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    properties:
+                      is_pass:
+                        type: boolean
+                    type: object
+                type: object
       summary: Captcha Status
       tags:
-      - Captcha
+        - Captcha
   /conf:
     get:
       description: Get system configurations
@@ -1730,213 +1735,213 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/config.Config'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/config.Config"
+                type: object
       summary: Config
       tags:
-      - System
+        - System
   /get:
     post:
       description: Get a list of comments by some conditions
       parameters:
-      - description: the comment page_key
-        in: formData
-        name: page_key
-        required: true
-        type: string
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
-      - description: the limit for pagination
-        in: formData
-        name: limit
-        type: integer
-      - description: the offset for pagination
-        in: formData
-        name: offset
-        type: integer
-      - description: enable flat_mode
-        in: formData
-        name: flat_mode
-        type: boolean
-      - description: sort by condition
-        enum:
-        - date_asc
-        - date_desc
-        - vote
-        in: formData
-        name: sort_by
-        type: string
-      - description: only show comments by admin
-        in: formData
-        name: view_only_admin
-        type: boolean
-      - description: search keywords
-        in: formData
-        name: search
-        type: string
-      - description: message center show type
-        enum:
-        - all
-        - mentions
-        - mine
-        - pending
-        - admin_all
-        - admin_pending
-        in: formData
-        name: type
-        type: string
-      - description: the username
-        in: formData
-        name: name
-        type: string
-      - description: the user email
-        in: formData
-        name: email
-        type: string
+        - description: the comment page_key
+          in: formData
+          name: page_key
+          required: true
+          type: string
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
+        - description: the limit for pagination
+          in: formData
+          name: limit
+          type: integer
+        - description: the offset for pagination
+          in: formData
+          name: offset
+          type: integer
+        - description: enable flat_mode
+          in: formData
+          name: flat_mode
+          type: boolean
+        - description: sort by condition
+          enum:
+            - date_asc
+            - date_desc
+            - vote
+          in: formData
+          name: sort_by
+          type: string
+        - description: only show comments by admin
+          in: formData
+          name: view_only_admin
+          type: boolean
+        - description: search keywords
+          in: formData
+          name: search
+          type: string
+        - description: message center show type
+          enum:
+            - all
+            - mentions
+            - mine
+            - pending
+            - admin_all
+            - admin_pending
+          in: formData
+          name: type
+          type: string
+        - description: the username
+          in: formData
+          name: name
+          type: string
+        - description: the user email
+          in: formData
+          name: email
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseGet'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseGet"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Comment List
       tags:
-      - Comment
+        - Comment
   /img-upload:
     post:
       description: Upload image from this endpoint
       parameters:
-      - description: upload file in preparation for import
-        in: formData
-        name: file
-        required: true
-        type: file
-      - description: the username
-        in: formData
-        name: name
-        required: true
-        type: string
-      - description: the user email
-        in: formData
-        name: email
-        required: true
-        type: string
-      - description: the page key
-        in: formData
-        name: page_key
-        required: true
-        type: string
-      - description: the page title
-        in: formData
-        name: page_title
-        type: string
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
+        - description: upload file in preparation for import
+          in: formData
+          name: file
+          required: true
+          type: file
+        - description: the username
+          in: formData
+          name: name
+          required: true
+          type: string
+        - description: the user email
+          in: formData
+          name: email
+          required: true
+          type: string
+        - description: the page key
+          in: formData
+          name: page_key
+          required: true
+          type: string
+        - description: the page title
+          in: formData
+          name: page_title
+          type: string
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseImgUpload'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseImgUpload"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Image Upload
       tags:
-      - Upload
+        - Upload
   /login:
     post:
       description: Login user by name or email
       parameters:
-      - description: the username
-        in: formData
-        name: name
-        type: string
-      - description: the user email
-        in: formData
-        name: email
-        required: true
-        type: string
-      - description: the user password
-        in: formData
-        name: password
-        required: true
-        type: string
+        - description: the username
+          in: formData
+          name: name
+          type: string
+        - description: the user email
+          in: formData
+          name: email
+          required: true
+          type: string
+        - description: the user password
+          in: formData
+          name: password
+          required: true
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseLogin'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseLogin"
+                type: object
         "400":
           description: Multiple users with the same email address are matched
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  properties:
-                    need_name_select:
-                      items:
-                        type: string
-                      type: array
-                  type: object
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    properties:
+                      need_name_select:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                type: object
       summary: User Login
       tags:
-      - User
+        - User
   /login-status:
     post:
       description: Get user login status by header Authorization
       parameters:
-      - description: the username
-        in: formData
-        name: name
-        type: string
-      - description: the user email
-        in: formData
-        name: email
-        type: string
-      - description: the user password
-        in: formData
-        name: password
-        required: true
-        type: string
+        - description: the username
+          in: formData
+          name: name
+          type: string
+        - description: the user email
+          in: formData
+          name: email
+          type: string
+        - description: the user password
+          in: formData
+          name: password
+          required: true
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseLoginStatus'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseLoginStatus"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: User Login Status
       tags:
-      - User
+        - User
   /logout:
     post:
       description: |-
@@ -1946,145 +1951,145 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       summary: User Logout
       tags:
-      - User
+        - User
   /mark-read:
     post:
       description: Mark specific notification as read for user
       parameters:
-      - description: the comment id of the notify you want to mark as read
-        in: formData
-        name: comment_id
-        required: true
-        type: integer
-      - description: the key of the notify
-        in: formData
-        name: notify_key
-        required: true
-        type: string
-      - description: the username
-        in: formData
-        name: name
-        type: string
-      - description: the user email
-        in: formData
-        name: email
-        type: string
-      - description: the option if mark all user's notify as read
-        in: formData
-        name: all_read
-        type: boolean
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
+        - description: the comment id of the notify you want to mark as read
+          in: formData
+          name: comment_id
+          required: true
+          type: integer
+        - description: the key of the notify
+          in: formData
+          name: notify_key
+          required: true
+          type: string
+        - description: the username
+          in: formData
+          name: name
+          type: string
+        - description: the user email
+          in: formData
+          name: email
+          type: string
+        - description: the option if mark all user's notify as read
+          in: formData
+          name: all_read
+          type: boolean
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       summary: Notify Mark Read
       tags:
-      - Notify
+        - Notify
   /pv:
     post:
       description: Log and get the number of page views
       parameters:
-      - description: the page key
-        in: formData
-        name: page_key
-        required: true
-        type: string
-      - description: the page title
-        in: formData
-        name: page_title
-        type: string
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
+        - description: the page key
+          in: formData
+          name: page_key
+          required: true
+          type: string
+        - description: the page title
+          in: formData
+          name: page_title
+          type: string
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponsePV'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponsePV"
+                type: object
       summary: Page View
       tags:
-      - PV
+        - PV
   /stat:
     post:
       description: Get the statistics of various data analysed
       parameters:
-      - description: the type of statistics
-        enum:
-        - latest_comments
-        - latest_pages
-        - pv_most_pages
-        - comment_most_pages
-        - page_pv
-        - site_pv
-        - page_comment
-        - site_comment
-        - rand_comments
-        - rand_pages
-        in: formData
-        name: type
-        required: true
-        type: string
-      - description: multiple page keys separated by commas
-        in: formData
-        name: page_keys
-        type: string
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
-      - description: the amount of items you want
-        in: formData
-        name: limit
-        type: integer
+        - description: the type of statistics
+          enum:
+            - latest_comments
+            - latest_pages
+            - pv_most_pages
+            - comment_most_pages
+            - page_pv
+            - site_pv
+            - page_comment
+            - site_comment
+            - rand_comments
+            - rand_pages
+          in: formData
+          name: type
+          required: true
+          type: string
+        - description: multiple page keys separated by commas
+          in: formData
+          name: page_keys
+          type: string
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
+        - description: the amount of items you want
+          in: formData
+          name: limit
+          type: integer
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: "#/definitions/common.JSONResult"
       summary: Statistics
       tags:
-      - Statistics
+        - Statistics
   /user-get:
     post:
       description: Get user info to prepare for login or check current user status
       parameters:
-      - description: the username
-        in: formData
-        name: name
-        type: string
-      - description: the user email
-        in: formData
-        name: email
-        type: string
+        - description: the username
+          in: formData
+          name: name
+          type: string
+        - description: the user email
+          in: formData
+          name: email
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseUserGet'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseUserGet"
+                type: object
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: User Info Get
       tags:
-      - User
+        - User
   /version:
     post:
       description: Get the version of Artalk
@@ -2092,54 +2097,54 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.ApiVersionData'
+            $ref: "#/definitions/common.ApiVersionData"
       summary: Version
       tags:
-      - System
+        - System
   /vote:
     post:
       description: Vote for a specific comment or page
       parameters:
-      - description: target comment or page ID you want to vote for
-        in: formData
-        name: target_id
-        required: true
-        type: integer
-      - description: the type of vote target
-        enum:
-        - comment_up
-        - comment_down
-        - page_up
-        - page_down
-        in: formData
-        name: type
-        required: true
-        type: string
-      - description: the username
-        in: formData
-        name: name
-        type: string
-      - description: the user email
-        in: formData
-        name: email
-        type: string
-      - description: the site name of your content scope
-        in: formData
-        name: site_name
-        type: string
+        - description: target comment or page ID you want to vote for
+          in: formData
+          name: target_id
+          required: true
+          type: integer
+        - description: the type of vote target
+          enum:
+            - comment_up
+            - comment_down
+            - page_up
+            - page_down
+          in: formData
+          name: type
+          required: true
+          type: string
+        - description: the username
+          in: formData
+          name: name
+          type: string
+        - description: the user email
+          in: formData
+          name: email
+          type: string
+        - description: the site name of your content scope
+          in: formData
+          name: site_name
+          type: string
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseVote'
-              type: object
+              - $ref: "#/definitions/common.JSONResult"
+              - properties:
+                  data:
+                    $ref: "#/definitions/handler.ResponseVote"
+                type: object
       summary: Vote
       tags:
-      - Vote
+        - Vote
 securityDefinitions:
   ApiKeyAuth:
     description: '"Type ''Bearer TOKEN'' to correctly set the API Key"'

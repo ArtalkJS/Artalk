@@ -8,7 +8,6 @@ module.exports = {
     project: ['./packages/*/tsconfig.json'],
     tsconfigRootDir: __dirname,
   },
-  ignoreFiles: ['node_modules/', 'coverage/', 'dist/', '**/*.js'],
   extends: [
     'airbnb-base',
     'airbnb-typescript/base',
@@ -18,6 +17,7 @@ module.exports = {
     'plugin:compat/recommended',
   ],
   plugins: ['prettier', '@typescript-eslint', 'import'],
+  ignorePatterns: ['node_modules/', 'coverage/', 'dist/', '**/*.js'],
   rules: {
     'no-alert': 'warn',
     'no-unused-vars': 0,

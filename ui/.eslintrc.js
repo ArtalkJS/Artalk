@@ -1,7 +1,9 @@
+const path = require('node:path')
+
 module.exports = {
   root: true,
-  parser: "@typescript-eslint/parser",
-  env: { "browser": true },
+  parser: '@typescript-eslint/parser',
+  env: { browser: true },
   parserOptions: {
     project: ['./packages/*/tsconfig.json'],
     tsconfigRootDir: __dirname,
@@ -12,7 +14,7 @@ module.exports = {
     'prettier',
     'plugin:import/recommended',
     'plugin:import/typescript',
-    "plugin:compat/recommended",
+    'plugin:compat/recommended',
   ],
   plugins: ['@typescript-eslint', 'import'],
   rules: {
@@ -38,11 +40,11 @@ module.exports = {
   settings: {
     'import/resolver': {
       typescript: {
-        "project": [__dirname + "/packages/*/tsconfig.json"]
+        project: ['packages/artalk/tsconfig.json'].map((p) =>
+          path.resolve(__dirname, p),
+        ),
       },
     },
-    'polyfills': [
-      'AbortController'
-    ]
-  }
+    polyfills: ['AbortController'],
+  },
 }

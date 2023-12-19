@@ -1,7 +1,6 @@
 {
   "name": "artalk",
   "version": "2.7.1",
-  "license": "MIT",
   "description": "A self-hosted comment system",
   "keywords": [
     "comment-system",
@@ -10,40 +9,67 @@
     "comments",
     "blog"
   ],
+  "homepage": "https://artalk.js.org",
+  "bugs": "https://github.com/ArtalkJS/Artalk/issue",
   "repository": {
     "type": "git",
     "url": "https://github.com/ArtalkJS/Artalk.git",
     "directory": "ui/packages/artalk"
   },
-  "homepage": "https://artalk.js.org",
-  "bugs": "https://github.com/ArtalkJS/Artalk/issue",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/main.d.ts",
+      "require": "./dist/Artalk.js",
+      "default": "./dist/Artalk.es.js"
+    },
+    "./dist/*": "./dist/*",
+    "./dist/Artalk": "./dist/Artalk.js",
+    "./dist/Artalk.es": "./dist/Artalk.es.js",
+    "./dist/Artalk.iife": "./dist/Artalk.iife.js",
+    "./dist/ArtalkLite": "./dist/ArtalkLite.js",
+    "./dist/ArtalkLite.es": "./dist/ArtalkLite.es.js",
+    "./dist/ArtalkLite.iife": "./dist/ArtalkLite.iife.js",
+    "./dist/i18n/jp": "./dist/i18n/jp.js",
+    "./dist/i18n/zh-TW": "./dist/i18n/zh-TW.js",
+    "./i18n/*": "./dist/i18n/*",
+    "./lite/*": {
+      "types": "./dist/src/main.d.ts",
+      "require": "./dist/ArtalkLite.js",
+      "default": "./dist/ArtalkLite.es.js"
+    },
+    "./style": "./dist/Artalk.css"
+  },
   "main": "./dist/Artalk.js",
-  "unpkg": "./dist/Artalk.iife.js",
   "jsdelivr": "./dist/Artalk.iife.js",
+  "unpkg": "./dist/Artalk.iife.js",
   "module": "./dist/Artalk.es.js",
   "types": "./dist/src/main.d.ts",
-  "typings": "./dist/src/main.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "dev": "vite",
     "build": "vite build && pnpm build:lite && pnpm build:i18n",
-    "build:lite": "vite build --config vite-lite.config.ts",
-    "build:i18n": "node scripts/build-i18n.mjs",
     "build:demo": "vite build --config vite-demo.config.ts",
-    "serve": "vite preview",
-    "deploy": "gh-pages -d deploy",
-    "predeploy": "pnpm build && pnpm build:demo && pnpm copy:deploy",
+    "build:i18n": "node scripts/build-i18n.mjs",
+    "build:lite": "vite build --config vite-lite.config.ts",
     "copy:deploy": "cp -r dist deploy && cp CNAME deploy",
-    "lint": "eslint --ext .js,.ts src",
+    "predeploy": "pnpm build && pnpm build:demo && pnpm copy:deploy",
+    "deploy": "gh-pages -d deploy",
+    "dev": "vite",
+    "lint": "eslint --ext .js,.ts src --fix",
+    "serve": "vite preview",
     "test:e2e": "playwright test",
     "test:report": "playwright show-report"
-  },
-  "devDependencies": {
-    "@types/marked": "5.0.1"
   },
   "dependencies": {
     "abortcontroller-polyfill": "^1.7.5",
     "hanabi": "^0.4.0",
     "insane": "^2.6.2",
     "marked": "^7.0.4"
+  },
+  "devDependencies": {
+    "@types/marked": "5.0.2"
   }
 }

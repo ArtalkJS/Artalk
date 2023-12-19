@@ -13,10 +13,10 @@
     "publish": "pnpm publish --access=public"
   },
   "dependencies": {
-    "artalk": "workspace: *",
-    "katex": "^0.16.8"
+    "artalk": "workspace:^",
+    "katex": "^0.16.9"
   },
   "devDependencies": {
-    "@types/katex": "0.16.0"
+    "@types/katex": "0.16.7"
   }
 }

@@ -6,7 +6,7 @@ WORKDIR /source
 # install tools
 RUN set -ex \
     && apk add --no-cache make git gcc musl-dev nodejs bash npm\
-    && npm install -g pnpm@9.8.1
+    && npm install -g pnpm@8.12.1
 
 # download go deps
 # (cache by separating the downloading of deps)

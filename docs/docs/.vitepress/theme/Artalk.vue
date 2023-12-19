@@ -1,7 +1,5 @@
 <template>
-  <ClientOnly>
-    <div ref="el" style="margin-top: 20px;"></div>
-  </ClientOnly>
+  <div ref="el" style="margin-top: 20px;"></div>
 </template>
 
 <script setup lang="ts">
@@ -17,10 +15,12 @@ const page = useData().page
 let artalk: Artalk
 
 onMounted(() => {
-  initArtalk(getConfByPage())
+  nextTick(() => {
+    initArtalk(getConfByPage())
+  })
 })
 
-watch(() => router.route.data.relativePath, () => {
+watch(() => router.route.path, () => {
   nextTick(() => {
     artalk.update(getConfByPage())
     artalk.reload()
@@ -32,6 +32,7 @@ onUnmounted(() => {
 })
 
 function initArtalk(conf: any) {
+  // TODO: remove dynamic import after the new version released
   import('artalk').then(({ default: Artalk }) => {
     artalk = Artalk.init({
       el:        el.value,
@@ -48,7 +49,7 @@ function initArtalk(conf: any) {
 
 function getConfByPage() {
   return {
-    pageKey:   'https://artalk.js.org'+location.pathname,
+    pageKey:   'https://artalk.js.org'+router.route.path,
     pageTitle:  page.value.title,
     server:    'https://artalk.qwqaq.com',
     site:      'ArtalkDocs',

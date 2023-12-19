@@ -5,8 +5,7 @@ extends:
 
 apis:
   artalk@v2:
-    root: ./swagger/swagger.json
-    rules: {}
+    root: ./swagger.json
 
 theme:
   openapi:

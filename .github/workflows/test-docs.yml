@@ -1,0 +1,32 @@
+name: Test Docs
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+  push:
+    paths:
+      - "docs/**"
+
+jobs:
+  test_docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Docs
+        run: pnpm docs:build

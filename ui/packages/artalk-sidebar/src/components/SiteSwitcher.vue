@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from 'pinia'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 
-const el = ref<HTMLElement|null>(null)
+const el = ref<HTMLElement | null>(null)
 
 const nav = useNavStore()
 const { siteSwitcherShow: curtShow, sites } = storeToRefs(nav)
@@ -37,11 +37,16 @@ const displaySites = computed(() => {
   displays.push({ label: t('allSites'), name: '__ATK_SITE_ALL', logoText: '_' })
   sites.value.forEach((site) => {
     displays.push({
-      label: site.name, name: site.name,
-      logoText: site.name.substring(0, 1)
+      label: site.name,
+      name: site.name,
+      logoText: site.name.substring(0, 1),
     })
   })
-  displays.push({ label: t('siteManage'), name: '__SITE_MANAGEMENT__', logoText: '+' })
+  displays.push({
+    label: t('siteManage'),
+    name: '__SITE_MANAGEMENT__',
+    logoText: '+',
+  })
   return displays
 })
 
@@ -68,7 +73,7 @@ watch(curtShow, (value) => {
     <div ref="el" v-show="curtShow" class="atk-site-list-floater">
       <div class="atk-sites">
         <div
-          v-for="(site) in displaySites"
+          v-for="site in displaySites"
           class="atk-site-item"
           :class="{ 'atk-active': curtSite === site.name }"
           @click="switchSite(site.name)"
@@ -120,7 +125,7 @@ watch(curtShow, (value) => {
         margin: 10px;
         border-radius: 3px;
         text-align: center;
-        color: #FFF;
+        color: #fff;
         font-size: 12px;
       }
 
@@ -130,14 +135,16 @@ watch(curtShow, (value) => {
         margin-left: 7px;
       }
 
-      &.atk-active, &:hover {
+      &.atk-active,
+      &:hover {
         background: var(--at-color-bg-grey);
       }
     }
   }
 }
 
-.v-enter-from, .v-leave-to {
+.v-enter-from,
+.v-leave-to {
   opacity: 0;
   transform: scale3d(1.05, 1.05, 1.05);
 }

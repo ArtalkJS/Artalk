@@ -6,10 +6,19 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-fs.copyFile(path.join(__dirname, '../../../../artalk.example.yml'), path.join(__dirname, '../src/assets/artalk.example.yml'), (err) => {
-  if (!err) console.log("\nArtalk config file 'artalk.example.yml' loaded.\n")
-  else console.error("Failed to load config file 'artalk.example.yml':\n\n", err, "\n");
-})
+fs.copyFile(
+  path.join(__dirname, '../../../../artalk.example.yml'),
+  path.join(__dirname, '../src/assets/artalk.example.yml'),
+  (err) => {
+    if (!err) console.log("\nArtalk config file 'artalk.example.yml' loaded.\n")
+    else
+      console.error(
+        "Failed to load config file 'artalk.example.yml':\n\n",
+        err,
+        '\n',
+      )
+  },
+)
 
 // const file = fs.createWriteStream()
 

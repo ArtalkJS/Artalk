@@ -33,7 +33,10 @@ export const Goto: ArtalkPlugin = (ctx) => {
   ctx.on('list-goto', (commentID) => {
     if (foundID === commentID) return
 
-    const comment = ctx.get('list').getCommentNodes().find(c => c.getID() === commentID)
+    const comment = ctx
+      .get('list')
+      .getCommentNodes()
+      .find((c) => c.getID() === commentID)
     if (!comment) return
 
     foundID = commentID
@@ -57,7 +60,7 @@ export const Goto: ArtalkPlugin = (ctx) => {
   })
 }
 
-function extractCommentID(): number|null {
+function extractCommentID(): number | null {
   // try get from query
   let commentId = Number(Utils.getQueryParam('atk_comment')) // same as backend GetReplyLink()
 

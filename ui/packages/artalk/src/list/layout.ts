@@ -10,7 +10,7 @@ export interface LayoutOptions {
   flatMode: boolean
 
   createCommentNode(comment: CommentData, ctxComments: CommentData[]): Comment
-  findCommentNode(id: number): Comment|undefined
+  findCommentNode(id: number): Comment | undefined
   getCommentDataList(): CommentData[]
 }
 
@@ -39,7 +39,11 @@ export default class ListLayout {
   // 导入评论 · 嵌套模式
   private importCommentsNestMode(srcData: CommentData[]) {
     // 遍历 root 评论
-    const rootNodes = ListNest.makeNestCommentNodeList(srcData, this.options.nestSortBy, this.options.nestMax)
+    const rootNodes = ListNest.makeNestCommentNodeList(
+      srcData,
+      this.options.nestSortBy,
+      this.options.nestMax,
+    )
     rootNodes.forEach((rootNode: ListNest.CommentNode) => {
       const rootC = this.options.createCommentNode(rootNode.comment, srcData)
 
@@ -48,7 +52,10 @@ export default class ListLayout {
       rootC.getRender().playFadeAnim()
 
       // 加载子评论
-      const loadChildren = (parentC: Comment, parentNode: ListNest.CommentNode) => {
+      const loadChildren = (
+        parentC: Comment,
+        parentNode: ListNest.CommentNode,
+      ) => {
         parentNode.children.forEach((node: ListNest.CommentNode) => {
           const childD = node.comment
           const childC = this.options.createCommentNode(childD, srcData)
@@ -68,15 +75,21 @@ export default class ListLayout {
   }
 
   /** 导入评论 · 平铺模式 */
-  private putCommentFlatMode(cData: CommentData, ctxData: CommentData[], insertMode: 'append'|'prepend') {
+  private putCommentFlatMode(
+    cData: CommentData,
+    ctxData: CommentData[],
+    insertMode: 'append' | 'prepend',
+  ) {
     if (cData.is_collapsed) cData.is_allow_reply = false
     const comment = this.options.createCommentNode(cData, ctxData)
 
     // 可见评论添加到界面
     // 注：不可见评论用于显示 “引用内容”
     if (cData.visible) {
-      if (insertMode === 'append') this.options.$commentsWrap?.append(comment.getEl())
-      if (insertMode === 'prepend') this.options.$commentsWrap?.prepend(comment.getEl())
+      if (insertMode === 'append')
+        this.options.$commentsWrap?.append(comment.getEl())
+      if (insertMode === 'prepend')
+        this.options.$commentsWrap?.prepend(comment.getEl())
       comment.getRender().playFadeAnim()
     }
 
@@ -88,7 +101,10 @@ export default class ListLayout {
 
   private insertCommentNest(commentData: CommentData) {
     // 嵌套模式
-    const comment = this.options.createCommentNode(commentData, this.options.getCommentDataList())
+    const comment = this.options.createCommentNode(
+      commentData,
+      this.options.getCommentDataList(),
+    )
 
     if (commentData.rid === 0) {
       // root评论 新增
@@ -97,7 +113,10 @@ export default class ListLayout {
       // 子评论 新增
       const parent = this.options.findCommentNode(commentData.rid)
       if (parent) {
-        parent.putChild(comment, (this.options.nestSortBy === 'DATE_ASC' ? 'append' : 'prepend'))
+        parent.putChild(
+          comment,
+          this.options.nestSortBy === 'DATE_ASC' ? 'append' : 'prepend',
+        )
 
         // 若父评论存在 “子评论部分” 限高，取消限高
         comment.getParents().forEach((p) => {
@@ -114,7 +133,11 @@ export default class ListLayout {
 
   private insertCommentFlatMode(commentData: CommentData) {
     // 平铺模式
-    const comment = this.putCommentFlatMode(commentData, this.options.getCommentDataList(), 'prepend')
+    const comment = this.putCommentFlatMode(
+      commentData,
+      this.options.getCommentDataList(),
+      'prepend',
+    )
     Ui.scrollIntoView(comment.getEl()) // 滚动到可见
   }
 }

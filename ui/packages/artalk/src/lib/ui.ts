@@ -2,16 +2,20 @@ import type { NotifyLevel } from '~/types'
 import * as Utils from './utils'
 
 /** 显示加载 */
-export function showLoading(parentElem: HTMLElement, conf?: { transparentBg?: boolean }) {
+export function showLoading(
+  parentElem: HTMLElement,
+  conf?: { transparentBg?: boolean },
+) {
   // Use :scope https://developer.mozilla.org/en-US/docs/Web/CSS/:scope
   let $loading = parentElem.querySelector<HTMLElement>(':scope > .atk-loading')
   if (!$loading) {
     $loading = Utils.createElement(
-    `<div class="atk-loading atk-fade-in" style="display: none;">
+      `<div class="atk-loading atk-fade-in" style="display: none;">
       <div class="atk-loading-spinner">
         <svg viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle></svg>
       </div>
-    </div>`)
+    </div>`,
+    )
     if (conf?.transparentBg) $loading.style.background = 'transparent'
     parentElem.appendChild($loading)
   }
@@ -29,7 +33,9 @@ export function showLoading(parentElem: HTMLElement, conf?: { transparentBg?: bo
 
 /** 隐藏加载 */
 export function hideLoading(parentElem: HTMLElement) {
-  const $loading = parentElem.querySelector<HTMLElement>(':scope > .atk-loading')
+  const $loading = parentElem.querySelector<HTMLElement>(
+    ':scope > .atk-loading',
+  )
   if ($loading) $loading.style.display = 'none'
 }
 
@@ -40,7 +46,10 @@ export function setLoading(val: boolean, parentElem: HTMLElement) {
 }
 
 /** 元素是否用户可见 */
-export function isVisible(el: HTMLElement, viewport: HTMLElement = document.documentElement) {
+export function isVisible(
+  el: HTMLElement,
+  viewport: HTMLElement = document.documentElement,
+) {
   const viewportHeight = viewport.clientHeight
 
   const docViewTop = viewport.scrollTop
@@ -50,11 +59,15 @@ export function isVisible(el: HTMLElement, viewport: HTMLElement = document.docu
   const elemTop = rect.top + docViewTop
   const elemBottom = elemTop + rect.height
 
-  return (elemBottom <= docViewBottom) //&& (elemTop >= docViewTop) 注释因为假如 el 比 viewport 还高就会失效
+  return elemBottom <= docViewBottom //&& (elemTop >= docViewTop) 注释因为假如 el 比 viewport 还高就会失效
 }
 
 /** 滚动到元素中心 */
-export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true, relativeTo?: HTMLElement) {
+export function scrollIntoView(
+  elem: HTMLElement,
+  enableAnim: boolean = true,
+  relativeTo?: HTMLElement,
+) {
   let top: number
 
   if (relativeTo) {
@@ -69,9 +82,10 @@ export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true, re
   }
 
   const scrollOptions: ScrollToOptions = {
-    top, left: 0,
+    top,
+    left: 0,
     // behavior: enableAnim ? 'smooth' : 'instant',
-    behavior: 'instant'
+    behavior: 'instant',
   }
 
   if (relativeTo) relativeTo.scroll(scrollOptions)
@@ -88,9 +102,11 @@ export function showNotify(
   const timeout = 3000 // 持续显示时间 ms
 
   const notifyElem = Utils.createElement(
-    `<div class="atk-notify atk-fade-in" style="background-color: ${colors[type]}"><span class="atk-notify-content"></span></div>`
+    `<div class="atk-notify atk-fade-in" style="background-color: ${colors[type]}"><span class="atk-notify-content"></span></div>`,
   )
-  const notifyContentEl = notifyElem.querySelector<HTMLElement>('.atk-notify-content')!
+  const notifyContentEl = notifyElem.querySelector<HTMLElement>(
+    '.atk-notify-content',
+  )!
   notifyContentEl.innerHTML = Utils.htmlEncode(msg).replace('\n', '<br/>')
 
   wrapElem.appendChild(notifyElem)
@@ -119,7 +135,7 @@ export function showNotify(
 export function playFadeAnim(
   elem: HTMLElement,
   after?: () => void,
-  type: 'in' | 'out' = 'in'
+  type: 'in' | 'out' = 'in',
 ) {
   elem.classList.add(`atk-fade-${type}`)
   // 动画结束清除 class
@@ -142,7 +158,11 @@ export function playFadeOutAnim(elem: HTMLElement, after?: () => void) {
 }
 
 /** 设置全局错误 */
-export function setError(parentElem: HTMLElement, html: string | HTMLElement | null, title: string = '<span class="atk-error-title">Artalk Error</span>') {
+export function setError(
+  parentElem: HTMLElement,
+  html: string | HTMLElement | null,
+  title: string = '<span class="atk-error-title">Artalk Error</span>',
+) {
   let elem = parentElem.querySelector<HTMLElement>('.atk-error-layer')
   if (html === null) {
     if (elem !== null) elem.remove()
@@ -150,7 +170,7 @@ export function setError(parentElem: HTMLElement, html: string | HTMLElement | n
   }
   if (!elem) {
     elem = Utils.createElement(
-      `<div class="atk-error-layer">${title}<span class="atk-error-text"></span></div>`
+      `<div class="atk-error-layer">${title}<span class="atk-error-text"></span></div>`,
     )
     parentElem.appendChild(elem)
   }
@@ -189,5 +209,5 @@ export function getScrollBarWidth() {
 
   document.body.removeChild(outer)
 
-  return (w1 - w2)
+  return w1 - w2
 }

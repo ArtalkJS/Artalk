@@ -19,22 +19,33 @@ import Preview from './preview'
 export const ENABLED_PLUGS: (typeof EditorPlug)[] = [
   // Core
   LocalStorage,
-  HeaderEvent, HeaderUser, HeaderLink,
+  HeaderEvent,
+  HeaderUser,
+  HeaderLink,
   Textarea,
-  Submit, SubmitBtn,
-  Mover, StateReply, StateEdit,
+  Submit,
+  SubmitBtn,
+  Mover,
+  StateReply,
+  StateEdit,
   Closable,
 
   // Extensions
-  Emoticons, Upload, Preview
+  Emoticons,
+  Upload,
+  Preview,
 ]
 
 /** Get the name list of disabled plugs */
-export function getDisabledPlugByConf(conf: ArtalkConfig): (typeof EditorPlug)[] {
+export function getDisabledPlugByConf(
+  conf: ArtalkConfig,
+): (typeof EditorPlug)[] {
   return [
-    {k: Upload, v: conf.imgUpload},
-    {k: Emoticons, v: conf.emoticons},
-    {k: Preview, v: conf.preview},
-    {k: Mover, v: conf.editorTravel},
-  ].filter(n => !n.v).flatMap(n => n.k)
+    { k: Upload, v: conf.imgUpload },
+    { k: Emoticons, v: conf.emoticons },
+    { k: Preview, v: conf.preview },
+    { k: Mover, v: conf.editorTravel },
+  ]
+    .filter((n) => !n.v)
+    .flatMap((n) => n.k)
 }

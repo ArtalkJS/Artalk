@@ -2,18 +2,21 @@ import type { ArtalkPlugin } from '~/types'
 
 export const ReachBottom: ArtalkPlugin = (ctx) => {
   const scrollEvtAt = document // TODO: support ref ctx.conf
-  let observer: IntersectionObserver|null = null
+  let observer: IntersectionObserver | null = null
 
   const setupObserver = ($target: HTMLElement) => {
     // eslint-disable-next-line compat/compat
-    observer = new IntersectionObserver(([entries]) => {
-      if (entries.isIntersecting) {
-        clearObserver()
-        ctx.trigger('list-reach-bottom')
-      }
-    }, {
-      root: scrollEvtAt
-    })
+    observer = new IntersectionObserver(
+      ([entries]) => {
+        if (entries.isIntersecting) {
+          clearObserver()
+          ctx.trigger('list-reach-bottom')
+        }
+      },
+      {
+        root: scrollEvtAt,
+      },
+    )
     observer.observe($target)
   }
 
@@ -28,7 +31,9 @@ export const ReachBottom: ArtalkPlugin = (ctx) => {
     const list = ctx.get('list')
 
     // use IntersectionObserver to detect reach bottom
-    const $target = list.getCommentsWrapEl().querySelector<HTMLElement>('.atk-comment-wrap:nth-last-child(3)')
+    const $target = list
+      .getCommentsWrapEl()
+      .querySelector<HTMLElement>('.atk-comment-wrap:nth-last-child(3)')
     if (!$target) return
 
     // check IntersectionObserver support

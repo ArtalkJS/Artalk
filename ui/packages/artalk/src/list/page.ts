@@ -9,19 +9,23 @@ function createPaginatorByConf(conf: ArtalkConfig): Paginator {
   return new UpDownPaginator()
 }
 
-function getPageDataByLastData(ctx: ContextApi): { offset: number, total: number } {
+function getPageDataByLastData(ctx: ContextApi): {
+  offset: number
+  total: number
+} {
   const last = ctx.getData().getListLastFetch()
   const r = { offset: 0, total: 0 }
   if (!last) return r
 
   r.offset = last.params.offset
-  if (last.data) r.total = last.params.flatMode ? last.data.total : last.data.total_roots
+  if (last.data)
+    r.total = last.params.flatMode ? last.data.total : last.data.total_roots
 
   return r
 }
 
 export const initListPaginatorFunc = (ctx: ContextApi) => {
-  let paginator: Paginator|null = null
+  let paginator: Paginator | null = null
 
   // Init paginator when conf loaded
   ctx.on('conf-loaded', (conf) => {
@@ -35,7 +39,9 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
     // create paginator dom
     const { offset, total } = getPageDataByLastData(ctx)
     const $paginator = paginator.create({
-      ctx, pageSize: conf.pagination.pageSize, total,
+      ctx,
+      pageSize: conf.pagination.pageSize,
+      total,
 
       readMoreAutoLoad: conf.pagination.autoLoad,
     })
@@ -57,7 +63,10 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
   // When list fetch
   ctx.on('list-fetch', (params) => {
     // if clear comments when fetch new page data
-    if (ctx.getData().getComments().length > 0 && paginator?.getIsClearComments(params)) {
+    if (
+      ctx.getData().getComments().length > 0 &&
+      paginator?.getIsClearComments(params)
+    ) {
       ctx.getData().clearComments()
     }
   })
@@ -73,9 +82,13 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
     if (!!comment || !paginator?.getHasMore()) return
 
     // wait for list loaded
-    ctx.on('list-loaded', () => {
-      autoSwitchPageForFindComment(commentID) // recursive, until comment found or no more page
-    }, { once: true })
+    ctx.on(
+      'list-loaded',
+      () => {
+        autoSwitchPageForFindComment(commentID) // recursive, until comment found or no more page
+      },
+      { once: true },
+    )
 
     // TODO: 自动范围改为直接跳转到计算后的页面
     setTimeout(() => {

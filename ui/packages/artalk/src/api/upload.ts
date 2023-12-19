@@ -18,10 +18,10 @@ export default class UploadApi extends ApiBase {
 
     const init: RequestInit = {
       method: 'POST',
-      body: form
+      body: form,
     }
 
     const json = await this.Fetch('/img-upload', init)
-    return ((json.data || {}) as any) as { img_file: string, img_url: string }
+    return (json.data || {}) as any as { img_file: string; img_url: string }
   }
 }

@@ -40,7 +40,8 @@ export default class Pagination {
           <input type="text" class="atk-input" aria-label="Enter the number of page" />
           <div class="atk-btn atk-btn-next">Next</div>
         </div>
-      </div>`)
+      </div>`,
+    )
     this.$input = this.$el.querySelector('.atk-input')!
     this.$input.value = `${this.page}`
 
@@ -74,11 +75,23 @@ export default class Pagination {
     const value = this.$input.value.trim()
 
     const modify = () => {
-      if (value === '') { this.setInput(this.page);return }
+      if (value === '') {
+        this.setInput(this.page)
+        return
+      }
       let page = Number(value)
-      if (Number.isNaN(page)) { this.setInput(this.page);return }
-      if (page < 1) { this.setInput(this.page);return }
-      if (page > this.maxPage) { this.setInput(this.maxPage);page = this.maxPage }
+      if (Number.isNaN(page)) {
+        this.setInput(this.page)
+        return
+      }
+      if (page < 1) {
+        this.setInput(this.page)
+        return
+      }
+      if (page > this.maxPage) {
+        this.setInput(this.maxPage)
+        page = this.maxPage
+      }
       this.change(page)
     }
 
@@ -89,13 +102,17 @@ export default class Pagination {
 
   public prev() {
     const page = this.page - 1
-    if (page < 1) { return }
+    if (page < 1) {
+      return
+    }
     this.change(page)
   }
 
   public next() {
     const page = this.page + 1
-    if (page > this.maxPage) { return }
+    if (page > this.maxPage) {
+      return
+    }
     this.change(page)
   }
 
@@ -130,13 +147,17 @@ export default class Pagination {
     if (keyCode === 38) {
       // 上键
       const page = Number(this.$input.value) + 1
-      if (page > this.maxPage) { return }
-      this.setInput(page);
+      if (page > this.maxPage) {
+        return
+      }
+      this.setInput(page)
       this.input()
     } else if (keyCode === 40) {
       // 下键
       const page = Number(this.$input.value) - 1
-      if (page < 1) { return }
+      if (page < 1) {
+        return
+      }
       this.setInput(page)
       this.input()
     } else if (keyCode === 13) {
@@ -146,7 +167,7 @@ export default class Pagination {
   }
 
   /** 加载 */
-  setLoading (isLoading: boolean) {
+  setLoading(isLoading: boolean) {
     if (isLoading) Ui.showLoading(this.$el)
     else Ui.hideLoading(this.$el)
   }

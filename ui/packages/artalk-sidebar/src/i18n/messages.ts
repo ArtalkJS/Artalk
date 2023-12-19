@@ -22,7 +22,8 @@ const en = {
   export: 'Export',
   settingSaved: 'Setting saved',
   settingSaveFailed: 'Setting save failed',
-  settingNotice: 'Note: Some config options may require a manual reboot to take effect.',
+  settingNotice:
+    'Note: Some config options may require a manual reboot to take effect.',
   apply: 'Apply',
   updateComplete: 'Update complete',
   updateReady: 'Ready to update...',
@@ -76,7 +77,7 @@ const en = {
   uploadReadyToImport: 'File uploaded and is ready for import',
   loginFailure: 'Login failure',
   login: 'Login',
-  loginSelectHint: 'Please select the account you wish to log into:'
+  loginSelectHint: 'Please select the account you wish to log into:',
 }
 
 const zhCN: typeof en = {
@@ -242,5 +243,7 @@ const zhTW: typeof en = {
 }
 
 export default {
-  en, 'zh-CN': zhCN, 'zh-TW': zhTW
+  en,
+  'zh-CN': zhCN,
+  'zh-TW': zhTW,
 }

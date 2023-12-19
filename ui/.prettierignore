@@ -1,0 +1,11 @@
+# dist files
+dist/
+
+# node modules
+node_modules/
+
+# pnpm lock file
+pnpm-lock.yaml
+
+# Minified files
+artalk-sidebar/src/lib/md5.js

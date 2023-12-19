@@ -2,7 +2,7 @@
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 import { artalk } from '../global'
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from 'pinia'
 
 const nav = useNavStore()
 const user = useUserStore()
@@ -12,7 +12,7 @@ const { t } = useI18n()
 const importParams = ref({
   siteName: '',
   siteURL: '',
-  payload: ''
+  payload: '',
 })
 
 const isLoading = ref(false)
@@ -23,15 +23,18 @@ const importTaskApiURL = ref('')
 const uploadedFilename = ref('')
 
 const importTaskStarted = ref(false)
-const importTaskParams = ref<{[k:string]:string}>({})
+const importTaskParams = ref<{ [k: string]: string }>({})
 
 const exportTaskStarted = ref(false)
 
 onMounted(() => {
-  nav.updateTabs({
-    'import': 'import',
-    'export': 'export',
-  }, 'import')
+  nav.updateTabs(
+    {
+      import: 'import',
+      export: 'export',
+    },
+    'import',
+  )
   watch(curtTab, (tab) => {
     if (tab === 'export') {
       startExportTask()
@@ -113,7 +116,10 @@ async function startExportTask() {
 
 function downloadFile(filename: string, text: string) {
   const el = document.createElement('a')
-  el.setAttribute('href', `data:text/json;charset=utf-8,${encodeURIComponent(text)}`);
+  el.setAttribute(
+    'href',
+    `data:text/json;charset=utf-8,${encodeURIComponent(text)}`,
+  )
   el.setAttribute('download', filename)
   el.style.display = 'none'
   document.body.appendChild(el)
@@ -131,7 +137,10 @@ function getYmdHisFilename() {
   const minutes = date.getMinutes()
   const seconds = date.getSeconds()
 
-  return `${year}${month}${day}-${hours}${padWithZeros(minutes, 2)}${padWithZeros(seconds, 2)}`
+  return `${year}${month}${day}-${hours}${padWithZeros(
+    minutes,
+    2,
+  )}${padWithZeros(seconds, 2)}`
 }
 
 function padWithZeros(vNumber: number, width: number) {
@@ -145,12 +154,21 @@ function padWithZeros(vNumber: number, width: number) {
 
 <template>
   <LoadingLayer v-if="isLoading" />
-  <LogTerminal v-if="importTaskStarted" :api-url="importTaskApiURL" :req-params="importTaskParams" @back="importTaskDone()" />
+  <LogTerminal
+    v-if="importTaskStarted"
+    :api-url="importTaskApiURL"
+    :req-params="importTaskParams"
+    @back="importTaskDone()"
+  />
   <div v-show="!importTaskStarted" class="atk-form">
     <div class="atk-label atk-data-file-label">Artrans {{ t('dataFile') }}</div>
     <FileUploader :api-url="uploadApiURL" @done="fileUploaded">
       <template v-slot:tip>
-        使用「<a href="https://artalk.js.org/guide/transfer.html" target="_blank">转换工具</a>」将评论数据转为 Artrans 格式
+        使用「
+        <a href="https://artalk.js.org/guide/transfer.html" target="_blank">
+          转换工具
+        </a>
+        」将评论数据转为 Artrans 格式
       </template>
       <template v-slot:done-msg>
         {{ t('uploadReadyToImport') }}
@@ -175,12 +193,16 @@ function padWithZeros(vNumber: number, width: number) {
     <div class="atk-label">{{ t('payload') }} ({{ t('optional') }})</div>
     <textarea name="AtkPayload" v-model="importParams.payload"></textarea>
     <span class="atk-desc">
-      参考「<a href="https://artalk.js.org/guide/transfer.html" target="_blank">文档 · 数据迁移</a>」
+      参考「
+      <a href="https://artalk.js.org/guide/transfer.html" target="_blank">
+        文档 · 数据迁移
+      </a>
+      」
     </span>
-    <button class="atk-btn" name="AtkSubmit" @click="startImportTask()">{{ t('import') }}</button>
+    <button class="atk-btn" name="AtkSubmit" @click="startImportTask()">
+      {{ t('import') }}
+    </button>
   </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

@@ -4,7 +4,12 @@ import { ApiOptions } from './_options'
 import $t from '../i18n'
 
 /** 公共请求函数 */
-export async function Fetch(opts: ApiOptions, input: RequestInfo, init: RequestInit, timeout?: number): Promise<any> {
+export async function Fetch(
+  opts: ApiOptions,
+  input: RequestInfo,
+  init: RequestInit,
+  timeout?: number,
+): Promise<any> {
   // JWT
   if (opts.apiToken) {
     const headers = new Headers(init.headers) // 保留原有 headers
@@ -31,28 +36,42 @@ export async function Fetch(opts: ApiOptions, input: RequestInfo, init: RequestI
   // 重新发起请求
   const recall = (resolve, reject) => {
     Fetch(opts, input, init)
-      .then(d => { resolve(d) })
-      .catch(e => { reject(e) })
+      .then((d) => {
+        resolve(d)
+      })
+      .catch((e) => {
+        reject(e)
+      })
   }
 
   // 请求弹出层验证
   if (json.data?.need_captcha) {
     // 请求需要验证码
-    json = await (new Promise<any>((resolve, reject) => {
-      opts.onNeedCheckCaptcha && opts.onNeedCheckCaptcha({
-        data: { imgData: json.data.img_data, iframe: json.data.iframe },
-        recall: () => { recall(resolve, reject) },
-        reject: () => { reject(json) }
-      })
-    }))
+    json = await new Promise<any>((resolve, reject) => {
+      opts.onNeedCheckCaptcha &&
+        opts.onNeedCheckCaptcha({
+          data: { imgData: json.data.img_data, iframe: json.data.iframe },
+          recall: () => {
+            recall(resolve, reject)
+          },
+          reject: () => {
+            reject(json)
+          },
+        })
+    })
   } else if (json.data?.need_login || isNoAccess) {
     // 请求需要管理员权限
-    json = await (new Promise<any>((resolve, reject) => {
-      opts.onNeedCheckAdmin && opts.onNeedCheckAdmin({
-        recall: () => { recall(resolve, reject) },
-        reject: () => { reject(json) }
-      })
-    }))
+    json = await new Promise<any>((resolve, reject) => {
+      opts.onNeedCheckAdmin &&
+        opts.onNeedCheckAdmin({
+          recall: () => {
+            recall(resolve, reject)
+          },
+          reject: () => {
+            reject(json)
+          },
+        })
+    })
   }
 
   if (!json.success) throw json // throw 相当于 reject(json)
@@ -61,7 +80,11 @@ export async function Fetch(opts: ApiOptions, input: RequestInfo, init: RequestI
 }
 
 /** 公共 POST 请求 */
-export async function POST<T>(opts: ApiOptions, url: string, data?: {[key: string]: any}) {
+export async function POST<T>(
+  opts: ApiOptions,
+  url: string,
+  data?: { [key: string]: any },
+) {
   const init: RequestInit = {
     method: 'POST',
   }
@@ -69,7 +92,7 @@ export async function POST<T>(opts: ApiOptions, url: string, data?: {[key: strin
   init.body = ToFormData(data)
 
   const json = await Fetch(opts, url, init)
-  return ((json.data || {}) as T)
+  return (json.data || {}) as T
 }
 
 /** 公共 GET 请求 (无 GET 方式 API) */
@@ -81,9 +104,11 @@ export async function POST<T>(opts: ApiOptions, url: string, data?: {[key: strin
 // }
 
 /** 对象转 FormData */
-export function ToFormData(object: {[key: string]: any}): FormData {
+export function ToFormData(object: { [key: string]: any }): FormData {
   const formData = new FormData()
-  Object.keys(object).forEach(key => formData.append(key, String(object[key])))
+  Object.keys(object).forEach((key) =>
+    formData.append(key, String(object[key])),
+  )
   return formData
 }
 
@@ -94,10 +119,12 @@ function timeoutFetch(url: RequestInfo, ms: number, opts: RequestInit) {
   let promise = fetch(url, { ...opts, signal: controller.signal })
   if (ms > 0) {
     const timer = setTimeout(() => controller.abort(), ms)
-    promise.finally(() => { clearTimeout(timer) })
+    promise.finally(() => {
+      clearTimeout(timer)
+    })
   }
   promise = promise.catch((err) => {
-    throw ((err || {}).name === 'AbortError') ? new Error($t('reqAborted')) : err
+    throw (err || {}).name === 'AbortError' ? new Error($t('reqAborted')) : err
   })
   return promise
 }

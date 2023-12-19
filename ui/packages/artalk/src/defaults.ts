@@ -17,7 +17,7 @@ const defaults: ArtalkConfig = {
   nestMax: 2,
   nestSort: 'DATE_ASC',
 
-  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json",
+  emoticons: 'https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json',
 
   vote: true,
   voteDown: false,

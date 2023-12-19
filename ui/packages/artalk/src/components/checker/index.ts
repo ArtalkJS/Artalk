@@ -30,7 +30,7 @@ export interface CheckerLauncherOptions {
  * Checker 发射台
  */
 export default class CheckerLauncher {
-  constructor(private opts: CheckerLauncherOptions) { }
+  constructor(private opts: CheckerLauncherOptions) {}
 
   public checkCaptcha(payload: CheckerCaptchaPayload) {
     this.fire(CaptchaChecker, payload, (ctx) => {
@@ -43,32 +43,41 @@ export default class CheckerLauncher {
     this.fire(AdminChecker, payload)
   }
 
-  public fire(checker: Checker, payload: CheckerPayload, postFire?: (c: CheckerCtx) => void) {
+  public fire(
+    checker: Checker,
+    payload: CheckerPayload,
+    postFire?: (c: CheckerCtx) => void,
+  ) {
     // 显示层
-    const layer = this.opts.getCtx().get('layerManager').create(`checker-${new Date().getTime()}`)
+    const layer = this.opts
+      .getCtx()
+      .get('layerManager')
+      .create(`checker-${new Date().getTime()}`)
     layer.show()
 
     // 构建 Checker 的上下文
     const checkerStore: CheckerStore = {}
     let hideInteractInput = false
     const checkerCtx: CheckerCtx = {
-      set: (key, val) => { checkerStore[key] = val },
-      get: (key) => (checkerStore[key]),
-      getOpts: () => (this.opts),
-      getUser: () => (this.opts.getCtx().get('user')),
+      set: (key, val) => {
+        checkerStore[key] = val
+      },
+      get: (key) => checkerStore[key],
+      getOpts: () => this.opts,
+      getUser: () => this.opts.getCtx().get('user'),
       getApi: () => this.opts.getApi(),
       hideInteractInput: () => {
         hideInteractInput = true
       },
       triggerSuccess: () => {
         this.close(checker, layer)
-        if (checker.onSuccess) checker.onSuccess(checkerCtx, "", "", formEl)
-        if (payload.onSuccess) payload.onSuccess("", dialog.$el)
+        if (checker.onSuccess) checker.onSuccess(checkerCtx, '', '', formEl)
+        if (payload.onSuccess) payload.onSuccess('', dialog.$el)
       },
       cancel: () => {
         this.close(checker, layer)
         if (payload.onCancel) payload.onCancel()
-      }
+      },
     }
 
     if (postFire) postFire(checkerCtx)
@@ -79,7 +88,9 @@ export default class CheckerLauncher {
 
     // 输入框
     const $input = Utils.createElement<HTMLInputElement>(
-      `<input id="check" type="${checker.inputType || 'text'}" autocomplete="off" required placeholder="">`
+      `<input id="check" type="${
+        checker.inputType || 'text'
+      }" autocomplete="off" required placeholder="">`,
     )
     formEl.appendChild($input)
     setTimeout(() => $input.focus(), 80) // 延迟 Focus
@@ -123,14 +134,16 @@ export default class CheckerLauncher {
           // 请求成功
           this.close(checker, layer)
 
-          if (checker.onSuccess) checker.onSuccess(checkerCtx, data, inputVal, formEl)
+          if (checker.onSuccess)
+            checker.onSuccess(checkerCtx, data, inputVal, formEl)
           if (payload.onSuccess) payload.onSuccess(inputVal, dialog.$el)
         })
         .catch((err) => {
           // 请求失败
           btnTextSet(String(err.msg || String(err)))
 
-          if (checker.onError) checker.onError(checkerCtx, err, inputVal, formEl)
+          if (checker.onError)
+            checker.onError(checkerCtx, err, inputVal, formEl)
 
           // 错误显示 3s 后恢复按钮
           const tf = setTimeout(() => btnTextRestore(), 3000)
@@ -152,7 +165,9 @@ export default class CheckerLauncher {
 
     if (hideInteractInput) {
       $input.style.display = 'none'
-      dialog.$el.querySelector<HTMLElement>('.atk-layer-dialog-actions')!.style.display = 'none'
+      dialog.$el.querySelector<HTMLElement>(
+        '.atk-layer-dialog-actions',
+      )!.style.display = 'none'
     }
 
     // 层装载 dialog 元素
@@ -173,8 +188,18 @@ export interface Checker {
   inputType?: 'password' | 'text'
   body: (checker: CheckerCtx) => HTMLElement
   request: (checker: CheckerCtx, inputVal: string) => Promise<string>
-  onSuccess?: (checker: CheckerCtx, respData: string, inputVal: string, formEl: HTMLElement) => void
-  onError?: (checker: CheckerCtx, err: any, inputVal: string, formEl: HTMLElement) => void
+  onSuccess?: (
+    checker: CheckerCtx,
+    respData: string,
+    inputVal: string,
+    formEl: HTMLElement,
+  ) => void
+  onError?: (
+    checker: CheckerCtx,
+    err: any,
+    inputVal: string,
+    formEl: HTMLElement,
+  ) => void
 }
 
 interface CheckerStore {

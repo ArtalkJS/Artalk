@@ -1,10 +1,21 @@
 import type { TInjectedServices } from '@/service'
-import type { CheckerCaptchaPayload, CheckerPayload } from '@/components/checker'
+import type {
+  CheckerCaptchaPayload,
+  CheckerPayload,
+} from '@/components/checker'
 import type { EventManagerFuncs } from '@/lib/event-manager'
 import type { TMarked } from '@/lib/marked'
 import type { I18n } from '@/i18n'
 import type Api from '@/api'
-import type { SidebarShowPayload, EventPayloadMap, ArtalkConfig, CommentData, DataManagerApi, ListFetchParams, NotifyLevel } from '.'
+import type {
+  SidebarShowPayload,
+  EventPayloadMap,
+  ArtalkConfig,
+  CommentData,
+  DataManagerApi,
+  ListFetchParams,
+  NotifyLevel,
+} from '.'
 
 /**
  * Context 接口
@@ -16,7 +27,10 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   $root: HTMLElement
 
   /** 依赖注入函数 */
-  inject<K extends keyof TInjectedServices>(depName: K, obj: TInjectedServices[K]): void
+  inject<K extends keyof TInjectedServices>(
+    depName: K,
+    obj: TInjectedServices[K],
+  ): void
 
   /** 获取依赖对象 */
   get<K extends keyof TInjectedServices>(depName: K): TInjectedServices[K]
@@ -74,10 +88,10 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   checkAdmin(payload: CheckerPayload): void
 
   /** i18n 翻译 */
-  $t(key: keyof I18n, args?: {[key: string]: string}): string
+  $t(key: keyof I18n, args?: { [key: string]: string }): string
 
   /** 设置夜间模式 */
-  setDarkMode(darkMode: boolean|'auto'): void
+  setDarkMode(darkMode: boolean | 'auto'): void
 
   /** 更新配置 */
   updateConf(conf: Partial<ArtalkConfig>): void

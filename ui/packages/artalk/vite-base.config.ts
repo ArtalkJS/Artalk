@@ -9,15 +9,15 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "./src/style/_variables.scss";@import "./src/style/_extend.scss";`
-     },
+        additionalData: `@import "./src/style/_variables.scss";@import "./src/style/_extend.scss";`,
+      },
     },
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
       '~': resolve(__dirname),
-    }
+    },
   },
   plugins: [
     tsconfigPaths(),
@@ -29,7 +29,7 @@ export default defineConfig({
     }),
     dts({
       // @see https://github.com/qmhc/vite-plugin-dts/blob/main/CHANGELOG.md#breaking-changes
-      copyDtsFiles: true
-    })
+      copyDtsFiles: true,
+    }),
   ],
 })

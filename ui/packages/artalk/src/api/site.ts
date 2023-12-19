@@ -10,18 +10,19 @@ export default class SiteApi extends ApiBase {
     const params: any = {}
 
     const d = await this.POST<any>('/admin/site-get', params)
-    return (d.sites as SiteData[])
+    return d.sites as SiteData[]
   }
 
   /** 站点 · 创建 */
   public async siteAdd(name: string, urls: string) {
     const params: any = {
-      name, urls,
-      site_name: '' // 全局保留字段，当前站点名
+      name,
+      urls,
+      site_name: '', // 全局保留字段，当前站点名
     }
 
     const d = await this.POST<any>('/admin/site-add', params)
-    return (d.site as SiteData)
+    return d.site as SiteData
   }
 
   /** 站点 · 修改 */
@@ -33,7 +34,7 @@ export default class SiteApi extends ApiBase {
     }
 
     const d = await this.POST<any>('/admin/site-edit', params)
-    return (d.site as SiteData)
+    return d.site as SiteData
   }
 
   /** 站点 · 删除 */
@@ -46,6 +47,6 @@ export default class SiteApi extends ApiBase {
   /** 导出 */
   public async export() {
     const d = await this.Fetch(`/admin/export`, { method: 'POST' }, 0)
-    return (d.data?.data || '' as string)
+    return d.data?.data || ('' as string)
   }
 }

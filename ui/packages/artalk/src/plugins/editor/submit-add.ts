@@ -6,7 +6,7 @@ export default class SubmitAddPreset {
 
   async reqAdd() {
     const nComment = await this.kit.useApi().comment.add({
-      ...this.getSubmitAddParams()
+      ...this.getSubmitAddParams(),
     })
     return nComment
   }
@@ -17,11 +17,13 @@ export default class SubmitAddPreset {
 
     return {
       content: this.kit.useEditor().getContentFinal(),
-      nick, email, link,
+      nick,
+      email,
+      link,
       rid: 0,
       page_key: conf.pageKey,
       page_title: conf.pageTitle,
-      site_name: conf.site
+      site_name: conf.site,
     }
   }
 

@@ -20,11 +20,11 @@ const emit = defineEmits<{
 const curtPage = ref(1)
 const offset = computed(() => pageSize.value * (curtPage.value - 1))
 const maxPage = computed(() => Math.ceil(total.value / pageSize.value))
-const prevDisabled = computed(() => (curtPage.value - 1 < 1))
-const nextDisabled = computed(() => (curtPage.value + 1 > maxPage.value))
+const prevDisabled = computed(() => curtPage.value - 1 < 1)
+const nextDisabled = computed(() => curtPage.value + 1 > maxPage.value)
 
 const inputValue = ref(String(curtPage.value))
-let inputTimer: number|undefined
+let inputTimer: number | undefined
 
 function changePage(page: number) {
   curtPage.value = page
@@ -36,14 +36,18 @@ function changePage(page: number) {
 function prev() {
   if (disabled?.value) return
   const page = curtPage.value - 1
-  if (page < 1) { return }
+  if (page < 1) {
+    return
+  }
   changePage(page)
 }
 
 function next() {
   if (disabled?.value) return
   const page = curtPage.value + 1
-  if (page > maxPage.value) { return }
+  if (page > maxPage.value) {
+    return
+  }
   changePage(page)
 }
 
@@ -67,11 +71,22 @@ function triggerInput(now: boolean = false) {
   const value = inputValue.value.trim()
 
   const modify = () => {
-    if (value === '') { revokeInput();return }
+    if (value === '') {
+      revokeInput()
+      return
+    }
     let page = Number(value)
-    if (Number.isNaN(page)) { revokeInput();return }
-    if (page < 1) { revokeInput();return }
-    if (page > maxPage.value) { page = maxPage.value }
+    if (Number.isNaN(page)) {
+      revokeInput()
+      return
+    }
+    if (page < 1) {
+      revokeInput()
+      return
+    }
+    if (page > maxPage.value) {
+      page = maxPage.value
+    }
     changePage(page)
   }
 
@@ -86,13 +101,17 @@ function onInputKeydown(evt: KeyboardEvent) {
   if (keyCode === 38) {
     // 上键
     const page = Number(inputValue.value) + 1
-    if (page > maxPage.value) { return }
-    fillInput(page);
+    if (page > maxPage.value) {
+      return
+    }
+    fillInput(page)
     triggerInput(false)
   } else if (keyCode === 40) {
     // 下键
     const page = Number(inputValue.value) - 1
-    if (page < 1) { return }
+    if (page < 1) {
+      return
+    }
     fillInput(page)
     triggerInput(false)
   } else if (keyCode === 13) {
@@ -111,7 +130,9 @@ defineExpose({ prev, next, reset })
         class="atk-btn atk-btn-prev"
         :class="{ 'atk-disabled': disabled || prevDisabled }"
         @click="prev()"
-      >Prev</div>
+      >
+        Prev
+      </div>
       <input
         type="text"
         class="atk-input"
@@ -125,7 +146,9 @@ defineExpose({ prev, next, reset })
         class="atk-btn atk-btn-next"
         :class="{ 'atk-disabled': disabled || nextDisabled }"
         @click="next()"
-      >Next</div>
+      >
+        Next
+      </div>
     </div>
   </div>
 </template>

@@ -9,17 +9,17 @@ interface UserOpts {
 class User {
   private data: LocalUser
 
-  constructor(
-    private opts: UserOpts
-  ) {
+  constructor(private opts: UserOpts) {
     // 从 localStorage 导入
-    const localUser = JSON.parse(window.localStorage.getItem(LOCAL_USER_KEY) || '{}')
+    const localUser = JSON.parse(
+      window.localStorage.getItem(LOCAL_USER_KEY) || '{}',
+    )
     this.data = {
       nick: localUser.nick || '',
       email: localUser.email || '',
       link: localUser.link || '',
       token: localUser.token || '',
-      isAdmin: localUser.isAdmin || false
+      isAdmin: localUser.isAdmin || false,
     }
   }
 
@@ -45,7 +45,7 @@ class User {
   logout() {
     this.update({
       token: '',
-      isAdmin: false
+      isAdmin: false,
     })
   }
 

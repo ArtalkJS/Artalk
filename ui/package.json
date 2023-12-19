@@ -7,7 +7,8 @@
     "dev:sidebar": "pnpm -F @artalk/artalk-sidebar dev",
     "build": "pnpm -F artalk build",
     "build:sidebar": "pnpm -F @artalk/artalk-sidebar build",
-    "build:all": "pnpm build && pnpm build:sidebar"
+    "build:all": "pnpm build && pnpm build:sidebar",
+    "lint:prettier": "prettier --check --write ."
   },
   "devDependencies": {
     "@playwright/test": "^1.40.1",
@@ -36,5 +37,11 @@
   },
   "browserslist": [
     "supports es6 and supports es6-class and supports es6-generators and supports es6-module-dynamic-import and supports es6-module and supports es6-number and supports es6-string-includes"
-  ]
+  ],
+  "prettier": {
+    "semi": false,
+    "arrowParens": "always",
+    "singleQuote": true,
+    "htmlWhitespaceSensitivity": "ignore"
+  }
 }

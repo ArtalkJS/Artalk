@@ -2,7 +2,7 @@ import Artalk from 'artalk'
 import type { ArtalkType } from 'artalk'
 import { useUserStore } from './stores/user'
 
-export let artalk: Artalk|null = null
+export let artalk: Artalk | null = null
 
 // 启动参数
 export const bootParams = getBootParams()
@@ -10,13 +10,13 @@ export function getBootParams() {
   const p = new URLSearchParams(document.location.search)
 
   return {
-    pageKey:    p.get('pageKey') || '',
-    site:       p.get('site') || '',
-    user:       <ArtalkType.LocalUser>JSON.parse(p.get('user') || '{}'),
-    view:       p.get('view') || '',
+    pageKey: p.get('pageKey') || '',
+    site: p.get('site') || '',
+    user: <ArtalkType.LocalUser>JSON.parse(p.get('user') || '{}'),
+    view: p.get('view') || '',
     viewParams: <any>null,
-    darkMode:   p.get('darkMode') === '1',
-    locale:     p.get('locale') || '',
+    darkMode: p.get('darkMode') === '1',
+    locale: p.get('locale') || '',
   }
 }
 
@@ -27,7 +27,7 @@ export function createArtalkInstance() {
 
   return Artalk.init({
     el: artalkEl,
-    server: (import.meta.env.DEV) ? 'http://localhost:23366' : '../',
+    server: import.meta.env.DEV ? 'http://localhost:23366' : '../',
     pageKey: bootParams.pageKey,
     site: bootParams.site,
     darkMode: bootParams.darkMode,
@@ -41,13 +41,14 @@ export function createArtalkInstance() {
         autoLoad: false,
       }
       conf.listUnreadHighlight = true
-    }
+    },
   })
 }
 
 export function importUserDataFromArtalkInstance() {
-  if (!artalk) throw Error("the artalk instance is not exist")
-  if (!artalk.ctx.get('user').getData().email) throw Error("the user data in artalk instance is invalid")
+  if (!artalk) throw Error('the artalk instance is not exist')
+  if (!artalk.ctx.get('user').getData().email)
+    throw Error('the user data in artalk instance is invalid')
 
   const userData = artalk.ctx.get('user').getData()
   useUserStore().$patch((state) => {

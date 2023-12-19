@@ -7,7 +7,12 @@ import ApiBase from './_base'
  */
 export default class CommentApi extends ApiBase {
   /** 评论 · 获取 */
-  public get(offset: number, pageSize: number, flatMode?: boolean, paramsEditor?: (params: any) => void) {
+  public get(
+    offset: number,
+    pageSize: number,
+    flatMode?: boolean,
+    paramsEditor?: (params: any) => void,
+  ) {
     const params: any = {
       page_key: this.options.pageKey,
       site_name: this.options.siteName,
@@ -25,7 +30,16 @@ export default class CommentApi extends ApiBase {
   }
 
   /** 评论 · 创建 */
-  public async add(comment: { nick: string, email: string, link: string, content: string, rid: number, page_key: string, page_title?: string, site_name?: string }) {
+  public async add(comment: {
+    nick: string
+    email: string
+    link: string
+    content: string
+    rid: number
+    page_key: string
+    page_title?: string
+    site_name?: string
+  }) {
     const params: any = {
       name: comment.nick,
       email: comment.email,
@@ -40,7 +54,7 @@ export default class CommentApi extends ApiBase {
     if (comment.site_name) params.site_name = comment.site_name
 
     const data = await this.POST<any>('/add', params)
-    return (data.comment as CommentData)
+    return data.comment as CommentData
   }
 
   /** 评论 · 修改 */
@@ -50,7 +64,7 @@ export default class CommentApi extends ApiBase {
     }
 
     const d = await this.POST<any>('/admin/comment-edit', params)
-    return (d.comment as CommentData)
+    return d.comment as CommentData
   }
 
   /** 评论 · 删除 */
@@ -73,6 +87,6 @@ export default class CommentApi extends ApiBase {
     this.withUserInfo(params)
 
     const data = await this.POST<any>('/vote', params)
-    return (data as {up: number, down: number})
+    return data as { up: number; down: number }
   }
 }

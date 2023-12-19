@@ -14,7 +14,7 @@ export default class PageApi extends ApiBase {
     }
 
     const d = await this.POST<any>('/admin/page-get', params)
-    return (d as { pages: PageData[], total: number })
+    return d as { pages: PageData[]; total: number }
   }
 
   /** 页面 · 修改 */
@@ -28,7 +28,7 @@ export default class PageApi extends ApiBase {
     }
 
     const d = await this.POST<any>('/admin/page-edit', params)
-    return (d.page as PageData)
+    return d.page as PageData
   }
 
   /** 页面 · 删除 */
@@ -49,14 +49,14 @@ export default class PageApi extends ApiBase {
     if (getStatus) params.get_status = getStatus
 
     const d = await this.POST<any>('/admin/page-fetch', params)
-    return (d as any)
+    return d as any
   }
 
   /** PV */
   public async pv() {
     const params: any = {
       page_key: this.options.pageKey || '',
-      page_title: this.options.pageTitle || ''
+      page_title: this.options.pageTitle || '',
     }
 
     const p = await this.POST<any>('/pv', params)
@@ -65,19 +65,30 @@ export default class PageApi extends ApiBase {
 
   /** 统计 */
   public async stat(
-    type: 'latest_comments'|'latest_pages'|'pv_most_pages'|'comment_most_pages'|
-          'page_pv'|'site_pv'|'page_comment'|'site_comment',
-    pageKeys?: string|string[],
-    limit?: number
+    type:
+      | 'latest_comments'
+      | 'latest_pages'
+      | 'pv_most_pages'
+      | 'comment_most_pages'
+      | 'page_pv'
+      | 'site_pv'
+      | 'page_comment'
+      | 'site_comment',
+    pageKeys?: string | string[],
+    limit?: number,
   ) {
     const params: any = {
       type,
     }
 
-    if (pageKeys) params.page_keys = Array.isArray(pageKeys) ? pageKeys.join(',') : pageKeys
+    if (pageKeys)
+      params.page_keys = Array.isArray(pageKeys) ? pageKeys.join(',') : pageKeys
     if (limit) params.limit = limit
 
-    const data = await this.POST<PageData[]|CommentData[]|object|number>(`/stat`, params)
+    const data = await this.POST<PageData[] | CommentData[] | object | number>(
+      `/stat`,
+      params,
+    )
     return data
   }
 }

@@ -5,22 +5,24 @@ import type { ArtalkType } from 'artalk'
 
 const nav = useNavStore()
 const sites = ref<ArtalkType.SiteData[]>([])
-const curtEditSite = ref<ArtalkType.SiteData|null>(null)
+const curtEditSite = ref<ArtalkType.SiteData | null>(null)
 const showSiteCreate = ref(false)
 const siteCreateInitVal = ref()
 const { t } = useI18n()
 
 onMounted(() => {
-  nav.updateTabs({
-
-  }, 'sites')
+  nav.updateTabs({}, 'sites')
 
   nav.setPageLoading(true)
-  artalk?.ctx.getApi().site.siteGet().then(gotSites => {
-    sites.value = gotSites
-  }).finally(() => {
-    nav.setPageLoading(false)
-  })
+  artalk?.ctx
+    .getApi()
+    .site.siteGet()
+    .then((gotSites) => {
+      sites.value = gotSites
+    })
+    .finally(() => {
+      nav.setPageLoading(false)
+    })
 
   // 通过启动参数打开站点创建
   const vp = bootParams.viewParams
@@ -46,7 +48,8 @@ const sitesGrouped = computed(() => {
   let j = -1
   for (let i = 0; i < sites.value.length; i++) {
     const item = sites.value[i]
-    if (i % 4 === 0) { // 每 4 个一组
+    if (i % 4 === 0) {
+      // 每 4 个一组
       grp.push([])
       j++
     }
@@ -67,10 +70,10 @@ function onNewSiteCreated(siteNew: ArtalkType.SiteData) {
 }
 
 function onSiteItemUpdate(site: ArtalkType.SiteData) {
-  const index = sites.value.findIndex(s => s.id === site.id)
+  const index = sites.value.findIndex((s) => s.id === site.id)
   if (index != -1) {
     const orgSite = sites.value[index]
-    Object.keys(site).forEach(key => {
+    Object.keys(site).forEach((key) => {
       ;(orgSite as any)[key] = (site as any)[key]
     })
   }
@@ -78,7 +81,7 @@ function onSiteItemUpdate(site: ArtalkType.SiteData) {
 }
 
 function onSiteItemRemove(id: number) {
-  const index = sites.value.findIndex(p => p.id === id)
+  const index = sites.value.findIndex((p) => p.id === id)
   sites.value.splice(index, 1)
   nav.refreshSites()
 }
@@ -89,7 +92,9 @@ function onSiteItemRemove(id: number) {
     <div class="atk-header">
       <div class="atk-title">{{ t('siteCount', { count: sites.length }) }}</div>
       <div class="atk-actions">
-        <div class="atk-item atk-site-add-btn" @click="create()"><i class="atk-icon atk-icon-plus"></i></div>
+        <div class="atk-item atk-site-add-btn" @click="create()">
+          <i class="atk-icon atk-icon-plus"></i>
+        </div>
       </div>
     </div>
     <SiteCreate
@@ -99,7 +104,7 @@ function onSiteItemRemove(id: number) {
       @done="onNewSiteCreated"
     />
     <div class="atk-site-rows-wrap">
-      <template v-for="(sites) in sitesGrouped">
+      <template v-for="sites in sitesGrouped">
         <template v-if="curtEditSite !== null">
           <SiteEditor
             v-if="!!sites.includes(curtEditSite)"
@@ -111,7 +116,7 @@ function onSiteItemRemove(id: number) {
         </template>
         <div class="atk-site-row">
           <div
-            v-for="(site) in sites"
+            v-for="site in sites"
             class="atk-site-item"
             :class="{ 'atk-active': curtEditSite === site }"
             @click="edit(site)"
@@ -218,7 +223,8 @@ function onSiteItemRemove(id: number) {
     }
   }
 
-  :deep(.atk-site-edit), :deep(.atk-site-add) {
+  :deep(.atk-site-edit),
+  :deep(.atk-site-add) {
     position: relative;
     min-height: 120px;
     width: 100%;
@@ -247,7 +253,7 @@ function onSiteItemRemove(id: number) {
             width: 100%;
             height: 6px;
             background: var(--at-color-main);
-            opacity: .4;
+            opacity: 0.4;
             left: 0;
             bottom: 6px;
           }

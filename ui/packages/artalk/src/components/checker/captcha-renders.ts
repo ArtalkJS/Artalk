@@ -7,13 +7,17 @@ import type { CheckerCtx } from '.'
 export function imgBody(checker: CheckerCtx) {
   // 图片验证方式
   const elem = Utils.createElement(
-    `<span><img class="atk-captcha-img" src="${checker.get('img_data') || ''}">${$t('captchaCheck')}</span>`
-  );
+    `<span><img class="atk-captcha-img" src="${
+      checker.get('img_data') || ''
+    }">${$t('captchaCheck')}</span>`,
+  )
 
   // 刷新验证码
   elem.querySelector<HTMLElement>('.atk-captcha-img')!.onclick = () => {
     const imgEl = elem.querySelector('.atk-captcha-img')
-    checker.getApi().captcha.captchaGet()
+    checker
+      .getApi()
+      .captcha.captchaGet()
       .then((imgData) => {
         imgEl!.setAttribute('src', imgData)
       })
@@ -26,25 +30,38 @@ export function imgBody(checker: CheckerCtx) {
 
 /** iframe 形式的通用验证服务 */
 export function iframeBody(checker: CheckerCtx) {
-  const $iframeWrap = Utils.createElement(`<div class="atk-checker-iframe-wrap"></div>`)
-  const $iframe = Utils.createElement<HTMLIFrameElement>(`<iframe class="atk-fade-in"></iframe>`)
+  const $iframeWrap = Utils.createElement(
+    `<div class="atk-checker-iframe-wrap"></div>`,
+  )
+  const $iframe = Utils.createElement<HTMLIFrameElement>(
+    `<iframe class="atk-fade-in"></iframe>`,
+  )
   $iframe.style.display = 'none'
   Ui.showLoading($iframeWrap, { transparentBg: true })
-  $iframe.src = `${checker.getOpts().getIframeURLBase() || ''}/api/captcha/get?t=${+new Date()}`
+  $iframe.src = `${
+    checker.getOpts().getIframeURLBase() || ''
+  }/api/captcha/get?t=${+new Date()}`
   $iframe.onload = () => {
     $iframe.style.display = ''
     Ui.hideLoading($iframeWrap)
   }
   $iframeWrap.append($iframe)
 
-  const $closeBtn = Utils.createElement(`<div class="atk-close-btn"><i class="atk-icon atk-icon-close"></i></div>`)
+  const $closeBtn = Utils.createElement(
+    `<div class="atk-close-btn"><i class="atk-icon atk-icon-close"></i></div>`,
+  )
   $iframeWrap.append($closeBtn)
 
   checker.hideInteractInput()
 
   // 轮询状态
   let stop = false // 打断
-  const sleep = (ms: number) => new Promise((resolve) => { window.setTimeout(() => { resolve(null) }, ms) })
+  const sleep = (ms: number) =>
+    new Promise((resolve) => {
+      window.setTimeout(() => {
+        resolve(null)
+      }, ms)
+    })
   ;(async function queryStatus() {
     await sleep(1000)
     if (stop) return
@@ -52,7 +69,9 @@ export function iframeBody(checker: CheckerCtx) {
     try {
       const resp = await checker.getApi().captcha.captchaStatus()
       isPass = resp.is_pass
-    } catch { isPass = false }
+    } catch {
+      isPass = false
+    }
     if (isPass) {
       checker.triggerSuccess()
     } else {

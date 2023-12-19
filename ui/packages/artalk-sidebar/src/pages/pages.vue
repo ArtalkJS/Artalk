@@ -9,7 +9,7 @@ import Pagination from '../components/Pagination.vue'
 const nav = useNavStore()
 const { site: curtSite } = storeToRefs(useUserStore())
 const pages = ref<ArtalkType.PageData[]>([])
-const curtEditPageID = ref<number|null>(null)
+const curtEditPageID = ref<number | null>(null)
 const { t } = useI18n()
 
 const pageSize = ref(20)
@@ -22,9 +22,7 @@ const refreshBtn = ref({
 })
 
 onMounted(() => {
-  nav.updateTabs({
-
-  }, '')
+  nav.updateTabs({}, '')
 
   reqPages(0)
 
@@ -34,7 +32,7 @@ onMounted(() => {
   })
 
   // Refresh task status recovery
-  getRefreshTaskStatus().then(d => {
+  getRefreshTaskStatus().then((d) => {
     if (d.is_progress === true) {
       refreshBtn.value.isRun = true
       refreshBtn.value.statusText = d.msg
@@ -50,7 +48,7 @@ onUnmounted(() => {
 })
 
 function scrollHandler() {
-  showActBarBorder.value = (nav.scrollableArea!.scrollTop > 10)
+  showActBarBorder.value = nav.scrollableArea!.scrollTop > 10
 }
 
 function editPage(page: ArtalkType.PageData) {
@@ -59,12 +57,15 @@ function editPage(page: ArtalkType.PageData) {
 
 function reqPages(offset: number) {
   nav.setPageLoading(true)
-  artalk?.ctx.getApi().page.pageGet(curtSite.value, offset, pageSize.value)
-    .then(data => {
+  artalk?.ctx
+    .getApi()
+    .page.pageGet(curtSite.value, offset, pageSize.value)
+    .then((data) => {
       pageTotal.value = data.total
       pages.value = data.pages
       nav.scrollPageToTop()
-    }).finally(() => {
+    })
+    .finally(() => {
       nav.setPageLoading(false)
     })
 }
@@ -74,22 +75,27 @@ function onChangePage(offset: number) {
 }
 
 function onPageItemUpdate(page: ArtalkType.PageData) {
-  const index = pages.value.findIndex(p => p.id === page.id)
+  const index = pages.value.findIndex((p) => p.id === page.id)
   if (index != -1) {
     const orgPage = pages.value[index]
-    Object.keys(page).forEach(key => {
+    Object.keys(page).forEach((key) => {
       ;(orgPage as any)[key] = (page as any)[key]
     })
   }
 }
 
 function onPageItemRemove(id: number) {
-  const index = pages.value.findIndex(p => p.id === id)
+  const index = pages.value.findIndex((p) => p.id === id)
   pages.value.splice(index, 1)
 }
 
 async function getRefreshTaskStatus() {
-  return await artalk!.ctx.getApi().page.pageFetch(undefined, undefined, true) as { is_progress: boolean, msg: string }
+  return (await artalk!.ctx
+    .getApi()
+    .page.pageFetch(undefined, undefined, true)) as {
+    is_progress: boolean
+    msg: string
+  }
 }
 
 function startRefreshTaskWatchdog() {
@@ -132,11 +138,19 @@ async function refreshAllPages() {
 }
 
 function cacheFlush() {
-  artalk!.ctx.getApi().admin.cacheFlushAll().then((d: any) => alert(d.msg)).catch(() => alert(t('opFailed')))
+  artalk!.ctx
+    .getApi()
+    .admin.cacheFlushAll()
+    .then((d: any) => alert(d.msg))
+    .catch(() => alert(t('opFailed')))
 }
 
 function cacheWarm() {
-  artalk!.ctx.getApi().admin.cacheWarmUp().then((d: any) => alert(d.msg)).catch(() => alert(t('opFailed')))
+  artalk!.ctx
+    .getApi()
+    .admin.cacheWarmUp()
+    .then((d: any) => alert(d.msg))
+    .catch(() => alert(t('opFailed')))
 }
 
 function openPage(url: string) {
@@ -146,18 +160,29 @@ function openPage(url: string) {
 
 <template>
   <div class="atk-page-list-wrap">
-    <div class="atk-header-action-bar" :class="{ 'bordered': showActBarBorder }">
+    <div class="atk-header-action-bar" :class="{ bordered: showActBarBorder }">
       <span class="atk-update-all-title-btn" @click="refreshAllPages()">
-        <i class="atk-icon atk-icon-sync" :class="{'atk-rotate': refreshBtn.isRun}"></i>
-        <span class="atk-text">{{ refreshBtn.isRun ? refreshBtn.statusText : t('updateTitle') }}</span>
+        <i
+          class="atk-icon atk-icon-sync"
+          :class="{ 'atk-rotate': refreshBtn.isRun }"
+        ></i>
+        <span class="atk-text">
+          {{ refreshBtn.isRun ? refreshBtn.statusText : t('updateTitle') }}
+        </span>
       </span>
-      <span class="atk-cache-flush-all-btn" @click="cacheFlush()"><span class="atk-text">{{ t('cacheClear') }}</span></span>
-      <span class="atk-cache-warm-up-btn" @click="cacheWarm()"><span class="atk-text">{{ t('cacheWarm')  }}</span></span>
+      <span class="atk-cache-flush-all-btn" @click="cacheFlush()">
+        <span class="atk-text">{{ t('cacheClear') }}</span>
+      </span>
+      <span class="atk-cache-warm-up-btn" @click="cacheWarm()">
+        <span class="atk-text">{{ t('cacheWarm') }}</span>
+      </span>
     </div>
     <div class="atk-page-list">
-      <div v-for="(page) in pages" class="atk-page-item">
+      <div v-for="page in pages" class="atk-page-item">
         <div class="atk-page-main">
-          <div class="atk-title" @click="openPage(page.url)">{{ page.title }}</div>
+          <div class="atk-title" @click="openPage(page.url)">
+            {{ page.title }}
+          </div>
           <div class="atk-sub" @click="openPage(page.url)">{{ page.url }}</div>
         </div>
         <div class="atk-page-actions">
@@ -196,7 +221,7 @@ function openPage(url: string) {
     background: var(--at-color-bg);
     z-index: 10;
     border-bottom: 1px solid transparent;
-    transition: .3s ease-out padding;
+    transition: 0.3s ease-out padding;
 
     &.bordered {
       padding-bottom: 10px;

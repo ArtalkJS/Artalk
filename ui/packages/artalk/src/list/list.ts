@@ -10,12 +10,16 @@ import { initListPaginatorFunc } from './page'
 export default class List extends Component {
   /** 列表评论集区域元素 */
   $commentsWrap!: HTMLElement
-  public getCommentsWrapEl() { return this.$commentsWrap }
+  public getCommentsWrapEl() {
+    return this.$commentsWrap
+  }
 
   protected commentNodes: CommentNode[] = []
-  getCommentNodes() { return this.commentNodes }
+  getCommentNodes() {
+    return this.commentNodes
+  }
 
-  constructor (ctx: ContextApi) {
+  constructor(ctx: ContextApi) {
     super(ctx)
 
     // Init base element
@@ -41,7 +45,7 @@ export default class List extends Component {
         this.commentNodes.push(node)
         return node
       },
-      findCommentNode: (id) => this.commentNodes.find(c => c.getID() === id),
+      findCommentNode: (id) => this.commentNodes.find((c) => c.getID() === id),
       getCommentDataList: () => this.ctx.getData().getComments(),
     })
   }
@@ -63,16 +67,21 @@ export default class List extends Component {
 
     // When comment delete
     this.ctx.on('comment-deleted', (comment) => {
-      const node = this.commentNodes.find(c => c.getID() === comment.id)
-      if (!node) { console.error(`comment node id=${comment.id} not found`);return }
+      const node = this.commentNodes.find((c) => c.getID() === comment.id)
+      if (!node) {
+        console.error(`comment node id=${comment.id} not found`)
+        return
+      }
       node.getEl().remove()
-      this.commentNodes = this.commentNodes.filter(c => c.getID() !== comment.id)
+      this.commentNodes = this.commentNodes.filter(
+        (c) => c.getID() !== comment.id,
+      )
       // TODO: remove child nodes
     })
 
     // When comment update
     this.ctx.on('comment-updated', (comment) => {
-      const node = this.commentNodes.find(c => c.getID() === comment.id)
+      const node = this.commentNodes.find((c) => c.getID() === comment.id)
       node && node.setData(comment)
     })
   }

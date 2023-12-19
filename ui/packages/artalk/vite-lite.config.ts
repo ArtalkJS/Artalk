@@ -4,7 +4,8 @@ import * as Utils from './src/lib/utils'
 export default Utils.mergeDeep(fullVersionConf, {
   build: {
     lib: {
-      fileName: (format) => ((format == "umd") ? 'ArtalkLite.js' : `ArtalkLite.${format}.js`),
+      fileName: (format) =>
+        format == 'umd' ? 'ArtalkLite.js' : `ArtalkLite.${format}.js`,
     },
     rollupOptions: {
       external: ['marked'],
@@ -12,9 +13,10 @@ export default Utils.mergeDeep(fullVersionConf, {
         globals: {
           marked: 'marked',
         },
-        assetFileNames: (assetInfo) => (/\.css$/.test(assetInfo.name) ? "ArtalkLite.css" : "[name].[ext]")
-      }
-   }
+        assetFileNames: (assetInfo) =>
+          /\.css$/.test(assetInfo.name) ? 'ArtalkLite.css' : '[name].[ext]',
+      },
+    },
   },
   define: {
     ARTALK_LITE: true,

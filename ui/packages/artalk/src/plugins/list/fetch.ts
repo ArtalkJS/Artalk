@@ -11,16 +11,22 @@ export const Fetch: ArtalkPlugin = (ctx) => {
       limit: ctx.conf.pagination.pageSize,
       flatMode: ctx.conf.flatMode as boolean, // always be boolean because had been handled in Artalk.init
       paramsModifier: ctx.conf.listFetchParamsModifier,
-      ..._params
+      ..._params,
     }
 
     // must before other function call
     ctx.getData().setListLastFetch({
-      params
+      params,
     })
 
-    ctx.getApi().comment
-      .get(params.offset, params.limit, params.flatMode, params.paramsModifier)
+    ctx
+      .getApi()
+      .comment.get(
+        params.offset,
+        params.limit,
+        params.flatMode,
+        params.paramsModifier,
+      )
       .then((data) => {
         // Must before all other function call and event trigger,
         // because it will depend on the lastData
@@ -46,7 +52,7 @@ export const Fetch: ArtalkPlugin = (ctx) => {
         // 显示错误对话框
         const error = {
           msg: e.msg || String(e),
-          data: e.data
+          data: e.data,
         }
 
         params.onError && params.onError(error)

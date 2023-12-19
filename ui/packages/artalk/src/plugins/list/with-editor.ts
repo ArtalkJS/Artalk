@@ -2,14 +2,16 @@ import type { ContextApi, ArtalkPlugin, PageData } from '~/types'
 import $t from '@/i18n'
 
 export const WithEditor: ArtalkPlugin = (ctx) => {
-  let $closeCommentBtn: HTMLElement|undefined
+  let $closeCommentBtn: HTMLElement | undefined
 
   // on Artalk inited
   // (after all components had mounted)
   ctx.on('inited', () => {
     const list = ctx.get('list')
 
-    $closeCommentBtn = list.$el.querySelector<HTMLElement>('[data-action="admin-close-comment"]')!
+    $closeCommentBtn = list.$el.querySelector<HTMLElement>(
+      '[data-action="admin-close-comment"]',
+    )!
 
     // bind editor close button click event
     $closeCommentBtn.addEventListener('click', () => {
@@ -46,11 +48,13 @@ export const WithEditor: ArtalkPlugin = (ctx) => {
 /** 管理员设置页面信息 */
 function adminPageEditSave(ctx: ContextApi, page: PageData) {
   ctx.editorShowLoading()
-  ctx.getApi().page.pageEdit(page)
+  ctx
+    .getApi()
+    .page.pageEdit(page)
     .then((respPage) => {
       ctx.getData().updatePage(respPage)
     })
-    .catch(err => {
+    .catch((err) => {
       ctx.editorShowNotify(`${$t('editFail')}: ${err.msg || String(err)}`, 'e')
     })
     .finally(() => {

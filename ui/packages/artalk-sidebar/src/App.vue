@@ -14,11 +14,15 @@ const i18n = useI18n()
 onBeforeMount(() => {
   // 获取语言
   if (!global.getBootParams().locale) {
-    global.getArtalk().ctx.getApi().system.conf().then(resp => {
-      if (resp.frontend_conf?.locale == 'string') {
-        i18n.locale.value = resp.frontend_conf.locale
-      }
-    })
+    global
+      .getArtalk()
+      .ctx.getApi()
+      .system.conf()
+      .then((resp) => {
+        if (resp.frontend_conf?.locale == 'string') {
+          i18n.locale.value = resp.frontend_conf.locale
+        }
+      })
   }
 
   if (bootParams.user?.email) {
@@ -34,13 +38,17 @@ onBeforeMount(() => {
   }
 
   // 验证登陆身份有效性
-  global.getArtalk().ctx.getApi().user.loginStatus().then(resp => {
-    if (resp.is_admin && !resp.is_login) {
-      global.getArtalk().ctx.get('user').logout()
-      user.logout()
-      router.replace('/login')
-    }
-  })
+  global
+    .getArtalk()
+    .ctx.getApi()
+    .user.loginStatus()
+    .then((resp) => {
+      if (resp.is_admin && !resp.is_login) {
+        global.getArtalk().ctx.get('user').logout()
+        user.logout()
+        router.replace('/login')
+      }
+    })
 })
 
 const darkMode = ref(bootParams.darkMode)
@@ -55,7 +63,10 @@ const darkMode = ref(bootParams.darkMode)
 </script>
 
 <template>
-  <div class="app-wrap artalk atk-sidebar" :class="{ 'atk-dark-mode': darkMode }">
+  <div
+    class="app-wrap artalk atk-sidebar"
+    :class="{ 'atk-dark-mode': darkMode }"
+  >
     <Header />
     <Tab />
 

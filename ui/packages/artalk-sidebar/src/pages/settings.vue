@@ -15,8 +15,8 @@ let settingsTpl = shallowReactive({ tpl: null as any })
 
 onMounted(() => {
   nav.updateTabs({
-    'sites': 'site',
-    'transfer': 'transfer',
+    sites: 'site',
+    transfer: 'transfer',
   })
 
   watch(curtTab, (tab) => {
@@ -24,12 +24,15 @@ onMounted(() => {
     else if (tab === 'transfer') router.replace('/transfer')
   })
 
-  artalk!.ctx.getApi().system.getSettings().then((data) => {
-    const yamlObj = YAML.parseDocument(data.template)
-    settingsTpl.tpl = yamlObj
-    settings.init(yamlObj)
-    settings.get().customs.value = YAML.parseDocument(data.custom)
-  })
+  artalk!.ctx
+    .getApi()
+    .system.getSettings()
+    .then((data) => {
+      const yamlObj = YAML.parseDocument(data.template)
+      settingsTpl.tpl = yamlObj
+      settings.init(yamlObj)
+      settings.get().customs.value = YAML.parseDocument(data.custom)
+    })
 })
 
 function save() {
@@ -37,7 +40,7 @@ function save() {
   try {
     yamlStr = settings.get().customs.value?.toString() || ''
   } catch (err) {
-    alert('YAML export error: '+err)
+    alert('YAML export error: ' + err)
     console.error(err)
     return
   }
@@ -50,14 +53,19 @@ function save() {
 
   if (isLoading.value) return
   isLoading.value = true
-  artalk!.ctx.getApi().system.saveSettings(yamlStr).then(() => {
-    alert(t('settingSaved'))
-  }).catch((err) => {
-    console.error(err)
-    alert(t('settingSaveFailed')+': '+err)
-  }).finally(() => {
-    isLoading.value = false
-  })
+  artalk!.ctx
+    .getApi()
+    .system.saveSettings(yamlStr)
+    .then(() => {
+      alert(t('settingSaved'))
+    })
+    .catch((err) => {
+      console.error(err)
+      alert(t('settingSaveFailed') + ': ' + err)
+    })
+    .finally(() => {
+      isLoading.value = false
+    })
 }
 </script>
 
@@ -65,14 +73,14 @@ function save() {
   <div v-if="!!settingsTpl.tpl" class="settings">
     <div class="act-bar">
       <div class="status-text"></div>
-      <button class="save-btn" @click="save()"><i class="atk-icon atk-icon-yes" /> {{ t('apply') }}</button>
+      <button class="save-btn" @click="save()">
+        <i class="atk-icon atk-icon-yes" />
+        {{ t('apply') }}
+      </button>
       <LoadingLayer v-if="isLoading" />
     </div>
     <div class="pfs">
-      <PreferenceGrp
-        :tpl-data="settingsTpl.tpl.toJS()"
-        :path="[]"
-      />
+      <PreferenceGrp :tpl-data="settingsTpl.tpl.toJS()" :path="[]" />
       <div class="notice">{{ t('settingNotice') }}</div>
     </div>
   </div>
@@ -124,7 +132,7 @@ function save() {
       border: 0;
 
       &:active {
-        opacity: .9;
+        opacity: 0.9;
       }
 
       i {
@@ -141,7 +149,8 @@ function save() {
     padding: 10px 30px;
   }
 
-  :deep(input[type="text"]), :deep(select) {
+  :deep(input[type='text']),
+  :deep(select) {
     font-size: 17px;
     width: 100%;
     height: 35px;

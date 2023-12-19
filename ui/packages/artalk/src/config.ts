@@ -9,7 +9,9 @@ import Defaults from './defaults'
  * @param customConf - The custom config object which is provided by the user
  * @returns The config for Artalk instance creation
  */
-export function handelCustomConf(customConf: Partial<ArtalkConfig>): ArtalkConfig {
+export function handelCustomConf(
+  customConf: Partial<ArtalkConfig>,
+): ArtalkConfig {
   // 合并默认配置
   const conf: ArtalkConfig = Utils.mergeDeep(Defaults, customConf)
 
@@ -48,12 +50,11 @@ export function handelCustomConf(customConf: Partial<ArtalkConfig>): ArtalkConfi
   }
 
   // flatMode
-  if (conf.flatMode === true || Number(conf.nestMax) <= 1)
-    conf.flatMode = true
+  if (conf.flatMode === true || Number(conf.nestMax) <= 1) conf.flatMode = true
 
   // 自动判断启用平铺模式
   if (conf.flatMode === 'auto')
-    conf.flatMode = window.matchMedia("(max-width: 768px)").matches
+    conf.flatMode = window.matchMedia('(max-width: 768px)').matches
 
   return conf
 }
@@ -66,18 +67,23 @@ export function handelCustomConf(customConf: Partial<ArtalkConfig>): ArtalkConfi
  */
 export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
   const DisabledKeys: (keyof ArtalkConfig)[] = [
-    'el', 'pageKey', 'pageTitle', 'server', 'site', 'darkMode'
+    'el',
+    'pageKey',
+    'pageTitle',
+    'server',
+    'site',
+    'darkMode',
   ]
-  Object.keys(conf).forEach(k => {
+  Object.keys(conf).forEach((k) => {
     if (DisabledKeys.includes(k as any)) delete conf[k]
   })
 
   // Patch: `emoticons` config string to json
-  if (conf.emoticons && typeof conf.emoticons === "string") {
+  if (conf.emoticons && typeof conf.emoticons === 'string') {
     conf.emoticons = conf.emoticons.trim()
-    if (conf.emoticons.startsWith("[") || conf.emoticons.startsWith("{")) {
+    if (conf.emoticons.startsWith('[') || conf.emoticons.startsWith('{')) {
       conf.emoticons = JSON.parse(conf.emoticons) // pase json
-    } else if (conf.emoticons === "false") {
+    } else if (conf.emoticons === 'false') {
       conf.emoticons = false
     }
   }
@@ -92,7 +98,10 @@ export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
  * @param ctx - If `ctx` not provided, `checkAdmin` and `checkCaptcha` will be disabled
  * @returns ApiOptions for Api client instance creation
  */
-export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi): ApiOptions {
+export function convertApiOptions(
+  conf: Partial<ArtalkConfig>,
+  ctx?: ContextApi,
+): ApiOptions {
   return {
     baseURL: `${conf.server}/api`,
     siteName: conf.site || '',
@@ -100,15 +109,21 @@ export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi)
     pageTitle: conf.pageTitle || '',
     timeout: conf.reqTimeout,
     apiToken: ctx?.get('user').getData().token,
-    userInfo: ctx?.get('user').checkHasBasicUserInfo() ? {
-      name: ctx?.get('user').getData().nick,
-      email: ctx?.get('user').getData().email,
-    } : undefined,
+    userInfo: ctx?.get('user').checkHasBasicUserInfo()
+      ? {
+          name: ctx?.get('user').getData().nick,
+          email: ctx?.get('user').getData().email,
+        }
+      : undefined,
 
     onNeedCheckAdmin(payload) {
       ctx?.checkAdmin({
-        onSuccess: () => { payload.recall() },
-        onCancel: () => { payload.reject() },
+        onSuccess: () => {
+          payload.recall()
+        },
+        onCancel: () => {
+          payload.reject()
+        },
       })
     },
 
@@ -116,8 +131,12 @@ export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi)
       ctx?.checkCaptcha({
         imgData: payload.data.imgData,
         iframe: payload.data.iframe,
-        onSuccess: () => { payload.recall() },
-        onCancel: () => { payload.reject() },
+        onSuccess: () => {
+          payload.recall()
+        },
+        onCancel: () => {
+          payload.reject()
+        },
       })
     },
   }

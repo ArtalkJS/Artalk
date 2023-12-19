@@ -17,8 +17,15 @@ export function getScrollbarHelper() {
 
     lock() {
       document.body.style.overflow = 'hidden'
-      const barPaddingRight = parseInt(window.getComputedStyle(document.body, null).getPropertyValue('padding-right'), 10)
-      document.body.style.paddingRight = `${Ui.getScrollBarWidth() + barPaddingRight || 0}px`
-    }
+      const barPaddingRight = parseInt(
+        window
+          .getComputedStyle(document.body, null)
+          .getPropertyValue('padding-right'),
+        10,
+      )
+      document.body.style.paddingRight = `${
+        Ui.getScrollBarWidth() + barPaddingRight || 0
+      }px`
+    },
   }
 }

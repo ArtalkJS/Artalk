@@ -12,8 +12,8 @@ export default defineConfig({
   base: './',
   build: {
     target: 'es2015',
-    outDir: resolve(__dirname, "dist"),
-    minify: 'terser'
+    outDir: resolve(__dirname, 'dist'),
+    minify: 'terser',
   },
   plugins: [
     VueRouter({ importMode: 'sync' }),
@@ -24,14 +24,17 @@ export default defineConfig({
     }),
     (() => ({
       name: 'prod-vue-resolver',
-      resolveId (id) {
+      resolveId(id) {
         // @issue https://github.com/vitejs/vite/issues/6607
         // dev mode vite resolves vue in other way
         // only in prod mode, `id === vue` is true
-        if(id === 'vue') {
-          return resolve(__dirname, './node_modules/vue/dist/vue.runtime.esm-bundler.js')
+        if (id === 'vue') {
+          return resolve(
+            __dirname,
+            './node_modules/vue/dist/vue.runtime.esm-bundler.js',
+          )
         }
-      }
+      },
     }))(),
   ],
   server: {
@@ -40,8 +43,8 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-         additionalData: `@import "./src/style/_variables.scss";@import "./src/style/_extends.scss";`
-     },
+        additionalData: `@import "./src/style/_variables.scss";@import "./src/style/_extends.scss";`,
+      },
     },
   },
 })

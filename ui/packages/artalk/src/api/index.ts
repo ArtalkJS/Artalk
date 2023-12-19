@@ -9,13 +9,18 @@ import admin from './admin'
 import upload from './upload'
 
 const ApiComponents = {
-  comment, page, site,
-  user, system, captcha,
-  admin, upload
+  comment,
+  page,
+  site,
+  user,
+  system,
+  captcha,
+  admin,
+  upload,
 }
 
 class Api {
-  constructor (opts: ApiOptions) {
+  constructor(opts: ApiOptions) {
     Object.entries(ApiComponents).forEach(([key, ApiComponent]) => {
       this[key] = new ApiComponent(opts)
     })

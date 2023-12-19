@@ -2,8 +2,8 @@
 import settings from '../lib/settings'
 
 const props = defineProps<{
-  tplData: Array<any>,
-  path: (string|number)[]
+  tplData: Array<any>
+  path: (string | number)[]
 }>()
 
 const ci = getCurrentInstance()
@@ -14,7 +14,8 @@ onMounted(() => {
 })
 
 function update() {
-  customValue.value = (settings.get().customs.value?.getIn(props.path) as any)?.items || []
+  customValue.value =
+    (settings.get().customs.value?.getIn(props.path) as any)?.items || []
 }
 
 function save() {

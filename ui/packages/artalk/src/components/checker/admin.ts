@@ -9,11 +9,13 @@ const AdminChecker: Checker = {
     const data = {
       name: checker.getUser().getData().nick,
       email: checker.getUser().getData().email,
-      password: inputVal
+      password: inputVal,
     }
 
     return (async () => {
-      const resp = await checker.getApi().user.login(data.name, data.email, data.password)
+      const resp = await checker
+        .getApi()
+        .user.login(data.name, data.email, data.password)
       return resp.token
     })()
   },
@@ -25,12 +27,12 @@ const AdminChecker: Checker = {
   onSuccess(checker, userToken, inputVal, formEl) {
     checker.getUser().update({
       isAdmin: true,
-      token: userToken
+      token: userToken,
     })
     checker.getOpts().onReload()
   },
 
-  onError(checker, err, inputVal, formEl) {}
+  onError(checker, err, inputVal, formEl) {},
 }
 
 export default AdminChecker

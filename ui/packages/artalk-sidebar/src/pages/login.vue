@@ -13,19 +13,23 @@ const router = useRouter()
 const { t } = useI18n()
 
 let userForm = ref({
-  email:    '',
-  password: ''
+  email: '',
+  password: '',
 })
 let version = ref('')
 let buildHash = ref('')
 let loginErr = ref('')
-let userSelector = ref<string[]|null>(null)
+let userSelector = ref<string[] | null>(null)
 
 onMounted(() => {
-  global.getArtalk()!.ctx.getApi().system.version().then((v) => {
-    version.value = v.version
-    buildHash.value = v.commit_hash
-  })
+  global
+    .getArtalk()!
+    .ctx.getApi()
+    .system.version()
+    .then((v) => {
+      version.value = v.version
+      buildHash.value = v.commit_hash
+    })
 })
 
 function onFocus() {
@@ -34,49 +38,78 @@ function onFocus() {
 
 function login(username?: string) {
   loginErr.value = ''
-  global.getArtalk()!.ctx.getApi().user.login(
-    username || '', userForm.value.email, userForm.value.password
-  ).then((resp) => {
-    const user = resp.user
-    global.getArtalk()!.ctx.get('user').update({
-      nick: user.name,
-      email: user.email,
-      link: user.link,
-      isAdmin: user.is_admin,
-      token: resp.token,
+  global
+    .getArtalk()!
+    .ctx.getApi()
+    .user.login(username || '', userForm.value.email, userForm.value.password)
+    .then((resp) => {
+      const user = resp.user
+      global.getArtalk()!.ctx.get('user').update({
+        nick: user.name,
+        email: user.email,
+        link: user.link,
+        isAdmin: user.is_admin,
+        token: resp.token,
+      })
+      global.importUserDataFromArtalkInstance()
+      router.replace('/')
     })
-    global.importUserDataFromArtalkInstance()
-    router.replace('/')
-  }).catch((e) => {
-    if (e.data?.need_name_select) {
-      userSelector.value = e.data?.need_name_select
-    } else {
-      loginErr.value = e.msg || t('loginFailure')
-    }
-  })
+    .catch((e) => {
+      if (e.data?.need_name_select) {
+        userSelector.value = e.data?.need_name_select
+      } else {
+        loginErr.value = e.msg || t('loginFailure')
+      }
+    })
 }
 </script>
 
 <template>
   <div class="login-dialog">
     <a href="https://artalk.js.org/" target="_blank">
-      <img class="logo" src="../assets/favicon.png" alt="logo" draggable="false" />
+      <img
+        class="logo"
+        src="../assets/favicon.png"
+        alt="logo"
+        draggable="false"
+      />
     </a>
     <form class="login-form" @submit.prevent="login()">
-      <input type="text" :placeholder="t('email')" v-model="userForm.email" @focus="onFocus">
-      <input type="password" :placeholder="t('password')" v-model="userForm.password" @focus="onFocus">
-      <div v-if="!!loginErr" class="err-msg atk-fade-in">{{loginErr}}</div>
+      <input
+        type="text"
+        :placeholder="t('email')"
+        v-model="userForm.email"
+        @focus="onFocus"
+      />
+      <input
+        type="password"
+        :placeholder="t('password')"
+        v-model="userForm.password"
+        @focus="onFocus"
+      />
+      <div v-if="!!loginErr" class="err-msg atk-fade-in">{{ loginErr }}</div>
       <button type="submit">{{ t('login') }}</button>
     </form>
     <div class="copyright">
-      Powered by <a href="https://artalk.js.org" target="_blank">Artalk</a> (v{{version}} / {{buildHash}})
+      Powered by
+      <a href="https://artalk.js.org" target="_blank">Artalk</a>
+      (v{{ version }} / {{ buildHash }})
     </div>
 
     <div v-if="userSelector" class="layer">
       <div class="user-selector atk-fade-in">
         <div class="text">{{ t('loginSelectHint') }}</div>
         <div class="user-list">
-          <div v-for="u in userSelector" class="item" @click="userSelector = null; login(u)">{{u}}</div>
+          <div
+            v-for="u in userSelector"
+            class="item"
+            @click="
+              userSelector = null
+              login(u)
+            "
+          >
+            {{ u }}
+          </div>
         </div>
       </div>
     </div>
@@ -148,7 +181,7 @@ function login(username?: string) {
     display: block;
 
     &:hover {
-      opacity: .95;
+      opacity: 0.95;
     }
   }
 
@@ -203,7 +236,7 @@ function login(username?: string) {
     & > .item {
       cursor: pointer;
       padding: 10px 20px;
-      transition: border .3s ease;
+      transition: border 0.3s ease;
       border-left: 2px solid transparent;
 
       &:hover {

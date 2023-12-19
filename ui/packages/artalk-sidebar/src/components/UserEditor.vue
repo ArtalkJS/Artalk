@@ -65,21 +65,29 @@ function submit() {
   }
 
   if (isCreateMode.value) {
-    artalk!.ctx.getApi().user.userAdd(user.value!, user.value!.password)
+    artalk!.ctx
+      .getApi()
+      .user.userAdd(user.value!, user.value!.password)
       .then((respUser) => {
         emit('update', respUser)
-      }).catch((e) => {
-        alert('用户创建错误：'+e.msg)
-      }).finally(() => {
+      })
+      .catch((e) => {
+        alert('用户创建错误：' + e.msg)
+      })
+      .finally(() => {
         isLoading.value = false
       })
   } else {
-    artalk!.ctx.getApi().user.userEdit(user.value!, user.value!.password)
+    artalk!.ctx
+      .getApi()
+      .user.userEdit(user.value!, user.value!.password)
       .then((respUser) => {
         emit('update', respUser)
-      }).catch((e) => {
-        alert('用户保存错误：'+e.msg)
-      }).finally(() => {
+      })
+      .catch((e) => {
+        alert('用户保存错误：' + e.msg)
+      })
+      .finally(() => {
         isLoading.value = false
       })
   }
@@ -89,30 +97,73 @@ function submit() {
 <template>
   <div class="user-editor-layer">
     <div class="header">
-      <div class="title">{{ isCreateMode ? t('userCreate') : t('userEdit') }}</div>
+      <div class="title">
+        {{ isCreateMode ? t('userCreate') : t('userEdit') }}
+      </div>
       <div v-if="!isCreateMode" class="close-btn" @click="close()">
         <i class="atk-icon atk-icon-close"></i>
       </div>
     </div>
     <div v-if="!isCreateMode" class="user-log">
-      <div><span>{{ t('comments') }}</span>{{(user as any).comment_count}}</div>
-      <div><span>{{ t('last') }} IP</span>{{(user as any).last_ip || '-'}}</div>
-      <div><span>{{ t('last') }} UA</span>
-        <template v-if="showFullDetails || !(user as any).last_ua">{{(user as any).last_ua || '-'}}</template>
-        <template v-else><span @click="showFullDetails = true" style="cursor: pointer;color: var(--at-color-main)">{{ t('Show') }}</span></template>
+      <div>
+        <span>{{ t('comments') }}</span>
+        {{ (user as any).comment_count }}
+      </div>
+      <div>
+        <span>{{ t('last') }} IP</span>
+        {{ (user as any).last_ip || '-' }}
+      </div>
+      <div>
+        <span>{{ t('last') }} UA</span>
+        <template v-if="showFullDetails || !(user as any).last_ua">
+          {{ (user as any).last_ua || '-' }}
+        </template>
+        <template v-else>
+          <span
+            @click="showFullDetails = true"
+            style="cursor: pointer; color: var(--at-color-main)"
+          >
+            {{ t('Show') }}
+          </span>
+        </template>
       </div>
     </div>
     <form v-if="user" class="atk-form" @submit.prevent="submit()">
       <div class="atk-label required">{{ t('username') }}</div>
-      <input v-model="user.name" type="text" placeholder="" autocomplete="off">
-      <div class="atk-label required">{{ t('email')  }}</div>
-      <input v-model="user.email" type="text" placeholder="" autocomplete="off">
+      <input
+        v-model="user.name"
+        type="text"
+        placeholder=""
+        autocomplete="off"
+      />
+      <div class="atk-label required">{{ t('email') }}</div>
+      <input
+        v-model="user.email"
+        type="text"
+        placeholder=""
+        autocomplete="off"
+      />
       <div class="atk-label">{{ t('link') }}</div>
-      <input v-model="user.link" type="text" placeholder="" autocomplete="off">
+      <input
+        v-model="user.link"
+        type="text"
+        placeholder=""
+        autocomplete="off"
+      />
       <div class="atk-label">{{ t('badgeText') }}</div>
-      <input v-model="user.badge_name" type="text" placeholder="" autocomplete="off">
+      <input
+        v-model="user.badge_name"
+        type="text"
+        placeholder=""
+        autocomplete="off"
+      />
       <div class="atk-label">{{ t('badgeColor') }} (Color Hex)</div>
-      <input v-model="user.badge_color" type="text" placeholder="" autocomplete="off">
+      <input
+        v-model="user.badge_color"
+        type="text"
+        placeholder=""
+        autocomplete="off"
+      />
       <div class="atk-label required">{{ t('role') }}</div>
       <select v-model="user.is_admin">
         <option :value="false">{{ t('normal') }}</option>
@@ -120,9 +171,19 @@ function submit() {
       </select>
       <template v-if="user.is_admin">
         <div class="atk-label required">{{ t('password') }}</div>
-        <input v-model="user.password" type="text" :placeholder="isCreateMode ? '' : `(${t('passwordEmptyHint')})`" autocomplete="off">
+        <input
+          v-model="user.password"
+          type="text"
+          :placeholder="isCreateMode ? '' : `(${t('passwordEmptyHint')})`"
+          autocomplete="off"
+        />
         <div class="atk-label">{{ t('siteAttached') }}</div>
-        <input v-model="user.site_names_raw" type="text" :placeholder="`(${t('siteEmptyHint')})`" autocomplete="off">
+        <input
+          v-model="user.site_names_raw"
+          type="text"
+          :placeholder="`(${t('siteEmptyHint')})`"
+          autocomplete="off"
+        />
       </template>
       <div class="atk-label required">{{ t('emailNotify') }}</div>
       <select v-model="user.receive_email">

@@ -1,8 +1,13 @@
 import type YAML from 'yaml'
 
 type YAMLPair = {
-  key?: { value: string, commentBefore: string, comment: string },
-  value?: { commentBefore: string, comment: string, value?: any, items?: YAMLPair[] }
+  key?: { value: string; commentBefore: string; comment: string }
+  value?: {
+    commentBefore: string
+    comment: string
+    value?: any
+    items?: YAMLPair[]
+  }
 }
 
 export function createSettings(yamlObj: any) {
@@ -18,7 +23,7 @@ export function createSettings(yamlObj: any) {
       const key = item?.key?.value
       if (!key) return
 
-      const itemPath = (!path) ? [key] : [...path, key]
+      const itemPath = !path ? [key] : [...path, key]
 
       let comment = ''
       if (index === 0 && parent) comment = parent?.value?.commentBefore || ''
@@ -35,7 +40,7 @@ export function createSettings(yamlObj: any) {
     })
   }
 
-  function extractItemDescFromComment(nodePath: string|(string|number)[]) {
+  function extractItemDescFromComment(nodePath: string | (string | number)[]) {
     if (Array.isArray(nodePath)) nodePath = nodePath.join('.')
     const nodeName = nodePath.split('.').slice(-1)[0]
     let comment = (comments[nodePath] || '').trim()
@@ -45,42 +50,47 @@ export function createSettings(yamlObj: any) {
 
     let title = ''
     let subTitle = ''
-    let opts: string[]|null = null
+    let opts: string[] | null = null
 
     const stReg = /\(.*?\)/gm
     title = comment.replace(stReg, '').trim()
     const stFind = stReg.exec(comment)
-    subTitle = stFind ? stFind[0].substring(1, stFind[0].length-1) : ''
+    subTitle = stFind ? stFind[0].substring(1, stFind[0].length - 1) : ''
     if (!title) {
-      const commonDict: any = { 'enabled': '启用' }
+      const commonDict: any = { enabled: '启用' }
       title = commonDict[nodeName] || snakeToCamel(nodeName)
     }
 
     const optReg = /\[.*?\]/gm
     const optFind = optReg.exec(title)
     if (optFind) {
-      try { opts = JSON.parse(optFind[0]) } catch (err) { console.error(err) }
+      try {
+        opts = JSON.parse(optFind[0])
+      } catch (err) {
+        console.error(err)
+      }
       title = title.replace(optReg, '').trim()
     }
 
     return {
-      title, subTitle, opts
+      title,
+      subTitle,
+      opts,
     }
   }
 
   function snakeToCamel(str: string) {
-    return str.toLowerCase()
-      .replace(/([_][a-z]|^[a-z])/g, (group) =>
-        group.slice(-1).toUpperCase()
-      )
+    return str
+      .toLowerCase()
+      .replace(/([_][a-z]|^[a-z])/g, (group) => group.slice(-1).toUpperCase())
   }
 
   return { comments, customs, defaultValues, extractItemDescFromComment }
 }
 
-let instance: ReturnType<(typeof createSettings)>
+let instance: ReturnType<typeof createSettings>
 
 export default {
-  init: (yamlObj: any) => instance = createSettings(yamlObj),
-  get: () => instance
+  init: (yamlObj: any) => (instance = createSettings(yamlObj)),
+  get: () => instance,
 }

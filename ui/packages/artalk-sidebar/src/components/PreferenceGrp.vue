@@ -4,11 +4,13 @@ import settings from '../lib/settings'
 const router = useRouter()
 
 const props = defineProps<{
-  tplData: Object|Array<any>
-  path: (string|number)[]
+  tplData: Object | Array<any>
+  path: (string | number)[]
 }>()
 
-const desc = computed(() => settings.get().extractItemDescFromComment(props.path))
+const desc = computed(() =>
+  settings.get().extractItemDescFromComment(props.path),
+)
 const level = computed(() => props.path.length)
 
 const expanded = ref(true)
@@ -53,11 +55,7 @@ function onHeadClick(evt: Event) {
             :path="[...path, key]"
           />
           <!-- Item Input -->
-          <PreferenceItem
-            v-else
-            :tpl-data="value"
-            :path="[...path, key]"
-          />
+          <PreferenceItem v-else :tpl-data="value" :path="[...path, key]" />
         </div>
       </template>
     </div>
@@ -87,7 +85,7 @@ function onHeadClick(evt: Event) {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        transition: height ease .2s;
+        transition: height ease 0.2s;
         left: -10px;
         content: '';
         height: 10px;
@@ -118,7 +116,8 @@ function onHeadClick(evt: Event) {
   }
 }
 
-.pf-grp.level-1, .pf-grp.level-2 {
+.pf-grp.level-1,
+.pf-grp.level-2 {
   & > .pf-head > .sub-title {
     padding: 0 10px 0 10px;
     margin-left: 4px;
@@ -126,7 +125,6 @@ function onHeadClick(evt: Event) {
     border-left: 2px solid var(--at-color-border);
   }
 }
-
 
 .pf-grp.level-3 {
   margin-left: 10px;

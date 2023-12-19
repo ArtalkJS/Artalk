@@ -5,7 +5,7 @@ import type { ArtalkType } from 'artalk'
 const { t } = useI18n()
 
 const props = defineProps<{
-  initVal?: { name: string, urls: string }
+  initVal?: { name: string; urls: string }
 }>()
 
 const emit = defineEmits<{
@@ -14,9 +14,9 @@ const emit = defineEmits<{
 }>()
 
 const isLoading = ref(false)
-const site = ref<{name: string, urls: string}>({
+const site = ref<{ name: string; urls: string }>({
   name: '',
-  urls: ''
+  urls: '',
 })
 
 onMounted(() => {
@@ -28,7 +28,10 @@ async function submit() {
   const siteName = site.value.name.trim()
   const siteUrls = site.value.urls.trim()
 
-  if (siteName === '') { alert('请输入站点名称'); return }
+  if (siteName === '') {
+    alert('请输入站点名称')
+    return
+  }
 
   isLoading.value = true
   let s: ArtalkType.SiteData
@@ -38,7 +41,9 @@ async function submit() {
     window.alert(`创建失败：${err.msg || ''}`)
     console.error(err)
     return
-  } finally { isLoading.value = false }
+  } finally {
+    isLoading.value = false
+  }
 
   emit('done', s)
 }
@@ -57,14 +62,26 @@ function close() {
       </div>
     </div>
     <form class="atk-form" @submit.prevent="submit()">
-      <input v-model="site.name" type="text" name="AtkSiteName" :placeholder="t('siteName')" autocomplete="off">
-      <input v-model="site.urls" type="text" name="AtkSiteUrls" :placeholder="`${t('siteUrls')} (${t('multiSepHint')})`" autocomplete="off">
-      <button type="submit" class="atk-btn" name="AtkSubmit">{{ t('add') }}</button>
+      <input
+        v-model="site.name"
+        type="text"
+        name="AtkSiteName"
+        :placeholder="t('siteName')"
+        autocomplete="off"
+      />
+      <input
+        v-model="site.urls"
+        type="text"
+        name="AtkSiteUrls"
+        :placeholder="`${t('siteUrls')} (${t('multiSepHint')})`"
+        autocomplete="off"
+      />
+      <button type="submit" class="atk-btn" name="AtkSubmit">
+        {{ t('add') }}
+      </button>
     </form>
     <LoadingLayer v-if="isLoading" />
   </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

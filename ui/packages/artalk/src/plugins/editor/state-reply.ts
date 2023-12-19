@@ -25,7 +25,7 @@ export default class StateReply extends EditorPlug {
     // register submit preset
     this.kit.useEvents().on('mounted', () => {
       const submitPlug = this.kit.useDeps(Submit)
-      if (!submitPlug) throw Error("SubmitPlug not initialized")
+      if (!submitPlug) throw Error('SubmitPlug not initialized')
 
       const defaultPreset = new SubmitAddPreset(this.kit)
 
@@ -39,7 +39,7 @@ export default class StateReply extends EditorPlug {
             rid: this.comment.id,
             page_key: this.comment.page_key,
             page_title: undefined,
-            site_name: this.comment.site_name
+            site_name: this.comment.site_name,
           })
 
           return nComment
@@ -52,7 +52,7 @@ export default class StateReply extends EditorPlug {
           }
 
           defaultPreset.postSubmitAdd(nComment)
-        }
+        },
       })
     })
   }
@@ -64,9 +64,10 @@ export default class StateReply extends EditorPlug {
         `<div class="atk-send-reply">` +
           `${$t('reply')} ` +
           `<span class="atk-text"></span><span class="atk-cancel">×</span>` +
-        `</div>`
+          `</div>`,
       )
-      ui.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
+      ui.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText =
+        `@${commentData.nick}`
       ui.$sendReply.addEventListener('click', () => {
         this.kit.useEditor().resetState()
       })

@@ -8,12 +8,17 @@ import Pending from './pending'
 import Actions from './actions'
 
 const Renders = {
-  Avatar, Header, Content, ReplyAt,
-  ReplyTo, Pending, Actions
+  Avatar,
+  Header,
+  Content,
+  ReplyAt,
+  ReplyTo,
+  Pending,
+  Actions,
 }
 
 export default function loadRenders(r: Render) {
-  Object.entries(Renders).forEach(([ name, render ]) => {
+  Object.entries(Renders).forEach(([name, render]) => {
     render(r)
   })
 }

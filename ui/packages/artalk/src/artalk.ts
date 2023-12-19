@@ -1,6 +1,11 @@
 import './style/main.scss'
 
-import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '~/types'
+import type {
+  ArtalkConfig,
+  EventPayloadMap,
+  ArtalkPlugin,
+  ContextApi,
+} from '~/types'
 import type { EventHandler } from './lib/event-manager'
 import Context from './context'
 import { handelCustomConf, convertApiOptions } from './config'
@@ -11,7 +16,7 @@ import Api from './api'
 import type { TInjectedServices } from './service'
 
 /** Global Plugins for all instances */
-const GlobalPlugins: ArtalkPlugin[] = [ ...DefaultPlugins ]
+const GlobalPlugins: ArtalkPlugin[] = [...DefaultPlugins]
 
 /**
  * Artalk
@@ -24,7 +29,7 @@ export default class Artalk {
   public $root!: HTMLElement
 
   /** Plugins */
-  protected plugins: ArtalkPlugin[] = [ ...GlobalPlugins ]
+  protected plugins: ArtalkPlugin[] = [...GlobalPlugins]
 
   constructor(conf: Partial<ArtalkConfig>) {
     // Init Config
@@ -41,7 +46,7 @@ export default class Artalk {
     })
 
     // Init Plugins
-    this.plugins.forEach(plugin => {
+    this.plugins.forEach((plugin) => {
       if (typeof plugin === 'function') plugin(this.ctx)
     })
 
@@ -67,17 +72,26 @@ export default class Artalk {
   }
 
   /** Add an event listener */
-  public on<K extends keyof EventPayloadMap>(name: K, handler: EventHandler<EventPayloadMap[K]>) {
+  public on<K extends keyof EventPayloadMap>(
+    name: K,
+    handler: EventHandler<EventPayloadMap[K]>,
+  ) {
     this.ctx.on(name, handler)
   }
 
   /** Remove an event listener */
-  public off<K extends keyof EventPayloadMap>(name: K, handler: EventHandler<EventPayloadMap[K]>) {
+  public off<K extends keyof EventPayloadMap>(
+    name: K,
+    handler: EventHandler<EventPayloadMap[K]>,
+  ) {
     this.ctx.off(name, handler)
   }
 
   /** Trigger an event */
-  public trigger<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K]) {
+  public trigger<K extends keyof EventPayloadMap>(
+    name: K,
+    payload?: EventPayloadMap[K],
+  ) {
     this.ctx.trigger(name, payload)
   }
 
@@ -110,7 +124,7 @@ export default class Artalk {
       pageKey: conf.pageKey,
       countEl: conf.countEl,
       pvEl: conf.pvEl,
-      pvAdd: false
+      pvAdd: false,
     })
   }
 }

@@ -9,18 +9,21 @@ export default class UserApi extends ApiBase {
   /** 用户 · 登录 */
   public async login(name: string, email: string, password: string) {
     const params: any = {
-      name, email, password
+      name,
+      email,
+      password,
     }
 
     const data = await this.POST<any>('/login', params)
-    return data as { token: string, user: UserData }
+    return data as { token: string; user: UserData }
   }
 
   /** 用户 · 获取  */
   public userGet(name: string, email: string) {
     const ctrl = new AbortController()
     const params: any = {
-      name, email
+      name,
+      email,
     }
 
     const req = this.Fetch(`/user-get`, {
@@ -28,7 +31,7 @@ export default class UserApi extends ApiBase {
       body: ToFormData(params),
       signal: ctrl.signal,
     }).then((json) => ({
-      user: json.data.user as UserData|null,
+      user: json.data.user as UserData | null,
       is_login: json.data.is_login as boolean,
       unread: (json.data.unread || []) as NotifyData[],
       unread_count: json.data.unread_count || 0,
@@ -36,14 +39,19 @@ export default class UserApi extends ApiBase {
 
     return {
       req,
-      abort: () => { ctrl.abort() },
+      abort: () => {
+        ctrl.abort()
+      },
     }
   }
 
   /** 用户 · 登录状态 */
   public async loginStatus() {
     const data = await this.POST<any>('/login-status', this.withUserInfo({}))
-    return (data || { is_login: false, is_admin: false }) as { is_login: boolean, is_admin: boolean }
+    return (data || { is_login: false, is_admin: false }) as {
+      is_login: boolean
+      is_admin: boolean
+    }
   }
 
   /** 用户 · 注销 */
@@ -69,7 +77,11 @@ export default class UserApi extends ApiBase {
   }
 
   /** 用户 · 列表 */
-  public async userList(offset?: number, limit?: number, type?: 'all'|'admin'|'in_conf') {
+  public async userList(
+    offset?: number,
+    limit?: number,
+    type?: 'all' | 'admin' | 'in_conf',
+  ) {
     const params: any = {
       offset: offset || 0,
       limit: limit || 15,
@@ -78,7 +90,7 @@ export default class UserApi extends ApiBase {
     if (type) params.type = type
 
     const d = await this.POST<any>('/admin/user-get', params)
-    return (d as { users: UserDataForAdmin[], total: number })
+    return d as { users: UserDataForAdmin[]; total: number }
   }
 
   /** 用户 · 新增 */
@@ -96,7 +108,7 @@ export default class UserApi extends ApiBase {
     }
 
     const d = await this.POST<any>('/admin/user-add', params)
-    return (d.user as UserDataForAdmin)
+    return d.user as UserDataForAdmin
   }
 
   /** 用户 · 修改 */
@@ -115,13 +127,13 @@ export default class UserApi extends ApiBase {
     }
 
     const d = await this.POST<any>('/admin/user-edit', params)
-    return (d.user as UserDataForAdmin)
+    return d.user as UserDataForAdmin
   }
 
   /** 用户 · 删除 */
   public userDel(userID: number) {
     return this.POST('/admin/user-del', {
-      id: String(userID)
+      id: String(userID),
     })
   }
 }

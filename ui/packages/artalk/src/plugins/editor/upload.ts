@@ -21,7 +21,7 @@ export default class Upload extends EditorPlug {
     this.$imgUploadInput = document.createElement('input')
     this.$imgUploadInput.type = 'file'
     this.$imgUploadInput.style.display = 'none'
-    this.$imgUploadInput.accept = AllowImgExts.map(o => `.${o}`).join(',')
+    this.$imgUploadInput.accept = AllowImgExts.map((o) => `.${o}`).join(',')
 
     // TODO: Use btn cannot refresh when mounted event is triggered
     const $btn = this.useBtn(`${$t('image')}`)
@@ -30,7 +30,8 @@ export default class Upload extends EditorPlug {
       // 选择图片
       const $input = this.$imgUploadInput!
       $input.onchange = () => {
-        (async () => { // 解决阻塞 UI 问题
+        ;(async () => {
+          // 解决阻塞 UI 问题
           if (!$input.files || $input.files.length === 0) return
           const file = $input.files[0]
           this.uploadImg(file)
@@ -119,7 +120,7 @@ export default class Upload extends EditorPlug {
         resp = await this.kit.useApi().upload.imgUpload(file)
       } else {
         // 使用自定义的图片上传器
-        resp = {img_url: await customUploaderFn(file)}
+        resp = { img_url: await customUploaderFn(file) }
       }
     } catch (err: any) {
       console.error(err)
@@ -129,16 +130,30 @@ export default class Upload extends EditorPlug {
       let imgURL = resp.img_url as string
 
       // 若为相对路径，加上 artalk server
-      if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi({
-        base: this.kit.useConf().server,
-        path: imgURL,
-      })
+      if (!Utils.isValidURL(imgURL))
+        imgURL = Utils.getURLBasedOnApi({
+          base: this.kit.useConf().server,
+          path: imgURL,
+        })
 
       // 上传成功插入图片
-      this.kit.useEditor().setContent(this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`))
+      this.kit
+        .useEditor()
+        .setContent(
+          this.kit
+            .useUI()
+            .$textarea.value.replace(
+              uploadPlaceholderTxt,
+              `${insertPrefix}![](${imgURL})`,
+            ),
+        )
     } else {
       // 上传失败删除加载文字
-      this.kit.useEditor().setContent(this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, ''))
+      this.kit
+        .useEditor()
+        .setContent(
+          this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, ''),
+        )
     }
   }
 }

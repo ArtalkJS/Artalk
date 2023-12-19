@@ -1,4 +1,11 @@
-import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPayloadMap, SidebarShowPayload } from '~/types'
+import type {
+  ArtalkConfig,
+  CommentData,
+  ListFetchParams,
+  ContextApi,
+  EventPayloadMap,
+  SidebarShowPayload,
+} from '~/types'
 import type { TInjectedServices } from './service'
 import Api from './api'
 
@@ -13,7 +20,7 @@ import EventManager from './lib/event-manager'
 import { convertApiOptions, handelCustomConf } from './config'
 
 // Auto dependency injection
-interface Context extends TInjectedServices { }
+interface Context extends TInjectedServices {}
 
 /**
  * Artalk Context
@@ -122,11 +129,11 @@ class Context implements ContextApi {
   }
 
   /* i18n */
-  public $t(key: I18n.I18nKeys, args: {[key: string]: string} = {}): string {
+  public $t(key: I18n.I18nKeys, args: { [key: string]: string } = {}): string {
     return I18n.t(key, args)
   }
 
-  public setDarkMode(darkMode: boolean|'auto'): void {
+  public setDarkMode(darkMode: boolean | 'auto'): void {
     // prevent trigger 'conf-loaded' to improve performance
     // this.updateConf({ ...this.conf, darkMode })
     this.conf.darkMode = darkMode

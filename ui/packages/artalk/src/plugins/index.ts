@@ -10,7 +10,11 @@ import { DarkMode } from './dark-mode'
 
 export const DefaultPlugins: ArtalkPlugin[] = [
   ConfRemoter,
-  Markdown, EditorKit, AdminOnlyElem,
+  Markdown,
+  EditorKit,
+  AdminOnlyElem,
   ...ListPlugins,
-  PvCountWidget, VersionCheck, DarkMode,
+  PvCountWidget,
+  VersionCheck,
+  DarkMode,
 ]

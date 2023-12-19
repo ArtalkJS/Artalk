@@ -28,7 +28,9 @@ export default class SystemApi extends ApiBase {
 
   /** 获取配置数据 */
   public async getSettings() {
-    const data = await this.POST<{custom: string, template: string}>('/admin/setting-get')
+    const data = await this.POST<{ custom: string; template: string }>(
+      '/admin/setting-get',
+    )
     return data
   }
 
@@ -42,8 +44,15 @@ export default class SystemApi extends ApiBase {
 
   /** 获取 API 版本信息 */
   public async version() {
-    const resp = await fetch(`${this.options.baseURL}/version`, { method: 'POST' })
+    const resp = await fetch(`${this.options.baseURL}/version`, {
+      method: 'POST',
+    })
     const data = await resp.json()
-    return data as { app: string, version: string, commit_hash: string, fe_min_version: string }
+    return data as {
+      app: string
+      version: string
+      commit_hash: string
+      fe_min_version: string
+    }
   }
 }

@@ -25,7 +25,9 @@ export default class SidebarLayer extends Component {
     }
 
     // event
-    this.ctx.on('user-changed', () => { this.firstShow = true })
+    this.ctx.on('user-changed', () => {
+      this.firstShow = true
+    })
   }
 
   private firstShow = true
@@ -40,7 +42,7 @@ export default class SidebarLayer extends Component {
 
     // 管理员身份验证 (若身份失效，弹出验证窗口)
     this.authCheck({
-      onSuccess: () => this.show(conf) // retry show after auth check
+      onSuccess: () => this.show(conf), // retry show after auth check
     })
 
     // 第一次加载
@@ -100,7 +102,7 @@ export default class SidebarLayer extends Component {
         },
         onCancel: () => {
           this.hide()
-        }
+        },
       })
     }
   }
@@ -119,24 +121,25 @@ export default class SidebarLayer extends Component {
     const $iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
 
     // 准备 Iframe 参数
-    const baseURL = (import.meta.env.DEV)  ? 'http://localhost:23367/'
+    const baseURL = import.meta.env.DEV
+      ? 'http://localhost:23367/'
       : Utils.getURLBasedOnApi({
-        base: this.ctx.conf.server,
-        path: '/sidebar/',
-      })
+          base: this.ctx.conf.server,
+          path: '/sidebar/',
+        })
 
     const query: any = {
       pageKey: this.conf.pageKey,
       site: this.conf.site || '',
       user: JSON.stringify(this.ctx.get('user').getData()),
-      time: +new Date()
+      time: +new Date(),
     }
 
     if (view) query.view = view
     if (this.conf.darkMode) query.darkMode = '1'
     if (typeof this.conf.locale === 'string') query.locale = this.conf.locale
 
-    const urlParams = new URLSearchParams(query);
+    const urlParams = new URLSearchParams(query)
     this.iframeLoad($iframe, `${baseURL}?${urlParams.toString()}`)
 
     return $iframe

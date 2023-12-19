@@ -13,16 +13,22 @@ export interface ErrorDialogOptions {
 }
 
 export function showErrorDialog(opts: ErrorDialogOptions) {
-  const errEl = Utils.createElement(`<span>${opts.errMsg}，${$t('listLoadFailMsg')}<br/></span>`)
+  const errEl = Utils.createElement(
+    `<span>${opts.errMsg}，${$t('listLoadFailMsg')}<br/></span>`,
+  )
 
   if (opts.retryFn) {
-    const $retryBtn = Utils.createElement(`<span style="cursor:pointer;">${$t('listRetry')}</span>`)
+    const $retryBtn = Utils.createElement(
+      `<span style="cursor:pointer;">${$t('listRetry')}</span>`,
+    )
     $retryBtn.onclick = () => opts.retryFn && opts.retryFn()
     errEl.appendChild($retryBtn)
   }
 
   if (opts.onOpenSidebar) {
-    const $openSidebar = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
+    const $openSidebar = Utils.createElement(
+      '<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>',
+    )
     errEl.appendChild($openSidebar)
     $openSidebar.onclick = () => opts.onOpenSidebar && opts.onOpenSidebar()
   }

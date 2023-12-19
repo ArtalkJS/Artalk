@@ -8,15 +8,15 @@ import EditorPlug from './_plug'
 import type PlugKit from './_kit'
 
 type OwOFormatType = {
-  [key: string] : {
-    type: 'emoticon'|'emoji'|'image',
-    container: {icon: string, text: string}[]
+  [key: string]: {
+    type: 'emoticon' | 'emoji' | 'image'
+    container: { icon: string; text: string }[]
   }
 }
 
 export default class Emoticons extends EditorPlug {
   private emoticons: EmoticonListData = []
-  private loadingTask: Promise<void>|null = null
+  private loadingTask: Promise<void> | null = null
 
   private $grpWrap!: HTMLElement
   private $grpSwitcher!: HTMLElement
@@ -84,31 +84,33 @@ export default class Emoticons extends EditorPlug {
     }
 
     if (!Array.isArray(data)) {
-      Ui.setError(this.$panel!, "表情包数据必须为 Array/Object/String 类型")
+      Ui.setError(this.$panel!, '表情包数据必须为 Array/Object/String 类型')
       Ui.hideLoading(this.$panel!)
       return []
     }
 
     const pushGrp = (grp: EmoticonGrpData) => {
       if (typeof grp !== 'object') return
-      if (grp.name && data.find(o => o.name === grp.name)) return
+      if (grp.name && data.find((o) => o.name === grp.name)) return
       data.push(grp)
     }
 
     // 加载子内容
     const remoteLoad = async (d: any[]) => {
-      await Promise.all(d.map(async (grp, index) => {
-        if (typeof grp === 'object' && !Array.isArray(grp)) {
-          pushGrp(grp)
-        } else if (Array.isArray(grp)) {
-          await remoteLoad(grp)
-        } else if (typeof grp === "string") {
-          const grpData = await this.remoteLoad(grp)
+      await Promise.all(
+        d.map(async (grp, index) => {
+          if (typeof grp === 'object' && !Array.isArray(grp)) {
+            pushGrp(grp)
+          } else if (Array.isArray(grp)) {
+            await remoteLoad(grp)
+          } else if (typeof grp === 'string') {
+            const grpData = await this.remoteLoad(grp)
 
-          if (Array.isArray(grpData)) await remoteLoad(grpData)
-          else if (typeof grpData === 'object') pushGrp(grpData)
-        }
-      }))
+            if (Array.isArray(grpData)) await remoteLoad(grpData)
+            else if (typeof grpData === 'object') pushGrp(grpData)
+          }
+        }),
+      )
     }
     await remoteLoad(data)
 
@@ -116,14 +118,24 @@ export default class Emoticons extends EditorPlug {
     data.forEach((item: any) => {
       if (this.isOwOFormat(item)) {
         const c = this.convertOwO(item)
-        c.forEach((grp) => { pushGrp(grp) })
+        c.forEach((grp) => {
+          pushGrp(grp)
+        })
       } else if (Array.isArray(item)) {
-        item.forEach((grp) => { pushGrp(grp) })
+        item.forEach((grp) => {
+          pushGrp(grp)
+        })
       }
     })
 
     // 剔除非法数据
-    data = data.filter((item: any) => (typeof item === 'object' && !Array.isArray(item) && !!item && !!item.name))
+    data = data.filter(
+      (item: any) =>
+        typeof item === 'object' &&
+        !Array.isArray(item) &&
+        !!item &&
+        !!item.name,
+    )
 
     // console.log(data)
 
@@ -144,7 +156,10 @@ export default class Emoticons extends EditorPlug {
     } catch (err) {
       Ui.hideLoading(this.$panel!)
       console.error('[Emoticons] Load Failed:', err)
-      Ui.setError(this.$panel!, `${$t('emoticon')}${$t('loadFail')} ${String(err)}`)
+      Ui.setError(
+        this.$panel!,
+        `${$t('emoticon')}${$t('loadFail')} ${String(err)}`,
+      )
       return []
     }
   }
@@ -153,17 +168,17 @@ export default class Emoticons extends EditorPlug {
   private solveNullKey(data: EmoticonGrpData[]) {
     data.forEach((grp) => {
       grp.items.forEach((item, index) => {
-        if (!item.key) item.key = `${grp.name} ${index+1}`
+        if (!item.key) item.key = `${grp.name} ${index + 1}`
       })
     })
   }
 
   /** 避免相同 item.key */
   private solveSameKey(data: EmoticonGrpData[]) {
-    const tmp: {[key: string]: number} = {}
+    const tmp: { [key: string]: number } = {}
     data.forEach((grp) => {
-      grp.items.forEach(item => {
-        if (!item.key || String(item.key).trim() === "") return
+      grp.items.forEach((item) => {
+        if (!item.key || String(item.key).trim() === '') return
         if (!tmp[item.key]) tmp[item.key] = 1
         else tmp[item.key]++
 
@@ -175,10 +190,15 @@ export default class Emoticons extends EditorPlug {
   /** 判断是否为 OwO 格式 */
   private isOwOFormat(data: any) {
     try {
-      return (typeof data === 'object') && !!Object.values(data).length
-        && Array.isArray(Object.keys(Object.values<any>(data)[0].container))
-        && Object.keys(Object.values<any>(data)[0].container[0]).includes('icon')
-    } catch { return false }
+      return (
+        typeof data === 'object' &&
+        !!Object.values(data).length &&
+        Array.isArray(Object.keys(Object.values<any>(data)[0].container)) &&
+        Object.keys(Object.values<any>(data)[0].container[0]).includes('icon')
+      )
+    } catch {
+      return false
+    }
   }
 
   /** 转换 OwO 格式数据 */
@@ -193,7 +213,10 @@ export default class Emoticons extends EditorPlug {
           const find = /src=["'](.*?)["']/.exec(iconStr)
           if (find && find.length > 1) item.icon = find[1]
         }
-        nGrp.items.push({ key: item.text || `${grpName} ${index+1}`, val: item.icon })
+        nGrp.items.push({
+          key: item.text || `${grpName} ${index + 1}`,
+          val: item.icon,
+        })
       })
       dest.push(nGrp)
     })
@@ -207,7 +230,9 @@ export default class Emoticons extends EditorPlug {
     this.$panel!.append(this.$grpWrap)
 
     this.emoticons.forEach((grp, index) => {
-      const $grp = Utils.createElement(`<div class="atk-grp" style="display: none;"></div>`)
+      const $grp = Utils.createElement(
+        `<div class="atk-grp" style="display: none;"></div>`,
+      )
       this.$grpWrap.append($grp)
       $grp.setAttribute('data-index', String(index))
       $grp.setAttribute('data-grp-name', grp.name)
@@ -216,7 +241,10 @@ export default class Emoticons extends EditorPlug {
         const $item = Utils.createElement(`<span class="atk-item"></span>`)
         $grp.append($item)
 
-        if (!!item.key && !(new RegExp(`^(${grp.name})?\\s?[0-9]+$`).test(item.key)))
+        if (
+          !!item.key &&
+          !new RegExp(`^(${grp.name})?\\s?[0-9]+$`).test(item.key)
+        )
           $item.setAttribute('title', item.key)
 
         if (grp.type === 'image') {
@@ -240,13 +268,15 @@ export default class Emoticons extends EditorPlug {
 
     // 表情分类切换 bar
     if (this.emoticons.length > 1) {
-      this.$grpSwitcher = Utils.createElement(`<div class="atk-grp-switcher"></div>`)
+      this.$grpSwitcher = Utils.createElement(
+        `<div class="atk-grp-switcher"></div>`,
+      )
       this.$panel!.append(this.$grpSwitcher)
       this.emoticons.forEach((grp, index) => {
         const $item = Utils.createElement('<span />')
         $item.innerText = grp.name
         $item.setAttribute('data-index', String(index))
-        $item.onclick = () => (this.openGrp(index))
+        $item.onclick = () => this.openGrp(index)
         this.$grpSwitcher.append($item)
       })
     }
@@ -266,8 +296,12 @@ export default class Emoticons extends EditorPlug {
       }
     })
 
-    this.$grpSwitcher?.querySelectorAll('span.active').forEach(item => item.classList.remove('active'))
-    this.$grpSwitcher?.querySelector(`span[data-index="${index}"]`)?.classList.add('active')
+    this.$grpSwitcher
+      ?.querySelectorAll('span.active')
+      .forEach((item) => item.classList.remove('active'))
+    this.$grpSwitcher
+      ?.querySelector(`span[data-index="${index}"]`)
+      ?.classList.add('active')
 
     this.changeListHeight()
   }
@@ -279,13 +313,14 @@ export default class Emoticons extends EditorPlug {
 
   /** 处理评论 content 中的表情内容 */
   public transEmoticonImageText(text: string) {
-    if (!this.emoticons || !Array.isArray(this.emoticons))
-      return text
+    if (!this.emoticons || !Array.isArray(this.emoticons)) return text
 
     this.emoticons.forEach((grp) => {
       if (grp.type !== 'image') return
       Object.entries(grp.items).forEach(([index, item]) => {
-        text = text.split(`:[${item.key}]`).join(`<img src="${item.val}" atk-emoticon="${item.key}">`) // replaceAll(...)
+        text = text
+          .split(`:[${item.key}]`)
+          .join(`<img src="${item.val}" atk-emoticon="${item.key}">`) // replaceAll(...)
       })
     })
 

@@ -167,7 +167,7 @@ export interface UserData {
   site_names: string[]
 
   /** 所属站点名 (字符串) */
-  site_names_raw: string,
+  site_names_raw: string
 
   /** 是否允许接收邮件通知 */
   receive_email: boolean
@@ -211,9 +211,9 @@ export interface NotifyData {
 }
 
 export type EmoticonGrpData = {
-  name: string,
-  type: 'emoticon'|'image'|'emoji'
-  items: {key: string, val: string}[]
+  name: string
+  type: 'emoticon' | 'image' | 'emoji'
+  items: { key: string; val: string }[]
 }
 
 export type EmoticonListData = EmoticonGrpData[]
@@ -247,11 +247,11 @@ export interface DataManagerApi {
   getLoading(): boolean
   setLoading(val: boolean): void
 
-  getListLastFetch(): ListLastFetchData|undefined
+  getListLastFetch(): ListLastFetchData | undefined
   setListLastFetch(val: ListLastFetchData): void
 
   getComments(): CommentData[]
-  findComment(id: number): CommentData|undefined
+  findComment(id: number): CommentData | undefined
 
   fetchComments(params: Partial<ListFetchParams>): void
   loadComments(comments: CommentData[]): void
@@ -264,8 +264,8 @@ export interface DataManagerApi {
   getUnreads(): NotifyData[]
   updateUnreads(unreads: NotifyData[]): void
 
-  getPage(): PageData|undefined
+  getPage(): PageData | undefined
   updatePage(pageData: PageData): void
 }
 
-export type NotifyLevel = "i" | "s" | "w" | "e"
+export type NotifyLevel = 'i' | 's' | 'w' | 'e'

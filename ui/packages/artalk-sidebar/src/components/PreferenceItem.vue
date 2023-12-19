@@ -3,23 +3,27 @@ import settings from '../lib/settings'
 
 const props = defineProps<{
   tplData: any
-  path: (string|number)[]
+  path: (string | number)[]
 }>()
 
-const desc = computed(() => settings.get().extractItemDescFromComment(props.path))
-const customValue = computed(() => settings.get().customs.value?.getIn(props.path) as any)
+const desc = computed(() =>
+  settings.get().extractItemDescFromComment(props.path),
+)
+const customValue = computed(
+  () => settings.get().customs.value?.getIn(props.path) as any,
+)
 
-function onChange(value: boolean|string|number) {
+function onChange(value: boolean | string | number) {
   // 类型转换
   switch (typeof props.tplData) {
-    case "boolean":
-      if (value === "true") value = true
-      else if (value === "false") value = false
+    case 'boolean':
+      if (value === 'true') value = true
+      else if (value === 'false') value = false
       break
-    case "string":
+    case 'string':
       value = String(value)
       break
-    case "number":
+    case 'number':
       if (!isNaN(Number(value))) value = Number(value)
       break
   }
@@ -32,34 +36,42 @@ function onChange(value: boolean|string|number) {
   <div class="pf-item">
     <div class="info">
       <div class="title">{{ desc.title }}</div>
-        <div v-if="!!desc.subTitle" class="sub-title">{{ desc.subTitle }}</div>
-      </div>
+      <div v-if="!!desc.subTitle" class="sub-title">{{ desc.subTitle }}</div>
+    </div>
 
-      <div class="value">
-        <!-- 候选框 -->
-        <template v-if="desc.opts !== null">
-          <select :value="customValue" @change="onChange(($event.target as any).value)">
-            <option
-              v-for="item in desc.opts"
-              :value="item"
-            >{{ item }}</option>
-          </select>
-        </template>
+    <div class="value">
+      <!-- 候选框 -->
+      <template v-if="desc.opts !== null">
+        <select
+          :value="customValue"
+          @change="onChange(($event.target as any).value)"
+        >
+          <option v-for="item in desc.opts" :value="item">{{ item }}</option>
+        </select>
+      </template>
 
-        <!-- 开关 -->
-        <template v-else-if="typeof tplData === 'boolean'">
-          <input type="checkbox" :checked="customValue" @change="onChange(($event.target as any).checked)">
-        </template>
+      <!-- 开关 -->
+      <template v-else-if="typeof tplData === 'boolean'">
+        <input
+          type="checkbox"
+          :checked="customValue"
+          @change="onChange(($event.target as any).checked)"
+        />
+      </template>
 
-        <!-- 文本框 -->
-        <template v-else>
-          <input
-            type="text"
-            :value="(typeof customValue === 'undefined' || customValue === null) ? '' : String(customValue)"
-            @change="onChange(($event.target as any).value)"
-          />
-        </template>
-      </div>
+      <!-- 文本框 -->
+      <template v-else>
+        <input
+          type="text"
+          :value="
+            typeof customValue === 'undefined' || customValue === null
+              ? ''
+              : String(customValue)
+          "
+          @change="onChange(($event.target as any).value)"
+        />
+      </template>
+    </div>
   </div>
 </template>
 

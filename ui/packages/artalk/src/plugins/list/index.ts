@@ -16,10 +16,21 @@ import { ReachBottom } from './reach-bottom'
 import { GotoFirst } from './goto-first'
 
 const ListPlugins: ArtalkPlugin[] = [
-  Fetch, Loading, Unread,
-  WithEditor, Count, SidebarBtn, UnreadBadge,
-  Dropdown, Goto, NoComment, Copyright,
-  TimeTicking, ErrorDialog, ReachBottom, GotoFirst
+  Fetch,
+  Loading,
+  Unread,
+  WithEditor,
+  Count,
+  SidebarBtn,
+  UnreadBadge,
+  Dropdown,
+  Goto,
+  NoComment,
+  Copyright,
+  TimeTicking,
+  ErrorDialog,
+  ReachBottom,
+  GotoFirst,
 ]
 
 export { ListPlugins }

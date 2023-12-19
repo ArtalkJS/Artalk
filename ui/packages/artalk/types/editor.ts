@@ -84,7 +84,11 @@ export interface EditorApi extends Component {
   /**
    * Start replaying a comment
    */
-  setReply(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
+  setReply(
+    commentData: CommentData,
+    $comment: HTMLElement,
+    scroll?: boolean,
+  ): void
 
   /**
    * Start editing a comment

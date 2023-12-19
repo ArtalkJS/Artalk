@@ -32,9 +32,11 @@ export async function initCountWidget(opt: CountOptions) {
   }
 
   // PV
-  const initialData = opt.pvAdd ? {
-    [opt.pageKey]: (await opt.getApi().page.pv()) // pv+1 and get pv count
-  } : undefined
+  const initialData = opt.pvAdd
+    ? {
+        [opt.pageKey]: await opt.getApi().page.pv(), // pv+1 and get pv count
+      }
+    : undefined
 
   if (opt.pvEl && document.querySelector(opt.pvEl)) {
     refreshStatCount(opt, {
@@ -53,7 +55,7 @@ async function refreshStatCount(
     query: 'page_pv' | 'page_comment'
     numEl: string
     data?: CountData
-  }
+  },
 ) {
   let data: CountData = args.data || {}
 
@@ -66,17 +68,23 @@ async function refreshStatCount(
 
   // Fetch count data from server
   if (queryPageKeys.length > 0) {
-    const res = await opt.getApi().page.stat(args.query, queryPageKeys) as CountData
+    const res = (await opt
+      .getApi()
+      .page.stat(args.query, queryPageKeys)) as CountData
     data = { ...data, ...res }
   }
 
   applyCountData(args.numEl, data, data[opt.pageKey])
 }
 
-function applyCountData(selector: string, data: CountData, defaultCount: number) {
+function applyCountData(
+  selector: string,
+  data: CountData,
+  defaultCount: number,
+) {
   document.querySelectorAll(selector).forEach((el) => {
     const pageKey = el.getAttribute('data-page-key')
-    const count = Number(pageKey ? (data[pageKey]) : defaultCount)
+    const count = Number(pageKey ? data[pageKey] : defaultCount)
     el.innerHTML = `${count}`
   })
 }

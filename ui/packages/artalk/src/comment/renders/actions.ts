@@ -7,28 +7,36 @@ import type Render from '../render'
  */
 export default function renderActions(r: Render) {
   Object.entries({
-    renderVote, renderReply,
+    renderVote,
+    renderReply,
     // 管理员操作
-    renderCollapse, renderModerator, renderPin, renderEdit, renderDel
+    renderCollapse,
+    renderModerator,
+    renderPin,
+    renderEdit,
+    renderDel,
   }).forEach(([name, render]) => {
     render(r)
   })
 }
-
 
 // 操作按钮 - 投票
 function renderVote(r: Render) {
   if (!r.ctx.conf.vote) return // 关闭投票功能
 
   // 赞同按钮
-  r.voteBtnUp = new ActionBtn(() => `${r.ctx.$t('voteUp')} (${r.data.vote_up || 0})`).appendTo(r.$actions)
+  r.voteBtnUp = new ActionBtn(
+    () => `${r.ctx.$t('voteUp')} (${r.data.vote_up || 0})`,
+  ).appendTo(r.$actions)
   r.voteBtnUp.setClick(() => {
     r.comment.getActions().vote('up')
   })
 
   // 反对按钮
   if (r.ctx.conf.voteDown) {
-    r.voteBtnDown = new ActionBtn(() => `${r.ctx.$t('voteDown')} (${r.data.vote_down || 0})`).appendTo(r.$actions)
+    r.voteBtnDown = new ActionBtn(
+      () => `${r.ctx.$t('voteDown')} (${r.data.vote_down || 0})`,
+    ).appendTo(r.$actions)
     r.voteBtnDown.setClick(() => {
       r.comment.getActions().vote('down')
     })
@@ -54,8 +62,9 @@ function renderReply(r: Render) {
 // 操作按钮 - 折叠
 function renderCollapse(r: Render) {
   const collapseBtn = new ActionBtn({
-    text: () => (r.data.is_collapsed ? r.ctx.$t('expand') : r.ctx.$t('collapse')),
-    adminOnly: true
+    text: () =>
+      r.data.is_collapsed ? r.ctx.$t('expand') : r.ctx.$t('collapse'),
+    adminOnly: true,
   })
   collapseBtn.appendTo(r.$actions)
   collapseBtn.setClick(() => {
@@ -66,8 +75,9 @@ function renderCollapse(r: Render) {
 // 操作按钮 - 审核
 function renderModerator(r: Render) {
   const pendingBtn = new ActionBtn({
-    text: () => (r.data.is_pending ? r.ctx.$t('pending') : r.ctx.$t('approved')),
-    adminOnly: true
+    text: () =>
+      r.data.is_pending ? r.ctx.$t('pending') : r.ctx.$t('approved'),
+    adminOnly: true,
   })
   pendingBtn.appendTo(r.$actions)
   pendingBtn.setClick(() => {
@@ -79,7 +89,7 @@ function renderModerator(r: Render) {
 function renderPin(r: Render) {
   const pinnedBtn = new ActionBtn({
     text: () => (r.data.is_pinned ? r.ctx.$t('unpin') : r.ctx.$t('pin')),
-    adminOnly: true
+    adminOnly: true,
   })
   pinnedBtn.appendTo(r.$actions)
   pinnedBtn.setClick(() => {
@@ -91,7 +101,7 @@ function renderPin(r: Render) {
 function renderEdit(r: Render) {
   const editBtn = new ActionBtn({
     text: r.ctx.$t('edit'),
-    adminOnly: true
+    adminOnly: true,
   })
   editBtn.appendTo(r.$actions)
   editBtn.setClick(() => {

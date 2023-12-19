@@ -67,7 +67,7 @@
     "abortcontroller-polyfill": "^1.7.5",
     "hanabi": "^0.4.0",
     "insane": "^2.6.2",
-    "marked": "^7.0.4"
+    "marked": "^11.1.0"
   },
   "devDependencies": {
     "@types/marked": "5.0.2"

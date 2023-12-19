@@ -1,0 +1,41 @@
+name: Test Docs
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "docs/**"
+  push:
+    branches:
+      - "!master"
+    paths:
+      - "docs/**"
+
+jobs:
+  deploy:
+    strategy:
+      matrix:
+        node: [18, 20]
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Docs
+        run: pnpm docs:build

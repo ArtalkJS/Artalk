@@ -14,29 +14,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # - name: Wait for other docs build to succeed
-      #   uses: lewagon/wait-on-check-action@v1.2.0
-      #   with:
-      #     running-workflow-name: 'Docs CN Mirror Deploy'
-      #     check-name: 'Build Docs'
-      #     ref: ${{ github.ref }}
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
-      #     allowed-conclusions: success,skipped,cancelled
-      #     wait-interval: 10
-
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Use pnpm
         uses: pnpm/action-setup@v2
-        with:
-          version: 8
 
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
-          registry-url: https://registry.npmjs.org/
+          node-version: 18
           cache: "pnpm"
 
       - name: Install dependencies

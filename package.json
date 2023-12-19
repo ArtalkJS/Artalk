@@ -4,5 +4,6 @@
   "homepage": "https://artalk.js.org",
   "scripts": {
     "docs:build": "pnpm -filter=docs-landing build && pnpm -r swagger:build && pnpm -r docs:build"
-  }
+  },
+  "packageManager": "pnpm@8.12.1"
 }

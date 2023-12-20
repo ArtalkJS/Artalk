@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import { watch, nextTick, ref, onMounted, onUnmounted } from 'vue'
 import { useData, useRouter } from 'vitepress'
-import type Artalk from 'artalk'
+import Artalk from 'artalk'
 
 const el = ref<HTMLElement | null>(null)
 
@@ -32,19 +32,16 @@ onUnmounted(() => {
 })
 
 function initArtalk(conf: any) {
-  // TODO: remove dynamic import after the new version released
-  import('artalk').then(({ default: Artalk }) => {
-    artalk = Artalk.init({
-      el:        el.value,
-      emoticons: '/assets/emoticons/default.json',
-      gravatar:   {
-        mirror: 'https://cravatar.cn/avatar/'
-      },
-      ...conf
-    })
-  }).then(() => {
-    loadExtraFuncs()
+  artalk = Artalk.init({
+    el:        el.value,
+    emoticons: '/assets/emoticons/default.json',
+    gravatar:   {
+      mirror: 'https://cravatar.cn/avatar/'
+    },
+    ...conf
   })
+
+  loadExtraFuncs()
 }
 
 function getConfByPage() {

@@ -15,7 +15,7 @@
     "docs:serve": "vitepress serve"
   },
   "devDependencies": {
-    "artalk": "^2.7.1",
+    "artalk": "^2.7.2",
     "markdown-it-for-inline": "^2.0.1",
     "sass": "^1.69.5",
     "vitepress": "1.0.0-rc.32"

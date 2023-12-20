@@ -11,8 +11,8 @@ importers:
   docs/docs:
     devDependencies:
       artalk:
-        specifier: ^2.7.1
-        version: 2.7.1
+        specifier: ^2.7.2
+        version: 2.7.2
       markdown-it-for-inline:
         specifier: ^2.0.1
         version: 2.0.1
@@ -1356,8 +1356,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /artalk@2.7.1:
-    resolution: {integrity: sha512-ncTOI99l2ixNyoQ1q/t/FfdtqyUK57zhLDUAwDLU27OBjM1GSPOC3Ww8XMgOdXh0igqVkZHev9oR5WiUQCGCww==}
+  /artalk@2.7.2:
+    resolution: {integrity: sha512-piGzAx5wUnFoXDOk28TH9Z+zJ7VDFgPHhsqka7LyqoFxo7sNQUgQZjDtn7JWnXxxMSA0/XqJIzpBerS0yllObg==}
     dependencies:
       abortcontroller-polyfill: 1.7.5
       hanabi: 0.4.0

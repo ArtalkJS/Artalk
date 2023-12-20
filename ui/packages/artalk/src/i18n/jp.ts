@@ -83,4 +83,5 @@ export default defineLocaleExternal('jp', {
   updateMsg: 'フルな体験をするためには、Artalk {name} をアップデートしてください',
   currentVersion: '現在のバージョン',
   ignore: '無視する',
+  open: 'オープン',
 }, ['jp-JP'])

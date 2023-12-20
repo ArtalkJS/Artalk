@@ -83,6 +83,7 @@ const zhCN: I18n = {
   updateMsg: '请更新 Artalk {name} 以获得完整体验',
   currentVersion: '当前版本',
   ignore: '忽略',
+  open: '打开',
 }
 
 export default zhCN

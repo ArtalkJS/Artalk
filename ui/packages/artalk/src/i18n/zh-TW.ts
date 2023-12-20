@@ -83,4 +83,5 @@ export default defineLocaleExternal('zh-TW', {
   updateMsg: '請更新 Artalk {name} 以獲得完整體驗',
   currentVersion: '當前版本',
   ignore: '忽略',
+  open: '打开',
 })

@@ -22,7 +22,7 @@ export function showErrorDialog(opts: ErrorDialogOptions) {
   }
 
   if (opts.onOpenSidebar) {
-    const $openSidebar = Utils.createElement('<span atk-only-admin-show> | <span style="cursor:pointer;">打开控制台</span></span>')
+    const $openSidebar = Utils.createElement(`<span atk-only-admin-show> | <span style="cursor:pointer;">${$t('open')+$t('ctrlCenter')}</span></span>`)
     errEl.appendChild($openSidebar)
     $openSidebar.onclick = () => opts.onOpenSidebar && opts.onOpenSidebar()
   }

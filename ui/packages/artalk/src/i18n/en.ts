@@ -81,4 +81,5 @@ export default {
   updateMsg: 'Please update Artalk {name} to get the full experience',
   currentVersion: 'Current Version',
   ignore: 'Ignore',
+  open: 'Open'
 }

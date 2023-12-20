@@ -15,7 +15,7 @@ onBeforeMount(() => {
   // 获取语言
   if (!global.getBootParams().locale) {
     global.getArtalk().ctx.getApi().system.conf().then(resp => {
-      if (resp.frontend_conf?.locale == 'string') {
+      if (typeof resp.frontend_conf?.locale === 'string') {
         i18n.locale.value = resp.frontend_conf.locale
       }
     })

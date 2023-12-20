@@ -1,4 +1,30 @@
 
+## [v2.7.2](https://github.com/ArtalkJS/Artalk/compare/v2.7.1...v2.7.2) (2023-12-20)
+
+### Features
+
+* patch `locale` config from `zh-cn` to `zh-CN` ([#678](https://github.com/ArtalkJS/Artalk/issues/678))
+
+### Bug Fixes
+
+* **sidebar:** sidebar language switch and config save issue ([#708](https://github.com/ArtalkJS/Artalk/issues/708))
+* **ui:** add `referrerpolicy` attribute for iframe ([#687](https://github.com/ArtalkJS/Artalk/issues/687)) ([#707](https://github.com/ArtalkJS/Artalk/issues/707))
+* **ui/dark-mode:** potential memory leak issue in auto mode ([#688](https://github.com/ArtalkJS/Artalk/issues/688))
+* **ui/pagination:** auto switch page by url hashtag issue ([#693](https://github.com/ArtalkJS/Artalk/issues/693))
+* **ui/sidebar:** refactor settings and fix save issue ([#677](https://github.com/ArtalkJS/Artalk/issues/677)) ([#706](https://github.com/ArtalkJS/Artalk/issues/706))
+
+### Code Refactoring
+
+* **ui:** move window references into function scope ([#675](https://github.com/ArtalkJS/Artalk/issues/675))
+* **ui/api:** losing coupling between `Api` and `User`
+* **ui/user:** user class no longer globally singleton
+
+### Documentation
+
+* **i18n:** add translation for `open` button
+* **refactor:** organize the pkgs and fix some issues ([#702](https://github.com/ArtalkJS/Artalk/issues/702))
+
+
 ## [v2.7.1](https://github.com/ArtalkJS/Artalk/compare/v2.7.0...v2.7.1) (2023-12-17)
 
 ### Bug Fixes

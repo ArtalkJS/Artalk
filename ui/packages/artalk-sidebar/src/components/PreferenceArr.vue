@@ -1,30 +1,25 @@
 <script setup lang="ts">
-import settings from '../lib/settings'
+import settings, { patchOptionValue, type OptionNode } from '../lib/settings'
 
 const props = defineProps<{
-  tplData: Array<any>,
-  path: (string|number)[]
+  node: OptionNode
 }>()
 
-const ci = getCurrentInstance()
 const customValue = ref<string[]>([])
 
 onMounted(() => {
-  update()
+  sync()
 })
 
-function update() {
-  customValue.value = (settings.get().customs.value?.getIn(props.path) as any)?.items || []
+function sync() {
+  const value = settings.get().getCustom(props.node.path)
+  customValue.value = (value && typeof value.toJSON === 'function') ? value.toJSON() : []
 }
 
 function save() {
-  settings.get().customs.value?.setIn([...props.path], customValue.value)
+  const v = patchOptionValue(customValue.value, props.node)
+  settings.get().setCustom(props.node.path, v)
 }
-
-watch(settings.get().customs, (customs) => {
-  update()
-  ci?.proxy?.$forceUpdate()
-})
 
 function onChange(index: number, val: string) {
   customValue.value[index] = val

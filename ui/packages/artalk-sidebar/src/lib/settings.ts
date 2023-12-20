@@ -1,86 +1,65 @@
-import type YAML from 'yaml'
+import YAML from 'yaml'
+import { getFlattenNodes, getTree, type OptionNode } from './settings-option'
 
-type YAMLPair = {
-  key?: { value: string, commentBefore: string, comment: string },
-  value?: { commentBefore: string, comment: string, value?: any, items?: YAMLPair[] }
-}
+export class Settings {
+  private tree: OptionNode
+  private flatten: {[path: string]: OptionNode}
+  private customs = shallowRef<YAML.Document.Parsed<YAML.ParsedNode>>()
 
-export function createSettings(yamlObj: any) {
-  const customs = shallowRef<YAML.Document.Parsed<YAML.ParsedNode>>()
+  constructor(yamlObj: YAML.Document.Parsed) {
+    this.tree = getTree(yamlObj)
+    this.flatten = getFlattenNodes(this.tree)
+  }
 
-  const comments: { [path: string]: string } = {}
-  const defaultValues: { [path: string]: string } = {}
+  getTree() {
+    return this.tree
+  }
 
-  loop((yamlObj as any).contents.items)
+  getNode(path: string) {
+    return this.flatten[path]
+  }
 
-  function loop(pairs: YAMLPair[], parent?: YAMLPair, path?: string[]) {
-    pairs.forEach((item, index: number) => {
-      const key = item?.key?.value
-      if (!key) return
+  getCustoms() {
+    return this.customs
+  }
 
-      const itemPath = (!path) ? [key] : [...path, key]
+  setCustoms(yamlStr: string) {
+    this.customs.value = YAML.parseDocument(yamlStr)
+  }
 
-      let comment = ''
-      if (index === 0 && parent) comment = parent?.value?.commentBefore || ''
-      else comment = item?.key?.commentBefore || ''
+  getCustom(path: string) {
+    return this.customs.value?.getIn(path.split('.')) as any
+  }
 
-      const pathStr = itemPath.join('.')
-      comments[pathStr] = comment.trim()
-      defaultValues[pathStr] = item?.value?.value
+  setCustom(path: string, value: any) {
+    const pathArr = path.split('.')
 
-      // 继续迭代
-      if (item?.value?.items) {
-        loop(item.value.items, item, itemPath)
+    this.makeSureObject(pathArr)
+
+    this.customs.value?.setIn(pathArr, value)
+  }
+
+  // @see https://github.com/eemeli/yaml/issues/174#issuecomment-632281283
+  private makeSureObject(pathArr: string[]) {
+    for (let i = pathArr.length-1; i >= 1; i--) {
+      const parentPath = pathArr.slice(0, -i)
+
+      const parentNode = this.customs.value?.getIn(parentPath)
+      if (!parentNode) {
+        this.customs.value?.setIn(parentPath, new YAML.YAMLMap())
       }
-    })
-  }
-
-  function extractItemDescFromComment(nodePath: string|(string|number)[]) {
-    if (Array.isArray(nodePath)) nodePath = nodePath.join('.')
-    const nodeName = nodePath.split('.').slice(-1)[0]
-    let comment = (comments[nodePath] || '').trim()
-
-    // ignore comments begin and end with `--`
-    comment = comment.replace(/--(.*?)--/gm, '')
-
-    let title = ''
-    let subTitle = ''
-    let opts: string[]|null = null
-
-    const stReg = /\(.*?\)/gm
-    title = comment.replace(stReg, '').trim()
-    const stFind = stReg.exec(comment)
-    subTitle = stFind ? stFind[0].substring(1, stFind[0].length-1) : ''
-    if (!title) {
-      const commonDict: any = { 'enabled': '启用' }
-      title = commonDict[nodeName] || snakeToCamel(nodeName)
-    }
-
-    const optReg = /\[.*?\]/gm
-    const optFind = optReg.exec(title)
-    if (optFind) {
-      try { opts = JSON.parse(optFind[0]) } catch (err) { console.error(err) }
-      title = title.replace(optReg, '').trim()
-    }
-
-    return {
-      title, subTitle, opts
     }
   }
-
-  function snakeToCamel(str: string) {
-    return str.toLowerCase()
-      .replace(/([_][a-z]|^[a-z])/g, (group) =>
-        group.slice(-1).toUpperCase()
-      )
-  }
-
-  return { comments, customs, defaultValues, extractItemDescFromComment }
 }
 
-let instance: ReturnType<(typeof createSettings)>
+// -------------------------------------------------------
+
+export * from './settings-option'
+
+// Singleton instance
+let instance: Settings
 
 export default {
-  init: (yamlObj: any) => instance = createSettings(yamlObj),
+  init: (yamlObj: YAML.Document.Parsed) => instance = new Settings(yamlObj),
   get: () => instance
 }

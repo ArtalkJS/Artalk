@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import YAML from 'yaml'
+import { shallowRef } from 'vue'
 import { useNavStore } from '../stores/nav'
 import { artalk } from '../global'
-import settings from '../lib/settings'
+import settings, { type OptionNode } from '../lib/settings'
 import { storeToRefs } from 'pinia'
 import LoadingLayer from '../components/LoadingLayer.vue'
 
@@ -11,7 +12,7 @@ const router = useRouter()
 const { t } = useI18n()
 const { curtTab } = storeToRefs(nav)
 const isLoading = ref(false)
-let settingsTpl = shallowReactive({ tpl: null as any })
+const tree = shallowRef<OptionNode>()
 
 onMounted(() => {
   nav.updateTabs({
@@ -26,16 +27,16 @@ onMounted(() => {
 
   artalk!.ctx.getApi().system.getSettings().then((data) => {
     const yamlObj = YAML.parseDocument(data.template)
-    settingsTpl.tpl = yamlObj
-    settings.init(yamlObj)
-    settings.get().customs.value = YAML.parseDocument(data.custom)
+    tree.value = settings.init(yamlObj).getTree()
+    console.log(tree.value)
+    settings.get().setCustoms(data.custom)
   })
 })
 
 function save() {
   let yamlStr = ''
   try {
-    yamlStr = settings.get().customs.value?.toString() || ''
+    yamlStr = settings.get().getCustoms().value?.toString() || ''
   } catch (err) {
     alert('YAML export error: '+err)
     console.error(err)
@@ -62,17 +63,14 @@ function save() {
 </script>
 
 <template>
-  <div v-if="!!settingsTpl.tpl" class="settings">
+  <div class="settings">
     <div class="act-bar">
       <div class="status-text"></div>
       <button class="save-btn" @click="save()"><i class="atk-icon atk-icon-yes" /> {{ t('apply') }}</button>
       <LoadingLayer v-if="isLoading" />
     </div>
-    <div class="pfs">
-      <PreferenceGrp
-        :tpl-data="settingsTpl.tpl.toJS()"
-        :path="[]"
-      />
+    <div v-if="tree" class="pfs">
+      <PreferenceGrp :node="tree" />
       <div class="notice">{{ t('settingNotice') }}</div>
     </div>
   </div>

@@ -1,24 +1,22 @@
 <script setup lang="ts">
-import settings from '../lib/settings'
-
-const router = useRouter()
+import settings, { type OptionNode } from '../lib/settings'
 
 const props = defineProps<{
-  tplData: Object|Array<any>
-  path: (string|number)[]
+  node: OptionNode
 }>()
-
-const desc = computed(() => settings.get().extractItemDescFromComment(props.path))
-const level = computed(() => props.path.length)
 
 const expanded = ref(true)
 
+const expandable = computed(() => {
+  return props.node.level === 1 && (props.node.type === 'object' || props.node.type === 'array')
+})
+
 onMounted(() => {
-  if (level.value === 1) expanded.value = false
+  if (expandable.value) expanded.value = false
 })
 
 function onHeadClick(evt: Event) {
-  if (level.value !== 1) return
+  if (!expandable.value) return
   if (!expanded.value) {
     expanded.value = true
     // nextTick(() => {
@@ -28,38 +26,24 @@ function onHeadClick(evt: Event) {
     expanded.value = false
   }
 }
+
+const hiddenNodes = ['admin_users']
 </script>
 
 <template>
-  <div class="pf-grp" :class="[`level-${level}`, expanded ? 'expand' : '']">
-    <div v-if="level > 0" class="pf-head" @click="onHeadClick">
-      <div class="title">{{ desc.title }}</div>
-      <div v-if="!!desc.subTitle" class="sub-title">{{ desc.subTitle }}</div>
+  <div v-if="!hiddenNodes.includes(node.name)" class="pf-grp" :class="[`level-${node.level}`, expanded ? 'expand' : '']">
+    <div v-if="node.level > 0 && (node.type === 'object' || node.type === 'array')" class="pf-head" @click="onHeadClick">
+      <div class="title">{{ node.title }}</div>
+      <div v-if="!!node.subTitle" class="sub-title">{{ node.subTitle }}</div>
     </div>
     <div v-show="expanded" class="pf-body">
-      <!-- Array -->
-      <template v-if="Array.isArray(tplData)">
-        <PreferenceArr :tpl-data="tplData" :path="path" />
+      <!-- Grp -->
+      <template v-if="node.items">
+        <PreferenceGrp v-for="n in node.items" :key="n.path" :node="n" />
       </template>
-      <!-- Object -->
-      <template v-else>
-        <div v-for="[key, value] in Object.entries(tplData)">
-          <!-- Admin Users -->
-          <template v-if="key === 'admin_users'"></template>
-          <!-- Grp -->
-          <PreferenceGrp
-            v-else-if="value !== null && typeof value === 'object'"
-            :tpl-data="value"
-            :path="[...path, key]"
-          />
-          <!-- Item Input -->
-          <PreferenceItem
-            v-else
-            :tpl-data="value"
-            :path="[...path, key]"
-          />
-        </div>
-      </template>
+
+      <!-- Item -->
+      <PreferenceItem v-else :node="node" />
     </div>
   </div>
 </template>

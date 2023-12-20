@@ -1,62 +1,58 @@
 <script setup lang="ts">
-import settings from '../lib/settings'
+import settings, { patchOptionValue, type OptionNode } from '../lib/settings'
 
 const props = defineProps<{
-  tplData: any
-  path: (string|number)[]
+  node: OptionNode
 }>()
 
-const desc = computed(() => settings.get().extractItemDescFromComment(props.path))
-const customValue = computed(() => settings.get().customs.value?.getIn(props.path) as any)
+const value = ref('')
 
-function onChange(value: boolean|string|number) {
-  // 类型转换
-  switch (typeof props.tplData) {
-    case "boolean":
-      if (value === "true") value = true
-      else if (value === "false") value = false
-      break
-    case "string":
-      value = String(value)
-      break
-    case "number":
-      if (!isNaN(Number(value))) value = Number(value)
-      break
-  }
+onBeforeMount(() => {
+  // initial value
+  value.value = settings.get().getCustom(props.node.path)
+})
 
-  settings.get().customs.value?.setIn(props.path, value)
+function onChange() {
+  const v = patchOptionValue(props.node, props.node)
+  settings.get().setCustom(props.node.path, v)
+  console.log('[SET]', props.node.path, v)
 }
 </script>
 
 <template>
   <div class="pf-item">
     <div class="info">
-      <div class="title">{{ desc.title }}</div>
-        <div v-if="!!desc.subTitle" class="sub-title">{{ desc.subTitle }}</div>
+      <div class="title">{{ node.title }}</div>
+        <div v-if="node.subTitle" class="sub-title">{{ node.subTitle }}</div>
       </div>
 
       <div class="value">
+        <!-- Array -->
+        <template v-if="node.type === 'array'">
+          <PreferenceArr :node="node" />
+        </template>
+
         <!-- 候选框 -->
-        <template v-if="desc.opts !== null">
-          <select :value="customValue" @change="onChange(($event.target as any).value)">
+        <template v-else-if="node.selector">
+          <select v-model="value" @change="onChange">
             <option
-              v-for="item in desc.opts"
+              v-for="item in node.selector"
               :value="item"
             >{{ item }}</option>
           </select>
         </template>
 
         <!-- 开关 -->
-        <template v-else-if="typeof tplData === 'boolean'">
-          <input type="checkbox" :checked="customValue" @change="onChange(($event.target as any).checked)">
+        <template v-else-if="node.type === 'boolean'">
+          <input type="checkbox" v-model="value" @change="onChange">
         </template>
 
         <!-- 文本框 -->
         <template v-else>
           <input
             type="text"
-            :value="(typeof customValue === 'undefined' || customValue === null) ? '' : String(customValue)"
-            @change="onChange(($event.target as any).value)"
+            v-model="value"
+            @change="onChange"
           />
         </template>
       </div>

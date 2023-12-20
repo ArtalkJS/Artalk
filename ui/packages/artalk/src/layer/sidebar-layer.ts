@@ -116,7 +116,7 @@ export default class SidebarLayer extends Component {
   }
 
   private createIframe(view?: string) {
-    const $iframe = Utils.createElement<HTMLIFrameElement>('<iframe></iframe>')
+    const $iframe = Utils.createElement<HTMLIFrameElement>('<iframe referrerpolicy="strict-origin-when-cross-origin"></iframe>')
 
     // 准备 Iframe 参数
     const baseURL = (import.meta.env.DEV)  ? 'http://localhost:23367/'

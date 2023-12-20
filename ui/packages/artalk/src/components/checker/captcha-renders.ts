@@ -27,7 +27,7 @@ export function imgBody(checker: CheckerCtx) {
 /** iframe 形式的通用验证服务 */
 export function iframeBody(checker: CheckerCtx) {
   const $iframeWrap = Utils.createElement(`<div class="atk-checker-iframe-wrap"></div>`)
-  const $iframe = Utils.createElement<HTMLIFrameElement>(`<iframe class="atk-fade-in"></iframe>`)
+  const $iframe = Utils.createElement<HTMLIFrameElement>(`<iframe class="atk-fade-in" referrerpolicy="strict-origin-when-cross-origin"></iframe>`)
   $iframe.style.display = 'none'
   Ui.showLoading($iframeWrap, { transparentBg: true })
   $iframe.src = `${checker.getOpts().getIframeURLBase() || ''}/api/captcha/get?t=${+new Date()}`

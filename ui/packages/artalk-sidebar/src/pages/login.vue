@@ -76,7 +76,7 @@ function login(username?: string) {
       <div class="user-selector atk-fade-in">
         <div class="text">{{ t('loginSelectHint') }}</div>
         <div class="user-list">
-          <div v-for="u in userSelector" class="item" @click="userSelector = null; login(u)">{{u}}</div>
+          <div v-for="(u, i) in userSelector" :key="i" class="item" @click="userSelector = null; login(u)">{{u}}</div>
         </div>
       </div>
     </div>

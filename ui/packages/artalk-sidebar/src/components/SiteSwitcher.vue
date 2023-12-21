@@ -68,7 +68,8 @@ watch(curtShow, (value) => {
     <div ref="el" v-show="curtShow" class="atk-site-list-floater">
       <div class="atk-sites">
         <div
-          v-for="(site) in displaySites"
+          v-for="(site, i) in displaySites"
+          :key="i"
           class="atk-site-item"
           :class="{ 'atk-active': curtSite === site.name }"
           @click="switchSite(site.name)"

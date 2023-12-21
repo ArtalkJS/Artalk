@@ -118,7 +118,7 @@ function delUser(user: ArtalkType.UserDataForAdmin) {
 <template>
   <div class="user-list-wrap">
     <div class="user-list">
-      <div v-for="(user) in users" class="user-item">
+      <div v-for="(user) in users" :key="user.id" class="user-item">
         <div class="user-main">
           <div class="title">
             {{ user.name }}

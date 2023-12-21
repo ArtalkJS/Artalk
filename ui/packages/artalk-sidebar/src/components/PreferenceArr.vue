@@ -39,7 +39,7 @@ function add() {
 
 <template>
   <div class="arr-grp">
-    <div v-for="(item, index) in customValue" class="arr-item">
+    <div v-for="(item, index) in customValue" :key="index" class="arr-item">
       <input
         type="text"
         :value="String(item)"

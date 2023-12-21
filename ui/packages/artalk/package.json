@@ -58,7 +58,7 @@
     "predeploy": "pnpm build && pnpm build:demo && pnpm copy:deploy",
     "deploy": "gh-pages -d deploy",
     "dev": "vite",
-    "lint": "eslint --ext .js,.ts src --fix",
+    "lint": "eslint './src/**/*.{js,ts}'",
     "serve": "vite preview",
     "test:e2e": "playwright test",
     "test:report": "playwright show-report"

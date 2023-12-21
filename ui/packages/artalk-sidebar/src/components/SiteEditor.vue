@@ -88,7 +88,8 @@ function onFiledEditorNo() {
         >{{ site.name }}</span>
         <span class="atk-site-urls">
           <div
-            v-for="(url) in site.urls"
+            v-for="(url, i) in site.urls"
+            :key="i"
             class="atk-url-item"
             @click="openURL(url)"
           >{{ url }}</div>

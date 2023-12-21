@@ -7,8 +7,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build --force",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
     "artalk": "workspace:^",
@@ -19,8 +22,15 @@
     "yaml": "^2.3.4"
   },
   "devDependencies": {
+    "@rushstack/eslint-patch": "^1.6.1",
+    "@tsconfig/node18": "^18.2.2",
+    "@types/jsdom": "^21.1.6",
     "@vitejs/plugin-vue": "^4.5.2",
+    "@vue/eslint-config-prettier": "^8.0.0",
+    "@vue/eslint-config-typescript": "^12.0.0",
     "@vue/tsconfig": "^0.5.1",
+    "eslint-plugin-vue": "^9.19.2",
+    "npm-run-all2": "^6.1.1",
     "typescript": "^5.3.3",
     "unplugin-auto-import": "^0.17.2",
     "unplugin-vue-components": "^0.26.0",

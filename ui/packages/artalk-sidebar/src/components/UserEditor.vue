@@ -25,7 +25,7 @@ const emit = defineEmits<{
   (evt: 'update', user: ArtalkType.UserDataForAdmin): void
 }>()
 
-const user = ref<IUserEditData>()
+const editUser = ref<IUserEditData>()
 
 const isLoading = ref(false)
 const isCreateMode = ref(false)
@@ -35,7 +35,7 @@ const showFullDetails = ref(false)
 onBeforeMount(() => {
   if (!props.user) {
     isCreateMode.value = true
-    user.value = {
+    editUser.value = {
       name: '',
       email: '',
       link: '',
@@ -47,7 +47,7 @@ onBeforeMount(() => {
       receive_email: true,
     }
   } else {
-    user.value = props.user
+    editUser.value = props.user
   }
 })
 
@@ -60,12 +60,12 @@ function submit() {
   isLoading.value = true
 
   // 默认标签颜色
-  if (user.value!.badge_name !== '' && user.value!.badge_color === '') {
-    user.value!.badge_color = '#0083ff'
+  if (editUser.value!.badge_name !== '' && editUser.value!.badge_color === '') {
+    editUser.value!.badge_color = '#0083ff'
   }
 
   if (isCreateMode.value) {
-    artalk!.ctx.getApi().user.userAdd(user.value!, user.value!.password)
+    artalk!.ctx.getApi().user.userAdd(editUser.value!, editUser.value!.password)
       .then((respUser) => {
         emit('update', respUser)
       }).catch((e) => {
@@ -74,7 +74,7 @@ function submit() {
         isLoading.value = false
       })
   } else {
-    artalk!.ctx.getApi().user.userEdit(user.value!, user.value!.password)
+    artalk!.ctx.getApi().user.userEdit(editUser.value!, editUser.value!.password)
       .then((respUser) => {
         emit('update', respUser)
       }).catch((e) => {
@@ -95,37 +95,37 @@ function submit() {
       </div>
     </div>
     <div v-if="!isCreateMode" class="user-log">
-      <div><span>{{ t('comments') }}</span>{{(user as any).comment_count}}</div>
-      <div><span>{{ t('last') }} IP</span>{{(user as any).last_ip || '-'}}</div>
+      <div><span>{{ t('comments') }}</span>{{(editUser as any).comment_count}}</div>
+      <div><span>{{ t('last') }} IP</span>{{(editUser as any).last_ip || '-'}}</div>
       <div><span>{{ t('last') }} UA</span>
-        <template v-if="showFullDetails || !(user as any).last_ua">{{(user as any).last_ua || '-'}}</template>
+        <template v-if="showFullDetails || !(editUser as any).last_ua">{{(editUser as any).last_ua || '-'}}</template>
         <template v-else><span @click="showFullDetails = true" style="cursor: pointer;color: var(--at-color-main)">{{ t('Show') }}</span></template>
       </div>
     </div>
-    <form v-if="user" class="atk-form" @submit.prevent="submit()">
+    <form v-if="editUser" class="atk-form" @submit.prevent="submit()">
       <div class="atk-label required">{{ t('username') }}</div>
-      <input v-model="user.name" type="text" placeholder="" autocomplete="off">
+      <input v-model="editUser.name" type="text" placeholder="" autocomplete="off">
       <div class="atk-label required">{{ t('email')  }}</div>
-      <input v-model="user.email" type="text" placeholder="" autocomplete="off">
+      <input v-model="editUser.email" type="text" placeholder="" autocomplete="off">
       <div class="atk-label">{{ t('link') }}</div>
-      <input v-model="user.link" type="text" placeholder="" autocomplete="off">
+      <input v-model="editUser.link" type="text" placeholder="" autocomplete="off">
       <div class="atk-label">{{ t('badgeText') }}</div>
-      <input v-model="user.badge_name" type="text" placeholder="" autocomplete="off">
+      <input v-model="editUser.badge_name" type="text" placeholder="" autocomplete="off">
       <div class="atk-label">{{ t('badgeColor') }} (Color Hex)</div>
-      <input v-model="user.badge_color" type="text" placeholder="" autocomplete="off">
+      <input v-model="editUser.badge_color" type="text" placeholder="" autocomplete="off">
       <div class="atk-label required">{{ t('role') }}</div>
-      <select v-model="user.is_admin">
+      <select v-model="editUser.is_admin">
         <option :value="false">{{ t('normal') }}</option>
         <option :value="true">{{ t('admin') }}</option>
       </select>
-      <template v-if="user.is_admin">
+      <template v-if="editUser.is_admin">
         <div class="atk-label required">{{ t('password') }}</div>
-        <input v-model="user.password" type="text" :placeholder="isCreateMode ? '' : `(${t('passwordEmptyHint')})`" autocomplete="off">
+        <input v-model="editUser.password" type="text" :placeholder="isCreateMode ? '' : `(${t('passwordEmptyHint')})`" autocomplete="off">
         <div class="atk-label">{{ t('siteAttached') }}</div>
-        <input v-model="user.site_names_raw" type="text" :placeholder="`(${t('siteEmptyHint')})`" autocomplete="off">
+        <input v-model="editUser.site_names_raw" type="text" :placeholder="`(${t('siteEmptyHint')})`" autocomplete="off">
       </template>
       <div class="atk-label required">{{ t('emailNotify') }}</div>
-      <select v-model="user.receive_email">
+      <select v-model="editUser.receive_email">
         <option :value="true">{{ t('enabled') }}</option>
         <option :value="false">{{ t('disabled') }}</option>
       </select>

@@ -99,7 +99,7 @@ function onSiteItemRemove(id: number) {
       @done="onNewSiteCreated"
     />
     <div class="atk-site-rows-wrap">
-      <template v-for="(sites) in sitesGrouped">
+      <template v-for="(sites, i) in sitesGrouped" :key="i">
         <template v-if="curtEditSite !== null">
           <SiteEditor
             v-if="!!sites.includes(curtEditSite)"
@@ -111,7 +111,8 @@ function onSiteItemRemove(id: number) {
         </template>
         <div class="atk-site-row">
           <div
-            v-for="(site) in sites"
+            v-for="site in sites"
+            :key="site.id"
             class="atk-site-item"
             :class="{ 'atk-active': curtEditSite === site }"
             @click="edit(site)"

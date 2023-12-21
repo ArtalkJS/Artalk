@@ -8,7 +8,7 @@ coverage
 vite*.config*
 
 # ignore all js files
-**/*.js
+**/*.*js
 
 # ignore all config files
 *.config.ts

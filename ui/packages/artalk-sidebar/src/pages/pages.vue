@@ -155,7 +155,7 @@ function openPage(url: string) {
       <span class="atk-cache-warm-up-btn" @click="cacheWarm()"><span class="atk-text">{{ t('cacheWarm')  }}</span></span>
     </div>
     <div class="atk-page-list">
-      <div v-for="(page) in pages" class="atk-page-item">
+      <div v-for="page in pages" :key="page.id" class="atk-page-item">
         <div class="atk-page-main">
           <div class="atk-title" @click="openPage(page.url)">{{ page.title }}</div>
           <div class="atk-sub" @click="openPage(page.url)">{{ page.url }}</div>

@@ -27,7 +27,7 @@ export function createArtalkInstance() {
 
   return Artalk.init({
     el: artalkEl,
-    server: (import.meta.env.DEV) ? 'http://localhost:23366' : '../',
+    server: '../',
     pageKey: bootParams.pageKey,
     site: bootParams.site,
     darkMode: bootParams.darkMode,

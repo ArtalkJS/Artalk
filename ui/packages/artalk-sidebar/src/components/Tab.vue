@@ -128,6 +128,7 @@ function onSearchSubmit(evt: Event) {
       <template v-if="indicator === 'tabs'">
         <div
           v-for="(tabLabel, tabName) in tabs"
+          :key="tabName"
           class="item"
           :class="{ active: curtTab === tabName }"
           @click="switchTab(tabName as string)"
@@ -144,6 +145,7 @@ function onSearchSubmit(evt: Event) {
       <template v-else>
         <div
           v-for="(page, pageName) in pages"
+          :key="pageName"
           class="item"
           v-show="!page.hide"
           :class="{ active: pageName === curtPage }"

@@ -1,16 +1,17 @@
 {
-  "compilerOptions": {
-    "baseUrl": "./",
-    "moduleResolution": "node"
-  },
-  "exclude": ["node_modules", "dist"],
-  "include": [
-    "typed-router.d.ts",
-    "components.d.ts",
-    "auto-imports.d.ts",
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.vue"
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
   ],
-  "extends": "@vue/tsconfig/tsconfig.json"
+  "compilerOptions": {
+    "module": "NodeNext"
+  }
 }

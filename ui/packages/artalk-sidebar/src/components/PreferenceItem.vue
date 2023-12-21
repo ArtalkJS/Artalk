@@ -36,7 +36,8 @@ function onChange() {
         <template v-else-if="node.selector">
           <select v-model="value" @change="onChange">
             <option
-              v-for="item in node.selector"
+              v-for="(item, i) in node.selector"
+              :key="i"
               :value="item"
             >{{ item }}</option>
           </select>

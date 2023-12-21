@@ -13,7 +13,6 @@ export interface OptionNode {
   items?: OptionNode[]
 }
 
-let f = true
 function extractItemComment(item: Pair, index: number, parentPair?: Pair): string {
   let comment = ''
   if (index === 0 && parentPair) comment = parentPair?.value?.commentBefore || ''

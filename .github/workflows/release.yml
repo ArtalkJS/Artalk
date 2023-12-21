@@ -19,7 +19,7 @@ on:
 
 env:
   REPO_DISPATCH_EVENT_TYPE: 'artalk-release'
-  UI_NPM_PKG_FILE: 'ui/packages/artalk/package.json'
+  UI_NPM_PKG_FILE: 'ui/artalk/package.json'
 
 jobs:
   release:

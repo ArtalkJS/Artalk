@@ -25,12 +25,10 @@ jobs:
           VERSION=$(git describe --tags --abbrev=0)
           git checkout ${VERSION}
 
-          VERSION_SHORT="$(cut -d '.' -f 1,2 <<< ${VERSION#v})" # (i.e "v1.2.3" -> "1.2")
           COMMIT_HASH="$(git rev-parse --short HEAD)"
           COMMIT_HASH_FULL="$(git rev-parse HEAD)"
 
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "VERSION_SHORT=${VERSION_SHORT}" >> $GITHUB_ENV
           echo "COMMIT_HASH=${COMMIT_HASH}" >> $GITHUB_ENV
           echo "COMMIT_HASH_FULL=${COMMIT_HASH_FULL}" >> $GITHUB_ENV
 

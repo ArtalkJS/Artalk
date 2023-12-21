@@ -9,10 +9,6 @@ jobs:
   build_publish:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./ui  # set for building frontend
-
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -33,7 +29,6 @@ jobs:
         node-version: 18.x
         registry-url: https://registry.npmjs.org/
         cache: 'pnpm'
-        cache-dependency-path: './ui/pnpm-lock.yaml'
 
     - name: Install dependencies
       run: pnpm install

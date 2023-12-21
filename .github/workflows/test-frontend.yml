@@ -17,10 +17,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    defaults:
-      run:
-        working-directory: ./ui
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -34,10 +30,9 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
-          cache-dependency-path: './ui/pnpm-lock.yaml'
 
       - name: Install Dependencies
-        run: pnpm --dir ./ui install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Package Build Test
         run: pnpm build:all

@@ -81,7 +81,7 @@ importers:
   docs/docs:
     devDependencies:
       artalk:
-        specifier: ^2.7.2
+        specifier: workspace:^
         version: link:../../ui/artalk
       markdown-it-for-inline:
         specifier: ^2.0.1

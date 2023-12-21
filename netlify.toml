@@ -3,4 +3,4 @@
 
 [build]
   publish = "docs/docs/.vitepress/dist"
-  command = "pnpm docs:build"
+  command = "pnpm build:docs"

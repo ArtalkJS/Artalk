@@ -7,8 +7,8 @@ Documentation of Artalk
 ## Build
 
 ```bash
-pnpm docs:dev
-pnpm docs:build
+pnpm dev:docs
+pnpm build:docs
 ```
 
 ## Deploy

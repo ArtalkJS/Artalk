@@ -29,4 +29,4 @@ jobs:
         run: pnpm install
 
       - name: Build Docs
-        run: pnpm docs:build
+        run: pnpm build:docs

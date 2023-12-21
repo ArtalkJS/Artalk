@@ -10,12 +10,12 @@
   },
   "private": true,
   "scripts": {
-    "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
-    "docs:serve": "vitepress serve"
+    "dev:docs": "vitepress dev",
+    "build:docs": "vitepress build",
+    "serve:docs": "vitepress serve"
   },
   "devDependencies": {
-    "artalk": "^2.7.2",
+    "artalk": "workspace:^",
     "markdown-it-for-inline": "^2.0.1",
     "sass": "^1.69.5",
     "vitepress": "1.0.0-rc.32"

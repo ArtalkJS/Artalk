@@ -30,7 +30,7 @@ jobs:
         run: pnpm install
 
       - name: Build Docs
-        run: pnpm docs:build
+        run: pnpm build:docs
 
       - name: Deploy
         uses: TencentCloud/cos-action@v1

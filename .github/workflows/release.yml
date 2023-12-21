@@ -1,5 +1,5 @@
 name: 📦 Release New Version
-run-name: 📦 Release ${{ inputs.custom || inputs.semver }} by @${{ github.actor }}
+run-name: 📦 Release ${{ inputs.custom || inputs.semver }} by @${{ github.actor }} ${{ inputs.dry-run && '(🧪 dry-run)' || '' }}
 
 on:
   workflow_dispatch:
@@ -16,6 +16,11 @@ on:
       #   description: 'Custom tag name (i.e v1.0.0-rc.1)'
       #   required: false
       #   default: ''
+      dry-run:
+        description: 'Dry run?'
+        type: boolean
+        required: false
+        default: false
 
 env:
   REPO_DISPATCH_EVENT_TYPE: 'artalk-release'
@@ -26,13 +31,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Git Fetch
-        run: git fetch --prune --unshallow --tags -f
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
           registry-url: https://registry.npmjs.org/
@@ -45,6 +49,7 @@ jobs:
             npm install -g semver
             prev_version="$(git describe --tags --abbrev=0)"
             echo "prev_version: ${prev_version}"
+            echo "PREV_VERSION=${prev_version}" >> $GITHUB_ENV
             next_version="v$(semver --increment ${{ inputs.semver }} ${prev_version})"
           fi
 
@@ -55,6 +60,9 @@ jobs:
 
           echo "next_version: ${next_version}"
           echo "VERSION=${next_version}" >> $GITHUB_ENV
+
+      - name: Print Next Version
+        run: echo "${VERSION}"
 
       - name: Setup git-chglog
         run: |
@@ -73,16 +81,21 @@ jobs:
             perl -i -pe 's/"version": ".*?"/"version": "'${VERSION#v}'"/g' "${UI_NPM_PKG_FILE}"
 
             # modify the version in docs
-            perl -pi -e 's#"latest"(\W+)?:(\W+)?".*?"#"latest": "'${VERSION#v}'"#g' docs/code/ArtalkVersion.json
+            perl -pi -e 's#"latest"(\W+)?:(\W+)?".*?"#"latest": "'${VERSION#v}'"#g' docs/docs/code/ArtalkVersion.json
 
-            # git commit and push
+            # git commit
             git config user.name github-actions[bot]
             git config user.email 41898282+github-actions[bot]@users.noreply.github.com
             git add .
             git commit -m "chore: release ${VERSION}"
             git tag "${VERSION}"
 
-            git push origin master "${VERSION}"
+            # git push
+            if [ "${{ inputs.dry-run }}" = "false" ]; then
+              git push origin master "${VERSION}"
+            else
+              git diff HEAD^ HEAD
+            fi
           else
             echo "skipped because git tag already exists."
           fi
@@ -91,3 +104,4 @@ jobs:
         uses: peter-evans/repository-dispatch@v2
         with:
           event-type: ${{ env.REPO_DISPATCH_EVENT_TYPE }}
+          client-payload: '{"version": ${{ toJSON(inputs.dry-run && env.PREV_VERSION || env.VERSION) }}, "dry_run": ${{ toJSON(inputs.dry-run) }}}'

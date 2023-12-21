@@ -1,5 +1,5 @@
 name: Build Docker
-run-name: Build Docker Image and Publish
+run-name: Build Docker Image and Publish (${{ github.event.client_payload.version }}) ${{ github.event.client_payload.dry_run == 'false' && '' || '(🧪 dry-run)' }}
 
 on:
   repository_dispatch:
@@ -7,6 +7,8 @@ on:
 
 env:
   DOCKER_IMG: artalk/artalk-go
+  VERSION: ${{ github.event.client_payload.version }}
+  DRY_RUN: ${{ github.event.client_payload.dry_run }}
 
 jobs:
   build_publish:
@@ -14,28 +16,20 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.VERSION }}
+          fetch-depth: 0
 
-      - name: Checkout latest tag
+      - name: Get commit hash
         run: |
-          # fetch tags
-          git fetch --prune --unshallow --tags -f
-
-          # checkout latest version
-          VERSION=$(git describe --tags --abbrev=0)
-          git checkout ${VERSION}
-
-          COMMIT_HASH="$(git rev-parse --short HEAD)"
-          COMMIT_HASH_FULL="$(git rev-parse HEAD)"
-
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "COMMIT_HASH=${COMMIT_HASH}" >> $GITHUB_ENV
-          echo "COMMIT_HASH_FULL=${COMMIT_HASH_FULL}" >> $GITHUB_ENV
+          echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "COMMIT_HASH_FULL=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
       # https://github.com/docker/login-action
       - name: Login to DockerHub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -43,14 +37,14 @@ jobs:
       # https://github.com/docker/setup-qemu-action
       - name: Setup QEMU
         id: qemu
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: 'amd64,arm64'
 
       # https://github.com/docker/setup-buildx-action
       - name: Setup Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Cache Docker layers
         uses: actions/cache@v3
@@ -63,7 +57,7 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Gen docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           context: git
           images: |
@@ -78,31 +72,34 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Build and Push
         id: docker_build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./
           file: ./Dockerfile
           platforms: 'linux/amd64,linux/arm64'
-          push: true
+          push: ${{ env.DRY_RUN == 'false' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
       - name: Comment build info in commit
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         env:
           STDOUT: "🐳 Published new docker image: [${{ env.DOCKER_IMG }}](https://hub.docker.com/r/${{ env.DOCKER_IMG }}) (${{ env.VERSION }} / sha-${{ env.COMMIT_HASH }})"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            github.rest.repos.createCommitComment({
+            const comment = {
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: process.env.COMMIT_HASH_FULL, // context.sha
               body: process.env.STDOUT
-            })
+            }
+            if (process.env.DRY_RUN == 'false')
+              github.rest.repos.createCommitComment(comment)
+            else console.log(comment)
 
       - name: Print image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

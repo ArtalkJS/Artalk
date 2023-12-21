@@ -1,5 +1,5 @@
 name: Build App
-run-name: Build Go App and Publish
+run-name: Build Go App and Publish (${{ github.event.client_payload.version }}) ${{ github.event.client_payload.dry_run == 'false' && '' || '(🧪 dry-run)' }}
 
 on:
   repository_dispatch:
@@ -10,6 +10,8 @@ env:
   PKG_NAME: 'github.com/ArtalkJS/Artalk'
   DOCKER_IMG: ghcr.io/goreleaser/goreleaser-cross
   CACHE_DIR: /tmp/cache/docker-image
+  VERSION: ${{ github.event.client_payload.version }}
+  DRY_RUN: ${{ github.event.client_payload.dry_run }}
 
 jobs:
   build_publish:
@@ -17,18 +19,10 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Checkout latest tag
-        run: |
-          # fetch tags
-          git fetch --prune --unshallow --tags -f
-
-          # checkout latest version
-          VERSION=$(git describe --tags --abbrev=0)
-          git checkout ${VERSION}
-
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.VERSION }}
+          fetch-depth: 0
 
       # disable cache because the err `no space left on device`
       # - name: Docker Image Cache
@@ -69,6 +63,9 @@ jobs:
           # copy config file
           cp conf/artalk.example.yml artalk.yml
 
+      - name: Print Relase Notes
+        run: cat local/release-notes.md
+
       - name: Build and Release
         run: |
           docker run \
@@ -81,4 +78,4 @@ jobs:
             -e CGO_ENABLED=1 \
             --env-file local/.release-env \
             ghcr.io/goreleaser/goreleaser-cross:v${GO_VERSION} \
-            release --release-notes local/release-notes.md
+            release --release-notes local/release-notes.md ${{ env.DRY_RUN == 'false' && '' || '--skip=publish' }}

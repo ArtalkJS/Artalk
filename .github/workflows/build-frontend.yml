@@ -1,9 +1,13 @@
 name: Build Frontend
-run-name: Build Frontend and Publish
+run-name: Build Frontend and Publish (${{ github.event.client_payload.version }}) ${{ github.event.client_payload.dry_run == 'false' && '' || '(🧪 dry-run)' }}
 
 on:
   repository_dispatch:
     types: [artalk-release]
+
+env:
+  VERSION: ${{ github.event.client_payload.version }}
+  DRY_RUN: ${{ github.event.client_payload.dry_run }}
 
 jobs:
   build_publish:
@@ -11,12 +15,10 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Checkout latest tag
-      run: |
-        git fetch --prune --unshallow --tags -f
-        git checkout $(git describe --tags --abbrev=0)
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ env.VERSION }}
+        fetch-depth: 0
 
     - name: Use pnpm
       uses: pnpm/action-setup@v2
@@ -24,27 +26,27 @@ jobs:
         version: 8
 
     - name: Setup node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: 18.x
         registry-url: https://registry.npmjs.org/
         cache: 'pnpm'
 
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm install --frozen-lockfile
 
     - name: Build
       run: pnpm build
 
     - name: Publish
-      run: pnpm publish -F artalk --no-git-checks
+      run: pnpm publish -F artalk ${{ env.DRY_RUN == 'false' && '' || '--dry-run' }}
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     # GitHub Packages
     #
     # Setup .npmrc file to publish to GitHub Packages
-    # - uses: actions/setup-node@v2
+    # - uses: actions/setup-node@v4
     #   with:
     #     registry-url: 'https://npm.pkg.github.com'
     # # Publish to GitHub Packages

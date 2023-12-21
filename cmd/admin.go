@@ -25,9 +25,17 @@ func NewAdminCommand(app *ArtalkCmd) *cobra.Command {
 			fmt.Println(" " + i18n.T("Create admin account"))
 			fmt.Println("--------------------------------")
 
-			username, email, password, err := credentials()
-			if err != nil {
-				log.Fatal(err)
+			// get from flags
+			username, _ := cmd.Flags().GetString("name")
+			email, _ := cmd.Flags().GetString("email")
+			password, _ := cmd.Flags().GetString("password")
+
+			if username == "" || email == "" || password == "" {
+				var err error
+				username, email, password, err = credentials()
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 
 			findUser := app.Dao().FindUser(username, email)
@@ -61,6 +69,10 @@ func NewAdminCommand(app *ArtalkCmd) *cobra.Command {
 			fmt.Println("--------------------------------")
 		},
 	}
+
+	flag(adminCmd, "name", "", i18n.T("Username"))
+	flag(adminCmd, "email", "", i18n.T("Email"))
+	flag(adminCmd, "password", "", i18n.T("Password"))
 
 	return adminCmd
 }

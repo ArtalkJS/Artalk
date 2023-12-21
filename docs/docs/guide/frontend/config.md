@@ -6,8 +6,8 @@ const artalk = Artalk.init({ ... })
 artalk.update({ ... })
 ```
 
-- 默认配置：[defaults.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/src/defaults.ts)
-- 声明文件：[config.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/types/config.ts)
+- 默认配置：[defaults.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/src/defaults.ts)
+- 声明文件：[config.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/types/config.ts)
 
 ## 轻松配置
 
@@ -179,7 +179,7 @@ JS DELIVR 在中国大陆的 [ICP 牌照已被吊销](https://github.com/jsdeliv
 artalk.setDarkMode(true)
 ```
 
-> 参考代码：“[index.html](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/index.html#L97-L150)”
+> 参考代码：“[index.html](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/index.html#L97-L150)”
 
 可设置为 `"auto"`，Artalk 将监听 `(prefers-color-scheme: dark)` 根据用户操作系统判断自动切换夜间模式。
 

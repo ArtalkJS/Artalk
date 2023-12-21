@@ -41,9 +41,9 @@ The backend program will run by default on port `23366`. You can access it throu
 
 ### Build Frontend
 
-First, you need to install the dependencies for the frontend. Simply run the `cd ui && pnpm install` command to install the dependencies.
+First, you need to install the dependencies for the frontend. Simply run the `pnpm install` command to install the dependencies.
 
-Then, run the `cd ui && pnpm dev` to build and run the frontend, and you can pass startup parameters to the program using `ARGS="--port 5173" pnpm dev`.
+Then, run the `pnpm dev` to build and run the frontend, and you can pass startup parameters to the program using `ARGS="--port 5173" pnpm dev`.
 
 The frontend program will run by default on port `5173`, and you can access it in a browser at `http://localhost:5173`. The frontend testing client will, by default, request the backend on port `23366`, so it's essential to keep the backend on this port.
 
@@ -51,9 +51,9 @@ The frontend program is divided into the main program and a sidebar program, wit
 
 ### Development Workflow
 
-In most cases, to set up a complete development instance, you need to navigate to the Artalk Repo directory and then execute `make dev`. This will run the backend on port `23366`. Then, execute `cd ui && pnpm dev`, which will run the frontend on port `5173`. You can optionally execute `pnpm dev:sidebar` to run the sidebar frontend on port `23367`. For frontend development, you need to access `http://localhost:5173` in your browser to perform your development and testing.
+In most cases, to set up a complete development instance, you need to navigate to the Artalk Repo directory and then execute `make dev`. This will run the backend on port `23366`. Then, execute `pnpm dev`, which will run the frontend on port `5173`. You can optionally execute `pnpm dev:sidebar` to run the sidebar frontend on port `23367`. For frontend development, you need to access `http://localhost:5173` in your browser to perform your development and testing.
 
-When you make changes to the frontend code, you can build the complete frontend program using `cd ui && pnpm build:all`. The JavaScript and CSS code can be found in `ui/packages/artalk/dist`.
+When you make changes to the frontend code, you can build the complete frontend program using `pnpm build:all`. The JavaScript and CSS code can be found in `ui/artalk/dist`.
 
 When you make changes to the backend code, running `make all` will build the complete backend program. Note that since the backend program also embeds the frontend code, the `scripts/build-frontend.sh` script will run during backend program building, which includes the embedded frontend main program and sidebar frontend program. If you are interested, you can explore the complete frontend build process in the `Makefile` code.
 

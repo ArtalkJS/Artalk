@@ -15,17 +15,17 @@ then
     volta install pnpm@8.12.1
 fi
 
-pnpm --dir ./ui install --frozen-lockfile
-pnpm --dir ./ui build:all
+pnpm install --frozen-lockfile
+pnpm build:all
 
 ## dist
 DIST_DIR="./public/dist"
 rm -rf ${DIST_DIR} && mkdir -p ${DIST_DIR}
-cp -r ./ui/packages/artalk/dist/{Artalk.css,Artalk.js} ${DIST_DIR}
-cp -r ./ui/packages/artalk/dist/{ArtalkLite.css,ArtalkLite.js} ${DIST_DIR}
-cp -r ./ui/packages/artalk/dist/i18n ${DIST_DIR}
+cp -r ./ui/artalk/dist/{Artalk.css,Artalk.js} ${DIST_DIR}
+cp -r ./ui/artalk/dist/{ArtalkLite.css,ArtalkLite.js} ${DIST_DIR}
+cp -r ./ui/artalk/dist/i18n ${DIST_DIR}
 
 ## sidebar
 SIDEBAR_DIR="./public/sidebar"
 rm -rf ${SIDEBAR_DIR} && mkdir -p ${SIDEBAR_DIR}
-cp -r ./ui/packages/artalk-sidebar/dist/* ${SIDEBAR_DIR}
+cp -r ./ui/artalk-sidebar/dist/* ${SIDEBAR_DIR}

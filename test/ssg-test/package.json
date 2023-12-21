@@ -16,7 +16,7 @@
     "vitepress": "1.0.0-rc.32"
   },
   "dependencies": {
-    "artalk": "link:ui/packages/artalk",
+    "artalk": "link:ui/artalk",
     "vue": "^3.3.12"
   }
 }

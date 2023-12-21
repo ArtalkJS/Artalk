@@ -30,7 +30,7 @@
 | `sidebar-hide`       | 侧边栏隐藏          |
  
 
-事件声明代码：[@ArtalkJS/Artalk - types/event.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/types/event.ts)
+事件声明代码：[@ArtalkJS/Artalk - types/event.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/types/event.ts)
 
 ## 添加事件监听
 

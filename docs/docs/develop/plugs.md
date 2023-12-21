@@ -46,7 +46,7 @@ Context 对象包含了 Artalk 的上下文信息。
 Context API 目前仍不稳定，开发可能会有变动，升级请关注 CHANGELOG。
 :::
 
-参考：[@artalk/types/context.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/types/context.ts)
+参考：[@artalk/types/context.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/types/context.ts)
 
 Artalk 拥有完整的 TypeScript 类型定义，你可以通过编辑器的自动补全来查看 API。
 
@@ -54,11 +54,11 @@ Artalk 拥有完整的 TypeScript 类型定义，你可以通过编辑器的自�
 
 Artalk 有很多内置的插件，你可以参考它们的源码来开发自己的插件。
 
-[@ArtalkJS/Artalk - src/plugins](https://github.com/ArtalkJS/Artalk/tree/master/ui/packages/artalk/src/plugins)
+[@ArtalkJS/Artalk - src/plugins](https://github.com/ArtalkJS/Artalk/tree/master/ui/artalk/src/plugins)
 
 我们还提供了一些外置的插件，同样可以参考：
 
 | 插件 | 说明 |
 | --- | --- |
-| [@artalk/plugin-katex](https://github.com/ArtalkJS/Artalk/tree/master/ui/packages/plugin-katex) | LaTeX 公式插件 |
-| [@artalk/plugin-lightbox](https://github.com/ArtalkJS/Artalk/tree/master/ui/packages/plugin-lightbox) | 图片灯箱插件 |
+| [@artalk/plugin-katex](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-katex) | LaTeX 公式插件 |
+| [@artalk/plugin-lightbox](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-lightbox) | 图片灯箱插件 |

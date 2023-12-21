@@ -1,5 +1,4 @@
 {
-    "eslint.workingDirectories": ["./ui"],
     "cSpell.words": [
         "akismet",
         "artalk",

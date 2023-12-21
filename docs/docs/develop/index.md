@@ -19,10 +19,10 @@
 由于 Artalk 正处于开发阶段，使用此文档中 `API`、`Event` 前请务必检查时效性。
 
  - `API` 部分参考源码
-   * [@ArtalkJS/Artalk - src/api/](https://github.com/ArtalkJS/Artalk/tree/master/ui/packages/artalk/src/api)
+   * [@ArtalkJS/Artalk - src/api/](https://github.com/ArtalkJS/Artalk/tree/master/ui/artalk/src/api)
    * [@ArtalkJS/Artalk - server/server.go](https://github.com/ArtalkJS/Artalk/blob/master/server/server.go)
  - `UI` 及 `Event` 部分参考源码
-   * [@ArtalkJS/Artalk - src/artalk.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/src/artalk.ts)
-   * [@ArtalkJS/Artalk - types/event.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/packages/artalk/types/event.ts)
+   * [@ArtalkJS/Artalk - src/artalk.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/src/artalk.ts)
+   * [@ArtalkJS/Artalk - types/event.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/types/event.ts)
 
 通过 Artalk 提供的 `API` 和 `Event`，你可以实现很多高级功能，比如编写评论管理机器人、评论提醒推送插件等。Artalk 并不为此提供技术指导，但鼓励你参考此处的文档自行定制。

@@ -18,7 +18,7 @@ Artalk LightBox 插件能帮助你将网站**现有的图片灯箱**功能自动
 
 目前自动集成支持：[LightGallery](https://github.com/sachinchoolur/lightGallery) [v2.5.0] / [FancyBox](https://github.com/fancyapps/fancybox) [v4.0.27] / [lightbox2](https://github.com/lokesh/lightbox2) [v2.11.3]
 
-对于还未适配的图片灯箱，欢迎提交 PR -> [查看代码](https://github.com/ArtalkJS/Artalk/blob/master/packages/plugin-lightbox/main.ts)
+对于还未适配的图片灯箱，欢迎提交 PR -> [查看代码](https://github.com/ArtalkJS/Artalk/blob/master/ui/plugin-lightbox/main.ts)
 
 ::: details 附：图片灯箱依赖 CDN 资源
 

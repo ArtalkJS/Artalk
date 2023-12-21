@@ -2,9 +2,42 @@
   "name": "artalk-monorepo",
   "private": true,
   "homepage": "https://artalk.js.org",
+  "packageManager": "pnpm@8.12.1",
   "scripts": {
-    "docs:build": "pnpm -F=docs-landing build && pnpm -F=docs-swagger swagger:build && pnpm -F=docs docs:build && pnpm docs:patch",
-    "docs:patch": "cp -rf docs/landing/dist/* docs/swagger/dist/* docs/docs/.vitepress/dist"
+    "dev": "pnpm -F artalk dev",
+    "dev:sidebar": "pnpm -F @artalk/artalk-sidebar dev",
+    "build": "pnpm -F artalk build",
+    "build:sidebar": "pnpm -F @artalk/artalk-sidebar build",
+    "build:all": "pnpm build && pnpm build:sidebar",
+    "build:docs": "pnpm build && pnpm -F=docs-landing build && pnpm -F=docs-swagger swagger:build && pnpm -F=docs build:docs && pnpm patch:docs",
+    "patch:docs": "cp -rf docs/landing/dist/* docs/swagger/dist/* docs/docs/.vitepress/dist"
   },
-  "packageManager": "pnpm@8.12.1"
+  "devDependencies": {
+    "@playwright/test": "^1.40.1",
+    "@rollup/plugin-dynamic-import-vars": "2.1.2",
+    "@types/node": "20.10.5",
+    "@typescript-eslint/eslint-plugin": "6.15.0",
+    "@typescript-eslint/parser": "6.15.0",
+    "autoprefixer": "10.4.16",
+    "eslint": "8.56.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-config-airbnb-typescript": "17.1.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-import-resolver-typescript": "3.6.1",
+    "eslint-plugin-compat": "4.2.0",
+    "eslint-plugin-import": "2.29.1",
+    "postcss": "8.4.32",
+    "prettier": "3.1.1",
+    "rollup": "4.9.1",
+    "sass": "1.69.5",
+    "terser": "5.26.0",
+    "typescript": "5.3.3",
+    "vite": "5.0.10",
+    "vite-plugin-checker": "0.6.2",
+    "vite-plugin-dts": "3.6.4",
+    "vite-tsconfig-paths": "4.2.2"
+  },
+  "browserslist": [
+    "supports es6 and supports es6-class and supports es6-generators and supports es6-module-dynamic-import and supports es6-module and supports es6-number and supports es6-string-includes"
+  ]
 }

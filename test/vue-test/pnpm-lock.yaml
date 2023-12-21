@@ -7,7 +7,7 @@ settings:
 dependencies:
   artalk:
     specifier: link:artalk
-    version: link:../../ui/packages/artalk
+    version: link:../../ui/artalk
   vue:
     specifier: ^3.3.11
     version: 3.3.12(typescript@5.3.3)

@@ -5,7 +5,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   env: { browser: true },
   parserOptions: {
-    project: ['./packages/*/tsconfig.json'],
+    project: ['./ui/*/tsconfig.json'],
     tsconfigRootDir: __dirname,
   },
   extends: [
@@ -40,7 +40,7 @@ module.exports = {
   settings: {
     'import/resolver': {
       typescript: {
-        project: ['packages/artalk/tsconfig.json'].map((p) =>
+        project: ['ui/artalk/tsconfig.json'].map((p) =>
           path.resolve(__dirname, p),
         ),
       },

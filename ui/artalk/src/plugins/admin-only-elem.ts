@@ -23,7 +23,7 @@ function getAdminOnlyEls(opts: { $root: HTMLElement }): HTMLElement[] {
   opts.$root.querySelectorAll<HTMLElement>(`[atk-only-admin-show]`).forEach(item => els.push(item))
 
   // TODO: provide a Artalk.conf hook to set whitelist of admin-only elements,
-  // and move following code to that hook (move into packages/artalk-sidebar)
+  // and move following code to that hook (move into @artalk/artalk-sidebar)
 
   // elements in sidebar
   const $sidebarEl = document.querySelector<HTMLElement>('.atk-sidebar')

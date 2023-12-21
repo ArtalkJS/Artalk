@@ -21,9 +21,9 @@ fi
 yq -i '.db.file = "data/ui_test.db"' artalk.yml
 
 # Run frontend e2e test
-pnpm -C ui/packages/artalk run test:e2e
+pnpm -F artalk run test:e2e
 
 # if args contains `--show-report` then open report
 if [[ $* == *--show-report* ]]; then
-    pnpm -C ui/packages/artalk run test:report
+    pnpm -F artalk run test:report
 fi

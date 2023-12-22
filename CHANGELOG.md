@@ -1,4 +1,7 @@
 
+## [v2.8.0](https://github.com/ArtalkJS/Artalk/compare/v2.7.3...v2.8.0) (2023-12-22)
+
+
 ## [v2.7.2](https://github.com/ArtalkJS/Artalk/compare/v2.7.1...v2.7.2) (2023-12-20)
 
 ### Features

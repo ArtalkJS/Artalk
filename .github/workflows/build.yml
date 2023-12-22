@@ -11,7 +11,7 @@ on:
       dry_run:
         description: 'Dry run'
         type: boolean
-        default: false
+        default: true
       build_items:
         description: 'Build items'
         type: string

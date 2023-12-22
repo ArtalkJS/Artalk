@@ -19,12 +19,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
 
       - name: Comment done info
         uses: ./.github/actions/comment
         if: ${{ inputs.issue_number != 0 }}
         with:
           issue_number: ${{ inputs.issue_number }}
-          content: |
-            🎉 Finished build and publish version ${{ inputs.version }}.
-
+          content: |-
+            🎉 Finished build and publish ${{ inputs.version }} ([NPM Package](https://www.npmjs.com/package/artalk?activeTab=versions) / [Docker Image](https://hub.docker.com/r/artalk/artalk-go/tags) / [Github Release](https://github.com/ArtalkJS/Artalk/releases/tag/${{ inputs.version }})).

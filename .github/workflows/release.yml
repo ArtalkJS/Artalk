@@ -24,6 +24,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
+          ref: master
           fetch-depth: 0
 
       - name: Setup Node
@@ -31,6 +32,9 @@ jobs:
         with:
           node-version: 18.x
           registry-url: https://registry.npmjs.org/
+
+      - name: Setup semver
+        run: npm install -g semver
 
       - name: Handle Version Number
         run: |
@@ -72,7 +76,7 @@ jobs:
           title: "chore: release ${{ env.VERSION }}"
           labels: release
           body: |
-            # Release ${{ env.VERSION }} 📦🚀
+            ## Release ${{ env.VERSION }} 📦🚀
 
             This PR is auto-generated, please check the changelog and confirm the release. 😀
 

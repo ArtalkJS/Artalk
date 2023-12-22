@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
 
       - name: Use pnpm
         uses: pnpm/action-setup@v2

@@ -54,7 +54,7 @@ jobs:
         if: ${{ inputs.issue_number != 0 }}
         with:
           issue_number: ${{ inputs.issue_number }}
-          content: |
-            🔖 Tagged version [${{ env.VERSION }}](https://github.com/ArtalkJS/Artalk/tree/${{ env.VERSION }}), also see [CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md).
+          content: |-
+            🔖 Tagged version [${{ env.VERSION }}](https://github.com/ArtalkJS/Artalk/tree/${{ env.VERSION }}) and updated the [CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md).
     outputs:
       version: ${{ env.VERSION }}

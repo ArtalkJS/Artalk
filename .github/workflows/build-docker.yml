@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
 
       # https://github.com/docker/metadata-action
       - name: Gen docker meta

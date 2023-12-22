@@ -1,8 +1,7 @@
 PKG_NAME    := github.com/ArtalkJS/Artalk
 BIN_NAME	:= ./bin/artalk
 VERSION     ?= $(shell git describe --tags --abbrev=0)
-COMMIT_HASH := $(shell git rev-parse --short HEAD)
-DEV_VERSION := dev-$(COMMIT_HASH)
+COMMIT_HASH ?= $(shell git rev-parse --short HEAD)
 
 HAS_RICHGO  := $(shell which richgo)
 GOTEST      ?= $(if $(HAS_RICHGO), richgo test, go test)
@@ -13,7 +12,7 @@ all: install build
 install:
 	go mod tidy
 
-build: build-frontend
+build:
 	go build \
     	-ldflags "-s -w -X $(PKG_NAME)/internal/config.Version=$(VERSION) \
         -X $(PKG_NAME)/internal/config.CommitHash=$(COMMIT_HASH)" \

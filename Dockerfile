@@ -5,8 +5,7 @@ WORKDIR /source
 
 # install tools
 RUN set -ex \
-    && apk add --no-cache make git gcc musl-dev nodejs bash npm\
-    && npm install -g pnpm@8.12.1
+    && apk add --no-cache make git gcc musl-dev bash
 
 # download go deps
 # (cache by separating the downloading of deps)
@@ -16,10 +15,28 @@ RUN go mod download
 # copy source code
 COPY . .
 
-# build
+## build UI
+ARG SKIP_UI_BUILD=false
+
+# install ui build toolchain
 RUN set -ex \
-    && export VERSION=$(git describe --tags --abbrev=0) \
-    && export COMMIT_SHA=$(git rev-parse --short HEAD) \
+    && if [ "$SKIP_UI_BUILD" = "false" ]; then \
+        apk add --no-cache nodejs npm \
+        && npm install -g pnpm@8.12.1 \
+    ;fi
+
+RUN set -ex \
+    && if [ "$SKIP_UI_BUILD" = "false" ]; then \
+        make build-frontend \
+    ;fi
+
+## build App
+ARG APP_VERSION=""
+ARG APP_COMMIT_HASH=""
+
+RUN set -ex \
+    && if [[ ! -z "$APP_VERSION" ]]; then export VERSION=$APP_VERSION ;fi \
+    && if [[ ! -z "$APP_COMMIT_HASH" ]]; then export COMMIT_HASH=$APP_COMMIT_HASH ;fi \
     && make build
 
 ### build final image

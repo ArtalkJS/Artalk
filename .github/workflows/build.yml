@@ -39,7 +39,7 @@ jobs:
     needs: tagging
     uses: ./.github/workflows/build-ui.yml
     with:
-      version: ${{ github.env.VERSION }}
+      version: ${{ needs.tagging.outputs.version }}
       dry_run: ${{ inputs.dry_run || false }}
     secrets: inherit
 
@@ -53,7 +53,7 @@ jobs:
       matrix:
         target: ["linux/amd64", "linux/arm64"]
     with:
-      version: ${{ github.env.VERSION }}
+      version: ${{ needs.tagging.outputs.version }}
       dry_run: ${{ inputs.dry_run || false }}
       target: ${{ matrix.target }}
     secrets: inherit
@@ -64,7 +64,7 @@ jobs:
     needs: tagging
     uses: ./.github/workflows/build-app.yml
     with:
-      version: ${{ github.env.VERSION }}
+      version: ${{ needs.tagging.outputs.version }}
       dry_run: ${{ inputs.dry_run || false }}
     secrets: inherit
 

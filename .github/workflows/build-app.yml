@@ -78,6 +78,7 @@ jobs:
             -v $(pwd):/go/src/${PKG_NAME} \
             -w /go/src/${PKG_NAME} \
             -e CGO_ENABLED=1 \
+            -e VERSION=${{ inputs.version }} \
             --env-file local/.release-env \
             ghcr.io/goreleaser/goreleaser-cross:v${GO_VERSION} \
             release --release-notes local/release-notes.md ${{ inputs.dry_run && '--skip=publish' || '' }}

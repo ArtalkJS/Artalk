@@ -1,0 +1,79 @@
+name: Build and Publish
+run-name: Build and Publish (${{ github.head_ref || github.ref }}) ${{ inputs.dry_run && '(🧪 Dry-Run)' || '' }}
+
+on:
+  pull_request:
+    branches: [master]
+    types: [closed]
+
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run'
+        type: boolean
+        default: false
+      build_items:
+        description: 'Build items'
+        type: string
+        default: 'ui,app,docker'
+
+jobs:
+  # Tag the release version code before building
+  # Getting the version code from the branch name or git ref.
+  tagging:
+    # Only run on manual trigger
+    # or when a PR is merged into master.
+    # (which the branch name start with `relase/`)
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/'))
+    uses: ./.github/workflows/build-tagging.yml
+    with:
+      issue_number: ${{ github.event.pull_request.number || 0 }}
+      dry_run: ${{ inputs.dry_run || false }}
+    secrets: inherit
+
+  # Build the UI
+  ui:
+    if: inputs.build_items == '' || contains(inputs.build_items, 'ui')
+    needs: tagging
+    uses: ./.github/workflows/build-ui.yml
+    with:
+      version: ${{ github.env.VERSION }}
+      dry_run: ${{ inputs.dry_run || false }}
+    secrets: inherit
+
+  # Build the Docker image
+  docker:
+    if: inputs.build_items == '' || contains(inputs.build_items, 'docker')
+    needs: tagging
+    uses: ./.github/workflows/build-docker.yml
+    # Parallel build the multi-arch docker image
+    strategy:
+      matrix:
+        target: ["linux/amd64", "linux/arm64"]
+    with:
+      version: ${{ github.env.VERSION }}
+      dry_run: ${{ inputs.dry_run || false }}
+      target: ${{ matrix.target }}
+    secrets: inherit
+
+  # Build the binary app
+  app:
+    if: inputs.build_items == '' || contains(inputs.build_items, 'app')
+    needs: tagging
+    uses: ./.github/workflows/build-app.yml
+    with:
+      version: ${{ github.env.VERSION }}
+      dry_run: ${{ inputs.dry_run || false }}
+    secrets: inherit
+
+  # All builds are complete
+  done:
+    needs: [tagging, ui, docker, app]
+    uses: ./.github/workflows/build-done.yml
+    with:
+      version: ${{ needs.tagging.outputs.version }}
+      issue_number: ${{ github.event.pull_request.number || 0 }}
+      dry_run: ${{ inputs.dry_run || false }}
+    secrets: inherit

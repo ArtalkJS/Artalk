@@ -1,0 +1,30 @@
+name: Build Done
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      dry_run:
+        required: true
+        type: boolean
+      issue_number:
+        required: true
+        type: number
+
+jobs:
+  tagging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Comment done info
+        uses: ./.github/actions/comment
+        if: ${{ inputs.issue_number != 0 }}
+        with:
+          issue_number: ${{ inputs.issue_number }}
+          content: |
+            🎉 Finished build and publish version ${{ inputs.version }}.
+

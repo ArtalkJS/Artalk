@@ -1,5 +1,5 @@
-name: 📦 Release New Version
-run-name: 📦 Release ${{ inputs.custom || inputs.semver }} by @${{ github.actor }} ${{ inputs.dry-run && '(🧪 dry-run)' || '' }}
+name: 0x📦 Release New Version
+run-name: 📦 Release ${{ inputs.semver }} by @${{ github.actor }} ${{ inputs.dry_run && '(🧪 Dry-Run)' || '' }}
 
 on:
   workflow_dispatch:
@@ -12,19 +12,10 @@ on:
           - minor
           - major
         required: true
-      # custom:
-      #   description: 'Custom tag name (i.e v1.0.0-rc.1)'
-      #   required: false
-      #   default: ''
-      dry-run:
+      dry_run:
         description: 'Dry run?'
         type: boolean
-        required: false
         default: false
-
-env:
-  REPO_DISPATCH_EVENT_TYPE: 'artalk-release'
-  UI_NPM_PKG_FILE: 'ui/artalk/package.json'
 
 jobs:
   release:
@@ -43,23 +34,11 @@ jobs:
 
       - name: Handle Version Number
         run: |
-          if [ ! -z "${{ inputs.custom }}" ]; then
-            next_version="${{ inputs.custom }}"
-          else
-            npm install -g semver
-            prev_version="$(git describe --tags --abbrev=0)"
-            echo "prev_version: ${prev_version}"
-            echo "PREV_VERSION=${prev_version}" >> $GITHUB_ENV
-            next_version="v$(semver --increment ${{ inputs.semver }} ${prev_version})"
-          fi
+          PREV_VERSION="$(git describe --tags --abbrev=0)"
+          NEXT_VERSION="v$(semver --increment ${{ inputs.semver }} ${PREV_VERSION})"
 
-          if [[ ! "${next_version}" =~ ^v.* ]]; then
-            echo "[err] custom tag name must be v*."
-            exit 1
-          fi
-
-          echo "next_version: ${next_version}"
-          echo "VERSION=${next_version}" >> $GITHUB_ENV
+          echo "PREV_VERSION=${PREV_VERSION}" >> $GITHUB_ENV
+          echo "VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
 
       - name: Print Next Version
         run: echo "${VERSION}"
@@ -70,38 +49,35 @@ jobs:
               | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
             git-chglog --version
 
-      - name: Version Changelog and Tagging
+      - name: Version Changelog
         run: |
-          if [ ! $(git tag -l "${VERSION}") ]; then
-            # prepend changelog
-            changelog=$(git-chglog --config .github/chglog/config.yml --next-tag "${VERSION}" "${VERSION}")
-            echo -e "${changelog}\n" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
+          # prepend changelog
+          changelog=$(git-chglog --config .github/chglog/config.yml --next-tag "${VERSION}" "${VERSION}")
+          echo -e "${changelog}\n" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
 
-            # modify the version of `package.json`
-            perl -i -pe 's/"version": ".*?"/"version": "'${VERSION#v}'"/g' "${UI_NPM_PKG_FILE}"
+          # modify the version of `package.json`
+          perl -i -pe 's/"version": ".*?"/"version": "'${VERSION#v}'"/g' ui/artalk/package.json
 
-            # modify the version in docs
-            perl -pi -e 's#"latest"(\W+)?:(\W+)?".*?"#"latest": "'${VERSION#v}'"#g' docs/docs/code/ArtalkVersion.json
+          # modify the version in docs
+          perl -pi -e 's#"latest"(\W+)?:(\W+)?".*?"#"latest": "'${VERSION#v}'"#g' docs/docs/code/ArtalkVersion.json
 
-            # git commit
-            git config user.name github-actions[bot]
-            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-            git add .
-            git commit -m "chore: release ${VERSION}"
-            git tag "${VERSION}"
+      - name: Print Git Diff
+        run: git diff
 
-            # git push
-            if [ "${{ inputs.dry-run }}" = "false" ]; then
-              git push origin master "${VERSION}"
-            else
-              git diff HEAD^ HEAD
-            fi
-          else
-            echo "skipped because git tag already exists."
-          fi
-
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v2
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
         with:
-          event-type: ${{ env.REPO_DISPATCH_EVENT_TYPE }}
-          client-payload: '{"version": ${{ toJSON(inputs.dry-run && env.PREV_VERSION || env.VERSION) }}, "dry_run": ${{ toJSON(inputs.dry-run) }}}'
+          branch: "release/${{ env.VERSION }}"
+          commit-message: "chore: release ${{ env.VERSION }}"
+          title: "chore: release ${{ env.VERSION }}"
+          labels: release
+          body: |
+            # Release ${{ env.VERSION }} 📦🚀
+
+            This PR is auto-generated, please check the changelog and confirm the release. 😀
+
+            The build workflow will be triggered after the PR is merged.
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          assignees: ${{ github.actor }}
+          draft: ${{ inputs.dry_run }}

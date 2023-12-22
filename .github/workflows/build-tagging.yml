@@ -1,0 +1,60 @@
+name: Build Pre Tagging
+
+on:
+  workflow_call:
+    inputs:
+      dry_run:
+        required: true
+        type: boolean
+      issue_number:
+        required: true
+        type: number
+    outputs:
+      version:
+        description: 'Version'
+        value: ${{ jobs.tagging.outputs.version }}
+
+jobs:
+  tagging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get release version
+        run: |
+          # `github.head_ref` only exists for pull_request events
+          REF="${{ github.head_ref || github.ref }}"
+          VERSION="${REF#release/}"
+          VERSION="${VERSION#refs/tags/}"
+
+          echo "Version: $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format: $VERSION, please check git ref or tag."
+            exit 1
+          fi
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create Tag
+        run: |
+          if [ ! $(git tag -l "${VERSION}") ]; then
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git tag -a $VERSION -m "Release $VERSION"
+            git push origin $VERSION
+          else
+            echo "Skip creating tag $VERSION, already exists."
+          fi
+
+      - name: Comment tag info to PR
+        uses: ./.github/actions/comment
+        if: ${{ inputs.issue_number != 0 }}
+        with:
+          issue_number: ${{ inputs.issue_number }}
+          content: |
+            🔖 Tagged version [${{ env.VERSION }}](https://github.com/ArtalkJS/Artalk/tree/${{ env.VERSION }}), also see [CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md).
+    outputs:
+      version: ${{ env.VERSION }}

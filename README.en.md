@@ -109,6 +109,13 @@ services:
 docker-compose up -d
 ```
 
+### Deploy on Sealos (oneClick deployment)
+
+> Click the button below to deploy with one click.👇
+
+[![Deploy-on-Sealos.svg](https://raw.githubusercontent.com/labring-actions/templates/main/Deploy-on-Sealos.svg)](https://cloud.sealos.io/?openapp=system-fastdeploy?templateName=artalk)
+
+
 ## Development
 
 see [CONTRIBUTING.md](./CONTRIBUTING.md)

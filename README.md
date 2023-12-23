@@ -109,6 +109,13 @@ services:
 docker-compose up -d
 ```
 
+### sealos (一键部署)
+
+点击以下按钮一键部署（部署后访问出现 404 请等待 3~5 分钟）：
+
+[![Deploy-on-Sealos.svg](https://raw.githubusercontent.com/labring-actions/templates/main/Deploy-on-Sealos.svg)](https://cloud.sealos.io/?openapp=system-fastdeploy?templateName=artalk)
+
+
 ## Development
 
 see [CONTRIBUTING.md](./CONTRIBUTING.md)

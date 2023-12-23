@@ -11,7 +11,7 @@ import Defaults from './defaults'
  */
 export function handelCustomConf(customConf: Partial<ArtalkConfig>): ArtalkConfig {
   // 合并默认配置
-  const conf: ArtalkConfig = Utils.mergeDeep(Defaults, customConf)
+  const conf: ArtalkConfig = Utils.mergeDeep({ ...Defaults }, customConf)
 
   // TODO the type of el options may HTMLElement, use it directly instead of from mergeDeep
   if (customConf.el) conf.el = customConf.el

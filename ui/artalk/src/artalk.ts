@@ -9,6 +9,8 @@ import { DefaultPlugins } from './plugins'
 import * as Stat from './plugins/stat'
 import Api from './api'
 import type { TInjectedServices } from './service'
+import * as Utils from "./lib/utils";
+import Defaults from "./defaults";
 
 /** Global Plugins for all instances */
 const GlobalPlugins: ArtalkPlugin[] = [ ...DefaultPlugins ]
@@ -28,7 +30,7 @@ export default class Artalk {
 
   constructor(conf: Partial<ArtalkConfig>) {
     // Init Config
-    this.conf = handelCustomConf(conf)
+    this.conf = handelCustomConf(Utils.mergeDeep(Utils.mergeDeep({}, Defaults), conf))
     if (this.conf.el instanceof HTMLElement) this.$root = this.conf.el
 
     // Init Context

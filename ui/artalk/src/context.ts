@@ -134,7 +134,7 @@ class Context implements ContextApi {
   }
 
   public updateConf(nConf: Partial<ArtalkConfig>): void {
-    this.conf = Utils.mergeDeep(this.conf, handelCustomConf(nConf))
+    this.conf = handelCustomConf(Utils.mergeDeep(this.conf, nConf))
     this.events.trigger('conf-loaded', this.conf)
   }
 

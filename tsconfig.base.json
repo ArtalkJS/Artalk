@@ -4,7 +4,7 @@
     "useDefineForClassFields": true,
     "module": "esnext",
     "lib": ["esnext", "dom"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
     "sourceMap": true,
     "experimentalDecorators": true,

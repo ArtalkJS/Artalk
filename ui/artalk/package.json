@@ -58,6 +58,8 @@
     "predeploy": "pnpm build && pnpm build:demo && pnpm copy:deploy",
     "deploy": "gh-pages -d deploy",
     "dev": "vite",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
     "lint": "eslint './src/**/*.{js,ts}'",
     "serve": "vite preview",
     "test:e2e": "playwright test",

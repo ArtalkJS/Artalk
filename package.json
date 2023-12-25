@@ -10,7 +10,8 @@
     "build:sidebar": "pnpm -F @artalk/artalk-sidebar build",
     "build:all": "pnpm build && pnpm build:sidebar",
     "build:docs": "pnpm build && pnpm -F=docs-landing build && pnpm -F=docs-swagger swagger:build && pnpm -F=docs build:docs && pnpm patch:docs",
-    "patch:docs": "cp -rf docs/landing/dist/* docs/swagger/dist/* docs/docs/.vitepress/dist"
+    "patch:docs": "cp -rf docs/landing/dist/* docs/swagger/dist/* docs/docs/.vitepress/dist",
+    "test": "pnpm -F artalk test"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.1",
@@ -18,6 +19,7 @@
     "@types/node": "20.10.5",
     "@typescript-eslint/eslint-plugin": "6.15.0",
     "@typescript-eslint/parser": "6.15.0",
+    "@vitest/coverage-v8": "^1.1.0",
     "autoprefixer": "10.4.16",
     "eslint": "8.56.0",
     "eslint-config-airbnb-base": "15.0.0",
@@ -26,6 +28,7 @@
     "eslint-import-resolver-typescript": "3.6.1",
     "eslint-plugin-compat": "4.2.0",
     "eslint-plugin-import": "2.29.1",
+    "jsdom": "^23.0.1",
     "postcss": "8.4.32",
     "prettier": "3.1.1",
     "rollup": "4.9.1",
@@ -35,7 +38,8 @@
     "vite": "5.0.10",
     "vite-plugin-checker": "0.6.2",
     "vite-plugin-dts": "3.6.4",
-    "vite-tsconfig-paths": "4.2.2"
+    "vite-tsconfig-paths": "4.2.2",
+    "vitest": "^1.1.0"
   },
   "browserslist": [
     "supports es6 and supports es6-class and supports es6-generators and supports es6-module-dynamic-import and supports es6-module and supports es6-number and supports es6-string-includes"

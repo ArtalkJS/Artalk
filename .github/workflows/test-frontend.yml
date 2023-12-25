@@ -37,6 +37,5 @@ jobs:
       - name: Package Build Test
         run: pnpm build:all
 
-      # TODO: Add unit test
-      # - name: Unit test
-      #   run: pnpm test
+      - name: Unit test
+        run: pnpm test

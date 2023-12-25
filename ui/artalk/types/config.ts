@@ -129,6 +129,7 @@ export interface ArtalkConfig {
   remoteConfModifier?: (conf: Partial<ArtalkConfig>) => void
   listUnreadHighlight?: boolean
   scrollRelativeTo?: () => HTMLElement
+  immediateFetch?: boolean
 }
 
 /**

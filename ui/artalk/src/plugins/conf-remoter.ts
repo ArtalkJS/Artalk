@@ -4,6 +4,11 @@ import { showErrorDialog } from '../components/error-dialog'
 
 export const ConfRemoter: ArtalkPlugin = (ctx) => {
   ctx.on('inited', () => {
+    if (ctx.conf.immediateFetch === false) return
+    ctx.trigger('conf-fetch')
+  })
+
+  ctx.on('conf-fetch', () => {
     loadConf(ctx)
   })
 }

@@ -3,15 +3,22 @@ import type { ApiOptions } from './api/_options'
 import * as Utils from './lib/utils'
 import Defaults from './defaults'
 
+
 /**
  * Merges the user custom config with the default config
- *
- * @param customConf - The custom config object which is provided by the user
- * @returns The config for Artalk instance creation
- */
-export function handelCustomConf(customConf: Partial<ArtalkConfig>): ArtalkConfig {
+*
+* @param customConf - The custom config object which is provided by the user
+* @param mergeDefaults - If `true`, the default config will be merged into the custom config
+* @returns The config for Artalk instance creation
+*/
+export function handelCustomConf(customConf: Partial<ArtalkConfig>, mergeDefaults?: true): ArtalkConfig
+export function handelCustomConf(customConf: Partial<ArtalkConfig>, mergeDefaults: false): Partial<ArtalkConfig>
+export function handelCustomConf(customConf: Partial<ArtalkConfig>, mergeDefaults = true) {
   // 合并默认配置
-  const conf: ArtalkConfig = Utils.mergeDeep({ ...Defaults }, customConf)
+  let conf: ArtalkConfig | Partial<ArtalkConfig> = { ...customConf }
+  if (mergeDefaults) {
+    conf = Utils.mergeDeep({ ...Defaults }, customConf)
+  }
 
   // TODO the type of el options may HTMLElement, use it directly instead of from mergeDeep
   if (customConf.el) conf.el = customConf.el
@@ -29,7 +36,9 @@ export function handelCustomConf(customConf: Partial<ArtalkConfig>): ArtalkConfi
   }
 
   // 服务器配置
-  conf.server = conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
+  if (conf.server) {
+    conf.server = conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
+  }
 
   // 默认 pageKey
   if (!conf.pageKey) {

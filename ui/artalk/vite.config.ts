@@ -1,9 +1,8 @@
-import { defineConfig } from 'vite'
+import { defineConfig, mergeConfig } from 'vite'
 import { resolve } from 'path'
 import baseConf from './vite-base.config'
-import * as Utils from './src/lib/utils'
 
-export default Utils.mergeDeep(baseConf, defineConfig({
+export default mergeConfig(baseConf, defineConfig({
   build: {
     target: 'es2015',
     outDir: resolve(__dirname, "dist"),

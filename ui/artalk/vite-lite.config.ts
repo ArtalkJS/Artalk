@@ -1,7 +1,7 @@
+import { mergeConfig } from 'vite'
 import fullVersionConf from './vite.config'
-import * as Utils from './src/lib/utils'
 
-export default Utils.mergeDeep(fullVersionConf, {
+export default mergeConfig(fullVersionConf, {
   build: {
     lib: {
       fileName: (format) => ((format == "umd") ? 'ArtalkLite.js' : `ArtalkLite.${format}.js`),

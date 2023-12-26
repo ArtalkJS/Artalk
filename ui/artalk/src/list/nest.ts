@@ -1,4 +1,4 @@
-import type { CommentData } from '~/types'
+import type { CommentData } from '@/types'
 
 export type CommentNode = {
   id: number

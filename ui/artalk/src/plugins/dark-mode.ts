@@ -1,4 +1,4 @@
-import type { ArtalkPlugin } from '~/types'
+import type { ArtalkPlugin } from '@/types'
 
 // Notice: Singleton mode needs to be loaded as lazy as possible,
 //         because the SSG application does not have a `window` context.

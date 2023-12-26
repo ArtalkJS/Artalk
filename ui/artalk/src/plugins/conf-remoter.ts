@@ -1,4 +1,4 @@
-import type { ArtalkConfig, ArtalkPlugin, ContextApi } from '~/types'
+import type { ArtalkConfig, ArtalkPlugin, ContextApi } from '@/types'
 import { handleConfFormServer } from '@/config'
 import { showErrorDialog } from '../components/error-dialog'
 

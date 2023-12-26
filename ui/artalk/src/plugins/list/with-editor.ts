@@ -1,4 +1,4 @@
-import type { ContextApi, ArtalkPlugin, PageData } from '~/types'
+import type { ContextApi, ArtalkPlugin, PageData } from '@/types'
 import $t from '@/i18n'
 
 export const WithEditor: ArtalkPlugin = (ctx) => {

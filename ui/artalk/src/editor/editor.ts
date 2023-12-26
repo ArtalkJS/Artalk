@@ -1,4 +1,4 @@
-import type { CommentData, ContextApi, EditorApi } from '~/types'
+import type { CommentData, ContextApi, EditorApi } from '@/types'
 import Component from '../lib/component'
 import * as Ui from '../lib/ui'
 import marked from '../lib/marked'

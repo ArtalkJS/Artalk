@@ -1,4 +1,4 @@
-import type { ContextApi, CommentData } from '~/types'
+import type { ContextApi, CommentData } from '@/types'
 import Comment from '../comment/comment'
 
 export function createComment(ctx: ContextApi, comment: CommentData, ctxComments: CommentData[]): Comment {

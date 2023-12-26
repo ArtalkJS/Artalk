@@ -1,4 +1,4 @@
-import type { ArtalkConfig, ContextApi } from '~/types'
+import type { ArtalkConfig, ContextApi } from '@/types'
 import $t from '@/i18n'
 import { Paginator } from './paginator'
 import ReadMorePaginator from './paginator/read-more'

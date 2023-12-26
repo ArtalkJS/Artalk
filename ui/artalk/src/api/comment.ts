@@ -1,4 +1,4 @@
-import type { CommentData, ListData } from '~/types'
+import type { CommentData, ListData } from '@/types'
 import * as Utils from '../lib/utils'
 import ApiBase from './_base'
 

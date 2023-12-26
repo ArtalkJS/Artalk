@@ -1,4 +1,4 @@
-import type { CommentData } from '~/types'
+import type { CommentData } from '@/types'
 import type PlugKit from './_kit'
 
 export default class SubmitAddPreset {

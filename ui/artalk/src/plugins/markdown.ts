@@ -1,4 +1,4 @@
-import type { ArtalkPlugin } from '~/types'
+import type { ArtalkPlugin } from '@/types'
 import * as marked from '@/lib/marked'
 
 export const Markdown: ArtalkPlugin = (ctx) => {

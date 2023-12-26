@@ -1,4 +1,4 @@
-import type { ArtalkPlugin } from '~/types'
+import type { ArtalkPlugin } from '@/types'
 import * as Utils from '@/lib/utils'
 
 /** 评论时间自动更新 */

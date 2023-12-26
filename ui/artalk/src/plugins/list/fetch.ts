@@ -1,4 +1,4 @@
-import type { ListFetchParams, ArtalkPlugin } from '~/types'
+import type { ListFetchParams, ArtalkPlugin } from '@/types'
 
 export const Fetch: ArtalkPlugin = (ctx) => {
   ctx.on('list-fetch', (_params) => {

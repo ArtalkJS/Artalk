@@ -1,4 +1,4 @@
-import type { LocalUser } from '~/types'
+import type { LocalUser } from '@/types'
 
 const LOCAL_USER_KEY = 'ArtalkUser'
 

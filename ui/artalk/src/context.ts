@@ -30,7 +30,7 @@ class Context implements ContextApi {
   public constructor(conf: ArtalkConfig) {
     this.conf = conf
 
-    this.$root = (conf.el instanceof Element) ? conf.el : document.createElement('div')
+    this.$root = conf.el as HTMLElement
     this.$root.classList.add('artalk')
     this.$root.innerHTML = ''
 

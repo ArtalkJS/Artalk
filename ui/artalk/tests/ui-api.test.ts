@@ -117,6 +117,17 @@ describe('Artalk instance', () => {
     expect(conf.gravatar, "the gravatar which not in update should keep the same").toEqual(RemoteConf.gravatar)
   })
 
+  it('should can getEl after config updated (artalk.getEl)', () => {
+    const target = document.getElementById(ContainerID)
+    expect(target).not.toBe(null)
+
+    const el = artalk.getEl()
+    expect(el).toBe(target)
+
+    const el2 = artalk.getConf().el
+    expect(el2).toBe(target)
+  })
+
   it('should can set dark mode (artalk.setDarkMode)', () => {
     const el = artalk.getEl()
     expect(artalk.getConf().darkMode).toBe(true)

@@ -43,3 +43,23 @@ describe('Prevent in-place modify: mergeDeep(a, b)', () => {
     expect(b).toEqual({ a: 1, arr: [1, 2, 3] })
   })
 })
+
+describe('Merge special types', () => {
+  const testItem = (name: string, val: any) => {
+    it(name, () => {
+      expect(mergeDeep({ a: val }, { b: val })).toEqual({ a: val, b: val })
+    })
+  }
+
+  const dom = document.createElement('div')
+  testItem('should can keep dom, not deep recursion', dom)
+
+  const fn = () => {}
+  testItem('should can keep function', fn)
+
+  const date = new Date()
+  testItem('should can keep date', date)
+
+  const reg = /abc/
+  testItem('should can keep regex', reg)
+})

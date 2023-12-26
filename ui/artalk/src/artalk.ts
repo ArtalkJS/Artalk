@@ -19,20 +19,17 @@ const GlobalPlugins: ArtalkPlugin[] = [ ...DefaultPlugins ]
  * @see https://artalk.js.org
  */
 export default class Artalk {
-  public conf!: ArtalkConfig
   public ctx!: ContextApi
-  public $root!: HTMLElement
 
   /** Plugins */
   protected plugins: ArtalkPlugin[] = [ ...GlobalPlugins ]
 
   constructor(conf: Partial<ArtalkConfig>) {
     // Init Config
-    this.conf = handelCustomConf(conf)
-    if (this.conf.el instanceof HTMLElement) this.$root = this.conf.el
+    const handledConf = handelCustomConf(conf, true)
 
     // Init Context
-    this.ctx = new Context(this.conf, this.$root)
+    this.ctx = new Context(handledConf)
 
     // Init Services
     Object.entries(Services).forEach(([name, initService]) => {
@@ -49,6 +46,16 @@ export default class Artalk {
     this.ctx.trigger('inited')
   }
 
+  /** Get the config of Artalk */
+  public getConf() {
+    return this.ctx.getConf()
+  }
+
+  /** Get the root element of Artalk */
+  public getEl() {
+    return this.ctx.$root
+  }
+
   /** Update config of Artalk */
   public update(conf: Partial<ArtalkConfig>) {
     this.ctx.updateConf(conf)
@@ -63,7 +70,7 @@ export default class Artalk {
   /** Destroy instance of Artalk */
   public destroy() {
     this.ctx.trigger('destroy')
-    this.$root.remove()
+    this.ctx.$root.remove()
   }
 
   /** Add an event listener */
@@ -103,7 +110,7 @@ export default class Artalk {
 
   /** Load count widget */
   public static loadCountWidget(c: Partial<ArtalkConfig>) {
-    const conf = handelCustomConf(c)
+    const conf = handelCustomConf(c, true)
 
     Stat.initCountWidget({
       getApi: () => new Api(convertApiOptions(conf)),
@@ -113,4 +120,14 @@ export default class Artalk {
       pvAdd: false
     })
   }
+
+  // ===========================
+  //         Deprecated
+  // ===========================
+
+  /** @deprecated Please use `getEl()` instead */
+  public get $root() { return this.ctx.$root }
+
+  /** @description Please use `getConf()` instead */
+  public get conf() { return this.ctx.getConf() }
 }

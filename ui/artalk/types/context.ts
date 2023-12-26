@@ -79,6 +79,9 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 设置夜间模式 */
   setDarkMode(darkMode: boolean|'auto'): void
 
+  /** 获取配置 */
+  getConf(): ArtalkConfig
+
   /** 更新配置 */
   updateConf(conf: Partial<ArtalkConfig>): void
 }

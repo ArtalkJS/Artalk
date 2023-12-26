@@ -2,8 +2,8 @@ import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPaylo
 import type { TInjectedServices } from './service'
 import Api from './api'
 
-import * as Utils from './lib/utils'
 import * as marked from './lib/marked'
+import { mergeDeep } from './lib/merge-deep'
 import { CheckerCaptchaPayload, CheckerPayload } from './components/checker'
 
 import { DataManager } from './data'
@@ -27,10 +27,10 @@ class Context implements ContextApi {
   /* Event Manager */
   private events = new EventManager<EventPayloadMap>()
 
-  public constructor(conf: ArtalkConfig, $root?: HTMLElement) {
+  public constructor(conf: ArtalkConfig) {
     this.conf = conf
 
-    this.$root = $root || document.createElement('div')
+    this.$root = conf.el as HTMLElement
     this.$root.classList.add('artalk')
     this.$root.innerHTML = ''
 
@@ -134,8 +134,12 @@ class Context implements ContextApi {
   }
 
   public updateConf(nConf: Partial<ArtalkConfig>): void {
-    this.conf = Utils.mergeDeep(this.conf, handelCustomConf(nConf))
+    this.conf = mergeDeep(this.conf, handelCustomConf(nConf, false))
     this.events.trigger('conf-loaded', this.conf)
+  }
+
+  public getConf(): ArtalkConfig {
+    return this.conf
   }
 
   public getMarked() {

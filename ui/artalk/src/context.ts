@@ -142,6 +142,10 @@ class Context implements ContextApi {
     return this.conf
   }
 
+  public getEl(): HTMLElement {
+    return this.$root
+  }
+
   public getMarked() {
     return marked.getInstance()
   }

@@ -82,6 +82,9 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 获取配置 */
   getConf(): ArtalkConfig
 
+  /** 获取挂载元素 */
+  getEl(): HTMLElement
+
   /** 更新配置 */
   updateConf(conf: Partial<ArtalkConfig>): void
 }

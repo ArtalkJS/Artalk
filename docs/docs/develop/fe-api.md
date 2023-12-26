@@ -157,3 +157,23 @@ artalk.setDarkMode(true)
 ## 浏览量组件 `loadCountWidget`
 
 详情见：[浏览量统计](../guide/frontend/pv.md)
+
+## 获取配置 `getConf`
+
+获取当前 Artalk 配置。
+
+```js
+const artalk = Artalk.init({ ... })
+
+const conf = artalk.getConf()
+```
+
+## 获取挂载元素 `getEl`
+
+获取当前 Artalk 挂载的 DOM 元素。
+
+```js
+const artalk = Artalk.init({ ... })
+
+const el = artalk.getEl()
+```

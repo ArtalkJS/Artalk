@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeAll } from 'vitest'
 import Artalk from '@/artalk'
 
 const InitConf = {
+  pageTitle: 'Artalk DEMO',
   pageKey: '/unit_test_page.html?test=1',
   server: 'http://localhost:3000/api',
   site: 'Unit Test Page',
@@ -65,17 +66,15 @@ describe('Artalk instance', () => {
     document.body.appendChild(el)
 
     artalk = Artalk.init({
+      ...InitConf,
       el,
-      pageKey: InitConf.pageKey,
-      server: InitConf.server,
-      site: InitConf.site,
-      darkMode: InitConf.darkMode,
-
       immediateFetch: false,  // for testing
     })
 
     expect(artalk).toBeInstanceOf(Artalk)
   })
+
+  let confCopy: any
 
   it('should have correct config (artalk.getConf, artalk.getEl)', () => {
     const conf = artalk.getConf()
@@ -85,6 +84,8 @@ describe('Artalk instance', () => {
     expect(conf.darkMode).toBe(InitConf.darkMode)
 
     expect(artalk.getEl().classList.contains('atk-dark-mode')).toBe(true)
+
+    confCopy = JSON.parse(JSON.stringify(conf))
   })
 
   it('should can listen to events and the conf-remoter works (artalk.trigger, artalk.on, conf-remoter)', async () => {
@@ -106,6 +107,12 @@ describe('Artalk instance', () => {
     expect(conf.gravatar, "the gravatar should be modified").toEqual(RemoteConf.gravatar)
   }, {
     timeout: 1000
+  })
+
+  it('should other config not changed after conf-remoter loaded (conf-remoter, artalk.update)', () => {
+    const confNew = JSON.parse(JSON.stringify(artalk.getConf()))
+    confCopy.gravatar = confNew.gravatar // exclude
+    expect(confCopy).toMatchObject(confNew)
   })
 
   it('should can update config (artalk.update)', () => {

@@ -19,5 +19,8 @@
     "markdown-it-for-inline": "^2.0.1",
     "sass": "^1.69.5",
     "vitepress": "1.0.0-rc.32"
+  },
+  "dependencies": {
+    "vue": "^3.3.12"
   }
 }

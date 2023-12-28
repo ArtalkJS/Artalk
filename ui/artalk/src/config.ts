@@ -3,21 +3,21 @@ import type { ApiOptions } from './api/_options'
 import { mergeDeep } from './lib/merge-deep'
 import Defaults from './defaults'
 
-
 /**
  * Handle the custom config which is provided by the user
  *
  * @param customConf - The custom config object which is provided by the user
+ * @param full - If `full` is `true`, the return value will be the complete config for Artalk instance creation
  * @returns The config for Artalk instance creation
  */
-export function handelCustomConf(customConf: Partial<ArtalkConfig>, mergeDefault: true): ArtalkConfig
-export function handelCustomConf(customConf: Partial<ArtalkConfig>, mergeDefault?: false): Partial<ArtalkConfig>
-export function handelCustomConf(customConf: Partial<ArtalkConfig>, mergeDefault = false) {
+export function handelCustomConf(customConf: Partial<ArtalkConfig>, full: true): ArtalkConfig
+export function handelCustomConf(customConf: Partial<ArtalkConfig>, full?: false): Partial<ArtalkConfig>
+export function handelCustomConf(customConf: Partial<ArtalkConfig>, full = false) {
   // 合并默认配置
-  const conf: Partial<ArtalkConfig> = mergeDefault ? mergeDeep(Defaults, customConf) : customConf
+  const conf: Partial<ArtalkConfig> = full ? mergeDeep(Defaults, customConf) : customConf
 
   // 绑定元素
-  if (typeof conf.el === 'string' && !!conf.el) {
+  if (conf.el && typeof conf.el === 'string') {
     try {
       const findEl = document.querySelector<HTMLElement>(conf.el)
       if (!findEl) throw Error(`Target element "${conf.el}" was not found.`)
@@ -28,34 +28,29 @@ export function handelCustomConf(customConf: Partial<ArtalkConfig>, mergeDefault
     }
   }
 
-  // 服务器配置
-  if (conf.server) {
-    conf.server = conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
-  }
-
   // 默认 pageKey
-  if (!conf.pageKey) {
-    // @link http://bl.ocks.org/abernier/3070589
-    conf.pageKey = `${window.location.pathname}`
-  }
+  if (conf.pageKey === '')
+    conf.pageKey = `${window.location.pathname}` // @link http://bl.ocks.org/abernier/3070589
 
   // 默认 pageTitle
-  if (!conf.pageTitle) {
+  if (conf.pageTitle === '')
     conf.pageTitle = `${document.title}`
-  }
+
+  // 服务器配置
+  if (conf.server)
+    conf.server = conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
 
   // 自适应语言
-  if (conf.locale === 'auto') {
+  if (conf.locale === 'auto')
     conf.locale = navigator.language
-  }
-
-  // flatMode
-  if (conf.flatMode === true || Number(conf.nestMax) <= 1)
-    conf.flatMode = true
 
   // 自动判断启用平铺模式
   if (conf.flatMode === 'auto')
     conf.flatMode = window.matchMedia("(max-width: 768px)").matches
+
+  // flatMode
+  if (typeof conf.nestMax === 'number' && Number(conf.nestMax) <= 1)
+    conf.flatMode = true
 
   return conf
 }

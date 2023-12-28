@@ -32,8 +32,6 @@
 
 Directly referencing `artalk.conf` and `artalk.$root` is deprecated. Please use functions instead: `artalk.getConf()` and `artalk.getEl()`.
 
----------
-
 
 ## [v2.7.2](https://github.com/ArtalkJS/Artalk/compare/v2.7.1...v2.7.2) (2023-12-20)
 

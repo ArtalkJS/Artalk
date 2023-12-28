@@ -1,4 +1,4 @@
-export default {
+const en = {
   /* Editor */
   placeholder: 'Leave a comment',
   noComment: 'No Comment',
@@ -83,3 +83,8 @@ export default {
   ignore: 'Ignore',
   open: 'Open'
 }
+
+export type I18n = typeof en
+export type I18nKeys = keyof I18n
+
+export default en

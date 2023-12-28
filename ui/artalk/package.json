@@ -27,10 +27,6 @@
       "require": {
         "types": "./dist/main.d.cts",
         "default": "./dist/Artalk.cjs"
-      },
-      "default": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/ArtalkLite.js"
       }
     },
     "./dist/ArtalkLite": {
@@ -41,21 +37,27 @@
       "require": {
         "types": "./dist/main.d.cts",
         "default": "./dist/ArtalkLite.cjs"
-      },
-      "default": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/ArtalkLite.js"
       }
     },
     "./dist/i18n/jp": {
-      "import": "./dist/i18n/jp.mjs",
-      "require": "./dist/i18n/jp.cjs",
-      "default": "./dist/i18n/jp.js"
+      "import": {
+        "types": "./dist/i18n/jp.d.ts",
+        "default": "./dist/i18n/jp.mts"
+      },
+      "require": {
+        "types": "./dist/i18n/jp.d.cts",
+        "default": "./dist/i18n/jp.cjs"
+      }
     },
     "./dist/i18n/zh-TW": {
-      "import": "./dist/i18n/zh-TW.mjs",
-      "require": "./dist/i18n/zh-TW.cjs",
-      "default": "./dist/i18n/zh-TW.js"
+      "import": {
+        "types": "./dist/i18n/zh-TW.d.ts",
+        "default": "./dist/i18n/zh-TW.mts"
+      },
+      "require": {
+        "types": "./dist/i18n/zh-TW.d.cts",
+        "default": "./dist/i18n/zh-TW.cjs"
+      }
     },
     "./dist/i18n/*": "./dist/i18n/*",
     "./dist/*.css": {
@@ -66,18 +68,13 @@
   },
   "typesVersions": {
     "*": {
-      "dist/main.d.ts": [
-        "./dist/main.d.ts"
-      ],
       "dist/ArtalkLite": [
         "./dist/main.d.ts"
       ]
     }
   },
   "main": "./dist/Artalk.js",
-  "jsdelivr": "./dist/Artalk.iife.js",
-  "unpkg": "./dist/Artalk.iife.js",
-  "module": "./dist/Artalk.es.js",
+  "module": "./dist/Artalk.mjs",
   "types": "./dist/main.d.ts",
   "files": [
     "dist"
@@ -93,6 +90,7 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint './src/**/*.{js,ts}'",
+    "attw": "pnpx @arethetypeswrong/cli --pack .",
     "serve": "vite preview",
     "test:e2e": "playwright test",
     "test:report": "playwright show-report"

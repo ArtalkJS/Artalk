@@ -39,3 +39,7 @@ jobs:
 
       - name: Unit test
         run: pnpm test
+
+      # https://github.com/arethetypeswrong/arethetypeswrong.github.io
+      - name: 'arethetypeswrong test'
+        run: pnpm -F artalk attw

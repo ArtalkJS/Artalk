@@ -26,10 +26,7 @@ fs.readdirSync(i18nPath).forEach(f => {
   libraries.push({
     entry: filename,
     name: lang,
-    fileName: (format) => {
-      console.log(lang)
-      return getFileName(lang, format)
-    },
+    fileName: (format) => getFileName(lang, format),
   })
 })
 
@@ -47,4 +44,9 @@ libraries.forEach(async (lib) => {
     },
     configFile: false, // prevent load any vite config file
   })
+
+  // crete d.ts file
+  const dts = `import type { I18n } from '../main.d.cts'\nexport = I18n`
+  fs.writeFileSync(path.join(outDir, `${lib.name!}.d.ts`), dts)
+  fs.writeFileSync(path.join(outDir, `${lib.name!}.d.cts`), dts)
 })

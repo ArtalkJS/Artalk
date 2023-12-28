@@ -1,4 +1,40 @@
 
+## [v2.7.3](https://github.com/ArtalkJS/Artalk/compare/v2.7.2...v2.7.3) (2023-12-28)
+
+### Features
+
+* **ci:** add dry-run mode for build workflow
+* **cmd:** support cli flag for creating admin account
+
+### Bug Fixes
+
+* **ui/init:** stack overflow when merging with config defaults ([#717](https://github.com/ArtalkJS/Artalk/issues/717))
+
+### Performance Improvements
+
+* **ui/build:** better dts generation ([#689](https://github.com/ArtalkJS/Artalk/issues/689))
+
+### Code Refactoring
+
+* **ci:** better release workflow
+* **docker:** add `--build-arg` argument to skip ui build
+* **test/ui:** add more ui api tests
+* **ui:** refactor directory structure ([#712](https://github.com/ArtalkJS/Artalk/issues/712))
+* **ui/conf:** better handling of mutable config ([#722](https://github.com/ArtalkJS/Artalk/issues/722))
+* **ui/test:** add vitest for unit testing
+
+### Documentation
+
+* update ui api documentation
+
+### BREAKING CHANGE
+
+
+Directly referencing `artalk.conf` and `artalk.$root` is deprecated. Please use functions instead: `artalk.getConf()` and `artalk.getEl()`.
+
+---------
+
+
 ## [v2.7.2](https://github.com/ArtalkJS/Artalk/compare/v2.7.1...v2.7.2) (2023-12-20)
 
 ### Features

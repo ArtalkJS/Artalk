@@ -1,4 +1,4 @@
-import type { CommentData, EditorState } from '~/types'
+import type { CommentData, EditorState } from '@/types'
 import * as Utils from '@/lib/utils'
 import type PlugKit from './_kit'
 

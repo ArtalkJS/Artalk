@@ -1,4 +1,4 @@
-import type { ArtalkPlugin } from '~/types'
+import type { ArtalkPlugin } from '@/types'
 import { WithEditor } from './with-editor'
 import { Unread } from './unread'
 import { Count } from './count'

@@ -1,4 +1,4 @@
-import type Comment from '~/src/comment'
+import type Comment from '@/comment'
 import { CommentData, ListData, ListFetchParams, NotifyData, PageData } from './data'
 import { ArtalkConfig, LocalUser } from './config'
 

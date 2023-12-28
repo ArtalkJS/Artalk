@@ -1,4 +1,4 @@
-import type { UserData, NotifyData, UserDataForAdmin } from '~/types'
+import type { UserData, NotifyData, UserDataForAdmin } from '@/types'
 import ApiBase from './_base'
 import { ToFormData } from './_request'
 

@@ -1,4 +1,4 @@
-import type { ContextApi } from '~/types'
+import type { ContextApi } from '@/types'
 import CheckerLauncher from './components/checker'
 import Editor from './editor/editor'
 import SidebarLayer from './layer/sidebar-layer'

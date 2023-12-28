@@ -1,4 +1,4 @@
-import type { ArtalkConfig } from '~/types'
+import type { ArtalkConfig } from '@/types'
 import type EditorPlug from './_plug'
 import LocalStorage from './local-storage'
 import Textarea from './textarea'

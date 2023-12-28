@@ -1,4 +1,4 @@
-import type { CommentData } from '~/types'
+import type { CommentData } from '@/types'
 import $t from '@/i18n'
 import * as Utils from '@/lib/utils'
 import type PlugKit from './_kit'

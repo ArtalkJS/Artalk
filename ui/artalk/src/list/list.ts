@@ -1,4 +1,4 @@
-import type { ContextApi } from '~/types'
+import type { ContextApi } from '@/types'
 import Component from '../lib/component'
 import * as Utils from '../lib/utils'
 import CommentNode from '../comment/comment'

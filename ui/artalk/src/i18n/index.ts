@@ -1,9 +1,8 @@
-import en from './en'
+import en, { I18n, I18nKeys } from './en'
 import zhCN from './zh-CN'
 import { GLOBAL_LOCALES_KEY } from './external'
 
-export type I18n = typeof en
-export type I18nKeys = keyof I18n
+export type * from './en'
 
 // @note the key of language is followed by `ISO 639`
 // https://en.wikipedia.org/wiki/ISO_639

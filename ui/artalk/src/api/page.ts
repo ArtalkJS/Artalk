@@ -1,4 +1,4 @@
-import type { PageData, CommentData } from '~/types'
+import type { PageData, CommentData } from '@/types'
 import ApiBase from './_base'
 
 /**

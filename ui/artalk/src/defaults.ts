@@ -1,4 +1,4 @@
-import type { ArtalkConfig } from '~/types'
+import type { ArtalkConfig } from '@/types'
 
 const defaults: ArtalkConfig = {
   el: '',

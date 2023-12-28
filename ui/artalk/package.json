@@ -20,40 +20,69 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/src/main.d.ts",
-      "require": "./dist/Artalk.js",
-      "default": "./dist/Artalk.es.js"
+      "import": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/Artalk.mjs"
+      },
+      "require": {
+        "types": "./dist/main.d.cts",
+        "default": "./dist/Artalk.cjs"
+      }
     },
-    "./dist/*": "./dist/*",
-    "./dist/Artalk": "./dist/Artalk.js",
-    "./dist/Artalk.es": "./dist/Artalk.es.js",
-    "./dist/Artalk.iife": "./dist/Artalk.iife.js",
-    "./dist/ArtalkLite": "./dist/ArtalkLite.js",
-    "./dist/ArtalkLite.es": "./dist/ArtalkLite.es.js",
-    "./dist/ArtalkLite.iife": "./dist/ArtalkLite.iife.js",
-    "./dist/i18n/jp": "./dist/i18n/jp.js",
-    "./dist/i18n/zh-TW": "./dist/i18n/zh-TW.js",
-    "./i18n/*": "./dist/i18n/*",
-    "./lite/*": {
-      "types": "./dist/src/main.d.ts",
-      "require": "./dist/ArtalkLite.js",
-      "default": "./dist/ArtalkLite.es.js"
+    "./dist/ArtalkLite": {
+      "import": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/ArtalkLite.mjs"
+      },
+      "require": {
+        "types": "./dist/main.d.cts",
+        "default": "./dist/ArtalkLite.cjs"
+      }
     },
-    "./style": "./dist/Artalk.css"
+    "./dist/i18n/jp": {
+      "import": {
+        "types": "./dist/i18n/jp.d.ts",
+        "default": "./dist/i18n/jp.mts"
+      },
+      "require": {
+        "types": "./dist/i18n/jp.d.cts",
+        "default": "./dist/i18n/jp.cjs"
+      }
+    },
+    "./dist/i18n/zh-TW": {
+      "import": {
+        "types": "./dist/i18n/zh-TW.d.ts",
+        "default": "./dist/i18n/zh-TW.mts"
+      },
+      "require": {
+        "types": "./dist/i18n/zh-TW.d.cts",
+        "default": "./dist/i18n/zh-TW.cjs"
+      }
+    },
+    "./dist/i18n/*": "./dist/i18n/*",
+    "./dist/*.css": {
+      "import": "./dist/*.css",
+      "require": "./dist/*.css"
+    },
+    "./dist/*": "./dist/*"
+  },
+  "typesVersions": {
+    "*": {
+      "dist/ArtalkLite": [
+        "./dist/main.d.ts"
+      ]
+    }
   },
   "main": "./dist/Artalk.js",
-  "jsdelivr": "./dist/Artalk.iife.js",
-  "unpkg": "./dist/Artalk.iife.js",
-  "module": "./dist/Artalk.es.js",
-  "types": "./dist/src/main.d.ts",
+  "module": "./dist/Artalk.mjs",
+  "types": "./dist/main.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "vite build && pnpm build:lite && pnpm build:i18n",
-    "build:demo": "vite build --config vite-demo.config.ts",
-    "build:i18n": "node scripts/build-i18n.mjs",
-    "build:lite": "vite build --config vite-lite.config.ts",
+    "build:lite": "cross-env ARTALK_LITE=1 vite build",
+    "build:i18n": "tsx scripts/build-i18n.ts",
     "copy:deploy": "cp -r dist deploy && cp CNAME deploy",
     "predeploy": "pnpm build && pnpm build:demo && pnpm copy:deploy",
     "deploy": "gh-pages -d deploy",
@@ -61,6 +90,7 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint './src/**/*.{js,ts}'",
+    "attw": "pnpx @arethetypeswrong/cli --pack .",
     "serve": "vite preview",
     "test:e2e": "playwright test",
     "test:report": "playwright show-report"

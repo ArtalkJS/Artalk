@@ -1,4 +1,4 @@
-import type { ContextApi, SidebarShowPayload } from '~/types'
+import type { ContextApi, SidebarShowPayload } from '@/types'
 import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'

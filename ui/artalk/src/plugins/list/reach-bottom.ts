@@ -1,4 +1,4 @@
-import type { ArtalkPlugin } from '~/types'
+import type { ArtalkPlugin } from '@/types'
 
 export const ReachBottom: ArtalkPlugin = (ctx) => {
   const scrollEvtAt = document // TODO: support ref ctx.conf

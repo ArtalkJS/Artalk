@@ -1,7 +1,7 @@
 import type Api from '@/api'
 import Dialog from '@/components/dialog'
 import $t from '@/i18n'
-import type { ContextApi } from '~/types'
+import type { ContextApi } from '@/types'
 import type { Layer } from '@/layer'
 import type User from '@/lib/user'
 import * as Utils from '@/lib/utils'

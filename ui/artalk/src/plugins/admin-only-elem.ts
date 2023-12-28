@@ -1,4 +1,4 @@
-import type { ArtalkPlugin } from '~/types'
+import type { ArtalkPlugin } from '@/types'
 
 export const AdminOnlyElem: ArtalkPlugin = (ctx) => {
   const scanApply = () => {

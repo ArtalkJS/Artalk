@@ -1,4 +1,4 @@
-import type { ContextApi } from '~/types'
+import type { ContextApi } from '@/types'
 import { getScrollbarHelper } from './scrollbar-helper'
 import { LayerWrap } from './wrap'
 import { Layer } from './layer'

@@ -1,4 +1,4 @@
-import type { ArtalkConfig, ContextApi } from '~/types'
+import type { ArtalkConfig, ContextApi } from '@/types'
 import type { ApiOptions } from './api/_options'
 import { mergeDeep } from './lib/merge-deep'
 import Defaults from './defaults'

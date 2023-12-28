@@ -1,6 +1,6 @@
+import type Component from '@/lib/component'
+import type { EditorUI } from '@/editor/ui'
 import type { CommentData, NotifyLevel } from '.'
-import type Component from '../src/lib/component'
-import type { EditorUI } from '../src/editor/ui'
 
 export type EditorState = 'reply' | 'edit' | 'normal'
 

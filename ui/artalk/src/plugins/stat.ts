@@ -1,4 +1,4 @@
-import type { ContextApi, ArtalkPlugin } from '~/types'
+import type { ContextApi, ArtalkPlugin } from '@/types'
 import Api from '../api'
 
 export interface CountOptions {

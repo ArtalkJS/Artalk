@@ -1,4 +1,4 @@
-import type { NotifyLevel } from '~/types'
+import type { NotifyLevel } from '@/types'
 import * as Utils from './utils'
 
 /** 显示加载 */

@@ -1,6 +1,6 @@
 import './emoticons.scss'
 
-import type { EmoticonListData, EmoticonGrpData } from '~/types'
+import type { EmoticonListData, EmoticonGrpData } from '@/types'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
 import $t from '@/i18n'

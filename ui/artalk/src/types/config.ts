@@ -1,4 +1,4 @@
-import { I18n } from '~/src/i18n'
+import { I18n } from '@/i18n'
 import { CommentData } from './data'
 
 export interface ArtalkConfig {

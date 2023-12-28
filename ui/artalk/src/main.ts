@@ -1,7 +1,9 @@
 import Artalk from './artalk'
-import * as ArtalkType from '../types'
+import type * as ArtalkType from './types'
 
+export type * from './types'
 export { ArtalkType }
+
 export default Artalk
 
 // Expose the static methods from the Artalk class

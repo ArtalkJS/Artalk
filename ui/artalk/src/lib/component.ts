@@ -1,4 +1,4 @@
-import type { ArtalkConfig, ContextApi } from '~/types'
+import type { ArtalkConfig, ContextApi } from '@/types'
 
 export default abstract class Component {
   public $el!: HTMLElement

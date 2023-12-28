@@ -1,4 +1,4 @@
-import type { ArtalkPlugin, ContextApi } from '~/types'
+import type { ArtalkPlugin, ContextApi } from '@/types'
 import { showErrorDialog } from '@/components/error-dialog'
 import * as Ui from '../../lib/ui'
 

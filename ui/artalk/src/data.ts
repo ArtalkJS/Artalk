@@ -1,4 +1,4 @@
-import type { NotifyData, PageData, CommentData, DataManagerApi, ListFetchParams, ListLastFetchData, EventPayloadMap } from '~/types'
+import type { NotifyData, PageData, CommentData, DataManagerApi, ListFetchParams, ListLastFetchData, EventPayloadMap } from '@/types'
 import EventManager from './lib/event-manager'
 
 export class DataManager implements DataManagerApi {

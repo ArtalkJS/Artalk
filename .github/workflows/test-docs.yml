@@ -1,12 +1,11 @@
 name: Test Docs
 
 on:
-  pull_request:
-    paths:
-      - "docs/**"
   push:
-    paths:
-      - "docs/**"
+    paths: ['docs/**']
+  pull_request:
+    paths: ['docs/**']
+    branches: ['!release/*']
 
 jobs:
   test_docs:

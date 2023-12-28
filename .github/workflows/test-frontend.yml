@@ -2,11 +2,10 @@ name: Test Frontend
 
 on:
   push:
-    paths:
-      - 'ui/**'
+    paths: ['ui/**']
   pull_request:
-    paths:
-      - 'ui/**'
+    paths: ['ui/**']
+    branches: ['!release/*']
 
 jobs:
   test_ui:

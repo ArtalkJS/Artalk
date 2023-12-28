@@ -84,7 +84,7 @@
   ],
   "scripts": {
     "build": "vite build && pnpm build:lite && pnpm build:i18n",
-    "build:lite": "ARTALK_LITE=1 vite build",
+    "build:lite": "cross-env ARTALK_LITE=1 vite build",
     "build:i18n": "tsx scripts/build-i18n.ts",
     "copy:deploy": "cp -r dist deploy && cp CNAME deploy",
     "predeploy": "pnpm build && pnpm build:demo && pnpm copy:deploy",

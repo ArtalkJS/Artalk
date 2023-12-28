@@ -3,6 +3,7 @@ name: Test Frontend
 on:
   push:
     paths: ['ui/**']
+    tags: ['!v*']
   pull_request:
     paths: ['ui/**']
     branches: ['!release/*']

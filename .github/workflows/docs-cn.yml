@@ -2,15 +2,11 @@ name: Docs CN Mirror Deploy
 
 on:
   push:
-    branches:
-      - master
-    paths:
-      - "docs/**"
+    branches: ['master']
+    paths: ['docs/**']
 
 jobs:
   deploy:
-    if: github.repository == 'ArtalkJS/Artalk'
-
     runs-on: ubuntu-latest
 
     steps:
@@ -39,6 +35,6 @@ jobs:
           secret_key: ${{ secrets.TENCENT_CLOUD_SECRET_KEY }}
           cos_bucket: ${{ secrets.DOCS_CN_COS_BUCKET }}
           cos_region: ${{ secrets.DOCS_CN_COS_REGION }}
-          local_path: .vitepress/dist/
+          local_path: docs/docs/.vitepress/dist/
           remote_path: /
           clean: true

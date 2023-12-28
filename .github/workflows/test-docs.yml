@@ -3,6 +3,7 @@ name: Test Docs
 on:
   push:
     paths: ['docs/**']
+    tags: ['!v*']
   pull_request:
     paths: ['docs/**']
     branches: ['!release/*']

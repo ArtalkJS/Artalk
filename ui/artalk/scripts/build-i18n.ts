@@ -1,7 +1,8 @@
-import fs from 'fs'
-import path from 'path'
-import { build } from 'vite'
-import { fileURLToPath } from 'url'
+import fs from 'node:fs'
+import path from 'node:path'
+import { build, LibraryOptions } from 'vite'
+import { fileURLToPath } from 'node:url'
+import { getFileName } from '../vite.config'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const i18nPath = path.join(__dirname, '../src/i18n/')
@@ -10,7 +11,7 @@ const outDir = path.resolve(__dirname, '../dist/i18n')
 // empty outDir before build
 fs.rmSync(outDir, { recursive: true, force: true })
 
-const libraries = []
+const libraries: LibraryOptions[] = []
 
 fs.readdirSync(i18nPath).forEach(f => {
   if (['index.ts', 'external.ts'].includes(f)) return
@@ -25,7 +26,10 @@ fs.readdirSync(i18nPath).forEach(f => {
   libraries.push({
     entry: filename,
     name: lang,
-    fileName: (format) => ((format == "umd") ? `${lang}.js` : `${lang}.${format}.js`),
+    fileName: (format) => {
+      console.log(lang)
+      return getFileName(lang, format)
+    },
   })
 })
 
@@ -33,12 +37,12 @@ libraries.forEach(async (lib) => {
   await build({
     build: {
       target: 'es2015',
-      outDir: outDir,
+      outDir,
       minify: 'terser',
       emptyOutDir: false,
       lib: {
         ...lib,
-        formats: ['umd'],
+        formats: ['umd', 'cjs', 'es'],
       },
     },
     configFile: false, // prevent load any vite config file

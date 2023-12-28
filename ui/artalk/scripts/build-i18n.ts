@@ -46,7 +46,7 @@ libraries.forEach(async (lib) => {
   })
 
   // crete d.ts file
-  const dts = `import type { I18n } from '../main.d.cts'\nexport = I18n`
+  const dts = `import type { I18n } from '../main.d.cts'\ndeclare const locale: I18n\nexport = locale\n`
   fs.writeFileSync(path.join(outDir, `${lib.name!}.d.ts`), dts)
   fs.writeFileSync(path.join(outDir, `${lib.name!}.d.cts`), dts)
 })

@@ -42,7 +42,7 @@
     "./dist/i18n/jp": {
       "import": {
         "types": "./dist/i18n/jp.d.ts",
-        "default": "./dist/i18n/jp.mts"
+        "default": "./dist/i18n/jp.mjs"
       },
       "require": {
         "types": "./dist/i18n/jp.d.cts",
@@ -52,7 +52,7 @@
     "./dist/i18n/zh-TW": {
       "import": {
         "types": "./dist/i18n/zh-TW.d.ts",
-        "default": "./dist/i18n/zh-TW.mts"
+        "default": "./dist/i18n/zh-TW.mjs"
       },
       "require": {
         "types": "./dist/i18n/zh-TW.d.cts",

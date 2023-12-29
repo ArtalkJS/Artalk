@@ -46,7 +46,7 @@ Context 对象包含了 Artalk 的上下文信息。
 Context API 目前仍不稳定，开发可能会有变动，升级请关注 CHANGELOG。
 :::
 
-参考：[@artalk/types/context.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/types/context.ts)
+参考：[@artalk/src/types/context.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/src/types/context.ts)
 
 Artalk 拥有完整的 TypeScript 类型定义，你可以通过编辑器的自动补全来查看 API。
 

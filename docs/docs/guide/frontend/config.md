@@ -7,7 +7,7 @@ artalk.update({ ... })
 ```
 
 - 默认配置：[defaults.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/src/defaults.ts)
-- 声明文件：[config.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/types/config.ts)
+- 声明文件：[config.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/src/types/config.ts)
 
 ## 轻松配置
 

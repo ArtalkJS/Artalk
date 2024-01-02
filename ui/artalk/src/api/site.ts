@@ -9,43 +9,37 @@ export default class SiteApi extends ApiBase {
   public async siteGet() {
     const params: any = {}
 
-    const d = await this.POST<any>('/admin/site-get', params)
+    const d = await this.fetch<any>('GET', '/sites', params)
     return (d.sites as SiteData[])
   }
 
   /** 站点 · 创建 */
   public async siteAdd(name: string, urls: string) {
-    const params: any = {
-      name, urls,
-      site_name: '' // 全局保留字段，当前站点名
-    }
+    const params: any = { name, urls }
 
-    const d = await this.POST<any>('/admin/site-add', params)
+    const d = await this.fetch<any>('POST', '/sites', params)
     return (d.site as SiteData)
   }
 
   /** 站点 · 修改 */
-  public async siteEdit(data: SiteData) {
+  public async siteEdit(id: number, data: SiteData) {
     const params: any = {
-      id: data.id,
       name: data.name || '',
       urls: data.urls || '',
     }
 
-    const d = await this.POST<any>('/admin/site-edit', params)
+    const d = await this.fetch<any>('PUT', `/sites/${id}`, params)
     return (d.site as SiteData)
   }
 
   /** 站点 · 删除 */
-  public siteDel(id: number, delContent = false) {
-    const params: any = { id, del_content: delContent }
-
-    return this.POST('/admin/site-del', params)
+  public siteDel(id: number) {
+    return this.fetch('DELETE', `/sites/${id}`)
   }
 
   /** 导出 */
   public async export() {
-    const d = await this.Fetch(`/admin/export`, { method: 'POST' }, 0)
+    const d = await this.fetch('GET', `/artransfer/export`, undefined, { timeout: 0 })
     return (d.data?.data || '' as string)
   }
 }

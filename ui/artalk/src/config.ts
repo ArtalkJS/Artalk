@@ -91,7 +91,7 @@ export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
  */
 export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi): ApiOptions {
   return {
-    baseURL: `${conf.server}/api`,
+    baseURL: `${conf.server}/api/v2`,
     siteName: conf.site || '',
     pageKey: conf.pageKey || '',
     pageTitle: conf.pageTitle || '',

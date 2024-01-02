@@ -13,32 +13,26 @@ export default class PageApi extends ApiBase {
       limit: limit || 15,
     }
 
-    const d = await this.POST<any>('/admin/page-get', params)
+    const d = await this.fetch<any>('GET', '/pages', params)
     return (d as { pages: PageData[], total: number })
   }
 
   /** 页面 · 修改 */
   public async pageEdit(data: PageData) {
     const params: any = {
-      id: data.id,
       key: data.key,
       title: data.title,
       admin_only: data.admin_only,
       site_name: data.site_name || this.options.siteName,
     }
 
-    const d = await this.POST<any>('/admin/page-edit', params)
+    const d = await this.fetch<any>('PUT', `/pages/${params.id}`, params)
     return (d.page as PageData)
   }
 
   /** 页面 · 删除 */
-  public pageDel(pageKey: string, siteName?: string) {
-    const params: any = {
-      key: String(pageKey),
-      site_name: siteName || '',
-    }
-
-    return this.POST('/admin/page-del', params)
+  public pageDel(id: number) {
+    return this.fetch('DELETE', `/pages/${id}`, id)
   }
 
   /** 页面 · 数据更新 */
@@ -48,18 +42,19 @@ export default class PageApi extends ApiBase {
     if (siteName) params.site_name = siteName
     if (getStatus) params.get_status = getStatus
 
-    const d = await this.POST<any>('/admin/page-fetch', params)
+    const d = await this.fetch<any>('POST', `/pages/${id}/fetch`, params)
     return (d as any)
   }
 
   /** PV */
   public async pv() {
     const params: any = {
-      page_key: this.options.pageKey || '',
-      page_title: this.options.pageTitle || ''
+      page_key: this.options.pageKey,
+      page_title: this.options.pageTitle,
+      site_name: this.options.siteName
     }
 
-    const p = await this.POST<any>('/pv', params)
+    const p = await this.fetch<any>('POST', `/pages/pv`, params)
     return p.pv as number
   }
 
@@ -70,14 +65,12 @@ export default class PageApi extends ApiBase {
     pageKeys?: string|string[],
     limit?: number
   ) {
-    const params: any = {
-      type,
-    }
+    const params: any = {}
 
     if (pageKeys) params.page_keys = Array.isArray(pageKeys) ? pageKeys.join(',') : pageKeys
     if (limit) params.limit = limit
 
-    const data = await this.POST<PageData[]|CommentData[]|object|number>(`/stat`, params)
+    const data = await this.fetch<PageData[]|CommentData[]|object|number>('POST', `/stats/${type}`, params)
     return data
   }
 }

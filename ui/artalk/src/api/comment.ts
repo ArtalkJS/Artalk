@@ -21,7 +21,7 @@ export default class CommentApi extends ApiBase {
 
     if (paramsEditor) paramsEditor(params)
 
-    return this.POST<ListData>('/get', params)
+    return this.fetch<ListData>('GET', '/comments', params)
   }
 
   /** 评论 · 创建 */
@@ -39,40 +39,34 @@ export default class CommentApi extends ApiBase {
     if (comment.page_title) params.page_title = comment.page_title
     if (comment.site_name) params.site_name = comment.site_name
 
-    const data = await this.POST<any>('/add', params)
+    const data = await this.fetch<any>('POST', '/comments', params)
     return (data.comment as CommentData)
   }
 
   /** 评论 · 修改 */
-  public async commentEdit(data: Partial<CommentData>) {
+  public async commentEdit(id: number, data: Partial<CommentData>) {
     const params: any = {
       ...data,
     }
 
-    const d = await this.POST<any>('/admin/comment-edit', params)
+    const d = await this.fetch<any>('PUT', `/comments/${id}`, params)
     return (d.comment as CommentData)
   }
 
   /** 评论 · 删除 */
-  public commentDel(commentID: number, siteName?: string) {
-    const params: any = {
-      id: String(commentID),
-      site_name: siteName || '',
-    }
-
-    return this.POST('/admin/comment-del', params)
+  public commentDel(id: number) {
+    return this.fetch('DELETE', `/comments/${id}`)
   }
 
   /** 投票 */
-  public async vote(targetID: number, type: string) {
+  public async vote(targetID: number, type: 'comment_up'|'comment_down'|'page_up'|'page_down') {
     const params: any = {
-      target_id: targetID,
-      type,
+      target_id: targetID, type,
     }
 
     this.withUserInfo(params)
 
-    const data = await this.POST<any>('/vote', params)
+    const data = await this.fetch<any>('POST', `/vote/${type}/${targetID}`, params)
     return (data as {up: number, down: number})
   }
 }

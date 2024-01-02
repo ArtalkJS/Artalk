@@ -56,7 +56,7 @@ function del() {
   const del = async () => {
     isLoading.value = true
     try {
-      await artalk!.ctx.getApi().page.pageDel(page.value.key, page.value.site_name)
+      await artalk!.ctx.getApi().page.pageDel(page.value.id)
     } catch (err: any) {
       console.log(err)
       alert(`删除失败 ${String(err)}`)

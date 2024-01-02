@@ -45,7 +45,7 @@ export default class CommentActions {
       modify.is_pinned = !modify.is_pinned
     }
 
-    this.ctx.getApi().comment.commentEdit(modify).then((data) => {
+    this.ctx.getApi().comment.commentEdit(this.data.id, modify).then((data) => {
       btnElem.setLoading(false)
 
       // 刷新当前 Comment UI
@@ -61,7 +61,7 @@ export default class CommentActions {
     if (btnElem.isLoading) return // 若正在删除中
 
     btnElem.setLoading(true, `${this.ctx.$t('deleting')}...`)
-    this.ctx.getApi().comment.commentDel(this.data.id, this.data.site_name)
+    this.ctx.getApi().comment.commentDel(this.data.id)
       .then(() => {
         btnElem.setLoading(false)
         if (this.cConf.onDelete) this.cConf.onDelete(this.comment)

@@ -27,13 +27,13 @@ beforeAll(() => {
         data: {}
       }
       const map = {
-        '/api/conf': {
+        '/api/v2/conf': {
           frontend_conf: RemoteConf,
           version: {},
         },
-        '/api/stat': { '/': 0 },
-        '/api/pv': { pv: 2 },
-        '/api/get': {
+        '/api/v2/stat': { '/': 0 },
+        '/api/v2/pv': { pv: 2 },
+        '/api/v2/comments': {
           comments: [],
           total: 0,
           total_roots: 0,

@@ -18,7 +18,7 @@ interface SystemConfResp {
 export default class SystemApi extends ApiBase {
   /** 获取配置 */
   public async conf(): Promise<SystemConfResp> {
-    const data = await this.POST<any>(`/conf`)
+    const data = await this.fetch<any>('GET', `/conf`)
 
     return {
       frontend_conf: data.frontend_conf,
@@ -28,13 +28,13 @@ export default class SystemApi extends ApiBase {
 
   /** 获取配置数据 */
   public async getSettings() {
-    const data = await this.POST<{custom: string, template: string}>('/admin/setting-get')
+    const data = await this.fetch<{custom: string, template: string}>('GET', '/settings')
     return data
   }
 
   /** 保存配置数据 */
   public async saveSettings(yamlStr: string) {
-    const data = await this.POST<boolean>('/admin/setting-save', {
+    const data = await this.fetch<boolean>('POST', '/settings', {
       data: yamlStr,
     })
     return data

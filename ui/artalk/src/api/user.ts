@@ -12,7 +12,7 @@ export default class UserApi extends ApiBase {
       name, email, password
     }
 
-    const data = await this.POST<any>('/login', params)
+    const data = await this.fetch<any>('POST', '/user/access_token', params)
     return data as { token: string, user: UserData }
   }
 
@@ -23,9 +23,7 @@ export default class UserApi extends ApiBase {
       name, email
     }
 
-    const req = this.Fetch(`/user-get`, {
-      method: 'POST',
-      body: ToFormData(params),
+    const req = this.fetch('GET', `/user/info`, params, {
       signal: ctrl.signal,
     }).then((json) => ({
       user: json.data.user as UserData|null,
@@ -42,30 +40,22 @@ export default class UserApi extends ApiBase {
 
   /** 用户 · 登录状态 */
   public async loginStatus() {
-    const data = await this.POST<any>('/login-status', this.withUserInfo({}))
+    const data = await this.fetch<any>('GET', '/user/status', this.withUserInfo({}))
     return (data || { is_login: false, is_admin: false }) as { is_login: boolean, is_admin: boolean }
-  }
-
-  /** 用户 · 注销 */
-  public async logout() {
-    return this.POST('/logout')
   }
 
   /** 已读标记 */
   public markRead(commentID: number, notifyKey: string, readAll = false) {
     const params: any = {
-      comment_id: commentID,
-      notify_key: notifyKey,
     }
 
+    // TODO separate API to `/notifies/read`
     if (readAll) {
-      delete params.comment_id
-      delete params.notify_key
-      params.read_all = true
+      params.all_read = true
       this.withUserInfo(params)
     }
 
-    return this.POST(`/mark-read`, params)
+    return this.fetch('POST', `/notifies/${commentID}/${notifyKey}/read`, params)
   }
 
   /** 用户 · 列表 */
@@ -75,9 +65,7 @@ export default class UserApi extends ApiBase {
       limit: limit || 15,
     }
 
-    if (type) params.type = type
-
-    const d = await this.POST<any>('/admin/user-get', params)
+    const d = await this.fetch<any>('GET', `/users${type ? `/${type}` : ''}`, params)
     return (d as { users: UserDataForAdmin[], total: number })
   }
 
@@ -95,14 +83,13 @@ export default class UserApi extends ApiBase {
       badge_color: user.badge_color || '',
     }
 
-    const d = await this.POST<any>('/admin/user-add', params)
+    const d = await this.fetch<any>('POST', '/users', params)
     return (d.user as UserDataForAdmin)
   }
 
   /** 用户 · 修改 */
-  public async userEdit(user: Partial<UserDataForAdmin>, password?: string) {
+  public async userEdit(id: number, user: Partial<UserDataForAdmin>, password?: string) {
     const params: any = {
-      id: user.id,
       name: user.name || '',
       email: user.email || '',
       password: password || '',
@@ -114,14 +101,12 @@ export default class UserApi extends ApiBase {
       badge_color: user.badge_color || '',
     }
 
-    const d = await this.POST<any>('/admin/user-edit', params)
+    const d = await this.fetch<any>('PUT', `/users/${id}`, params)
     return (d.user as UserDataForAdmin)
   }
 
   /** 用户 · 删除 */
-  public userDel(userID: number) {
-    return this.POST('/admin/user-del', {
-      id: String(userID)
-    })
+  public userDel(id: number) {
+    return this.fetch('DELETE', `/users/${id}`)
   }
 }

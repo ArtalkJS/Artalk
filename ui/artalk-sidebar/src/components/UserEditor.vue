@@ -5,6 +5,7 @@ import type { ArtalkType } from 'artalk'
 const { t } = useI18n()
 
 interface IUserEditData {
+  id: number
   name: string
   email: string
   link: string
@@ -36,6 +37,7 @@ onBeforeMount(() => {
   if (!props.user) {
     isCreateMode.value = true
     editUser.value = {
+      id: 0,
       name: '',
       email: '',
       link: '',
@@ -74,7 +76,8 @@ function submit() {
         isLoading.value = false
       })
   } else {
-    artalk!.ctx.getApi().user.userEdit(editUser.value!, editUser.value!.password)
+    const user = editUser.value!
+    artalk!.ctx.getApi().user.userEdit(user.id, user, user.password)
       .then((respUser) => {
         emit('update', respUser)
       }).catch((e) => {

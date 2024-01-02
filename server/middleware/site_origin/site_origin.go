@@ -12,6 +12,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
+	"github.com/tidwall/gjson"
 )
 
 // 不启用 Origin 控制的 API paths
@@ -30,8 +31,19 @@ func SiteOriginMiddleware(app *core.App) fiber.Handler {
 			}
 		}
 
-		siteName := c.FormValue("site_name")
-		siteID := uint(0)
+		// Try to get site_name from request
+		siteName := c.Get("X-ATK-SITE-NAME")
+		if siteName == "" {
+			siteName = c.Query("site_name")
+		}
+		if siteName == "" {
+			siteName = c.FormValue("site_name")
+		}
+		if siteName == "" && c.Get("Content-Type") == "application/json" {
+			siteName = gjson.GetBytes(c.Body(), "site_name").String()
+		}
+
+		var siteID uint = 0
 		var site *entity.Site = nil
 
 		siteAll := false
@@ -106,8 +118,12 @@ func CheckOrigin(app *core.App, c *fiber.Ctx, allowSite *entity.Site) (bool, err
 	if origin == "" || origin == "null" {
 		// 从 Referer 获取 Origin
 		referer := string(c.Request().Header.Referer())
+		// 此处不再强制 Origin 必须存在，因为可以通过 Access-Control-Allow-Origin 来限制非法跨域请求
+		// if referer == "" {
+		// 	return false, common.RespError(c, i18n.T("Invalid request")+", "+i18n.T("Unable to get `{{name}}`", map[string]interface{}{"name": "origin"}))
+		// }
 		if referer == "" {
-			return false, common.RespError(c, i18n.T("Invalid request")+", "+i18n.T("Unable to get `{{name}}`", map[string]interface{}{"name": "origin"}))
+			return true, nil
 		}
 		origin = referer
 	}

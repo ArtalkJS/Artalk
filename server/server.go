@@ -23,9 +23,9 @@ import (
 )
 
 // @Title          Artalk API
-// @Version        1.0
-// @Description    This is an Artalk server.
-// @BasePath  	   /api/
+// @Version        2.0
+// @Description    Artalk is a modern comment system based on Golang.
+// @BasePath  	   /api/v2
 
 // @Contact.name   API Support
 // @Contact.url    https://artalk.js.org
@@ -49,6 +49,8 @@ func Serve(app *core.App) (*fiber.App, error) {
 		// TODO add config to set ProxyHeader
 		ProxyHeader:        "X-Forwarded-For",
 		EnableIPValidation: true,
+
+		ErrorHandler: common.ErrorHandler,
 	})
 
 	// logger
@@ -74,7 +76,7 @@ func Serve(app *core.App) (*fiber.App, error) {
 		fb.Use(pprof.New())
 	}
 
-	api := fb.Group("/api", site_origin.SiteOriginMiddleware(app))
+	api := fb.Group("/api/v2", site_origin.SiteOriginMiddleware(app))
 	{
 		h.CommentAdd(app, api)
 		h.CommentGet(app, api)
@@ -94,7 +96,6 @@ func Serve(app *core.App) (*fiber.App, error) {
 		h.UserGet(app, api)
 		h.UserLogin(app, api)
 		h.UserLoginStatus(app, api)
-		h.UserLogout(app, api)
 
 		// admin
 		admin(app, api)
@@ -120,7 +121,7 @@ func Serve(app *core.App) (*fiber.App, error) {
 }
 
 func admin(app *core.App, f fiber.Router) {
-	admin := f.Group("/admin", middleware.AdminOnlyMiddleware(app))
+	admin := f.Group("/", middleware.AdminOnlyMiddleware(app))
 	{
 		h.AdminCommentEdit(app, admin)
 		h.AdminCommentDel(app, admin)
@@ -159,13 +160,14 @@ func cors(app *core.App, f fiber.Router) {
 }
 
 func actionLimit(app *core.App, f fiber.Router) {
+	const BasePath = "/api/v2"
 	f.Use(limiter.ActionLimitMiddleware(app, limiter.ActionLimitConf{
 		// 启用操作限制路径白名单
 		ProtectPaths: []string{
-			"/api/add",
-			"/api/login",
-			"/api/vote",
-			"/api/img-upload",
+			BasePath + "/comments",
+			BasePath + "/login",
+			BasePath + "/votes",
+			BasePath + "/img-upload",
 		},
 	}))
 }

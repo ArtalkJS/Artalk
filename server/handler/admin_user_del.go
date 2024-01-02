@@ -7,29 +7,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminUserDel struct {
-	ID uint `form:"id" validate:"required"`
-}
-
-// @Summary      User Delete
+// @Summary      Delete User
 // @Description  Delete a specific user
 // @Tags         User
-// @Param        id             formData  string  true   "the user ID you want to delete"
+// @Param        id  path  int  true  "The user ID you want to delete"
 // @Security     ApiKeyAuth
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
-// @Router       /admin/user-del  [post]
+// @Router       /users/{id}  [delete]
 func AdminUserDel(app *core.App, router fiber.Router) {
-	router.Post("/user-del", func(c *fiber.Ctx) error {
+	router.Delete("/users/:id", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
-		var p ParamsAdminUserDel
-		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
-			return resp
-		}
+		id, _ := c.ParamsInt("id")
 
-		user := app.Dao().FindUserByID(p.ID)
+		user := app.Dao().FindUserByID(uint(id))
 		if user.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("User")}))
 		}

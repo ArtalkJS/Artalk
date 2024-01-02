@@ -23,7 +23,13 @@ func GetApiVersionDataMap() ApiVersionData {
 	}
 }
 
-func GetApiPublicConfDataMap(app *core.App, c *fiber.Ctx) Map {
+type ConfData struct {
+	ImgUpload    bool           `json:"img_upload"`
+	FrontendConf Map            `json:"frontend_conf"`
+	Version      ApiVersionData `json:"version"`
+}
+
+func GetApiPublicConfDataMap(app *core.App, c *fiber.Ctx) ConfData {
 	isAdmin := CheckIsAdminReq(app, c)
 	imgUpload := app.Conf().ImgUpload.Enabled
 	if isAdmin {
@@ -43,9 +49,9 @@ func GetApiPublicConfDataMap(app *core.App, c *fiber.Ctx) Map {
 		frontendConf["locale"] = app.Conf().Locale
 	}
 
-	return Map{
-		"img_upload":    imgUpload,
-		"frontend_conf": frontendConf,
-		"version":       GetApiVersionDataMap(),
+	return ConfData{
+		ImgUpload:    imgUpload,
+		FrontendConf: frontendConf,
+		Version:      GetApiVersionDataMap(),
 	}
 }

@@ -13,41 +13,34 @@ import (
 )
 
 type ParamsAdd struct {
-	Name    string `form:"name"`
-	Email   string `form:"email"`
-	Link    string `form:"link"`
-	Content string `form:"content" validate:"required"`
-	Rid     uint   `form:"rid"`
-	UA      string `form:"ua"`
+	Name    string `form:"name"`                        // The comment name
+	Email   string `form:"email"`                       // The comment email
+	Link    string `form:"link"`                        // The comment link
+	Content string `form:"content" validate:"required"` // The comment content
+	Rid     uint   `form:"rid"`                         // The comment rid
+	UA      string `form:"ua"`                          // The comment ua
 
-	PageKey   string `form:"page_key" validate:"required"`
-	PageTitle string `form:"page_title"`
+	PageKey   string `form:"page_key" validate:"required"` // The comment page_key
+	PageTitle string `form:"page_title"`                   // The comment page_title
 
-	SiteName string
-	SiteID   uint
+	SiteName string `form:"site_name" validate:"required"` // The site name of your content scope
 }
 
 type ResponseAdd struct {
 	Comment entity.CookedComment `json:"comment"`
 }
 
-// @Summary      Comment Add
+// @Summary      Create Comment
 // @Description  Create a new comment
 // @Tags         Comment
-// @Param        name           formData  string  false  "the comment name"
-// @Param        email          formData  string  false  "the comment email"
-// @Param        link           formData  string  false  "the comment link"
-// @Param        content        formData  string  true   "the comment content"
-// @Param        rid            formData  string  false  "the comment rid"
-// @Param        ua             formData  string  false  "the comment ua"
-// @Param        page_key       formData  string  true   "the comment page_key"
-// @Param        page_title     formData  string  false  "the comment page_title"
-// @Param        site_name      formData  string  false  "the site name of your content scope"
+// @Param        comment  body  ParamsAdd  true  "The comment data"
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult{data=ResponseAdd}
-// @Router       /add  [post]
+// @Accept       json
+// @Produce      json
+// @Router       /comments  [post]
 func CommentAdd(app *core.App, router fiber.Router) {
-	router.Post("/add", func(c *fiber.Ctx) error {
+	router.Post("/comments", func(c *fiber.Ctx) error {
 		var p ParamsAdd
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
@@ -78,9 +71,6 @@ func CommentAdd(app *core.App, router fiber.Router) {
 		if p.UA != "" {
 			ua = p.UA
 		}
-
-		// use site
-		common.UseSite(c, &p.SiteName, &p.SiteID, nil)
 
 		// find page
 		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)

@@ -8,26 +8,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminSiteGet struct {
-}
-
 type ResponseAdminSiteGet struct {
 	Sites []entity.CookedSite `json:"sites"`
 }
 
-// @Summary      Site List
+// @Summary      Get Site List
 // @Description  Get a list of sites by some conditions
 // @Tags         Site
 // @Security     ApiKeyAuth
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteGet}
-// @Router       /admin/site-get  [post]
+// @Router       /sites  [get]
 func AdminSiteGet(app *core.App, router fiber.Router) {
-	router.Post("/site-get", func(c *fiber.Ctx) error {
-		var p ParamsAdminSiteGet
-		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
-			return resp
-		}
-
+	router.Get("/sites", func(c *fiber.Ctx) error {
 		allSites := app.Dao().FindAllSitesCooked()
 		sites := allSites
 

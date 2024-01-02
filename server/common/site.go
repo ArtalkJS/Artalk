@@ -5,14 +5,16 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func UseSite(c *fiber.Ctx, siteName *string, destID *uint, destSiteAll *bool) {
-	if destID != nil {
-		*destID = c.Locals(config.CTX_KEY_ATK_SITE_ID).(uint)
-	}
-	if siteName != nil {
-		*siteName = c.Locals(config.CTX_KEY_ATK_SITE_NAME).(string)
-	}
-	if destSiteAll != nil {
-		*destSiteAll = c.Locals(config.CTX_KEY_ATK_SITE_ALL).(bool)
+type SiteInfoByRequest struct {
+	ID   uint
+	Name string
+	All  bool
+}
+
+func GetSiteInfo(c *fiber.Ctx) SiteInfoByRequest {
+	return SiteInfoByRequest{
+		ID:   c.Locals(config.CTX_KEY_ATK_SITE_ID).(uint),
+		Name: c.Locals(config.CTX_KEY_ATK_SITE_NAME).(string),
+		All:  c.Locals(config.CTX_KEY_ATK_SITE_ALL).(bool),
 	}
 }

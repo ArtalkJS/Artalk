@@ -21,7 +21,6 @@ type Config struct {
 	SiteDefault    string                 `koanf:"site_default" json:"site_default"`       // 默认站点名（当请求无指定 site_name 时使用）
 	AdminUsers     []AdminUserConf        `koanf:"admin_users" json:"admin_users"`         // 管理员账户
 	LoginTimeout   int                    `koanf:"login_timeout" json:"login_timeout"`     // 登录超时
-	Cookie         CookieConf             `koanf:"cookie" json:"cookie"`                   // Cookie
 	Moderator      ModeratorConf          `koanf:"moderator" json:"moderator"`             // 评论审查
 	Captcha        CaptchaConf            `koanf:"captcha" json:"captcha"`                 // 验证码
 	Email          EmailConf              `koanf:"email" json:"email"`                     // 邮箱提醒
@@ -101,10 +100,6 @@ type AdminUserConf struct {
 	BadgeColor   string   `koanf:"badge_color" json:"badge_color"`
 	ReceiveEmail *bool    `koanf:"receive_email" json:"receive_email"`
 	Sites        []string `koanf:"sites" json:"sites"`
-}
-
-type CookieConf struct {
-	Enabled bool `koanf:"enabled" json:"enabled"`
 }
 
 type ModeratorConf struct {

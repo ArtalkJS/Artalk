@@ -12,34 +12,31 @@ import (
 )
 
 type ParamsAdminPageEdit struct {
-	// 查询值
-	ID       uint `form:"id"`
-	SiteName string
-	SiteID   uint
+	SiteName string `json:"site_name"` // The site name of your content scope
 
-	// 修改值
-	Key       string `form:"key"`
-	Title     string `form:"title"`
-	AdminOnly bool   `form:"admin_only"`
+	Key       string `json:"key"`        // Edit page key
+	Title     string `json:"title"`      // Edit page title
+	AdminOnly bool   `json:"admin_only"` // Edit page admin_only option
 }
 
 type ResponseAdminPageEdit struct {
 	Page entity.CookedPage `json:"page"`
 }
 
-// @Summary      Page Edit
+// @Summary      Edit Page
 // @Description  Edit a specific page
 // @Tags         Page
-// @Param        id             formData  string  true   "the page ID you want to edit"
-// @Param        site_name      formData  string  false  "the site name of your content scope"
-// @Param        key            formData  string  false  "edit page key"
-// @Param        title          formData  string  false  "edit page title"
-// @Param        admin_only     formData  bool    false  "edit page admin_only option"
 // @Security     ApiKeyAuth
+// @Param        id    path  int                  true "The page ID you want to edit"
+// @Param        page  body  ParamsAdminPageEdit  true "The page data"
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminPageEdit}
-// @Router       /admin/page-edit  [post]
+// @Router       /pages/{id}  [put]
 func AdminPageEdit(app *core.App, router fiber.Router) {
-	router.Post("/page-edit", func(c *fiber.Ctx) error {
+	router.Put("/pages/:id", func(c *fiber.Ctx) error {
+		id, _ := c.ParamsInt("id")
+
 		var p ParamsAdminPageEdit
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
@@ -49,11 +46,8 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": "key"}))
 		}
 
-		// use site
-		common.UseSite(c, &p.SiteName, &p.SiteID, nil)
-
 		// find page
-		var page = app.Dao().FindPageByID(p.ID)
+		var page = app.Dao().FindPageByID(uint(id))
 		if page.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
@@ -64,7 +58,7 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 
 		// 重命名合法性检测
 		modifyKey := p.Key != page.Key
-		if modifyKey && !app.Dao().FindPage(p.Key, p.SiteName).IsEmpty() {
+		if modifyKey && !app.Dao().FindPage(p.Key, page.SiteName).IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("Page")}))
 		}
 

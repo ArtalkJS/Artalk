@@ -18,19 +18,18 @@ func Captcha(app *core.App, router fiber.Router) {
 		return c.Next()
 	})
 	{
-		ca.Post("/refresh", captchaGet(app))
+		ca.Get("/status", captchaStatus(app))
 		ca.Get("/get", captchaGet(app))
-		ca.Post("/get", captchaGet(app))
-		ca.Post("/check", captchaCheck(app))
-		ca.Post("/status", captchaStatus(app))
+		ca.Post("/verify", captchaVerify(app))
 	}
 }
 
-// @Summary      Captcha Status
+// @Summary      Get Captcha Status
 // @Description  Get the status of the user's captcha verification
 // @Tags         Captcha
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=object{is_pass=bool}}
-// @Router       /captcha/status  [post]
+// @Router       /captcha/status  [get]
 func captchaStatus(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		limiter, err := common.GetLimiter[limiter.Limiter](c)
@@ -42,13 +41,12 @@ func captchaStatus(app *core.App) func(c *fiber.Ctx) error {
 	}
 }
 
-// @Summary      Captcha Get
+// @Summary      Get Captcha
 // @Description  Get a base64 encoded captcha image or a HTML page to verify for user
 // @Tags         Captcha
+// @Produce      json,html
 // @Success      200  {object}  common.JSONResult{data=object{img_data=string}}
-// @Router       /captcha/refresh  [post]
-// @Router       /captcha/get      [get]
-// @Router       /captcha/get      [post]
+// @Router       /captcha/get  [get]
 func captchaGet(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		// create new captcha checker instance
@@ -80,17 +78,18 @@ func captchaGet(app *core.App) func(c *fiber.Ctx) error {
 }
 
 type ParamsCaptchaCheck struct {
-	Value string `form:"value" validate:"required"`
+	Value string `form:"value" json:"value" validate:"required"` // The captcha value to check
 }
 
-// @Summary      Captcha Check
+// @Summary      Verify Captcha
 // @Description  Verify user enters correct captcha code
 // @Tags         Captcha
-// @Param        value  formData  string  true  "the captcha value to check"
+// @Param        data  body  ParamsCaptchaCheck  true  "The data to check"
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
 // @Failure      400  {object}  common.JSONResult{data=object{img_data=string}}
-// @Router       /captcha/check [post]
-func captchaCheck(app *core.App) func(c *fiber.Ctx) error {
+// @Router       /captcha/verify [post]
+func captchaVerify(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		// handle user input
 		var p ParamsCaptchaCheck

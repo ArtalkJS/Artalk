@@ -7,29 +7,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminSiteDel struct {
-	ID uint `form:"id" validate:"required"`
-}
-
-// @Summary      Site Delete
+// @Summary      Delete Site
 // @Description  Delete a specific site
 // @Tags         Site
-// @Param        id             formData  string  true   "the site ID you want to delete"
 // @Security     ApiKeyAuth
+// @Param        id  path  int  true   "The site ID you want to delete"
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
-// @Router       /admin/site-del  [post]
+// @Router       /sites/{id}  [delete]
 func AdminSiteDel(app *core.App, router fiber.Router) {
-	router.Post("/site-del", func(c *fiber.Ctx) error {
-		var p ParamsAdminSiteDel
-		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
-			return resp
-		}
+	router.Delete("/sites/:id", func(c *fiber.Ctx) error {
+		id, _ := c.ParamsInt("id")
 
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
-		site := app.Dao().FindSiteByID(p.ID)
+		site := app.Dao().FindSiteByID(uint(id))
 		if site.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Site")}))
 		}

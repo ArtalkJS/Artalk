@@ -21,16 +21,9 @@ import (
 )
 
 type ParamsImgUpload struct {
-	Name  string `form:"name" validate:"required"`
-	Email string `form:"email" validate:"required"`
-
-	PageKey   string `form:"page_key" validate:"required"`
-	PageTitle string `form:"page_title"`
-
-	SiteName string
-
-	SiteID  uint
-	SiteAll bool
+	Name     string `json:"name" form:"name" validate:"required"`
+	Email    string `json:"email" form:"email" validate:"required"`
+	SiteName string `json:"site_name" form:"site_name"`
 }
 
 type ResponseImgUpload struct {
@@ -38,20 +31,20 @@ type ResponseImgUpload struct {
 	ImgURL  string `json:"img_url"`
 }
 
-// @Summary      Image Upload
-// @Description  Upload image from this endpoint
+// @Summary      Upload
+// @Description  Upload file from this endpoint
 // @Tags         Upload
-// @Param        file           formData  file    true   "upload file in preparation for import"
-// @Param        name           formData  string  true   "the username"
-// @Param        email          formData  string  true   "the user email"
-// @Param        page_key       formData  string  true   "the page key"
-// @Param        page_title     formData  string  false  "the page title"
-// @Param        site_name      formData  string  false  "the site name of your content scope"
+// @Param        file           formData  file    true   "Upload file"
+// @Param        name           formData  string  true   "The username"
+// @Param        email          formData  string  true   "The user email"
+// @Param        site_name      formData  string  false  "The site name of your content scope"
 // @Security     ApiKeyAuth
+// @Accept       mpfd
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseImgUpload}
-// @Router       /img-upload  [post]
+// @Router       /upload  [post]
 func ImgUpload(app *core.App, router fiber.Router) {
-	router.Post("/img-upload", func(c *fiber.Ctx) error {
+	router.Post("/upload", func(c *fiber.Ctx) error {
 		// 功能开关 (管理员始终开启)
 		if !app.Conf().ImgUpload.Enabled && !common.CheckIsAdminReq(app, c) {
 			return common.RespError(c, i18n.T("Image upload forbidden"), common.Map{
@@ -68,9 +61,6 @@ func ImgUpload(app *core.App, router fiber.Router) {
 		if !utils.ValidateEmail(p.Email) {
 			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
-
-		// use site
-		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 		// find page
 		// page := entity.FindPage(p.PageKey, p.PageTitle)

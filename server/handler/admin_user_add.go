@@ -11,38 +11,32 @@ import (
 )
 
 type ParamsAdminUserAdd struct {
-	Name         string `form:"name" validate:"required"`
-	Email        string `form:"email" validate:"required"`
-	Password     string `form:"password"`
-	Link         string `form:"link"`
-	IsAdmin      bool   `form:"is_admin" validate:"required"`
-	SiteNames    string `form:"site_names"`
-	ReceiveEmail bool   `form:"receive_email" validate:"required"`
-	BadgeName    string `form:"badge_name"`
-	BadgeColor   string `form:"badge_color"`
+	Name         string `json:"name" validate:"required"`          // The user name
+	Email        string `json:"email" validate:"required"`         // The user email
+	Password     string `json:"password"`                          // The user password
+	Link         string `json:"link"`                              // The user link
+	IsAdmin      bool   `json:"is_admin" validate:"required"`      // The user is an admin
+	SiteNames    string `json:"site_names"`                        // The site names associated with the user
+	ReceiveEmail bool   `json:"receive_email" validate:"required"` // The user receive email
+	BadgeName    string `json:"badge_name"`                        // The user badge name
+	BadgeColor   string `json:"badge_color"`                       // The user badge color (hex format)
 }
 
 type ResponseAdminUserAdd struct {
 	User entity.CookedUserForAdmin `json:"user"`
 }
 
-// @Summary      User Add
+// @Summary      Create User
 // @Description  Create a new user
 // @Tags         User
-// @Param        name           formData  string  true   "the user name"
-// @Param        email          formData  string  true   "the user email"
-// @Param        password       formData  string  false  "the user password"
-// @Param        link           formData  string  false  "the user link"
-// @Param        is_admin       formData  bool    true   "the user is an admin"
-// @Param        site_names     formData  string  false  "the site names associated with the user"
-// @Param        receive_email  formData  bool    true   "the user receive email"
-// @Param        badge_name     formData  string  false  "the user badge name"
-// @Param        badge_color    formData  string  false  "the user badge color (hex format)"
+// @Param        user  body  ParamsAdminUserAdd  true  "The user data"
 // @Security     ApiKeyAuth
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminUserAdd}
-// @Router       /admin/user-add  [post]
+// @Router       /users  [post]
 func AdminUserAdd(app *core.App, router fiber.Router) {
-	router.Post("/user-add", func(c *fiber.Ctx) error {
+	router.Post("/users", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}

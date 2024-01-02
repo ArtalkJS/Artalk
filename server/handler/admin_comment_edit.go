@@ -14,61 +14,46 @@ import (
 )
 
 type ParamsCommentEdit struct {
-	// 查询值
-	ID       uint `form:"id" validate:"required"`
-	SiteName string
-	SiteID   uint
-	SiteAll  bool
+	SiteName string `json:"site_name"` // The site name of your content scope
 
-	// 可修改
-	Content     string `form:"content"`
-	PageKey     string `form:"page_key"`
-	Nick        string `form:"nick"`
-	Email       string `form:"email"`
-	Link        string `form:"link"`
-	Rid         string `form:"rid"`
-	UA          string `form:"ua"`
-	IP          string `form:"ip"`
-	IsCollapsed bool   `form:"is_collapsed"`
-	IsPending   bool   `form:"is_pending"`
-	IsPinned    bool   `form:"is_pinned"`
+	Content     string `json:"content"`      // The comment content
+	PageKey     string `json:"page_key"`     // The comment page_key
+	Nick        string `json:"nick"`         // The comment nick
+	Email       string `json:"email"`        // The comment email
+	Link        string `json:"link"`         // The comment link
+	Rid         string `json:"rid"`          // The comment rid
+	UA          string `json:"ua"`           // The comment ua
+	IP          string `json:"ip"`           // The comment ip
+	IsCollapsed bool   `json:"is_collapsed"` // The comment is_collapsed
+	IsPending   bool   `json:"is_pending"`   // The comment is_pending
+	IsPinned    bool   `json:"is_pinned"`    // The comment is_pinned
 }
 
 type ResponseCommentEdit struct {
 	Comment entity.CookedComment `json:"comment"`
 }
 
-// @Summary      Comment Edit
+// @Summary      Edit Comment
 // @Description  Edit a specific comment
 // @Tags         Comment
-// @Param        id             formData  int     true   "the comment ID you want to edit"
-// @Param        site_name      formData  string  false  "the site name of your content scope"
-// @Param        content        formData  string  false  "the comment content"
-// @Param        page_key       formData  string  false  "the comment page_key"
-// @Param        nick           formData  string  false  "the comment nick"
-// @Param        email          formData  string  false  "the comment email"
-// @Param        link           formData  string  false  "the comment link"
-// @Param        rid            formData  string  false  "the comment rid"
-// @Param        ua             formData  string  false  "the comment ua"
-// @Param        ip             formData  string  false  "the comment ip"
-// @Param        is_collapsed   formData  bool    false  "the comment is_collapsed"
-// @Param        is_pending     formData  bool    false  "the comment is_pending"
-// @Param        is_pinned      formData  bool    false  "the comment is_pinned"
+// @Param        id             path  int                true  "The comment ID you want to edit"
+// @Param        comment        body  ParamsCommentEdit  true  "The comment data"
 // @Security     ApiKeyAuth
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseCommentEdit}
-// @Router       /admin/comment-edit [post]
+// @Router       /comments/{id} [put]
 func AdminCommentEdit(app *core.App, router fiber.Router) {
-	router.Post("/comment-edit", func(c *fiber.Ctx) error {
+	router.Put("/comments/:id", func(c *fiber.Ctx) error {
 		var p ParamsCommentEdit
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
-		// use site
-		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
+		id, _ := c.ParamsInt("id")
 
 		// find comment
-		comment := app.Dao().FindComment(p.ID)
+		comment := app.Dao().FindComment(uint(id))
 		if comment.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 		}

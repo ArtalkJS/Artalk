@@ -9,9 +9,8 @@ import (
 )
 
 type ParamsAdminUserGet struct {
-	Limit  int    `form:"limit"`
-	Offset int    `form:"offset"`
-	Type   string `form:"type"`
+	Limit  int `query:"limit" json:"limit"`   // The limit for pagination
+	Offset int `query:"offset" json:"offset"` // The offset for pagination
 }
 
 type ResponseAdminUserGet struct {
@@ -19,19 +18,23 @@ type ResponseAdminUserGet struct {
 	Users []entity.CookedUserForAdmin `json:"users"`
 }
 
-// @Summary      User List
+// @Summary      Get User List
 // @Description  Get a list of users by some conditions
 // @Tags         User
-// @Param        limit          formData  int     false  "the limit for pagination"
-// @Param        offset         formData  int     false  "the offset for pagination"
+// @Param        type     path   string              false  "The type of users"  Enums(all, admin, in_conf)
+// @Param        options  query  ParamsAdminUserGet  true   "The options"
 // @Security     ApiKeyAuth
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminUserGet}
-// @Router       /admin/user-get  [post]
+// @Router       /users/{type}  [get]
 func AdminUserGet(app *core.App, router fiber.Router) {
-	router.Post("/user-get", func(c *fiber.Ctx) error {
+	router.Get("/users/:type?", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
+
+		listType := c.Params("type", "all") // 默认类型
 
 		var p ParamsAdminUserGet
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -46,13 +49,9 @@ func AdminUserGet(app *core.App, router fiber.Router) {
 		q.Count(&total)
 
 		// 类型筛选
-		if p.Type == "" {
-			p.Type = "all" // 默认类型
-		}
-
-		if p.Type == "admin" {
+		if listType == "admin" {
 			q = q.Where("is_admin = ?", true)
-		} else if p.Type == "in_conf" {
+		} else if listType == "in_conf" {
 			q = q.Where("is_in_conf = ?", true)
 		}
 

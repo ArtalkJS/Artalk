@@ -7,34 +7,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsCommentDel struct {
-	ID uint `form:"id" validate:"required"`
-
-	SiteName string
-	SiteID   uint
-	SiteAll  bool
-}
-
-// @Summary      Comment Delete
+// @Summary      Delete Comment
 // @Description  Delete a specific comment
 // @Tags         Comment
-// @Param        id             formData  int     true  "the comment ID you want to delete"
-// @Param        site_name      formData  string  false "the site name of your content scope"
+// @Param        id       path  int               true  "The comment ID you want to delete"
 // @Security     ApiKeyAuth
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
-// @Router       /admin/comment-del  [post]
+// @Router       /comments/{id}  [delete]
 func AdminCommentDel(app *core.App, router fiber.Router) {
-	router.Post("/comment-del", func(c *fiber.Ctx) error {
-		var p ParamsCommentDel
-		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
-			return resp
-		}
-
-		// use site
-		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
+	router.Delete("/comments/:id", func(c *fiber.Ctx) error {
+		id, _ := c.ParamsInt("id")
 
 		// find comment
-		comment := app.Dao().FindComment(p.ID)
+		comment := app.Dao().FindComment(uint(id))
 		if comment.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 		}

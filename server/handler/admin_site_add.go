@@ -11,24 +11,25 @@ import (
 )
 
 type ParamsAdminSiteAdd struct {
-	Name string `form:"name" validate:"required"`
-	Urls string `form:"urls"`
+	Name string `json:"name" validate:"required"` // The site name
+	Urls string `json:"urls"`                     // The site urls
 }
 
 type ResponseAdminSiteAdd struct {
 	Site entity.CookedSite `json:"site"`
 }
 
-// @Summary      Site Add
+// @Summary      Create Site
 // @Description  Create a new site
 // @Tags         Site
-// @Param        name           formData  string  false  "the site name"
-// @Param        urls           formData  string  false  "the site urls"
 // @Security     ApiKeyAuth
+// @Param        site  body  ParamsAdminSiteAdd  true  "The site data"
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteAdd}
-// @Router       /admin/site-add  [post]
+// @Router       /sites  [post]
 func AdminSiteAdd(app *core.App, router fiber.Router) {
-	router.Post("/site-add", func(c *fiber.Ctx) error {
+	router.Post("/sites", func(c *fiber.Ctx) error {
 		var p ParamsAdminSiteAdd
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp

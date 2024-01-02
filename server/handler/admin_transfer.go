@@ -16,22 +16,24 @@ import (
 )
 
 func AdminTransfer(app *core.App, router fiber.Router) {
-	router.Post("/import", adminImport(app))
-	router.Post("/import-upload", adminImportUpload(app))
-	router.Post("/export", adminExport(app))
+	router.Post("/artransfer/import", adminImport(app))
+	router.Post("/artransfer/upload", adminImportUpload(app))
+	router.Get("/artransfer/export", adminExport(app))
 }
 
 type ParamsAdminImport struct {
-	Payload string `form:"payload"`
+	Payload string `json:"payload"` // The transfer importer payload
 }
 
-// @Summary      Transfer Import
+// @Summary      Import Artrans
 // @Description  Import data to Artalk
 // @Tags         Transfer
-// @Param        payload        formData  string  false  "the transfer importer payload"
 // @Security     ApiKeyAuth
+// @Param        data  body  ParamsAdminImport  true  "The data to import"
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
-// @Router       /admin/import  [post]
+// @Router       /artransfer/import  [post]
 func adminImport(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		var p ParamsAdminImport
@@ -95,13 +97,15 @@ func adminImport(app *core.App) func(c *fiber.Ctx) error {
 	}
 }
 
-// @Summary      Transfer Import Upload
+// @Summary      Upload Artrans
 // @Description  Upload a file to prepare to import
 // @Tags         Transfer
-// @Param        file           formData  file    true   "upload file in preparation for import task"
 // @Security     ApiKeyAuth
-// @Success      200  {object}  common.JSONResult
-// @Router       /admin/import-upload  [post]
+// @Param        file  formData  file  true  "Upload file in preparation for import task"
+// @Accept       mpfd
+// @Produce      json
+// @Success      200  {object}  common.JSONResult{data=object{filename=string}}
+// @Router       /artransfer/upload  [post]
 func adminImportUpload(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		// 获取 Form
@@ -140,12 +144,13 @@ func adminImportUpload(app *core.App) func(c *fiber.Ctx) error {
 	}
 }
 
-// @Summary      Transfer Export
+// @Summary      Export Artrans
 // @Description  Export data from Artalk
 // @Tags         Transfer
 // @Security     ApiKeyAuth
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=object{data=string}}
-// @Router       /admin/export  [post]
+// @Router       /artransfer/export  [get]
 func adminExport(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		var siteNameScope []string

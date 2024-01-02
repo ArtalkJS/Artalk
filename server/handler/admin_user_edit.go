@@ -11,43 +11,35 @@ import (
 )
 
 type ParamsAdminUserEdit struct {
-	// 查询值
-	ID uint `form:"id" validate:"required"`
-
-	// 修改值
-	Name         string `form:"name" validate:"required"`
-	Email        string `form:"email" validate:"required"`
-	Password     string `form:"password"`
-	Link         string `form:"link"`
-	IsAdmin      bool   `form:"is_admin" validate:"required"`
-	SiteNames    string `form:"site_names"`
-	ReceiveEmail bool   `form:"receive_email" validate:"required"`
-	BadgeName    string `form:"badge_name"`
-	BadgeColor   string `form:"badge_color"`
+	Name         string `json:"name" validate:"required"`          // The user name
+	Email        string `json:"email" validate:"required"`         // The user email
+	Password     string `json:"password"`                          // The user password
+	Link         string `json:"link"`                              // The user link
+	IsAdmin      bool   `json:"is_admin" validate:"required"`      // The user is an admin
+	SiteNames    string `json:"site_names"`                        // The site names associated with the user
+	ReceiveEmail bool   `json:"receive_email" validate:"required"` // The user receive email
+	BadgeName    string `json:"badge_name"`                        // The user badge name
+	BadgeColor   string `json:"badge_color"`                       // The user badge color (hex format)
 }
 
 type ResponseAdminUserEdit struct {
 	User entity.CookedUserForAdmin `json:"user"`
 }
 
-// @Summary      User Edit
+// @Summary      Edit User
 // @Description  Edit a specific user
 // @Tags         User
-// @Param        id             formData  string  true   "the user ID you want to edit"
-// @Param        name           formData  string  true   "the user name"
-// @Param        email          formData  string  true   "the user email"
-// @Param        password       formData  string  false  "the user password"
-// @Param        link           formData  string  false  "the user link"
-// @Param        is_admin       formData  bool    true   "the user is an admin"
-// @Param        site_names     formData  string  false  "the site names associated with the user"
-// @Param        receive_email  formData  bool    true   "the user receive email"
-// @Param        badge_name     formData  string  false  "the user badge name"
-// @Param        badge_color    formData  string  false  "the user badge color (hex format)"
+// @Param        id    path  int                  true  "The user ID you want to edit"
+// @Param        user  body  ParamsAdminUserEdit  true  "The user data"
 // @Security     ApiKeyAuth
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminUserEdit}
-// @Router       /admin/user-edit  [post]
+// @Router       /users/{id}  [put]
 func AdminUserEdit(app *core.App, router fiber.Router) {
-	router.Post("/user-edit", func(c *fiber.Ctx) error {
+	router.Put("/users/:id", func(c *fiber.Ctx) error {
+		id, _ := c.ParamsInt("id")
+
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
@@ -57,7 +49,7 @@ func AdminUserEdit(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		user := app.Dao().FindUserByID(p.ID)
+		user := app.Dao().FindUserByID(uint(id))
 		if user.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("User")}))
 		}

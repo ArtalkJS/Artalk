@@ -10,29 +10,34 @@ import (
 )
 
 type ParamsGet struct {
-	PageKey  string `form:"page_key" validate:"required"`
-	SiteName string
+	PageKey  string `query:"page_key" json:"page_key" validate:"required"` // The comment page_key
+	SiteName string `query:"site_name" json:"site_name"`                   // The site name of your content scope
 
-	Limit  int `form:"limit"`
-	Offset int `form:"offset"`
+	Limit  int `query:"limit" json:"limit"`   // The limit for pagination
+	Offset int `query:"offset" json:"offset"` // The offset for pagination
 
-	FlatMode      bool   `form:"flat_mode"`
-	SortBy        string `form:"sort_by"`         // date_asc, date_desc, vote
-	ViewOnlyAdmin bool   `form:"view_only_admin"` // 只看 admin
+	FlatMode      bool   `query:"flat_mode" json:"flat_mode"`                             // Enable flat_mode
+	SortBy        string `query:"sort_by" json:"sort_by" enums:"date_asc,date_desc,vote"` // Sort by condition
+	ViewOnlyAdmin bool   `query:"view_only_admin" json:"view_only_admin"`                 // Only show comments by admin
 
-	Search string `form:"search"`
+	Search string `query:"search" json:"search"` // Search keywords
 
 	// Message Center
-	Type  string `form:"type"` // ["", "all", "mentions", "mine", "pending", "admin_all", "admin_pending"]
-	Name  string `form:"name"`
-	Email string `form:"email"`
 
-	SiteID  uint
-	SiteAll bool
+	Type  string `query:"type" json:"type" enums:"all,mentions,mine,pending,admin_all,admin_pending"` // Message center show type
+	Name  string `query:"name" json:"name"`                                                           // The username
+	Email string `query:"email" json:"email"`                                                         // The user email
+}
 
-	IsMsgCenter bool
-	User        *entity.User
-	IsAdminReq  bool
+type CommentGetOptions struct {
+	Params ParamsGet
+
+	SiteID  uint // The site id of your content scope
+	SiteAll bool // The site all of your content scope
+
+	IsMsgCenter bool         // Is message center
+	User        *entity.User // The user
+	IsAdminReq  bool         // Is admin request
 }
 
 type ResponseGet struct {
@@ -43,42 +48,37 @@ type ResponseGet struct {
 	Unread      []entity.CookedNotify  `json:"unread"`
 	UnreadCount int                    `json:"unread_count"`
 	ApiVersion  common.ApiVersionData  `json:"api_version"`
-	Conf        common.Map             `json:"conf,omitempty"`
 }
 
-// @Summary      Comment List
+// @Summary      Get Comment List
 // @Description  Get a list of comments by some conditions
 // @Tags         Comment
-// @Param        page_key        formData  string  true   "the comment page_key"
-// @Param        site_name       formData  string  false  "the site name of your content scope"
-// @Param        limit           formData  int     false  "the limit for pagination"
-// @Param        offset          formData  int     false  "the offset for pagination"
-// @Param        flat_mode       formData  bool    false  "enable flat_mode"
-// @Param        sort_by         formData  string  false  "sort by condition"  Enums(date_asc, date_desc, vote)
-// @Param        view_only_admin formData  bool    false  "only show comments by admin"
-// @Param        search          formData  string  false  "search keywords"
-// @Param        type            formData  string  false  "message center show type"  Enums(all, mentions, mine, pending, admin_all, admin_pending)
-// @Param        name            formData  string  false  "the username"
-// @Param        email           formData  string  false  "the user email"
 // @Security     ApiKeyAuth
-// @Success      200  {object}   common.JSONResult{data=ResponseGet}
-// @Router       /get  [post]
+// @Param        options  query  ParamsGet  true  "The options"
+// @Produce      json
+// @Success      200  {object}  common.JSONResult{data=ResponseGet}
+// @Router       /comments  [get]
 func CommentGet(app *core.App, router fiber.Router) {
-	router.Post("/get", func(c *fiber.Ctx) error {
+	router.Get("/comments", func(c *fiber.Ctx) error {
 		var p ParamsGet
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
+		var opts CommentGetOptions
+		opts.Params = p
+
 		// use site
-		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
+		site := common.GetSiteInfo(c)
+		opts.SiteID = site.ID
+		opts.SiteAll = site.All
 
 		// handle params
 		UseCfgFrontend(app, &p)
 
 		// find page
 		var page entity.Page
-		if !p.SiteAll {
+		if !opts.SiteAll {
 			page = app.Dao().FindPage(p.PageKey, p.SiteName)
 			if page.IsEmpty() { // if page not found
 				page = entity.Page{
@@ -92,17 +92,17 @@ func CommentGet(app *core.App, router fiber.Router) {
 		var user entity.User
 		if p.Name != "" && p.Email != "" {
 			user = app.Dao().FindUser(p.Name, p.Email)
-			p.User = &user // init params user field
+			opts.User = &user // init params user field
 		}
 
 		// check if admin
 		if common.CheckIsAdminReq(app, c) {
-			p.IsAdminReq = true
+			opts.IsAdminReq = true
 		}
 
 		// check if msg center
 		if p.Type != "" && p.Name != "" && p.Email != "" {
-			p.IsMsgCenter = true
+			opts.IsMsgCenter = true
 			p.FlatMode = true // 通知中心强制平铺模式
 		}
 
@@ -112,7 +112,7 @@ func CommentGet(app *core.App, router fiber.Router) {
 			// nested_mode prepare the root comments as first query result
 			findScopes = append(findScopes, RootComments())
 		}
-		if !p.IsMsgCenter {
+		if !opts.IsMsgCenter {
 			// pinned comments ignore
 			findScopes = append(findScopes, func(d *gorm.DB) *gorm.DB {
 				return d.Where("is_pinned = ?", false) // 因为置顶是独立的查询，这里就不再查)
@@ -126,10 +126,10 @@ func CommentGet(app *core.App, router fiber.Router) {
 
 		// get comments for the first query
 		var comments []entity.Comment
-		GetCommentQuery(app, c, p, p.SiteID, findScopes...).Scopes(Paginate(p.Offset, p.Limit)).Find(&comments)
+		GetCommentQuery(app, c, opts, opts.SiteID, findScopes...).Scopes(Paginate(p.Offset, p.Limit)).Find(&comments)
 
 		// prepend the pinned comments
-		prependPinnedComments(app, c, p, &comments)
+		prependPinnedComments(app, c, opts, &comments)
 
 		// cook
 		cookedComments := app.Dao().CookAllComments(comments)
@@ -142,7 +142,7 @@ func CommentGet(app *core.App, router fiber.Router) {
 
 			// 获取 comment 子评论
 			for _, parent := range cookedComments { // TODO: Read more children, pagination for children comment
-				children := app.Dao().FindCommentChildren(parent.ID, SiteIsolationChecker(app, c, p), AllowedCommentChecker(app, c, p))
+				children := app.Dao().FindCommentChildren(parent.ID, SiteIsolationChecker(app, c, opts), AllowedCommentChecker(app, c, opts))
 				cookedComments = append(cookedComments, app.Dao().CookAllComments(children)...)
 			}
 
@@ -157,7 +157,7 @@ func CommentGet(app *core.App, router fiber.Router) {
 					continue
 				}
 
-				rComment := app.Dao().FindComment(comment.Rid, SiteIsolationChecker(app, c, p)) // 查找被回复的评论
+				rComment := app.Dao().FindComment(comment.Rid, SiteIsolationChecker(app, c, opts)) // 查找被回复的评论
 				if rComment.IsEmpty() {
 					continue
 				}
@@ -169,18 +169,18 @@ func CommentGet(app *core.App, router fiber.Router) {
 		}
 
 		// count comments
-		total := CountComments(GetCommentQuery(app, c, p, p.SiteID))
-		totalRoots := CountComments(GetCommentQuery(app, c, p, p.SiteID, RootComments()))
+		total := CountComments(GetCommentQuery(app, c, opts, opts.SiteID))
+		totalRoots := CountComments(GetCommentQuery(app, c, opts, opts.SiteID, RootComments()))
 
 		// mark all as read in msg center
-		if p.IsMsgCenter {
-			app.Dao().UserNotifyMarkAllAsRead(p.User.ID)
+		if opts.IsMsgCenter {
+			app.Dao().UserNotifyMarkAllAsRead(opts.User.ID)
 		}
 
 		// unread notifies
 		var unreadNotifies = []entity.CookedNotify{}
-		if p.User != nil {
-			unreadNotifies = app.Dao().CookAllNotifies(app.Dao().FindUnreadNotifies(p.User.ID))
+		if opts.User != nil {
+			unreadNotifies = app.Dao().CookAllNotifies(app.Dao().FindUnreadNotifies(opts.User.ID))
 		}
 
 		// IP region query
@@ -208,10 +208,6 @@ func CommentGet(app *core.App, router fiber.Router) {
 			Unread:      unreadNotifies,
 			UnreadCount: len(unreadNotifies),
 			ApiVersion:  common.GetApiVersionDataMap(),
-		}
-
-		if p.Offset == 0 {
-			resp.Conf = common.GetApiPublicConfDataMap(app, c)
 		}
 
 		return common.RespData(c, resp)

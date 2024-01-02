@@ -6,10 +6,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary      Config
-// @Description  Get system configurations
+// @Summary  Get System Configs for UI
 // @Tags     System
-// @Success  200  {object}  common.JSONResult{data=config.Config}
+// @Produce  json
+// @Success  200  {object}  common.JSONResult{data=common.ConfData}
 // @Router   /conf  [get]
 func Conf(app *core.App, router fiber.Router) {
 	router.All("/conf", func(c *fiber.Ctx) error {

@@ -11,33 +11,32 @@ import (
 )
 
 type ParamsAdminPageFetch struct {
-	ID       uint `form:"id"`
-	SiteName string
-
-	GetStatus bool `form:"get_status"`
+	SiteName  string `json:"site_name"`  // The site name of your content scope
+	GetStatus bool   `json:"get_status"` // If true, only get the status of the current task status
 }
 
 var allPageFetching = false
 var allPageFetchDone = 0
 var allPageFetchTotal = 0
 
-// @Summary      Page Data Fetch
+// @Summary      Fetch Page Data
 // @Description  Fetch the data of a specific page
 // @Tags         Page
-// @Param        key            formData  string  true   "the page ID you want to fetch"
-// @Param        site_name      formData  string  false  "the site name of your content scope"
-// @Param        get_status     formData  bool    false  "which response data you want to receive"
 // @Security     ApiKeyAuth
+// @Param        id       path  int                   true  "The page ID you want to fetch"
+// @Param        options  body  ParamsAdminPageFetch  true  "The options"
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
-// @Router       /admin/page-fetch  [post]
+// @Router       /pages/{id}/fetch  [post]
 func AdminPageFetch(app *core.App, router fiber.Router) {
-	router.Post("/page-fetch", func(c *fiber.Ctx) error {
+	router.Post("/pages/:id/fetch", func(c *fiber.Ctx) error {
+		id, _ := c.ParamsInt("id")
+
 		var p ParamsAdminPageFetch
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
-
-		common.UseSite(c, &p.SiteName, nil, nil)
 
 		// 状态获取
 		if p.GetStatus {
@@ -55,6 +54,7 @@ func AdminPageFetch(app *core.App, router fiber.Router) {
 		}
 
 		// 更新全部站点
+		// TODO separate the API `/pages/:id/fetch` and `/pages/fetch`
 		if p.SiteName != "" {
 			if allPageFetching {
 				return common.RespError(c, i18n.T("Task in progress, please wait a moment"))
@@ -86,7 +86,7 @@ func AdminPageFetch(app *core.App, router fiber.Router) {
 			return common.RespSuccess(c)
 		}
 
-		page := app.Dao().FindPageByID(p.ID)
+		page := app.Dao().FindPageByID(uint(id))
 		if page.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}

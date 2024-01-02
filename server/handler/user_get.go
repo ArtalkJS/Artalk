@@ -8,8 +8,8 @@ import (
 )
 
 type ParamsUserGet struct {
-	Name  string `form:"name"`
-	Email string `form:"email"`
+	Name  string `query:"name" json:"name"`   // The username
+	Email string `query:"email" json:"email"` // The user email
 }
 
 type ResponseUserGet struct {
@@ -19,25 +19,33 @@ type ResponseUserGet struct {
 	UnreadCount int                   `json:"unread_count"`
 }
 
-// @Summary      User Info Get
+// @Summary      Get User Info
 // @Description  Get user info to prepare for login or check current user status
-// @Tags         User
-// @Param        name           formData  string  false  "the username"
-// @Param        email          formData  string  false  "the user email"
+// @Tags         Account
 // @Security     ApiKeyAuth
+// @Param        user  query  ParamsUserGet  true  "The user to query"
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseUserGet}
-// @Router       /user-get  [post]
+// @Router       /user/info  [get]
 func UserGet(app *core.App, router fiber.Router) {
-	router.Post("/user-get", func(c *fiber.Ctx) error {
+	router.Get("/user/info", func(c *fiber.Ctx) error {
+		// login status
+		user := common.GetUserByReq(app, c)
+		isLogin := !user.IsEmpty()
+
 		var p ParamsUserGet
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
-		// login status
-		isLogin := !common.GetUserByReq(app, c).IsEmpty()
+		if !isLogin {
+			user = app.Dao().FindUser(p.Name, p.Email)
+		} else {
+			if p.Name != "" || p.Email != "" {
+				return common.RespError(c, "Not necessary to query user info when logged in")
+			}
+		}
 
-		user := app.Dao().FindUser(p.Name, p.Email)
 		if user.IsEmpty() {
 			return common.RespData(c, ResponseUserGet{
 				User:        nil,
@@ -49,7 +57,6 @@ func UserGet(app *core.App, router fiber.Router) {
 
 		// unread notifies
 		unreadNotifies := app.Dao().CookAllNotifies(app.Dao().FindUnreadNotifies(user.ID))
-
 		cockedUser := app.Dao().CookUser(&user)
 
 		return common.RespData(c, ResponseUserGet{

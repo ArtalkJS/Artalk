@@ -12,35 +12,28 @@ import (
 )
 
 type ParamsStat struct {
-	Type string `form:"type" validate:"required"`
-
-	SiteName string
-	PageKeys string `form:"page_keys"`
-
-	Limit int `form:"limit"`
-
-	SiteID  uint
-	SiteAll bool
+	SiteName string `query:"site_name" json:"site_name"` // The site name of your content scope
+	PageKeys string `query:"page_keys" json:"page_keys"` // multiple page keys separated by commas
+	Limit    int    `query:"limit" json:"limit"`         // The limit for pagination
 }
 
-// @Summary      Statistics
-// @Description  Get the statistics of various data analysed
-// @Tags         Statistics
-// @Param        type        formData  string  true   "the type of statistics"  Enums(latest_comments, latest_pages, pv_most_pages, comment_most_pages, page_pv, site_pv, page_comment, site_comment, rand_comments, rand_pages)
-// @Param        page_keys   formData  string  false  "multiple page keys separated by commas"
-// @Param        site_name   formData  string  false  "the site name of your content scope"
-// @Param        limit       formData  int     false  "the amount of items you want"
+// @Summary      Statistic
+// @Description  Get the statistics of various data analysis
+// @Tags         Statistic
+// @Param        type        path   string      true   "The type of statistics"  Enums(latest_comments, latest_pages, pv_most_pages, comment_most_pages, page_pv, site_pv, page_comment, site_comment, rand_comments, rand_pages)
+// @Param        options     query  ParamsStat  false  "The options"
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
-// @Router       /stat  [post]
+// @Router       /stats/{type}  [get]
 func Stat(app *core.App, router fiber.Router) {
-	router.Post("/stat", func(c *fiber.Ctx) error {
+	router.Get("/stats/:type", func(c *fiber.Ctx) error {
+		queryType := c.Params("type")
+
 		var p ParamsStat
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
-
-		// use site
-		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 		// Limit 限定
 		if p.Limit <= 0 {
@@ -65,7 +58,7 @@ func Stat(app *core.App, router fiber.Router) {
 			}
 		}
 
-		switch p.Type {
+		switch queryType {
 		case "latest_comments":
 			// 最新评论
 			var comments []entity.Comment

@@ -7,31 +7,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminPageDel struct {
-	Key      string `form:"key" validate:"required"`
-	SiteName string
-	SiteID   uint
-}
-
-// @Summary      Page Delete
+// @Summary      Delete Page
 // @Description  Delete a specific page
 // @Tags         Page
-// @Param        key            formData  string  true   "the page KEY you want to delete"
-// @Param        site_name      formData  string  false  "the site name of your content scope"
+// @Param        id  path  int  true  "The page ID you want to delete"
 // @Security     ApiKeyAuth
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
-// @Router       /admin/page-del  [post]
+// @Router       /pages/{id}  [delete]
 func AdminPageDel(app *core.App, router fiber.Router) {
-	router.Post("/page-del", func(c *fiber.Ctx) error {
-		var p ParamsAdminPageDel
-		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
-			return resp
-		}
+	router.Delete("/pages/:id", func(c *fiber.Ctx) error {
+		id, _ := c.ParamsInt("id")
 
-		// use site
-		common.UseSite(c, &p.SiteName, &p.SiteID, nil)
-
-		page := app.Dao().FindPage(p.Key, p.SiteName)
+		page := app.Dao().FindPageByID(uint(id))
 		if page.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}

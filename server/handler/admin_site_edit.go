@@ -13,35 +13,34 @@ import (
 )
 
 type ParamsAdminSiteEdit struct {
-	// 查询值
-	ID uint `form:"id" validate:"required"`
-
-	// 修改值
-	Name string `form:"name"`
-	Urls string `form:"urls"`
+	Name string `json:"name"` // Edit site name
+	Urls string `json:"urls"` // Edit site urls
 }
 
 type ResponseAdminSiteEdit struct {
 	Site entity.CookedSite `json:"site"`
 }
 
-// @Summary      Site Edit
+// @Summary      Edit Site
 // @Description  Edit a specific site
 // @Tags         Site
-// @Param        id             formData  string  true   "the site ID you want to edit"
-// @Param        name           formData  string  false  "edit site name"
-// @Param        urls           formData  string  false  "edit site urls"
 // @Security     ApiKeyAuth
+// @Param        id    path  string               true  "The site ID you want to edit"
+// @Param        site  body  ParamsAdminSiteEdit  true  "The site data"
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteEdit}
-// @Router       /admin/site-edit  [post]
+// @Router       /sites/{id}  [put]
 func AdminSiteEdit(app *core.App, router fiber.Router) {
-	router.Post("/site-edit", func(c *fiber.Ctx) error {
+	router.Put("/sites/:id", func(c *fiber.Ctx) error {
+		id, _ := c.ParamsInt("id")
+
 		var p ParamsAdminSiteEdit
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
-		site := app.Dao().FindSiteByID(p.ID)
+		site := app.Dao().FindSiteByID(uint(id))
 		if site.IsEmpty() {
 			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Site")}))
 		}

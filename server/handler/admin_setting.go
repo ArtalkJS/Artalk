@@ -18,14 +18,15 @@ type ResponseAdminSettingGet struct {
 	Template string `json:"template"`
 }
 
-// @Summary      Settings Get
+// @Summary      Get Settings
 // @Description  Get settings from app config file
 // @Tags         System
 // @Security     ApiKeyAuth
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminSettingGet}
-// @Router       /admin/setting-get [post]
+// @Router       /settings [get]
 func AdminSettingGet(app *core.App, router fiber.Router) {
-	router.Post("/setting-get", func(c *fiber.Ctx) error {
+	router.Get("/settings", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
@@ -43,18 +44,20 @@ func AdminSettingGet(app *core.App, router fiber.Router) {
 }
 
 type ParamsAdminSettingSave struct {
-	Data string `form:"data" validate:"required"`
+	Data string `json:"data" validate:"required"` // The content of the config file in YAML format
 }
 
-// @Summary      Settings Save
+// @Summary      Save Settings
 // @Description  Save settings to app config file
 // @Tags         System
-// @Param        data           formData  string  true  "the content of the config file in YAML format"
 // @Security     ApiKeyAuth
+// @Param        settings  body  ParamsAdminSettingSave  true  "The settings data"
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
-// @Router       /admin/setting-save [post]
+// @Router       /settings [post]
 func AdminSettingSave(app *core.App, router fiber.Router) {
-	router.Post("/setting-save", func(c *fiber.Ctx) error {
+	router.Post("/settings", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
@@ -96,15 +99,17 @@ func AdminSettingSave(app *core.App, router fiber.Router) {
 	})
 }
 
-// @Summary      Settings Template
+// @Summary      Get Settings Template
 // @Description  Get config templates in different languages for rendering the settings page in the frontend
 // @Tags         System
 // @Security     ApiKeyAuth
-// @Success      200  {object}  string
-// @Router       /admin/setting-tpl  [post]
+// @Param        locale  path  string  false  "The locale of the settings template you want to get"
+// @Produce      json
+// @Success      200  {string}  string
+// @Router       /settings/template/{locale}  [get]
 func AdminSettingTpl(app *core.App, router fiber.Router) {
-	router.Post("/setting-tpl", func(c *fiber.Ctx) error {
-		locale := strings.TrimSpace(c.FormValue("locale"))
+	router.Get("/settings/template/:locale?", func(c *fiber.Ctx) error {
+		locale := strings.TrimSpace(c.Params("locale"))
 		tpl := config.Template(locale)
 		return c.Status(http.StatusOK).SendString(tpl)
 	})

@@ -14,44 +14,44 @@ import (
 )
 
 // 获取评论查询实例
-func GetCommentQuery(app *core.App, c *fiber.Ctx, p ParamsGet, siteID uint, scopes ...func(*gorm.DB) *gorm.DB) *gorm.DB {
+func GetCommentQuery(app *core.App, c *fiber.Ctx, opts CommentGetOptions, siteID uint, scopes ...func(*gorm.DB) *gorm.DB) *gorm.DB {
 	q := app.Dao().DB().Model(&entity.Comment{})
 
-	q.Scopes(SiteIsolationScope(app, c, p), AllowedComment(app, c, p))
-	q.Order(GetSortRuleSQL(p.SortBy, "created_at DESC")) // 排序规则
+	q.Scopes(SiteIsolationScope(app, c, opts), AllowedComment(app, c, opts))
+	q.Order(GetSortRuleSQL(opts.Params.SortBy, "created_at DESC")) // 排序规则
 	q.Scopes(scopes...)
 
 	switch {
-	case !p.IsMsgCenter:
+	case !opts.IsMsgCenter:
 		// ==========
 		//  非通知中心
 		// ==========
 
 		// 只看管理员功能
-		if p.ViewOnlyAdmin {
+		if opts.Params.ViewOnlyAdmin {
 			adminIDs := app.Dao().GetAllAdminIDs() // 获取管理员列表
 			q.Where("user_id IN ?", adminIDs)      // 只允许管理员 user_id
 		}
 
-		q.Where("page_key = ?", p.PageKey)
+		q.Where("page_key = ?", opts.Params.PageKey)
 
-	case p.IsMsgCenter:
+	case opts.IsMsgCenter:
 		// ==========
 		//  通知中心
 		// ==========
-		user := p.User
+		user := opts.User
 		if user == nil || user.IsEmpty() {
 			return q.Where("id = 0") // user not found
 		}
 
 		// admin_only 检测
-		if strings.HasPrefix(p.Type, "admin_") {
-			if !p.IsAdminReq || !common.IsAdminHasSiteAccess(app, c, p.SiteName) {
+		if strings.HasPrefix(opts.Params.Type, "admin_") {
+			if !opts.IsAdminReq || !common.IsAdminHasSiteAccess(app, c, opts.Params.SiteName) {
 				return q.Where("id = 0")
 			}
 		}
 
-		switch p.Type {
+		switch opts.Params.Type {
 		case "all":
 			q.Where("rid IN (?) OR user_id = ?", app.Dao().GetUserAllCommentIDs(user.ID), user.ID)
 		case "mentions":
@@ -80,29 +80,29 @@ func RootComments() func(db *gorm.DB) *gorm.DB {
 }
 
 // 允许的评论
-func AllowedComment(app *core.App, c *fiber.Ctx, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+func AllowedComment(app *core.App, c *fiber.Ctx, opts CommentGetOptions) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if common.CheckIsAdminReq(app, c) {
 			return db // 管理员显示全部
 		}
 
 		// 通知中心允许显示个人的待审状态的评论
-		if p.IsMsgCenter && !p.User.IsEmpty() {
-			return db.Where("is_pending = ? OR (is_pending = ? AND user_id = ?)", false, true, p.User.ID)
+		if opts.IsMsgCenter && !opts.User.IsEmpty() {
+			return db.Where("is_pending = ? OR (is_pending = ? AND user_id = ?)", false, true, opts.User.ID)
 		}
 
 		return db.Where("is_pending = ?", false) // 不允许待审评论
 	}
 }
 
-func AllowedCommentChecker(app *core.App, c *fiber.Ctx, p ParamsGet) func(*entity.Comment) bool {
+func AllowedCommentChecker(app *core.App, c *fiber.Ctx, opts CommentGetOptions) func(*entity.Comment) bool {
 	return func(comment *entity.Comment) bool {
 		if common.CheckIsAdminReq(app, c) {
 			return true // 管理员显示全部
 		}
 
 		// 通知中心允许显示个人的待审状态的评论
-		if p.IsMsgCenter && p.User.ID == comment.UserID {
+		if opts.IsMsgCenter && opts.User.ID == comment.UserID {
 			return true
 		}
 
@@ -115,13 +115,13 @@ func AllowedCommentChecker(app *core.App, c *fiber.Ctx, p ParamsGet) func(*entit
 	}
 }
 
-func SiteIsolationChecker(app *core.App, c *fiber.Ctx, p ParamsGet) func(*entity.Comment) bool {
+func SiteIsolationChecker(app *core.App, c *fiber.Ctx, opts CommentGetOptions) func(*entity.Comment) bool {
 	return func(comment *entity.Comment) bool {
-		if common.CheckIsAdminReq(app, c) && p.SiteAll {
+		if common.CheckIsAdminReq(app, c) && opts.SiteAll {
 			return true // 仅管理员支持取消站点隔离
 		}
 
-		if comment.SiteName != p.SiteName {
+		if comment.SiteName != opts.Params.SiteName {
 			return false
 		}
 
@@ -130,13 +130,13 @@ func SiteIsolationChecker(app *core.App, c *fiber.Ctx, p ParamsGet) func(*entity
 }
 
 // 站点隔离
-func SiteIsolationScope(app *core.App, c *fiber.Ctx, p ParamsGet) func(db *gorm.DB) *gorm.DB {
+func SiteIsolationScope(app *core.App, c *fiber.Ctx, opts CommentGetOptions) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		if common.CheckIsAdminReq(app, c) && p.SiteAll {
+		if common.CheckIsAdminReq(app, c) && opts.SiteAll {
 			return db // 仅管理员支持取消站点隔离
 		}
 
-		return db.Where("site_name = ?", p.SiteName)
+		return db.Where("site_name = ?", opts.Params.SiteName)
 	}
 }
 
@@ -192,13 +192,13 @@ func Paginate(offset int, limit int) func(db *gorm.DB) *gorm.DB {
 }
 
 // 插入置顶的评论
-func prependPinnedComments(app *core.App, c *fiber.Ctx, p ParamsGet, comments *[]entity.Comment) {
-	if p.IsMsgCenter || p.Offset != 0 {
+func prependPinnedComments(app *core.App, c *fiber.Ctx, opts CommentGetOptions, comments *[]entity.Comment) {
+	if opts.IsMsgCenter || opts.Params.Offset != 0 {
 		return // 通知中心关闭置顶 & 仅在分页的首页加入置顶评论
 	}
 
 	pinnedComments := []entity.Comment{}
-	GetCommentQuery(app, c, p, p.SiteID).Where("is_pinned = ?", true).Find(&pinnedComments)
+	GetCommentQuery(app, c, opts, opts.SiteID).Where("is_pinned = ?", true).Find(&pinnedComments)
 	if len(pinnedComments) == 0 {
 		return // 没有置顶评论
 	}

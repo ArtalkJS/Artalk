@@ -4,9 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"strings"
-	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -17,9 +15,9 @@ import (
 )
 
 type ParamsLogin struct {
-	Name     string `form:"name"`
-	Email    string `form:"email" validate:"required"`
-	Password string `form:"password" validate:"required"`
+	Name     string `json:"name"`                         // The username
+	Email    string `json:"email" validate:"required"`    // The user email
+	Password string `json:"password" validate:"required"` // The user password
 }
 
 type ResponseLogin struct {
@@ -27,17 +25,17 @@ type ResponseLogin struct {
 	User  entity.CookedUser `json:"user"`
 }
 
-// @Summary      User Login
+// @Summary      Get Access Token
 // @Description  Login user by name or email
-// @Tags         User
-// @Param        name      formData  string  false  "the username"
-// @Param        email     formData  string  true   "the user email"
-// @Param        password  formData  string  true   "the user password"
+// @Tags         Account
+// @Param        user  body  ParamsLogin  true  "The user login data"
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseLogin}
 // @Failure      400  {object}  common.JSONResult{data=object{need_name_select=[]string}}  "Multiple users with the same email address are matched"
-// @Router       /login  [post]
+// @Router       /user/access_token  [post]
 func UserLogin(app *core.App, router fiber.Router) {
-	router.Post("/login", func(c *fiber.Ctx) error {
+	router.Post("/user/access_token", func(c *fiber.Ctx) error {
 		var p ParamsLogin
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
@@ -76,8 +74,8 @@ func UserLogin(app *core.App, router fiber.Router) {
 		}
 
 		// 密码验证
-		bcryptPrefix := "(bcrypt)"
-		md5Prefix := "(md5)"
+		const bcryptPrefix = "(bcrypt)"
+		const md5Prefix = "(md5)"
 		passwordOK := false
 		switch {
 		case strings.HasPrefix(user.Password, bcryptPrefix):
@@ -105,7 +103,6 @@ func UserLogin(app *core.App, router fiber.Router) {
 		}
 
 		jwtToken := common.LoginGetUserToken(user, app.Conf().AppKey, app.Conf().LoginTimeout)
-		setAuthCookie(app, c, jwtToken, time.Now().Add(time.Second*time.Duration(app.Conf().LoginTimeout)))
 
 		return common.RespData(c, ResponseLogin{
 			Token: jwtToken,
@@ -114,38 +111,14 @@ func UserLogin(app *core.App, router fiber.Router) {
 	})
 }
 
-func setAuthCookie(app *core.App, c *fiber.Ctx, jwtToken string, expires time.Time) {
-	if !app.Conf().Cookie.Enabled {
-		return
-	}
-
-	// save jwt to cookie
-	cookie := new(fiber.Cookie)
-	cookie.Name = config.COOKIE_KEY_ATK_AUTH
-	cookie.Value = jwtToken
-	cookie.Expires = expires
-
-	// @see https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Cookies
-	// @see https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes
-	cookie.Path = "/"
-	cookie.HTTPOnly = true // prevent XSS
-	cookie.Secure = true   // https only
-	cookie.SameSite = ""   // for cors-request
-
-	// @note cookie secure is not working on localhost
-	// @see https://bugs.chromium.org/p/chromium/issues/detail?id=1177877#c7
-
-	c.Cookie(cookie)
-}
-
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
 
 type ParamsLoginStatus struct {
-	Name  string `form:"name"`
-	Email string `form:"email"`
+	Name  string `query:"name" json:"name"`   // The username
+	Email string `query:"email" json:"email"` // The user email
 }
 
 type ResponseLoginStatus struct {
@@ -153,17 +126,16 @@ type ResponseLoginStatus struct {
 	IsLogin bool `json:"is_login"`
 }
 
-// @Summary      User Login Status
+// @Summary      Get Login Status
 // @Description  Get user login status by header Authorization
-// @Tags         User
-// @Param        name           formData  string  false  "the username"
-// @Param        email          formData  string  false  "the user email"
-// @Param        password       formData  string  true   "the user password"
+// @Tags         Account
 // @Security     ApiKeyAuth
+// @Param        user  query  ParamsLoginStatus  true  "The user to query"
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseLoginStatus}
-// @Router       /login-status  [post]
+// @Router       /user/status  [get]
 func UserLoginStatus(app *core.App, router fiber.Router) {
-	router.Post("/login-status", func(c *fiber.Ctx) error {
+	router.Get("/user/status", func(c *fiber.Ctx) error {
 		var p ParamsLoginStatus
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp

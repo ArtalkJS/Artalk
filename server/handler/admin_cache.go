@@ -7,22 +7,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminCacheWarm struct {
-}
-
-// @Summary      Cache Warming
-// @Description  Cache warming helps you hit the cache on the user's first visit
+// @Summary      Warm-Up Cache
+// @Description  Cache warming helps you to pre-load the cache to improve the performance of the first request
 // @Tags         Cache
 // @Security     ApiKeyAuth
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
-// @Router       /admin/cache-warm  [post]
+// @Router       /cache/warmup  [post]
 func AdminCacheWarm(app *core.App, router fiber.Router) {
-	router.Post("/cache-warm", func(c *fiber.Ctx) error {
-		var p ParamsAdminCacheWarm
-		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
-			return resp
-		}
-
+	router.Post("/cache/warmup", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
@@ -41,24 +34,15 @@ func AdminCacheWarm(app *core.App, router fiber.Router) {
 	})
 }
 
-type ParamsAdminCacheFlush struct {
-	FlushAll bool `form:"flush_all"`
-}
-
-// @Summary      Cache Flush
-// @Description  Flush Cache when application runs
+// @Summary      Flush Cache
+// @Description  Flush all cache on the server
 // @Tags         Cache
-// @Param        flush_all      formData  int     false  "flush all cache" example(1)
 // @Security     ApiKeyAuth
 // @Success      200  {object}  common.JSONResult
-// @Router       /admin/cache-flush  [post]
+// @Produce      json
+// @Router       /cache/flush  [post]
 func AdminCacheFlush(app *core.App, router fiber.Router) {
-	router.Post("/cache-flush", func(c *fiber.Ctx) error {
-		var p ParamsAdminCacheFlush
-		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
-			return resp
-		}
-
+	router.Post("/cache/flush", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
@@ -67,16 +51,12 @@ func AdminCacheFlush(app *core.App, router fiber.Router) {
 			return common.RespError(c, "cache disabled")
 		}
 
-		if p.FlushAll {
-			go func() {
-				app.Dao().CacheFlushAll()
-			}()
+		go func() {
+			app.Dao().CacheFlushAll()
+		}()
 
-			return common.RespData(c, common.Map{
-				"msg": i18n.T("Task executing in background, please wait..."),
-			})
-		}
-
-		return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Parameter")}))
+		return common.RespData(c, common.Map{
+			"msg": i18n.T("Task executing in background, please wait..."),
+		})
 	})
 }

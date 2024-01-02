@@ -9,11 +9,9 @@ import (
 )
 
 type ParamsAdminPageGet struct {
-	SiteName string
-	SiteID   uint
-	SiteAll  bool
-	Limit    int `form:"limit"`
-	Offset   int `form:"offset"`
+	SiteName string `query:"site_name" json:"site_name"` // The site name of your content scope
+	Limit    int    `query:"limit" json:"limit"`         // The limit for pagination
+	Offset   int    `query:"offset" json:"offset"`       // The offset for pagination
 }
 
 type ResponseAdminPageGet struct {
@@ -21,32 +19,32 @@ type ResponseAdminPageGet struct {
 	Pages []entity.CookedPage `json:"pages"`
 }
 
-// @Summary      Page List
+// @Summary      Get Page List
 // @Description  Get a list of pages by some conditions
 // @Tags         Page
-// @Param        site_name      formData  string  false  "the site name of your content scope"
-// @Param        limit          formData  int     false  "the limit for pagination"
-// @Param        offset         formData  int     false  "the offset for pagination"
 // @Security     ApiKeyAuth
+// @Param        options  query  ParamsAdminPageGet  true  "The options"
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult{data=ResponseAdminPageGet}
-// @Router       /admin/page-get  [post]
+// @Router       /pages  [get]
 func AdminPageGet(app *core.App, router fiber.Router) {
-	router.Post("/page-get", func(c *fiber.Ctx) error {
+	router.Get("/pages", func(c *fiber.Ctx) error {
 		var p ParamsAdminPageGet
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
 		// use site
-		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
+		site := common.GetSiteInfo(c)
 
-		if !common.IsAdminHasSiteAccess(app, c, p.SiteName) {
+		if !common.IsAdminHasSiteAccess(app, c, site.Name) {
 			return common.RespError(c, i18n.T("Access denied"))
 		}
 
 		// 准备 query
 		q := app.Dao().DB().Model(&entity.Page{}).Order("created_at DESC")
-		if !p.SiteAll { // 不是查的所有站点
+		if !site.All { // 不是查的所有站点
 			q = q.Where("site_name = ?", p.SiteName)
 		}
 

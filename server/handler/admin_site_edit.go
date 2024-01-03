@@ -18,7 +18,7 @@ type ParamsAdminSiteEdit struct {
 }
 
 type ResponseAdminSiteEdit struct {
-	Site entity.CookedSite `json:"site"`
+	Data entity.CookedSite `json:"data"`
 }
 
 // @Summary      Edit Site
@@ -29,7 +29,7 @@ type ResponseAdminSiteEdit struct {
 // @Param        site  body  ParamsAdminSiteEdit  true  "The site data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteEdit}
+// @Success      200  {object}  ResponseAdminSiteEdit
 // @Router       /sites/{id}  [put]
 func AdminSiteEdit(app *core.App, router fiber.Router) {
 	router.Put("/sites/:id", func(c *fiber.Ctx) error {
@@ -42,29 +42,29 @@ func AdminSiteEdit(app *core.App, router fiber.Router) {
 
 		site := app.Dao().FindSiteByID(uint(id))
 		if site.IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Site")}))
+			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Site")}))
 		}
 
 		// 站点操作权限检查
 		if !common.IsAdminHasSiteAccess(app, c, site.Name) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		if strings.TrimSpace(p.Name) == "" {
-			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": "name"}))
+			return common.RespError(c, 400, i18n.T("{{name}} cannot be empty", Map{"name": "name"}))
 		}
 
 		// 重命名合法性检测
 		modifyName := p.Name != site.Name
 		if modifyName && !app.Dao().FindSite(p.Name).IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("Site")}))
+			return common.RespError(c, 400, i18n.T("{{name}} already exists", Map{"name": i18n.T("Site")}))
 		}
 
 		// urls 合法性检测
 		if p.Urls != "" {
 			for _, url := range utils.SplitAndTrimSpace(p.Urls, ",") {
 				if !utils.ValidateURL(url) {
-					return common.RespError(c, i18n.T("Contains invalid URL"))
+					return common.RespError(c, 400, i18n.T("Contains invalid URL"))
 				}
 			}
 		}
@@ -98,11 +98,11 @@ func AdminSiteEdit(app *core.App, router fiber.Router) {
 
 		err := app.Dao().UpdateSite(&site)
 		if err != nil {
-			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Site")}))
+			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Site")}))
 		}
 
 		return common.RespData(c, ResponseAdminSiteEdit{
-			Site: app.Dao().CookSite(&site),
+			Data: app.Dao().CookSite(&site),
 		})
 	})
 }

@@ -15,7 +15,7 @@ type ParamsAdminUserGet struct {
 
 type ResponseAdminUserGet struct {
 	Total int64                       `json:"total"`
-	Users []entity.CookedUserForAdmin `json:"users"`
+	Data  []entity.CookedUserForAdmin `json:"data"`
 }
 
 // @Summary      Get User List
@@ -26,12 +26,13 @@ type ResponseAdminUserGet struct {
 // @Security     ApiKeyAuth
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseAdminUserGet}
+// @Success      200  {object}  ResponseAdminUserGet
+// @Failure      403  {object}  Map{msg=string}
 // @Router       /users/{type}  [get]
 func AdminUserGet(app *core.App, router fiber.Router) {
 	router.Get("/users/:type?", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		listType := c.Params("type", "all") // 默认类型
@@ -68,7 +69,7 @@ func AdminUserGet(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminUserGet{
-			Users: cookedUsers,
+			Data:  cookedUsers,
 			Total: total,
 		})
 	})

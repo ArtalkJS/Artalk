@@ -23,17 +23,19 @@ type ResponseAdminSettingGet struct {
 // @Tags         System
 // @Security     ApiKeyAuth
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseAdminSettingGet}
+// @Success      200  {object}  ResponseAdminSettingGet
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /settings [get]
 func AdminSettingGet(app *core.App, router fiber.Router) {
 	router.Get("/settings", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		dat, err := os.ReadFile(app.Conf().GetCfgFileLoaded())
 		if err != nil {
-			return common.RespError(c, i18n.T("Config file read failed"))
+			return common.RespError(c, 500, i18n.T("Config file read failed"))
 		}
 
 		return common.RespData(c, ResponseAdminSettingGet{
@@ -54,12 +56,14 @@ type ParamsAdminSettingSave struct {
 // @Param        settings  body  ParamsAdminSettingSave  true  "The settings data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult
+// @Success      200  {object}  Map{}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /settings [post]
 func AdminSettingSave(app *core.App, router fiber.Router) {
 	router.Post("/settings", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		var p ParamsAdminSettingSave
@@ -70,27 +74,27 @@ func AdminSettingSave(app *core.App, router fiber.Router) {
 		configFile := app.Conf().GetCfgFileLoaded()
 		f, err := os.Create(configFile)
 		if err != nil {
-			return common.RespError(c, i18n.T("Config file read failed")+": "+err.Error())
+			return common.RespError(c, 500, i18n.T("Config file read failed")+": "+err.Error())
 		}
 
 		defer f.Close()
 
 		_, err2 := f.WriteString(p.Data)
 		if err2 != nil {
-			return common.RespError(c, i18n.T("Save failed")+": "+err2.Error())
+			return common.RespError(c, 500, i18n.T("Save failed")+": "+err2.Error())
 		}
 
 		// 应用新配置文件
 		conf, err := config.NewFromFile(configFile)
 		if err != nil {
-			return common.RespError(c, "Config instance err: "+err.Error())
+			return common.RespError(c, 500, "Config instance err: "+err.Error())
 		}
 
 		app.SetConf(conf)
 
 		// 重启服务
 		if err := app.Restart(); err != nil {
-			return common.RespError(c, i18n.T("Restart failed: {{err}}", map[string]interface{}{"err": err.Error()}))
+			return common.RespError(c, 500, i18n.T("Restart failed: {{err}}", map[string]interface{}{"err": err.Error()}))
 		}
 
 		log.Info(i18n.T("Services restart complete"))
@@ -104,8 +108,8 @@ func AdminSettingSave(app *core.App, router fiber.Router) {
 // @Tags         System
 // @Security     ApiKeyAuth
 // @Param        locale  path  string  false  "The locale of the settings template you want to get"
-// @Produce      json
-// @Success      200  {string}  string
+// @Produce      application/yaml
+// @Success      200  {string}  string  "The template content"
 // @Router       /settings/template/{locale}  [get]
 func AdminSettingTpl(app *core.App, router fiber.Router) {
 	router.Get("/settings/template/:locale?", func(c *fiber.Ctx) error {

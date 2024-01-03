@@ -22,7 +22,7 @@ type ResponsePV struct {
 // @Param        page  body  ParamsPV  true  "The page to record pv"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponsePV}
+// @Success      200  {object}  ResponsePV
 // @Router       /pages/pv  [post]
 func PV(app *core.App, router fiber.Router) {
 	router.Post("/pages/pv", func(c *fiber.Ctx) error {

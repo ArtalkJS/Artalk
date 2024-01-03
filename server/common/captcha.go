@@ -11,7 +11,7 @@ import (
 func GetLimiter[T any](c *fiber.Ctx) (lmt *T, error error) {
 	l := c.Locals("limiter").(*T)
 	if l == nil {
-		return nil, RespError(c, "limiter is not initialize")
+		return nil, RespError(c, 500, "limiter is not initialize")
 	}
 	return l, nil
 }

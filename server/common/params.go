@@ -88,7 +88,7 @@ func ValidateRequired(c *fiber.Ctx, destParams interface{}) (isContinue bool, re
 
 		// check required param
 		if strings.TrimSpace(paramVal) == "" {
-			return false, RespError(c, "Param `"+paramKey+"` is required")
+			return false, RespError(c, 400, "Param `"+paramKey+"` is required")
 		}
 	}
 

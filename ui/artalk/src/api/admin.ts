@@ -11,6 +11,6 @@ export default class AdminApi extends ApiBase {
 
   /** 缓存预热 */
   public cacheWarmUp() {
-    return this.fetch('POST', '/cache/warmup')
+    return this.fetch('POST', '/cache/warm_up')
   }
 }

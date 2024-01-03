@@ -41,7 +41,7 @@ type CommentGetOptions struct {
 }
 
 type ResponseGet struct {
-	Comments    []entity.CookedComment `json:"comments"`
+	Data        []entity.CookedComment `json:"comments"`
 	Total       int64                  `json:"total"`
 	TotalRoots  int64                  `json:"total_roots"`
 	Page        entity.CookedPage      `json:"page"`
@@ -56,7 +56,8 @@ type ResponseGet struct {
 // @Security     ApiKeyAuth
 // @Param        options  query  ParamsGet  true  "The options"
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseGet}
+// @Success      200  {object}  ResponseGet
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /comments  [get]
 func CommentGet(app *core.App, router fiber.Router) {
 	router.Get("/comments", func(c *fiber.Ctx) error {
@@ -201,7 +202,7 @@ func CommentGet(app *core.App, router fiber.Router) {
 		}
 
 		resp := ResponseGet{
-			Comments:    cookedComments,
+			Data:        cookedComments,
 			Total:       total,
 			TotalRoots:  totalRoots,
 			Page:        app.Dao().CookPage(&page),

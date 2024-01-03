@@ -13,24 +13,27 @@ import (
 // @Param        id  path  int  true  "The user ID you want to delete"
 // @Security     ApiKeyAuth
 // @Produce      json
-// @Success      200  {object}  common.JSONResult
+// @Success      200  {object}  Map{}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /users/{id}  [delete]
 func AdminUserDel(app *core.App, router fiber.Router) {
 	router.Delete("/users/:id", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		id, _ := c.ParamsInt("id")
 
 		user := app.Dao().FindUserByID(uint(id))
 		if user.IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("User")}))
+			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("User")}))
 		}
 
 		err := app.Dao().DelUser(&user)
 		if err != nil {
-			return common.RespError(c, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("User")}))
+			return common.RespError(c, 500, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("User")}))
 		}
 		return common.RespSuccess(c)
 	})

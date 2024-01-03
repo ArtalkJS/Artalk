@@ -9,7 +9,7 @@ import (
 // @Summary  Get System Configs for UI
 // @Tags     System
 // @Produce  json
-// @Success  200  {object}  common.JSONResult{data=common.ConfData}
+// @Success  200  {object}  common.ConfData
 // @Router   /conf  [get]
 func Conf(app *core.App, router fiber.Router) {
 	router.All("/conf", func(c *fiber.Ctx) error {

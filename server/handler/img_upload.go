@@ -41,13 +41,16 @@ type ResponseImgUpload struct {
 // @Security     ApiKeyAuth
 // @Accept       mpfd
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseImgUpload}
+// @Success      200  {object}  ResponseImgUpload
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /upload  [post]
 func ImgUpload(app *core.App, router fiber.Router) {
 	router.Post("/upload", func(c *fiber.Ctx) error {
 		// 功能开关 (管理员始终开启)
 		if !app.Conf().ImgUpload.Enabled && !common.CheckIsAdminReq(app, c) {
-			return common.RespError(c, i18n.T("Image upload forbidden"), common.Map{
+			return common.RespError(c, 403, i18n.T("Image upload forbidden"), common.Map{
 				"img_upload_enabled": false,
 			})
 		}
@@ -59,7 +62,7 @@ func ImgUpload(app *core.App, router fiber.Router) {
 		}
 
 		if !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
+			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 
 		// find page
@@ -70,7 +73,7 @@ func ImgUpload(app *core.App, router fiber.Router) {
 		// 图片大小限制 (Based on content length)
 		if app.Conf().ImgUpload.MaxSize != 0 {
 			if int64(c.Request().Header.ContentLength()) > app.Conf().ImgUpload.MaxSize*1024*1024 {
-				return common.RespError(c, i18n.T("Image exceeds {{file_size}} limit", Map{
+				return common.RespError(c, 400, i18n.T("Image exceeds {{file_size}} limit", Map{
 					"file_size": fmt.Sprintf("%dMB", app.Conf().ImgUpload.MaxSize),
 				}))
 			}
@@ -80,14 +83,14 @@ func ImgUpload(app *core.App, router fiber.Router) {
 		file, err := c.FormFile("file")
 		if err != nil {
 			log.Error(err)
-			return common.RespError(c, "File read failed")
+			return common.RespError(c, 500, "File read failed")
 		}
 
 		// 打开文件
 		src, err := file.Open()
 		if err != nil {
 			log.Error(err)
-			return common.RespError(c, "File open failed")
+			return common.RespError(c, 500, "File open failed")
 		}
 		defer src.Close()
 
@@ -95,13 +98,13 @@ func ImgUpload(app *core.App, router fiber.Router) {
 		buf, err := io.ReadAll(src)
 		if err != nil {
 			log.Error(err)
-			return common.RespError(c, "File read failed")
+			return common.RespError(c, 500, "File read failed")
 		}
 
 		// 大小限制 (Based on content read)
 		if app.Conf().ImgUpload.MaxSize != 0 {
 			if int64(len(buf)) > app.Conf().ImgUpload.MaxSize*1024*1024 {
-				return common.RespError(c, i18n.T("Image exceeds {{file_size}} limit", Map{
+				return common.RespError(c, 400, i18n.T("Image exceeds {{file_size}} limit", Map{
 					"file_size": fmt.Sprintf("%dMB", app.Conf().ImgUpload.MaxSize),
 				}))
 			}
@@ -116,7 +119,7 @@ func ImgUpload(app *core.App, router fiber.Router) {
 			// "image/svg+xml",
 		}
 		if !utils.ContainsStr(allowMines, fileMine) {
-			return common.RespError(c, i18n.T("Unsupported formats"))
+			return common.RespError(c, 400, i18n.T("Unsupported formats"))
 		}
 
 		// 图片文件名
@@ -135,21 +138,21 @@ func ImgUpload(app *core.App, router fiber.Router) {
 		// 创建图片目标文件
 		if err := utils.EnsureDir(app.Conf().ImgUpload.Path); err != nil {
 			log.Error(err)
-			return common.RespError(c, "Folder creation failed")
+			return common.RespError(c, 500, "Folder creation failed")
 		}
 
 		fileFullPath := strings.TrimSuffix(app.Conf().ImgUpload.Path, "/") + "/" + filename
 		dst, err := os.Create(fileFullPath)
 		if err != nil {
 			log.Error(err)
-			return common.RespError(c, "File creation failed")
+			return common.RespError(c, 500, "File creation failed")
 		}
 		defer dst.Close()
 
 		// 写入图片文件
 		if _, err = dst.Write(buf); err != nil {
 			log.Error(err)
-			return common.RespError(c, "File write failed")
+			return common.RespError(c, 500, "File write failed")
 		}
 
 		// 生成外部可访问链接
@@ -178,7 +181,7 @@ func ImgUpload(app *core.App, router fiber.Router) {
 				}
 
 				log.Error("[IMG_UPLOAD] [upgit] upgit output: ", upgitURL)
-				return common.RespError(c, i18n.T("Upload image via {{method}} failed", Map{"method": "upgit"}))
+				return common.RespError(c, 500, i18n.T("Upload image via {{method}} failed", Map{"method": "upgit"}))
 			}
 
 			// 上传成功，删除本地文件

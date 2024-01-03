@@ -52,7 +52,7 @@ func SiteOriginMiddleware(app *core.App) fiber.Handler {
 		// 请求站点名 == "__ATK_SITE_ALL" 时取消站点隔离
 		if siteName == config.ATK_SITE_ALL {
 			if !isSuperAdmin {
-				return common.RespError(c, "Only admin can query sites with disable isolation")
+				return common.RespError(c, 403, "Only admin can query sites with disable isolation")
 			}
 
 			siteAll = true
@@ -68,6 +68,7 @@ func SiteOriginMiddleware(app *core.App) fiber.Handler {
 			findSite := app.Dao().FindSite(siteName)
 			if findSite.IsEmpty() {
 				return common.RespError(c,
+					404,
 					i18n.T("Site `{{name}}` not found. Please create it in control center.", map[string]interface{}{"name": siteName}),
 					common.Map{
 						"err_no_site": true,
@@ -120,7 +121,7 @@ func CheckOrigin(app *core.App, c *fiber.Ctx, allowSite *entity.Site) (bool, err
 		referer := string(c.Request().Header.Referer())
 		// 此处不再强制 Origin 必须存在，因为可以通过 Access-Control-Allow-Origin 来限制非法跨域请求
 		// if referer == "" {
-		// 	return false, common.RespError(c, i18n.T("Invalid request")+", "+i18n.T("Unable to get `{{name}}`", map[string]interface{}{"name": "origin"}))
+		// 	return false, common.RespError(c, 400, i18n.T("Invalid request")+", "+i18n.T("Unable to get `{{name}}`", map[string]interface{}{"name": "origin"}))
 		// }
 		if referer == "" {
 			return true, nil
@@ -139,7 +140,7 @@ func CheckOrigin(app *core.App, c *fiber.Ctx, allowSite *entity.Site) (bool, err
 		return true, nil
 	}
 
-	return false, common.RespError(c, i18n.T("Invalid request. Please check your `trusted_domains` config."))
+	return false, common.RespError(c, 403, i18n.T("Invalid request. Please check your `trusted_domains` config."))
 }
 
 // 判断 Origin 是否被允许

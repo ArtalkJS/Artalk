@@ -16,7 +16,7 @@ type ParamsAdminPageGet struct {
 
 type ResponseAdminPageGet struct {
 	Total int64               `json:"total"`
-	Pages []entity.CookedPage `json:"pages"`
+	Data  []entity.CookedPage `json:"data"`
 }
 
 // @Summary      Get Page List
@@ -26,7 +26,8 @@ type ResponseAdminPageGet struct {
 // @Param        options  query  ParamsAdminPageGet  true  "The options"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseAdminPageGet}
+// @Success      200  {object}  ResponseAdminPageGet
+// @Failure      403  {object}  Map{msg=string}
 // @Router       /pages  [get]
 func AdminPageGet(app *core.App, router fiber.Router) {
 	router.Get("/pages", func(c *fiber.Ctx) error {
@@ -39,7 +40,7 @@ func AdminPageGet(app *core.App, router fiber.Router) {
 		site := common.GetSiteInfo(c)
 
 		if !common.IsAdminHasSiteAccess(app, c, site.Name) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		// 准备 query
@@ -65,7 +66,7 @@ func AdminPageGet(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminPageGet{
-			Pages: cookedPages,
+			Data:  cookedPages,
 			Total: total,
 		})
 	})

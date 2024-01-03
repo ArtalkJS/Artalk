@@ -21,7 +21,9 @@ type ParamsAdminSendMail struct {
 // @Param        email  body  ParamsAdminSendMail  true  "The email data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult
+// @Success      200  {object}  Map{}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{}
 // @Router       /send_email  [post]
 func AdminSendMail(app *core.App, router fiber.Router) {
 	router.Post("/send_email", func(c *fiber.Ctx) error {
@@ -31,13 +33,13 @@ func AdminSendMail(app *core.App, router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		emailService, err := core.AppService[*core.EmailService](app)
 		if err != nil {
 			log.Error("[EmailService] err: ", err)
-			return common.RespError(c, "EmailService err: "+err.Error())
+			return common.RespError(c, 500, "EmailService err: "+err.Error())
 		}
 		emailService.AsyncSendTo(p.Subject, p.Body, p.ToAddr)
 

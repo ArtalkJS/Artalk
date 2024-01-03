@@ -13,7 +13,7 @@ import (
 func Captcha(app *core.App, router fiber.Router) {
 	ca := router.Group("/captcha/", func(c *fiber.Ctx) error {
 		if !app.Conf().Captcha.Enabled {
-			return common.RespError(c, "Captcha disabled")
+			return common.RespError(c, 404, "Captcha disabled")
 		}
 		return c.Next()
 	})
@@ -28,7 +28,7 @@ func Captcha(app *core.App, router fiber.Router) {
 // @Description  Get the status of the user's captcha verification
 // @Tags         Captcha
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=object{is_pass=bool}}
+// @Success      200  {object}  Map{data=object{is_pass=bool}}
 // @Router       /captcha/status  [get]
 func captchaStatus(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
@@ -45,7 +45,8 @@ func captchaStatus(app *core.App) func(c *fiber.Ctx) error {
 // @Description  Get a base64 encoded captcha image or a HTML page to verify for user
 // @Tags         Captcha
 // @Produce      json,html
-// @Success      200  {object}  common.JSONResult{data=object{img_data=string}}
+// @Success      200  {object}  Map{data=object{img_data=string}}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /captcha/get  [get]
 func captchaGet(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
@@ -55,7 +56,7 @@ func captchaGet(app *core.App) func(c *fiber.Ctx) error {
 		// get new captcha
 		got, err := cap.Get()
 		if err != nil {
-			return common.RespError(c, "captcha generate err: "+err.Error())
+			return common.RespError(c, 500, "captcha generate err: "+err.Error())
 		}
 
 		// response captcha
@@ -73,7 +74,7 @@ func captchaGet(app *core.App) func(c *fiber.Ctx) error {
 			return c.Send(got)
 		}
 
-		return common.RespError(c, "invalid captcha type")
+		return common.RespError(c, 500, "invalid captcha type")
 	}
 }
 
@@ -86,8 +87,8 @@ type ParamsCaptchaCheck struct {
 // @Tags         Captcha
 // @Param        data  body  ParamsCaptchaCheck  true  "The data to check"
 // @Produce      json
-// @Success      200  {object}  common.JSONResult
-// @Failure      400  {object}  common.JSONResult{data=object{img_data=string}}
+// @Success      200  {object}  Map{}
+// @Failure      403  {object}  Map{img_data=string}
 // @Router       /captcha/verify [post]
 func captchaVerify(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
@@ -123,17 +124,17 @@ func captchaVerify(app *core.App) func(c *fiber.Ctx) error {
 			if !isPass {
 				img, err := cap.Get()
 				if err != nil {
-					return common.RespError(c, "captcha generate err: "+err.Error())
+					return common.RespError(c, 500, "captcha generate err: "+err.Error())
 				}
 
-				return common.RespError(c, i18n.T("Wrong captcha"), common.Map{
+				return common.RespError(c, 403, i18n.T("Wrong captcha"), common.Map{
 					"img_data": string(img),
 				})
 			}
 		case captcha.IFrame:
 			if !isPass {
 				log.Error("[Captcha] Failed to verify: ", err)
-				return common.RespError(c, i18n.T("Verification failed"), common.Map{
+				return common.RespError(c, 403, i18n.T("Verification failed"), common.Map{
 					"detail": err.Error(),
 				})
 			}

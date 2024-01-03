@@ -29,7 +29,10 @@ type ResponseVote struct {
 // @Param        vote	    body  ParamsVote  true  "The vote data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseVote}
+// @Success      200  {object}  ResponseVote
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /votes/{type}/{target_id}  [post]
 func Vote(app *core.App, router fiber.Router) {
 	router.Post("/votes/:type/:target_id", func(c *fiber.Ctx) error {
@@ -58,7 +61,7 @@ func Vote(app *core.App, router fiber.Router) {
 		voteType := strings.TrimPrefix(strings.TrimPrefix(rawType, "comment_"), "page_")
 
 		if !isUp && !isDown {
-			return common.RespError(c, "unknown type")
+			return common.RespError(c, 404, "unknown type")
 		}
 
 		var comment entity.Comment
@@ -68,15 +71,15 @@ func Vote(app *core.App, router fiber.Router) {
 		case isVoteComment:
 			comment = app.Dao().FindComment(uint(targetID))
 			if comment.IsEmpty() {
-				return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
+				return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 			}
 		case isVotePage:
 			page = app.Dao().FindPageByID(uint(targetID))
 			if page.IsEmpty() {
-				return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
+				return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 			}
 		default:
-			return common.RespError(c, "unknown type")
+			return common.RespError(c, 404, "unknown type")
 		}
 
 		// sync target model field value

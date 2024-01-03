@@ -15,6 +15,10 @@ type ParamsAdminPageFetch struct {
 	GetStatus bool   `json:"get_status"` // If true, only get the status of the current task status
 }
 
+type ResponseAdminPageFetch struct {
+	Data entity.CookedPage `json:"data"`
+}
+
 var allPageFetching = false
 var allPageFetchDone = 0
 var allPageFetchTotal = 0
@@ -27,7 +31,11 @@ var allPageFetchTotal = 0
 // @Param        options  body  ParamsAdminPageFetch  true  "The options"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult
+// @Success      200  {object}  ResponseAdminPageFetch
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /pages/{id}/fetch  [post]
 func AdminPageFetch(app *core.App, router fiber.Router) {
 	router.Post("/pages/:id/fetch", func(c *fiber.Ctx) error {
@@ -57,7 +65,7 @@ func AdminPageFetch(app *core.App, router fiber.Router) {
 		// TODO separate the API `/pages/:id/fetch` and `/pages/fetch`
 		if p.SiteName != "" {
 			if allPageFetching {
-				return common.RespError(c, i18n.T("Task in progress, please wait a moment"))
+				return common.RespError(c, 400, i18n.T("Task in progress, please wait a moment"))
 			}
 
 			// 异步执行
@@ -88,19 +96,19 @@ func AdminPageFetch(app *core.App, router fiber.Router) {
 
 		page := app.Dao().FindPageByID(uint(id))
 		if page.IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
+			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
 		if !common.IsAdminHasSiteAccess(app, c, page.SiteName) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		if err := app.Dao().FetchPageFromURL(&page); err != nil {
-			return common.RespError(c, i18n.T("Page fetch failed")+": "+err.Error())
+			return common.RespError(c, 500, i18n.T("Page fetch failed")+": "+err.Error())
 		}
 
-		return common.RespData(c, common.Map{
-			"page": app.Dao().CookPage(&page),
+		return common.RespData(c, ResponseAdminPageFetch{
+			Data: app.Dao().CookPage(&page),
 		})
 	})
 }

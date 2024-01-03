@@ -8,8 +8,8 @@ interface ApiVersionInfo {
 }
 
 interface SystemConfResp {
-  frontend_conf: Partial<ArtalkConfig>
-  version: ApiVersionInfo
+  frontend_conf?: Partial<ArtalkConfig>
+  version?: ApiVersionInfo
 }
 
 /**

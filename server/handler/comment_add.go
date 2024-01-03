@@ -27,7 +27,7 @@ type ParamsAdd struct {
 }
 
 type ResponseAdd struct {
-	Comment entity.CookedComment `json:"comment"`
+	Data entity.CookedComment `json:"data"`
 }
 
 // @Summary      Create Comment
@@ -35,7 +35,9 @@ type ResponseAdd struct {
 // @Tags         Comment
 // @Param        comment  body  ParamsAdd  true  "The comment data"
 // @Security     ApiKeyAuth
-// @Success      200  {object}  common.JSONResult{data=ResponseAdd}
+// @Success      200  {object}  ResponseAdd
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Accept       json
 // @Produce      json
 // @Router       /comments  [post]
@@ -47,17 +49,17 @@ func CommentAdd(app *core.App, router fiber.Router) {
 		}
 
 		if strings.TrimSpace(p.Name) == "" {
-			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Nickname")}))
+			return common.RespError(c, 400, i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Nickname")}))
 		}
 		if strings.TrimSpace(p.Email) == "" {
-			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Email")}))
+			return common.RespError(c, 400, i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Email")}))
 		}
 
 		if !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
+			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 		if p.Link != "" && !utils.ValidateURL(p.Link) {
-			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
+			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
 		}
 
 		var (
@@ -85,13 +87,13 @@ func CommentAdd(app *core.App, router fiber.Router) {
 		if p.Rid != 0 {
 			parentComment = app.Dao().FindComment(p.Rid)
 			if parentComment.IsEmpty() {
-				return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Parent comment")}))
+				return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Parent comment")}))
 			}
 			if parentComment.PageKey != p.PageKey {
-				return common.RespError(c, "Inconsistent with the page_key of the parent comment")
+				return common.RespError(c, 400, "Inconsistent with the page_key of the parent comment")
 			}
 			if !parentComment.IsAllowReply() {
-				return common.RespError(c, i18n.T("Cannot reply to this comment"))
+				return common.RespError(c, 400, i18n.T("Cannot reply to this comment"))
 			}
 		}
 
@@ -99,7 +101,7 @@ func CommentAdd(app *core.App, router fiber.Router) {
 		user := app.Dao().FindCreateUser(p.Name, p.Email, p.Link)
 		if user.ID == 0 || page.Key == "" {
 			log.Error("Cannot get user or page")
-			return common.RespError(c, i18n.T("Comment failed"))
+			return common.RespError(c, 500, i18n.T("Comment failed"))
 		}
 
 		// update user
@@ -136,7 +138,7 @@ func CommentAdd(app *core.App, router fiber.Router) {
 		err := app.Dao().CreateComment(&comment)
 		if err != nil {
 			log.Error("Save Comment error: ", err)
-			return common.RespError(c, i18n.T("Comment failed"))
+			return common.RespError(c, 500, i18n.T("Comment failed"))
 		}
 
 		// 异步执行
@@ -183,7 +185,7 @@ func CommentAdd(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdd{
-			Comment: cookedComment,
+			Data: cookedComment,
 		})
 	})
 }

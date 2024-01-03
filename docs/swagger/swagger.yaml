@@ -22,14 +22,9 @@ definitions:
     properties:
       data:
         description: 数据
-      extra:
-        description: 数据
       msg:
         description: 消息
         type: string
-      success:
-        description: 是否成功
-        type: boolean
     type: object
   common.Map:
     additionalProperties: true
@@ -754,6 +749,9 @@ definitions:
       site_names_raw:
         type: string
     type: object
+  handler.Map:
+    additionalProperties: true
+    type: object
   handler.ParamsAdd:
     properties:
       content:
@@ -790,9 +788,24 @@ definitions:
     type: object
   handler.ParamsAdminImport:
     properties:
-      payload:
-        description: The transfer importer payload
+      assumeyes:
+        description: Automatically answer yes for all questions.
+        type: boolean
+      json_data:
+        description: The JSON data
         type: string
+      json_file:
+        description: The JSON file path
+        type: string
+      target_site_name:
+        description: The target site name
+        type: string
+      target_site_url:
+        description: The target site url
+        type: string
+      url_resolver:
+        description: Enable URL resolver
+        type: boolean
     type: object
   handler.ParamsAdminPageEdit:
     properties:
@@ -1034,17 +1047,22 @@ definitions:
     type: object
   handler.ResponseAdd:
     properties:
-      comment:
+      data:
         $ref: '#/definitions/entity.CookedComment'
     type: object
   handler.ResponseAdminPageEdit:
     properties:
-      page:
+      data:
+        $ref: '#/definitions/entity.CookedPage'
+    type: object
+  handler.ResponseAdminPageFetch:
+    properties:
+      data:
         $ref: '#/definitions/entity.CookedPage'
     type: object
   handler.ResponseAdminPageGet:
     properties:
-      pages:
+      data:
         items:
           $ref: '#/definitions/entity.CookedPage'
         type: array
@@ -1060,44 +1078,50 @@ definitions:
     type: object
   handler.ResponseAdminSiteAdd:
     properties:
-      site:
+      data:
         $ref: '#/definitions/entity.CookedSite'
     type: object
   handler.ResponseAdminSiteEdit:
     properties:
-      site:
+      data:
         $ref: '#/definitions/entity.CookedSite'
     type: object
   handler.ResponseAdminSiteGet:
     properties:
-      sites:
+      data:
         items:
           $ref: '#/definitions/entity.CookedSite'
         type: array
     type: object
   handler.ResponseAdminUserAdd:
     properties:
-      user:
+      data:
         $ref: '#/definitions/entity.CookedUserForAdmin'
     type: object
   handler.ResponseAdminUserEdit:
     properties:
-      user:
+      data:
         $ref: '#/definitions/entity.CookedUserForAdmin'
     type: object
   handler.ResponseAdminUserGet:
     properties:
-      total:
-        type: integer
-      users:
+      data:
         items:
           $ref: '#/definitions/entity.CookedUserForAdmin'
         type: array
+      total:
+        type: integer
     type: object
   handler.ResponseCommentEdit:
     properties:
-      comment:
+      data:
         $ref: '#/definitions/entity.CookedComment'
+    type: object
+  handler.ResponseExport:
+    properties:
+      data:
+        description: The exported data which is a JSON string
+        type: string
     type: object
   handler.ResponseGet:
     properties:
@@ -1125,6 +1149,12 @@ definitions:
       img_file:
         type: string
       img_url:
+        type: string
+    type: object
+  handler.ResponseImportUpload:
+    properties:
+      filename:
+        description: The uploaded file name which can be used to import
         type: string
     type: object
   handler.ResponseLogin:
@@ -1178,84 +1208,6 @@ info:
   title: Artalk API
   version: "2.0"
 paths:
-  /artransfer/export:
-    get:
-      description: Export data from Artalk
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  properties:
-                    data:
-                      type: string
-                  type: object
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: Export Artrans
-      tags:
-      - Transfer
-  /artransfer/import:
-    post:
-      consumes:
-      - application/json
-      description: Import data to Artalk
-      parameters:
-      - description: The data to import
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/handler.ParamsAdminImport'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/common.JSONResult'
-      security:
-      - ApiKeyAuth: []
-      summary: Import Artrans
-      tags:
-      - Transfer
-  /artransfer/upload:
-    post:
-      consumes:
-      - multipart/form-data
-      description: Upload a file to prepare to import
-      parameters:
-      - description: Upload file in preparation for import task
-        in: formData
-        name: file
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  properties:
-                    filename:
-                      type: string
-                  type: object
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: Upload Artrans
-      tags:
-      - Transfer
   /cache/flush:
     post:
       description: Flush all cache on the server
@@ -1265,13 +1217,36 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: Flush Cache
       tags:
       - Cache
-  /cache/warmup:
+  /cache/warm_up:
     post:
       description: Cache warming helps you to pre-load the cache to improve the performance
         of the first request
@@ -1281,7 +1256,30 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: Warm-Up Cache
@@ -1299,13 +1297,22 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
                 data:
                   properties:
                     img_data:
                       type: string
                   type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       summary: Get Captcha
       tags:
@@ -1320,7 +1327,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
                 data:
                   properties:
@@ -1347,18 +1354,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
-        "400":
-          description: Bad Request
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  properties:
-                    img_data:
-                      type: string
-                  type: object
+                img_data:
+                  type: string
               type: object
       summary: Verify Captcha
       tags:
@@ -1429,11 +1433,15 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseGet'
+        "500":
+          description: Internal Server Error
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseGet'
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -1457,11 +1465,24 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseAdd'
+        "400":
+          description: Bad Request
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdd'
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -1483,7 +1504,34 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: Delete Comment
@@ -1511,11 +1559,42 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseCommentEdit'
+        "400":
+          description: Bad Request
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseCommentEdit'
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -1530,12 +1609,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/common.ConfData'
-              type: object
+            $ref: '#/definitions/common.ConfData'
       summary: Get System Configs for UI
       tags:
       - System
@@ -1567,7 +1641,34 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: '#/definitions/handler.Map'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       summary: Mark Notify as Read
       tags:
       - Notify
@@ -1595,11 +1696,15 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseAdminPageGet'
+        "403":
+          description: Forbidden
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminPageGet'
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -1621,7 +1726,34 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: Delete Page
@@ -1649,11 +1781,42 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseAdminPageEdit'
+        "400":
+          description: Bad Request
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminPageEdit'
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -1683,7 +1846,43 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: '#/definitions/handler.ResponseAdminPageFetch'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: Fetch Page Data
@@ -1707,12 +1906,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponsePV'
-              type: object
+            $ref: '#/definitions/handler.ResponsePV'
       summary: Record PV
       tags:
       - Page
@@ -1734,7 +1928,20 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Map'
       security:
       - ApiKeyAuth: []
       summary: Send Email
@@ -1749,11 +1956,24 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseAdminSettingGet'
+        "403":
+          description: Forbidden
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminSettingGet'
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -1777,7 +1997,25 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: Save Settings
@@ -1793,10 +2031,10 @@ paths:
         name: locale
         type: string
       produces:
-      - application/json
+      - application/yaml
       responses:
         "200":
-          description: OK
+          description: The template content
           schema:
             type: string
       security:
@@ -1813,12 +2051,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminSiteGet'
-              type: object
+            $ref: '#/definitions/handler.ResponseAdminSiteGet'
       security:
       - ApiKeyAuth: []
       summary: Get Site List
@@ -1841,11 +2074,33 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseAdminSiteAdd'
+        "400":
+          description: Bad Request
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminSiteAdd'
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -1867,7 +2122,34 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: Delete Site
@@ -1895,12 +2177,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminSiteEdit'
-              type: object
+            $ref: '#/definitions/handler.ResponseAdminSiteEdit'
       security:
       - ApiKeyAuth: []
       summary: Edit Site
@@ -1947,9 +2224,130 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       summary: Statistic
       tags:
       - Statistic
+  /transfer/export:
+    get:
+      description: Export data from Artalk
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseExport'
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Export Artrans
+      tags:
+      - Transfer
+  /transfer/import:
+    post:
+      consumes:
+      - application/json
+      description: Import data to Artalk
+      parameters:
+      - description: The data to import
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsAdminImport'
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Import Artrans
+      tags:
+      - Transfer
+  /transfer/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload a file to prepare to import
+      parameters:
+      - description: Upload file in preparation for import task
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseImportUpload'
+            - properties:
+                filename:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Upload Artrans
+      tags:
+      - Transfer
   /upload:
     post:
       consumes:
@@ -1981,11 +2379,33 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseImgUpload'
+        "400":
+          description: Bad Request
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseImgUpload'
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -2010,25 +2430,40 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseLogin'
-              type: object
+            $ref: '#/definitions/handler.ResponseLogin'
         "400":
           description: Multiple users with the same email address are matched
           schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
+                ' data':
                   properties:
                     need_name_select:
                       items:
                         type: string
                       type: array
                   type: object
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       summary: Get Access Token
       tags:
@@ -2051,11 +2486,15 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseUserGet'
+        "400":
+          description: Bad Request
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseUserGet'
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -2080,12 +2519,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/common.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseLoginStatus'
-              type: object
+            $ref: '#/definitions/handler.ResponseLoginStatus'
       security:
       - ApiKeyAuth: []
       summary: Get Login Status
@@ -2109,11 +2543,33 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseAdminUserAdd'
+        "400":
+          description: Bad Request
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminUserAdd'
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -2135,7 +2591,34 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: Delete User
@@ -2163,11 +2646,42 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseAdminUserEdit'
+        "400":
+          description: Bad Request
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminUserEdit'
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -2202,11 +2716,15 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseAdminUserGet'
+        "403":
+          description: Forbidden
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseAdminUserGet'
+                msg:
+                  type: string
               type: object
       security:
       - ApiKeyAuth: []
@@ -2259,11 +2777,33 @@ paths:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseVote'
+        "403":
+          description: Forbidden
+          schema:
             allOf:
-            - $ref: '#/definitions/common.JSONResult'
+            - $ref: '#/definitions/handler.Map'
             - properties:
-                data:
-                  $ref: '#/definitions/handler.ResponseVote'
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
               type: object
       summary: Vote
       tags:
@@ -2278,7 +2818,16 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/common.JSONResult'
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
       summary: Sync Vote Data

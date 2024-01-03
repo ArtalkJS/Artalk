@@ -12,12 +12,13 @@ import (
 // @Tags         Vote
 // @Security     ApiKeyAuth
 // @Produce      json
-// @Success      200  {object}  common.JSONResult
+// @Success      200  {object}  Map{}
+// @Failure      403  {object}  Map{msg=string}
 // @Router       /votes/sync  [post]
 func AdminVoteSync(app *core.App, router fiber.Router) {
 	router.Post("/votes/sync", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		app.Dao().VoteSync()

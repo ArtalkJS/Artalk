@@ -2,27 +2,26 @@ package handler
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"os"
+	"slices"
 
 	"github.com/ArtalkJS/Artalk/internal/artransfer"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
 
 func AdminTransfer(app *core.App, router fiber.Router) {
-	router.Post("/artransfer/import", adminImport(app))
-	router.Post("/artransfer/upload", adminImportUpload(app))
-	router.Get("/artransfer/export", adminExport(app))
+	router.Post("/transfer/import", transferImport(app))
+	router.Post("/transfer/upload", transferUpload(app))
+	router.Get("/transfer/export", transferExport(app))
 }
 
 type ParamsAdminImport struct {
-	Payload string `json:"payload"` // The transfer importer payload
+	artransfer.ImportParams
 }
 
 // @Summary      Import Artrans
@@ -31,46 +30,30 @@ type ParamsAdminImport struct {
 // @Security     ApiKeyAuth
 // @Param        data  body  ParamsAdminImport  true  "The data to import"
 // @Accept       json
-// @Produce      json
-// @Success      200  {object}  common.JSONResult
-// @Router       /artransfer/import  [post]
-func adminImport(app *core.App) func(c *fiber.Ctx) error {
+// @Produce      html
+// @Success      200  {string}  string
+// @Router       /transfer/import  [post]
+func transferImport(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		var p ParamsAdminImport
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
-		var payloadMapRaw map[string]interface{}
-		err := json.Unmarshal([]byte(p.Payload), &payloadMapRaw)
-		if err != nil {
-			return common.RespError(c, "Payload parsing error", common.Map{
-				"error": err,
-			})
-		}
-
-		payloadMap := map[string]string{}
-		for k, v := range payloadMapRaw {
-			payloadMap[k] = utils.ToString(v) // convert all value to string
-		}
-
-		payloadArr := []string{}
-		for k, v := range payloadMap {
-			payloadArr = append(payloadArr, k+":"+v)
-		}
-
+		// If not super admin, force to fill target site name and check permission
 		if !common.GetIsSuperAdmin(app, c) {
+			if p.TargetSiteName == "" {
+				return common.RespError(c, 400, "Please fill in the target site name")
+			}
+
 			user := common.GetUserByReq(app, c)
-			if sitName, isExist := payloadMap["t_name"]; isExist {
-				if !utils.ContainsStr(app.Dao().CookUser(&user).SiteNames, sitName) {
-					return common.RespError(c, "Destination site name of prohibited import")
-				}
-			} else {
-				return common.RespError(c, "Please fill in the target site name")
+			if !slices.Contains(app.Dao().CookUser(&user).SiteNames, p.TargetSiteName) {
+				return common.RespError(c, 400, "Destination site name are prohibited since no permission")
 			}
 		}
 
-		// TODO bcz 懒，先整这个缓冲输出，以后改成高级点的
+		// TODO: temporary solution: output real-time log by html format body stream
+		// consider using websocket or long polling in the future
 		r := c.Response()
 
 		r.Header.Add(fiber.HeaderContentType, fiber.MIMETextHTMLCharsetUTF8)
@@ -89,12 +72,54 @@ func adminImport(app *core.App) func(c *fiber.Ctx) error {
 			buf.Write([]byte("<script>scroll();</script>"))
 		}
 
-		params := artransfer.ArrToImportParams(payloadArr)
-		params.Assumeyes = true
-		artransfer.RunImportArtrans(app.Dao(), params)
+		p.Assumeyes = true
+		artransfer.RunImportArtrans(app.Dao(), &p.ImportParams)
 
 		return nil
 	}
+}
+
+type ResponseExport struct {
+	// The exported data which is a JSON string
+	Data string `json:"data"`
+}
+
+// @Summary      Export Artrans
+// @Description  Export data from Artalk
+// @Tags         Transfer
+// @Security     ApiKeyAuth
+// @Produce      json
+// @Success      200  {object}  ResponseExport
+// @Failure      500  {object}  Map{msg=string}
+// @Router       /transfer/export  [get]
+func transferExport(app *core.App) func(c *fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		var siteNameScope []string
+
+		// If not super admin, only export sites that have permission
+		if !common.GetIsSuperAdmin(app, c) {
+			u := common.GetUserByReq(app, c)
+			siteNameScope = app.Dao().CookUser(&u).SiteNames
+		}
+
+		jsonStr, err := artransfer.RunExportArtrans(app.Dao(), &artransfer.ExportParams{
+			SiteNameScope: siteNameScope,
+		})
+		if err != nil {
+			common.RespError(c, 500, i18n.T("Export error"), common.Map{
+				"err": err,
+			})
+		}
+
+		return common.RespData(c, ResponseExport{
+			Data: jsonStr,
+		})
+	}
+}
+
+type ResponseImportUpload struct {
+	// The uploaded file name which can be used to import
+	Filename string `json:"filename"`
 }
 
 // @Summary      Upload Artrans
@@ -104,73 +129,46 @@ func adminImport(app *core.App) func(c *fiber.Ctx) error {
 // @Param        file  formData  file  true  "Upload file in preparation for import task"
 // @Accept       mpfd
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=object{filename=string}}
-// @Router       /artransfer/upload  [post]
-func adminImportUpload(app *core.App) func(c *fiber.Ctx) error {
+// @Success      200  {object}  ResponseImportUpload{filename=string}
+// @Failure      500  {object}  Map{msg=string}
+// @Router       /transfer/upload  [post]
+func transferUpload(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
-		// 获取 Form
+		// Get file from FormData
 		file, err := c.FormFile("file")
 		if err != nil {
 			log.Error(err)
-			return common.RespError(c, "File read failed")
+			return common.RespError(c, 500, "File read failed")
 		}
 
-		// 打开文件
+		// Open file
 		src, err := file.Open()
 		if err != nil {
 			log.Error(err)
-			return common.RespError(c, "File open failed")
+			return common.RespError(c, 500, "File open failed")
 		}
 		defer src.Close()
 
-		// 读取文件
+		// Read file to buffer
 		buf, err := io.ReadAll(src)
 		if err != nil {
 			log.Error(err)
-			return common.RespError(c, "File read failed")
+			return common.RespError(c, 500, "File read failed")
 		}
 
+		// Create temp file
 		tmpFile, err := os.CreateTemp("", "artalk-import-file-")
 		if err != nil {
 			log.Error(err)
-			return common.RespError(c, "tmp file creation failed")
+			return common.RespError(c, 500, "tmp file creation failed")
 		}
 
+		// Write buffer to temp file
 		tmpFile.Write(buf)
 
-		return common.RespData(c, common.Map{
-			"filename": tmpFile.Name(),
-		})
-	}
-}
-
-// @Summary      Export Artrans
-// @Description  Export data from Artalk
-// @Tags         Transfer
-// @Security     ApiKeyAuth
-// @Produce      json
-// @Success      200  {object}  common.JSONResult{data=object{data=string}}
-// @Router       /artransfer/export  [get]
-func adminExport(app *core.App) func(c *fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
-		var siteNameScope []string
-		if !common.GetIsSuperAdmin(app, c) {
-			// 仅导出限定范围内的站点
-			u := common.GetUserByReq(app, c)
-			siteNameScope = app.Dao().CookUser(&u).SiteNames
-		}
-
-		jsonStr, err := artransfer.RunExportArtrans(app.Dao(), &artransfer.ExportParams{
-			SiteNameScope: siteNameScope,
-		})
-		if err != nil {
-			common.RespError(c, i18n.T("Export error"), common.Map{
-				"err": err,
-			})
-		}
-
-		return common.RespData(c, common.Map{
-			"data": jsonStr,
+		// Return filename
+		return common.RespData(c, ResponseImportUpload{
+			Filename: tmpFile.Name(),
 		})
 	}
 }

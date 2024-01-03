@@ -78,7 +78,7 @@ func ActionLimitMiddleware(app *core.App, conf ActionLimitConf) fiber.Handler {
 				respData["img_data"] = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 40'%3E%3Cdefs%3E%3Cstyle%3E.a%7Bfill:%23328ce6%3B%7D.b%7Bfont-size:12px%3Bfill:%23fff%3Bfont-family:sans-serif%3B%7D%3C/style%3E%3C/defs%3E%3Crect class='a' width='160' height='40'/%3E%3Ctext class='b' transform='translate(18.37 16.67)'%3EArtalk Frontend%3Ctspan x='0' y='14.4'%3EOut-Of-Date.%3C/tspan%3E%3C/text%3E%3C/svg%3E"
 			}
 
-			return common.RespError(c, i18n.T("Captcha required"), respData)
+			return common.RespError(c, 403, i18n.T("Captcha required"), respData)
 		}
 	}
 }

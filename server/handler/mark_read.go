@@ -21,7 +21,10 @@ type ParamsMarkRead struct {
 // @Param        options     body  ParamsMarkRead  true  "The options"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult
+// @Success      200  {object}  Map{}
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /notifies/{comment_id}/{notify_key}/read  [post]
 func MarkRead(app *core.App, router fiber.Router) {
 	router.Post("/notifies/:comment_id/:notify_key", func(c *fiber.Ctx) error {
@@ -37,13 +40,13 @@ func MarkRead(app *core.App, router fiber.Router) {
 		// TODO separate the API `/notifies/:comment_id/:notify_key/read` and `/notifies/read`
 		if p.AllRead {
 			if p.Name == "" || p.Email == "" {
-				return common.RespError(c, "username or email cannot be empty")
+				return common.RespError(c, 400, "username or email cannot be empty")
 			}
 
 			user := app.Dao().FindUser(p.Name, p.Email)
 			err := app.Dao().UserNotifyMarkAllAsRead(user.ID)
 			if err != nil {
-				return common.RespError(c, err.Error())
+				return common.RespError(c, 500, err.Error())
 			}
 
 			return common.RespSuccess(c)
@@ -52,7 +55,7 @@ func MarkRead(app *core.App, router fiber.Router) {
 		// find notify
 		notify := app.Dao().FindNotifyForComment(uint(commentID), notifyKey)
 		if notify.IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Notify")}))
+			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Notify")}))
 		}
 
 		if notify.IsRead {
@@ -62,7 +65,7 @@ func MarkRead(app *core.App, router fiber.Router) {
 		// update notify
 		err := app.Dao().NotifySetRead(&notify)
 		if err != nil {
-			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Notify")}))
+			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Notify")}))
 		}
 
 		return common.RespSuccess(c)

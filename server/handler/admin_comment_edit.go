@@ -30,7 +30,7 @@ type ParamsCommentEdit struct {
 }
 
 type ResponseCommentEdit struct {
-	Comment entity.CookedComment `json:"comment"`
+	Data entity.CookedComment `json:"data"`
 }
 
 // @Summary      Edit Comment
@@ -41,7 +41,11 @@ type ResponseCommentEdit struct {
 // @Security     ApiKeyAuth
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseCommentEdit}
+// @Success      200  {object}  ResponseCommentEdit
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /comments/{id} [put]
 func AdminCommentEdit(app *core.App, router fiber.Router) {
 	router.Put("/comments/:id", func(c *fiber.Ctx) error {
@@ -55,19 +59,19 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 		// find comment
 		comment := app.Dao().FindComment(uint(id))
 		if comment.IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
+			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 		}
 
 		if !common.IsAdminHasSiteAccess(app, c, comment.SiteName) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		// check params
 		if p.Email != "" && !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
+			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 		if p.Link != "" && !utils.ValidateURL(p.Link) {
-			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
+			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
 		}
 
 		// content
@@ -127,17 +131,17 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 			if !comment.IsPending {
 				if err := RenotifyWhenPendingModified(app, &comment); err != nil {
 					log.Error("[RenotifyWhenPendingModified] error: ", err)
-					return common.RespError(c, "Renotify Err: "+err.Error())
+					return common.RespError(c, 500, "Renotify Err: "+err.Error())
 				}
 			}
 		}
 
 		if err := app.Dao().UpdateComment(&comment); err != nil {
-			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
+			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
 		}
 
 		return common.RespData(c, ResponseCommentEdit{
-			Comment: app.Dao().CookComment(&comment),
+			Data: app.Dao().CookComment(&comment),
 		})
 	})
 }

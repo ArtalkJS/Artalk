@@ -9,7 +9,7 @@ import (
 )
 
 type ResponseAdminSiteGet struct {
-	Sites []entity.CookedSite `json:"sites"`
+	Data []entity.CookedSite `json:"data"`
 }
 
 // @Summary      Get Site List
@@ -17,7 +17,7 @@ type ResponseAdminSiteGet struct {
 // @Tags         Site
 // @Security     ApiKeyAuth
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteGet}
+// @Success      200  {object}  ResponseAdminSiteGet
 // @Router       /sites  [get]
 func AdminSiteGet(app *core.App, router fiber.Router) {
 	router.Get("/sites", func(c *fiber.Ctx) error {
@@ -37,7 +37,7 @@ func AdminSiteGet(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminSiteGet{
-			Sites: sites,
+			Data: sites,
 		})
 	})
 }

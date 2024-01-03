@@ -12,23 +12,25 @@ import (
 // @Tags         Cache
 // @Security     ApiKeyAuth
 // @Produce      json
-// @Success      200  {object}  common.JSONResult
-// @Router       /cache/warmup  [post]
+// @Success      200  {object}  Map{msg=string}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      400  {object}  Map{msg=string}
+// @Router       /cache/warm_up  [post]
 func AdminCacheWarm(app *core.App, router fiber.Router) {
-	router.Post("/cache/warmup", func(c *fiber.Ctx) error {
+	router.Post("/cache/warm_up", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		if !app.Conf().Cache.Enabled {
-			return common.RespError(c, "cache disabled")
+			return common.RespError(c, 400, "cache disabled")
 		}
 
 		go func() {
 			app.Dao().CacheWarmUp()
 		}()
 
-		return common.RespData(c, common.Map{
+		return common.RespData(c, Map{
 			"msg": i18n.T("Task executing in background, please wait..."),
 		})
 	})
@@ -38,24 +40,26 @@ func AdminCacheWarm(app *core.App, router fiber.Router) {
 // @Description  Flush all cache on the server
 // @Tags         Cache
 // @Security     ApiKeyAuth
-// @Success      200  {object}  common.JSONResult
+// @Success      200  {object}  Map{msg=string}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      400  {object}  Map{msg=string}
 // @Produce      json
 // @Router       /cache/flush  [post]
 func AdminCacheFlush(app *core.App, router fiber.Router) {
 	router.Post("/cache/flush", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		if !app.Conf().Cache.Enabled {
-			return common.RespError(c, "cache disabled")
+			return common.RespError(c, 400, "cache disabled")
 		}
 
 		go func() {
 			app.Dao().CacheFlushAll()
 		}()
 
-		return common.RespData(c, common.Map{
+		return common.RespData(c, Map{
 			"msg": i18n.T("Task executing in background, please wait..."),
 		})
 	})

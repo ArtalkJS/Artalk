@@ -23,7 +23,7 @@ type ParamsAdminUserAdd struct {
 }
 
 type ResponseAdminUserAdd struct {
-	User entity.CookedUserForAdmin `json:"user"`
+	Data entity.CookedUserForAdmin `json:"data"`
 }
 
 // @Summary      Create User
@@ -33,12 +33,15 @@ type ResponseAdminUserAdd struct {
 // @Security     ApiKeyAuth
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseAdminUserAdd}
+// @Success      200  {object}  ResponseAdminUserAdd
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /users  [post]
 func AdminUserAdd(app *core.App, router fiber.Router) {
 	router.Post("/users", func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		var p ParamsAdminUserAdd
@@ -47,14 +50,14 @@ func AdminUserAdd(app *core.App, router fiber.Router) {
 		}
 
 		if !app.Dao().FindUser(p.Name, p.Email).IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("User")}))
+			return common.RespError(c, 400, i18n.T("{{name}} already exists", Map{"name": i18n.T("User")}))
 		}
 
 		if !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
+			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 		if p.Link != "" && !utils.ValidateURL(p.Link) {
-			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
+			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
 		}
 
 		user := entity.User{}
@@ -71,17 +74,17 @@ func AdminUserAdd(app *core.App, router fiber.Router) {
 			err := user.SetPasswordEncrypt(p.Password)
 			if err != nil {
 				log.Errorln(err)
-				return common.RespError(c, i18n.T("Password update failed"))
+				return common.RespError(c, 500, i18n.T("Password update failed"))
 			}
 		}
 
 		err := app.Dao().CreateUser(&user)
 		if err != nil {
-			return common.RespError(c, i18n.T("{{name}} creation failed", Map{"name": i18n.T("User")}))
+			return common.RespError(c, 500, i18n.T("{{name}} creation failed", Map{"name": i18n.T("User")}))
 		}
 
 		return common.RespData(c, ResponseAdminUserAdd{
-			User: app.Dao().UserToCookedForAdmin(&user),
+			Data: app.Dao().UserToCookedForAdmin(&user),
 		})
 	})
 }

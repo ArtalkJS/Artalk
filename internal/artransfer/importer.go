@@ -15,12 +15,12 @@ import (
 )
 
 type ImportParams struct {
-	TargetSiteName string
-	TargetSiteUrl  string
-	UrlResolver    bool
-	JsonFile       string
-	JsonData       string
-	Assumeyes      bool // Automatically answer yes for all questions.
+	TargetSiteName string `json:"target_site_name"`    // The target site name
+	TargetSiteUrl  string `json:"target_site_url"`     // The target site url
+	UrlResolver    bool   `json:"url_resolver"`        // Enable URL resolver
+	JsonFile       string `json:"json_file,omitempty"` // The JSON file path
+	JsonData       string `json:"json_data,omitempty"` // The JSON data
+	Assumeyes      bool   `json:"assumeyes"`           // Automatically answer yes for all questions.
 }
 
 func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran) {

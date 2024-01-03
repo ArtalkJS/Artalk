@@ -31,8 +31,10 @@ type ResponseLogin struct {
 // @Param        user  body  ParamsLogin  true  "The user login data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseLogin}
-// @Failure      400  {object}  common.JSONResult{data=object{need_name_select=[]string}}  "Multiple users with the same email address are matched"
+// @Success      200  {object}  ResponseLogin
+// @Failure      400  {object}  Map{msg=string, data=object{need_name_select=[]string}}  "Multiple users with the same email address are matched"
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /user/access_token  [post]
 func UserLogin(app *core.App, router fiber.Router) {
 	router.Post("/user/access_token", func(c *fiber.Ctx) error {
@@ -46,7 +48,7 @@ func UserLogin(app *core.App, router fiber.Router) {
 		if p.Name == "" {
 			// 仅 Email 的查询
 			if !utils.ValidateEmail(p.Email) {
-				return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
+				return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 			}
 			users := app.Dao().FindUsersByEmail(p.Email)
 			if len(users) == 1 {
@@ -58,10 +60,11 @@ func UserLogin(app *core.App, router fiber.Router) {
 				for _, u := range users {
 					userNames = append(userNames, u.Name)
 				}
-				return common.RespError(c, "Need to select username", common.Map{
+				return common.RespData(c, common.Map{
 					// 前端需做处理让用户选择用户名，
 					// 之后再发起带 name 参数的请求
 					"need_name_select": userNames,
+					"msg":              "Need to select username",
 				})
 			}
 		} else {
@@ -70,7 +73,7 @@ func UserLogin(app *core.App, router fiber.Router) {
 		}
 
 		if user.IsEmpty() {
-			return common.RespError(c, i18n.T("Login failed"))
+			return common.RespError(c, 403, i18n.T("Login failed"))
 		}
 
 		// 密码验证
@@ -99,7 +102,7 @@ func UserLogin(app *core.App, router fiber.Router) {
 		}
 
 		if !passwordOK {
-			return common.RespError(c, i18n.T("Login failed"))
+			return common.RespError(c, 403, i18n.T("Login failed"))
 		}
 
 		jwtToken := common.LoginGetUserToken(user, app.Conf().AppKey, app.Conf().LoginTimeout)
@@ -132,7 +135,7 @@ type ResponseLoginStatus struct {
 // @Security     ApiKeyAuth
 // @Param        user  query  ParamsLoginStatus  true  "The user to query"
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseLoginStatus}
+// @Success      200  {object}  ResponseLoginStatus
 // @Router       /user/status  [get]
 func UserLoginStatus(app *core.App, router fiber.Router) {
 	router.Get("/user/status", func(c *fiber.Ctx) error {

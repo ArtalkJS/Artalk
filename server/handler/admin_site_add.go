@@ -16,7 +16,7 @@ type ParamsAdminSiteAdd struct {
 }
 
 type ResponseAdminSiteAdd struct {
-	Site entity.CookedSite `json:"site"`
+	Data entity.CookedSite `json:"data"`
 }
 
 // @Summary      Create Site
@@ -26,7 +26,10 @@ type ResponseAdminSiteAdd struct {
 // @Param        site  body  ParamsAdminSiteAdd  true  "The site data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseAdminSiteAdd}
+// @Success      200  {object}  ResponseAdminSiteAdd
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /sites  [post]
 func AdminSiteAdd(app *core.App, router fiber.Router) {
 	router.Post("/sites", func(c *fiber.Ctx) error {
@@ -36,24 +39,24 @@ func AdminSiteAdd(app *core.App, router fiber.Router) {
 		}
 
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		if p.Urls != "" {
 			urls := utils.SplitAndTrimSpace(p.Urls, ",")
 			for _, url := range urls {
 				if !utils.ValidateURL(url) {
-					return common.RespError(c, i18n.T("Contains invalid URL"))
+					return common.RespError(c, 400, i18n.T("Contains invalid URL"))
 				}
 			}
 		}
 
 		if p.Name == config.ATK_SITE_ALL {
-			return common.RespError(c, "Prohibit the use of reserved keywords as names")
+			return common.RespError(c, 400, "Prohibit the use of reserved keywords as names")
 		}
 
 		if !app.Dao().FindSite(p.Name).IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("Site")}))
+			return common.RespError(c, 400, i18n.T("{{name}} already exists", Map{"name": i18n.T("Site")}))
 		}
 
 		site := entity.Site{}
@@ -61,11 +64,11 @@ func AdminSiteAdd(app *core.App, router fiber.Router) {
 		site.Urls = p.Urls
 		err := app.Dao().CreateSite(&site)
 		if err != nil {
-			return common.RespError(c, i18n.T("{{name}} creation failed", Map{"name": i18n.T("Site")}))
+			return common.RespError(c, 500, i18n.T("{{name}} creation failed", Map{"name": i18n.T("Site")}))
 		}
 
 		return common.RespData(c, ResponseAdminSiteAdd{
-			Site: app.Dao().CookSite(&site),
+			Data: app.Dao().CookSite(&site),
 		})
 	})
 }

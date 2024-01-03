@@ -17,7 +17,5 @@ func ErrorHandler(ctx *fiber.Ctx, err error) error {
 		code = e.Code
 	}
 
-	return RespError(ctx, fmt.Sprintf("Error: %s", err.Error()), Map{
-		"code": code,
-	})
+	return RespError(ctx, code, fmt.Sprintf("Error: %s", err.Error()))
 }

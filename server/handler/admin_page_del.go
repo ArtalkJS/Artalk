@@ -13,7 +13,10 @@ import (
 // @Param        id  path  int  true  "The page ID you want to delete"
 // @Security     ApiKeyAuth
 // @Produce      json
-// @Success      200  {object}  common.JSONResult
+// @Success      200  {object}  Map{}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /pages/{id}  [delete]
 func AdminPageDel(app *core.App, router fiber.Router) {
 	router.Delete("/pages/:id", func(c *fiber.Ctx) error {
@@ -21,16 +24,16 @@ func AdminPageDel(app *core.App, router fiber.Router) {
 
 		page := app.Dao().FindPageByID(uint(id))
 		if page.IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
+			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
 		if !common.IsAdminHasSiteAccess(app, c, page.SiteName) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		err := app.Dao().DelPage(&page)
 		if err != nil {
-			return common.RespError(c, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("Page")}))
+			return common.RespError(c, 500, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("Page")}))
 		}
 
 		return common.RespSuccess(c)

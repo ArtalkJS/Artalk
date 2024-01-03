@@ -20,7 +20,7 @@ type ParamsAdminPageEdit struct {
 }
 
 type ResponseAdminPageEdit struct {
-	Page entity.CookedPage `json:"page"`
+	Data entity.CookedPage `json:"data"`
 }
 
 // @Summary      Edit Page
@@ -31,7 +31,11 @@ type ResponseAdminPageEdit struct {
 // @Param        page  body  ParamsAdminPageEdit  true "The page data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseAdminPageEdit}
+// @Success      200  {object}  ResponseAdminPageEdit
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /pages/{id}  [put]
 func AdminPageEdit(app *core.App, router fiber.Router) {
 	router.Put("/pages/:id", func(c *fiber.Ctx) error {
@@ -43,23 +47,23 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 		}
 
 		if strings.TrimSpace(p.Key) == "" {
-			return common.RespError(c, i18n.T("{{name}} cannot be empty", Map{"name": "key"}))
+			return common.RespError(c, 400, i18n.T("{{name}} cannot be empty", Map{"name": "key"}))
 		}
 
 		// find page
 		var page = app.Dao().FindPageByID(uint(id))
 		if page.IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
+			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
 		if !common.IsAdminHasSiteAccess(app, c, page.SiteName) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		// 重命名合法性检测
 		modifyKey := p.Key != page.Key
 		if modifyKey && !app.Dao().FindPage(p.Key, page.SiteName).IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("Page")}))
+			return common.RespError(c, 400, i18n.T("{{name}} already exists", Map{"name": i18n.T("Page")}))
 		}
 
 		// 预先删除缓存，防止修改主键原有 page_key 占用问题
@@ -83,11 +87,11 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 		}
 
 		if err := app.Dao().UpdatePage(&page); err != nil {
-			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("Page")}))
+			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Page")}))
 		}
 
 		return common.RespData(c, ResponseAdminPageEdit{
-			Page: app.Dao().CookPage(&page),
+			Data: app.Dao().CookPage(&page),
 		})
 	})
 }

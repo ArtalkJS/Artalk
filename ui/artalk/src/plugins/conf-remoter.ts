@@ -16,7 +16,7 @@ export const ConfRemoter: ArtalkPlugin = (ctx) => {
 function loadConf(ctx: ContextApi) {
   ctx.getApi().system.conf().then((data) => {
     let conf: Partial<ArtalkConfig> = {
-      apiVersion: data.version.version, // version info
+      apiVersion: data.version?.version, // version info
     }
 
     // reference conf from backend
@@ -50,6 +50,7 @@ function loadConf(ctx: ContextApi) {
       }) : undefined // only show open sidebar button when user is admin
     })
 
+    console.error(err)
     throw err
   }).then(() => {
     // 评论获取

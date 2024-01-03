@@ -23,7 +23,7 @@ type ParamsAdminUserEdit struct {
 }
 
 type ResponseAdminUserEdit struct {
-	User entity.CookedUserForAdmin `json:"user"`
+	Data entity.CookedUserForAdmin `json:"data"`
 }
 
 // @Summary      Edit User
@@ -34,14 +34,18 @@ type ResponseAdminUserEdit struct {
 // @Security     ApiKeyAuth
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  common.JSONResult{data=ResponseAdminUserEdit}
+// @Success      200  {object}  ResponseAdminUserEdit
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
 // @Router       /users/{id}  [put]
 func AdminUserEdit(app *core.App, router fiber.Router) {
 	router.Put("/users/:id", func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
 		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, i18n.T("Access denied"))
+			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		var p ParamsAdminUserEdit
@@ -51,7 +55,7 @@ func AdminUserEdit(app *core.App, router fiber.Router) {
 
 		user := app.Dao().FindUserByID(uint(id))
 		if user.IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} not found", Map{"name": i18n.T("User")}))
+			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("User")}))
 		}
 
 		// 改名名合法性检测
@@ -59,14 +63,14 @@ func AdminUserEdit(app *core.App, router fiber.Router) {
 		modifyEmail := p.Email != user.Email
 
 		if modifyName && modifyEmail && !app.Dao().FindUser(p.Name, p.Email).IsEmpty() {
-			return common.RespError(c, i18n.T("{{name}} already exists", Map{"name": i18n.T("User")}))
+			return common.RespError(c, 400, i18n.T("{{name}} already exists", Map{"name": i18n.T("User")}))
 		}
 
 		if !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
+			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 		if p.Link != "" && !utils.ValidateURL(p.Link) {
-			return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
+			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
 		}
 
 		// 删除原有缓存
@@ -89,11 +93,11 @@ func AdminUserEdit(app *core.App, router fiber.Router) {
 
 		err := app.Dao().UpdateUser(&user)
 		if err != nil {
-			return common.RespError(c, i18n.T("{{name}} save failed", Map{"name": i18n.T("User")}))
+			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("User")}))
 		}
 
 		return common.RespData(c, ResponseAdminUserEdit{
-			User: app.Dao().UserToCookedForAdmin(&user),
+			Data: app.Dao().UserToCookedForAdmin(&user),
 		})
 	})
 }

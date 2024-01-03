@@ -76,7 +76,7 @@ func (dao *Dao) FindUser(name string, email string) entity.User {
 	// 查询缓存
 	dao.QueryDBWithCache(fmt.Sprintf(UserByNameEmailKey, strings.ToLower(name), strings.ToLower(email)), &user, func() {
 		// 不区分大小写
-		dao.DB().Where("LOWER(name) = ? AND LOWER(email) = ?", name, email).First(&user)
+		dao.DB().Where("LOWER(name) = LOWER(?) AND LOWER(email) = LOWER(?)", name, email).First(&user)
 	})
 
 	return user

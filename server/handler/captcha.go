@@ -24,11 +24,15 @@ func Captcha(app *core.App, router fiber.Router) {
 	}
 }
 
+type ResponseCaptchaStatus struct {
+	IsPass bool `json:"is_pass"`
+}
+
 // @Summary      Get Captcha Status
 // @Description  Get the status of the user's captcha verification
 // @Tags         Captcha
 // @Produce      json
-// @Success      200  {object}  Map{data=object{is_pass=bool}}
+// @Success      200  {object}  ResponseCaptchaStatus
 // @Router       /captcha/status  [get]
 func captchaStatus(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
@@ -37,15 +41,21 @@ func captchaStatus(app *core.App) func(c *fiber.Ctx) error {
 			return err
 		}
 
-		return common.RespData(c, common.Map{"is_pass": limiter.IsPass(c.IP())})
+		return common.RespData(c, ResponseCaptchaStatus{
+			IsPass: limiter.IsPass(c.IP()),
+		})
 	}
+}
+
+type ResponseCaptchaGet struct {
+	ImgData string `json:"img_data"`
 }
 
 // @Summary      Get Captcha
 // @Description  Get a base64 encoded captcha image or a HTML page to verify for user
 // @Tags         Captcha
 // @Produce      json,html
-// @Success      200  {object}  Map{data=object{img_data=string}}
+// @Success      200  {object}  ResponseCaptchaGet
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /captcha/get  [get]
 func captchaGet(app *core.App) func(c *fiber.Ctx) error {
@@ -62,8 +72,8 @@ func captchaGet(app *core.App) func(c *fiber.Ctx) error {
 		// response captcha
 		switch cap.Type() {
 		case captcha.Image:
-			return common.RespData(c, common.Map{
-				"img_data": string(got),
+			return common.RespData(c, ResponseCaptchaGet{
+				ImgData: string(got),
 			})
 
 		case captcha.IFrame:
@@ -78,14 +88,14 @@ func captchaGet(app *core.App) func(c *fiber.Ctx) error {
 	}
 }
 
-type ParamsCaptchaCheck struct {
+type ParamsCaptchaVerify struct {
 	Value string `form:"value" json:"value" validate:"required"` // The captcha value to check
 }
 
 // @Summary      Verify Captcha
 // @Description  Verify user enters correct captcha code
 // @Tags         Captcha
-// @Param        data  body  ParamsCaptchaCheck  true  "The data to check"
+// @Param        data  body  ParamsCaptchaVerify  true  "The data to check"
 // @Produce      json
 // @Success      200  {object}  Map{}
 // @Failure      403  {object}  Map{img_data=string}
@@ -93,7 +103,7 @@ type ParamsCaptchaCheck struct {
 func captchaVerify(app *core.App) func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		// handle user input
-		var p ParamsCaptchaCheck
+		var p ParamsCaptchaVerify
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}

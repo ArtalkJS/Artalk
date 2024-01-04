@@ -11,7 +11,7 @@ abstract class ApiBase {
     path: string,
     payload?: any,
     opts?: RequestInit & { timeout?: number }
-  ): Promise<any> {
+  ): Promise<T> {
     let url = this.options.baseURL + path
     let init: RequestInit = { method }
     if (method === 'POST' || method === 'PUT') init.body = JSON.stringify(payload)

@@ -23,7 +23,7 @@ type ParamsAdminUserAdd struct {
 }
 
 type ResponseAdminUserAdd struct {
-	Data entity.CookedUserForAdmin `json:"data"`
+	entity.CookedUserForAdmin
 }
 
 // @Summary      Create User
@@ -84,7 +84,7 @@ func AdminUserAdd(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminUserAdd{
-			Data: app.Dao().UserToCookedForAdmin(&user),
+			CookedUserForAdmin: app.Dao().UserToCookedForAdmin(&user),
 		})
 	})
 }

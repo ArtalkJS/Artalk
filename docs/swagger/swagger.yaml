@@ -849,11 +849,11 @@ definitions:
     type: object
   handler.ParamsAdminSettingSave:
     properties:
-      data:
+      yaml:
         description: The content of the config file in YAML format
         type: string
     required:
-    - data
+    - yaml
     type: object
   handler.ParamsAdminSiteAdd:
     properties:
@@ -945,7 +945,7 @@ definitions:
     - name
     - receive_email
     type: object
-  handler.ParamsCaptchaCheck:
+  handler.ParamsCaptchaVerify:
     properties:
       value:
         description: The captcha value to check
@@ -1047,18 +1047,94 @@ definitions:
     type: object
   handler.ResponseAdd:
     properties:
-      data:
-        $ref: '#/definitions/entity.CookedComment'
+      badge_color:
+        type: string
+      badge_name:
+        type: string
+      content:
+        type: string
+      content_marked:
+        type: string
+      date:
+        type: string
+      email_encrypted:
+        type: string
+      id:
+        type: integer
+      ip_region:
+        type: string
+      is_allow_reply:
+        type: boolean
+      is_collapsed:
+        type: boolean
+      is_pending:
+        type: boolean
+      is_pinned:
+        type: boolean
+      link:
+        type: string
+      nick:
+        type: string
+      page_key:
+        type: string
+      page_url:
+        type: string
+      rid:
+        type: integer
+      site_name:
+        type: string
+      ua:
+        type: string
+      user_id:
+        type: integer
+      visible:
+        type: boolean
+      vote_down:
+        type: integer
+      vote_up:
+        type: integer
     type: object
   handler.ResponseAdminPageEdit:
     properties:
-      data:
-        $ref: '#/definitions/entity.CookedPage'
+      admin_only:
+        type: boolean
+      id:
+        type: integer
+      key:
+        type: string
+      pv:
+        type: integer
+      site_name:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+      vote_down:
+        type: integer
+      vote_up:
+        type: integer
     type: object
   handler.ResponseAdminPageFetch:
     properties:
-      data:
-        $ref: '#/definitions/entity.CookedPage'
+      admin_only:
+        type: boolean
+      id:
+        type: integer
+      key:
+        type: string
+      pv:
+        type: integer
+      site_name:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+      vote_down:
+        type: integer
+      vote_up:
+        type: integer
     type: object
   handler.ResponseAdminPageGet:
     properties:
@@ -1071,20 +1147,43 @@ definitions:
     type: object
   handler.ResponseAdminSettingGet:
     properties:
-      custom:
+      yaml:
         type: string
-      template:
+    type: object
+  handler.ResponseAdminSettingTpl:
+    properties:
+      yaml:
         type: string
     type: object
   handler.ResponseAdminSiteAdd:
     properties:
-      data:
-        $ref: '#/definitions/entity.CookedSite'
+      first_url:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      urls:
+        items:
+          type: string
+        type: array
+      urls_raw:
+        type: string
     type: object
   handler.ResponseAdminSiteEdit:
     properties:
-      data:
-        $ref: '#/definitions/entity.CookedSite'
+      first_url:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      urls:
+        items:
+          type: string
+        type: array
+      urls_raw:
+        type: string
     type: object
   handler.ResponseAdminSiteGet:
     properties:
@@ -1095,13 +1194,69 @@ definitions:
     type: object
   handler.ResponseAdminUserAdd:
     properties:
-      data:
-        $ref: '#/definitions/entity.CookedUserForAdmin'
+      badge_color:
+        type: string
+      badge_name:
+        type: string
+      comment_count:
+        type: integer
+      email:
+        type: string
+      id:
+        type: integer
+      is_admin:
+        type: boolean
+      is_in_conf:
+        type: boolean
+      last_ip:
+        type: string
+      last_ua:
+        type: string
+      link:
+        type: string
+      name:
+        type: string
+      receive_email:
+        type: boolean
+      site_names:
+        items:
+          type: string
+        type: array
+      site_names_raw:
+        type: string
     type: object
   handler.ResponseAdminUserEdit:
     properties:
-      data:
-        $ref: '#/definitions/entity.CookedUserForAdmin'
+      badge_color:
+        type: string
+      badge_name:
+        type: string
+      comment_count:
+        type: integer
+      email:
+        type: string
+      id:
+        type: integer
+      is_admin:
+        type: boolean
+      is_in_conf:
+        type: boolean
+      last_ip:
+        type: string
+      last_ua:
+        type: string
+      link:
+        type: string
+      name:
+        type: string
+      receive_email:
+        type: boolean
+      site_names:
+        items:
+          type: string
+        type: array
+      site_names_raw:
+        type: string
     type: object
   handler.ResponseAdminUserGet:
     properties:
@@ -1112,14 +1267,24 @@ definitions:
       total:
         type: integer
     type: object
+  handler.ResponseCaptchaGet:
+    properties:
+      img_data:
+        type: string
+    type: object
+  handler.ResponseCaptchaStatus:
+    properties:
+      is_pass:
+        type: boolean
+    type: object
   handler.ResponseCommentEdit:
     properties:
-      data:
+      comment:
         $ref: '#/definitions/entity.CookedComment'
     type: object
   handler.ResponseExport:
     properties:
-      data:
+      artrans:
         description: The exported data which is a JSON string
         type: string
     type: object
@@ -1127,7 +1292,7 @@ definitions:
     properties:
       api_version:
         $ref: '#/definitions/common.ApiVersionData'
-      comments:
+      data:
         items:
           $ref: '#/definitions/entity.CookedComment'
         type: array
@@ -1296,15 +1461,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/handler.Map'
-            - properties:
-                data:
-                  properties:
-                    img_data:
-                      type: string
-                  type: object
-              type: object
+            $ref: '#/definitions/handler.ResponseCaptchaGet'
         "500":
           description: Internal Server Error
           schema:
@@ -1326,15 +1483,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/handler.Map'
-            - properties:
-                data:
-                  properties:
-                    is_pass:
-                      type: boolean
-                  type: object
-              type: object
+            $ref: '#/definitions/handler.ResponseCaptchaStatus'
       summary: Get Captcha Status
       tags:
       - Captcha
@@ -1347,7 +1496,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/handler.ParamsCaptchaCheck'
+          $ref: '#/definitions/handler.ParamsCaptchaVerify'
       produces:
       - application/json
       responses:
@@ -1985,7 +2134,7 @@ paths:
       - application/json
       description: Save settings to app config file
       parameters:
-      - description: The settings data
+      - description: The settings
         in: body
         name: settings
         required: true
@@ -2031,12 +2180,12 @@ paths:
         name: locale
         type: string
       produces:
-      - application/yaml
+      - application/json
       responses:
         "200":
-          description: The template content
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/handler.ResponseAdminSettingTpl'
       security:
       - ApiKeyAuth: []
       summary: Get Settings Template

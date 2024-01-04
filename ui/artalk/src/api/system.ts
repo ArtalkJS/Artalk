@@ -28,14 +28,21 @@ export default class SystemApi extends ApiBase {
 
   /** 获取配置数据 */
   public async getSettings() {
-    const data = await this.fetch<{custom: string, template: string}>('GET', '/settings')
+    const data = await this.fetch<{ yaml: string }>('GET', '/settings')
+    return data
+  }
+
+  public async getSettingsTemplate(locale?: string) {
+    let path = '/settings/template'
+    if (locale) path += `/${locale}`
+    const data = await this.fetch<{ yaml: string }>('GET', path)
     return data
   }
 
   /** 保存配置数据 */
-  public async saveSettings(yamlStr: string) {
+  public async saveSettings(yaml: string) {
     const data = await this.fetch<boolean>('POST', '/settings', {
-      data: yamlStr,
+      yaml
     })
     return data
   }

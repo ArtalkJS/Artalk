@@ -23,7 +23,7 @@ type ParamsAdminUserEdit struct {
 }
 
 type ResponseAdminUserEdit struct {
-	Data entity.CookedUserForAdmin `json:"data"`
+	entity.CookedUserForAdmin
 }
 
 // @Summary      Edit User
@@ -97,7 +97,7 @@ func AdminUserEdit(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminUserEdit{
-			Data: app.Dao().UserToCookedForAdmin(&user),
+			CookedUserForAdmin: app.Dao().UserToCookedForAdmin(&user),
 		})
 	})
 }

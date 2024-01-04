@@ -41,7 +41,7 @@ type CommentGetOptions struct {
 }
 
 type ResponseGet struct {
-	Data        []entity.CookedComment `json:"comments"`
+	Data        []entity.CookedComment `json:"data"`
 	Total       int64                  `json:"total"`
 	TotalRoots  int64                  `json:"total_roots"`
 	Page        entity.CookedPage      `json:"page"`

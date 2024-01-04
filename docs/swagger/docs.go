@@ -184,24 +184,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/handler.Map"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "img_data": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/handler.ResponseCaptchaGet"
                         }
                     },
                     "500": {
@@ -239,24 +222,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/handler.Map"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "is_pass": {
-                                                    "type": "boolean"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/handler.ResponseCaptchaStatus"
                         }
                     }
                 }
@@ -279,7 +245,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.ParamsCaptchaCheck"
+                            "$ref": "#/definitions/handler.ParamsCaptchaVerify"
                         }
                     }
                 ],
@@ -1398,7 +1364,7 @@ const docTemplate = `{
                 "summary": "Save Settings",
                 "parameters": [
                     {
-                        "description": "The settings data",
+                        "description": "The settings",
                         "name": "settings",
                         "in": "body",
                         "required": true,
@@ -1462,7 +1428,7 @@ const docTemplate = `{
                 ],
                 "description": "Get config templates in different languages for rendering the settings page in the frontend",
                 "produces": [
-                    "application/yaml"
+                    "application/json"
                 ],
                 "tags": [
                     "System"
@@ -1478,9 +1444,9 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "The template content",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/handler.ResponseAdminSettingTpl"
                         }
                     }
                 }
@@ -4162,10 +4128,10 @@ const docTemplate = `{
         "handler.ParamsAdminSettingSave": {
             "type": "object",
             "required": [
-                "data"
+                "yaml"
             ],
             "properties": {
-                "data": {
+                "yaml": {
                     "description": "The content of the config file in YAML format",
                     "type": "string"
                 }
@@ -4294,7 +4260,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.ParamsCaptchaCheck": {
+        "handler.ParamsCaptchaVerify": {
             "type": "object",
             "required": [
                 "value"
@@ -4437,24 +4403,138 @@ const docTemplate = `{
         "handler.ResponseAdd": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/entity.CookedComment"
+                "badge_color": {
+                    "type": "string"
+                },
+                "badge_name": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "content_marked": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "email_encrypted": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ip_region": {
+                    "type": "string"
+                },
+                "is_allow_reply": {
+                    "type": "boolean"
+                },
+                "is_collapsed": {
+                    "type": "boolean"
+                },
+                "is_pending": {
+                    "type": "boolean"
+                },
+                "is_pinned": {
+                    "type": "boolean"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "nick": {
+                    "type": "string"
+                },
+                "page_key": {
+                    "type": "string"
+                },
+                "page_url": {
+                    "type": "string"
+                },
+                "rid": {
+                    "type": "integer"
+                },
+                "site_name": {
+                    "type": "string"
+                },
+                "ua": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "visible": {
+                    "type": "boolean"
+                },
+                "vote_down": {
+                    "type": "integer"
+                },
+                "vote_up": {
+                    "type": "integer"
                 }
             }
         },
         "handler.ResponseAdminPageEdit": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/entity.CookedPage"
+                "admin_only": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "pv": {
+                    "type": "integer"
+                },
+                "site_name": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "vote_down": {
+                    "type": "integer"
+                },
+                "vote_up": {
+                    "type": "integer"
                 }
             }
         },
         "handler.ResponseAdminPageFetch": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/entity.CookedPage"
+                "admin_only": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "pv": {
+                    "type": "integer"
+                },
+                "site_name": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "vote_down": {
+                    "type": "integer"
+                },
+                "vote_up": {
+                    "type": "integer"
                 }
             }
         },
@@ -4475,10 +4555,15 @@ const docTemplate = `{
         "handler.ResponseAdminSettingGet": {
             "type": "object",
             "properties": {
-                "custom": {
+                "yaml": {
                     "type": "string"
-                },
-                "template": {
+                }
+            }
+        },
+        "handler.ResponseAdminSettingTpl": {
+            "type": "object",
+            "properties": {
+                "yaml": {
                     "type": "string"
                 }
             }
@@ -4486,16 +4571,46 @@ const docTemplate = `{
         "handler.ResponseAdminSiteAdd": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/entity.CookedSite"
+                "first_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "urls_raw": {
+                    "type": "string"
                 }
             }
         },
         "handler.ResponseAdminSiteEdit": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/entity.CookedSite"
+                "first_url": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "urls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "urls_raw": {
+                    "type": "string"
                 }
             }
         },
@@ -4513,16 +4628,100 @@ const docTemplate = `{
         "handler.ResponseAdminUserAdd": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/entity.CookedUserForAdmin"
+                "badge_color": {
+                    "type": "string"
+                },
+                "badge_name": {
+                    "type": "string"
+                },
+                "comment_count": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_admin": {
+                    "type": "boolean"
+                },
+                "is_in_conf": {
+                    "type": "boolean"
+                },
+                "last_ip": {
+                    "type": "string"
+                },
+                "last_ua": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "receive_email": {
+                    "type": "boolean"
+                },
+                "site_names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "site_names_raw": {
+                    "type": "string"
                 }
             }
         },
         "handler.ResponseAdminUserEdit": {
             "type": "object",
             "properties": {
-                "data": {
-                    "$ref": "#/definitions/entity.CookedUserForAdmin"
+                "badge_color": {
+                    "type": "string"
+                },
+                "badge_name": {
+                    "type": "string"
+                },
+                "comment_count": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_admin": {
+                    "type": "boolean"
+                },
+                "is_in_conf": {
+                    "type": "boolean"
+                },
+                "last_ip": {
+                    "type": "string"
+                },
+                "last_ua": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "receive_email": {
+                    "type": "boolean"
+                },
+                "site_names": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "site_names_raw": {
+                    "type": "string"
                 }
             }
         },
@@ -4540,10 +4739,26 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.ResponseCaptchaGet": {
+            "type": "object",
+            "properties": {
+                "img_data": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.ResponseCaptchaStatus": {
+            "type": "object",
+            "properties": {
+                "is_pass": {
+                    "type": "boolean"
+                }
+            }
+        },
         "handler.ResponseCommentEdit": {
             "type": "object",
             "properties": {
-                "data": {
+                "comment": {
                     "$ref": "#/definitions/entity.CookedComment"
                 }
             }
@@ -4551,7 +4766,7 @@ const docTemplate = `{
         "handler.ResponseExport": {
             "type": "object",
             "properties": {
-                "data": {
+                "artrans": {
                     "description": "The exported data which is a JSON string",
                     "type": "string"
                 }
@@ -4563,7 +4778,7 @@ const docTemplate = `{
                 "api_version": {
                     "$ref": "#/definitions/common.ApiVersionData"
                 },
-                "comments": {
+                "data": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entity.CookedComment"

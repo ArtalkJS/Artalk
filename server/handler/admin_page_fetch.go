@@ -16,7 +16,7 @@ type ParamsAdminPageFetch struct {
 }
 
 type ResponseAdminPageFetch struct {
-	Data entity.CookedPage `json:"data"`
+	entity.CookedPage
 }
 
 var allPageFetching = false
@@ -108,7 +108,7 @@ func AdminPageFetch(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminPageFetch{
-			Data: app.Dao().CookPage(&page),
+			CookedPage: app.Dao().CookPage(&page),
 		})
 	})
 }

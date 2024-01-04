@@ -30,7 +30,7 @@ type ParamsCommentEdit struct {
 }
 
 type ResponseCommentEdit struct {
-	Data entity.CookedComment `json:"data"`
+	Comment entity.CookedComment `json:"comment"`
 }
 
 // @Summary      Edit Comment
@@ -141,7 +141,7 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseCommentEdit{
-			Data: app.Dao().CookComment(&comment),
+			Comment: app.Dao().CookComment(&comment),
 		})
 	})
 }

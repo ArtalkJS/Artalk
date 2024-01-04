@@ -81,7 +81,7 @@ func transferImport(app *core.App) func(c *fiber.Ctx) error {
 
 type ResponseExport struct {
 	// The exported data which is a JSON string
-	Data string `json:"data"`
+	Artrans string `json:"artrans"`
 }
 
 // @Summary      Export Artrans
@@ -112,7 +112,7 @@ func transferExport(app *core.App) func(c *fiber.Ctx) error {
 		}
 
 		return common.RespData(c, ResponseExport{
-			Data: jsonStr,
+			Artrans: jsonStr,
 		})
 	}
 }

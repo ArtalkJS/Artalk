@@ -4,7 +4,7 @@ import { ApiOptions } from './_options'
 import $t from '../i18n'
 
 /** 公共请求函数 */
-export async function Fetch<T>(opts: ApiOptions, path: RequestInfo, init: RequestInit, timeout?: number): Promise<T> {
+export async function Fetch<T extends any>(opts: ApiOptions, path: RequestInfo, init: RequestInit, timeout?: number): Promise<T> {
   const headers = new Headers({
     'Accept': 'application/json',
     'Content-Type': 'application/json',

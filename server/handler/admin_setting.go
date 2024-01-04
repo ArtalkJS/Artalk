@@ -1,9 +1,7 @@
 package handler
 
 import (
-	"net/http"
 	"os"
-	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
@@ -14,8 +12,7 @@ import (
 )
 
 type ResponseAdminSettingGet struct {
-	Custom   string `json:"custom"`
-	Template string `json:"template"`
+	Yaml string `json:"yaml"`
 }
 
 // @Summary      Get Settings
@@ -39,21 +36,20 @@ func AdminSettingGet(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminSettingGet{
-			Custom:   string(dat),
-			Template: app.ConfTpl(),
+			Yaml: string(dat),
 		})
 	})
 }
 
 type ParamsAdminSettingSave struct {
-	Data string `json:"data" validate:"required"` // The content of the config file in YAML format
+	Yaml string `json:"yaml" validate:"required"` // The content of the config file in YAML format
 }
 
 // @Summary      Save Settings
 // @Description  Save settings to app config file
 // @Tags         System
 // @Security     ApiKeyAuth
-// @Param        settings  body  ParamsAdminSettingSave  true  "The settings data"
+// @Param        settings  body  ParamsAdminSettingSave  true "The settings"
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  Map{}
@@ -79,7 +75,7 @@ func AdminSettingSave(app *core.App, router fiber.Router) {
 
 		defer f.Close()
 
-		_, err2 := f.WriteString(p.Data)
+		_, err2 := f.WriteString(p.Yaml)
 		if err2 != nil {
 			return common.RespError(c, 500, i18n.T("Save failed")+": "+err2.Error())
 		}
@@ -103,18 +99,31 @@ func AdminSettingSave(app *core.App, router fiber.Router) {
 	})
 }
 
+type ResponseAdminSettingTpl struct {
+	Yaml string `json:"yaml"`
+}
+
 // @Summary      Get Settings Template
 // @Description  Get config templates in different languages for rendering the settings page in the frontend
 // @Tags         System
 // @Security     ApiKeyAuth
 // @Param        locale  path  string  false  "The locale of the settings template you want to get"
-// @Produce      application/yaml
-// @Success      200  {string}  string  "The template content"
+// @Produce      json
+// @Success      200  {object}  ResponseAdminSettingTpl
 // @Router       /settings/template/{locale}  [get]
 func AdminSettingTpl(app *core.App, router fiber.Router) {
 	router.Get("/settings/template/:locale?", func(c *fiber.Ctx) error {
-		locale := strings.TrimSpace(c.Params("locale"))
-		tpl := config.Template(locale)
-		return c.Status(http.StatusOK).SendString(tpl)
+		var tpl string
+
+		locale := c.Params("locale")
+		if locale == "" {
+			tpl = app.ConfTpl()
+		} else {
+			tpl = config.Template(locale)
+		}
+
+		return common.RespData(c, ResponseAdminSettingTpl{
+			Yaml: tpl,
+		})
 	})
 }

@@ -16,7 +16,7 @@ type ParamsAdminSiteAdd struct {
 }
 
 type ResponseAdminSiteAdd struct {
-	Data entity.CookedSite `json:"data"`
+	entity.CookedSite
 }
 
 // @Summary      Create Site
@@ -68,7 +68,7 @@ func AdminSiteAdd(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminSiteAdd{
-			Data: app.Dao().CookSite(&site),
+			CookedSite: app.Dao().CookSite(&site),
 		})
 	})
 }

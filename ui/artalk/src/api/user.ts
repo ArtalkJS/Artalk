@@ -23,14 +23,14 @@ export default class UserApi extends ApiBase {
       name, email
     }
 
-    const req = this.fetch('GET', `/user/info`, params, {
+    const req = this.fetch<{
+      user: UserData|null,
+      is_login: boolean,
+      unread: NotifyData[],
+      unread_count: number,
+    }>('GET', `/user/info`, params, {
       signal: ctrl.signal,
-    }).then((json) => ({
-      user: json.data.user as UserData|null,
-      is_login: json.data.is_login as boolean,
-      unread: (json.data.unread || []) as NotifyData[],
-      unread_count: json.data.unread_count || 0,
-    }))
+    })
 
     return {
       req,

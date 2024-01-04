@@ -27,7 +27,7 @@ type ParamsAdd struct {
 }
 
 type ResponseAdd struct {
-	Data entity.CookedComment `json:"data"`
+	entity.CookedComment
 }
 
 // @Summary      Create Comment
@@ -185,7 +185,7 @@ func CommentAdd(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdd{
-			Data: cookedComment,
+			CookedComment: cookedComment,
 		})
 	})
 }

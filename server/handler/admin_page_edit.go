@@ -20,7 +20,7 @@ type ParamsAdminPageEdit struct {
 }
 
 type ResponseAdminPageEdit struct {
-	Data entity.CookedPage `json:"data"`
+	entity.CookedPage
 }
 
 // @Summary      Edit Page
@@ -91,7 +91,7 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminPageEdit{
-			Data: app.Dao().CookPage(&page),
+			CookedPage: app.Dao().CookPage(&page),
 		})
 	})
 }

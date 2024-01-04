@@ -39,7 +39,7 @@ export default class SiteApi extends ApiBase {
 
   /** 导出 */
   public async export() {
-    const d = await this.fetch('GET', `/artransfer/export`, undefined, { timeout: 0 })
-    return (d.data?.data || '' as string)
+    const d = await this.fetch<{ data: string }>('GET', `/artransfer/export`, undefined, { timeout: 0 })
+    return (d.data || '' as string)
   }
 }

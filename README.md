@@ -109,6 +109,10 @@ services:
 docker-compose up -d
 ```
 
+### 在 sealos 上一键部署
+
+[![](https://raw.githubusercontent.com/labring-actions/templates/main/Deploy-on-Sealos.svg)](https://cloud.sealos.io/?openapp=system-template%3FtemplateName%3Dartalk)
+
 ## Development
 
 see [CONTRIBUTING.md](./CONTRIBUTING.md)

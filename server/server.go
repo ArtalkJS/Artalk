@@ -83,6 +83,8 @@ func Serve(app *core.App) (*fiber.App, error) {
 		h.Vote(app, api)
 		h.PV(app, api)
 		h.Stat(app, api)
+		h.GetNotifies(app, api)
+		h.MarkAllRead(app, api)
 		h.MarkRead(app, api)
 		h.ImgUpload(app, api)
 

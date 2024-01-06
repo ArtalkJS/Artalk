@@ -2,10 +2,89 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
+
+type ParamsGetNotifies struct {
+	Name  string `query:"name" validate:"required"`  // The user name
+	Email string `query:"email" validate:"required"` // The user email
+}
+
+type ResponseGetNotifies struct {
+	Notifies []entity.CookedNotify `json:"notifies"`
+	Count    int                   `json:"count"`
+}
+
+// @Summary      Get Notifies
+// @Description  Get a list of notifies for user
+// @Tags         Notify
+// @Param        name   query  string  true  "The user name"
+// @Param        email  query  string  true  "The user email"
+// @Produce      json
+// @Success      200  {object}  ResponseGetNotifies
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
+// @Router       /notifies  [get]
+func GetNotifies(app *core.App, router fiber.Router) {
+	router.Get("/notifies", func(c *fiber.Ctx) error {
+		var p ParamsGetNotifies
+		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
+			return resp
+		}
+
+		user := app.Dao().FindUser(p.Name, p.Email)
+
+		var notifies = []entity.CookedNotify{}
+		if !user.IsEmpty() {
+			notifies = app.Dao().CookAllNotifies(app.Dao().FindUnreadNotifies(user.ID))
+		}
+
+		return common.RespData(c, ResponseGetNotifies{
+			Notifies: notifies,
+			Count:    len(notifies),
+		})
+	})
+}
+
+// Mark all notifies as read
+type ParamsMarkAllRead struct {
+	Name  string `json:"name" validate:"required"`  // The username
+	Email string `json:"email" validate:"required"` // The user email
+}
+
+// @Summary      Mark All Notifies as Read
+// @Description  Mark all notifies as read for user
+// @Tags         Notify
+// @Param        name   query  string  true  "The user name"
+// @Param        email  query  string  true  "The user email"
+// @Produce      json
+// @Success      200  {object}  Map{}
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
+// @Router       /notifies/read  [post]
+func MarkAllRead(app *core.App, router fiber.Router) {
+	router.Post("/notifies/read", func(c *fiber.Ctx) error {
+		var p ParamsMarkAllRead
+		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
+			return resp
+		}
+
+		user := app.Dao().FindUser(p.Name, p.Email)
+		if user.IsEmpty() {
+			return common.RespSuccess(c)
+		}
+
+		err := app.Dao().UserNotifyMarkAllAsRead(user.ID)
+		if err != nil {
+			return common.RespError(c, 500, err.Error())
+		}
+
+		return common.RespSuccess(c)
+	})
+}
 
 type ParamsMarkRead struct {
 	Name    string `json:"name"`     // The username

@@ -32,6 +32,7 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		Rid:            c.Rid,
 		BadgeName:      user.BadgeName,
 		BadgeColor:     user.BadgeColor,
+		IP:             c.IP,
 		Visible:        true,
 		VoteUp:         c.VoteUp,
 		VoteDown:       c.VoteDown,

@@ -2,7 +2,7 @@
 import type { Checker } from '.'
 import * as render from './captcha-renders'
 
-const CaptchaChecker: Checker = {
+const CaptchaChecker: Checker<{}> = {
   request(checker, inputVal) {
     return checker.getApi().captcha.captchaVerify(inputVal)
   },

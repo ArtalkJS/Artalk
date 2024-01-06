@@ -13,8 +13,12 @@ export default class PageApi extends ApiBase {
       limit: limit || 15,
     }
 
-    const d = await this.fetch<any>('GET', '/pages', params)
-    return (d as { pages: PageData[], total: number })
+    const d = await this.fetch<{
+      pages: PageData[],
+      count: number
+    }>('GET', '/pages', params)
+
+    return d
   }
 
   /** 页面 · 修改 */
@@ -26,8 +30,9 @@ export default class PageApi extends ApiBase {
       site_name: data.site_name || this.options.siteName,
     }
 
-    const d = await this.fetch<any>('PUT', `/pages/${params.id}`, params)
-    return (d.page as PageData)
+    const d = await this.fetch<PageData>('PUT', `/pages/${params.id}`, params)
+
+    return d
   }
 
   /** 页面 · 删除 */
@@ -42,8 +47,8 @@ export default class PageApi extends ApiBase {
     if (siteName) params.site_name = siteName
     if (getStatus) params.get_status = getStatus
 
-    const d = await this.fetch<any>('POST', `/pages/${id}/fetch`, params)
-    return (d as any)
+    const d = await this.fetch<PageData>('POST', `/pages/${id}/fetch`, params)
+    return d
   }
 
   /** PV */

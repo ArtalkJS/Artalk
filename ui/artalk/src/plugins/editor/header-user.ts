@@ -1,4 +1,5 @@
 import $t from '@/i18n'
+import type { UserInfoApiResponseData } from '@/types'
 import EditorPlug from './_plug'
 import type PlugKit from './_kit'
 
@@ -72,13 +73,13 @@ export default class HeaderUser extends EditorPlug {
    * @param data The response data from server
    */
   private onUserInfoFetched(
-    data: any // TODO: fix type
+    data: UserInfoApiResponseData
   ) {
     // If api response is not login, logout
     if (!data.is_login) this.kit.useUser().logout()
 
     // Update unread notifies
-    this.kit.useGlobalCtx().getData().updateUnreads(data.unread)
+    this.kit.useGlobalCtx().getData().updateUnreads(data.notifies)
 
     // If user is admin and not login,
     if (this.kit.useUser().checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {

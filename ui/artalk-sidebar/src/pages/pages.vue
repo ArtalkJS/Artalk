@@ -61,7 +61,7 @@ function reqPages(offset: number) {
   nav.setPageLoading(true)
   artalk?.ctx.getApi().page.pageGet(curtSite.value, offset, pageSize.value)
     .then(data => {
-      pageTotal.value = data.total
+      pageTotal.value = data.count
       pages.value = data.pages
       nav.scrollPageToTop()
     }).finally(() => {
@@ -89,7 +89,7 @@ function onPageItemRemove(id: number) {
 }
 
 async function getRefreshTaskStatus() {
-  return await artalk!.ctx.getApi().page.pageFetch(undefined, undefined, true) as { is_progress: boolean, msg: string }
+  return await artalk!.ctx.getApi().page.pageFetch(undefined, undefined, true) as unknown as { is_progress: boolean, msg: string }
 }
 
 function startRefreshTaskWatchdog() {

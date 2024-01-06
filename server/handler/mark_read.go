@@ -87,9 +87,8 @@ func MarkAllRead(app *core.App, router fiber.Router) {
 }
 
 type ParamsMarkRead struct {
-	Name    string `json:"name"`     // The username
-	Email   string `json:"email"`    // The user email
-	AllRead bool   `json:"all_read"` // The option if mark all user's notify as read
+	Name  string `json:"name"`  // The username
+	Email string `json:"email"` // The user email
 }
 
 // @Summary      Mark Notify as Read
@@ -113,22 +112,6 @@ func MarkRead(app *core.App, router fiber.Router) {
 		var p ParamsMarkRead
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
-		}
-
-		// all read
-		// TODO separate the API `/notifies/:comment_id/:notify_key/read` and `/notifies/read`
-		if p.AllRead {
-			if p.Name == "" || p.Email == "" {
-				return common.RespError(c, 400, "username or email cannot be empty")
-			}
-
-			user := app.Dao().FindUser(p.Name, p.Email)
-			err := app.Dao().UserNotifyMarkAllAsRead(user.ID)
-			if err != nil {
-				return common.RespError(c, 500, err.Error())
-			}
-
-			return common.RespSuccess(c)
 		}
 
 		// find notify

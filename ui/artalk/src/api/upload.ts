@@ -21,7 +21,10 @@ export default class UploadApi extends ApiBase {
       body: form
     }
 
-    const json = await this.fetch<{ img_file: string, img_url: string }>('POST', '/upload', init)
+    const json = await this.fetch<{
+      img_file: string,
+      img_url: string
+    }>('POST', '/upload', init)
     return json
   }
 }

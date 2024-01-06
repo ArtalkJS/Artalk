@@ -9,7 +9,8 @@ import (
 )
 
 type ResponseAdminSiteGet struct {
-	Data []entity.CookedSite `json:"data"`
+	Sites []entity.CookedSite `json:"sites"`
+	Count int                 `json:"count"`
 }
 
 // @Summary      Get Site List
@@ -37,7 +38,8 @@ func AdminSiteGet(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminSiteGet{
-			Data: sites,
+			Sites: sites,
+			Count: len(sites),
 		})
 	})
 }

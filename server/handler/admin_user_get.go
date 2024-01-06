@@ -14,8 +14,8 @@ type ParamsAdminUserGet struct {
 }
 
 type ResponseAdminUserGet struct {
-	Total int64                       `json:"total"`
-	Data  []entity.CookedUserForAdmin `json:"data"`
+	Total int64                       `json:"count"`
+	Users []entity.CookedUserForAdmin `json:"users"`
 }
 
 // @Summary      Get User List
@@ -69,7 +69,7 @@ func AdminUserGet(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminUserGet{
-			Data:  cookedUsers,
+			Users: cookedUsers,
 			Total: total,
 		})
 	})

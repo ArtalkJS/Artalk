@@ -24,7 +24,6 @@ func GetApiVersionDataMap() ApiVersionData {
 }
 
 type ConfData struct {
-	ImgUpload    bool           `json:"img_upload"`
 	FrontendConf Map            `json:"frontend_conf"`
 	Version      ApiVersionData `json:"version"`
 }
@@ -50,7 +49,6 @@ func GetApiPublicConfDataMap(app *core.App, c *fiber.Ctx) ConfData {
 	}
 
 	return ConfData{
-		ImgUpload:    imgUpload,
 		FrontendConf: frontendConf,
 		Version:      GetApiVersionDataMap(),
 	}

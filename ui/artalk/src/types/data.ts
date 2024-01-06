@@ -74,28 +74,13 @@ export interface ListData {
   comments: CommentData[]
 
   /** 根评论总数 */
-  total_roots: number
+  roots_count: number
 
   /** 评论总数（包括所有子评论） */
-  total: number
+  count: number
 
   /** 页面信息 */
   page: PageData
-
-  /** 站点信息 */
-  site: SiteData
-
-  /** 未读的 Notifies */
-  unread: NotifyData[]
-
-  /** 未读计数 */
-  unread_count: number
-
-  /** API 版本 */
-  api_version: ApiVersionData
-
-  /** 后端配置 */
-  conf: any // TODO
 }
 
 export interface PageData {
@@ -269,3 +254,10 @@ export interface DataManagerApi {
 }
 
 export type NotifyLevel = "i" | "s" | "w" | "e"
+
+export interface UserInfoApiResponseData {
+  user?: UserData
+  is_login: boolean
+  notifies: NotifyData[]
+  notifies_count: number
+}

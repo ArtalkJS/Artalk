@@ -6,7 +6,7 @@ abstract class ApiBase {
     protected options: ApiOptions
   ) {}
 
-  protected async fetch<T>(
+  protected async fetch<T = any>(
     method: 'GET'|'POST'|'PUT'|'DELETE',
     path: string,
     payload?: any,

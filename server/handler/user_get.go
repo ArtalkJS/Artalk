@@ -13,10 +13,10 @@ type ParamsUserGet struct {
 }
 
 type ResponseUserGet struct {
-	User        *entity.CookedUser    `json:"user"`
-	IsLogin     bool                  `json:"is_login"`
-	Unread      []entity.CookedNotify `json:"unread"`
-	UnreadCount int                   `json:"unread_count"`
+	User          *entity.CookedUser    `json:"user"`
+	IsLogin       bool                  `json:"is_login"`
+	Notifies      []entity.CookedNotify `json:"notifies"`
+	NotifiesCount int                   `json:"notifies_count"`
 }
 
 // @Summary      Get User Info
@@ -49,10 +49,10 @@ func UserGet(app *core.App, router fiber.Router) {
 
 		if user.IsEmpty() {
 			return common.RespData(c, ResponseUserGet{
-				User:        nil,
-				IsLogin:     isLogin,
-				Unread:      []entity.CookedNotify{},
-				UnreadCount: 0,
+				User:          nil,
+				IsLogin:       isLogin,
+				Notifies:      []entity.CookedNotify{},
+				NotifiesCount: 0,
 			})
 		}
 
@@ -61,10 +61,10 @@ func UserGet(app *core.App, router fiber.Router) {
 		cockedUser := app.Dao().CookUser(&user)
 
 		return common.RespData(c, ResponseUserGet{
-			User:        &cockedUser,
-			IsLogin:     isLogin,
-			Unread:      unreadNotifies,
-			UnreadCount: len(unreadNotifies),
+			User:          &cockedUser,
+			IsLogin:       isLogin,
+			Notifies:      unreadNotifies,
+			NotifiesCount: len(unreadNotifies),
 		})
 	})
 }

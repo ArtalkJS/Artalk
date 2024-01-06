@@ -28,7 +28,7 @@ export const Unread: ArtalkPlugin = (ctx) => {
     const notifyKey = Utils.getQueryParam('atk_notify_key')
     if (notifyKey) {
       // mark as read
-      ctx.getApi().user.markRead(commentID, notifyKey)
+      ctx.getApi().notify.markRead(commentID, notifyKey)
         .then(() => {
           // remove from unread list
           ctx.getData().updateUnreads(ctx.getData().getUnreads().filter(o => o.comment_id !== commentID))

@@ -15,7 +15,7 @@ function getPageDataByLastData(ctx: ContextApi): { offset: number, total: number
   if (!last) return r
 
   r.offset = last.params.offset
-  if (last.data) r.total = last.params.flatMode ? last.data.total : last.data.total_roots
+  if (last.data) r.total = last.params.flatMode ? last.data.count : last.data.roots_count
 
   return r
 }

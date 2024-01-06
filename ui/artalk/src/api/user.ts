@@ -1,6 +1,5 @@
-import type { UserData, NotifyData, UserDataForAdmin } from '@/types'
+import type { UserData, UserDataForAdmin, UserInfoApiResponseData } from '@/types'
 import ApiBase from './_base'
-import { ToFormData } from './_request'
 
 /**
  * 用户 API
@@ -8,12 +7,14 @@ import { ToFormData } from './_request'
 export default class UserApi extends ApiBase {
   /** 用户 · 登录 */
   public async login(name: string, email: string, password: string) {
-    const params: any = {
-      name, email, password
-    }
+    const params = { name, email, password }
 
-    const data = await this.fetch<any>('POST', '/user/access_token', params)
-    return data as { token: string, user: UserData }
+    const data = await this.fetch<{
+      token: string,
+      user: UserData
+    }>('POST', '/user/access_token', params)
+
+    return data
   }
 
   /** 用户 · 获取  */
@@ -23,12 +24,7 @@ export default class UserApi extends ApiBase {
       name, email
     }
 
-    const req = this.fetch<{
-      user: UserData|null,
-      is_login: boolean,
-      unread: NotifyData[],
-      unread_count: number,
-    }>('GET', `/user/info`, params, {
+    const req = this.fetch<UserInfoApiResponseData>('GET', `/user/info`, params, {
       signal: ctrl.signal,
     })
 
@@ -40,22 +36,11 @@ export default class UserApi extends ApiBase {
 
   /** 用户 · 登录状态 */
   public async loginStatus() {
-    const data = await this.fetch<any>('GET', '/user/status', this.withUserInfo({}))
-    return (data || { is_login: false, is_admin: false }) as { is_login: boolean, is_admin: boolean }
-  }
-
-  /** 已读标记 */
-  public markRead(commentID: number, notifyKey: string, readAll = false) {
-    const params: any = {
-    }
-
-    // TODO separate API to `/notifies/read`
-    if (readAll) {
-      params.all_read = true
-      this.withUserInfo(params)
-    }
-
-    return this.fetch('POST', `/notifies/${commentID}/${notifyKey}/read`, params)
+    const data = await this.fetch<{
+      is_login: boolean,
+      is_admin: boolean
+    }>('GET', '/user/status', this.withUserInfo({}))
+    return data
   }
 
   /** 用户 · 列表 */
@@ -65,8 +50,15 @@ export default class UserApi extends ApiBase {
       limit: limit || 15,
     }
 
-    const d = await this.fetch<any>('GET', `/users${type ? `/${type}` : ''}`, params)
-    return (d as { users: UserDataForAdmin[], total: number })
+    let path = '/users'
+    if (type) path += `/${type}`
+
+    const d = await this.fetch<{
+      users: UserDataForAdmin[],
+      total: number
+    }>('GET', path, params)
+
+    return d
   }
 
   /** 用户 · 新增 */
@@ -83,8 +75,8 @@ export default class UserApi extends ApiBase {
       badge_color: user.badge_color || '',
     }
 
-    const d = await this.fetch<any>('POST', '/users', params)
-    return (d.user as UserDataForAdmin)
+    const d = await this.fetch<UserDataForAdmin>('POST', '/users', params)
+    return d
   }
 
   /** 用户 · 修改 */
@@ -101,8 +93,9 @@ export default class UserApi extends ApiBase {
       badge_color: user.badge_color || '',
     }
 
-    const d = await this.fetch<any>('PUT', `/users/${id}`, params)
-    return (d.user as UserDataForAdmin)
+    const d = await this.fetch<UserDataForAdmin>('PUT', `/users/${id}`, params)
+
+    return d
   }
 
   /** 用户 · 删除 */

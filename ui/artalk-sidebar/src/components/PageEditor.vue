@@ -43,7 +43,7 @@ async function sync() {
   isLoading.value = true
   let p: ArtalkType.PageData
   try {
-    p = (await artalk!.ctx.getApi().page.pageFetch(page.value.id)).page
+    p = (await artalk!.ctx.getApi().page.pageFetch(page.value.id))
   } catch (err: any) {
     alert(`同步失败：${err.msg || '未知错误'}`)
     console.log(err)

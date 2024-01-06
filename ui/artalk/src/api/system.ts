@@ -17,13 +17,10 @@ interface SystemConfResp {
  */
 export default class SystemApi extends ApiBase {
   /** 获取配置 */
-  public async conf(): Promise<SystemConfResp> {
-    const data = await this.fetch<any>('GET', `/conf`)
+  public async conf() {
+    const data = await this.fetch<SystemConfResp>('GET', `/conf`)
 
-    return {
-      frontend_conf: data.frontend_conf,
-      version: data.version,
-    }
+    return data
   }
 
   /** 获取配置数据 */
@@ -41,7 +38,7 @@ export default class SystemApi extends ApiBase {
 
   /** 保存配置数据 */
   public async saveSettings(yaml: string) {
-    const data = await this.fetch<boolean>('POST', '/settings', {
+    const data = await this.fetch('POST', '/settings', {
       yaml
     })
     return data
@@ -51,6 +48,6 @@ export default class SystemApi extends ApiBase {
   public async version() {
     const resp = await fetch(`${this.options.baseURL}/version`, { method: 'POST' })
     const data = await resp.json()
-    return data as { app: string, version: string, commit_hash: string, fe_min_version: string }
+    return data as ApiVersionInfo
   }
 }

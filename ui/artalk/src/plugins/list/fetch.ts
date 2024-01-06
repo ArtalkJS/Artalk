@@ -34,9 +34,6 @@ export const Fetch: ArtalkPlugin = (ctx) => {
         // 更新页面数据
         ctx.getData().updatePage(data.page)
 
-        // 未读消息提示功能
-        ctx.getData().updateUnreads(data.unread || [])
-
         // trigger events when success
         params.onSuccess && params.onSuccess(data)
 

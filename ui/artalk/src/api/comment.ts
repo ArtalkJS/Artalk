@@ -39,8 +39,9 @@ export default class CommentApi extends ApiBase {
     if (comment.page_title) params.page_title = comment.page_title
     if (comment.site_name) params.site_name = comment.site_name
 
-    const data = await this.fetch<any>('POST', '/comments', params)
-    return (data.comment as CommentData)
+    const data = await this.fetch<CommentData>('POST', '/comments', params)
+
+    return data
   }
 
   /** 评论 · 修改 */
@@ -49,8 +50,9 @@ export default class CommentApi extends ApiBase {
       ...data,
     }
 
-    const d = await this.fetch<any>('PUT', `/comments/${id}`, params)
-    return (d.comment as CommentData)
+    const d = await this.fetch<CommentData>('PUT', `/comments/${id}`, params)
+
+    return d
   }
 
   /** 评论 · 删除 */
@@ -60,13 +62,11 @@ export default class CommentApi extends ApiBase {
 
   /** 投票 */
   public async vote(targetID: number, type: 'comment_up'|'comment_down'|'page_up'|'page_down') {
-    const params: any = {
-      target_id: targetID, type,
-    }
+    const data = await this.fetch<{
+      up: number,
+      down: number
+    }>('POST', `/votes/${type}/${targetID}`, this.withUserInfo({}))
 
-    this.withUserInfo(params)
-
-    const data = await this.fetch<any>('POST', `/vote/${type}/${targetID}`, params)
-    return (data as {up: number, down: number})
+    return data
   }
 }

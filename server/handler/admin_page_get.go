@@ -15,8 +15,8 @@ type ParamsAdminPageGet struct {
 }
 
 type ResponseAdminPageGet struct {
-	Total int64               `json:"total"`
-	Data  []entity.CookedPage `json:"data"`
+	Total int64               `json:"count"`
+	Pages []entity.CookedPage `json:"pages"`
 }
 
 // @Summary      Get Page List
@@ -66,7 +66,7 @@ func AdminPageGet(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseAdminPageGet{
-			Data:  cookedPages,
+			Pages: cookedPages,
 			Total: total,
 		})
 	})

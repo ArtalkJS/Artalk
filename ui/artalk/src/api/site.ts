@@ -9,16 +9,19 @@ export default class SiteApi extends ApiBase {
   public async siteGet() {
     const params: any = {}
 
-    const d = await this.fetch<any>('GET', '/sites', params)
-    return (d.sites as SiteData[])
+    const d = await this.fetch<{
+      sites: SiteData[],
+      count: number
+    }>('GET', '/sites', params)
+    return d
   }
 
   /** 站点 · 创建 */
   public async siteAdd(name: string, urls: string) {
     const params: any = { name, urls }
 
-    const d = await this.fetch<any>('POST', '/sites', params)
-    return (d.site as SiteData)
+    const d = await this.fetch<SiteData>('POST', '/sites', params)
+    return d
   }
 
   /** 站点 · 修改 */
@@ -28,8 +31,8 @@ export default class SiteApi extends ApiBase {
       urls: data.urls || '',
     }
 
-    const d = await this.fetch<any>('PUT', `/sites/${id}`, params)
-    return (d.site as SiteData)
+    const d = await this.fetch<SiteData>('PUT', `/sites/${id}`, params)
+    return d
   }
 
   /** 站点 · 删除 */
@@ -39,7 +42,7 @@ export default class SiteApi extends ApiBase {
 
   /** 导出 */
   public async export() {
-    const d = await this.fetch<{ data: string }>('GET', `/artransfer/export`, undefined, { timeout: 0 })
-    return (d.data || '' as string)
+    const d = await this.fetch<{ artrans: string }>('GET', `/transfer/export`, undefined, { timeout: 0 })
+    return (d.artrans || '' as string)
   }
 }

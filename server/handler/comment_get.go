@@ -30,7 +30,7 @@ type ParamsGet struct {
 }
 
 type ResponseGet struct {
-	Data       []entity.CookedComment `json:"data"`
+	Comments   []entity.CookedComment `json:"comments"`
 	Count      int64                  `json:"count"`
 	RootsCount int64                  `json:"roots_count"`
 	Page       *entity.CookedPage     `json:"page,omitempty"`
@@ -123,7 +123,7 @@ func CommentGet(app *core.App, router fiber.Router) {
 
 		// The response data
 		resp := ResponseGet{
-			Data:       comments,
+			Comments:   comments,
 			Count:      count,
 			RootsCount: rootsCount,
 		}

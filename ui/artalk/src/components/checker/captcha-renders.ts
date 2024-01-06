@@ -14,8 +14,8 @@ export function imgBody(checker: CheckerCtx) {
   elem.querySelector<HTMLElement>('.atk-captcha-img')!.onclick = () => {
     const imgEl = elem.querySelector('.atk-captcha-img')
     checker.getApi().captcha.captchaGet()
-      .then((imgData) => {
-        imgEl!.setAttribute('src', imgData)
+      .then((res) => {
+        imgEl!.setAttribute('src', res.img_data)
       })
       .catch((err) => {
         console.error('Failed to get captcha image ', err)

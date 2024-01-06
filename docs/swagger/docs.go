@@ -698,6 +698,150 @@ const docTemplate = `{
                 }
             }
         },
+        "/notifies": {
+            "get": {
+                "description": "Get a list of notifies for user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notify"
+                ],
+                "summary": "Get Notifies",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The user name",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The user email",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseGetNotifies"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/notifies/read": {
+            "post": {
+                "description": "Mark all notifies as read for user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notify"
+                ],
+                "summary": "Mark All Notifies as Read",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The user name",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The user email",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.Map"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/notifies/{comment_id}/{notify_key}/read": {
             "post": {
                 "description": "Mark specific notification as read for user",
@@ -4541,7 +4685,7 @@ const docTemplate = `{
         "handler.ResponseAdminPageGet": {
             "type": "object",
             "properties": {
-                "data": {
+                "pages": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entity.CookedPage"
@@ -4617,7 +4761,7 @@ const docTemplate = `{
         "handler.ResponseAdminSiteGet": {
             "type": "object",
             "properties": {
-                "data": {
+                "sites": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entity.CookedSite"
@@ -4728,14 +4872,14 @@ const docTemplate = `{
         "handler.ResponseAdminUserGet": {
             "type": "object",
             "properties": {
-                "data": {
+                "total": {
+                    "type": "integer"
+                },
+                "users": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entity.CookedUserForAdmin"
                     }
-                },
-                "total": {
-                    "type": "integer"
                 }
             }
         },
@@ -4775,32 +4919,34 @@ const docTemplate = `{
         "handler.ResponseGet": {
             "type": "object",
             "properties": {
-                "api_version": {
-                    "$ref": "#/definitions/common.ApiVersionData"
-                },
-                "data": {
+                "comments": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entity.CookedComment"
                     }
                 },
+                "count": {
+                    "type": "integer"
+                },
                 "page": {
                     "$ref": "#/definitions/entity.CookedPage"
                 },
-                "total": {
+                "roots_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.ResponseGetNotifies": {
+            "type": "object",
+            "properties": {
+                "count": {
                     "type": "integer"
                 },
-                "total_roots": {
-                    "type": "integer"
-                },
-                "unread": {
+                "notifies": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entity.CookedNotify"
                     }
-                },
-                "unread_count": {
-                    "type": "integer"
                 }
             }
         },

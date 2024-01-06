@@ -168,13 +168,13 @@ export default class CheckerLauncher {
   }
 }
 
-export interface Checker {
+export interface Checker<T = any> {
   el?: HTMLElement
   inputType?: 'password' | 'text'
   body: (checker: CheckerCtx) => HTMLElement
-  request: (checker: CheckerCtx, inputVal: string) => Promise<string>
-  onSuccess?: (checker: CheckerCtx, respData: string, inputVal: string, formEl: HTMLElement) => void
-  onError?: (checker: CheckerCtx, err: any, inputVal: string, formEl: HTMLElement) => void
+  request: (checker: CheckerCtx, inputVal: string) => Promise<T>
+  onSuccess?: (checker: CheckerCtx, respData: T, inputVal: string, formEl: HTMLElement) => void
+  onError?: (checker: CheckerCtx, errData: any, inputVal: string, formEl: HTMLElement) => void
 }
 
 interface CheckerStore {

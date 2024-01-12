@@ -42,11 +42,7 @@ func AdminCacheWarm(app *core.App, router fiber.Router) {
 // @Produce      json
 // @Router       /cache/flush  [post]
 func AdminCacheFlush(app *core.App, router fiber.Router) {
-	router.Post("/cache/flush", func(c *fiber.Ctx) error {
-		if ok, resp := common.AdminRequired(app, c); !ok {
-			return resp
-		}
-
+	router.Post("/cache/flush", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		if !app.Conf().Cache.Enabled {
 			return common.RespError(c, 400, "cache disabled")
 		}
@@ -58,5 +54,5 @@ func AdminCacheFlush(app *core.App, router fiber.Router) {
 		return common.RespData(c, Map{
 			"msg": i18n.T("Task executing in background, please wait..."),
 		})
-	})
+	}))
 }

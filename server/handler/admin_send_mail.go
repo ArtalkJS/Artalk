@@ -26,10 +26,6 @@ type ParamsAdminSendMail struct {
 // @Router       /send_email  [post]
 func AdminSendMail(app *core.App, router fiber.Router) {
 	router.Post("/send_email", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		if ok, resp := common.AdminRequired(app, c); !ok {
-			return resp
-		}
-
 		var p ParamsAdminSendMail
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp

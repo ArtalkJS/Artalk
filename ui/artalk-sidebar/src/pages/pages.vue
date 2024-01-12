@@ -89,7 +89,7 @@ function onPageItemRemove(id: number) {
 }
 
 async function getRefreshTaskStatus() {
-  return await artalk!.ctx.getApi().page.pageFetch(undefined, undefined, true) as unknown as { is_progress: boolean, msg: string }
+  return await artalk!.ctx.getApi().page.pagesAllFetchStatus()
 }
 
 function startRefreshTaskWatchdog() {
@@ -121,7 +121,7 @@ async function refreshAllPages() {
 
   // 发起任务
   try {
-    await artalk!.ctx.getApi().page.pageFetch(undefined, curtSite.value)
+    await artalk!.ctx.getApi().page.pagesAllFetch(curtSite.value)
   } catch (err: any) {
     alert(err.msg)
     setRefreshTaskDone()

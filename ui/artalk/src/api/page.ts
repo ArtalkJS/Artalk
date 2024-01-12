@@ -41,13 +41,27 @@ export default class PageApi extends ApiBase {
   }
 
   /** 页面 · 数据更新 */
-  public async pageFetch(id?: number, siteName?: string, getStatus?: boolean) {
-    const params: any = {}
-    if (id) params.id = id
-    if (siteName) params.site_name = siteName
-    if (getStatus) params.get_status = getStatus
+  public async pageFetch(id: number) {
+    const d = await this.fetch<PageData>('POST', `/pages/${id}/fetch`)
+    return d
+  }
 
-    const d = await this.fetch<PageData>('POST', `/pages/${id}/fetch`, params)
+  /** 页面 · 整站数据更新 */
+  public async pagesAllFetch(siteName?: string) {
+    const params: any = {}
+    if (siteName) params.site_name = siteName
+    const d = await this.fetch('POST', `/pages/fetch`, params)
+    return d
+  }
+
+  /** 页面 · 整站数据更新 - 当前状态 */
+  public async pagesAllFetchStatus() {
+    const d = await this.fetch<{
+      msg: string,
+      is_progress: boolean,
+      done: number,
+      total: number
+    }>('GET', `/pages/fetch/status`)
     return d
   }
 

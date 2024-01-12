@@ -82,7 +82,7 @@ func CommentAdd(app *core.App, router fiber.Router) {
 		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
 
 		// check if the user is allowed to comment
-		if isAllowed, resp := common.CheckIsAllowed(app, c, p.Name, p.Email, page, p.SiteName); !isAllowed {
+		if isAllowed, resp := isAllowComment(app, c, p.Name, p.Email, page); !isAllowed {
 			return resp
 		}
 
@@ -192,4 +192,17 @@ func CommentAdd(app *core.App, router fiber.Router) {
 			CookedComment: cookedComment,
 		})
 	})
+}
+
+func isAllowComment(app *core.App, c *fiber.Ctx, name string, email string, page entity.Page) (bool, error) {
+	isAdminUser := app.Dao().IsAdminUserByNameEmail(name, email)
+
+	// 如果用户是管理员，或者当前页只能管理员评论
+	if isAdminUser || page.AdminOnly {
+		if !common.CheckIsAdminReq(app, c) {
+			return false, common.RespError(c, 403, i18n.T("Admin access required"), Map{"need_login": true})
+		}
+	}
+
+	return true, nil
 }

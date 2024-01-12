@@ -9,7 +9,6 @@
   last_ua: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36
   is_admin: true
   is_in_conf: true
-  site_names:
   receive_email: true
   created_at: 2022-04-29 14:31:53
   updated_at: 2022-04-29 14:31:53

@@ -148,12 +148,6 @@ export interface UserData {
   /** 是否属于管理员 */
   is_admin: boolean
 
-  /** 所属站点名 */
-  site_names: string[]
-
-  /** 所属站点名 (字符串) */
-  site_names_raw: string,
-
   /** 是否允许接收邮件通知 */
   receive_email: boolean
 }

@@ -26,7 +26,11 @@ type ParamsAdminSendMail struct {
 // @Failure      500  {object}  Map{}
 // @Router       /send_email  [post]
 func AdminSendMail(app *core.App, router fiber.Router) {
-	router.Post("/send_email", func(c *fiber.Ctx) error {
+	router.Post("/send_email", common.AdminGuard(app, func(c *fiber.Ctx) error {
+		if ok, resp := common.AdminRequired(app, c); !ok {
+			return resp
+		}
+
 		var p ParamsAdminSendMail
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
@@ -44,5 +48,5 @@ func AdminSendMail(app *core.App, router fiber.Router) {
 		emailService.AsyncSendTo(p.Subject, p.Body, p.ToAddr)
 
 		return common.RespSuccess(c)
-	})
+	}))
 }

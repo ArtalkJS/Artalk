@@ -21,6 +21,24 @@ func CheckIsAllowed(app *core.App, c *fiber.Ctx, name string, email string, page
 	return true, nil
 }
 
+func AdminRequired(app *core.App, c *fiber.Ctx) (bool, error) {
+	if !CheckIsAdminReq(app, c) {
+		return false, RespError(c, 403, i18n.T("Admin access required"), Map{"need_login": true})
+	}
+
+	return true, nil
+}
+
+func AdminGuard(app *core.App, handler fiber.Handler) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		if ok, resp := AdminRequired(app, c); !ok {
+			return resp
+		}
+
+		return handler(c)
+	}
+}
+
 func CheckIsAdminReq(app *core.App, c *fiber.Ctx) bool {
 	jwt := GetJwtInstanceByReq(app, c)
 	if jwt == nil {

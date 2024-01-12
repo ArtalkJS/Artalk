@@ -13,17 +13,17 @@ import (
 )
 
 type ParamsAdd struct {
-	Name    string `form:"name"`                        // The comment name
-	Email   string `form:"email"`                       // The comment email
-	Link    string `form:"link"`                        // The comment link
-	Content string `form:"content" validate:"required"` // The comment content
-	Rid     uint   `form:"rid"`                         // The comment rid
-	UA      string `form:"ua"`                          // The comment ua
+	Name    string `json:"name"`                        // The comment name
+	Email   string `json:"email"`                       // The comment email
+	Link    string `json:"link"`                        // The comment link
+	Content string `json:"content" validate:"required"` // The comment content
+	Rid     uint   `json:"rid"`                         // The comment rid
+	UA      string `json:"ua"`                          // The comment ua
 
-	PageKey   string `form:"page_key" validate:"required"` // The comment page_key
-	PageTitle string `form:"page_title"`                   // The comment page_title
+	PageKey   string `json:"page_key" validate:"required"` // The comment page_key
+	PageTitle string `json:"page_title"`                   // The comment page_title
 
-	SiteName string `form:"site_name" validate:"required"` // The site name of your content scope
+	SiteName string `json:"site_name" validate:"required"` // The site name of your content scope
 }
 
 type ResponseAdd struct {
@@ -60,6 +60,10 @@ func CommentAdd(app *core.App, router fiber.Router) {
 		}
 		if p.Link != "" && !utils.ValidateURL(p.Link) {
 			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
+		}
+
+		if _, ok, resp := common.CheckSiteExist(app, c, p.SiteName); !ok {
+			return resp
 		}
 
 		var (

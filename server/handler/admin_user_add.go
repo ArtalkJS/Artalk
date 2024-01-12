@@ -39,7 +39,7 @@ type ResponseAdminUserAdd struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /users  [post]
 func AdminUserAdd(app *core.App, router fiber.Router) {
-	router.Post("/users", func(c *fiber.Ctx) error {
+	router.Post("/users", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
@@ -86,5 +86,5 @@ func AdminUserAdd(app *core.App, router fiber.Router) {
 		return common.RespData(c, ResponseAdminUserAdd{
 			CookedUserForAdmin: app.Dao().UserToCookedForAdmin(&user),
 		})
-	})
+	}))
 }

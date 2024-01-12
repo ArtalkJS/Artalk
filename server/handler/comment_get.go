@@ -8,7 +8,6 @@ import (
 	cog "github.com/ArtalkJS/Artalk/server/handler/comments_get"
 	"github.com/gofiber/fiber/v2"
 	"github.com/samber/lo"
-	"gorm.io/gorm"
 )
 
 type ParamsGet struct {
@@ -24,9 +23,10 @@ type ParamsGet struct {
 
 	Search string `query:"search" json:"search"` // Search keywords
 
-	Type  string `query:"type" json:"type" enums:"all,mentions,mine,pending,admin_all,admin_pending"` // Message center show type
-	Name  string `query:"name" json:"name"`                                                           // The username
-	Email string `query:"email" json:"email"`                                                         // The user email
+	Type  string `query:"type" json:"type" enums:"all,mentions,mine,pending"` // Message center show type
+	Scope string `query:"scope" json:"scope" enums:"page,user,site"`          // The scope of comments
+	Name  string `query:"name" json:"name"`                                   // The username
+	Email string `query:"email" json:"email"`                                 // The user email
 }
 
 type ResponseGet struct {
@@ -66,21 +66,25 @@ func CommentGet(app *core.App, router fiber.Router) {
 
 		// Query scope
 		scope := cog.ScopePage
-		if p.Email != "" && p.Name != "" {
-			if user.IsAdmin {
-				scope = cog.ScopeSite
-			} else {
-				scope = cog.ScopeUser
+		if p.Scope != "" {
+			scope = cog.Scope(p.Scope)
+		}
+
+		// if query scope is page, check page exist
+		if scope == cog.ScopePage {
+			if _, ok, resp := common.CheckSiteExist(app, c, p.SiteName); !ok {
+				return resp
 			}
 		}
 
-		// Generate query by options
-		rawComments := cog.FindComments(app.Dao(), cog.QueryOptions{
+		// Query options
+		queryOpts := cog.QueryOptions{
 			User: user,
 
 			Scope: scope,
 
 			SitePayload: cog.SitePayload{
+				Type:     cog.SiteScopeType(p.Type),
 				SiteName: p.SiteName,
 			},
 
@@ -94,14 +98,15 @@ func CommentGet(app *core.App, router fiber.Router) {
 				Type: cog.UserScopeType(p.Type),
 			},
 
-			SortBy:   cog.SortRule(p.SortBy),
-			FlatMode: p.FlatMode,
-			Search:   p.Search,
+			SortBy: cog.SortRule(p.SortBy),
+			Search: p.Search,
+		}
 
-			ExtraScopes: []func(*gorm.DB) *gorm.DB{
-				// Pagination
-				Paginate(p.Offset, p.Limit),
-			},
+		// Generate query by options
+		rawComments := cog.FindComments(app.Dao(), queryOpts, cog.FindOptions{
+			Limit:    p.Limit,
+			Offset:   p.Offset,
+			OnlyRoot: !p.FlatMode,
 		})
 
 		// Transform
@@ -118,8 +123,8 @@ func CommentGet(app *core.App, router fiber.Router) {
 		comments = cog.FindIPRegionForComments(app, comments)
 
 		// count comments
-		count := cog.CountComments(app.Dao(), cog.CommonScope(user))
-		rootsCount := cog.CountComments(app.Dao(), cog.CommonScope(user), cog.OnlyRoot())
+		count := cog.CountComments(app.Dao(), queryOpts)
+		rootsCount := cog.CountComments(app.Dao(), queryOpts, cog.OnlyRoot())
 
 		// The response data
 		resp := ResponseGet{

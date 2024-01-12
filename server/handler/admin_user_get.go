@@ -30,7 +30,7 @@ type ResponseAdminUserGet struct {
 // @Failure      403  {object}  Map{msg=string}
 // @Router       /users/{type}  [get]
 func AdminUserGet(app *core.App, router fiber.Router) {
-	router.Get("/users/:type?", func(c *fiber.Ctx) error {
+	router.Get("/users/:type?", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
@@ -72,5 +72,5 @@ func AdminUserGet(app *core.App, router fiber.Router) {
 			Users: cookedUsers,
 			Total: total,
 		})
-	})
+	}))
 }

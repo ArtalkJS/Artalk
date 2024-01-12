@@ -9,8 +9,8 @@ import (
 )
 
 type ParamsGetNotifies struct {
-	Name  string `query:"name" validate:"required"`  // The user name
-	Email string `query:"email" validate:"required"` // The user email
+	Name  string `query:"name"`  // The user name
+	Email string `query:"email"` // The user email
 }
 
 type ResponseGetNotifies struct {
@@ -35,7 +35,10 @@ func GetNotifies(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		user := app.Dao().FindUser(p.Name, p.Email)
+		var user entity.User
+		if p.Name != "" && p.Email != "" {
+			user = app.Dao().FindUser(p.Name, p.Email)
+		}
 
 		var notifies = []entity.CookedNotify{}
 		if !user.IsEmpty() {

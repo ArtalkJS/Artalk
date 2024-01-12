@@ -38,7 +38,7 @@ type ResponseAdminPageEdit struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /pages/{id}  [put]
 func AdminPageEdit(app *core.App, router fiber.Router) {
-	router.Put("/pages/:id", func(c *fiber.Ctx) error {
+	router.Put("/pages/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
 		var p ParamsAdminPageEdit
@@ -48,6 +48,11 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 
 		if strings.TrimSpace(p.Key) == "" {
 			return common.RespError(c, 400, i18n.T("{{name}} cannot be empty", Map{"name": "key"}))
+		}
+
+		// check site exist
+		if _, ok, resp := common.CheckSiteExist(app, c, p.SiteName); !ok {
+			return resp
 		}
 
 		// find page
@@ -93,5 +98,5 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 		return common.RespData(c, ResponseAdminPageEdit{
 			CookedPage: app.Dao().CookPage(&page),
 		})
-	})
+	}))
 }

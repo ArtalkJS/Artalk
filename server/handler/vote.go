@@ -11,9 +11,8 @@ import (
 )
 
 type ParamsVote struct {
-	Name     string `json:"name"`      // The username
-	Email    string `json:"email"`     // The user email
-	SiteName string `json:"site_name"` // The site name of your content scope
+	Name  string `json:"name"`  // The username
+	Email string `json:"email"` // The user email
 }
 
 type ResponseVote struct {

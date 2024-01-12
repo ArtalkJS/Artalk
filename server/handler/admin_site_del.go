@@ -19,7 +19,7 @@ import (
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /sites/{id}  [delete]
 func AdminSiteDel(app *core.App, router fiber.Router) {
-	router.Delete("/sites/:id", func(c *fiber.Ctx) error {
+	router.Delete("/sites/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
 		if !common.GetIsSuperAdmin(app, c) {
@@ -37,5 +37,5 @@ func AdminSiteDel(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespSuccess(c)
-	})
+	}))
 }

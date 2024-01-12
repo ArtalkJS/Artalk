@@ -19,7 +19,7 @@ import (
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /pages/{id}  [delete]
 func AdminPageDel(app *core.App, router fiber.Router) {
-	router.Delete("/pages/:id", func(c *fiber.Ctx) error {
+	router.Delete("/pages/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
 		page := app.Dao().FindPageByID(uint(id))
@@ -37,5 +37,5 @@ func AdminPageDel(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespSuccess(c)
-	})
+	}))
 }

@@ -16,7 +16,7 @@ import (
 // @Failure      403  {object}  Map{msg=string}
 // @Router       /votes/sync  [post]
 func AdminVoteSync(app *core.App, router fiber.Router) {
-	router.Post("/votes/sync", func(c *fiber.Ctx) error {
+	router.Post("/votes/sync", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
@@ -24,5 +24,5 @@ func AdminVoteSync(app *core.App, router fiber.Router) {
 		app.Dao().VoteSync()
 
 		return common.RespSuccess(c)
-	})
+	}))
 }

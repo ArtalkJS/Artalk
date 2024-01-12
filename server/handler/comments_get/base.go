@@ -25,10 +25,7 @@ type QueryOptions struct {
 
 	SortBy SortRule
 
-	FlatMode bool
-	Search   string
-
-	ExtraScopes []func(*gorm.DB) *gorm.DB
+	Search string
 }
 
 // Get query scope by params
@@ -36,11 +33,6 @@ func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(*gorm.DB) *gorm.DB {
 	return func(q *gorm.DB) *gorm.DB {
 		// Basic scope
 		q.Scopes(CommonScope(opts.User))
-
-		// Nested mode get only the root comments
-		if !opts.FlatMode {
-			q.Scopes(OnlyRoot())
-		}
 
 		// Search function
 		if opts.Search != "" {
@@ -63,25 +55,39 @@ func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(*gorm.DB) *gorm.DB {
 
 		if scope, ok := scopes[opts.Scope]; ok {
 			q.Scopes(scope)
+		} else {
+			q.Where("1 = 0")
 		}
 
 		// Sort by
 		q.Order(GetSortSQL(opts.SortBy))
 
-		// Extra scopes
-		q.Scopes(opts.ExtraScopes...)
-
 		return q
 	}
 }
 
+type FindOptions struct {
+	Offset   int
+	Limit    int
+	OnlyRoot bool
+}
+
 // Find comments by options
-func FindComments(dao *dao.Dao, opts QueryOptions) []entity.Comment {
+func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) []entity.Comment {
 	var comments []entity.Comment
 
-	dao.DB().Model(&entity.Comment{}).
-		Scopes(GetQueryScopes(dao, opts)).
-		Find(&comments)
+	q := dao.DB().Model(&entity.Comment{}).
+		Scopes(GetQueryScopes(dao, opts))
+
+	q.Offset(pg.Offset).
+		Limit(pg.Limit)
+
+	if pg.OnlyRoot {
+		// Nested mode get only the root comments
+		q.Scopes(OnlyRoot())
+	}
+
+	q.Find(&comments)
 
 	return comments
 }

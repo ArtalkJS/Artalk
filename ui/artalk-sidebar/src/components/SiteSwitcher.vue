@@ -34,7 +34,7 @@ function switchSite(siteName: string) {
 
 const displaySites = computed(() => {
   const displays: IDisplaySite[] = []
-  displays.push({ label: t('allSites'), name: '__ATK_SITE_ALL', logoText: '_' })
+  displays.push({ label: t('allSites'), name: '', logoText: '_' })
   sites.value.forEach((site) => {
     displays.push({
       label: site.name, name: site.name,

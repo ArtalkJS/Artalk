@@ -48,13 +48,18 @@ type ResponseCommentEdit struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /comments/{id} [put]
 func AdminCommentEdit(app *core.App, router fiber.Router) {
-	router.Put("/comments/:id", func(c *fiber.Ctx) error {
+	router.Put("/comments/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		var p ParamsCommentEdit
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
 		id, _ := c.ParamsInt("id")
+
+		// check site exist
+		if _, ok, resp := common.CheckSiteExist(app, c, p.SiteName); !ok {
+			return resp
+		}
 
 		// find comment
 		comment := app.Dao().FindComment(uint(id))
@@ -143,7 +148,7 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 		return common.RespData(c, ResponseCommentEdit{
 			Comment: app.Dao().CookComment(&comment),
 		})
-	})
+	}))
 }
 
 func RenotifyWhenPendingModified(app *core.App, comment *entity.Comment) (err error) {

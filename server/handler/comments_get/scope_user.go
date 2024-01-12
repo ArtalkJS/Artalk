@@ -29,7 +29,7 @@ func UserScopeQuery(payload UserScopePayload, opts UserScopeOpts) func(*gorm.DB)
 	return func(q *gorm.DB) *gorm.DB {
 		// If user not found, return empty query
 		if opts.User.IsEmpty() {
-			return q.Where("id = 0")
+			return q.Where("1 = 0")
 		}
 
 		// Get user all comment ids which someone could reply to him

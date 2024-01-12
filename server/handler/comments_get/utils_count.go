@@ -7,8 +7,13 @@ import (
 )
 
 // Count comments
-func CountComments(dao *dao.Dao, scopes ...func(db *gorm.DB) *gorm.DB) int64 {
+func CountComments(dao *dao.Dao, opts QueryOptions, scopes ...func(db *gorm.DB) *gorm.DB) int64 {
 	var count int64
-	dao.DB().Model(&entity.Comment{}).Scopes(scopes...).Count(&count)
+
+	dao.DB().Model(&entity.Comment{}).
+		Scopes(GetQueryScopes(dao, opts)).
+		Scopes(scopes...).
+		Count(&count)
+
 	return count
 }

@@ -17,7 +17,7 @@ import (
 // @Failure      400  {object}  Map{msg=string}
 // @Router       /cache/warm_up  [post]
 func AdminCacheWarm(app *core.App, router fiber.Router) {
-	router.Post("/cache/warm_up", func(c *fiber.Ctx) error {
+	router.Post("/cache/warm_up", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
@@ -33,7 +33,7 @@ func AdminCacheWarm(app *core.App, router fiber.Router) {
 		return common.RespData(c, Map{
 			"msg": i18n.T("Task executing in background, please wait..."),
 		})
-	})
+	}))
 }
 
 // @Summary      Flush Cache
@@ -47,6 +47,10 @@ func AdminCacheWarm(app *core.App, router fiber.Router) {
 // @Router       /cache/flush  [post]
 func AdminCacheFlush(app *core.App, router fiber.Router) {
 	router.Post("/cache/flush", func(c *fiber.Ctx) error {
+		if ok, resp := common.AdminRequired(app, c); !ok {
+			return resp
+		}
+
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, 403, i18n.T("Access denied"))
 		}

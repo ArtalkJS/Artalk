@@ -72,10 +72,13 @@ export default class PageApi extends ApiBase {
   ) {
     const params: any = {}
 
+    params.site_name = this.options.siteName
     if (pageKeys) params.page_keys = Array.isArray(pageKeys) ? pageKeys.join(',') : pageKeys
     if (limit) params.limit = limit
 
-    const data = await this.fetch<PageData[]|CommentData[]|object|number>('POST', `/stats/${type}`, params)
+    const data = await this.fetch<{
+      data: PageData[]|CommentData[]|object|number
+    }>('GET', `/stats/${type}`, params)
     return data
   }
 }

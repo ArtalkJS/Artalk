@@ -26,7 +26,7 @@ const (
 func PageScopeQuery(payload PageScopePayload, opts PageScopeOpts) func(*gorm.DB) *gorm.DB {
 	return func(d *gorm.DB) *gorm.DB {
 		if payload.SiteName == "" || payload.PageKey == "" {
-			return d.Where("id = 0")
+			return d.Where("1 = 0")
 		}
 
 		// Query within site & page

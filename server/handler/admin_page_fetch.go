@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -38,7 +37,7 @@ var allPageFetchTotal = 0
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /pages/{id}/fetch  [post]
 func AdminPageFetch(app *core.App, router fiber.Router) {
-	router.Post("/pages/:id/fetch", func(c *fiber.Ctx) error {
+	router.Post("/pages/:id/fetch", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
 		var p ParamsAdminPageFetch
@@ -75,7 +74,7 @@ func AdminPageFetch(app *core.App, router fiber.Router) {
 				allPageFetchTotal = 0
 				var pages []entity.Page
 				db := app.Dao().DB().Model(&entity.Page{})
-				if p.SiteName != config.ATK_SITE_ALL {
+				if p.SiteName != "" {
 					db = db.Where(&entity.Page{SiteName: p.SiteName})
 				}
 				db.Find(&pages)
@@ -110,5 +109,5 @@ func AdminPageFetch(app *core.App, router fiber.Router) {
 		return common.RespData(c, ResponseAdminPageFetch{
 			CookedPage: app.Dao().CookPage(&page),
 		})
-	})
+	}))
 }

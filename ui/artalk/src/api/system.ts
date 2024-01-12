@@ -46,7 +46,7 @@ export default class SystemApi extends ApiBase {
 
   /** 获取 API 版本信息 */
   public async version() {
-    const resp = await fetch(`${this.options.baseURL}/version`, { method: 'POST' })
+    const resp = await fetch(`${this.options.baseURL}/version`, { method: 'GET' })
     const data = await resp.json()
     return data as ApiVersionInfo
   }

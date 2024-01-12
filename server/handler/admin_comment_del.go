@@ -19,7 +19,7 @@ import (
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /comments/{id}  [delete]
 func AdminCommentDel(app *core.App, router fiber.Router) {
-	router.Delete("/comments/:id", func(c *fiber.Ctx) error {
+	router.Delete("/comments/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
 		// find comment
@@ -43,5 +43,5 @@ func AdminCommentDel(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespSuccess(c)
-	})
+	}))
 }

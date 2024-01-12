@@ -30,22 +30,30 @@ type ResponseAdminPageGet struct {
 // @Failure      403  {object}  Map{msg=string}
 // @Router       /pages  [get]
 func AdminPageGet(app *core.App, router fiber.Router) {
-	router.Get("/pages", func(c *fiber.Ctx) error {
+	router.Get("/pages", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		var p ParamsAdminPageGet
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
-		// use site
-		site := common.GetSiteInfo(c)
-
-		if !common.IsAdminHasSiteAccess(app, c, site.Name) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
+		user := common.GetUserByReq(app, c)
 
 		// 准备 query
 		q := app.Dao().DB().Model(&entity.Page{}).Order("created_at DESC")
-		if !site.All { // 不是查的所有站点
+		if p.SiteName == "" {
+			userSites := app.Dao().CookUser(&user).SiteNames
+			if !user.IsEmpty() && len(userSites) > 0 {
+				q = q.Where("site_name IN (?)", userSites)
+			}
+		} else {
+			if _, ok, resp := common.CheckSiteExist(app, c, p.SiteName); !ok {
+				return resp
+			}
+
+			if !common.IsAdminHasSiteAccess(app, c, p.SiteName) {
+				return common.RespError(c, 403, i18n.T("Access denied"))
+			}
+
 			q = q.Where("site_name = ?", p.SiteName)
 		}
 
@@ -69,5 +77,5 @@ func AdminPageGet(app *core.App, router fiber.Router) {
 			Pages: cookedPages,
 			Total: total,
 		})
-	})
+	}))
 }

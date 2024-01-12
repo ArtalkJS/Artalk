@@ -34,7 +34,7 @@ type ParamsAdminImport struct {
 // @Success      200  {string}  string
 // @Router       /transfer/import  [post]
 func transferImport(app *core.App) func(c *fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
+	return common.AdminGuard(app, func(c *fiber.Ctx) error {
 		var p ParamsAdminImport
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
@@ -76,7 +76,7 @@ func transferImport(app *core.App) func(c *fiber.Ctx) error {
 		artransfer.RunImportArtrans(app.Dao(), &p.ImportParams)
 
 		return nil
-	}
+	})
 }
 
 type ResponseExport struct {
@@ -93,7 +93,7 @@ type ResponseExport struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /transfer/export  [get]
 func transferExport(app *core.App) func(c *fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
+	return common.AdminGuard(app, func(c *fiber.Ctx) error {
 		var siteNameScope []string
 
 		// If not super admin, only export sites that have permission
@@ -114,7 +114,7 @@ func transferExport(app *core.App) func(c *fiber.Ctx) error {
 		return common.RespData(c, ResponseExport{
 			Artrans: jsonStr,
 		})
-	}
+	})
 }
 
 type ResponseImportUpload struct {
@@ -133,7 +133,7 @@ type ResponseImportUpload struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /transfer/upload  [post]
 func transferUpload(app *core.App) func(c *fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
+	return common.AdminGuard(app, func(c *fiber.Ctx) error {
 		// Get file from FormData
 		file, err := c.FormFile("file")
 		if err != nil {
@@ -170,5 +170,5 @@ func transferUpload(app *core.App) func(c *fiber.Ctx) error {
 		return common.RespData(c, ResponseImportUpload{
 			Filename: tmpFile.Name(),
 		})
-	}
+	})
 }

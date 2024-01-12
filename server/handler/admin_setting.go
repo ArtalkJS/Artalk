@@ -25,7 +25,7 @@ type ResponseAdminSettingGet struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /settings [get]
 func AdminSettingGet(app *core.App, router fiber.Router) {
-	router.Get("/settings", func(c *fiber.Ctx) error {
+	router.Get("/settings", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
@@ -38,7 +38,7 @@ func AdminSettingGet(app *core.App, router fiber.Router) {
 		return common.RespData(c, ResponseAdminSettingGet{
 			Yaml: string(dat),
 		})
-	})
+	}))
 }
 
 type ParamsAdminSettingSave struct {
@@ -57,7 +57,7 @@ type ParamsAdminSettingSave struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /settings [post]
 func AdminSettingSave(app *core.App, router fiber.Router) {
-	router.Post("/settings", func(c *fiber.Ctx) error {
+	router.Post("/settings", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
@@ -96,7 +96,7 @@ func AdminSettingSave(app *core.App, router fiber.Router) {
 		log.Info(i18n.T("Services restart complete"))
 
 		return common.RespSuccess(c)
-	})
+	}))
 }
 
 type ResponseAdminSettingTpl struct {
@@ -112,7 +112,7 @@ type ResponseAdminSettingTpl struct {
 // @Success      200  {object}  ResponseAdminSettingTpl
 // @Router       /settings/template/{locale}  [get]
 func AdminSettingTpl(app *core.App, router fiber.Router) {
-	router.Get("/settings/template/:locale?", func(c *fiber.Ctx) error {
+	router.Get("/settings/template/:locale?", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		var tpl string
 
 		locale := c.Params("locale")
@@ -125,5 +125,5 @@ func AdminSettingTpl(app *core.App, router fiber.Router) {
 		return common.RespData(c, ResponseAdminSettingTpl{
 			Yaml: tpl,
 		})
-	})
+	}))
 }

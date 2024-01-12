@@ -41,7 +41,7 @@ type ResponseAdminUserEdit struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /users/{id}  [put]
 func AdminUserEdit(app *core.App, router fiber.Router) {
-	router.Put("/users/:id", func(c *fiber.Ctx) error {
+	router.Put("/users/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
 		if !common.GetIsSuperAdmin(app, c) {
@@ -99,5 +99,5 @@ func AdminUserEdit(app *core.App, router fiber.Router) {
 		return common.RespData(c, ResponseAdminUserEdit{
 			CookedUserForAdmin: app.Dao().UserToCookedForAdmin(&user),
 		})
-	})
+	}))
 }

@@ -19,7 +19,7 @@ import (
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /users/{id}  [delete]
 func AdminUserDel(app *core.App, router fiber.Router) {
-	router.Delete("/users/:id", func(c *fiber.Ctx) error {
+	router.Delete("/users/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		if !common.GetIsSuperAdmin(app, c) {
 			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
@@ -36,5 +36,5 @@ func AdminUserDel(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("User")}))
 		}
 		return common.RespSuccess(c)
-	})
+	}))
 }

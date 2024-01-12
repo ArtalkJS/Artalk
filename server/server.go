@@ -14,7 +14,6 @@ import (
 	h "github.com/ArtalkJS/Artalk/server/handler"
 	"github.com/ArtalkJS/Artalk/server/middleware"
 	"github.com/ArtalkJS/Artalk/server/middleware/limiter"
-	"github.com/ArtalkJS/Artalk/server/middleware/site_origin"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	fiber_logger "github.com/gofiber/fiber/v2/middleware/logger"
@@ -76,7 +75,7 @@ func Serve(app *core.App) (*fiber.App, error) {
 		fb.Use(pprof.New())
 	}
 
-	api := fb.Group("/api/v2", site_origin.SiteOriginMiddleware(app))
+	api := fb.Group("/api/v2")
 	{
 		h.CommentAdd(app, api)
 		h.CommentGet(app, api)
@@ -122,39 +121,29 @@ func Serve(app *core.App) (*fiber.App, error) {
 	}
 }
 
-func admin(app *core.App, f fiber.Router) {
-	admin := f.Group("/", middleware.AdminOnlyMiddleware(app))
-	{
-		h.AdminCommentEdit(app, admin)
-		h.AdminCommentDel(app, admin)
-
-		h.AdminPageGet(app, admin)
-		h.AdminPageEdit(app, admin)
-		h.AdminPageDel(app, admin)
-		h.AdminPageFetch(app, admin)
-
-		h.AdminSiteGet(app, admin)
-		h.AdminSiteAdd(app, admin)
-		h.AdminSiteEdit(app, admin)
-		h.AdminSiteDel(app, admin)
-
-		h.AdminUserGet(app, admin)
-		h.AdminUserAdd(app, admin)
-		h.AdminUserEdit(app, admin)
-		h.AdminUserDel(app, admin)
-
-		h.AdminCacheWarm(app, admin)
-		h.AdminCacheFlush(app, admin)
-
-		h.AdminSendMail(app, admin)
-		h.AdminVoteSync(app, admin)
-
-		h.AdminSettingGet(app, admin)
-		h.AdminSettingSave(app, admin)
-		h.AdminSettingTpl(app, admin)
-
-		h.AdminTransfer(app, admin)
-	}
+func admin(app *core.App, api fiber.Router) {
+	h.AdminCommentEdit(app, api)
+	h.AdminCommentDel(app, api)
+	h.AdminPageGet(app, api)
+	h.AdminPageEdit(app, api)
+	h.AdminPageDel(app, api)
+	h.AdminPageFetch(app, api)
+	h.AdminSiteGet(app, api)
+	h.AdminSiteAdd(app, api)
+	h.AdminSiteEdit(app, api)
+	h.AdminSiteDel(app, api)
+	h.AdminUserGet(app, api)
+	h.AdminUserAdd(app, api)
+	h.AdminUserEdit(app, api)
+	h.AdminUserDel(app, api)
+	h.AdminCacheWarm(app, api)
+	h.AdminCacheFlush(app, api)
+	h.AdminSendMail(app, api)
+	h.AdminVoteSync(app, api)
+	h.AdminSettingGet(app, api)
+	h.AdminSettingSave(app, api)
+	h.AdminSettingTpl(app, api)
+	h.AdminTransfer(app, api)
 }
 
 func cors(app *core.App, f fiber.Router) {

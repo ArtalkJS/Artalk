@@ -32,7 +32,7 @@ type ResponseAdminSiteEdit struct {
 // @Success      200  {object}  ResponseAdminSiteEdit
 // @Router       /sites/{id}  [put]
 func AdminSiteEdit(app *core.App, router fiber.Router) {
-	router.Put("/sites/:id", func(c *fiber.Ctx) error {
+	router.Put("/sites/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
 		var p ParamsAdminSiteEdit
@@ -104,5 +104,5 @@ func AdminSiteEdit(app *core.App, router fiber.Router) {
 		return common.RespData(c, ResponseAdminSiteEdit{
 			CookedSite: app.Dao().CookSite(&site),
 		})
-	})
+	}))
 }

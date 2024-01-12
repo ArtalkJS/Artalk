@@ -51,7 +51,7 @@ export function importUserDataFromArtalkInstance() {
 
   const userData = artalk.ctx.get('user').getData()
   useUserStore().$patch((state) => {
-    state.site = '__ATK_SITE_ALL'
+    state.site = ''
     state.name = userData.nick
     state.email = userData.email
     state.isAdmin = userData.isAdmin

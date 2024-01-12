@@ -41,7 +41,7 @@ export async function Fetch<T = any>(opts: ApiOptions, path: RequestInfo, init: 
   }
 
   // 请求弹出层验证
-  if (json.data?.need_captcha) {
+  if (json.need_captcha) {
     // 请求需要验证码
     json = await (new Promise<any>((resolve, reject) => {
       opts.onNeedCheckCaptcha && opts.onNeedCheckCaptcha({
@@ -50,7 +50,7 @@ export async function Fetch<T = any>(opts: ApiOptions, path: RequestInfo, init: 
         reject: () => { reject(json) }
       })
     }))
-  } else if (json.data?.need_login || isNoAccess) {
+  } else if (json.need_login || isNoAccess) {
     // 请求需要管理员权限
     json = await (new Promise<any>((resolve, reject) => {
       opts.onNeedCheckAdmin && opts.onNeedCheckAdmin({
@@ -59,8 +59,6 @@ export async function Fetch<T = any>(opts: ApiOptions, path: RequestInfo, init: 
       })
     }))
   }
-
-  if (!json.success) throw json // throw 相当于 reject(json)
 
   return json
 }

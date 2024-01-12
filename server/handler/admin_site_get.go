@@ -21,7 +21,7 @@ type ResponseAdminSiteGet struct {
 // @Success      200  {object}  ResponseAdminSiteGet
 // @Router       /sites  [get]
 func AdminSiteGet(app *core.App, router fiber.Router) {
-	router.Get("/sites", func(c *fiber.Ctx) error {
+	router.Get("/sites", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		allSites := app.Dao().FindAllSitesCooked()
 		sites := allSites
 
@@ -41,5 +41,5 @@ func AdminSiteGet(app *core.App, router fiber.Router) {
 			Sites: sites,
 			Count: len(sites),
 		})
-	})
+	}))
 }

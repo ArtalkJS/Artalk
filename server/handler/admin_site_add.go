@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -32,7 +31,7 @@ type ResponseAdminSiteAdd struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /sites  [post]
 func AdminSiteAdd(app *core.App, router fiber.Router) {
-	router.Post("/sites", func(c *fiber.Ctx) error {
+	router.Post("/sites", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		var p ParamsAdminSiteAdd
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
@@ -51,10 +50,6 @@ func AdminSiteAdd(app *core.App, router fiber.Router) {
 			}
 		}
 
-		if p.Name == config.ATK_SITE_ALL {
-			return common.RespError(c, 400, "Prohibit the use of reserved keywords as names")
-		}
-
 		if !app.Dao().FindSite(p.Name).IsEmpty() {
 			return common.RespError(c, 400, i18n.T("{{name}} already exists", Map{"name": i18n.T("Site")}))
 		}
@@ -70,5 +65,5 @@ func AdminSiteAdd(app *core.App, router fiber.Router) {
 		return common.RespData(c, ResponseAdminSiteAdd{
 			CookedSite: app.Dao().CookSite(&site),
 		})
-	})
+	}))
 }

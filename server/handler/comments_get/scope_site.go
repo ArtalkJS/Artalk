@@ -23,7 +23,7 @@ func SiteScopeQuery(payload SitePayload, user entity.User) func(*gorm.DB) *gorm.
 	return func(q *gorm.DB) *gorm.DB {
 		if !user.IsAdmin {
 			// only admin can query sites
-			return q.Where("id = 0")
+			return q.Where("1 = 0")
 		}
 
 		if payload.SiteName != "" {

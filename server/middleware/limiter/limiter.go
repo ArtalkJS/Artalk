@@ -12,7 +12,7 @@ import (
 )
 
 type ActionLimitConf struct {
-	ProtectPaths []string
+	ProtectPaths [][]string
 }
 
 const LimiterLocalKey = "limiter"
@@ -35,7 +35,7 @@ func ActionLimitMiddleware(app *core.App, conf ActionLimitConf) fiber.Handler {
 		}
 
 		// 路径跳过
-		if !isProtectPath(c.Path(), conf.ProtectPaths) {
+		if !isProtectPath(c.Method(), c.Path(), conf.ProtectPaths) {
 			return c.Next()
 		}
 
@@ -50,10 +50,8 @@ func ActionLimitMiddleware(app *core.App, conf ActionLimitConf) fiber.Handler {
 			// 无需验证码
 			err := c.Next()
 
-			// 若为保护路径
-			if isProtectPath(c.Path(), conf.ProtectPaths) &&
-				c.Method() != fiber.MethodOptions { // 忽略 Options 请求
-				limiter.Log(ip)
+			if c.Method() != fiber.MethodOptions { // 忽略 Options 请求
+				limiter.Log(ip) // 记录操作
 			}
 
 			return err
@@ -83,9 +81,9 @@ func ActionLimitMiddleware(app *core.App, conf ActionLimitConf) fiber.Handler {
 	}
 }
 
-func isProtectPath(pathTarget string, protectPaths []string) bool {
+func isProtectPath(targetMethod string, targetPath string, protectPaths [][]string) bool {
 	for _, p := range protectPaths {
-		if path.Clean(pathTarget) == path.Clean(p) {
+		if targetMethod == p[0] && path.Clean(targetPath) == path.Clean(p[1]) {
 			return true
 		}
 	}

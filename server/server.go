@@ -128,6 +128,8 @@ func admin(app *core.App, api fiber.Router) {
 	h.AdminPageEdit(app, api)
 	h.AdminPageDel(app, api)
 	h.AdminPageFetch(app, api)
+	h.AdminPagesFetchAll(app, api)
+	h.AdminPageFetchAllStatus(app, api)
 	h.AdminSiteGet(app, api)
 	h.AdminSiteAdd(app, api)
 	h.AdminSiteEdit(app, api)
@@ -151,14 +153,13 @@ func cors(app *core.App, f fiber.Router) {
 }
 
 func actionLimit(app *core.App, f fiber.Router) {
-	const BasePath = "/api/v2"
 	f.Use(limiter.ActionLimitMiddleware(app, limiter.ActionLimitConf{
-		// 启用操作限制路径白名单
-		ProtectPaths: []string{
-			BasePath + "/comments",
-			BasePath + "/login",
-			BasePath + "/votes",
-			BasePath + "/img-upload",
+		// 保护的路径
+		ProtectPaths: [][]string{
+			{fiber.MethodPost, "/api/v2/comments"},
+			{fiber.MethodPost, "/api/v2/access_token"},
+			{fiber.MethodPost, "/api/v2/votes"},
+			{fiber.MethodPost, "/api/v2/upload"},
 		},
 	}))
 }

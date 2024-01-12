@@ -179,8 +179,6 @@ func (dao *Dao) FindAllSitesCooked() []entity.CookedSite {
 // ===============
 
 func (dao *Dao) CookUser(u *entity.User) entity.CookedUser {
-	splitSites := utils.SplitAndTrimSpace(u.SiteNames, ",")
-
 	return entity.CookedUser{
 		ID:           u.ID,
 		Name:         u.Name,
@@ -189,8 +187,6 @@ func (dao *Dao) CookUser(u *entity.User) entity.CookedUser {
 		BadgeName:    u.BadgeName,
 		BadgeColor:   u.BadgeColor,
 		IsAdmin:      u.IsAdmin,
-		SiteNames:    splitSites,
-		SiteNamesRaw: u.SiteNames,
 		ReceiveEmail: u.ReceiveEmail,
 	}
 }

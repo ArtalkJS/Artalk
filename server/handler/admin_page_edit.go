@@ -61,10 +61,6 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
-		if !common.IsAdminHasSiteAccess(app, c, page.SiteName) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		// 重命名合法性检测
 		modifyKey := p.Key != page.Key
 		if modifyKey && !app.Dao().FindPage(p.Key, page.SiteName).IsEmpty() {

@@ -26,10 +26,6 @@ type ResponseAdminSettingGet struct {
 // @Router       /settings [get]
 func AdminSettingGet(app *core.App, router fiber.Router) {
 	router.Get("/settings", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		dat, err := os.ReadFile(app.Conf().GetCfgFileLoaded())
 		if err != nil {
 			return common.RespError(c, 500, i18n.T("Config file read failed"))
@@ -58,10 +54,6 @@ type ParamsAdminSettingSave struct {
 // @Router       /settings [post]
 func AdminSettingSave(app *core.App, router fiber.Router) {
 	router.Post("/settings", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		var p ParamsAdminSettingSave
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp

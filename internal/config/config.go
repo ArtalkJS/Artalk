@@ -92,14 +92,13 @@ type SSLConf struct {
 }
 
 type AdminUserConf struct {
-	Name         string   `koanf:"name" json:"name"`
-	Email        string   `koanf:"email" json:"email"`
-	Link         string   `koanf:"link" json:"link"`
-	Password     string   `koanf:"password" json:"password"`
-	BadgeName    string   `koanf:"badge_name" json:"badge_name"`
-	BadgeColor   string   `koanf:"badge_color" json:"badge_color"`
-	ReceiveEmail *bool    `koanf:"receive_email" json:"receive_email"`
-	Sites        []string `koanf:"sites" json:"sites"`
+	Name         string `koanf:"name" json:"name"`
+	Email        string `koanf:"email" json:"email"`
+	Link         string `koanf:"link" json:"link"`
+	Password     string `koanf:"password" json:"password"`
+	BadgeName    string `koanf:"badge_name" json:"badge_name"`
+	BadgeColor   string `koanf:"badge_color" json:"badge_color"`
+	ReceiveEmail *bool  `koanf:"receive_email" json:"receive_email"`
 }
 
 type ModeratorConf struct {

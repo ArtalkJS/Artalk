@@ -98,10 +98,6 @@ func AdminPageFetch(app *core.App, router fiber.Router) {
 			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
-		if !common.IsAdminHasSiteAccess(app, c, page.SiteName) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		if err := app.Dao().FetchPageFromURL(&page); err != nil {
 			return common.RespError(c, 500, i18n.T("Page fetch failed")+": "+err.Error())
 		}

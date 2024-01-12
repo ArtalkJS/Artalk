@@ -28,10 +28,6 @@ func AdminCommentDel(app *core.App, router fiber.Router) {
 			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 		}
 
-		if !common.IsAdminHasSiteAccess(app, c, comment.SiteName) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		// 删除主评论
 		if err := app.Dao().DelComment(&comment); err != nil {
 			return common.RespError(c, 500, i18n.T("{{name}} deletion failed", Map{"name": i18n.T("Comment")}))

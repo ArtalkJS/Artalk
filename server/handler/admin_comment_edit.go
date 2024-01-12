@@ -67,10 +67,6 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 		}
 
-		if !common.IsAdminHasSiteAccess(app, c, comment.SiteName) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		// check params
 		if p.Email != "" && !utils.ValidateEmail(p.Email) {
 			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))

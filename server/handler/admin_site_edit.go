@@ -45,11 +45,6 @@ func AdminSiteEdit(app *core.App, router fiber.Router) {
 			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Site")}))
 		}
 
-		// 站点操作权限检查
-		if !common.IsAdminHasSiteAccess(app, c, site.Name) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		if strings.TrimSpace(p.Name) == "" {
 			return common.RespError(c, 400, i18n.T("{{name}} cannot be empty", Map{"name": "name"}))
 		}

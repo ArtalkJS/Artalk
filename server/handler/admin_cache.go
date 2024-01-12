@@ -18,10 +18,6 @@ import (
 // @Router       /cache/warm_up  [post]
 func AdminCacheWarm(app *core.App, router fiber.Router) {
 	router.Post("/cache/warm_up", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		if !app.Conf().Cache.Enabled {
 			return common.RespError(c, 400, "cache disabled")
 		}
@@ -49,10 +45,6 @@ func AdminCacheFlush(app *core.App, router fiber.Router) {
 	router.Post("/cache/flush", func(c *fiber.Ctx) error {
 		if ok, resp := common.AdminRequired(app, c); !ok {
 			return resp
-		}
-
-		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		if !app.Conf().Cache.Enabled {

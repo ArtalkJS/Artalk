@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"os"
-	"slices"
 
 	"github.com/ArtalkJS/Artalk/internal/artransfer"
 	"github.com/ArtalkJS/Artalk/internal/core"
@@ -38,18 +37,6 @@ func transferImport(app *core.App) func(c *fiber.Ctx) error {
 		var p ParamsAdminImport
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
-		}
-
-		// If not super admin, force to fill target site name and check permission
-		if !common.GetIsSuperAdmin(app, c) {
-			if p.TargetSiteName == "" {
-				return common.RespError(c, 400, "Please fill in the target site name")
-			}
-
-			user := common.GetUserByReq(app, c)
-			if !slices.Contains(app.Dao().CookUser(&user).SiteNames, p.TargetSiteName) {
-				return common.RespError(c, 400, "Destination site name are prohibited since no permission")
-			}
 		}
 
 		// TODO: temporary solution: output real-time log by html format body stream
@@ -95,12 +82,6 @@ type ResponseExport struct {
 func transferExport(app *core.App) func(c *fiber.Ctx) error {
 	return common.AdminGuard(app, func(c *fiber.Ctx) error {
 		var siteNameScope []string
-
-		// If not super admin, only export sites that have permission
-		if !common.GetIsSuperAdmin(app, c) {
-			u := common.GetUserByReq(app, c)
-			siteNameScope = app.Dao().CookUser(&u).SiteNames
-		}
 
 		jsonStr, err := artransfer.RunExportArtrans(app.Dao(), &artransfer.ExportParams{
 			SiteNameScope: siteNameScope,

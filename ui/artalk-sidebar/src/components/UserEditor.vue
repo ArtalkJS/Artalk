@@ -13,7 +13,6 @@ interface IUserEditData {
   badge_name: string
   badge_color: string
   is_admin: boolean
-  site_names_raw: string
   receive_email: boolean
 }
 
@@ -45,7 +44,6 @@ onBeforeMount(() => {
       badge_name: '',
       badge_color: '',
       is_admin: false,
-      site_names_raw: '',
       receive_email: true,
     }
   } else {
@@ -124,8 +122,6 @@ function submit() {
       <template v-if="editUser.is_admin">
         <div class="atk-label required">{{ t('password') }}</div>
         <input v-model="editUser.password" type="text" :placeholder="isCreateMode ? '' : `(${t('passwordEmptyHint')})`" autocomplete="off">
-        <div class="atk-label">{{ t('siteAttached') }}</div>
-        <input v-model="editUser.site_names_raw" type="text" :placeholder="`(${t('siteEmptyHint')})`" autocomplete="off">
       </template>
       <div class="atk-label required">{{ t('emailNotify') }}</div>
       <select v-model="editUser.receive_email">

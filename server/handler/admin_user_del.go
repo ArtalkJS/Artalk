@@ -20,10 +20,6 @@ import (
 // @Router       /users/{id}  [delete]
 func AdminUserDel(app *core.App, router fiber.Router) {
 	router.Delete("/users/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		id, _ := c.ParamsInt("id")
 
 		user := app.Dao().FindUserByID(uint(id))

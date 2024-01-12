@@ -2,7 +2,6 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -34,10 +33,6 @@ func AdminSendMail(app *core.App, router fiber.Router) {
 		var p ParamsAdminSendMail
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
-		}
-
-		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
 		}
 
 		emailService, err := core.AppService[*core.EmailService](app)

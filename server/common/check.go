@@ -4,7 +4,6 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -47,25 +46,4 @@ func CheckIsAdminReq(app *core.App, c *fiber.Ctx) bool {
 
 	user := GetUserByJwt(app, jwt)
 	return user.IsAdmin
-}
-
-func GetIsSuperAdmin(app *core.App, c *fiber.Ctx) bool {
-	user := GetUserByReq(app, c)
-	return user.IsAdmin && user.SiteNames == ""
-}
-
-func IsAdminHasSiteAccess(app *core.App, c *fiber.Ctx, siteName string) bool {
-	user := GetUserByReq(app, c)
-	cookedUser := app.Dao().CookUser(&user)
-
-	if !user.IsAdmin {
-		return false
-	}
-
-	if !GetIsSuperAdmin(app, c) && !utils.ContainsStr(cookedUser.SiteNames, siteName) {
-		// 如果账户分配了站点，并且待操作的站点并非处于分配的站点列表
-		return false
-	}
-
-	return true
 }

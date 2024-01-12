@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -36,22 +35,11 @@ func AdminPageGet(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		user := common.GetUserByReq(app, c)
-
 		// 准备 query
 		q := app.Dao().DB().Model(&entity.Page{}).Order("created_at DESC")
-		if p.SiteName == "" {
-			userSites := app.Dao().CookUser(&user).SiteNames
-			if !user.IsEmpty() && len(userSites) > 0 {
-				q = q.Where("site_name IN (?)", userSites)
-			}
-		} else {
+		if p.SiteName != "" {
 			if _, ok, resp := common.CheckSiteExist(app, c, p.SiteName); !ok {
 				return resp
-			}
-
-			if !common.IsAdminHasSiteAccess(app, c, p.SiteName) {
-				return common.RespError(c, 403, i18n.T("Access denied"))
 			}
 
 			q = q.Where("site_name = ?", p.SiteName)

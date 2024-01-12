@@ -16,7 +16,6 @@ type ParamsAdminUserEdit struct {
 	Password     string `json:"password"`                          // The user password
 	Link         string `json:"link"`                              // The user link
 	IsAdmin      bool   `json:"is_admin" validate:"required"`      // The user is an admin
-	SiteNames    string `json:"site_names"`                        // The site names associated with the user
 	ReceiveEmail bool   `json:"receive_email" validate:"required"` // The user receive email
 	BadgeName    string `json:"badge_name"`                        // The user badge name
 	BadgeColor   string `json:"badge_color"`                       // The user badge color (hex format)
@@ -43,10 +42,6 @@ type ResponseAdminUserEdit struct {
 func AdminUserEdit(app *core.App, router fiber.Router) {
 	router.Put("/users/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
-
-		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
 
 		var p ParamsAdminUserEdit
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -86,7 +81,6 @@ func AdminUserEdit(app *core.App, router fiber.Router) {
 		}
 		user.Link = p.Link
 		user.IsAdmin = p.IsAdmin
-		user.SiteNames = p.SiteNames
 		user.ReceiveEmail = p.ReceiveEmail
 		user.BadgeName = p.BadgeName
 		user.BadgeColor = p.BadgeColor

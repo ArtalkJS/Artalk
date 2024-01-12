@@ -37,10 +37,6 @@ func AdminSiteAdd(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		if p.Urls != "" {
 			urls := utils.SplitAndTrimSpace(p.Urls, ",")
 			for _, url := range urls {

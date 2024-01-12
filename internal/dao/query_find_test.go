@@ -88,7 +88,6 @@ func TestFindUser(t *testing.T) {
 		assert.Equal(t, "admin@qwqaq.com", result.Email)
 		assert.Equal(t, "123456", result.Password)
 		assert.Equal(t, true, result.IsAdmin)
-		assert.Equal(t, "", result.SiteNames)
 		assert.Equal(t, "管理员", result.BadgeName)
 	})
 
@@ -110,7 +109,6 @@ func TestFindUserByID(t *testing.T) {
 		assert.Equal(t, "admin@qwqaq.com", result.Email)
 		assert.Equal(t, "123456", result.Password)
 		assert.Equal(t, true, result.IsAdmin)
-		assert.Equal(t, "", result.SiteNames)
 		assert.Equal(t, "管理员", result.BadgeName)
 	})
 

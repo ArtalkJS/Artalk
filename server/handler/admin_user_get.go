@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -31,10 +30,6 @@ type ResponseAdminUserGet struct {
 // @Router       /users/{type}  [get]
 func AdminUserGet(app *core.App, router fiber.Router) {
 	router.Get("/users/:type?", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		listType := c.Params("type", "all") // 默认类型
 
 		var p ParamsAdminUserGet

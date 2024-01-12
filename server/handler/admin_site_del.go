@@ -22,10 +22,6 @@ func AdminSiteDel(app *core.App, router fiber.Router) {
 	router.Delete("/sites/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
-		if !common.GetIsSuperAdmin(app, c) {
-			return common.RespError(c, 403, i18n.T("Access denied"))
-		}
-
 		site := app.Dao().FindSiteByID(uint(id))
 		if site.IsEmpty() {
 			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Site")}))

@@ -11,32 +11,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ResponseAdminSettingGet struct {
-	Yaml string `json:"yaml"`
-}
-
-// @Summary      Get Settings
-// @Description  Get settings from app config file
-// @Tags         System
-// @Security     ApiKeyAuth
-// @Produce      json
-// @Success      200  {object}  ResponseAdminSettingGet
-// @Failure      403  {object}  Map{msg=string}
-// @Failure      500  {object}  Map{msg=string}
-// @Router       /settings [get]
-func AdminSettingGet(app *core.App, router fiber.Router) {
-	router.Get("/settings", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		dat, err := os.ReadFile(app.Conf().GetCfgFileLoaded())
-		if err != nil {
-			return common.RespError(c, 500, i18n.T("Config file read failed"))
-		}
-
-		return common.RespData(c, ResponseAdminSettingGet{
-			Yaml: string(dat),
-		})
-	}))
-}
-
 type ParamsAdminSettingSave struct {
 	Yaml string `json:"yaml" validate:"required"` // The content of the config file in YAML format
 }
@@ -88,34 +62,5 @@ func AdminSettingSave(app *core.App, router fiber.Router) {
 		log.Info(i18n.T("Services restart complete"))
 
 		return common.RespSuccess(c)
-	}))
-}
-
-type ResponseAdminSettingTpl struct {
-	Yaml string `json:"yaml"`
-}
-
-// @Summary      Get Settings Template
-// @Description  Get config templates in different languages for rendering the settings page in the frontend
-// @Tags         System
-// @Security     ApiKeyAuth
-// @Param        locale  path  string  false  "The locale of the settings template you want to get"
-// @Produce      json
-// @Success      200  {object}  ResponseAdminSettingTpl
-// @Router       /settings/template/{locale}  [get]
-func AdminSettingTpl(app *core.App, router fiber.Router) {
-	router.Get("/settings/template/:locale?", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		var tpl string
-
-		locale := c.Params("locale")
-		if locale == "" {
-			tpl = app.ConfTpl()
-		} else {
-			tpl = config.Template(locale)
-		}
-
-		return common.RespData(c, ResponseAdminSettingTpl{
-			Yaml: tpl,
-		})
 	}))
 }

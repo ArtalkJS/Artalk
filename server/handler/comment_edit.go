@@ -130,7 +130,7 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 
 			// 待审状态被修改为 false，则重新发送邮件通知
 			if !comment.IsPending {
-				if err := RenotifyWhenPendingModified(app, &comment); err != nil {
+				if err := renotifyWhenPendingModified(app, &comment); err != nil {
 					log.Error("[RenotifyWhenPendingModified] error: ", err)
 					return common.RespError(c, 500, "Renotify Err: "+err.Error())
 				}
@@ -147,7 +147,7 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 	}))
 }
 
-func RenotifyWhenPendingModified(app *core.App, comment *entity.Comment) (err error) {
+func renotifyWhenPendingModified(app *core.App, comment *entity.Comment) (err error) {
 	if comment.Rid == 0 {
 		return // Root 评论不发送通知，因为这个评论已经被管理员看到了
 	}

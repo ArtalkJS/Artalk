@@ -13,8 +13,8 @@ import (
 )
 
 type ParamsAdminSiteEdit struct {
-	Name string `json:"name"` // Edit site name
-	Urls string `json:"urls"` // Edit site urls
+	Name string   `json:"name"` // Edit site name
+	Urls []string `json:"urls"` // Edit site urls
 }
 
 type ResponseAdminSiteEdit struct {
@@ -56,8 +56,8 @@ func AdminSiteEdit(app *core.App, router fiber.Router) {
 		}
 
 		// urls 合法性检测
-		if p.Urls != "" {
-			for _, url := range utils.SplitAndTrimSpace(p.Urls, ",") {
+		if len(p.Urls) > 0 {
+			for _, url := range p.Urls {
 				if !utils.ValidateURL(url) {
 					return common.RespError(c, 400, i18n.T("Contains invalid URL"))
 				}
@@ -89,7 +89,7 @@ func AdminSiteEdit(app *core.App, router fiber.Router) {
 
 		// 修改 site
 		site.Name = p.Name
-		site.Urls = p.Urls
+		site.Urls = strings.Join(p.Urls, ",")
 
 		err := app.Dao().UpdateSite(&site)
 		if err != nil {

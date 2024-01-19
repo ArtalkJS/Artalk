@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
@@ -21,7 +20,7 @@ type ParamsCommentEdit struct {
 	Nick        string `json:"nick"`         // The comment nick
 	Email       string `json:"email"`        // The comment email
 	Link        string `json:"link"`         // The comment link
-	Rid         string `json:"rid"`          // The comment rid
+	Rid         uint   `json:"rid"`          // The comment rid
 	UA          string `json:"ua"`           // The comment ua
 	IP          string `json:"ip"`           // The comment ip
 	IsCollapsed bool   `json:"is_collapsed"` // The comment is_collapsed
@@ -30,7 +29,7 @@ type ParamsCommentEdit struct {
 }
 
 type ResponseCommentEdit struct {
-	Comment entity.CookedComment `json:"comment"`
+	entity.CookedComment
 }
 
 // @Summary      Edit Comment
@@ -78,13 +77,6 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 		// content
 		if p.Content != "" {
 			comment.Content = p.Content
-		}
-
-		// rid
-		if p.Rid != "" {
-			if rid, err := strconv.Atoi(p.Rid); err == nil {
-				comment.Rid = uint(rid)
-			}
 		}
 
 		// merge user
@@ -142,7 +134,7 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseCommentEdit{
-			Comment: app.Dao().CookComment(&comment),
+			CookedComment: app.Dao().CookComment(&comment),
 		})
 	}))
 }

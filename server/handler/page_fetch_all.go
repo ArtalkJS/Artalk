@@ -10,8 +10,7 @@ import (
 )
 
 type ParamsAdminFetchAllPages struct {
-	SiteName  string `json:"site_name"`  // If not empty, only fetch pages of this site
-	GetStatus bool   `json:"get_status"` // If true, only get the status of the current task status
+	SiteName string `json:"site_name"` // If not empty, only fetch pages of this site
 }
 
 // @Summary      Fetch All Pages Data
@@ -34,12 +33,7 @@ func AdminPagesFetchAll(app *core.App, router fiber.Router) {
 
 		// If the task is in progress
 		if allPageFetching {
-			// If user want to get the status
-			if p.GetStatus {
-
-			} else {
-				return common.RespError(c, 400, i18n.T("Task in progress, please wait a moment"))
-			}
+			return common.RespError(c, 400, i18n.T("Task in progress, please wait a moment"))
 		}
 
 		// Start the async task

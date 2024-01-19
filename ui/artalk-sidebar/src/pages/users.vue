@@ -53,7 +53,7 @@ function reqUsers(offset: number) {
   nav.setPageLoading(true)
   artalk?.ctx.getApi().user.userList(offset, pageSize.value, curtType.value as any)
     .then(got => {
-      pageTotal.value = got.total
+      pageTotal.value = got.count
       users.value = got.users
       nav.scrollPageToTop()
     }).finally(() => {

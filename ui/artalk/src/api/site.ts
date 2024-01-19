@@ -17,7 +17,7 @@ export default class SiteApi extends ApiBase {
   }
 
   /** 站点 · 创建 */
-  public async siteAdd(name: string, urls: string) {
+  public async siteAdd(name: string, urls: string[]) {
     const params: any = { name, urls }
 
     const d = await this.fetch<SiteData>('POST', '/sites', params)

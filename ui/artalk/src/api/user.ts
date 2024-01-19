@@ -55,7 +55,7 @@ export default class UserApi extends ApiBase {
 
     const d = await this.fetch<{
       users: UserDataForAdmin[],
-      total: number
+      count: number
     }>('GET', path, params)
 
     return d

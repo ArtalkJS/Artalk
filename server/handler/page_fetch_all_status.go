@@ -7,6 +7,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+var (
+	allPageFetching   = false
+	allPageFetchDone  = 0
+	allPageFetchTotal = 0
+)
+
 type ResponseAdminPageFetchAllStatus struct {
 	Msg        string `json:"msg"`         // The message of the task status
 	IsProgress bool   `json:"is_progress"` // If the task is in progress

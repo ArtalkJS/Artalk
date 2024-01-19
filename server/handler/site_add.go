@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"strings"
+
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -10,8 +12,8 @@ import (
 )
 
 type ParamsAdminSiteAdd struct {
-	Name string `json:"name" validate:"required"` // The site name
-	Urls string `json:"urls"`                     // The site urls
+	Name string   `json:"name" validate:"required"` // The site name
+	Urls []string `json:"urls"`                     // The site urls
 }
 
 type ResponseAdminSiteAdd struct {
@@ -37,9 +39,8 @@ func AdminSiteAdd(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		if p.Urls != "" {
-			urls := utils.SplitAndTrimSpace(p.Urls, ",")
-			for _, url := range urls {
+		if len(p.Urls) > 0 {
+			for _, url := range p.Urls {
 				if !utils.ValidateURL(url) {
 					return common.RespError(c, 400, i18n.T("Contains invalid URL"))
 				}
@@ -52,7 +53,7 @@ func AdminSiteAdd(app *core.App, router fiber.Router) {
 
 		site := entity.Site{}
 		site.Name = p.Name
-		site.Urls = p.Urls
+		site.Urls = strings.Join(p.Urls, ",")
 		err := app.Dao().CreateSite(&site)
 		if err != nil {
 			return common.RespError(c, 500, i18n.T("{{name}} creation failed", Map{"name": i18n.T("Site")}))

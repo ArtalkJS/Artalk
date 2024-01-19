@@ -68,8 +68,8 @@ function submit() {
     artalk!.ctx.getApi().user.userAdd(editUser.value!, editUser.value!.password)
       .then((respUser) => {
         emit('update', respUser)
-      }).catch((e) => {
-        alert('用户创建错误：'+e.msg)
+      }).catch((e: ArtalkType.FetchError) => {
+        alert('用户创建错误：'+e.message)
       }).finally(() => {
         isLoading.value = false
       })
@@ -78,8 +78,8 @@ function submit() {
     artalk!.ctx.getApi().user.userEdit(user.id, user, user.password)
       .then((respUser) => {
         emit('update', respUser)
-      }).catch((e) => {
-        alert('用户保存错误：'+e.msg)
+      }).catch((e: ArtalkType.FetchError) => {
+        alert('用户保存错误：'+e.message)
       }).finally(() => {
         isLoading.value = false
       })

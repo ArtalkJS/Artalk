@@ -12,10 +12,6 @@ type ResponseAdminPageFetch struct {
 	entity.CookedPage
 }
 
-var allPageFetching = false
-var allPageFetchDone = 0
-var allPageFetchTotal = 0
-
 // @Summary      Fetch Page Data
 // @Description  Fetch the data of a specific page
 // @Tags         Page

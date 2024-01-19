@@ -30,14 +30,14 @@ export default class PageApi extends ApiBase {
       site_name: data.site_name || this.options.siteName,
     }
 
-    const d = await this.fetch<PageData>('PUT', `/pages/${params.id}`, params)
+    const d = await this.fetch<PageData>('PUT', `/pages/${data.id}`, params)
 
     return d
   }
 
   /** 页面 · 删除 */
   public pageDel(id: number) {
-    return this.fetch('DELETE', `/pages/${id}`, id)
+    return this.fetch('DELETE', `/pages/${id}`)
   }
 
   /** 页面 · 数据更新 */

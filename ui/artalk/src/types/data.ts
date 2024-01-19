@@ -255,3 +255,9 @@ export interface UserInfoApiResponseData {
   notifies: NotifyData[]
   notifies_count: number
 }
+
+export interface FetchError extends Error {
+  code: number
+  message: string
+  data?: any
+}

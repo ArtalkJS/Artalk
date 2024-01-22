@@ -100,12 +100,12 @@ class Context implements ContextApi {
   }
 
   /* 权限检测 */
-  public checkAdmin(payload: CheckerPayload): void {
-    this.checkerLauncher.checkAdmin(payload)
+  public checkAdmin(payload: CheckerPayload): Promise<void> {
+    return this.checkerLauncher.checkAdmin(payload)
   }
 
-  public checkCaptcha(payload: CheckerCaptchaPayload): void {
-    this.checkerLauncher.checkCaptcha(payload)
+  public checkCaptcha(payload: CheckerCaptchaPayload): Promise<void> {
+    return this.checkerLauncher.checkCaptcha(payload)
   }
 
   /* Events */

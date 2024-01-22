@@ -15,16 +15,12 @@ export interface ApiOptions {
   // -------------------------------------------------------------------
 
   onNeedCheckCaptcha?: (payload: {
-    recall: () => void
-    reject: () => void
     data: {
       imgData: string
       iframe: string
     }
-  }) => void
+  }) => Promise<void>
 
   onNeedCheckAdmin?: (payload: {
-    recall: () => void
-    reject: () => void
-  }) => void
+  }) => Promise<void>
 }

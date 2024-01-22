@@ -68,10 +68,10 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   editorResetState(): void
 
   /** 验证码检测 */
-  checkCaptcha(payload: CheckerCaptchaPayload): void
+  checkCaptcha(payload: CheckerCaptchaPayload): Promise<void>
 
   /** 管理员检测 */
-  checkAdmin(payload: CheckerPayload): void
+  checkAdmin(payload: CheckerPayload): Promise<void>
 
   /** i18n 翻译 */
   $t(key: keyof I18n, args?: {[key: string]: string}): string

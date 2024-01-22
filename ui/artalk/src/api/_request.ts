@@ -23,37 +23,24 @@ export async function Fetch<T = any>(opts: ApiOptions, url: string, init: Reques
     { ...init, headers })
 
   // 解析获取响应的 json
-  let json: any = await resp.json().catch(() => {})
+  const json = await resp.json().catch(() => {})
 
   if (!resp.ok) {
-    // 重新发起请求
-    const recall = (resolve, reject) => {
-      Fetch(opts, url, init)
-        .then(d => { resolve(d) })
-        .catch(e => { reject(e) })
+    // 请求需要验证码
+    if (json.need_captcha) {
+      opts.onNeedCheckCaptcha && await opts.onNeedCheckCaptcha({
+        data: { imgData: json.data.img_data, iframe: json.data.iframe }
+      })
+      return Fetch(opts, url, init) // retry
     }
 
-    // 请求弹出层验证
-    if (json.need_captcha) {
-      // 请求需要验证码
-      json = await (new Promise<any>((resolve, reject) => {
-        opts.onNeedCheckCaptcha && opts.onNeedCheckCaptcha({
-          data: { imgData: json.data.img_data, iframe: json.data.iframe },
-          recall: () => { recall(resolve, reject) },
-          reject: () => { reject(json) }
-        })
-      }))
-    } else if (json.need_login) {
-      // 请求需要管理员权限
-      json = await (new Promise<any>((resolve, reject) => {
-        opts.onNeedCheckAdmin && opts.onNeedCheckAdmin({
-          recall: () => { recall(resolve, reject) },
-          reject: () => { reject(json) }
-        })
-      }))
-    } else {
-      throw await createError(resp.status, json)
+    // 请求需要管理员权限
+    if (json.need_login) {
+      opts.onNeedCheckAdmin && await opts.onNeedCheckAdmin({})
+      return Fetch(opts, url, init) // retry
     }
+
+    throw createError(resp.status, json)
   }
 
   return json
@@ -87,7 +74,7 @@ export class FetchException extends Error implements FetchError {
   data?: any
 }
 
-async function createError(code: number, data: any): Promise<FetchException> {
+function createError(code: number, data: any): FetchException {
   const err = new FetchException()
   err.message = data.msg || data.message || 'fetch error'
   err.code = code

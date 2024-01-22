@@ -102,19 +102,16 @@ export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi)
       email: ctx?.get('user').getData().email,
     } : undefined,
 
-    onNeedCheckAdmin(payload) {
-      ctx?.checkAdmin({
-        onSuccess: () => { payload.recall() },
-        onCancel: () => { payload.reject() },
-      })
+    onNeedCheckAdmin: (payload) => {
+      if (!ctx) throw new Error('`ctx` is required when `onNeedCheckAdmin` is called.')
+      return ctx.checkAdmin({})
     },
 
-    onNeedCheckCaptcha(payload) {
-      ctx?.checkCaptcha({
+    onNeedCheckCaptcha: (payload) => {
+      if (!ctx) throw new Error('`ctx` is required when `onNeedCheckCaptcha` is called.')
+      return ctx.checkCaptcha({
         imgData: payload.data.imgData,
         iframe: payload.data.iframe,
-        onSuccess: () => { payload.recall() },
-        onCancel: () => { payload.reject() },
       })
     },
   }

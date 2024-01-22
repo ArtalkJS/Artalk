@@ -46,7 +46,7 @@ const services = {
       getCtx: () => ctx,
       getApi: () => ctx.getApi(),
       onReload: () => ctx.reload(),
-      getCaptchaIframeURL: () => `${ctx.conf.server}/api/v2/captcha/get?t=${+new Date()}`
+      getCaptchaIframeURL: () => `${ctx.conf.server}/api/v2/captcha?t=${+new Date()}`
     })
     return checkerLauncher
   },

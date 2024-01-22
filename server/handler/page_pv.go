@@ -7,9 +7,9 @@ import (
 )
 
 type ParamsPagePV struct {
-	PageKey   string `json:"page_key" validate:"required"` // The page key
-	PageTitle string `json:"page_title"`                   // The page title
-	SiteName  string `json:"site_name"`                    // The site name of your content scope
+	PageKey   string `json:"page_key" validate:"required"`   // The page key
+	PageTitle string `json:"page_title" validate:"optional"` // The page title
+	SiteName  string `json:"site_name" validate:"optional"`  // The site name of your content scope
 }
 
 type ResponsePagePV struct {

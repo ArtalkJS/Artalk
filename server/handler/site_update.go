@@ -13,8 +13,8 @@ import (
 )
 
 type ParamsSiteUpdate struct {
-	Name string   `json:"name"` // Updated site name
-	Urls []string `json:"urls"` // Updated site urls
+	Name string   `json:"name" validate:"required"` // Updated site name
+	Urls []string `json:"urls" validate:"required"` // Updated site urls
 }
 
 type ResponseSiteUpdate struct {

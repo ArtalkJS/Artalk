@@ -8,8 +8,8 @@ import (
 )
 
 type ParamsNotifyList struct {
-	Name  string `query:"name"`  // The user name
-	Email string `query:"email"` // The user email
+	Name  string `query:"name" validate:"optional"`  // The user name
+	Email string `query:"email" validate:"optional"` // The user email
 }
 
 type ResponseNotifyList struct {

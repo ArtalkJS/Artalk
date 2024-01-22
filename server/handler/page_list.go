@@ -8,9 +8,9 @@ import (
 )
 
 type ParamsPageList struct {
-	SiteName string `query:"site_name" json:"site_name"` // The site name of your content scope
-	Limit    int    `query:"limit" json:"limit"`         // The limit for pagination
-	Offset   int    `query:"offset" json:"offset"`       // The offset for pagination
+	SiteName string `query:"site_name" json:"site_name" validate:"optional"` // The site name of your content scope
+	Limit    int    `query:"limit" json:"limit" validate:"optional"`         // The limit for pagination
+	Offset   int    `query:"offset" json:"offset" validate:"optional"`       // The offset for pagination
 }
 
 type ResponsePageList struct {

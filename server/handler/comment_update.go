@@ -13,19 +13,19 @@ import (
 )
 
 type ParamsCommentUpdate struct {
-	SiteName string `json:"site_name"` // The site name of your content scope
+	SiteName string `json:"site_name" validate:"required"` // The site name of your content scope
 
-	Content     string `json:"content"`      // The comment content
-	PageKey     string `json:"page_key"`     // The comment page_key
-	Nick        string `json:"nick"`         // The comment nick
-	Email       string `json:"email"`        // The comment email
-	Link        string `json:"link"`         // The comment link
-	Rid         uint   `json:"rid"`          // The comment rid
-	UA          string `json:"ua"`           // The comment ua
-	IP          string `json:"ip"`           // The comment ip
-	IsCollapsed bool   `json:"is_collapsed"` // The comment is_collapsed
-	IsPending   bool   `json:"is_pending"`   // The comment is_pending
-	IsPinned    bool   `json:"is_pinned"`    // The comment is_pinned
+	Content     string `json:"content" validate:"required"`      // The comment content
+	PageKey     string `json:"page_key" validate:"required"`     // The comment page_key
+	Nick        string `json:"nick" validate:"required"`         // The comment nick
+	Email       string `json:"email" validate:"required"`        // The comment email
+	Link        string `json:"link" validate:"required"`         // The comment link
+	Rid         uint   `json:"rid" validate:"required"`          // The comment rid
+	UA          string `json:"ua" validate:"required"`           // The comment ua
+	IP          string `json:"ip" validate:"required"`           // The comment ip
+	IsCollapsed bool   `json:"is_collapsed" validate:"required"` // The comment is_collapsed
+	IsPending   bool   `json:"is_pending" validate:"required"`   // The comment is_pending
+	IsPinned    bool   `json:"is_pinned" validate:"required"`    // The comment is_pinned
 }
 
 type ResponseCommentUpdate struct {

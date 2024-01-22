@@ -13,15 +13,15 @@ import (
 )
 
 type ParamsCommentCreate struct {
-	Name    string `json:"name"`                        // The comment name
-	Email   string `json:"email"`                       // The comment email
-	Link    string `json:"link"`                        // The comment link
+	Name    string `json:"name" validate:"optional"`    // The comment name
+	Email   string `json:"email" validate:"optional"`   // The comment email
+	Link    string `json:"link" validate:"optional"`    // The comment link
 	Content string `json:"content" validate:"required"` // The comment content
-	Rid     uint   `json:"rid"`                         // The comment rid
-	UA      string `json:"ua"`                          // The comment ua
+	Rid     uint   `json:"rid" validate:"optional"`     // The comment rid
+	UA      string `json:"ua" validate:"optional"`      // The comment ua
 
-	PageKey   string `json:"page_key" validate:"required"` // The comment page_key
-	PageTitle string `json:"page_title"`                   // The comment page_title
+	PageKey   string `json:"page_key" validate:"required"`   // The comment page_key
+	PageTitle string `json:"page_title" validate:"optional"` // The comment page_title
 
 	SiteName string `json:"site_name" validate:"required"` // The site name of your content scope
 }

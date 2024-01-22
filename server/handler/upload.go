@@ -23,7 +23,7 @@ import (
 type ParamsUpload struct {
 	Name     string `json:"name" form:"name" validate:"required"`
 	Email    string `json:"email" form:"email" validate:"required"`
-	SiteName string `json:"site_name" form:"site_name"`
+	SiteName string `json:"site_name" form:"site_name" validate:"optional"`
 }
 
 type ResponseUpload struct {

@@ -12,11 +12,11 @@ import (
 )
 
 type ParamsPageUpdate struct {
-	SiteName string `json:"site_name"` // The site name of your content scope
+	SiteName string `json:"site_name" validate:"required"` // The site name of your content scope
 
-	Key       string `json:"key"`        // Updated page key
-	Title     string `json:"title"`      // Updated page title
-	AdminOnly bool   `json:"admin_only"` // Updated page admin_only option
+	Key       string `json:"key" validate:"required"`        // Updated page key
+	Title     string `json:"title" validate:"required"`      // Updated page title
+	AdminOnly bool   `json:"admin_only" validate:"required"` // Updated page admin_only option
 }
 
 type ResponsePageUpdate struct {

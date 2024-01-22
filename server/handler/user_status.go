@@ -7,8 +7,8 @@ import (
 )
 
 type ParamsUserStatus struct {
-	Name  string `query:"name" json:"name"`   // The username
-	Email string `query:"email" json:"email"` // The user email
+	Name  string `query:"name" json:"name" validate:"optional"`   // The username
+	Email string `query:"email" json:"email" validate:"optional"` // The user email
 }
 
 type ResponseUserStatus struct {

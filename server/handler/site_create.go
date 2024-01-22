@@ -13,7 +13,7 @@ import (
 
 type ParamsSiteCreate struct {
 	Name string   `json:"name" validate:"required"` // The site name
-	Urls []string `json:"urls"`                     // The site urls
+	Urls []string `json:"urls" validate:"required"` // The site urls
 }
 
 type ResponseSiteCreate struct {

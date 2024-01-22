@@ -8,8 +8,8 @@ import (
 )
 
 type ParamsUserList struct {
-	Limit  int `query:"limit" json:"limit"`   // The limit for pagination
-	Offset int `query:"offset" json:"offset"` // The offset for pagination
+	Limit  int `query:"limit" json:"limit" validate:"optional"`   // The limit for pagination
+	Offset int `query:"offset" json:"offset" validate:"optional"` // The offset for pagination
 }
 
 type ResponseAdminUserList struct {

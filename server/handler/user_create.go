@@ -13,12 +13,12 @@ import (
 type ParamsUserCreate struct {
 	Name         string `json:"name" validate:"required"`          // The user name
 	Email        string `json:"email" validate:"required"`         // The user email
-	Password     string `json:"password"`                          // The user password
-	Link         string `json:"link"`                              // The user link
+	Password     string `json:"password" validate:"optional"`      // The user password
+	Link         string `json:"link" validate:"optional"`          // The user link
 	IsAdmin      bool   `json:"is_admin" validate:"required"`      // The user is an admin
 	ReceiveEmail bool   `json:"receive_email" validate:"required"` // The user receive email
-	BadgeName    string `json:"badge_name"`                        // The user badge name
-	BadgeColor   string `json:"badge_color"`                       // The user badge color (hex format)
+	BadgeName    string `json:"badge_name" validate:"optional"`    // The user badge name
+	BadgeColor   string `json:"badge_color" validate:"optional"`   // The user badge color (hex format)
 }
 
 type ResponseUserCreate struct {

@@ -10,7 +10,7 @@ import (
 )
 
 type ParamsPageFetchAll struct {
-	SiteName string `json:"site_name"` // If not empty, only fetch pages of this site
+	SiteName string `json:"site_name" validate:"optional"` // If not empty, only fetch pages of this site
 }
 
 // @Id           FetchAllPages

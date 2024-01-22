@@ -15,7 +15,7 @@ import (
 )
 
 type ParamsUserLogin struct {
-	Name     string `json:"name"`                         // The username
+	Name     string `json:"name" validate:"optional"`     // The username
 	Email    string `json:"email" validate:"required"`    // The user email
 	Password string `json:"password" validate:"required"` // The user password
 }

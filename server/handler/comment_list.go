@@ -11,22 +11,22 @@ import (
 )
 
 type ParamsCommentList struct {
-	PageKey  string `query:"page_key" json:"page_key" validate:"required"` // The comment page_key
-	SiteName string `query:"site_name" json:"site_name"`                   // The site name of your content scope
+	PageKey  string `query:"page_key" json:"page_key" validate:"required"`   // The comment page_key
+	SiteName string `query:"site_name" json:"site_name" validate:"optional"` // The site name of your content scope
 
-	Limit  int `query:"limit" json:"limit"`   // The limit for pagination
-	Offset int `query:"offset" json:"offset"` // The offset for pagination
+	Limit  int `query:"limit" json:"limit" validate:"optional"`   // The limit for pagination
+	Offset int `query:"offset" json:"offset" validate:"optional"` // The offset for pagination
 
-	FlatMode      bool   `query:"flat_mode" json:"flat_mode"`                             // Enable flat_mode
-	SortBy        string `query:"sort_by" json:"sort_by" enums:"date_asc,date_desc,vote"` // Sort by condition
-	ViewOnlyAdmin bool   `query:"view_only_admin" json:"view_only_admin"`                 // Only show comments by admin
+	FlatMode      bool   `query:"flat_mode" json:"flat_mode" validate:"optional"`                             // Enable flat_mode
+	SortBy        string `query:"sort_by" json:"sort_by" enums:"date_asc,date_desc,vote" validate:"optional"` // Sort by condition
+	ViewOnlyAdmin bool   `query:"view_only_admin" json:"view_only_admin" validate:"optional"`                 // Only show comments by admin
 
-	Search string `query:"search" json:"search"` // Search keywords
+	Search string `query:"search" json:"search" validate:"optional"` // Search keywords
 
-	Type  string `query:"type" json:"type" enums:"all,mentions,mine,pending"` // Message center show type
-	Scope string `query:"scope" json:"scope" enums:"page,user,site"`          // The scope of comments
-	Name  string `query:"name" json:"name"`                                   // The username
-	Email string `query:"email" json:"email"`                                 // The user email
+	Type  string `query:"type" json:"type" enums:"all,mentions,mine,pending" validate:"optional"` // Message center show type
+	Scope string `query:"scope" json:"scope" enums:"page,user,site" validate:"optional"`          // The scope of comments
+	Name  string `query:"name" json:"name" validate:"optional"`                                   // The username
+	Email string `query:"email" json:"email" validate:"optional"`                                 // The user email
 }
 
 type ResponseCommentList struct {

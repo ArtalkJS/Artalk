@@ -12,9 +12,9 @@ import (
 )
 
 type ParamsStat struct {
-	SiteName string `query:"site_name" json:"site_name"` // The site name of your content scope
-	PageKeys string `query:"page_keys" json:"page_keys"` // multiple page keys separated by commas
-	Limit    int    `query:"limit" json:"limit"`         // The limit for pagination
+	SiteName string `query:"site_name" json:"site_name" validate:"optional"` // The site name of your content scope
+	PageKeys string `query:"page_keys" json:"page_keys" validate:"optional"` // multiple page keys separated by commas
+	Limit    int    `query:"limit" json:"limit" validate:"optional"`         // The limit for pagination
 }
 
 type ResponseStat struct {

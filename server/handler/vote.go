@@ -11,8 +11,8 @@ import (
 )
 
 type ParamsVote struct {
-	Name  string `json:"name"`  // The username
-	Email string `json:"email"` // The user email
+	Name  string `json:"name" validate:"optional"`  // The username
+	Email string `json:"email" validate:"optional"` // The user email
 }
 
 type ResponseVote struct {

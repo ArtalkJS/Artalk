@@ -24,7 +24,7 @@ import (
 // @Title          Artalk API
 // @Version        2.0
 // @Description    Artalk is a modern comment system based on Golang.
-// @BasePath  	   /api/v2
+// @BasePath       /api/v2
 
 // @Contact.name   API Support
 // @Contact.url    https://artalk.js.org

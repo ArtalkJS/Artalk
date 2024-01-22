@@ -25,7 +25,7 @@ type ResponseUserCreate struct {
 	entity.CookedUserForAdmin
 }
 
-// @Id		     CreateUser
+// @Id           CreateUser
 // @Summary      Create User
 // @Description  Create a new user
 // @Tags         User

@@ -11,7 +11,7 @@ type ResponseCaptchaStatus struct {
 	IsPass bool `json:"is_pass"`
 }
 
-// @Id	         GetCaptchaStatus
+// @Id           GetCaptchaStatus
 // @Summary      Get Captcha Status
 // @Description  Get the status of the user's captcha verification
 // @Tags         Captcha

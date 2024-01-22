@@ -21,7 +21,7 @@ type ResponseStat struct {
 	Data interface{} `json:"data"`
 }
 
-// @Id		     GetStats
+// @Id           GetStats
 // @Summary      Statistic
 // @Description  Get the statistics of various data analysis
 // @Tags         Statistic

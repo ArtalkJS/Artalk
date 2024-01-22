@@ -36,7 +36,7 @@ type ResponseCommentList struct {
 	Page       *entity.CookedPage     `json:"page,omitempty"`
 }
 
-// @Id		     GetComments
+// @Id           GetComments
 // @Summary      Get Comment List
 // @Description  Get a list of comments by some conditions
 // @Tags         Comment

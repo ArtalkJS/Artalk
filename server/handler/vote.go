@@ -26,7 +26,7 @@ type ResponseVote struct {
 // @Tags         Vote
 // @Param        type       path  string      true  "The type of vote target"  Enums(comment_up, comment_down, page_up, page_down)
 // @Param        target_id  path  int         true  "Target comment or page ID you want to vote for"
-// @Param        vote	    body  ParamsVote  true  "The vote data"
+// @Param        vote       body  ParamsVote  true  "The vote data"
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  ResponseVote

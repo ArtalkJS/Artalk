@@ -18,7 +18,7 @@ type ResponsePageList struct {
 	Pages []entity.CookedPage `json:"pages"`
 }
 
-// @Id		     GetPages
+// @Id           GetPages
 // @Summary      Get Page List
 // @Description  Get a list of pages by some conditions
 // @Tags         Page

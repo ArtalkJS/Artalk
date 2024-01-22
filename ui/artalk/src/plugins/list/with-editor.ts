@@ -46,7 +46,7 @@ export const WithEditor: ArtalkPlugin = (ctx) => {
 /** 管理员设置页面信息 */
 function adminPageEditSave(ctx: ContextApi, page: PageData) {
   ctx.editorShowLoading()
-  ctx.getApi().page.pageEdit(page)
+  ctx.getApi().page.edit(page)
     .then((respPage) => {
       ctx.getData().updatePage(respPage)
     })

@@ -79,7 +79,7 @@ export default class HeaderUser extends EditorPlug {
     if (!data.is_login) this.kit.useUser().logout()
 
     // Update unread notifies
-    this.kit.useGlobalCtx().getData().updateUnreads(data.notifies)
+    this.kit.useGlobalCtx().getData().updateNotifies(data.notifies)
 
     // If user is admin and not login,
     if (this.kit.useUser().checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {

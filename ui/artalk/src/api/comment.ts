@@ -45,7 +45,7 @@ export default class CommentApi extends ApiBase {
   }
 
   /** 评论 · 修改 */
-  public async commentEdit(id: number, data: Partial<CommentData>) {
+  public async edit(id: number, data: Partial<CommentData>) {
     const params: any = {
       ...data,
     }
@@ -56,7 +56,7 @@ export default class CommentApi extends ApiBase {
   }
 
   /** 评论 · 删除 */
-  public commentDel(id: number) {
+  public delete(id: number) {
     return this.fetch('DELETE', `/comments/${id}`)
   }
 

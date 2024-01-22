@@ -22,7 +22,7 @@ export interface CheckerPayload {
 export interface CheckerLauncherOptions {
   getCtx: () => ContextApi
   getApi: () => Api
-  getIframeURLBase: () => string
+  getCaptchaIframeURL: () => string
   onReload: () => void
 }
 

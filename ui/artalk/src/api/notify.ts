@@ -16,7 +16,7 @@ export default class Notify extends ApiBase {
   }
 
   /** 获取未读通知 */
-  public getUnread() {
+  public getNotifies() {
     return this.fetch<{
       notifies: NotifyData[],
       count: number,

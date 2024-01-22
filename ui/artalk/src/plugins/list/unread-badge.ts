@@ -20,7 +20,7 @@ export const UnreadBadge: ArtalkPlugin = (ctx) => {
     $unreadBadge = list.$el.querySelector<HTMLElement>('.atk-unread-badge')
   })
 
-  ctx.on('unreads-updated', (unreads) => {
-    showUnreadBadge(unreads.length || 0)
+  ctx.on('notifies-updated', (notifies) => {
+    showUnreadBadge(notifies.length || 0)
   })
 }

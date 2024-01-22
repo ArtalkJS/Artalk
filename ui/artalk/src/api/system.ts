@@ -50,4 +50,14 @@ export default class SystemApi extends ApiBase {
     const data = await resp.json()
     return data as ApiVersionInfo
   }
+
+  /** 缓存清除 */
+  public cacheFlushAll() {
+    return this.fetch('POST', '/cache/flush')
+  }
+
+  /** 缓存预热 */
+  public cacheWarmUp() {
+    return this.fetch('POST', '/cache/warm_up')
+  }
 }

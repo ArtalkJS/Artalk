@@ -5,14 +5,13 @@ import site from './site'
 import user from './user'
 import system from './system'
 import captcha from './captcha'
-import admin from './admin'
 import upload from './upload'
 import notify from './notify'
 
 const ApiComponents = {
   comment, page, site,
   user, system, captcha,
-  admin, upload, notify
+  upload, notify
 }
 
 class Api {

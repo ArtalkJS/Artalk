@@ -59,7 +59,7 @@ function editPage(page: ArtalkType.PageData) {
 
 function reqPages(offset: number) {
   nav.setPageLoading(true)
-  artalk?.ctx.getApi().page.pageGet(curtSite.value, offset, pageSize.value)
+  artalk?.ctx.getApi().page.list(curtSite.value, offset, pageSize.value)
     .then(data => {
       pageTotal.value = data.count
       pages.value = data.pages
@@ -89,7 +89,7 @@ function onPageItemRemove(id: number) {
 }
 
 async function getRefreshTaskStatus() {
-  return await artalk!.ctx.getApi().page.pagesAllFetchStatus()
+  return await artalk!.ctx.getApi().page.getFetchStatus()
 }
 
 function startRefreshTaskWatchdog() {
@@ -121,7 +121,7 @@ async function refreshAllPages() {
 
   // 发起任务
   try {
-    await artalk!.ctx.getApi().page.pagesAllFetch(curtSite.value)
+    await artalk!.ctx.getApi().page.fetchAllData(curtSite.value)
   } catch (err: any) {
     alert(err.msg)
     setRefreshTaskDone()
@@ -132,11 +132,11 @@ async function refreshAllPages() {
 }
 
 function cacheFlush() {
-  artalk!.ctx.getApi().admin.cacheFlushAll().then((d: any) => alert(d.msg)).catch(() => alert(t('opFailed')))
+  artalk!.ctx.getApi().system.cacheFlushAll().then((d: any) => alert(d.msg)).catch(() => alert(t('opFailed')))
 }
 
 function cacheWarm() {
-  artalk!.ctx.getApi().admin.cacheWarmUp().then((d: any) => alert(d.msg)).catch(() => alert(t('opFailed')))
+  artalk!.ctx.getApi().system.cacheWarmUp().then((d: any) => alert(d.msg)).catch(() => alert(t('opFailed')))
 }
 
 function openPage(url: string) {

@@ -240,8 +240,8 @@ export interface DataManagerApi {
   updateComment(comment: CommentData): void
   deleteComment(id: number): void
 
-  getUnreads(): NotifyData[]
-  updateUnreads(unreads: NotifyData[]): void
+  getNotifies(): NotifyData[]
+  updateNotifies(notifies: NotifyData[]): void
 
   getPage(): PageData|undefined
   updatePage(pageData: PageData): void

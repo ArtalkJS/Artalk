@@ -30,7 +30,7 @@ export function iframeBody(checker: CheckerCtx) {
   const $iframe = Utils.createElement<HTMLIFrameElement>(`<iframe class="atk-fade-in" referrerpolicy="strict-origin-when-cross-origin"></iframe>`)
   $iframe.style.display = 'none'
   Ui.showLoading($iframeWrap, { transparentBg: true })
-  $iframe.src = `${checker.getOpts().getIframeURLBase() || ''}/api/captcha/get?t=${+new Date()}`
+  $iframe.src = checker.getOpts().getCaptchaIframeURL()
   $iframe.onload = () => {
     $iframe.style.display = ''
     Ui.hideLoading($iframeWrap)

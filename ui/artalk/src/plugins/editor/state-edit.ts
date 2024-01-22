@@ -35,7 +35,7 @@ export default class StateEdit extends EditorPlug {
             link: this.kit.useUI().$link.value,
           }
           const comment = this.comment!
-          const nComment = await this.kit.useApi().comment.commentEdit(comment.id, {
+          const nComment = await this.kit.useApi().comment.edit(comment.id, {
             ...comment, ...saveData
           })
           return nComment

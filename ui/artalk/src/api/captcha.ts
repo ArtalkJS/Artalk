@@ -8,7 +8,7 @@ export default class CaptchaApi extends ApiBase {
   public async captchaGet() {
     const data = await this.fetch<{
       img_data: string
-    }>('GET', '/captcha/refresh')
+    }>('GET', '/captcha/get')
     return data
   }
 

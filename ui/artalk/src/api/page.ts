@@ -6,7 +6,7 @@ import ApiBase from './_base'
  */
 export default class PageApi extends ApiBase {
   /** 页面 · 获取 */
-  public async pageGet(siteName?: string, offset?: number, limit?: number) {
+  public async list(siteName?: string, offset?: number, limit?: number) {
     const params: any = {
       site_name: siteName || '',
       offset: offset || 0,
@@ -22,7 +22,7 @@ export default class PageApi extends ApiBase {
   }
 
   /** 页面 · 修改 */
-  public async pageEdit(data: PageData) {
+  public async edit(data: PageData) {
     const params: any = {
       key: data.key,
       title: data.title,
@@ -36,18 +36,18 @@ export default class PageApi extends ApiBase {
   }
 
   /** 页面 · 删除 */
-  public pageDel(id: number) {
+  public delete(id: number) {
     return this.fetch('DELETE', `/pages/${id}`)
   }
 
   /** 页面 · 数据更新 */
-  public async pageFetch(id: number) {
+  public async fetchData(id: number) {
     const d = await this.fetch<PageData>('POST', `/pages/${id}/fetch`)
     return d
   }
 
   /** 页面 · 整站数据更新 */
-  public async pagesAllFetch(siteName?: string) {
+  public async fetchAllData(siteName?: string) {
     const params: any = {}
     if (siteName) params.site_name = siteName
     const d = await this.fetch('POST', `/pages/fetch`, params)
@@ -55,7 +55,7 @@ export default class PageApi extends ApiBase {
   }
 
   /** 页面 · 整站数据更新 - 当前状态 */
-  public async pagesAllFetchStatus() {
+  public async getFetchStatus() {
     const d = await this.fetch<{
       msg: string,
       is_progress: boolean,

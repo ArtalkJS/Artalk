@@ -5,7 +5,7 @@ export class DataManager implements DataManagerApi {
   private loading: boolean = false
   private listLastFetch?: ListLastFetchData
   private comments: CommentData[] = [] // Note: 无层级结构 + 无须排列
-  private unreads: NotifyData[] = []
+  private notifies: NotifyData[] = []
   private page?: PageData
 
   constructor(
@@ -83,16 +83,16 @@ export class DataManager implements DataManagerApi {
   }
 
   // -------------------------------------------------------------------
-  //  Unreads
+  //  Notifies
   // -------------------------------------------------------------------
-  getUnreads() {
-    return this.unreads
+  getNotifies() {
+    return this.notifies
   }
 
-  updateUnreads(unread: NotifyData[]) {
-    this.unreads = unread
+  updateNotifies(notifies: NotifyData[]) {
+    this.notifies = notifies
 
-    this.events.trigger('unreads-updated', this.unreads)
+    this.events.trigger('notifies-updated', this.notifies)
   }
 
   // -------------------------------------------------------------------

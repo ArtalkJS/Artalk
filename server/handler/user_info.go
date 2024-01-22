@@ -7,34 +7,35 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsUserGet struct {
+type ParamsUserInfo struct {
 	Name  string `query:"name" json:"name"`   // The username
 	Email string `query:"email" json:"email"` // The user email
 }
 
-type ResponseUserGet struct {
+type ResponseUserInfo struct {
 	User          *entity.CookedUser    `json:"user"`
 	IsLogin       bool                  `json:"is_login"`
 	Notifies      []entity.CookedNotify `json:"notifies"`
 	NotifiesCount int                   `json:"notifies_count"`
 }
 
+// @Id           GetUser
 // @Summary      Get User Info
 // @Description  Get user info to prepare for login or check current user status
 // @Tags         Account
 // @Security     ApiKeyAuth
-// @Param        user  query  ParamsUserGet  true  "The user to query"
+// @Param        user  query  ParamsUserInfo  true  "The user to query"
 // @Produce      json
-// @Success      200  {object}  ResponseUserGet
+// @Success      200  {object}  ResponseUserInfo
 // @Failure      400  {object}  Map{msg=string}
-// @Router       /user/info  [get]
-func UserGet(app *core.App, router fiber.Router) {
-	router.Get("/user/info", func(c *fiber.Ctx) error {
+// @Router       /user  [get]
+func UserInfo(app *core.App, router fiber.Router) {
+	router.Get("/user", func(c *fiber.Ctx) error {
 		// login status
 		user := common.GetUserByReq(app, c)
 		isLogin := !user.IsEmpty()
 
-		var p ParamsUserGet
+		var p ParamsUserInfo
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -48,7 +49,7 @@ func UserGet(app *core.App, router fiber.Router) {
 		}
 
 		if user.IsEmpty() {
-			return common.RespData(c, ResponseUserGet{
+			return common.RespData(c, ResponseUserInfo{
 				User:          nil,
 				IsLogin:       isLogin,
 				Notifies:      []entity.CookedNotify{},
@@ -60,7 +61,7 @@ func UserGet(app *core.App, router fiber.Router) {
 		unreadNotifies := app.Dao().CookAllNotifies(app.Dao().FindUnreadNotifies(user.ID))
 		cockedUser := app.Dao().CookUser(&user)
 
-		return common.RespData(c, ResponseUserGet{
+		return common.RespData(c, ResponseUserInfo{
 			User:          &cockedUser,
 			IsLogin:       isLogin,
 			Notifies:      unreadNotifies,

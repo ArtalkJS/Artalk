@@ -8,21 +8,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ResponseExport struct {
+type ResponseTransferExport struct {
 	// The exported data which is a JSON string
 	Artrans string `json:"artrans"`
 }
 
+// @Id           ExportArtrans
 // @Summary      Export Artrans
 // @Description  Export data from Artalk
 // @Tags         Transfer
 // @Security     ApiKeyAuth
 // @Produce      json
-// @Success      200  {object}  ResponseExport
+// @Success      200  {object}  ResponseTransferExport
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /transfer/export  [get]
-func transferExport(app *core.App) func(c *fiber.Ctx) error {
-	return common.AdminGuard(app, func(c *fiber.Ctx) error {
+func TransferExport(app *core.App, router fiber.Router) {
+	router.Get("/transfer/export", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		var siteNameScope []string
 
 		jsonStr, err := artransfer.RunExportArtrans(app.Dao(), &artransfer.ExportParams{
@@ -34,8 +35,8 @@ func transferExport(app *core.App) func(c *fiber.Ctx) error {
 			})
 		}
 
-		return common.RespData(c, ResponseExport{
+		return common.RespData(c, ResponseTransferExport{
 			Artrans: jsonStr,
 		})
-	})
+	}))
 }

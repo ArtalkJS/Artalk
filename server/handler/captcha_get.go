@@ -11,15 +11,16 @@ type ResponseCaptchaGet struct {
 	ImgData string `json:"img_data"`
 }
 
+// @Id           GetCaptcha
 // @Summary      Get Captcha
 // @Description  Get a base64 encoded captcha image or a HTML page to verify for user
 // @Tags         Captcha
 // @Produce      json,html
 // @Success      200  {object}  ResponseCaptchaGet
 // @Failure      500  {object}  Map{msg=string}
-// @Router       /captcha/get  [get]
-func captchaGet(app *core.App) func(c *fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
+// @Router       /captcha  [get]
+func CaptchaGet(app *core.App, router fiber.Router) {
+	router.Get("/captcha", func(c *fiber.Ctx) error {
 		// create new captcha checker instance
 		cap := common.NewCaptchaChecker(app, c)
 
@@ -45,5 +46,5 @@ func captchaGet(app *core.App) func(c *fiber.Ctx) error {
 		}
 
 		return common.RespError(c, 500, "invalid captcha type")
-	}
+	})
 }

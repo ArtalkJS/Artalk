@@ -11,30 +11,31 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminSiteAdd struct {
+type ParamsSiteCreate struct {
 	Name string   `json:"name" validate:"required"` // The site name
 	Urls []string `json:"urls"`                     // The site urls
 }
 
-type ResponseAdminSiteAdd struct {
+type ResponseSiteCreate struct {
 	entity.CookedSite
 }
 
+// @Id           CreateSite
 // @Summary      Create Site
 // @Description  Create a new site
 // @Tags         Site
 // @Security     ApiKeyAuth
-// @Param        site  body  ParamsAdminSiteAdd  true  "The site data"
+// @Param        site  body  ParamsSiteCreate  true  "The site data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  ResponseAdminSiteAdd
+// @Success      200  {object}  ResponseSiteCreate
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /sites  [post]
-func AdminSiteAdd(app *core.App, router fiber.Router) {
+func SiteCreate(app *core.App, router fiber.Router) {
 	router.Post("/sites", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		var p ParamsAdminSiteAdd
+		var p ParamsSiteCreate
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -59,7 +60,7 @@ func AdminSiteAdd(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("{{name}} creation failed", Map{"name": i18n.T("Site")}))
 		}
 
-		return common.RespData(c, ResponseAdminSiteAdd{
+		return common.RespData(c, ResponseSiteCreate{
 			CookedSite: app.Dao().CookSite(&site),
 		})
 	}))

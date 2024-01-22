@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Id           WarmUpCache
 // @Summary      Warm-Up Cache
 // @Description  Cache warming helps you to pre-load the cache to improve the performance of the first request
 // @Tags         Cache
@@ -16,7 +17,7 @@ import (
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      400  {object}  Map{msg=string}
 // @Router       /cache/warm_up  [post]
-func AdminCacheWarm(app *core.App, router fiber.Router) {
+func CacheWarmUp(app *core.App, router fiber.Router) {
 	router.Post("/cache/warm_up", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		if !app.Conf().Cache.Enabled {
 			return common.RespError(c, 400, "cache disabled")

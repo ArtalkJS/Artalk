@@ -6,27 +6,28 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsLoginStatus struct {
+type ParamsUserStatus struct {
 	Name  string `query:"name" json:"name"`   // The username
 	Email string `query:"email" json:"email"` // The user email
 }
 
-type ResponseLoginStatus struct {
+type ResponseUserStatus struct {
 	IsAdmin bool `json:"is_admin"`
 	IsLogin bool `json:"is_login"`
 }
 
+// @Id           GetUserStatus
 // @Summary      Get Login Status
 // @Description  Get user login status by header Authorization
 // @Tags         Account
 // @Security     ApiKeyAuth
-// @Param        user  query  ParamsLoginStatus  true  "The user to query"
+// @Param        user  query  ParamsUserStatus  true  "The user to query"
 // @Produce      json
-// @Success      200  {object}  ResponseLoginStatus
+// @Success      200  {object}  ResponseUserStatus
 // @Router       /user/status  [get]
-func UserLoginStatus(app *core.App, router fiber.Router) {
+func UserStatus(app *core.App, router fiber.Router) {
 	router.Get("/user/status", func(c *fiber.Ctx) error {
-		var p ParamsLoginStatus
+		var p ParamsUserStatus
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -36,7 +37,7 @@ func UserLoginStatus(app *core.App, router fiber.Router) {
 			isAdmin = app.Dao().IsAdminUserByNameEmail(p.Name, p.Email)
 		}
 
-		return common.RespData(c, ResponseLoginStatus{
+		return common.RespData(c, ResponseUserStatus{
 			IsAdmin: isAdmin,
 			IsLogin: common.CheckIsAdminReq(app, c),
 		})

@@ -7,32 +7,33 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminUserGet struct {
+type ParamsUserList struct {
 	Limit  int `query:"limit" json:"limit"`   // The limit for pagination
 	Offset int `query:"offset" json:"offset"` // The offset for pagination
 }
 
-type ResponseAdminUserGet struct {
+type ResponseAdminUserList struct {
 	Total int64                       `json:"count"`
 	Users []entity.CookedUserForAdmin `json:"users"`
 }
 
+// @Id           GetUsers
 // @Summary      Get User List
 // @Description  Get a list of users by some conditions
 // @Tags         User
 // @Param        type     path   string              false  "The type of users"  Enums(all, admin, in_conf)
-// @Param        options  query  ParamsAdminUserGet  true   "The options"
+// @Param        options  query  ParamsUserList  true   "The options"
 // @Security     ApiKeyAuth
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  ResponseAdminUserGet
+// @Success      200  {object}  ResponseAdminUserList
 // @Failure      403  {object}  Map{msg=string}
 // @Router       /users/{type}  [get]
-func AdminUserGet(app *core.App, router fiber.Router) {
+func UserList(app *core.App, router fiber.Router) {
 	router.Get("/users/:type?", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		listType := c.Params("type", "all") // 默认类型
 
-		var p ParamsAdminUserGet
+		var p ParamsUserList
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -63,7 +64,7 @@ func AdminUserGet(app *core.App, router fiber.Router) {
 			cookedUsers = append(cookedUsers, app.Dao().UserToCookedForAdmin(&u))
 		}
 
-		return common.RespData(c, ResponseAdminUserGet{
+		return common.RespData(c, ResponseAdminUserList{
 			Users: cookedUsers,
 			Total: total,
 		})

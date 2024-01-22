@@ -10,7 +10,7 @@ import (
 	"github.com/samber/lo"
 )
 
-type ParamsGet struct {
+type ParamsCommentList struct {
 	PageKey  string `query:"page_key" json:"page_key" validate:"required"` // The comment page_key
 	SiteName string `query:"site_name" json:"site_name"`                   // The site name of your content scope
 
@@ -29,25 +29,26 @@ type ParamsGet struct {
 	Email string `query:"email" json:"email"`                                 // The user email
 }
 
-type ResponseGet struct {
+type ResponseCommentList struct {
 	Comments   []entity.CookedComment `json:"comments"`
 	Count      int64                  `json:"count"`
 	RootsCount int64                  `json:"roots_count"`
 	Page       *entity.CookedPage     `json:"page,omitempty"`
 }
 
+// @Id		     GetComments
 // @Summary      Get Comment List
 // @Description  Get a list of comments by some conditions
 // @Tags         Comment
 // @Security     ApiKeyAuth
-// @Param        options  query  ParamsGet  true  "The options"
+// @Param        options  query  ParamsCommentList  true  "The options"
 // @Produce      json
-// @Success      200  {object}  ResponseGet
+// @Success      200  {object}  ResponseCommentList
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /comments  [get]
-func CommentGet(app *core.App, router fiber.Router) {
+func CommentList(app *core.App, router fiber.Router) {
 	router.Get("/comments", func(c *fiber.Ctx) error {
-		var p ParamsGet
+		var p ParamsCommentList
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -127,7 +128,7 @@ func CommentGet(app *core.App, router fiber.Router) {
 		rootsCount := cog.CountComments(app.Dao(), queryOpts, cog.OnlyRoot())
 
 		// The response data
-		resp := ResponseGet{
+		resp := ResponseCommentList{
 			Comments:   comments,
 			Count:      count,
 			RootsCount: rootsCount,

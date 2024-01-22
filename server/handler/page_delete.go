@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Id           DeletePage
 // @Summary      Delete Page
 // @Description  Delete a specific page
 // @Tags         Page
@@ -18,7 +19,7 @@ import (
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /pages/{id}  [delete]
-func AdminPageDel(app *core.App, router fiber.Router) {
+func PageDelete(app *core.App, router fiber.Router) {
 	router.Delete("/pages/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 

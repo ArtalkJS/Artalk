@@ -12,7 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdd struct {
+type ParamsCommentCreate struct {
 	Name    string `json:"name"`                        // The comment name
 	Email   string `json:"email"`                       // The comment email
 	Link    string `json:"link"`                        // The comment link
@@ -26,24 +26,25 @@ type ParamsAdd struct {
 	SiteName string `json:"site_name" validate:"required"` // The site name of your content scope
 }
 
-type ResponseAdd struct {
+type ResponseCommentCreate struct {
 	entity.CookedComment
 }
 
+// @Id           CreateComment
 // @Summary      Create Comment
 // @Description  Create a new comment
 // @Tags         Comment
-// @Param        comment  body  ParamsAdd  true  "The comment data"
+// @Param        comment  body  ParamsCommentCreate  true  "The comment data"
 // @Security     ApiKeyAuth
-// @Success      200  {object}  ResponseAdd
+// @Success      200  {object}  ResponseCommentCreate
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Accept       json
 // @Produce      json
 // @Router       /comments  [post]
-func CommentAdd(app *core.App, router fiber.Router) {
+func CommentCreate(app *core.App, router fiber.Router) {
 	router.Post("/comments", func(c *fiber.Ctx) error {
-		var p ParamsAdd
+		var p ParamsCommentCreate
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -188,7 +189,7 @@ func CommentAdd(app *core.App, router fiber.Router) {
 			}
 		}
 
-		return common.RespData(c, ResponseAdd{
+		return common.RespData(c, ResponseCommentCreate{
 			CookedComment: cookedComment,
 		})
 	})

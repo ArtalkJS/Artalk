@@ -14,31 +14,32 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type ParamsLogin struct {
+type ParamsUserLogin struct {
 	Name     string `json:"name"`                         // The username
 	Email    string `json:"email" validate:"required"`    // The user email
 	Password string `json:"password" validate:"required"` // The user password
 }
 
-type ResponseLogin struct {
+type ResponseUserLogin struct {
 	Token string            `json:"token"`
 	User  entity.CookedUser `json:"user"`
 }
 
+// @Id           Login
 // @Summary      Get Access Token
 // @Description  Login user by name or email
 // @Tags         Account
-// @Param        user  body  ParamsLogin  true  "The user login data"
+// @Param        user  body  ParamsUserLogin  true  "The user login data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  ResponseLogin
+// @Success      200  {object}  ResponseUserLogin
 // @Failure      400  {object}  Map{msg=string, data=object{need_name_select=[]string}}  "Multiple users with the same email address are matched"
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /user/access_token  [post]
 func UserLogin(app *core.App, router fiber.Router) {
 	router.Post("/user/access_token", func(c *fiber.Ctx) error {
-		var p ParamsLogin
+		var p ParamsUserLogin
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -107,7 +108,7 @@ func UserLogin(app *core.App, router fiber.Router) {
 
 		jwtToken := common.LoginGetUserToken(user, app.Conf().AppKey, app.Conf().LoginTimeout)
 
-		return common.RespData(c, ResponseLogin{
+		return common.RespData(c, ResponseUserLogin{
 			Token: jwtToken,
 			User:  app.Dao().CookUser(&user),
 		})

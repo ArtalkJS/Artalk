@@ -8,10 +8,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ResponseAdminPageFetch struct {
+type ResponsePageFetch struct {
 	entity.CookedPage
 }
 
+// @Id           FetchPage
 // @Summary      Fetch Page Data
 // @Description  Fetch the data of a specific page
 // @Tags         Page
@@ -19,11 +20,11 @@ type ResponseAdminPageFetch struct {
 // @Param        id       path  int                   true  "The page ID you want to fetch"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  ResponseAdminPageFetch
+// @Success      200  {object}  ResponsePageFetch
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /pages/{id}/fetch  [post]
-func AdminPageFetch(app *core.App, router fiber.Router) {
+func PageFetch(app *core.App, router fiber.Router) {
 	router.Post("/pages/:id/fetch", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
@@ -36,7 +37,7 @@ func AdminPageFetch(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("Page fetch failed")+": "+err.Error())
 		}
 
-		return common.RespData(c, ResponseAdminPageFetch{
+		return common.RespData(c, ResponsePageFetch{
 			CookedPage: app.Dao().CookPage(&page),
 		})
 	}))

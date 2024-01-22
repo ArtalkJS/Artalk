@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Id           FlushCache
 // @Summary      Flush Cache
 // @Description  Flush all cache on the server
 // @Tags         Cache
@@ -16,7 +17,7 @@ import (
 // @Failure      400  {object}  Map{msg=string}
 // @Produce      json
 // @Router       /cache/flush  [post]
-func AdminCacheFlush(app *core.App, router fiber.Router) {
+func CacheFlush(app *core.App, router fiber.Router) {
 	router.Post("/cache/flush", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		if !app.Conf().Cache.Enabled {
 			return common.RespError(c, 400, "cache disabled")

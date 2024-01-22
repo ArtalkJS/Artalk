@@ -11,37 +11,38 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminPageEdit struct {
+type ParamsPageUpdate struct {
 	SiteName string `json:"site_name"` // The site name of your content scope
 
-	Key       string `json:"key"`        // Edit page key
-	Title     string `json:"title"`      // Edit page title
-	AdminOnly bool   `json:"admin_only"` // Edit page admin_only option
+	Key       string `json:"key"`        // Updated page key
+	Title     string `json:"title"`      // Updated page title
+	AdminOnly bool   `json:"admin_only"` // Updated page admin_only option
 }
 
-type ResponseAdminPageEdit struct {
+type ResponsePageUpdate struct {
 	entity.CookedPage
 }
 
-// @Summary      Edit Page
-// @Description  Edit a specific page
+// @Id           UpdatePage
+// @Summary      Update Page
+// @Description  Update a specific page
 // @Tags         Page
 // @Security     ApiKeyAuth
-// @Param        id    path  int                  true "The page ID you want to edit"
-// @Param        page  body  ParamsAdminPageEdit  true "The page data"
+// @Param        id    path  int               true "The page ID you want to update"
+// @Param        page  body  ParamsPageUpdate  true "The page data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  ResponseAdminPageEdit
+// @Success      200  {object}  ResponsePageUpdate
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /pages/{id}  [put]
-func AdminPageEdit(app *core.App, router fiber.Router) {
+func PageUpdate(app *core.App, router fiber.Router) {
 	router.Put("/pages/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
-		var p ParamsAdminPageEdit
+		var p ParamsPageUpdate
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -91,7 +92,7 @@ func AdminPageEdit(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Page")}))
 		}
 
-		return common.RespData(c, ResponseAdminPageEdit{
+		return common.RespData(c, ResponsePageUpdate{
 			CookedPage: app.Dao().CookPage(&page),
 		})
 	}))

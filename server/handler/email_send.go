@@ -7,26 +7,27 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminSendMail struct {
+type ParamsEmailSend struct {
 	Subject string `json:"subject" validate:"required"` // The subject of email
 	Body    string `json:"body" validate:"required"`    // The body of email
 	ToAddr  string `json:"to_addr" validate:"required"` // The email address of the receiver
 }
 
+// @Id           SendEmail
 // @Summary      Send Email
 // @Description  Send an email to test the email sender
 // @Tags         System
 // @Security     ApiKeyAuth
-// @Param        email  body  ParamsAdminSendMail  true  "The email data"
+// @Param        email  body  ParamsEmailSend  true  "The email data"
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  Map{}
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{}
 // @Router       /send_email  [post]
-func AdminSendMail(app *core.App, router fiber.Router) {
+func EmailSend(app *core.App, router fiber.Router) {
 	router.Post("/send_email", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		var p ParamsAdminSendMail
+		var p ParamsEmailSend
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}

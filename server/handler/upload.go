@@ -20,17 +20,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsImgUpload struct {
+type ParamsUpload struct {
 	Name     string `json:"name" form:"name" validate:"required"`
 	Email    string `json:"email" form:"email" validate:"required"`
 	SiteName string `json:"site_name" form:"site_name"`
 }
 
-type ResponseImgUpload struct {
-	ImgFile string `json:"img_file"`
-	ImgURL  string `json:"img_url"`
+type ResponseUpload struct {
+	FileType  string `json:"file_type" enum:"image"`
+	FileName  string `json:"file_name"`
+	PublicURL string `json:"public_url"`
 }
 
+// @Id           Upload
 // @Summary      Upload
 // @Description  Upload file from this endpoint
 // @Tags         Upload
@@ -41,12 +43,12 @@ type ResponseImgUpload struct {
 // @Security     ApiKeyAuth
 // @Accept       mpfd
 // @Produce      json
-// @Success      200  {object}  ResponseImgUpload
+// @Success      200  {object}  ResponseUpload
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /upload  [post]
-func ImgUpload(app *core.App, router fiber.Router) {
+func Upload(app *core.App, router fiber.Router) {
 	router.Post("/upload", func(c *fiber.Ctx) error {
 		// 功能开关 (管理员始终开启)
 		if !app.Conf().ImgUpload.Enabled && !common.CheckIsAdminReq(app, c) {
@@ -56,7 +58,7 @@ func ImgUpload(app *core.App, router fiber.Router) {
 		}
 
 		// 传入参数解析
-		var p ParamsImgUpload
+		var p ParamsUpload
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -111,6 +113,8 @@ func ImgUpload(app *core.App, router fiber.Router) {
 		}
 
 		// 文件格式判断
+		// The http.DetectContentType function reads the first 512 bytes of a file
+		// and uses these bytes (aka the magic number) to determine the file's content type.
 		// @link https://mimesniff.spec.whatwg.org/
 		// @link https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/MIME_types
 		fileMine := http.DetectContentType(buf)
@@ -197,9 +201,10 @@ func ImgUpload(app *core.App, router fiber.Router) {
 		}
 
 		// 响应数据
-		return common.RespData(c, ResponseImgUpload{
-			ImgFile: filename,
-			ImgURL:  imgURL,
+		return common.RespData(c, ResponseUpload{
+			FileType:  "image",
+			FileName:  filename,
+			PublicURL: imgURL,
 		})
 	})
 }

@@ -7,30 +7,31 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsMarkRead struct {
+type ParamsNotifyRead struct {
 	Name  string `json:"name"`  // The username
 	Email string `json:"email"` // The user email
 }
 
+// @Id           MarkNotifyRead
 // @Summary      Mark Notify as Read
 // @Description  Mark specific notification as read for user
 // @Tags         Notify
 // @Param        comment_id  path  int             true  "The comment id of the notify you want to mark as read"
 // @Param        notify_key  path  string          true  "The key of the notify"
-// @Param        options     body  ParamsMarkRead  true  "The options"
+// @Param        options     body  ParamsNotifyRead  true  "The options"
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  Map{}
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
-// @Router       /notifies/{comment_id}/{notify_key}/read  [post]
-func MarkRead(app *core.App, router fiber.Router) {
+// @Router       /notifies/{comment_id}/{notify_key}  [post]
+func NotifyRead(app *core.App, router fiber.Router) {
 	router.Post("/notifies/:comment_id/:notify_key", func(c *fiber.Ctx) error {
 		commentID, _ := c.ParamsInt("comment_id")
 		notifyKey := c.Params("notify_key")
 
-		var p ParamsMarkRead
+		var p ParamsNotifyRead
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}

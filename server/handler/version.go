@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Id           GetVersion
 // @Summary      Get Version Info
 // @Description  Get the version of Artalk
 // @Tags         System

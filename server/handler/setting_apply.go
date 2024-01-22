@@ -11,24 +11,25 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminSettingSave struct {
+type ParamsSettingApply struct {
 	Yaml string `json:"yaml" validate:"required"` // The content of the config file in YAML format
 }
 
-// @Summary      Save Settings
-// @Description  Save settings to app config file
+// @Id           ApplySettings
+// @Summary      Save and apply Settings
+// @Description  Apply settings and restart the server
 // @Tags         System
 // @Security     ApiKeyAuth
-// @Param        settings  body  ParamsAdminSettingSave  true "The settings"
+// @Param        settings  body  ParamsSettingApply  true "The settings"
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  Map{}
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
-// @Router       /settings [post]
-func AdminSettingSave(app *core.App, router fiber.Router) {
-	router.Post("/settings", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		var p ParamsAdminSettingSave
+// @Router       /settings [put]
+func SettingApply(app *core.App, router fiber.Router) {
+	router.Put("/settings", common.AdminGuard(app, func(c *fiber.Ctx) error {
+		var p ParamsSettingApply
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}

@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Id           DeleteComment
 // @Summary      Delete Comment
 // @Description  Delete a specific comment
 // @Tags         Comment
@@ -18,7 +19,7 @@ import (
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /comments/{id}  [delete]
-func AdminCommentDel(app *core.App, router fiber.Router) {
+func CommentDelete(app *core.App, router fiber.Router) {
 	router.Delete("/comments/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 

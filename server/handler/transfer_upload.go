@@ -10,11 +10,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ResponseImportUpload struct {
+type ResponseTransferUpload struct {
 	// The uploaded file name which can be used to import
 	Filename string `json:"filename"`
 }
 
+// @Id           UploadArtrans
 // @Summary      Upload Artrans
 // @Description  Upload a file to prepare to import
 // @Tags         Transfer
@@ -22,11 +23,11 @@ type ResponseImportUpload struct {
 // @Param        file  formData  file  true  "Upload file in preparation for import task"
 // @Accept       mpfd
 // @Produce      json
-// @Success      200  {object}  ResponseImportUpload{filename=string}
+// @Success      200  {object}  ResponseTransferUpload{filename=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /transfer/upload  [post]
-func transferUpload(app *core.App) func(c *fiber.Ctx) error {
-	return common.AdminGuard(app, func(c *fiber.Ctx) error {
+func TransferUpload(app *core.App, router fiber.Router) {
+	router.Post("/transfer/upload", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		// Get file from FormData
 		file, err := c.FormFile("file")
 		if err != nil {
@@ -60,8 +61,8 @@ func transferUpload(app *core.App) func(c *fiber.Ctx) error {
 		tmpFile.Write(buf)
 
 		// Return filename
-		return common.RespData(c, ResponseImportUpload{
+		return common.RespData(c, ResponseTransferUpload{
 			Filename: tmpFile.Name(),
 		})
-	})
+	}))
 }

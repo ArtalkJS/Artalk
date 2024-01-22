@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminUserAdd struct {
+type ParamsUserCreate struct {
 	Name         string `json:"name" validate:"required"`          // The user name
 	Email        string `json:"email" validate:"required"`         // The user email
 	Password     string `json:"password"`                          // The user password
@@ -21,25 +21,26 @@ type ParamsAdminUserAdd struct {
 	BadgeColor   string `json:"badge_color"`                       // The user badge color (hex format)
 }
 
-type ResponseAdminUserAdd struct {
+type ResponseUserCreate struct {
 	entity.CookedUserForAdmin
 }
 
+// @Id		     CreateUser
 // @Summary      Create User
 // @Description  Create a new user
 // @Tags         User
-// @Param        user  body  ParamsAdminUserAdd  true  "The user data"
+// @Param        user  body  ParamsUserCreate  true  "The user data"
 // @Security     ApiKeyAuth
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  ResponseAdminUserAdd
+// @Success      200  {object}  ResponseUserCreate
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /users  [post]
-func AdminUserAdd(app *core.App, router fiber.Router) {
+func UserCreate(app *core.App, router fiber.Router) {
 	router.Post("/users", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		var p ParamsAdminUserAdd
+		var p ParamsUserCreate
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -77,7 +78,7 @@ func AdminUserAdd(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("{{name}} creation failed", Map{"name": i18n.T("User")}))
 		}
 
-		return common.RespData(c, ResponseAdminUserAdd{
+		return common.RespData(c, ResponseUserCreate{
 			CookedUserForAdmin: app.Dao().UserToCookedForAdmin(&user),
 		})
 	}))

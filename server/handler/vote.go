@@ -20,6 +20,7 @@ type ResponseVote struct {
 	Down int `json:"down"`
 }
 
+// @Id           Vote
 // @Summary      Vote
 // @Description  Vote for a specific comment or page
 // @Tags         Vote

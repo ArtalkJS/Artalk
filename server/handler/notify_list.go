@@ -7,29 +7,30 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsGetNotifies struct {
+type ParamsNotifyList struct {
 	Name  string `query:"name"`  // The user name
 	Email string `query:"email"` // The user email
 }
 
-type ResponseGetNotifies struct {
+type ResponseNotifyList struct {
 	Notifies []entity.CookedNotify `json:"notifies"`
 	Count    int                   `json:"count"`
 }
 
+// @Id           GetNotifies
 // @Summary      Get Notifies
 // @Description  Get a list of notifies for user
 // @Tags         Notify
 // @Param        name   query  string  true  "The user name"
 // @Param        email  query  string  true  "The user email"
 // @Produce      json
-// @Success      200  {object}  ResponseGetNotifies
+// @Success      200  {object}  ResponseNotifyList
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /notifies  [get]
-func GetNotifies(app *core.App, router fiber.Router) {
+func NotifyList(app *core.App, router fiber.Router) {
 	router.Get("/notifies", func(c *fiber.Ctx) error {
-		var p ParamsGetNotifies
+		var p ParamsNotifyList
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -44,7 +45,7 @@ func GetNotifies(app *core.App, router fiber.Router) {
 			notifies = app.Dao().CookAllNotifies(app.Dao().FindUnreadNotifies(user.ID))
 		}
 
-		return common.RespData(c, ResponseGetNotifies{
+		return common.RespData(c, ResponseNotifyList{
 			Notifies: notifies,
 			Count:    len(notifies),
 		})

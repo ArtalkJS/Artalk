@@ -7,11 +7,12 @@ import (
 )
 
 // Mark all notifies as read
-type ParamsMarkAllRead struct {
+type ParamsNotifyReadAll struct {
 	Name  string `json:"name" validate:"required"`  // The username
 	Email string `json:"email" validate:"required"` // The user email
 }
 
+// @Id           MarkAllNotifyRead
 // @Summary      Mark All Notifies as Read
 // @Description  Mark all notifies as read for user
 // @Tags         Notify
@@ -22,9 +23,9 @@ type ParamsMarkAllRead struct {
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /notifies/read  [post]
-func MarkAllRead(app *core.App, router fiber.Router) {
+func NotifyReadAll(app *core.App, router fiber.Router) {
 	router.Post("/notifies/read", func(c *fiber.Ctx) error {
-		var p ParamsMarkAllRead
+		var p ParamsNotifyReadAll
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}

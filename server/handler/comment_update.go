@@ -12,7 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsCommentEdit struct {
+type ParamsCommentUpdate struct {
 	SiteName string `json:"site_name"` // The site name of your content scope
 
 	Content     string `json:"content"`      // The comment content
@@ -28,27 +28,28 @@ type ParamsCommentEdit struct {
 	IsPinned    bool   `json:"is_pinned"`    // The comment is_pinned
 }
 
-type ResponseCommentEdit struct {
+type ResponseCommentUpdate struct {
 	entity.CookedComment
 }
 
-// @Summary      Edit Comment
-// @Description  Edit a specific comment
+// @Id           UpdateComment
+// @Summary      Update Comment
+// @Description  Update a specific comment
 // @Tags         Comment
-// @Param        id             path  int                true  "The comment ID you want to edit"
-// @Param        comment        body  ParamsCommentEdit  true  "The comment data"
+// @Param        id             path  int                true  "The comment ID you want to update"
+// @Param        comment        body  ParamsCommentUpdate  true  "The comment data"
 // @Security     ApiKeyAuth
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  ResponseCommentEdit
+// @Success      200  {object}  ResponseCommentUpdate
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /comments/{id} [put]
-func AdminCommentEdit(app *core.App, router fiber.Router) {
+func CommentUpdate(app *core.App, router fiber.Router) {
 	router.Put("/comments/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		var p ParamsCommentEdit
+		var p ParamsCommentUpdate
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -133,7 +134,7 @@ func AdminCommentEdit(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
 		}
 
-		return common.RespData(c, ResponseCommentEdit{
+		return common.RespData(c, ResponseCommentUpdate{
 			CookedComment: app.Dao().CookComment(&comment),
 		})
 	}))

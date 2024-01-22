@@ -14,6 +14,7 @@ type ParamsCaptchaVerify struct {
 	Value string `form:"value" json:"value" validate:"required"` // The captcha value to check
 }
 
+// @Id           VerifyCaptcha
 // @Summary      Verify Captcha
 // @Description  Verify user enters correct captcha code
 // @Tags         Captcha
@@ -22,8 +23,8 @@ type ParamsCaptchaVerify struct {
 // @Success      200  {object}  Map{}
 // @Failure      403  {object}  Map{img_data=string}
 // @Router       /captcha/verify [post]
-func captchaVerify(app *core.App) func(c *fiber.Ctx) error {
-	return func(c *fiber.Ctx) error {
+func CaptchaVerify(app *core.App, router fiber.Router) {
+	router.Post("/captcha/verify", func(c *fiber.Ctx) error {
 		// handle user input
 		var p ParamsCaptchaVerify
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
@@ -73,5 +74,5 @@ func captchaVerify(app *core.App) func(c *fiber.Ctx) error {
 		}
 
 		return common.RespSuccess(c)
-	}
+	})
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminUserEdit struct {
+type ParamsUserUpdate struct {
 	Name         string `json:"name" validate:"required"`          // The user name
 	Email        string `json:"email" validate:"required"`         // The user email
 	Password     string `json:"password"`                          // The user password
@@ -21,29 +21,30 @@ type ParamsAdminUserEdit struct {
 	BadgeColor   string `json:"badge_color"`                       // The user badge color (hex format)
 }
 
-type ResponseAdminUserEdit struct {
+type ResponseUserUpdate struct {
 	entity.CookedUserForAdmin
 }
 
-// @Summary      Edit User
-// @Description  Edit a specific user
+// @Id           UpdateUser
+// @Summary      Update User
+// @Description  Update a specific user
 // @Tags         User
-// @Param        id    path  int                  true  "The user ID you want to edit"
-// @Param        user  body  ParamsAdminUserEdit  true  "The user data"
+// @Param        id    path  int                  true  "The user ID you want to update"
+// @Param        user  body  ParamsUserUpdate  true  "The user data"
 // @Security     ApiKeyAuth
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  ResponseAdminUserEdit
+// @Success      200  {object}  ResponseUserUpdate
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /users/{id}  [put]
-func AdminUserEdit(app *core.App, router fiber.Router) {
+func UserUpdate(app *core.App, router fiber.Router) {
 	router.Put("/users/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
-		var p ParamsAdminUserEdit
+		var p ParamsUserUpdate
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -90,7 +91,7 @@ func AdminUserEdit(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("User")}))
 		}
 
-		return common.RespData(c, ResponseAdminUserEdit{
+		return common.RespData(c, ResponseUserUpdate{
 			CookedUserForAdmin: app.Dao().UserToCookedForAdmin(&user),
 		})
 	}))

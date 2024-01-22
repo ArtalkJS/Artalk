@@ -7,19 +7,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ResponseAdminSettingTpl struct {
+type ResponseSettingTemplate struct {
 	Yaml string `json:"yaml"`
 }
 
+// @Id           GetSettingsTemplate
 // @Summary      Get Settings Template
 // @Description  Get config templates in different languages for rendering the settings page in the frontend
 // @Tags         System
 // @Security     ApiKeyAuth
 // @Param        locale  path  string  false  "The locale of the settings template you want to get"
 // @Produce      json
-// @Success      200  {object}  ResponseAdminSettingTpl
+// @Success      200  {object}  ResponseSettingTemplate
 // @Router       /settings/template/{locale}  [get]
-func AdminSettingTpl(app *core.App, router fiber.Router) {
+func SettingTemplate(app *core.App, router fiber.Router) {
 	router.Get("/settings/template/:locale?", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		var tpl string
 
@@ -30,7 +31,7 @@ func AdminSettingTpl(app *core.App, router fiber.Router) {
 			tpl = config.Template(locale)
 		}
 
-		return common.RespData(c, ResponseAdminSettingTpl{
+		return common.RespData(c, ResponseSettingTemplate{
 			Yaml: tpl,
 		})
 	}))

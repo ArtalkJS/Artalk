@@ -12,30 +12,31 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminSiteEdit struct {
-	Name string   `json:"name"` // Edit site name
-	Urls []string `json:"urls"` // Edit site urls
+type ParamsSiteUpdate struct {
+	Name string   `json:"name"` // Updated site name
+	Urls []string `json:"urls"` // Updated site urls
 }
 
-type ResponseAdminSiteEdit struct {
+type ResponseSiteUpdate struct {
 	entity.CookedSite
 }
 
-// @Summary      Edit Site
-// @Description  Edit a specific site
+// @Id           UpdateSite
+// @Summary      Update Site
+// @Description  Update a specific site
 // @Tags         Site
 // @Security     ApiKeyAuth
-// @Param        id    path  string               true  "The site ID you want to edit"
-// @Param        site  body  ParamsAdminSiteEdit  true  "The site data"
+// @Param        id    path  string            true  "The site ID you want to update"
+// @Param        site  body  ParamsSiteUpdate  true  "The site data"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  ResponseAdminSiteEdit
+// @Success      200  {object}  ResponseSiteUpdate
 // @Router       /sites/{id}  [put]
-func AdminSiteEdit(app *core.App, router fiber.Router) {
+func SiteUpdate(app *core.App, router fiber.Router) {
 	router.Put("/sites/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
-		var p ParamsAdminSiteEdit
+		var p ParamsSiteUpdate
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -96,7 +97,7 @@ func AdminSiteEdit(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Site")}))
 		}
 
-		return common.RespData(c, ResponseAdminSiteEdit{
+		return common.RespData(c, ResponseSiteUpdate{
 			CookedSite: app.Dao().CookSite(&site),
 		})
 	}))

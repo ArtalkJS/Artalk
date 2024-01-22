@@ -6,27 +6,28 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsPV struct {
+type ParamsPagePV struct {
 	PageKey   string `json:"page_key" validate:"required"` // The page key
 	PageTitle string `json:"page_title"`                   // The page title
 	SiteName  string `json:"site_name"`                    // The site name of your content scope
 }
 
-type ResponsePV struct {
+type ResponsePagePV struct {
 	PV int `json:"pv"`
 }
 
-// @Summary      Record PV
-// @Description  Log and get the number of page views
+// @Id           LogPv
+// @Summary      Increase Page Views (PV)
+// @Description  Increase and get the number of page views
 // @Tags         Page
-// @Param        page  body  ParamsPV  true  "The page to record pv"
+// @Param        page  body  ParamsPagePV  true  "The page to record pv"
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  ResponsePV
+// @Success      200  {object}  ResponsePagePV
 // @Router       /pages/pv  [post]
-func PV(app *core.App, router fiber.Router) {
+func PagePV(app *core.App, router fiber.Router) {
 	router.Post("/pages/pv", func(c *fiber.Ctx) error {
-		var p ParamsPV
+		var p ParamsPagePV
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -40,7 +41,7 @@ func PV(app *core.App, router fiber.Router) {
 		page.PV++
 		app.Dao().UpdatePage(&page)
 
-		return common.RespData(c, ResponsePV{
+		return common.RespData(c, ResponsePagePV{
 			PV: page.PV,
 		})
 	})

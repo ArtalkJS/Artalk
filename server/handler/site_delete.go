@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary      Delete Site
+// @Summary      Site Delete
 // @Description  Delete a specific site
 // @Tags         Site
 // @Security     ApiKeyAuth
@@ -18,7 +18,7 @@ import (
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /sites/{id}  [delete]
-func AdminSiteDel(app *core.App, router fiber.Router) {
+func SiteDelete(app *core.App, router fiber.Router) {
 	router.Delete("/sites/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 

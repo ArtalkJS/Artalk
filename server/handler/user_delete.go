@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Id           DeleteUser
 // @Summary      Delete User
 // @Description  Delete a specific user
 // @Tags         User
@@ -18,7 +19,7 @@ import (
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /users/{id}  [delete]
-func AdminUserDel(app *core.App, router fiber.Router) {
+func UserDelete(app *core.App, router fiber.Router) {
 	router.Delete("/users/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 

@@ -9,22 +9,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminImport struct {
+type ParamsTransferImport struct {
 	artransfer.ImportParams
 }
 
+// @Id           ImportArtrans
 // @Summary      Import Artrans
 // @Description  Import data to Artalk
 // @Tags         Transfer
 // @Security     ApiKeyAuth
-// @Param        data  body  ParamsAdminImport  true  "The data to import"
+// @Param        data  body  ParamsTransferImport  true  "The data to import"
 // @Accept       json
 // @Produce      html
 // @Success      200  {string}  string
 // @Router       /transfer/import  [post]
-func transferImport(app *core.App) func(c *fiber.Ctx) error {
-	return common.AdminGuard(app, func(c *fiber.Ctx) error {
-		var p ParamsAdminImport
+func TransferImport(app *core.App, router fiber.Router) {
+	router.Post("/transfer/import", common.AdminGuard(app, func(c *fiber.Ctx) error {
+		var p ParamsTransferImport
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
@@ -53,5 +54,5 @@ func transferImport(app *core.App) func(c *fiber.Ctx) error {
 		artransfer.RunImportArtrans(app.Dao(), &p.ImportParams)
 
 		return nil
-	})
+	}))
 }

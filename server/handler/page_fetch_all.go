@@ -9,24 +9,25 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsAdminFetchAllPages struct {
+type ParamsPageFetchAll struct {
 	SiteName string `json:"site_name"` // If not empty, only fetch pages of this site
 }
 
+// @Id           FetchAllPages
 // @Summary      Fetch All Pages Data
 // @Description  Fetch the data of all pages
 // @Tags         Page
 // @Security     ApiKeyAuth
-// @Param        options  body  ParamsAdminFetchAllPages  true  "The options"
+// @Param        options  body  ParamsPageFetchAll  true  "The options"
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  Map{}
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /pages/fetch  [post]
-func AdminPagesFetchAll(app *core.App, router fiber.Router) {
+func PageFetchAll(app *core.App, router fiber.Router) {
 	router.Post("/pages/fetch", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		var p ParamsAdminFetchAllPages
+		var p ParamsPageFetchAll
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}

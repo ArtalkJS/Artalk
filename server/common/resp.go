@@ -9,10 +9,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// JSONResult JSON 响应数据结构
+// JSONResult JSON Response data structure
 type JSONResult struct {
-	Msg  string      `json:"msg,omitempty"`  // 消息
-	Data interface{} `json:"data,omitempty"` // 数据
+	Msg  string      `json:"msg,omitempty"`  // Message
+	Data interface{} `json:"data,omitempty"` // Data
 }
 
 // RespData is just response data
@@ -26,7 +26,7 @@ func RespSuccess(c *fiber.Ctx, msg ...string) error {
 		Msg: "Success",
 	}
 
-	// 可选参数 msg
+	// Optional msg parameter
 	if len(msg) > 0 {
 		respData.Msg = msg[0]
 	}

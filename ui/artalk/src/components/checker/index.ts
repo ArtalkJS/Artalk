@@ -1,4 +1,4 @@
-import type Api from '@/api'
+import type { Api } from '@/api'
 import Dialog from '@/components/dialog'
 import $t from '@/i18n'
 import type { ContextApi } from '@/types'

@@ -55,11 +55,13 @@ export default class HeaderUser extends EditorPlug {
     this.query.timer = window.setTimeout(() => {
       this.query.timer = null // clear the timer (clarify the timer is executing)
 
-      const {req, abort} = this.kit.useApi().user.userGet(
-        this.kit.useUser().getData().nick, this.kit.useUser().getData().email
-      )
-      this.query.abortFn = abort
-      req.then(data => this.onUserInfoFetched(data))
+      const api = this.kit.useApi()
+      const CANCEL_TOKEN = 'getUserCancelToken'
+      this.query.abortFn = () => api.abortRequest(CANCEL_TOKEN)
+
+      api.user.getUser({ ...api.getUserFields() }, {
+        cancelToken: CANCEL_TOKEN
+      }).then(res => this.onUserInfoFetched(res.data))
         .catch((err) => {})
         .finally(() => {
           this.query.abortFn = null // clear the abort function (clarify the request is finished)

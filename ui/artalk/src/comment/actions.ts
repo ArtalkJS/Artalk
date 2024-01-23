@@ -16,10 +16,10 @@ export default class CommentActions {
   public vote(type: 'up'|'down') {
     const actionBtn = (type === 'up') ? this.comment.getRender().voteBtnUp : this.comment.getRender().voteBtnDown
 
-    this.ctx.getApi().comment.vote(this.data.id, `comment_${type}`)
-    .then((v) => {
-      this.data.vote_up = v.up
-      this.data.vote_down = v.down
+    this.ctx.getApi().votes.vote(`comment_${type}`, this.data.id, { ...this.ctx.getApi().getUserFields() })
+    .then((res) => {
+      this.data.vote_up = res.data.up
+      this.data.vote_down = res.data.down
       this.comment.getRender().voteBtnUp?.updateText()
       this.comment.getRender().voteBtnDown?.updateText()
     })
@@ -45,11 +45,13 @@ export default class CommentActions {
       modify.is_pinned = !modify.is_pinned
     }
 
-    this.ctx.getApi().comment.edit(this.data.id, modify).then((data) => {
+    this.ctx.getApi().comments.updateComment(this.data.id, {
+      ...modify,
+    }).then((res) => {
       btnElem.setLoading(false)
 
       // 刷新当前 Comment UI
-      this.comment.setData(data)
+      this.comment.setData(res.data)
     }).catch((err) => {
       console.error(err)
       btnElem.setError(this.ctx.$t('editFail'))
@@ -61,7 +63,7 @@ export default class CommentActions {
     if (btnElem.isLoading) return // 若正在删除中
 
     btnElem.setLoading(true, `${this.ctx.$t('deleting')}...`)
-    this.ctx.getApi().comment.delete(this.data.id)
+    this.ctx.getApi().comments.deleteComment(this.data.id)
       .then(() => {
         btnElem.setLoading(false)
         if (this.cConf.onDelete) this.cConf.onDelete(this.comment)

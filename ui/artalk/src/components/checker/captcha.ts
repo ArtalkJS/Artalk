@@ -4,7 +4,9 @@ import * as render from './captcha-renders'
 
 const CaptchaChecker: Checker<{}> = {
   request(checker, inputVal) {
-    return checker.getApi().captcha.captchaVerify(inputVal)
+    return checker.getApi().captcha.verifyCaptcha({
+      value: inputVal
+    })
   },
 
   body(checker) {

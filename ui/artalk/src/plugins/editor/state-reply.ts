@@ -34,13 +34,13 @@ export default class StateReply extends EditorPlug {
         req: async () => {
           if (!this.comment) throw new Error('reply comment cannot be empty')
 
-          const nComment = await this.kit.useApi().comment.add({
-            ...defaultPreset.getSubmitAddParams(),
+          const nComment = (await this.kit.useApi().comments.createComment({
+            ...(await defaultPreset.getSubmitAddParams()),
             rid: this.comment.id,
             page_key: this.comment.page_key,
             page_title: undefined,
             site_name: this.comment.site_name
-          })
+          })).data
 
           return nComment
         },

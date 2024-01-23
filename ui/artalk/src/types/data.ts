@@ -27,16 +27,13 @@ export interface CommentData {
   date: string
 
   /** 是否折叠 */
-  is_collapsed?: boolean
+  is_collapsed: boolean
 
   /** 是否待审 */
-  is_pending?: boolean
+  is_pending: boolean
 
   /** 是否置顶 */
-  is_pinned?: boolean
-
-  /** 是否为管理员 */
-  is_admin?: boolean
+  is_pinned: boolean
 
   /** 徽章文字 */
   badge_name?: string
@@ -48,7 +45,7 @@ export interface CommentData {
   ip_region?: string
 
   /** 是否允许回复 */
-  is_allow_reply?: boolean
+  is_allow_reply: boolean
 
   /** 评论页面 key */
   page_key: string
@@ -164,9 +161,6 @@ export interface UserDataForAdmin extends UserData {
 
   /** 评论数 */
   comment_count: number
-
-  /** 密码 */
-  password: string
 }
 
 export interface NotifyData {

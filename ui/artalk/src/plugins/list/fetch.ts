@@ -19,9 +19,24 @@ export const Fetch: ArtalkPlugin = (ctx) => {
       params
     })
 
-    ctx.getApi().comment
-      .get(params.offset, params.limit, params.flatMode, params.paramsModifier)
-      .then((data) => {
+    // prepare params for request
+    const reqParams = {
+      limit: params.limit,
+      offset: params.offset,
+      flat_mode: params.flatMode,
+      page_key: ctx.getConf().pageKey,
+      site_name: ctx.getConf().site,
+    }
+
+    // call the modifier function
+    if (params.paramsModifier) params.paramsModifier(reqParams)
+
+    // start request
+    ctx.getApi().comments
+      .getComments({
+        ...reqParams,
+      })
+      .then(({ data }) => {
         // Must before all other function call and event trigger,
         // because it will depend on the lastData
         // TODO: this is global variable, easy to use, but not good, consider to refactor.

@@ -111,22 +111,22 @@ export default class Upload extends EditorPlug {
     this.kit.useEditor().insertContent(uploadPlaceholderTxt)
 
     // 上传图片
-    let resp: any
+    let resp: { public_url: string } | undefined
     try {
       const customUploaderFn = this.kit.useConf().imgUploader
       if (!customUploaderFn) {
         // 使用 Artalk 进行图片上传
-        resp = await this.kit.useApi().upload.imgUpload(file)
+        resp = (await this.kit.useApi().upload.upload({ file })).data
       } else {
         // 使用自定义的图片上传器
-        resp = {img_url: await customUploaderFn(file)}
+        resp = { public_url: await customUploaderFn(file) }
       }
     } catch (err: any) {
       console.error(err)
       this.kit.useEditor().showNotify(`${$t('uploadFail')}，${err.msg}`, 'e')
     }
-    if (!!resp && resp.img_url) {
-      let imgURL = resp.img_url as string
+    if (!!resp && resp.public_url) {
+      let imgURL = resp.public_url as string
 
       // 若为相对路径，加上 artalk server
       if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi({

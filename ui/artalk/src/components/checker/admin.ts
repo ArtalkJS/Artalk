@@ -5,14 +5,12 @@ import type { Checker } from '.'
 const AdminChecker: Checker<{ token: string }> = {
   inputType: 'password',
 
-  request(checker, inputVal) {
-    const data = {
+  async request(checker, inputVal) {
+    return (await checker.getApi().user.login({
       name: checker.getUser().getData().nick,
       email: checker.getUser().getData().email,
       password: inputVal
-    }
-
-    return checker.getApi().user.login(data.name, data.email, data.password)
+    })).data
   },
 
   body(checker) {

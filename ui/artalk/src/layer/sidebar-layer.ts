@@ -88,8 +88,10 @@ export default class SidebarLayer extends Component {
   // --------------------------------------------------
 
   private async authCheck(opts: { onSuccess: () => void }) {
-    const resp = await this.ctx.getApi().user.loginStatus()
-    if (resp.is_admin && !resp.is_login) {
+    const data = (await this.ctx.getApi().user.getUserStatus({
+      ...this.ctx.getApi().getUserFields()
+    })).data
+    if (data.is_admin && !data.is_login) {
       this.firstShow = true
 
       this.ctx.checkAdmin({

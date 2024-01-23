@@ -1,6 +1,6 @@
 import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPayloadMap, SidebarShowPayload } from '@/types'
 import type { TInjectedServices } from './service'
-import Api from './api'
+import { Api } from './api'
 
 import * as marked from './lib/marked'
 import { mergeDeep } from './lib/merge-deep'

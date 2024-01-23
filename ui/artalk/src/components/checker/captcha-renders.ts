@@ -13,9 +13,9 @@ export function imgBody(checker: CheckerCtx) {
   // 刷新验证码
   elem.querySelector<HTMLElement>('.atk-captcha-img')!.onclick = () => {
     const imgEl = elem.querySelector('.atk-captcha-img')
-    checker.getApi().captcha.captchaGet()
+    checker.getApi().captcha.getCaptcha()
       .then((res) => {
-        imgEl!.setAttribute('src', res.img_data)
+        imgEl!.setAttribute('src', res.data.img_data)
       })
       .catch((err) => {
         console.error('Failed to get captcha image ', err)
@@ -50,8 +50,8 @@ export function iframeBody(checker: CheckerCtx) {
     if (stop) return
     let isPass = false
     try {
-      const resp = await checker.getApi().captcha.captchaStatus()
-      isPass = resp.is_pass
+      const resp = await checker.getApi().captcha.getCaptchaStatus()
+      isPass = resp.data.is_pass
     } catch { isPass = false }
     if (isPass) {
       checker.triggerSuccess()

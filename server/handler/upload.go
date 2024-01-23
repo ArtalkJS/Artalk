@@ -21,9 +21,6 @@ import (
 )
 
 type ParamsUpload struct {
-	Name     string `json:"name" form:"name" validate:"required"`
-	Email    string `json:"email" form:"email" validate:"required"`
-	SiteName string `json:"site_name" form:"site_name" validate:"optional"`
 }
 
 type ResponseUpload struct {
@@ -37,9 +34,6 @@ type ResponseUpload struct {
 // @Description  Upload file from this endpoint
 // @Tags         Upload
 // @Param        file           formData  file    true   "Upload file"
-// @Param        name           formData  string  true   "The username"
-// @Param        email          formData  string  true   "The user email"
-// @Param        site_name      formData  string  false  "The site name of your content scope"
 // @Security     ApiKeyAuth
 // @Accept       mpfd
 // @Produce      json
@@ -61,10 +55,6 @@ func Upload(app *core.App, router fiber.Router) {
 		var p ParamsUpload
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
-		}
-
-		if !utils.ValidateEmail(p.Email) {
-			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
 
 		// find page

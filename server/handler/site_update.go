@@ -26,7 +26,7 @@ type ResponseSiteUpdate struct {
 // @Description  Update a specific site
 // @Tags         Site
 // @Security     ApiKeyAuth
-// @Param        id    path  string            true  "The site ID you want to update"
+// @Param        id    path  int               true  "The site ID you want to update"
 // @Param        site  body  ParamsSiteUpdate  true  "The site data"
 // @Accept       json
 // @Produce      json

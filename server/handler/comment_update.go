@@ -17,12 +17,12 @@ type ParamsCommentUpdate struct {
 
 	Content     string `json:"content" validate:"required"`      // The comment content
 	PageKey     string `json:"page_key" validate:"required"`     // The comment page_key
-	Nick        string `json:"nick" validate:"required"`         // The comment nick
-	Email       string `json:"email" validate:"required"`        // The comment email
-	Link        string `json:"link" validate:"required"`         // The comment link
+	Nick        string `json:"nick" validate:"optional"`         // The comment nick
+	Email       string `json:"email" validate:"optional"`        // The comment email
+	Link        string `json:"link" validate:"optional"`         // The comment link
 	Rid         uint   `json:"rid" validate:"required"`          // The comment rid
 	UA          string `json:"ua" validate:"required"`           // The comment ua
-	IP          string `json:"ip" validate:"required"`           // The comment ip
+	IP          string `json:"ip" validate:"optional"`           // The comment ip
 	IsCollapsed bool   `json:"is_collapsed" validate:"required"` // The comment is_collapsed
 	IsPending   bool   `json:"is_pending" validate:"required"`   // The comment is_pending
 	IsPinned    bool   `json:"is_pinned" validate:"required"`    // The comment is_pinned

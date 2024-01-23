@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// @Id           deleteSite
 // @Summary      Site Delete
 // @Description  Delete a specific site
 // @Tags         Site

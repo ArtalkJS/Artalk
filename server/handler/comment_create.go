@@ -13,8 +13,8 @@ import (
 )
 
 type ParamsCommentCreate struct {
-	Name    string `json:"name" validate:"optional"`    // The comment name
-	Email   string `json:"email" validate:"optional"`   // The comment email
+	Name    string `json:"name" validate:"required"`    // The comment name
+	Email   string `json:"email" validate:"required"`   // The comment email
 	Link    string `json:"link" validate:"optional"`    // The comment link
 	Content string `json:"content" validate:"required"` // The comment content
 	Rid     uint   `json:"rid" validate:"optional"`     // The comment rid

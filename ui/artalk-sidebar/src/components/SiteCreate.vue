@@ -33,8 +33,10 @@ async function submit() {
   isLoading.value = true
   let s: ArtalkType.SiteData
   try {
-
-    s = await artalk!.ctx.getApi().site.siteAdd(siteName, siteUrls)
+    s = (await artalk!.ctx.getApi().sites.createSite({
+      name: siteName,
+      urls: siteUrls
+    })).data
   } catch (err: any) {
     window.alert(`创建失败：${err.msg || ''}`)
     console.error(err)

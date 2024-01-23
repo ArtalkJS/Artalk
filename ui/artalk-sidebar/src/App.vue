@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 import { useNavStore } from './stores/nav'
 import { useUserStore } from './stores/user'
 import global, { bootParams, createArtalkInstance } from './global'
+import Artalk from 'artalk'
 
 const nav = useNavStore()
 const user = useUserStore()
@@ -14,9 +15,9 @@ const i18n = useI18n()
 onBeforeMount(() => {
   // 获取语言
   if (!global.getBootParams().locale) {
-    global.getArtalk().ctx.getApi().system.conf().then(resp => {
-      if (typeof resp.frontend_conf?.locale === 'string') {
-        i18n.locale.value = resp.frontend_conf.locale
+    global.getArtalk().ctx.getApi().conf.conf().then(res => {
+      if (typeof res.data.frontend_conf?.locale === 'string') {
+        i18n.locale.value = res.data.frontend_conf.locale
       }
     })
   }
@@ -34,11 +35,23 @@ onBeforeMount(() => {
   }
 
   // 验证登录身份有效性
-  global.getArtalk().ctx.getApi().user.loginStatus().then(resp => {
-    if (resp.is_admin && !resp.is_login) {
-      global.getArtalk().ctx.get('user').logout()
+  const artalkUser = global.getArtalk().ctx.get('user')
+  const artalkUserData = artalkUser.getData()
+
+  global.getArtalk().ctx.getApi().user.getUserStatus({
+    email: artalkUserData.email,
+    name: artalkUserData.nick
+  }).then(res => {
+    if (res.data.is_admin && !res.data.is_login) {
+      artalkUser.logout()
       user.logout()
       router.replace('/login')
+    } else {
+      // 将全部通知标记为已读
+      global.getArtalk().ctx.getApi().notifies.markAllNotifyRead({
+        email: artalkUserData.email,
+        name: artalkUserData.nick
+      })
     }
   })
 })

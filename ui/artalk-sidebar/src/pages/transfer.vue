@@ -99,8 +99,8 @@ async function startExportTask() {
   exportTaskStarted.value = true
   isLoading.value = true
   try {
-    const data = await artalk!.ctx.getApi().site.export()
-    downloadFile(`backup-${getYmdHisFilename()}.artrans`, data)
+    const res = await artalk!.ctx.getApi().transfer.exportArtrans()
+    downloadFile(`backup-${getYmdHisFilename()}.artrans`, res.data.artrans)
   } catch (err: any) {
     console.log(err)
     window.alert(`${String(err)}`)

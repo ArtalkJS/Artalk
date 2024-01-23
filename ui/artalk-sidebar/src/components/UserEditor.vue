@@ -9,7 +9,7 @@ interface IUserEditData {
   name: string
   email: string
   link: string
-  password: string
+  password?: string
   badge_name: string
   badge_color: string
   is_admin: boolean
@@ -47,7 +47,10 @@ onBeforeMount(() => {
       receive_email: true,
     }
   } else {
-    editUser.value = props.user
+    editUser.value = {
+      ...props.user,
+      password: '',
+    }
   }
 })
 
@@ -65,9 +68,11 @@ function submit() {
   }
 
   if (isCreateMode.value) {
-    artalk!.ctx.getApi().user.userAdd(editUser.value!, editUser.value!.password)
-      .then((respUser) => {
-        emit('update', respUser)
+    artalk!.ctx.getApi().users.createUser({
+      ...editUser.value!
+    })
+      .then((res) => {
+        emit('update', res.data)
       }).catch((e: ArtalkType.FetchError) => {
         alert('用户创建错误：'+e.message)
       }).finally(() => {
@@ -75,9 +80,11 @@ function submit() {
       })
   } else {
     const user = editUser.value!
-    artalk!.ctx.getApi().user.userEdit(user.id, user, user.password)
-      .then((respUser) => {
-        emit('update', respUser)
+    artalk!.ctx.getApi().users.updateUser(user.id, {
+      ...editUser.value!
+    })
+      .then((res) => {
+        emit('update', res.data)
       }).catch((e: ArtalkType.FetchError) => {
         alert('用户保存错误：'+e.message)
       }).finally(() => {

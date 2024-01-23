@@ -26,13 +26,13 @@ onMounted(() => {
   })
 
   Promise.all([
-    artalk!.ctx.getApi().system.getSettingsTemplate(),
-    artalk!.ctx.getApi().system.getSettings()
+    artalk!.ctx.getApi().settings.getSettingsTemplate(),
+    artalk!.ctx.getApi().settings.getSettings(),
   ]).then(([template, custom]) => {
-    const yamlObj = YAML.parseDocument(template.yaml)
+    const yamlObj = YAML.parseDocument(template.data.yaml)
     tree.value = settings.init(yamlObj).getTree()
     console.log(tree.value)
-    settings.get().setCustoms(custom.yaml)
+    settings.get().setCustoms(custom.data.yaml)
   })
 })
 
@@ -54,7 +54,9 @@ function save() {
 
   if (isLoading.value) return
   isLoading.value = true
-  artalk!.ctx.getApi().system.saveSettings(yamlStr).then(() => {
+  artalk!.ctx.getApi().settings.applySettings({
+    yaml: yamlStr
+  }).then(() => {
     alert(t('settingSaved'))
   }).catch((err) => {
     console.error(err)

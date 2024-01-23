@@ -16,8 +16,8 @@ type ParamsNotifyReadAll struct {
 // @Summary      Mark All Notifies as Read
 // @Description  Mark all notifies as read for user
 // @Tags         Notify
-// @Param        name   query  string  true  "The user name"
-// @Param        email  query  string  true  "The user email"
+// @Param        options  body  ParamsNotifyReadAll  true  "The options"
+// @Accept       json
 // @Produce      json
 // @Success      200  {object}  Map{}
 // @Failure      400  {object}  Map{msg=string}

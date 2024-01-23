@@ -16,7 +16,7 @@ type ResponseSettingTemplate struct {
 // @Description  Get config templates in different languages for rendering the settings page in the frontend
 // @Tags         System
 // @Security     ApiKeyAuth
-// @Param        locale  path  string  false  "The locale of the settings template you want to get"
+// @Param        locale  path  string  true  "The locale of the settings template you want to get"
 // @Produce      json
 // @Success      200  {object}  ResponseSettingTemplate
 // @Router       /settings/template/{locale}  [get]

@@ -23,6 +23,7 @@ type ResponseNotifyList struct {
 // @Tags         Notify
 // @Param        name   query  string  true  "The user name"
 // @Param        email  query  string  true  "The user email"
+// @Accept       json
 // @Produce      json
 // @Success      200  {object}  ResponseNotifyList
 // @Failure      400  {object}  Map{msg=string}

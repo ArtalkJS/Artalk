@@ -13,7 +13,6 @@ import (
 // @Tags         Notify
 // @Param        comment_id  path  int             true  "The comment id of the notify you want to mark as read"
 // @Param        notify_key  path  string          true  "The key of the notify"
-// @Accept       json
 // @Produce      json
 // @Success      200  {object}  Map{}
 // @Failure      400  {object}  Map{msg=string}

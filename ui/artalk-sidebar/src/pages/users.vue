@@ -51,10 +51,9 @@ onMounted(() => {
 
 function reqUsers(offset: number) {
   nav.setPageLoading(true)
-  artalk?.ctx.getApi().users.getUsers({
+  artalk?.ctx.getApi().users.getUsers(curtType.value as any, {
     offset,
-    limit: pageSize.value,
-    type: curtType.value as any,
+    limit: pageSize.value
   })
     .then(res => {
       pageTotal.value = res.data.count

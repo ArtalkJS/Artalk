@@ -72,8 +72,7 @@ async function refreshStatCount(
 
   // Fetch count data from server
   if (queryPageKeys.length > 0) {
-    const res = (await opt.getApi().stats.getStats({
-      type: args.query,
+    const res = (await opt.getApi().stats.getStats(args.query, {
       page_keys: queryPageKeys.join(','),
       site_name: opt.siteName,
     })).data.data as CountData

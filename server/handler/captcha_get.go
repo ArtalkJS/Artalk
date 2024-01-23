@@ -15,7 +15,7 @@ type ResponseCaptchaGet struct {
 // @Summary      Get Captcha
 // @Description  Get a base64 encoded captcha image or a HTML page to verify for user
 // @Tags         Captcha
-// @Produce      json,html
+// @Produce      json
 // @Success      200  {object}  ResponseCaptchaGet
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /captcha  [get]

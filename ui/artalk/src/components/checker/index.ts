@@ -28,12 +28,14 @@ export interface CheckerLauncherOptions {
 
 function wrapPromise<P extends CheckerPayload = CheckerPayload>(fn: (p: P) => void) {
   return (payload: P) => new Promise<void>((resolve, reject) => {
+    const cancelFn = payload.onCancel
     payload.onCancel = () => {
-      payload.onCancel && payload.onCancel()
+      cancelFn && cancelFn()
       reject(new Error('user canceled the checker'))
     }
+    const successFn = payload.onSuccess
     payload.onSuccess = () => {
-      payload.onSuccess && payload.onSuccess()
+      successFn && successFn()
       resolve()
     }
     fn(payload)

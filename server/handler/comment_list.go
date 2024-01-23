@@ -42,6 +42,7 @@ type ResponseCommentList struct {
 // @Tags         Comment
 // @Security     ApiKeyAuth
 // @Param        options  query  ParamsCommentList  true  "The options"
+// @Accept       json
 // @Produce      json
 // @Success      200  {object}  ResponseCommentList
 // @Failure      500  {object}  Map{msg=string}

@@ -9,12 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-export type ApplySettingsData = HandlerMap
-
-export type ApplySettingsError = HandlerMap & {
-  msg?: string
-}
-
 export interface CommonApiVersionData {
   app: string
   commit_hash: string
@@ -34,50 +28,6 @@ export interface CommonJSONResult {
 }
 
 export type CommonMap = Record<string, any>
-
-export type ConfData = CommonConfData
-
-export type CreateCommentData = HandlerResponseCommentCreate
-
-export type CreateCommentError = HandlerMap & {
-  msg?: string
-}
-
-export type CreateSiteData = HandlerResponseSiteCreate
-
-export type CreateSiteError = HandlerMap & {
-  msg?: string
-}
-
-export type CreateUserData = HandlerResponseUserCreate
-
-export type CreateUserError = HandlerMap & {
-  msg?: string
-}
-
-export type DeleteCommentData = HandlerMap
-
-export type DeleteCommentError = HandlerMap & {
-  msg?: string
-}
-
-export type DeletePageData = HandlerMap
-
-export type DeletePageError = HandlerMap & {
-  msg?: string
-}
-
-export type DeleteSiteData = HandlerMap
-
-export type DeleteSiteError = HandlerMap & {
-  msg?: string
-}
-
-export type DeleteUserData = HandlerMap
-
-export type DeleteUserError = HandlerMap & {
-  msg?: string
-}
 
 export interface EntityCookedComment {
   badge_color: string
@@ -160,179 +110,6 @@ export interface EntityCookedUserForAdmin {
   receive_email: boolean
 }
 
-export type ExportArtransData = HandlerResponseTransferExport
-
-export type ExportArtransError = HandlerMap & {
-  msg?: string
-}
-
-export type FetchAllPagesData = HandlerMap
-
-export type FetchAllPagesError = HandlerMap & {
-  msg?: string
-}
-
-export type FetchPageData = HandlerResponsePageFetch
-
-export type FetchPageError = HandlerMap & {
-  msg?: string
-}
-
-export type FlushCacheData = HandlerMap & {
-  msg?: string
-}
-
-export type FlushCacheError = HandlerMap & {
-  msg?: string
-}
-
-export type GetCaptchaData = HandlerResponseCaptchaGet
-
-export type GetCaptchaError = HandlerMap & {
-  msg?: string
-}
-
-export type GetCaptchaStatusData = HandlerResponseCaptchaStatus
-
-export type GetCommentsData = HandlerResponseCommentList
-
-export type GetCommentsError = HandlerMap & {
-  msg?: string
-}
-
-export interface GetCommentsParams {
-  /** The user email */
-  email?: string
-  /** Enable flat_mode */
-  flat_mode?: boolean
-  /** The limit for pagination */
-  limit?: number
-  /** The username */
-  name?: string
-  /** The offset for pagination */
-  offset?: number
-  /** The comment page_key */
-  page_key: string
-  /** The scope of comments */
-  scope?: 'page' | 'user' | 'site'
-  /** Search keywords */
-  search?: string
-  /** The site name of your content scope */
-  site_name?: string
-  /** Sort by condition */
-  sort_by?: 'date_asc' | 'date_desc' | 'vote'
-  /** Message center show type */
-  type?: 'all' | 'mentions' | 'mine' | 'pending'
-  /** Only show comments by admin */
-  view_only_admin?: boolean
-}
-
-export type GetNotifiesData = HandlerResponseNotifyList
-
-export type GetNotifiesError = HandlerMap & {
-  msg?: string
-}
-
-export interface GetNotifiesParams {
-  /** The user email */
-  email: string
-  /** The user name */
-  name: string
-}
-
-export type GetPageFetchStatusData = HandlerResponsePageFetchStatus
-
-export type GetPagesData = HandlerResponsePageList
-
-export type GetPagesError = HandlerMap & {
-  msg?: string
-}
-
-export interface GetPagesParams {
-  /** The limit for pagination */
-  limit?: number
-  /** The offset for pagination */
-  offset?: number
-  /** The site name of your content scope */
-  site_name?: string
-}
-
-export type GetSettingsData = HandlerResponseSettingGet
-
-export type GetSettingsError = HandlerMap & {
-  msg?: string
-}
-
-export type GetSettingsTemplateData = HandlerResponseSettingTemplate
-
-export type GetSitesData = HandlerResponseSiteList
-
-export type GetStatsData = CommonJSONResult
-
-export type GetStatsError = HandlerMap & {
-  msg?: string
-}
-
-export interface GetStatsParams {
-  /** The limit for pagination */
-  limit?: number
-  /** multiple page keys separated by commas */
-  page_keys?: string
-  /** The site name of your content scope */
-  site_name?: string
-  /** The type of statistics */
-  type:
-    | 'latest_comments'
-    | 'latest_pages'
-    | 'pv_most_pages'
-    | 'comment_most_pages'
-    | 'page_pv'
-    | 'site_pv'
-    | 'page_comment'
-    | 'site_comment'
-    | 'rand_comments'
-    | 'rand_pages'
-}
-
-export type GetUserData = HandlerResponseUserInfo
-
-export type GetUserError = HandlerMap & {
-  msg?: string
-}
-
-export interface GetUserParams {
-  /** The user email */
-  email?: string
-  /** The username */
-  name?: string
-}
-
-export type GetUserStatusData = HandlerResponseUserStatus
-
-export interface GetUserStatusParams {
-  /** The user email */
-  email?: string
-  /** The username */
-  name?: string
-}
-
-export type GetUsersData = HandlerResponseAdminUserList
-
-export type GetUsersError = HandlerMap & {
-  msg?: string
-}
-
-export interface GetUsersParams {
-  /** The limit for pagination */
-  limit?: number
-  /** The offset for pagination */
-  offset?: number
-  /** The type of users */
-  type?: 'all' | 'admin' | 'in_conf'
-}
-
-export type GetVersionData = CommonApiVersionData
-
 export type HandlerMap = Record<string, any>
 
 export interface HandlerParamsCaptchaVerify {
@@ -395,6 +172,13 @@ export interface HandlerParamsEmailSend {
   subject: string
   /** The email address of the receiver */
   to_addr: string
+}
+
+export interface HandlerParamsNotifyReadAll {
+  /** The user email */
+  email: string
+  /** The username */
+  name: string
 }
 
 export interface HandlerParamsPageFetchAll {
@@ -728,126 +512,6 @@ export interface HandlerResponseVote {
   up: number
 }
 
-export type ImportArtransData = string
-
-export type LogPvData = HandlerResponsePagePV
-
-export type LoginData = HandlerResponseUserLogin
-
-export type LoginError =
-  | (HandlerMap & {
-      ' data'?: {
-        need_name_select?: string[]
-      }
-      msg?: string
-    })
-  | (HandlerMap & {
-      msg?: string
-    })
-
-export type MarkAllNotifyReadData = HandlerMap
-
-export type MarkAllNotifyReadError = HandlerMap & {
-  msg?: string
-}
-
-export interface MarkAllNotifyReadParams {
-  /** The user email */
-  email: string
-  /** The user name */
-  name: string
-}
-
-export type MarkNotifyReadData = HandlerMap
-
-export type MarkNotifyReadError = HandlerMap & {
-  msg?: string
-}
-
-export type SendEmailData = HandlerMap
-
-export type SendEmailError =
-  | (HandlerMap & {
-      msg?: string
-    })
-  | HandlerMap
-
-export type SyncVotesData = HandlerMap
-
-export type SyncVotesError = HandlerMap & {
-  msg?: string
-}
-
-export type UpdateCommentData = HandlerResponseCommentUpdate
-
-export type UpdateCommentError = HandlerMap & {
-  msg?: string
-}
-
-export type UpdatePageData = HandlerResponsePageUpdate
-
-export type UpdatePageError = HandlerMap & {
-  msg?: string
-}
-
-export type UpdateSiteData = HandlerResponseSiteUpdate
-
-export type UpdateUserData = HandlerResponseUserUpdate
-
-export type UpdateUserError = HandlerMap & {
-  msg?: string
-}
-
-export type UploadArtransData = HandlerResponseTransferUpload & {
-  filename?: string
-}
-
-export type UploadArtransError = HandlerMap & {
-  msg?: string
-}
-
-export interface UploadArtransPayload {
-  /**
-   * Upload file in preparation for import task
-   * @format binary
-   */
-  file: File
-}
-
-export type UploadData = HandlerResponseUpload
-
-export type UploadError = HandlerMap & {
-  msg?: string
-}
-
-export interface UploadPayload {
-  /**
-   * Upload file
-   * @format binary
-   */
-  file: File
-}
-
-export type VerifyCaptchaData = HandlerMap
-
-export type VerifyCaptchaError = HandlerMap & {
-  img_data?: string
-}
-
-export type VoteData = HandlerResponseVote
-
-export type VoteError = HandlerMap & {
-  msg?: string
-}
-
-export type WarmUpCacheData = HandlerMap & {
-  msg?: string
-}
-
-export type WarmUpCacheError = HandlerMap & {
-  msg?: string
-}
-
 export type QueryParamsType = Record<string | number, any>
 export type ResponseFormat = keyof Omit<Body, 'body' | 'bodyUsed'>
 
@@ -1077,7 +741,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Flush Cache
  * @request POST:/cache/flush
  * @secure
- * @response `200` `FlushCacheData` OK
+ * @response `200` `(HandlerMap & {
+    msg?: string,
+
+})` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1088,10 +755,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Forbidden
  */
     flushCache: (params: RequestParams = {}) =>
-      this.request<FlushCacheData, FlushCacheError>({
+      this.request<
+        HandlerMap & {
+          msg?: string
+        },
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/cache/flush`,
         method: 'POST',
         secure: true,
+        format: 'json',
         ...params,
       }),
 
@@ -1103,7 +778,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Warm-Up Cache
  * @request POST:/cache/warm_up
  * @secure
- * @response `200` `WarmUpCacheData` OK
+ * @response `200` `(HandlerMap & {
+    msg?: string,
+
+})` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1114,10 +792,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Forbidden
  */
     warmUpCache: (params: RequestParams = {}) =>
-      this.request<WarmUpCacheData, WarmUpCacheError>({
+      this.request<
+        HandlerMap & {
+          msg?: string
+        },
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/cache/warm_up`,
         method: 'POST',
         secure: true,
+        format: 'json',
         ...params,
       }),
   }
@@ -1129,16 +815,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @name GetCaptcha
  * @summary Get Captcha
  * @request GET:/captcha
- * @response `200` `GetCaptchaData` OK
+ * @response `200` `HandlerResponseCaptchaGet` OK
  * @response `500` `(HandlerMap & {
     msg?: string,
 
 })` Internal Server Error
  */
     getCaptcha: (params: RequestParams = {}) =>
-      this.request<GetCaptchaData, GetCaptchaError>({
+      this.request<
+        HandlerResponseCaptchaGet,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/captcha`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
 
@@ -1149,12 +841,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetCaptchaStatus
      * @summary Get Captcha Status
      * @request GET:/captcha/status
-     * @response `200` `GetCaptchaStatusData` OK
+     * @response `200` `HandlerResponseCaptchaStatus` OK
      */
     getCaptchaStatus: (params: RequestParams = {}) =>
-      this.request<GetCaptchaStatusData, any>({
+      this.request<HandlerResponseCaptchaStatus, any>({
         path: `/captcha/status`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
 
@@ -1165,18 +858,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @name VerifyCaptcha
  * @summary Verify Captcha
  * @request POST:/captcha/verify
- * @response `200` `VerifyCaptchaData` OK
+ * @response `200` `HandlerMap` OK
  * @response `403` `(HandlerMap & {
     img_data?: string,
 
 })` Forbidden
  */
     verifyCaptcha: (data: HandlerParamsCaptchaVerify, params: RequestParams = {}) =>
-      this.request<VerifyCaptchaData, VerifyCaptchaError>({
+      this.request<
+        HandlerMap,
+        HandlerMap & {
+          img_data?: string
+        }
+      >({
         path: `/captcha/verify`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }
@@ -1189,18 +888,53 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Get Comment List
  * @request GET:/comments
  * @secure
- * @response `200` `GetCommentsData` OK
+ * @response `200` `HandlerResponseCommentList` OK
  * @response `500` `(HandlerMap & {
     msg?: string,
 
 })` Internal Server Error
  */
-    getComments: (query: GetCommentsParams, params: RequestParams = {}) =>
-      this.request<GetCommentsData, GetCommentsError>({
+    getComments: (
+      query: {
+        /** The user email */
+        email?: string
+        /** Enable flat_mode */
+        flat_mode?: boolean
+        /** The limit for pagination */
+        limit?: number
+        /** The username */
+        name?: string
+        /** The offset for pagination */
+        offset?: number
+        /** The comment page_key */
+        page_key: string
+        /** The scope of comments */
+        scope?: 'page' | 'user' | 'site'
+        /** Search keywords */
+        search?: string
+        /** The site name of your content scope */
+        site_name?: string
+        /** Sort by condition */
+        sort_by?: 'date_asc' | 'date_desc' | 'vote'
+        /** Message center show type */
+        type?: 'all' | 'mentions' | 'mine' | 'pending'
+        /** Only show comments by admin */
+        view_only_admin?: boolean
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        HandlerResponseCommentList,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/comments`,
         method: 'GET',
         query: query,
         secure: true,
+        type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1212,7 +946,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Create Comment
  * @request POST:/comments
  * @secure
- * @response `200` `CreateCommentData` OK
+ * @response `200` `HandlerResponseCommentCreate` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1223,12 +957,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     createComment: (comment: HandlerParamsCommentCreate, params: RequestParams = {}) =>
-      this.request<CreateCommentData, CreateCommentError>({
+      this.request<
+        HandlerResponseCommentCreate,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/comments`,
         method: 'POST',
         body: comment,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1240,7 +980,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Update Comment
  * @request PUT:/comments/{id}
  * @secure
- * @response `200` `UpdateCommentData` OK
+ * @response `200` `HandlerResponseCommentUpdate` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1259,12 +999,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     updateComment: (id: number, comment: HandlerParamsCommentUpdate, params: RequestParams = {}) =>
-      this.request<UpdateCommentData, UpdateCommentError>({
+      this.request<
+        HandlerResponseCommentUpdate,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/comments/${id}`,
         method: 'PUT',
         body: comment,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1276,7 +1022,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Delete Comment
  * @request DELETE:/comments/{id}
  * @secure
- * @response `200` `DeleteCommentData` OK
+ * @response `200` `HandlerMap` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
@@ -1291,10 +1037,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     deleteComment: (id: number, params: RequestParams = {}) =>
-      this.request<DeleteCommentData, DeleteCommentError>({
+      this.request<
+        HandlerMap,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/comments/${id}`,
         method: 'DELETE',
         secure: true,
+        format: 'json',
         ...params,
       }),
   }
@@ -1306,12 +1058,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name Conf
      * @summary Get System Configs
      * @request GET:/conf
-     * @response `200` `ConfData` OK
+     * @response `200` `CommonConfData` OK
      */
     conf: (params: RequestParams = {}) =>
-      this.request<ConfData, any>({
+      this.request<CommonConfData, any>({
         path: `/conf`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
   }
@@ -1323,7 +1076,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @name GetNotifies
  * @summary Get Notifies
  * @request GET:/notifies
- * @response `200` `GetNotifiesData` OK
+ * @response `200` `HandlerResponseNotifyList` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1333,11 +1086,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    getNotifies: (query: GetNotifiesParams, params: RequestParams = {}) =>
-      this.request<GetNotifiesData, GetNotifiesError>({
+    getNotifies: (
+      query: {
+        /** The user email */
+        email: string
+        /** The user name */
+        name: string
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        HandlerResponseNotifyList,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/notifies`,
         method: 'GET',
         query: query,
+        type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1348,7 +1116,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @name MarkAllNotifyRead
  * @summary Mark All Notifies as Read
  * @request POST:/notifies/read
- * @response `200` `MarkAllNotifyReadData` OK
+ * @response `200` `HandlerMap` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1358,11 +1126,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    markAllNotifyRead: (query: MarkAllNotifyReadParams, params: RequestParams = {}) =>
-      this.request<MarkAllNotifyReadData, MarkAllNotifyReadError>({
+    markAllNotifyRead: (options: HandlerParamsNotifyReadAll, params: RequestParams = {}) =>
+      this.request<
+        HandlerMap,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/notifies/read`,
         method: 'POST',
-        query: query,
+        body: options,
+        type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1373,7 +1148,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @name MarkNotifyRead
  * @summary Mark Notify as Read
  * @request POST:/notifies/{comment_id}/{notify_key}
- * @response `200` `MarkNotifyReadData` OK
+ * @response `200` `HandlerMap` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1388,10 +1163,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     markNotifyRead: (commentId: number, notifyKey: string, params: RequestParams = {}) =>
-      this.request<MarkNotifyReadData, MarkNotifyReadError>({
+      this.request<
+        HandlerMap,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/notifies/${commentId}/${notifyKey}`,
         method: 'POST',
-        type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }
@@ -1404,19 +1184,35 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Get Page List
  * @request GET:/pages
  * @secure
- * @response `200` `GetPagesData` OK
+ * @response `200` `HandlerResponsePageList` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
 })` Forbidden
  */
-    getPages: (query: GetPagesParams, params: RequestParams = {}) =>
-      this.request<GetPagesData, GetPagesError>({
+    getPages: (
+      query?: {
+        /** The limit for pagination */
+        limit?: number
+        /** The offset for pagination */
+        offset?: number
+        /** The site name of your content scope */
+        site_name?: string
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        HandlerResponsePageList,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/pages`,
         method: 'GET',
         query: query,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1428,7 +1224,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Fetch All Pages Data
  * @request POST:/pages/fetch
  * @secure
- * @response `200` `FetchAllPagesData` OK
+ * @response `200` `HandlerMap` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1439,12 +1235,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     fetchAllPages: (options: HandlerParamsPageFetchAll, params: RequestParams = {}) =>
-      this.request<FetchAllPagesData, FetchAllPagesError>({
+      this.request<
+        HandlerMap,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/pages/fetch`,
         method: 'POST',
         body: options,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1456,13 +1258,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get Pages Fetch Status
      * @request GET:/pages/fetch/status
      * @secure
-     * @response `200` `GetPageFetchStatusData` OK
+     * @response `200` `HandlerResponsePageFetchStatus` OK
      */
     getPageFetchStatus: (params: RequestParams = {}) =>
-      this.request<GetPageFetchStatusData, any>({
+      this.request<HandlerResponsePageFetchStatus, any>({
         path: `/pages/fetch/status`,
         method: 'GET',
         secure: true,
+        format: 'json',
         ...params,
       }),
 
@@ -1473,14 +1276,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name LogPv
      * @summary Increase Page Views (PV)
      * @request POST:/pages/pv
-     * @response `200` `LogPvData` OK
+     * @response `200` `HandlerResponsePagePV` OK
      */
     logPv: (page: HandlerParamsPagePV, params: RequestParams = {}) =>
-      this.request<LogPvData, any>({
+      this.request<HandlerResponsePagePV, any>({
         path: `/pages/pv`,
         method: 'POST',
         body: page,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1492,7 +1296,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Update Page
  * @request PUT:/pages/{id}
  * @secure
- * @response `200` `UpdatePageData` OK
+ * @response `200` `HandlerResponsePageUpdate` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1511,12 +1315,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     updatePage: (id: number, page: HandlerParamsPageUpdate, params: RequestParams = {}) =>
-      this.request<UpdatePageData, UpdatePageError>({
+      this.request<
+        HandlerResponsePageUpdate,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/pages/${id}`,
         method: 'PUT',
         body: page,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1528,7 +1338,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Delete Page
  * @request DELETE:/pages/{id}
  * @secure
- * @response `200` `DeletePageData` OK
+ * @response `200` `HandlerMap` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
@@ -1543,10 +1353,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     deletePage: (id: number, params: RequestParams = {}) =>
-      this.request<DeletePageData, DeletePageError>({
+      this.request<
+        HandlerMap,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/pages/${id}`,
         method: 'DELETE',
         secure: true,
+        format: 'json',
         ...params,
       }),
 
@@ -1558,7 +1374,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Fetch Page Data
  * @request POST:/pages/{id}/fetch
  * @secure
- * @response `200` `FetchPageData` OK
+ * @response `200` `HandlerResponsePageFetch` OK
  * @response `404` `(HandlerMap & {
     msg?: string,
 
@@ -1569,11 +1385,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     fetchPage: (id: number, params: RequestParams = {}) =>
-      this.request<FetchPageData, FetchPageError>({
+      this.request<
+        HandlerResponsePageFetch,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/pages/${id}/fetch`,
         method: 'POST',
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }
@@ -1586,7 +1408,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Send Email
  * @request POST:/send_email
  * @secure
- * @response `200` `SendEmailData` OK
+ * @response `200` `HandlerMap` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
@@ -1594,12 +1416,19 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @response `500` `HandlerMap` Internal Server Error
  */
     sendEmail: (email: HandlerParamsEmailSend, params: RequestParams = {}) =>
-      this.request<SendEmailData, SendEmailError>({
+      this.request<
+        HandlerMap,
+        | (HandlerMap & {
+            msg?: string
+          })
+        | HandlerMap
+      >({
         path: `/send_email`,
         method: 'POST',
         body: email,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }
@@ -1612,7 +1441,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Get Settings
  * @request GET:/settings
  * @secure
- * @response `200` `GetSettingsData` OK
+ * @response `200` `HandlerResponseSettingGet` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
@@ -1623,10 +1452,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     getSettings: (params: RequestParams = {}) =>
-      this.request<GetSettingsData, GetSettingsError>({
+      this.request<
+        HandlerResponseSettingGet,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/settings`,
         method: 'GET',
         secure: true,
+        format: 'json',
         ...params,
       }),
 
@@ -1638,7 +1473,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Save and apply Settings
  * @request PUT:/settings
  * @secure
- * @response `200` `ApplySettingsData` OK
+ * @response `200` `HandlerMap` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
@@ -1649,12 +1484,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     applySettings: (settings: HandlerParamsSettingApply, params: RequestParams = {}) =>
-      this.request<ApplySettingsData, ApplySettingsError>({
+      this.request<
+        HandlerMap,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/settings`,
         method: 'PUT',
         body: settings,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1666,13 +1507,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get Settings Template
      * @request GET:/settings/template/{locale}
      * @secure
-     * @response `200` `GetSettingsTemplateData` OK
+     * @response `200` `HandlerResponseSettingTemplate` OK
      */
-    getSettingsTemplate: (locale?: string, params: RequestParams = {}) =>
-      this.request<GetSettingsTemplateData, any>({
+    getSettingsTemplate: (locale: string, params: RequestParams = {}) =>
+      this.request<HandlerResponseSettingTemplate, any>({
         path: `/settings/template/${locale}`,
         method: 'GET',
         secure: true,
+        format: 'json',
         ...params,
       }),
   }
@@ -1685,13 +1527,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get Site List
      * @request GET:/sites
      * @secure
-     * @response `200` `GetSitesData` OK
+     * @response `200` `HandlerResponseSiteList` OK
      */
     getSites: (params: RequestParams = {}) =>
-      this.request<GetSitesData, any>({
+      this.request<HandlerResponseSiteList, any>({
         path: `/sites`,
         method: 'GET',
         secure: true,
+        format: 'json',
         ...params,
       }),
 
@@ -1703,7 +1546,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Create Site
  * @request POST:/sites
  * @secure
- * @response `200` `CreateSiteData` OK
+ * @response `200` `HandlerResponseSiteCreate` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1718,12 +1561,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     createSite: (site: HandlerParamsSiteCreate, params: RequestParams = {}) =>
-      this.request<CreateSiteData, CreateSiteError>({
+      this.request<
+        HandlerResponseSiteCreate,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/sites`,
         method: 'POST',
         body: site,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1735,15 +1584,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Update Site
      * @request PUT:/sites/{id}
      * @secure
-     * @response `200` `UpdateSiteData` OK
+     * @response `200` `HandlerResponseSiteUpdate` OK
      */
     updateSite: (id: number, site: HandlerParamsSiteUpdate, params: RequestParams = {}) =>
-      this.request<UpdateSiteData, any>({
+      this.request<HandlerResponseSiteUpdate, any>({
         path: `/sites/${id}`,
         method: 'PUT',
         body: site,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1755,7 +1605,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Site Delete
  * @request DELETE:/sites/{id}
  * @secure
- * @response `200` `DeleteSiteData` OK
+ * @response `200` `HandlerMap` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
@@ -1770,10 +1620,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     deleteSite: (id: number, params: RequestParams = {}) =>
-      this.request<DeleteSiteData, DeleteSiteError>({
+      this.request<
+        HandlerMap,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/sites/${id}`,
         method: 'DELETE',
         secure: true,
+        format: 'json',
         ...params,
       }),
   }
@@ -1785,7 +1641,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @name GetStats
  * @summary Statistic
  * @request GET:/stats/{type}
- * @response `200` `GetStatsData` OK
+ * @response `200` `CommonJSONResult` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1803,12 +1659,39 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    getStats: ({ type, ...query }: GetStatsParams, params: RequestParams = {}) =>
-      this.request<GetStatsData, GetStatsError>({
+    getStats: (
+      type:
+        | 'latest_comments'
+        | 'latest_pages'
+        | 'pv_most_pages'
+        | 'comment_most_pages'
+        | 'page_pv'
+        | 'site_pv'
+        | 'page_comment'
+        | 'site_comment'
+        | 'rand_comments'
+        | 'rand_pages',
+      query?: {
+        /** The limit for pagination */
+        limit?: number
+        /** multiple page keys separated by commas */
+        page_keys?: string
+        /** The site name of your content scope */
+        site_name?: string
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        CommonJSONResult,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/stats/${type}`,
         method: 'GET',
         query: query,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }
@@ -1821,17 +1704,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Export Artrans
  * @request GET:/transfer/export
  * @secure
- * @response `200` `ExportArtransData` OK
+ * @response `200` `HandlerResponseTransferExport` OK
  * @response `500` `(HandlerMap & {
     msg?: string,
 
 })` Internal Server Error
  */
     exportArtrans: (params: RequestParams = {}) =>
-      this.request<ExportArtransData, ExportArtransError>({
+      this.request<
+        HandlerResponseTransferExport,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/transfer/export`,
         method: 'GET',
         secure: true,
+        format: 'json',
         ...params,
       }),
 
@@ -1843,10 +1732,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Import Artrans
      * @request POST:/transfer/import
      * @secure
-     * @response `200` `ImportArtransData` OK
+     * @response `200` `string` OK
      */
     importArtrans: (data: HandlerParamsTransferImport, params: RequestParams = {}) =>
-      this.request<ImportArtransData, any>({
+      this.request<string, any>({
         path: `/transfer/import`,
         method: 'POST',
         body: data,
@@ -1863,19 +1752,39 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Upload Artrans
  * @request POST:/transfer/upload
  * @secure
- * @response `200` `UploadArtransData` OK
+ * @response `200` `(HandlerResponseTransferUpload & {
+    filename?: string,
+
+})` OK
  * @response `500` `(HandlerMap & {
     msg?: string,
 
 })` Internal Server Error
  */
-    uploadArtrans: (data: UploadArtransPayload, params: RequestParams = {}) =>
-      this.request<UploadArtransData, UploadArtransError>({
+    uploadArtrans: (
+      data: {
+        /**
+         * Upload file in preparation for import task
+         * @format binary
+         */
+        file: File
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        HandlerResponseTransferUpload & {
+          filename?: string
+        },
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/transfer/upload`,
         method: 'POST',
         body: data,
         secure: true,
         type: ContentType.FormData,
+        format: 'json',
         ...params,
       }),
   }
@@ -1888,7 +1797,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Upload
  * @request POST:/upload
  * @secure
- * @response `200` `UploadData` OK
+ * @response `200` `HandlerResponseUpload` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -1902,13 +1811,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    upload: (data: UploadPayload, params: RequestParams = {}) =>
-      this.request<UploadData, UploadError>({
+    upload: (
+      data: {
+        /**
+         * Upload file
+         * @format binary
+         */
+        file: File
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        HandlerResponseUpload,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/upload`,
         method: 'POST',
         body: data,
         secure: true,
         type: ContentType.FormData,
+        format: 'json',
         ...params,
       }),
   }
@@ -1921,18 +1845,32 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Get User Info
  * @request GET:/user
  * @secure
- * @response `200` `GetUserData` OK
+ * @response `200` `HandlerResponseUserInfo` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
 })` Bad Request
  */
-    getUser: (query: GetUserParams, params: RequestParams = {}) =>
-      this.request<GetUserData, GetUserError>({
+    getUser: (
+      query?: {
+        /** The user email */
+        email?: string
+        /** The username */
+        name?: string
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        HandlerResponseUserInfo,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/user`,
         method: 'GET',
         query: query,
         secure: true,
+        format: 'json',
         ...params,
       }),
 
@@ -1943,7 +1881,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @name Login
  * @summary Get Access Token
  * @request POST:/user/access_token
- * @response `200` `LoginData` OK
+ * @response `200` `HandlerResponseUserLogin` OK
  * @response `400` `(HandlerMap & {
     " data"?: {
     need_name_select?: (string)[],
@@ -1962,11 +1900,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     login: (user: HandlerParamsUserLogin, params: RequestParams = {}) =>
-      this.request<LoginData, LoginError>({
+      this.request<
+        HandlerResponseUserLogin,
+        | (HandlerMap & {
+            ' data'?: {
+              need_name_select?: string[]
+            }
+            msg?: string
+          })
+        | (HandlerMap & {
+            msg?: string
+          })
+      >({
         path: `/user/access_token`,
         method: 'POST',
         body: user,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1978,14 +1928,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get Login Status
      * @request GET:/user/status
      * @secure
-     * @response `200` `GetUserStatusData` OK
+     * @response `200` `HandlerResponseUserStatus` OK
      */
-    getUserStatus: (query: GetUserStatusParams, params: RequestParams = {}) =>
-      this.request<GetUserStatusData, any>({
+    getUserStatus: (
+      query?: {
+        /** The user email */
+        email?: string
+        /** The username */
+        name?: string
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<HandlerResponseUserStatus, any>({
         path: `/user/status`,
         method: 'GET',
         query: query,
         secure: true,
+        format: 'json',
         ...params,
       }),
   }
@@ -1998,7 +1957,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Create User
  * @request POST:/users
  * @secure
- * @response `200` `CreateUserData` OK
+ * @response `200` `HandlerResponseUserCreate` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -2013,12 +1972,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     createUser: (user: HandlerParamsUserCreate, params: RequestParams = {}) =>
-      this.request<CreateUserData, CreateUserError>({
+      this.request<
+        HandlerResponseUserCreate,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/users`,
         method: 'POST',
         body: user,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -2030,7 +1995,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Update User
  * @request PUT:/users/{id}
  * @secure
- * @response `200` `UpdateUserData` OK
+ * @response `200` `HandlerResponseUserUpdate` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
@@ -2049,12 +2014,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     updateUser: (id: number, user: HandlerParamsUserUpdate, params: RequestParams = {}) =>
-      this.request<UpdateUserData, UpdateUserError>({
+      this.request<
+        HandlerResponseUserUpdate,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/users/${id}`,
         method: 'PUT',
         body: user,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -2066,7 +2037,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Delete User
  * @request DELETE:/users/{id}
  * @secure
- * @response `200` `DeleteUserData` OK
+ * @response `200` `HandlerMap` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
@@ -2081,10 +2052,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 })` Internal Server Error
  */
     deleteUser: (id: number, params: RequestParams = {}) =>
-      this.request<DeleteUserData, DeleteUserError>({
+      this.request<
+        HandlerMap,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/users/${id}`,
         method: 'DELETE',
         secure: true,
+        format: 'json',
         ...params,
       }),
 
@@ -2096,19 +2073,34 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Get User List
  * @request GET:/users/{type}
  * @secure
- * @response `200` `GetUsersData` OK
+ * @response `200` `HandlerResponseAdminUserList` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
 })` Forbidden
  */
-    getUsers: ({ type, ...query }: GetUsersParams, params: RequestParams = {}) =>
-      this.request<GetUsersData, GetUsersError>({
+    getUsers: (
+      type?: 'all' | 'admin' | 'in_conf',
+      query?: {
+        /** The limit for pagination */
+        limit?: number
+        /** The offset for pagination */
+        offset?: number
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        HandlerResponseAdminUserList,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/users/${type}`,
         method: 'GET',
         query: query,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }
@@ -2120,12 +2112,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetVersion
      * @summary Get Version Info
      * @request GET:/version
-     * @response `200` `GetVersionData` OK
+     * @response `200` `CommonApiVersionData` OK
      */
     getVersion: (params: RequestParams = {}) =>
-      this.request<GetVersionData, any>({
+      this.request<CommonApiVersionData, any>({
         path: `/version`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
   }
@@ -2138,17 +2131,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Sync Vote Data
  * @request POST:/votes/sync
  * @secure
- * @response `200` `SyncVotesData` OK
+ * @response `200` `HandlerMap` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
 })` Forbidden
  */
     syncVotes: (params: RequestParams = {}) =>
-      this.request<SyncVotesData, SyncVotesError>({
+      this.request<
+        HandlerMap,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/votes/sync`,
         method: 'POST',
         secure: true,
+        format: 'json',
         ...params,
       }),
 
@@ -2159,7 +2158,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @name Vote
  * @summary Vote
  * @request POST:/votes/{type}/{target_id}
- * @response `200` `VoteData` OK
+ * @response `200` `HandlerResponseVote` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
 
@@ -2179,11 +2178,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       vote: HandlerParamsVote,
       params: RequestParams = {},
     ) =>
-      this.request<VoteData, VoteError>({
+      this.request<
+        HandlerResponseVote,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
         path: `/votes/${type}/${targetId}`,
         method: 'POST',
         body: vote,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }

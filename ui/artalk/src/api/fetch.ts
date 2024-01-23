@@ -4,15 +4,20 @@ import { FetchError } from '@/types'
 import { ApiOptions } from './options'
 
 export const Fetch = async (opts: ApiOptions, input: string | URL | Request, init?: RequestInit) => {
+  const apiToken = opts.getApiToken && opts.getApiToken()
+
   const headers = new Headers({
-    'Authorization': opts.apiToken ? `Bearer ${opts.apiToken}` : '',
+    'Authorization': apiToken ? `Bearer ${apiToken}` : '',
     ...init?.headers,
   })
 
   if (!headers.get('Authorization')) headers.delete('Authorization')
 
   // 请求操作
-  const resp = await fetch(input, init)
+  const resp = await fetch(input, {
+    ...init,
+    headers,
+  })
 
   if (!resp.ok) {
     // 解析响应的 json
@@ -22,7 +27,7 @@ export const Fetch = async (opts: ApiOptions, input: string | URL | Request, ini
     if (json.need_captcha) {
         // 请求需要验证码
         opts.onNeedCheckCaptcha && await opts.onNeedCheckCaptcha({
-        data: { imgData: json.data.img_data, iframe: json.data.iframe }
+          data: { imgData: json.data.img_data, iframe: json.data.iframe }
         })
         return Fetch(opts, input, init) // retry
     }

@@ -27,16 +27,13 @@ export interface CommentData {
   date: string
 
   /** 是否折叠 */
-  is_collapsed?: boolean
+  is_collapsed: boolean
 
   /** 是否待审 */
-  is_pending?: boolean
+  is_pending: boolean
 
   /** 是否置顶 */
-  is_pinned?: boolean
-
-  /** 是否为管理员 */
-  is_admin?: boolean
+  is_pinned: boolean
 
   /** 徽章文字 */
   badge_name?: string
@@ -48,7 +45,7 @@ export interface CommentData {
   ip_region?: string
 
   /** 是否允许回复 */
-  is_allow_reply?: boolean
+  is_allow_reply: boolean
 
   /** 评论页面 key */
   page_key: string
@@ -74,28 +71,13 @@ export interface ListData {
   comments: CommentData[]
 
   /** 根评论总数 */
-  total_roots: number
+  roots_count: number
 
   /** 评论总数（包括所有子评论） */
-  total: number
+  count: number
 
   /** 页面信息 */
   page: PageData
-
-  /** 站点信息 */
-  site: SiteData
-
-  /** 未读的 Notifies */
-  unread: NotifyData[]
-
-  /** 未读计数 */
-  unread_count: number
-
-  /** API 版本 */
-  api_version: ApiVersionData
-
-  /** 后端配置 */
-  conf: any // TODO
 }
 
 export interface PageData {
@@ -163,12 +145,6 @@ export interface UserData {
   /** 是否属于管理员 */
   is_admin: boolean
 
-  /** 所属站点名 */
-  site_names: string[]
-
-  /** 所属站点名 (字符串) */
-  site_names_raw: string,
-
   /** 是否允许接收邮件通知 */
   receive_email: boolean
 }
@@ -185,9 +161,6 @@ export interface UserDataForAdmin extends UserData {
 
   /** 评论数 */
   comment_count: number
-
-  /** 密码 */
-  password: string
 }
 
 export interface NotifyData {
@@ -261,11 +234,24 @@ export interface DataManagerApi {
   updateComment(comment: CommentData): void
   deleteComment(id: number): void
 
-  getUnreads(): NotifyData[]
-  updateUnreads(unreads: NotifyData[]): void
+  getNotifies(): NotifyData[]
+  updateNotifies(notifies: NotifyData[]): void
 
   getPage(): PageData|undefined
   updatePage(pageData: PageData): void
 }
 
 export type NotifyLevel = "i" | "s" | "w" | "e"
+
+export interface UserInfoApiResponseData {
+  user?: UserData
+  is_login: boolean
+  notifies: NotifyData[]
+  notifies_count: number
+}
+
+export interface FetchError extends Error {
+  code: number
+  message: string
+  data?: any
+}

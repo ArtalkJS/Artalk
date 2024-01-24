@@ -1,29 +1,27 @@
-import { ApiOptions } from './_options'
-import comment from './comment'
-import page from './page'
-import site from './site'
-import user from './user'
-import system from './system'
-import captcha from './captcha'
-import admin from './admin'
-import upload from './upload'
+import { ApiOptions } from './options'
+import { Api as ApiV2 } from './v2'
+import { Fetch } from './fetch'
 
-const ApiComponents = {
-  comment, page, site,
-  user, system, captcha,
-  admin, upload
-}
+export class Api extends ApiV2<void> {
+  private _opts: ApiOptions
 
-class Api {
-  constructor (opts: ApiOptions) {
-    Object.entries(ApiComponents).forEach(([key, ApiComponent]) => {
-      this[key] = new ApiComponent(opts)
+  constructor(opts: ApiOptions) {
+    super({
+      baseUrl: opts.baseURL,
+      customFetch: (input, init) => Fetch(opts, input, init)
     })
+
+    this._opts = opts
+  }
+
+  /**
+   * Get user info as params for request
+   *
+   * @returns Request params with user info
+   */
+  getUserFields() {
+    const user = this._opts.userInfo
+    if (!user?.name || !user?.email) return undefined
+    return { name: user.name, email: user.email }
   }
 }
-
-type TC = typeof ApiComponents
-type AC = { [K in keyof TC]: InstanceType<TC[K]> }
-interface Api extends AC {}
-
-export default Api

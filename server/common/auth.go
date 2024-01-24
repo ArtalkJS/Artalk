@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/gofiber/fiber/v2"
@@ -47,11 +46,6 @@ func LoginGetUserToken(user entity.User, key string, ttl int) string {
 	return t
 }
 
-func GetJwtStrByReqCookie(c *fiber.Ctx) string {
-	cookie := c.Cookies(config.COOKIE_KEY_ATK_AUTH)
-	return cookie
-}
-
 func GetJwtInstanceByReq(app *core.App, c *fiber.Ctx) *jwt.Token {
 	token := c.Query("token")
 	if token == "" {
@@ -60,9 +54,6 @@ func GetJwtInstanceByReq(app *core.App, c *fiber.Ctx) *jwt.Token {
 	if token == "" {
 		token = c.Get(fiber.HeaderAuthorization)
 		token = strings.TrimPrefix(token, "Bearer ")
-	}
-	if token == "" && app.Conf().Cookie.Enabled {
-		token = GetJwtStrByReqCookie(c)
 	}
 	if token == "" {
 		return nil

@@ -45,7 +45,5 @@ func CorsMiddleware(app *core.App) func(*fiber.Ctx) error {
 		AllowOriginsFunc: func(origin string) bool {
 			return isOriginAllowed(app, origin)
 		},
-		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
-		AllowCredentials: true, // allow cors with cookies
 	})
 }

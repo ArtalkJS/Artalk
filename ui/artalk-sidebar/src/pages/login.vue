@@ -7,7 +7,8 @@
 </route>
 
 <script setup lang="ts">
-import global, { bootParams, createArtalkInstance } from '../global'
+import { getArtalk } from '../global'
+import { useUserStore } from '../stores/user'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -22,9 +23,9 @@ let loginErr = ref('')
 let userSelector = ref<string[]|null>(null)
 
 onMounted(() => {
-  global.getArtalk()!.ctx.getApi().system.version().then((v) => {
-    version.value = v.version
-    buildHash.value = v.commit_hash
+  getArtalk()!.ctx.getApi().version.getVersion().then((res) => {
+    version.value = res.data.version
+    buildHash.value = res.data.commit_hash
   })
 })
 
@@ -34,18 +35,24 @@ function onFocus() {
 
 function login(username?: string) {
   loginErr.value = ''
-  global.getArtalk()!.ctx.getApi().user.login(
-    username || '', userForm.value.email, userForm.value.password
-  ).then((resp) => {
-    const user = resp.user
-    global.getArtalk()!.ctx.get('user').update({
+
+  const artalk = getArtalk()
+  if (!artalk) throw new Error('Artalk instance not initialized')
+
+  artalk.ctx.getApi().user.login({
+    name: username || '',
+    email: userForm.value.email,
+    password: userForm.value.password
+  }).then((res) => {
+    const user = res.data.user
+    artalk.ctx.get('user').update({
       nick: user.name,
       email: user.email,
       link: user.link,
       isAdmin: user.is_admin,
-      token: resp.token,
+      token: res.data.token,
     })
-    global.importUserDataFromArtalkInstance()
+    useUserStore().sync(artalk)
     router.replace('/')
   }).catch((e) => {
     if (e.data?.need_name_select) {

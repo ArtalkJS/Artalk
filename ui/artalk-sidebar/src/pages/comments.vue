@@ -19,10 +19,10 @@ onMounted(() => {
   // 初始化导航条
   if (user.isAdmin) {
     nav.updateTabs({
-      admin_all: 'all',
-      admin_pending: 'pending',
-      all: 'personal',
-    }, 'admin_all')
+      all: 'all',
+      pending: 'pending',
+      personal_all: 'personal',
+    }, 'all')
   } else {
     nav.updateTabs({
       all: 'all',
@@ -52,8 +52,19 @@ onMounted(() => {
 
   artalk!.ctx.updateConf({
     listFetchParamsModifier: (params) => {
-      params.type = curtTab.value // 列表数据类型
       params.site_name = curtSite.value // 站点名
+
+      let scope = user.isAdmin ? 'site' : 'user'
+      let type = curtTab.value
+
+      if (curtTab.value === 'personal_all') {
+        scope = 'user'
+        type = 'all'
+      }
+
+      params.scope = scope
+      params.type = type
+
       if (search.value) params.search = search.value
     },
     scrollRelativeTo: () => wrapEl.value!,

@@ -16,7 +16,7 @@ test('Comment Add', async ({ page }) => {
   const CommentContent = '[A New Test Comment Content Here]'
   await page.getByPlaceholder('键入内容...').fill(CommentContent)
   await page.getByRole('button', { name: '发送评论' }).click()
-  await page.waitForResponse('http://localhost:23366/api/add')
+  await page.waitForResponse('http://localhost:23366/api/v2/comments')
   expect(
     await page.locator('.atk-list').getByText(CommentContent).isVisible(),
   ).toBeTruthy()

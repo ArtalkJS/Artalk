@@ -5,14 +5,14 @@ import type { ArtalkType } from 'artalk'
 const { t } = useI18n()
 
 interface IUserEditData {
+  id: number
   name: string
   email: string
   link: string
-  password: string
+  password?: string
   badge_name: string
   badge_color: string
   is_admin: boolean
-  site_names_raw: string
   receive_email: boolean
 }
 
@@ -36,6 +36,7 @@ onBeforeMount(() => {
   if (!props.user) {
     isCreateMode.value = true
     editUser.value = {
+      id: 0,
       name: '',
       email: '',
       link: '',
@@ -43,11 +44,13 @@ onBeforeMount(() => {
       badge_name: '',
       badge_color: '',
       is_admin: false,
-      site_names_raw: '',
       receive_email: true,
     }
   } else {
-    editUser.value = props.user
+    editUser.value = {
+      ...props.user,
+      password: '',
+    }
   }
 })
 
@@ -65,20 +68,25 @@ function submit() {
   }
 
   if (isCreateMode.value) {
-    artalk!.ctx.getApi().user.userAdd(editUser.value!, editUser.value!.password)
-      .then((respUser) => {
-        emit('update', respUser)
-      }).catch((e) => {
-        alert('用户创建错误：'+e.msg)
+    artalk!.ctx.getApi().users.createUser({
+      ...editUser.value!
+    })
+      .then((res) => {
+        emit('update', res.data)
+      }).catch((e: ArtalkType.FetchError) => {
+        alert('用户创建错误：'+e.message)
       }).finally(() => {
         isLoading.value = false
       })
   } else {
-    artalk!.ctx.getApi().user.userEdit(editUser.value!, editUser.value!.password)
-      .then((respUser) => {
-        emit('update', respUser)
-      }).catch((e) => {
-        alert('用户保存错误：'+e.msg)
+    const user = editUser.value!
+    artalk!.ctx.getApi().users.updateUser(user.id, {
+      ...editUser.value!
+    })
+      .then((res) => {
+        emit('update', res.data)
+      }).catch((e: ArtalkType.FetchError) => {
+        alert('用户保存错误：'+e.message)
       }).finally(() => {
         isLoading.value = false
       })
@@ -121,8 +129,6 @@ function submit() {
       <template v-if="editUser.is_admin">
         <div class="atk-label required">{{ t('password') }}</div>
         <input v-model="editUser.password" type="text" :placeholder="isCreateMode ? '' : `(${t('passwordEmptyHint')})`" autocomplete="off">
-        <div class="atk-label">{{ t('siteAttached') }}</div>
-        <input v-model="editUser.site_names_raw" type="text" :placeholder="`(${t('siteEmptyHint')})`" autocomplete="off">
       </template>
       <div class="atk-label required">{{ t('emailNotify') }}</div>
       <select v-model="editUser.receive_email">

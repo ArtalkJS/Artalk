@@ -1,5 +1,5 @@
 import type { ArtalkConfig, ContextApi } from '@/types'
-import type { ApiOptions } from './api/_options'
+import type { ApiOptions } from './api/options'
 import { mergeDeep } from './lib/merge-deep'
 import Defaults from './defaults'
 
@@ -91,30 +91,27 @@ export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
  */
 export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi): ApiOptions {
   return {
-    baseURL: `${conf.server}/api`,
+    baseURL: `${conf.server}/api/v2`,
     siteName: conf.site || '',
     pageKey: conf.pageKey || '',
     pageTitle: conf.pageTitle || '',
     timeout: conf.reqTimeout,
-    apiToken: ctx?.get('user').getData().token,
+    getApiToken: () => ctx?.get('user').getData().token,
     userInfo: ctx?.get('user').checkHasBasicUserInfo() ? {
       name: ctx?.get('user').getData().nick,
       email: ctx?.get('user').getData().email,
     } : undefined,
 
-    onNeedCheckAdmin(payload) {
-      ctx?.checkAdmin({
-        onSuccess: () => { payload.recall() },
-        onCancel: () => { payload.reject() },
-      })
+    onNeedCheckAdmin: (payload) => {
+      if (!ctx) throw new Error('`ctx` is required when `onNeedCheckAdmin` is called.')
+      return ctx.checkAdmin({})
     },
 
-    onNeedCheckCaptcha(payload) {
-      ctx?.checkCaptcha({
+    onNeedCheckCaptcha: (payload) => {
+      if (!ctx) throw new Error('`ctx` is required when `onNeedCheckCaptcha` is called.')
+      return ctx.checkCaptcha({
         imgData: payload.data.imgData,
         iframe: payload.data.iframe,
-        onSuccess: () => { payload.recall() },
-        onCancel: () => { payload.reject() },
       })
     },
   }

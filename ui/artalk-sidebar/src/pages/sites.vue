@@ -16,8 +16,8 @@ onMounted(() => {
   }, 'sites')
 
   nav.setPageLoading(true)
-  artalk?.ctx.getApi().site.siteGet().then(gotSites => {
-    sites.value = gotSites
+  artalk?.ctx.getApi().sites.getSites().then(res => {
+    sites.value = res.data.sites
   }).finally(() => {
     nav.setPageLoading(false)
   })

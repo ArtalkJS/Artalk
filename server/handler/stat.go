@@ -12,35 +12,37 @@ import (
 )
 
 type ParamsStat struct {
-	Type string `form:"type" validate:"required"`
-
-	SiteName string
-	PageKeys string `form:"page_keys"`
-
-	Limit int `form:"limit"`
-
-	SiteID  uint
-	SiteAll bool
+	SiteName string `query:"site_name" json:"site_name" validate:"optional"` // The site name of your content scope
+	PageKeys string `query:"page_keys" json:"page_keys" validate:"optional"` // multiple page keys separated by commas
+	Limit    int    `query:"limit" json:"limit" validate:"optional"`         // The limit for pagination
 }
 
-// @Summary      Statistics
-// @Description  Get the statistics of various data analysed
-// @Tags         Statistics
-// @Param        type        formData  string  true   "the type of statistics"  Enums(latest_comments, latest_pages, pv_most_pages, comment_most_pages, page_pv, site_pv, page_comment, site_comment, rand_comments, rand_pages)
-// @Param        page_keys   formData  string  false  "multiple page keys separated by commas"
-// @Param        site_name   formData  string  false  "the site name of your content scope"
-// @Param        limit       formData  int     false  "the amount of items you want"
+type ResponseStat struct {
+	Data interface{} `json:"data"`
+}
+
+// @Id           GetStats
+// @Summary      Statistic
+// @Description  Get the statistics of various data analysis
+// @Tags         Statistic
+// @Param        type        path   string      true   "The type of statistics"  Enums(latest_comments, latest_pages, pv_most_pages, comment_most_pages, page_pv, site_pv, page_comment, site_comment, rand_comments, rand_pages)
+// @Param        options     query  ParamsStat  false  "The options"
+// @Accept       json
+// @Produce      json
 // @Success      200  {object}  common.JSONResult
-// @Router       /stat  [post]
+// @Failure      400  {object}  Map{msg=string}
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
+// @Router       /stats/{type}  [get]
 func Stat(app *core.App, router fiber.Router) {
-	router.Post("/stat", func(c *fiber.Ctx) error {
+	router.Get("/stats/:type", func(c *fiber.Ctx) error {
+		queryType := c.Params("type")
+
 		var p ParamsStat
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
-
-		// use site
-		common.UseSite(c, &p.SiteName, &p.SiteID, &p.SiteAll)
 
 		// Limit 限定
 		if p.Limit <= 0 {
@@ -65,7 +67,7 @@ func Stat(app *core.App, router fiber.Router) {
 			}
 		}
 
-		switch p.Type {
+		switch queryType {
 		case "latest_comments":
 			// 最新评论
 			var comments []entity.Comment
@@ -74,7 +76,9 @@ func Stat(app *core.App, router fiber.Router) {
 				Limit(p.Limit).
 				Find(&comments)
 
-			return common.RespData(c, app.Dao().CookAllComments(comments))
+			return common.RespData(c, ResponseStat{
+				Data: app.Dao().CookAllComments(comments),
+			})
 
 		case "latest_pages":
 			// 最新页面
@@ -84,7 +88,9 @@ func Stat(app *core.App, router fiber.Router) {
 				Limit(p.Limit).
 				Find(&pages)
 
-			return common.RespData(c, app.Dao().CookAllPages(pages))
+			return common.RespData(c, ResponseStat{
+				Data: app.Dao().CookAllPages(pages),
+			})
 
 		case "pv_most_pages":
 			// PV 数最多的页面
@@ -94,7 +100,9 @@ func Stat(app *core.App, router fiber.Router) {
 				Limit(p.Limit).
 				Find(&pages)
 
-			return common.RespData(c, app.Dao().CookAllPages(pages))
+			return common.RespData(c, ResponseStat{
+				Data: app.Dao().CookAllPages(pages),
+			})
 
 		case "comment_most_pages":
 			// 评论数最多的页面
@@ -104,7 +112,9 @@ func Stat(app *core.App, router fiber.Router) {
 				p.SiteName, false, p.Limit,
 			).Find(&pages)
 
-			return common.RespData(c, app.Dao().CookAllPages(pages))
+			return common.RespData(c, ResponseStat{
+				Data: app.Dao().CookAllPages(pages),
+			})
 
 		case "page_pv":
 			// 查询页面的 PV 数
@@ -119,7 +129,9 @@ func Stat(app *core.App, router fiber.Router) {
 				}
 			}
 
-			return common.RespData(c, pvs)
+			return common.RespData(c, ResponseStat{
+				Data: pvs,
+			})
 
 		case "site_pv":
 			// 全站 PV 数
@@ -139,14 +151,18 @@ func Stat(app *core.App, router fiber.Router) {
 				counts[k] = count
 			}
 
-			return common.RespData(c, counts)
+			return common.RespData(c, ResponseStat{
+				Data: counts,
+			})
 
 		case "site_comment":
 			// 全站评论数
 			var count int64
 			app.Dao().DB().Scopes(QueryComments).Count(&count)
 
-			return common.RespData(c, count)
+			return common.RespData(c, ResponseStat{
+				Data: count,
+			})
 
 		case "rand_comments":
 			// 随机评论
@@ -155,7 +171,9 @@ func Stat(app *core.App, router fiber.Router) {
 				Limit(p.Limit).
 				Find(&comments)
 
-			return common.RespData(c, app.Dao().CookAllComments(comments))
+			return common.RespData(c, ResponseStat{
+				Data: app.Dao().CookAllComments(comments),
+			})
 
 		case "rand_pages":
 			// 随机页面
@@ -164,9 +182,11 @@ func Stat(app *core.App, router fiber.Router) {
 				Limit(p.Limit).
 				Find(&pages)
 
-			return common.RespData(c, app.Dao().CookAllPages(pages))
+			return common.RespData(c, ResponseStat{
+				Data: app.Dao().CookAllPages(pages),
+			})
 		}
 
-		return common.RespError(c, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Type")}))
+		return common.RespError(c, 404, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Type")}))
 	})
 }

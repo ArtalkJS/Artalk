@@ -25,11 +25,14 @@ onMounted(() => {
     else if (tab === 'transfer') router.replace('/transfer')
   })
 
-  artalk!.ctx.getApi().system.getSettings().then((data) => {
-    const yamlObj = YAML.parseDocument(data.template)
+  Promise.all([
+    artalk!.ctx.getApi().settings.getSettingsTemplate(''),
+    artalk!.ctx.getApi().settings.getSettings(),
+  ]).then(([template, custom]) => {
+    const yamlObj = YAML.parseDocument(template.data.yaml)
     tree.value = settings.init(yamlObj).getTree()
     console.log(tree.value)
-    settings.get().setCustoms(data.custom)
+    settings.get().setCustoms(custom.data.yaml)
   })
 })
 
@@ -51,7 +54,9 @@ function save() {
 
   if (isLoading.value) return
   isLoading.value = true
-  artalk!.ctx.getApi().system.saveSettings(yamlStr).then(() => {
+  artalk!.ctx.getApi().settings.applySettings({
+    yaml: yamlStr
+  }).then(() => {
     alert(t('settingSaved'))
   }).catch((err) => {
     console.error(err)

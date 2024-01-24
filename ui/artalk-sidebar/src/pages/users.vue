@@ -51,10 +51,13 @@ onMounted(() => {
 
 function reqUsers(offset: number) {
   nav.setPageLoading(true)
-  artalk?.ctx.getApi().user.userList(offset, pageSize.value, curtType.value as any)
-    .then(got => {
-      pageTotal.value = got.total
-      users.value = got.users
+  artalk?.ctx.getApi().users.getUsers(curtType.value as any, {
+    offset,
+    limit: pageSize.value
+  })
+    .then(res => {
+      pageTotal.value = res.data.count
+      users.value = res.data.users
       nav.scrollPageToTop()
     }).finally(() => {
       nav.setPageLoading(false)
@@ -99,7 +102,7 @@ function closeEditUser() {
 
 function delUser(user: ArtalkType.UserDataForAdmin) {
   if (window.confirm(`该操作将删除 用户："${user.name}" 邮箱："${user.email}" 所有评论，包括其评论下面他人的回复评论，是否继续？`)) {
-    artalk!.ctx.getApi().user.userDel(user.id)
+    artalk!.ctx.getApi().users.deleteUser(user.id)
       .then(() => {
         const index = users.value.findIndex(u => u.id === user.id)
         users.value.splice(index, 1)

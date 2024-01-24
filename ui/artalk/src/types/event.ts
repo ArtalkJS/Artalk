@@ -28,7 +28,7 @@ export interface EventPayloadMap {
   'comment-updated': CommentData   // 评论更新后
   'comment-deleted': CommentData   // 评论删除后
   'comment-rendered': Comment      // 评论节点渲染后
-  'unreads-updated': NotifyData[]  // 未读消息变更时
+  'notifies-updated': NotifyData[] // 消息列表变更时
   'list-goto': number              // 评论跳转时
   'page-loaded': PageData          // 页面数据更新后
   'editor-submit': undefined       // 编辑器提交时

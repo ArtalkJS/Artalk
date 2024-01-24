@@ -14,15 +14,15 @@ export const ConfRemoter: ArtalkPlugin = (ctx) => {
 }
 
 function loadConf(ctx: ContextApi) {
-  ctx.getApi().system.conf().then((data) => {
+  ctx.getApi().conf.conf().then((res) => {
     let conf: Partial<ArtalkConfig> = {
-      apiVersion: data.version.version, // version info
+      apiVersion: res.data.version?.version, // version info
     }
 
     // reference conf from backend
     if (ctx.conf.useBackendConf) {
-      if (!data.frontend_conf) throw new Error('The remote backend does not respond to the frontend conf, but `useBackendConf` conf is enabled')
-      conf = { ...conf, ...handleConfFormServer(data.frontend_conf) }
+      if (!res.data.frontend_conf) throw new Error('The remote backend does not respond to the frontend conf, but `useBackendConf` conf is enabled')
+      conf = { ...conf, ...handleConfFormServer(res.data.frontend_conf) }
     }
 
     // apply conf modifier
@@ -50,6 +50,7 @@ function loadConf(ctx: ContextApi) {
       }) : undefined // only show open sidebar button when user is admin
     })
 
+    console.error(err)
     throw err
   }).then(() => {
     // 评论获取

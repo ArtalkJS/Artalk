@@ -13,9 +13,9 @@ export function imgBody(checker: CheckerCtx) {
   // 刷新验证码
   elem.querySelector<HTMLElement>('.atk-captcha-img')!.onclick = () => {
     const imgEl = elem.querySelector('.atk-captcha-img')
-    checker.getApi().captcha.captchaGet()
-      .then((imgData) => {
-        imgEl!.setAttribute('src', imgData)
+    checker.getApi().captcha.getCaptcha()
+      .then((res) => {
+        imgEl!.setAttribute('src', res.data.img_data)
       })
       .catch((err) => {
         console.error('Failed to get captcha image ', err)
@@ -30,7 +30,7 @@ export function iframeBody(checker: CheckerCtx) {
   const $iframe = Utils.createElement<HTMLIFrameElement>(`<iframe class="atk-fade-in" referrerpolicy="strict-origin-when-cross-origin"></iframe>`)
   $iframe.style.display = 'none'
   Ui.showLoading($iframeWrap, { transparentBg: true })
-  $iframe.src = `${checker.getOpts().getIframeURLBase() || ''}/api/captcha/get?t=${+new Date()}`
+  $iframe.src = checker.getOpts().getCaptchaIframeURL()
   $iframe.onload = () => {
     $iframe.style.display = ''
     Ui.hideLoading($iframeWrap)
@@ -50,8 +50,8 @@ export function iframeBody(checker: CheckerCtx) {
     if (stop) return
     let isPass = false
     try {
-      const resp = await checker.getApi().captcha.captchaStatus()
-      isPass = resp.is_pass
+      const resp = await checker.getApi().captcha.getCaptchaStatus()
+      isPass = resp.data.is_pass
     } catch { isPass = false }
     if (isPass) {
       checker.triggerSuccess()

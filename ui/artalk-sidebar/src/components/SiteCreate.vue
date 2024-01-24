@@ -26,14 +26,17 @@ onMounted(() => {
 
 async function submit() {
   const siteName = site.value.name.trim()
-  const siteUrls = site.value.urls.trim()
+  const siteUrls = site.value.urls.trim().split(',').map((v) => v.trim()).filter((v) => !!v)
 
   if (siteName === '') { alert('请输入站点名称'); return }
 
   isLoading.value = true
   let s: ArtalkType.SiteData
   try {
-    s = await artalk!.ctx.getApi().site.siteAdd(siteName, siteUrls)
+    s = (await artalk!.ctx.getApi().sites.createSite({
+      name: siteName,
+      urls: siteUrls
+    })).data
   } catch (err: any) {
     window.alert(`创建失败：${err.msg || ''}`)
     console.error(err)

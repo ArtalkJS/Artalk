@@ -9,38 +9,24 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// JSONResult JSON 响应数据结构
+// JSONResult JSON Response data structure
 type JSONResult struct {
-	Success bool        `json:"success"`         // 是否成功
-	Msg     string      `json:"msg,omitempty"`   // 消息
-	Data    interface{} `json:"data,omitempty"`  // 数据
-	Extra   interface{} `json:"extra,omitempty"` // 数据
-}
-
-// RespJSON is normal json result
-func RespJSON(c *fiber.Ctx, msg string, data interface{}, success bool) error {
-	return c.Status(http.StatusOK).JSON(&JSONResult{
-		Success: success,
-		Msg:     msg,
-		Data:    data,
-	})
+	Msg  string      `json:"msg,omitempty"`  // Message
+	Data interface{} `json:"data,omitempty"` // Data
 }
 
 // RespData is just response data
 func RespData(c *fiber.Ctx, data interface{}) error {
-	return c.Status(http.StatusOK).JSON(&JSONResult{
-		Success: true,
-		Data:    data,
-	})
+	return c.Status(http.StatusOK).JSON(data)
 }
 
 // RespSuccess is just response success
 func RespSuccess(c *fiber.Ctx, msg ...string) error {
 	respData := &JSONResult{
-		Success: true,
+		Msg: "Success",
 	}
 
-	// 可选参数 msg
+	// Optional msg parameter
 	if len(msg) > 0 {
 		respData.Msg = msg[0]
 	}
@@ -49,24 +35,22 @@ func RespSuccess(c *fiber.Ctx, msg ...string) error {
 }
 
 // RespError is just response error
-func RespError(c *fiber.Ctx, msg string, data ...Map) error {
+func RespError(c *fiber.Ctx, code int, msg string, data ...Map) error {
 	// log
 	path := c.Path()
 	if path == "" {
 		path = "/"
 	}
-	LogWithHttpInfo(c).Errorf("[响应] %s %s ==> %s", c.Method(), path, strconv.Quote(msg))
+	LogWithHttpInfo(c).Errorf("[Response] %s %s ==> %s", c.Method(), path, strconv.Quote(msg))
 
 	respData := Map{}
 	if len(data) > 0 {
 		respData = data[0]
 	}
 
-	return c.Status(http.StatusOK).JSON(&JSONResult{
-		Success: false,
-		Msg:     msg,
-		Data:    respData,
-	})
+	respData["msg"] = msg
+
+	return c.Status(code).JSON(respData)
 }
 
 func LogWithHttpInfo(c *fiber.Ctx) *log.Entry {

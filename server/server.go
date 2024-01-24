@@ -14,7 +14,6 @@ import (
 	h "github.com/ArtalkJS/Artalk/server/handler"
 	"github.com/ArtalkJS/Artalk/server/middleware"
 	"github.com/ArtalkJS/Artalk/server/middleware/limiter"
-	"github.com/ArtalkJS/Artalk/server/middleware/site_origin"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	fiber_logger "github.com/gofiber/fiber/v2/middleware/logger"
@@ -23,9 +22,9 @@ import (
 )
 
 // @Title          Artalk API
-// @Version        1.0
-// @Description    This is an Artalk server.
-// @BasePath  	   /api/
+// @Version        2.0
+// @Description    Artalk is a modern comment system based on Golang.
+// @BasePath       /api/v2
 
 // @Contact.name   API Support
 // @Contact.url    https://artalk.js.org
@@ -49,6 +48,8 @@ func Serve(app *core.App) (*fiber.App, error) {
 		// TODO add config to set ProxyHeader
 		ProxyHeader:        "X-Forwarded-For",
 		EnableIPValidation: true,
+
+		ErrorHandler: common.ErrorHandler,
 	})
 
 	// logger
@@ -74,15 +75,17 @@ func Serve(app *core.App) (*fiber.App, error) {
 		fb.Use(pprof.New())
 	}
 
-	api := fb.Group("/api", site_origin.SiteOriginMiddleware(app))
+	api := fb.Group("/api/v2")
 	{
-		h.CommentAdd(app, api)
-		h.CommentGet(app, api)
+		h.CommentCreate(app, api)
+		h.CommentList(app, api)
 		h.Vote(app, api)
-		h.PV(app, api)
+		h.PagePV(app, api)
 		h.Stat(app, api)
-		h.MarkRead(app, api)
-		h.ImgUpload(app, api)
+		h.NotifyList(app, api)
+		h.NotifyReadAll(app, api)
+		h.NotifyRead(app, api)
+		h.Upload(app, api)
 
 		h.Conf(app, api)
 		h.Version(app, api)
@@ -91,10 +94,9 @@ func Serve(app *core.App) (*fiber.App, error) {
 		h.Captcha(app, api)
 
 		// user
-		h.UserGet(app, api)
+		h.UserInfo(app, api)
 		h.UserLogin(app, api)
-		h.UserLoginStatus(app, api)
-		h.UserLogout(app, api)
+		h.UserStatus(app, api)
 
 		// admin
 		admin(app, api)
@@ -119,39 +121,31 @@ func Serve(app *core.App) (*fiber.App, error) {
 	}
 }
 
-func admin(app *core.App, f fiber.Router) {
-	admin := f.Group("/admin", middleware.AdminOnlyMiddleware(app))
-	{
-		h.AdminCommentEdit(app, admin)
-		h.AdminCommentDel(app, admin)
-
-		h.AdminPageGet(app, admin)
-		h.AdminPageEdit(app, admin)
-		h.AdminPageDel(app, admin)
-		h.AdminPageFetch(app, admin)
-
-		h.AdminSiteGet(app, admin)
-		h.AdminSiteAdd(app, admin)
-		h.AdminSiteEdit(app, admin)
-		h.AdminSiteDel(app, admin)
-
-		h.AdminUserGet(app, admin)
-		h.AdminUserAdd(app, admin)
-		h.AdminUserEdit(app, admin)
-		h.AdminUserDel(app, admin)
-
-		h.AdminCacheWarm(app, admin)
-		h.AdminCacheFlush(app, admin)
-
-		h.AdminSendMail(app, admin)
-		h.AdminVoteSync(app, admin)
-
-		h.AdminSettingGet(app, admin)
-		h.AdminSettingSave(app, admin)
-		h.AdminSettingTpl(app, admin)
-
-		h.AdminTransfer(app, admin)
-	}
+func admin(app *core.App, api fiber.Router) {
+	h.CommentUpdate(app, api)
+	h.CommentDelete(app, api)
+	h.PageList(app, api)
+	h.PageUpdate(app, api)
+	h.PageDelete(app, api)
+	h.PageFetch(app, api)
+	h.PageFetchAll(app, api)
+	h.PageFetchStatus(app, api)
+	h.SiteList(app, api)
+	h.SiteCreate(app, api)
+	h.SiteUpdate(app, api)
+	h.SiteDelete(app, api)
+	h.UserList(app, api)
+	h.UserCreate(app, api)
+	h.UserUpdate(app, api)
+	h.UserDelete(app, api)
+	h.CacheWarmUp(app, api)
+	h.CacheFlush(app, api)
+	h.EmailSend(app, api)
+	h.VoteSync(app, api)
+	h.SettingGet(app, api)
+	h.SettingApply(app, api)
+	h.SettingTemplate(app, api)
+	h.Transfer(app, api)
 }
 
 func cors(app *core.App, f fiber.Router) {
@@ -159,15 +153,7 @@ func cors(app *core.App, f fiber.Router) {
 }
 
 func actionLimit(app *core.App, f fiber.Router) {
-	f.Use(limiter.ActionLimitMiddleware(app, limiter.ActionLimitConf{
-		// 启用操作限制路径白名单
-		ProtectPaths: []string{
-			"/api/add",
-			"/api/login",
-			"/api/vote",
-			"/api/img-upload",
-		},
-	}))
+	f.Use(limiter.ActionLimitMiddleware(app, limiter.ActionLimitConf{}))
 }
 
 func static(f fiber.Router) {

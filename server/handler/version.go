@@ -6,11 +6,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// @Summary      Version
+// @Id           GetVersion
+// @Summary      Get Version Info
 // @Description  Get the version of Artalk
 // @Tags         System
+// @Produce      json
 // @Success      200  {object}  common.ApiVersionData
-// @Router       /version  [post]
+// @Router       /version  [get]
 func Version(app *core.App, router fiber.Router) {
 	router.All("/version", func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(common.GetApiVersionDataMap())

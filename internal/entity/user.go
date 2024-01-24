@@ -16,7 +16,6 @@ type User struct {
 	LastIP       string
 	LastUA       string
 	IsAdmin      bool
-	SiteNames    string
 	ReceiveEmail bool `gorm:"default:true"`
 
 	// 配置文件中添加的

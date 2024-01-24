@@ -34,10 +34,11 @@ export default class StateEdit extends EditorPlug {
             email: this.kit.useUI().$email.value,
             link: this.kit.useUI().$link.value,
           }
-          const nComment = await this.kit.useApi().comment.commentEdit({
-            ...this.comment, ...saveData
+          const comment = this.comment!
+          const nComment = await this.kit.useApi().comments.updateComment(comment.id, {
+            ...comment, ...saveData
           })
-          return nComment
+          return nComment.data
         },
         post: (nComment: CommentData) => {
           this.kit.useGlobalCtx().getData().updateComment(nComment)

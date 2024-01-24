@@ -69,7 +69,7 @@ export default class SidebarLayer extends Component {
 
     // 清空 unread
     setTimeout(() => {
-      this.ctx.getData().updateUnreads([])
+      this.ctx.getData().updateNotifies([])
     }, 0)
 
     this.ctx.trigger('sidebar-show')
@@ -88,8 +88,10 @@ export default class SidebarLayer extends Component {
   // --------------------------------------------------
 
   private async authCheck(opts: { onSuccess: () => void }) {
-    const resp = await this.ctx.getApi().user.loginStatus()
-    if (resp.is_admin && !resp.is_login) {
+    const data = (await this.ctx.getApi().user.getUserStatus({
+      ...this.ctx.getApi().getUserFields()
+    })).data
+    if (data.is_admin && !data.is_login) {
       this.firstShow = true
 
       this.ctx.checkAdmin({
@@ -134,7 +136,6 @@ export default class SidebarLayer extends Component {
 
     if (view) query.view = view
     if (this.conf.darkMode) query.darkMode = '1'
-    if (typeof this.conf.locale === 'string') query.locale = this.conf.locale
 
     const urlParams = new URLSearchParams(query);
     this.iframeLoad($iframe, `${baseURL}?${urlParams.toString()}`)

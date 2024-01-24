@@ -1,6 +1,6 @@
 import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPayloadMap, SidebarShowPayload } from '@/types'
 import type { TInjectedServices } from './service'
-import Api from './api'
+import { Api } from './api'
 
 import * as marked from './lib/marked'
 import { mergeDeep } from './lib/merge-deep'
@@ -100,12 +100,12 @@ class Context implements ContextApi {
   }
 
   /* 权限检测 */
-  public checkAdmin(payload: CheckerPayload): void {
-    this.checkerLauncher.checkAdmin(payload)
+  public checkAdmin(payload: CheckerPayload): Promise<void> {
+    return this.checkerLauncher.checkAdmin(payload)
   }
 
-  public checkCaptcha(payload: CheckerCaptchaPayload): void {
-    this.checkerLauncher.checkCaptcha(payload)
+  public checkCaptcha(payload: CheckerCaptchaPayload): Promise<void> {
+    return this.checkerLauncher.checkCaptcha(payload)
   }
 
   /* Events */

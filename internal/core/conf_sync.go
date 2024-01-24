@@ -1,8 +1,6 @@
 package core
 
 import (
-	"strings"
-
 	"github.com/ArtalkJS/Artalk/internal/entity"
 )
 
@@ -29,7 +27,6 @@ func (app *App) syncFromConf() {
 				IsAdmin:      true,
 				IsInConf:     true,
 				ReceiveEmail: receiveEmail,
-				SiteNames:    strings.Join(admin.Sites, ","),
 			}
 			app.dao.CreateUser(&user)
 		} else {
@@ -43,7 +40,6 @@ func (app *App) syncFromConf() {
 			user.IsAdmin = true
 			user.IsInConf = true
 			user.ReceiveEmail = receiveEmail
-			user.SiteNames = strings.Join(admin.Sites, ",")
 			app.dao.UpdateUser(&user)
 		}
 	}

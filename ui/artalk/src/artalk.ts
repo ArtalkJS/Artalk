@@ -7,7 +7,7 @@ import { handelCustomConf, convertApiOptions } from './config'
 import Services from './service'
 import { DefaultPlugins } from './plugins'
 import * as Stat from './plugins/stat'
-import Api from './api'
+import { Api } from './api'
 import type { TInjectedServices } from './service'
 
 /** Global Plugins for all instances */
@@ -114,6 +114,7 @@ export default class Artalk {
 
     Stat.initCountWidget({
       getApi: () => new Api(convertApiOptions(conf)),
+      siteName: conf.site,
       pageKey: conf.pageKey,
       countEl: conf.countEl,
       pvEl: conf.pvEl,

@@ -3,7 +3,7 @@ import type { CheckerCaptchaPayload, CheckerPayload } from '@/components/checker
 import type { EventManagerFuncs } from '@/lib/event-manager'
 import type { TMarked } from '@/lib/marked'
 import type { I18n } from '@/i18n'
-import type Api from '@/api'
+import type { Api } from '@/api'
 import type { SidebarShowPayload, EventPayloadMap, ArtalkConfig, CommentData, DataManagerApi, ListFetchParams, NotifyLevel } from '.'
 
 /**
@@ -68,10 +68,10 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   editorResetState(): void
 
   /** 验证码检测 */
-  checkCaptcha(payload: CheckerCaptchaPayload): void
+  checkCaptcha(payload: CheckerCaptchaPayload): Promise<void>
 
   /** 管理员检测 */
-  checkAdmin(payload: CheckerPayload): void
+  checkAdmin(payload: CheckerPayload): Promise<void>
 
   /** i18n 翻译 */
   $t(key: keyof I18n, args?: {[key: string]: string}): string

@@ -22,30 +22,28 @@ beforeAll(() => {
     ok: true,
     status: 200,
     json: () => {
-      const resp = {
-        success: true,
-        data: {}
-      }
+      let resp: any = {}
+
       const map = {
-        '/api/conf': {
+        '/api/v2/conf': {
           frontend_conf: RemoteConf,
           version: {},
         },
-        '/api/stat': { '/': 0 },
-        '/api/pv': { pv: 2 },
-        '/api/get': {
+        '/api/v2/stat': { data: { '/': 0 } },
+        '/api/v2/pages/pv': { pv: 2 },
+        '/api/v2/notifies': { notifies: [], count: 0 },
+        '/api/v2/comments': {
           comments: [],
-          total: 0,
-          total_roots: 0,
+          count: 0,
+          roots_count: 0,
           page: { id: 4, admin_only: false, key: '/', url: '/', title: 'Artalk DEMO', site_name: 'ArtalkDocs', vote_up: 0, vote_down: 0, pv: 1 },
-          unread: [],
-          unread_count: 0,
-          conf: { frontend_conf: {}, version: {} },
         }
       }
 
+      const path = new URL(url).pathname
+
       Object.entries(map).forEach(([k, v]) => {
-        if (url.endsWith(k)) resp.data = v
+        if (path.startsWith(k)) resp = v
       })
 
       return Promise.resolve(resp)

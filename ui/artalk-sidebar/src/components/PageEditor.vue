@@ -30,7 +30,7 @@ async function editAdminOnly() {
   isLoading.value = true
   let p: ArtalkType.PageData
   try {
-    p = await artalk!.ctx.getApi().page.pageEdit({ ...page.value, admin_only: !page.value.admin_only })
+    p = (await artalk!.ctx.getApi().pages.updatePage(page.value.id, { ...page.value, admin_only: !page.value.admin_only })).data
   } catch (err: any) {
     alert(`修改失败：${err.msg || '未知错误'}`)
     console.log(err)
@@ -43,7 +43,7 @@ async function sync() {
   isLoading.value = true
   let p: ArtalkType.PageData
   try {
-    p = (await artalk!.ctx.getApi().page.pageFetch(page.value.id)).page
+    p = (await artalk!.ctx.getApi().pages.fetchPage(page.value.id)).data
   } catch (err: any) {
     alert(`同步失败：${err.msg || '未知错误'}`)
     console.log(err)
@@ -56,7 +56,7 @@ function del() {
   const del = async () => {
     isLoading.value = true
     try {
-      await artalk!.ctx.getApi().page.pageDel(page.value.key, page.value.site_name)
+      await artalk!.ctx.getApi().pages.deletePage(page.value.id)
     } catch (err: any) {
       console.log(err)
       alert(`删除失败 ${String(err)}`)
@@ -78,7 +78,7 @@ async function onFieldEditorYes(val: string) {
     isLoading.value = true
     let p: ArtalkType.PageData
     try {
-      p = await artalk!.ctx.getApi().page.pageEdit({ ...page.value, [editFieldKey.value as any]: val })
+      p = (await artalk!.ctx.getApi().pages.updatePage(page.value.id, { ...page.value, [editFieldKey.value as any]: val })).data
     } catch (err: any) {
       alert(`修改失败：${err.msg || '未知错误'}`)
       console.error(err)

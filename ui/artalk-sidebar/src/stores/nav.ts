@@ -53,8 +53,8 @@ export const useNavStore = defineStore('nav', () => {
   }
 
   const refreshSites = () => {
-    artalk?.ctx.getApi().site.siteGet().then((respSites) => {
-      sites.value = respSites
+    artalk?.ctx.getApi().sites.getSites().then((res) => {
+      sites.value = res.data.sites
     })
   }
 

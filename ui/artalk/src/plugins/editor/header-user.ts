@@ -1,4 +1,5 @@
 import $t from '@/i18n'
+import type { UserInfoApiResponseData } from '@/types'
 import EditorPlug from './_plug'
 import type PlugKit from './_kit'
 
@@ -54,11 +55,13 @@ export default class HeaderUser extends EditorPlug {
     this.query.timer = window.setTimeout(() => {
       this.query.timer = null // clear the timer (clarify the timer is executing)
 
-      const {req, abort} = this.kit.useApi().user.userGet(
-        this.kit.useUser().getData().nick, this.kit.useUser().getData().email
-      )
-      this.query.abortFn = abort
-      req.then(data => this.onUserInfoFetched(data))
+      const api = this.kit.useApi()
+      const CANCEL_TOKEN = 'getUserCancelToken'
+      this.query.abortFn = () => api.abortRequest(CANCEL_TOKEN)
+
+      api.user.getUser({ ...api.getUserFields() }, {
+        cancelToken: CANCEL_TOKEN
+      }).then(res => this.onUserInfoFetched(res.data))
         .catch((err) => {})
         .finally(() => {
           this.query.abortFn = null // clear the abort function (clarify the request is finished)
@@ -72,13 +75,13 @@ export default class HeaderUser extends EditorPlug {
    * @param data The response data from server
    */
   private onUserInfoFetched(
-    data: any // TODO: fix type
+    data: UserInfoApiResponseData
   ) {
     // If api response is not login, logout
     if (!data.is_login) this.kit.useUser().logout()
 
     // Update unread notifies
-    this.kit.useGlobalCtx().getData().updateUnreads(data.unread)
+    this.kit.useGlobalCtx().getData().updateNotifies(data.notifies)
 
     // If user is admin and not login,
     if (this.kit.useUser().checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {

@@ -42,7 +42,7 @@ function del() {
   const del = async () => {
     isLoading.value = true
     try {
-      await artalk!.ctx.getApi().site.siteDel(site.value.id, true)
+      await artalk!.ctx.getApi().sites.deleteSite(site.value.id)
     } catch (err: any) {
       console.log(err)
       alert(`删除失败 ${String(err)}`)
@@ -56,11 +56,15 @@ function del() {
 }
 
 async function onFieldEditorYes(val: string) {
+  if (!editFieldKey.value) return
+
   if (editFieldVal.value !== val) {
     isLoading.value = true
     let s: ArtalkType.SiteData
     try {
-      s = await artalk!.ctx.getApi().site.siteEdit({ ...site.value, [editFieldKey.value as any]: val })
+      let finalVal: string|string[] = val
+      if (Array.isArray(site.value[editFieldKey.value])) finalVal = val.split(',').map((v) => v.trim()).filter((v) => !!v)
+      s = (await artalk!.ctx.getApi().sites.updateSite(site.value.id, { ...site.value, [editFieldKey.value]: finalVal })).data
     } catch (err: any) {
       alert(`修改失败：${err.msg || '未知错误'}`)
       console.error(err)

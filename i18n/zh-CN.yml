@@ -27,7 +27,7 @@
 "Invalid request. Please check your `trusted_domains` config.": 请求无效, 请检查 `trusted_domains` 配置项
 "Invalid {{name}}": 无效的{{name}}
 "Link": 链接
-"Login failed": 登陆失败
+"Login failed": 登录失败
 "Name": 名称
 "New version available": 有更新可用
 "Nickname": 昵称

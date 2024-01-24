@@ -2464,7 +2464,7 @@ const docTemplate = `{
                     ]
                 },
                 "login_timeout": {
-                    "description": "登陆超时",
+                    "description": "登录超时",
                     "type": "integer"
                 },
                 "moderator": {

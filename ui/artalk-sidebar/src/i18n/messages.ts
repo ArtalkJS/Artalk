@@ -155,9 +155,9 @@ const zhCN: typeof en = {
   payload: '启动参数',
   optional: '可选',
   uploadReadyToImport: '文件已成功上传，可以开始导入',
-  loginFailure: '登陆发生异常',
+  loginFailure: '登录发生异常',
   login: '登录',
-  loginSelectHint: '请选择您要登陆的账户：',
+  loginSelectHint: '请选择您要登录的账户：',
 }
 
 const zhTW: typeof en = {
@@ -236,9 +236,9 @@ const zhTW: typeof en = {
   payload: '啟動參數',
   optional: '可選',
   uploadReadyToImport: '文件已成功上傳，可以開始導入',
-  loginFailure: '登陸發生異常',
+  loginFailure: '登錄發生異常',
   login: '登錄',
-  loginSelectHint: '請選擇您要登陸的賬戶：',
+  loginSelectHint: '請選擇您要登錄的賬戶：',
 }
 
 export default {

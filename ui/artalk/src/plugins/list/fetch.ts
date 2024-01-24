@@ -35,6 +35,7 @@ export const Fetch: ArtalkPlugin = (ctx) => {
     ctx.getApi().comments
       .getComments({
         ...reqParams,
+        ...ctx.getApi().getUserFields()
       })
       .then(({ data }) => {
         // Must before all other function call and event trigger,

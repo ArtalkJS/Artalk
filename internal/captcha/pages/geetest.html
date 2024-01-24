@@ -29,21 +29,20 @@
 
     gt.appendTo("#captcha").onSuccess(function (e) {
       var result = gt.getValidate();
-      var form = new FormData()
-      form.append("value", JSON.stringify(result))
       console.log("[极验验证结果] ", result)
-      fetch("./check", {
+      fetch("./verify", {
           method: 'POST',
-          body: form,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ value: JSON.stringify(result) }),
       })
-      .then(function (resp) {
-        return resp.json()
-      })
-      .then(function (json) {
-        if (json.success) {
-          console.log("验证成功：" + json)
-        } else {
-          alert("验证失败：" + json.msg || '')
+      .then(function (res) {
+        if (!res.ok) {
+          res.json().then(json => {
+            alert("验证失败：" + res.status + " " + json.msg || '')
+          })
         }
       })
       .catch(function (err) {

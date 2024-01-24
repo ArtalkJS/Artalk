@@ -27,7 +27,7 @@ export const Fetch = async (opts: ApiOptions, input: string | URL | Request, ini
     if (json.need_captcha) {
         // 请求需要验证码
         opts.onNeedCheckCaptcha && await opts.onNeedCheckCaptcha({
-          data: { imgData: json.data.img_data, iframe: json.data.iframe }
+          data: { imgData: json.img_data, iframe: json.iframe }
         })
         return Fetch(opts, input, init) // retry
     }

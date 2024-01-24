@@ -43,7 +43,7 @@ type ResponseCommentCreate struct {
 // @Produce      json
 // @Router       /comments  [post]
 func CommentCreate(app *core.App, router fiber.Router) {
-	router.Post("/comments", func(c *fiber.Ctx) error {
+	router.Post("/comments", common.LimiterGuard(app, func(c *fiber.Ctx) error {
 		var p ParamsCommentCreate
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
@@ -192,7 +192,7 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		return common.RespData(c, ResponseCommentCreate{
 			CookedComment: cookedComment,
 		})
-	})
+	}))
 }
 
 func isAllowComment(app *core.App, c *fiber.Ctx, name string, email string, page entity.Page) (bool, error) {

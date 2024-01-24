@@ -35,7 +35,7 @@ type ResponseVote struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /votes/{type}/{target_id}  [post]
 func Vote(app *core.App, router fiber.Router) {
-	router.Post("/votes/:type/:target_id", func(c *fiber.Ctx) error {
+	router.Post("/votes/:type/:target_id", common.LimiterGuard(app, func(c *fiber.Ctx) error {
 		rawType := c.Params("type")
 		targetID, _ := c.ParamsInt("target_id")
 
@@ -135,5 +135,5 @@ func Vote(app *core.App, router fiber.Router) {
 			Up:   up,
 			Down: down,
 		})
-	})
+	}))
 }

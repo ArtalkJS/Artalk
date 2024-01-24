@@ -153,15 +153,7 @@ func cors(app *core.App, f fiber.Router) {
 }
 
 func actionLimit(app *core.App, f fiber.Router) {
-	f.Use(limiter.ActionLimitMiddleware(app, limiter.ActionLimitConf{
-		// 保护的路径
-		ProtectPaths: [][]string{
-			{fiber.MethodPost, "/api/v2/comments"},
-			{fiber.MethodPost, "/api/v2/access_token"},
-			{fiber.MethodPost, "/api/v2/votes"},
-			{fiber.MethodPost, "/api/v2/upload"},
-		},
-	}))
+	f.Use(limiter.ActionLimitMiddleware(app, limiter.ActionLimitConf{}))
 }
 
 func static(f fiber.Router) {

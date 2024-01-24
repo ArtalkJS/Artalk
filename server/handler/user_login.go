@@ -38,7 +38,7 @@ type ResponseUserLogin struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /user/access_token  [post]
 func UserLogin(app *core.App, router fiber.Router) {
-	router.Post("/user/access_token", func(c *fiber.Ctx) error {
+	router.Post("/user/access_token", common.LimiterGuard(app, func(c *fiber.Ctx) error {
 		var p ParamsUserLogin
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
@@ -112,5 +112,5 @@ func UserLogin(app *core.App, router fiber.Router) {
 			Token: jwtToken,
 			User:  app.Dao().CookUser(&user),
 		})
-	})
+	}))
 }

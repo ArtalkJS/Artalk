@@ -4,7 +4,6 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/captcha"
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/limiter"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
@@ -31,8 +30,8 @@ func CaptchaVerify(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		limiter, err := common.GetLimiter[limiter.Limiter](c)
-		if limiter == nil {
+		limiter, err := common.GetLimiter(c)
+		if err != nil {
 			return err
 		}
 

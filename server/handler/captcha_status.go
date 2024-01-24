@@ -2,7 +2,6 @@ package handler
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/limiter"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,8 +19,8 @@ type ResponseCaptchaStatus struct {
 // @Router       /captcha/status  [get]
 func CaptchaStatus(app *core.App, router fiber.Router) {
 	router.Get("/captcha/status", func(c *fiber.Ctx) error {
-		limiter, err := common.GetLimiter[limiter.Limiter](c)
-		if limiter == nil {
+		limiter, err := common.GetLimiter(c)
+		if err != nil {
 			return err
 		}
 

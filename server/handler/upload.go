@@ -43,7 +43,7 @@ type ResponseUpload struct {
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /upload  [post]
 func Upload(app *core.App, router fiber.Router) {
-	router.Post("/upload", func(c *fiber.Ctx) error {
+	router.Post("/upload", common.LimiterGuard(app, func(c *fiber.Ctx) error {
 		// 功能开关 (管理员始终开启)
 		if !app.Conf().ImgUpload.Enabled && !common.CheckIsAdminReq(app, c) {
 			return common.RespError(c, 403, i18n.T("Image upload forbidden"), common.Map{
@@ -196,7 +196,7 @@ func Upload(app *core.App, router fiber.Router) {
 			FileName:  filename,
 			PublicURL: imgURL,
 		})
-	})
+	}))
 }
 
 // 调用 upgit 上传图片获得 URL

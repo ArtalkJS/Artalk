@@ -16,8 +16,8 @@ export interface ApiOptions {
 
   onNeedCheckCaptcha?: (payload: {
     data: {
-      imgData: string
-      iframe: string
+      imgData?: string
+      iframe?: string
     }
   }) => Promise<void>
 

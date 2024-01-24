@@ -12,8 +12,10 @@ class User {
   constructor(
     private opts: UserOpts
   ) {
-    // 从 localStorage 导入
+    // Import from localStorage
     const localUser = JSON.parse(window.localStorage.getItem(LOCAL_USER_KEY) || '{}')
+
+    // Initialize
     this.data = {
       nick: localUser.nick || '',
       email: localUser.email || '',
@@ -27,7 +29,7 @@ class User {
     return this.data
   }
 
-  /** 保存用户到 localStorage 中 */
+  /** Update user data and save to localStorage */
   update(obj: Partial<LocalUser> = {}) {
     Object.entries(obj).forEach(([key, value]) => {
       this.data[key] = value
@@ -49,7 +51,7 @@ class User {
     })
   }
 
-  /** 是否已填写基本用户信息 */
+  /** Check if user has filled basic data */
   checkHasBasicUserInfo() {
     return !!this.data.nick && !!this.data.email
   }

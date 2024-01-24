@@ -11,7 +11,8 @@
   "private": true,
   "scripts": {
     "swagger:build": "npx @redocly/cli build-docs --output ./dist/http-api.html",
-    "swagger:serve": "npx @redocly/cli preview-docs"
+    "swagger:serve": "npx @redocly/cli preview-docs",
+    "swagger:build-http-client": "npx swagger-typescript-api -n v2 -p ./swagger.json -o ../../ui/artalk/src/api --responses --sort-types"
   },
   "devDependencies": {
     "@redocly/cli": "1.5.0"

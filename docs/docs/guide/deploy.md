@@ -15,7 +15,7 @@ docker run -d \
 
 > 假设域名 `http://your_domain` 已正确添加 DNS 记录并指向你的服务器 IP
 
-浏览器打开 `http://your_domain:8080` 将出现 Artalk 后台登陆界面。
+浏览器打开 `http://your_domain:8080` 将出现 Artalk 后台登录界面。
 
 执行命令创建管理员账户：
 

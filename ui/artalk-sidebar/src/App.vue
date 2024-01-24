@@ -2,59 +2,71 @@
 import { storeToRefs } from 'pinia'
 import { useNavStore } from './stores/nav'
 import { useUserStore } from './stores/user'
-import global, { bootParams, createArtalkInstance } from './global'
-import Artalk from 'artalk'
+import type Artalk from 'artalk'
+import { getArtalk, bootParams } from './global'
 
 const nav = useNavStore()
 const user = useUserStore()
 const route = useRoute()
 const router = useRouter()
 const { scrollableArea } = storeToRefs(nav)
-const i18n = useI18n()
+
+const artalkLoaded = ref(false)
 
 onBeforeMount(() => {
-  // 获取语言
-  if (!global.getBootParams().locale) {
-    global.getArtalk().ctx.getApi().conf.conf().then(res => {
-      if (typeof res.data.frontend_conf?.locale === 'string') {
-        i18n.locale.value = res.data.frontend_conf.locale
-      }
-    })
+  const artalk = getArtalk()
+  if (!artalk) {
+    throw new Error('Artalk instance not initialized')
   }
 
+  artalk.on('conf-loaded', () => {
+    if (artalkLoaded.value) return
+    artalkLoaded.value = true
+
+    syncArtalk(artalk)
+  })
+})
+
+function syncArtalk(artalk: Artalk) {
+  // access from open sidebar or directly by url
   if (bootParams.user?.email) {
-    global.getArtalk().ctx.get('user').update(bootParams.user)
+    // sync user from sidebar to artalk
+    artalk.ctx.get('user').update(bootParams.user)
   } else {
+    // sync user from artalk to sidebar
     try {
-      global.importUserDataFromArtalkInstance()
-    } catch (e) {
-      // console.error(e)
-      router.replace('/login')
+      useUserStore().sync(artalk)
+    } catch {
+      nextTick(() => {
+        router.replace('/login')
+      })
       return
     }
   }
 
   // 验证登录身份有效性
-  const artalkUser = global.getArtalk().ctx.get('user')
+  const artalkUser = artalk.ctx.get('user')
   const artalkUserData = artalkUser.getData()
 
-  global.getArtalk().ctx.getApi().user.getUserStatus({
+  artalk.ctx.getApi().user.getUserStatus({
     email: artalkUserData.email,
     name: artalkUserData.nick
   }).then(res => {
     if (res.data.is_admin && !res.data.is_login) {
       artalkUser.logout()
       user.logout()
-      router.replace('/login')
+      nextTick(() => {
+        router.replace('/login')
+      })
     } else {
       // 将全部通知标记为已读
-      global.getArtalk().ctx.getApi().notifies.markAllNotifyRead({
+      artalk.ctx.getApi().notifies.markAllNotifyRead({
         email: artalkUserData.email,
         name: artalkUserData.nick
       })
     }
   })
-})
+}
 
 const darkMode = ref(bootParams.darkMode)
 
@@ -68,7 +80,7 @@ const darkMode = ref(bootParams.darkMode)
 </script>
 
 <template>
-  <div class="app-wrap artalk atk-sidebar" :class="{ 'atk-dark-mode': darkMode }">
+  <div v-if="artalkLoaded" class="app-wrap artalk atk-sidebar" :class="{ 'atk-dark-mode': darkMode }">
     <Header />
     <Tab />
 

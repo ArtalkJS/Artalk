@@ -3,10 +3,10 @@ name: Test Frontend
 on:
   push:
     paths: ['ui/**']
-    tags: ['!v*']
+    tags-ignore: ['v*']
   pull_request:
     paths: ['ui/**']
-    branches: ['!release/*']
+    branches-ignore: ['release/*']
 
 jobs:
   test_ui:

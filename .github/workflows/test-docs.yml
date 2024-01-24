@@ -3,10 +3,10 @@ name: Test Docs
 on:
   push:
     paths: ['docs/**']
-    tags: ['!v*']
+    tags-ignore: ['v*']
   pull_request:
     paths: ['docs/**']
-    branches: ['!release/*']
+    branches-ignore: ['release/*']
 
 jobs:
   test_docs:

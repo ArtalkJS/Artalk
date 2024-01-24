@@ -1,16 +1,10 @@
 # 管理员 × 多站点
 
-Artalk 支持站点隔离，以及为站点分配指定的管理员账户，
+Artalk 支持多站点，管理员可以创建多个站点，并对不同站点的评论、页面进行集中管理。
 
-所以，你可以实现两种模式：单人多站点、多人多站点。
+## 创建管理员
 
-运用「单人多站点」模式，你能够实现多个站点共用同一个 Artalk 后端程序，集中化管理。
-
-运用「多人多站点」模式，你可以和你的朋友们共用同一个 Artalk 后端程序。😉
-
-## 创建超级管理员
-
-执行命令根据命令行提示快速创建超级管理员。
+执行命令根据命令行提示快速创建管理员。
 
 ```sh
 ./artalk admin
@@ -22,7 +16,7 @@ Artalk 支持站点隔离，以及为站点分配指定的管理员账户，
 docker exec -it artalk artalk admin
 ```
 
-之后可使用超级管理员账户登陆控制中心，在用户管理页面的图形界面可创建更多账户，而无需手动编辑配置文件。
+之后可使用管理员账户登录控制中心，在用户管理页面的图形界面可创建更多账户，无需手动编辑配置文件。
 
 ## 站点的创建和管理
 
@@ -32,25 +26,25 @@ docker exec -it artalk artalk admin
 
 你可以设置多个管理员账户，当输入框输入匹配管理员用户名和邮箱时，将弹出密码验证提示框，
 
-并且只有管理员才能访问侧边栏「[控制中心](../frontend/sidebar.md#控制中心)」，在前端对评论内容进行管理操作。
+并且只有管理员才能访问「[控制中心](../frontend/sidebar.md#控制中心)」，在前端对评论内容进行管理操作。
 
-在配置文件中添加如下内容：
+（可选操作）通过配置文件添加管理员：
 
 ```yaml
 admin_users:
   - name: "admin"
     email: "admin@example.com"
-    password: ""
+    password: "(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
     badge_name: "管理员"
     badge_color: "#0083FF"
   - name: "admin2"
     email: "admin2@example.com"
-    password: ""
+    password: "(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
     badge_name: "小管理员"
     badge_color: "#0083FF"
 ```
 
-每一项配置的解释：
+每项配置的解释：
 
 - **name** & **email**：用户名和邮箱，**不区分大小写**。
 - **password**：用户密码。
@@ -71,74 +65,9 @@ admin_users:
 - **badge_name**：用户显示的头衔徽标文字。
 - **badge_color**：用户显示的头衔徽标背景颜色。
 
-## 超级管理员、普通管理员
-
-管理员分为「超级管理员」和「普通管理员」，前者可以管理全部站点，后者只能管理部分站点。
-
-普通管理员将：
-
-  - 不会收到其它站点的评论邮件通知，邮件通知彼此隔离。
-  - 不能对设定范围外的站点进行 删除、修改、查询 等操作。
-  - 仅能在受限模式下使用 数据导入导出、站点管理 等功能。
-
-完整的 `admin_users` 配置如下：
-
-```yaml
-admin_users:
-  - name: "超级管理员"
-    email: "super_admin@example.com"
-    password: "(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
-    badge_name: "超级管理员"
-    badge_color: "#0083ff"
-    receive_email: false
-
-  - name: "普通管理员1"
-    email: "admin1@example.com"
-    password: "(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
-    badge_name: "管理员"
-    badge_color: "#0083ff"
-    sites:
-      - 站点名 A
-      - 站点名 B
-
-  - name: "普通管理员2"
-    email: "admin2@example.com"
-    password: "(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
-    badge_name: "管理员"
-    badge_color: "#0083ff"
-    sites:
-      - 站点名 C
-      - 站点名 D
-```
-
-### 为管理员分配站点
-
-- **sites**：向管理员分配站点，即控制管理员对于站点「[控制中心](../frontend/sidebar.md#控制中心)」的可访问权限。
-  
-  当未分配站点时，即 sites 未配置时，该账户为「**超级管理员**」，可以管理全部站点：
-
-  ```yaml
-  admin_users:
-    - name: "super_admin"
-      # 未分配 sites，为超级管理员
-  ```
-
-  当分配站点后，即 sites 已配置时，该管理员成为「**普通管理员**」：
-
-  ```yaml
-  admin_users:
-    - name: "a_admin_user"
-      # ↓ 为账户分配 sites
-      sites:
-        - 站点名 A
-        - 站点名 B
-  ```
-
-  注：你至少需要一个超级管理员，这样才能创建站点。
-
 ### 控制管理员接收邮件通知
 
-当页面有新的评论时，邮件会发送给**该站点**的全部管理员，但你可以配置 `receive_email` 强制禁用它。
+当页面有新的评论时，默认配置是邮件会发送给全部管理员，但你可以配置 `receive_email` 强制禁用它。
 
 这对于设定了多个邮箱，但又不希望某些邮箱收到评论邮件的情况很有帮助。
 
@@ -148,13 +77,6 @@ admin_users:
 
 ```yaml
 admin_users:
-  - name: "super_admin"
-    # 未分配 sites，即为超级管理员
-    receive_email: false # ← 超级管理员不接收邮件
-
-  - name: "a_admin_user"
-    # 分配 sites，即为普通管理员
-    sites:
-      - 站点名 A
-      - 站点名 B
+  - name: "admin"
+    receive_email: false # ← 强制不接收邮件
 ```

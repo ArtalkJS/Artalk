@@ -40,4 +40,4 @@
 
 ## 设置
 
-登陆管理员账户可进入到 “控制中心” 的图形设置界面，轻松地对 [配置文件](/guide/backend/config.md) 以及 [前端的配置](/guide/frontend/config.md) 进行修改，而无需手动编辑复杂的配置文件。
+登录管理员账户可进入到 “控制中心” 的图形设置界面，轻松地对 [配置文件](/guide/backend/config.md) 以及 [前端的配置](/guide/frontend/config.md) 进行修改，而无需手动编辑复杂的配置文件。

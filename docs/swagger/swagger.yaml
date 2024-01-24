@@ -1,4 +1,4 @@
-basePath: /api/
+basePath: /api/v2
 definitions:
   common.ApiVersionData:
     properties:
@@ -8,584 +8,34 @@ definitions:
         type: string
       version:
         type: string
+    required:
+    - app
+    - commit_hash
+    - version
+    type: object
+  common.ConfData:
+    properties:
+      frontend_conf:
+        $ref: '#/definitions/common.Map'
+      version:
+        $ref: '#/definitions/common.ApiVersionData'
+    required:
+    - frontend_conf
+    - version
     type: object
   common.JSONResult:
     properties:
       data:
-        description: 数据
-      extra:
-        description: 数据
+        description: Data
       msg:
-        description: 消息
+        description: Message
         type: string
-      success:
-        description: 是否成功
-        type: boolean
+    required:
+    - data
+    - msg
     type: object
   common.Map:
     additionalProperties: true
-    type: object
-  config.AdminEmailConf:
-    properties:
-      enabled:
-        description: 管理员总开关
-        type: boolean
-      mail_subject:
-        description: 管理员邮件标题
-        type: string
-      mail_tpl:
-        description: 管理员专用邮件模板
-        type: string
-    type: object
-  config.AdminNotifyConf:
-    properties:
-      bark:
-        allOf:
-          - $ref: "#/definitions/config.NotifyBarkConf"
-        description: bark
-      ding_talk:
-        allOf:
-          - $ref: "#/definitions/config.NotifyDingTalkConf"
-        description: 钉钉
-      email:
-        allOf:
-          - $ref: "#/definitions/config.AdminEmailConf"
-        description: 邮件通知
-      lark:
-        allOf:
-          - $ref: "#/definitions/config.NotifyLarkConf"
-        description: 飞书
-      line:
-        allOf:
-          - $ref: "#/definitions/config.NotifyLINEConf"
-        description: LINE
-      noise_mode:
-        description: 嘈杂模式 (非回复管理员的评论也发送通知)
-        type: boolean
-      notify_subject:
-        description: 通知标题
-        type: string
-      notify_tpl:
-        description: 通知模板
-        type: string
-      slack:
-        allOf:
-          - $ref: "#/definitions/config.NotifySlackConf"
-        description: slack
-      telegram:
-        allOf:
-          - $ref: "#/definitions/config.NotifyTelegramConf"
-        description: TG
-      webhook:
-        allOf:
-          - $ref: "#/definitions/config.NotifyWebHookConf"
-        description: WebHook
-    type: object
-  config.AdminUserConf:
-    properties:
-      badge_color:
-        type: string
-      badge_name:
-        type: string
-      email:
-        type: string
-      link:
-        type: string
-      name:
-        type: string
-      password:
-        type: string
-      receive_email:
-        type: boolean
-      sites:
-        items:
-          type: string
-        type: array
-    type: object
-  config.AliDMConf:
-    properties:
-      access_key_id:
-        type: string
-      access_key_secret:
-        type: string
-      account_name:
-        type: string
-      region:
-        type: string
-    type: object
-  config.AliyunAntispamConf:
-    properties:
-      access_key_id:
-        type: string
-      access_key_secret:
-        type: string
-      enabled:
-        type: boolean
-      region:
-        type: string
-    type: object
-  config.CacheConf:
-    properties:
-      enabled:
-        type: boolean
-      expires:
-        description: 过期时间
-        type: integer
-      redis:
-        $ref: "#/definitions/config.RedisConf"
-      server:
-        description: 缓存服务器
-        type: string
-      type:
-        $ref: "#/definitions/config.CacheType"
-      warm_up:
-        description: 启动时缓存预热
-        type: boolean
-    type: object
-  config.CacheType:
-    enum:
-      - builtin
-      - redis
-      - memcache
-    type: string
-    x-enum-comments:
-      CacheTypeBuiltin: 内建缓存
-    x-enum-varnames:
-      - CacheTypeBuiltin
-      - CacheTypeRedis
-      - CacheTypeMemcache
-  config.CaptchaConf:
-    properties:
-      action_limit:
-        type: integer
-      action_reset:
-        type: integer
-      always:
-        type: boolean
-      captcha_type:
-        $ref: "#/definitions/config.CaptchaType"
-      enabled:
-        type: boolean
-      geetest:
-        $ref: "#/definitions/config.GeetestConf"
-      hcaptcha:
-        $ref: "#/definitions/config.HCaptchaConf"
-      recaptcha:
-        $ref: "#/definitions/config.ReCaptchaConf"
-      turnstile:
-        $ref: "#/definitions/config.TurnstileConf"
-    type: object
-  config.CaptchaType:
-    enum:
-      - image
-      - turnstile
-      - recaptcha
-      - hcaptcha
-      - geetest
-    type: string
-    x-enum-varnames:
-      - TypeImage
-      - TypeTurnstile
-      - TypeReCaptcha
-      - TypeHCaptcha
-      - TypeGeetest
-  config.Config:
-    properties:
-      admin_notify:
-        allOf:
-          - $ref: "#/definitions/config.AdminNotifyConf"
-        description: 其他通知方式
-      admin_users:
-        description: 管理员账户
-        items:
-          $ref: "#/definitions/config.AdminUserConf"
-        type: array
-      app_key:
-        description: 加密密钥
-        type: string
-      cache:
-        allOf:
-          - $ref: "#/definitions/config.CacheConf"
-        description: 缓存
-      captcha:
-        allOf:
-          - $ref: "#/definitions/config.CaptchaConf"
-        description: 验证码
-      cookie:
-        allOf:
-          - $ref: "#/definitions/config.CookieConf"
-        description: Cookie
-      db:
-        allOf:
-          - $ref: "#/definitions/config.DBConf"
-        description: 数据库配置
-      debug:
-        description: 调试模式
-        type: boolean
-      email:
-        allOf:
-          - $ref: "#/definitions/config.EmailConf"
-        description: 邮箱提醒
-      frontend:
-        additionalProperties: true
-        type: object
-      host:
-        description: HTTP Server 监听 IP
-        type: string
-      img_upload:
-        allOf:
-          - $ref: "#/definitions/config.ImgUploadConf"
-        description: 图片上传
-      ip_region:
-        allOf:
-          - $ref: "#/definitions/config.IPRegionConf"
-        description: IP 归属地展示
-      locale:
-        description: 语言
-        type: string
-      log:
-        allOf:
-          - $ref: "#/definitions/config.LogConf"
-        description: 日志文件
-      login_timeout:
-        description: 登录超时
-        type: integer
-      moderator:
-        allOf:
-          - $ref: "#/definitions/config.ModeratorConf"
-        description: 评论审查
-      port:
-        description: HTTP Server 监听 Port
-        type: integer
-      site_default:
-        description: 默认站点名（当请求无指定 site_name 时使用）
-        type: string
-      ssl:
-        allOf:
-          - $ref: "#/definitions/config.SSLConf"
-        description: SSL
-      timezone:
-        description: 时区
-        type: string
-      trusted_domains:
-        description: 可信任的域名 (新)
-        items:
-          type: string
-        type: array
-    type: object
-  config.CookieConf:
-    properties:
-      enabled:
-        type: boolean
-    type: object
-  config.DBConf:
-    properties:
-      charset:
-        type: string
-      dsn:
-        description: 最高优先级
-        type: string
-      file:
-        type: string
-      host:
-        type: string
-      name:
-        type: string
-      password:
-        type: string
-      port:
-        type: integer
-      table_prefix:
-        type: string
-      type:
-        $ref: "#/definitions/config.DBType"
-      user:
-        type: string
-    type: object
-  config.DBType:
-    enum:
-      - mysql
-      - sqlite
-      - pgsql
-      - mssql
-    type: string
-    x-enum-varnames:
-      - TypeMySql
-      - TypeSQLite
-      - TypePostgreSQL
-      - TypeMSSQL
-  config.EmailConf:
-    properties:
-      ali_dm:
-        allOf:
-          - $ref: "#/definitions/config.AliDMConf"
-        description: 阿里云邮件配置
-      enabled:
-        description: 总开关
-        type: boolean
-      mail_subject:
-        description: 邮件标题
-        type: string
-      mail_tpl:
-        description: 邮件模板
-        type: string
-      queue:
-        allOf:
-          - $ref: "#/definitions/config.EmailQueueConf"
-        description: 邮件发送队列配置
-      send_addr:
-        description: 发件人地址
-        type: string
-      send_name:
-        description: 发件人名
-        type: string
-      send_type:
-        allOf:
-          - $ref: "#/definitions/config.EmailSenderType"
-        description: 发送方式
-      smtp:
-        allOf:
-          - $ref: "#/definitions/config.SMTPConf"
-        description: SMTP 配置
-    type: object
-  config.EmailQueueConf:
-    properties:
-      buffer_size:
-        description: Channel buffer size (default is zero that not create buffer)
-        type: integer
-    type: object
-  config.EmailSenderType:
-    enum:
-      - smtp
-      - ali_dm
-      - sendmail
-    type: string
-    x-enum-varnames:
-      - TypeSMTP
-      - TypeAliDM
-      - TypeSendmail
-  config.GeetestConf:
-    properties:
-      captcha_id:
-        type: string
-      captcha_key:
-        type: string
-    type: object
-  config.HCaptchaConf:
-    properties:
-      secret_key:
-        type: string
-      site_key:
-        type: string
-    type: object
-  config.IPRegionConf:
-    properties:
-      db_path:
-        description: 数据文件路径
-        type: string
-      enabled:
-        description: 启用 IP 归属地展示
-        type: boolean
-      precision:
-        description: 显示精度
-        type: string
-    type: object
-  config.ImgUploadConf:
-    properties:
-      enabled:
-        description: 总开关
-        type: boolean
-      max_size:
-        description: 图片大小限制
-        type: integer
-      path:
-        description: 图片存放路径
-        type: string
-      public_path:
-        description: 图片 URL 基础路径
-        type: string
-      quality:
-        description: 图片质量
-        type: string
-      upgit:
-        allOf:
-          - $ref: "#/definitions/config.UpgitConf"
-        description: upgit
-    type: object
-  config.KeyWordsAntispamConf:
-    properties:
-      enabled:
-        type: boolean
-      file_sep:
-        type: string
-      files:
-        items:
-          type: string
-        type: array
-      pending:
-        type: boolean
-      replac_to:
-        type: string
-    type: object
-  config.LogConf:
-    properties:
-      enabled:
-        type: boolean
-      filename:
-        type: string
-    type: object
-  config.ModeratorConf:
-    properties:
-      akismet_key:
-        type: string
-      aliyun:
-        $ref: "#/definitions/config.AliyunAntispamConf"
-      api_fail_block:
-        description: API 请求错误仍然拦截
-        type: boolean
-      keywords:
-        $ref: "#/definitions/config.KeyWordsAntispamConf"
-      pending_default:
-        type: boolean
-      tencent:
-        $ref: "#/definitions/config.TencentAntispamConf"
-    type: object
-  config.NotifyBarkConf:
-    properties:
-      enabled:
-        type: boolean
-      server:
-        type: string
-    type: object
-  config.NotifyDingTalkConf:
-    properties:
-      enabled:
-        type: boolean
-      secret:
-        type: string
-      token:
-        type: string
-    type: object
-  config.NotifyLINEConf:
-    properties:
-      channel_access_token:
-        type: string
-      channel_secret:
-        type: string
-      enabled:
-        type: boolean
-      receivers:
-        items:
-          type: string
-        type: array
-    type: object
-  config.NotifyLarkConf:
-    properties:
-      enabled:
-        type: boolean
-      webhook_url:
-        type: string
-    type: object
-  config.NotifySlackConf:
-    properties:
-      enabled:
-        type: boolean
-      oauth_token:
-        type: string
-      receivers:
-        items:
-          type: string
-        type: array
-    type: object
-  config.NotifyTelegramConf:
-    properties:
-      api_token:
-        type: string
-      enabled:
-        type: boolean
-      receivers:
-        items:
-          type: integer
-        type: array
-    type: object
-  config.NotifyWebHookConf:
-    properties:
-      enabled:
-        type: boolean
-      url:
-        type: string
-    type: object
-  config.ReCaptchaConf:
-    properties:
-      secret_key:
-        type: string
-      site_key:
-        type: string
-    type: object
-  config.RedisConf:
-    properties:
-      db:
-        description: Redis 默认数据库 0
-        type: integer
-      network:
-        description: tcp or unix
-        type: string
-      password:
-        type: string
-      username:
-        type: string
-    type: object
-  config.SMTPConf:
-    properties:
-      from:
-        type: string
-      host:
-        type: string
-      password:
-        type: string
-      port:
-        type: integer
-      username:
-        type: string
-    type: object
-  config.SSLConf:
-    properties:
-      cert_path:
-        type: string
-      enabled:
-        type: boolean
-      key_path:
-        type: string
-    type: object
-  config.TencentAntispamConf:
-    properties:
-      enabled:
-        type: boolean
-      region:
-        type: string
-      secret_id:
-        type: string
-      secret_key:
-        type: string
-    type: object
-  config.TurnstileConf:
-    properties:
-      secret_key:
-        type: string
-      site_key:
-        type: string
-    type: object
-  config.UpgitConf:
-    properties:
-      del_local:
-        description: 上传后删除本地的图片
-        type: boolean
-      enabled:
-        description: 启用 upgit
-        type: boolean
-      exec:
-        description: 启动命令
-        type: string
     type: object
   entity.CookedComment:
     properties:
@@ -635,6 +85,30 @@ definitions:
         type: integer
       vote_up:
         type: integer
+    required:
+    - badge_color
+    - badge_name
+    - content
+    - content_marked
+    - date
+    - email_encrypted
+    - id
+    - ip_region
+    - is_allow_reply
+    - is_collapsed
+    - is_pending
+    - is_pinned
+    - link
+    - nick
+    - page_key
+    - page_url
+    - rid
+    - site_name
+    - ua
+    - user_id
+    - visible
+    - vote_down
+    - vote_up
     type: object
   entity.CookedNotify:
     properties:
@@ -650,6 +124,13 @@ definitions:
         type: string
       user_id:
         type: integer
+    required:
+    - comment_id
+    - id
+    - is_emailed
+    - is_read
+    - read_link
+    - user_id
     type: object
   entity.CookedPage:
     properties:
@@ -671,6 +152,16 @@ definitions:
         type: integer
       vote_up:
         type: integer
+    required:
+    - admin_only
+    - id
+    - key
+    - pv
+    - site_name
+    - title
+    - url
+    - vote_down
+    - vote_up
     type: object
   entity.CookedSite:
     properties:
@@ -686,6 +177,12 @@ definitions:
         type: array
       urls_raw:
         type: string
+    required:
+    - first_url
+    - id
+    - name
+    - urls
+    - urls_raw
     type: object
   entity.CookedUser:
     properties:
@@ -705,12 +202,15 @@ definitions:
         type: string
       receive_email:
         type: boolean
-      site_names:
-        items:
-          type: string
-        type: array
-      site_names_raw:
-        type: string
+    required:
+    - badge_color
+    - badge_name
+    - email
+    - id
+    - is_admin
+    - link
+    - name
+    - receive_email
     type: object
   entity.CookedUserForAdmin:
     properties:
@@ -738,141 +238,845 @@ definitions:
         type: string
       receive_email:
         type: boolean
-      site_names:
+    required:
+    - badge_color
+    - badge_name
+    - comment_count
+    - email
+    - id
+    - is_admin
+    - is_in_conf
+    - last_ip
+    - last_ua
+    - link
+    - name
+    - receive_email
+    type: object
+  handler.Map:
+    additionalProperties: true
+    type: object
+  handler.ParamsCaptchaVerify:
+    properties:
+      value:
+        description: The captcha value to check
+        type: string
+    required:
+    - value
+    type: object
+  handler.ParamsCommentCreate:
+    properties:
+      content:
+        description: The comment content
+        type: string
+      email:
+        description: The comment email
+        type: string
+      link:
+        description: The comment link
+        type: string
+      name:
+        description: The comment name
+        type: string
+      page_key:
+        description: The comment page_key
+        type: string
+      page_title:
+        description: The comment page_title
+        type: string
+      rid:
+        description: The comment rid
+        type: integer
+      site_name:
+        description: The site name of your content scope
+        type: string
+      ua:
+        description: The comment ua
+        type: string
+    required:
+    - content
+    - email
+    - name
+    - page_key
+    - site_name
+    type: object
+  handler.ParamsCommentUpdate:
+    properties:
+      content:
+        description: The comment content
+        type: string
+      email:
+        description: The comment email
+        type: string
+      ip:
+        description: The comment ip
+        type: string
+      is_collapsed:
+        description: The comment is_collapsed
+        type: boolean
+      is_pending:
+        description: The comment is_pending
+        type: boolean
+      is_pinned:
+        description: The comment is_pinned
+        type: boolean
+      link:
+        description: The comment link
+        type: string
+      nick:
+        description: The comment nick
+        type: string
+      page_key:
+        description: The comment page_key
+        type: string
+      rid:
+        description: The comment rid
+        type: integer
+      site_name:
+        description: The site name of your content scope
+        type: string
+      ua:
+        description: The comment ua
+        type: string
+    required:
+    - content
+    - is_collapsed
+    - is_pending
+    - is_pinned
+    - page_key
+    - rid
+    - site_name
+    - ua
+    type: object
+  handler.ParamsEmailSend:
+    properties:
+      body:
+        description: The body of email
+        type: string
+      subject:
+        description: The subject of email
+        type: string
+      to_addr:
+        description: The email address of the receiver
+        type: string
+    required:
+    - body
+    - subject
+    - to_addr
+    type: object
+  handler.ParamsNotifyReadAll:
+    properties:
+      email:
+        description: The user email
+        type: string
+      name:
+        description: The username
+        type: string
+    required:
+    - email
+    - name
+    type: object
+  handler.ParamsPageFetchAll:
+    properties:
+      site_name:
+        description: If not empty, only fetch pages of this site
+        type: string
+    type: object
+  handler.ParamsPagePV:
+    properties:
+      page_key:
+        description: The page key
+        type: string
+      page_title:
+        description: The page title
+        type: string
+      site_name:
+        description: The site name of your content scope
+        type: string
+    required:
+    - page_key
+    type: object
+  handler.ParamsPageUpdate:
+    properties:
+      admin_only:
+        description: Updated page admin_only option
+        type: boolean
+      key:
+        description: Updated page key
+        type: string
+      site_name:
+        description: The site name of your content scope
+        type: string
+      title:
+        description: Updated page title
+        type: string
+    required:
+    - admin_only
+    - key
+    - site_name
+    - title
+    type: object
+  handler.ParamsSettingApply:
+    properties:
+      yaml:
+        description: The content of the config file in YAML format
+        type: string
+    required:
+    - yaml
+    type: object
+  handler.ParamsSiteCreate:
+    properties:
+      name:
+        description: The site name
+        type: string
+      urls:
+        description: The site urls
         items:
           type: string
         type: array
-      site_names_raw:
+    required:
+    - name
+    - urls
+    type: object
+  handler.ParamsSiteUpdate:
+    properties:
+      name:
+        description: Updated site name
         type: string
-    type: object
-  handler.ResponseAdd:
-    properties:
-      comment:
-        $ref: "#/definitions/entity.CookedComment"
-    type: object
-  handler.ResponseAdminPageEdit:
-    properties:
-      page:
-        $ref: "#/definitions/entity.CookedPage"
-    type: object
-  handler.ResponseAdminPageGet:
-    properties:
-      pages:
+      urls:
+        description: Updated site urls
         items:
-          $ref: "#/definitions/entity.CookedPage"
+          type: string
         type: array
-      total:
-        type: integer
+    required:
+    - name
+    - urls
     type: object
-  handler.ResponseAdminSettingGet:
+  handler.ParamsTransferImport:
     properties:
-      custom:
+      assumeyes:
+        description: Automatically answer yes for all questions.
+        type: boolean
+      json_data:
+        description: The JSON data
         type: string
-      template:
+      json_file:
+        description: The JSON file path
+        type: string
+      target_site_name:
+        description: The target site name
+        type: string
+      target_site_url:
+        description: The target site url
+        type: string
+      url_resolver:
+        description: Enable URL resolver
+        type: boolean
+    type: object
+  handler.ParamsUserCreate:
+    properties:
+      badge_color:
+        description: The user badge color (hex format)
+        type: string
+      badge_name:
+        description: The user badge name
+        type: string
+      email:
+        description: The user email
+        type: string
+      is_admin:
+        description: The user is an admin
+        type: boolean
+      link:
+        description: The user link
+        type: string
+      name:
+        description: The user name
+        type: string
+      password:
+        description: The user password
+        type: string
+      receive_email:
+        description: The user receive email
+        type: boolean
+    required:
+    - email
+    - is_admin
+    - name
+    - receive_email
+    type: object
+  handler.ParamsUserLogin:
+    properties:
+      email:
+        description: The user email
+        type: string
+      name:
+        description: The username
+        type: string
+      password:
+        description: The user password
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  handler.ParamsUserUpdate:
+    properties:
+      badge_color:
+        description: The user badge color (hex format)
+        type: string
+      badge_name:
+        description: The user badge name
+        type: string
+      email:
+        description: The user email
+        type: string
+      is_admin:
+        description: The user is an admin
+        type: boolean
+      link:
+        description: The user link
+        type: string
+      name:
+        description: The user name
+        type: string
+      password:
+        description: The user password
+        type: string
+      receive_email:
+        description: The user receive email
+        type: boolean
+    required:
+    - email
+    - is_admin
+    - name
+    - receive_email
+    type: object
+  handler.ParamsVote:
+    properties:
+      email:
+        description: The user email
+        type: string
+      name:
+        description: The username
         type: string
     type: object
-  handler.ResponseAdminSiteAdd:
+  handler.ResponseAdminUserList:
     properties:
-      site:
-        $ref: "#/definitions/entity.CookedSite"
-    type: object
-  handler.ResponseAdminSiteEdit:
-    properties:
-      site:
-        $ref: "#/definitions/entity.CookedSite"
-    type: object
-  handler.ResponseAdminSiteGet:
-    properties:
-      sites:
-        items:
-          $ref: "#/definitions/entity.CookedSite"
-        type: array
-    type: object
-  handler.ResponseAdminUserAdd:
-    properties:
-      user:
-        $ref: "#/definitions/entity.CookedUserForAdmin"
-    type: object
-  handler.ResponseAdminUserEdit:
-    properties:
-      user:
-        $ref: "#/definitions/entity.CookedUserForAdmin"
-    type: object
-  handler.ResponseAdminUserGet:
-    properties:
-      total:
+      count:
         type: integer
       users:
         items:
-          $ref: "#/definitions/entity.CookedUserForAdmin"
+          $ref: '#/definitions/entity.CookedUserForAdmin'
         type: array
+    required:
+    - count
+    - users
     type: object
-  handler.ResponseCommentEdit:
+  handler.ResponseCaptchaGet:
     properties:
-      comment:
-        $ref: "#/definitions/entity.CookedComment"
+      img_data:
+        type: string
+    required:
+    - img_data
     type: object
-  handler.ResponseGet:
+  handler.ResponseCaptchaStatus:
     properties:
-      api_version:
-        $ref: "#/definitions/common.ApiVersionData"
+      is_pass:
+        type: boolean
+    required:
+    - is_pass
+    type: object
+  handler.ResponseCommentCreate:
+    properties:
+      badge_color:
+        type: string
+      badge_name:
+        type: string
+      content:
+        type: string
+      content_marked:
+        type: string
+      date:
+        type: string
+      email_encrypted:
+        type: string
+      id:
+        type: integer
+      ip_region:
+        type: string
+      is_allow_reply:
+        type: boolean
+      is_collapsed:
+        type: boolean
+      is_pending:
+        type: boolean
+      is_pinned:
+        type: boolean
+      link:
+        type: string
+      nick:
+        type: string
+      page_key:
+        type: string
+      page_url:
+        type: string
+      rid:
+        type: integer
+      site_name:
+        type: string
+      ua:
+        type: string
+      user_id:
+        type: integer
+      visible:
+        type: boolean
+      vote_down:
+        type: integer
+      vote_up:
+        type: integer
+    required:
+    - badge_color
+    - badge_name
+    - content
+    - content_marked
+    - date
+    - email_encrypted
+    - id
+    - ip_region
+    - is_allow_reply
+    - is_collapsed
+    - is_pending
+    - is_pinned
+    - link
+    - nick
+    - page_key
+    - page_url
+    - rid
+    - site_name
+    - ua
+    - user_id
+    - visible
+    - vote_down
+    - vote_up
+    type: object
+  handler.ResponseCommentList:
+    properties:
       comments:
         items:
-          $ref: "#/definitions/entity.CookedComment"
+          $ref: '#/definitions/entity.CookedComment'
         type: array
-      conf:
-        $ref: "#/definitions/common.Map"
+      count:
+        type: integer
       page:
-        $ref: "#/definitions/entity.CookedPage"
-      total:
+        $ref: '#/definitions/entity.CookedPage'
+      roots_count:
         type: integer
-      total_roots:
-        type: integer
-      unread:
-        items:
-          $ref: "#/definitions/entity.CookedNotify"
-        type: array
-      unread_count:
-        type: integer
+    required:
+    - comments
+    - count
+    - page
+    - roots_count
     type: object
-  handler.ResponseImgUpload:
+  handler.ResponseCommentUpdate:
     properties:
-      img_file:
+      badge_color:
         type: string
-      img_url:
+      badge_name:
         type: string
+      content:
+        type: string
+      content_marked:
+        type: string
+      date:
+        type: string
+      email_encrypted:
+        type: string
+      id:
+        type: integer
+      ip_region:
+        type: string
+      is_allow_reply:
+        type: boolean
+      is_collapsed:
+        type: boolean
+      is_pending:
+        type: boolean
+      is_pinned:
+        type: boolean
+      link:
+        type: string
+      nick:
+        type: string
+      page_key:
+        type: string
+      page_url:
+        type: string
+      rid:
+        type: integer
+      site_name:
+        type: string
+      ua:
+        type: string
+      user_id:
+        type: integer
+      visible:
+        type: boolean
+      vote_down:
+        type: integer
+      vote_up:
+        type: integer
+    required:
+    - badge_color
+    - badge_name
+    - content
+    - content_marked
+    - date
+    - email_encrypted
+    - id
+    - ip_region
+    - is_allow_reply
+    - is_collapsed
+    - is_pending
+    - is_pinned
+    - link
+    - nick
+    - page_key
+    - page_url
+    - rid
+    - site_name
+    - ua
+    - user_id
+    - visible
+    - vote_down
+    - vote_up
     type: object
-  handler.ResponseLogin:
+  handler.ResponseNotifyList:
+    properties:
+      count:
+        type: integer
+      notifies:
+        items:
+          $ref: '#/definitions/entity.CookedNotify'
+        type: array
+    required:
+    - count
+    - notifies
+    type: object
+  handler.ResponsePageFetch:
+    properties:
+      admin_only:
+        type: boolean
+      id:
+        type: integer
+      key:
+        type: string
+      pv:
+        type: integer
+      site_name:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+      vote_down:
+        type: integer
+      vote_up:
+        type: integer
+    required:
+    - admin_only
+    - id
+    - key
+    - pv
+    - site_name
+    - title
+    - url
+    - vote_down
+    - vote_up
+    type: object
+  handler.ResponsePageFetchStatus:
+    properties:
+      done:
+        description: The number of pages that have been fetched
+        type: integer
+      is_progress:
+        description: If the task is in progress
+        type: boolean
+      msg:
+        description: The message of the task status
+        type: string
+      total:
+        description: The total number of pages
+        type: integer
+    required:
+    - done
+    - is_progress
+    - msg
+    - total
+    type: object
+  handler.ResponsePageList:
+    properties:
+      count:
+        type: integer
+      pages:
+        items:
+          $ref: '#/definitions/entity.CookedPage'
+        type: array
+    required:
+    - count
+    - pages
+    type: object
+  handler.ResponsePagePV:
+    properties:
+      pv:
+        type: integer
+    required:
+    - pv
+    type: object
+  handler.ResponsePageUpdate:
+    properties:
+      admin_only:
+        type: boolean
+      id:
+        type: integer
+      key:
+        type: string
+      pv:
+        type: integer
+      site_name:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+      vote_down:
+        type: integer
+      vote_up:
+        type: integer
+    required:
+    - admin_only
+    - id
+    - key
+    - pv
+    - site_name
+    - title
+    - url
+    - vote_down
+    - vote_up
+    type: object
+  handler.ResponseSettingGet:
+    properties:
+      yaml:
+        type: string
+    required:
+    - yaml
+    type: object
+  handler.ResponseSettingTemplate:
+    properties:
+      yaml:
+        type: string
+    required:
+    - yaml
+    type: object
+  handler.ResponseSiteCreate:
+    properties:
+      first_url:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      urls:
+        items:
+          type: string
+        type: array
+      urls_raw:
+        type: string
+    required:
+    - first_url
+    - id
+    - name
+    - urls
+    - urls_raw
+    type: object
+  handler.ResponseSiteList:
+    properties:
+      count:
+        type: integer
+      sites:
+        items:
+          $ref: '#/definitions/entity.CookedSite'
+        type: array
+    required:
+    - count
+    - sites
+    type: object
+  handler.ResponseSiteUpdate:
+    properties:
+      first_url:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      urls:
+        items:
+          type: string
+        type: array
+      urls_raw:
+        type: string
+    required:
+    - first_url
+    - id
+    - name
+    - urls
+    - urls_raw
+    type: object
+  handler.ResponseTransferExport:
+    properties:
+      artrans:
+        description: The exported data which is a JSON string
+        type: string
+    required:
+    - artrans
+    type: object
+  handler.ResponseTransferUpload:
+    properties:
+      filename:
+        description: The uploaded file name which can be used to import
+        type: string
+    required:
+    - filename
+    type: object
+  handler.ResponseUpload:
+    properties:
+      file_name:
+        type: string
+      file_type:
+        type: string
+      public_url:
+        type: string
+    required:
+    - file_name
+    - file_type
+    - public_url
+    type: object
+  handler.ResponseUserCreate:
+    properties:
+      badge_color:
+        type: string
+      badge_name:
+        type: string
+      comment_count:
+        type: integer
+      email:
+        type: string
+      id:
+        type: integer
+      is_admin:
+        type: boolean
+      is_in_conf:
+        type: boolean
+      last_ip:
+        type: string
+      last_ua:
+        type: string
+      link:
+        type: string
+      name:
+        type: string
+      receive_email:
+        type: boolean
+    required:
+    - badge_color
+    - badge_name
+    - comment_count
+    - email
+    - id
+    - is_admin
+    - is_in_conf
+    - last_ip
+    - last_ua
+    - link
+    - name
+    - receive_email
+    type: object
+  handler.ResponseUserInfo:
+    properties:
+      is_login:
+        type: boolean
+      notifies:
+        items:
+          $ref: '#/definitions/entity.CookedNotify'
+        type: array
+      notifies_count:
+        type: integer
+      user:
+        $ref: '#/definitions/entity.CookedUser'
+    required:
+    - is_login
+    - notifies
+    - notifies_count
+    - user
+    type: object
+  handler.ResponseUserLogin:
     properties:
       token:
         type: string
       user:
-        $ref: "#/definitions/entity.CookedUser"
+        $ref: '#/definitions/entity.CookedUser'
+    required:
+    - token
+    - user
     type: object
-  handler.ResponseLoginStatus:
+  handler.ResponseUserStatus:
     properties:
       is_admin:
         type: boolean
       is_login:
         type: boolean
+    required:
+    - is_admin
+    - is_login
     type: object
-  handler.ResponsePV:
+  handler.ResponseUserUpdate:
     properties:
-      pv:
+      badge_color:
+        type: string
+      badge_name:
+        type: string
+      comment_count:
         type: integer
-    type: object
-  handler.ResponseUserGet:
-    properties:
-      is_login:
+      email:
+        type: string
+      id:
+        type: integer
+      is_admin:
         type: boolean
-      unread:
-        items:
-          $ref: "#/definitions/entity.CookedNotify"
-        type: array
-      unread_count:
-        type: integer
-      user:
-        $ref: "#/definitions/entity.CookedUser"
+      is_in_conf:
+        type: boolean
+      last_ip:
+        type: string
+      last_ua:
+        type: string
+      link:
+        type: string
+      name:
+        type: string
+      receive_email:
+        type: boolean
+    required:
+    - badge_color
+    - badge_name
+    - comment_count
+    - email
+    - id
+    - is_admin
+    - is_in_conf
+    - last_ip
+    - last_ua
+    - link
+    - name
+    - receive_email
     type: object
   handler.ResponseVote:
     properties:
@@ -880,1271 +1084,1778 @@ definitions:
         type: integer
       up:
         type: integer
+    required:
+    - down
+    - up
     type: object
 info:
   contact:
     email: artalkjs@gmail.com
     name: API Support
     url: https://artalk.js.org
-  description: This is an Artalk server.
+  description: Artalk is a modern comment system based on Golang.
   license:
     name: MIT
     url: https://github.com/ArtalkJS/Artalk/blob/master/LICENSE
   title: Artalk API
-  version: "1.0"
+  version: "2.0"
 paths:
-  /add:
+  /cache/flush:
     post:
+      description: Flush all cache on the server
+      operationId: FlushCache
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Flush Cache
+      tags:
+      - Cache
+  /cache/warm_up:
+    post:
+      description: Cache warming helps you to pre-load the cache to improve the performance
+        of the first request
+      operationId: WarmUpCache
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Warm-Up Cache
+      tags:
+      - Cache
+  /captcha:
+    get:
+      description: Get a base64 encoded captcha image or a HTML page to verify for
+        user
+      operationId: GetCaptcha
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseCaptchaGet'
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: Get Captcha
+      tags:
+      - Captcha
+  /captcha/status:
+    get:
+      description: Get the status of the user's captcha verification
+      operationId: GetCaptchaStatus
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseCaptchaStatus'
+      summary: Get Captcha Status
+      tags:
+      - Captcha
+  /captcha/verify:
+    post:
+      description: Verify user enters correct captcha code
+      operationId: VerifyCaptcha
+      parameters:
+      - description: The data to check
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsCaptchaVerify'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                img_data:
+                  type: string
+              type: object
+      summary: Verify Captcha
+      tags:
+      - Captcha
+  /comments:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of comments by some conditions
+      operationId: GetComments
+      parameters:
+      - description: The user email
+        in: query
+        name: email
+        type: string
+      - description: Enable flat_mode
+        in: query
+        name: flat_mode
+        type: boolean
+      - description: The limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: The username
+        in: query
+        name: name
+        type: string
+      - description: The offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: The comment page_key
+        in: query
+        name: page_key
+        required: true
+        type: string
+      - description: The scope of comments
+        enum:
+        - page
+        - user
+        - site
+        in: query
+        name: scope
+        type: string
+      - description: Search keywords
+        in: query
+        name: search
+        type: string
+      - description: The site name of your content scope
+        in: query
+        name: site_name
+        type: string
+      - description: Sort by condition
+        enum:
+        - date_asc
+        - date_desc
+        - vote
+        in: query
+        name: sort_by
+        type: string
+      - description: Message center show type
+        enum:
+        - all
+        - mentions
+        - mine
+        - pending
+        in: query
+        name: type
+        type: string
+      - description: Only show comments by admin
+        in: query
+        name: view_only_admin
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseCommentList'
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get Comment List
+      tags:
+      - Comment
+    post:
+      consumes:
+      - application/json
       description: Create a new comment
+      operationId: CreateComment
       parameters:
-        - description: the comment name
-          in: formData
-          name: name
-          type: string
-        - description: the comment email
-          in: formData
-          name: email
-          type: string
-        - description: the comment link
-          in: formData
-          name: link
-          type: string
-        - description: the comment content
-          in: formData
-          name: content
-          required: true
-          type: string
-        - description: the comment rid
-          in: formData
-          name: rid
-          type: string
-        - description: the comment ua
-          in: formData
-          name: ua
-          type: string
-        - description: the comment page_key
-          in: formData
-          name: page_key
-          required: true
-          type: string
-        - description: the comment page_title
-          in: formData
-          name: page_title
-          type: string
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
+      - description: The comment data
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsCommentCreate'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseCommentCreate'
+        "400":
+          description: Bad Request
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseAdd"
-                type: object
-      security:
-        - ApiKeyAuth: []
-      summary: Comment Add
-      tags:
-        - Comment
-  /admin/cache-flush:
-    post:
-      description: Flush Cache when application runs
-      parameters:
-        - description: flush all cache
-          example: 1
-          in: formData
-          name: flush_all
-          type: integer
-      responses:
-        "200":
-          description: OK
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
           schema:
-            $ref: "#/definitions/common.JSONResult"
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
-        - ApiKeyAuth: []
-      summary: Cache Flush
+      - ApiKeyAuth: []
+      summary: Create Comment
       tags:
-        - Cache
-  /admin/cache-warm:
-    post:
-      description: Cache warming helps you hit the cache on the user's first visit
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/common.JSONResult"
-      security:
-        - ApiKeyAuth: []
-      summary: Cache Warming
-      tags:
-        - Cache
-  /admin/comment-del:
-    post:
+      - Comment
+  /comments/{id}:
+    delete:
       description: Delete a specific comment
+      operationId: DeleteComment
       parameters:
-        - description: the comment ID you want to delete
-          in: formData
-          name: id
-          required: true
-          type: integer
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
+      - description: The comment ID you want to delete
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/common.JSONResult"
-      security:
-        - ApiKeyAuth: []
-      summary: Comment Delete
-      tags:
-        - Comment
-  /admin/comment-edit:
-    post:
-      description: Edit a specific comment
-      parameters:
-        - description: the comment ID you want to edit
-          in: formData
-          name: id
-          required: true
-          type: integer
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
-        - description: the comment content
-          in: formData
-          name: content
-          type: string
-        - description: the comment page_key
-          in: formData
-          name: page_key
-          type: string
-        - description: the comment nick
-          in: formData
-          name: nick
-          type: string
-        - description: the comment email
-          in: formData
-          name: email
-          type: string
-        - description: the comment link
-          in: formData
-          name: link
-          type: string
-        - description: the comment rid
-          in: formData
-          name: rid
-          type: string
-        - description: the comment ua
-          in: formData
-          name: ua
-          type: string
-        - description: the comment ip
-          in: formData
-          name: ip
-          type: string
-        - description: the comment is_collapsed
-          in: formData
-          name: is_collapsed
-          type: boolean
-        - description: the comment is_pending
-          in: formData
-          name: is_pending
-          type: boolean
-        - description: the comment is_pinned
-          in: formData
-          name: is_pinned
-          type: boolean
-      responses:
-        "200":
-          description: OK
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseCommentEdit"
-                type: object
-      security:
-        - ApiKeyAuth: []
-      summary: Comment Edit
-      tags:
-        - Comment
-  /admin/export:
-    post:
-      description: Export data from Artalk
-      responses:
-        "200":
-          description: OK
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    properties:
-                      data:
-                        type: string
-                    type: object
-                type: object
-      security:
-        - ApiKeyAuth: []
-      summary: Transfer Export
-      tags:
-        - Transfer
-  /admin/import:
-    post:
-      description: Import data to Artalk
-      parameters:
-        - description: the transfer importer payload
-          in: formData
-          name: payload
-          type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/common.JSONResult"
-      security:
-        - ApiKeyAuth: []
-      summary: Transfer Import
-      tags:
-        - Transfer
-  /admin/import-upload:
-    post:
-      description: Upload a file to prepare to import
-      parameters:
-        - description: upload file in preparation for import task
-          in: formData
-          name: file
-          required: true
-          type: file
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/common.JSONResult"
-      security:
-        - ApiKeyAuth: []
-      summary: Transfer Import Upload
-      tags:
-        - Transfer
-  /admin/page-del:
-    post:
-      description: Delete a specific page
-      parameters:
-        - description: the page KEY you want to delete
-          in: formData
-          name: key
-          required: true
-          type: string
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/common.JSONResult"
-      security:
-        - ApiKeyAuth: []
-      summary: Page Delete
-      tags:
-        - Page
-  /admin/page-edit:
-    post:
-      description: Edit a specific page
-      parameters:
-        - description: the page ID you want to edit
-          in: formData
-          name: id
-          required: true
-          type: string
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
-        - description: edit page key
-          in: formData
-          name: key
-          type: string
-        - description: edit page title
-          in: formData
-          name: title
-          type: string
-        - description: edit page admin_only option
-          in: formData
-          name: admin_only
-          type: boolean
-      responses:
-        "200":
-          description: OK
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseAdminPageEdit"
-                type: object
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
-        - ApiKeyAuth: []
-      summary: Page Edit
+      - ApiKeyAuth: []
+      summary: Delete Comment
       tags:
-        - Page
-  /admin/page-fetch:
-    post:
-      description: Fetch the data of a specific page
+      - Comment
+    put:
+      consumes:
+      - application/json
+      description: Update a specific comment
+      operationId: UpdateComment
       parameters:
-        - description: the page ID you want to fetch
-          in: formData
-          name: key
-          required: true
-          type: string
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
-        - description: which response data you want to receive
-          in: formData
-          name: get_status
-          type: boolean
+      - description: The comment ID you want to update
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: The comment data
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsCommentUpdate'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/common.JSONResult"
+            $ref: '#/definitions/handler.ResponseCommentUpdate'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
-        - ApiKeyAuth: []
-      summary: Page Data Fetch
+      - ApiKeyAuth: []
+      summary: Update Comment
       tags:
-        - Page
-  /admin/page-get:
+      - Comment
+  /conf:
+    get:
+      description: Get System Configs for UI
+      operationId: Conf
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.ConfData'
+      summary: Get System Configs
+      tags:
+      - System
+  /notifies:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of notifies for user
+      operationId: GetNotifies
+      parameters:
+      - description: The user name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: The user email
+        in: query
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseNotifyList'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: Get Notifies
+      tags:
+      - Notify
+  /notifies/{comment_id}/{notify_key}:
     post:
+      description: Mark specific notification as read for user
+      operationId: MarkNotifyRead
+      parameters:
+      - description: The comment id of the notify you want to mark as read
+        in: path
+        name: comment_id
+        required: true
+        type: integer
+      - description: The key of the notify
+        in: path
+        name: notify_key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Map'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: Mark Notify as Read
+      tags:
+      - Notify
+  /notifies/read:
+    post:
+      consumes:
+      - application/json
+      description: Mark all notifies as read for user
+      operationId: MarkAllNotifyRead
+      parameters:
+      - description: The options
+        in: body
+        name: options
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsNotifyReadAll'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Map'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: Mark All Notifies as Read
+      tags:
+      - Notify
+  /pages:
+    get:
+      consumes:
+      - application/json
       description: Get a list of pages by some conditions
+      operationId: GetPages
       parameters:
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
-        - description: the limit for pagination
-          in: formData
-          name: limit
-          type: integer
-        - description: the offset for pagination
-          in: formData
-          name: offset
-          type: integer
+      - description: The limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: The offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: The site name of your content scope
+        in: query
+        name: site_name
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponsePageList'
+        "403":
+          description: Forbidden
+          schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseAdminPageGet"
-                type: object
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
-        - ApiKeyAuth: []
-      summary: Page List
+      - ApiKeyAuth: []
+      summary: Get Page List
       tags:
-        - Page
-  /admin/send-mail:
+      - Page
+  /pages/{id}:
+    delete:
+      description: Delete a specific page
+      operationId: DeletePage
+      parameters:
+      - description: The page ID you want to delete
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Page
+      tags:
+      - Page
+    put:
+      consumes:
+      - application/json
+      description: Update a specific page
+      operationId: UpdatePage
+      parameters:
+      - description: The page ID you want to update
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: The page data
+        in: body
+        name: page
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsPageUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponsePageUpdate'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update Page
+      tags:
+      - Page
+  /pages/{id}/fetch:
     post:
+      consumes:
+      - application/json
+      description: Fetch the data of a specific page
+      operationId: FetchPage
+      parameters:
+      - description: The page ID you want to fetch
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponsePageFetch'
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Fetch Page Data
+      tags:
+      - Page
+  /pages/fetch:
+    post:
+      consumes:
+      - application/json
+      description: Fetch the data of all pages
+      operationId: FetchAllPages
+      parameters:
+      - description: The options
+        in: body
+        name: options
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsPageFetchAll'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Map'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Fetch All Pages Data
+      tags:
+      - Page
+  /pages/fetch/status:
+    get:
+      description: Get the status of the task of fetching all pages
+      operationId: GetPageFetchStatus
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponsePageFetchStatus'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Pages Fetch Status
+      tags:
+      - Page
+  /pages/pv:
+    post:
+      consumes:
+      - application/json
+      description: Increase and get the number of page views
+      operationId: LogPv
+      parameters:
+      - description: The page to record pv
+        in: body
+        name: page
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsPagePV'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponsePagePV'
+      summary: Increase Page Views (PV)
+      tags:
+      - Page
+  /send_email:
+    post:
+      consumes:
+      - application/json
       description: Send an email to test the email sender
+      operationId: SendEmail
       parameters:
-        - description: the subject of email
-          in: formData
-          name: subject
-          required: true
-          type: string
-        - description: the body of email
-          in: formData
-          name: body
-          required: true
-          type: string
-        - description: the email address of the receiver
-          in: formData
-          name: to_addr
-          required: true
-          type: string
+      - description: The email data
+        in: body
+        name: email
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsEmailSend'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/common.JSONResult"
-      security:
-        - ApiKeyAuth: []
-      summary: Email Send
-      tags:
-        - System
-  /admin/setting-get:
-    post:
-      description: Get settings from app config file
-      responses:
-        "200":
-          description: OK
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseAdminSettingGet"
-                type: object
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.Map'
       security:
-        - ApiKeyAuth: []
-      summary: Settings Get
+      - ApiKeyAuth: []
+      summary: Send Email
       tags:
-        - System
-  /admin/setting-save:
-    post:
-      description: Save settings to app config file
-      parameters:
-        - description: the content of the config file in YAML format
-          in: formData
-          name: data
-          required: true
-          type: string
+      - System
+  /settings:
+    get:
+      description: Get settings from app config file
+      operationId: GetSettings
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/common.JSONResult"
+            $ref: '#/definitions/handler.ResponseSettingGet'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
-        - ApiKeyAuth: []
-      summary: Settings Save
+      - ApiKeyAuth: []
+      summary: Get Settings
       tags:
-        - System
-  /admin/setting-tpl:
-    post:
-      description:
-        Get config templates in different languages for rendering the settings
+      - System
+    put:
+      consumes:
+      - application/json
+      description: Apply settings and restart the server
+      operationId: ApplySettings
+      parameters:
+      - description: The settings
+        in: body
+        name: settings
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsSettingApply'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Save and apply Settings
+      tags:
+      - System
+  /settings/template/{locale}:
+    get:
+      description: Get config templates in different languages for rendering the settings
         page in the frontend
+      operationId: GetSettingsTemplate
+      parameters:
+      - description: The locale of the settings template you want to get
+        in: path
+        name: locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseSettingTemplate'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Settings Template
+      tags:
+      - System
+  /sites:
+    get:
+      description: Get a list of sites by some conditions
+      operationId: GetSites
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseSiteList'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Site List
+      tags:
+      - Site
+    post:
+      consumes:
+      - application/json
+      description: Create a new site
+      operationId: CreateSite
+      parameters:
+      - description: The site data
+        in: body
+        name: site
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsSiteCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseSiteCreate'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create Site
+      tags:
+      - Site
+  /sites/{id}:
+    delete:
+      description: Delete a specific site
+      operationId: deleteSite
+      parameters:
+      - description: The site ID you want to delete
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Site Delete
+      tags:
+      - Site
+    put:
+      consumes:
+      - application/json
+      description: Update a specific site
+      operationId: UpdateSite
+      parameters:
+      - description: The site ID you want to update
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: The site data
+        in: body
+        name: site
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsSiteUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseSiteUpdate'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Site
+      tags:
+      - Site
+  /stats/{type}:
+    get:
+      consumes:
+      - application/json
+      description: Get the statistics of various data analysis
+      operationId: GetStats
+      parameters:
+      - description: The type of statistics
+        enum:
+        - latest_comments
+        - latest_pages
+        - pv_most_pages
+        - comment_most_pages
+        - page_pv
+        - site_pv
+        - page_comment
+        - site_comment
+        - rand_comments
+        - rand_pages
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: The limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: multiple page keys separated by commas
+        in: query
+        name: page_keys
+        type: string
+      - description: The site name of your content scope
+        in: query
+        name: site_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: Statistic
+      tags:
+      - Statistic
+  /transfer/export:
+    get:
+      description: Export data from Artalk
+      operationId: ExportArtrans
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseTransferExport'
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Export Artrans
+      tags:
+      - Transfer
+  /transfer/import:
+    post:
+      consumes:
+      - application/json
+      description: Import data to Artalk
+      operationId: ImportArtrans
+      parameters:
+      - description: The data to import
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsTransferImport'
+      produces:
+      - text/html
       responses:
         "200":
           description: OK
           schema:
             type: string
       security:
-        - ApiKeyAuth: []
-      summary: Settings Template
+      - ApiKeyAuth: []
+      summary: Import Artrans
       tags:
-        - System
-  /admin/site-add:
+      - Transfer
+  /transfer/upload:
     post:
-      description: Create a new site
+      consumes:
+      - multipart/form-data
+      description: Upload a file to prepare to import
+      operationId: UploadArtrans
       parameters:
-        - description: the site name
-          in: formData
-          name: name
-          type: string
-        - description: the site urls
-          in: formData
-          name: urls
-          type: string
+      - description: Upload file in preparation for import task
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseAdminSiteAdd"
-                type: object
-      security:
-        - ApiKeyAuth: []
-      summary: Site Add
-      tags:
-        - Site
-  /admin/site-del:
-    post:
-      description: Delete a specific site
-      parameters:
-        - description: the site ID you want to delete
-          in: formData
-          name: id
-          required: true
-          type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/common.JSONResult"
-      security:
-        - ApiKeyAuth: []
-      summary: Site Delete
-      tags:
-        - Site
-  /admin/site-edit:
-    post:
-      description: Edit a specific site
-      parameters:
-        - description: the site ID you want to edit
-          in: formData
-          name: id
-          required: true
-          type: string
-        - description: edit site name
-          in: formData
-          name: name
-          type: string
-        - description: edit site urls
-          in: formData
-          name: urls
-          type: string
-      responses:
-        "200":
-          description: OK
+            - $ref: '#/definitions/handler.ResponseTransferUpload'
+            - properties:
+                filename:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseAdminSiteEdit"
-                type: object
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
-        - ApiKeyAuth: []
-      summary: Site Edit
+      - ApiKeyAuth: []
+      summary: Upload Artrans
       tags:
-        - Site
-  /admin/site-get:
+      - Transfer
+  /upload:
     post:
-      description: Get a list of sites by some conditions
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseAdminSiteGet"
-                type: object
-      security:
-        - ApiKeyAuth: []
-      summary: Site List
-      tags:
-        - Site
-  /admin/user-add:
-    post:
-      description: Create a new user
+      consumes:
+      - multipart/form-data
+      description: Upload file from this endpoint
+      operationId: Upload
       parameters:
-        - description: the user name
-          in: formData
-          name: name
-          required: true
-          type: string
-        - description: the user email
-          in: formData
-          name: email
-          required: true
-          type: string
-        - description: the user password
-          in: formData
-          name: password
-          type: string
-        - description: the user link
-          in: formData
-          name: link
-          type: string
-        - description: the user is an admin
-          in: formData
-          name: is_admin
-          required: true
-          type: boolean
-        - description: the site names associated with the user
-          in: formData
-          name: site_names
-          type: string
-        - description: the user receive email
-          in: formData
-          name: receive_email
-          required: true
-          type: boolean
-        - description: the user badge name
-          in: formData
-          name: badge_name
-          type: string
-        - description: the user badge color (hex format)
-          in: formData
-          name: badge_color
-          type: string
+      - description: Upload file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseAdminUserAdd"
-                type: object
-      security:
-        - ApiKeyAuth: []
-      summary: User Add
-      tags:
-        - User
-  /admin/user-del:
-    post:
-      description: Delete a specific user
-      parameters:
-        - description: the user ID you want to delete
-          in: formData
-          name: id
-          required: true
-          type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/common.JSONResult"
-      security:
-        - ApiKeyAuth: []
-      summary: User Delete
-      tags:
-        - User
-  /admin/user-edit:
-    post:
-      description: Edit a specific user
-      parameters:
-        - description: the user ID you want to edit
-          in: formData
-          name: id
-          required: true
-          type: string
-        - description: the user name
-          in: formData
-          name: name
-          required: true
-          type: string
-        - description: the user email
-          in: formData
-          name: email
-          required: true
-          type: string
-        - description: the user password
-          in: formData
-          name: password
-          type: string
-        - description: the user link
-          in: formData
-          name: link
-          type: string
-        - description: the user is an admin
-          in: formData
-          name: is_admin
-          required: true
-          type: boolean
-        - description: the site names associated with the user
-          in: formData
-          name: site_names
-          type: string
-        - description: the user receive email
-          in: formData
-          name: receive_email
-          required: true
-          type: boolean
-        - description: the user badge name
-          in: formData
-          name: badge_name
-          type: string
-        - description: the user badge color (hex format)
-          in: formData
-          name: badge_color
-          type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseAdminUserEdit"
-                type: object
-      security:
-        - ApiKeyAuth: []
-      summary: User Edit
-      tags:
-        - User
-  /admin/user-get:
-    post:
-      description: Get a list of users by some conditions
-      parameters:
-        - description: the limit for pagination
-          in: formData
-          name: limit
-          type: integer
-        - description: the offset for pagination
-          in: formData
-          name: offset
-          type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseAdminUserGet"
-                type: object
-      security:
-        - ApiKeyAuth: []
-      summary: User List
-      tags:
-        - User
-  /admin/vote-sync:
-    post:
-      description:
-        Sync the number of votes in the `comments` or `pages` data tables
-        to keep them the same as the `votes` table
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/common.JSONResult"
-      security:
-        - ApiKeyAuth: []
-      summary: Vote Sync
-      tags:
-        - Vote
-  /captcha/check:
-    post:
-      description: Verify user enters correct captcha code
-      parameters:
-        - description: the captcha value to check
-          in: formData
-          name: value
-          required: true
-          type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/common.JSONResult"
+            $ref: '#/definitions/handler.ResponseUpload'
         "400":
           description: Bad Request
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    properties:
-                      img_data:
-                        type: string
-                    type: object
-                type: object
-      summary: Captcha Check
-      tags:
-        - Captcha
-  /captcha/get:
-    get:
-      description:
-        Get a base64 encoded captcha image or a HTML page to verify for
-        user
-      responses:
-        "200":
-          description: OK
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    properties:
-                      img_data:
-                        type: string
-                    type: object
-                type: object
-      summary: Captcha Get
-      tags:
-        - Captcha
-    post:
-      description:
-        Get a base64 encoded captcha image or a HTML page to verify for
-        user
-      responses:
-        "200":
-          description: OK
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    properties:
-                      img_data:
-                        type: string
-                    type: object
-                type: object
-      summary: Captcha Get
-      tags:
-        - Captcha
-  /captcha/refresh:
-    post:
-      description:
-        Get a base64 encoded captcha image or a HTML page to verify for
-        user
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    properties:
-                      img_data:
-                        type: string
-                    type: object
-                type: object
-      summary: Captcha Get
-      tags:
-        - Captcha
-  /captcha/status:
-    post:
-      description: Get the status of the user's captcha verification
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    properties:
-                      is_pass:
-                        type: boolean
-                    type: object
-                type: object
-      summary: Captcha Status
-      tags:
-        - Captcha
-  /conf:
-    get:
-      description: Get system configurations
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/config.Config"
-                type: object
-      summary: Config
-      tags:
-        - System
-  /get:
-    post:
-      description: Get a list of comments by some conditions
-      parameters:
-        - description: the comment page_key
-          in: formData
-          name: page_key
-          required: true
-          type: string
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
-        - description: the limit for pagination
-          in: formData
-          name: limit
-          type: integer
-        - description: the offset for pagination
-          in: formData
-          name: offset
-          type: integer
-        - description: enable flat_mode
-          in: formData
-          name: flat_mode
-          type: boolean
-        - description: sort by condition
-          enum:
-            - date_asc
-            - date_desc
-            - vote
-          in: formData
-          name: sort_by
-          type: string
-        - description: only show comments by admin
-          in: formData
-          name: view_only_admin
-          type: boolean
-        - description: search keywords
-          in: formData
-          name: search
-          type: string
-        - description: message center show type
-          enum:
-            - all
-            - mentions
-            - mine
-            - pending
-            - admin_all
-            - admin_pending
-          in: formData
-          name: type
-          type: string
-        - description: the username
-          in: formData
-          name: name
-          type: string
-        - description: the user email
-          in: formData
-          name: email
-          type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseGet"
-                type: object
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
-        - ApiKeyAuth: []
-      summary: Comment List
+      - ApiKeyAuth: []
+      summary: Upload
       tags:
-        - Comment
-  /img-upload:
-    post:
-      description: Upload image from this endpoint
+      - Upload
+  /user:
+    get:
+      description: Get user info to prepare for login or check current user status
+      operationId: GetUser
       parameters:
-        - description: upload file in preparation for import
-          in: formData
-          name: file
-          required: true
-          type: file
-        - description: the username
-          in: formData
-          name: name
-          required: true
-          type: string
-        - description: the user email
-          in: formData
-          name: email
-          required: true
-          type: string
-        - description: the page key
-          in: formData
-          name: page_key
-          required: true
-          type: string
-        - description: the page title
-          in: formData
-          name: page_title
-          type: string
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
+      - description: The user email
+        in: query
+        name: email
+        type: string
+      - description: The username
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/handler.ResponseUserInfo'
+        "400":
+          description: Bad Request
+          schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseImgUpload"
-                type: object
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
-        - ApiKeyAuth: []
-      summary: Image Upload
+      - ApiKeyAuth: []
+      summary: Get User Info
       tags:
-        - Upload
-  /login:
+      - Account
+  /user/access_token:
     post:
+      consumes:
+      - application/json
       description: Login user by name or email
+      operationId: Login
       parameters:
-        - description: the username
-          in: formData
-          name: name
-          type: string
-        - description: the user email
-          in: formData
-          name: email
-          required: true
-          type: string
-        - description: the user password
-          in: formData
-          name: password
-          required: true
-          type: string
+      - description: The user login data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsUserLogin'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseLogin"
-                type: object
+            $ref: '#/definitions/handler.ResponseUserLogin'
         "400":
           description: Multiple users with the same email address are matched
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    properties:
-                      need_name_select:
-                        items:
-                          type: string
-                        type: array
-                    type: object
-                type: object
-      summary: User Login
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                ' data':
+                  properties:
+                    need_name_select:
+                      items:
+                        type: string
+                      type: array
+                  type: object
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: Get Access Token
       tags:
-        - User
-  /login-status:
-    post:
+      - Account
+  /user/status:
+    get:
       description: Get user login status by header Authorization
+      operationId: GetUserStatus
       parameters:
-        - description: the username
-          in: formData
-          name: name
-          type: string
-        - description: the user email
-          in: formData
-          name: email
-          type: string
-        - description: the user password
-          in: formData
-          name: password
-          required: true
-          type: string
+      - description: The user email
+        in: query
+        name: email
+        type: string
+      - description: The username
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseLoginStatus"
-                type: object
+            $ref: '#/definitions/handler.ResponseUserStatus'
       security:
-        - ApiKeyAuth: []
-      summary: User Login Status
+      - ApiKeyAuth: []
+      summary: Get Login Status
       tags:
-        - User
-  /logout:
+      - Account
+  /users:
     post:
-      description: |-
-        Logout current user (applies to cookie identification only)
-        User Logout
+      consumes:
+      - application/json
+      description: Create a new user
+      operationId: CreateUser
+      parameters:
+      - description: The user data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsUserCreate'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/common.JSONResult"
-      summary: User Logout
-      tags:
-        - User
-  /mark-read:
-    post:
-      description: Mark specific notification as read for user
-      parameters:
-        - description: the comment id of the notify you want to mark as read
-          in: formData
-          name: comment_id
-          required: true
-          type: integer
-        - description: the key of the notify
-          in: formData
-          name: notify_key
-          required: true
-          type: string
-        - description: the username
-          in: formData
-          name: name
-          type: string
-        - description: the user email
-          in: formData
-          name: email
-          type: string
-        - description: the option if mark all user's notify as read
-          in: formData
-          name: all_read
-          type: boolean
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/common.JSONResult"
-      summary: Notify Mark Read
-      tags:
-        - Notify
-  /pv:
-    post:
-      description: Log and get the number of page views
-      parameters:
-        - description: the page key
-          in: formData
-          name: page_key
-          required: true
-          type: string
-        - description: the page title
-          in: formData
-          name: page_title
-          type: string
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
-      responses:
-        "200":
-          description: OK
+            $ref: '#/definitions/handler.ResponseUserCreate'
+        "400":
+          description: Bad Request
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponsePV"
-                type: object
-      summary: Page View
-      tags:
-        - PV
-  /stat:
-    post:
-      description: Get the statistics of various data analysed
-      parameters:
-        - description: the type of statistics
-          enum:
-            - latest_comments
-            - latest_pages
-            - pv_most_pages
-            - comment_most_pages
-            - page_pv
-            - site_pv
-            - page_comment
-            - site_comment
-            - rand_comments
-            - rand_pages
-          in: formData
-          name: type
-          required: true
-          type: string
-        - description: multiple page keys separated by commas
-          in: formData
-          name: page_keys
-          type: string
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
-        - description: the amount of items you want
-          in: formData
-          name: limit
-          type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/common.JSONResult"
-      summary: Statistics
-      tags:
-        - Statistics
-  /user-get:
-    post:
-      description: Get user info to prepare for login or check current user status
-      parameters:
-        - description: the username
-          in: formData
-          name: name
-          type: string
-        - description: the user email
-          in: formData
-          name: email
-          type: string
-      responses:
-        "200":
-          description: OK
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseUserGet"
-                type: object
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
-        - ApiKeyAuth: []
-      summary: User Info Get
+      - ApiKeyAuth: []
+      summary: Create User
       tags:
-        - User
+      - User
+  /users/{id}:
+    delete:
+      description: Delete a specific user
+      operationId: DeleteUser
+      parameters:
+      - description: The user ID you want to delete
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete User
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Update a specific user
+      operationId: UpdateUser
+      parameters:
+      - description: The user ID you want to update
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: The user data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsUserUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseUserUpdate'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update User
+      tags:
+      - User
+  /users/{type}:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of users by some conditions
+      operationId: GetUsers
+      parameters:
+      - description: The type of users
+        enum:
+        - all
+        - admin
+        - in_conf
+        in: path
+        name: type
+        type: string
+      - description: The limit for pagination
+        in: query
+        name: limit
+        type: integer
+      - description: The offset for pagination
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseAdminUserList'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get User List
+      tags:
+      - User
   /version:
-    post:
+    get:
       description: Get the version of Artalk
+      operationId: GetVersion
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/common.ApiVersionData"
-      summary: Version
+            $ref: '#/definitions/common.ApiVersionData'
+      summary: Get Version Info
       tags:
-        - System
-  /vote:
+      - System
+  /votes/{type}/{target_id}:
     post:
+      consumes:
+      - application/json
       description: Vote for a specific comment or page
+      operationId: Vote
       parameters:
-        - description: target comment or page ID you want to vote for
-          in: formData
-          name: target_id
-          required: true
-          type: integer
-        - description: the type of vote target
-          enum:
-            - comment_up
-            - comment_down
-            - page_up
-            - page_down
-          in: formData
-          name: type
-          required: true
-          type: string
-        - description: the username
-          in: formData
-          name: name
-          type: string
-        - description: the user email
-          in: formData
-          name: email
-          type: string
-        - description: the site name of your content scope
-          in: formData
-          name: site_name
-          type: string
+      - description: The type of vote target
+        enum:
+        - comment_up
+        - comment_down
+        - page_up
+        - page_down
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: Target comment or page ID you want to vote for
+        in: path
+        name: target_id
+        required: true
+        type: integer
+      - description: The vote data
+        in: body
+        name: vote
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsVote'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseVote'
+        "403":
+          description: Forbidden
           schema:
             allOf:
-              - $ref: "#/definitions/common.JSONResult"
-              - properties:
-                  data:
-                    $ref: "#/definitions/handler.ResponseVote"
-                type: object
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
       summary: Vote
       tags:
-        - Vote
+      - Vote
+  /votes/sync:
+    post:
+      description: Sync the number of votes in the `comments` or `pages` data tables
+        to keep them the same as the `votes` table
+      operationId: SyncVotes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Map'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Sync Vote Data
+      tags:
+      - Vote
 securityDefinitions:
   ApiKeyAuth:
     description: '"Type ''Bearer TOKEN'' to correctly set the API Key"'

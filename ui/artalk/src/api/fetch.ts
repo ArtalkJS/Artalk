@@ -20,8 +20,8 @@ export const Fetch = async (opts: ApiOptions, input: string | URL | Request, ini
   })
 
   if (!resp.ok) {
-    // 解析响应的 json
-    const json: any = await resp.json().catch(() => {})
+    // Deserialize response body (if it is JSON, otherwise returns `{}`)
+    const json: any = (await resp.json().catch(() => {})) || {}
 
     // 请求弹出层验证
     if (json.need_captcha) {

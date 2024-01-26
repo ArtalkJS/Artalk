@@ -3,6 +3,7 @@ package dao_test
 import (
 	"testing"
 
+	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/test"
 	"github.com/stretchr/testify/assert"
 )
@@ -203,7 +204,47 @@ func TestGetAllAdmins(t *testing.T) {
 	defer app.Cleanup()
 
 	allAdmins := app.Dao().GetAllAdmins()
-	assert.GreaterOrEqual(t, len(allAdmins), 1)
+	assert.GreaterOrEqual(t, len(allAdmins), 1, "GetAllAdmins() not works")
+
+	t.Run("Test modify and get admins", func(t *testing.T) {
+		getContainsUser := func(userID uint) bool {
+			for _, a := range app.Dao().GetAllAdmins() {
+				if a.ID == userID {
+					return true
+				}
+			}
+			return false
+		}
+
+		// create
+		var adminID uint = 0
+		admin := entity.User{
+			Name:    "TestAdmin",
+			Email:   "admin@test.com",
+			IsAdmin: true,
+		}
+		app.Dao().CreateUser(&admin)
+		adminID = admin.ID
+		assert.NotZero(t, adminID, "user create failed")
+
+		assert.Equal(t, true, getContainsUser(adminID), "admin not found after create")
+
+		// update
+		admin.IsAdmin = false
+		app.Dao().UpdateUser(&admin)
+		assert.Equal(t, false, getContainsUser(adminID), "admin still exists after update")
+
+		// re-update
+		admin.IsAdmin = true
+		app.Dao().UpdateUser(&admin)
+		assert.Equal(t, true, getContainsUser(adminID), "admin not found after re-update to admin")
+
+		// delete
+		app.Dao().DelUser(&admin)
+
+		// not contains admin
+		assert.Equal(t, false, getContainsUser(adminID), "admin still exists after delete")
+	})
 }
 
 func TestIsAdminUser(t *testing.T) {

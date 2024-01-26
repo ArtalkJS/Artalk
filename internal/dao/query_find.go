@@ -219,16 +219,11 @@ func (dao *Dao) GetVoteNumUpDown(targetID uint, voteTo string) (int, int) {
 //#endregion
 
 // #region 管理员账号检测
-var allAdmins *[]entity.User = nil
-
 func (dao *Dao) GetAllAdmins() []entity.User {
-	if allAdmins == nil {
-		var admins []entity.User
-		dao.DB().Where(&entity.User{IsAdmin: true}).Find(&admins)
-		allAdmins = &admins
-	}
-
-	return *allAdmins
+	// TODO add cache and flush cache when admin changed
+	var admins []entity.User
+	dao.DB().Where(&entity.User{IsAdmin: true}).Find(&admins)
+	return admins
 }
 
 func (dao *Dao) GetAllAdminIDs() []uint {

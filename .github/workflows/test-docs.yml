@@ -2,11 +2,12 @@ name: Test Docs
 
 on:
   push:
+    branches: ['*', '!release/*']
     paths: ['docs/**']
     tags-ignore: ['v*']
   pull_request:
     paths: ['docs/**']
-    branches-ignore: ['release/*']
+    branches: ['*', '!release/*']
 
 jobs:
   test_docs:

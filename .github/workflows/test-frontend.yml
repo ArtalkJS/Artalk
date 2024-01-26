@@ -2,11 +2,12 @@ name: Test Frontend
 
 on:
   push:
+    branches: ['*', '!release/*']
     paths: ['ui/**']
     tags-ignore: ['v*']
   pull_request:
     paths: ['ui/**']
-    branches-ignore: ['release/*']
+    branches: ['*', '!release/*']
 
 jobs:
   test_ui:

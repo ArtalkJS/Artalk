@@ -26,7 +26,7 @@ export default defineConfig({
     sourcemap: true,
     emptyOutDir: name === 'Artalk',  // wait for https://github.com/qmhc/vite-plugin-dts/pull/291
     lib: {
-      name: name,
+      name: 'Artalk',
       fileName: (format: string) => getFileName(name, format),
       entry: resolve(__dirname, 'src/main.ts'),
       formats: ["es", "umd", "cjs", "iife"]

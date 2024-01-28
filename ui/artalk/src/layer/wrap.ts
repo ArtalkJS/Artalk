@@ -1,11 +1,11 @@
 import * as Utils from '@/lib/utils'
 import { getScrollbarHelper } from './scrollbar-helper'
+import { Layer } from './layer'
 
 export class LayerWrap {
   private $wrap: HTMLElement
   private $mask: HTMLElement
-  private allowMaskClose: boolean = true
-  private items: HTMLElement[] = []
+  private items: Layer[] = []
 
   constructor() {
     this.$wrap = Utils.createElement(
@@ -15,14 +15,33 @@ export class LayerWrap {
   }
 
   createItem(name: string, el?: HTMLElement) {
-    if (!el) {
-      el = document.createElement('div')
-      el.classList.add('atk-layer-item')
-      el.setAttribute('data-layer-name', name)
-      el.style.display = 'none'
-    }
+    // init element
+    el = el || this.createItemElement(name)
+    el.setAttribute('data-layer-name', name)
     this.$wrap.appendChild(el)
-    this.items.push(el)
+
+    // create layer instance
+    const layer = new Layer(el, {
+      hideWrap: () => this.hideWrap(el!),
+      showWrap: () => this.showWrap()
+    })
+
+    // register mask click event
+    this.getMask().addEventListener('click', () => {
+      layer.getAllowMaskClose() && layer.hide()
+    })
+
+    // add to items
+    this.items.push(layer)
+
+    return layer
+  }
+
+  private createItemElement(name: string) {
+    const el = document.createElement('div')
+    el.classList.add('atk-layer-item')
+    el.style.display = 'none'
+    this.$wrap.appendChild(el)
     return el
   }
 
@@ -34,32 +53,22 @@ export class LayerWrap {
     return this.$mask
   }
 
-  setMaskClose(enabled: boolean) {
-    this.allowMaskClose = enabled
-  }
-
-  show() {
+  showWrap() {
     this.$wrap.style.display = 'block'
     this.$mask.style.display = 'block'
     this.$mask.classList.add('atk-fade-in')
-    this.$mask.onclick = () => {
-      if (this.allowMaskClose) this.hide()
-    }
     getScrollbarHelper().lock()
   }
 
-  hide(callback?: () => void) {
+  hideWrap($el: HTMLElement) {
     // if wrap contains more than one item, do not hide entire wrap
-    if (this.items.filter(e => e.isConnected && e.style.display !== 'none').length > 1) {
-      callback && callback()
+    if (this.items.map(l => l.getEl()).filter(e => e !== $el && e.isConnected && e.style.display !== 'none').length > 0) {
       return
     }
 
-    const onAfterHide = () => {
+    const onHide = () => {
       this.$wrap.style.display = 'none'
       this.$wrap.classList.remove('atk-fade-out')
-
-      callback && callback()
 
       getScrollbarHelper().unlock()
 
@@ -69,9 +78,9 @@ export class LayerWrap {
     // perform animation
     this.$wrap.classList.add('atk-fade-out')
     if (window.getComputedStyle(this.$wrap)['animation-name'] !== 'none') {
-      this.$wrap.onanimationend = () => onAfterHide()
+      this.$wrap.onanimationend = () => onHide()
     } else {
-      onAfterHide()
+      onHide()
     }
   }
 }

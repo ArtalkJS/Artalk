@@ -2,7 +2,6 @@ import type { Api } from '@/api'
 import Dialog from '@/components/dialog'
 import $t from '@/i18n'
 import type { ContextApi } from '@/types'
-import type { Layer } from '@/layer'
 import type User from '@/lib/user'
 import * as Utils from '@/lib/utils'
 import CaptchaChecker from './captcha'
@@ -64,6 +63,10 @@ export default class CheckerLauncher {
     const layer = this.opts.getCtx().get('layerManager').create(`checker-${new Date().getTime()}`)
     layer.show()
 
+    const close = () => {
+      layer.destroy()
+    }
+
     // 构建 Checker 的上下文
     const checkerStore: CheckerStore = {}
     let hideInteractInput = false
@@ -77,12 +80,12 @@ export default class CheckerLauncher {
         hideInteractInput = true
       },
       triggerSuccess: () => {
-        this.close(checker, layer)
+        close()
         if (checker.onSuccess) checker.onSuccess(checkerCtx, "", "", formEl)
         if (payload.onSuccess) payload.onSuccess()
       },
       cancel: () => {
-        this.close(checker, layer)
+        close()
         if (payload.onCancel) payload.onCancel()
       }
     }
@@ -137,7 +140,7 @@ export default class CheckerLauncher {
         .request(checkerCtx, inputVal)
         .then((data) => {
           // 请求成功
-          this.close(checker, layer)
+          close()
 
           if (checker.onSuccess) checker.onSuccess(checkerCtx, data, inputVal, formEl)
           if (payload.onSuccess) payload.onSuccess()
@@ -161,7 +164,7 @@ export default class CheckerLauncher {
 
     // 取消按钮
     dialog.setNo(() => {
-      this.close(checker, layer)
+      close()
       if (payload.onCancel) payload.onCancel()
       return false
     })
@@ -176,11 +179,6 @@ export default class CheckerLauncher {
 
     // onMount 回调
     if (payload.onMount) payload.onMount(dialog.$el)
-  }
-
-  // 关闭 checker 对话框
-  private close(checker: Checker, layer: Layer) {
-    layer.destroy()
   }
 }
 

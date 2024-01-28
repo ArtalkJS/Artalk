@@ -1,6 +1,6 @@
 export interface LayerOptions {
-  showWrap: () => void
-  hideWrap: () => void
+  onShow: () => void
+  onHide: () => void
 }
 
 export class Layer {
@@ -30,18 +30,18 @@ export class Layer {
   }
 
   show() {
+    this.opts.onShow()
     this.$el.style.display = ''
-    this.opts.showWrap()
   }
 
   async hide() {
-    this.opts.hideWrap()
+    this.opts.onHide()
     this.$el.style.display = 'none'
     this.onAfterHide && this.onAfterHide()
   }
 
   async destroy() {
-    this.opts.hideWrap()
+    this.opts.onHide()
     this.$el.remove()
     this.onAfterHide && this.onAfterHide()
   }

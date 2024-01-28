@@ -22,8 +22,8 @@ export class LayerWrap {
 
     // create layer instance
     const layer = new Layer(el, {
-      hideWrap: () => this.hideWrap(el!),
-      showWrap: () => this.showWrap()
+      onHide: () => this.hideWrap(el!),
+      onShow: () => this.showWrap()
     })
 
     // register mask click event

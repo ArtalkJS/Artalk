@@ -20,14 +20,14 @@ interface Context extends TInjectedServices { }
  */
 class Context implements ContextApi {
   /* 运行参数 */
-  public conf: ArtalkConfig
-  public data: DataManager
-  public $root: HTMLElement
+  conf: ArtalkConfig
+  data: DataManager
+  $root: HTMLElement
 
   /* Event Manager */
   private events = new EventManager<EventPayloadMap>()
 
-  public constructor(conf: ArtalkConfig) {
+  constructor(conf: ArtalkConfig) {
     this.conf = conf
 
     this.$root = conf.el as HTMLElement
@@ -37,128 +37,128 @@ class Context implements ContextApi {
     this.data = new DataManager(this.events)
   }
 
-  public inject(depName: string, obj: any) {
+  inject(depName: string, obj: any) {
     this[depName] = obj
   }
 
-  public get(depName: string) {
+  get(depName: string) {
     return this[depName]
   }
 
-  public getApi() {
+  getApi() {
     return new Api(convertApiOptions(this.conf, this))
   }
 
-  public getData() {
+  getData() {
     return this.data
   }
 
-  public replyComment(commentData: CommentData, $comment: HTMLElement): void {
+  replyComment(commentData: CommentData, $comment: HTMLElement): void {
     this.editor.setReply(commentData, $comment)
   }
 
-  public editComment(commentData: CommentData, $comment: HTMLElement): void {
+  editComment(commentData: CommentData, $comment: HTMLElement): void {
     this.editor.setEditComment(commentData, $comment)
   }
 
-  public fetch(params: Partial<ListFetchParams>): void {
+  fetch(params: Partial<ListFetchParams>): void {
     this.data.fetchComments(params)
   }
 
-  public reload(): void {
+  reload(): void {
     this.data.fetchComments({ offset: 0 })
   }
 
   /* List */
-  public listGotoFirst(): void {
+  listGotoFirst(): void {
     this.events.trigger('list-goto-first')
   }
 
-  public getCommentNodes() {
+  getCommentNodes() {
     return this.list.getCommentNodes()
   }
 
-  public getComments() {
+  getComments() {
     return this.data.getComments()
   }
 
-  public getCommentList = this.getCommentNodes
-  public getCommentDataList = this.getComments
+  getCommentList = this.getCommentNodes
+  getCommentDataList = this.getComments
 
   /* Editor */
-  public editorShowLoading(): void {
+  editorShowLoading(): void {
     this.editor.showLoading()
   }
 
-  public editorHideLoading(): void {
+  editorHideLoading(): void {
     this.editor.hideLoading()
   }
 
-  public editorShowNotify(msg, type): void {
+  editorShowNotify(msg, type): void {
     this.editor.showNotify(msg, type)
   }
 
-  public editorResetState(): void {
+  editorResetState(): void {
     this.editor.resetState()
   }
 
   /* Sidebar */
-  public showSidebar(payload?: SidebarShowPayload): void {
+  showSidebar(payload?: SidebarShowPayload): void {
     this.sidebarLayer.show(payload)
   }
 
-  public hideSidebar(): void {
+  hideSidebar(): void {
     this.sidebarLayer.hide()
   }
 
   /* Checker */
-  public checkAdmin(payload: CheckerPayload): Promise<void> {
+  checkAdmin(payload: CheckerPayload): Promise<void> {
     return this.checkerLauncher.checkAdmin(payload)
   }
 
-  public checkCaptcha(payload: CheckerCaptchaPayload): Promise<void> {
+  checkCaptcha(payload: CheckerCaptchaPayload): Promise<void> {
     return this.checkerLauncher.checkCaptcha(payload)
   }
 
   /* Events */
-  public on(name: any, handler: any) {
+  on(name: any, handler: any) {
     this.events.on(name, handler)
   }
 
-  public off(name: any, handler: any) {
+  off(name: any, handler: any) {
     this.events.off(name, handler)
   }
 
-  public trigger(name: any, payload?: any) {
+  trigger(name: any, payload?: any) {
     this.events.trigger(name, payload)
   }
 
   /* i18n */
-  public $t(key: I18n.I18nKeys, args: {[key: string]: string} = {}): string {
+  $t(key: I18n.I18nKeys, args: {[key: string]: string} = {}): string {
     return I18n.t(key, args)
   }
 
-  public setDarkMode(darkMode: boolean|'auto'): void {
+  setDarkMode(darkMode: boolean|'auto'): void {
     // prevent trigger 'conf-loaded' to improve performance
     // this.updateConf({ ...this.conf, darkMode })
     this.conf.darkMode = darkMode
     this.events.trigger('dark-mode-changed', darkMode)
   }
 
-  public updateConf(nConf: Partial<ArtalkConfig>): void {
+  updateConf(nConf: Partial<ArtalkConfig>): void {
     this.conf = mergeDeep(this.conf, handelCustomConf(nConf, false))
     this.events.trigger('conf-loaded', this.conf)
   }
 
-  public getConf(): ArtalkConfig {
+  getConf(): ArtalkConfig {
     return this.conf
   }
 
-  public getEl(): HTMLElement {
+  getEl(): HTMLElement {
     return this.$root
   }
 
-  public getMarked() {
+  getMarked() {
     return marked.getInstance()
   }
 }

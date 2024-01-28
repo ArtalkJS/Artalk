@@ -64,11 +64,17 @@ async function startUploadFile(file: File) {
     const setErr = (msg: string): void => {
       reset()
       isUploading.value = false
-      alert(`文件上传失败，${msg}`)
+      alert(`File upload failed: ${msg}`)
     }
 
-    if (xhr?.status !== 200) {
-      setErr(`响应状态码：${xhr?.status}`)
+    if (!xhr) {
+      setErr('xhr instance is null')
+      return
+    }
+
+    const ok = (xhr.status >= 200) && (xhr.status <= 299)
+    if (!ok) {
+      setErr(`Response HTTP Code: ${xhr.status}, Body: ${xhr.response}`)
       return
     }
 
@@ -77,17 +83,17 @@ async function startUploadFile(file: File) {
       json = JSON.parse(xhr.response)
     } catch (err) {
       console.error(err)
-      setErr(`JSON 解析失败：${err}`)
+      setErr(`JSON parse error: ${err}`)
       return
     }
 
-    if (!json.success || !json.data.filename) {
-      setErr(`响应：${xhr.response}`)
+    if (!json.filename) {
+      setErr(`Response filename is empty: ${xhr.response}`)
       return
     }
 
     isDone.value = true
-    remoteFilename.value = json.data.filename
+    remoteFilename.value = json.filename
     isUploading.value = false
     emit('done', remoteFilename.value)
   }

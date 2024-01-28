@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useNavStore } from '@/stores/nav'
+
 const props = defineProps<{
   apiUrl: string
   reqParams: { [k: string]: string }
@@ -17,6 +19,11 @@ onMounted(() => {
   $frame.className = 'atk-iframe'
   $frame.name = frameName
   logWrapEl.value!.append($frame)
+
+  // on iframe done
+  $frame.onload = () => {
+    useNavStore().refreshSites()
+  }
 
   // 创建临时表单，初始化 iframe
   const $formTmp = document.createElement('form')

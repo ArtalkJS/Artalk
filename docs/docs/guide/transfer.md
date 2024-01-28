@@ -165,15 +165,15 @@ typecho-20220424-202246.artrans
 参数格式遵循 `<key>:<value>`，例如：
 
 ```bash
-./artalk import 类型 t_name:"Site" t_url:"https://xx.com" json_file:"文件路径"
+./artalk import 类型 target_site_name:"Site" target_site_url:"https://xx.com" json_file:"文件路径"
 ```
 
 前端的导入同样可以手动输入启动参数，例如：
 
 ```json
 {
-  "t_name": "Site",
-  "t_url": "https://xx.com",
+  "target_site_name": "Site",
+  "target_site_url": "https://xx.com",
   "json_file": "服务器上的文件路径"
 }
 ```
@@ -182,10 +182,12 @@ Artalk 导入功能的通用启动参数：
 
 |   参数   | 类型   | 说明         |
 | :------: | ------ | ------------ |
-| `t_name` | String | 导入站点名称 |
-| `t_url`  | String | 导入站点 URL |
+| `target_site_name` | String | 导入站点名称 |
+| `target_site_url`  | String | 导入站点 URL |
+| `url_resolver`     | Boolean | 默认关闭，URL 解析器。将 `page_key` 基于 `target_site_url` 参数重新生成为完整 URL 作为评论的新 `page_key` |
 | `json_file`  | String | JSON 数据文件路径 |
 | `json_data`  | String | JSON 数据字符串内容 |
+| `assumeyes`  | Boolean | 不提确认 `y/n`，直接执行 |
 
 ## 数据备份
 

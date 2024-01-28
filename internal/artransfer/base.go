@@ -50,12 +50,12 @@ func ArrToImportParams(arr []string) *ImportParams {
 	params.UrlResolver = false // 默认关闭
 
 	getParamsFrom(arr).To(map[string]any{
-		"t_name":         &params.TargetSiteName,
-		"t_url":          &params.TargetSiteUrl,
-		"t_url_resolver": &params.UrlResolver,
-		"json_file":      &params.JsonFile,
-		"json_data":      &params.JsonData,
-		"assumeyes":      &params.Assumeyes,
+		"target_site_name": &params.TargetSiteName,
+		"target_site_url":  &params.TargetSiteUrl,
+		"url_resolver":     &params.UrlResolver,
+		"json_file":        &params.JsonFile,
+		"json_data":        &params.JsonData,
+		"assumeyes":        &params.Assumeyes,
 	})
 
 	return &params

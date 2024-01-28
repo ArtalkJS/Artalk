@@ -23,7 +23,7 @@ const importTaskApiURL = ref('')
 const uploadedFilename = ref('')
 
 const importTaskStarted = ref(false)
-const importTaskParams = ref<{[k:string]:string}>({})
+const importTaskParams = ref<Record<string, string>>({})
 
 const exportTaskStarted = ref(false)
 
@@ -39,8 +39,8 @@ onMounted(() => {
     }
   })
 
-  uploadApiURL.value = `${artalk?.ctx.conf.server}/api/admin/import-upload`
-  importTaskApiURL.value = `${artalk?.ctx.conf.server}/api/admin/import`
+  uploadApiURL.value = `${artalk?.ctx.conf.server}/api/v2/transfer/upload`
+  importTaskApiURL.value = `${artalk?.ctx.conf.server}/api/v2/transfer/import`
 })
 
 function setError(msg: string) {
@@ -53,7 +53,7 @@ function fileUploaded(filename: string) {
 
 function startImportTask() {
   if (!uploadedFilename.value) {
-    setError(`请先上传 Artrans 数据文件`)
+    setError(`Please upload a data file first`)
     return
   }
 
@@ -69,22 +69,22 @@ function startImportTask() {
     try {
       rData = JSON.parse(payload)
     } catch (err) {
-      setError(`Payload JSON 格式有误：${String(err)}`)
+      setError(`Payload JSON invalid: ${err}`)
       return
     }
 
     if (typeof rData !== 'object' || Array.isArray(rData)) {
-      setError(`Payload 需为 JSON 对象`)
+      setError(`Payload should be an object`)
       return
     }
   }
-  if (siteName) rData.t_name = siteName
-  if (siteURL) rData.t_url = siteURL
+  if (siteName) rData.target_site_name = siteName
+  if (siteURL) rData.target_site_url = siteURL
   rData.json_file = uploadedFilename.value
 
   // 创建导入会话
   importTaskParams.value = {
-    payload: JSON.stringify(rData),
+    ...rData,
     token: user.token,
   }
   importTaskStarted.value = true

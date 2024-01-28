@@ -15,12 +15,12 @@ import (
 )
 
 type ImportParams struct {
-	TargetSiteName string `json:"target_site_name" validate:"optional"`    // The target site name
-	TargetSiteUrl  string `json:"target_site_url" validate:"optional"`     // The target site url
-	UrlResolver    bool   `json:"url_resolver" validate:"optional"`        // Enable URL resolver
-	JsonFile       string `json:"json_file,omitempty" validate:"optional"` // The JSON file path
-	JsonData       string `json:"json_data,omitempty" validate:"optional"` // The JSON data
-	Assumeyes      bool   `json:"assumeyes" validate:"optional"`           // Automatically answer yes for all questions.
+	TargetSiteName string `json:"target_site_name" form:"target_site_name" validate:"optional"` // The target site name
+	TargetSiteUrl  string `json:"target_site_url" form:"target_site_url" validate:"optional"`   // The target site url
+	UrlResolver    bool   `json:"url_resolver" form:"url_resolver" validate:"optional"`         // Enable URL resolver
+	JsonFile       string `json:"json_file,omitempty" form:"json_file" validate:"optional"`     // The JSON file path
+	JsonData       string `json:"json_data,omitempty" form:"json_data" validate:"optional"`     // The JSON data
+	Assumeyes      bool   `json:"assumeyes" form:"assumeyes" validate:"optional"`               // Automatically answer yes for all questions.
 }
 
 func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran) {
@@ -126,6 +126,10 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 		nPageKey := c.PageKey
 		if params.UrlResolver { // 使用 URL 解析器
 			splittedURLs := utils.SplitAndTrimSpace(params.TargetSiteUrl, ",")
+			if len(splittedURLs) == 0 {
+				logFatal("[URL Resolver] " + i18n.T("{{name}} cannot be empty", map[string]interface{}{"name": i18n.T("Target Site") + " " + "URL"}))
+				return
+			}
 			nPageKey = urlResolverGetPageKey(splittedURLs[0], c.PageKey)
 		}
 

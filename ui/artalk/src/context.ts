@@ -1,6 +1,7 @@
 import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPayloadMap, SidebarShowPayload } from '@/types'
 import type { TInjectedServices } from './service'
 import { Api } from './api'
+import type CommentNode from './comment'
 
 import * as marked from './lib/marked'
 import { mergeDeep } from './lib/merge-deep'
@@ -73,7 +74,17 @@ class Context implements ContextApi {
     this.events.trigger('list-goto-first')
   }
 
-  /* 编辑器 */
+  public getCommentNodes(): CommentNode[] {
+    return this.list.getCommentNodes()
+  }
+
+  public getComments(): CommentData[] {
+    return this.data.getComments()
+  }
+
+  public getCommentList = this.getCommentNodes
+  public getCommentDataList = this.getComments
+
   public editorShowLoading(): void {
     this.editor.showLoading()
   }

@@ -49,6 +49,24 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** 列表滚动到第一个评论的位置 */
   listGotoFirst(): void
 
+  /** Get the comment data list */
+  getComments(): CommentData[]
+
+  /** Get the comment node list */
+  getCommentNodes(): CommentNode[]
+
+  /**
+   * Get the comment data list
+   * @deprecated Use `getComments()` instead
+   */
+  getCommentDataList(): CommentData[]
+
+  /**
+   * Get the comment node list
+   * @deprecated Use `getCommentNodes()` instead
+   */
+  getCommentList(): CommentNode[]
+
   /** 显示侧边栏 */
   showSidebar(payload?: SidebarShowPayload): void
 

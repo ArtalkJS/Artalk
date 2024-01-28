@@ -4,13 +4,11 @@ import type { EventManagerFuncs } from '@/lib/event-manager'
 import type { TMarked } from '@/lib/marked'
 import type { I18n } from '@/i18n'
 import type { Api } from '@/api'
-import type CommentNode from '@/comment'
+import type { CommentNode } from '@/comment'
 import type { SidebarShowPayload, EventPayloadMap, ArtalkConfig, CommentData, DataManagerApi, ListFetchParams, NotifyLevel } from '.'
 
 /**
- * Context 接口
- *
- * (面向接口的编程)
+ * Artalk Context
  */
 export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   /** Artalk 根元素对象 */

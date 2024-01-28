@@ -1,7 +1,6 @@
 import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPayloadMap, SidebarShowPayload } from '@/types'
 import type { TInjectedServices } from './service'
 import { Api } from './api'
-import type CommentNode from './comment'
 
 import * as marked from './lib/marked'
 import { mergeDeep } from './lib/merge-deep'
@@ -70,21 +69,23 @@ class Context implements ContextApi {
     this.data.fetchComments({ offset: 0 })
   }
 
+  /* List */
   public listGotoFirst(): void {
     this.events.trigger('list-goto-first')
   }
 
-  public getCommentNodes(): CommentNode[] {
+  public getCommentNodes() {
     return this.list.getCommentNodes()
   }
 
-  public getComments(): CommentData[] {
+  public getComments() {
     return this.data.getComments()
   }
 
   public getCommentList = this.getCommentNodes
   public getCommentDataList = this.getComments
 
+  /* Editor */
   public editorShowLoading(): void {
     this.editor.showLoading()
   }
@@ -101,7 +102,7 @@ class Context implements ContextApi {
     this.editor.resetState()
   }
 
-  /* 侧边栏 */
+  /* Sidebar */
   public showSidebar(payload?: SidebarShowPayload): void {
     this.sidebarLayer.show(payload)
   }
@@ -110,7 +111,7 @@ class Context implements ContextApi {
     this.sidebarLayer.hide()
   }
 
-  /* 权限检测 */
+  /* Checker */
   public checkAdmin(payload: CheckerPayload): Promise<void> {
     return this.checkerLauncher.checkAdmin(payload)
   }

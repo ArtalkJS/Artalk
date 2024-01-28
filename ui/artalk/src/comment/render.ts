@@ -1,4 +1,4 @@
-import type Comment from './comment'
+import type { CommentNode } from '.'
 import ActionBtn from '../components/action-btn'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
@@ -8,7 +8,7 @@ import CommentHTML from './comment.html?raw'
 import loadRenders from './renders'
 
 export default class Render {
-  public comment: Comment
+  public comment: CommentNode
 
   public get ctx() { return this.comment.ctx }
   public get data() { return this.comment.getData() }
@@ -30,7 +30,7 @@ export default class Render {
   public $replyTo?: HTMLElement // 回复评论内容 (平铺下显示)
   public $replyAt?: HTMLElement // 回复 AT（层级嵌套下显示）
 
-  public constructor(comment: Comment) {
+  public constructor(comment: CommentNode) {
     this.comment = comment
   }
 

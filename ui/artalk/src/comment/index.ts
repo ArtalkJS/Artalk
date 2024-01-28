@@ -1,3 +1,3 @@
-import Comment from './comment'
+import CommentNode from './comment-node'
 
-export default Comment
+export { CommentNode }

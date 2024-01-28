@@ -1,6 +1,6 @@
 import type { CommentData } from '@/types'
 import * as Ui from '@/lib/ui'
-import Comment from '../comment/comment'
+import type { CommentNode } from '@/comment'
 import * as ListNest from './nest'
 
 export interface LayoutOptions {
@@ -9,8 +9,8 @@ export interface LayoutOptions {
   nestMax: number
   flatMode: boolean
 
-  createCommentNode(comment: CommentData, ctxComments: CommentData[]): Comment
-  findCommentNode(id: number): Comment|undefined
+  createCommentNode(comment: CommentData, ctxComments: CommentData[]): CommentNode
+  findCommentNode(id: number): CommentNode|undefined
   getCommentDataList(): CommentData[]
 }
 
@@ -48,7 +48,7 @@ export default class ListLayout {
       rootC.getRender().playFadeAnim()
 
       // 加载子评论
-      const loadChildren = (parentC: Comment, parentNode: ListNest.CommentNode) => {
+      const loadChildren = (parentC: CommentNode, parentNode: ListNest.CommentNode) => {
         parentNode.children.forEach((node: ListNest.CommentNode) => {
           const childD = node.comment
           const childC = this.options.createCommentNode(childD, srcData)

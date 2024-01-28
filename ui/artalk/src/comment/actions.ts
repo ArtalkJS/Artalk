@@ -1,14 +1,14 @@
-import type Comment from './comment'
+import type { CommentNode } from '.'
 import ActionBtn from '../components/action-btn'
 
 export default class CommentActions {
-  private comment: Comment
+  private comment: CommentNode
 
   private get ctx() { return this.comment.ctx }
   private get data() { return this.comment.getData() }
   private get cConf() { return this.comment.getConf() }
 
-  public constructor(comment: Comment) {
+  public constructor(comment: CommentNode) {
     this.comment = comment
   }
 

@@ -1,4 +1,4 @@
-import type Comment from '@/comment'
+import type { CommentNode } from '@/comment'
 import { CommentData, ListData, ListFetchParams, NotifyData, PageData } from './data'
 import { ArtalkConfig, LocalUser } from './config'
 
@@ -27,7 +27,7 @@ export interface EventPayloadMap {
   'comment-inserted': CommentData  // 评论插入后
   'comment-updated': CommentData   // 评论更新后
   'comment-deleted': CommentData   // 评论删除后
-  'comment-rendered': Comment      // 评论节点渲染后
+  'comment-rendered': CommentNode      // 评论节点渲染后
   'notifies-updated': NotifyData[] // 消息列表变更时
   'list-goto': number              // 评论跳转时
   'page-loaded': PageData          // 页面数据更新后

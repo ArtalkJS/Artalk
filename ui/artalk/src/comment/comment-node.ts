@@ -17,15 +17,15 @@ export interface CommentConf {
   onDelete?: Function
 }
 
-export default class Comment extends Component {
+export default class CommentNode extends Component {
   private renderInstance: CommentUI
   private actionInstance: CommentActions
 
   private data: CommentData
   private cConf: CommentConf
 
-  private parent: Comment|null
-  private children: Comment[] = []
+  private parent: CommentNode|null
+  private children: CommentNode[] = []
 
   private nestCurt: number // 当前嵌套层数
   private nestMax: number  // 最大嵌套层数
@@ -106,7 +106,7 @@ export default class Comment extends Component {
   }
 
   /** 置入子评论 */
-  public putChild(childC: Comment, insertMode: 'append'|'prepend' = 'append') {
+  public putChild(childC: CommentNode, insertMode: 'append'|'prepend' = 'append') {
     childC.parent = this
     childC.nestCurt = this.nestCurt + 1 // 嵌套层数 +1
 
@@ -140,8 +140,8 @@ export default class Comment extends Component {
 
   /** 获取所有父评论 */
   public getParents() {
-    const parents: Comment[] = []
-    const once = (c: Comment) => {
+    const parents: CommentNode[] = []
+    const once = (c: CommentNode) => {
       if (c.parent) {
         parents.push(c.parent)
         once(c.parent)

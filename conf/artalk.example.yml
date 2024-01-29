@@ -218,6 +218,8 @@ email:
 admin_notify:
   # Notification template (set to file path to use custom template)
   notify_tpl: "default"
+  # Pending comment still send notification (notifications are still sent when comments are intercepted)
+  notify_pending: false
   # Noise mode
   # -- noise_mode is disabled by default. --
   # -- When this option is set to `false`, only messages sent to the administrator will be notified, --

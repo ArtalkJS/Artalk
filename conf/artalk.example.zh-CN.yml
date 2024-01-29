@@ -226,6 +226,8 @@ email:
 admin_notify:
   # 通知模版 (填入文件路径使用自定义模板)
   notify_tpl: "default"
+  # 待审评论仍然发送通知 (当评论被拦截时仍然发送通知)
+  notify_pending: false
   # 嘈杂模式
   noise_mode: false
   # 邮件通知管理员

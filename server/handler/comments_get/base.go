@@ -39,6 +39,9 @@ func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(*gorm.DB) *gorm.DB {
 			q.Scopes(SearchScope(dao, opts.Search))
 		}
 
+		// Sort by
+		q.Order(GetSortSQL(opts.Scope, opts.SortBy))
+
 		// Scopes
 		scopes := map[Scope]func(*gorm.DB) *gorm.DB{
 			ScopePage: PageScopeQuery(opts.PagePayload, PageScopeOpts{
@@ -58,9 +61,6 @@ func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(*gorm.DB) *gorm.DB {
 		} else {
 			q.Where("1 = 0")
 		}
-
-		// Sort by
-		q.Order(GetSortSQL(opts.SortBy))
 
 		return q
 	}

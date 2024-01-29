@@ -9,7 +9,7 @@ const (
 )
 
 // Get sort rule
-func GetSortSQL(sortBy SortRule) string {
+func GetSortSQL(scope Scope, sortBy SortRule) string {
 	switch sortBy {
 	case SortByDateDesc:
 		return "created_at DESC"
@@ -17,6 +17,10 @@ func GetSortSQL(sortBy SortRule) string {
 		return "created_at ASC"
 	case SortByVote:
 		return "vote_up DESC, created_at DESC"
+	}
+
+	if scope == ScopePage {
+		return "is_pinned DESC, created_at DESC"
 	}
 
 	return "created_at DESC"

@@ -39,16 +39,7 @@ func PageScopeQuery(payload PageScopePayload, opts PageScopeOpts) func(*gorm.DB)
 			d.Scopes(CommentsWithinSomeUsers(opts.AdminUserIDs))
 		}
 
-		// Insert pinned comments
-		d.Scopes(PinnedCommentsSort())
-
 		return d
-	}
-}
-
-func PinnedCommentsSort() func(*gorm.DB) *gorm.DB {
-	return func(d *gorm.DB) *gorm.DB {
-		return d.Order("is_pinned DESC")
 	}
 }
 

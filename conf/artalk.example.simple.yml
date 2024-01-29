@@ -102,6 +102,7 @@ email:
     account_name: "noreply@example.com"
 admin_notify:
   notify_tpl: "default"
+  notify_pending: false
   noise_mode: false
   email:
     enabled: true

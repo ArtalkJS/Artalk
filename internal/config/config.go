@@ -291,6 +291,7 @@ type AdminNotifyConf struct {
 	Slack         NotifySlackConf    `koanf:"slack" json:"slack"`                   // slack
 	LINE          NotifyLINEConf     `koanf:"line" json:"line"`                     // LINE
 	WebHook       NotifyWebHookConf  `koanf:"webhook" json:"webhook"`               // WebHook
+	NotifyPending bool               `koanf:"notify_pending" json:"notify_pending"` // 待审核评论通知
 	NoiseMode     bool               `koanf:"noise_mode" json:"noise_mode"`         // 嘈杂模式 (非回复管理员的评论也发送通知)
 }
 

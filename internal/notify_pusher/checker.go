@@ -34,6 +34,11 @@ func (pusher *NotifyPusher) checkNeedSendEmailToAdmin(comment *entity.Comment, p
 		return false
 	}
 
+	// 待审评论不发送通知
+	if comment.IsPending && !pusher.conf.NotifyPending {
+		return false
+	}
+
 	// 管理员自己回复自己，不提醒
 	if comment.UserID == admin.ID {
 		return false
@@ -70,6 +75,11 @@ func (pusher *NotifyPusher) checkNeedMultiPush(comment *entity.Comment, pComment
 	// 忽略来自管理员的评论
 	coUser := pusher.dao.FetchUserForComment(comment)
 	if coUser.IsAdmin {
+		return false
+	}
+
+	// 待审评论不发送通知
+	if comment.IsPending && !pusher.conf.NotifyPending {
 		return false
 	}
 

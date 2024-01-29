@@ -229,6 +229,15 @@ admin_notify:
 
 可用变量和邮件模板相同，可参考：[邮件模版](./email.md#邮件模板)
 
+## 待审评论仍然发送通知 `notify_pending`
+
+```yaml
+admin_notify:
+  notify_pending: false
+```
+
+`notify_pending` 默认为关闭状态，当该项设置为 `false` 时，待审评论不会发送通知。你可以在控制中心查看所有待审核的评论。
+
 ## 嘈杂模式 `noise_mode`
 
 ```yaml
@@ -236,7 +245,7 @@ admin_notify:
   noise_mode: false
 ```
 
-noise_mode 默认为关闭状态，当该项设置为 `false` 时，站内仅向管理员回复的消息会发送通知，例如「普通用户 A」回复「普通用户 B」，这两个用户之间的通讯不会通知管理员。
+`noise_mode` 默认为关闭状态，当该项设置为 `false` 时，站内仅向管理员回复的消息会发送通知，例如「普通用户 A」回复「普通用户 B」，这两个用户之间的通讯不会通知管理员。
 
 注：当 `moderator.pending_default` 为 `true` 时，noise_mode 为始终开启状态。
 

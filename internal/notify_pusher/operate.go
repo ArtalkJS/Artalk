@@ -7,7 +7,6 @@ import (
 // 通知发送 (from comment to parentComment)
 func (pusher *NotifyPusher) Push(comment *entity.Comment, pComment *entity.Comment) {
 	isRootComment := pComment == nil || pComment.IsEmpty()
-	isAdminNoiseModeOn := pusher.conf.NoiseMode
 
 	// ==============
 	//  邮件回复对方
@@ -19,7 +18,7 @@ func (pusher *NotifyPusher) Push(comment *entity.Comment, pComment *entity.Comme
 	// ==============
 	//  邮件通知管理员
 	// ==============
-	if isRootComment || isAdminNoiseModeOn {
+	if isRootComment || pusher.conf.NoiseMode {
 		pusher.emailToAdmins(comment, pComment)
 	}
 

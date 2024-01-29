@@ -10,7 +10,6 @@ func (pusher *NotifyPusher) sendEmail(notify *entity.Notify) {
 	if pusher.conf.EmailPush != nil {
 		pusher.conf.EmailPush(notify)
 	}
-	// email.AsyncSend(&notify)
 }
 
 func (pusher *NotifyPusher) emailToUser(comment *entity.Comment, pComment *entity.Comment) {

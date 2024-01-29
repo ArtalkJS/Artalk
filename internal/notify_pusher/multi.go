@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/notify_pusher/sender"
 	"github.com/ArtalkJS/Artalk/internal/template"
@@ -65,7 +66,7 @@ func (pusher *NotifyPusher) getAdminNotifySubjectBody(comment *entity.Comment, t
 
 	body := render.Render(&notify)
 	if comment.IsPending {
-		body = "[待审状态评论]\n\n" + body
+		body = "[" + i18n.T("Pending") + "]\n\n" + body
 	}
 
 	return subject, body

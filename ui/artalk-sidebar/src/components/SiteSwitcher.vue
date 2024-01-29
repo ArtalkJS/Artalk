@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia';
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
+import { bootParams } from '@/global'
 
 const el = ref<HTMLElement|null>(null)
 
@@ -61,6 +62,13 @@ watch(curtShow, (value) => {
     document.removeEventListener('click', outsideChecker)
   }
 })
+
+function logout() {
+  useUserStore().logout()
+  nextTick(() => {
+    router.replace('/login')
+  })
+}
 </script>
 
 <template>
@@ -76,6 +84,12 @@ watch(curtShow, (value) => {
         >
           <div class="atk-site-logo">{{ site.logoText }}</div>
           <div class="atk-site-name">{{ site.label }}</div>
+        </div>
+
+        <!-- Logout Button -->
+        <div v-if="!bootParams.user?.email" class="atk-site-item" @click="logout()">
+          <svg class="atk-site-logo" stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="-6 -6 36 36" xmlns="http://www.w3.org/2000/svg"><path d="M5 22C4.44772 22 4 21.5523 4 21V3C4 2.44772 4.44772 2 5 2H19C19.5523 2 20 2.44772 20 3V6H18V4H6V20H18V18H20V21C20 21.5523 19.5523 22 19 22H5ZM18 16V13H11V11H18V8L23 12L18 16Z"></path></svg>
+          <div class="atk-site-name">{{ $t('logout') }}</div>
         </div>
       </div>
     </div>

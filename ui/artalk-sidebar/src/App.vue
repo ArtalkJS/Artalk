@@ -35,7 +35,7 @@ function syncArtalk(artalk: Artalk) {
   } else {
     // sync user from artalk to sidebar
     try {
-      useUserStore().sync(artalk)
+      useUserStore().sync()
     } catch {
       nextTick(() => {
         router.replace('/login')
@@ -53,7 +53,6 @@ function syncArtalk(artalk: Artalk) {
     name: artalkUserData.nick
   }).then(res => {
     if (res.data.is_admin && !res.data.is_login) {
-      artalkUser.logout()
       user.logout()
       nextTick(() => {
         router.replace('/login')

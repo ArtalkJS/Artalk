@@ -26,7 +26,7 @@ const userAvatarImgURL = computed(() => {
         :class="{ 'active': nav.siteSwitcherShow }"
         @click="nav.showSiteSwitcher()"
       >
-        <div class="site">{{ curtSite.substring(0, 1) }}</div>
+        <div class="site">{{ curtSite.substring(0, 1) || '_' }}</div>
       </div>
     </template>
     <template v-else>

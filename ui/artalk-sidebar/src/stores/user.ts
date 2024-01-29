@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { bootParams } from '../global'
-import type Artalk from 'artalk'
+import { bootParams, getArtalk } from '../global'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -17,9 +16,12 @@ export const useUserStore = defineStore('user', {
       this.email = ''
       this.isAdmin = false
       this.token = ''
+
+      getArtalk()?.ctx.get('user').logout()
     },
-    sync(artalk: Artalk) {
-      const user = artalk.ctx.get('user')
+    sync() {
+      const user = getArtalk()?.ctx.get('user')
+      if (!user) throw new Error('Artalk is not initialized')
       if (!user.checkHasBasicUserInfo()) throw new Error('User is not logged in')
       const userData = user.getData()
       this.site = ''

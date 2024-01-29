@@ -52,7 +52,7 @@ function login(username?: string) {
       isAdmin: user.is_admin,
       token: res.data.token,
     })
-    useUserStore().sync(artalk)
+    useUserStore().sync()
     router.replace('/')
   }).catch((e) => {
     if (e.data?.need_name_select) {

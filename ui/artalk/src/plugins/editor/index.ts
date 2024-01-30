@@ -16,7 +16,7 @@ import Upload from './upload'
 import Preview from './preview'
 
 /** The default enabled plugs */
-export const ENABLED_PLUGS: (typeof EditorPlug)[] = [
+const EDITOR_PLUGS: (typeof EditorPlug)[] = [
   // Core
   LocalStorage,
   HeaderEvent, HeaderUser, HeaderLink,
@@ -29,12 +29,17 @@ export const ENABLED_PLUGS: (typeof EditorPlug)[] = [
   Emoticons, Upload, Preview
 ]
 
-/** Get the name list of disabled plugs */
-export function getDisabledPlugByConf(conf: ArtalkConfig): (typeof EditorPlug)[] {
-  return [
-    {k: Upload, v: conf.imgUpload},
-    {k: Emoticons, v: conf.emoticons},
-    {k: Preview, v: conf.preview},
-    {k: Mover, v: conf.editorTravel},
-  ].filter(n => !n.v).flatMap(n => n.k)
+/**
+ * Get the enabled plugs by config
+ */
+export function getEnabledPlugs(conf: Pick<ArtalkConfig, 'imgUpload'|'emoticons'|'preview'|'editorTravel'>): (typeof EditorPlug)[] {
+  // The reference map of config and plugs
+  // (for check if the plug is enabled)
+  const confRefs = new Map<typeof EditorPlug, any>()
+  confRefs.set(Upload, conf.imgUpload)
+  confRefs.set(Emoticons, conf.emoticons)
+  confRefs.set(Preview, conf.preview)
+  confRefs.set(Mover, conf.editorTravel)
+
+  return EDITOR_PLUGS.filter(p => !confRefs.has(p) || !!confRefs.get(p))
 }

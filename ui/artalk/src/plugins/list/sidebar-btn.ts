@@ -20,7 +20,7 @@ export const SidebarBtn: ArtalkPlugin = (ctx) => {
     }
   }
 
-  ctx.on('conf-loaded', () => {
+  ctx.watchConf(['locale'], (conf) => {
     const list = ctx.get('list')
 
     $openSidebarBtn = list.$el.querySelector<HTMLElement>('[data-action="open-sidebar"]')

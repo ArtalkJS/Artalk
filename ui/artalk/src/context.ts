@@ -139,10 +139,7 @@ class Context implements ContextApi {
   }
 
   setDarkMode(darkMode: boolean|'auto'): void {
-    // prevent trigger 'conf-loaded' to improve performance
-    // this.updateConf({ ...this.conf, darkMode })
-    this.conf.darkMode = darkMode
-    this.events.trigger('dark-mode-changed', darkMode)
+    this.updateConf({ darkMode })
   }
 
   updateConf(nConf: Partial<ArtalkConfig>): void {
@@ -160,6 +157,26 @@ class Context implements ContextApi {
 
   getMarked() {
     return marked.getInstance()
+  }
+
+  watchConf<T extends (keyof ArtalkConfig)[]>(keys: T, effect: (conf: Pick<ArtalkConfig, T[number]>) => void): void {
+    const deepEqual = (a: any, b: any) => JSON.stringify(a) === JSON.stringify(b)
+    const val = () => {
+      const conf = this.getConf()
+      const res: any = {}
+      keys.forEach((key) => { res[key] = conf[key] })
+      return res
+    }
+    let lastVal = {}
+    this.on('conf-loaded', () => {
+      const newVal = val()
+      const isDiff = !deepEqual(lastVal, newVal)
+      // only trigger when specific keys changed
+      if (isDiff) {
+        lastVal = newVal
+        effect(newVal)
+      }
+    })
   }
 }
 

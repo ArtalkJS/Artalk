@@ -8,10 +8,10 @@ import $t from '@/i18n'
 let IgnoreVersionCheck = false
 
 export const VersionCheck: ArtalkPlugin = (ctx) => {
-  ctx.on('conf-loaded', () => {
+  ctx.watchConf(['apiVersion', 'versionCheck'], (conf) => {
     const list = ctx.get('list')
-    if (ctx.conf.apiVersion && ctx.conf.versionCheck && !IgnoreVersionCheck)
-      versionCheck(list, ARTALK_VERSION, ctx.conf.apiVersion)
+    if (conf.apiVersion && conf.versionCheck && !IgnoreVersionCheck)
+      versionCheck(list, ARTALK_VERSION, conf.apiVersion)
   })
 }
 

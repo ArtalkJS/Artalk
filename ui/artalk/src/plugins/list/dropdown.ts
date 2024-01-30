@@ -20,14 +20,14 @@ export const Dropdown: ArtalkPlugin = (ctx) => {
     })
   }
 
-  ctx.on('conf-loaded', () => {
+  ctx.watchConf(['listSort', 'locale'], (conf) => {
     const list = ctx.get('list')
 
     const $count = list.$el.querySelector<HTMLElement>('.atk-comment-count')
     if (!$count) return
 
     // 评论列表排序 Dropdown 下拉选择层
-    if (ctx.conf.listSort) {
+    if (conf.listSort) {
       initDropdown($count)
     } else {
       removeDropdown({

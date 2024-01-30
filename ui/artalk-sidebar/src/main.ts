@@ -20,7 +20,7 @@ const i18n = createI18n({
 // Artalk extension
 Artalk.use((ctx) => {
   // Sync config from artalk instance to sidebar
-  ctx.on('conf-loaded', (conf) => {
+  ctx.watchConf(['locale'], (conf) => {
     if (typeof conf.locale === 'string' && conf.locale !== 'auto')
       i18n.global.locale.value = conf.locale as any
   })

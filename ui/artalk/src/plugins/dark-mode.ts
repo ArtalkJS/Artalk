@@ -1,6 +1,6 @@
 import type { ArtalkPlugin } from '@/types'
 
-// Notice: Singleton mode needs to be loaded as lazy as possible,
+// Notice: Singleton pattern needs to be loaded as lazy as possible,
 //         because the SSG application does not have a `window` context.
 let darkModeMedia: MediaQueryList | undefined
 
@@ -48,9 +48,8 @@ export const DarkMode: ArtalkPlugin = (ctx) => {
     }
   }
 
+  ctx.watchConf(['darkMode'], (conf) => sync(conf.darkMode))
   ctx.on('inited', () => sync(ctx.conf.darkMode))
-  ctx.on('conf-loaded', (conf) => sync(conf.darkMode))
-  ctx.on('dark-mode-changed', (darkMode) => sync(darkMode))
   ctx.on('destroy', () => {
     // if handler exists, don't forget to remove it, or it will cause memory leak
     darkModeAutoHandler && darkModeMedia?.removeEventListener('change', darkModeAutoHandler)

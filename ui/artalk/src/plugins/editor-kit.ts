@@ -1,6 +1,6 @@
 import type { EditorApi, ArtalkPlugin } from '@/types'
 import EventManager from '@/lib/event-manager'
-import { ENABLED_PLUGS, getDisabledPlugByConf } from './editor'
+import { getEnabledPlugs } from './editor'
 import EditorPlug from './editor/_plug'
 import PlugKit from './editor/_kit'
 
@@ -43,7 +43,9 @@ export class PlugManager {
     public editor: EditorApi
   ) {
     let confLoaded = false // config not loaded at first time
-    this.editor.ctx.on('conf-loaded', () => {
+    this.editor.ctx.watchConf([
+      'imgUpload', 'emoticons', 'preview', 'editorTravel', 'locale'
+    ], (conf) => {
       // trigger unmount event will call all plugs' unmount function
       // (this will only be called while conf reloaded, not be called at first time)
       confLoaded && this.getEvents().trigger('unmounted')
@@ -52,10 +54,7 @@ export class PlugManager {
       this.clear()
 
       // init the all enabled plugs
-      const DISABLED = getDisabledPlugByConf(this.editor.ctx.conf)
-
-      ENABLED_PLUGS
-        .filter(p => !DISABLED.includes(p)) // 禁用的插件
+      getEnabledPlugs(conf)
         .forEach((Plug) => {
           // create the plug instance
           const kit = new PlugKit(this)

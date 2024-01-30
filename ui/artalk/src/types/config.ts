@@ -130,6 +130,7 @@ export interface ArtalkConfig {
   listUnreadHighlight?: boolean
   scrollRelativeTo?: () => HTMLElement
   immediateFetch?: boolean
+  pvAdd?: boolean
 }
 
 /**

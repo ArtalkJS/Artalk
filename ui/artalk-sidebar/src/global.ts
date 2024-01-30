@@ -39,6 +39,7 @@ export function initArtalk() {
     site: bootParams.site,
     darkMode: bootParams.darkMode,
     useBackendConf: true,
+    pvAdd: false,
     remoteConfModifier: (conf) => {
       conf.noComment = `<div class="atk-sidebar-no-content">No Content</div>` // TODO i18n t('noComment')
       conf.flatMode = true

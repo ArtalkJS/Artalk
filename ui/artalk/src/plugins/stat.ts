@@ -23,7 +23,7 @@ export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
       pageKey: conf.pageKey,
       countEl: conf.countEl,
       pvEl: conf.pvEl,
-      pvAdd: true,
+      pvAdd: (typeof ctx.conf.pvAdd === 'boolean' ? ctx.conf.pvAdd : true),
     })
   })
 }

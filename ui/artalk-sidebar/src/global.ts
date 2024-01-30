@@ -17,6 +17,13 @@ export const bootParams = getBootParams()
 function getBootParams() {
   const p = new URLSearchParams(document.location.search)
 
+  // call history api to clear search params
+  // on purpose to prevent the params (e.g. user token)
+  // from being leaked like from the referrer header or the browser history
+  if (!!p.get('user') && window.history.replaceState) {
+    window.history.replaceState({}, '', window.location.pathname)
+  }
+
   return {
     pageKey:    p.get('pageKey') || '',
     site:       p.get('site') || '',

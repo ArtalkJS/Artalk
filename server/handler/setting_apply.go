@@ -60,7 +60,7 @@ func SettingApply(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("Restart failed: {{err}}", map[string]interface{}{"err": err.Error()}))
 		}
 
-		log.Info(i18n.T("Services restart complete"))
+		log.Info("[Apply Settings] " + i18n.T("Services restart complete"))
 
 		return common.RespSuccess(c)
 	}))

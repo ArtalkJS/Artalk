@@ -104,4 +104,7 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
 
   /** 更新配置 */
   updateConf(conf: Partial<ArtalkConfig>): void
+
+  /** 监听配置更新 */
+  watchConf<T extends (keyof ArtalkConfig)[]>(keys: T, effect: (val: Pick<ArtalkConfig, T[number]>) => void): void
 }

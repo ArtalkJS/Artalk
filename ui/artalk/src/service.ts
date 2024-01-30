@@ -20,8 +20,8 @@ const services = {
   i18n(ctx: ContextApi) {
     I18n.setLocale(ctx.conf.locale)
 
-    ctx.on('conf-loaded', () => {
-      I18n.setLocale(ctx.conf.locale)
+    ctx.watchConf(['locale'], (conf) => {
+      I18n.setLocale(conf.locale)
     })
   },
 

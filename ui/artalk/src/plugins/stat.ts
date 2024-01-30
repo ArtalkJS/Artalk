@@ -1,4 +1,4 @@
-import type { ContextApi, ArtalkPlugin } from '@/types'
+import type { ContextApi, ArtalkPlugin, ArtalkConfig } from '@/types'
 import { Api } from '@/api'
 
 export interface CountOptions {
@@ -14,13 +14,15 @@ export interface CountOptions {
 }
 
 export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
-  ctx.on('conf-loaded', () => {
+  ctx.watchConf([
+    'site', 'pageKey', 'countEl', 'pvEl',
+  ], (conf) => {
     initCountWidget({
       getApi: () => ctx.getApi(),
-      siteName: ctx.conf.site,
-      pageKey: ctx.conf.pageKey,
-      countEl: ctx.conf.countEl,
-      pvEl: ctx.conf.pvEl,
+      siteName: conf.site,
+      pageKey: conf.pageKey,
+      countEl: conf.countEl,
+      pvEl: conf.pvEl,
       pvAdd: true,
     })
   })

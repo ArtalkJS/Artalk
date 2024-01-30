@@ -14,7 +14,7 @@ export const UnreadBadge: ArtalkPlugin = (ctx) => {
     }
   }
 
-  ctx.on('conf-loaded', () => {
+  ctx.on('inited', () => {
     const list = ctx.get('list')
 
     $unreadBadge = list.$el.querySelector<HTMLElement>('.atk-unread-badge')

@@ -4,7 +4,7 @@ import { Paginator } from './paginator'
 import ReadMorePaginator from './paginator/read-more'
 import UpDownPaginator from './paginator/up-down'
 
-function createPaginatorByConf(conf: ArtalkConfig): Paginator {
+function createPaginatorByConf(conf: Pick<ArtalkConfig, 'pagination'>): Paginator {
   if (conf.pagination.readMore) return new ReadMorePaginator()
   return new UpDownPaginator()
 }
@@ -24,7 +24,7 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
   let paginator: Paginator|null = null
 
   // Init paginator when conf loaded
-  ctx.on('conf-loaded', (conf) => {
+  ctx.watchConf(['pagination', 'locale'], (conf) => {
     const list = ctx.get('list')
 
     if (paginator) paginator.dispose() // if had been init, dispose it

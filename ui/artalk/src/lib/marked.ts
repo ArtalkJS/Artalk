@@ -7,18 +7,13 @@ import { getRenderer } from './marked-renderer'
 type Replacer = (raw: string) => string
 export type TMarked = typeof libMarked
 
-let instance: (typeof libMarked)|undefined
+let instance: TMarked|undefined
 let replacers: Replacer[] = []
 
 const markedOptions: MarkedOptions = {
-  pedantic: false,
   gfm: true,
   breaks: true,
-  smartLists: true,
-  smartypants: true,
-  xhtml: false,
-  sanitize: false,
-  silent: true,
+  async: false
 }
 
 /** Get Marked instance */
@@ -45,7 +40,7 @@ export function initMarked() {
 
 /** 解析 markdown */
 export default function marked(src: string): string {
-  let markedContent = getInstance()?.parse(src)
+  let markedContent = getInstance()?.parse(src) as string
   if (!markedContent) { // 无 Markdown 模式简单处理
     markedContent = simpleMarked(src)
   }

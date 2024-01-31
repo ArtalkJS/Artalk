@@ -1,6 +1,7 @@
 import en, { I18n, I18nKeys } from './en'
 import zhCN from './zh-CN'
 import { GLOBAL_LOCALES_KEY } from './external'
+import * as Utils from '../lib/utils'
 
 export type * from './en'
 
@@ -60,7 +61,7 @@ export function t(key: I18nKeys, args: {[key: string]: string} = {}) {
   let str = LocaleDict?.[key] || key
   str = str.replace(/\{\s*(\w+?)\s*\}/g, (_, token) => args[token] || '')
 
-  return str
+  return Utils.htmlEncode(str)
 }
 
 export default t

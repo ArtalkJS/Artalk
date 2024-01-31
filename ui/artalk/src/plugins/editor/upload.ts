@@ -123,7 +123,7 @@ export default class Upload extends EditorPlug {
       }
     } catch (err: any) {
       console.error(err)
-      this.kit.useEditor().showNotify(`${$t('uploadFail')}，${err.msg}`, 'e')
+      this.kit.useEditor().showNotify(`${$t('uploadFail')}: ${err.msg}`, 'e')
     }
     if (!!resp && resp.public_url) {
       let imgURL = resp.public_url as string

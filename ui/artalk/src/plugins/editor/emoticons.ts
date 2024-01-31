@@ -84,7 +84,7 @@ export default class Emoticons extends EditorPlug {
     }
 
     if (!Array.isArray(data)) {
-      Ui.setError(this.$panel!, "表情包数据必须为 Array/Object/String 类型")
+      Ui.setError(this.$panel!, `[${$t('emoticon')}] Data must be of Array/Object/String type`)
       Ui.hideLoading(this.$panel!)
       return []
     }
@@ -144,7 +144,7 @@ export default class Emoticons extends EditorPlug {
     } catch (err) {
       Ui.hideLoading(this.$panel!)
       console.error('[Emoticons] Load Failed:', err)
-      Ui.setError(this.$panel!, `${$t('emoticon')}${$t('loadFail')} ${String(err)}`)
+      Ui.setError(this.$panel!, `[${$t('emoticon')}] ${$t('loadFail')}: ${String(err)}`)
       return []
     }
   }

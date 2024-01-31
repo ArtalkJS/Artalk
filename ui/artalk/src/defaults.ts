@@ -49,7 +49,7 @@ const defaults: ArtalkConfig = {
   versionCheck: true,
   useBackendConf: true,
 
-  locale: 'zh-CN',
+  locale: 'en',
 }
 
 if (ARTALK_LITE) {

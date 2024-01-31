@@ -1,75 +1,75 @@
 import { defineLocaleExternal } from './external'
 
 export default defineLocaleExternal('jp', {
-  /* エディタ */
-  placeholder: 'コメントを残す',
+  /* Editor */
+  placeholder: '内容を入力してください...',
   noComment: 'コメントなし',
-  send: '送信',
-  save: '保存',
+  send: 'コメントを送信',
+  save: 'コメントを保存',
   nick: 'ニックネーム',
-  email: 'メール',
+  email: 'Eメール',
   link: 'ウェブサイト',
   emoticon: '絵文字',
   preview: 'プレビュー',
   image: '画像',
   uploadFail: 'アップロードに失敗しました',
   commentFail: 'コメントに失敗しました',
-  restoredMsg: 'コンテンツが復元されました',
-  onlyAdminCanReply: '管理者のみが返信できます',
-  uploadLoginMsg: 'アップロードするには、名前とメールアドレスを入力してください',
+  restoredMsg: '内容が自動的に復元されました',
+  onlyAdminCanReply: '管理者のみがコメントできます',
+  uploadLoginMsg: '名前とメールアドレスを入力してからアップロードしてください',
 
-  /* リスト */
-  counter: '{count} コメント',
-  sortLatest: '最新のもの',
-  sortOldest: '最も古い',
-  sortBest: 'ベスト',
+  /* List */
+  counter: '{count}件のコメント',
+  sortLatest: '最新',
+  sortOldest: '最古',
+  sortBest: '人気',
   sortAuthor: '著者',
-  openComment: 'コメントを開く',
-  closeComment: 'コメントを閉じる',
-  listLoadFailMsg: 'コメントの読み込みに失敗しました',
-  listRetry: 'クリックで再試行',
+  openComment: 'コメントを表示',
+  closeComment: 'コメントを非表示',
+  listLoadFailMsg: 'コメントリストのデータを取得できません',
+  listRetry: '再試行するにはクリック',
   loadMore: 'もっと読み込む',
 
-  /* コメント */
+  /* Comment */
   admin: '管理者',
   reply: '返信',
-  voteUp: 'アップ',
-  voteDown: 'ダウン',
+  voteUp: '賛成',
+  voteDown: '反対',
   voteFail: '投票に失敗しました',
   readMore: '続きを読む',
-  actionConfirm: '確認',
-  collapse: '折りたたむ',
+  actionConfirm: '操作を確認',
+  collapse: '折り畳む',
   collapsed: '折りたたまれた',
-  collapsedMsg: 'このコメントは折りたたまれました',
+  collapsedMsg: 'このコメントはシステムまたは管理者によって折りたたまれました',
   expand: '展開',
-  approved: '承認されました',
+  approved: '承認済み',
   pending: '保留中',
-  pendingMsg: '保留中、コメント投稿者にのみ表示されます',
+  pendingMsg: '審査中、自分自身のみが表示できます。',
   edit: '編集',
   editCancel: '編集をキャンセル',
   delete: '削除',
-  deleteConfirm: '確認',
-  pin: 'ピン',
-  unpin: 'ピン外し',
+  deleteConfirm: '削除を確認',
+  pin: 'ピン留め',
+  unpin: 'ピン留めを解除',
 
-  /* 時間 */
+  /* Time */
   seconds: '秒前',
   minutes: '分前',
   hours: '時間前',
-  days: '数日前',
+  days: '日前',
   now: 'たった今',
 
-  /* チェッカー */
-  adminCheck: '管理者パスワードを入力してください:',
-  captchaCheck: '続けるにはCAPTCHAを入力してください:',
+  /* Checker */
+  adminCheck: '管理者として認証するにはパスワードを入力してください：',
+  captchaCheck: '続行するにはキャプチャを入力してください：',
   confirm: '確認',
-  cancel: '取消',
+  cancel: 'キャンセル',
 
-  /* サイドバー */
-  msgCenter: 'メッセージ',
-  ctrlCenter: 'コンソール',
+  /* Sidebar */
+  msgCenter: '通知センター',
+  ctrlCenter: 'コントロールセンター',
 
-  /* 一般 */
+  /* General */
   frontend: 'フロントエンド',
   backend: 'バックエンド',
   loading: '読み込み中',
@@ -78,10 +78,11 @@ export default defineLocaleExternal('jp', {
   editFail: '編集に失敗しました',
   deleting: '削除中',
   deleteFail: '削除に失敗しました',
-  reqGot: 'リクエストを取得しました',
-  reqAborted: 'リクエストがタイムアウトしたか、予期せず終了した',
-  updateMsg: 'フルな体験をするためには、Artalk {name} をアップデートしてください',
+  reqGot: 'リクエストが受信されました',
+  reqAborted: 'リクエストがタイムアウトまたは予期せず中止されました',
+  updateMsg: '完全な体験を得るにはArtalk {name}を更新してください',
   currentVersion: '現在のバージョン',
-  ignore: '無視する',
-  open: 'オープン',
+  ignore: '無視',
+  open: '開く',
+  openName: '{name}を開く',
 }, ['jp-JP'])

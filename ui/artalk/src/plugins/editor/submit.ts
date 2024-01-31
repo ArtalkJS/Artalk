@@ -61,7 +61,7 @@ export default class Submit extends EditorPlug {
     } catch (err: any) {
       // submit error
       console.error(err)
-      this.kit.useEditor().showNotify(`${$t('commentFail')}，${err.msg || String(err)}`, 'e')
+      this.kit.useEditor().showNotify(`${$t('commentFail')}: ${err.msg || String(err)}`, 'e')
       return
     } finally {
       this.kit.useEditor().hideLoading()

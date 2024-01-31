@@ -141,6 +141,8 @@ function padWithZeros(vNumber: number, width: number) {
   }
   return numAsString
 }
+
+const artransferToolHint = computed(() => t('artransferToolHint', { link: '__LINK__' }).replace('__LINK__', `<a href="https://artalk.js.org/guide/transfer.html" target="_blank">${t('artransfer')}</a>`))
 </script>
 
 <template>
@@ -150,7 +152,7 @@ function padWithZeros(vNumber: number, width: number) {
     <div class="atk-label atk-data-file-label">Artrans {{ t('dataFile') }}</div>
     <FileUploader :api-url="uploadApiURL" @done="fileUploaded">
       <template v-slot:tip>
-        使用「<a href="https://artalk.js.org/guide/transfer.html" target="_blank">转换工具</a>」将评论数据转为 Artrans 格式
+        <span v-html="artransferToolHint" />
       </template>
       <template v-slot:done-msg>
         {{ t('uploadReadyToImport') }}
@@ -175,7 +177,7 @@ function padWithZeros(vNumber: number, width: number) {
     <div class="atk-label">{{ t('payload') }} ({{ t('optional') }})</div>
     <textarea name="AtkPayload" v-model="importParams.payload"></textarea>
     <span class="atk-desc">
-      参考「<a href="https://artalk.js.org/guide/transfer.html" target="_blank">文档 · 数据迁移</a>」
+      <a href="https://artalk.js.org/guide/transfer.html" target="_blank">{{ t('moreDetails') }}</a>
     </span>
     <button class="atk-btn" name="AtkSubmit" @click="startImportTask()">{{ t('import') }}</button>
   </div>

@@ -25,7 +25,7 @@ const en = {
   openComment: 'Open Comment',
   closeComment: 'Close Comment',
   listLoadFailMsg: 'Failed to load comments',
-  listRetry: 'Click to retry',
+  listRetry: 'Retry',
   loadMore: 'Load More',
 
   /* Comment */
@@ -81,7 +81,8 @@ const en = {
   updateMsg: 'Please update Artalk {name} to get the full experience',
   currentVersion: 'Current Version',
   ignore: 'Ignore',
-  open: 'Open'
+  open: 'Open',
+  openName: 'Open {name}',
 }
 
 export type I18n = typeof en

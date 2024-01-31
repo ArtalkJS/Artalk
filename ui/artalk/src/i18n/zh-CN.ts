@@ -84,6 +84,7 @@ const zhCN: I18n = {
   currentVersion: '当前版本',
   ignore: '忽略',
   open: '打开',
+  openName: '打开{name}',
 }
 
 export default zhCN

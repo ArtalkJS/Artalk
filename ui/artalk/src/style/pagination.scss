@@ -7,7 +7,6 @@
 
   & > .atk-btn,
   & > .atk-input {
-    font-size: 15px;
     height: 30px;
     border: 1px solid var(--at-color-border);
     border-radius: 3px;
@@ -18,7 +17,7 @@
 
   & > .atk-btn {
     user-select: none;
-    width: 70px;
+    width: 60px;
     cursor: pointer;
     display: flex;
     justify-content: center;

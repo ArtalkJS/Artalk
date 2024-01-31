@@ -11,6 +11,7 @@ import * as I18n from './i18n'
 
 import EventManager from './lib/event-manager'
 import { convertApiOptions, handelCustomConf } from './config'
+import { watchConf } from './lib/watch-conf'
 
 // Auto dependency injection
 interface Context extends TInjectedServices { }
@@ -26,6 +27,7 @@ class Context implements ContextApi {
 
   /* Event Manager */
   private events = new EventManager<EventPayloadMap>()
+  private mounted = false
 
   constructor(conf: ArtalkConfig) {
     this.conf = conf
@@ -35,6 +37,10 @@ class Context implements ContextApi {
     this.$root.innerHTML = ''
 
     this.data = new DataManager(this.events)
+
+    this.on('mounted', () => {
+      this.mounted = true
+    })
   }
 
   inject(depName: string, obj: any) {
@@ -144,7 +150,7 @@ class Context implements ContextApi {
 
   updateConf(nConf: Partial<ArtalkConfig>): void {
     this.conf = mergeDeep(this.conf, handelCustomConf(nConf, false))
-    this.events.trigger('conf-loaded', this.conf)
+    this.mounted && this.events.trigger('updated', this.conf)
   }
 
   getConf(): ArtalkConfig {
@@ -160,23 +166,7 @@ class Context implements ContextApi {
   }
 
   watchConf<T extends (keyof ArtalkConfig)[]>(keys: T, effect: (conf: Pick<ArtalkConfig, T[number]>) => void): void {
-    const deepEqual = (a: any, b: any) => JSON.stringify(a) === JSON.stringify(b)
-    const val = () => {
-      const conf = this.getConf()
-      const res: any = {}
-      keys.forEach((key) => { res[key] = conf[key] })
-      return res
-    }
-    let lastVal = {}
-    this.on('conf-loaded', () => {
-      const newVal = val()
-      const isDiff = !deepEqual(lastVal, newVal)
-      // only trigger when specific keys changed
-      if (isDiff) {
-        lastVal = newVal
-        effect(newVal)
-      }
-    })
+    watchConf(this, keys, effect)
   }
 }
 

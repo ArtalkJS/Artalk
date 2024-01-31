@@ -10,7 +10,7 @@ export const ErrorDialog: ArtalkPlugin = (ctx) => {
     Ui.setError(list.$el, null)
   })
 
-  ctx.on('list-error', (err) => {
+  ctx.on('list-failed', (err) => {
     showErrorDialog({
       $err: ctx.get('list').$el,
       errMsg: err.msg,

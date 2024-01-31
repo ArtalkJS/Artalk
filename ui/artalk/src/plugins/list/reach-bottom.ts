@@ -50,7 +50,7 @@ export const ReachBottom: ArtalkPlugin = (ctx) => {
     setupObserver($target)
   })
 
-  ctx.on('destroy', () => {
+  ctx.on('unmounted', () => {
     clearObserver()
   })
 }

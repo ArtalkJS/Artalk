@@ -5,7 +5,7 @@ import * as Utils from '@/lib/utils'
 export const TimeTicking: ArtalkPlugin = (ctx) => {
   let timer: number|null = null
 
-  ctx.on('inited', () => {
+  ctx.on('mounted', () => {
     timer = window.setInterval(() => {
       const list = ctx.get('list')
 
@@ -16,7 +16,7 @@ export const TimeTicking: ArtalkPlugin = (ctx) => {
     }, 30 * 1000) // 30s 更新一次
   })
 
-  ctx.on('destroy', () => {
+  ctx.on('unmounted', () => {
     timer && window.clearInterval(timer)
   })
 }

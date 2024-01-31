@@ -92,7 +92,7 @@ describe('Artalk instance', () => {
     const fn = vi.fn()
 
     await new Promise(resolve => {
-      artalk.on('conf-loaded', (conf) => {
+      artalk.on('mounted', (conf) => {
         resolve(null)
         fn()
       })

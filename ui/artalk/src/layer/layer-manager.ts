@@ -9,7 +9,7 @@ export class LayerManager {
     this.wrap = new LayerWrap()
     document.body.appendChild(this.wrap.getWrap())
 
-    ctx.on('destroy', () => {
+    ctx.on('unmounted', () => {
       this.wrap.getWrap().remove()
     })
 

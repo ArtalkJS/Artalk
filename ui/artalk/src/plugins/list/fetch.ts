@@ -65,7 +65,7 @@ export const Fetch: ArtalkPlugin = (ctx) => {
         params.onError && params.onError(error)
 
         // trigger events when error
-        ctx.trigger('list-error', error)
+        ctx.trigger('list-failed', error)
         ctx.trigger('list-fetched', { params, error })
 
         throw e

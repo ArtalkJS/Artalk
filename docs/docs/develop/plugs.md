@@ -6,7 +6,7 @@
 import Artalk from 'artalk'
 
 Artalk.use((ctx) => {
-  ctx.on('inited', () => {
+  ctx.on('mounted', () => {
     ctx.get('editor').setContent("Hello World")
   })
 

@@ -19,7 +19,7 @@ onBeforeMount(() => {
     throw new Error('Artalk instance not initialized')
   }
 
-  artalk.on('conf-loaded', () => {
+  artalk.on('mounted', () => {
     if (artalkLoaded.value) return
     artalkLoaded.value = true
 

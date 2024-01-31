@@ -42,8 +42,8 @@ export default class Artalk {
       if (typeof plugin === 'function') plugin(this.ctx)
     })
 
-    // Trigger inited event
-    this.ctx.trigger('inited')
+    // Trigger created event
+    this.ctx.trigger('created')
   }
 
   /** Get the config of Artalk */
@@ -69,7 +69,7 @@ export default class Artalk {
 
   /** Destroy instance of Artalk */
   public destroy() {
-    this.ctx.trigger('destroy')
+    this.ctx.trigger('unmounted')
     this.ctx.$root.remove()
   }
 

@@ -63,7 +63,7 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
   })
 
   // When list error
-  ctx.on('list-error', () => {
+  ctx.on('list-failed', () => {
     paginator?.showErr?.($t('loadFail'))
   })
 

@@ -13,11 +13,11 @@ export const GotoFirst: ArtalkPlugin = (ctx) => {
     })
   }
 
-  ctx.on('inited', () => {
+  ctx.on('mounted', () => {
     ctx.on('list-goto-first', handler)
   })
 
-  ctx.on('destroy', () => {
+  ctx.on('unmounted', () => {
     ctx.off('list-goto-first', handler)
   })
 }

@@ -3,9 +3,9 @@ import { handleConfFormServer } from '@/config'
 import { showErrorDialog } from '../components/error-dialog'
 
 export const ConfRemoter: ArtalkPlugin = (ctx) => {
-  ctx.on('inited', () => {
-    if (ctx.conf.immediateFetch === false) return
-    ctx.trigger('conf-fetch')
+  ctx.on('created', () => {
+    if (ctx.conf.immediateFetch !== false)
+      ctx.trigger('conf-fetch')
   })
 
   ctx.on('conf-fetch', () => {
@@ -52,6 +52,9 @@ function loadConf(ctx: ContextApi) {
 
     console.error(err)
     throw err
+  }).then(() => {
+    // Trigger mounted event
+    ctx.trigger('mounted')
   }).then(() => {
     // 评论获取
     if (ctx.conf.remoteConfModifier) return // only auto fetch when no remoteConfModifier

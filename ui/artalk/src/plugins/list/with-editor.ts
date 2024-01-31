@@ -4,9 +4,9 @@ import $t from '@/i18n'
 export const WithEditor: ArtalkPlugin = (ctx) => {
   let $closeCommentBtn: HTMLElement|undefined
 
-  // on Artalk inited
+  // on Artalk mounted
   // (after all components had mounted)
-  ctx.on('inited', () => {
+  ctx.on('mounted', () => {
     const list = ctx.get('list')
 
     $closeCommentBtn = list.$el.querySelector<HTMLElement>('[data-action="admin-close-comment"]')!

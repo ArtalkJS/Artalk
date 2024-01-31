@@ -1,4 +1,52 @@
 
+## [v2.8.0](https://github.com/ArtalkJS/Artalk/compare/v2.7.3...v2.8.0) (2024-01-31)
+
+### Features
+
+* **go:** upgrade golang to v1.21.5 and some deps
+* **notify:** add `notify_pending` config option ([#728](https://github.com/ArtalkJS/Artalk/issues/728)) ([#754](https://github.com/ArtalkJS/Artalk/issues/754))
+* **ui/admin:** add logout button in admin panel ([#488](https://github.com/ArtalkJS/Artalk/issues/488)) ([#753](https://github.com/ArtalkJS/Artalk/issues/753))
+
+### Bug Fixes
+
+* **cache:** unable to change admin list after caching ([#748](https://github.com/ArtalkJS/Artalk/issues/748)) ([#750](https://github.com/ArtalkJS/Artalk/issues/750))
+* **i18n:** sidebar language cannot be changed
+* **ui/editor:** prevent propagation of click event in editor ([#734](https://github.com/ArtalkJS/Artalk/issues/734))
+* **ui/layer:** unexpected behavior with multiple items when closing
+* **ui/lite:** correct the instance name for compiling ArtalkLite ([#740](https://github.com/ArtalkJS/Artalk/issues/740))
+* **ui/no_comment:** flickering when clearing list before fetch
+* **ui/pagination:** auto load list when scroll reaches bottom
+* **ui/sidebar:** incorrectly increasing pv count in sidebar ([#724](https://github.com/ArtalkJS/Artalk/issues/724))
+* **ui/sidebar_layer:** sidebar still displays when login is required
+
+### Performance Improvements
+
+* **ui/conf:** support for watching partial changes in config with `watchConf()` ([#755](https://github.com/ArtalkJS/Artalk/issues/755))
+* **ui/i18n:** refine some translation ([#743](https://github.com/ArtalkJS/Artalk/issues/743))
+* **ui/pagination:** replace the prev/next text on pagination buttons with icons ([#743](https://github.com/ArtalkJS/Artalk/issues/743))
+* **ui/sidebar:** prevent potential token leakage by clearing query in iframe url
+
+### Code Refactoring
+
+* **api:** update swagger file of API v2
+* **api:** refactor HTTP API to version 2 ([#735](https://github.com/ArtalkJS/Artalk/issues/735))
+* **transfer:** normalize transfer payload parameter name
+* **ui:** optimize init and update lifecycle events
+* **ui/comment:** rename class `Comment` to `CommentNode`
+* **ui/ctx:** add `getComments` and `getCommentNodes` in context ([#752](https://github.com/ArtalkJS/Artalk/issues/752))
+
+### Documentation
+
+* update multi-sites manual ([#747](https://github.com/ArtalkJS/Artalk/issues/747))
+
+### BREAKING CHANGE
+
+
+For Developers: The HTTP API has now been updated to version v2, with a lot of adjustments made, such as changing to Restful API style, request type, request body, response body, etc. data structure, adding error response codes. You can refer to [#735](https://github.com/ArtalkJS/Artalk/issues/735) or https://artalk.js.org/http-api Please update all your existing clients to adapt to the new v2 server. The new base path is `/api/v2/`. The UI package's HTTP client has been implemented to auto-generate based on `Swagger.json`, and there have been a lot of adjustments to the `artalk.ctx.getApi()` related code. In addition, the HTTP API no longer enforces checks on the header's `Origin` and `Referer` (to implement strict isolation of different sites) but still maintains the original CORS origin check.
+
+For General Users: Now all administrators have the same level of authority (there is no longer super admin authority), the function of assigning sub-administrators with independent scope authority to individual sites has been removed, which can simplify the HTTP server maintenance and implementation. Upgrading only requires updating the client and server application at the same time, and there are no additional operations.
+
+
 ## [v2.7.3](https://github.com/ArtalkJS/Artalk/compare/v2.7.2...v2.7.3) (2023-12-28)
 
 ### Features

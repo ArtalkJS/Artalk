@@ -28,20 +28,20 @@ export default defineConfig({
     [
       "link",
       {
-        href: "https://npm.elemecdn.com/lightgallery@2.3.0/css/lightgallery.css",
+        href: "https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.3.0/css/lightgallery.css",
         rel: "stylesheet",
       },
     ],
     [
       "script",
       {
-        src: "https://npm.elemecdn.com/lightgallery@2.3.0/lightgallery.min.js",
+        src: "https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.3.0/lightgallery.min.js",
       },
     ],
     // katex
-    // ['link', { href: "https://npm.elemecdn.com/katex@0.15.3/dist/katex.min.css", rel: 'stylesheet' }],
-    // ['script', { src: 'https://npm.elemecdn.com/katex@0.15.3/dist/katex.min.js' }],
-    // ['script', { src: 'https://npm.elemecdn.com/@artalkjs/plugin-katex/dist/artalk-plugin-katex.js' }],
+    ['link', { href: "https://unpkg.com/katex@0.15.3/dist/katex.min.css", rel: 'stylesheet' }],
+    ['script', { src: 'https://unpkg.com/katex@0.15.3/dist/katex.min.js' }],
+    ['script', { src: 'https://unpkg.com/@artalk/plugin-katex/dist/artalk-plugin-katex.js' }],
   ],
 
   lastUpdated: true,

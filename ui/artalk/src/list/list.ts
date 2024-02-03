@@ -53,7 +53,10 @@ export default class List extends Component {
     })
 
     this.ctx.on('list-loaded', (comments) => {
-      if (comments.length === 0) this.$commentsWrap.innerHTML = ''
+      if (comments.length === 0) {
+        this.commentNodes = []
+        this.$commentsWrap.innerHTML = ''
+      }
     })
 
     // When comment insert

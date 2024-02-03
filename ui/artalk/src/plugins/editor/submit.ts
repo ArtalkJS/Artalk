@@ -8,6 +8,7 @@ interface CustomSubmit {
   activeCond: () => void
   pre?: () => void
   req?: () => Promise<CommentData>
+  /** The `post` method is called after the comment is successfully submitted */
   post?: (nComment: CommentData) => void
 }
 

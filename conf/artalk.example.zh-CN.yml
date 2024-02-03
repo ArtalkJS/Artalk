@@ -164,9 +164,9 @@ captcha:
     captcha_id: ""
     captcha_key: ""
 
-# IP 归属地
+# IP 属地
 ip_region:
-  # 启用 IP 归属地展示
+  # 启用 IP 属地展示
   enabled: false
   # 数据文件路径 (.xdb 格式)
   db_path: "./data/ip2region.xdb"

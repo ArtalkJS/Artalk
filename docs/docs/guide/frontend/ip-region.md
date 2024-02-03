@@ -1,12 +1,12 @@
-# IP 归属地
+# IP 属地
 
-Artalk 内置用户 IP 归属地展示功能，并且你可以设置显示的精度：精确到市、省。
+Artalk 内置用户 IP 属地展示功能，并且你可以设置显示的精度：精确到市、省。
 
-该功能默认关闭，你可在 Artalk 控制中心设置中启用 IP 归属地展示功能。
+该功能默认关闭，你可在 Artalk 控制中心设置中启用 IP 属地展示功能。
 
-## IP 归属地数据库
+## IP 属地数据库
 
-在开启 IP 归属地展示功能之前，你需要下载一个数据库文件：
+在开启 IP 属地展示功能之前，你需要下载一个数据库文件：
 
  - [GitHub 下载](https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region.xdb) / [镜像站下载](https://gh-proxy.com/?q=https%3A%2F%2Fgithub.com%2Flionsoul2014%2Fip2region%2Fblob%2Fmaster%2Fdata%2Fip2region.xdb) (境内推荐)
 
@@ -25,9 +25,9 @@ Artalk 内置用户 IP 归属地展示功能，并且你可以设置显示的精
 配置文件：
 
 ```yaml
-# IP 归属地
+# IP 属地
 ip_region:
-  # 启用 IP 归属地展示
+  # 启用 IP 属地展示
   enabled: false
   # 数据文件路径 (.xdb 格式)
   db_path: "./data/ip2region.xdb"

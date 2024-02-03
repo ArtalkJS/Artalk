@@ -176,7 +176,7 @@ func (conf *Config) ipRegionPatch() {
 
 	// 检测配置文件是否存在
 	if !utils.CheckFileExist(conf.IPRegion.DBPath) {
-		log.Warn("未找到 IP 数据库文件：" + strconv.Quote(conf.IPRegion.DBPath) + "，IP 归属地功能已禁用，" +
+		log.Warn("未找到 IP 数据库文件：" + strconv.Quote(conf.IPRegion.DBPath) + "，IP 属地功能已禁用，" +
 			"参考链接：https://artalk.js.org/guide/frontend/ip-region.html")
 		conf.IPRegion.Enabled = false
 	}

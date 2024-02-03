@@ -41,7 +41,7 @@ export interface CommentData {
   /** 徽章颜色 */
   badge_color?: string
 
-  /** IP 归属地 */
+  /** IP 属地 */
   ip_region?: string
 
   /** 是否允许回复 */

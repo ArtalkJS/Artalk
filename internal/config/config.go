@@ -24,7 +24,7 @@ type Config struct {
 	Moderator      ModeratorConf          `koanf:"moderator" json:"moderator"`             // 评论审查
 	Captcha        CaptchaConf            `koanf:"captcha" json:"captcha"`                 // 验证码
 	Email          EmailConf              `koanf:"email" json:"email"`                     // 邮箱提醒
-	IPRegion       IPRegionConf           `koanf:"ip_region" json:"ip_region"`             // IP 归属地展示
+	IPRegion       IPRegionConf           `koanf:"ip_region" json:"ip_region"`             // IP 属地展示
 	ImgUpload      ImgUploadConf          `koanf:"img_upload" json:"img_upload"`           // 图片上传
 	AdminNotify    AdminNotifyConf        `koanf:"admin_notify" json:"admin_notify"`       // 其他通知方式
 	Frontend       map[string]interface{} `koanf:"frontend" json:"frontend"`
@@ -252,7 +252,7 @@ type RedisConf struct {
 }
 
 type IPRegionConf struct {
-	Enabled   bool   `koanf:"enabled" json:"enabled"`     // 启用 IP 归属地展示
+	Enabled   bool   `koanf:"enabled" json:"enabled"`     // 启用 IP 属地展示
 	DBPath    string `koanf:"db_path" json:"db_path"`     // 数据文件路径
 	Precision string `koanf:"precision" json:"precision"` // 显示精度
 }

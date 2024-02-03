@@ -134,8 +134,11 @@ func CommentUpdate(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
 		}
 
+		cookedComment := app.Dao().CookComment(&comment)
+		cookedComment = fetchIPRegionForComment(app, cookedComment)
+
 		return common.RespData(c, ResponseCommentUpdate{
-			CookedComment: app.Dao().CookComment(&comment),
+			CookedComment: cookedComment,
 		})
 	}))
 }

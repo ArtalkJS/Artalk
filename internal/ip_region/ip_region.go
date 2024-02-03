@@ -25,7 +25,7 @@ func (ipRegion *IPRegion) IP2Region(ip string) string {
 
 	region, err := search(ip, ipRegion.conf.DBPath, ipRegion.conf.CacheEnabled)
 	if err != nil {
-		log.Error(err)
+		log.Warn("[IP2Region] ", err)
 		return ""
 	}
 

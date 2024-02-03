@@ -56,8 +56,8 @@ func FindIPRegionForComments(app *core.App, comments []entity.CookedComment) []e
 
 	ipRegionService, err := core.AppService[*core.IPRegionService](app)
 	if err == nil {
-		for _, c := range comments {
-			c.IPRegion = ipRegionService.Query(c.IP)
+		for i, c := range comments {
+			comments[i].IPRegion = ipRegionService.Query(c.IP)
 		}
 	} else {
 		log.Error("[IPRegionService] err: ", err)

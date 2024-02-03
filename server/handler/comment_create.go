@@ -179,20 +179,24 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		}()
 
 		cookedComment := app.Dao().CookComment(&comment)
-
-		// IP 归属地
-		if app.Conf().IPRegion.Enabled {
-			if ipRegionService, err := core.AppService[*core.IPRegionService](app); err == nil {
-				cookedComment.IPRegion = ipRegionService.Query(comment.IP)
-			} else {
-				log.Error("[IPRegionService] err: ", err)
-			}
-		}
+		cookedComment = fetchIPRegionForComment(app, cookedComment)
 
 		return common.RespData(c, ResponseCommentCreate{
 			CookedComment: cookedComment,
 		})
 	}))
+}
+
+// Fetch IP Region for Comment
+func fetchIPRegionForComment(app *core.App, comment entity.CookedComment) entity.CookedComment {
+	if app.Conf().IPRegion.Enabled {
+		if ipRegionService, err := core.AppService[*core.IPRegionService](app); err == nil {
+			comment.IPRegion = ipRegionService.Query(comment.IP)
+		} else {
+			log.Error("[IPRegionService] err: ", err)
+		}
+	}
+	return comment
 }
 
 func isAllowComment(app *core.App, c *fiber.Ctx, name string, email string, page entity.Page) (bool, error) {

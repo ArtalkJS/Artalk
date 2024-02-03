@@ -30,8 +30,6 @@ func NewImportCommand(app *ArtalkCmd) *cobra.Command {
 			params := artransfer.ArrToImportParams(payload)
 			params.Assumeyes, _ = cmd.Flags().GetBool("assumeyes")
 			artransfer.RunImportArtrans(app.Dao(), params)
-
-			log.Info(i18n.T("Import complete"))
 		},
 	}
 

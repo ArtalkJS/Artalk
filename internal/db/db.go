@@ -17,6 +17,13 @@ func NewDB(conf config.DBConf) (*gorm.DB, error) {
 		},
 	}
 
+	// Enable Prepared Statement by default
+	if prepareStmt := conf.PrepareStmt; prepareStmt != nil {
+		gormConfig.PrepareStmt = *prepareStmt
+	} else {
+		gormConfig.PrepareStmt = true
+	}
+
 	var dsn string
 	if conf.Dsn != "" {
 		dsn = conf.Dsn

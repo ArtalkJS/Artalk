@@ -29,6 +29,11 @@ type QueryOptions struct {
 }
 
 // Get query scope by params
+//
+//	Please be aware that only `WHERE` conditions are permissible in this function.
+//	For `ORDER BY`, `LIMIT`, and `OFFSET`, please utilize separate functions, as this
+//	function is invoked in both `Find` and `Count`. `ORDER BY`, `LIMIT`, and `OFFSET` cannot
+//	be employed within `Count`.
 func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(*gorm.DB) *gorm.DB {
 	return func(q *gorm.DB) *gorm.DB {
 		// Basic scope
@@ -38,9 +43,6 @@ func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(*gorm.DB) *gorm.DB {
 		if opts.Search != "" {
 			q.Scopes(SearchScope(dao, opts.Search))
 		}
-
-		// Sort by
-		q.Order(GetSortSQL(opts.Scope, opts.SortBy))
 
 		// Scopes
 		scopes := map[Scope]func(*gorm.DB) *gorm.DB{
@@ -78,6 +80,9 @@ func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) []entity.Comm
 
 	q := dao.DB().Model(&entity.Comment{}).
 		Scopes(GetQueryScopes(dao, opts))
+
+	// Sort Rule
+	q.Order(GetSortSQL(opts.Scope, opts.SortBy))
 
 	q.Offset(pg.Offset).
 		Limit(pg.Limit)

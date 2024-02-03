@@ -8,7 +8,7 @@ Artalk 内置用户 IP 归属地展示功能，并且你可以设置显示的精
 
 在开启 IP 归属地展示功能之前，你需要下载一个数据库文件：
 
- - [GitHub 下载](https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region.xdb) / [镜像站下载](https://ghproxy.com/?q=https%3A%2F%2Fgithub.com%2Flionsoul2014%2Fip2region%2Fblob%2Fmaster%2Fdata%2Fip2region.xdb) (国内推荐)
+ - [GitHub 下载](https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region.xdb) / [镜像站下载](https://gh-proxy.com/?q=https%3A%2F%2Fgithub.com%2Flionsoul2014%2Fip2region%2Fblob%2Fmaster%2Fdata%2Fip2region.xdb) (境内推荐)
 
 下载后请手动放置到 `./data/` 目录下，文件命名为：`ip2region.xdb`
 

@@ -127,21 +127,27 @@ Artalk 静态资源通过上游 CDNJS 分发，以下镜像资源可供选择：
 >
 > https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
 
-**Staticfile CDN (国内)**
+**SUSTech Mirrors (境内)**
+
+> https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/artalk/:ArtalkVersion:/Artalk.js
+>
+> https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
+
+::: details 查看更多
+
+**Staticfile CDN (境内)**
 
 > https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.js
 >
 > https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.css
 
-::: details 查看更多
-
-**BootCDN (国内)**
+**BootCDN (境内)**
 
 > https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.js
 >
 > https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
 
-**75CDN (国内)**
+**75CDN (境内)**
 
 > https://lib.baomitu.com/artalk/:ArtalkVersion:/Artalk.js
 >

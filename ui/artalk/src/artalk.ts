@@ -115,7 +115,6 @@ export default class Artalk {
     Stat.initCountWidget({
       getApi: () => new Api(convertApiOptions(conf)),
       siteName: conf.site,
-      pageKey: conf.pageKey,
       countEl: conf.countEl,
       pvEl: conf.pvEl,
       pvAdd: false

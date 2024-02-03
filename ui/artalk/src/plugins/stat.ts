@@ -5,7 +5,8 @@ export interface CountOptions {
   getApi(): Api
 
   siteName: string
-  pageKey: string
+  pageKey?: string
+  pageTitle?: string
   countEl: string
   pvEl: string
 
@@ -15,12 +16,13 @@ export interface CountOptions {
 
 export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
   ctx.watchConf([
-    'site', 'pageKey', 'countEl', 'pvEl',
+    'site', 'pageKey', 'pageTitle', 'countEl', 'pvEl',
   ], (conf) => {
     initCountWidget({
       getApi: () => ctx.getApi(),
       siteName: conf.site,
       pageKey: conf.pageKey,
+      pageTitle: conf.pageTitle,
       countEl: conf.countEl,
       pvEl: conf.pvEl,
       pvAdd: (typeof ctx.conf.pvAdd === 'boolean' ? ctx.conf.pvAdd : true),
@@ -36,10 +38,10 @@ export async function initCountWidget(opt: CountOptions) {
   }
 
   // PV
-  const initialData = opt.pvAdd ? {
+  const initialData = (opt.pvAdd && opt.pageKey) ? {
     [opt.pageKey]: (await opt.getApi().pages.logPv({
       page_key: opt.pageKey,
-      page_title: opt.pageKey,
+      page_title: opt.pageTitle,
       site_name: opt.siteName,
     })).data.pv // pv+1 and get pv count
   } : undefined
@@ -68,7 +70,7 @@ async function refreshStatCount(
   // Get page keys which will be queried
   let queryPageKeys = Array.from(document.querySelectorAll(args.numEl))
     .map((e) => e.getAttribute('data-page-key') || opt.pageKey)
-    .filter((k) => typeof data[k] !== 'number') // filter out keys that already have data
+    .filter((k) => k && typeof data[k] !== 'number') // filter out keys that already have data
 
   queryPageKeys = [...new Set(queryPageKeys)] // deduplicate
 
@@ -81,7 +83,8 @@ async function refreshStatCount(
     data = { ...data, ...res }
   }
 
-  applyCountData(args.numEl, data, data[opt.pageKey])
+  const defaultCount = opt.pageKey ? data[opt.pageKey] : 0
+  applyCountData(args.numEl, data, defaultCount)
 }
 
 function applyCountData(selector: string, data: CountData, defaultCount: number) {

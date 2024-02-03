@@ -57,7 +57,7 @@ Artalk 除了支持 OwO 格式外，还内置支持一种标准的表情包列�
 
 ::: warning
 
-前端的配置将默认被后端覆盖，详情参考：[在后端控制前端](/guide/backend/fe-control.html)
+前端的配置可能会被后端所覆盖，详情参考：[在后端控制前端](/guide/backend/fe-control.html)
 
 :::
 

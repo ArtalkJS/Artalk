@@ -278,7 +278,7 @@ admin_notify:
       - "USER_ID_1"
       - "GROUP_ID_1"
 
-# 前端配置
+# 界面配置
 frontend:
   # 评论框占位文字
   placeholder: ""

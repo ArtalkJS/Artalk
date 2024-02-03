@@ -1,10 +1,10 @@
 # 在后端控制前端
 
-你可以在后端完全控制前端界面的行为（包括设定[前端的配置](/guide/frontend/config)），我们推荐使用这种方式部署 Artalk，并且这个特性「默认开启」。
+你可以在后端完全控制前端界面的行为（包括设定几乎所有[前端配置项](/guide/frontend/config)），我们推荐使用这种方式配置 Artalk 界面，并且这个特性「默认开启」。
 
-## 如何修改前端配置
+## 如何修改前端界面配置
 
-在侧边栏的[控制中心](/guide/frontend/sidebar.md#控制中心)提供了图形设置界面，你能快速轻松地对前端配置进行修改。
+在侧边栏的[控制中心](/guide/frontend/sidebar.md#控制中心)提供了图形设置界面，你能快速轻松地对前端界面配置进行修改。
 
 <img src="../../images/sidebar/fe-setting.png" width="400px">
 

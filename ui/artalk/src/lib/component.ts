@@ -9,4 +9,8 @@ export default abstract class Component {
   public constructor(
     public ctx: ContextApi
   ) {}
+
+  getEl() {
+    return this.$el
+  }
 }

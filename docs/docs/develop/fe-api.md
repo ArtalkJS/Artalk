@@ -26,14 +26,16 @@ const artalk = Artalk.init({
 })
 ```
 
-调用该函数会向后端发起请求：
+调用该函数会异步地向后端发起请求：
 
 1. 获取前端配置
 2. 获取评论列表
 
-配置和评论加载完毕后会分别触发 `conf-loaded` 和 `list-loaded` 事件。
+配置和插件加载完毕后会触发 `mounted` 事件。
 
-注：前端配置可能会被覆盖，详情见：[在后端控制前端](../guide/backend/fe-control.md)。
+评论列表加载完毕后会触发 `list-loaded` 事件。
+
+注：前端界面配置可能会被覆盖，详情见：[在后端控制前端](../guide/backend/fe-control.md)。
 
 ## 释放资源 `destroy`
 
@@ -45,7 +47,7 @@ const artalk = Artalk.init({ ... })
 artalk.destroy()
 ```
 
-释放资源将执行 Artalk 挂载的 DOM 节点删除，以及解除 Artalk 事件监听等操作。
+调用该函数时，将触发 `unmounted` 事件。释放资源将执行 Artalk 挂载的 DOM 节点删除，以及解除 Artalk 事件监听等操作。当该函数执行完毕后，Artalk 实例将不再可用。
 
 在 Vue / React 等框架中，务必在组件销毁时调用该函数，否则会造成内存泄漏：
 
@@ -69,11 +71,11 @@ artalk.update({
 })
 ```
 
-调用该函数将触发 `conf-loaded` 事件。
+调用该函数将触发 `updated` 事件。
 
 更新配置不会自动刷新评论列表，可按需继续执行 `artalk.reload()` 函数。
 
-请注意，该函数是一个实例化对象中的方法，并非全局函数。
+请注意，该函数是一个实例化对象中的成员方法，并非全局函数。
 
 前端配置参考：[前端配置](../guide/frontend/config.md)
 
@@ -96,8 +98,9 @@ artalk.reload()
 ```js
 const artalk = Artalk.init({ ... })
 
-artalk.on('list-loaded', () => {
-  alert('评论列表加载完毕')
+artalk.on('list-loaded', (comments) => {
+  // comments 包含当前页面所有评论数据 (而非仅本次请求获取的部分评论)
+  console.log('评论列表加载完毕: ', comments)
 })
 ```
 
@@ -125,7 +128,7 @@ artalk.off('list-loaded', handler)
 ```js
 const artalk = Artalk.init({ ... })
 
-artalk.trigger('list-loaded')
+artalk.trigger('list-loaded', [...])
 ```
 
 ## 加载插件 `use`
@@ -152,6 +155,15 @@ const artalk = Artalk.init({ ... })
 const artalk = Artalk.init({ ... })
 
 artalk.setDarkMode(true)
+```
+
+也可以通过调用 `Artalk.init` 时，通过 `darkMode` 参数设置初始夜间模式。
+
+```js
+const artalk = Artalk.init({
+  // ...其他配置
+  darkMode:  'auto',
+})
 ```
 
 ## 浏览量组件 `loadCountWidget`

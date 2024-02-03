@@ -53,6 +53,7 @@ update-i18n:
 update-swagger:
 	go install github.com/swaggo/swag/cmd/swag@latest
 	swag init -g server/server.go --output ./docs/swagger --requiredByDefault
+	pnpm -r swagger:build-http-client
 
 docker-build:
 	./scripts/docker-build.sh

@@ -56,7 +56,7 @@ export default class ReadMorePaginator implements Paginator {
     return this.instance.hasMore
   }
 
-  getIsClearComments(params: Partial<ListFetchParams>): boolean {
+  getIsClearComments(params: { offset?: number }): boolean {
     return params.offset === 0
   }
 

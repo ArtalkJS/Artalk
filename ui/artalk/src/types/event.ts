@@ -16,9 +16,9 @@ export interface EventPayloadMap {
   'conf-fetch': undefined          // 配置请求时
   'list-fetch': Partial<ListFetchParams>    // 评论列表请求时
   'list-fetched': ListFetchedArgs           // 评论列表请求后
-  'list-load': CommentData[]     // 评论装载前
+  'list-load': CommentData[]     // 评论装载前 (list-load payload is partial comments)
 
-  'list-loaded': CommentData[]     // 评论装载后
+  'list-loaded': CommentData[]     // 评论装载后 (list-loaded payload is full comments)
   'list-failed': ErrorData          // 评论加载错误时
 
   'list-goto-first': undefined    // 评论列表归位时

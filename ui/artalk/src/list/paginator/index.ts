@@ -18,7 +18,7 @@ export interface Paginator {
   showErr?(msg: string): void
   getHasMore(): boolean
   /** Clear comments when fetch new page data */
-  getIsClearComments(params: Partial<ListFetchParams>): boolean
+  getIsClearComments(params: { offset?: number }): boolean
   dispose(): void
 }
 

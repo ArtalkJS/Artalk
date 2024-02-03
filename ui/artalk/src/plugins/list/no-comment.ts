@@ -3,14 +3,7 @@ import * as Utils from '@/lib/utils'
 import { sanitize } from '@/lib/sanitizer'
 
 export const NoComment: ArtalkPlugin = (ctx) => {
-  let isFetching = false
-  ctx.on('list-fetch', (params) => {
-    isFetching = true
-  })
-
   ctx.on('list-loaded', (comments) => {
-    if (!isFetching) return // Skip before fetch (e.g. clear all comments before fetch)
-    isFetching = false
     const list = ctx.get('list')!
 
     // 无评论

@@ -17,6 +17,7 @@ db:
   password: ""
   charset: "utf8mb4"
   ssl: false
+  prepare_stmt: true
 log:
   enabled: true
   filename: "./data/artalk.log"

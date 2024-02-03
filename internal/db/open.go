@@ -27,7 +27,14 @@ func OpenMySql(dsn string, gormConfig *gorm.Config) (*gorm.DB, error) {
 }
 
 func OpenPostgreSQL(dsn string, gormConfig *gorm.Config) (*gorm.DB, error) {
-	return gorm.Open(postgres.Open(dsn), gormConfig)
+	return gorm.Open(postgres.New(postgres.Config{
+		DSN: dsn,
+
+		// gorm v2 use `pgx` as postgres’s database/sql driver,
+		// it enables prepared statement cache by default,
+		// disable it when `PrepareStmt` is false by following code:
+		PreferSimpleProtocol: !gormConfig.PrepareStmt,
+	}), gormConfig)
 }
 
 func OpenSqlServer(dsn string, gormConfig *gorm.Config) (*gorm.DB, error) {

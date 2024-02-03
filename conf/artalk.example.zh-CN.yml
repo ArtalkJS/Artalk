@@ -44,6 +44,8 @@ db:
   table_prefix: ""
   # 启用 SSL
   ssl: false
+  # 预编译语句
+  prepare_stmt: true
 
 # 日志
 log:

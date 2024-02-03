@@ -47,6 +47,8 @@ db:
   charset: "utf8mb4"
   # Enable SSL mode
   ssl: false
+  # Prepared Statement
+  prepare_stmt: true
 
 # Logging
 log:

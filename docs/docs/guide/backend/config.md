@@ -96,6 +96,7 @@ db:
   charset: "utf8mb4" # 编码格式
   table_prefix: ""   # 表前缀 (例如："atk_")
   ssl: false         # 启用 SSL
+  prepare_stmt: true # 预编译语句
 ```
 
 数据表将在 Artalk 启动时自动完成创建，无需额外操作。

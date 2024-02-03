@@ -41,6 +41,7 @@ func NewAdminCommand(app *ArtalkCmd) *cobra.Command {
 			findUser := app.Dao().FindUser(username, email)
 			if !findUser.IsEmpty() {
 				findUser.SetPasswordEncrypt(password)
+				findUser.IsAdmin = true
 				if err := app.Dao().UpdateUser(&findUser); err != nil {
 					log.Fatal(err)
 				}

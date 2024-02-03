@@ -11,10 +11,6 @@ func RunExportArtrans(dao *dao.Dao, params *ExportParams) (string, error) {
 }
 
 func RunImportArtrans(dao *dao.Dao, params *ImportParams) {
-	if !params.UrlResolver {
-		logWarn("Target site URL resolver disabled")
-	}
-
 	// 读取 JSON
 	if params.JsonData == "" {
 		if params.JsonFile == "" {

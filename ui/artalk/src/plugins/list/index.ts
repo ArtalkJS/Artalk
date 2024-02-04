@@ -4,7 +4,8 @@ import { Unread } from './unread'
 import { Count } from './count'
 import { SidebarBtn } from './sidebar-btn'
 import { UnreadBadge } from './unread-badge'
-import { Goto } from './goto'
+import { GotoDispatcher } from './goto-dispatcher'
+import { GotoFocus } from './goto-focus'
 import { Copyright } from './copyright'
 import { NoComment } from './no-comment'
 import { Dropdown } from './dropdown'
@@ -18,7 +19,7 @@ import { GotoFirst } from './goto-first'
 const ListPlugins: ArtalkPlugin[] = [
   Fetch, Loading, Unread,
   WithEditor, Count, SidebarBtn, UnreadBadge,
-  Dropdown, Goto, NoComment, Copyright,
+  Dropdown, GotoDispatcher, GotoFocus, NoComment, Copyright,
   TimeTicking, ErrorDialog, ReachBottom, GotoFirst
 ]
 

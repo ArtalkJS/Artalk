@@ -45,9 +45,6 @@ onMounted(() => {
   artalk!.ctx.on('comment-rendered', (comment) => {
     const pageURL = comment.getData().page_url
     comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
-    comment.getConf().onReplyBtnClick = () => {
-      artalk!.ctx.replyComment(comment.getData(), comment.getEl())
-    }
   })
 
   artalk!.ctx.updateConf({

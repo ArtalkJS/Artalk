@@ -494,6 +494,73 @@ const docTemplate = `{
             }
         },
         "/comments/{id}": {
+            "get": {
+                "description": "Get the detail of a comment by comment id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Get a comment",
+                "operationId": "GetComment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The comment ID you want to get",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseCommentGet"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -3964,6 +4031,31 @@ const docTemplate = `{
                 },
                 "vote_up": {
                     "type": "integer"
+                }
+            }
+        },
+        "handler.ResponseCommentGet": {
+            "type": "object",
+            "required": [
+                "comment",
+                "reply_comment"
+            ],
+            "properties": {
+                "comment": {
+                    "description": "The comment detail",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.CookedComment"
+                        }
+                    ]
+                },
+                "reply_comment": {
+                    "description": "The reply comment if exists (like reply)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.CookedComment"
+                        }
+                    ]
                 }
             }
         },

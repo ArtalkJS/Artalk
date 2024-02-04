@@ -67,8 +67,6 @@ onMounted(() => {
     scrollRelativeTo: () => wrapEl.value!,
   })
 
-  window.artalk = artalk
-
   artalk!.reload()
 
   const $el = artalk!.ctx.get('list')!.$el

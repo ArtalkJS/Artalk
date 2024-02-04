@@ -67,10 +67,10 @@
 "Wrong captcha": 验证码错误
 "{{count}} items imported": 已导入 {{count}} 个项目
 "{{done}} of {{total}} done": 已完成 {{done}} 共 {{total}} 个
-"{{name}} already exists": '{{name}} 已存在'
-"{{name}} cannot be empty": '{{name}} 不能为空'
-"{{name}} creation failed": '{{name}} 创建失败'
-"{{name}} deletion failed": '{{name}} 删除失败'
-"{{name}} is required": '{{name}} 必须填写'
-"{{name}} not found": '{{name}} 未找到'
-"{{name}} save failed": '{{name}} 保存失败'
+"{{name}} already exists": '{{name}}已存在'
+"{{name}} cannot be empty": '{{name}}不能为空'
+"{{name}} creation failed": '{{name}}创建失败'
+"{{name}} deletion failed": '{{name}}删除失败'
+"{{name}} is required": '{{name}}必须填写'
+"{{name}} not found": '{{name}}未找到'
+"{{name}} save failed": '{{name}}保存失败'

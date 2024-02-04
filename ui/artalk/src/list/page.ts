@@ -67,41 +67,11 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
     paginator?.showErr?.($t('loadFail'))
   })
 
-  // List goto auto next page when comment not found
-  // autoJumpToNextPage(ctx, paginator)
-
   // loading
   ctx.on('list-fetch', (params) => {
     paginator?.setLoading(true)
   })
   ctx.on('list-fetched', ({ params }) => {
     paginator?.setLoading(false)
-  })
-}
-
-function autoJumpToNextPage(ctx: ContextApi, paginator: Paginator|null) {
-  // TODO: Disable this feature temporarily. Because it may cause the page memory leak.
-  // if the comments is too much and the comment still not found.
-  // Consider to refactor to a better solution.
-  // Such as: calculate in backend and jump to the specific page directly.
-  return
-
-  const autoSwitchPageForFindComment = (commentID: number) => {
-    const comment = ctx.getData().findComment(commentID)
-    if (!!comment || !paginator?.getHasMore()) return
-
-    // wait for list loaded
-    ctx.on('list-loaded', () => {
-      autoSwitchPageForFindComment(commentID) // recursive, until comment found or no more page
-    }, { once: true })
-
-    // TODO: 自动范围改为直接跳转到计算后的页面
-    setTimeout(() => {
-      paginator?.next()
-    }, 80)
-  }
-
-  ctx.on('list-goto', (commentID) => {
-    autoSwitchPageForFindComment(commentID)
   })
 }

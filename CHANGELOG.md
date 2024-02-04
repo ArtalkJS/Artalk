@@ -1,4 +1,36 @@
 
+## [v2.8.1](https://github.com/ArtalkJS/Artalk/compare/v2.8.0...v2.8.1) (2024-02-04)
+
+### Features
+
+* **api:** add GET `/comments/:id` endpoint ([#764](https://github.com/ArtalkJS/Artalk/issues/764))
+* **config:** add `db.prepare_stmt` config option ([#760](https://github.com/ArtalkJS/Artalk/issues/760)) ([#762](https://github.com/ArtalkJS/Artalk/issues/762))
+* **ui/goto:** improved solution of navigating to comment via link hash ([#693](https://github.com/ArtalkJS/Artalk/issues/693)) ([#765](https://github.com/ArtalkJS/Artalk/issues/765))
+
+### Bug Fixes
+
+* **api/comments:** counting comments issue in PostgreSQL db ([#760](https://github.com/ArtalkJS/Artalk/issues/760)) ([#761](https://github.com/ArtalkJS/Artalk/issues/761))
+* **cmd/admin:** update user role to admin if already exists
+* **ip_region:** unable to output the IP region correctly ([#760](https://github.com/ArtalkJS/Artalk/issues/760))
+* **ui/list:** unable to reply or delete comments after switching pagination
+* **ui/no_comment:** always appears when creating comment
+* **ui/pv:** missing `pageTitle` field in the PV request
+* **ui/scroll:** scroll into view issue when `relativeTo` parameter is provided
+
+### Performance Improvements
+
+* **style/sidebar:** improve some detail in sidebar
+
+### Code Refactoring
+
+* **ui/comment:** loose coupling between `Comment` and `Context`
+* **ui/list:** refactor the list layout manager
+
+### Documentation
+
+* supplement and refine `fe-api.md`
+
+
 ## [v2.8.0](https://github.com/ArtalkJS/Artalk/compare/v2.7.3...v2.8.0) (2024-01-31)
 
 ### Features

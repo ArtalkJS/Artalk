@@ -333,6 +333,13 @@ export interface HandlerResponseCommentCreate {
   vote_up: number
 }
 
+export interface HandlerResponseCommentGet {
+  /** The comment detail */
+  comment: EntityCookedComment
+  /** The reply comment if exists (like reply) */
+  reply_comment: EntityCookedComment
+}
+
 export interface HandlerResponseCommentList {
   comments: EntityCookedComment[]
   count: number
@@ -967,6 +974,37 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'POST',
         body: comment,
         secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description Get the detail of a comment by comment id
+ *
+ * @tags Comment
+ * @name GetComment
+ * @summary Get a comment
+ * @request GET:/comments/{id}
+ * @response `200` `HandlerResponseCommentGet` OK
+ * @response `404` `(HandlerMap & {
+    msg?: string,
+
+})` Not Found
+ * @response `500` `(HandlerMap & {
+    msg?: string,
+
+})` Internal Server Error
+ */
+    getComment: (id: number, params: RequestParams = {}) =>
+      this.request<
+        HandlerResponseCommentGet,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
+        path: `/comments/${id}`,
+        method: 'GET',
         type: ContentType.Json,
         format: 'json',
         ...params,

@@ -659,6 +659,20 @@ definitions:
     - vote_down
     - vote_up
     type: object
+  handler.ResponseCommentGet:
+    properties:
+      comment:
+        allOf:
+        - $ref: '#/definitions/entity.CookedComment'
+        description: The comment detail
+      reply_comment:
+        allOf:
+        - $ref: '#/definitions/entity.CookedComment'
+        description: The reply comment if exists (like reply)
+    required:
+    - comment
+    - reply_comment
+    type: object
   handler.ResponseCommentList:
     properties:
       comments:
@@ -1426,6 +1440,45 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Delete Comment
+      tags:
+      - Comment
+    get:
+      consumes:
+      - application/json
+      description: Get the detail of a comment by comment id
+      operationId: GetComment
+      parameters:
+      - description: The comment ID you want to get
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseCommentGet'
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: Get a comment
       tags:
       - Comment
     put:

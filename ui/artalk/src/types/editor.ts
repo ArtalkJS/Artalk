@@ -82,7 +82,7 @@ export interface EditorApi extends Component {
   hideLoading(): void
 
   /**
-   * Start replaying a comment
+   * Start replying a comment
    */
   setReply(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
 

@@ -116,6 +116,15 @@ const darkMode = ref(bootParams.darkMode)
     left: 0;
     background: var(--at-color-bg);
     border-top: 1px solid var(--at-color-border);
+
+    // A patch for loading
+    // Because the parent position set to fixed,
+    // the loading layer will be fixed to the area if position is absolute (which is default for atk-loading)
+    .atk-loading {
+      position: fixed;
+      top: 102px;
+      height: calc(100% - 102px);
+    }
   }
 }
 </style>

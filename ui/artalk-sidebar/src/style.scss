@@ -14,6 +14,13 @@ body {
   .atk-sidebar-inner {
   }
 
+  .atk-list {
+    .atk-main-editor {
+      margin-top: -4px;
+      margin-bottom: -2px;
+    }
+  }
+
   .atk-sidebar-no-content {
     position: absolute;
     left: 0;

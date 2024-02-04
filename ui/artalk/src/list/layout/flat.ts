@@ -11,7 +11,7 @@ export const createFlatStrategy: LayoutStrategyCreator = (opts) => ({
   },
   insert: (comment, replyComment) => {
     const node = insertComment(opts, 'prepend', comment, replyComment)
-    Ui.scrollIntoView(node.getEl()) // 滚动到可见
+    node.scrollIntoView()
   }
 })
 

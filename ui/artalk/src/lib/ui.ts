@@ -60,8 +60,7 @@ export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true, re
   if (relativeTo) {
     const containerRect = relativeTo.getBoundingClientRect()
     const elementRect = elem.getBoundingClientRect()
-    top = elementRect.top - containerRect.top + relativeTo.scrollTop
-    top += Utils.getHeight(relativeTo) / 2 - Utils.getHeight(elem) / 2
+    top = elementRect.top - containerRect.top + relativeTo.scrollTop - relativeTo.clientHeight / 2 + elem.clientHeight / 2
   } else {
     const rect = elem.getBoundingClientRect()
     const elemTop = rect.top + window.scrollY

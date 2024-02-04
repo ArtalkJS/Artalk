@@ -140,7 +140,7 @@ export default class Render {
   public setOpenURL(url: string) {
     this.setOpenable(true)
     this.$el.onclick = (evt) => {
-      evt.preventDefault()
+      evt.stopPropagation()
       window.open(url)
     }
   }
@@ -149,7 +149,7 @@ export default class Render {
   public setOpenAction(action: () => void) {
     this.setOpenable(true)
     this.$el.onclick = (evt) => {
-      evt.preventDefault()
+      evt.stopPropagation()
       action()
     }
   }

@@ -22,6 +22,7 @@ export function createCommentNode(ctx: ContextApi, comment: CommentData, replyCo
     nestMax: ctx.conf.nestMax,
     heightLimit: ctx.conf.heightLimit,
     avatarURLBuilder: ctx.conf.avatarURLBuilder,
+    scrollRelativeTo: ctx.conf.scrollRelativeTo,
     vote: ctx.conf.vote,
     voteDown: ctx.conf.voteDown,
     uaBadge: ctx.conf.uaBadge,

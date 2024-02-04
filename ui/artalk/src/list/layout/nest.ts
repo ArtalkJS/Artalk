@@ -55,7 +55,7 @@ export const createNestStrategy: LayoutStrategyCreator = (opts) => ({
 
     node.getRender().checkHeightLimit()
 
-    Ui.scrollIntoView(node.getEl()) // 滚动到可以见
+    node.scrollIntoView() // 滚动到可以见
     node.getRender().playFadeAnim() // 播放评论渐出动画
   }
 })

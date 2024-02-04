@@ -11,7 +11,6 @@ import CommentActions from './actions'
 export interface CommentOptions {
   // Hooks
   onAfterRender?: () => void
-  onReplyBtnClick?: Function
   onDelete?: Function
 
   /** The comment being replied to (linked comment) */
@@ -26,6 +25,7 @@ export interface CommentOptions {
   gravatar: ArtalkConfig['gravatar']
   heightLimit: ArtalkConfig['heightLimit']
   avatarURLBuilder: ArtalkConfig['avatarURLBuilder']
+  scrollRelativeTo: ArtalkConfig['scrollRelativeTo']
 
   // TODO: Move to plugin folder and remove from core
   getApi: () => Api
@@ -181,10 +181,14 @@ export default class CommentNode {
     })
 
     // Scroll to comment
-    Ui.scrollIntoView(this.$el, false)
+    this.scrollIntoView()
 
     // Perform flash animation
     this.getRender().playFlashAnim()
+  }
+
+  scrollIntoView() {
+    this.$el && Ui.scrollIntoView(this.$el, false, this.opts.scrollRelativeTo && this.opts.scrollRelativeTo())
   }
 
   /**

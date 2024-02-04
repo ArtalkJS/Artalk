@@ -44,11 +44,7 @@ function renderReply(r: Render) {
   r.$actions.append(replyBtn)
   replyBtn.addEventListener('click', (e) => {
     e.stopPropagation() // 防止穿透
-    if (!r.opts.onReplyBtnClick) {
-      r.opts.replyComment(r.data, r.$el)
-    } else {
-      r.opts.onReplyBtnClick()
-    }
+    r.opts.replyComment(r.data, r.$el)
   })
 }
 

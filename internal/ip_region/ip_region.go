@@ -1,6 +1,8 @@
 package ip_region
 
 import (
+	"strings"
+
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/log"
 )
@@ -21,8 +23,11 @@ func NewIPRegion(conf IPRegionConf) *IPRegion {
 }
 
 func (ipRegion *IPRegion) IP2Region(ip string) string {
-	ip = ipScraper(ip)
+	if strings.TrimSpace(ip) == "" {
+		return ""
+	}
 
+	ip = ipScraper(ip)
 	region, err := search(ip, ipRegion.conf.DBPath, ipRegion.conf.CacheEnabled)
 	if err != nil {
 		log.Warn("[IP2Region] ", err)

@@ -8,7 +8,7 @@ export default function renderAvatar(r: Render) {
   const $avatar = r.$el.querySelector<HTMLElement>('.atk-avatar')!
   const $avatarImg = Utils.createElement<HTMLImageElement>('<img />')
 
-  const avatarURLBuilder = r.conf.avatarURLBuilder
+  const avatarURLBuilder = r.opts.avatarURLBuilder
   $avatarImg.src = avatarURLBuilder ? avatarURLBuilder(r.data) : r.comment.getGravatarURL()
 
   if (r.data.link) {

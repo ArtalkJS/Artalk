@@ -1,42 +1,54 @@
-import type { CommentData, ContextApi } from '@/types'
-import Component from '../lib/component'
+import type { CommentData, ArtalkConfig, ContextApi } from '@/types'
+import $t from '@/i18n'
+import type { Api } from '../api'
+import * as Ui from '../lib/ui'
 import * as Utils from '../lib/utils'
 import marked from '../lib/marked'
 import UADetect from '../lib/detect'
 import CommentUI from './render'
 import CommentActions from './actions'
 
-export interface CommentConf {
-  isUnread?: boolean
-  openURL?: string
-  isFlatMode: boolean
-  replyTo?: CommentData
-  afterRender?: () => void
-  openEvt?: () => void
+export interface CommentOptions {
+  // Hooks
+  onAfterRender?: () => void
   onReplyBtnClick?: Function
   onDelete?: Function
+
+  /** The comment being replied to (linked comment) */
+  replyTo?: CommentData
+
+  // Referenced from ArtalkConfig
+  flatMode: boolean
+  vote: boolean
+  voteDown: boolean
+  uaBadge: boolean
+  nestMax: number
+  gravatar: ArtalkConfig['gravatar']
+  heightLimit: ArtalkConfig['heightLimit']
+  avatarURLBuilder: ArtalkConfig['avatarURLBuilder']
+
+  // TODO: Move to plugin folder and remove from core
+  getApi: () => Api
+  replyComment: ContextApi['replyComment']
+  editComment: ContextApi['editComment']
 }
 
-export default class CommentNode extends Component {
+export default class CommentNode {
+  $el?: HTMLElement
+
   private renderInstance: CommentUI
   private actionInstance: CommentActions
 
   private data: CommentData
-  private cConf: CommentConf
+  private opts: CommentOptions
 
   private parent: CommentNode|null
   private children: CommentNode[] = []
 
   private nestCurt: number // 当前嵌套层数
-  private nestMax: number  // 最大嵌套层数
 
-  constructor(ctx: ContextApi, data: CommentData, conf: CommentConf) {
-    super(ctx)
-
-    // 最大嵌套数
-    this.nestMax = ctx.conf.nestMax || 3
-
-    this.cConf = conf
+  constructor(data: CommentData, opts: CommentOptions) {
+    this.opts = opts
     this.data = { ...data }
     this.data.date = this.data.date.replace(/-/g, '/') // 解决 Safari 日期解析 NaN 问题
 
@@ -53,8 +65,12 @@ export default class CommentNode extends Component {
 
     if (this.$el) this.$el.replaceWith(newEl)
     this.$el = newEl
+    // Please be aware of the memory leak, the $el may be replaced multiple times.
+    // If somewhere else has a reference to the old $el, it will cause a memory leak.
+    // So it's limited to use the $el reference by `getEl()`.
+    // The `getEl()` will always return the latest $el.
 
-    if (this.cConf.afterRender) this.cConf.afterRender()
+    if (this.opts.onAfterRender) this.opts.onAfterRender()
   }
 
   /** 获取评论操作实例对象 */
@@ -106,62 +122,83 @@ export default class CommentNode extends Component {
   }
 
   /** 置入子评论 */
-  public putChild(childC: CommentNode, insertMode: 'append'|'prepend' = 'append') {
-    childC.parent = this
-    childC.nestCurt = this.nestCurt + 1 // 嵌套层数 +1
+  public putChild(childNode: CommentNode, insertMode: 'append'|'prepend' = 'append') {
+    childNode.parent = this
+    childNode.nestCurt = this.nestCurt + 1 // 嵌套层数 +1
+    this.children.push(childNode)
 
-    this.children.push(childC)
+    const $childrenWrap = this.getChildrenWrapEl()
+    const $childComment = childNode.getEl()
+    if (insertMode === 'append') $childrenWrap.append($childComment)
+    else if (insertMode === 'prepend') $childrenWrap.prepend($childComment)
 
-    const $children = this.getChildrenEl()
-    if (insertMode === 'append') $children.append(childC.getEl())
-    else if (insertMode === 'prepend') $children.prepend(childC.getEl())
-
-    childC.getRender().playFadeAnim()
-
-    // 内容限高
-    childC.getRender().checkHeightLimit()
+    childNode.getRender().playFadeAnim()
+    childNode.getRender().checkHeightLimit()  // 内容限高
   }
 
   /** 获取存放子评论的元素对象 */
-  public getChildrenEl(): HTMLElement {
-    let $children = this.getRender().getChildrenWrap()
-
-    if (!$children) {
-      // console.log(this.nestCurt)
-      if (this.nestCurt < this.nestMax) {
-        $children = this.getRender().renderChildrenWrap()
-      } else {
-        $children = this.parent!.getChildrenEl()
-      }
+  public getChildrenWrapEl(): HTMLElement {
+    // console.log(this.nestCurt)
+    if (this.nestCurt >= this.opts.nestMax) {
+      return this.parent!.getChildrenWrapEl()
     }
-
-    return $children
+    return this.getRender().getChildrenWrap()
   }
 
   /** 获取所有父评论 */
   public getParents() {
-    const parents: CommentNode[] = []
-    const once = (c: CommentNode) => {
-      if (c.parent) {
-        parents.push(c.parent)
-        once(c.parent)
-      }
+    const flattenParents: CommentNode[] = []
+    let parent = this.parent
+    while (parent) {
+      flattenParents.push(parent)
+      parent = parent.getParent()
     }
-
-    once(this)
-    return parents
+    return flattenParents
   }
 
-  /** 获取评论元素对象 */
+  /**
+   * Get the element of the comment
+   *
+   * The `getEl()` will always return the latest $el after calling `render()`.
+   * Please be aware of the memory leak if you use the $el reference directly.
+   */
   public getEl() {
+    if (!this.$el) throw new Error('comment element not initialized before `getEl()`')
     return this.$el
+  }
+
+  /**
+   * Focus on the comment
+   *
+   * Scroll to the comment and perform flash animation
+   */
+  focus() {
+    if (!this.$el) throw new Error('comment element not initialized before `focus()`')
+
+    // 若父评论存在 “子评论部分” 限高，取消限高
+    this.getParents().forEach((p) => {
+      p.getRender().heightLimitRemoveForChildren()
+    })
+
+    // Scroll to comment
+    Ui.scrollIntoView(this.$el, false)
+
+    // Perform flash animation
+    this.getRender().playFlashAnim()
+  }
+
+  /**
+   * Remove the comment node
+   */
+  remove() {
+    this.$el?.remove()
   }
 
   /** 获取 Gravatar 头像 URL */
   public getGravatarURL() {
     return Utils.getGravatarURL({
-      mirror: this.ctx.conf.gravatar.mirror,
-      params: this.ctx.conf.gravatar.params,
+      mirror: this.opts.gravatar.mirror,
+      params: this.opts.gravatar.params,
       emailMD5: this.data.email_encrypted,
     })
   }
@@ -173,7 +210,7 @@ export default class CommentNode extends Component {
 
   /** 获取格式化后的日期 */
   public getDateFormatted() {
-    return Utils.timeAgo(new Date(this.data.date), this.ctx.$t)
+    return Utils.timeAgo(new Date(this.data.date), $t)
   }
 
   /** 获取用户 UserAgent 信息 */
@@ -186,7 +223,7 @@ export default class CommentNode extends Component {
   }
 
   /** 获取配置 */
-  public getConf() {
-    return this.cConf
+  public getOpts() {
+    return this.opts
   }
 }

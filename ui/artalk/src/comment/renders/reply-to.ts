@@ -1,24 +1,31 @@
-import * as Utils from '../../lib/utils'
-import marked from '../../lib/marked'
+import * as Utils from '@/lib/utils'
+import marked from '@/lib/marked'
+import $t from '@/i18n'
 import type Render from '../render'
 
 /**
- * 回复的对象界面
+ * 关联评论显示 (被回复的评论)
  */
 export default function renderReplyTo(r: Render) {
-  if (!r.cConf.isFlatMode) return // 仅平铺模式显示
-  if (!r.cConf.replyTo) return
+  if (!r.opts.flatMode) return // 仅平铺模式显示
+  if (!r.opts.replyTo) return
 
   r.$replyTo = Utils.createElement(`
     <div class="atk-reply-to">
-      <div class="atk-meta">${r.ctx.$t('reply')} <span class="atk-nick"></span>:</div>
+      <div class="atk-meta">${$t('reply')} <span class="atk-nick"></span>:</div>
       <div class="atk-content"></div>
     </div>`)
+
+  // Comment author name
   const $nick = r.$replyTo.querySelector<HTMLElement>('.atk-nick')!
-  $nick.innerText = `@${r.cConf.replyTo.nick}`
+  $nick.innerText = `@${r.opts.replyTo.nick}`
   $nick.onclick = () => { r.comment.getActions().goToReplyComment() }
-  let replyContent = marked(r.cConf.replyTo.content)
-  if (r.cConf.replyTo.is_collapsed) replyContent = `[${r.ctx.$t('collapsed')}]`
+
+  // Comment content
+  let replyContent = marked(r.opts.replyTo.content)
+  if (r.opts.replyTo.is_collapsed) replyContent = `[${$t('collapsed')}]`
   r.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
+
+  // Mount the replyTo element
   r.$body.prepend(r.$replyTo)
 }

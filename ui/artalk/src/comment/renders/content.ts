@@ -1,3 +1,4 @@
+import $t from '@/i18n'
 import * as Utils from '../../lib/utils'
 import * as Ui from '../../lib/ui'
 import type Render from '../render'
@@ -16,8 +17,8 @@ export default function renderContent(r: Render) {
   r.$content.classList.add('atk-hide', 'atk-type-collapsed')
   const collapsedInfoEl = Utils.createElement(`
     <div class="atk-collapsed">
-      <span class="atk-text">${r.ctx.$t('collapsedMsg')}</span>
-      <span class="atk-show-btn">${r.ctx.$t('expand')}</span>
+      <span class="atk-text">${$t('collapsedMsg')}</span>
+      <span class="atk-show-btn">${$t('expand')}</span>
     </div>`)
   r.$body.insertAdjacentElement('beforeend', collapsedInfoEl)
 
@@ -29,11 +30,11 @@ export default function renderContent(r: Render) {
       r.$content.innerHTML = r.comment.getContentMarked()
       r.$content.classList.remove('atk-hide')
       Ui.playFadeInAnim(r.$content)
-      contentShowBtn.innerText = r.ctx.$t('collapse')
+      contentShowBtn.innerText = $t('collapse')
     } else {
       r.$content.innerHTML = ''
       r.$content.classList.add('atk-hide')
-      contentShowBtn.innerText = r.ctx.$t('expand')
+      contentShowBtn.innerText = $t('expand')
     }
   })
 }

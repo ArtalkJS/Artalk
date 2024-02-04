@@ -10,10 +10,8 @@ import loadRenders from './renders'
 export default class Render {
   public comment: CommentNode
 
-  public get ctx() { return this.comment.ctx }
   public get data() { return this.comment.getData() }
-  public get conf() { return this.comment.conf }
-  public get cConf() { return this.comment.getConf() }
+  public get opts() { return this.comment.getOpts() }
 
   public $el!: HTMLElement
   public $main!: HTMLElement
@@ -34,6 +32,15 @@ export default class Render {
     this.comment = comment
   }
 
+  /**
+   * Render the comment ui
+   *
+   * If comment data is updated, call this method to re-render the comment ui.
+   * The method will be called multiple times, so it should be idempotent.
+   *
+   * Renders may add event listeners to the comment ui, so it should be called only once or override the original.
+   * Please be aware of the memory leak caused by the event listener.
+   */
   public render() {
     // init ui elements
     this.$el = Utils.createElement(CommentHTML)
@@ -49,14 +56,17 @@ export default class Render {
     // call all renders
     loadRenders(this)
 
-    this.recoveryChildrenWrap()
+    // append children wrap if exists
+    if (this.$childrenWrap) {
+      this.$main.append(this.$childrenWrap)
+    }
 
     return this.$el
   }
 
   /** 内容限高检测 */
   public checkHeightLimit() {
-    const conf = this.ctx.conf.heightLimit
+    const conf = this.opts.heightLimit
     if (!conf || !conf.content || !conf.children) return // 关闭限高
 
     const contentMaxH = conf.content
@@ -94,26 +104,24 @@ export default class Render {
     Ui.playFadeInAnim(this.comment.getRender().$body)
   }
 
-  /** 获取子评论 Wrap */
-  public getChildrenWrap() {
-    return this.$childrenWrap
+  /** Perform the flash animation */
+  playFlashAnim() {
+    // Make sure the class is removed
+    this.$el.classList.remove('atk-flash-once')
+    window.setTimeout(() => {
+      // Add the class to perform the animation
+      this.$el.classList.add('atk-flash-once')
+    }, 150)
   }
 
-  /** 初始化子评论区域 Wrap */
-  public renderChildrenWrap() {
+  /** 获取子评论 Wrap */
+  public getChildrenWrap() {
     if (!this.$childrenWrap) {
+      // if not exists, create a new one
       this.$childrenWrap = Utils.createElement('<div class="atk-comment-children"></div>')
       this.$main.append(this.$childrenWrap)
     }
-
     return this.$childrenWrap
-  }
-
-  /** 恢复原有的子评论区域 Wrap */
-  public recoveryChildrenWrap() {
-    if (this.$childrenWrap) {
-      this.$main.append(this.$childrenWrap)
-    }
   }
 
   /** 设置已读 */
@@ -134,8 +142,6 @@ export default class Render {
     this.$el.onclick = (evt) => {
       evt.preventDefault()
       window.open(url)
-
-      if (this.cConf.openEvt) this.cConf.openEvt()
     }
   }
 

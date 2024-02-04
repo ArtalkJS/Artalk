@@ -1,3 +1,4 @@
+import $t from '@/i18n'
 import * as Utils from '../../lib/utils'
 import ActionBtn from '../../components/action-btn'
 import type Render from '../render'
@@ -18,17 +19,17 @@ export default function renderActions(r: Render) {
 
 // 操作按钮 - 投票
 function renderVote(r: Render) {
-  if (!r.ctx.conf.vote) return // 关闭投票功能
+  if (!r.opts.vote) return // 关闭投票功能
 
   // 赞同按钮
-  r.voteBtnUp = new ActionBtn(() => `${r.ctx.$t('voteUp')} (${r.data.vote_up || 0})`).appendTo(r.$actions)
+  r.voteBtnUp = new ActionBtn(() => `${$t('voteUp')} (${r.data.vote_up || 0})`).appendTo(r.$actions)
   r.voteBtnUp.setClick(() => {
     r.comment.getActions().vote('up')
   })
 
   // 反对按钮
-  if (r.ctx.conf.voteDown) {
-    r.voteBtnDown = new ActionBtn(() => `${r.ctx.$t('voteDown')} (${r.data.vote_down || 0})`).appendTo(r.$actions)
+  if (r.opts.voteDown) {
+    r.voteBtnDown = new ActionBtn(() => `${$t('voteDown')} (${r.data.vote_down || 0})`).appendTo(r.$actions)
     r.voteBtnDown.setClick(() => {
       r.comment.getActions().vote('down')
     })
@@ -39,14 +40,14 @@ function renderVote(r: Render) {
 function renderReply(r: Render) {
   if (!r.data.is_allow_reply) return // 不允许回复
 
-  const replyBtn = Utils.createElement(`<span>${r.ctx.$t('reply')}</span>`)
+  const replyBtn = Utils.createElement(`<span>${$t('reply')}</span>`)
   r.$actions.append(replyBtn)
   replyBtn.addEventListener('click', (e) => {
     e.stopPropagation() // 防止穿透
-    if (!r.cConf.onReplyBtnClick) {
-      r.ctx.replyComment(r.data, r.$el)
+    if (!r.opts.onReplyBtnClick) {
+      r.opts.replyComment(r.data, r.$el)
     } else {
-      r.cConf.onReplyBtnClick()
+      r.opts.onReplyBtnClick()
     }
   })
 }
@@ -54,7 +55,7 @@ function renderReply(r: Render) {
 // 操作按钮 - 折叠
 function renderCollapse(r: Render) {
   const collapseBtn = new ActionBtn({
-    text: () => (r.data.is_collapsed ? r.ctx.$t('expand') : r.ctx.$t('collapse')),
+    text: () => (r.data.is_collapsed ? $t('expand') : $t('collapse')),
     adminOnly: true
   })
   collapseBtn.appendTo(r.$actions)
@@ -66,7 +67,7 @@ function renderCollapse(r: Render) {
 // 操作按钮 - 审核
 function renderModerator(r: Render) {
   const pendingBtn = new ActionBtn({
-    text: () => (r.data.is_pending ? r.ctx.$t('pending') : r.ctx.$t('approved')),
+    text: () => (r.data.is_pending ? $t('pending') : $t('approved')),
     adminOnly: true
   })
   pendingBtn.appendTo(r.$actions)
@@ -78,7 +79,7 @@ function renderModerator(r: Render) {
 // 操作按钮 - 置顶
 function renderPin(r: Render) {
   const pinnedBtn = new ActionBtn({
-    text: () => (r.data.is_pinned ? r.ctx.$t('unpin') : r.ctx.$t('pin')),
+    text: () => (r.data.is_pinned ? $t('unpin') : $t('pin')),
     adminOnly: true
   })
   pinnedBtn.appendTo(r.$actions)
@@ -90,21 +91,21 @@ function renderPin(r: Render) {
 // 操作按钮 - 编辑
 function renderEdit(r: Render) {
   const editBtn = new ActionBtn({
-    text: r.ctx.$t('edit'),
+    text: $t('edit'),
     adminOnly: true
   })
   editBtn.appendTo(r.$actions)
   editBtn.setClick(() => {
-    r.ctx.editComment(r.data, r.$el)
+    r.opts.editComment(r.data, r.$el)
   })
 }
 
 // 操作按钮 - 删除
 function renderDel(r: Render) {
   const delBtn = new ActionBtn({
-    text: r.ctx.$t('delete'),
+    text: $t('delete'),
     confirm: true,
-    confirmText: r.ctx.$t('deleteConfirm'),
+    confirmText: $t('deleteConfirm'),
     adminOnly: true,
   })
   delBtn.appendTo(r.$actions)

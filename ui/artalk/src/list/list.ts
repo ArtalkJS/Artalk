@@ -4,7 +4,7 @@ import * as Utils from '@/lib/utils'
 import { CommentNode } from '@/comment'
 import ListHTML from './list.html?raw'
 import ListLayout from './layout'
-import { createComment as createCommentNode } from './comment'
+import { createCommentNode } from './comment'
 import { initListPaginatorFunc } from './page'
 
 export default class List extends Component {
@@ -29,20 +29,19 @@ export default class List extends Component {
     this.initCrudEvents()
   }
 
-  getListLayout() {
+  getListLayout({ forceFlatMode }: { forceFlatMode?: boolean } = {}) {
     return new ListLayout({
       $commentsWrap: this.$commentsWrap,
       nestSortBy: this.ctx.conf.nestSort,
       nestMax: this.ctx.conf.nestMax,
-      flatMode: this.ctx.conf.flatMode as boolean,
+      flatMode: typeof forceFlatMode === 'boolean' ? forceFlatMode : this.ctx.conf.flatMode as boolean,
       // flatMode must be boolean because it had been handled when Artalk.init
-      createCommentNode: (d, c) => {
-        const node = createCommentNode(this.ctx, d, c)
-        this.commentNodes.push(node)
+      createCommentNode: (d, r) => {
+        const node = createCommentNode(this.ctx, d, r, { forceFlatMode })
+        this.commentNodes.push(node) // store node instance
         return node
       },
       findCommentNode: (id) => this.commentNodes.find(c => c.getID() === id),
-      getCommentDataList: () => this.ctx.getData().getComments(),
     })
   }
 
@@ -68,7 +67,7 @@ export default class List extends Component {
     this.ctx.on('comment-deleted', (comment) => {
       const node = this.commentNodes.find(c => c.getID() === comment.id)
       if (!node) { console.error(`comment node id=${comment.id} not found`);return }
-      node.getEl().remove()
+      node.remove()
       this.commentNodes = this.commentNodes.filter(c => c.getID() !== comment.id)
       // TODO: remove child nodes
     })

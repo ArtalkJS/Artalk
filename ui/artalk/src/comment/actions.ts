@@ -1,12 +1,13 @@
+import ActionBtn from '@/components/action-btn'
+import $t from '@/i18n'
 import type { CommentNode } from '.'
-import ActionBtn from '../components/action-btn'
 
 export default class CommentActions {
   private comment: CommentNode
 
-  private get ctx() { return this.comment.ctx }
   private get data() { return this.comment.getData() }
-  private get cConf() { return this.comment.getConf() }
+  private get opts() { return this.comment.getOpts() }
+  private getApi() { return this.comment.getOpts().getApi() }
 
   public constructor(comment: CommentNode) {
     this.comment = comment
@@ -16,7 +17,7 @@ export default class CommentActions {
   public vote(type: 'up'|'down') {
     const actionBtn = (type === 'up') ? this.comment.getRender().voteBtnUp : this.comment.getRender().voteBtnDown
 
-    this.ctx.getApi().votes.vote(`comment_${type}`, this.data.id, { ...this.ctx.getApi().getUserFields() })
+    this.getApi().votes.vote(`comment_${type}`, this.data.id, { ...this.getApi().getUserFields() })
     .then((res) => {
       this.data.vote_up = res.data.up
       this.data.vote_down = res.data.down
@@ -24,7 +25,7 @@ export default class CommentActions {
       this.comment.getRender().voteBtnDown?.updateText()
     })
     .catch((err) => {
-      actionBtn?.setError(this.ctx.$t('voteFail'))
+      actionBtn?.setError($t('voteFail'))
       console.log(err)
     })
   }
@@ -33,7 +34,7 @@ export default class CommentActions {
   public adminEdit(type: 'collapsed'|'pending'|'pinned', btnElem: ActionBtn) {
     if (btnElem.isLoading) return // 若正在修改中
 
-    btnElem.setLoading(true, `${this.ctx.$t('editing')}...`)
+    btnElem.setLoading(true, `${$t('editing')}...`)
 
     // 克隆并修改当前数据
     const modify = { ...this.data }
@@ -45,7 +46,7 @@ export default class CommentActions {
       modify.is_pinned = !modify.is_pinned
     }
 
-    this.ctx.getApi().comments.updateComment(this.data.id, {
+    this.getApi().comments.updateComment(this.data.id, {
       ...modify,
     }).then((res) => {
       btnElem.setLoading(false)
@@ -54,7 +55,7 @@ export default class CommentActions {
       this.comment.setData(res.data)
     }).catch((err) => {
       console.error(err)
-      btnElem.setError(this.ctx.$t('editFail'))
+      btnElem.setError($t('editFail'))
     })
   }
 
@@ -62,15 +63,15 @@ export default class CommentActions {
   public adminDelete(btnElem: ActionBtn) {
     if (btnElem.isLoading) return // 若正在删除中
 
-    btnElem.setLoading(true, `${this.ctx.$t('deleting')}...`)
-    this.ctx.getApi().comments.deleteComment(this.data.id)
+    btnElem.setLoading(true, `${$t('deleting')}...`)
+    this.getApi().comments.deleteComment(this.data.id)
       .then(() => {
         btnElem.setLoading(false)
-        if (this.cConf.onDelete) this.cConf.onDelete(this.comment)
+        if (this.opts.onDelete) this.opts.onDelete(this.comment)
       })
       .catch((e) => {
         console.error(e)
-        btnElem.setError(this.ctx.$t('deleteFail'))
+        btnElem.setError($t('deleteFail'))
       })
   }
 

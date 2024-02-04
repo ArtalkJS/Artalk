@@ -1,3 +1,4 @@
+import $t from '@/i18n'
 import * as Utils from '../../lib/utils'
 import type Render from '../render'
 
@@ -33,13 +34,13 @@ function renderVerifyBadge(ctx: Render) {
   const badgeColor = ctx.data.badge_color
   if (badgeText) {
     const $badge = Utils.createElement(`<span class="atk-badge"></span>`)
-    $badge.innerText = badgeText.replace('管理员', ctx.ctx.$t('admin')) // i18n patch
+    $badge.innerText = badgeText.replace('管理员', $t('admin')) // i18n patch
     $badge.style.backgroundColor = badgeColor || ''
     ctx.$headerBadgeWrap.append($badge)
   }
 
   if (ctx.data.is_pinned) {
-    const $pinnedBadge = Utils.createElement(`<span class="atk-pinned-badge">${ctx.ctx.$t('pin')}</span>`) // 置顶徽章
+    const $pinnedBadge = Utils.createElement(`<span class="atk-pinned-badge">${$t('pin')}</span>`) // 置顶徽章
     ctx.$headerBadgeWrap.append($pinnedBadge)
   }
 }
@@ -51,7 +52,7 @@ function renderDate(ctx: Render) {
 }
 
 function renderUABadge(ctx: Render) {
-  if (!ctx.ctx.conf.uaBadge && !ctx.data.ip_region) return
+  if (!ctx.opts.uaBadge && !ctx.data.ip_region) return
 
   let $uaWrap = ctx.$header.querySelector('atk-ua-wrap')
   if (!$uaWrap) {
@@ -67,7 +68,7 @@ function renderUABadge(ctx: Render) {
     $uaWrap.append($regionBadge)
   }
 
-  if (ctx.ctx.conf.uaBadge) {
+  if (ctx.opts.uaBadge) {
     const { browser, os } = ctx.comment.getUserUA()
     if (String(browser).trim()) {
       const $uaBrowser = Utils.createElement(`<span class="atk-ua ua-browser"></span>`)

@@ -73,7 +73,7 @@ export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
   if (conf.emoticons && typeof conf.emoticons === "string") {
     conf.emoticons = conf.emoticons.trim()
     if (conf.emoticons.startsWith("[") || conf.emoticons.startsWith("{")) {
-      conf.emoticons = JSON.parse(conf.emoticons) // pase json
+      conf.emoticons = JSON.parse(conf.emoticons) // parse json
     } else if (conf.emoticons === "false") {
       conf.emoticons = false
     }

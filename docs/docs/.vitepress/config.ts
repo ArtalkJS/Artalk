@@ -19,10 +19,10 @@ export default defineConfig({
     ],
     // artalk
     // ['link', { href: `https://npm.elemecdn.com/artalk@${Version.latest}/dist/Artalk.css`, rel: 'stylesheet' }],
-    [
-      "link",
-      { href: `https://artalk.qwqaq.com/dist/Artalk.css`, rel: "stylesheet" },
-    ],
+    // [
+    //   "link",
+    //   { href: `https://artalk.qwqaq.com/dist/Artalk.css`, rel: "stylesheet" },
+    // ],
     // ['script', { src: ArtalkCDN.JS }],
     // light gallery
     [
@@ -41,7 +41,7 @@ export default defineConfig({
     // katex
     ['link', { href: "https://unpkg.com/katex@0.15.3/dist/katex.min.css", rel: 'stylesheet' }],
     ['script', { src: 'https://unpkg.com/katex@0.15.3/dist/katex.min.js' }],
-    ['script', { src: 'https://unpkg.com/@artalk/plugin-katex/dist/artalk-plugin-katex.js' }],
+    // ['script', { src: 'https://unpkg.com/@artalk/plugin-katex/dist/artalk-plugin-katex.js' }],
   ],
 
   lastUpdated: true,

@@ -6,6 +6,7 @@
 import { watch, nextTick, ref, onMounted, onUnmounted } from 'vue'
 import { useData, useRouter } from 'vitepress'
 import Artalk from 'artalk'
+import 'artalk/dist/Artalk.css'
 
 const el = ref<HTMLElement | null>(null)
 

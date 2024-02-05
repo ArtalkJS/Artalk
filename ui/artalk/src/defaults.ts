@@ -56,6 +56,7 @@ if (ARTALK_LITE) {
   defaults.vote = false
   defaults.uaBadge = false
   defaults.emoticons = false
+  defaults.preview = false
 }
 
 export default defaults

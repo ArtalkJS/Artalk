@@ -1,4 +1,19 @@
 
+## [v2.8.2](https://github.com/ArtalkJS/Artalk/compare/v2.8.1...v2.8.2) (2024-02-05)
+
+### Bug Fixes
+
+* **api/comments:** `ua` field is optional and not required ([#767](https://github.com/ArtalkJS/Artalk/issues/767))
+* **style:** replace style `break-all` with `break-word` in content el ([#644](https://github.com/ArtalkJS/Artalk/issues/644))
+
+### Performance Improvements
+
+* **ui/editor:** optimize editor styles for narrow-width screens
+* **ui/editor:** modify editor plug-in text buttons to icons for brevity
+* **ui/editor:** place `Cancel Reply` at the bottom of editor area ([#644](https://github.com/ArtalkJS/Artalk/issues/644))
+* **ui/lite:** disable ArtalkLite `preview` config option by default
+
+
 ## [v2.8.1](https://github.com/ArtalkJS/Artalk/compare/v2.8.0...v2.8.1) (2024-02-04)
 
 ### Features

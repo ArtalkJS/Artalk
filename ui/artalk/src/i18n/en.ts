@@ -9,7 +9,7 @@ const en = {
   link: 'Website',
   emoticon: 'Emoji',
   preview: 'Preview',
-  image: 'Image',
+  uploadImage: 'Upload Image',
   uploadFail: 'Upload Failed',
   commentFail: 'Failed to comment',
   restoredMsg: 'Content has been restored',

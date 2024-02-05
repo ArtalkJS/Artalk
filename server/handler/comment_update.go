@@ -21,7 +21,7 @@ type ParamsCommentUpdate struct {
 	Email       string `json:"email" validate:"optional"`        // The comment email
 	Link        string `json:"link" validate:"optional"`         // The comment link
 	Rid         uint   `json:"rid" validate:"required"`          // The comment rid
-	UA          string `json:"ua" validate:"required"`           // The comment ua
+	UA          string `json:"ua" validate:"optional"`           // The comment ua
 	IP          string `json:"ip" validate:"optional"`           // The comment ip
 	IsCollapsed bool   `json:"is_collapsed" validate:"required"` // The comment is_collapsed
 	IsPending   bool   `json:"is_pending" validate:"required"`   // The comment is_pending

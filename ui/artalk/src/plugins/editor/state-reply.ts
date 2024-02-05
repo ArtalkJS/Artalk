@@ -65,7 +65,7 @@ export default class StateReply extends EditorPlug {
           `<span class="atk-text-wrap">` +
           `${$t('reply')} <span class="atk-text"></span>` +
           `</span>` +
-          `<span class="atk-cancel">×</span>` +
+          `<span class="atk-cancel"></span>` +
         `</span>`
       )
       $btn.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`

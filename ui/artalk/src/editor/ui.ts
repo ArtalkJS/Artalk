@@ -11,6 +11,8 @@ const Sel = {
   $bottom: '.atk-bottom',
   $submitBtn: '.atk-send-btn',
   $notifyWrap: '.atk-notify-wrap',
+  $bottomLeft: '.atk-bottom-left',
+  $stateWrap: '.atk-state-wrap',
   $plugBtnWrap: '.atk-plug-btn-wrap',
   $plugPanelWrap: '.atk-plug-panel-wrap',
 }
@@ -22,7 +24,7 @@ export interface EditorUI extends Record<keyof typeof Sel, HTMLElement> {
   $link: HTMLInputElement
   $textarea: HTMLTextAreaElement
   $submitBtn: HTMLButtonElement
-  $sendReply?: HTMLElement
+  $sendReplyBtn?: HTMLElement
   $editCancelBtn?: HTMLElement
 }
 

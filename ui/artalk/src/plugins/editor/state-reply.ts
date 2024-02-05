@@ -59,18 +59,21 @@ export default class StateReply extends EditorPlug {
 
   private setReply(commentData: CommentData) {
     const ui = this.kit.useUI()
-    if (!ui.$sendReply) {
-      ui.$sendReply = Utils.createElement(
-        `<div class="atk-send-reply">` +
-          `${$t('reply')} ` +
-          `<span class="atk-text"></span><span class="atk-cancel">×</span>` +
-        `</div>`
+    if (!ui.$sendReplyBtn) {
+      const $btn = Utils.createElement(
+        `<span class="atk-state-btn">` +
+          `<span class="atk-text-wrap">` +
+          `${$t('reply')} <span class="atk-text"></span>` +
+          `</span>` +
+          `<span class="atk-cancel">×</span>` +
+        `</span>`
       )
-      ui.$sendReply.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
-      ui.$sendReply.addEventListener('click', () => {
+      $btn.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
+      $btn.addEventListener('click', () => {
         this.kit.useEditor().resetState()
       })
-      ui.$textareaWrap.append(ui.$sendReply)
+      ui.$stateWrap.append($btn)
+      ui.$sendReplyBtn = $btn
     }
 
     this.comment = commentData
@@ -82,9 +85,9 @@ export default class StateReply extends EditorPlug {
     if (!this.comment) return
 
     const ui = this.kit.useUI()
-    if (ui.$sendReply) {
-      ui.$sendReply.remove()
-      ui.$sendReply = undefined
+    if (ui.$sendReplyBtn) {
+      ui.$sendReplyBtn.remove()
+      ui.$sendReplyBtn = undefined
     }
     this.comment = undefined
   }

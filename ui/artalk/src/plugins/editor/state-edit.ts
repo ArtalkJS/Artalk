@@ -51,15 +51,17 @@ export default class StateEdit extends EditorPlug {
     const ui = this.kit.useUI()
     if (!ui.$editCancelBtn) {
       const $btn = Utils.createElement(
-        `<div class="atk-send-reply">` +
-          `${$t('editCancel')} ` +
+        `<span class="atk-state-btn">` +
+          `<span class="atk-text-wrap">` +
+          `${$t('editCancel')}` +
+          `</span>` +
           `<span class="atk-cancel">×</span>` +
-        `</div>`
+        `</span>`
       )
       $btn.onclick = () => {
         this.kit.useEditor().resetState()
       }
-      ui.$textareaWrap.append($btn)
+      ui.$stateWrap.append($btn)
       ui.$editCancelBtn = $btn
     }
     this.comment = comment

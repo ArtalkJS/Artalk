@@ -161,7 +161,7 @@
       }
 
       & > .atk-content {
-        word-break: break-all;
+        word-break: break-word;
 
         &.atk-type-collapsed {
           border: 3px solid var(--at-color-bg-grey);

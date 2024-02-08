@@ -44,8 +44,9 @@ $nav-height: 40px;
       cursor: pointer;
       user-select: none;
       margin-left: 10px;
+      font-size: 22px;
 
-      &:hover .atk-icon-close {
+      &:hover ::after {
         background-color: rgba(232, 17, 35, 0.9);
       }
     }

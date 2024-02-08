@@ -221,9 +221,11 @@ function openPage(url: string) {
         display: inline-block;
         width: 14px;
         height: 14px;
-        vertical-align: middle;
-        background-color: var(--at-color-meta);
         margin-right: 5px;
+
+        &::after {
+          background-color: var(--at-color-meta);
+        }
       }
 
       &:hover {

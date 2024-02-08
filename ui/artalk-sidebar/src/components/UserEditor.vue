@@ -177,7 +177,7 @@ function submit() {
   align-items: center;
   cursor: pointer;
 
-  &:hover i {
+  &:hover i::after {
     background-color: var(--at-color-red);
   }
 }

@@ -90,11 +90,11 @@
     }
   }
 
-  .atk-icon {
+  .atk-icon::after {
     background-color: var(--at-color-meta);
   }
 
-  .atk-icon-yes {
+  .atk-icon-yes::after {
     background-color: var(--at-color-main);
   }
 }

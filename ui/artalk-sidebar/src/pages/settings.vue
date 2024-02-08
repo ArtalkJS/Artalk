@@ -131,11 +131,11 @@ function save() {
       }
 
       i {
-        width: 16px;
-        height: 16px;
-        display: inline-block;
         margin-right: 8px;
-        background-color: #fff;
+
+        &::after {
+          background-color: #fff;
+        }
       }
     }
   }

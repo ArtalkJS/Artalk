@@ -162,7 +162,7 @@ export interface HandlerParamsCommentUpdate {
   /** The site name of your content scope */
   site_name: string
   /** The comment ua */
-  ua: string
+  ua?: string
 }
 
 export interface HandlerParamsEmailSend {
@@ -1878,7 +1878,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
  * @description Get user info to prepare for login or check current user status
  *
- * @tags Account
+ * @tags Auth
  * @name GetUser
  * @summary Get User Info
  * @request GET:/user
@@ -1915,7 +1915,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
  * @description Login user by name or email
  *
- * @tags Account
+ * @tags Auth
  * @name Login
  * @summary Get Access Token
  * @request POST:/user/access_token
@@ -1928,10 +1928,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     msg?: string,
 
 })` Multiple users with the same email address are matched
- * @response `403` `(HandlerMap & {
+ * @response `401` `(HandlerMap & {
     msg?: string,
 
-})` Forbidden
+})` Unauthorized
  * @response `500` `(HandlerMap & {
     msg?: string,
 
@@ -1961,7 +1961,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * @description Get user login status by header Authorization
      *
-     * @tags Account
+     * @tags Auth
      * @name GetUserStatus
      * @summary Get Login Status
      * @request GET:/user/status

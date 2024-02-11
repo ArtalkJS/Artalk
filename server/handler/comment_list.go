@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
@@ -55,12 +57,12 @@ func CommentList(app *core.App, router fiber.Router) {
 		}
 
 		// Get current user
-		user := common.GetUserByReq(app, c)
-		if user.IsEmpty() {
+		user, err := common.GetUserByReq(app, c)
+		if errors.Is(err, common.ErrTokenNotProvided) {
 			// If not login, find user by name and email
 			user = app.Dao().FindUser(p.Name, p.Email)
 
-			// If user is admin, but not login, clear user
+			// If user is admin, but not login yet, clear user
 			if user.IsAdmin {
 				user = entity.User{}
 			}

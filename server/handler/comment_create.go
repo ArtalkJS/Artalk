@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/core"
@@ -83,7 +84,7 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
 
 		// check if the user is allowed to comment
-		if isAllowed, resp := isAllowComment(app, c, p.Name, p.Email, page); !isAllowed {
+		if isAllowed, resp := isAllowComment(app, c, p.Name, p.Email, page.AdminOnly); !isAllowed {
 			return resp
 		}
 
@@ -199,11 +200,16 @@ func fetchIPRegionForComment(app *core.App, comment entity.CookedComment) entity
 	return comment
 }
 
-func isAllowComment(app *core.App, c *fiber.Ctx, name string, email string, page entity.Page) (bool, error) {
+func isAllowComment(app *core.App, c *fiber.Ctx, name string, email string, pageAdminOnly bool) (bool, error) {
+	user, err := common.GetUserByReq(app, c)
+	if !errors.Is(err, common.ErrTokenNotProvided) && user.IsEmpty() {
+		return false, common.RespError(c, 401, i18n.T("Login required"), Map{"need_auth_login": true})
+	}
+
 	isAdminUser := app.Dao().IsAdminUserByNameEmail(name, email)
 
 	// 如果用户是管理员，或者当前页只能管理员评论
-	if isAdminUser || page.AdminOnly {
+	if isAdminUser || pageAdminOnly {
 		if !common.CheckIsAdminReq(app, c) {
 			return false, common.RespError(c, 403, i18n.T("Admin access required"), Map{"need_login": true})
 		}

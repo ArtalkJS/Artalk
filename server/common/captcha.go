@@ -19,10 +19,11 @@ func GetLimiter(c *fiber.Ctx) (lmt *limiter.Limiter, err error) {
 }
 
 func NewCaptchaChecker(app *core.App, c *fiber.Ctx) captcha.Checker {
+	user, _ := GetUserByReq(app, c)
 	return captcha.NewCaptchaChecker(&captcha.CheckerConf{
 		CaptchaConf: app.Conf().Captcha,
 		User: captcha.User{
-			ID: fmt.Sprint(GetUserByReq(app, c).ID),
+			ID: fmt.Sprint(user.ID),
 			IP: c.IP(),
 		},
 	})

@@ -19,7 +19,7 @@ type ResponseUserStatus struct {
 // @Id           GetUserStatus
 // @Summary      Get Login Status
 // @Description  Get user login status by header Authorization
-// @Tags         Account
+// @Tags         Auth
 // @Security     ApiKeyAuth
 // @Param        user  query  ParamsUserStatus  true  "The user to query"
 // @Produce      json

@@ -15,21 +15,16 @@ import (
 // jwtCustomClaims are custom claims extending default ones.
 // See https://github.com/golang-jwt/jwt for more examples
 type jwtCustomClaims struct {
-	UserID  uint   `json:"user_id"`
-	Name    string `json:"name"`
-	Email   string `json:"email"`
-	IsAdmin bool   `json:"is_admin"`
+	UserID uint `json:"user_id"`
 	jwt.StandardClaims
 }
 
-func LoginGetUserToken(user entity.User, key string, ttl int) string {
+func LoginGetUserToken(user entity.User, key string, ttl int) (string, error) {
 	// Set custom claims
 	claims := &jwtCustomClaims{
-		UserID:  user.ID,
-		Name:    user.Name,
-		Email:   user.Email,
-		IsAdmin: user.IsAdmin,
+		UserID: user.ID,
 		StandardClaims: jwt.StandardClaims{
+			IssuedAt:  time.Now().Unix(),                                       // 签发时间
 			ExpiresAt: time.Now().Add(time.Second * time.Duration(ttl)).Unix(), // 过期时间
 		},
 	}
@@ -40,13 +35,17 @@ func LoginGetUserToken(user entity.User, key string, ttl int) string {
 	// Generate encoded token and send it as response.
 	t, err := token.SignedString([]byte(key))
 	if err != nil {
-		return ""
+		return "", err
 	}
 
-	return t
+	return t, nil
 }
 
-func GetJwtInstanceByReq(app *core.App, c *fiber.Ctx) *jwt.Token {
+var ErrTokenNotProvided = fmt.Errorf("token not provided")
+var ErrTokenUserNotFound = fmt.Errorf("user not found")
+var ErrTokenInvalidFromDate = fmt.Errorf("token is invalid starting from a certain date")
+
+func GetTokenByReq(c *fiber.Ctx) string {
 	token := c.Query("token")
 	if token == "" {
 		token = c.FormValue("token")
@@ -55,8 +54,13 @@ func GetJwtInstanceByReq(app *core.App, c *fiber.Ctx) *jwt.Token {
 		token = c.Get(fiber.HeaderAuthorization)
 		token = strings.TrimPrefix(token, "Bearer ")
 	}
+	return token
+}
+
+func GetJwtDataByReq(app *core.App, c *fiber.Ctx) (jwtCustomClaims, error) {
+	token := GetTokenByReq(c)
 	if token == "" {
-		return nil
+		return jwtCustomClaims{}, ErrTokenNotProvided
 	}
 
 	jwt, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
@@ -67,29 +71,31 @@ func GetJwtInstanceByReq(app *core.App, c *fiber.Ctx) *jwt.Token {
 		return []byte(app.Conf().AppKey), nil // 密钥
 	})
 	if err != nil {
-		return nil
-	}
-
-	return jwt
-}
-
-func GetUserByJwt(app *core.App, jwt *jwt.Token) entity.User {
-	if jwt == nil {
-		return entity.User{}
+		return jwtCustomClaims{}, err
 	}
 
 	claims := jwtCustomClaims{}
 	tmp, _ := json.Marshal(jwt.Claims)
 	_ = json.Unmarshal(tmp, &claims)
 
-	user := app.Dao().FindUserByID(claims.UserID)
-
-	return user
+	return claims, nil
 }
 
-func GetUserByReq(app *core.App, c *fiber.Ctx) entity.User {
-	jwt := GetJwtInstanceByReq(app, c)
-	user := GetUserByJwt(app, jwt)
+func GetUserByReq(app *core.App, c *fiber.Ctx) (entity.User, error) {
+	claims, err := GetJwtDataByReq(app, c)
+	if err != nil {
+		return entity.User{}, err
+	}
 
-	return user
+	user := app.Dao().FindUserByID(claims.UserID)
+	if user.IsEmpty() {
+		return entity.User{}, ErrTokenUserNotFound
+	}
+
+	// check tokenValidFrom
+	if user.TokenValidFrom.Valid && user.TokenValidFrom.Time.After(time.Unix(claims.IssuedAt, 0)) {
+		return entity.User{}, ErrTokenInvalidFromDate
+	}
+
+	return user, nil
 }

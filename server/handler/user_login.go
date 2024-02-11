@@ -28,7 +28,7 @@ type ResponseUserLogin struct {
 // @Id           Login
 // @Summary      Get Access Token
 // @Description  Login user by name or email
-// @Tags         Account
+// @Tags         Auth
 // @Param        user  body  ParamsUserLogin  true  "The user login data"
 // @Accept       json
 // @Produce      json
@@ -106,7 +106,10 @@ func UserLogin(app *core.App, router fiber.Router) {
 			return common.RespError(c, 403, i18n.T("Login failed"))
 		}
 
-		jwtToken := common.LoginGetUserToken(user, app.Conf().AppKey, app.Conf().LoginTimeout)
+		jwtToken, err := common.LoginGetUserToken(user, app.Conf().AppKey, app.Conf().LoginTimeout)
+		if err != nil {
+			return common.RespError(c, 500, err.Error())
+		}
 
 		return common.RespData(c, ResponseUserLogin{
 			Token: jwtToken,

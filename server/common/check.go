@@ -17,11 +17,9 @@ func AdminGuard(app *core.App, handler fiber.Handler) fiber.Handler {
 }
 
 func CheckIsAdminReq(app *core.App, c *fiber.Ctx) bool {
-	jwt := GetJwtInstanceByReq(app, c)
-	if jwt == nil {
+	user, err := GetUserByReq(app, c)
+	if err != nil {
 		return false
 	}
-
-	user := GetUserByJwt(app, jwt)
-	return user.IsAdmin
+	return !user.IsEmpty() && user.IsAdmin
 }

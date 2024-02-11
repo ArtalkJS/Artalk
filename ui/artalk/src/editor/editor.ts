@@ -107,7 +107,12 @@ class Editor extends Component implements EditorApi {
   }
 
   submit() {
-    this.ctx.trigger('editor-submit')
+    const next = () => this.ctx.trigger('editor-submit')
+    if (this.ctx.conf.beforeSubmit) {
+      this.ctx.conf.beforeSubmit(this, next)
+    } else {
+      next()
+    }
   }
 }
 

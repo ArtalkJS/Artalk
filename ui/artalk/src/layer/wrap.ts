@@ -66,21 +66,7 @@ export class LayerWrap {
       return
     }
 
-    const onHide = () => {
-      this.$wrap.style.display = 'none'
-      this.$wrap.classList.remove('atk-fade-out')
-
-      getScrollbarHelper().unlock()
-
-      this.$wrap.onanimationend = null
-    }
-
-    // perform animation
-    this.$wrap.classList.add('atk-fade-out')
-    if (window.getComputedStyle(this.$wrap)['animation-name'] !== 'none') {
-      this.$wrap.onanimationend = () => onHide()
-    } else {
-      onHide()
-    }
+    this.$wrap.style.display = 'none'
+    getScrollbarHelper().unlock()
   }
 }

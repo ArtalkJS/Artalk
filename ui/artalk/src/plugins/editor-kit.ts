@@ -77,10 +77,6 @@ export class PlugManager {
     this.editor.getUI().$plugPanelWrap.innerHTML = ''
     this.editor.getUI().$plugPanelWrap.style.display = 'none'
     this.editor.getUI().$plugBtnWrap.innerHTML = ''
-    // 防止穿透
-    this.editor.getUI().$el.addEventListener('click', (e) => {
-      e.stopPropagation()
-    })
 
     // load the plug UI
     this.plugs.forEach((plug) => this.loadPluginItem(plug))

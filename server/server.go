@@ -90,6 +90,7 @@ func Serve(app *core.App) (*fiber.App, error) {
 
 		h.Conf(app, api)
 		h.Version(app, api)
+		h.ConfDomain(app, api)
 
 		// captcha
 		h.Captcha(app, api)

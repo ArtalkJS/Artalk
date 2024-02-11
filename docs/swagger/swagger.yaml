@@ -345,7 +345,6 @@ definitions:
     - page_key
     - rid
     - site_name
-    - ua
     type: object
   handler.ParamsEmailSend:
     properties:
@@ -763,6 +762,18 @@ definitions:
     - visible
     - vote_down
     - vote_up
+    type: object
+  handler.ResponseConfDomain:
+    properties:
+      is_trusted:
+        description: Is the domain trusted
+        type: boolean
+      origin:
+        description: The origin of the domain
+        type: string
+    required:
+    - is_trusted
+    - origin
     type: object
   handler.ResponseNotifyList:
     properties:
@@ -1558,6 +1569,25 @@ paths:
           schema:
             $ref: '#/definitions/common.ConfData'
       summary: Get System Configs
+      tags:
+      - System
+  /conf/domain:
+    get:
+      description: Get Domain Info
+      operationId: GetDomain
+      parameters:
+      - description: Domain URL
+        in: query
+        name: url
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseConfDomain'
+      summary: Get Domain Info
       tags:
       - System
   /notifies:
@@ -2511,7 +2541,7 @@ paths:
       - ApiKeyAuth: []
       summary: Get User Info
       tags:
-      - Account
+      - Auth
   /user/access_token:
     post:
       consumes:
@@ -2548,8 +2578,8 @@ paths:
                 msg:
                   type: string
               type: object
-        "403":
-          description: Forbidden
+        "401":
+          description: Unauthorized
           schema:
             allOf:
             - $ref: '#/definitions/handler.Map'
@@ -2568,7 +2598,7 @@ paths:
               type: object
       summary: Get Access Token
       tags:
-      - Account
+      - Auth
   /user/status:
     get:
       description: Get user login status by header Authorization
@@ -2593,7 +2623,7 @@ paths:
       - ApiKeyAuth: []
       summary: Get Login Status
       tags:
-      - Account
+      - Auth
   /users:
     post:
       consumes:

@@ -373,6 +373,13 @@ export interface HandlerResponseCommentUpdate {
   vote_up: number
 }
 
+export interface HandlerResponseConfDomain {
+  /** Is the domain trusted */
+  is_trusted: boolean
+  /** The origin of the domain */
+  origin: string
+}
+
 export interface HandlerResponseNotifyList {
   count: number
   notifies: EntityCookedNotify[]
@@ -1102,6 +1109,30 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<CommonConfData, any>({
         path: `/conf`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get Domain Info
+     *
+     * @tags System
+     * @name GetDomain
+     * @summary Get Domain Info
+     * @request GET:/conf/domain
+     * @response `200` `HandlerResponseConfDomain` OK
+     */
+    getDomain: (
+      query?: {
+        /** Domain URL */
+        url?: string
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<HandlerResponseConfDomain, any>({
+        path: `/conf/domain`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),

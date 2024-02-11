@@ -36,14 +36,14 @@ func getCorsAllowOrigins(app *core.App) []string {
 	return allowOrigins
 }
 
-func isOriginAllowed(app *core.App, origin string) bool {
+func CheckOriginTrusted(app *core.App, origin string) bool {
 	return slices.Contains(getCorsAllowOrigins(app), origin)
 }
 
 func CorsMiddleware(app *core.App) func(*fiber.Ctx) error {
 	return cors.New(cors.Config{
 		AllowOriginsFunc: func(origin string) bool {
-			return isOriginAllowed(app, origin)
+			return CheckOriginTrusted(app, origin)
 		},
 	})
 }

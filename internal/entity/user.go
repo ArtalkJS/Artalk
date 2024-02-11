@@ -1,8 +1,12 @@
 package entity
 
 import (
+	"crypto/md5"
 	"database/sql"
+	"fmt"
+	"strings"
 	"time"
+
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -39,4 +43,36 @@ func (u *User) SetPasswordEncrypt(password string) (err error) {
 	u.Password = "(bcrypt)" + string(encrypted)
 	u.TokenValidFrom.Scan(time.Now())
 	return nil
+}
+
+func (u *User) CheckPassword(input string) bool {
+	if u.ID == 0 {
+		return false
+	}
+	password := strings.TrimSpace(u.Password)
+	if password == "" {
+		return false
+	}
+
+	const BcryptPrefix = "(bcrypt)"
+	const MD5Prefix = "(md5)"
+
+	switch {
+	case strings.HasPrefix(password, BcryptPrefix):
+		if err := bcrypt.CompareHashAndPassword([]byte(password[len(BcryptPrefix):]),
+			[]byte(input)); err == nil {
+			return true
+		}
+	case strings.HasPrefix(password, MD5Prefix):
+		if strings.EqualFold(password[len(MD5Prefix):],
+			fmt.Sprintf("%x", md5.Sum([]byte(input)))) {
+			return true
+		}
+	default:
+		if password == input {
+			return true
+		}
+	}
+
+	return false
 }

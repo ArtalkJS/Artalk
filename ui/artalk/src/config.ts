@@ -1,6 +1,7 @@
 import type { ArtalkConfig, ContextApi } from '@/types'
 import type { ApiOptions } from './api/options'
 import { mergeDeep } from './lib/merge-deep'
+import { createApiHandlers } from './api'
 import Defaults from './defaults'
 
 /**
@@ -101,18 +102,14 @@ export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi)
       name: ctx?.get('user').getData().nick,
       email: ctx?.get('user').getData().email,
     } : undefined,
-
-    onNeedCheckAdmin: (payload) => {
-      if (!ctx) throw new Error('`ctx` is required when `onNeedCheckAdmin` is called.')
-      return ctx.checkAdmin({})
-    },
-
-    onNeedCheckCaptcha: (payload) => {
-      if (!ctx) throw new Error('`ctx` is required when `onNeedCheckCaptcha` is called.')
-      return ctx.checkCaptcha({
-        imgData: payload.data.imgData,
-        iframe: payload.data.iframe,
-      })
-    },
+    handlers: ctx?.getApiHandlers(),
   }
+}
+
+export function createNewApiHandlers(ctx: ContextApi) {
+  const h = createApiHandlers()
+  h.add('need_captcha', (res) => ctx.checkCaptcha(res))
+  h.add('need_login', () => ctx.checkAdmin({}))
+
+  return h
 }

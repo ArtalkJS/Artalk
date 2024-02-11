@@ -3,7 +3,7 @@ import type { CheckerCaptchaPayload, CheckerPayload } from '@/components/checker
 import type { EventManagerFuncs } from '@/lib/event-manager'
 import type { TMarked } from '@/lib/marked'
 import type { I18n } from '@/i18n'
-import type { Api } from '@/api'
+import type { Api, ApiHandlers } from '@/api'
 import type { CommentNode } from '@/comment'
 import type { SidebarShowPayload, EventPayloadMap, ArtalkConfig, CommentData, DataManagerApi, ListFetchParams, NotifyLevel } from '.'
 
@@ -29,6 +29,9 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
 
   /** 获取 API 以供 HTTP 请求 */
   getApi(): Api
+
+  /** Get API handlers */
+  getApiHandlers(): ApiHandlers
 
   /** 获取数据管理器对象 */
   getData(): DataManagerApi

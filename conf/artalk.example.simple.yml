@@ -168,3 +168,4 @@ frontend:
     scrollable: false
   reqTimeout: 15000
   versionCheck: true
+  pluginURLs: []

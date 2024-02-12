@@ -336,3 +336,5 @@ frontend:
   reqTimeout: 15000
   # 版本检测
   versionCheck: true
+  # 插件
+  pluginURLs: []

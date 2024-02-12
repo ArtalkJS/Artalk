@@ -66,7 +66,6 @@ describe('Artalk instance', () => {
     artalk = Artalk.init({
       ...InitConf,
       el,
-      immediateFetch: false,  // for testing
     })
 
     expect(artalk).toBeInstanceOf(Artalk)
@@ -81,19 +80,17 @@ describe('Artalk instance', () => {
     expect(conf.site).toBe(InitConf.site)
     expect(conf.darkMode).toBe(InitConf.darkMode)
 
-    expect(artalk.getEl().classList.contains('atk-dark-mode')).toBe(true)
-
     confCopy = JSON.parse(JSON.stringify(conf))
   })
 
   it('should can listen to events and the conf-remoter works (artalk.trigger, artalk.on, conf-remoter)', async () => {
-    artalk.trigger('conf-fetch')
+    global.devLoadArtalk()
 
     const fn = vi.fn()
 
-    await new Promise(resolve => {
+    await new Promise<void>(resolve => {
       artalk.on('mounted', (conf) => {
-        resolve(null)
+        resolve()
         fn()
       })
     })

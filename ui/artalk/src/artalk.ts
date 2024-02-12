@@ -5,13 +5,10 @@ import type { EventHandler } from './lib/event-manager'
 import Context from './context'
 import { handelCustomConf, convertApiOptions } from './config'
 import Services from './service'
-import { DefaultPlugins } from './plugins'
 import * as Stat from './plugins/stat'
 import { Api } from './api'
 import type { TInjectedServices } from './service'
-
-/** Global Plugins for all instances */
-const GlobalPlugins: ArtalkPlugin[] = [ ...DefaultPlugins ]
+import { GlobalPlugins, load } from './load'
 
 /**
  * Artalk
@@ -20,9 +17,6 @@ const GlobalPlugins: ArtalkPlugin[] = [ ...DefaultPlugins ]
  */
 export default class Artalk {
   public ctx!: ContextApi
-
-  /** Plugins */
-  protected plugins: ArtalkPlugin[] = [ ...GlobalPlugins ]
 
   constructor(conf: Partial<ArtalkConfig>) {
     // Init Config
@@ -34,16 +28,11 @@ export default class Artalk {
     // Init Services
     Object.entries(Services).forEach(([name, initService]) => {
       const obj = initService(this.ctx)
-      if (obj) this.ctx.inject(name as keyof TInjectedServices, obj) // auto inject deps to ctx
+      obj && this.ctx.inject(name as keyof TInjectedServices, obj) // auto inject deps to ctx
     })
 
-    // Init Plugins
-    this.plugins.forEach(plugin => {
-      if (typeof plugin === 'function') plugin(this.ctx)
-    })
-
-    // Trigger created event
-    this.ctx.trigger('created')
+    if (import.meta.env.DEV && import.meta.env.VITEST) global.devLoadArtalk = () => load(this.ctx)
+    else load(this.ctx)
   }
 
   /** Get the config of Artalk */

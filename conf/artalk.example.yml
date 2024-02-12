@@ -329,3 +329,5 @@ frontend:
   reqTimeout: 15000
   # Version check
   versionCheck: true
+  # Plugins
+  pluginURLs: []

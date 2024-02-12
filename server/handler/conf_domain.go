@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"net/url"
-
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/ArtalkJS/Artalk/server/middleware"
@@ -28,14 +26,9 @@ func ConfDomain(app *core.App, router fiber.Router) {
 		if domainURL == "" {
 			domainURL = c.Get("Origin")
 		}
-		u, err := url.Parse(domainURL)
-		if err != nil {
-			return common.RespError(c, 400, "Invalid URL")
-		}
-		origin := u.Scheme + "://" + u.Host
-		isTrusted := middleware.CheckOriginTrusted(app, origin)
+		trusted, origin, _ := middleware.CheckURLTrusted(app, domainURL)
 		return common.RespData(c, ResponseConfDomain{
-			IsTrusted: isTrusted,
+			IsTrusted: trusted,
 			Origin:    origin,
 		})
 	})

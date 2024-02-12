@@ -40,11 +40,15 @@ func UserInfo(app *core.App, router fiber.Router) {
 
 		// login status
 		user, err := common.GetUserByReq(app, c)
+		isLogin := !user.IsEmpty()
+
+		// Anonymous
 		if errors.Is(err, common.ErrTokenNotProvided) {
 			// If not login, find user by name and email
 			user = app.Dao().FindUser(p.Name, p.Email)
 		}
 
+		// If user not found
 		if user.IsEmpty() {
 			return common.RespData(c, ResponseUserInfo{
 				User:          nil,
@@ -60,7 +64,7 @@ func UserInfo(app *core.App, router fiber.Router) {
 
 		return common.RespData(c, ResponseUserInfo{
 			User:          &cockedUser,
-			IsLogin:       true,
+			IsLogin:       isLogin,
 			Notifies:      unreadNotifies,
 			NotifiesCount: len(unreadNotifies),
 		})

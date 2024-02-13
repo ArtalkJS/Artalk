@@ -104,8 +104,8 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		}
 
 		// find user
-		user := app.Dao().FindCreateUser(p.Name, p.Email, p.Link)
-		if user.ID == 0 || page.Key == "" {
+		user, err := app.Dao().FindCreateUser(p.Name, p.Email, p.Link)
+		if err != nil || page.Key == "" {
 			log.Error("Cannot get user or page")
 			return common.RespError(c, 500, i18n.T("Comment failed"))
 		}
@@ -141,8 +141,7 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		}
 
 		// save to database
-		err := app.Dao().CreateComment(&comment)
-		if err != nil {
+		if err := app.Dao().CreateComment(&comment); err != nil {
 			log.Error("Save Comment error: ", err)
 			return common.RespError(c, 500, i18n.T("Comment failed"))
 		}

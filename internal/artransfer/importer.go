@@ -106,8 +106,8 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 		}
 
 		// 准备 user
-		user := dao.FindCreateUser(c.Nick, c.Email, c.Link)
-		if !user.IsAdmin {
+		user, err := dao.FindCreateUser(c.Nick, c.Email, c.Link)
+		if err == nil && !user.IsAdmin {
 			userModified := false
 			if c.BadgeName != "" && c.BadgeName != user.BadgeName {
 				user.BadgeName = c.BadgeName

@@ -33,7 +33,7 @@ func (dao *Dao) CreateSite(site *entity.Site) error {
 	return nil
 }
 
-func (dao *Dao) NewUser(name string, email string, link string) entity.User {
+func (dao *Dao) NewUser(name string, email string, link string) (entity.User, error) {
 	user := entity.User{
 		Name:  name,
 		Email: email,
@@ -43,9 +43,10 @@ func (dao *Dao) NewUser(name string, email string, link string) entity.User {
 	err := dao.CreateUser(&user)
 	if err != nil {
 		log.Error("Create User error: ", err)
+		return entity.User{}, err
 	}
 
-	return user
+	return user, nil
 }
 
 func (dao *Dao) CreateUser(user *entity.User) error {

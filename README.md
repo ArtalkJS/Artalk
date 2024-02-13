@@ -71,7 +71,7 @@ import Artalk from 'artalk'
 Artalk.init({
   el:      '#Comments',
   site:    'Artalk 的博客',
-  server:  'https://artalk.example.com'
+  server:  'https://artalk.example.com',
   pageKey: '/2018/10/02/hello-world.html'
 })
 ```

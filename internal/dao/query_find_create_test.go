@@ -70,7 +70,8 @@ func TestFindCreateUser(t *testing.T) {
 			userLink  = "https://qwqaq.com"
 		)
 
-		result := app.Dao().FindCreateUser(userName, userEmail, userLink)
+		result, err := app.Dao().FindCreateUser(userName, userEmail, userLink)
+		assert.NoError(t, err)
 		assert.False(t, result.IsEmpty())
 		assert.Equal(t, userName, result.Name)
 		assert.Equal(t, userEmail, result.Email)
@@ -81,8 +82,33 @@ func TestFindCreateUser(t *testing.T) {
 		assert.Equal(t, app.Dao().CookUser(&result), app.Dao().CookUser(&findUser), "创建后的用户数据有问题")
 	})
 
+	t.Run("Valid User Values", func(t *testing.T) {
+		args := []struct {
+			name   string
+			email  string
+			link   string
+			result bool
+		}{
+			{"", "", "", false},
+			{"userA", "", "", false},
+			{"", "user_a@example.com", "", false},
+			{"userB", "user_b", "", false},
+			{"userC", "user_c@example.com", "https://xxxx.com", true},
+		}
+		for _, arg := range args {
+			_, err := app.Dao().FindCreateUser(arg.name, arg.email, arg.link)
+			assert.Equal(t, arg.result, err == nil, "FindCreateUser(%s, %s, %s) should return %v", arg.name, arg.email, arg.link, arg.result)
+		}
+
+		// Invalid user link
+		u, err := app.Dao().FindCreateUser("userD", "user_d@example.com", "xxxx.com")
+		assert.NoError(t, err)
+		assert.Equal(t, "", u.Link, "The user should be create but link is empty because it's invalid")
+	})
+
 	t.Run("Find Existed User", func(t *testing.T) {
-		result := app.Dao().FindCreateUser("userA", "user_a@qwqaq.com", "")
+		result, err := app.Dao().FindCreateUser("userA", "user_a@qwqaq.com", "")
+		assert.NoError(t, err)
 		assert.False(t, result.IsEmpty())
 		assert.Equal(t, app.Dao().FindUser("userA", "user_a@qwqaq.com"), result)
 	})

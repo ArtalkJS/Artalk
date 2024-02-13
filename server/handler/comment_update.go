@@ -90,8 +90,8 @@ func CommentUpdate(app *core.App, router fiber.Router) {
 		}
 
 		// find or save new user
-		user := app.Dao().FindCreateUser(p.Nick, p.Email, p.Link)
-		if user.ID != comment.UserID {
+		user, err := app.Dao().FindCreateUser(p.Nick, p.Email, p.Link)
+		if err == nil && user.ID != comment.UserID {
 			comment.UserID = user.ID
 		}
 

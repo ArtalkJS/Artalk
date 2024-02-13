@@ -47,7 +47,11 @@ func Vote(app *core.App, router fiber.Router) {
 		// find user
 		var user entity.User
 		if p.Name != "" && p.Email != "" {
-			user = app.Dao().FindCreateUser(p.Name, p.Email, "")
+			var err error
+			user, err = app.Dao().FindCreateUser(p.Name, p.Email, "")
+			if err != nil {
+				return common.RespError(c, 500, "Failed to create user")
+			}
 		}
 
 		ip := c.IP()

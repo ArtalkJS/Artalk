@@ -23,14 +23,16 @@ type App struct {
 	cache   *cache.Cache
 	service *map[string]Service
 
-	onTerminate *hook.Hook[*TerminateEvent]
+	onTerminate   *hook.Hook[*TerminateEvent]
+	onConfUpdated *hook.Hook[*ConfUpdatedEvent]
 }
 
 func NewApp(conf *config.Config) *App {
 	app := &App{
-		conf:        conf,
-		service:     &map[string]Service{},
-		onTerminate: &hook.Hook[*TerminateEvent]{},
+		conf:          conf,
+		service:       &map[string]Service{},
+		onTerminate:   &hook.Hook[*TerminateEvent]{},
+		onConfUpdated: &hook.Hook[*ConfUpdatedEvent]{},
 	}
 
 	app.injectDefaultServices()
@@ -189,6 +191,7 @@ func (app *App) Conf() *config.Config {
 
 func (app *App) SetConf(conf *config.Config) {
 	app.conf = conf
+	app.onConfUpdated.Trigger(&ConfUpdatedEvent{App: app, Conf: conf})
 }
 
 func (app *App) Dao() *dao.Dao {
@@ -273,4 +276,8 @@ func (app *App) initDao() error {
 
 func (app *App) OnTerminate() *hook.Hook[*TerminateEvent] {
 	return app.onTerminate
+}
+
+func (app *App) OnConfUpdated() *hook.Hook[*ConfUpdatedEvent] {
+	return app.onConfUpdated
 }

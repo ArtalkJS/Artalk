@@ -120,11 +120,7 @@ function extractComment(name: string, comment: string) {
   const stFind = stReg.exec(comment)
   subTitle = stFind ? stFind[0].substring(1, stFind[0].length-1) : ''
   if (!title) {
-    const defaultTitles: any = {
-      // TODO: add i18n
-      'enabled': '启用'
-    }
-    title = defaultTitles[name] || snakeToCamel(name)
+    title = snakeToCamel(name)
   }
 
   const optReg = /\[.*?\]/gm

@@ -68,6 +68,7 @@ export default defineLocaleExternal('jp', {
   /* Sidebar */
   msgCenter: '通知センター',
   ctrlCenter: 'コントロールセンター',
+  emailVerified: 'メールアドレスが確認されました',
 
   /* General */
   frontend: 'フロントエンド',

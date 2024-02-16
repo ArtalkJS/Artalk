@@ -68,6 +68,7 @@ export default defineLocaleExternal('zh-TW', {
   /* Sidebar */
   msgCenter: '通知中心',
   ctrlCenter: '控制中心',
+  emailVerified: '郵箱已驗證',
 
   /* General */
   frontend: '前端',

@@ -212,7 +212,7 @@
       border-radius: calc($block-radius / 2);
 
       @media only screen and (max-width: 768px) {
-        width: 6em;
+        min-width: 6em;
       }
 
       &:active {

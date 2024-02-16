@@ -42,6 +42,7 @@ export interface EntityCookedComment {
   is_collapsed: boolean
   is_pending: boolean
   is_pinned: boolean
+  is_verified: boolean
   link: string
   nick: string
   page_key: string
@@ -320,6 +321,7 @@ export interface HandlerResponseCommentCreate {
   is_collapsed: boolean
   is_pending: boolean
   is_pinned: boolean
+  is_verified: boolean
   link: string
   nick: string
   page_key: string
@@ -360,6 +362,7 @@ export interface HandlerResponseCommentUpdate {
   is_collapsed: boolean
   is_pending: boolean
   is_pinned: boolean
+  is_verified: boolean
   link: string
   nick: string
   page_key: string

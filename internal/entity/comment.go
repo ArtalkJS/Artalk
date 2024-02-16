@@ -12,9 +12,10 @@ type Comment struct {
 	PageKey  string `gorm:"index;size:255"`
 	SiteName string `gorm:"index;size:255"`
 
-	UserID uint `gorm:"index"`
-	UA     string
-	IP     string
+	UserID     uint `gorm:"index"`
+	IsVerified bool `gorm:"default:false"`
+	UA         string
+	IP         string
 
 	Rid uint `gorm:"index"` // 父评论 ID
 

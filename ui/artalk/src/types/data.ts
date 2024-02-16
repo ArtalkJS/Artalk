@@ -35,6 +35,9 @@ export interface CommentData {
   /** 是否置顶 */
   is_pinned: boolean
 
+  /** 是否已验证 */
+  is_verified: boolean
+
   /** 徽章文字 */
   badge_name?: string
 

@@ -68,6 +68,7 @@ const zhCN: I18n = {
   /* Sidebar */
   msgCenter: '通知中心',
   ctrlCenter: '控制中心',
+  emailVerified: '邮箱已验证',
 
   /* General */
   frontend: '前端',

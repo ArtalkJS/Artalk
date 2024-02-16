@@ -3,6 +3,7 @@ package dao
 import (
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/samber/lo"
 )
 
 // ===============
@@ -29,6 +30,7 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		IsPending:      c.IsPending,
 		IsPinned:       c.IsPinned,
 		IsAllowReply:   c.IsAllowReply(),
+		IsVerified:     lo.If(user.IsAdmin, true).Else(c.IsVerified),
 		Rid:            c.Rid,
 		BadgeName:      user.BadgeName,
 		BadgeColor:     user.BadgeColor,

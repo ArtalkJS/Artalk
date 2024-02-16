@@ -14,6 +14,7 @@ type CookedComment struct {
 	IsPending      bool   `json:"is_pending"`
 	IsPinned       bool   `json:"is_pinned"`
 	IsAllowReply   bool   `json:"is_allow_reply"`
+	IsVerified     bool   `json:"is_verified"`
 	Rid            uint   `json:"rid"`
 	BadgeName      string `json:"badge_name"`
 	BadgeColor     string `json:"badge_color"`

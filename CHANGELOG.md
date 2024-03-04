@@ -1,4 +1,35 @@
 
+## [v2.8.3](https://github.com/ArtalkJS/Artalk/compare/v2.8.2...v2.8.3) (2024-03-04)
+
+### Features
+
+* **api/auth:** invalidate old auth tokens after changing password
+* **api/domain:** add GET `/conf/domain` endpoint
+* **app:** add `onConfUpdated` hook
+* **comment:** add `is_verified` field for comment entity
+* **ui/api:** add `ctx.getApiHandlers()` to handle error responses and expose hooks
+* **ui/editor:** add `beforeSubmit` hook for editor submitting
+* **ui/plugins:** support dynamic loading of ui plug-in scripts ([#774](https://github.com/ArtalkJS/Artalk/issues/774))
+
+### Bug Fixes
+
+* **captcha/image:** unable to display image captcha on initial load
+* **conf:** skip patching IP region conf if disabled
+* **exception:** missing `message` field after refactoring exception data structure
+* **sidebar/login:** cannot select a name with the same email upon login ([#781](https://github.com/ArtalkJS/Artalk/issues/781))
+* **ui/layer:** ensure immediate operation when calling `show()` after `hide()`
+
+### Performance Improvements
+
+* **ui/editor:** improve the icon details for editor
+
+### Code Refactoring
+
+* **dao:** validate the args of the `FindCreateUser` function
+* **entity/user:** extract `CheckPassword` function
+* **origin:** extract `CheckURLTrusted` function
+
+
 ## [v2.8.2](https://github.com/ArtalkJS/Artalk/compare/v2.8.1...v2.8.2) (2024-02-05)
 
 ### Bug Fixes

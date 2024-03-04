@@ -169,6 +169,10 @@ func (conf *Config) i18nPatch() {
 
 // IP属地功能配置修补
 func (conf *Config) ipRegionPatch() {
+	if !conf.IPRegion.Enabled {
+		return
+	}
+
 	// IP 属地默认数据文件
 	if conf.IPRegion.DBPath == "" {
 		conf.IPRegion.DBPath = "./data/ip2region.xdb"

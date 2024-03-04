@@ -1,5 +1,5 @@
 export interface ApiHandlerPayload {
-  'need_captcha': { imgData?: string; iframe?: string }
+  'need_captcha': { img_data?: string; iframe?: string }
   'need_login': {}
   'need_auth_login': {}
 }

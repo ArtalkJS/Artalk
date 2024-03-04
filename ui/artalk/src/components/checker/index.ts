@@ -8,7 +8,7 @@ import CaptchaChecker from './captcha'
 import AdminChecker from './admin'
 
 export interface CheckerCaptchaPayload extends CheckerPayload {
-  imgData?: string
+  img_data?: string
   iframe?: string
 }
 
@@ -49,7 +49,7 @@ export default class CheckerLauncher {
 
   public checkCaptcha: ((payload: CheckerCaptchaPayload) => Promise<void>) = wrapPromise((p) => {
     this.fire(CaptchaChecker, p, (ctx) => {
-      ctx.set('img_data', p.imgData)
+      ctx.set('img_data', p.img_data)
       ctx.set('iframe', p.iframe)
     })
   })
@@ -147,7 +147,7 @@ export default class CheckerLauncher {
         })
         .catch((err) => {
           // 请求失败
-          btnTextSet(String(err.msg || String(err)))
+          btnTextSet(String(err.message || String(err)))
 
           if (checker.onError) checker.onError(checkerCtx, err, inputVal, formEl)
 

@@ -28,7 +28,7 @@ type ResponseUserLogin struct {
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  ResponseUserLogin
-// @Failure      400  {object}  Map{msg=string, data=object{need_name_select=[]string}}  "Multiple users with the same email address are matched"
+// @Failure      400  {object}  Map{msg=string,data=object{need_name_select=[]string}}  "Multiple users with the same email address are matched"
 // @Failure      401  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /user/access_token  [post]
@@ -56,11 +56,10 @@ func UserLogin(app *core.App, router fiber.Router) {
 				for _, u := range users {
 					userNames = append(userNames, u.Name)
 				}
-				return common.RespData(c, common.Map{
+				return common.RespError(c, 400, "Need to select username", common.Map{
 					// 前端需做处理让用户选择用户名，
 					// 之后再发起带 name 参数的请求
 					"need_name_select": userNames,
-					"msg":              "Need to select username",
 				})
 			}
 		} else {

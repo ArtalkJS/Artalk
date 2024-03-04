@@ -7,6 +7,7 @@
 </route>
 
 <script setup lang="ts">
+import type { ArtalkType } from 'artalk'
 import { getArtalk } from '../global'
 import { useUserStore } from '../stores/user'
 
@@ -54,11 +55,11 @@ function login(username?: string) {
     })
     useUserStore().sync()
     router.replace('/')
-  }).catch((e) => {
+  }).catch((e: ArtalkType.FetchError) => {
     if (e.data?.need_name_select) {
       userSelector.value = e.data?.need_name_select
     } else {
-      loginErr.value = e.msg || t('loginFailure')
+      loginErr.value = e.message || t('loginFailure')
     }
   })
 }

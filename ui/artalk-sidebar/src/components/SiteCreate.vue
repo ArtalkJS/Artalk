@@ -38,7 +38,7 @@ async function submit() {
       urls: siteUrls
     })).data
   } catch (err: any) {
-    window.alert(`创建失败：${err.msg || ''}`)
+    window.alert(`创建失败：${err.message || ''}`)
     console.error(err)
     return
   } finally { isLoading.value = false }

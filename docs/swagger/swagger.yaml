@@ -63,6 +63,8 @@ definitions:
         type: boolean
       is_pinned:
         type: boolean
+      is_verified:
+        type: boolean
       link:
         type: string
       nick:
@@ -98,6 +100,7 @@ definitions:
     - is_collapsed
     - is_pending
     - is_pinned
+    - is_verified
     - link
     - nick
     - page_key
@@ -611,6 +614,8 @@ definitions:
         type: boolean
       is_pinned:
         type: boolean
+      is_verified:
+        type: boolean
       link:
         type: string
       nick:
@@ -646,6 +651,7 @@ definitions:
     - is_collapsed
     - is_pending
     - is_pinned
+    - is_verified
     - link
     - nick
     - page_key
@@ -716,6 +722,8 @@ definitions:
         type: boolean
       is_pinned:
         type: boolean
+      is_verified:
+        type: boolean
       link:
         type: string
       nick:
@@ -751,6 +759,7 @@ definitions:
     - is_collapsed
     - is_pending
     - is_pinned
+    - is_verified
     - link
     - nick
     - page_key
@@ -2568,7 +2577,7 @@ paths:
             allOf:
             - $ref: '#/definitions/handler.Map'
             - properties:
-                ' data':
+                data:
                   properties:
                     need_name_select:
                       items:

@@ -2497,7 +2497,7 @@
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " data": {
+                                        "data": {
                                             "type": "object",
                                             "properties": {
                                                 "need_name_select": {
@@ -3212,6 +3212,7 @@
                 "is_collapsed",
                 "is_pending",
                 "is_pinned",
+                "is_verified",
                 "link",
                 "nick",
                 "page_key",
@@ -3259,6 +3260,9 @@
                     "type": "boolean"
                 },
                 "is_pinned": {
+                    "type": "boolean"
+                },
+                "is_verified": {
                     "type": "boolean"
                 },
                 "link": {
@@ -3971,6 +3975,7 @@
                 "is_collapsed",
                 "is_pending",
                 "is_pinned",
+                "is_verified",
                 "link",
                 "nick",
                 "page_key",
@@ -4018,6 +4023,9 @@
                     "type": "boolean"
                 },
                 "is_pinned": {
+                    "type": "boolean"
+                },
+                "is_verified": {
                     "type": "boolean"
                 },
                 "link": {
@@ -4121,6 +4129,7 @@
                 "is_collapsed",
                 "is_pending",
                 "is_pinned",
+                "is_verified",
                 "link",
                 "nick",
                 "page_key",
@@ -4168,6 +4177,9 @@
                     "type": "boolean"
                 },
                 "is_pinned": {
+                    "type": "boolean"
+                },
+                "is_verified": {
                     "type": "boolean"
                 },
                 "link": {

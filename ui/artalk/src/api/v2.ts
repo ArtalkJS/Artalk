@@ -1955,7 +1955,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @request POST:/user/access_token
  * @response `200` `HandlerResponseUserLogin` OK
  * @response `400` `(HandlerMap & {
-    " data"?: {
+    data?: {
     need_name_select?: (string)[],
 
 },
@@ -1975,7 +1975,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<
         HandlerResponseUserLogin,
         | (HandlerMap & {
-            ' data'?: {
+            data?: {
               need_name_select?: string[]
             }
             msg?: string

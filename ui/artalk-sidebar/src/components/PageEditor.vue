@@ -32,7 +32,7 @@ async function editAdminOnly() {
   try {
     p = (await artalk!.ctx.getApi().pages.updatePage(page.value.id, { ...page.value, admin_only: !page.value.admin_only })).data
   } catch (err: any) {
-    alert(`修改失败：${err.msg || '未知错误'}`)
+    alert(`修改失败：${err.message || '未知错误'}`)
     console.log(err)
     return
   } finally { isLoading.value = false }
@@ -45,7 +45,7 @@ async function sync() {
   try {
     p = (await artalk!.ctx.getApi().pages.fetchPage(page.value.id)).data
   } catch (err: any) {
-    alert(`同步失败：${err.msg || '未知错误'}`)
+    alert(`同步失败：${err.message || '未知错误'}`)
     console.log(err)
     return
   } finally { isLoading.value = false }
@@ -80,7 +80,7 @@ async function onFieldEditorYes(val: string) {
     try {
       p = (await artalk!.ctx.getApi().pages.updatePage(page.value.id, { ...page.value, [editFieldKey.value as any]: val })).data
     } catch (err: any) {
-      alert(`修改失败：${err.msg || '未知错误'}`)
+      alert(`修改失败：${err.message || '未知错误'}`)
       console.error(err)
       return false
     } finally { isLoading.value = false }

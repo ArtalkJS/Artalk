@@ -111,8 +111,8 @@ function delUser(user: ArtalkType.UserDataForAdmin) {
           alert('用户已从数据库删除，请手动编辑配置文件并删除用户')
         }
       })
-      .catch((e) => {
-        alert('删除失败：'+e.msg)
+      .catch((e: ArtalkType.FetchError) => {
+        alert('删除失败：'+e.message)
       })
   }
 }

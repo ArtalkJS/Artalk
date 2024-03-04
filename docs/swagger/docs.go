@@ -2504,7 +2504,7 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " data": {
+                                        "data": {
                                             "type": "object",
                                             "properties": {
                                                 "need_name_select": {
@@ -3219,6 +3219,7 @@ const docTemplate = `{
                 "is_collapsed",
                 "is_pending",
                 "is_pinned",
+                "is_verified",
                 "link",
                 "nick",
                 "page_key",
@@ -3266,6 +3267,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "is_pinned": {
+                    "type": "boolean"
+                },
+                "is_verified": {
                     "type": "boolean"
                 },
                 "link": {
@@ -3978,6 +3982,7 @@ const docTemplate = `{
                 "is_collapsed",
                 "is_pending",
                 "is_pinned",
+                "is_verified",
                 "link",
                 "nick",
                 "page_key",
@@ -4025,6 +4030,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "is_pinned": {
+                    "type": "boolean"
+                },
+                "is_verified": {
                     "type": "boolean"
                 },
                 "link": {
@@ -4128,6 +4136,7 @@ const docTemplate = `{
                 "is_collapsed",
                 "is_pending",
                 "is_pinned",
+                "is_verified",
                 "link",
                 "nick",
                 "page_key",
@@ -4175,6 +4184,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "is_pinned": {
+                    "type": "boolean"
+                },
+                "is_verified": {
                     "type": "boolean"
                 },
                 "link": {

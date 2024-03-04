@@ -51,7 +51,7 @@ function adminPageEditSave(ctx: ContextApi, page: PageData) {
       ctx.getData().updatePage(data)
     })
     .catch(err => {
-      ctx.editorShowNotify(`${$t('editFail')}: ${err.msg || String(err)}`, 'e')
+      ctx.editorShowNotify(`${$t('editFail')}: ${err.message || String(err)}`, 'e')
     })
     .finally(() => {
       ctx.editorHideLoading()

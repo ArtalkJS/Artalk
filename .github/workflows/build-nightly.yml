@@ -1,0 +1,205 @@
+name: Build Nightly
+run-name: Build Nightly ${{ inputs.dry_run && '(🧪 Dry-Run)' || '' }}
+
+on:
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run'
+        type: boolean
+        default: true
+
+env:
+  DOCKER_IMG: artalk/artalk-go
+  PLATFORMS: 'linux/amd64,linux/arm64,linux/arm/v7'
+  DOCKER_BUILD_ARGS: |-
+    SKIP_UI_BUILD=true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check should run
+        if: github.event_name == 'schedule'
+        run: |
+          if [[ "$(git log --since='24 hours ago' | wc -l)" -eq 0 ]] || \
+            [[ "$GITHUB_REPOSITORY" != "ArtalkJS/Artalk" ]]; then
+            echo "Skipping automatic run"
+            exit 78
+          fi
+
+      # https://github.com/docker/metadata-action
+      - name: Gen docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.DOCKER_IMG }}
+          tags: |
+            type=raw,value=nightly
+
+      # https://github.com/docker/login-action
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # https://github.com/docker/setup-qemu-action
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: ${{ env.PLATFORMS }}
+
+      # https://github.com/docker/setup-buildx-action
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          registry-url: https://registry.npmjs.org/
+          cache: 'pnpm'
+
+      # Build UI outside of Docker to speed up cross-platform builds
+      - name: Build UI
+        run: |
+          make build-frontend
+
+      # https://github.com/docker/build-push-action
+      - name: Build Multi-Platform Docker Images and Push
+        uses: docker/build-push-action@v5
+        with:
+          push: ${{ !inputs.dry_run }}
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ env.PLATFORMS }}
+          build-args: ${{ env.DOCKER_BUILD_ARGS }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      - name: Move cache
+        run:
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      - name: Build `linux/amd64` and Load locally
+        uses: docker/build-push-action@v5
+        with:
+          load: true # automatically load the single-platform build result to `docker images`
+          push: false
+          context: .
+          file: ./Dockerfile
+          platforms: 'linux/amd64'
+          build-args: ${{ env.DOCKER_BUILD_ARGS }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          # cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      # Export docker image
+      - name: Export Docker Image
+        id: docker_image
+        run: |
+          FILENAME="docker_image_nigthly_$(date +'%Y%m%d')_linux_amd64.tar"
+          docker save -o $FILENAME ${{ env.DOCKER_IMG }}
+          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
+
+      - name: Upload Docker Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ steps.docker_image.outputs.filename }}"
+          path: "${{ steps.docker_image.outputs.filename }}"
+
+      # Generate CHANGELOG
+      - name: Generate Changelog
+        run: |
+          # install git-chglog
+          curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
+              | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
+
+          changelog=$(git-chglog --config .github/chglog/config.yml --next-tag nightly nightly)
+          echo -e "${changelog}\n" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
+
+      - name: Upload Changelog
+        uses: actions/upload-artifact@v4
+        with:
+          name: CHANGELOG.md
+          path: CHANGELOG.md
+          compression-level: 0
+
+      # Frontend
+      - name: Pack frontend
+        id: pack_frontend
+        run: |
+          FILENAME="frontend_nigthly_$(date +'%Y%m%d').tar.gz"
+          PKG_FILE=$(pnpm pack -C ui/artalk --pack-destination ../.. | tail -n 1)
+          mv $PKG_FILE $FILENAME
+          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
+
+      - name: Upload frontend
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ steps.pack_frontend.outputs.filename }}"
+          path: "${{ steps.pack_frontend.outputs.filename }}"
+          compression-level: 0
+
+      # App
+      - name: Pack app
+        id: pack_app
+        run: |
+          DEST="artalk_nigthly_$(date +'%Y%m%d')_linux_amd64"
+          FILENAME="$DEST.tar.gz"
+          mkdir -p $DEST
+
+          # bin file
+          docker run --rm --entrypoint cat ${{ env.DOCKER_IMG }} /artalk > "$DEST/artalk"
+          chmod +x "$DEST/artalk"
+
+          # doc file
+          cp conf/artalk.example.yml "$DEST/artalk.yml"
+          cp README.md LICENSE CHANGELOG.md "$DEST"
+
+          tar -czf $FILENAME $DEST
+          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
+
+      - name: Upload App
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ steps.pack_app.outputs.filename }}"
+          path: "${{ steps.pack_app.outputs.filename }}"
+          compression-level: 0
+
+      # checksums.txt
+      - name: Calculate checksums.txt
+        env:
+          DIST_FILES: |
+            ${{ steps.docker_image.outputs.filename }}
+            ${{ steps.pack_app.outputs.filename }}
+            ${{ steps.pack_frontend.outputs.filename }}
+            CHANGELOG.md
+        run: |
+          sha256sum $DIST_FILES > checksums.txt
+
+      - name: Upload checksums.txt
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksums.txt
+          path: checksums.txt
+          compression-level: 0

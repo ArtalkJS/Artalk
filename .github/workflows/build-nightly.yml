@@ -66,7 +66,7 @@ jobs:
         run: |
           echo "PNPM_STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Setup pnpm cache
         with:
           path: ${{ env.PNPM_STORE_PATH }}
@@ -130,6 +130,7 @@ jobs:
         platform:
           - linux/amd64
           - linux/arm64
+          - linux/arm/v7
         # exclude:
         #   # exclude build x86 on arm, and vice versa.
         #   - { os: macos-14, platform: linux/amd64 }
@@ -182,9 +183,12 @@ jobs:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ env.DOCKER_BUILD_ARGS }}
+          # The `type=image,push=true` must the last one,
+          # because the `build.outputs.digest` will output the last image's digest.
+          # The digests will be used in the merge step.
           outputs: |
-            type=image,push=true,name=${{ env.DOCKER_IMG }},push-by-digest=true,name-canonical=true
             type=docker,name=${{ env.DOCKER_IMG }}
+            type=image,push=true,name=${{ env.DOCKER_IMG }},push-by-digest=true,name-canonical=true
 
       - name: Export digest
         run: |
@@ -204,28 +208,31 @@ jobs:
       - name: Export Docker Image
         id: docker
         run: |
-          IMG_FILE="artalk_docker_nigthly_$(date +'%Y%m%d')_${PLATFORM_PAIR}.tar"
-          docker save -o $IMG_FILE ${{ env.DOCKER_IMG }}
+          IMG_FILE="artalk_docker_nigthly_$(date +'%Y%m%d')_${PLATFORM_PAIR}.tar.gz"
+          docker save ${{ env.DOCKER_IMG }} | gzip > $IMG_FILE
           echo "img_file=$IMG_FILE" >> $GITHUB_OUTPUT
 
       # App
       - name: Pack app
         id: app
         run: |
-          DIR="/tmp/app_pkg/artalk_nigthly_$(date +'%Y%m%d')_${PLATFORM_PAIR}"
-          mkdir -p $DIR
+          BASE_DIR="/tmp/app_pkg"
+          NAME="artalk_nigthly_$(date +'%Y%m%d')_${PLATFORM_PAIR}"
+          SUB_DIR="$BASE_DIR/$NAME"
+          PKG_FILE="$BASE_DIR/$NAME.tar.gz"
 
           # bin file
-          docker run --rm --entrypoint cat ${{ env.DOCKER_IMG }} /artalk > "$DIR/artalk"
-          chmod +x "$DIR/artalk"
+          mkdir -p $SUB_DIR
+          docker run --rm --entrypoint cat ${{ env.DOCKER_IMG }} /artalk > "$SUB_DIR/artalk"
+          chmod +x "$SUB_DIR/artalk"
 
           # doc file
-          cp conf/artalk.example.yml "$DIR/artalk.yml"
-          cp README.md LICENSE CHANGELOG.md "$DIR"
+          cp conf/artalk.example.yml "$SUB_DIR/artalk.yml"
+          cp README.md LICENSE CHANGELOG.md "$SUB_DIR"
 
           # create package file
-          tar -czf "$DIR.tar.gz" $DIR
-          echo "app_pkg_file=$DIR.tar.gz" >> $GITHUB_OUTPUT
+          tar -czf $PKG_FILE -C $BASE_DIR $NAME
+          echo "app_pkg_file=$PKG_FILE" >> $GITHUB_OUTPUT
 
       # Move build artifacts
       - name: Move build artifacts
@@ -275,8 +282,10 @@ jobs:
       - name: Create manifest list and push
         working-directory: ${{ env.DIGEST_DIR }}
         run: |
-          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.DOCKER_IMG }}@sha256:%s ' *)
+          TAGS_ARG=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          MINIFEST_SRCS=$(printf '${{ env.DOCKER_IMG }}@sha256:%s ' *)
+
+          docker buildx imagetools create ${TAGS_ARG} ${MINIFEST_SRCS}
 
       - name: Inspect image
         run: |
@@ -307,31 +316,26 @@ jobs:
               | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
 
           CHANGELOG=$(git-chglog --config .github/chglog/config.yml --next-tag nightly nightly)
-          echo -e "$CHANGELOG" > /tmp/changelog.md
-          echo -e "\n> ⚠️ This version is latest nightly build and is **NOT** the final released version. Please use it with caution." \
-                  "\n> 💡 Docker user can run \`docker pull artalk/artalk-go:nightly\` to get the nightly build." >> release.md
-
-      - name: Get release files
-        run: |
-          FILES=$(find ${DIST_DIR} -type f -exec readlink -f {} \;)
-          echo -e "RELEASE_FILES<<EOF" >> $GITHUB_ENV
-          echo -e "$FILES" >> $GITHUB_ENV
-          echo -e "EOF" >> $GITHUB_ENV
+          MD_FILE="/tmp/changelog.md"
+          echo -e "$CHANGELOG" > $MD_FILE
+          echo -e "\n> [!NOTE]\n" \
+                  "> The Nightly version, automatically built based on the latest code, " \
+                  "is not yet released and may be unstable. Please use it with caution. " \
+                  "Docker user can run \`docker pull artalk/artalk-go:nightly\` to get " \
+                  "the nightly build." >> $MD_FILE
 
       # checksums.txt
       - name: Calculate checksums.txt
-        id: checksums
         run: |
-          sha256sum ${RELEASE_FILES} > checksums.txt
+          cd $DIST_DIR
+          sha256sum * > checksums.txt
 
           # print checksums.txt
           cat checksums.txt
 
-          # output release files
-          tmp_files="${RELEASE_FILES}"
+          FILES=$(find ${DIST_DIR} -type f -exec readlink -f {} \;)
           echo -e "RELEASE_FILES<<EOF" >> $GITHUB_ENV
-          echo -e "${tmp_files}" >> $GITHUB_ENV
-          echo -e "checksums.txt" >> $GITHUB_ENV
+          echo -e "$FILES" >> $GITHUB_ENV
           echo -e "EOF" >> $GITHUB_ENV
 
       - name: Create tag and push

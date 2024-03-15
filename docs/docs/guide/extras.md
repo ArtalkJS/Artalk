@@ -26,11 +26,10 @@ Artalk v1 版本基于 [PHP 后端](https://github.com/ArtalkJS/ArtalkPHP)，部
 
 :::
 
-- [[!!!] 一个 Artalk 的非官方文档 (By @thun888)](https://blog.thun888.xyz/wiki/Artalk/)
+- [[!!!] 一个 Artalk 的非官方文档 (By @thun888)](https://blog.hzchu.top/wiki/Artalk-doc/)
 - [为 Gridsome 添加 Artalk 自托管评论系统 - Monstx's Blog](https://blog.monsterx.cn/code/use-self-hosted-comment-system-in-gridsome/)
 - [Artalk 自托管评论系统的后端部署 - Jalen's Blog](https://blog.jalenchuh.cn/posts/artalk-api-php/)
 - [无服务器搭建 Artalk 评论系统后端 - 陈YFの博客](https://blog.cyfan.top/p/480ab6ed.html)
-- [哔哩哔哩 [站内首发] Artalk 评论系统搭建教程 - @thun888](https://www.bilibili.com/s/video/BV1954y1E7uP)
 - [Hexo Next 主题添加 Artalk 评论系统 - 心底的河流](https://lhy.life/20201126-artalk-next/)
 - [Hexo 添加 Artalk 评论教程 - 我相信我可以](https://butterfly.imlete.cn/article/Hexo-Artalk.html)
 - [基于 Butterfly 主题添加 Artalk 评论系统 - 卓越科技的 Blog](https://blog.imzykj.cn/posts/93afb348/)

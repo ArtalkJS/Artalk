@@ -23,7 +23,7 @@
 - [频率](https://pinlyu.com/)
 - [子舒](https://zburu.com/)
 - [叶开](https://xn--qpru0x.cn/)
-- [Thun888](https://blog.thun888.xyz/)
+- [Thun888](https://blog.hzchu.top/)
 - [青空之蓝](https://blog.ixk.me/)
 - [Monstx](https://blog.monsterx.cn/)
 - [QWQAQ](https://qwqaq.com/)

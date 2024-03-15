@@ -36,6 +36,18 @@ jobs:
             exit 78
           fi
 
+      - name: Create tag and push
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+          git tag -d nightly || true
+          git push origin :refs/tags/nightly || true
+
+          git tag -f nightly
+          git checkout nightly
+          git push -f origin nightly
+
       # https://github.com/docker/metadata-action
       - name: Gen docker meta
         id: meta
@@ -80,25 +92,6 @@ jobs:
         run: |
           make build-frontend
 
-      # https://github.com/docker/build-push-action
-      - name: Build Multi-Platform Docker Images and Push
-        uses: docker/build-push-action@v5
-        with:
-          push: ${{ !inputs.dry_run }}
-          context: .
-          file: ./Dockerfile
-          platforms: ${{ env.PLATFORMS }}
-          build-args: ${{ env.DOCKER_BUILD_ARGS }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
-
-      - name: Move cache
-        run:
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
       - name: Build `linux/amd64` and Load locally
         uses: docker/build-push-action@v5
         with:
@@ -111,54 +104,43 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
-          # cache-to: type=local,dest=/tmp/.buildx-cache-new
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      - name: Move cache
+        run:
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      # https://github.com/docker/build-push-action
+      - name: Build Multi-Platform Docker Images and Push
+        uses: docker/build-push-action@v5
+        if: ${{ !inputs.dry_run }}
+        with:
+          push: true
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ env.PLATFORMS }}
+          build-args: ${{ env.DOCKER_BUILD_ARGS }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
 
       # Export docker image
       - name: Export Docker Image
         id: docker_image
         run: |
-          FILENAME="docker_image_nigthly_$(date +'%Y%m%d')_linux_amd64.tar"
+          FILENAME="artalk_docker_nigthly_$(date +'%Y%m%d')_linux_amd64.tar"
           docker save -o $FILENAME ${{ env.DOCKER_IMG }}
           echo "filename=$FILENAME" >> $GITHUB_OUTPUT
-
-      - name: Upload Docker Image
-        uses: actions/upload-artifact@v4
-        with:
-          name: "${{ steps.docker_image.outputs.filename }}"
-          path: "${{ steps.docker_image.outputs.filename }}"
-
-      # Generate CHANGELOG
-      - name: Generate Changelog
-        run: |
-          # install git-chglog
-          curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
-              | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
-
-          changelog=$(git-chglog --config .github/chglog/config.yml --next-tag nightly nightly)
-          echo -e "${changelog}\n" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
-
-      - name: Upload Changelog
-        uses: actions/upload-artifact@v4
-        with:
-          name: CHANGELOG.md
-          path: CHANGELOG.md
-          compression-level: 0
 
       # Frontend
       - name: Pack frontend
         id: pack_frontend
         run: |
-          FILENAME="frontend_nigthly_$(date +'%Y%m%d').tar.gz"
+          FILENAME="artalk_frontend_nigthly_$(date +'%Y%m%d').tar.gz"
           PKG_FILE=$(pnpm pack -C ui/artalk --pack-destination ../.. | tail -n 1)
           mv $PKG_FILE $FILENAME
           echo "filename=$FILENAME" >> $GITHUB_OUTPUT
-
-      - name: Upload frontend
-        uses: actions/upload-artifact@v4
-        with:
-          name: "${{ steps.pack_frontend.outputs.filename }}"
-          path: "${{ steps.pack_frontend.outputs.filename }}"
-          compression-level: 0
 
       # App
       - name: Pack app
@@ -179,27 +161,41 @@ jobs:
           tar -czf $FILENAME $DEST
           echo "filename=$FILENAME" >> $GITHUB_OUTPUT
 
-      - name: Upload App
-        uses: actions/upload-artifact@v4
-        with:
-          name: "${{ steps.pack_app.outputs.filename }}"
-          path: "${{ steps.pack_app.outputs.filename }}"
-          compression-level: 0
+      # Generate CHANGELOG
+      - name: Generate Changelog
+        run: |
+          # install git-chglog
+          curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
+              | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
+
+          CHANGELOG=$(git-chglog --config .github/chglog/config.yml --next-tag nightly nightly)
+          echo -e "$CHANGELOG" > release.md
+          echo -e "\n> ⚠️ This version is latest nightly build and is **NOT** the final released version. Please use it with caution." \
+                  "\n> 💡 Docker user can run \`docker pull artalk/artalk-go:nightly\` to get the nightly build." >> release.md
 
       # checksums.txt
       - name: Calculate checksums.txt
+        id: checksums
         env:
-          DIST_FILES: |
+          DIST_FILES: |-
             ${{ steps.docker_image.outputs.filename }}
             ${{ steps.pack_app.outputs.filename }}
             ${{ steps.pack_frontend.outputs.filename }}
-            CHANGELOG.md
         run: |
           sha256sum $DIST_FILES > checksums.txt
 
-      - name: Upload checksums.txt
-        uses: actions/upload-artifact@v4
+          echo -e "DIST_FILES<<EOF" >> $GITHUB_ENV
+          echo -e "$DIST_FILES" >> $GITHUB_ENV
+          echo -e "checksums.txt" >> $GITHUB_ENV
+          echo -e "EOF" >> $GITHUB_ENV
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: checksums.txt
-          path: checksums.txt
-          compression-level: 0
+          draft: ${{ inputs.dry_run }}
+          prerelease: true
+          tag_name: nightly
+          name: Nightly Version
+          body_path: release.md
+          files: |-
+            ${{ env.DIST_FILES }}

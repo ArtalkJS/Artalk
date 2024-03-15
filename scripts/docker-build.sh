@@ -3,7 +3,7 @@
 set -e
 
 IMAGE_NAME="artalk/artalk-go"
-VERSION=$(git describe --tags --abbrev=0)
+VERSION=$(git describe --tags --abbrev=0 --match 'v*')
 
 if [[ $* == *--push* ]]
 then

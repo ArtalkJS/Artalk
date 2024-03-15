@@ -1,0 +1,76 @@
+"Access denied": Accès refusé
+"Account": Compte
+"Admin access required": Accès administrateur requis
+"Admin": Administrateur
+"Cannot reply to this comment": Impossible de répondre à ce commentaire
+"Captcha required": Captcha requis
+"Checking for updates": Vérification des mises à jour
+"Comment count": Nombre de commentaires
+"Comment failed": Le commentaire a écho
+"Comment": Commentaire
+"Config file read failed": Échec de la lecture du fichier de configuration
+"Confirm to continue?": Confirmez pour continuer?
+"Contains invalid URL": Contient une URL invalide
+"Create admin account": Créer un compte administrateur
+"Current version is the latest": La version actuelle est la plus récente
+"Downloading": Téléchargement
+"Email": Email
+"Enter {{name}}": Entrez {{name}}
+"Export complete": Exportation terminée
+"Export error": Erreur d'exportation
+"File": Fichier
+"First comment": Premier commentaire
+"Image exceeds {{file_size}} limit": L'image dépasse la limite de {{file_size}}
+"Image upload forbidden": Téléchargement d'images interdit
+"Import complete": Importation complète
+"Invalid request": Requête invalide
+"Invalid request. Please check your `trusted_domains` config.": Requête invalide. Veuillez vérifier votre configuration `trusted_domains`.
+"Invalid {{name}}": {{name}} invalide
+"Link": Lien
+"Login failed": La connexion a échoué
+"Name": Nom
+"New version available": Nouvelle version disponible
+"Nickname": Surnom
+"No comment": Pas de commentaire
+"Notify": Notifier
+"Page fetch failed": Échec de la récupération de la page
+"Page": Page
+"Parameter": Paramètre
+"Parent comment": Commentaire parent
+"Password update failed": La mise à jour du mot de passe a échoué
+"Password updated": Mot de passe mis à jour
+"Password": Mot de passe
+"Pending": En attente
+"Please review": Veuillez réviser
+"Retype {{name}}": Saisir à nouveau {{name}}
+"Save failed": L'enregistrement a échoué
+"Saving": Sauver
+"Services restart complete": Redémarrage des services terminé
+"Site `{{name}}` not found. Please create it in control center.": Le site `{{name}}` n'a pas été trouvé. Veuillez le créer dans le centre de contrôle.
+"Site": Site
+"Sub-comment": Sous-commentaire
+"Target Site": Site cible
+"Task executing in background, please wait...": Tâche exécutée en arrière-plan, veuillez patienter...
+"Task in progress, please wait a moment": Tâche en cours, veuillez patienter un instant
+"Type": Type
+"URL Resolver": Résolveur d'URL
+"Unable to get `{{name}}`": Impossible d'obtenir `{{name}}`
+"Unspecified": Non spécifié
+"Unsupported formats": Formats non supporté
+"Update complete": Mise à jour terminée
+"Update failed": Échec de la mise à jour
+"Upload image via {{method}} failed": Échec de l'envoie d'une image via {{méthod}}
+"User": Utilisateur
+"Username": Nom d'utilisateur
+"Verification failed": Échec de la vérification
+"Working directory retrieval failed": Échec de la récupération du répertoire de travail
+"Wrong captcha": Mauvais captcha
+"{{count}} items imported": {{count}} articles importés"
+"{{done}} of {{total}} done": {{done}} de {{total}} fait
+"{{name}} already exists": {{name}} existe déjà
+"{{name}} cannot be empty": {{name}} ne peut pas être vide
+"{{name}} creation failed": La création de {{name}} a échoué
+"{{name}} deletion failed": Échec de la suppression de {{name}}
+"{{name}} is required": {{name}} est obligatoire
+"{{name}} not found": {{name}} introuvable
+"{{name}} save failed": Échec de la sauvegarde de {{name}}

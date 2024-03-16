@@ -51,6 +51,10 @@ func Gen(genType string, specificPath string, overwrite bool) {
 		log.Fatal(i18n.T("{{name}} already exists", map[string]interface{}{"name": i18n.T("File")}) + ": " + absPath)
 	}
 
+	if err := utils.EnsureDir(filepath.Dir(absPath)); err != nil {
+		log.Fatal("Failed to create target directory: ", err)
+	}
+
 	dst, err := os.Create(absPath)
 	if err != nil {
 		log.Fatal("Failed to create target file: ", err)

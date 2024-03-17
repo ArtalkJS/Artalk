@@ -70,7 +70,7 @@ func Stat(app *core.App, router fiber.Router) {
 		switch queryType {
 		case "latest_comments":
 			// 最新评论
-			var comments []entity.Comment
+			var comments []*entity.Comment
 			app.Dao().DB().Scopes(QueryComments).
 				Order("created_at DESC").
 				Limit(p.Limit).
@@ -166,7 +166,7 @@ func Stat(app *core.App, router fiber.Router) {
 
 		case "rand_comments":
 			// 随机评论
-			var comments []entity.Comment
+			var comments []*entity.Comment
 			app.Dao().DB().Scopes(QueryComments, QueryOrderRand).
 				Limit(p.Limit).
 				Find(&comments)

@@ -25,6 +25,11 @@ type Comment struct {
 
 	VoteUp   int
 	VoteDown int
+
+	RootID   uint       `gorm:"index"` // 根评论 ID
+	Children []*Comment `gorm:"foreignKey:root_id;references:id"`
+	Page     *Page      `gorm:"foreignKey:page_key;references:key"`
+	User     *User      `gorm:"foreignKey:id;references:user_id"`
 }
 
 func (c Comment) IsEmpty() bool {

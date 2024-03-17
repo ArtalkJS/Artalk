@@ -127,7 +127,8 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			IP:     ip,
 			UA:     ua,
 
-			Rid: p.Rid,
+			Rid:    p.Rid,
+			RootID: app.Dao().FindCommentRootID(p.Rid),
 
 			IsPending:   false,
 			IsCollapsed: false,

@@ -34,6 +34,18 @@ func (dao *Dao) FindComment(id uint, checkers ...func(*entity.Comment) bool) ent
 	return comment
 }
 
+func (dao *Dao) FindCommentRootID(rid uint) uint {
+	for rid != 0 {
+		var comment entity.Comment
+		dao.DB().First(&comment, rid)
+		if comment.Rid == 0 {
+			return comment.ID
+		}
+		rid = comment.Rid
+	}
+	return 0
+}
+
 // (Cached：parent-comments)
 func (dao *Dao) FindCommentChildrenShallow(parentID uint, checkers ...func(*entity.Comment) bool) []entity.Comment {
 	var children []entity.Comment

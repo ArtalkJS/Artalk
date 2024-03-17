@@ -14,11 +14,11 @@ if [ "$1" != 'gen' ] && ( [ ! -e /data/artalk.yml ] && [ ! -e /data/artalk-go.ym
         upMsg+=$'# please unmount the config file volume from your container\n'
         upMsg+=$'# and edit "/data/artalk.yml" for configuration.'
         echo "$upMsg" > /conf.yml
-        echo "$(date) [info] Copy config file from '/conf.yml' to '/data/artalk.yml' for upgrade"
+        echo "$(date) [info][docker] Copy config file from '/conf.yml' to '/data/artalk.yml' for upgrade"
     else
         # Generate new config
         artalk gen conf /data/artalk.yml
-        echo "$(date) [info] Generate new config file to '/data/artalk.yml'"
+        echo "$(date) [info][docker] Generate new config file to '/data/artalk.yml'"
     fi
 fi
 

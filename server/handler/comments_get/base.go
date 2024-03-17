@@ -75,8 +75,8 @@ type FindOptions struct {
 }
 
 // Find comments by options
-func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) []entity.Comment {
-	var comments []entity.Comment
+func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) []*entity.Comment {
+	var comments []*entity.Comment
 
 	q := dao.DB().Model(&entity.Comment{}).
 		Scopes(GetQueryScopes(dao, opts))
@@ -90,6 +90,8 @@ func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) []entity.Comm
 	if pg.OnlyRoot {
 		// Nested mode get only the root comments
 		q.Scopes(OnlyRoot())
+
+		q.Preload("Children").Preload("User").Preload("Page").Preload("Children.User").Preload("Children.Page")
 	}
 
 	q.Find(&comments)

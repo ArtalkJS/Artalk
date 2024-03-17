@@ -1,6 +1,8 @@
 package comments_get
 
 import (
+	"slices"
+
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
@@ -8,13 +10,26 @@ import (
 )
 
 // Find all child comments (for nested mode)
-func FindChildComments(dao *dao.Dao, user entity.User, comments []entity.CookedComment) []entity.CookedComment {
-	for _, parent := range comments { // TODO: Consider add a feature, read more children, pagination for children comment
-		children := dao.FindCommentChildren(parent.ID, NoPendingChecker(user))
-		comments = append(comments, dao.CookAllComments(children)...)
+func FlattenChildComments(dao *dao.Dao, user entity.User, comments []*entity.Comment) []*entity.Comment {
+	flatten := make([]*entity.Comment, 0)
+	queue := make([]*entity.Comment, len(comments))
+	copy(queue, comments)
+
+	for len(queue) > 0 {
+		c := queue[0]     // get the first element
+		queue = queue[1:] // dequeue
+
+		if !NoPendingChecker(user)(c) {
+			continue
+		}
+
+		flatten = append(flatten, c)
+
+		// add children to the end of the queue
+		queue = append(queue, c.Children...)
 	}
 
-	return comments
+	return flatten
 }
 
 // Find all linked comments (for flat mode)
@@ -28,7 +43,9 @@ func FindLinkedComments(app *dao.Dao, comments []entity.CookedComment) []entity.
 		}
 
 		// If comment is already in the list, skip
-		if entity.ContainsCookedComment(comments, comment.Rid) {
+		if slices.ContainsFunc(comments, func(c entity.CookedComment) bool {
+			return c.ID == comment.Rid
+		}) {
 			continue
 		}
 

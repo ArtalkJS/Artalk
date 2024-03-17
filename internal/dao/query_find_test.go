@@ -47,6 +47,24 @@ func TestFindComment(t *testing.T) {
 	}
 }
 
+func TestFindCommentRootID(t *testing.T) {
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
+
+	tests := []struct {
+		rid    uint
+		rootID uint
+	}{
+		{0, 0},
+		{1002, 1000},
+	}
+
+	for _, tt := range tests {
+		got := app.Dao().FindCommentRootID(tt.rid)
+		assert.Equal(t, tt.rootID, got)
+	}
+}
+
 func TestFindCommentChildrenShallow(t *testing.T) {
 	app, _ := test.NewTestApp()
 	defer app.Cleanup()

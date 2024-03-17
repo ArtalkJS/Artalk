@@ -113,14 +113,14 @@ func CommentList(app *core.App, router fiber.Router) {
 			OnlyRoot: !p.FlatMode,
 		})
 
-		// Transform
-		comments := app.Dao().CookAllComments(rawComments)
+		var comments []entity.CookedComment
 
 		// Find extra comments
 		if p.FlatMode {
-			comments = cog.FindLinkedComments(app.Dao(), comments)
+			// Transform
+			comments = cog.FindLinkedComments(app.Dao(), app.Dao().CookAllComments(rawComments))
 		} else {
-			comments = cog.FindChildComments(app.Dao(), user, comments)
+			comments = app.Dao().CookAllComments(cog.FlattenChildComments(app.Dao(), user, rawComments))
 		}
 
 		// Get IP region

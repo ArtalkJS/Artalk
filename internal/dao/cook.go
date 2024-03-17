@@ -11,8 +11,17 @@ import (
 // ===============
 
 func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
-	user := dao.FetchUserForComment(c)
-	page := dao.FetchPageForComment(c)
+	user := c.User
+	if user == nil {
+		u := dao.FetchUserForComment(c)
+		user = &u
+	}
+
+	page := c.Page
+	if c.Page == nil {
+		p := dao.FetchPageForComment(c)
+		page = &p
+	}
 
 	markedContent, _ := utils.Marked(c.Content)
 
@@ -39,15 +48,15 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		VoteUp:         c.VoteUp,
 		VoteDown:       c.VoteDown,
 		PageKey:        c.PageKey,
-		PageURL:        dao.GetPageAccessibleURL(&page),
+		PageURL:        dao.GetPageAccessibleURL(page),
 		SiteName:       c.SiteName,
 	}
 }
 
-func (dao *Dao) CookAllComments(comments []entity.Comment) []entity.CookedComment {
+func (dao *Dao) CookAllComments(comments []*entity.Comment) []entity.CookedComment {
 	cookedComments := []entity.CookedComment{}
 	for _, c := range comments {
-		cookedComments = append(cookedComments, dao.CookComment(&c))
+		cookedComments = append(cookedComments, dao.CookComment(c))
 	}
 	return cookedComments
 }

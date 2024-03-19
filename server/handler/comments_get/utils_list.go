@@ -1,83 +1,53 @@
 package comments_get
 
 import (
-	"slices"
-
-	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/samber/lo"
+	"gorm.io/gorm"
 )
 
-// Find all child comments (for nested mode)
-func FlattenChildComments(dao *dao.Dao, user entity.User, comments []*entity.Comment) []*entity.Comment {
-	flatten := make([]*entity.Comment, 0)
-	queue := make([]*entity.Comment, len(comments))
-	copy(queue, comments)
-
-	for len(queue) > 0 {
-		c := queue[0]     // get the first element
-		queue = queue[1:] // dequeue
-
-		if !NoPendingChecker(user)(c) {
-			continue
-		}
-
-		flatten = append(flatten, c)
-
-		// add children to the end of the queue
-		queue = append(queue, c.Children...)
-	}
-
-	return flatten
-}
-
-// Find all linked comments (for flat mode)
-func FindLinkedComments(app *dao.Dao, comments []entity.CookedComment) []entity.CookedComment {
-	// Find linked comments which `id` is the same as `rid`
-	// Linked comments could be invisible but included in the list
-	for _, comment := range comments {
-		// If comment is root comment, skip
-		if comment.Rid == 0 {
-			continue
-		}
-
-		// If comment is already in the list, skip
-		if slices.ContainsFunc(comments, func(c entity.CookedComment) bool {
-			return c.ID == comment.Rid
-		}) {
-			continue
-		}
-
-		// Get linked comment
-		rComment := app.FindComment(comment.Rid)
-		if rComment.IsEmpty() {
-			continue
-		}
-
-		// Set invisible
-		rCooked := app.CookComment(&rComment)
-		rCooked.Visible = false
-
-		comments = append(comments, rCooked)
-	}
-
+// Find all nested children (for nested mode)
+func findNestedChildren(dao *dao.Dao, comments []entity.CookedComment, commonScopes []func(*gorm.DB) *gorm.DB) []entity.CookedComment {
+	allRootIDs := lo.Map(comments, func(c entity.CookedComment, _ int) uint { return c.ID })
+	// TODO: Add pagination for nested mode
+	// 	All children will be loaded at once without pagination, which may cause performance issues.
+	// 	The backend will response all to the client-side, and render by the client-side itself.
+	var children []*entity.Comment
+	dao.DB().Model(&entity.Comment{}).
+		Scopes(commonScopes...).
+		Where("root_id IN ?", allRootIDs).
+		Find(&children)
+	comments = append(comments, dao.CookAllComments(children)...)
 	return comments
 }
 
-// Find the IP region of each comment
-func FindIPRegionForComments(app *core.App, comments []entity.CookedComment) []entity.CookedComment {
-	if !app.Conf().IPRegion.Enabled {
-		return comments
+// Find all linked comments (for flat mode)
+func findFlatLinkedComments(dao *dao.Dao, comments []entity.CookedComment, commonScopes []func(*gorm.DB) *gorm.DB) []entity.CookedComment {
+	allCommentIDs := map[uint]bool{}
+	for _, c := range comments {
+		allCommentIDs[c.ID] = true
 	}
 
-	ipRegionService, err := core.AppService[*core.IPRegionService](app)
-	if err == nil {
-		for i, c := range comments {
-			comments[i].IPRegion = ipRegionService.Query(c.IP)
-		}
-	} else {
-		log.Error("[IPRegionService] err: ", err)
+	missCommentIDs := lo.Map(lo.Filter(comments, func(c entity.CookedComment, i int) bool {
+		return c.Rid != 0 && !allCommentIDs[c.Rid]
+	}), func(c entity.CookedComment, i int) uint {
+		return c.Rid
+	})
+
+	// Find linked comments which `id` is the same as `rid`
+	var linkedComments []entity.Comment
+	if len(missCommentIDs) > 0 {
+		dao.DB().Where("id IN ?", missCommentIDs).
+			Scopes(commonScopes...).
+			Find(&linkedComments)
+	}
+
+	// Linked comments could be invisible but included in the list
+	for _, c := range linkedComments {
+		rCooked := dao.CookComment(&c)
+		rCooked.Visible = false // Set invisible
+		comments = append(comments, rCooked)
 	}
 
 	return comments

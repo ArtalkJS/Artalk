@@ -23,6 +23,11 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		page = &p
 	}
 
+	var site *entity.Site
+	if page != nil && page.Site != nil {
+		site = page.Site
+	}
+
 	markedContent, _ := utils.Marked(c.Content)
 
 	return entity.CookedComment{
@@ -48,7 +53,7 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		VoteUp:         c.VoteUp,
 		VoteDown:       c.VoteDown,
 		PageKey:        c.PageKey,
-		PageURL:        dao.GetPageAccessibleURL(page),
+		PageURL:        dao.GetPageAccessibleURL(page, site),
 		SiteName:       c.SiteName,
 	}
 }

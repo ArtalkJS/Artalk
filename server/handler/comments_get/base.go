@@ -1,9 +1,11 @@
+// This package's main job is to build the `where` conditions of SQL.
+// Call `GetQueryScopes` to create a LiteDB instance. This can be converted into a `gorm.DB` instance filled with `where` conditions.
+// Call the functions in `expose.go` to get the whole query result, not just the `where` conditions (via Gorm).
 package comments_get
 
 import (
 	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
-	"gorm.io/gorm"
 )
 
 type Scope string
@@ -34,8 +36,11 @@ type QueryOptions struct {
 //	For `ORDER BY`, `LIMIT`, and `OFFSET`, please utilize separate functions, as this
 //	function is invoked in both `Find` and `Count`. `ORDER BY`, `LIMIT`, and `OFFSET` cannot
 //	be employed within `Count`.
-func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(*gorm.DB) *gorm.DB {
-	return func(q *gorm.DB) *gorm.DB {
+//
+//	Updated: The `*gorm.DB` had been refactored to `liteDB`, which is a subset of `*gorm.DB`.
+//	(only contains `WHERE` conditions)
+func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(liteDB) liteDB {
+	return func(q liteDB) liteDB {
 		// Basic scope
 		q.Scopes(CommonScope(opts.User))
 
@@ -45,7 +50,7 @@ func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(*gorm.DB) *gorm.DB {
 		}
 
 		// Scopes
-		scopes := map[Scope]func(*gorm.DB) *gorm.DB{
+		scopes := map[Scope]func(liteDB) liteDB{
 			ScopePage: PageScopeQuery(opts.PagePayload, PageScopeOpts{
 				AdminUserIDs: dao.GetAllAdminIDs(),
 			}),
@@ -66,35 +71,4 @@ func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(*gorm.DB) *gorm.DB {
 
 		return q
 	}
-}
-
-type FindOptions struct {
-	Offset   int
-	Limit    int
-	OnlyRoot bool
-}
-
-// Find comments by options
-func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) []*entity.Comment {
-	var comments []*entity.Comment
-
-	q := dao.DB().Model(&entity.Comment{}).
-		Scopes(GetQueryScopes(dao, opts))
-
-	// Sort Rule
-	q.Order(GetSortSQL(opts.Scope, opts.SortBy))
-
-	q.Offset(pg.Offset).
-		Limit(pg.Limit)
-
-	if pg.OnlyRoot {
-		// Nested mode get only the root comments
-		q.Scopes(OnlyRoot())
-
-		q.Preload("Children").Preload("User").Preload("Page").Preload("Children.User").Preload("Children.Page")
-	}
-
-	q.Find(&comments)
-
-	return comments
 }

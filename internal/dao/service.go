@@ -48,7 +48,7 @@ func (dao *Dao) GetPageAccessibleURL(p *entity.Page, s ...*entity.Site) string {
 		// 若 pageKey 为相对路径，生成相对于 site.FirstUrl 配置的 URL
 		if !utils.ValidateURL(p.Key) {
 			var site *entity.Site
-			if len(s) > 0 {
+			if len(s) > 0 && s[0] != nil {
 				site = s[0]
 			} else {
 				findSite := dao.FetchSiteForPage(p)

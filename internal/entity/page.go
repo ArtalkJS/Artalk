@@ -18,6 +18,8 @@ type Page struct {
 	VoteDown int
 
 	PV int
+
+	Site *Site `gorm:"foreignKey:site_name;references:name"`
 }
 
 func (p Page) IsEmpty() bool {

@@ -9,8 +9,8 @@ import (
 // Basic scope for all queries
 //
 // It will ignore pending comments for non-admin users
-func CommonScope(user entity.User) func(*gorm.DB) *gorm.DB {
-	return func(d *gorm.DB) *gorm.DB {
+func CommonScope(user entity.User) func(liteDB) liteDB {
+	return func(d liteDB) liteDB {
 		// Ignore pending comments
 		if !user.IsAdmin { // If not admin, ignore pending comments
 			d.Scopes(NoPending(user.ID))
@@ -27,8 +27,8 @@ func OnlyRoot() func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func NoPending(allowUserID ...uint) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
+func NoPending(allowUserID ...uint) func(db liteDB) liteDB {
+	return func(db liteDB) liteDB {
 		// 白名单用户 ID
 		if len(allowUserID) > 0 && allowUserID[0] != 0 {
 			return db.Where("(user_id = ? AND is_pending = ?) OR is_pending = ?", allowUserID[0], true, false)
@@ -38,35 +38,14 @@ func NoPending(allowUserID ...uint) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func NoPendingChecker(user entity.User) func(*entity.Comment) bool {
-	return func(comment *entity.Comment) bool {
-		// Show all comments to admin
-		if user.IsAdmin {
-			return true
-		}
-
-		// Allow self comments even if pending
-		if user.ID != 0 && user.ID == comment.UserID {
-			return true
-		}
-
-		// Prevent pending comments
-		if comment.IsPending {
-			return false
-		}
-
-		return true
-	}
-}
-
 // Filter by search keywords
-func SearchScope(dao *dao.Dao, keywords string) func(d *gorm.DB) *gorm.DB {
+func SearchScope(dao *dao.Dao, keywords string) func(d liteDB) liteDB {
 	var userIds []uint
 	dao.DB().Model(&entity.User{}).Where(
 		"LOWER(name) = LOWER(?) OR LOWER(email) = LOWER(?)", keywords, keywords,
 	).Pluck("id", &userIds)
 
-	return func(d *gorm.DB) *gorm.DB {
+	return func(d liteDB) liteDB {
 		return d.Where("user_id IN (?) OR content LIKE ? OR page_key = ? OR ip = ? OR ua = ?",
 			userIds, "%"+keywords+"%", keywords, keywords, keywords)
 	}

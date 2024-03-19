@@ -17,19 +17,18 @@ type Comment struct {
 	UA         string
 	IP         string
 
-	Rid uint `gorm:"index"` // 父评论 ID
+	Rid uint `gorm:"index"` // Parent Node ID
 
-	IsCollapsed bool `gorm:"default:false"` // 折叠
-	IsPending   bool `gorm:"default:false"` // 待审
-	IsPinned    bool `gorm:"default:false"` // 置顶
+	IsCollapsed bool `gorm:"default:false"`
+	IsPending   bool `gorm:"default:false"`
+	IsPinned    bool `gorm:"default:false"`
 
 	VoteUp   int
 	VoteDown int
 
-	RootID   uint       `gorm:"index"` // 根评论 ID
-	Children []*Comment `gorm:"foreignKey:root_id;references:id"`
-	Page     *Page      `gorm:"foreignKey:page_key;references:key"`
-	User     *User      `gorm:"foreignKey:id;references:user_id"`
+	RootID uint  `gorm:"index"` // Root Node ID (can be derived from `Rid`)
+	Page   *Page `gorm:"foreignKey:page_key;references:key"`
+	User   *User `gorm:"foreignKey:id;references:user_id"`
 }
 
 func (c Comment) IsEmpty() bool {

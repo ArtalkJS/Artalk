@@ -6,6 +6,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/server/common"
 	cog "github.com/ArtalkJS/Artalk/server/handler/comments_get"
 	"github.com/gofiber/fiber/v2"
@@ -107,28 +108,14 @@ func CommentList(app *core.App, router fiber.Router) {
 		}
 
 		// Generate query by options
-		rawComments := cog.FindComments(app.Dao(), queryOpts, cog.FindOptions{
-			Limit:    p.Limit,
-			Offset:   p.Offset,
-			OnlyRoot: !p.FlatMode,
+		comments, count, rootsCount := cog.FindComments(app.Dao(), queryOpts, cog.FindOptions{
+			Limit:  p.Limit,
+			Offset: p.Offset,
+			Nested: !p.FlatMode,
 		})
 
-		var comments []entity.CookedComment
-
-		// Find extra comments
-		if p.FlatMode {
-			// Transform
-			comments = cog.FindLinkedComments(app.Dao(), app.Dao().CookAllComments(rawComments))
-		} else {
-			comments = app.Dao().CookAllComments(cog.FlattenChildComments(app.Dao(), user, rawComments))
-		}
-
 		// Get IP region
-		comments = cog.FindIPRegionForComments(app, comments)
-
-		// count comments
-		count := cog.CountComments(app.Dao(), queryOpts)
-		rootsCount := cog.CountComments(app.Dao(), queryOpts, cog.OnlyRoot())
+		comments = findIPRegionForComments(app, comments)
 
 		// The response data
 		resp := ResponseCommentList{
@@ -139,15 +126,14 @@ func CommentList(app *core.App, router fiber.Router) {
 
 		// If query scope is page, extra query page data
 		if scope == cog.ScopePage {
-			page := findPageData(app.Dao(), p.PageKey, p.SiteName)
-			resp.Page = &page
+			resp.Page = findPageData(app.Dao(), p.PageKey, p.SiteName)
 		}
 
 		return common.RespData(c, resp)
 	})
 }
 
-func findPageData(dao *dao.Dao, pageKey string, siteName string) entity.CookedPage {
+func findPageData(dao *dao.Dao, pageKey string, siteName string) *entity.CookedPage {
 	page := dao.FindPage(pageKey, siteName)
 	if page.IsEmpty() {
 		// If page not found, create a new one but not save it
@@ -156,5 +142,24 @@ func findPageData(dao *dao.Dao, pageKey string, siteName string) entity.CookedPa
 			SiteName: siteName,
 		}
 	}
-	return dao.CookPage(&page)
+	cooked := dao.CookPage(&page)
+	return &cooked
+}
+
+// Find the IP region of each comment
+func findIPRegionForComments(app *core.App, comments []entity.CookedComment) []entity.CookedComment {
+	if !app.Conf().IPRegion.Enabled {
+		return comments
+	}
+
+	ipRegionService, err := core.AppService[*core.IPRegionService](app)
+	if err == nil {
+		for i, c := range comments {
+			comments[i].IPRegion = ipRegionService.Query(c.IP)
+		}
+	} else {
+		log.Error("[IPRegionService] err: ", err)
+	}
+
+	return comments
 }

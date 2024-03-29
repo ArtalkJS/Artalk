@@ -50,7 +50,7 @@ func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(liteDB) liteDB {
 		}
 
 		// Scopes
-		scopes := map[Scope]func(liteDB) liteDB{
+		q.Scopes(map[Scope]func(liteDB) liteDB{
 			ScopePage: PageScopeQuery(opts.PagePayload, PageScopeOpts{
 				AdminUserIDs: dao.GetAllAdminIDs(),
 			}),
@@ -61,13 +61,7 @@ func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(liteDB) liteDB {
 				},
 			}),
 			ScopeSite: SiteScopeQuery(opts.SitePayload, opts.User),
-		}
-
-		if scope, ok := scopes[opts.Scope]; ok {
-			q.Scopes(scope)
-		} else {
-			q.Where("1 = 0")
-		}
+		}[opts.Scope])
 
 		return q
 	}

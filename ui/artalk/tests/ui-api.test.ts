@@ -158,10 +158,7 @@ describe('Artalk instance', () => {
     artalk.destroy()
 
     // detect if it is cleaned up
-    const selectors = [`#${ContainerID}`, '.atk-layer-wrap']
-    selectors.forEach(selector => {
-      const el = document.querySelector(selector)
-      expect(el).toBe(null)
-    })
+    expect(document.querySelector(`#${ContainerID}`)?.firstChild).toBe(null)
+    expect(document.querySelector('.atk-layer-wrap')).toBe(null)
   })
 })

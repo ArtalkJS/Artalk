@@ -59,7 +59,9 @@ export default class Artalk {
   /** Destroy instance of Artalk */
   public destroy() {
     this.ctx.trigger('unmounted')
-    this.ctx.$root.remove()
+    while (this.ctx.$root.firstChild) {
+      this.ctx.$root.removeChild(this.ctx.$root.firstChild)
+    }
   }
 
   /** Add an event listener */

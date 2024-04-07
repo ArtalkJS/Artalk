@@ -189,7 +189,7 @@ img_upload:
     # 启用 Upgit
     enabled: false
     # 命令行参数
-    exec: "./upgit -c <upgit配置文件路径> -t /artalk-img"
+    exec: "upgit -c <upgit配置文件路径> -t /artalk-img"
     # 上传后删除本地的图片
     del_local: true
 

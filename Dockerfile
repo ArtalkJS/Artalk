@@ -22,7 +22,7 @@ ARG SKIP_UI_BUILD=false
 RUN set -ex \
     && if [ "$SKIP_UI_BUILD" = "false" ]; then \
         apk add --no-cache nodejs npm \
-        && npm install -g pnpm@8.12.1 \
+        && npm install -g pnpm@8.15.6 \
     ;fi
 
 RUN set -ex \

@@ -2,8 +2,6 @@ package comments_get
 
 import (
 	"slices"
-
-	"gorm.io/gorm"
 )
 
 type PageScopeOpts struct {
@@ -23,8 +21,8 @@ const (
 )
 
 // Page Scope
-func PageScopeQuery(payload PageScopePayload, opts PageScopeOpts) func(*gorm.DB) *gorm.DB {
-	return func(d *gorm.DB) *gorm.DB {
+func PageScopeQuery(payload PageScopePayload, opts PageScopeOpts) func(liteDB) liteDB {
+	return func(d liteDB) liteDB {
 		if payload.SiteName == "" || payload.PageKey == "" {
 			return d.Where("1 = 0")
 		}
@@ -43,20 +41,20 @@ func PageScopeQuery(payload PageScopePayload, opts PageScopeOpts) func(*gorm.DB)
 	}
 }
 
-func CommentsWithinSite(siteName string) func(*gorm.DB) *gorm.DB {
-	return func(d *gorm.DB) *gorm.DB {
+func CommentsWithinSite(siteName string) func(liteDB) liteDB {
+	return func(d liteDB) liteDB {
 		return d.Where("site_name = ?", siteName)
 	}
 }
 
-func CommentsWithinPage(pageKey string) func(*gorm.DB) *gorm.DB {
-	return func(d *gorm.DB) *gorm.DB {
+func CommentsWithinPage(pageKey string) func(liteDB) liteDB {
+	return func(d liteDB) liteDB {
 		return d.Where("page_key = ?", pageKey)
 	}
 }
 
-func CommentsWithinSomeUsers(allAdminIDs []uint) func(*gorm.DB) *gorm.DB {
-	return func(d *gorm.DB) *gorm.DB {
+func CommentsWithinSomeUsers(allAdminIDs []uint) func(liteDB) liteDB {
+	return func(d liteDB) liteDB {
 		return d.Where("user_id IN ?", allAdminIDs)
 	}
 }

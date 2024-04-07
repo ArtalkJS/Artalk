@@ -75,6 +75,18 @@
   created_at: 2022-04-29 14:46:43
   updated_at: 2022-04-29 14:46:43
 
+- id: 1007
+  rid: 1006
+  content: "测试在站点 2 的『待审评论』"
+  page_key: /site_b/1001.html
+  site_name: Site B
+  user_id: 1002
+  ua: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36
+  ip: 10.90.2.102
+  created_at: 2024-03-29 16:48:15
+  updated_at: 2022-03-29 16:48:15
+  is_pending: true
+
 # ---------- 分页测试 ----------
 # str = ""
 # for (let i = 10; i <= 60; i++) {

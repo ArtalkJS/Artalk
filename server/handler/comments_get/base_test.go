@@ -113,6 +113,23 @@ func TestGetQueryScopes(t *testing.T) {
 				}))
 			},
 		},
+		{
+			name: "Hide pending comments if empty user",
+			opts: QueryOptions{
+				User:  entity.User{},
+				Scope: ScopePage,
+				PagePayload: PageScopePayload{
+					SiteName: "Site B",
+					PageKey:  "/site_b/1001.html",
+				},
+			},
+			want: func(comments []entity.Comment) {
+				assert.Greater(t, len(comments), 0)
+				assert.Equal(t, 0, lo.CountBy(comments, func(c entity.Comment) bool {
+					return c.IsPending
+				}))
+			},
+		},
 	}
 
 	for _, tt := range tests {

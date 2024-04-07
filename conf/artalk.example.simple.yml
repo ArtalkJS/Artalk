@@ -83,7 +83,7 @@ img_upload:
   public_path: null
   upgit:
     enabled: false
-    exec: "./upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
+    exec: "upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
     del_local: true
 email:
   enabled: false

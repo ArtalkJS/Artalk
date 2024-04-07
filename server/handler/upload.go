@@ -199,22 +199,21 @@ func Upload(app *core.App, router fiber.Router) {
 	}))
 }
 
-// 调用 upgit 上传图片获得 URL
+// Call UpGit to upload images
 func execUpgitUpload(execCommand string, filename string) string {
 	LogTag := "[IMG_UPLOAD] [upgit] "
 
-	// 处理参数
+	// Separate the command and arguments
 	cmdStrSplitted := strings.Split(execCommand, " ")
-	execApp := cmdStrSplitted[0]
-	execArgs := []string{}
-	for i, arg := range cmdStrSplitted {
-		if i > 0 {
-			execArgs = append(execArgs, arg)
-		}
-	}
+
+	// For security reasons, Artalk no longer allows you to specify the executable file path of UpGit.
+	// execApp := cmdStrSplitted[0]
+	execApp := "upgit"
+
+	execArgs := cmdStrSplitted[1:]
 	execArgs = append(execArgs, filename)
 
-	// 执行命令
+	// Execute the command
 	cmd := exec.Command(execApp, execArgs...)
 	stdout, _ := cmd.StdoutPipe()
 

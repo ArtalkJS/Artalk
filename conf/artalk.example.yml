@@ -181,7 +181,7 @@ img_upload:
     # Enable Upgit
     enabled: false
     # Command line arguments
-    exec: "./upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
+    exec: "upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
     # Delete local image after upload success
     del_local: true
 

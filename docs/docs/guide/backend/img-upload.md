@@ -1,6 +1,6 @@
 # 图片上传
 
-Artalk 提供图片上传功能，支持限制图片大小、上传频率等，你还能结合 upgit 将图片上传到图床。
+Artalk 提供图片上传功能，支持限制图片大小、上传频率等，你还能结合 UpGit 将图片上传到图床。
 
 你可以在[控制中心](/guide/frontend/sidebar.md#控制中心)找到「设置」界面修改此配置。
 
@@ -18,23 +18,43 @@ img_upload:
   # 使用 upgit 将图片上传到 GitHub 或图床
   upgit:
     enabled: false  # 启用 upgit
-    exec: "./upgit -c <upgit配置文件路径> -t /artalk-img"
+    exec: "upgit -c <upgit配置文件路径> -t /artalk-img"
     del_local: true # 上传后删除本地的图片
 ```
 
 ## 使用 Upgit 上传到图床
 
-[Upgit](https://github.com/pluveto/upgit) 支持将图片上传到 Github、Gitee、腾讯云 COS、七牛云、又拍云、SM.MS 等图床或代码仓库。
+[UpGit](https://github.com/pluveto/upgit) 支持将图片上传到 Github、Gitee、腾讯云 COS、七牛云、又拍云、SM.MS 等图床或代码仓库。
 
-首先，根据 [README.md](https://github.com/pluveto/upgit) 的说明，下载 Upgit 并完成你需要上传的目标图床的配置。
+首先，根据 [README.md](https://github.com/pluveto/upgit) 的说明，下载 UpGit 并完成你需要上传的目标图床的配置。
 
-然后在 Artalk 的 `img_upload.upgit` 字段填入 Upgit 启动参数 (建议使用程序绝对路径)，例如：
+然后，将 UpGit 加入系统的环境变量中，在 `~/.bashrc` 加入：
+
+```bash
+export PATH=$PATH:/path/to/upgit
+```
+
+（或者直接移入 `/usr/bin`）
+
+最后，在 Artalk 的 `img_upload.upgit` 字段填入 UpGit 启动参数：
 
 ```yaml
   upgit:
     enabled: true  # 启用 upgit
-    exec: "/root/upgit -c <upgit配置文件路径> -t /artalk-img"
+    exec: "upgit -c <upgit配置文件路径> -t /artalk-img"
     del_local: true # 上传后删除本地的图片
+```
+
+::: warning 更新注意
+从 `v2.8.4` 版本开始，为了增强安全性，Artalk 不再允许指定 UpGit 的可执行文件路径，请将其加入系统的环境变量中。:)
+:::
+
+### Docker 挂载 UpGit
+
+如果你使用 Docker 部署 Artalk，可以将 UpGit 可执行文件挂载到容器中：
+
+```bash
+docker run -d --name artalk -v /path/to/upgit:/usr/bin/upgit -v /path/to/artalk:/app/data -p 8080:23366 artalk
 ```
 
 ## 上传频率限制

@@ -17,10 +17,10 @@
   "devDependencies": {
     "artalk": "workspace:^",
     "markdown-it-for-inline": "^2.0.1",
-    "sass": "^1.70.0",
-    "vitepress": "1.0.0-rc.40"
+    "sass": "^1.74.1",
+    "vitepress": "1.0.2"
   },
   "dependencies": {
-    "vue": "^3.4.15"
+    "vue": "^3.4.21"
   }
 }

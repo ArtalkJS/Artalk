@@ -31,8 +31,11 @@ export default class Artalk {
       obj && this.ctx.inject(name as keyof TInjectedServices, obj) // auto inject deps to ctx
     })
 
-    if (import.meta.env.DEV && import.meta.env.VITEST) global.devLoadArtalk = () => load(this.ctx)
-    else load(this.ctx)
+    if (import.meta.env.DEV && import.meta.env.VITEST) {
+      global.devLoadArtalk = () => load(this.ctx)
+    } else {
+      load(this.ctx)
+    }
   }
 
   /** Get the config of Artalk */

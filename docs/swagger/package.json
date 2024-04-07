@@ -15,6 +15,6 @@
     "swagger:build-http-client": "npx swagger-typescript-api -n v2 -p ./swagger.json -o ../../ui/artalk/src/api --responses --sort-types"
   },
   "devDependencies": {
-    "@redocly/cli": "1.8.1"
+    "@redocly/cli": "1.11.0"
   }
 }

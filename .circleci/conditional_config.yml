@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   node: circleci/node@5.2.0
-  codecov: codecov/codecov@4.0.1
+  codecov: codecov/codecov@3.3.0
 
 executors:
   base:

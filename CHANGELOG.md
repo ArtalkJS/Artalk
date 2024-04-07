@@ -1,4 +1,35 @@
 
+## [v2.8.4](https://github.com/ArtalkJS/Artalk/compare/v2.8.3...v2.8.4) (2024-04-07)
+
+### Features
+
+* **ci/build:** add nightly build workflow
+* **go:** upgrade golang to v1.22.1 and some deps
+
+### Bug Fixes
+
+* **cmd/gen:** ensure directory before saving in `gen` cmd ([#612](https://github.com/ArtalkJS/Artalk/issues/612))
+* **ui/lifecycle:** keep root element during destroy ([#810](https://github.com/ArtalkJS/Artalk/issues/810))
+
+### Performance Improvements
+
+* **conf/upgit:** disallow custom executable path of `upgit` for security ([#817](https://github.com/ArtalkJS/Artalk/issues/817))
+* **db:** optimize N+1 query in comment list ([#799](https://github.com/ArtalkJS/Artalk/issues/799))
+
+### Code Refactoring
+
+* **comments_get:** reduce api complexity by introducing `LiteDB` ([#800](https://github.com/ArtalkJS/Artalk/issues/800))
+
+### Documentation
+
+* **i18n:** add French translation ([#797](https://github.com/ArtalkJS/Artalk/issues/797))
+
+### BREAKING CHANGE
+
+
+For UpGit users: Due to security reasons, Artalk no longer allows configuring the executable file path (img_upload.upgit.exec) for upgit. Please add it to system environment variables instead.
+
+
 ## [v2.8.3](https://github.com/ArtalkJS/Artalk/compare/v2.8.2...v2.8.3) (2024-03-04)
 
 ### Features

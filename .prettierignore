@@ -1,4 +1,9 @@
 CHANGELOG.md
 CHANGELOG.tpl.md
-pnpm-lock.yaml
 CDN.html
+internal/template/notify_tpl/default.html
+
+# generated files
+docs/swagger/swagger.json
+docs/swagger/swagger.yaml
+pnpm-lock.yaml

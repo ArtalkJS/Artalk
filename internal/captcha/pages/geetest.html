@@ -1,58 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Geetest</title>
-  <script src="//static.geetest.com/v4/gt4.js"></script>
-  <style>
-    body, html { margin: 0;padding: 0; }
-    body { display: flex;justify-content: center;height: 100vh;align-items: center; }
-  </style>
-</head>
-<body>
-  <div id="captcha"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Geetest</title>
+    <script src="//static.geetest.com/v4/gt4.js"></script>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="captcha"></div>
 
-  <script>
-  // var params = new URLSearchParams(document.location.search)
-  // var captchaId = params.get('captcha_id')
+    <script>
+      const captchaId = '{{.gt_id}}' // gt_id
 
-  var captchaId = "{{.gt_id}}" // gt_id
+      /**
+       * @link https://docs.geetest.com/gt4/apirefer/api/web
+       */
+      initGeetest4({ captchaId, product: 'popup' }, (gt) => {
+        window.gt = gt
 
-  // @link https://docs.geetest.com/gt4/apirefer/api/web
-  initGeetest4({
-    captchaId: captchaId,
-    product: "popup",
-  }, function (gt) {
-    window.gt = gt
+        gt.appendTo('#captcha').onSuccess((e) => {
+          var result = gt.getValidate()
 
-    gt.appendTo("#captcha").onSuccess(function (e) {
-      var result = gt.getValidate();
-      console.log("[极验验证结果] ", result)
-      fetch("./verify", {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ value: JSON.stringify(result) }),
-      })
-      .then(function (res) {
-        if (!res.ok) {
-          res.json().then(json => {
-            alert("验证失败：" + res.status + " " + json.msg || '')
+          console.log('[极验验证结果]:', result)
+
+          fetch('./verify', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ value: JSON.stringify(result) }),
           })
-        }
-      })
-      .catch(function (err) {
-          console.error(err)
-          alert("后端 API 请求失败：" + err)
-      });
-    });
+            .then((res) => {
+              if (!res.ok)
+                res.json().then((json) => {
+                  alert('验证失败：' + res.status + ' ' + json.msg || '')
+                })
+            })
+            .catch((err) => {
+              console.error(err)
+              alert('后端 API 请求失败：' + err.message || '')
+            })
+        })
 
-    gt.showCaptcha();
-  })
-  </script>
-</body>
+        gt.showCaptcha()
+      })
+    </script>
+  </body>
 </html>

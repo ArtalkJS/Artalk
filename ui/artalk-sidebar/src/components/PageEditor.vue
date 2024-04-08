@@ -33,12 +33,10 @@ async function editAdminOnly() {
   let p: ArtalkType.PageData
   try {
     p = (
-      await artalk!.ctx
-        .getApi()
-        .pages.updatePage(page.value.id, {
-          ...page.value,
-          admin_only: !page.value.admin_only,
-        })
+      await artalk!.ctx.getApi().pages.updatePage(page.value.id, {
+        ...page.value,
+        admin_only: !page.value.admin_only,
+      })
     ).data
   } catch (err: any) {
     alert(`修改失败：${err.message || '未知错误'}`)
@@ -97,12 +95,10 @@ async function onFieldEditorYes(val: string) {
     let p: ArtalkType.PageData
     try {
       p = (
-        await artalk!.ctx
-          .getApi()
-          .pages.updatePage(page.value.id, {
-            ...page.value,
-            [editFieldKey.value as any]: val,
-          })
+        await artalk!.ctx.getApi().pages.updatePage(page.value.id, {
+          ...page.value,
+          [editFieldKey.value as any]: val,
+        })
       ).data
     } catch (err: any) {
       alert(`修改失败：${err.message || '未知错误'}`)

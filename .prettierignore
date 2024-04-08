@@ -7,3 +7,4 @@ internal/template/notify_tpl/default.html
 docs/swagger/swagger.json
 docs/swagger/swagger.yaml
 pnpm-lock.yaml
+ui/artalk/src/api/v2.ts

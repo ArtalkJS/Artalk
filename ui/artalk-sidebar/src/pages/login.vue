@@ -70,6 +70,11 @@ function login(username?: string) {
       }
     })
 }
+
+function selectUser(username: string) {
+  userSelector.value = null
+  login(username)
+}
 </script>
 
 <template>
@@ -112,10 +117,7 @@ function login(username?: string) {
             v-for="(u, i) in userSelector"
             :key="i"
             class="item"
-            @click="
-              userSelector = null
-              login(u)
-            "
+            @click="selectUser(u)"
           >
             {{ u }}
           </div>

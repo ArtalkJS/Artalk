@@ -8,3 +8,5 @@ docs/swagger/swagger.json
 docs/swagger/swagger.yaml
 pnpm-lock.yaml
 ui/artalk/src/api/v2.ts
+ui/artalk-sidebar/auto-imports.d.ts
+ui/artalk-sidebar/components.d.ts

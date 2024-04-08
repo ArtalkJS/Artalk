@@ -13,10 +13,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "vitepress": "1.0.0-rc.32"
+    "vitepress": "1.0.2"
   },
   "dependencies": {
     "artalk": "link:ui/artalk",
-    "vue": "^3.3.12"
+    "vue": "^3.4.21"
   }
 }

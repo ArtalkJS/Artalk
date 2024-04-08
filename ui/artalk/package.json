@@ -29,6 +29,39 @@
         "default": "./dist/Artalk.cjs"
       }
     },
+    "./ArtalkLite": {
+      "import": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/ArtalkLite.mjs"
+      },
+      "require": {
+        "types": "./dist/main.d.cts",
+        "default": "./dist/ArtalkLite.cjs"
+      }
+    },
+    "./i18n/jp": {
+      "import": {
+        "types": "./dist/i18n/jp.d.ts",
+        "default": "./dist/i18n/jp.mjs"
+      },
+      "require": {
+        "types": "./dist/i18n/jp.d.cts",
+        "default": "./dist/i18n/jp.cjs"
+      }
+    },
+    "./i18n/zh-TW": {
+      "import": {
+        "types": "./dist/i18n/zh-TW.d.ts",
+        "default": "./dist/i18n/zh-TW.mjs"
+      },
+      "require": {
+        "types": "./dist/i18n/zh-TW.d.cts",
+        "default": "./dist/i18n/zh-TW.cjs"
+      }
+    },
+    "./i18n/*": "./dist/i18n/*",
+    "./Artalk.css": "./dist/Artalk.css",
+    "./ArtalkLite.css": "./dist/ArtalkLite.css",
     "./dist/ArtalkLite": {
       "import": {
         "types": "./dist/main.d.ts",
@@ -60,10 +93,6 @@
       }
     },
     "./dist/i18n/*": "./dist/i18n/*",
-    "./dist/*.css": {
-      "import": "./dist/*.css",
-      "require": "./dist/*.css"
-    },
     "./dist/*": "./dist/*"
   },
   "typesVersions": {

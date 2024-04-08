@@ -3,7 +3,7 @@
   "bracketSpacing": true,
   "htmlWhitespaceSensitivity": "css",
   "insertPragma": false,
-  "jsxBracketSameLine": false,
+  "bracketSameLine": false,
   "jsxSingleQuote": false,
   "printWidth": 100,
   "proseWrap": "preserve",
@@ -14,5 +14,13 @@
   "tabWidth": 2,
   "trailingComma": "all",
   "useTabs": false,
-  "vueIndentScriptAndStyle": false
+  "vueIndentScriptAndStyle": false,
+  "overrides": [
+    {
+      "files": ["*.yaml", "*.yml"],
+      "options": {
+        "singleQuote": false
+      }
+    }
+  ]
 }

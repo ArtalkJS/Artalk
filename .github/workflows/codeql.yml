@@ -20,7 +20,7 @@ on:
     branches:
       - master
   schedule:
-    - cron: '40 17 * * 4'
+    - cron: "40 17 * * 4"
 
 jobs:
   analyze:
@@ -74,4 +74,4 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: '/language:${{matrix.language}}'
+          category: "/language:${{matrix.language}}"

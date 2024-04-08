@@ -33,7 +33,7 @@ builds:
     env:
       - CC=x86_64-linux-gnu-gcc
       - CXX=x86_64-linux-gnu-g++
-    binary: '{{.ProjectName}}'
+    binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: &common_ldflags |
       -X github.com/ArtalkJS/Artalk/internal/config.Version={{.Version}}
@@ -49,7 +49,7 @@ builds:
     env:
       - CC=aarch64-linux-gnu-gcc
       - CXX=aarch64-linux-gnu-g++
-    binary: '{{.ProjectName}}'
+    binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
 
@@ -60,11 +60,11 @@ builds:
     goarch:
       - arm
     goarm:
-      - '7'
+      - "7"
     env:
       - CC=arm-linux-gnueabihf-gcc
       - CXX=arm-linux-gnueabihf-g++
-    binary: '{{.ProjectName}}'
+    binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
 
@@ -81,7 +81,7 @@ builds:
     env:
       - CC=o64-clang
       - CXX=o64-clang++
-    binary: '{{.ProjectName}}'
+    binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
 
@@ -94,7 +94,7 @@ builds:
     env:
       - CC=oa64-clang
       - CXX=oa64-clang++
-    binary: '{{.ProjectName}}'
+    binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
 
@@ -111,7 +111,7 @@ builds:
     env:
       - CC=x86_64-w64-mingw32-gcc
       - CXX=x86_64-w64-mingw32-g++
-    binary: '{{.ProjectName}}'
+    binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
     flags:
@@ -129,7 +129,7 @@ builds:
     env:
       - CC=/llvm-mingw/bin/aarch64-w64-mingw32-gcc
       - CXX=/llvm-mingw/bin/aarch64-w64-mingw32-g++
-    binary: '{{.ProjectName}}'
+    binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
     flags: *win_common_flags
@@ -144,7 +144,7 @@ archives:
       - linux-arm7
       - linux-arm64
       - darwin-arm64
-    name_template: '{{.ProjectName}}_v{{.Version}}_{{.Os}}_{{.Arch}}{{.Arm}}'
+    name_template: "{{.ProjectName}}_v{{.Version}}_{{.Os}}_{{.Arch}}{{.Arm}}"
     format: tar.gz
     format_overrides:
       - goos: windows
@@ -156,10 +156,10 @@ archives:
       - artalk.yml
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 
 snapshot:
-  name_template: '{{.Version}}-SNAPSHOT-{{.ShortCommit}}'
+  name_template: "{{.Version}}-SNAPSHOT-{{.ShortCommit}}"
 
 # changelog:
 #   sort: asc

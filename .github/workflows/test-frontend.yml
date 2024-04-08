@@ -2,12 +2,12 @@ name: Test Frontend
 
 on:
   push:
-    branches: ['*', '!release/*', '!nightly']
-    paths: ['ui/**']
-    tags-ignore: ['v*']
+    branches: ["*", "!release/*", "!nightly"]
+    paths: ["ui/**"]
+    tags-ignore: ["v*"]
   pull_request:
-    paths: ['ui/**']
-    branches: ['*', '!release/*', '!nightly']
+    paths: ["ui/**"]
+    branches: ["*", "!release/*", "!nightly"]
 
 jobs:
   test_ui:
@@ -42,5 +42,5 @@ jobs:
         run: pnpm test
 
       # https://github.com/arethetypeswrong/arethetypeswrong.github.io
-      - name: 'arethetypeswrong test'
+      - name: "arethetypeswrong test"
         run: pnpm -F artalk attw || true

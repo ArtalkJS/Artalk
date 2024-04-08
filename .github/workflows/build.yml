@@ -9,13 +9,13 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run'
+        description: "Dry run"
         type: boolean
         default: true
       build_items:
-        description: 'Build items'
+        description: "Build items"
         type: string
-        default: 'ui,app,docker'
+        default: "ui,app,docker"
 
 jobs:
   # Tag the release version code before building

@@ -20,87 +20,80 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/Artalk.mjs"
-      },
       "require": {
         "types": "./dist/main.d.cts",
         "default": "./dist/Artalk.cjs"
+      },
+      "default": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/Artalk.mjs"
       }
     },
     "./ArtalkLite": {
-      "import": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/ArtalkLite.mjs"
-      },
       "require": {
         "types": "./dist/main.d.cts",
         "default": "./dist/ArtalkLite.cjs"
+      },
+      "default": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/ArtalkLite.mjs"
       }
     },
     "./i18n/jp": {
-      "import": {
-        "types": "./dist/i18n/jp.d.ts",
-        "default": "./dist/i18n/jp.mjs"
-      },
       "require": {
         "types": "./dist/i18n/jp.d.cts",
         "default": "./dist/i18n/jp.cjs"
+      },
+      "default": {
+        "types": "./dist/i18n/jp.d.ts",
+        "default": "./dist/i18n/jp.mjs"
       }
     },
     "./i18n/zh-TW": {
-      "import": {
-        "types": "./dist/i18n/zh-TW.d.ts",
-        "default": "./dist/i18n/zh-TW.mjs"
-      },
       "require": {
         "types": "./dist/i18n/zh-TW.d.cts",
         "default": "./dist/i18n/zh-TW.cjs"
+      },
+      "default": {
+        "types": "./dist/i18n/zh-TW.d.ts",
+        "default": "./dist/i18n/zh-TW.mjs"
       }
     },
     "./i18n/*": "./dist/i18n/*",
     "./Artalk.css": "./dist/Artalk.css",
     "./ArtalkLite.css": "./dist/ArtalkLite.css",
     "./dist/ArtalkLite": {
-      "import": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/ArtalkLite.mjs"
-      },
       "require": {
         "types": "./dist/main.d.cts",
         "default": "./dist/ArtalkLite.cjs"
+      },
+      "default": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/ArtalkLite.mjs"
       }
     },
     "./dist/i18n/jp": {
-      "import": {
-        "types": "./dist/i18n/jp.d.ts",
-        "default": "./dist/i18n/jp.mjs"
-      },
       "require": {
         "types": "./dist/i18n/jp.d.cts",
         "default": "./dist/i18n/jp.cjs"
+      },
+      "default": {
+        "types": "./dist/i18n/jp.d.ts",
+        "default": "./dist/i18n/jp.mjs"
       }
     },
     "./dist/i18n/zh-TW": {
-      "import": {
-        "types": "./dist/i18n/zh-TW.d.ts",
-        "default": "./dist/i18n/zh-TW.mjs"
-      },
       "require": {
         "types": "./dist/i18n/zh-TW.d.cts",
         "default": "./dist/i18n/zh-TW.cjs"
+      },
+      "default": {
+        "types": "./dist/i18n/zh-TW.d.ts",
+        "default": "./dist/i18n/zh-TW.mjs"
       }
     },
     "./dist/i18n/*": "./dist/i18n/*",
     "./dist/*": "./dist/*"
-  },
-  "typesVersions": {
-    "*": {
-      "dist/ArtalkLite": [
-        "./dist/main.d.ts"
-      ]
-    }
   },
   "main": "./dist/Artalk.js",
   "module": "./dist/Artalk.mjs",

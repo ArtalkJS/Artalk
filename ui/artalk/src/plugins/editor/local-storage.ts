@@ -31,6 +31,9 @@ export default class LocalStorage extends EditorPlug {
 
   // Save editor content to localStorage
   public save() {
-    window.localStorage.setItem(LocalStorageKey, this.kit.useEditor().getContentRaw().trim())
+    window.localStorage.setItem(
+      LocalStorageKey,
+      this.kit.useEditor().getContentRaw().trim(),
+    )
   }
 }

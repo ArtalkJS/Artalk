@@ -8,6 +8,8 @@ import type Render from '../render'
 export default function renderPending(r: Render) {
   if (!r.data.is_pending) return
 
-  const pendingEl = Utils.createElement(`<div class="atk-pending">${$t('pendingMsg')}</div>`)
+  const pendingEl = Utils.createElement(
+    `<div class="atk-pending">${$t('pendingMsg')}</div>`,
+  )
   r.$body.prepend(pendingEl)
 }

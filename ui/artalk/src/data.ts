@@ -1,4 +1,12 @@
-import type { NotifyData, PageData, CommentData, DataManagerApi, ListFetchParams, ListLastFetchData, EventPayloadMap } from '@/types'
+import type {
+  NotifyData,
+  PageData,
+  CommentData,
+  DataManagerApi,
+  ListFetchParams,
+  ListLastFetchData,
+  EventPayloadMap,
+} from '@/types'
 import EventManager from './lib/event-manager'
 
 export class DataManager implements DataManagerApi {
@@ -8,9 +16,7 @@ export class DataManager implements DataManagerApi {
   private notifies: NotifyData[] = []
   private page?: PageData
 
-  constructor(
-    protected events: EventManager<EventPayloadMap>
-  ) {}
+  constructor(protected events: EventManager<EventPayloadMap>) {}
 
   getLoading() {
     return this.loading
@@ -40,7 +46,7 @@ export class DataManager implements DataManagerApi {
   }
 
   findComment(id: number) {
-    return this.comments.find(c => c.id === id)
+    return this.comments.find((c) => c.id === id)
   }
 
   clearComments() {
@@ -64,7 +70,7 @@ export class DataManager implements DataManagerApi {
   }
 
   updateComment(comment: CommentData) {
-    this.comments = this.comments.map(c => {
+    this.comments = this.comments.map((c) => {
       if (c.id === comment.id) return comment
       return c
     })
@@ -74,9 +80,9 @@ export class DataManager implements DataManagerApi {
   }
 
   deleteComment(id: number) {
-    const comment = this.comments.find(c => c.id === id)
+    const comment = this.comments.find((c) => c.id === id)
     if (!comment) throw new Error(`Comment ${id} not found`)
-    this.comments = this.comments.filter(c => c.id !== id)
+    this.comments = this.comments.filter((c) => c.id !== id)
 
     this.events.trigger('comment-deleted', comment)
     this.events.trigger('list-loaded', this.comments)

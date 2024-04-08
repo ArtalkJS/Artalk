@@ -1,11 +1,10 @@
-
 import type { Checker } from '.'
 import * as render from './captcha-renders'
 
 const CaptchaChecker: Checker<{}> = {
   request(checker, inputVal) {
     return checker.getApi().captcha.verifyCaptcha({
-      value: inputVal
+      value: inputVal,
     })
   },
 
@@ -21,8 +20,7 @@ const CaptchaChecker: Checker<{}> = {
   onError(checker, err, inputVal, formEl) {
     formEl.querySelector<HTMLElement>('.atk-captcha-img')!.click() // 刷新验证码
     formEl.querySelector<HTMLInputElement>('input[type="text"]')!.value = '' // 清空输入框输入
-  }
+  },
 }
 
 export default CaptchaChecker
-

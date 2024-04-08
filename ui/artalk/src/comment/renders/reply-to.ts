@@ -19,12 +19,15 @@ export default function renderReplyTo(r: Render) {
   // Comment author name
   const $nick = r.$replyTo.querySelector<HTMLElement>('.atk-nick')!
   $nick.innerText = `@${r.opts.replyTo.nick}`
-  $nick.onclick = () => { r.comment.getActions().goToReplyComment() }
+  $nick.onclick = () => {
+    r.comment.getActions().goToReplyComment()
+  }
 
   // Comment content
   let replyContent = marked(r.opts.replyTo.content)
   if (r.opts.replyTo.is_collapsed) replyContent = `[${$t('collapsed')}]`
-  r.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
+  r.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML =
+    replyContent
 
   // Mount the replyTo element
   r.$body.prepend(r.$replyTo)

@@ -14,10 +14,7 @@ interface EditorPlug {
 }
 
 class EditorPlug {
-  constructor(
-    protected kit: PlugKit
-  ) {
-  }
+  constructor(protected kit: PlugKit) {}
 
   /** Use plug btn will add a btn on the bottom of editor */
   useBtn(html: string = '<div></div>') {
@@ -51,7 +48,10 @@ class EditorPlug {
   }
 
   /** Use editor state modifier */
-  useEditorStateEffect(stateName: EditorState, effectFn: (comment: CommentData) => () => void) {
+  useEditorStateEffect(
+    stateName: EditorState,
+    effectFn: (comment: CommentData) => () => void,
+  ) {
     this.editorStateEffectWhen = stateName
     this.editorStateEffect = effectFn
   }

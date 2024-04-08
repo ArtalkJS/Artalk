@@ -4,14 +4,14 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import checker from 'vite-plugin-checker'
 import dts from 'vite-plugin-dts'
-import { copyFileSync } from "node:fs"
+import { copyFileSync } from 'node:fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export function getFileName(name: string, format: string) {
-  if (format == "umd") return `${name}.js`
-  else if (format == "cjs") return `${name}.cjs`
-  else if (format == "es") return `${name}.mjs`
+  if (format == 'umd') return `${name}.js`
+  else if (format == 'cjs') return `${name}.cjs`
+  else if (format == 'es') return `${name}.mjs`
   return `${name}.${format}.js`
 }
 
@@ -21,41 +21,45 @@ export default defineConfig({
   root: __dirname,
   build: {
     target: 'es2015',
-    outDir: resolve(__dirname, "dist"),
+    outDir: resolve(__dirname, 'dist'),
     minify: 'terser',
     sourcemap: true,
-    emptyOutDir: name === 'Artalk',  // wait for https://github.com/qmhc/vite-plugin-dts/pull/291
+    emptyOutDir: name === 'Artalk', // wait for https://github.com/qmhc/vite-plugin-dts/pull/291
     lib: {
       name: 'Artalk',
       fileName: (format: string) => getFileName(name, format),
       entry: resolve(__dirname, 'src/main.ts'),
-      formats: ["es", "umd", "cjs", "iife"]
+      formats: ['es', 'umd', 'cjs', 'iife'],
     },
     rollupOptions: {
-      external: (name === 'ArtalkLite') ? ['marked'] : [],
+      external: name === 'ArtalkLite' ? ['marked'] : [],
       output: {
-        globals: (name === 'ArtalkLite') ? {
-          marked: 'marked',
-        } : {},
-        assetFileNames: (assetInfo) => (/\.css$/.test(assetInfo.name || '') ? `${name}.css` : "[name].[ext]"),
+        globals:
+          name === 'ArtalkLite'
+            ? {
+                marked: 'marked',
+              }
+            : {},
+        assetFileNames: (assetInfo) =>
+          /\.css$/.test(assetInfo.name || '') ? `${name}.css` : '[name].[ext]',
         // @see https://github.com/rollup/rollup/issues/587
         //  and https://github.com/rollup/rollup/pull/631/files
         exports: 'named',
-      }
-    }
+      },
+    },
   },
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "./src/style/_variables.scss";@import "./src/style/_extend.scss";`
-     },
+        additionalData: `@import "./src/style/_variables.scss";@import "./src/style/_extend.scss";`,
+      },
     },
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
       '~': resolve(__dirname),
-    }
+    },
   },
   define: {
     ARTALK_LITE: false,
@@ -69,15 +73,17 @@ export default defineConfig({
       },
     }),
     // @see https://github.com/qmhc/vite-plugin-dts
-    (name === 'Artalk') ? dts({
-      include: ['src'],
-      exclude: ['src/**/*.{spec,test}.ts', 'dist'],
-      rollupTypes: true,
-      afterBuild: () => {
-        // @see https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/main/packages/cli
-        // @fix https://github.com/arethetypeswrong/arethetypeswrong.github.io/blob/main/docs/problems/FalseESM.md#consequences
-        copyFileSync("dist/main.d.ts", "dist/main.d.cts")
-      },
-    }) : null,
+    name === 'Artalk'
+      ? dts({
+          include: ['src'],
+          exclude: ['src/**/*.{spec,test}.ts', 'dist'],
+          rollupTypes: true,
+          afterBuild: () => {
+            // @see https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/main/packages/cli
+            // @fix https://github.com/arethetypeswrong/arethetypeswrong.github.io/blob/main/docs/problems/FalseESM.md#consequences
+            copyFileSync('dist/main.d.ts', 'dist/main.d.cts')
+          },
+        })
+      : null,
   ],
 })

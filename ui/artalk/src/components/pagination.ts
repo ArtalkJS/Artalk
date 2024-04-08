@@ -44,7 +44,8 @@ export default class Pagination {
             <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="14px" width="14px" xmlns="http://www.w3.org/2000/svg"><path d="M294.1 256L167 129c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.3 34 0L345 239c9.1 9.1 9.3 23.7.7 33.1L201.1 417c-4.7 4.7-10.9 7-17 7s-12.3-2.3-17-7c-9.4-9.4-9.4-24.6 0-33.9l127-127.1z"></path></svg>
           </div>
         </div>
-      </div>`)
+      </div>`,
+    )
     this.$input = this.$el.querySelector('.atk-input')!
     this.$input.value = `${this.page}`
 
@@ -78,11 +79,23 @@ export default class Pagination {
     const value = this.$input.value.trim()
 
     const modify = () => {
-      if (value === '') { this.setInput(this.page);return }
+      if (value === '') {
+        this.setInput(this.page)
+        return
+      }
       let page = Number(value)
-      if (Number.isNaN(page)) { this.setInput(this.page);return }
-      if (page < 1) { this.setInput(this.page);return }
-      if (page > this.maxPage) { this.setInput(this.maxPage);page = this.maxPage }
+      if (Number.isNaN(page)) {
+        this.setInput(this.page)
+        return
+      }
+      if (page < 1) {
+        this.setInput(this.page)
+        return
+      }
+      if (page > this.maxPage) {
+        this.setInput(this.maxPage)
+        page = this.maxPage
+      }
       this.change(page)
     }
 
@@ -93,13 +106,17 @@ export default class Pagination {
 
   public prev() {
     const page = this.page - 1
-    if (page < 1) { return }
+    if (page < 1) {
+      return
+    }
     this.change(page)
   }
 
   public next() {
     const page = this.page + 1
-    if (page > this.maxPage) { return }
+    if (page > this.maxPage) {
+      return
+    }
     this.change(page)
   }
 
@@ -134,13 +151,17 @@ export default class Pagination {
     if (keyCode === 38) {
       // 上键
       const page = Number(this.$input.value) + 1
-      if (page > this.maxPage) { return }
-      this.setInput(page);
+      if (page > this.maxPage) {
+        return
+      }
+      this.setInput(page)
       this.input()
     } else if (keyCode === 40) {
       // 下键
       const page = Number(this.$input.value) - 1
-      if (page < 1) { return }
+      if (page < 1) {
+        return
+      }
       this.setInput(page)
       this.input()
     } else if (keyCode === 13) {
@@ -150,7 +171,7 @@ export default class Pagination {
   }
 
   /** 加载 */
-  setLoading (isLoading: boolean) {
+  setLoading(isLoading: boolean) {
     if (isLoading) Ui.showLoading(this.$el)
     else Ui.hideLoading(this.$el)
   }

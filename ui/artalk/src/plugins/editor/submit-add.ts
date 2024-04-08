@@ -6,9 +6,11 @@ export default class SubmitAddPreset {
   constructor(private kit: PlugKit) {}
 
   async reqAdd() {
-    const nComment = (await this.kit.useApi().comments.createComment({
-      ...(await this.getSubmitAddParams())
-    })).data
+    const nComment = (
+      await this.kit.useApi().comments.createComment({
+        ...(await this.getSubmitAddParams()),
+      })
+    ).data
     return nComment
   }
 
@@ -18,7 +20,9 @@ export default class SubmitAddPreset {
 
     return {
       content: this.kit.useEditor().getContentFinal(),
-      name: nick, email, link,
+      name: nick,
+      email,
+      link,
       rid: 0,
       page_key: conf.pageKey,
       page_title: conf.pageTitle,

@@ -1,6 +1,11 @@
 import './style/main.scss'
 
-import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '@/types'
+import type {
+  ArtalkConfig,
+  EventPayloadMap,
+  ArtalkPlugin,
+  ContextApi,
+} from '@/types'
 import type { EventHandler } from './lib/event-manager'
 import Context from './context'
 import { handelCustomConf, convertApiOptions } from './config'
@@ -68,17 +73,26 @@ export default class Artalk {
   }
 
   /** Add an event listener */
-  public on<K extends keyof EventPayloadMap>(name: K, handler: EventHandler<EventPayloadMap[K]>) {
+  public on<K extends keyof EventPayloadMap>(
+    name: K,
+    handler: EventHandler<EventPayloadMap[K]>,
+  ) {
     this.ctx.on(name, handler)
   }
 
   /** Remove an event listener */
-  public off<K extends keyof EventPayloadMap>(name: K, handler: EventHandler<EventPayloadMap[K]>) {
+  public off<K extends keyof EventPayloadMap>(
+    name: K,
+    handler: EventHandler<EventPayloadMap[K]>,
+  ) {
     this.ctx.off(name, handler)
   }
 
   /** Trigger an event */
-  public trigger<K extends keyof EventPayloadMap>(name: K, payload?: EventPayloadMap[K]) {
+  public trigger<K extends keyof EventPayloadMap>(
+    name: K,
+    payload?: EventPayloadMap[K],
+  ) {
     this.ctx.trigger(name, payload)
   }
 
@@ -111,7 +125,7 @@ export default class Artalk {
       siteName: conf.site,
       countEl: conf.countEl,
       pvEl: conf.pvEl,
-      pvAdd: false
+      pvAdd: false,
     })
   }
 
@@ -120,8 +134,12 @@ export default class Artalk {
   // ===========================
 
   /** @deprecated Please use `getEl()` instead */
-  public get $root() { return this.ctx.$root }
+  public get $root() {
+    return this.ctx.$root
+  }
 
   /** @description Please use `getConf()` instead */
-  public get conf() { return this.ctx.getConf() }
+  public get conf() {
+    return this.ctx.getConf()
+  }
 }

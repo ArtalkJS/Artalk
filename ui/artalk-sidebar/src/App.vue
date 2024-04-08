@@ -48,23 +48,26 @@ function syncArtalk(artalk: Artalk) {
   const artalkUser = artalk.ctx.get('user')
   const artalkUserData = artalkUser.getData()
 
-  artalk.ctx.getApi().user.getUserStatus({
-    email: artalkUserData.email,
-    name: artalkUserData.nick
-  }).then(res => {
-    if (res.data.is_admin && !res.data.is_login) {
-      user.logout()
-      nextTick(() => {
-        router.replace('/login')
-      })
-    } else {
-      // 将全部通知标记为已读
-      artalk.ctx.getApi().notifies.markAllNotifyRead({
-        email: artalkUserData.email,
-        name: artalkUserData.nick
-      })
-    }
-  })
+  artalk.ctx
+    .getApi()
+    .user.getUserStatus({
+      email: artalkUserData.email,
+      name: artalkUserData.nick,
+    })
+    .then((res) => {
+      if (res.data.is_admin && !res.data.is_login) {
+        user.logout()
+        nextTick(() => {
+          router.replace('/login')
+        })
+      } else {
+        // 将全部通知标记为已读
+        artalk.ctx.getApi().notifies.markAllNotifyRead({
+          email: artalkUserData.email,
+          name: artalkUserData.nick,
+        })
+      }
+    })
 }
 
 const darkMode = ref(bootParams.darkMode)
@@ -79,7 +82,11 @@ const darkMode = ref(bootParams.darkMode)
 </script>
 
 <template>
-  <div v-if="artalkLoaded" class="app-wrap artalk atk-sidebar" :class="{ 'atk-dark-mode': darkMode }">
+  <div
+    v-if="artalkLoaded"
+    class="app-wrap artalk atk-sidebar"
+    :class="{ 'atk-dark-mode': darkMode }"
+  >
     <Header />
     <Tab />
 

@@ -11,7 +11,8 @@ export default class Textarea extends EditorPlug {
 
     this.kit.useMounted(() => {
       // 占位符
-      this.kit.useUI().$textarea.placeholder = this.kit.useConf().placeholder || $t('placeholder')
+      this.kit.useUI().$textarea.placeholder =
+        this.kit.useConf().placeholder || $t('placeholder')
 
       // bind the event
       this.kit.useUI().$textarea.addEventListener('keydown', onKeydown)
@@ -43,12 +44,16 @@ export default class Textarea extends EditorPlug {
   }
 
   private onInput() {
-    this.kit.useEvents().trigger('content-updated', this.kit.useEditor().getContentRaw())
+    this.kit
+      .useEvents()
+      .trigger('content-updated', this.kit.useEditor().getContentRaw())
   }
 
   // Resize the textarea height by content
   public adaptiveHeightByContent() {
-    const diff = this.kit.useUI().$textarea.offsetHeight - this.kit.useUI().$textarea.clientHeight
+    const diff =
+      this.kit.useUI().$textarea.offsetHeight -
+      this.kit.useUI().$textarea.clientHeight
     this.kit.useUI().$textarea.style.height = '0px' // it's a magic. 若不加此行，内容减少，高度回不去
     this.kit.useUI().$textarea.style.height = `${this.kit.useUI().$textarea.scrollHeight + diff}px`
   }

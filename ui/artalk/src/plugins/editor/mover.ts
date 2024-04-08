@@ -10,7 +10,9 @@ export default class Mover extends EditorPlug {
 
     const editorEl = this.kit.useUI().$el
 
-    editorEl.after(Utils.createElement('<div class="atk-editor-travel-placeholder"></div>'))
+    editorEl.after(
+      Utils.createElement('<div class="atk-editor-travel-placeholder"></div>'),
+    )
 
     const $travelPlace = Utils.createElement('<div></div>')
     afterEl.after($travelPlace)
@@ -23,7 +25,10 @@ export default class Mover extends EditorPlug {
   back() {
     if (!this.isMoved) return
     this.isMoved = false
-    this.kit.useGlobalCtx().$root.querySelector('.atk-editor-travel-placeholder')?.replaceWith(this.kit.useUI().$el)
+    this.kit
+      .useGlobalCtx()
+      .$root.querySelector('.atk-editor-travel-placeholder')
+      ?.replaceWith(this.kit.useUI().$el)
     this.kit.useUI().$el.classList.remove('editor-traveling')
   }
 }

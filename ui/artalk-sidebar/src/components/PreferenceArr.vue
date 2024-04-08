@@ -13,7 +13,8 @@ onMounted(() => {
 
 function sync() {
   const value = settings.get().getCustom(props.node.path)
-  customValue.value = (value && typeof value.toJSON === 'function') ? value.toJSON() : []
+  customValue.value =
+    value && typeof value.toJSON === 'function' ? value.toJSON() : []
 }
 
 function save() {

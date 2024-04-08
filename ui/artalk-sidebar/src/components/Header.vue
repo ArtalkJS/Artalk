@@ -23,7 +23,7 @@ const userAvatarImgURL = computed(() => {
     <template v-if="isAdmin">
       <div
         class="avatar clickable"
-        :class="{ 'active': nav.siteSwitcherShow }"
+        :class="{ active: nav.siteSwitcherShow }"
         @click="nav.showSiteSwitcher()"
       >
         <div class="site">{{ curtSite.substring(0, 1) || '_' }}</div>
@@ -31,7 +31,7 @@ const userAvatarImgURL = computed(() => {
     </template>
     <template v-else>
       <div class="avatar">
-        <img :src="userAvatarImgURL">
+        <img :src="userAvatarImgURL" />
       </div>
     </template>
 
@@ -75,7 +75,8 @@ const userAvatarImgURL = computed(() => {
     &.clickable {
       cursor: pointer;
 
-      &:hover, &.active {
+      &:hover,
+      &.active {
         background: var(--at-color-bg-grey);
         border-right: 1px solid var(--at-color-border);
       }
@@ -100,7 +101,7 @@ const userAvatarImgURL = computed(() => {
       text-align: center;
       line-height: 30px;
       font-size: 13px;
-      color: #FFF;
+      color: #fff;
     }
   }
 
@@ -116,14 +117,14 @@ const userAvatarImgURL = computed(() => {
       font-size: 20px;
 
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
         height: 6px;
         background: #0083ff;
-        opacity: .4;
+        opacity: 0.4;
       }
     }
   }

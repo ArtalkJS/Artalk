@@ -6,7 +6,8 @@ body {
   margin: 0;
 }
 
-.artalk, .atk-layer-wrap {
+.artalk,
+.atk-layer-wrap {
   font-family: $font-family;
 }
 
@@ -66,7 +67,8 @@ body {
       }
     }
 
-    input, textarea {
+    input,
+    textarea {
       display: block;
       line-height: $form-height;
       padding: 0 10px;
@@ -82,7 +84,7 @@ body {
         border-bottom-color: var(--at-color-bg-light);
       }
 
-      &[type="file"] {
+      &[type='file'] {
         background: transparent;
         border: 2px solid var(--at-color-border);
         cursor: pointer;
@@ -98,7 +100,7 @@ body {
         }
       }
 
-      &[type="file"]::-webkit-file-upload-button {
+      &[type='file']::-webkit-file-upload-button {
         background: transparent;
         color: var(--at-color-font);
         border: 0;
@@ -110,7 +112,7 @@ body {
         line-height: 25px;
         margin-right: 15px;
         cursor: pointer;
-        transition: .2s ease;
+        transition: 0.2s ease;
         -webkit-appearance: none;
         border-radius: 0;
       }
@@ -156,7 +158,9 @@ body {
       user-select: none;
     }
 
-    input, select, button {
+    input,
+    select,
+    button {
       font-size: 15px;
     }
 
@@ -190,7 +194,7 @@ body {
         font-size: 14px;
 
         .atk-curt {
-          color: var(--at-color-main)
+          color: var(--at-color-main);
         }
 
         .atk-abort {
@@ -218,7 +222,8 @@ body {
       }
     }
 
-    .atk-log {}
+    .atk-log {
+    }
 
     .atk-iframe {
       width: 100%;

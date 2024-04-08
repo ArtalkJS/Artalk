@@ -13,7 +13,9 @@ Artalk.use((ctx) => {
 
   let i = 0
   const nextID = () => `__atk_katex_id_${i++}__`
-  const mathExpressions: { [key: string]: { type: 'block' | 'inline', expression: string } } = {}
+  const mathExpressions: {
+    [key: string]: { type: 'block' | 'inline'; expression: string }
+  } = {}
 
   function replaceMathWithIds(text: string) {
     // Allowing newlines inside of `$$...$$`
@@ -42,30 +44,36 @@ Artalk.use((ctx) => {
   const orgCodespan = renderer.codespan
   const orgText = renderer.text
 
-  renderer.listitem = (text: string, task: boolean, checked: boolean) => orgListitem(replaceMathWithIds(text), task, checked)
+  renderer.listitem = (text: string, task: boolean, checked: boolean) =>
+    orgListitem(replaceMathWithIds(text), task, checked)
   renderer.paragraph = (text: string) => orgParagraph(replaceMathWithIds(text))
-  renderer.tablecell = (content: string, flags: any) => orgTablecell(replaceMathWithIds(content), flags)
+  renderer.tablecell = (content: string, flags: any) =>
+    orgTablecell(replaceMathWithIds(content), flags)
   renderer.codespan = (code: string) => orgCodespan(replaceMathWithIds(code))
   renderer.text = (text: string) => orgText(replaceMathWithIds(text)) // Inline level, maybe unneeded
 
   ctx.updateConf({
-    markedReplacers: [(text) => {
-      text = text.replace(/(__atk_katex_id_\d+__)/g, (_match, capture) => {
-        const v = mathExpressions[capture]
-        const type = v.type
-        let expression = v.expression
+    markedReplacers: [
+      (text) => {
+        text = text.replace(/(__atk_katex_id_\d+__)/g, (_match, capture) => {
+          const v = mathExpressions[capture]
+          const type = v.type
+          let expression = v.expression
 
-        // replace <br/> tag to \n
-        expression = expression.replace(/<br\s*\/?>/mg, "\n")
+          // replace <br/> tag to \n
+          expression = expression.replace(/<br\s*\/?>/gm, '\n')
 
-        return katex.renderToString(expression, { displayMode: type === 'block' })
-      })
+          return katex.renderToString(expression, {
+            displayMode: type === 'block',
+          })
+        })
 
-      return text
-    }]
+        return text
+      },
+    ],
   })
 
   markedInstance.use({
-    renderer
+    renderer,
   })
 })

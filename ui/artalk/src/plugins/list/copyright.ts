@@ -8,9 +8,9 @@ export const Copyright: ArtalkPlugin = (ctx) => {
     const $copyright = list.$el.querySelector<HTMLElement>('.atk-copyright')
     if (!$copyright) return
 
-    $copyright.innerHTML = (
+    $copyright.innerHTML =
       `Powered By <a href="https://artalk.js.org" ` +
       `target="_blank" title="Artalk v${ARTALK_VERSION}">` +
-      `Artalk</a>`)
+      `Artalk</a>`
   })
 }

@@ -551,16 +551,22 @@ export interface FullRequestParams extends Omit<RequestInit, 'body'> {
   cancelToken?: CancelToken
 }
 
-export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' | 'path'>
+export type RequestParams = Omit<
+  FullRequestParams,
+  'body' | 'method' | 'query' | 'path'
+>
 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string
   baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<RequestParams | void> | RequestParams | void
   customFetch?: typeof fetch
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown>
+  extends Response {
   data: D
   error: E
 }
@@ -579,7 +585,8 @@ export class HttpClient<SecurityDataType = unknown> {
   private securityData: SecurityDataType | null = null
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker']
   private abortControllers = new Map<CancelToken, AbortController>()
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams)
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
+    fetch(...fetchParams)
 
   private baseApiParams: RequestParams = {
     credentials: 'same-origin',
@@ -612,9 +619,15 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected toQueryString(rawQuery?: QueryParamsType): string {
     const query = rawQuery || {}
-    const keys = Object.keys(query).filter((key) => 'undefined' !== typeof query[key])
+    const keys = Object.keys(query).filter(
+      (key) => 'undefined' !== typeof query[key],
+    )
     return keys
-      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
+      .map((key) =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key),
+      )
       .join('&')
   }
 
@@ -625,8 +638,13 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === 'object' || typeof input === 'string') ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== 'string' ? JSON.stringify(input) : input),
+      input !== null && (typeof input === 'object' || typeof input === 'string')
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== 'string'
+        ? JSON.stringify(input)
+        : input,
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key]
@@ -635,15 +653,18 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-            ? JSON.stringify(property)
-            : `${property}`,
+              ? JSON.stringify(property)
+              : `${property}`,
         )
         return formData
       }, new FormData()),
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   }
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams,
+  ): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -656,7 +677,9 @@ export class HttpClient<SecurityDataType = unknown> {
     }
   }
 
-  protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
+  protected createAbortSignal = (
+    cancelToken: CancelToken,
+  ): AbortSignal | undefined => {
     if (this.abortControllers.has(cancelToken)) {
       const abortController = this.abortControllers.get(cancelToken)
       if (abortController) {
@@ -700,15 +723,26 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json]
     const responseFormat = format || requestParams.format
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData
+            ? { 'Content-Type': type }
+            : {}),
+        },
+        signal:
+          (cancelToken
+            ? this.createAbortSignal(cancelToken)
+            : requestParams.signal) || null,
+        body:
+          typeof body === 'undefined' || body === null
+            ? null
+            : payloadFormatter(body),
       },
-      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
-      body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
+    ).then(async (response) => {
       const r = response as HttpResponse<T, E>
       r.data = null as unknown as T
       r.error = null as unknown as E
@@ -748,7 +782,9 @@ export class HttpClient<SecurityDataType = unknown> {
  *
  * Artalk is a modern comment system based on Golang.
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+export class Api<
+  SecurityDataType extends unknown,
+> extends HttpClient<SecurityDataType> {
   cache = {
     /**
  * @description Flush all cache on the server
@@ -881,7 +917,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Forbidden
  */
-    verifyCaptcha: (data: HandlerParamsCaptchaVerify, params: RequestParams = {}) =>
+    verifyCaptcha: (
+      data: HandlerParamsCaptchaVerify,
+      params: RequestParams = {},
+    ) =>
       this.request<
         HandlerMap,
         HandlerMap & {
@@ -973,7 +1012,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    createComment: (comment: HandlerParamsCommentCreate, params: RequestParams = {}) =>
+    createComment: (
+      comment: HandlerParamsCommentCreate,
+      params: RequestParams = {},
+    ) =>
       this.request<
         HandlerResponseCommentCreate,
         HandlerMap & {
@@ -1046,7 +1088,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    updateComment: (id: number, comment: HandlerParamsCommentUpdate, params: RequestParams = {}) =>
+    updateComment: (
+      id: number,
+      comment: HandlerParamsCommentUpdate,
+      params: RequestParams = {},
+    ) =>
       this.request<
         HandlerResponseCommentUpdate,
         HandlerMap & {
@@ -1198,7 +1244,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    markAllNotifyRead: (options: HandlerParamsNotifyReadAll, params: RequestParams = {}) =>
+    markAllNotifyRead: (
+      options: HandlerParamsNotifyReadAll,
+      params: RequestParams = {},
+    ) =>
       this.request<
         HandlerMap,
         HandlerMap & {
@@ -1234,7 +1283,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    markNotifyRead: (commentId: number, notifyKey: string, params: RequestParams = {}) =>
+    markNotifyRead: (
+      commentId: number,
+      notifyKey: string,
+      params: RequestParams = {},
+    ) =>
       this.request<
         HandlerMap,
         HandlerMap & {
@@ -1306,7 +1359,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    fetchAllPages: (options: HandlerParamsPageFetchAll, params: RequestParams = {}) =>
+    fetchAllPages: (
+      options: HandlerParamsPageFetchAll,
+      params: RequestParams = {},
+    ) =>
       this.request<
         HandlerMap,
         HandlerMap & {
@@ -1386,7 +1442,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    updatePage: (id: number, page: HandlerParamsPageUpdate, params: RequestParams = {}) =>
+    updatePage: (
+      id: number,
+      page: HandlerParamsPageUpdate,
+      params: RequestParams = {},
+    ) =>
       this.request<
         HandlerResponsePageUpdate,
         HandlerMap & {
@@ -1555,7 +1615,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    applySettings: (settings: HandlerParamsSettingApply, params: RequestParams = {}) =>
+    applySettings: (
+      settings: HandlerParamsSettingApply,
+      params: RequestParams = {},
+    ) =>
       this.request<
         HandlerMap,
         HandlerMap & {
@@ -1658,7 +1721,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      * @response `200` `HandlerResponseSiteUpdate` OK
      */
-    updateSite: (id: number, site: HandlerParamsSiteUpdate, params: RequestParams = {}) =>
+    updateSite: (
+      id: number,
+      site: HandlerParamsSiteUpdate,
+      params: RequestParams = {},
+    ) =>
       this.request<HandlerResponseSiteUpdate, any>({
         path: `/sites/${id}`,
         method: 'PUT',
@@ -1806,7 +1873,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      * @response `200` `string` OK
      */
-    importArtrans: (data: HandlerParamsTransferImport, params: RequestParams = {}) =>
+    importArtrans: (
+      data: HandlerParamsTransferImport,
+      params: RequestParams = {},
+    ) =>
       this.request<string, any>({
         path: `/transfer/import`,
         method: 'POST',
@@ -2085,7 +2155,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    updateUser: (id: number, user: HandlerParamsUserUpdate, params: RequestParams = {}) =>
+    updateUser: (
+      id: number,
+      user: HandlerParamsUserUpdate,
+      params: RequestParams = {},
+    ) =>
       this.request<
         HandlerResponseUserUpdate,
         HandlerMap & {

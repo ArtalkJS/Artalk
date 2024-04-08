@@ -23,7 +23,7 @@ export default class StateEdit extends EditorPlug {
     // register submit preset
     this.kit.useMounted(() => {
       const submitPlug = this.kit.useDeps(Submit)
-      if (!submitPlug) throw Error("SubmitPlug not initialized")
+      if (!submitPlug) throw Error('SubmitPlug not initialized')
 
       submitPlug.registerCustom({
         activeCond: () => !!this.comment, // active this custom submit when edit mode
@@ -35,14 +35,17 @@ export default class StateEdit extends EditorPlug {
             link: this.kit.useUI().$link.value,
           }
           const comment = this.comment!
-          const nComment = await this.kit.useApi().comments.updateComment(comment.id, {
-            ...comment, ...saveData
-          })
+          const nComment = await this.kit
+            .useApi()
+            .comments.updateComment(comment.id, {
+              ...comment,
+              ...saveData,
+            })
           return nComment.data
         },
         post: (nComment: CommentData) => {
           this.kit.useGlobalCtx().getData().updateComment(nComment)
-        }
+        },
       })
     })
   }
@@ -56,7 +59,7 @@ export default class StateEdit extends EditorPlug {
           `${$t('editCancel')}` +
           `</span>` +
           `<span class="atk-cancel atk-icon-close atk-icon"></span>` +
-        `</span>`
+          `</span>`,
       )
       $btn.onclick = () => {
         this.kit.useEditor().resetState()

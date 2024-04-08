@@ -42,7 +42,7 @@ export default class Submit extends EditorPlug {
       return
     }
 
-    const custom = this.customs.find(o => o.activeCond())
+    const custom = this.customs.find((o) => o.activeCond())
 
     this.kit.useEditor().showLoading()
 
@@ -62,7 +62,9 @@ export default class Submit extends EditorPlug {
     } catch (err: any) {
       // submit error
       console.error(err)
-      this.kit.useEditor().showNotify(`${$t('commentFail')}: ${err.message || String(err)}`, 'e')
+      this.kit
+        .useEditor()
+        .showNotify(`${$t('commentFail')}: ${err.message || String(err)}`, 'e')
       return
     } finally {
       this.kit.useEditor().hideLoading()

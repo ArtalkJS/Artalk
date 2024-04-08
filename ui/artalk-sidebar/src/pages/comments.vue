@@ -18,23 +18,29 @@ const search = ref('')
 onMounted(() => {
   // 初始化导航条
   if (user.isAdmin) {
-    nav.updateTabs({
-      all: 'all',
-      pending: 'pending',
-      personal_all: 'personal',
-    }, 'all')
+    nav.updateTabs(
+      {
+        all: 'all',
+        pending: 'pending',
+        personal_all: 'personal',
+      },
+      'all',
+    )
   } else {
-    nav.updateTabs({
-      all: 'all',
-      mentions: 'mentions',
-      mine: 'mine',
-      pending: 'pending',
-    }, 'all')
+    nav.updateTabs(
+      {
+        all: 'all',
+        mentions: 'mentions',
+        mine: 'mine',
+        pending: 'pending',
+      },
+      'all',
+    )
   }
 
   watch(curtTab, (curtTab) => {
     artalk!.ctx.fetch({
-      offset: 0
+      offset: 0,
     })
   })
 
@@ -79,14 +85,17 @@ onMounted(() => {
   listEl.value?.append($el)
 
   // 搜索功能
-  nav.enableSearch((value: string) => {
-    search.value = value
-    artalk!.reload()
-  }, () => {
-    if (search.value === '') return
-    search.value = ''
-    artalk!.reload()
-  })
+  nav.enableSearch(
+    (value: string) => {
+      search.value = value
+      artalk!.reload()
+    },
+    () => {
+      if (search.value === '') return
+      search.value = ''
+      artalk!.reload()
+    },
+  )
 })
 </script>
 

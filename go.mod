@@ -18,7 +18,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/gofiber/swagger v1.0.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/jedib0t/go-pretty/v6 v6.5.7
+	github.com/jedib0t/go-pretty/v6 v6.5.8
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/knadh/koanf v1.5.0
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20240322081424-40c7f53fc97c

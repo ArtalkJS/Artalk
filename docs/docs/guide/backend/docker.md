@@ -43,7 +43,7 @@ docker run -d \
 然后，在前端配置填入后端地址：
 
 ```js
-Artalk.init({ server: "http://your_domain:8080" })
+Artalk.init({ server: 'http://your_domain:8080' })
 ```
 
 ## 重启

@@ -15,29 +15,29 @@ Artalk 内置图片验证码功能，你可以配置操作频率限制，当超�
 ```yaml
 # 验证码
 captcha:
-  enabled: true    # 总开关
-  always: false    # 总是需要验证码
-  captcha_type: "image" # 验证码类型
-  action_limit: 3  # 激活验证码所需操作次数
+  enabled: true # 总开关
+  always: false # 总是需要验证码
+  captcha_type: image # 验证码类型
+  action_limit: 3 # 激活验证码所需操作次数
   action_reset: 60 # 重置操作计数器超时 (单位：s, 设为 -1 不重置)
   # Turnstile
   # (https://www.cloudflare.com/products/turnstile/)
   turnstile:
-    site_key: ""
-    secret_key: ""
+    site_key: ''
+    secret_key: ''
   # reCaptcha
   # (https://www.google.com/recaptcha/about/)
   recaptcha:
-    site_key: ""
-    secret_key: ""
+    site_key: ''
+    secret_key: ''
   # hCaptcha (https://www.hcaptcha.com/)
   hcaptcha:
-    site_key: ""
-    secret_key: ""
+    site_key: ''
+    secret_key: ''
   # Geetest 极验 (https://www.geetest.com)
   geetest:
-    captcha_id: ""
-    captcha_key: ""
+    captcha_id: ''
+    captcha_key: ''
 ```
 
 - **always**：当该项为 `true` 时，总是需要输入验证码。
@@ -49,7 +49,7 @@ captcha:
 
 ## 配置举例
 
-#### 例 1
+### 例 1
 
 在 60s 时间范围内，当操作次数超过 3 次，将一直被要求输入验证码：
 
@@ -61,7 +61,7 @@ captcha:
 
 在 60s 后将自动重置计数器，即重新获得 3 次不用输入验证码的机会。
 
-#### 例 2
+### 例 2
 
 无论多少时间范围内，这个 IP 地址操作次数只要超过 5 次时，将一直被要求输入验证码：
 
@@ -71,7 +71,7 @@ captcha:
   action_reset: -1
 ```
 
-#### 例 3
+### 例 3
 
 总是要求输入验证码，无论这个 IP 操作多少次：
 
@@ -99,10 +99,10 @@ captcha:
 ```yaml
 captcha:
   # 省略其他配置...
-  captcha_type: "turnstile"
+  captcha_type: turnstile
   turnstile:
-    site_key: ""
-    secret_key: ""
+    site_key: ''
+    secret_key: ''
 ```
 
 ## reCAPTCHA
@@ -114,10 +114,10 @@ captcha:
 ```yaml
 captcha:
   # 省略其他配置...
-  captcha_type: "recaptcha"
+  captcha_type: recaptcha
   recaptcha:
-    site_key: ""
-    secret_key: ""
+    site_key: ''
+    secret_key: ''
 ```
 
 注：国内访问 Google API 也许需要配置系统代理。
@@ -133,10 +133,10 @@ reCAPTCHA 官方提供了用于测试的 Keys：[可见此处](https://developer
 ```yaml
 captcha:
   # 省略其他配置...
-  captcha_type: "hcaptcha"
+  captcha_type: hcaptcha
   hcaptcha:
-    site_key: ""
-    secret_key: ""
+    site_key: ''
+    secret_key: ''
 ```
 
 hCaptcha 官方提供了用于测试的 Keys：[可见此处](https://docs.hcaptcha.com/#integration-testing-test-keys)。
@@ -152,9 +152,8 @@ Artalk 支持接入 [Geetest 极验](https://www.geetest.com/adaptive-captcha) �
 ```yaml
 captcha:
   # 省略其他配置...
-  captcha_type: "geetest"
+  captcha_type: geetest
   geetest:
-    captcha_id: ""
-    captcha_key: ""
+    captcha_id: ''
+    captcha_key: ''
 ```
-

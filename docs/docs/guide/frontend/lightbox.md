@@ -7,7 +7,7 @@ Artalk LightBox 插件能帮助你将网站**现有的图片灯箱**功能自动
 <script src="lightgallery.js"></script>
 
 <!-- 2. 引入 Artalk -->
-<link href="/lib/artalk/Artalk.css" rel="stylesheet">
+<link href="/lib/artalk/Artalk.css" rel="stylesheet" />
 <script src="/lib/artalk/Artalk.js"></script>
 
 <!-- 3. 引入 Artalk LightBox 插件 -->
@@ -26,17 +26,23 @@ Artalk LightBox 插件能帮助你将网站**现有的图片灯箱**功能自动
 
 #### LightGallery
 
-  ```html
-  <link rel="stylesheet" href="https://unpkg.com/lightgallery@2.5.0/css/lightgallery.css">
-  <script src="https://unpkg.com/lightgallery@2.5.0/lightgallery.min.js"></script>
-  ```
+```html
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/lightgallery@2.5.0/css/lightgallery.css"
+/>
+<script src="https://unpkg.com/lightgallery@2.5.0/lightgallery.min.js"></script>
+```
 
 #### FancyBox
 
-  ```html
-  <link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0.27/dist/fancybox.css">
-  <script src="https://unpkg.com/@fancyapps/ui@4.0.27/dist/fancybox.umd.js"></script>
-  ```
+```html
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@fancyapps/ui@4.0.27/dist/fancybox.css"
+/>
+<script src="https://unpkg.com/@fancyapps/ui@4.0.27/dist/fancybox.umd.js"></script>
+```
 
 :::
 
@@ -46,10 +52,10 @@ Artalk LightBox 插件能帮助你将网站**现有的图片灯箱**功能自动
 
 ```html
 <script>
-window.ATK_LIGHTBOX_CONF = {
-  groupAll: true,
-  // ...其他配置
-}
+  window.ATK_LIGHTBOX_CONF = {
+    groupAll: true,
+    // ...其他配置
+  }
 </script>
 <script src="artalk-plugin-lightbox.js"></script>
 ```

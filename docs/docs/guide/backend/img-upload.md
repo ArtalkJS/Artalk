@@ -11,14 +11,14 @@ Artalk 提供图片上传功能，支持限制图片大小、上传频率等，�
 ```yaml
 # 图片上传
 img_upload:
-  enabled: true              # 总开关
-  path: "./data/artalk-img/" # 图片存放路径
-  max_size: 5                # 图片大小限制 (单位：MB)
-  public_path: null          # 指定图片链接基础路径 (默认为 "/static/images/")
+  enabled: true # 总开关
+  path: ./data/artalk-img/ # 图片存放路径
+  max_size: 5 # 图片大小限制 (单位：MB)
+  public_path: null # 指定图片链接基础路径 (默认为 "/static/images/")
   # 使用 upgit 将图片上传到 GitHub 或图床
   upgit:
-    enabled: false  # 启用 upgit
-    exec: "upgit -c <upgit配置文件路径> -t /artalk-img"
+    enabled: false # 启用 upgit
+    exec: upgit -c <upgit配置文件路径> -t /artalk-img
     del_local: true # 上传后删除本地的图片
 ```
 
@@ -39,10 +39,10 @@ export PATH=$PATH:/path/to/upgit
 最后，在 Artalk 的 `img_upload.upgit` 字段填入 UpGit 启动参数：
 
 ```yaml
-  upgit:
-    enabled: true  # 启用 upgit
-    exec: "upgit -c <upgit配置文件路径> -t /artalk-img"
-    del_local: true # 上传后删除本地的图片
+upgit:
+  enabled: true # 启用 upgit
+  exec: upgit -c <upgit配置文件路径> -t /artalk-img
+  del_local: true # 上传后删除本地的图片
 ```
 
 ::: warning 更新注意
@@ -78,7 +78,7 @@ http://<后端地址>/static/images/
 当该项为「相对路径」时，例如：`/static/images/` 前端上传图片得到的 HTML 标签将为：
 
 ```html
-<img src="http://<后端地址>/static/images/1.png">
+<img src="http://<后端地址>/static/images/1.png" />
 ```
 
 注：这里的 `<后端地址>` 是前端 `conf.server` 配置。
@@ -86,7 +86,7 @@ http://<后端地址>/static/images/
 当该项为「完整 URL 路径」时，例如：`https://cdn.github.com/img/` 时，图片标签将为：
 
 ```html
-<img src="https://cdn.github.com/img/1.png">
+<img src="https://cdn.github.com/img/1.png" />
 ```
 
 提示：这个配置可以结合负载均衡等场景使用。
@@ -101,13 +101,13 @@ Artalk.init({
     const form = new FormData()
     form.set('file', file)
 
-    const imgUrl = await fetch("https://api.example.org/upload", {
+    const imgUrl = await fetch('https://api.example.org/upload', {
       method: 'POST',
-      body: form
+      body: form,
     })
 
     return imgUrl
-  }
+  },
 })
 ```
 

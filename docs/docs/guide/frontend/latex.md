@@ -4,11 +4,14 @@
 
 ```html
 <!-- 1. 引入 Katex -->
-<link rel="stylesheet" href="https://unpkg.com/katex@0.15.3/dist/katex.min.css">
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/katex@0.15.3/dist/katex.min.css"
+/>
 <script defer src="https://unpkg.com/katex@0.15.3/dist/katex.min.js"></script>
 
 <!-- 2. 引入 Artalk -->
-<link href="/lib/artalk/Artalk.css" rel="stylesheet">
+<link href="/lib/artalk/Artalk.css" rel="stylesheet" />
 <script src="/lib/artalk/Artalk.js"></script>
 
 <!-- 3. 引入 Artalk Katex 插件 -->
@@ -17,11 +20,10 @@
 
 之后，你可以回复：
 
-```
-$$ P(A) = \sum P(\{ (e_1,...,e_N) \})  =  {{N}\choose{k}} \cdot p^kq^{N-k} $$
+```md
+$$ P(A) = \sum P(\{ (e_1,...,e_N) \}) = {{N}\choose{k}} \cdot p^kq^{N-k} $$
 ```
 
 查看效果：
 
 ![](/images/latex-support/1.png)
-

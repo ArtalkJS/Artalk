@@ -5,8 +5,6 @@ import './style.scss'
 
 const { Layout } = DefaultTheme
 
-onMounted(() => {
-})
 </script>
 
 <template>

@@ -16,50 +16,50 @@ Artalk 支持通过多元推送功能以多种方式发送管理员通知。
 # 多元推送
 admin_notify:
   # 通知模版
-  notify_tpl: "default"
+  notify_tpl: default
   noise_mode: false
   # 邮件通知管理员
   email:
     enabled: true # 当使用其他推送方式时，可以关闭管理员邮件通知
-    mail_subject: "[{{site_name}}] 您的文章「{{page_title}}」有新回复"
-    mail_tpl: ""
+    mail_subject: '[{{site_name}}] 您的文章「{{page_title}}」有新回复'
+    mail_tpl: ''
   # Telegram
   telegram:
     enabled: false
-    api_token: ""
+    api_token: ''
     receivers:
       - 7777777
   # 飞书
   lark:
     enabled: false
-    webhook_url: ""
+    webhook_url: ''
   # 钉钉
   ding_talk:
     enabled: false
-    token: ""
-    secret: ""
+    token: ''
+    secret: ''
   # Bark
   bark:
     enabled: false
-    server: "http://day.app/xxxxxxx/"
+    server: http://day.app/xxxxxxx/
   # Slack
   slack:
     enabled: false
-    oauth_token: ""
+    oauth_token: ''
     receivers:
-      - "CHANNEL_ID"
+      - CHANNEL_ID
   # LINE
   line:
     enabled: false
-    channel_secret: ""
-    channel_access_token: ""
+    channel_secret: ''
+    channel_access_token: ''
     receivers:
-      - "USER_ID_1"
-      - "GROUP_ID_1"
+      - USER_ID_1
+      - GROUP_ID_1
   # WebHook
   webhook:
     enabled: false
-    url: ""
+    url: ''
 ```
 
 :::
@@ -71,8 +71,8 @@ admin_notify:
 ```yaml
 admin_notify:
   enabled: true # 当使用其他推送方式时，可以关闭管理员邮件通知
-  mail_subject: "[{{site_name}}] 您的文章「{{page_title}}」有新回复"
-  mail_tpl: ""
+  mail_subject: '[{{site_name}}] 您的文章「{{page_title}}」有新回复'
+  mail_tpl: ''
 ```
 
 当使用其他推送方式时，可以关闭管理员邮件通知。
@@ -83,7 +83,7 @@ admin_notify:
 
 - 配置项 `mail_subject` 为发送给管理员的邮件标题。
 - 配置项 `mail_tpl` 为发送给管理员的邮件选用特定的[邮件模板](./email.md#邮件模板)（填写邮件模板文件路径）。
-  
+
   (当该项留空时，将继承 `email.mail_tpl` 配置项)
 
 ## Telegram
@@ -93,7 +93,7 @@ admin_notify:
   # Telegram
   telegram:
     enabled: true
-    api_token: ""
+    api_token: ''
     receivers:
       - 7777777
 ```
@@ -132,7 +132,7 @@ admin_notify:
   # 飞书
   lark:
     enabled: true
-    webhook_url: ""
+    webhook_url: ''
 ```
 
 - `webhook_url`：填入创建群组机器人时得到的 WebHook 地址。
@@ -160,8 +160,8 @@ admin_notify:
   # 钉钉
   ding_talk:
     enabled: true
-    token: ""
-    secret: ""
+    token: ''
+    secret: ''
 ```
 
 可参考：[钉钉开放文档](https://open.dingtalk.com/document/robots/custom-robot-access)
@@ -173,16 +173,14 @@ admin_notify:
   # Bark
   bark:
     enabled: true
-    server: "http://day.app/xxxxxxx/"
+    server: http://day.app/xxxxxxx/
 ```
 
 [Bark](https://github.com/Finb/Bark) 是一款开源的 iOS App，并且[支持自托管](https://github.com/Finb/bark-server)，你能使用 Bark 轻松地推送消息给你的 iOS 设备。
 
 你可以在 App Store 搜索下载，并获得需要填入 Artalk 的 `server` 配置项：
 
-
 <img src="/images/notify/bark.png" width="700px">
-
 
 ## Slack
 
@@ -191,9 +189,9 @@ admin_notify:
   # Slack
   slack:
     enabled: true
-    oauth_token: ""
+    oauth_token: ''
     receivers:
-      - "CHANNEL_ID"
+      - CHANNEL_ID
 ```
 
 ## LINE
@@ -203,18 +201,18 @@ admin_notify:
   # LINE
   line:
     enabled: true
-    channel_secret: ""
-    channel_access_token: ""
+    channel_secret: ''
+    channel_access_token: ''
     receivers:
-      - "USER_ID_1"
-      - "GROUP_ID_1"
+      - USER_ID_1
+      - GROUP_ID_1
 ```
 
 ## 通知模版
 
 ```yaml
 admin_notify:
-  notify_tpl: "default"
+  notify_tpl: default
 ```
 
 配置项 `admin_notify.notify_tpl` 可设置为自定义通知模版「文件路径」，默认的通知模版为：
@@ -259,21 +257,21 @@ admin_notify:
 
 ```yaml
 admin_notify:
-    webhook:
-      enabled: true
-      url: "http://localhost:8080/"
+  webhook:
+    enabled: true
+    url: http://localhost:8080/
 ```
 
 **Body 数据内容**
 
 `application/json` 类型
 
-|Key|描述|类型|备注|
-| - | - | - | - |
-|`notify_subject`|通知标题     |String| 对应 admin_notify.notify_subject 配置项 |
-|`notify_body`   |通知内容     |String| 根据 admin_notify.notify_tpl 模版渲染 |
-|`comment`       |评论内容     |Object| 新创建的评论数据对象 |
-|`parent_comment`|评论回复的目标|Object| 如果是根节点评论值为 null |
+| Key              | 描述           | 类型   | 备注                                    |
+| ---------------- | -------------- | ------ | --------------------------------------- |
+| `notify_subject` | 通知标题       | String | 对应 admin_notify.notify_subject 配置项 |
+| `notify_body`    | 通知内容       | String | 根据 admin_notify.notify_tpl 模版渲染   |
+| `comment`        | 评论内容       | Object | 新创建的评论数据对象                    |
+| `parent_comment` | 评论回复的目标 | Object | 如果是根节点评论值为 null               |
 
 **Body 数据样本**
 
@@ -311,53 +309,53 @@ admin_notify:
 **Node.js express 处理示例**
 
 ```js
-const express = require('express');
+const express = require('express')
 
-const app = express();
+const app = express()
 
-app.use(express.json()); // Use JSON middleware
+app.use(express.json()) // Use JSON middleware
 
-app.post('/', function(request, response){
-  console.log(request.body);
+app.post('/', (request, response) => {
+  console.log(request.body)
 
   const notifySubject = request.body.notify_subject
-  const notifyBody    = request.body.notify_body
-  console.log(notifySubject, notifyBody);
+  const notifyBody = request.body.notify_body
+  console.log(notifySubject, notifyBody)
 
-  response.send(request.body);
-});
+  response.send(request.body)
+})
 
-app.listen(8080);
+app.listen(8080)
 ```
 
 **Node.js http 处理示例**
 
 ```js
-const http = require("http");
+const http = require('http')
 
-const requestListener = function (req, res) {
+const requestListener = (req, res) => {
   // receive json request
-  let body = "";
-  req.on("data", function (data) {
-    body += data;
-  });
-  req.on("end", function () {
-    let json = "";
+  let body = ''
+  req.on('data', (data) => {
+    body += data
+  })
+  req.on('end', () => {
+    let json = ''
     try {
-      json = JSON.parse(body);
+      json = JSON.parse(body)
     } catch {}
 
     // do something with json
-    console.log(json);
-    res.end();
-  });
+    console.log(json)
+    res.end()
+  })
 
-  res.writeHead(200);
-  res.end("Hello, World!");
-};
+  res.writeHead(200)
+  res.end('Hello, World!')
+}
 
-const server = http.createServer(requestListener);
-server.listen(8080);
+const server = http.createServer(requestListener)
+server.listen(8080)
 ```
 
 **PHP Laravel 处理示例**
@@ -382,10 +380,10 @@ import (
 )
 
 type ArtalkNotify struct {
-	NotifySubject string      `json:"notify_subject"`
-	NotifyBody    string      `json:"notify_body"`
-	Comment       interface{} `json:"comment"`
-	ParentComment interface{} `json:"parent_comment"`
+  NotifySubject string      `json:"notify_subject"`
+  NotifyBody    string      `json:"notify_body"`
+  Comment       interface{} `json:"comment"`
+  ParentComment interface{} `json:"parent_comment"`
 }
 
 func webhookHandler(rw http.ResponseWriter, req *http.Request) {
@@ -403,4 +401,3 @@ func main() {
     log.Fatal(http.ListenAndServe(":8080", nil))
 }
 ```
-

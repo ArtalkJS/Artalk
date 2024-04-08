@@ -10,28 +10,28 @@
 
 ```json
 {
-    "id": "123", 
-    "rid": "233", 
-    "content": "Hello Artalk", 
-    "ua": "Artalk/6.6", 
-    "ip": "233.233.233.233",
-    "created_at": "2021-10-28 20:50:15 +0800 +0800", 
-    "updated_at": "2021-10-28 20:50:15 +0800 +0800", 
-    "is_collapsed": "false", 
-    "is_pending": "false", 
-    "vote_up": "666", 
-    "vote_down": "0", 
-    "nick": "qwqcode", 
-    "email": "qwqcode@github.com", 
-    "link": "https://qwqaq.com", 
-    "password": "", 
-    "badge_name": "管理员", 
-    "badge_color": "#FF716D", 
-    "page_key": "https://artalk.js.org/guide/transfer.html", 
-    "page_title": "数据迁移", 
-    "page_admin_only": "false", 
-    "site_name": "Artalk",
-    "site_urls": "http://localhost:3000/demo/,https://artalk.js.org"
+  "id": "123",
+  "rid": "233",
+  "content": "Hello Artalk",
+  "ua": "Artalk/6.6",
+  "ip": "233.233.233.233",
+  "created_at": "2021-10-28 20:50:15 +0800 +0800",
+  "updated_at": "2021-10-28 20:50:15 +0800 +0800",
+  "is_collapsed": "false",
+  "is_pending": "false",
+  "vote_up": "666",
+  "vote_down": "0",
+  "nick": "qwqcode",
+  "email": "qwqcode@github.com",
+  "link": "https://qwqaq.com",
+  "password": "",
+  "badge_name": "管理员",
+  "badge_color": "#FF716D",
+  "page_key": "https://artalk.js.org/guide/transfer.html",
+  "page_title": "数据迁移",
+  "page_admin_only": "false",
+  "site_name": "Artalk",
+  "site_urls": "http://localhost:3000/demo/,https://artalk.js.org"
 }
 ```
 
@@ -180,14 +180,14 @@ typecho-20220424-202246.artrans
 
 Artalk 导入功能的通用启动参数：
 
-|   参数   | 类型   | 说明         |
-| :------: | ------ | ------------ |
-| `target_site_name` | String | 导入站点名称 |
-| `target_site_url`  | String | 导入站点 URL |
-| `url_resolver`     | Boolean | 默认关闭，URL 解析器。将 `page_key` 基于 `target_site_url` 参数重新生成为完整 URL 作为评论的新 `page_key` |
-| `json_file`  | String | JSON 数据文件路径 |
-| `json_data`  | String | JSON 数据字符串内容 |
-| `assumeyes`  | Boolean | 不提确认 `y/n`，直接执行 |
+|        参数        | 类型    | 说明                                                                                                      |
+| :----------------: | ------- | --------------------------------------------------------------------------------------------------------- |
+| `target_site_name` | String  | 导入站点名称                                                                                              |
+| `target_site_url`  | String  | 导入站点 URL                                                                                              |
+|   `url_resolver`   | Boolean | 默认关闭，URL 解析器。将 `page_key` 基于 `target_site_url` 参数重新生成为完整 URL 作为评论的新 `page_key` |
+|    `json_file`     | String  | JSON 数据文件路径                                                                                         |
+|    `json_data`     | String  | JSON 数据字符串内容                                                                                       |
+|    `assumeyes`     | Boolean | 不提确认 `y/n`，直接执行                                                                                  |
 
 ## 数据备份
 

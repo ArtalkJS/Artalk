@@ -4,7 +4,7 @@
 
 ```yaml
 frontend:
-  emoticons: "https://raw.githubusercontent.com/ArtalkJS/Emoticons/master/grps/default.json"
+  emoticons: https://raw.githubusercontent.com/ArtalkJS/Emoticons/master/grps/default.json
 ```
 
 ## 表情包预设
@@ -21,7 +21,7 @@ Artalk 的表情包功能借鉴了其优秀的设计，并且 Artalk 原生适�
 
 ```yaml
 frontend:
-  emoticons: "https://raw.githubusercontent.com/DIYgod/OwO/master/demo/OwO.json"
+  emoticons: https://raw.githubusercontent.com/DIYgod/OwO/master/demo/OwO.json
   # 直接食用 OwO 格式的表情包 ↑↑
 ```
 
@@ -32,25 +32,28 @@ frontend:
 Artalk 除了支持 OwO 格式外，还内置支持一种标准的表情包列表文件格式：
 
 ```js
-[{
-    "name": "颜表情",
-    "type": "emoticon", // 字符类型
-    "items": [
-        { "key": "Hi", "val": "|´・ω・)ノ" },
-        { "key": "开心", "val": "ヾ(≧∇≦*)ゝ" },
-        //...
-    ]
-}, {
-    "name": "滑稽",
-    "type": "image", // 图片类型
-    "items": [
-        {
-            "key": "原味稽",
-            "val": "<图片 URL>"
-        },
-        //...
-    ]
-}]
+;[
+  {
+    name: '颜表情',
+    type: 'emoticon', // 字符类型
+    items: [
+      { key: 'Hi', val: '|´・ω・)ノ' },
+      { key: '开心', val: 'ヾ(≧∇≦*)ゝ' },
+      //...
+    ],
+  },
+  {
+    name: '滑稽',
+    type: 'image', // 图片类型
+    items: [
+      {
+        key: '原味稽',
+        val: '<图片 URL>',
+      },
+      //...
+    ],
+  },
+]
 ```
 
 ## 前端配置
@@ -65,8 +68,9 @@ Artalk 除了支持 OwO 格式外，还内置支持一种标准的表情包列�
 
 ```js
 Artalk.init({
-    // 默认表情包列表，动态引入 ↓↓
-    emoticons: "https://raw.githubusercontent.com/ArtalkJS/Emoticons/master/grps/default.json",
+  // 默认表情包列表，动态引入 ↓↓
+  emoticons:
+    'https://raw.githubusercontent.com/ArtalkJS/Emoticons/master/grps/default.json',
 })
 ```
 
@@ -76,10 +80,9 @@ Artalk.init({
 
 ```js
 Artalk.init({
-    emoticons: false
+  emoticons: false,
 })
 ```
-
 
 ## 加载方式
 
@@ -89,7 +92,7 @@ Artalk.init({
 
 ```js
 Artalk.init({
-    emoticons: "<表情包数据文件 URL>",
+  emoticons: '<表情包数据文件 URL>',
 })
 ```
 
@@ -101,25 +104,28 @@ Artalk.init({
 
 ```js
 Artalk.init({
-    emoticons: [{
-        "name": "颜表情",
-        "type": "emoticon", // 字符类型
-        "items": [
-            { "key": "Hi", "val": "|´・ω・)ノ" },
-            { "key": "开心", "val": "ヾ(≧∇≦*)ゝ" },
-            //...
-        ]
-    }, {
-        "name": "滑稽",
-        "type": "image", // 图片类型
-        "items": [
-            {
-                "key": "原味稽",
-                "val": "<图片 URL>"
-            },
-            //...
-        ]
-    }],
+  emoticons: [
+    {
+      name: '颜表情',
+      type: 'emoticon', // 字符类型
+      items: [
+        { key: 'Hi', val: '|´・ω・)ノ' },
+        { key: '开心', val: 'ヾ(≧∇≦*)ゝ' },
+        //...
+      ],
+    },
+    {
+      name: '滑稽',
+      type: 'image', // 图片类型
+      items: [
+        {
+          key: '原味稽',
+          val: '<图片 URL>',
+        },
+        //...
+      ],
+    },
+  ],
 })
 ```
 
@@ -129,20 +135,20 @@ Artalk 支持 **动态**、**静态** 混合加载，例如：
 
 ```js
 Artalk.init({
-    emoticons: [
-        // 动态加载
-        "https://raw.githubusercontent.com/DIYgod/OwO/master/demo/OwO.json", // OwO 格式表情包
-        "https://raw.githubusercontent.com/qwqcode/huaji/master/huaji.json",
-        // 静态加载
-        {
-            "name": "表情包名字",
-            "type": "emoticon", // 字符类型
-            "items": [
-                { "key": "去吧大师球", "val": "(╯°A°)╯︵○○○" },
-                //...
-            ]
-        }
-    ]
+  emoticons: [
+    // 动态加载
+    'https://raw.githubusercontent.com/DIYgod/OwO/master/demo/OwO.json', // OwO 格式表情包
+    'https://raw.githubusercontent.com/qwqcode/huaji/master/huaji.json',
+    // 静态加载
+    {
+      name: '表情包名字',
+      type: 'emoticon', // 字符类型
+      items: [
+        { key: '去吧大师球', val: '(╯°A°)╯︵○○○' },
+        //...
+      ],
+    },
+  ],
 })
 ```
 
@@ -152,9 +158,7 @@ Artalk 支持远程表情包资源中**嵌套引入**另外的表情包资源，
 
 ```js
 Artalk.init({
-    emoticons: [
-        "https://example.org/表情包.json"
-    ]
+  emoticons: ['https://example.org/表情包.json'],
 })
 ```
 
@@ -162,10 +166,11 @@ Artalk.init({
 
 ```json
 [
-    "https://example.org/其他表情包.json",
+  "https://example.org/其他表情包.json",
+  //...
+  {
+    // Artalk 格式、OwO 格式
     //...
-    { // Artalk 格式、OwO 格式
-        //...
-    }
+  }
 ]
 ```

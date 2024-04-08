@@ -1,5 +1,9 @@
 <template>
-  <iframe src="https://artransfer.netlify.app/?iframe=1" style="width: 100%;height: 520px;border: 0;" id="artransferIframe"></iframe>
+  <iframe
+    src="https://artransfer.netlify.app/?iframe=1"
+    style="width: 100%; height: 520px; border: 0"
+    id="artransferIframe"
+  ></iframe>
 </template>
 
 <script lang="ts">
@@ -29,10 +33,6 @@ export default defineComponent({
         setArtransferIframeDarkMode(darkMode)
       })
     }).observe(document.querySelector('html'), { attributes: true })
-  }
+  },
 })
 </script>
-
-<style>
-
-</style>

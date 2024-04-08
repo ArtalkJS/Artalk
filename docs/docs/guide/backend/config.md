@@ -16,8 +16,8 @@ artalk -c ./conf.yml
 
 Artalk 读取以 `ATK_` 为前缀的环境变量，并且全部大写，子节点用单个下划线表示，配置名含下划线请用双下划线表示：
 
-  - `_` (单下划线) 转为 `.` 表示子节点
-  - `__` (双下划线) 转为 `_` 表示配置名的下划线
+- `_` (单下划线) 转为 `.` 表示子节点
+- `__` (双下划线) 转为 `_` 表示配置名的下划线
 
 e.g.
 
@@ -35,7 +35,7 @@ ATK_ADMIN_USERS_0_NAME   -> admin_users[0].name
 
 可参考一份「完整的配置文件」：[artalk.example.zh-CN.yml](https://github.com/ArtalkJS/Artalk/blob/master/conf/artalk.example.zh-CN.yml)
 
-#### 使用 gen 命令生成配置文件
+### 使用 gen 命令生成配置文件
 
 Artalk 提供 `gen` 命令，你可以快速生成一份新的配置文件：
 
@@ -43,7 +43,7 @@ Artalk 提供 `gen` 命令，你可以快速生成一份新的配置文件：
 artalk gen conf -lang zh-CN ./artalk.yml
 ```
 
-#### 命令行下载配置文件
+### 命令行下载配置文件
 
 ```bash
 wget -O artalk.yml https://raw.githubusercontent.com/ArtalkJS/Artalk/master/conf/artalk.example.zh-CN.yml
@@ -54,7 +54,7 @@ wget -O artalk.yml https://raw.githubusercontent.com/ArtalkJS/Artalk/master/conf
 在 Artalk 启动之前，你需要配置一个 `app_key` 用于对网站内容进行安全加密：
 
 ```yaml
-app_key: "<任意的字符>"
+app_key: <任意的字符>
 ```
 
 ## 语言 `locale`
@@ -62,7 +62,7 @@ app_key: "<任意的字符>"
 设置 Artalk 的语言。遵循 Unicode BCP 47 规范，该项默认为 "zh-CN" (简体中文)。
 
 ```yml
-locale: "zh-CN"
+locale: zh-CN
 ```
 
 详情参考：[多语言](../frontend/i18n.md)
@@ -77,8 +77,8 @@ SQLite 是轻型数据库，使用单个文件存储数据，无需额外运行�
 
 ```yaml
 db:
-  type: "sqlite"
-  file: "./data/artalk.db"
+  type: sqlite
+  file: ./data/artalk.db
 ```
 
 #### MySQL / PostgreSQL / SQL Server
@@ -87,15 +87,15 @@ db:
 
 ```yaml
 db:
-  type: "mysql"      # sqlite, mysql, pgsql, mssql
-  name: "artalk"     # 数据库名
-  host: "localhost"  # 地址
-  port: "3306"       # 端口
-  user: "root"       # 账号
-  password: ""       # 密码
-  charset: "utf8mb4" # 编码格式
-  table_prefix: ""   # 表前缀 (例如："atk_")
-  ssl: false         # 启用 SSL
+  type: mysql # sqlite, mysql, pgsql, mssql
+  name: artalk # 数据库名
+  host: localhost # 地址
+  port: 3306 # 端口
+  user: root # 账号
+  password: '' # 密码
+  charset: utf8mb4 # 编码格式
+  table_prefix: '' # 表前缀 (例如："atk_")
+  ssl: false # 启用 SSL
   prepare_stmt: true # 预编译语句
 ```
 
@@ -107,8 +107,8 @@ db:
 
 ```yaml
 db:
-  type: "mysql"
-  dsn: "mysql://myuser:mypassword@localhost:3306/mydatabase?tls=skip-verify"
+  type: mysql
+  dsn: mysql://myuser:mypassword@localhost:3306/mydatabase?tls=skip-verify
 ```
 
 更多内容参考：[@go-sql-driver/mysql:README.md](https://github.com/go-sql-driver/mysql)
@@ -125,8 +125,8 @@ Artalk 支持多站点，你可以创建多个管理员账户，为其分配站�
 
 ```yaml
 trusted_domains:
-  - "https://前端使用域名A.com"
-  - "https://前端使用域名B.com"
+  - https://前端使用域名A.com
+  - https://前端使用域名B.com
 ```
 
 配置该项能限制来自列表外的 Referer 和跨域请求。
@@ -145,7 +145,7 @@ trusted_domains:
 
 ```yaml
 trusted_domains:
-  - "*"
+  - '*'
 ```
 
 ::: danger
@@ -166,13 +166,13 @@ CSRF 跨域攻击防范措施参考：[OWASP 安全备忘单](https://cheatsheet
 如果你觉得大概是不会用到 Artalk 的多站点功能，可以直接将该项配置为你的站点名，例如：
 
 ```yaml
-site_default: "Artalk 官网"
+site_default: Artalk 官网
 ```
 
 然后在前端直接使用这个站点名：
 
 ```js
-Artalk.init({ site: "Artalk 官网" })
+Artalk.init({ site: 'Artalk 官网' })
 ```
 
 这样，你就无需在侧边栏的[控制中心](../frontend/sidebar.md#控制中心)手动创建站点。
@@ -211,11 +211,11 @@ Artalk.init({ site: "Artalk 官网" })
 
 ```yaml
 cache:
-  enabled: true   # 启用缓存 (默认关闭)
-  type: "builtin" # 支持 redis, memcache, builtin (自带缓存)
-  expires: 30     # 缓存过期时间 (单位：分钟)
-  warm_up: false  # 程序启动时预热缓存
-  server: ""      # 连接缓存服务器 (例如："localhost:6379")
+  enabled: true # 启用缓存 (默认关闭)
+  type: builtin # 支持 redis, memcache, builtin (自带缓存)
+  expires: 30 # 缓存过期时间 (单位：分钟)
+  warm_up: false # 程序启动时预热缓存
+  server: '' # 连接缓存服务器 (例如："localhost:6379")
 ```
 
 - **warm_up**：缓存预热功能。设置为 `true`，在 Artalk 启动时会立刻对数据库内容进行全面缓存，如果你的评论数据较多，多达上万条，启动时间可能会延长。
@@ -232,10 +232,10 @@ Redis 身份认证、数据库配置：
 cache:
   # 省略其他配置项...
   redis:
-    network: "tcp" # 连接方式 (tcp 或 unix)
-    username: ""   # 用户名
-    password: ""   # 密码
-    db: 0          # 使用零号数据库
+    network: tcp # 连接方式 (tcp 或 unix)
+    username: '' # 用户名
+    password: '' # 密码
+    db: 0 # 使用零号数据库
 ```
 
 <!-- 技术细节：[Artalk 缓存机制 时序图.png](/images/artalk/artalk-cache.png) -->
@@ -246,7 +246,7 @@ cache:
 Artalk 的默认 HTTP 端口为 23366，你可以在配置文件中指定：
 
 ```yaml
-host: "0.0.0.0"
+host: '0.0.0.0'
 port: 23366
 ```
 
@@ -265,8 +265,8 @@ artalk server --host 127.0.0.1 --port 8080
 ```yaml
 ssl:
   enabled: true
-  cert_path: ""
-  key_path: ""
+  cert_path: ''
+  key_path: ''
 ```
 
 你可以配置该项，让 HTTP 升级为 HTTPS，通过 SSL 协议加密传输数据。
@@ -279,7 +279,7 @@ ssl:
 ## 时区配置 `timezone`
 
 ```yaml
-timezone: "Asia/Shanghai"
+timezone: Asia/Shanghai
 ```
 
 该值填写你所在地时区，对应 IANA 数据库时区名，参考：[Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) / [RFC-6557](https://www.rfc-editor.org/rfc/rfc6557.html)。
@@ -308,7 +308,7 @@ login_timeout: 259200
 ```yaml
 log:
   enabled: true # 总开关
-  filename: "./data/artalk.log" # 日志文件路径
+  filename: ./data/artalk.log # 日志文件路径
 ```
 
 ## 调试模式 `debug`
@@ -340,7 +340,7 @@ artalk -w /root/artalk -c ./conf.yml
 例如 `conf.yml` 中有这样的配置：
 
 ```yaml
-test_file: "./data/artalk.log"
+test_file: ./data/artalk.log
 ```
 
 将读取 `/root/artalk/data/artalk.log`。

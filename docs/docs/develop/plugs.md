@@ -47,26 +47,26 @@ const artalk = Artalk.init({ ... })
 
 Context 对象包含了 Artalk 的上下文信息。
 
-| 成员 | 说明 |
-| --- | --- |
-| `ctx.getEl` | 获取容器元素 |
-| `ctx.getConf` | 获取配置 |
-| `ctx.updateConf` | 更新配置 |
-| `ctx.watchConf` | 监听配置 |
-| `ctx.setDarkMode` | 设置夜间模式 |
-| `ctx.getApi` | 获取 API 客户端对象 |
-|--|--|
-| `ctx.fetch` | 获取评论数据 |
-| `ctx.reload` | 重载评论列表 |
-| `ctx.getComments` | 获取所有评论数据对象 |
+| 成员                  | 说明                 |
+| --------------------- | -------------------- |
+| `ctx.getEl`           | 获取容器元素         |
+| `ctx.getConf`         | 获取配置             |
+| `ctx.updateConf`      | 更新配置             |
+| `ctx.watchConf`       | 监听配置             |
+| `ctx.setDarkMode`     | 设置夜间模式         |
+| `ctx.getApi`          | 获取 API 客户端对象  |
+| --                    | --                   |
+| `ctx.fetch`           | 获取评论数据         |
+| `ctx.reload`          | 重载评论列表         |
+| `ctx.getComments`     | 获取所有评论数据对象 |
 | `ctx.getCommentNodes` | 获取所有评论节点对象 |
-|--|--|
-| `ctx.on` | 添加事件监听 |
-| `ctx.off` | 解除事件监听 |
-| `ctx.trigger` | 触发事件 |
-|--|--|
-| `ctx.get` | 获取依赖 |
-| `ctx.inject` | 注入依赖 |
+| --                    | --                   |
+| `ctx.on`              | 添加事件监听         |
+| `ctx.off`             | 解除事件监听         |
+| `ctx.trigger`         | 触发事件             |
+| --                    | --                   |
+| `ctx.get`             | 获取依赖             |
+| `ctx.inject`          | 注入依赖             |
 
 ::: warning
 Context API 目前仍不稳定，开发可能会有变动，升级请关注 CHANGELOG。
@@ -84,7 +84,7 @@ Artalk 有很多内置的插件，你可以参考它们的源码来开发自己�
 
 我们还提供了一些外置的插件，同样可以参考：
 
-| 插件 | 说明 |
-| --- | --- |
-| [@artalk/plugin-katex](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-katex) | LaTeX 公式插件 |
-| [@artalk/plugin-lightbox](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-lightbox) | 图片灯箱插件 |
+| 插件                                                                                         | 说明           |
+| -------------------------------------------------------------------------------------------- | -------------- |
+| [@artalk/plugin-katex](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-katex)       | LaTeX 公式插件 |
+| [@artalk/plugin-lightbox](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-lightbox) | 图片灯箱插件   |

@@ -32,16 +32,16 @@ docker exec -it artalk artalk admin
 
 ```yaml
 admin_users:
-  - name: "admin"
-    email: "admin@example.com"
-    password: "(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
-    badge_name: "管理员"
-    badge_color: "#0083FF"
-  - name: "admin2"
-    email: "admin2@example.com"
-    password: "(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
-    badge_name: "小管理员"
-    badge_color: "#0083FF"
+  - name: admin
+    email: admin@example.com
+    password: (bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm
+    badge_name: 管理员
+    badge_color: '#0083FF'
+  - name: admin2
+    email: admin2@example.com
+    password: (bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm
+    badge_name: 小管理员
+    badge_color: '#0083FF'
 ```
 
 每项配置的解释：
@@ -77,6 +77,6 @@ admin_users:
 
 ```yaml
 admin_users:
-  - name: "admin"
+  - name: admin
     receive_email: false # ← 强制不接收邮件
 ```

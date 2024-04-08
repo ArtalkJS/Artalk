@@ -8,33 +8,33 @@
 
 ## 功能亮点
 
- - **轻量设计**
+- **轻量设计**
 
-   前端采用 TypeScript (Vanilla JS)，轻量级，无冗余依赖，仅 ~30KB (gzipped)。
+  前端采用 TypeScript (Vanilla JS)，轻量级，无冗余依赖，仅 ~30KB (gzipped)。
 
-   后端采用 Golang 重制 (Artalk v2)，跨平台，体积小巧，五脏俱全，快速部署。
+  后端采用 Golang 重制 (Artalk v2)，跨平台，体积小巧，五脏俱全，快速部署。
 
- - **“麻雀虽小，五脏俱全”**
-   
-   - Markdown 语法 + 代码高亮
-   - [通知中心](./frontend/sidebar.md) - 站内：侧边栏 + 红点标记
-   - [多形式推送](./backend/admin_notify.md) - 站外：邮件、TG、钉钉、飞书 + 异步执行
-   - [评论审核](./backend/moderator.md)：折叠 / 反垃圾 / 频率限制 / 滑动验证
-   - [多站点](./backend/multi-site.md)：共用同一个后端程序，多站点集中化管理
-   - [表情包](./frontend/emoticons.md)：支持 OwO 格式 + 动态加载
-   - [Artrans](./transfer.md)：评论数据快速迁移 (导入 / 导出) 工具
-   - 评论投票 / 身份徽章 / 密码验证 / 说说模式 
-   - 评论盖楼 / 评论分页 / 滚动加载 / 实时预览
-   - 评论排序 / 评论置顶 / 评论防丢 / 自动填充
-   - 图片上传 / 页面管理 / 站点隔离 / 夜间模式
+- **“麻雀虽小，五脏俱全”**
 
-   穷举不是我们的特长，更多有趣的功能期待你来探索！
+  - Markdown 语法 + 代码高亮
+  - [通知中心](./frontend/sidebar.md) - 站内：侧边栏 + 红点标记
+  - [多形式推送](./backend/admin_notify.md) - 站外：邮件、TG、钉钉、飞书 + 异步执行
+  - [评论审核](./backend/moderator.md)：折叠 / 反垃圾 / 频率限制 / 滑动验证
+  - [多站点](./backend/multi-site.md)：共用同一个后端程序，多站点集中化管理
+  - [表情包](./frontend/emoticons.md)：支持 OwO 格式 + 动态加载
+  - [Artrans](./transfer.md)：评论数据快速迁移 (导入 / 导出) 工具
+  - 评论投票 / 身份徽章 / 密码验证 / 说说模式
+  - 评论盖楼 / 评论分页 / 滚动加载 / 实时预览
+  - 评论排序 / 评论置顶 / 评论防丢 / 自动填充
+  - 图片上传 / 页面管理 / 站点隔离 / 夜间模式
+
+  穷举不是我们的特长，更多有趣的功能期待你来探索！
 
 - **“Unlimited Blade Works”**
 
-   Artalk 正在持续成长，创意由你发挥，价值由你赋予！
+  Artalk 正在持续成长，创意由你发挥，价值由你赋予！
 
-   不论是 Vue、React、Svelte 的前端项目，还是 WordPress、Typecho、Hexo 等博客系统，都可以快速引入 Artalk，结合诸位的聪明才智，我们相信 Artalk 能够自如应对各种业务场景。
+  不论是 Vue、React、Svelte 的前端项目，还是 WordPress、Typecho、Hexo 等博客系统，都可以快速引入 Artalk，结合诸位的聪明才智，我们相信 Artalk 能够自如应对各种业务场景。
 
 > 更多支持 / 计划的功能，详见：[README.md](https://github.com/ArtalkJS/Artalk#todos)。
 
@@ -67,14 +67,14 @@ Artalk 社区是包容开放的社区，我们欢迎不同水平的人员帮助 
 我们作为开源精神的推崇者以及实践者，希望我们所创造的自由软件，都应该被自由的使用，自由的研究，自由的更改和自由的分享。本项目主程序使用 [MIT](https://github.com/ArtalkJS/Artalk/blob/master/LICENSE) 协议开源，文档使用 [CC](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh) 许可协议。
 ::: tip 立即为社区贡献力量？
 
-  - 浏览开发者资料（[开发文档](../develop/index.md) / [CONTRIBUTING.md](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)）
-  - 维护 Artalk 后端（代码仓库 [@ArtalkJS/Artalk:/](https://github.com/ArtalkJS/Artalk)）
-  - 维护 Artalk 前端（代码仓库 [@ArtalkJS/Artalk:/ui](https://github.com/ArtalkJS/Artalk/tree/master/ui)）
-  - 完善 Artalk 文档（代码仓库 [@ArtalkJS/Artalk:/docs](https://github.com/ArtalkJS/Artalk/tree/master/docs)）
-  - 翻译 多语言 i18n（前往查看 [多语言说明](./frontend/i18n.html)）
-  - 改进数据迁移工具（代码仓库 [@ArtalkJS/Artransfer](https://github.com/ArtalkJS/Artransfer)）
-  - 分享你的想法创意（下方留言 / [Discussions](https://github.com/ArtalkJS/Artalk/discussions)）
-  - 编写相关社区项目（扩展插件 / 部署教程等）
+- 浏览开发者资料（[开发文档](../develop/index.md) / [CONTRIBUTING.md](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)）
+- 维护 Artalk 后端（代码仓库 [@ArtalkJS/Artalk:/](https://github.com/ArtalkJS/Artalk)）
+- 维护 Artalk 前端（代码仓库 [@ArtalkJS/Artalk:/ui](https://github.com/ArtalkJS/Artalk/tree/master/ui)）
+- 完善 Artalk 文档（代码仓库 [@ArtalkJS/Artalk:/docs](https://github.com/ArtalkJS/Artalk/tree/master/docs)）
+- 翻译 多语言 i18n（前往查看 [多语言说明](./frontend/i18n.html)）
+- 改进数据迁移工具（代码仓库 [@ArtalkJS/Artransfer](https://github.com/ArtalkJS/Artransfer)）
+- 分享你的想法创意（下方留言 / [Discussions](https://github.com/ArtalkJS/Artalk/discussions)）
+- 编写相关社区项目（扩展插件 / 部署教程等）
 
 :::
 

@@ -4,8 +4,8 @@ Artalk 支持解析相对路径，因此你可以在前端页面进行如下配�
 
 ```js
 Artalk.init({
-  site: "举个栗子站点", // 你的站点名
-  pageKey: "/relative-path/xx.html", // 使用相对路径
+  site: '举个栗子站点', // 你的站点名
+  pageKey: '/relative-path/xx.html', // 使用相对路径
 })
 ```
 
@@ -23,7 +23,7 @@ Artalk.init({
 "https://设定的举个栗子站点URL.xxx/relative-path/xx.html"
 ```
 
-### 解析后的 URL 用途
+## 解析后的 URL 用途
 
 站点 URL + 页面 相对路径 将用于：
 
@@ -32,7 +32,7 @@ Artalk.init({
 - **控制中心**页面管理打开页面
 - **获取页面标题**等信息时使用
 
-### 配置多个站点 URL 的情况
+## 配置多个站点 URL 的情况
 
 你可能需要配置站点的多个 URL 来允许 Referer 和跨域。
 
@@ -40,13 +40,13 @@ Artalk.init({
 
 **当站点存在多个 URL 时**，「相对路径」会基于多个 URL 中的「**第一个**」URL。
 
-### 使用绝对路径的情况
+## 使用绝对路径的情况
 
 区别于使用相对路径，你可以使用绝对路径，例如前端这样配置：
 
 ```js
 Artalk.init({
-  pageKey: "https://your_domain.com/relative-path/xx.html", // 使用绝对路径
+  pageKey: 'https://your_domain.com/relative-path/xx.html', // 使用绝对路径
 })
 ```
 

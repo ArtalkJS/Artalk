@@ -13,8 +13,10 @@
 
 创建模板文件 `/主题目录/layouts/partials/comment/artalk.html`：
 
+<!-- prettier-ignore-start -->
+
 ```html
-<link href="/lib/artalk/Artalk.css" rel="stylesheet">
+<link href="/lib/artalk/Artalk.css" rel="stylesheet" />
 <script src="/lib/artalk/Artalk.js"></script>
 
 <!-- Artalk -->
@@ -22,22 +24,22 @@
 
 <script>
   Artalk.init({
-    el:        '#Comments',
-    pageKey:   '{{ .Permalink }}',
+    el: '#Comments',
+    pageKey: '{{ .Permalink }}',
     pageTitle: '{{ .Title }}',
-    server:    '{{ $.Site.Params.artalk.server }}',
-    site:      '{{ $.Site.Params.artalk.site }}',
+    server: '{{ $.Site.Params.artalk.server }}',
+    site: '{{ $.Site.Params.artalk.site }}',
     // ...你的其他配置
   })
 </script>
 ```
 
+<!-- prettier-ignore-end -->
+
 文章页模板 `/主题目录/layouts/_default/single.html` 合适的位置添加：
 
 ```html
-<div class="article-comments">
-  {{- partial "comment/artalk" . -}}
-</div>
+<div class="article-comments">{{- partial "comment/artalk" . -}}</div>
 ```
 
 修改 Hugo 配置文件：
@@ -49,7 +51,6 @@
 server = 'https://artalk.example.org'
 site = '你的站点名'
 ```
-
 
 ```yaml [config.yaml]
 params:
@@ -65,7 +66,7 @@ params:
 创建 `/主题目录/layout/comment/artalk.ejs`：
 
 ```html
-<link href="/lib/artalk/Artalk.css" rel="stylesheet">
+<link href="/lib/artalk/Artalk.css" rel="stylesheet" />
 <script src="/lib/artalk/Artalk.js"></script>
 
 <div id="Comments"></div>
@@ -84,9 +85,7 @@ params:
 修改文章模板文件，例如 `/主题目录/layout/post.ejs`：
 
 ```html
-<div class="article-comments">
-  <%- partial('comment/artalk') %>
-</div>
+<div class="article-comments"><%- partial('comment/artalk') %></div>
 ```
 
 编辑主题配置 `/主题目录/_config.example.yml`：

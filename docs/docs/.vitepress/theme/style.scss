@@ -8,7 +8,7 @@
   --vp-c-divider: #dfe2e5;
 
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: linear-gradient(90deg,#0083ff, #37dfd9);
+  --vp-home-hero-name-background: linear-gradient(90deg, #0083ff, #37dfd9);
 }
 
 .dark {
@@ -38,9 +38,9 @@
   background-color: #0083ff;
 
   &:hover {
-    border-color: #007CF0;
+    border-color: #007cf0;
     color: #fff;
-    background-color: #007CF0;
+    background-color: #007cf0;
   }
 }
 
@@ -48,52 +48,52 @@
 .wave {
   display: inline-block;
   transform-origin: center bottom;
-  animation:upAnimation 2.33s ease .8s 3 both;
+  animation: upAnimation 2.33s ease 0.8s 3 both;
 }
 @keyframes upAnimation {
   0% {
     transform: rotate(0deg);
-    transition-timing-function:cubic-bezier(0.215, .61, .355, 1);
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   }
   10% {
     transform: rotate(-12deg);
-    transition-timing-function:cubic-bezier(0.215, .61, .355, 1);
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   }
   20% {
     transform: rotate(12deg);
-    transition-timing-function:cubic-bezier(0.215, .61, .355, 1);
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   }
   28% {
     transform: rotate(-10deg);
-    transition-timing-function:cubic-bezier(0.215, .61, .355, 1);
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   }
   36% {
     transform: rotate(10deg);
-    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+    transition-timing-function: cubic-bezier(0.755, 0.5, 0.855, 0.06);
   }
   42% {
     transform: rotate(-8deg);
-    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+    transition-timing-function: cubic-bezier(0.755, 0.5, 0.855, 0.06);
   }
   48% {
     transform: rotate(8deg);
-    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+    transition-timing-function: cubic-bezier(0.755, 0.5, 0.855, 0.06);
   }
   52% {
     transform: rotate(-4deg);
-    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+    transition-timing-function: cubic-bezier(0.755, 0.5, 0.855, 0.06);
   }
   56% {
     transform: rotate(4deg);
-    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+    transition-timing-function: cubic-bezier(0.755, 0.5, 0.855, 0.06);
   }
   60% {
     transform: rotate(0deg);
-    transition-timing-function:cubic-bezier(0.755, .5, .855, .06);
+    transition-timing-function: cubic-bezier(0.755, 0.5, 0.855, 0.06);
   }
   100% {
     transform: rotate(0deg);
-    transition-timing-function:cubic-bezier(0.215, .61, .355, 1);
+    transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   }
 }
 
@@ -107,33 +107,38 @@ img[atk-emoticon] {
 }
 
 /* 由于 body 未添加一致的 transition，导致其他地方暗黑模式切换加 transition 比较怪 */
-.vp-doc div[class*='language-'] { transition: none; }
-.vp-doc :not(pre) > code { transition: none; }
+.vp-doc div[class*='language-'] {
+  transition: none;
+}
+.vp-doc :not(pre) > code {
+  transition: none;
+}
 
 .vp-doc {
   table {
     border-collapse: collapse;
     margin: 1rem 0;
     display: block;
-    overflow-x: auto
+    overflow-x: auto;
   }
 
-  td,th {
-    padding: .6em 1em;
+  td,
+  th {
+    padding: 0.6em 1em;
   }
 }
 
 /* 侧边栏 */
 .VPSidebar::-webkit-scrollbar {
-  width: 7px
+  width: 7px;
 }
 
 .VPSidebar::-webkit-scrollbar-track {
-  background-color: transparent
+  background-color: transparent;
 }
 
 .VPSidebar::-webkit-scrollbar-thumb {
-  background-color: var(--vp-c-divider)
+  background-color: var(--vp-c-divider);
 }
 
 // details block patch
@@ -146,5 +151,5 @@ img[atk-emoticon] {
 }
 
 .vp-code-group .tabs::after {
-  background-color: var(--vp-c-divider)
+  background-color: var(--vp-c-divider);
 }

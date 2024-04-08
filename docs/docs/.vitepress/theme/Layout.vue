@@ -4,7 +4,6 @@ import { onMounted } from 'vue'
 import './style.scss'
 
 const { Layout } = DefaultTheme
-
 </script>
 
 <template>

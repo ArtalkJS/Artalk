@@ -1,45 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>reCaptcha</title>
-  <script src="https://www.google.com/recaptcha/api.js"></script>
-  <style>
-    body, html { margin: 0;padding: 0; }
-    body { display: flex;justify-content: center;height: 100vh;align-items: center; }
-  </style>
-</head>
-<body>
-  <div id="container"></div>
-  <script>
-  grecaptcha.ready(function() {
-    grecaptcha.render("container", {
-      sitekey: "{{.site_key}}",
-      callback: function(token) {
-        fetch("./verify", {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ value: token }),
-        })
-        .then(function (res) {
-          if (!res.ok) {
-            res.json().then(json => {
-              alert("验证失败：" + res.status + " " + json.msg || '')
-            })
-          }
-        })
-        .catch(function (err) {
-          console.error(err)
-          alert("后端 API 请求失败：" + err)
-        })
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>reCaptcha</title>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
       }
-    });
-  });
-  </script>
-</body>
+      body {
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script>
+      grecaptcha.ready(() => {
+        grecaptcha.render('container', {
+          sitekey: '{{.site_key}}',
+          callback: (token) => {
+            fetch('./verify', {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ value: token }),
+            })
+              .then((res) => {
+                if (!res.ok)
+                  res.json().then((json) => {
+                    alert('验证失败：' + res.status + ' ' + json.msg || '')
+                  })
+              })
+              .catch(function (err) {
+                console.error(err)
+                alert('后端 API 请求失败：' + err.message)
+              })
+          },
+        })
+      })
+    </script>
+  </body>
 </html>

@@ -5,18 +5,24 @@ import type { LayoutStrategyCreator, LayoutOptions } from '.'
 export const createFlatStrategy: LayoutStrategyCreator = (opts) => ({
   import: (comments) => {
     comments.forEach((comment: CommentData) => {
-      const replyComment = (comment.rid === 0 ? undefined : comments.find(c => c.id === comment.rid))
+      const replyComment =
+        comment.rid === 0 ? undefined : comments.find((c) => c.id === comment.rid)
       insertComment(opts, 'append', comment, replyComment)
     })
   },
   insert: (comment, replyComment) => {
     const node = insertComment(opts, 'prepend', comment, replyComment)
     node.scrollIntoView()
-  }
+  },
 })
 
 /** 导入评论 · 平铺模式 */
-function insertComment(opts: LayoutOptions, insertMode: 'append'|'prepend', comment: CommentData, replyComment?: CommentData | undefined) {
+function insertComment(
+  opts: LayoutOptions,
+  insertMode: 'append' | 'prepend',
+  comment: CommentData,
+  replyComment?: CommentData | undefined,
+) {
   if (comment.is_collapsed) comment.is_allow_reply = false
   const node = opts.createCommentNode(comment, replyComment)
 

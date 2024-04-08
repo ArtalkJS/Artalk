@@ -9,8 +9,12 @@ import { AdminOnlyElem } from './admin-only-elem'
 import { DarkMode } from './dark-mode'
 
 export const DefaultPlugins: ArtalkPlugin[] = [
-  Markdown, EditorKit, AdminOnlyElem,
+  Markdown,
+  EditorKit,
+  AdminOnlyElem,
   ...ListPlugins,
   Notifies,
-  PvCountWidget, VersionCheck, DarkMode,
+  PvCountWidget,
+  VersionCheck,
+  DarkMode,
 ]

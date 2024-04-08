@@ -14,6 +14,8 @@ npm install artalk
 
 调用该函数将创建并得到一个 Artalk 的实例化对象，可用于后续操作。
 
+<!-- prettier-ignore-start -->
+
 ```js
 import Artalk from 'artalk'
 
@@ -25,6 +27,8 @@ const artalk = Artalk.init({
   site:      'Artalk 的博客',
 })
 ```
+
+<!-- prettier-ignore-end -->
 
 调用该函数会异步地向后端发起请求：
 
@@ -162,7 +166,7 @@ artalk.setDarkMode(true)
 ```js
 const artalk = Artalk.init({
   // ...其他配置
-  darkMode:  'auto',
+  darkMode: 'auto',
 })
 ```
 

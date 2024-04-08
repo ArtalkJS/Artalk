@@ -10,8 +10,12 @@ import loadRenders from './renders'
 export default class Render {
   public comment: CommentNode
 
-  public get data() { return this.comment.getData() }
-  public get opts() { return this.comment.getOpts() }
+  public get data() {
+    return this.comment.getData()
+  }
+  public get opts() {
+    return this.comment.getOpts()
+  }
 
   public $el!: HTMLElement
   public $main!: HTMLElement
@@ -20,7 +24,7 @@ export default class Render {
   public $headerBadgeWrap!: HTMLElement
   public $body!: HTMLElement
   public $content!: HTMLElement
-  public $childrenWrap!: HTMLElement|null
+  public $childrenWrap!: HTMLElement | null
   public $actions!: HTMLElement
   public voteBtnUp?: ActionBtn
   public voteBtnDown?: ActionBtn
@@ -72,20 +76,24 @@ export default class Render {
     const contentMaxH = conf.content
     const childrenMaxH = conf.children
 
-    HeightLimit.check({
-      postExpandBtnClick: () => {
-        // 子评论数仅有 1，直接取消限高
-        const children = this.comment.getChildren()
-        if (children.length === 1) HeightLimit.disposeHeightLimit(children[0].getRender().$content)
+    HeightLimit.check(
+      {
+        postExpandBtnClick: () => {
+          // 子评论数仅有 1，直接取消限高
+          const children = this.comment.getChildren()
+          if (children.length === 1)
+            HeightLimit.disposeHeightLimit(children[0].getRender().$content)
+        },
+        scrollable: conf.scrollable,
       },
-      scrollable: conf.scrollable
-    }, [
-      // 评论内容限高
-      { el: this.$content, max: contentMaxH, imgContains: true },
-      { el: this.$replyTo, max: contentMaxH, imgContains: true },
-      // 子评论区域限高（仅嵌套模式）
-      { el: this.$childrenWrap, max: childrenMaxH, imgContains: false }
-    ])
+      [
+        // 评论内容限高
+        { el: this.$content, max: contentMaxH, imgContains: true },
+        { el: this.$replyTo, max: contentMaxH, imgContains: true },
+        // 子评论区域限高（仅嵌套模式）
+        { el: this.$childrenWrap, max: childrenMaxH, imgContains: false },
+      ],
+    )
   }
 
   /** 子评论区域移除限高 */

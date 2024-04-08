@@ -15,9 +15,7 @@ export interface CountOptions {
 }
 
 export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
-  ctx.watchConf([
-    'site', 'pageKey', 'pageTitle', 'countEl', 'pvEl',
-  ], (conf) => {
+  ctx.watchConf(['site', 'pageKey', 'pageTitle', 'countEl', 'pvEl'], (conf) => {
     initCountWidget({
       getApi: () => ctx.getApi(),
       siteName: conf.site,
@@ -25,7 +23,7 @@ export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
       pageTitle: conf.pageTitle,
       countEl: conf.countEl,
       pvEl: conf.pvEl,
-      pvAdd: (typeof ctx.conf.pvAdd === 'boolean' ? ctx.conf.pvAdd : true),
+      pvAdd: typeof ctx.conf.pvAdd === 'boolean' ? ctx.conf.pvAdd : true,
     })
   })
 }
@@ -38,13 +36,18 @@ export async function initCountWidget(opt: CountOptions) {
   }
 
   // PV
-  const initialData = (opt.pvAdd && opt.pageKey) ? {
-    [opt.pageKey]: (await opt.getApi().pages.logPv({
-      page_key: opt.pageKey,
-      page_title: opt.pageTitle,
-      site_name: opt.siteName,
-    })).data.pv // pv+1 and get pv count
-  } : undefined
+  const initialData =
+    opt.pvAdd && opt.pageKey
+      ? {
+          [opt.pageKey]: (
+            await opt.getApi().pages.logPv({
+              page_key: opt.pageKey,
+              page_title: opt.pageTitle,
+              site_name: opt.siteName,
+            })
+          ).data.pv, // pv+1 and get pv count
+        }
+      : undefined
 
   if (opt.pvEl && document.querySelector(opt.pvEl)) {
     refreshStatCount(opt, {
@@ -63,7 +66,7 @@ async function refreshStatCount(
     query: 'page_pv' | 'page_comment'
     numEl: string
     data?: CountData
-  }
+  },
 ) {
   let data: CountData = args.data || {}
 
@@ -76,10 +79,12 @@ async function refreshStatCount(
 
   // Fetch count data from server
   if (queryPageKeys.length > 0) {
-    const res = (await opt.getApi().stats.getStats(args.query, {
-      page_keys: queryPageKeys.join(','),
-      site_name: opt.siteName,
-    })).data.data as CountData
+    const res = (
+      await opt.getApi().stats.getStats(args.query, {
+        page_keys: queryPageKeys.join(','),
+        site_name: opt.siteName,
+      })
+    ).data.data as CountData
     data = { ...data, ...res }
   }
 
@@ -90,7 +95,7 @@ async function refreshStatCount(
 function applyCountData(selector: string, data: CountData, defaultCount: number) {
   document.querySelectorAll(selector).forEach((el) => {
     const pageKey = el.getAttribute('data-page-key')
-    const count = Number(pageKey ? (data[pageKey]) : defaultCount)
+    const count = Number(pageKey ? data[pageKey] : defaultCount)
     el.innerHTML = `${count}`
   })
 }

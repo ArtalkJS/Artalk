@@ -6,11 +6,13 @@ const AdminChecker: Checker<{ token: string }> = {
   inputType: 'password',
 
   async request(checker, inputVal) {
-    return (await checker.getApi().user.login({
-      name: checker.getUser().getData().nick,
-      email: checker.getUser().getData().email,
-      password: inputVal
-    })).data
+    return (
+      await checker.getApi().user.login({
+        name: checker.getUser().getData().nick,
+        email: checker.getUser().getData().email,
+        password: inputVal,
+      })
+    ).data
   },
 
   body(checker) {
@@ -20,12 +22,12 @@ const AdminChecker: Checker<{ token: string }> = {
   onSuccess(checker, res, inputVal, formEl) {
     checker.getUser().update({
       isAdmin: true,
-      token: res.token
+      token: res.token,
     })
     checker.getOpts().onReload()
   },
 
-  onError(checker, err, inputVal, formEl) {}
+  onError(checker, err, inputVal, formEl) {},
 }
 
 export default AdminChecker

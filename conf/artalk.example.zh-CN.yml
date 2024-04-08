@@ -11,13 +11,13 @@ app_key: ""
 debug: false
 
 # 语言 ["en", "zh-CN", "zh-TW", "jp"]
-locale: "zh-CN"
+locale: zh-CN
 
 # 时间区域
-timezone: "Asia/Shanghai"
+timezone: Asia/Shanghai
 
 # 默认站点名
-site_default: "默认站点"
+site_default: 默认站点
 
 # 登录有效时长 (单位：秒)
 login_timeout: 259200
@@ -25,21 +25,21 @@ login_timeout: 259200
 # 数据库
 db:
   # 数据库类型 ["sqlite", "mysql", "pgsql", "mssql"]
-  type: "sqlite"
+  type: sqlite
   # 数据库文件 (仅 SQLite 数据库需填写)
-  file: "./data/artalk.db"
+  file: ./data/artalk.db
   # 数据库名称
-  name: "artalk"
+  name: artalk
   # 数据库地址
-  host: "localhost"
+  host: localhost
   # 数据库端口
   port: 3306
   # 数据库账户
-  user: "root"
+  user: root
   # 数据库密码
   password: ""
   # 编码格式
-  charset: "utf8mb4"
+  charset: utf8mb4
   # 表前缀 (例如："atk_")
   table_prefix: ""
   # 启用 SSL
@@ -52,14 +52,14 @@ log:
   # 启用日志
   enabled: true
   # 日志文件路径
-  filename: "./data/artalk.log"
+  filename: ./data/artalk.log
 
 # 缓存
 cache:
   # 启用缓存
   enabled: false
   # 缓存类型 ["redis", "memcache", "builtin"]
-  type: "builtin"
+  type: builtin
   # 缓存过期时间 (单位：分钟)
   expires: 30
   # 缓存启动预热 (程序启动时预热缓存)
@@ -69,7 +69,7 @@ cache:
   # Redis 配置
   redis:
     # 连接方式 ["tcp", "unix"]
-    network: "tcp"
+    network: tcp
     # 用户名
     username: ""
     # 密码
@@ -112,14 +112,14 @@ moderator:
     enabled: false
     secret_id: ""
     secret_key: ""
-    region: "ap-guangzhou"
+    region: ap-guangzhou
   # 阿里云内容安全
   # (https://help.aliyun.com/document_detail/28417.html)
   aliyun:
     enabled: false
     access_key_id: ""
     access_key_secret: ""
-    region: "cn-shanghai"
+    region: cn-shanghai
   # 关键词过滤 (本地离线词库)
   keywords:
     enabled: false
@@ -127,11 +127,11 @@ moderator:
     pending: false
     # 词库文件 (支持多个词库文件)
     files:
-      - "./data/词库_1.txt"
+      - ./data/词库_1.txt
     # 词库文件内容分割符 (例如填写 "\n" 文件中一行一个关键词)
     file_sep: "\n"
     # 替换字符
-    replac_to: "x"
+    replac_to: x
 
 # 验证码
 captcha:
@@ -140,7 +140,7 @@ captcha:
   # 总是需要验证码
   always: false
   # 验证类型 ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
-  captcha_type: "image"
+  captcha_type: image
   # 激活验证码所需操作次数
   action_limit: 3
   # 重置操作计数器超时 (单位：s, 设为 -1 不重置)
@@ -169,16 +169,16 @@ ip_region:
   # 启用 IP 属地展示
   enabled: false
   # 数据文件路径 (.xdb 格式)
-  db_path: "./data/ip2region.xdb"
+  db_path: ./data/ip2region.xdb
   # 显示精度 ["province", "city", "country"]
-  precision: "province"
+  precision: province
 
 # 图片上传
 img_upload:
   # 启用图片上传
   enabled: true
   # 图片存放路径
-  path: "./data/artalk-img/"
+  path: ./data/artalk-img/
   # 图片大小限制 (单位：MB)
   max_size: 5
   # 图片链接基础路径 (默认为 "/static/images/")
@@ -189,7 +189,7 @@ img_upload:
     # 启用 Upgit
     enabled: false
     # 命令行参数
-    exec: "upgit -c <upgit配置文件路径> -t /artalk-img"
+    exec: upgit -c <upgit配置文件路径> -t /artalk-img
     # 上传后删除本地的图片
     del_local: true
 
@@ -198,23 +198,23 @@ email:
   # 启用邮件通知
   enabled: false
   # 发送方式 ["smtp", "ali_dm", "sendmail"]
-  send_type: "smtp"
+  send_type: smtp
   # 发信人昵称
   send_name: "{{reply_nick}}"
   # 发信人地址
-  send_addr: "noreply@example.com"
+  send_addr: noreply@example.com
   # 邮件标题
   mail_subject: "[{{site_name}}] 您收到了来自 @{{reply_nick}} 的回复"
   # 邮件模板文件 (填入文件路径使用自定义模板)
-  mail_tpl: "default"
+  mail_tpl: default
   # SMTP 发送 (启用请将发送方式设为 "smtp")
   smtp:
     # 发件地址
-    host: "smtp.qq.com"
+    host: smtp.qq.com
     # 发件端口
     port: 587
     # 用户名
-    username: "example@qq.com"
+    username: example@qq.com
     # 密码
     password: ""
   # 阿里云邮件推送
@@ -222,12 +222,12 @@ email:
   ali_dm:
     access_key_id: ""
     access_key_secret: ""
-    account_name: "noreply@example.com"
+    account_name: noreply@example.com
 
 # 多元推送
 admin_notify:
   # 通知模版 (填入文件路径使用自定义模板)
-  notify_tpl: "default"
+  notify_tpl: default
   # 待审评论仍然发送通知 (当评论被拦截时仍然发送通知)
   notify_pending: false
   # 嘈杂模式
@@ -249,7 +249,7 @@ admin_notify:
   # Bark
   bark:
     enabled: false
-    server: "http://day.app/xxxxxxx/"
+    server: http://day.app/xxxxxxx/
   # 飞书
   lark:
     enabled: false
@@ -268,15 +268,15 @@ admin_notify:
     enabled: false
     oauth_token: ""
     receivers:
-      - "CHANNEL_ID"
+      - CHANNEL_ID
   # LINE
   line:
     enabled: false
     channel_secret: ""
     channel_access_token: ""
     receivers:
-      - "USER_ID_1"
-      - "GROUP_ID_1"
+      - USER_ID_1
+      - GROUP_ID_1
 
 # 界面配置
 frontend:
@@ -289,7 +289,7 @@ frontend:
   # 评论框穿梭
   editorTravel: true
   # 表情包
-  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
+  emoticons: https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json
   # 投票按钮
   vote: true
   # 反对按钮
@@ -305,7 +305,7 @@ frontend:
   # 编辑器实时预览功能
   preview: true
   # 平铺模式 ["auto", true, false]
-  flatMode: "auto"
+  flatMode: auto
   # 最大嵌套层数
   nestMax: 2
   # 嵌套评论排序规则 ["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]
@@ -313,9 +313,9 @@ frontend:
   # 头像 Gravatar
   gravatar:
     # API 地址
-    mirror: "https://cravatar.cn/avatar/"
+    mirror: https://cravatar.cn/avatar/
     # API 参数
-    params: "d=mp&s=240"
+    params: d=mp&s=240
   # 评论分页
   pagination:
     # 每页评论数

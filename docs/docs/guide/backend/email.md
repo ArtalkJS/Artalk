@@ -11,21 +11,21 @@ Artalk 支持 SMTP 协议、阿里云邮件推送、调用系统 sendmail 命令
 ```yaml
 # 邮件通知
 email:
-  enabled: false    # 总开关
-  send_type: "smtp" # 发送方式 [smtp, ali_dm, sendmail]
+  enabled: false # 总开关
+  send_type: smtp # 发送方式 [smtp, ali_dm, sendmail]
   send_name: '{{reply_nick}}' # 发信人昵称
-  send_addr: "example@qq.com" # 发信人地址
-  mail_subject: "[{{site_name}}] 您收到了来自 @{{reply_nick}} 的回复"
-  mail_tpl: "default" # 邮件模板文件
+  send_addr: example@qq.com # 发信人地址
+  mail_subject: '[{{site_name}}] 您收到了来自 @{{reply_nick}} 的回复'
+  mail_tpl: default # 邮件模板文件
   smtp:
-    host: "smtp.qq.com"
+    host: smtp.qq.com
     port: 587
-    username: "example@qq.com"
-    password: ""
+    username: example@qq.com
+    password: ''
   ali_dm: # https://help.aliyun.com/document_detail/29444.html
-    access_key_id: ""     # 阿里云颁发给用户的访问服务所用的密钥 ID
-    access_key_secret: "" # 用于加密的密钥
-    account_name: "example@example.com" # 管理控制台中配置的发信地址
+    access_key_id: '' # 阿里云颁发给用户的访问服务所用的密钥 ID
+    access_key_secret: '' # 用于加密的密钥
+    account_name: example@example.com # 管理控制台中配置的发信地址
 ```
 
 ### 选择发件方式
@@ -35,7 +35,7 @@ email:
 ```yaml
 email:
   enabled: true
-  send_type: "smtp" # 发送方式
+  send_type: smtp # 发送方式
   # 省略其他配置...
   smtp:
     # SMTP 配置...
@@ -49,12 +49,12 @@ email:
 # 邮件通知
 email:
   enabled: true
-  send_type: "smtp" # 选择 smtp
+  send_type: smtp # 选择 smtp
   smtp:
-    host: "smtp.qq.com"
+    host: smtp.qq.com
     port: 587
-    username: "example@qq.com"
-    password: ""
+    username: example@qq.com
+    password: ''
 ```
 
 ### 阿里云推送配置
@@ -62,11 +62,11 @@ email:
 ```yaml
 email:
   enabled: true
-  send_type: "ali_dm" # 选择 ali_dm
+  send_type: ali_dm # 选择 ali_dm
   ali_dm:
-    access_key_id: ""     # 阿里云颁发给用户的访问服务所用的密钥 ID
-    access_key_secret: "" # 用于加密的密钥
-    account_name: "example@example.com" # 管理控制台中配置的发信地址
+    access_key_id: '' # 阿里云颁发给用户的访问服务所用的密钥 ID
+    access_key_secret: '' # 用于加密的密钥
+    account_name: example@example.com # 管理控制台中配置的发信地址
 ```
 
 可参考：[阿里云官方文档](https://help.aliyun.com/document_detail/29444.html)
@@ -86,16 +86,16 @@ email:
 ```yaml
 email:
   # 省略其他配置...
-  mail_subject: "[{{site_name}}] 您收到了来自 @{{reply_nick}} 的回复"
+  mail_subject: '[{{site_name}}] 您收到了来自 @{{reply_nick}} 的回复'
   mail_subject_to_admin: '[{{site_name}}] 您的文章 "{{page_title}}" 有新回复'
-  mail_tpl: "default" # 邮件模板文件
+  mail_tpl: default # 邮件模板文件
 ```
 
-变量是 “Mustache” 的语法，`双大括号` + `变量名` 的形式即可输出一个变量： 
+变量是 “Mustache” 的语法，`双大括号` + `变量名` 的形式即可输出一个变量：
 
 **基本内容变量**
 
-```
+```yaml
 {{content}}        # 评论内容
 {{link_to_reply}}  # 回复链接
 {{nick}}           # 评论者昵称
@@ -109,7 +109,7 @@ email:
 
 ::: details 查看其他变量
 
-```
+```yaml
 # 评论创建者
 {{comment.badge_color}}
 {{comment.badge_name}}
@@ -276,7 +276,7 @@ email:
   "parent_comment.ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
   "parent_comment.visible": false,
   "parent_comment.vote_down": 0,
-  "parent_comment.vote_up": 0,
+  "parent_comment.vote_up": 0
 }
 ```
 
@@ -290,7 +290,7 @@ email:
 
 ```yaml
 email:
-  mail_tpl: "/root/Artalk/data/mail_tpl/your_email_template.html"
+  mail_tpl: /root/Artalk/data/mail_tpl/your_email_template.html
   # 其他配置省略...
 ```
 
@@ -298,15 +298,13 @@ email:
 
 ```html
 <div>
-    <p>Hi, {{nick}}：</p>
-    <p>
-        您在 “{{page_title}}” 收到了回复：
-    </p>
-    <div>
-        <div>@{{reply_nick}}:</div>
-        <div>{{reply_content}}</div>
-    </div>
-    <p><a href="{{link_to_reply}}" target="_blank">回复消息 »</a></p>
+  <p>Hi, {{nick}}：</p>
+  <p>您在 “{{page_title}}” 收到了回复：</p>
+  <div>
+    <div>@{{reply_nick}}:</div>
+    <div>{{reply_content}}</div>
+  </div>
+  <p><a href="{{link_to_reply}}" target="_blank">回复消息 »</a></p>
 </div>
 ```
 
@@ -319,7 +317,7 @@ Artalk 内置许多预设的邮件模板，例如 `mail_tpl: "default"` 使用�
 ```yaml
 admin_notify:
   enabled: true
-  mail_subject: "[{{site_name}}] 您的文章「{{page_title}}」有新回复"
+  mail_subject: '[{{site_name}}] 您的文章「{{page_title}}」有新回复'
 ```
 
 注：旧版 `email.mail_subject_to_admin` 配置项已弃用，请使用以上替代。

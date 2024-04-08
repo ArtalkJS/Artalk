@@ -27,9 +27,11 @@ docker exec -it artalk artalk admin
 
 > 注：将 `http://your_domain:8080` 改为你的服务器域名，或使用 [公共 CDN 资源](#cdn-资源)。
 
+<!-- prettier-ignore-start -->
+
 ```html
 <!-- CSS -->
-<link href="http://your_domain:8080/dist/Artalk.css" rel="stylesheet">
+<link href="http://your_domain:8080/dist/Artalk.css" rel="stylesheet" />
 
 <!-- JS -->
 <script src="http://your_domain:8080/dist/Artalk.js"></script>
@@ -37,15 +39,16 @@ docker exec -it artalk artalk admin
 <!-- Artalk -->
 <div id="Comments"></div>
 <script>
-Artalk.init({
+  Artalk.init({
   el:        '#Comments',                // 绑定元素的 Selector
   pageKey:   '/post/1',                  // 固定链接 (留空自动获取)
   pageTitle: '关于引入 Artalk 的这档子事',  // 页面标题 (留空自动获取)
   server:    'http://your_domain:8080',  // 后端地址
   site:      'Artalk 的博客',             // 你的站点名
-})
+  })
 </script>
 ```
+<!-- prettier-ignore-end -->
 
 在评论框输入管理员的用户名和邮箱，控制台入口按钮将出现在评论框右下角位置。
 
@@ -60,9 +63,9 @@ Artalk.init({
 3. 运行程序 `./artalk server`
 4. 前端配置
 
-    ```js
-    Artalk.init({ server: "http://your_domain:23366" })
-    ```
+   ```js
+   Artalk.init({ server: 'http://your_domain:23366' })
+   ```
 
 **进一步操作：**
 
@@ -76,7 +79,7 @@ Artalk.init({
 **compose.yaml**
 
 ```yaml
-version: "3.5"
+version: '3.5'
 services:
   artalk:
     container_name: artalk
@@ -123,47 +126,47 @@ Artalk 静态资源通过上游 CDNJS 分发，以下镜像资源可供选择：
 
 **CDNJS**
 
-> https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.js
+> <https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.js>
 >
-> https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
+> <https://cdnjs.cloudflare.com/ajax/libs/artalk/:ArtalkVersion:/Artalk.css>
 
 **SUSTech Mirrors (境内)**
 
-> https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/artalk/:ArtalkVersion:/Artalk.js
+> <https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/artalk/:ArtalkVersion:/Artalk.js>
 >
-> https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
+> <https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/artalk/:ArtalkVersion:/Artalk.css>
 
 ::: details 查看更多
 
 **Staticfile CDN (境内)**
 
-> https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.js
+> <https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.js>
 >
-> https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.css
+> <https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.css>
 
 **BootCDN (境内)**
 
-> https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.js
+> <https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.js>
 >
-> https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.css
+> <https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.css>
 
 **75CDN (境内)**
 
-> https://lib.baomitu.com/artalk/:ArtalkVersion:/Artalk.js
+> <https://lib.baomitu.com/artalk/:ArtalkVersion:/Artalk.js>
 >
-> https://lib.baomitu.com/artalk/:ArtalkVersion:/Artalk.css
+> <https://lib.baomitu.com/artalk/:ArtalkVersion:/Artalk.css>
 
 **UNPKG**
 
-> https://unpkg.com/artalk@:ArtalkVersion:/dist/Artalk.js
-> 
-> https://unpkg.com/artalk@:ArtalkVersion:/dist/Artalk.css
+> <https://unpkg.com/artalk@:ArtalkVersion:/dist/Artalk.js>
+>
+> <https://unpkg.com/artalk@:ArtalkVersion:/dist/Artalk.css>
 
 **JS DELIVR**
 
-> https://cdn.jsdelivr.net/npm/artalk@:ArtalkVersion:/dist/Artalk.js
-> 
-> https://cdn.jsdelivr.net/npm/artalk@:ArtalkVersion:/dist/Artalk.css
+> <https://cdn.jsdelivr.net/npm/artalk@:ArtalkVersion:/dist/Artalk.js>
+>
+> <https://cdn.jsdelivr.net/npm/artalk@:ArtalkVersion:/dist/Artalk.css>
 
 :::
 

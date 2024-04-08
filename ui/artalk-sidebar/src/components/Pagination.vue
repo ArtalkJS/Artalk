@@ -20,11 +20,11 @@ const emit = defineEmits<{
 const curtPage = ref(1)
 const offset = computed(() => pageSize.value * (curtPage.value - 1))
 const maxPage = computed(() => Math.ceil(total.value / pageSize.value))
-const prevDisabled = computed(() => (curtPage.value - 1 < 1))
-const nextDisabled = computed(() => (curtPage.value + 1 > maxPage.value))
+const prevDisabled = computed(() => curtPage.value - 1 < 1)
+const nextDisabled = computed(() => curtPage.value + 1 > maxPage.value)
 
 const inputValue = ref(String(curtPage.value))
-let inputTimer: number|undefined
+let inputTimer: number | undefined
 
 function changePage(page: number) {
   curtPage.value = page
@@ -36,14 +36,18 @@ function changePage(page: number) {
 function prev() {
   if (disabled?.value) return
   const page = curtPage.value - 1
-  if (page < 1) { return }
+  if (page < 1) {
+    return
+  }
   changePage(page)
 }
 
 function next() {
   if (disabled?.value) return
   const page = curtPage.value + 1
-  if (page > maxPage.value) { return }
+  if (page > maxPage.value) {
+    return
+  }
   changePage(page)
 }
 
@@ -67,11 +71,22 @@ function triggerInput(now: boolean = false) {
   const value = inputValue.value.trim()
 
   const modify = () => {
-    if (value === '') { revokeInput();return }
+    if (value === '') {
+      revokeInput()
+      return
+    }
     let page = Number(value)
-    if (Number.isNaN(page)) { revokeInput();return }
-    if (page < 1) { revokeInput();return }
-    if (page > maxPage.value) { page = maxPage.value }
+    if (Number.isNaN(page)) {
+      revokeInput()
+      return
+    }
+    if (page < 1) {
+      revokeInput()
+      return
+    }
+    if (page > maxPage.value) {
+      page = maxPage.value
+    }
     changePage(page)
   }
 
@@ -86,13 +101,17 @@ function onInputKeydown(evt: KeyboardEvent) {
   if (keyCode === 38) {
     // 上键
     const page = Number(inputValue.value) + 1
-    if (page > maxPage.value) { return }
-    fillInput(page);
+    if (page > maxPage.value) {
+      return
+    }
+    fillInput(page)
     triggerInput(false)
   } else if (keyCode === 40) {
     // 下键
     const page = Number(inputValue.value) - 1
-    if (page < 1) { return }
+    if (page < 1) {
+      return
+    }
     fillInput(page)
     triggerInput(false)
   } else if (keyCode === 13) {
@@ -113,7 +132,19 @@ defineExpose({ prev, next, reset })
         @click="prev()"
         aria-label="Previous page"
       >
-        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="14px" width="14px" xmlns="http://www.w3.org/2000/svg"><path d="M217.9 256L345 129c9.4-9.4 9.4-24.6 0-33.9-9.4-9.4-24.6-9.3-34 0L167 239c-9.1 9.1-9.3 23.7-.7 33.1L310.9 417c4.7 4.7 10.9 7 17 7s12.3-2.3 17-7c9.4-9.4 9.4-24.6 0-33.9L217.9 256z"></path></svg>
+        <svg
+          stroke="currentColor"
+          fill="currentColor"
+          stroke-width="0"
+          viewBox="0 0 512 512"
+          height="14px"
+          width="14px"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M217.9 256L345 129c9.4-9.4 9.4-24.6 0-33.9-9.4-9.4-24.6-9.3-34 0L167 239c-9.1 9.1-9.3 23.7-.7 33.1L310.9 417c4.7 4.7 10.9 7 17 7s12.3-2.3 17-7c9.4-9.4 9.4-24.6 0-33.9L217.9 256z"
+          ></path>
+        </svg>
       </div>
       <input
         type="text"
@@ -130,7 +161,19 @@ defineExpose({ prev, next, reset })
         @click="next()"
         aria-label="Next page"
       >
-        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="14px" width="14px" xmlns="http://www.w3.org/2000/svg"><path d="M294.1 256L167 129c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.3 34 0L345 239c9.1 9.1 9.3 23.7.7 33.1L201.1 417c-4.7 4.7-10.9 7-17 7s-12.3-2.3-17-7c-9.4-9.4-9.4-24.6 0-33.9l127-127.1z"></path></svg>
+        <svg
+          stroke="currentColor"
+          fill="currentColor"
+          stroke-width="0"
+          viewBox="0 0 512 512"
+          height="14px"
+          width="14px"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M294.1 256L167 129c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.3 34 0L345 239c9.1 9.1 9.3 23.7.7 33.1L201.1 417c-4.7 4.7-10.9 7-17 7s-12.3-2.3-17-7c-9.4-9.4-9.4-24.6 0-33.9l127-127.1z"
+          ></path>
+        </svg>
       </div>
     </div>
   </div>

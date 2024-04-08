@@ -4,5 +4,5 @@
     "types": ["vite/client"],
     "resolveJsonModule": true
   },
-  "include": ["**/.vitepress/**/*"],
+  "include": ["**/.vitepress/**/*"]
 }

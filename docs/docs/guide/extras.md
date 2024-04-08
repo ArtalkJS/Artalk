@@ -34,7 +34,6 @@ Artalk v1 版本基于 [PHP 后端](https://github.com/ArtalkJS/ArtalkPHP)，部
 - [Hexo 添加 Artalk 评论教程 - 我相信我可以](https://butterfly.imlete.cn/article/Hexo-Artalk.html)
 - [基于 Butterfly 主题添加 Artalk 评论系统 - 卓越科技的 Blog](https://blog.imzykj.cn/posts/93afb348/)
 
-
 ## 衍生品
 
 - [Artalk：一款 ~~简洁~~ 有趣的自托管评论系统 (By monsterxcn)](https://github.com/monsterxcn/Artalk)

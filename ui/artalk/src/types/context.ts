@@ -5,7 +5,15 @@ import type { TMarked } from '@/lib/marked'
 import type { I18n } from '@/i18n'
 import type { Api, ApiHandlers } from '@/api'
 import type { CommentNode } from '@/comment'
-import type { SidebarShowPayload, EventPayloadMap, ArtalkConfig, CommentData, DataManagerApi, ListFetchParams, NotifyLevel } from '.'
+import type {
+  SidebarShowPayload,
+  EventPayloadMap,
+  ArtalkConfig,
+  CommentData,
+  DataManagerApi,
+  ListFetchParams,
+  NotifyLevel,
+} from '.'
 
 /**
  * Artalk Context
@@ -94,10 +102,10 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   checkAdmin(payload: CheckerPayload): Promise<void>
 
   /** i18n 翻译 */
-  $t(key: keyof I18n, args?: {[key: string]: string}): string
+  $t(key: keyof I18n, args?: { [key: string]: string }): string
 
   /** 设置夜间模式 */
-  setDarkMode(darkMode: boolean|'auto'): void
+  setDarkMode(darkMode: boolean | 'auto'): void
 
   /** 获取配置 */
   getConf(): ArtalkConfig
@@ -109,5 +117,8 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   updateConf(conf: Partial<ArtalkConfig>): void
 
   /** 监听配置更新 */
-  watchConf<T extends (keyof ArtalkConfig)[]>(keys: T, effect: (val: Pick<ArtalkConfig, T[number]>) => void): void
+  watchConf<T extends (keyof ArtalkConfig)[]>(
+    keys: T,
+    effect: (val: Pick<ArtalkConfig, T[number]>) => void,
+  ): void
 }

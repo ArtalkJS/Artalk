@@ -12,29 +12,29 @@ Artalk 支持多种评论过滤方式以拦截垃圾评论，支持通过 Akisme
 # 评论审核
 moderator:
   pending_default: false # 发表新评论默认为 “待审状态”
-  api_fail_block: false  # 垃圾检测 API 请求错误仍然拦截
+  api_fail_block: false # 垃圾检测 API 请求错误仍然拦截
   # akismet.com 反垃圾
-  akismet_key: ""
+  akismet_key: ''
   # 腾讯云文本内容安全 (tms)
   tencent: # https://cloud.tencent.com/document/product/1124/64508
     enabled: false
-    secret_id: ""
-    secret_key: ""
-    region: "ap-guangzhou"
+    secret_id: ''
+    secret_key: ''
+    region: ap-guangzhou
   # 阿里云内容安全
   aliyun: # https://help.aliyun.com/document_detail/28417.html
     enabled: false
-    access_key_id: ""
-    access_key_secret: ""
-    region: "cn-shanghai"
+    access_key_id: ''
+    access_key_secret: ''
+    region: cn-shanghai
   # 关键词词库过滤
   keywords:
     enabled: false
     pending: false # 匹配成功设为待审状态
-    files:         # 支持多个词库文件
-      - "./data/词库_1.txt"
+    files: # 支持多个词库文件
+      - './data/词库_1.txt'
     file_sep: "\n" # 词库文件内容分割符
-    replac_to: "x" # 替换字符
+    replac_to: 'x' # 替换字符
 ```
 
 ## 默认待审模式
@@ -58,7 +58,7 @@ moderator:
 
 ```yaml
 moderator:
-  akismet_key: "your_key"
+  akismet_key: your_key
 ```
 
 ## 腾讯云文本内容安全
@@ -71,9 +71,9 @@ moderator:
 moderator:
   tencent:
     enabled: true
-    secret_id: ""
-    secret_key: ""
-    region: "ap-guangzhou"
+    secret_id: ''
+    secret_key: ''
+    region: ap-guangzhou
 ```
 
 ## 阿里云内容安全
@@ -86,9 +86,9 @@ moderator:
 moderator:
   aliyun:
     enabled: true
-    access_key_id: ""
-    access_key_secret: ""
-    region: "cn-shanghai"
+    access_key_id: ''
+    access_key_secret: ''
+    region: cn-shanghai
 ```
 
 ## 关键词词库过滤
@@ -100,10 +100,10 @@ moderator:
   keywords:
     enabled: true
     pending: false # 匹配成功设为待审状态
-    files:         # 支持多个词库文件
-      - "./data/词库_1.txt"
+    files: # 支持多个词库文件
+      - ./data/词库_1.txt
     file_sep: "\n" # 词库文件内容分割符
-    replac_to: "x" # 替换字符
+    replac_to: 'x' # 替换字符
 ```
 
 - **pending**：当成功匹配时，是否将评论设为待审核状态。

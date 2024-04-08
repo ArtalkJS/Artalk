@@ -26,16 +26,18 @@ export default class ActionBtn {
 
   public msgRecTimer?: number // 消息显示复原定时器
   public msgRecTimerFunc?: Function // 消息显示复原操作
-  public get isMessaging() { return !!this.msgRecTimer } // 消息正在显示
+  public get isMessaging() {
+    return !!this.msgRecTimer
+  } // 消息正在显示
 
   public isConfirming = false // 正在确认
   public confirmRecTimer?: number // 确认消息复原定时器
 
   /** 构造函数 */
-  constructor(opts: ActionBtnOptions|string|(() => string)) {
+  constructor(opts: ActionBtnOptions | string | (() => string)) {
     this.$el = Utils.createElement(`<span class="atk-common-action-btn"></span>`)
 
-    this.opts = (typeof opts !== 'object') ? ({ text: opts }) : opts
+    this.opts = typeof opts !== 'object' ? { text: opts } : opts
     this.$el.innerText = this.getText()
 
     // 仅管理员可操作
@@ -50,7 +52,7 @@ export default class ActionBtn {
 
   /** 获取按钮文字（动态/静态） */
   private getText() {
-    return (typeof this.opts.text === 'string') ? this.opts.text : this.opts.text()
+    return typeof this.opts.text === 'string' ? this.opts.text : this.opts.text()
   }
 
   /** 设置点击事件 */

@@ -4,8 +4,8 @@ info:
   title: CHANGELOG
   repository_url: https://github.com/ArtalkJS/Artalk
 options:
-  tag_filter_pattern: '^v'
-  sort: "date"
+  tag_filter_pattern: "^v"
+  sort: date
   commits:
     filters:
       Type:

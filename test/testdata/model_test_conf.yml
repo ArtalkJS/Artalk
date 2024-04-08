@@ -1,11 +1,11 @@
 # 加密密钥
-app_key: "test"
+app_key: test
 
 # 调试模式
 debug: false
 
 # 时区
-timezone: "Asia/Shanghai"
+timezone: Asia/Shanghai
 
 # 日志
 log:
@@ -14,19 +14,18 @@ log:
 # 缓存
 cache:
   enabled: false
-  type: "disabled" # 支持 redis, memcache, builtin (自带缓存)
-  expires: 30     # 缓存过期时间 (单位：分钟)
-  warm_up: false  # 程序启动时预热缓存
-  server: ""      # 连接缓存服务器 (例如："localhost:6379")
+  type: disabled # 支持 redis, memcache, builtin (自带缓存)
+  expires: 30 # 缓存过期时间 (单位：分钟)
+  warm_up: false # 程序启动时预热缓存
+  server: "" # 连接缓存服务器 (例如："localhost:6379")
 
 # 默认站点名
-site_default: "默认站点"
+site_default: 默认站点
 
 # 管理员账户
 admin_users:
-  - name: "admin_in_conf"
-    email: "admin_in_conf@example.org"
+  - name: admin_in_conf
+    email: admin_in_conf@example.org
     password: "123456" # 密码支持 bcrypt 或 md5 加密，例如填写："(md5)50c21190c6e4e5418c6a90d2b5031119"
-    badge_name: "管理员"
+    badge_name: 管理员
     badge_color: "#FF6C00"
-

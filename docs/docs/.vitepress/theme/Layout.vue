@@ -4,9 +4,6 @@ import { onMounted } from 'vue'
 import './style.scss'
 
 const { Layout } = DefaultTheme
-
-onMounted(() => {
-})
 </script>
 
 <template>

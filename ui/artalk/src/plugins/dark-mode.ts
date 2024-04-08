@@ -7,7 +7,7 @@ let darkModeMedia: MediaQueryList | undefined
 function updateClassnames($els: HTMLElement[], darkMode: boolean) {
   const DarkModeClassName = 'atk-dark-mode'
 
-  $els.forEach($el => {
+  $els.forEach(($el) => {
     if (darkMode) $el.classList.add(DarkModeClassName)
     else $el.classList.remove(DarkModeClassName)
   })
@@ -17,7 +17,7 @@ export const DarkMode: ArtalkPlugin = (ctx) => {
   // the handler bind to Artalk instance, don't forget to remove it when Artalk instance destroyed
   let darkModeAutoHandler: ((evt: MediaQueryListEvent) => void) | undefined
 
-  const sync = (darkMode: boolean|'auto') => {
+  const sync = (darkMode: boolean | 'auto') => {
     // the elements that classnames need to be updated when darkMode changed
     const $els = [ctx.$root, ctx.get('layerManager').getEl()]
 

@@ -11,7 +11,7 @@ export class Api extends ApiV2<void> {
   constructor(opts: ApiOptions) {
     super({
       baseUrl: opts.baseURL,
-      customFetch: (input, init) => Fetch(opts, input, init)
+      customFetch: (input, init) => Fetch(opts, input, init),
     })
 
     this._opts = opts

@@ -1,14 +1,14 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Launch Artalk for Debugging",
-            "type": "go",
-            "request": "launch",
-            "mode": "exec",
-            "program": "${workspaceFolder}/bin/artalk",
-            "preLaunchTask": "Build for debugging",
-            "args": ["server", "-c", "${workspaceFolder}/data/artalk.yml"]
-        }
-    ],
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Artalk for Debugging",
+      "type": "go",
+      "request": "launch",
+      "mode": "exec",
+      "program": "${workspaceFolder}/bin/artalk",
+      "preLaunchTask": "Build for debugging",
+      "args": ["server", "-c", "${workspaceFolder}/data/artalk.yml"]
+    }
+  ]
 }

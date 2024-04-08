@@ -12,7 +12,10 @@ import Defaults from './defaults'
  * @returns The config for Artalk instance creation
  */
 export function handelCustomConf(customConf: Partial<ArtalkConfig>, full: true): ArtalkConfig
-export function handelCustomConf(customConf: Partial<ArtalkConfig>, full?: false): Partial<ArtalkConfig>
+export function handelCustomConf(
+  customConf: Partial<ArtalkConfig>,
+  full?: false,
+): Partial<ArtalkConfig>
 export function handelCustomConf(customConf: Partial<ArtalkConfig>, full = false) {
   // 合并默认配置
   const conf: Partial<ArtalkConfig> = full ? mergeDeep(Defaults, customConf) : customConf
@@ -30,28 +33,22 @@ export function handelCustomConf(customConf: Partial<ArtalkConfig>, full = false
   }
 
   // 默认 pageKey
-  if (conf.pageKey === '')
-    conf.pageKey = `${window.location.pathname}` // @link http://bl.ocks.org/abernier/3070589
+  if (conf.pageKey === '') conf.pageKey = `${window.location.pathname}` // @link http://bl.ocks.org/abernier/3070589
 
   // 默认 pageTitle
-  if (conf.pageTitle === '')
-    conf.pageTitle = `${document.title}`
+  if (conf.pageTitle === '') conf.pageTitle = `${document.title}`
 
   // 服务器配置
-  if (conf.server)
-    conf.server = conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
+  if (conf.server) conf.server = conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
 
   // 自适应语言
-  if (conf.locale === 'auto')
-    conf.locale = navigator.language
+  if (conf.locale === 'auto') conf.locale = navigator.language
 
   // 自动判断启用平铺模式
-  if (conf.flatMode === 'auto')
-    conf.flatMode = window.matchMedia("(max-width: 768px)").matches
+  if (conf.flatMode === 'auto') conf.flatMode = window.matchMedia('(max-width: 768px)').matches
 
   // flatMode
-  if (typeof conf.nestMax === 'number' && Number(conf.nestMax) <= 1)
-    conf.flatMode = true
+  if (typeof conf.nestMax === 'number' && Number(conf.nestMax) <= 1) conf.flatMode = true
 
   return conf
 }
@@ -64,18 +61,23 @@ export function handelCustomConf(customConf: Partial<ArtalkConfig>, full = false
  */
 export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
   const DisabledKeys: (keyof ArtalkConfig)[] = [
-    'el', 'pageKey', 'pageTitle', 'server', 'site', 'darkMode'
+    'el',
+    'pageKey',
+    'pageTitle',
+    'server',
+    'site',
+    'darkMode',
   ]
-  Object.keys(conf).forEach(k => {
+  Object.keys(conf).forEach((k) => {
     if (DisabledKeys.includes(k as any)) delete conf[k]
   })
 
   // Patch: `emoticons` config string to json
-  if (conf.emoticons && typeof conf.emoticons === "string") {
+  if (conf.emoticons && typeof conf.emoticons === 'string') {
     conf.emoticons = conf.emoticons.trim()
-    if (conf.emoticons.startsWith("[") || conf.emoticons.startsWith("{")) {
+    if (conf.emoticons.startsWith('[') || conf.emoticons.startsWith('{')) {
       conf.emoticons = JSON.parse(conf.emoticons) // parse json
-    } else if (conf.emoticons === "false") {
+    } else if (conf.emoticons === 'false') {
       conf.emoticons = false
     }
   }
@@ -98,10 +100,12 @@ export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi)
     pageTitle: conf.pageTitle || '',
     timeout: conf.reqTimeout,
     getApiToken: () => ctx?.get('user').getData().token,
-    userInfo: ctx?.get('user').checkHasBasicUserInfo() ? {
-      name: ctx?.get('user').getData().nick,
-      email: ctx?.get('user').getData().email,
-    } : undefined,
+    userInfo: ctx?.get('user').checkHasBasicUserInfo()
+      ? {
+          name: ctx?.get('user').getData().nick,
+          email: ctx?.get('user').getData().email,
+        }
+      : undefined,
     handlers: ctx?.getApiHandlers(),
   }
 }

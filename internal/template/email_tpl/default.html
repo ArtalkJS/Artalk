@@ -1,12 +1,45 @@
-<div style="padding: 5px 0;">
-    <p style="margin-left: 10px;font-size: 16px;">Hi, {{nick}}：</p>
-    <p style="margin-left: 20px;">
-        您在 “{{page_title}}” 收到了回复：
-    </p>
-    <div style="background:#fbfbfb;padding:15px 20px;font-size:18px;border-left:3px solid #0083ff;margin-top:17px;">
-        <div style="font-size: 16px;">@{{reply_nick}}:</div>
-        <div>{{reply_content}}</div>
-    </div>
-    <p style="margin-bottom:25px;margin-left: 10px;"><a href="{{link_to_reply}}" target="_blank" style="display:inline-block;padding: 5px 20px;color: #0083ff;background: #fff;border-radius: 40px;border: 2px solid #0083ff;text-decoration:none;margin-top:10px;"">回复 &nbsp;»</a></p>
-    <p style="text-align: right;color: #757e91;margin-right: 10px;">-- <a href="{{site_url}}" target="_blank" style="color: #0083ff;text-decoration:none;">{{site_name}}</a><br /><span style="font-size: 16px;">Powered By Artalk<span style="color: #06abd7;">Go</span></span></p>
+<div style="padding: 5px 0">
+  <p style="margin-left: 10px; font-size: 16px">Hi, {{nick}}：</p>
+  <p style="margin-left: 20px">您在 “{{page_title}}” 收到了回复：</p>
+  <div
+    style="
+      background: #fbfbfb;
+      padding: 15px 20px;
+      font-size: 18px;
+      border-left: 3px solid #0083ff;
+      margin-top: 17px;
+    "
+  >
+    <div style="font-size: 16px">@{{reply_nick}}:</div>
+    <div>{{reply_content}}</div>
+  </div>
+  <p style="margin-bottom: 25px; margin-left: 10px">
+    <a
+      href="{{link_to_reply}}"
+      target="_blank"
+      style="
+        display: inline-block;
+        padding: 5px 20px;
+        color: #0083ff;
+        background: #fff;
+        border-radius: 40px;
+        border: 2px solid #0083ff;
+        text-decoration: none;
+        margin-top: 10px;
+      "
+    >
+      回复 &nbsp;»
+    </a>
+  </p>
+  <p style="text-align: right; color: #757e91; margin-right: 10px">
+    --
+    <a href="{{site_url}}" target="_blank" style="color: #0083ff; text-decoration: none">
+      {{site_name}}
+    </a>
+    <br />
+    <span style="font-size: 16px">
+      Powered By Artalk
+      <span style="color: #06abd7">Go</span>
+    </span>
+  </p>
 </div>

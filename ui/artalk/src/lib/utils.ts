@@ -23,18 +23,18 @@ export function htmlDecode(str: string) {
 }
 
 export function getQueryParam(name: string) {
-  const match = RegExp(`[?&]${name}=([^&]*)`).exec(window.location.search);
-  return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+  const match = RegExp(`[?&]${name}=([^&]*)`).exec(window.location.search)
+  return match && decodeURIComponent(match[1].replace(/\+/g, ' '))
 }
 
 export function getOffset(el: HTMLElement, relativeTo?: HTMLElement) {
-  const getOffsetRecursive = (element: HTMLElement): { top: number, left: number } => {
+  const getOffsetRecursive = (element: HTMLElement): { top: number; left: number } => {
     const rect = element.getBoundingClientRect()
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop
     return {
       top: rect.top + scrollTop,
-      left: rect.left + scrollLeft
+      left: rect.left + scrollLeft,
     }
   }
 
@@ -45,7 +45,7 @@ export function getOffset(el: HTMLElement, relativeTo?: HTMLElement) {
 
   return {
     top: elOffset.top - relativeToOffset.top,
-    left: elOffset.left - relativeToOffset.left
+    left: elOffset.left - relativeToOffset.left,
   }
 }
 
@@ -127,12 +127,14 @@ export function onImagesLoaded($container: HTMLElement, event: Function) {
   }
 }
 
-export function getGravatarURL(opts: { params: string, mirror: string, emailMD5: string }) {
+export function getGravatarURL(opts: { params: string; mirror: string; emailMD5: string }) {
   return `${opts.mirror.replace(/\/$/, '')}/${opts.emailMD5}?${opts.params.replace(/^\?/, '')}`
 }
 
 export function sleep(ms: number) {
-  return new Promise(resolve => { setTimeout(resolve, ms) });
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
 }
 
 /** 版本号比较（a < b :-1 | 0 | b < a :1） */
@@ -140,12 +142,12 @@ export function versionCompare(a: string, b: string) {
   const pa = a.split('.')
   const pb = b.split('.')
   for (let i = 0; i < 3; i++) {
-      const na = Number(pa[i])
-      const nb = Number(pb[i])
-      if (na > nb) return 1
-      if (nb > na) return -1
-      if (!Number.isNaN(na) && Number.isNaN(nb)) return 1
-      if (Number.isNaN(na) && !Number.isNaN(nb)) return -1
+    const na = Number(pa[i])
+    const nb = Number(pb[i])
+    if (na > nb) return 1
+    if (nb > na) return -1
+    if (!Number.isNaN(na) && Number.isNaN(nb)) return 1
+    if (Number.isNaN(na) && !Number.isNaN(nb)) return -1
   }
   return 0
 }
@@ -162,23 +164,31 @@ export async function getCorrectUserAgent() {
   const uaData = (navigator as any).userAgentData
   let uaGot: any = null
   try {
-    uaGot = await uaData.getHighEntropyValues(["platformVersion"])
-  } catch (err) { console.error(err); return uaRaw }
+    uaGot = await uaData.getHighEntropyValues(['platformVersion'])
+  } catch (err) {
+    console.error(err)
+    return uaRaw
+  }
   const majorPlatformVersion = Number(uaGot.platformVersion.split('.')[0])
 
-  if (uaData.platform === "Windows") {
-    if (majorPlatformVersion >= 13) { // @link https://docs.microsoft.com/en-us/microsoft-edge/web-platform/how-to-detect-win11
+  if (uaData.platform === 'Windows') {
+    if (majorPlatformVersion >= 13) {
+      // @link https://docs.microsoft.com/en-us/microsoft-edge/web-platform/how-to-detect-win11
       // @date 2022-4-29
       // Win 11 样本："Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"
       return uaRaw.replace(/Windows NT 10.0/, 'Windows NT 11.0')
     }
   }
-  if (uaData.platform === "macOS") {
-    if (majorPlatformVersion >= 11) { // 11 => BigSur
+  if (uaData.platform === 'macOS') {
+    if (majorPlatformVersion >= 11) {
+      // 11 => BigSur
       // @date 2022-4-29
       // (Intel Chip) macOS 12.3 样本："Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36"
       // (Arm Chip) macOS 样本："Mozilla/5.0 (Macintosh; ARM Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Safari/605.1.15"
-      return uaRaw.replace(/(Mac OS X \d+_\d+_\d+|Mac OS X)/, `Mac OS X ${uaGot.platformVersion.replace(/\./g, '_')}`)
+      return uaRaw.replace(
+        /(Mac OS X \d+_\d+_\d+|Mac OS X)/,
+        `Mac OS X ${uaGot.platformVersion.replace(/\./g, '_')}`,
+      )
     }
   }
 
@@ -191,12 +201,14 @@ export function isValidURL(urlRaw: string) {
   let url: URL
   try {
     url = new URL(urlRaw)
-  } catch (_) { return false }
-  return url.protocol === "http:" || url.protocol === "https:"
+  } catch (_) {
+    return false
+  }
+  return url.protocol === 'http:' || url.protocol === 'https:'
 }
 
 /** 获取基于 conf.server 的 URL */
-export function getURLBasedOnApi(opts: { base: string, path: string }) {
+export function getURLBasedOnApi(opts: { base: string; path: string }) {
   return getURLBasedOn(opts.base, opts.path)
 }
 

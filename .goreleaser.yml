@@ -14,9 +14,9 @@ env:
 
 before:
   hooks:
-  # install dependencies
-  - make install
-  - make build-frontend
+    # install dependencies
+    - make install
+    - make build-frontend
 
 # build multi-platform
 builds:
@@ -60,7 +60,7 @@ builds:
     goarch:
       - arm
     goarm:
-      - '7'
+      - "7"
     env:
       - CC=arm-linux-gnueabihf-gcc
       - CXX=arm-linux-gnueabihf-g++
@@ -118,7 +118,7 @@ builds:
       # https://go-review.googlesource.com/c/go/+/224588/
       # https://github.com/ArtalkJS/Artalk/issues/35
       &win_common_flags |
-        -tags=timetzdata
+      -tags=timetzdata
 
   # Win (arm_64)
   - id: windows-arm64
@@ -156,7 +156,7 @@ archives:
       - artalk.yml
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 
 snapshot:
   name_template: "{{.Version}}-SNAPSHOT-{{.ShortCommit}}"

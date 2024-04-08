@@ -14,7 +14,7 @@ const emit = defineEmits<{
 
 const { site } = toRefs(props)
 const isLoading = ref(false)
-const editFieldKey = ref<keyof ArtalkType.SiteData|null>(null)
+const editFieldKey = ref<keyof ArtalkType.SiteData | null>(null)
 const editFieldVal = computed(() => {
   if (editFieldKey.value === 'urls') return site.value.urls_raw || ''
   return String(editFieldKey ? site.value[editFieldKey.value!] || '' : '')
@@ -47,12 +47,12 @@ function del() {
       console.log(err)
       alert(`删除失败 ${String(err)}`)
       return
-    } finally { isLoading.value = false }
+    } finally {
+      isLoading.value = false
+    }
     emit('remove', site.value.id)
   }
-  if (window.confirm(
-    `确认删除站点 "${site.value.name}"？将会删除所有相关数据`
-  )) del()
+  if (window.confirm(`确认删除站点 "${site.value.name}"？将会删除所有相关数据`)) del()
 }
 
 async function onFieldEditorYes(val: string) {
@@ -62,14 +62,25 @@ async function onFieldEditorYes(val: string) {
     isLoading.value = true
     let s: ArtalkType.SiteData
     try {
-      let finalVal: string|string[] = val
-      if (Array.isArray(site.value[editFieldKey.value])) finalVal = val.split(',').map((v) => v.trim()).filter((v) => !!v)
-      s = (await artalk!.ctx.getApi().sites.updateSite(site.value.id, { ...site.value, [editFieldKey.value]: finalVal })).data
+      let finalVal: string | string[] = val
+      if (Array.isArray(site.value[editFieldKey.value]))
+        finalVal = val
+          .split(',')
+          .map((v) => v.trim())
+          .filter((v) => !!v)
+      s = (
+        await artalk!.ctx.getApi().sites.updateSite(site.value.id, {
+          ...site.value,
+          [editFieldKey.value]: finalVal,
+        })
+      ).data
     } catch (err: any) {
       alert(`修改失败：${err.message || '未知错误'}`)
       console.error(err)
       return false
-    } finally { isLoading.value = false }
+    } finally {
+      isLoading.value = false
+    }
     emit('update', s)
   }
 
@@ -86,17 +97,13 @@ function onFiledEditorNo() {
   <div class="atk-site-edit">
     <div class="atk-header">
       <div class="atk-site-info">
-        <span
-          class="atk-site-name"
-          @click="!site.first_url || openURL(site.first_url)"
-        >{{ site.name }}</span>
+        <span class="atk-site-name" @click="!site.first_url || openURL(site.first_url)">
+          {{ site.name }}
+        </span>
         <span class="atk-site-urls">
-          <div
-            v-for="(url, i) in site.urls"
-            :key="i"
-            class="atk-url-item"
-            @click="openURL(url)"
-          >{{ url }}</div>
+          <div v-for="(url, i) in site.urls" :key="i" class="atk-url-item" @click="openURL(url)">
+            {{ url }}
+          </div>
         </span>
       </div>
       <div class="atk-close-btn" @click="close()">
@@ -105,7 +112,9 @@ function onFiledEditorNo() {
     </div>
     <div class="atk-main">
       <div class="atk-site-text-actions">
-        <div class="atk-item atk-rename-btn" @click="rename()">{{ t('rename') }}</div>
+        <div class="atk-item atk-rename-btn" @click="rename()">
+          {{ t('rename') }}
+        </div>
         <div class="atk-item atk-edit-url-btn" @click="editURL()">{{ t('edit') }} URL</div>
         <!--<div class="atk-item atk-export-btn">导出</div>
         <div class="atk-item atk-import-btn">导入</div>-->
@@ -126,6 +135,4 @@ function onFiledEditorNo() {
   </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

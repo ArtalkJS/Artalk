@@ -11,6 +11,6 @@ export default mergeConfig(
       exclude: [...configDefaults.exclude, 'tests/e2e/*'],
       root: fileURLToPath(new URL('./', import.meta.url)),
       setupFiles: ['tests/setup.ts'],
-    }
-  })
+    },
+  }),
 )

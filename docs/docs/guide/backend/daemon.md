@@ -79,7 +79,7 @@ WantedBy=multi-user.target
 
 保存服务文件后，你可以设置自动启动服务：
 
-```bash 
+```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now artalk
 ```

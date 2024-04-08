@@ -5,10 +5,10 @@ import EditorPlug from './editor/_plug'
 import PlugKit from './editor/_kit'
 
 export interface EditorEventPayloadMap {
-  'mounted': undefined
-  'unmounted': undefined
-  'header-input': { field: string, $input: HTMLInputElement }
-  'header-change': { field: string, $input: HTMLInputElement }
+  mounted: undefined
+  unmounted: undefined
+  'header-input': { field: string; $input: HTMLInputElement }
+  'header-change': { field: string; $input: HTMLInputElement }
   'content-updated': string
   'panel-show': EditorPlug
   'panel-hide': EditorPlug
@@ -27,11 +27,15 @@ export const EditorKit: ArtalkPlugin = (ctx) => {
 
 export class PlugManager {
   private plugs: EditorPlug[] = []
-  private openedPlug: EditorPlug|null = null
+  private openedPlug: EditorPlug | null = null
   private events = new EventManager<EditorEventPayloadMap>()
 
-  getPlugs() { return this.plugs }
-  getEvents() { return this.events }
+  getPlugs() {
+    return this.plugs
+  }
+  getEvents() {
+    return this.events
+  }
 
   private clear() {
     this.plugs = []
@@ -39,35 +43,33 @@ export class PlugManager {
     if (this.openedPlug) this.closePlugPanel()
   }
 
-  constructor(
-    public editor: EditorApi
-  ) {
+  constructor(public editor: EditorApi) {
     let confLoaded = false // config not loaded at first time
-    this.editor.ctx.watchConf([
-      'imgUpload', 'emoticons', 'preview', 'editorTravel', 'locale'
-    ], (conf) => {
-      // trigger unmount event will call all plugs' unmount function
-      // (this will only be called while conf reloaded, not be called at first time)
-      confLoaded && this.getEvents().trigger('unmounted')
+    this.editor.ctx.watchConf(
+      ['imgUpload', 'emoticons', 'preview', 'editorTravel', 'locale'],
+      (conf) => {
+        // trigger unmount event will call all plugs' unmount function
+        // (this will only be called while conf reloaded, not be called at first time)
+        confLoaded && this.getEvents().trigger('unmounted')
 
-      // reset the plugs
-      this.clear()
+        // reset the plugs
+        this.clear()
 
-      // init the all enabled plugs
-      getEnabledPlugs(conf)
-        .forEach((Plug) => {
+        // init the all enabled plugs
+        getEnabledPlugs(conf).forEach((Plug) => {
           // create the plug instance
           const kit = new PlugKit(this)
           this.plugs.push(new Plug(kit))
         })
 
-      // trigger event for plug initialization
-      this.getEvents().trigger('mounted')
-      confLoaded = true
+        // trigger event for plug initialization
+        this.getEvents().trigger('mounted')
+        confLoaded = true
 
-      // refresh the plug UI
-      this.loadPluginUI()
-    })
+        // refresh the plug UI
+        this.loadPluginUI()
+      },
+    )
 
     this.events.on('panel-close', () => this.closePlugPanel())
   }
@@ -89,24 +91,26 @@ export class PlugManager {
     this.editor.getUI().$plugBtnWrap.appendChild($btn)
 
     // bind the event when click plug btn
-    !$btn.onclick && ($btn.onclick = () => {
-      // removing the active class from all the buttons
-      this.editor.getUI().$plugBtnWrap
-        .querySelectorAll('.active')
-        .forEach(item => item.classList.remove('active'))
+    !$btn.onclick &&
+      ($btn.onclick = () => {
+        // removing the active class from all the buttons
+        this.editor
+          .getUI()
+          .$plugBtnWrap.querySelectorAll('.active')
+          .forEach((item) => item.classList.remove('active'))
 
-      // if the plug is not the same as the openedPlug,
-      if (plug !== this.openedPlug) {
-        // then open the plug current clicked plug panel
-        this.openPlugPanel(plug)
+        // if the plug is not the same as the openedPlug,
+        if (plug !== this.openedPlug) {
+          // then open the plug current clicked plug panel
+          this.openPlugPanel(plug)
 
-        // add active class for current plug panel
-        $btn.classList.add('active')
-      } else {
-        // then close the plug
-        this.closePlugPanel()
-      }
-    })
+          // add active class for current plug panel
+          $btn.classList.add('active')
+        } else {
+          // then close the plug
+          this.closePlugPanel()
+        }
+      })
 
     // initialization of plug panel
     const $panel = plug.$panel
@@ -117,7 +121,7 @@ export class PlugManager {
   }
 
   get<T extends typeof EditorPlug>(plug: T) {
-    return this.plugs.find(p => p instanceof plug) as InstanceType<T> | undefined;
+    return this.plugs.find((p) => p instanceof plug) as InstanceType<T> | undefined
   }
 
   /** Open the editor plug panel */

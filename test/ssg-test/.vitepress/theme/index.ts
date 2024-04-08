@@ -9,11 +9,11 @@ export default {
   extends: DefaultTheme,
   Layout: () => {
     return h(DefaultTheme.Layout, null, {
-      'doc-after': () => h(Artalk)
+      'doc-after': () => h(Artalk),
       // https://vitepress.dev/guide/extending-default-theme#layout-slots
     })
   },
   enhanceApp({ app, router, siteData }) {
     // ...
-  }
+  },
 } satisfies Theme

@@ -12,7 +12,7 @@ export interface LayoutOptions {
   flatMode: boolean
 
   createCommentNode(comment: CommentData, replyComment?: CommentData): CommentNode
-  findCommentNode(id: number): CommentNode|undefined
+  findCommentNode(id: number): CommentNode | undefined
 }
 
 export interface LayoutStrategy {
@@ -26,7 +26,9 @@ export class ListLayout {
   constructor(private options: LayoutOptions) {}
 
   private getStrategy() {
-    return this.options.flatMode ? createFlatStrategy(this.options) : createNestStrategy(this.options)
+    return this.options.flatMode
+      ? createFlatStrategy(this.options)
+      : createNestStrategy(this.options)
   }
 
   import(comments: CommentData[]) {

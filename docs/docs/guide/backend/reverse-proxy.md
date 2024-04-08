@@ -76,7 +76,7 @@ sudo systemctl restart nginx
 配置前端：
 
 ```js
-Artalk.init({ server: "http://artalk.your_domain.com" })
+Artalk.init({ server: 'http://artalk.your_domain.com' })
 ```
 
 ::: tip
@@ -118,4 +118,3 @@ Artalk.init({ server: "http://artalk.your_domain.com" })
 打开「反向代理」选项卡，点击「添加反向代理」，「目标 URL」填写 `http://localhost:端口号`（端口号与 Artalk 端口对应），「发送域名」填写 `$host`，如图：
 
 ![](/images/baota-proxy/2.png)
-

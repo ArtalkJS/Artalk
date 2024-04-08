@@ -7,7 +7,10 @@ import type Render from '../render'
  */
 export default function renderHeader(r: Render) {
   Object.entries({
-    renderNick, renderVerifyBadge, renderDate, renderUABadge
+    renderNick,
+    renderVerifyBadge,
+    renderDate,
+    renderUABadge,
   }).forEach(([name, render]) => {
     render(r)
   })
@@ -17,7 +20,9 @@ function renderNick(r: Render) {
   r.$headerNick = r.$el.querySelector<HTMLElement>('.atk-nick')!
 
   if (r.data.link) {
-    const $nickA = Utils.createElement<HTMLLinkElement>('<a target="_blank" rel="noreferrer noopener nofollow"></a>')
+    const $nickA = Utils.createElement<HTMLLinkElement>(
+      '<a target="_blank" rel="noreferrer noopener nofollow"></a>',
+    )
     $nickA.innerText = r.data.nick
     $nickA.href = Utils.isValidURL(r.data.link) ? r.data.link : `https://${r.data.link}`
     r.$headerNick.append($nickA)
@@ -38,7 +43,9 @@ function renderVerifyBadge(ctx: Render) {
     $badge.style.backgroundColor = badgeColor || ''
     ctx.$headerBadgeWrap.append($badge)
   } else if (ctx.data.is_verified) {
-    const $verifiedBadge = Utils.createElement(`<span class="atk-verified-icon" title="${$t('emailVerified')}"></span>`) // 邮箱验证徽章
+    const $verifiedBadge = Utils.createElement(
+      `<span class="atk-verified-icon" title="${$t('emailVerified')}"></span>`,
+    ) // 邮箱验证徽章
     ctx.$headerBadgeWrap.append($verifiedBadge)
   }
 

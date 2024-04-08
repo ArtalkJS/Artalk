@@ -9,9 +9,8 @@ export class Layer {
 
   constructor(
     private $el: HTMLElement,
-    private opts: LayerOptions
-  ) {
-  }
+    private opts: LayerOptions,
+  ) {}
 
   setOnAfterHide(func: () => void) {
     this.onAfterHide = func

@@ -2,7 +2,7 @@ import type { ContextApi, ArtalkPlugin, PageData } from '@/types'
 import $t from '@/i18n'
 
 export const WithEditor: ArtalkPlugin = (ctx) => {
-  let $closeCommentBtn: HTMLElement|undefined
+  let $closeCommentBtn: HTMLElement | undefined
 
   // on Artalk mounted
   // (after all components had mounted)
@@ -46,11 +46,13 @@ export const WithEditor: ArtalkPlugin = (ctx) => {
 /** 管理员设置页面信息 */
 function adminPageEditSave(ctx: ContextApi, page: PageData) {
   ctx.editorShowLoading()
-  ctx.getApi().pages.updatePage(page.id, page)
+  ctx
+    .getApi()
+    .pages.updatePage(page.id, page)
     .then(({ data }) => {
       ctx.getData().updatePage(data)
     })
-    .catch(err => {
+    .catch((err) => {
       ctx.editorShowNotify(`${$t('editFail')}: ${err.message || String(err)}`, 'e')
     })
     .finally(() => {

@@ -67,10 +67,10 @@
 "Wrong captcha": 驗證碼錯誤
 "{{count}} items imported": 已導入 {{count}} 個項目
 "{{done}} of {{total}} done": 已完成 {{done}} 共 {{total}} 個
-"{{name}} already exists": '{{name}}已存在'
-"{{name}} cannot be empty": '{{name}}不能為空'
-"{{name}} creation failed": '{{name}}創建失敗'
-"{{name}} deletion failed": '{{name}}刪除失敗'
-"{{name}} is required": '{{name}}必須填寫'
-"{{name}} not found": '{{name}}未找到'
-"{{name}} save failed": '{{name}}保存失敗'
+"{{name}} already exists": "{{name}}已存在"
+"{{name}} cannot be empty": "{{name}}不能為空"
+"{{name}} creation failed": "{{name}}創建失敗"
+"{{name}} deletion failed": "{{name}}刪除失敗"
+"{{name}} is required": "{{name}}必須填寫"
+"{{name}} not found": "{{name}}未找到"
+"{{name}} save failed": "{{name}}保存失敗"

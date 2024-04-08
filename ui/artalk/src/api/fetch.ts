@@ -3,11 +3,15 @@ import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 import { FetchError } from '@/types'
 import { ApiOptions } from './options'
 
-export const Fetch = async (opts: ApiOptions, input: string | URL | Request, init?: RequestInit) => {
+export const Fetch = async (
+  opts: ApiOptions,
+  input: string | URL | Request,
+  init?: RequestInit,
+) => {
   const apiToken = opts.getApiToken && opts.getApiToken()
 
   const headers = new Headers({
-    'Authorization': apiToken ? `Bearer ${apiToken}` : '',
+    Authorization: apiToken ? `Bearer ${apiToken}` : '',
     ...init?.headers,
   })
 
@@ -24,13 +28,14 @@ export const Fetch = async (opts: ApiOptions, input: string | URL | Request, ini
     const json: any = (await resp.json().catch(() => {})) || {}
 
     let retry = false
-    opts.handlers && (await opts.handlers.get().reduce(async (promise, item) => {
-      await promise
-      if (json[item.action] === true) {
-        await item.handler(json)
-        retry = true
-      }
-    }, Promise.resolve()))
+    opts.handlers &&
+      (await opts.handlers.get().reduce(async (promise, item) => {
+        await promise
+        if (json[item.action] === true) {
+          await item.handler(json)
+          retry = true
+        }
+      }, Promise.resolve()))
 
     if (retry) return Fetch(opts, input, init)
     throw createError(resp.status, json)

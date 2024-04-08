@@ -40,9 +40,7 @@ module.exports = {
   settings: {
     'import/resolver': {
       typescript: {
-        project: ['ui/artalk/tsconfig.json'].map((p) =>
-          path.resolve(__dirname, p),
-        ),
+        project: ['ui/artalk/tsconfig.json'].map((p) => path.resolve(__dirname, p)),
       },
     },
     polyfills: ['AbortController'],

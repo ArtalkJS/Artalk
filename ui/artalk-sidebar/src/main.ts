@@ -12,9 +12,9 @@ import Artalk from 'artalk'
 // i18n
 const i18n = createI18n({
   legacy: false, // use i18n in Composition API
-  locale:  'en',
+  locale: 'en',
   fallbackLocale: 'en',
-  messages
+  messages,
 })
 
 // Artalk extension

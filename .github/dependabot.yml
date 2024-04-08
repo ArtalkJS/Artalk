@@ -14,7 +14,7 @@ updates:
     groups:
       deps:
         patterns:
-          - '*'
+          - "*"
     open-pull-requests-limit: 15
 
   - package-ecosystem: npm
@@ -39,7 +39,7 @@ updates:
     groups:
       deps:
         patterns:
-          - '*'
+          - "*"
     open-pull-requests-limit: 15
 
   - package-ecosystem: docker
@@ -51,7 +51,7 @@ updates:
     groups:
       deps:
         patterns:
-          - '*'
+          - "*"
     open-pull-requests-limit: 15
 
   - package-ecosystem: github-actions
@@ -63,5 +63,5 @@ updates:
     groups:
       deps:
         patterns:
-          - '*'
+          - "*"
     open-pull-requests-limit: 15

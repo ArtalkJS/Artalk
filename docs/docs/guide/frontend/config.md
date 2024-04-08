@@ -218,7 +218,7 @@ artalk.setDarkMode(true)
 
 ### pvEl
 
-**页面浏览量 (PV) 绑定元素** 
+**页面浏览量 (PV) 绑定元素**
 
 - 类型：`String`
 - 默认值：`"#ArtalkPV"`
@@ -231,7 +231,7 @@ artalk.setDarkMode(true)
 
 ### countEl
 
-**评论数绑定元素** 
+**评论数绑定元素**
 
 - 类型：`String`
 - 默认值：`"#ArtalkCount"`
@@ -304,13 +304,13 @@ Artalk.init({
     const form = new FormData()
     form.set('file', file)
 
-    const imgUrl = await fetch("https://api.example.org/upload", {
+    const imgUrl = await fetch('https://api.example.org/upload', {
       method: 'POST',
-      body: form
+      body: form,
     })
 
     return imgUrl
-  }
+  },
 })
 ```
 
@@ -383,7 +383,7 @@ v2.5.5 已废弃 `gravatar.default` 配置项，请使用 `gravatar.params` 替�
 Artalk.init({
   avatarURLBuilder: (comment) => {
     return `/api/avatar?email=${comment.email_encrypted}`
-  }
+  },
 })
 ```
 

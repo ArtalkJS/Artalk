@@ -12,14 +12,14 @@ debug: false
 
 # Language (follow Unicode BCP 47) ["en", "zh-CN", "zh-TW", "jp"]
 # -- see https://www.techonthenet.com/js/language_tags.php --
-locale: "en"
+locale: en
 
 # Timezone (follow IANA Time Zone Database)
 # -- see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones --
-timezone: "Asia/Shanghai"
+timezone: Asia/Shanghai
 
 # Default site name (create when app is first launched)
-site_default: "Default Site"
+site_default: Default Site
 
 # Login timeout (in seconds)
 login_timeout: 259200
@@ -27,24 +27,24 @@ login_timeout: 259200
 # Database
 db:
   # Database type ["sqlite", "mysql", "pgsql", "mssql"]
-  type: "sqlite"
+  type: sqlite
   # Database file (only for SQLite)
-  file: "./data/artalk.db"
+  file: ./data/artalk.db
   # Table prefix (e.g. "atk_")
   table_prefix: ""
   # -- The following is not necessary for SQLite --
   # Database name
-  name: "artalk"
+  name: artalk
   # Host address
-  host: "localhost"
+  host: localhost
   # Host port
   port: 3306
   # Database user
-  user: "root"
+  user: root
   # Database password
   password: ""
   # Database charset
-  charset: "utf8mb4"
+  charset: utf8mb4
   # Enable SSL mode
   ssl: false
   # Prepared Statement
@@ -55,14 +55,14 @@ log:
   # Enable logging
   enabled: true
   # Log file path
-  filename: "./data/artalk.log"
+  filename: ./data/artalk.log
 
 # Cache
 cache:
   # Enable cache
   enabled: false
   # Cache type ["redis", "memcache", "builtin"]
-  type: "builtin"
+  type: builtin
   # Cache expiration time (in minutes)
   expires: 30
   # Cache warm up (warm up cache when program starts)
@@ -73,7 +73,7 @@ cache:
   # Redis config
   redis:
     # Connection type ["tcp", "unix"]
-    network: "tcp"
+    network: tcp
     # Redis username
     username: ""
     # Redis password
@@ -113,7 +113,7 @@ moderator:
     enabled: false
     secret_id: ""
     secret_key: ""
-    region: "ap-guangzhou"
+    region: ap-guangzhou
   # Aliyun Content Security
   # (Auto review comments with Aliyun Content Security)
   # -- see https://help.aliyun.com/document_detail/28417.html --
@@ -121,7 +121,7 @@ moderator:
     enabled: false
     access_key_id: ""
     access_key_secret: ""
-    region: "cn-shanghai"
+    region: cn-shanghai
   # Keyword filter (local offline dictionary)
   keywords:
     # Enable keyword filter
@@ -130,9 +130,9 @@ moderator:
     pending: false
     # Dictionary file (support multiple dictionary files)
     files:
-      - "./data/keywords_1.txt"
+      - ./data/keywords_1.txt
     file_sep: "\n"
-    replac_to: "x"
+    replac_to: x
 
 # Captcha
 captcha:
@@ -141,7 +141,7 @@ captcha:
   # Captcha is required always
   always: false
   # Captcha type ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
-  captcha_type: "image"
+  captcha_type: image
   # Action limit
   # (the number of actions required to activate captcha)
   action_limit: 3
@@ -171,7 +171,7 @@ img_upload:
   # Enable image upload
   enabled: true
   # Image storage
-  path: "./data/artalk-img/"
+  path: ./data/artalk-img/
   # Image size limit (unit: MB)
   max_size: 5
   # Image link base path (default: "/static/images/")
@@ -181,7 +181,7 @@ img_upload:
     # Enable Upgit
     enabled: false
     # Command line arguments
-    exec: "upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
+    exec: upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img
     # Delete local image after upload success
     del_local: true
 
@@ -190,23 +190,23 @@ email:
   # Enable email notification
   enabled: false
   # Send method ["smtp", "ali_dm", "sendmail"]
-  send_type: "smtp"
+  send_type: smtp
   # Nick name of sender
   send_name: "{{reply_nick}}"
   # Email address of sender
-  send_addr: "noreply@example.com"
+  send_addr: noreply@example.com
   # Email subject
   mail_subject: "[{{site_name}}] You got a reply from @{{reply_nick}}"
   # Email template file (set to file path to use custom template)
-  mail_tpl: "default"
+  mail_tpl: default
   # SMTP send (set send method to "smtp" to enable)
   smtp:
     # Email address of sender
-    host: "smtp.qq.com"
+    host: smtp.qq.com
     # Email port
     port: 587
     # Email address of sender
-    username: "example@qq.com"
+    username: example@qq.com
     # Password
     password: ""
   # Aliyun mail push
@@ -214,12 +214,12 @@ email:
   ali_dm:
     access_key_id: ""
     access_key_secret: ""
-    account_name: "noreply@example.com"
+    account_name: noreply@example.com
 
 # Multi-Push
 admin_notify:
   # Notification template (set to file path to use custom template)
-  notify_tpl: "default"
+  notify_tpl: default
   # Pending comment still send notification (notifications are still sent when comments are intercepted)
   notify_pending: false
   # Noise mode
@@ -244,7 +244,7 @@ admin_notify:
   # Bark
   bark:
     enabled: false
-    server: "http://day.app/xxxxxxx/"
+    server: http://day.app/xxxxxxx/
   lark:
     enabled: false
     webhook_url: ""
@@ -268,8 +268,8 @@ admin_notify:
     channel_secret: ""
     channel_access_token: ""
     receivers:
-      - "USER_ID_1"
-      - "GROUP_ID_1"
+      - USER_ID_1
+      - GROUP_ID_1
 
 # UI Settings
 frontend:
@@ -282,7 +282,7 @@ frontend:
   # Movable comment box
   editorTravel: true
   # Emoticons
-  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
+  emoticons: https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json
   # Vote button
   vote: true
   # Dislike button
@@ -298,7 +298,7 @@ frontend:
   # Editor real-time preview
   preview: true
   # Flatten mode ["auto", true, false]
-  flatMode: "auto"
+  flatMode: auto
   # Maximum nesting level
   nestMax: 2
   # Nesting comment sorting rules ["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]
@@ -306,9 +306,9 @@ frontend:
   # Gravatar
   gravatar:
     # API URL
-    mirror: "https://www.gravatar.com/avatar/"
+    mirror: https://www.gravatar.com/avatar/
     # API parameters
-    params: "d=mp&s=240"
+    params: d=mp&s=240
   # Comment pagination
   pagination:
     # Number of comments per page

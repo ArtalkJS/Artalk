@@ -25,7 +25,7 @@
 "Import complete": Importation complète
 "Invalid request": Requête invalide
 "Invalid request. Please check your `trusted_domains` config.": Requête invalide. Veuillez vérifier votre configuration `trusted_domains`.
-"Invalid {{name}}": {{name}} invalide
+"Invalid {{name}}": "{{name}} invalide"
 "Link": Lien
 "Login failed": La connexion a échoué
 "Name": Nom
@@ -42,7 +42,7 @@
 "Password": Mot de passe
 "Pending": En attente
 "Please review": Veuillez réviser
-"Retype {{name}}": Saisir à nouveau {{name}}
+"Retype {{name}}": "Saisir à nouveau {{name}}"
 "Save failed": L'enregistrement a échoué
 "Saving": Sauver
 "Services restart complete": Redémarrage des services terminé
@@ -54,23 +54,23 @@
 "Task in progress, please wait a moment": Tâche en cours, veuillez patienter un instant
 "Type": Type
 "URL Resolver": Résolveur d'URL
-"Unable to get `{{name}}`": Impossible d'obtenir `{{name}}`
+"Unable to get `{{name}}`": "Impossible d'obtenir `{{name}}`"
 "Unspecified": Non spécifié
 "Unsupported formats": Formats non supporté
 "Update complete": Mise à jour terminée
 "Update failed": Échec de la mise à jour
-"Upload image via {{method}} failed": Échec de l'envoie d'une image via {{méthod}}
+"Upload image via {{method}} failed": "Échec de l'envoie d'une image via {{méthod}}"
 "User": Utilisateur
 "Username": Nom d'utilisateur
 "Verification failed": Échec de la vérification
 "Working directory retrieval failed": Échec de la récupération du répertoire de travail
 "Wrong captcha": Mauvais captcha
-"{{count}} items imported": {{count}} articles importés"
-"{{done}} of {{total}} done": {{done}} de {{total}} fait
-"{{name}} already exists": {{name}} existe déjà
-"{{name}} cannot be empty": {{name}} ne peut pas être vide
-"{{name}} creation failed": La création de {{name}} a échoué
-"{{name}} deletion failed": Échec de la suppression de {{name}}
-"{{name}} is required": {{name}} est obligatoire
-"{{name}} not found": {{name}} introuvable
-"{{name}} save failed": Échec de la sauvegarde de {{name}}
+"{{count}} items imported": "{{count}} articles importés"
+"{{done}} of {{total}} done": "{{done}} de {{total}} fait"
+"{{name}} already exists": "{{name}} existe déjà"
+"{{name}} cannot be empty": "{{name}} ne peut pas être vide"
+"{{name}} creation failed": "La création de {{name}} a échoué"
+"{{name}} deletion failed": "Échec de la suppression de {{name}}"
+"{{name}} is required": "{{name}} est obligatoire"
+"{{name}} not found": "{{name}} introuvable"
+"{{name}} save failed": "Échec de la sauvegarde de {{name}}"

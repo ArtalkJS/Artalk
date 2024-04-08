@@ -17,14 +17,15 @@ export const VersionCheck: ArtalkPlugin = (ctx) => {
 
 function versionCheck(list: List, feVer: string, beVer: string) {
   const comp = Utils.versionCompare(feVer, beVer)
-  const sameVer = (comp === 0)
+  const sameVer = comp === 0
   if (sameVer) return
 
   const errEl = Utils.createElement(
-    `<div>${$t('updateMsg', { name: (comp < 0) ? $t('frontend') : $t('backend') })}` +
-    `<br/><br/><span style="color: var(--at-color-meta);">` +
-    `${$t('currentVersion')}: ${$t('frontend')} ${feVer} / ${$t('backend')} ${beVer}` +
-    `</span><br/><br/></div>`)
+    `<div>${$t('updateMsg', { name: comp < 0 ? $t('frontend') : $t('backend') })}` +
+      `<br/><br/><span style="color: var(--at-color-meta);">` +
+      `${$t('currentVersion')}: ${$t('frontend')} ${feVer} / ${$t('backend')} ${beVer}` +
+      `</span><br/><br/></div>`,
+  )
   const ignoreBtn = Utils.createElement(`<span style="cursor:pointer">${$t('ignore')}</span>`)
   ignoreBtn.onclick = () => {
     Ui.setError(list.$el.parentElement!, null)

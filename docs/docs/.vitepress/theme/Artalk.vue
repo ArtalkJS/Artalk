@@ -1,5 +1,5 @@
 <template>
-  <div ref="el" style="margin-top: 20px;"></div>
+  <div ref="el" style="margin-top: 20px"></div>
 </template>
 
 <script setup lang="ts">
@@ -21,12 +21,15 @@ onMounted(() => {
   })
 })
 
-watch(() => router.route.path, () => {
-  nextTick(() => {
-    artalk.update(getConfByPage())
-    artalk.reload()
-  })
-})
+watch(
+  () => router.route.path,
+  () => {
+    nextTick(() => {
+      artalk.update(getConfByPage())
+      artalk.reload()
+    })
+  },
+)
 
 onUnmounted(() => {
   artalk.destroy()
@@ -34,12 +37,12 @@ onUnmounted(() => {
 
 function initArtalk(conf: any) {
   artalk = Artalk.init({
-    el:        el.value,
+    el: el.value,
     emoticons: '/assets/emoticons/default.json',
-    gravatar:   {
-      mirror: 'https://cravatar.cn/avatar/'
+    gravatar: {
+      mirror: 'https://cravatar.cn/avatar/',
     },
-    ...conf
+    ...conf,
   })
 
   loadExtraFuncs()
@@ -47,30 +50,34 @@ function initArtalk(conf: any) {
 
 function getConfByPage() {
   return {
-    pageKey:   'https://artalk.js.org'+router.route.path,
-    pageTitle:  page.value.title,
-    server:    'https://artalk.qwqaq.com',
-    site:      'ArtalkDocs',
+    pageKey: 'https://artalk.js.org' + router.route.path,
+    pageTitle: page.value.title,
+    server: 'https://artalk.qwqaq.com',
+    site: 'ArtalkDocs',
   }
 }
 
 function loadExtraFuncs() {
   // 图片灯箱插件
   artalk.on('list-loaded', () => {
-    document.querySelectorAll('.atk-comment .atk-content').forEach(($content) => {
-      const imgEls = $content.querySelectorAll<HTMLImageElement>('img:not([atk-emoticon]):not([atk-lightbox])');
-      imgEls.forEach((imgEl) => {
-        imgEl.setAttribute('atk-lightbox', '')
-        const linkEl = document.createElement('a')
-        linkEl.setAttribute('class', 'atk-img-link')
-        linkEl.setAttribute('href', imgEl.src)
-        linkEl.setAttribute('data-src', imgEl.src)
-        linkEl.append(imgEl.cloneNode())
-        imgEl.replaceWith(linkEl)
+    document
+      .querySelectorAll('.atk-comment .atk-content')
+      .forEach(($content) => {
+        const imgEls = $content.querySelectorAll<HTMLImageElement>(
+          'img:not([atk-emoticon]):not([atk-lightbox])',
+        )
+        imgEls.forEach((imgEl) => {
+          imgEl.setAttribute('atk-lightbox', '')
+          const linkEl = document.createElement('a')
+          linkEl.setAttribute('class', 'atk-img-link')
+          linkEl.setAttribute('href', imgEl.src)
+          linkEl.setAttribute('data-src', imgEl.src)
+          linkEl.append(imgEl.cloneNode())
+          imgEl.replaceWith(linkEl)
+        })
+        // @ts-ignore
+        if (imgEls.length) lightGallery($content, { selector: '.atk-img-link' })
       })
-      // @ts-ignore
-      if (imgEls.length) lightGallery($content, { selector: '.atk-img-link' })
-    })
   })
 
   // 夜间模式
@@ -88,7 +95,3 @@ function loadExtraFuncs() {
   }).observe(document.querySelector('html'), { attributes: true })
 }
 </script>
-
-<style>
-
-</style>

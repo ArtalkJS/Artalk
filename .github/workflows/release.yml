@@ -13,7 +13,7 @@ on:
           - major
         required: true
       dry_run:
-        description: 'Dry run?'
+        description: "Dry run?"
         type: boolean
         default: false
 
@@ -49,9 +49,9 @@ jobs:
 
       - name: Setup git-chglog
         run: |
-            curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
-              | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
-            git-chglog --version
+          curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
+            | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
+          git-chglog --version
 
       - name: Version Changelog
         run: |

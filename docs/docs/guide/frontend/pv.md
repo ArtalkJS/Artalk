@@ -28,15 +28,19 @@ Artalk.init({
 
 在非评论页，无需调用 `Artalk.init` 加载评论框 (会使页面浏览量 PV 数增加)，仅调用 `loadCountWidget` 静态方法即可：
 
+<!-- prettier-ignore-start -->
+
 
 ```js
 Artalk.loadCountWidget({
-  server:  '服务器地址',
-  site:    '站点名',
-  pvEl:    '#ArtalkPV',
+  server: '服务器地址',
+  site: '站点名',
+  pvEl: '#ArtalkPV',
   countEl: '#ArtalkCount',
-});
+})
 ```
+
+<!-- prettier-ignore-end -->
 
 然后你可以放置多个 `#ArtalkPV` 元素，通过属性 `data-page-key` 来指定需要查询的页面：
 

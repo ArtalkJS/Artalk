@@ -15,8 +15,7 @@ export const ErrorDialog: ArtalkPlugin = (ctx) => {
       $err: ctx.get('list').$el,
       errMsg: err.msg,
       errData: err.data,
-      retryFn: () => ctx.fetch({ offset: 0 })
+      retryFn: () => ctx.fetch({ offset: 0 }),
     })
   })
 }
-

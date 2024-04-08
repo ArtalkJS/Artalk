@@ -5,7 +5,12 @@ interface CreateCommentNodeOptions {
   forceFlatMode?: boolean
 }
 
-export function createCommentNode(ctx: ContextApi, comment: CommentData, replyComment?: CommentData, opts?: CreateCommentNodeOptions): CommentNode {
+export function createCommentNode(
+  ctx: ContextApi,
+  comment: CommentData,
+  replyComment?: CommentData,
+  opts?: CreateCommentNodeOptions,
+): CommentNode {
   const instance = new CommentNode(comment, {
     onAfterRender: () => {
       ctx.trigger('comment-rendered', instance)
@@ -17,7 +22,10 @@ export function createCommentNode(ctx: ContextApi, comment: CommentData, replyCo
     replyTo: replyComment,
 
     // TODO simplify reference
-    flatMode: typeof opts?.forceFlatMode === 'boolean' ? opts?.forceFlatMode : ctx.conf.flatMode as boolean,
+    flatMode:
+      typeof opts?.forceFlatMode === 'boolean'
+        ? opts?.forceFlatMode
+        : (ctx.conf.flatMode as boolean),
     gravatar: ctx.conf.gravatar,
     nestMax: ctx.conf.nestMax,
     heightLimit: ctx.conf.heightLimit,
@@ -30,7 +38,7 @@ export function createCommentNode(ctx: ContextApi, comment: CommentData, replyCo
     // TODO: move to plugin folder and remove from core
     getApi: () => ctx.getApi(),
     replyComment: (c, $el) => ctx.replyComment(c, $el),
-    editComment: (c, $el) => ctx.editComment(c, $el)
+    editComment: (c, $el) => ctx.editComment(c, $el),
   })
 
   // 渲染元素

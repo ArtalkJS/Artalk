@@ -65,6 +65,8 @@
 npm install artalk
 ```
 
+<!-- prettier-ignore-start -->
+
 ```ts
 import Artalk from 'artalk'
 
@@ -75,6 +77,8 @@ Artalk.init({
   pageKey: '/2018/10/02/hello-world.html'
 })
 ```
+
+<!-- prettier-ignore-end -->
 
 ### Docker
 
@@ -94,7 +98,7 @@ vim docker-compose.yaml
 ```
 
 ```yaml
-version: "3.5"
+version: '3.5'
 services:
   artalk:
     container_name: artalk
@@ -124,7 +128,7 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Repobeats Analytics
 
-![Alt](https://repobeats.axiom.co/api/embed/a9fc9191ac561bc5a8ee2cddc81e635ecaebafb6.svg "Repobeats analytics image")
+![Alt](https://repobeats.axiom.co/api/embed/a9fc9191ac561bc5a8ee2cddc81e635ecaebafb6.svg 'Repobeats analytics image')
 
 ## 特别致谢
 

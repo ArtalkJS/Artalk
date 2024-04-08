@@ -12,11 +12,39 @@ export const Dropdown: ArtalkPlugin = (ctx) => {
     renderDropdown({
       $dropdownWrap: $dropdownOn,
       dropdownList: [
-        [$t('sortLatest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'date_desc' }) }],
-        [$t('sortBest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'vote' }) }],
-        [$t('sortOldest'), () => { reloadUseParamsEditor(p => { p.sort_by = 'date_asc' }) }],
-        [$t('sortAuthor'), () => { reloadUseParamsEditor(p => { p.view_only_admin = true }) }],
-      ]
+        [
+          $t('sortLatest'),
+          () => {
+            reloadUseParamsEditor((p) => {
+              p.sort_by = 'date_desc'
+            })
+          },
+        ],
+        [
+          $t('sortBest'),
+          () => {
+            reloadUseParamsEditor((p) => {
+              p.sort_by = 'vote'
+            })
+          },
+        ],
+        [
+          $t('sortOldest'),
+          () => {
+            reloadUseParamsEditor((p) => {
+              p.sort_by = 'date_asc'
+            })
+          },
+        ],
+        [
+          $t('sortAuthor'),
+          () => {
+            reloadUseParamsEditor((p) => {
+              p.view_only_admin = true
+            })
+          },
+        ],
+      ],
     })
   }
 
@@ -31,7 +59,7 @@ export const Dropdown: ArtalkPlugin = (ctx) => {
       initDropdown($count)
     } else {
       removeDropdown({
-        $dropdownWrap: $count
+        $dropdownWrap: $count,
       })
     }
   })
@@ -39,7 +67,7 @@ export const Dropdown: ArtalkPlugin = (ctx) => {
 
 /** 评论排序方式选择下拉菜单 */
 function renderDropdown(conf: {
-  $dropdownWrap: HTMLElement,
+  $dropdownWrap: HTMLElement
   dropdownList: [string, () => void][]
 }) {
   const { $dropdownWrap, dropdownList } = conf
@@ -58,12 +86,16 @@ function renderDropdown(conf: {
 
     // set active
     curtActive = i
-    $dropdown.querySelectorAll('.active').forEach((e) => { e.classList.remove('active') })
+    $dropdown.querySelectorAll('.active').forEach((e) => {
+      e.classList.remove('active')
+    })
     $item.classList.add('active')
 
     // 关闭层 (临时消失，取消 :hover)
     $dropdown.style.display = 'none'
-    setTimeout(() => { $dropdown.style.display = '' }, 80)
+    setTimeout(() => {
+      $dropdown.style.display = ''
+    }, 80)
   }
 
   // 生成列表元素
@@ -75,7 +107,9 @@ function renderDropdown(conf: {
     const $item = Utils.createElement(`<li class="atk-dropdown-item"><span></span></li>`)
     const $link = $item.querySelector<HTMLElement>('span')!
     $link.innerText = name
-    $link.onclick = () => { onItemClick(i, $item, name, action) }
+    $link.onclick = () => {
+      onItemClick(i, $item, name, action)
+    }
     $dropdown.append($item)
 
     if (i === curtActive) $item.classList.add('active') // 默认选中项
@@ -85,9 +119,7 @@ function renderDropdown(conf: {
 }
 
 /** 删除评论排序方式选择下拉菜单 */
-function removeDropdown(conf: {
-  $dropdownWrap: HTMLElement
-}) {
+function removeDropdown(conf: { $dropdownWrap: HTMLElement }) {
   const { $dropdownWrap } = conf
   $dropdownWrap.classList.remove('atk-dropdown-wrap')
   $dropdownWrap.querySelector('.atk-arrow-down-icon')?.remove()

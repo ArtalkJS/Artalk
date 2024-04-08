@@ -8,10 +8,14 @@ export type CommentNode = {
   level: number
 }
 
-export type SortByType = 'DATE_DESC'|'DATE_ASC'|'SRC_INDEX'|'VOTE_UP_DESC'
+export type SortByType = 'DATE_DESC' | 'DATE_ASC' | 'SRC_INDEX' | 'VOTE_UP_DESC'
 
 // 构建树状结构列表
-export function makeNestCommentNodeList(srcData: CommentData[], sortBy: SortByType = 'DATE_DESC', nestMax = 2) {
+export function makeNestCommentNodeList(
+  srcData: CommentData[],
+  sortBy: SortByType = 'DATE_DESC',
+  nestMax = 2,
+) {
   const nodeList: CommentNode[] = []
 
   const roots = srcData.filter((o) => o.rid === 0)
@@ -25,7 +29,6 @@ export function makeNestCommentNodeList(srcData: CommentData[], sortBy: SortByTy
 
     rootNode.parent = rootNode
     nodeList.push(rootNode)
-
     ;(function loadChildren(parentNode: CommentNode) {
       const children = srcData.filter((o) => o.rid === parentNode.id)
       if (children.length === 0) return
@@ -55,7 +58,7 @@ export function makeNestCommentNodeList(srcData: CommentData[], sortBy: SortByTy
     return v
   }
 
-  (function sortLevels(nodes: CommentNode[]) {
+  ;(function sortLevels(nodes: CommentNode[]) {
     nodes.forEach((node) => {
       node.children = node.children.sort(sortFunc)
       sortLevels(node.children)

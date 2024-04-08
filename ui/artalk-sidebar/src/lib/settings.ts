@@ -3,7 +3,7 @@ import { getFlattenNodes, getTree, type OptionNode } from './settings-option'
 
 export class Settings {
   private tree: OptionNode
-  private flatten: {[path: string]: OptionNode}
+  private flatten: { [path: string]: OptionNode }
   private customs = shallowRef<YAML.Document.Parsed<YAML.ParsedNode>>()
 
   constructor(yamlObj: YAML.Document.Parsed) {
@@ -41,7 +41,7 @@ export class Settings {
 
   // @see https://github.com/eemeli/yaml/issues/174#issuecomment-632281283
   private makeSureObject(pathArr: string[]) {
-    for (let i = pathArr.length-1; i >= 1; i--) {
+    for (let i = pathArr.length - 1; i >= 1; i--) {
       const parentPath = pathArr.slice(0, -i)
 
       const parentNode = this.customs.value?.getIn(parentPath)
@@ -60,6 +60,6 @@ export * from './settings-option'
 let instance: Settings
 
 export default {
-  init: (yamlObj: YAML.Document.Parsed) => instance = new Settings(yamlObj),
-  get: () => instance
+  init: (yamlObj: YAML.Document.Parsed) => (instance = new Settings(yamlObj)),
+  get: () => instance,
 }

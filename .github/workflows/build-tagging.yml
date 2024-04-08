@@ -11,7 +11,7 @@ on:
         type: number
     outputs:
       version:
-        description: 'Version'
+        description: "Version"
         value: ${{ jobs.tagging.outputs.version }}
 
 jobs:

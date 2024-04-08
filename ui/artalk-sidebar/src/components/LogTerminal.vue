@@ -10,7 +10,7 @@ const emit = defineEmits<{
   (evt: 'back'): void
 }>()
 
-const logWrapEl = ref<HTMLElement|null>(null)
+const logWrapEl = ref<HTMLElement | null>(null)
 
 onMounted(() => {
   // 创建 iframe
@@ -71,7 +71,8 @@ function back() {
     }
   }
 
-  .atk-log {}
+  .atk-log {
+  }
 
   .atk-iframe {
     width: 100%;

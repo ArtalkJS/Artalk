@@ -77,7 +77,7 @@ const en = {
   loginFailure: 'Login failure',
   login: 'Login',
   logout: 'Logout',
-  loginSelectHint: 'Please select the account you wish to log into:'
+  loginSelectHint: 'Please select the account you wish to log into:',
 }
 
 const zhCN: typeof en = {
@@ -245,5 +245,7 @@ const zhTW: typeof en = {
 }
 
 export default {
-  en, 'zh-CN': zhCN, 'zh-TW': zhTW
+  en,
+  'zh-CN': zhCN,
+  'zh-TW': zhTW,
 }

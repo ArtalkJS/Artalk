@@ -11,44 +11,56 @@ const InitConf = {
 
 const RemoteConf = {
   darkMode: false, // simulate response `false`, but the final should still be `true`, cannot override this
-  gravatar: { mirror: 'https://test.avatar.com/unit_test', params: 'test=123' }
+  gravatar: { mirror: 'https://test.avatar.com/unit_test', params: 'test=123' },
 }
 
 const ContainerID = 'artalk-container'
 
 beforeAll(() => {
   // mock fetch
-  global.fetch = vi.fn().mockImplementation((url: string, init: RequestInit) => Promise.resolve({
-    ok: true,
-    status: 200,
-    json: () => {
-      let resp: any = {}
+  global.fetch = vi.fn().mockImplementation((url: string, init: RequestInit) =>
+    Promise.resolve({
+      ok: true,
+      status: 200,
+      json: () => {
+        let resp: any = {}
 
-      const map = {
-        '/api/v2/conf': {
-          frontend_conf: RemoteConf,
-          version: {},
-        },
-        '/api/v2/stat': { data: { '/': 0 } },
-        '/api/v2/pages/pv': { pv: 2 },
-        '/api/v2/notifies': { notifies: [], count: 0 },
-        '/api/v2/comments': {
-          comments: [],
-          count: 0,
-          roots_count: 0,
-          page: { id: 4, admin_only: false, key: '/', url: '/', title: 'Artalk DEMO', site_name: 'ArtalkDocs', vote_up: 0, vote_down: 0, pv: 1 },
+        const map = {
+          '/api/v2/conf': {
+            frontend_conf: RemoteConf,
+            version: {},
+          },
+          '/api/v2/stat': { data: { '/': 0 } },
+          '/api/v2/pages/pv': { pv: 2 },
+          '/api/v2/notifies': { notifies: [], count: 0 },
+          '/api/v2/comments': {
+            comments: [],
+            count: 0,
+            roots_count: 0,
+            page: {
+              id: 4,
+              admin_only: false,
+              key: '/',
+              url: '/',
+              title: 'Artalk DEMO',
+              site_name: 'ArtalkDocs',
+              vote_up: 0,
+              vote_down: 0,
+              pv: 1,
+            },
+          },
         }
-      }
 
-      const path = new URL(url).pathname
+        const path = new URL(url).pathname
 
-      Object.entries(map).forEach(([k, v]) => {
-        if (path.startsWith(k)) resp = v
-      })
+        Object.entries(map).forEach(([k, v]) => {
+          if (path.startsWith(k)) resp = v
+        })
 
-      return Promise.resolve(resp)
-    }
-  })) as any
+        return Promise.resolve(resp)
+      },
+    }),
+  ) as any
 })
 
 describe('Artalk instance', () => {
@@ -83,26 +95,30 @@ describe('Artalk instance', () => {
     confCopy = JSON.parse(JSON.stringify(conf))
   })
 
-  it('should can listen to events and the conf-remoter works (artalk.trigger, artalk.on, conf-remoter)', async () => {
-    global.devLoadArtalk()
+  it(
+    'should can listen to events and the conf-remoter works (artalk.trigger, artalk.on, conf-remoter)',
+    async () => {
+      global.devLoadArtalk()
 
-    const fn = vi.fn()
+      const fn = vi.fn()
 
-    await new Promise<void>(resolve => {
-      artalk.on('mounted', (conf) => {
-        resolve()
-        fn()
+      await new Promise<void>((resolve) => {
+        artalk.on('mounted', (conf) => {
+          resolve()
+          fn()
+        })
       })
-    })
 
-    expect(fn).toBeCalledTimes(1)
+      expect(fn).toBeCalledTimes(1)
 
-    const conf = artalk.getConf()
-    expect(conf.darkMode, "the darkMode is unmodifiable, should still false").toBe(true)
-    expect(conf.gravatar, "the gravatar should be modified").toEqual(RemoteConf.gravatar)
-  }, {
-    timeout: 1000
-  })
+      const conf = artalk.getConf()
+      expect(conf.darkMode, 'the darkMode is unmodifiable, should still false').toBe(true)
+      expect(conf.gravatar, 'the gravatar should be modified').toEqual(RemoteConf.gravatar)
+    },
+    {
+      timeout: 1000,
+    },
+  )
 
   it('should other config not changed after conf-remoter loaded (conf-remoter, artalk.update)', () => {
     const confNew = JSON.parse(JSON.stringify(artalk.getConf()))
@@ -116,7 +132,9 @@ describe('Artalk instance', () => {
 
     const conf = artalk.getConf()
     expect(conf.placeholder).toBe(Placeholder)
-    expect(conf.gravatar, "the gravatar which not in update should keep the same").toEqual(RemoteConf.gravatar)
+    expect(conf.gravatar, 'the gravatar which not in update should keep the same').toEqual(
+      RemoteConf.gravatar,
+    )
   })
 
   it('should can getEl after config updated (artalk.getEl)', () => {
@@ -144,7 +162,7 @@ describe('Artalk instance', () => {
 
     const fn = vi.fn()
 
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       artalk.on('list-loaded', () => {
         resolve(null)
         fn()

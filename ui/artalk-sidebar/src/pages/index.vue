@@ -18,11 +18,11 @@ onMounted(() => {
     if (splitted[1]) bootParams.viewParams = JSON.parse(splitted[1])
   }
 
-  const LinkMap: {[key:string]:string} = {
+  const LinkMap: { [key: string]: string } = {
     comments: '/comments',
     pages: '/pages',
     sites: '/sites',
-    settings: '/settings'
+    settings: '/settings',
   }
   router.replace(LinkMap[bootParams.view] || '/comments')
 })

@@ -13,12 +13,12 @@ fs.rmSync(outDir, { recursive: true, force: true })
 
 const libraries: LibraryOptions[] = []
 
-fs.readdirSync(i18nPath).forEach(f => {
+fs.readdirSync(i18nPath).forEach((f) => {
   if (['index.ts', 'external.ts'].includes(f)) return
 
   const filename = path.join(i18nPath, f)
   const lang = path.parse(filename).name
-  const content = fs.readFileSync(filename);
+  const content = fs.readFileSync(filename)
 
   // only compile the external locale
   if (!content.toString().includes('defineLocaleExternal')) return

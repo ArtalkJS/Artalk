@@ -17,14 +17,17 @@ const pagination = ref<InstanceType<typeof Pagination>>()
 const curtType = ref('all')
 
 const addingUser = ref(false)
-const editingUser = ref<ArtalkType.UserDataForAdmin|undefined>()
+const editingUser = ref<ArtalkType.UserDataForAdmin | undefined>()
 
 onMounted(() => {
-  nav.updateTabs({
-    'all': 'all',
-    'admin': 'admin',
-    'create': 'create'
-  }, 'all')
+  nav.updateTabs(
+    {
+      all: 'all',
+      admin: 'admin',
+      create: 'create',
+    },
+    'all',
+  )
 
   watch(curtTab, (tab) => {
     if (tab === 'create') {
@@ -51,15 +54,18 @@ onMounted(() => {
 
 function reqUsers(offset: number) {
   nav.setPageLoading(true)
-  artalk?.ctx.getApi().users.getUsers(curtType.value as any, {
-    offset,
-    limit: pageSize.value
-  })
-    .then(res => {
+  artalk?.ctx
+    .getApi()
+    .users.getUsers(curtType.value as any, {
+      offset,
+      limit: pageSize.value,
+    })
+    .then((res) => {
       pageTotal.value = res.data.count
       users.value = res.data.users
       nav.scrollPageToTop()
-    }).finally(() => {
+    })
+    .finally(() => {
       nav.setPageLoading(false)
     })
 }
@@ -79,11 +85,11 @@ function editUser(user: ArtalkType.UserDataForAdmin) {
 }
 
 function updateUser(user: ArtalkType.UserDataForAdmin) {
-  const index = users.value.findIndex(u => u.id === user.id)
+  const index = users.value.findIndex((u) => u.id === user.id)
   if (index != -1) {
     // 修改用户
     const orgUser = users.value[index]
-    Object.keys(users).forEach(key => {
+    Object.keys(users).forEach((key) => {
       ;(orgUser as any)[key] = (users as any)[key]
     })
   } else {
@@ -101,10 +107,16 @@ function closeEditUser() {
 }
 
 function delUser(user: ArtalkType.UserDataForAdmin) {
-  if (window.confirm(`该操作将删除 用户："${user.name}" 邮箱："${user.email}" 所有评论，包括其评论下面他人的回复评论，是否继续？`)) {
-    artalk!.ctx.getApi().users.deleteUser(user.id)
+  if (
+    window.confirm(
+      `该操作将删除 用户："${user.name}" 邮箱："${user.email}" 所有评论，包括其评论下面他人的回复评论，是否继续？`,
+    )
+  ) {
+    artalk!.ctx
+      .getApi()
+      .users.deleteUser(user.id)
       .then(() => {
-        const index = users.value.findIndex(u => u.id === user.id)
+        const index = users.value.findIndex((u) => u.id === user.id)
         users.value.splice(index, 1)
 
         if (user.is_in_conf) {
@@ -112,7 +124,7 @@ function delUser(user: ArtalkType.UserDataForAdmin) {
         }
       })
       .catch((e: ArtalkType.FetchError) => {
-        alert('删除失败：'+e.message)
+        alert('删除失败：' + e.message)
       })
   }
 }
@@ -121,21 +133,31 @@ function delUser(user: ArtalkType.UserDataForAdmin) {
 <template>
   <div class="user-list-wrap">
     <div class="user-list">
-      <div v-for="(user) in users" :key="user.id" class="user-item">
+      <div v-for="user in users" :key="user.id" class="user-item">
         <div class="user-main">
           <div class="title">
             {{ user.name }}
             <span class="badge-grp">
-              <span v-if="user.badge_name" class="badge" :style="{ backgroundColor: user.badge_color }">{{user.badge_name}}</span>
-              <span v-else-if="user.is_admin" class="badge admin" :title="t('userAdminHint')">{{ t('Admin') }}</span>
-              <span v-if="user.is_in_conf" class="badge in-conf" :title="t('userInConfHint')">{{ t('Config') }}</span>
+              <span
+                v-if="user.badge_name"
+                class="badge"
+                :style="{ backgroundColor: user.badge_color }"
+              >
+                {{ user.badge_name }}
+              </span>
+              <span v-else-if="user.is_admin" class="badge admin" :title="t('userAdminHint')">
+                {{ t('Admin') }}
+              </span>
+              <span v-if="user.is_in_conf" class="badge in-conf" :title="t('userInConfHint')">
+                {{ t('Config') }}
+              </span>
             </span>
           </div>
           <div class="sub">{{ user.email }}</div>
         </div>
         <div class="user-actions">
           <span @click="editUser(user)">{{ t('edit') }}</span>
-          <span>{{ t('comment') }} ({{user.comment_count}})</span>
+          <span>{{ t('comment') }} ({{ user.comment_count }})</span>
           <span @click="delUser(user)">{{ t('delete') }}</span>
         </div>
       </div>
@@ -191,7 +213,7 @@ function delUser(user: ArtalkType.UserDataForAdmin) {
             color: #fff;
 
             &.admin {
-              background: #0083FF;
+              background: #0083ff;
             }
 
             &.in-conf {

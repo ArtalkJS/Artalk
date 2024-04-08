@@ -53,7 +53,8 @@
       }
 
       .atk-dropdown-item {
-        span, a {
+        span,
+        a {
           display: block;
           line-height: 2rem;
           position: relative;
@@ -66,7 +67,8 @@
           }
         }
 
-        &.active span, a {
+        &.active span,
+        a {
           color: var(--at-color-main);
         }
       }
@@ -95,7 +97,8 @@
         user-select: none;
         position: relative;
 
-        &.atk-on, &.atk-on * {
+        &.atk-on,
+        &.atk-on * {
           color: var(--at-color-main);
         }
 

@@ -6,12 +6,12 @@
  * @returns New object with merged key/values
  */
 export function mergeDeep<T>(...objects: any[]): T {
-  const isObject = (obj: any) => obj && typeof obj === "object" && obj.constructor === Object;
+  const isObject = (obj: any) => obj && typeof obj === 'object' && obj.constructor === Object
 
   return objects.reduce((prev, obj) => {
     Object.keys(obj ?? {}).forEach((key) => {
       // Avoid prototype pollution
-      if (key === "__proto__" || key === "constructor" || key === "prototype") {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
         return
       }
 

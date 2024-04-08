@@ -2,10 +2,7 @@ import type { NotifyLevel } from '@/types'
 import * as Utils from './utils'
 
 /** 显示加载 */
-export function showLoading(
-  parentElem: HTMLElement,
-  conf?: { transparentBg?: boolean },
-) {
+export function showLoading(parentElem: HTMLElement, conf?: { transparentBg?: boolean }) {
   // Use :scope https://developer.mozilla.org/en-US/docs/Web/CSS/:scope
   let $loading = parentElem.querySelector<HTMLElement>(':scope > .atk-loading')
   if (!$loading) {
@@ -33,9 +30,7 @@ export function showLoading(
 
 /** 隐藏加载 */
 export function hideLoading(parentElem: HTMLElement) {
-  const $loading = parentElem.querySelector<HTMLElement>(
-    ':scope > .atk-loading',
-  )
+  const $loading = parentElem.querySelector<HTMLElement>(':scope > .atk-loading')
   if ($loading) $loading.style.display = 'none'
 }
 
@@ -46,10 +41,7 @@ export function setLoading(val: boolean, parentElem: HTMLElement) {
 }
 
 /** 元素是否用户可见 */
-export function isVisible(
-  el: HTMLElement,
-  viewport: HTMLElement = document.documentElement,
-) {
+export function isVisible(el: HTMLElement, viewport: HTMLElement = document.documentElement) {
   const viewportHeight = viewport.clientHeight
 
   const docViewTop = viewport.scrollTop
@@ -97,20 +89,14 @@ export function scrollIntoView(
 }
 
 /** 显示消息 */
-export function showNotify(
-  wrapElem: HTMLElement,
-  msg: string,
-  type: NotifyLevel,
-) {
+export function showNotify(wrapElem: HTMLElement, msg: string, type: NotifyLevel) {
   const colors = { s: '#57d59f', e: '#ff6f6c', w: '#ffc721', i: '#2ebcfc' }
   const timeout = 3000 // 持续显示时间 ms
 
   const notifyElem = Utils.createElement(
     `<div class="atk-notify atk-fade-in" style="background-color: ${colors[type]}"><span class="atk-notify-content"></span></div>`,
   )
-  const notifyContentEl = notifyElem.querySelector<HTMLElement>(
-    '.atk-notify-content',
-  )!
+  const notifyContentEl = notifyElem.querySelector<HTMLElement>('.atk-notify-content')!
   notifyContentEl.innerHTML = Utils.htmlEncode(msg).replace('\n', '<br/>')
 
   wrapElem.appendChild(notifyElem)
@@ -136,11 +122,7 @@ export function showNotify(
 }
 
 /** fade 动画 */
-export function playFadeAnim(
-  elem: HTMLElement,
-  after?: () => void,
-  type: 'in' | 'out' = 'in',
-) {
+export function playFadeAnim(elem: HTMLElement, after?: () => void, type: 'in' | 'out' = 'in') {
   elem.classList.add(`atk-fade-${type}`)
   // 动画结束清除 class
   const onAnimEnded = () => {

@@ -86,10 +86,7 @@ export default class Emoticons extends EditorPlug {
     }
 
     if (!Array.isArray(data)) {
-      Ui.setError(
-        this.$panel!,
-        `[${$t('emoticon')}] Data must be of Array/Object/String type`,
-      )
+      Ui.setError(this.$panel!, `[${$t('emoticon')}] Data must be of Array/Object/String type`)
       Ui.hideLoading(this.$panel!)
       return []
     }
@@ -135,11 +132,7 @@ export default class Emoticons extends EditorPlug {
 
     // 剔除非法数据
     data = data.filter(
-      (item: any) =>
-        typeof item === 'object' &&
-        !Array.isArray(item) &&
-        !!item &&
-        !!item.name,
+      (item: any) => typeof item === 'object' && !Array.isArray(item) && !!item && !!item.name,
     )
 
     // console.log(data)
@@ -161,10 +154,7 @@ export default class Emoticons extends EditorPlug {
     } catch (err) {
       Ui.hideLoading(this.$panel!)
       console.error('[Emoticons] Load Failed:', err)
-      Ui.setError(
-        this.$panel!,
-        `[${$t('emoticon')}] ${$t('loadFail')}: ${String(err)}`,
-      )
+      Ui.setError(this.$panel!, `[${$t('emoticon')}] ${$t('loadFail')}: ${String(err)}`)
       return []
     }
   }
@@ -235,9 +225,7 @@ export default class Emoticons extends EditorPlug {
     this.$panel!.append(this.$grpWrap)
 
     this.emoticons.forEach((grp, index) => {
-      const $grp = Utils.createElement(
-        `<div class="atk-grp" style="display: none;"></div>`,
-      )
+      const $grp = Utils.createElement(`<div class="atk-grp" style="display: none;"></div>`)
       this.$grpWrap.append($grp)
       $grp.setAttribute('data-index', String(index))
       $grp.setAttribute('data-grp-name', grp.name)
@@ -246,10 +234,7 @@ export default class Emoticons extends EditorPlug {
         const $item = Utils.createElement(`<span class="atk-item"></span>`)
         $grp.append($item)
 
-        if (
-          !!item.key &&
-          !new RegExp(`^(${grp.name})?\\s?[0-9]+$`).test(item.key)
-        )
+        if (!!item.key && !new RegExp(`^(${grp.name})?\\s?[0-9]+$`).test(item.key))
           $item.setAttribute('title', item.key)
 
         if (grp.type === 'image') {
@@ -273,9 +258,7 @@ export default class Emoticons extends EditorPlug {
 
     // 表情分类切换 bar
     if (this.emoticons.length > 1) {
-      this.$grpSwitcher = Utils.createElement(
-        `<div class="atk-grp-switcher"></div>`,
-      )
+      this.$grpSwitcher = Utils.createElement(`<div class="atk-grp-switcher"></div>`)
       this.$panel!.append(this.$grpSwitcher)
       this.emoticons.forEach((grp, index) => {
         const $item = Utils.createElement('<span />')
@@ -304,9 +287,7 @@ export default class Emoticons extends EditorPlug {
     this.$grpSwitcher
       ?.querySelectorAll('span.active')
       .forEach((item) => item.classList.remove('active'))
-    this.$grpSwitcher
-      ?.querySelector(`span[data-index="${index}"]`)
-      ?.classList.add('active')
+    this.$grpSwitcher?.querySelector(`span[data-index="${index}"]`)?.classList.add('active')
 
     this.changeListHeight()
   }

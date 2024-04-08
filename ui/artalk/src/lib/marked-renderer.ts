@@ -11,9 +11,7 @@ export function getRenderer() {
 export const markedLinkRenderer =
   (renderer: any, orgLinkRenderer: Function) =>
   (href: string, title: string, text: string): string => {
-    const localLink = href?.startsWith(
-      `${window.location.protocol}//${window.location.hostname}`,
-    )
+    const localLink = href?.startsWith(`${window.location.protocol}//${window.location.hostname}`)
     const html = orgLinkRenderer.call(renderer, href, title, text)
     return html.replace(
       /^<a /,

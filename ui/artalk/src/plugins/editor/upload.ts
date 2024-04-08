@@ -126,9 +126,7 @@ export default class Upload extends EditorPlug {
       }
     } catch (err: any) {
       console.error(err)
-      this.kit
-        .useEditor()
-        .showNotify(`${$t('uploadFail')}: ${err.message}`, 'e')
+      this.kit.useEditor().showNotify(`${$t('uploadFail')}: ${err.message}`, 'e')
     }
     if (!!resp && resp.public_url) {
       let imgURL = resp.public_url as string
@@ -146,18 +144,13 @@ export default class Upload extends EditorPlug {
         .setContent(
           this.kit
             .useUI()
-            .$textarea.value.replace(
-              uploadPlaceholderTxt,
-              `${insertPrefix}![](${imgURL})`,
-            ),
+            .$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`),
         )
     } else {
       // 上传失败删除加载文字
       this.kit
         .useEditor()
-        .setContent(
-          this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, ''),
-        )
+        .setContent(this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, ''))
     }
   }
 }

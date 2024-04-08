@@ -9,9 +9,7 @@ export const WithEditor: ArtalkPlugin = (ctx) => {
   ctx.on('mounted', () => {
     const list = ctx.get('list')
 
-    $closeCommentBtn = list.$el.querySelector<HTMLElement>(
-      '[data-action="admin-close-comment"]',
-    )!
+    $closeCommentBtn = list.$el.querySelector<HTMLElement>('[data-action="admin-close-comment"]')!
 
     // bind editor close button click event
     $closeCommentBtn.addEventListener('click', () => {
@@ -55,10 +53,7 @@ function adminPageEditSave(ctx: ContextApi, page: PageData) {
       ctx.getData().updatePage(data)
     })
     .catch((err) => {
-      ctx.editorShowNotify(
-        `${$t('editFail')}: ${err.message || String(err)}`,
-        'e',
-      )
+      ctx.editorShowNotify(`${$t('editFail')}: ${err.message || String(err)}`, 'e')
     })
     .finally(() => {
       ctx.editorHideLoading()

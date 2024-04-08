@@ -65,8 +65,7 @@ export class LayerWrap {
     if (
       this.items
         .map((l) => l.getEl())
-        .filter((e) => e !== $el && e.isConnected && e.style.display !== 'none')
-        .length > 0
+        .filter((e) => e !== $el && e.isConnected && e.style.display !== 'none').length > 0
     ) {
       return
     }

@@ -26,18 +26,16 @@ function renderVote(r: Render) {
   if (!r.opts.vote) return // 关闭投票功能
 
   // 赞同按钮
-  r.voteBtnUp = new ActionBtn(
-    () => `${$t('voteUp')} (${r.data.vote_up || 0})`,
-  ).appendTo(r.$actions)
+  r.voteBtnUp = new ActionBtn(() => `${$t('voteUp')} (${r.data.vote_up || 0})`).appendTo(r.$actions)
   r.voteBtnUp.setClick(() => {
     r.comment.getActions().vote('up')
   })
 
   // 反对按钮
   if (r.opts.voteDown) {
-    r.voteBtnDown = new ActionBtn(
-      () => `${$t('voteDown')} (${r.data.vote_down || 0})`,
-    ).appendTo(r.$actions)
+    r.voteBtnDown = new ActionBtn(() => `${$t('voteDown')} (${r.data.vote_down || 0})`).appendTo(
+      r.$actions,
+    )
     r.voteBtnDown.setClick(() => {
       r.comment.getActions().vote('down')
     })

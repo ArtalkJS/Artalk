@@ -14,10 +14,7 @@ export const Count: ArtalkPlugin = (ctx) => {
         count: `${Number(ctx.getData().getListLastFetch()?.data?.count) || 0}`,
       }),
     )
-    $count.innerHTML = text.replace(
-      /(\d+)/,
-      '<span class="atk-comment-count-num">$1</span>',
-    )
+    $count.innerHTML = text.replace(/(\d+)/, '<span class="atk-comment-count-num">$1</span>')
   }
 
   ctx.on('list-loaded', () => {

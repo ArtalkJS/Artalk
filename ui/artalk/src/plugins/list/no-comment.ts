@@ -8,20 +8,14 @@ export const NoComment: ArtalkPlugin = (ctx) => {
 
     // 无评论
     const isNoComment = comments.length <= 0
-    let $noComment = list
-      .getCommentsWrapEl()
-      .querySelector<HTMLElement>('.atk-list-no-comment')
+    let $noComment = list.getCommentsWrapEl().querySelector<HTMLElement>('.atk-list-no-comment')
 
     if (isNoComment) {
       if (!$noComment) {
-        $noComment = Utils.createElement(
-          '<div class="atk-list-no-comment"></div>',
-        )
+        $noComment = Utils.createElement('<div class="atk-list-no-comment"></div>')
 
         // sanitize before set innerHTML
-        $noComment.innerHTML = sanitize(
-          list.ctx.conf.noComment || list.ctx.$t('noComment'),
-        )
+        $noComment.innerHTML = sanitize(list.ctx.conf.noComment || list.ctx.$t('noComment'))
         list.getCommentsWrapEl().appendChild($noComment)
       }
     } else {

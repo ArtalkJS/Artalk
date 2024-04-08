@@ -80,20 +80,10 @@ function selectUser(username: string) {
 <template>
   <div class="login-dialog">
     <a href="https://artalk.js.org/" target="_blank">
-      <img
-        class="logo"
-        src="../assets/favicon.png"
-        alt="logo"
-        draggable="false"
-      />
+      <img class="logo" src="../assets/favicon.png" alt="logo" draggable="false" />
     </a>
     <form class="login-form" @submit.prevent="login()">
-      <input
-        type="text"
-        :placeholder="t('email')"
-        v-model="userForm.email"
-        @focus="onFocus"
-      />
+      <input type="text" :placeholder="t('email')" v-model="userForm.email" @focus="onFocus" />
       <input
         type="password"
         :placeholder="t('password')"
@@ -113,12 +103,7 @@ function selectUser(username: string) {
       <div class="user-selector atk-fade-in">
         <div class="text">{{ t('loginSelectHint') }}</div>
         <div class="user-list">
-          <div
-            v-for="(u, i) in userSelector"
-            :key="i"
-            class="item"
-            @click="selectUser(u)"
-          >
+          <div v-for="(u, i) in userSelector" :key="i" class="item" @click="selectUser(u)">
             {{ u }}
           </div>
         </div>

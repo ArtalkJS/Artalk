@@ -64,20 +64,14 @@ class Editor extends Component implements EditorApi {
       this.ui.$textarea.focus()
       ;(document as any).selection.createRange().text = val
       this.ui.$textarea.focus()
-    } else if (
-      this.ui.$textarea.selectionStart ||
-      this.ui.$textarea.selectionStart === 0
-    ) {
+    } else if (this.ui.$textarea.selectionStart || this.ui.$textarea.selectionStart === 0) {
       const sStart = this.ui.$textarea.selectionStart
       const sEnd = this.ui.$textarea.selectionEnd
       const sT = this.ui.$textarea.scrollTop
       this.setContent(
         this.ui.$textarea.value.substring(0, sStart) +
           val +
-          this.ui.$textarea.value.substring(
-            sEnd,
-            this.ui.$textarea.value.length,
-          ),
+          this.ui.$textarea.value.substring(sEnd, this.ui.$textarea.value.length),
       )
       this.ui.$textarea.focus()
       this.ui.$textarea.selectionStart = sStart + val.length

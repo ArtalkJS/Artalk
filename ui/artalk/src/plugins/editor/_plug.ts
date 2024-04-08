@@ -48,10 +48,7 @@ class EditorPlug {
   }
 
   /** Use editor state modifier */
-  useEditorStateEffect(
-    stateName: EditorState,
-    effectFn: (comment: CommentData) => () => void,
-  ) {
+  useEditorStateEffect(stateName: EditorState, effectFn: (comment: CommentData) => () => void) {
     this.editorStateEffectWhen = stateName
     this.editorStateEffect = effectFn
   }

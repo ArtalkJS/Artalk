@@ -22,8 +22,7 @@ const en = {
   export: 'Export',
   settingSaved: 'Setting saved',
   settingSaveFailed: 'Setting save failed',
-  settingNotice:
-    'Note: Some config options may require a manual reboot to take effect.',
+  settingNotice: 'Note: Some config options may require a manual reboot to take effect.',
   apply: 'Apply',
   updateComplete: 'Update complete',
   updateReady: 'Ready to update...',

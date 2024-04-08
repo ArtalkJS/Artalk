@@ -126,9 +126,7 @@ export default class Render {
   public getChildrenWrap() {
     if (!this.$childrenWrap) {
       // if not exists, create a new one
-      this.$childrenWrap = Utils.createElement(
-        '<div class="atk-comment-children"></div>',
-      )
+      this.$childrenWrap = Utils.createElement('<div class="atk-comment-children"></div>')
       this.$main.append(this.$childrenWrap)
     }
     return this.$childrenWrap

@@ -116,10 +116,7 @@ async function startExportTask() {
 
 function downloadFile(filename: string, text: string) {
   const el = document.createElement('a')
-  el.setAttribute(
-    'href',
-    `data:text/json;charset=utf-8,${encodeURIComponent(text)}`,
-  )
+  el.setAttribute('href', `data:text/json;charset=utf-8,${encodeURIComponent(text)}`)
   el.setAttribute('download', filename)
   el.style.display = 'none'
   document.body.appendChild(el)

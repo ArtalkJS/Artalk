@@ -14,8 +14,7 @@ export const SidebarBtn: ArtalkPlugin = (ctx) => {
 
       // update button text (normal user or admin)
       const $btnText = $openSidebarBtn.querySelector<HTMLElement>('.atk-text')
-      if ($btnText)
-        $btnText.innerText = !user.isAdmin ? $t('msgCenter') : $t('ctrlCenter')
+      if ($btnText) $btnText.innerText = !user.isAdmin ? $t('msgCenter') : $t('ctrlCenter')
     } else {
       $openSidebarBtn.classList.add('atk-hide')
     }
@@ -24,9 +23,7 @@ export const SidebarBtn: ArtalkPlugin = (ctx) => {
   ctx.watchConf(['locale'], (conf) => {
     const list = ctx.get('list')
 
-    $openSidebarBtn = list.$el.querySelector<HTMLElement>(
-      '[data-action="open-sidebar"]',
-    )
+    $openSidebarBtn = list.$el.querySelector<HTMLElement>('[data-action="open-sidebar"]')
     if (!$openSidebarBtn) return
 
     $openSidebarBtn.onclick = () => {

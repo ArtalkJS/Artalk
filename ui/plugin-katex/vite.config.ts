@@ -12,9 +12,7 @@ export default defineConfig({
       entry: resolve(__dirname, './main.ts'),
       name: 'artalk-plugin-katex',
       fileName: (format) =>
-        format == 'umd'
-          ? 'artalk-plugin-katex.js'
-          : `artalk-plugin-katex.${format}.js`,
+        format == 'umd' ? 'artalk-plugin-katex.js' : `artalk-plugin-katex.${format}.js`,
       formats: ['es', 'umd', 'iife'],
     },
     rollupOptions: {

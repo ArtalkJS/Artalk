@@ -26,8 +26,7 @@ export default function renderReplyTo(r: Render) {
   // Comment content
   let replyContent = marked(r.opts.replyTo.content)
   if (r.opts.replyTo.is_collapsed) replyContent = `[${$t('collapsed')}]`
-  r.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML =
-    replyContent
+  r.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
 
   // Mount the replyTo element
   r.$body.prepend(r.$replyTo)

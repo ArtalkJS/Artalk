@@ -16,9 +16,7 @@ Artalk.use((ctx) => {
     ctx.getCommentNodes().forEach((comment) => {
       const $content = comment.getRender().$content
       $content
-        .querySelectorAll<HTMLImageElement>(
-          `img:not([atk-emoticon]):not([${LOADED_ATTR}])`,
-        )
+        .querySelectorAll<HTMLImageElement>(`img:not([atk-emoticon]):not([${LOADED_ATTR}])`)
         .forEach(($img) => {
           $img.setAttribute(LOADED_ATTR, '') // 初始化标记
 
@@ -82,9 +80,6 @@ Artalk.use((ctx) => {
   // Fancybox Event bind
   // @link https://github.com/fancyapps/fancybox
   if (typeIs('Fancybox')) {
-    window.Fancybox.bind(
-      `.artalk .atk-list ${IMG_LINK_EL_SEL}`,
-      window.ATK_LIGHTBOX_CONF,
-    )
+    window.Fancybox.bind(`.artalk .atk-list ${IMG_LINK_EL_SEL}`, window.ATK_LIGHTBOX_CONF)
   }
 })

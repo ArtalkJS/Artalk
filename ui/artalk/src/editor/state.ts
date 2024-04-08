@@ -20,10 +20,7 @@ export default class EditorStateManager {
    * @param state The state to switch
    * @param payload The cause of state switch
    */
-  switch(
-    state: EditorState,
-    payload?: { $comment: HTMLElement; comment: CommentData },
-  ) {
+  switch(state: EditorState, payload?: { $comment: HTMLElement; comment: CommentData }) {
     // trigger unmount
     if (this.stateUnmountFn) {
       this.stateUnmountFn()
@@ -42,8 +39,7 @@ export default class EditorStateManager {
       this.editor.getPlugs()?.get(Mover)?.move(moveAfterEl)
 
       const $relative =
-        this.editor.ctx.conf.scrollRelativeTo &&
-        this.editor.ctx.conf.scrollRelativeTo()
+        this.editor.ctx.conf.scrollRelativeTo && this.editor.ctx.conf.scrollRelativeTo()
       Ui.scrollIntoView(this.editor.getUI().$el, true, $relative)
 
       const plugin = this.editor

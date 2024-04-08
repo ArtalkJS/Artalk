@@ -4,9 +4,7 @@ import { Paginator } from './paginator'
 import ReadMorePaginator from './paginator/read-more'
 import UpDownPaginator from './paginator/up-down'
 
-function createPaginatorByConf(
-  conf: Pick<ArtalkConfig, 'pagination'>,
-): Paginator {
+function createPaginatorByConf(conf: Pick<ArtalkConfig, 'pagination'>): Paginator {
   if (conf.pagination.readMore) return new ReadMorePaginator()
   return new UpDownPaginator()
 }
@@ -20,8 +18,7 @@ function getPageDataByLastData(ctx: ContextApi): {
   if (!last) return r
 
   r.offset = last.params.offset
-  if (last.data)
-    r.total = last.params.flatMode ? last.data.count : last.data.roots_count
+  if (last.data) r.total = last.params.flatMode ? last.data.count : last.data.roots_count
 
   return r
 }
@@ -65,10 +62,7 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
   // When list fetch
   ctx.on('list-fetch', (params) => {
     // if clear comments when fetch new page data
-    if (
-      ctx.getData().getComments().length > 0 &&
-      paginator?.getIsClearComments(params)
-    ) {
+    if (ctx.getData().getComments().length > 0 && paginator?.getIsClearComments(params)) {
       ctx.getData().clearComments()
     }
   })

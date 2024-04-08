@@ -12,9 +12,7 @@ export default defineConfig({
       entry: resolve(__dirname, './main.ts'),
       name: 'artalk-plugin-lightbox',
       fileName: (format) =>
-        format == 'umd'
-          ? 'artalk-plugin-lightbox.js'
-          : `artalk-plugin-lightbox.${format}.js`,
+        format == 'umd' ? 'artalk-plugin-lightbox.js' : `artalk-plugin-lightbox.${format}.js`,
       formats: ['es', 'umd', 'iife'],
     },
     rollupOptions: {

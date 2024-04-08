@@ -13,12 +13,7 @@ export default class HeaderEvent extends EditorPlug {
     const changeEventFns: { [name: string]: () => void } = {}
 
     const trigger =
-      (
-        evt: 'header-input' | 'header-change',
-        $input: HTMLInputElement,
-        field: string,
-      ) =>
-      () => {
+      (evt: 'header-input' | 'header-change', $input: HTMLInputElement, field: string) => () => {
         this.kit.useEvents().trigger(evt, { field, $input })
       }
 

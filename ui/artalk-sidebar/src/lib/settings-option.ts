@@ -1,8 +1,5 @@
 import YAML from 'yaml'
-type Pair = YAML.Pair<
-  YAML.Scalar<any>,
-  YAML.Scalar<any> & YAML.YAMLMap<any, any>
->
+type Pair = YAML.Pair<YAML.Scalar<any>, YAML.Scalar<any> & YAML.YAMLMap<any, any>>
 
 export interface OptionNode {
   name: string
@@ -16,14 +13,9 @@ export interface OptionNode {
   items?: OptionNode[]
 }
 
-function extractItemComment(
-  item: Pair,
-  index: number,
-  parentPair?: Pair,
-): string {
+function extractItemComment(item: Pair, index: number, parentPair?: Pair): string {
   let comment = ''
-  if (index === 0 && parentPair)
-    comment = parentPair?.value?.commentBefore || ''
+  if (index === 0 && parentPair) comment = parentPair?.value?.commentBefore || ''
   else comment = item?.key?.commentBefore || ''
   return comment
 }
@@ -59,9 +51,8 @@ export function getTree(yamlObj: YAML.Document.Parsed): OptionNode {
       // get type
       const probablyTypes = ['string', 'number', 'boolean', 'object']
       const type =
-        (Array.isArray(value)
-          ? 'array'
-          : probablyTypes.find((t) => typeof value === t)) || undefined
+        (Array.isArray(value) ? 'array' : probablyTypes.find((t) => typeof value === t)) ||
+        undefined
 
       if (!type) return
 
@@ -160,9 +151,7 @@ function extractComment(name: string, comment: string) {
 }
 
 function snakeToCamel(str: string) {
-  return str
-    .toLowerCase()
-    .replace(/([_][a-z]|^[a-z])/g, (group) => group.slice(-1).toUpperCase())
+  return str.toLowerCase().replace(/([_][a-z]|^[a-z])/g, (group) => group.slice(-1).toUpperCase())
 }
 
 /**
@@ -189,8 +178,7 @@ export function patchOptionValue(value: any, node: OptionNode) {
       break
     case 'array':
       // trim string array
-      if (Array.isArray(value))
-        value = value.map((v) => (typeof v === 'string' ? v.trim() : v))
+      if (Array.isArray(value)) value = value.map((v) => (typeof v === 'string' ? v.trim() : v))
       break
   }
 

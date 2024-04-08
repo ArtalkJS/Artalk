@@ -138,11 +138,7 @@ function onSearchSubmit(evt: Event) {
           {{ t(tabLabel) }}
         </div>
 
-        <div
-          v-if="isSearchEnabled"
-          class="item search-btn"
-          @click="showSearch()"
-        ></div>
+        <div v-if="isSearchEnabled" class="item search-btn" @click="showSearch()"></div>
       </template>
 
       <!-- pages -->
@@ -160,11 +156,7 @@ function onSearchSubmit(evt: Event) {
       </template>
     </div>
 
-    <form
-      v-if="isSearchShow"
-      class="search-layer atk-fade-in"
-      @submit.prevent="onSearchSubmit"
-    >
+    <form v-if="isSearchShow" class="search-layer atk-fade-in" @submit.prevent="onSearchSubmit">
       <div class="item back-btn" @click="hideSearch()">
         <div class="icon arrow"></div>
       </div>

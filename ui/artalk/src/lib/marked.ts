@@ -69,10 +69,7 @@ function simpleMarked(src: string) {
         (_, code) => `<pre><code>${renderCode(code)}</code></pre>`,
       )
       // .replace(/`([^`]+?)`/g, '<code>$1</code>')
-      .replace(
-        /!\[(.*?)\]\((.*?)\)/g,
-        (_, alt, imgSrc) => `<img src="${imgSrc}" alt="${alt}" />`,
-      )
+      .replace(/!\[(.*?)\]\((.*?)\)/g, (_, alt, imgSrc) => `<img src="${imgSrc}" alt="${alt}" />`)
       .replace(
         /\[(.*?)\]\((.*?)\)/g,
         (_, text, link) => `<a href="${link}" target="_blank">${text}</a>`,

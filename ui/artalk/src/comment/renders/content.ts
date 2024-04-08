@@ -22,8 +22,7 @@ export default function renderContent(r: Render) {
     </div>`)
   r.$body.insertAdjacentElement('beforeend', collapsedInfoEl)
 
-  const contentShowBtn =
-    collapsedInfoEl.querySelector<HTMLElement>('.atk-show-btn')!
+  const contentShowBtn = collapsedInfoEl.querySelector<HTMLElement>('.atk-show-btn')!
   contentShowBtn.addEventListener('click', (e) => {
     e.stopPropagation() // 防止穿透
 

@@ -77,11 +77,7 @@ function del() {
     }
     emit('remove', page.value.id)
   }
-  if (
-    window.confirm(
-      `确认删除页面 "${page.value.title || page.value.key}"？将会删除所有相关数据`,
-    )
-  )
+  if (window.confirm(`确认删除页面 "${page.value.title || page.value.key}"？将会删除所有相关数据`))
     del()
 }
 

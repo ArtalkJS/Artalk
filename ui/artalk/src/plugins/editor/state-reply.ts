@@ -70,8 +70,7 @@ export default class StateReply extends EditorPlug {
           `<span class="atk-cancel atk-icon-close atk-icon"></span>` +
           `</span>`,
       )
-      $btn.querySelector<HTMLElement>('.atk-text')!.innerText =
-        `@${commentData.nick}`
+      $btn.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
       $btn.addEventListener('click', () => {
         this.kit.useEditor().resetState()
       })

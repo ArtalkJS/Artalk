@@ -138,40 +138,15 @@ function submit() {
     </div>
     <form v-if="editUser" class="atk-form" @submit.prevent="submit()">
       <div class="atk-label required">{{ t('username') }}</div>
-      <input
-        v-model="editUser.name"
-        type="text"
-        placeholder=""
-        autocomplete="off"
-      />
+      <input v-model="editUser.name" type="text" placeholder="" autocomplete="off" />
       <div class="atk-label required">{{ t('email') }}</div>
-      <input
-        v-model="editUser.email"
-        type="text"
-        placeholder=""
-        autocomplete="off"
-      />
+      <input v-model="editUser.email" type="text" placeholder="" autocomplete="off" />
       <div class="atk-label">{{ t('link') }}</div>
-      <input
-        v-model="editUser.link"
-        type="text"
-        placeholder=""
-        autocomplete="off"
-      />
+      <input v-model="editUser.link" type="text" placeholder="" autocomplete="off" />
       <div class="atk-label">{{ t('badgeText') }}</div>
-      <input
-        v-model="editUser.badge_name"
-        type="text"
-        placeholder=""
-        autocomplete="off"
-      />
+      <input v-model="editUser.badge_name" type="text" placeholder="" autocomplete="off" />
       <div class="atk-label">{{ t('badgeColor') }} (Color Hex)</div>
-      <input
-        v-model="editUser.badge_color"
-        type="text"
-        placeholder=""
-        autocomplete="off"
-      />
+      <input v-model="editUser.badge_color" type="text" placeholder="" autocomplete="off" />
       <div class="atk-label required">{{ t('role') }}</div>
       <select v-model="editUser.is_admin">
         <option :value="false">{{ t('normal') }}</option>

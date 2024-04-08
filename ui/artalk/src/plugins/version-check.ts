@@ -26,18 +26,12 @@ function versionCheck(list: List, feVer: string, beVer: string) {
       `${$t('currentVersion')}: ${$t('frontend')} ${feVer} / ${$t('backend')} ${beVer}` +
       `</span><br/><br/></div>`,
   )
-  const ignoreBtn = Utils.createElement(
-    `<span style="cursor:pointer">${$t('ignore')}</span>`,
-  )
+  const ignoreBtn = Utils.createElement(`<span style="cursor:pointer">${$t('ignore')}</span>`)
   ignoreBtn.onclick = () => {
     Ui.setError(list.$el.parentElement!, null)
     IgnoreVersionCheck = true
     list.ctx.fetch({ offset: 0 })
   }
   errEl.append(ignoreBtn)
-  Ui.setError(
-    list.$el.parentElement!,
-    errEl,
-    '<span class="atk-warn-title">Artalk Warn</span>',
-  )
+  Ui.setError(list.$el.parentElement!, errEl, '<span class="atk-warn-title">Artalk Warn</span>')
 }

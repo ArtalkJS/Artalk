@@ -40,10 +40,7 @@ const EDITOR_PLUGS: (typeof EditorPlug)[] = [
  * Get the enabled plugs by config
  */
 export function getEnabledPlugs(
-  conf: Pick<
-    ArtalkConfig,
-    'imgUpload' | 'emoticons' | 'preview' | 'editorTravel'
-  >,
+  conf: Pick<ArtalkConfig, 'imgUpload' | 'emoticons' | 'preview' | 'editorTravel'>,
 ): (typeof EditorPlug)[] {
   // The reference map of config and plugs
   // (for check if the plug is enabled)

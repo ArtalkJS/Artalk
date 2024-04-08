@@ -17,11 +17,7 @@ import { DataManager } from './data'
 import * as I18n from './i18n'
 
 import EventManager from './lib/event-manager'
-import {
-  convertApiOptions,
-  createNewApiHandlers,
-  handelCustomConf,
-} from './config'
+import { convertApiOptions, createNewApiHandlers, handelCustomConf } from './config'
 import { watchConf } from './lib/watch-conf'
 
 // Auto dependency injection

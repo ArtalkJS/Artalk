@@ -92,11 +92,7 @@ async function refreshStatCount(
   applyCountData(args.numEl, data, defaultCount)
 }
 
-function applyCountData(
-  selector: string,
-  data: CountData,
-  defaultCount: number,
-) {
+function applyCountData(selector: string, data: CountData, defaultCount: number) {
   document.querySelectorAll(selector).forEach((el) => {
     const pageKey = el.getAttribute('data-page-key')
     const count = Number(pageKey ? data[pageKey] : defaultCount)

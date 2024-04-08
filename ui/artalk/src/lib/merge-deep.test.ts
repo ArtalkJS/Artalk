@@ -34,9 +34,9 @@ describe('Array merge', () => {
     })
   })
   it('should merge arrays (3 levels)', () => {
-    expect(
-      mergeDeep({ a: { b: { c: [1] } } }, { a: { b: { c: [2] } } }),
-    ).toEqual({ a: { b: { c: [1, 2] } } })
+    expect(mergeDeep({ a: { b: { c: [1] } } }, { a: { b: { c: [2] } } })).toEqual({
+      a: { b: { c: [1, 2] } },
+    })
   })
 })
 

@@ -18,8 +18,7 @@ export default defineLocaleExternal(
     commentFail: 'コメントに失敗しました',
     restoredMsg: '内容が自動的に復元されました',
     onlyAdminCanReply: '管理者のみがコメントできます',
-    uploadLoginMsg:
-      '名前とメールアドレスを入力してからアップロードしてください',
+    uploadLoginMsg: '名前とメールアドレスを入力してからアップロードしてください',
 
     /* List */
     counter: '{count}件のコメント',
@@ -43,8 +42,7 @@ export default defineLocaleExternal(
     actionConfirm: '操作を確認',
     collapse: '折り畳む',
     collapsed: '折りたたまれた',
-    collapsedMsg:
-      'このコメントはシステムまたは管理者によって折りたたまれました',
+    collapsedMsg: 'このコメントはシステムまたは管理者によって折りたたまれました',
     expand: '展開',
     approved: '承認済み',
     pending: '保留中',

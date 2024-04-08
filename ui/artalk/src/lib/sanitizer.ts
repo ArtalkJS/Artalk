@@ -73,11 +73,7 @@ const insaneOptions = {
       ['span', /^(hljs-.*)$/],
     ]
     allowed.forEach(([tag, reg]) => {
-      if (
-        node.tag === tag &&
-        !!node.attrs.class &&
-        !(reg as RegExp).test(node.attrs.class)
-      ) {
+      if (node.tag === tag && !!node.attrs.class && !(reg as RegExp).test(node.attrs.class)) {
         delete node.attrs.class
       }
     })

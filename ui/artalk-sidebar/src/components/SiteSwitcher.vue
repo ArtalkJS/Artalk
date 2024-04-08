@@ -92,11 +92,7 @@ function logout() {
         </div>
 
         <!-- Logout Button -->
-        <div
-          v-if="!bootParams.user?.email"
-          class="atk-site-item"
-          @click="logout()"
-        >
+        <div v-if="!bootParams.user?.email" class="atk-site-item" @click="logout()">
           <svg
             class="atk-site-logo"
             stroke="currentColor"

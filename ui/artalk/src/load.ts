@@ -77,10 +77,7 @@ export async function load(ctx: ContextApi) {
 /**
  * Dynamically load plugins from Network
  */
-async function loadNetworkPlugins(
-  scripts: string[],
-  apiBase: string,
-): Promise<ArtalkPlugin[]> {
+async function loadNetworkPlugins(scripts: string[], apiBase: string): Promise<ArtalkPlugin[]> {
   if (!scripts || !Array.isArray(scripts)) return []
 
   const tasks: Promise<void>[] = []

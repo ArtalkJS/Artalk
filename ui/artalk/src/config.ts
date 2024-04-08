@@ -11,22 +11,14 @@ import Defaults from './defaults'
  * @param full - If `full` is `true`, the return value will be the complete config for Artalk instance creation
  * @returns The config for Artalk instance creation
  */
-export function handelCustomConf(
-  customConf: Partial<ArtalkConfig>,
-  full: true,
-): ArtalkConfig
+export function handelCustomConf(customConf: Partial<ArtalkConfig>, full: true): ArtalkConfig
 export function handelCustomConf(
   customConf: Partial<ArtalkConfig>,
   full?: false,
 ): Partial<ArtalkConfig>
-export function handelCustomConf(
-  customConf: Partial<ArtalkConfig>,
-  full = false,
-) {
+export function handelCustomConf(customConf: Partial<ArtalkConfig>, full = false) {
   // 合并默认配置
-  const conf: Partial<ArtalkConfig> = full
-    ? mergeDeep(Defaults, customConf)
-    : customConf
+  const conf: Partial<ArtalkConfig> = full ? mergeDeep(Defaults, customConf) : customConf
 
   // 绑定元素
   if (conf.el && typeof conf.el === 'string') {
@@ -47,19 +39,16 @@ export function handelCustomConf(
   if (conf.pageTitle === '') conf.pageTitle = `${document.title}`
 
   // 服务器配置
-  if (conf.server)
-    conf.server = conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
+  if (conf.server) conf.server = conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
 
   // 自适应语言
   if (conf.locale === 'auto') conf.locale = navigator.language
 
   // 自动判断启用平铺模式
-  if (conf.flatMode === 'auto')
-    conf.flatMode = window.matchMedia('(max-width: 768px)').matches
+  if (conf.flatMode === 'auto') conf.flatMode = window.matchMedia('(max-width: 768px)').matches
 
   // flatMode
-  if (typeof conf.nestMax === 'number' && Number(conf.nestMax) <= 1)
-    conf.flatMode = true
+  if (typeof conf.nestMax === 'number' && Number(conf.nestMax) <= 1) conf.flatMode = true
 
   return conf
 }
@@ -103,10 +92,7 @@ export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
  * @param ctx - If `ctx` not provided, `checkAdmin` and `checkCaptcha` will be disabled
  * @returns ApiOptions for Api client instance creation
  */
-export function convertApiOptions(
-  conf: Partial<ArtalkConfig>,
-  ctx?: ContextApi,
-): ApiOptions {
+export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi): ApiOptions {
   return {
     baseURL: `${conf.server}/api/v2`,
     siteName: conf.site || '',

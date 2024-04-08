@@ -48,8 +48,7 @@ const services = {
       onReload: () => ctx.reload(),
 
       // make sure suffix with a slash, because it will be used as a base url when call `fetch`
-      getCaptchaIframeURL: () =>
-        `${ctx.conf.server}/api/v2/captcha/?t=${+new Date()}`,
+      getCaptchaIframeURL: () => `${ctx.conf.server}/api/v2/captcha/?t=${+new Date()}`,
     })
     return checkerLauncher
   },

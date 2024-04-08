@@ -145,18 +145,10 @@ function delUser(user: ArtalkType.UserDataForAdmin) {
               >
                 {{ user.badge_name }}
               </span>
-              <span
-                v-else-if="user.is_admin"
-                class="badge admin"
-                :title="t('userAdminHint')"
-              >
+              <span v-else-if="user.is_admin" class="badge admin" :title="t('userAdminHint')">
                 {{ t('Admin') }}
               </span>
-              <span
-                v-if="user.is_in_conf"
-                class="badge in-conf"
-                :title="t('userInConfHint')"
-              >
+              <span v-if="user.is_in_conf" class="badge in-conf" :title="t('userInConfHint')">
                 {{ t('Config') }}
               </span>
             </span>

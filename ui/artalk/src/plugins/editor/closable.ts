@@ -21,10 +21,7 @@ export default class Closable extends EditorPlug {
   }
 
   private open() {
-    this.kit
-      .useUI()
-      .$textareaWrap.querySelector('.atk-comment-closed')
-      ?.remove()
+    this.kit.useUI().$textareaWrap.querySelector('.atk-comment-closed')?.remove()
     this.kit.useUI().$textarea.style.display = ''
     this.kit.useUI().$bottom.style.display = ''
   }
@@ -34,9 +31,7 @@ export default class Closable extends EditorPlug {
       this.kit
         .useUI()
         .$textareaWrap.prepend(
-          Utils.createElement(
-            `<div class="atk-comment-closed">${$t('onlyAdminCanReply')}</div>`,
-          ),
+          Utils.createElement(`<div class="atk-comment-closed">${$t('onlyAdminCanReply')}</div>`),
         )
 
     if (!this.kit.useUser().getData().isAdmin) {

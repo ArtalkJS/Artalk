@@ -31,9 +31,7 @@ function extractCommentID(): number | null {
   // Because click goto will change hash.
   const match = window.location.hash.match(/#atk-comment-([0-9]+)/)
   let commentId =
-    match && match[1] && !Number.isNaN(parseFloat(match[1]))
-      ? parseFloat(match[1])
-      : null
+    match && match[1] && !Number.isNaN(parseFloat(match[1])) ? parseFloat(match[1]) : null
 
   // Fail over to get from query
   if (!commentId) {

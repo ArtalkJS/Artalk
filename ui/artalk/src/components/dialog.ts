@@ -22,9 +22,7 @@ export default class Dialog {
     )
 
     // 按钮
-    this.$actions = this.$el.querySelector<HTMLElement>(
-      '.atk-layer-dialog-actions',
-    )!
+    this.$actions = this.$el.querySelector<HTMLElement>('.atk-layer-dialog-actions')!
 
     // 内容
     this.$content = this.$el.querySelector('.atk-layer-dialog-content')!

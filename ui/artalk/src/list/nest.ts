@@ -51,14 +51,10 @@ export function makeNestCommentNodeList(
   // 排序
   const sortFunc = (a: CommentNode, b: CommentNode): number => {
     let v = a.id - b.id
-    if (sortBy === 'DATE_ASC')
-      v = +new Date(a.comment.date) - +new Date(b.comment.date)
-    else if (sortBy === 'DATE_DESC')
-      v = +new Date(b.comment.date) - +new Date(a.comment.date)
-    else if (sortBy === 'SRC_INDEX')
-      v = srcData.indexOf(a.comment) - srcData.indexOf(b.comment)
-    else if (sortBy === 'VOTE_UP_DESC')
-      v = b.comment.vote_up - a.comment.vote_up
+    if (sortBy === 'DATE_ASC') v = +new Date(a.comment.date) - +new Date(b.comment.date)
+    else if (sortBy === 'DATE_DESC') v = +new Date(b.comment.date) - +new Date(a.comment.date)
+    else if (sortBy === 'SRC_INDEX') v = srcData.indexOf(a.comment) - srcData.indexOf(b.comment)
+    else if (sortBy === 'VOTE_UP_DESC') v = b.comment.vote_up - a.comment.vote_up
     return v
   }
 

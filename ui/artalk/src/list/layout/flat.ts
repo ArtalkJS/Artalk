@@ -6,9 +6,7 @@ export const createFlatStrategy: LayoutStrategyCreator = (opts) => ({
   import: (comments) => {
     comments.forEach((comment: CommentData) => {
       const replyComment =
-        comment.rid === 0
-          ? undefined
-          : comments.find((c) => c.id === comment.rid)
+        comment.rid === 0 ? undefined : comments.find((c) => c.id === comment.rid)
       insertComment(opts, 'append', comment, replyComment)
     })
   },

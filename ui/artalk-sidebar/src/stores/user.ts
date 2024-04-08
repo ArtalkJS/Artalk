@@ -22,8 +22,7 @@ export const useUserStore = defineStore('user', {
     sync() {
       const user = getArtalk()?.ctx.get('user')
       if (!user) throw new Error('Artalk is not initialized')
-      if (!user.checkHasBasicUserInfo())
-        throw new Error('User is not logged in')
+      if (!user.checkHasBasicUserInfo()) throw new Error('User is not logged in')
       const userData = user.getData()
       this.site = ''
       this.name = userData.nick

@@ -52,8 +52,7 @@ export const DarkMode: ArtalkPlugin = (ctx) => {
   ctx.on('created', () => sync(ctx.conf.darkMode))
   ctx.on('unmounted', () => {
     // if handler exists, don't forget to remove it, or it will cause memory leak
-    darkModeAutoHandler &&
-      darkModeMedia?.removeEventListener('change', darkModeAutoHandler)
+    darkModeAutoHandler && darkModeMedia?.removeEventListener('change', darkModeAutoHandler)
     darkModeAutoHandler = undefined
   })
 }

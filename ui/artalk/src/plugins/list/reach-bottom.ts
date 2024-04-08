@@ -4,8 +4,7 @@ export const ReachBottom: ArtalkPlugin = (ctx) => {
   let observer: IntersectionObserver | null = null
 
   const setupObserver = ($target: HTMLElement) => {
-    const scrollEvtAt =
-      (ctx.conf.scrollRelativeTo && ctx.conf.scrollRelativeTo()) || null
+    const scrollEvtAt = (ctx.conf.scrollRelativeTo && ctx.conf.scrollRelativeTo()) || null
 
     // eslint-disable-next-line compat/compat
     observer = new IntersectionObserver(
@@ -41,10 +40,7 @@ export const ReachBottom: ArtalkPlugin = (ctx) => {
 
     // get the second last child
     const children = list.getCommentsWrapEl().childNodes
-    const $target =
-      children.length > 2
-        ? (children[children.length - 2] as HTMLElement)
-        : null
+    const $target = children.length > 2 ? (children[children.length - 2] as HTMLElement) : null
     if (!$target) return
 
     // check IntersectionObserver support

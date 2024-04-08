@@ -11,9 +11,7 @@ class User {
 
   constructor(private opts: UserOpts) {
     // Import from localStorage
-    const localUser = JSON.parse(
-      window.localStorage.getItem(LOCAL_USER_KEY) || '{}',
-    )
+    const localUser = JSON.parse(window.localStorage.getItem(LOCAL_USER_KEY) || '{}')
 
     // Initialize
     this.data = {

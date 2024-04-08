@@ -13,16 +13,12 @@ export interface ErrorDialogOptions {
 }
 
 export function showErrorDialog(opts: ErrorDialogOptions) {
-  const errEl = Utils.createElement(
-    `<span><span class="error-message"></span><br/><br/></span>`,
-  )
+  const errEl = Utils.createElement(`<span><span class="error-message"></span><br/><br/></span>`)
   errEl.querySelector<HTMLElement>('.error-message')!.innerText =
     `${$t('listLoadFailMsg')}\n${opts.errMsg}`
 
   if (opts.retryFn) {
-    const $retryBtn = Utils.createElement(
-      `<span style="cursor:pointer;">${$t('listRetry')}</span>`,
-    )
+    const $retryBtn = Utils.createElement(`<span style="cursor:pointer;">${$t('listRetry')}</span>`)
     $retryBtn.onclick = () => opts.retryFn && opts.retryFn()
     errEl.appendChild($retryBtn)
   }

@@ -52,8 +52,7 @@ function del() {
     }
     emit('remove', site.value.id)
   }
-  if (window.confirm(`确认删除站点 "${site.value.name}"？将会删除所有相关数据`))
-    del()
+  if (window.confirm(`确认删除站点 "${site.value.name}"？将会删除所有相关数据`)) del()
 }
 
 async function onFieldEditorYes(val: string) {
@@ -98,19 +97,11 @@ function onFiledEditorNo() {
   <div class="atk-site-edit">
     <div class="atk-header">
       <div class="atk-site-info">
-        <span
-          class="atk-site-name"
-          @click="!site.first_url || openURL(site.first_url)"
-        >
+        <span class="atk-site-name" @click="!site.first_url || openURL(site.first_url)">
           {{ site.name }}
         </span>
         <span class="atk-site-urls">
-          <div
-            v-for="(url, i) in site.urls"
-            :key="i"
-            class="atk-url-item"
-            @click="openURL(url)"
-          >
+          <div v-for="(url, i) in site.urls" :key="i" class="atk-url-item" @click="openURL(url)">
             {{ url }}
           </div>
         </span>
@@ -124,9 +115,7 @@ function onFiledEditorNo() {
         <div class="atk-item atk-rename-btn" @click="rename()">
           {{ t('rename') }}
         </div>
-        <div class="atk-item atk-edit-url-btn" @click="editURL()">
-          {{ t('edit') }} URL
-        </div>
+        <div class="atk-item atk-edit-url-btn" @click="editURL()">{{ t('edit') }} URL</div>
         <!--<div class="atk-item atk-export-btn">导出</div>
         <div class="atk-item atk-import-btn">导入</div>-->
       </div>

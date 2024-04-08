@@ -61,10 +61,7 @@ export const useNavStore = defineStore('nav', () => {
       })
   }
 
-  const enableSearch = (
-    searchEvt: (val: string) => void,
-    searchResetEvt: () => void,
-  ) => {
+  const enableSearch = (searchEvt: (val: string) => void, searchResetEvt: () => void) => {
     isSearchEnabled.value = true
     searchEvent.value = searchEvt
     searchResetEvent.value = searchResetEvt

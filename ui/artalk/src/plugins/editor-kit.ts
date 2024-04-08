@@ -121,9 +121,7 @@ export class PlugManager {
   }
 
   get<T extends typeof EditorPlug>(plug: T) {
-    return this.plugs.find((p) => p instanceof plug) as
-      | InstanceType<T>
-      | undefined
+    return this.plugs.find((p) => p instanceof plug) as InstanceType<T> | undefined
   }
 
   /** Open the editor plug panel */

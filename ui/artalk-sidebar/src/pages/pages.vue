@@ -163,10 +163,7 @@ function openPage(url: string) {
   <div class="atk-page-list-wrap">
     <div class="atk-header-action-bar" :class="{ bordered: showActBarBorder }">
       <span class="atk-update-all-title-btn" @click="refreshAllPages()">
-        <i
-          class="atk-icon atk-icon-sync"
-          :class="{ 'atk-rotate': refreshBtn.isRun }"
-        ></i>
+        <i class="atk-icon atk-icon-sync" :class="{ 'atk-rotate': refreshBtn.isRun }"></i>
         <span class="atk-text">
           {{ refreshBtn.isRun ? refreshBtn.statusText : t('updateTitle') }}
         </span>

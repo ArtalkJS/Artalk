@@ -7,13 +7,7 @@ export default class HeaderUser extends EditorPlug {
   constructor(kit: PlugKit) {
     super(kit)
 
-    const onInput = ({
-      $input,
-      field,
-    }: {
-      $input: HTMLInputElement
-      field: string
-    }) => {
+    const onInput = ({ $input, field }: { $input: HTMLInputElement; field: string }) => {
       if (this.kit.useEditor().getState() === 'edit') return // TODO: prevent execute when editing, since update comment.user not support
 
       // update user data
@@ -24,15 +18,13 @@ export default class HeaderUser extends EditorPlug {
     }
 
     this.kit.useMounted(() => {
-      Object.entries(this.kit.useEditor().getHeaderInputEls()).forEach(
-        ([key, $input]) => {
-          // set placeholder
-          $input.placeholder = `${$t(key as any)}`
+      Object.entries(this.kit.useEditor().getHeaderInputEls()).forEach(([key, $input]) => {
+        // set placeholder
+        $input.placeholder = `${$t(key as any)}`
 
-          // sync header values from User.data
-          $input.value = this.kit.useUser().getData()[key] || ''
-        },
-      )
+        // sync header values from User.data
+        $input.value = this.kit.useUser().getData()[key] || ''
+      })
 
       // bind events
       this.kit.useEvents().on('header-input', onInput)
@@ -92,11 +84,7 @@ export default class HeaderUser extends EditorPlug {
     this.kit.useGlobalCtx().getData().updateNotifies(data.notifies)
 
     // If user is admin and not login,
-    if (
-      this.kit.useUser().checkHasBasicUserInfo() &&
-      !data.is_login &&
-      data.user?.is_admin
-    ) {
+    if (this.kit.useUser().checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {
       // then show login window
       this.kit.useGlobalCtx().checkAdmin({
         onSuccess: () => {},

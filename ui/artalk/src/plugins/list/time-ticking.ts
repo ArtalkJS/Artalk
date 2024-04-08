@@ -9,12 +9,10 @@ export const TimeTicking: ArtalkPlugin = (ctx) => {
     timer = window.setInterval(() => {
       const list = ctx.get('list')
 
-      list.$el
-        .querySelectorAll<HTMLElement>('[data-atk-comment-date]')
-        .forEach((el) => {
-          const date = el.getAttribute('data-atk-comment-date')
-          el.innerText = Utils.timeAgo(new Date(Number(date)), ctx.$t)
-        })
+      list.$el.querySelectorAll<HTMLElement>('[data-atk-comment-date]').forEach((el) => {
+        const date = el.getAttribute('data-atk-comment-date')
+        el.innerText = Utils.timeAgo(new Date(Number(date)), ctx.$t)
+      })
     }, 30 * 1000) // 30s 更新一次
   })
 

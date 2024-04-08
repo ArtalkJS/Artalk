@@ -334,21 +334,10 @@
     $cOverwrite: var(--at-color-bg);
     background:
       /* Shadow covers */
-      linear-gradient($cOverwrite 1px, transparent 1px calc(100% - 1px)) center
-        top,
-      linear-gradient(
-          transparent calc(100% - 1px),
-          $cOverwrite calc(100% - 1px) 1px
-        )
-        center bottom,
-      /* Shadows */
-        linear-gradient($cBorder 1px, transparent 1px calc(100% - 1px)) center
-        top,
-      linear-gradient(
-          transparent calc(100% - 1px),
-          $cBorder calc(100% - 1px) 1px
-        )
-        center bottom;
+      linear-gradient($cOverwrite 1px, transparent 1px calc(100% - 1px)) center top,
+      linear-gradient(transparent calc(100% - 1px), $cOverwrite calc(100% - 1px) 1px) center bottom,
+      /* Shadows */ linear-gradient($cBorder 1px, transparent 1px calc(100% - 1px)) center top,
+      linear-gradient(transparent calc(100% - 1px), $cBorder calc(100% - 1px) 1px) center bottom;
     background-repeat: no-repeat;
     background-color: transparent;
     background-size:

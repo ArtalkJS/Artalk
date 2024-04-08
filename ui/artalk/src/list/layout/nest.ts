@@ -6,11 +6,7 @@ import type { LayoutStrategyCreator } from '.'
 export const createNestStrategy: LayoutStrategyCreator = (opts) => ({
   import: (comments) => {
     // 遍历 root 评论
-    const rootNodes = ListNest.makeNestCommentNodeList(
-      comments,
-      opts.nestSortBy,
-      opts.nestMax,
-    )
+    const rootNodes = ListNest.makeNestCommentNodeList(comments, opts.nestSortBy, opts.nestMax)
     rootNodes.forEach((rootNode: ListNest.CommentNode) => {
       const rootC = opts.createCommentNode(rootNode.comment)
 
@@ -19,10 +15,7 @@ export const createNestStrategy: LayoutStrategyCreator = (opts) => ({
       rootC.getRender().playFadeAnim()
 
       // 加载子评论
-      const loadChildren = (
-        parentC: CommentNode,
-        parentNode: ListNest.CommentNode,
-      ) => {
+      const loadChildren = (parentC: CommentNode, parentNode: ListNest.CommentNode) => {
         parentNode.children.forEach((node: ListNest.CommentNode) => {
           const childD = node.comment
           const childC = opts.createCommentNode(childD, parentC.getData())
@@ -51,10 +44,7 @@ export const createNestStrategy: LayoutStrategyCreator = (opts) => ({
       // 子评论 新增
       const parent = opts.findCommentNode(comment.rid)
       if (parent) {
-        parent.putChild(
-          node,
-          opts.nestSortBy === 'DATE_ASC' ? 'append' : 'prepend',
-        )
+        parent.putChild(node, opts.nestSortBy === 'DATE_ASC' ? 'append' : 'prepend')
 
         // 若父评论存在 “子评论部分” 限高，取消限高
         node.getParents().forEach((p) => {

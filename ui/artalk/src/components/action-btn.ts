@@ -35,9 +35,7 @@ export default class ActionBtn {
 
   /** 构造函数 */
   constructor(opts: ActionBtnOptions | string | (() => string)) {
-    this.$el = Utils.createElement(
-      `<span class="atk-common-action-btn"></span>`,
-    )
+    this.$el = Utils.createElement(`<span class="atk-common-action-btn"></span>`)
 
     this.opts = typeof opts !== 'object' ? { text: opts } : opts
     this.$el.innerText = this.getText()
@@ -54,9 +52,7 @@ export default class ActionBtn {
 
   /** 获取按钮文字（动态/静态） */
   private getText() {
-    return typeof this.opts.text === 'string'
-      ? this.opts.text
-      : this.opts.text()
+    return typeof this.opts.text === 'string' ? this.opts.text : this.opts.text()
   }
 
   /** 设置点击事件 */
@@ -137,12 +133,7 @@ export default class ActionBtn {
   }
 
   /** 设置消息 */
-  public setMsg(
-    text: string,
-    className?: string,
-    duringTime?: number,
-    after?: Function,
-  ) {
+  public setMsg(text: string, className?: string, duringTime?: number, after?: Function) {
     this.setLoading(false)
     if (className) this.$el.classList.add(className)
     this.$el.innerText = text

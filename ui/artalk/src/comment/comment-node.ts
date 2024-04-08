@@ -122,10 +122,7 @@ export default class CommentNode {
   }
 
   /** 置入子评论 */
-  public putChild(
-    childNode: CommentNode,
-    insertMode: 'append' | 'prepend' = 'append',
-  ) {
+  public putChild(childNode: CommentNode, insertMode: 'append' | 'prepend' = 'append') {
     childNode.parent = this
     childNode.nestCurt = this.nestCurt + 1 // 嵌套层数 +1
     this.children.push(childNode)
@@ -166,8 +163,7 @@ export default class CommentNode {
    * Please be aware of the memory leak if you use the $el reference directly.
    */
   public getEl() {
-    if (!this.$el)
-      throw new Error('comment element not initialized before `getEl()`')
+    if (!this.$el) throw new Error('comment element not initialized before `getEl()`')
     return this.$el
   }
 
@@ -177,8 +173,7 @@ export default class CommentNode {
    * Scroll to the comment and perform flash animation
    */
   focus() {
-    if (!this.$el)
-      throw new Error('comment element not initialized before `focus()`')
+    if (!this.$el) throw new Error('comment element not initialized before `focus()`')
 
     // 若父评论存在 “子评论部分” 限高，取消限高
     this.getParents().forEach((p) => {
@@ -194,11 +189,7 @@ export default class CommentNode {
 
   scrollIntoView() {
     this.$el &&
-      Ui.scrollIntoView(
-        this.$el,
-        false,
-        this.opts.scrollRelativeTo && this.opts.scrollRelativeTo(),
-      )
+      Ui.scrollIntoView(this.$el, false, this.opts.scrollRelativeTo && this.opts.scrollRelativeTo())
   }
 
   /**

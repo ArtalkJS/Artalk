@@ -27,8 +27,7 @@ export default class ReadMorePaginator implements Paginator {
     // 滚动到底部自动加载
     if (opt.readMoreAutoLoad) {
       this.onReachedBottom = () => {
-        if (!this.instance.hasMore || this.opt.ctx.getData().getLoading())
-          return
+        if (!this.instance.hasMore || this.opt.ctx.getData().getLoading()) return
         this.instance.click()
       }
       this.opt.ctx.on('list-reach-bottom', this.onReachedBottom)
@@ -62,8 +61,7 @@ export default class ReadMorePaginator implements Paginator {
   }
 
   dispose(): void {
-    this.onReachedBottom &&
-      this.opt.ctx.off('list-reach-bottom', this.onReachedBottom)
+    this.onReachedBottom && this.opt.ctx.off('list-reach-bottom', this.onReachedBottom)
     this.instance.$el.remove()
   }
 }

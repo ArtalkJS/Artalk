@@ -10,9 +10,7 @@ export default class Mover extends EditorPlug {
 
     const editorEl = this.kit.useUI().$el
 
-    editorEl.after(
-      Utils.createElement('<div class="atk-editor-travel-placeholder"></div>'),
-    )
+    editorEl.after(Utils.createElement('<div class="atk-editor-travel-placeholder"></div>'))
 
     const $travelPlace = Utils.createElement('<div></div>')
     afterEl.after($travelPlace)

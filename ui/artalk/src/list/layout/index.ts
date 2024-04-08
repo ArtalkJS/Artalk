@@ -11,10 +11,7 @@ export interface LayoutOptions {
   nestMax: number
   flatMode: boolean
 
-  createCommentNode(
-    comment: CommentData,
-    replyComment?: CommentData,
-  ): CommentNode
+  createCommentNode(comment: CommentData, replyComment?: CommentData): CommentNode
   findCommentNode(id: number): CommentNode | undefined
 }
 

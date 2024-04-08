@@ -146,45 +146,35 @@
           aria-label="npm package version"
           target="_blank"
         >
-          <img
-            src="https://img.shields.io/npm/v/artalk.svg?style=flat-square"
-          />
+          <img src="https://img.shields.io/npm/v/artalk.svg?style=flat-square" />
         </a>
         <a
           href="https://www.npmjs.com/package/artalk"
           aria-label="npm package download number"
           target="_blank"
         >
-          <img
-            src="https://img.shields.io/npm/dt/artalk.svg?style=flat-square"
-          />
+          <img src="https://img.shields.io/npm/dt/artalk.svg?style=flat-square" />
         </a>
         <a
           href="https://github.com/ArtalkJS/Artalk/commits/master"
           aria-label="last commit"
           target="_blank"
         >
-          <img
-            src="https://img.shields.io/github/last-commit/ArtalkJS/Artalk?style=flat-square"
-          />
+          <img src="https://img.shields.io/github/last-commit/ArtalkJS/Artalk?style=flat-square" />
         </a>
         <a
           href="https://github.com/ArtalkJS/Artalk/blob/master/LICENSE"
           aria-label="open source license"
           target="_blank"
         >
-          <img
-            src="https://img.shields.io/github/license/ArtalkJS/Artalk.svg?style=flat-square"
-          />
+          <img src="https://img.shields.io/github/license/ArtalkJS/Artalk.svg?style=flat-square" />
         </a>
         <a
           href="https://github.com/ArtalkJS/Artalk"
           aria-label="GitHub star number"
           target="_blank"
         >
-          <img
-            src="https://img.shields.io/github/stars/ArtalkJS/Artalk?style=flat-square"
-          />
+          <img src="https://img.shields.io/github/stars/ArtalkJS/Artalk?style=flat-square" />
         </a>
       </div>
     </div>
@@ -200,9 +190,7 @@
         el: '#comments',
         pageKey: 'https://artalk.js.org/guide/intro.html',
         pageTitle: 'Artalk Home',
-        server: import.meta.env.DEV
-          ? 'http://localhost:23366'
-          : 'https://artalk.qwqaq.com',
+        server: import.meta.env.DEV ? 'http://localhost:23366' : 'https://artalk.qwqaq.com',
         site: 'ArtalkDocs',
         //useBackendConf: true,
       })
@@ -240,10 +228,7 @@
           darkMode = true
         } else {
           try {
-            if (
-              window.matchMedia &&
-              window.matchMedia('(prefers-color-scheme: dark)').matches
-            ) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
               darkMode = true
             }
           } catch {}
@@ -277,18 +262,16 @@
 
         // Listen
         try {
-          window
-            .matchMedia('(prefers-color-scheme: dark)')
-            .addEventListener('change', (e) => {
-              const newColorScheme = e.matches ? 'dark' : 'light'
-              if (newColorScheme == 'dark') {
-                darkMode = true
-              } else {
-                darkMode = false
-              }
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            const newColorScheme = e.matches ? 'dark' : 'light'
+            if (newColorScheme == 'dark') {
+              darkMode = true
+            } else {
+              darkMode = false
+            }
 
-              checkAndApplyDarkMode()
-            })
+            checkAndApplyDarkMode()
+          })
         } catch {}
       })()
     </script>

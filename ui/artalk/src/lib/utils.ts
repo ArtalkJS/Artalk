@@ -1,6 +1,4 @@
-export function createElement<E extends HTMLElement = HTMLElement>(
-  htmlStr: string = '',
-): E {
+export function createElement<E extends HTMLElement = HTMLElement>(htmlStr: string = ''): E {
   const div = document.createElement('div')
   div.innerHTML = htmlStr.trim()
   return (div.firstElementChild || div) as E
@@ -30,9 +28,7 @@ export function getQueryParam(name: string) {
 }
 
 export function getOffset(el: HTMLElement, relativeTo?: HTMLElement) {
-  const getOffsetRecursive = (
-    element: HTMLElement,
-  ): { top: number; left: number } => {
+  const getOffsetRecursive = (element: HTMLElement): { top: number; left: number } => {
     const rect = element.getBoundingClientRect()
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop
@@ -131,11 +127,7 @@ export function onImagesLoaded($container: HTMLElement, event: Function) {
   }
 }
 
-export function getGravatarURL(opts: {
-  params: string
-  mirror: string
-  emailMD5: string
-}) {
+export function getGravatarURL(opts: { params: string; mirror: string; emailMD5: string }) {
   return `${opts.mirror.replace(/\/$/, '')}/${opts.emailMD5}?${opts.params.replace(/^\?/, '')}`
 }
 
@@ -163,10 +155,7 @@ export function versionCompare(a: string, b: string) {
 /** 获取修正后的 UserAgent */
 export async function getCorrectUserAgent() {
   const uaRaw = navigator.userAgent
-  if (
-    !(navigator as any).userAgentData ||
-    !(navigator as any).userAgentData.getHighEntropyValues
-  ) {
+  if (!(navigator as any).userAgentData || !(navigator as any).userAgentData.getHighEntropyValues) {
     return uaRaw
   }
 

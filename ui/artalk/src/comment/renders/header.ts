@@ -24,9 +24,7 @@ function renderNick(r: Render) {
       '<a target="_blank" rel="noreferrer noopener nofollow"></a>',
     )
     $nickA.innerText = r.data.nick
-    $nickA.href = Utils.isValidURL(r.data.link)
-      ? r.data.link
-      : `https://${r.data.link}`
+    $nickA.href = Utils.isValidURL(r.data.link) ? r.data.link : `https://${r.data.link}`
     r.$headerNick.append($nickA)
   } else {
     r.$headerNick.innerText = r.data.nick
@@ -52,9 +50,7 @@ function renderVerifyBadge(ctx: Render) {
   }
 
   if (ctx.data.is_pinned) {
-    const $pinnedBadge = Utils.createElement(
-      `<span class="atk-pinned-badge">${$t('pin')}</span>`,
-    ) // 置顶徽章
+    const $pinnedBadge = Utils.createElement(`<span class="atk-pinned-badge">${$t('pin')}</span>`) // 置顶徽章
     ctx.$headerBadgeWrap.append($pinnedBadge)
   }
 }
@@ -77,9 +73,7 @@ function renderUABadge(ctx: Render) {
   $uaWrap.innerHTML = ''
 
   if (ctx.data.ip_region) {
-    const $regionBadge = Utils.createElement(
-      `<span class="atk-region-badge"></span>`,
-    )
+    const $regionBadge = Utils.createElement(`<span class="atk-region-badge"></span>`)
     $regionBadge.innerText = ctx.data.ip_region
     $uaWrap.append($regionBadge)
   }
@@ -87,9 +81,7 @@ function renderUABadge(ctx: Render) {
   if (ctx.opts.uaBadge) {
     const { browser, os } = ctx.comment.getUserUA()
     if (String(browser).trim()) {
-      const $uaBrowser = Utils.createElement(
-        `<span class="atk-ua ua-browser"></span>`,
-      )
+      const $uaBrowser = Utils.createElement(`<span class="atk-ua ua-browser"></span>`)
       $uaBrowser.innerText = browser
       $uaWrap.append($uaBrowser)
     }

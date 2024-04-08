@@ -1,8 +1,6 @@
 export type EventHandler<T> = (payload: T) => void
-export interface Event<
-  PayloadMap,
-  K extends keyof PayloadMap = keyof PayloadMap,
-> extends EventOptions {
+export interface Event<PayloadMap, K extends keyof PayloadMap = keyof PayloadMap>
+  extends EventOptions {
   name: K
   handler: EventHandler<PayloadMap[K]>
 }
@@ -16,16 +14,11 @@ export interface EventManagerFuncs<PayloadMap> {
     handler: EventHandler<PayloadMap[K]>,
     opts?: EventOptions,
   ): void
-  off<K extends keyof PayloadMap>(
-    name: K,
-    handler: EventHandler<PayloadMap[K]>,
-  ): void
+  off<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>): void
   trigger<K extends keyof PayloadMap>(name: K, payload?: PayloadMap[K]): void
 }
 
-export default class EventManager<PayloadMap>
-  implements EventManagerFuncs<PayloadMap>
-{
+export default class EventManager<PayloadMap> implements EventManagerFuncs<PayloadMap> {
   private events: Event<PayloadMap>[] = []
 
   /**
@@ -46,14 +39,9 @@ export default class EventManager<PayloadMap>
   /**
    * Remove an event listener for a specific event name and handler
    */
-  public off<K extends keyof PayloadMap>(
-    name: K,
-    handler: EventHandler<PayloadMap[K]>,
-  ) {
+  public off<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>) {
     if (!handler) return // not allow remove all events with same name
-    this.events = this.events.filter(
-      (evt) => !(evt.name === name && evt.handler === handler),
-    )
+    this.events = this.events.filter((evt) => !(evt.name === name && evt.handler === handler))
   }
 
   /**

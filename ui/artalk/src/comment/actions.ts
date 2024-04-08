@@ -22,9 +22,7 @@ export default class CommentActions {
   /** 投票操作 */
   public vote(type: 'up' | 'down') {
     const actionBtn =
-      type === 'up'
-        ? this.comment.getRender().voteBtnUp
-        : this.comment.getRender().voteBtnDown
+      type === 'up' ? this.comment.getRender().voteBtnUp : this.comment.getRender().voteBtnDown
 
     this.getApi()
       .votes.vote(`comment_${type}`, this.data.id, {
@@ -43,10 +41,7 @@ export default class CommentActions {
   }
 
   /** 管理员 - 评论状态修改 */
-  public adminEdit(
-    type: 'collapsed' | 'pending' | 'pinned',
-    btnElem: ActionBtn,
-  ) {
+  public adminEdit(type: 'collapsed' | 'pending' | 'pinned', btnElem: ActionBtn) {
     if (btnElem.isLoading) return // 若正在修改中
 
     btnElem.setLoading(true, `${$t('editing')}...`)

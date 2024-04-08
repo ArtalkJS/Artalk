@@ -5,14 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>plugin-katex</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css"
-    />
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js"
-    ></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js"></script>
   </head>
   <body>
     <div id="comments"></div>
@@ -26,9 +20,7 @@
         el: '#comments',
         pageKey: 'https://artalk.js.org/',
         pageTitle: 'Artalk Home',
-        server: import.meta.env.DEV
-          ? 'http://localhost:23366'
-          : 'https://artalk.qwqaq.com',
+        server: import.meta.env.DEV ? 'http://localhost:23366' : 'https://artalk.qwqaq.com',
         site: 'ArtalkDocs',
       })
     </script>

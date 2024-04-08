@@ -112,13 +112,8 @@ describe('Artalk instance', () => {
       expect(fn).toBeCalledTimes(1)
 
       const conf = artalk.getConf()
-      expect(
-        conf.darkMode,
-        'the darkMode is unmodifiable, should still false',
-      ).toBe(true)
-      expect(conf.gravatar, 'the gravatar should be modified').toEqual(
-        RemoteConf.gravatar,
-      )
+      expect(conf.darkMode, 'the darkMode is unmodifiable, should still false').toBe(true)
+      expect(conf.gravatar, 'the gravatar should be modified').toEqual(RemoteConf.gravatar)
     },
     {
       timeout: 1000,
@@ -137,10 +132,9 @@ describe('Artalk instance', () => {
 
     const conf = artalk.getConf()
     expect(conf.placeholder).toBe(Placeholder)
-    expect(
-      conf.gravatar,
-      'the gravatar which not in update should keep the same',
-    ).toEqual(RemoteConf.gravatar)
+    expect(conf.gravatar, 'the gravatar which not in update should keep the same').toEqual(
+      RemoteConf.gravatar,
+    )
   })
 
   it('should can getEl after config updated (artalk.getEl)', () => {

@@ -30,10 +30,7 @@ export default defineConfig({
         // dev mode vite resolves vue in other way
         // only in prod mode, `id === vue` is true
         if (id === 'vue') {
-          return resolve(
-            __dirname,
-            './node_modules/vue/dist/vue.runtime.esm-bundler.js',
-          )
+          return resolve(__dirname, './node_modules/vue/dist/vue.runtime.esm-bundler.js')
         }
       },
     }))(),

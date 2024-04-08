@@ -11,8 +11,7 @@ export default function renderReplyAt(r: Render) {
   r.$replyAt = Utils.createElement(
     `<span class="atk-item atk-reply-at"><span class="atk-arrow"></span><span class="atk-nick"></span></span>`,
   )
-  r.$replyAt.querySelector<HTMLElement>('.atk-nick')!.innerText =
-    `${r.opts.replyTo.nick}`
+  r.$replyAt.querySelector<HTMLElement>('.atk-nick')!.innerText = `${r.opts.replyTo.nick}`
   r.$replyAt.onclick = () => {
     r.comment.getActions().goToReplyComment()
   }

@@ -15,11 +15,7 @@ export const Unread: ArtalkPlugin = (ctx) => {
           window.open(notify.read_link)
 
           // remove notify which has been read
-          ctx
-            .getData()
-            .updateNotifies(
-              notifies.filter((o) => o.comment_id !== comment.getID()),
-            )
+          ctx.getData().updateNotifies(notifies.filter((o) => o.comment_id !== comment.getID()))
         })
       } else {
         // comment not in unread list

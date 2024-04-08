@@ -39,9 +39,7 @@ export default class List extends Component {
       nestSortBy: this.ctx.conf.nestSort,
       nestMax: this.ctx.conf.nestMax,
       flatMode:
-        typeof forceFlatMode === 'boolean'
-          ? forceFlatMode
-          : (this.ctx.conf.flatMode as boolean),
+        typeof forceFlatMode === 'boolean' ? forceFlatMode : (this.ctx.conf.flatMode as boolean),
       // flatMode must be boolean because it had been handled when Artalk.init
       createCommentNode: (d, r) => {
         const node = createCommentNode(this.ctx, d, r, { forceFlatMode })
@@ -78,9 +76,7 @@ export default class List extends Component {
         return
       }
       node.remove()
-      this.commentNodes = this.commentNodes.filter(
-        (c) => c.getID() !== comment.id,
-      )
+      this.commentNodes = this.commentNodes.filter((c) => c.getID() !== comment.id)
       // TODO: remove child nodes
     })
 

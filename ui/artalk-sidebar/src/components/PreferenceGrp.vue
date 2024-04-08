@@ -8,10 +8,7 @@ const props = defineProps<{
 const expanded = ref(true)
 
 const expandable = computed(() => {
-  return (
-    props.node.level === 1 &&
-    (props.node.type === 'object' || props.node.type === 'array')
-  )
+  return props.node.level === 1 && (props.node.type === 'object' || props.node.type === 'array')
 })
 
 onMounted(() => {

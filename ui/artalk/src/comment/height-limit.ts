@@ -93,10 +93,7 @@ export function disposeHeightLimit($el: HTMLElement) {
 const HEIGHT_LIMIT_SCROLL_CSS = 'atk-height-limit-scroll'
 
 /** Apply scrollable height limit */
-export function applyScrollableHeightLimit(obj: {
-  el: HTMLElement
-  maxHeight: number
-}) {
+export function applyScrollableHeightLimit(obj: { el: HTMLElement; maxHeight: number }) {
   if (!obj.el) return
   if (obj.el.classList.contains(HEIGHT_LIMIT_SCROLL_CSS)) return
   obj.el.classList.add(HEIGHT_LIMIT_SCROLL_CSS)

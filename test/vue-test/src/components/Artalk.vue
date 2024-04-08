@@ -26,7 +26,3 @@ onUnmounted(() => {
 <template>
   <view ref="el"></view>
 </template>
-
-<style lang="scss" scoped>
-
-</style>

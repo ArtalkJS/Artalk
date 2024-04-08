@@ -8,8 +8,11 @@ export const Notifies: ArtalkPlugin = (ctx) => {
     if (!user) return
 
     // Fetch all unread notifies
-    ctx.getApi().notifies.getNotifies(user).then(res => {
-      ctx.getData().updateNotifies(res.data.notifies)
-    })
+    ctx
+      .getApi()
+      .notifies.getNotifies(user)
+      .then((res) => {
+        ctx.getData().updateNotifies(res.data.notifies)
+      })
   })
 }

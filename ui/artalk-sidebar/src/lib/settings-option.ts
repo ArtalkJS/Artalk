@@ -7,7 +7,7 @@ export interface OptionNode {
   level: number
   default?: string | number | boolean
   selector?: string[]
-  type: 'string'|'number'|'boolean'|'object'|'array'
+  type: 'string' | 'number' | 'boolean' | 'object' | 'array'
   title: string
   subTitle?: string
   items?: OptionNode[]
@@ -28,9 +28,14 @@ export function getTree(yamlObj: YAML.Document.Parsed): OptionNode {
     level: 0,
     type: 'object',
     items: [],
-  };
+  }
 
-  const traverse = (pairs: Pair[], parentNode: OptionNode = tree, parentPath: string[] = [], parentPair?: Pair) => {
+  const traverse = (
+    pairs: Pair[],
+    parentNode: OptionNode = tree,
+    parentPath: string[] = [],
+    parentPair?: Pair,
+  ) => {
     pairs.forEach((item, index) => {
       // get key and value
       const key = item.key?.value
@@ -45,12 +50,14 @@ export function getTree(yamlObj: YAML.Document.Parsed): OptionNode {
 
       // get type
       const probablyTypes = ['string', 'number', 'boolean', 'object']
-      const type = (Array.isArray(value) ? 'array' : probablyTypes.find(t => typeof value === t)) || undefined
+      const type =
+        (Array.isArray(value) ? 'array' : probablyTypes.find((t) => typeof value === t)) ||
+        undefined
 
       if (!type) return
 
       // get default value
-      const defaultValue = (type !== 'object') ? value : undefined
+      const defaultValue = type !== 'object' ? value : undefined
 
       // create new node
       const node: OptionNode = {
@@ -85,8 +92,10 @@ export function getTree(yamlObj: YAML.Document.Parsed): OptionNode {
  * @param yamlObj
  * @returns
  */
-export function getFlattenNodes(tree: OptionNode): {[path: string]: OptionNode} {
-  const metas: {[path: string]: OptionNode} = {}
+export function getFlattenNodes(tree: OptionNode): {
+  [path: string]: OptionNode
+} {
+  const metas: { [path: string]: OptionNode } = {}
 
   const traverse = (node: OptionNode) => {
     metas[node.path] = node
@@ -113,12 +122,12 @@ function extractComment(name: string, comment: string) {
 
   let title = ''
   let subTitle = ''
-  let selector: string[]|undefined
+  let selector: string[] | undefined
 
   const stReg = /\(.*?\)/gm
   title = comment.replace(stReg, '').trim()
   const stFind = stReg.exec(comment)
-  subTitle = stFind ? stFind[0].substring(1, stFind[0].length-1) : ''
+  subTitle = stFind ? stFind[0].substring(1, stFind[0].length - 1) : ''
   if (!title) {
     title = snakeToCamel(name)
   }
@@ -126,20 +135,23 @@ function extractComment(name: string, comment: string) {
   const optReg = /\[.*?\]/gm
   const optFind = optReg.exec(title)
   if (optFind) {
-    try { selector = JSON.parse(optFind[0]) } catch (err) { console.error(err) }
+    try {
+      selector = JSON.parse(optFind[0])
+    } catch (err) {
+      console.error(err)
+    }
     title = title.replace(optReg, '').trim()
   }
 
   return {
-    title, subTitle, selector
+    title,
+    subTitle,
+    selector,
   }
 }
 
 function snakeToCamel(str: string) {
-  return str.toLowerCase()
-    .replace(/([_][a-z]|^[a-z])/g, (group) =>
-      group.slice(-1).toUpperCase()
-    )
+  return str.toLowerCase().replace(/([_][a-z]|^[a-z])/g, (group) => group.slice(-1).toUpperCase())
 }
 
 /**
@@ -152,20 +164,21 @@ function snakeToCamel(str: string) {
 export function patchOptionValue(value: any, node: OptionNode) {
   console.log(value, node)
   switch (node.type) {
-    case "boolean":
-      if (value === "true") value = true
-      else if (value === "false") value = false
+    case 'boolean':
+      if (value === 'true') value = true
+      else if (value === 'false') value = false
       break
-    case "string":
-      if (!node.selector) // ignore option item
+    case 'string':
+      if (!node.selector)
+        // ignore option item
         value = String(value).trim()
       break
-    case "number":
+    case 'number':
       if (!isNaN(Number(value))) value = Number(value)
       break
-    case "array":
+    case 'array':
       // trim string array
-      if (Array.isArray(value)) value = value.map(v => typeof v === 'string' ? v.trim() : v)
+      if (Array.isArray(value)) value = value.map((v) => (typeof v === 'string' ? v.trim() : v))
       break
   }
 

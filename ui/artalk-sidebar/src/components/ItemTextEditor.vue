@@ -6,12 +6,12 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (evt: 'yes', value: string): boolean|void|Promise<boolean|void>
-  (evt: 'no', value: string): boolean|void|Promise<boolean|void>
+  (evt: 'yes', value: string): boolean | void | Promise<boolean | void>
+  (evt: 'no', value: string): boolean | void | Promise<boolean | void>
   (evt: 'close'): void
 }>()
 
-const inputEl = ref<HTMLInputElement|null>(null)
+const inputEl = ref<HTMLInputElement | null>(null)
 const inputVal = ref('')
 const inputInvalid = ref(false)
 
@@ -30,13 +30,14 @@ function onInput() {
 }
 
 function onKeyUp(evt: KeyboardEvent) {
-  if (evt.key === 'Enter' || evt.keyCode === 13) { // 按下回车键
+  if (evt.key === 'Enter' || evt.keyCode === 13) {
+    // 按下回车键
     evt.preventDefault()
     submit('yes')
   }
 }
 
-async function submit(type: 'yes'|'no') {
+async function submit(type: 'yes' | 'no') {
   if (type == 'yes' && inputInvalid.value) return
 
   let isContinue: any = undefined
@@ -67,7 +68,7 @@ async function submit(type: 'yes'|'no') {
         @input="onInput()"
         @keyup="onKeyUp"
         :class="{ 'atk-invalid': inputInvalid }"
-      >
+      />
     </div>
     <div class="atk-actions">
       <div
@@ -77,10 +78,7 @@ async function submit(type: 'yes'|'no') {
       >
         <i class="atk-icon atk-icon-yes"></i>
       </div>
-      <div
-        class="atk-item atk-no-btn"
-        @click="submit('no')"
-      >
+      <div class="atk-item atk-no-btn" @click="submit('no')">
         <i class="atk-icon atk-icon-no"></i>
       </div>
     </div>
@@ -113,7 +111,8 @@ async function submit(type: 'yes'|'no') {
       outline: none;
       background: transparent;
 
-      &.atk-invalid {}
+      &.atk-invalid {
+      }
 
       &:focus {
         border-bottom-color: var(--at-color-main);
@@ -124,7 +123,8 @@ async function submit(type: 'yes'|'no') {
   .atk-actions {
     @extend .atk-list-btn-actions;
 
-    .atk-yes-btn.atk-disabled {}
+    .atk-yes-btn.atk-disabled {
+    }
   }
 }
 </style>

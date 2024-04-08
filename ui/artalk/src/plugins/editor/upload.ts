@@ -21,16 +21,19 @@ export default class Upload extends EditorPlug {
     this.$imgUploadInput = document.createElement('input')
     this.$imgUploadInput.type = 'file'
     this.$imgUploadInput.style.display = 'none'
-    this.$imgUploadInput.accept = AllowImgExts.map(o => `.${o}`).join(',')
+    this.$imgUploadInput.accept = AllowImgExts.map((o) => `.${o}`).join(',')
 
     // TODO: Use btn cannot refresh when mounted event is triggered
-    const $btn = this.useBtn(`<i aria-label="${$t('uploadImage')}"><svg fill="currentColor" aria-hidden="true" height="14" viewBox="0 0 14 14" width="14"><path d="m0 1.94444c0-1.074107.870333-1.94444 1.94444-1.94444h10.11116c1.0741 0 1.9444.870333 1.9444 1.94444v10.11116c0 1.0741-.8703 1.9444-1.9444 1.9444h-10.11116c-1.074107 0-1.94444-.8703-1.94444-1.9444zm1.94444-.38888c-.21466 0-.38888.17422-.38888.38888v7.06689l2.33333-2.33333 2.33333 2.33333 3.88888-3.88889 2.3333 2.33334v-5.51134c0-.21466-.1742-.38888-.3888-.38888zm10.49996 8.09977-2.3333-2.33333-3.88888 3.8889-2.33333-2.33334-2.33333 2.33334v.8447c0 .2146.17422.3888.38888.3888h10.11116c.2146 0 .3888-.1742.3888-.3888zm-7.1944-6.54422c-.75133 0-1.36111.60978-1.36111 1.36111 0 .75134.60978 1.36111 1.36111 1.36111s1.36111-.60977 1.36111-1.36111c0-.75133-.60978-1.36111-1.36111-1.36111z"/></svg></i>`)
+    const $btn = this.useBtn(
+      `<i aria-label="${$t('uploadImage')}"><svg fill="currentColor" aria-hidden="true" height="14" viewBox="0 0 14 14" width="14"><path d="m0 1.94444c0-1.074107.870333-1.94444 1.94444-1.94444h10.11116c1.0741 0 1.9444.870333 1.9444 1.94444v10.11116c0 1.0741-.8703 1.9444-1.9444 1.9444h-10.11116c-1.074107 0-1.94444-.8703-1.94444-1.9444zm1.94444-.38888c-.21466 0-.38888.17422-.38888.38888v7.06689l2.33333-2.33333 2.33333 2.33333 3.88888-3.88889 2.3333 2.33334v-5.51134c0-.21466-.1742-.38888-.3888-.38888zm10.49996 8.09977-2.3333-2.33333-3.88888 3.8889-2.33333-2.33334-2.33333 2.33334v.8447c0 .2146.17422.3888.38888.3888h10.11116c.2146 0 .3888-.1742.3888-.3888zm-7.1944-6.54422c-.75133 0-1.36111.60978-1.36111 1.36111 0 .75134.60978 1.36111 1.36111 1.36111s1.36111-.60977 1.36111-1.36111c0-.75133-.60978-1.36111-1.36111-1.36111z"/></svg></i>`,
+    )
     $btn.after(this.$imgUploadInput)
     $btn.onclick = () => {
       // 选择图片
       const $input = this.$imgUploadInput!
       $input.onchange = () => {
-        (async () => { // 解决阻塞 UI 问题
+        ;(async () => {
+          // 解决阻塞 UI 问题
           if (!$input.files || $input.files.length === 0) return
           const file = $input.files[0]
           this.uploadImg(file)
@@ -129,16 +132,25 @@ export default class Upload extends EditorPlug {
       let imgURL = resp.public_url as string
 
       // 若为相对路径，加上 artalk server
-      if (!Utils.isValidURL(imgURL)) imgURL = Utils.getURLBasedOnApi({
-        base: this.kit.useConf().server,
-        path: imgURL,
-      })
+      if (!Utils.isValidURL(imgURL))
+        imgURL = Utils.getURLBasedOnApi({
+          base: this.kit.useConf().server,
+          path: imgURL,
+        })
 
       // 上传成功插入图片
-      this.kit.useEditor().setContent(this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`))
+      this.kit
+        .useEditor()
+        .setContent(
+          this.kit
+            .useUI()
+            .$textarea.value.replace(uploadPlaceholderTxt, `${insertPrefix}![](${imgURL})`),
+        )
     } else {
       // 上传失败删除加载文字
-      this.kit.useEditor().setContent(this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, ''))
+      this.kit
+        .useEditor()
+        .setContent(this.kit.useUI().$textarea.value.replace(uploadPlaceholderTxt, ''))
     }
   }
 }

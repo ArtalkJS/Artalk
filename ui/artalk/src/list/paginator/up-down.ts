@@ -17,9 +17,9 @@ export default class UpDownPaginator implements Paginator {
           offset: o,
           onSuccess: () => {
             opt.ctx.listGotoFirst()
-          }
+          },
         })
-      }
+      },
     })
 
     return this.instance.$el

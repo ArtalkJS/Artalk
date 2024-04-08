@@ -23,7 +23,7 @@ export default class ReadMoreBtn {
 
   /** 是否有更多内容 */
   get hasMore() {
-    return this.total > (this.offset + this.opts.pageSize)
+    return this.total > this.offset + this.opts.pageSize
   }
 
   public constructor(opts: ReadMoreBtnOptions) {
@@ -31,17 +31,20 @@ export default class ReadMoreBtn {
     this.origText = this.opts.text || this.origText
 
     this.$el = Utils.createElement(
-    `<div class="atk-list-read-more" style="display: none;">
+      `<div class="atk-list-read-more" style="display: none;">
       <div class="atk-list-read-more-inner">
         <div class="atk-loading-icon" style="display: none;"></div>
         <span class="atk-text">${this.origText}</span>
       </div>
-    </div>`)
+    </div>`,
+    )
 
     this.$loading = this.$el.querySelector<HTMLElement>('.atk-loading-icon')!
     this.$text = this.$el.querySelector<HTMLElement>('.atk-text')!
 
-    this.$el.onclick = () => { this.click() }
+    this.$el.onclick = () => {
+      this.click()
+    }
   }
 
   click() {
@@ -60,7 +63,7 @@ export default class ReadMoreBtn {
   }
 
   /** 加载 */
-  setLoading (isLoading: boolean) {
+  setLoading(isLoading: boolean) {
     this.$loading.style.display = isLoading ? '' : 'none'
     this.$text.style.display = isLoading ? 'none' : ''
   }

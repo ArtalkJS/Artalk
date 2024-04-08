@@ -7,8 +7,12 @@
     animation: atkFlashOnce 1s ease-in-out 0s;
 
     @keyframes atkFlashOnce {
-      from { background: rgba(0, 131, 255, 0.2); }
-      to { background: transparent; }
+      from {
+        background: rgba(0, 131, 255, 0.2);
+      }
+      to {
+        background: transparent;
+      }
     }
   }
 
@@ -62,7 +66,7 @@
     & > .atk-header {
       line-height: 1.5;
       font-size: 13px;
-      margin-bottom: .5em;
+      margin-bottom: 0.5em;
       overflow: hidden;
       position: relative;
       display: flex;
@@ -80,7 +84,8 @@
           margin-right: 6px;
         }
 
-        &.atk-nick, &.atk-nick a {
+        &.atk-nick,
+        &.atk-nick a {
           font-size: 14px;
           color: var(--at-color-main);
           text-decoration: none;
@@ -215,7 +220,7 @@
           font-size: 15px;
 
           .atk-nick {
-            color: var(--at-color-main)
+            color: var(--at-color-main);
           }
         }
 
@@ -265,7 +270,8 @@
           cursor: pointer;
           user-select: none;
 
-          &.atk-error, &.atk-error:hover {
+          &.atk-error,
+          &.atk-error:hover {
             color: var(--at-color-red);
           }
 
@@ -288,7 +294,7 @@
     display: block;
     overflow: hidden;
     width: 100%;
-    content: " ";
+    content: ' ';
     bottom: 0;
     height: 80px;
     background: var(--at-color-gradient);
@@ -330,12 +336,15 @@
       /* Shadow covers */
       linear-gradient($cOverwrite 1px, transparent 1px calc(100% - 1px)) center top,
       linear-gradient(transparent calc(100% - 1px), $cOverwrite calc(100% - 1px) 1px) center bottom,
-      /* Shadows */
-      linear-gradient($cBorder 1px, transparent 1px calc(100% - 1px)) center top,
+      /* Shadows */ linear-gradient($cBorder 1px, transparent 1px calc(100% - 1px)) center top,
       linear-gradient(transparent calc(100% - 1px), $cBorder calc(100% - 1px) 1px) center bottom;
     background-repeat: no-repeat;
     background-color: transparent;
-    background-size: 100% 1px, 100% 1px, 100% 1px, 100% 1px;
+    background-size:
+      100% 1px,
+      100% 1px,
+      100% 1px,
+      100% 1px;
     /* Opera doesn't support this in the shorthand */
     background-attachment: local, local, scroll, scroll;
   }

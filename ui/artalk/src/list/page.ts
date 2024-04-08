@@ -9,7 +9,10 @@ function createPaginatorByConf(conf: Pick<ArtalkConfig, 'pagination'>): Paginato
   return new UpDownPaginator()
 }
 
-function getPageDataByLastData(ctx: ContextApi): { offset: number, total: number } {
+function getPageDataByLastData(ctx: ContextApi): {
+  offset: number
+  total: number
+} {
   const last = ctx.getData().getListLastFetch()
   const r = { offset: 0, total: 0 }
   if (!last) return r
@@ -21,7 +24,7 @@ function getPageDataByLastData(ctx: ContextApi): { offset: number, total: number
 }
 
 export const initListPaginatorFunc = (ctx: ContextApi) => {
-  let paginator: Paginator|null = null
+  let paginator: Paginator | null = null
 
   // Init paginator when conf loaded
   ctx.watchConf(['pagination', 'locale'], (conf) => {
@@ -35,7 +38,9 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
     // create paginator dom
     const { offset, total } = getPageDataByLastData(ctx)
     const $paginator = paginator.create({
-      ctx, pageSize: conf.pagination.pageSize, total,
+      ctx,
+      pageSize: conf.pagination.pageSize,
+      total,
 
       readMoreAutoLoad: conf.pagination.autoLoad,
     })

@@ -9,9 +9,15 @@ class Editor extends Component implements EditorApi {
   private ui: EditorUI
   private state: EditorStateManager
 
-  getUI() { return this.ui }
-  getPlugs() { return this.ctx.get('editorPlugs') }
-  getState() { return this.state.get() }
+  getUI() {
+    return this.ui
+  }
+  getPlugs() {
+    return this.ctx.get('editorPlugs')
+  }
+  getState() {
+    return this.state.get()
+  }
 
   constructor(ctx: ContextApi) {
     super(ctx)
@@ -55,14 +61,18 @@ class Editor extends Component implements EditorApi {
 
   insertContent(val: string) {
     if ((document as any).selection) {
-      this.ui.$textarea.focus();
-      (document as any).selection.createRange().text = val
+      this.ui.$textarea.focus()
+      ;(document as any).selection.createRange().text = val
       this.ui.$textarea.focus()
     } else if (this.ui.$textarea.selectionStart || this.ui.$textarea.selectionStart === 0) {
       const sStart = this.ui.$textarea.selectionStart
       const sEnd = this.ui.$textarea.selectionEnd
       const sT = this.ui.$textarea.scrollTop
-      this.setContent(this.ui.$textarea.value.substring(0, sStart) + val + this.ui.$textarea.value.substring(sEnd, this.ui.$textarea.value.length))
+      this.setContent(
+        this.ui.$textarea.value.substring(0, sStart) +
+          val +
+          this.ui.$textarea.value.substring(sEnd, this.ui.$textarea.value.length),
+      )
       this.ui.$textarea.focus()
       this.ui.$textarea.selectionStart = sStart + val.length
       this.ui.$textarea.selectionEnd = sStart + val.length

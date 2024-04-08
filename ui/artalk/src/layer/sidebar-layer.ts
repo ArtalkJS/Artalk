@@ -25,7 +25,9 @@ export default class SidebarLayer extends Component {
     }
 
     // event
-    this.ctx.on('user-changed', () => { this.refreshOnShow = true })
+    this.ctx.on('user-changed', () => {
+      this.refreshOnShow = true
+    })
   }
 
   /** Refresh iFrame on show */
@@ -53,15 +55,18 @@ export default class SidebarLayer extends Component {
       const $iframe = this.$iframe!
       const iFrameSrc = $iframe.src
       if (this.conf.darkMode !== iFrameSrc.includes('darkMode=1')) {
-        this.iframeLoad($iframe, (this.conf.darkMode)
-          ? iFrameSrc.concat('&darkMode=1')
-          : iFrameSrc.replace('&darkMode=1', ''))
+        this.iframeLoad(
+          $iframe,
+          this.conf.darkMode
+            ? iFrameSrc.concat('&darkMode=1')
+            : iFrameSrc.replace('&darkMode=1', ''),
+        )
       }
     }
 
     // 管理员身份验证 (若身份失效，弹出验证窗口)
     this.authCheck({
-      onSuccess: () => this.show(conf) // retry show after auth check
+      onSuccess: () => this.show(conf), // retry show after auth check
     })
 
     // 执行滑动显示动画
@@ -85,9 +90,11 @@ export default class SidebarLayer extends Component {
   // --------------------------------------------------
 
   private async authCheck(opts: { onSuccess: () => void }) {
-    const data = (await this.ctx.getApi().user.getUserStatus({
-      ...this.ctx.getApi().getUserFields()
-    })).data
+    const data = (
+      await this.ctx.getApi().user.getUserStatus({
+        ...this.ctx.getApi().getUserFields(),
+      })
+    ).data
     if (data.is_admin && !data.is_login) {
       this.refreshOnShow = true
 
@@ -100,7 +107,7 @@ export default class SidebarLayer extends Component {
         },
         onCancel: () => {
           this.hide()
-        }
+        },
       })
 
       // hide sidebar layer
@@ -128,26 +135,29 @@ export default class SidebarLayer extends Component {
   }
 
   private createIframe(view?: string) {
-    const $iframe = Utils.createElement<HTMLIFrameElement>('<iframe referrerpolicy="strict-origin-when-cross-origin"></iframe>')
+    const $iframe = Utils.createElement<HTMLIFrameElement>(
+      '<iframe referrerpolicy="strict-origin-when-cross-origin"></iframe>',
+    )
 
     // 准备 Iframe 参数
-    const baseURL = (import.meta.env.DEV)  ? 'http://localhost:23367/'
+    const baseURL = import.meta.env.DEV
+      ? 'http://localhost:23367/'
       : Utils.getURLBasedOnApi({
-        base: this.ctx.conf.server,
-        path: '/sidebar/',
-      })
+          base: this.ctx.conf.server,
+          path: '/sidebar/',
+        })
 
     const query: any = {
       pageKey: this.conf.pageKey,
       site: this.conf.site || '',
       user: JSON.stringify(this.ctx.get('user').getData()),
-      time: +new Date()
+      time: +new Date(),
     }
 
     if (view) query.view = view
     if (this.conf.darkMode) query.darkMode = '1'
 
-    const urlParams = new URLSearchParams(query);
+    const urlParams = new URLSearchParams(query)
     this.iframeLoad($iframe, `${baseURL}?${urlParams.toString()}`)
 
     return $iframe

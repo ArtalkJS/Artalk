@@ -9,7 +9,7 @@ export type * from './en'
 // https://en.wikipedia.org/wiki/ISO_639
 // https://datatracker.ietf.org/doc/html/rfc5646#section-2.1
 export const internal = {
-  'en': en,
+  en,
   'en-US': en,
   'zh-CN': zhCN,
 }
@@ -21,7 +21,7 @@ export function findLocaleSet(lang: string): I18n {
   // normalize a key of language to `ISO 639`
   lang = lang.replace(
     /^([a-zA-Z]+)(-[a-zA-Z]+)?$/,
-    (_, p1: string, p2: string) => (p1.toLowerCase() + (p2 || '').toUpperCase())
+    (_, p1: string, p2: string) => p1.toLowerCase() + (p2 || '').toUpperCase(),
   )
 
   // internal finding
@@ -42,22 +42,22 @@ export function findLocaleSet(lang: string): I18n {
 /**
  * System locale setting
  */
-let LocaleConf: I18n|string = 'en'
+let LocaleConf: I18n | string = 'en'
 let LocaleDict: I18n = findLocaleSet(LocaleConf) // en by default
 
 /**
  * Set system locale
  */
-export function setLocale(locale: I18n|string) {
+export function setLocale(locale: I18n | string) {
   if (locale === LocaleConf) return
   LocaleConf = locale
-  LocaleDict = (typeof locale === 'string') ? findLocaleSet(locale) : locale
+  LocaleDict = typeof locale === 'string' ? findLocaleSet(locale) : locale
 }
 
 /**
  * Get an i18n message by key
  */
-export function t(key: I18nKeys, args: {[key: string]: string} = {}) {
+export function t(key: I18nKeys, args: { [key: string]: string } = {}) {
   let str = LocaleDict?.[key] || key
   str = str.replace(/\{\s*(\w+?)\s*\}/g, (_, token) => args[token] || '')
 

@@ -23,40 +23,34 @@ function onChange() {
   <div class="pf-item">
     <div class="info">
       <div class="title">{{ node.title }}</div>
-        <div v-if="node.subTitle" class="sub-title">{{ node.subTitle }}</div>
-      </div>
+      <div v-if="node.subTitle" class="sub-title">{{ node.subTitle }}</div>
+    </div>
 
-      <div class="value">
-        <!-- Array -->
-        <template v-if="node.type === 'array'">
-          <PreferenceArr :node="node" />
-        </template>
+    <div class="value">
+      <!-- Array -->
+      <template v-if="node.type === 'array'">
+        <PreferenceArr :node="node" />
+      </template>
 
-        <!-- 候选框 -->
-        <template v-else-if="node.selector">
-          <select v-model="value" @change="onChange">
-            <option
-              v-for="(item, i) in node.selector"
-              :key="i"
-              :value="item"
-            >{{ item }}</option>
-          </select>
-        </template>
+      <!-- 候选框 -->
+      <template v-else-if="node.selector">
+        <select v-model="value" @change="onChange">
+          <option v-for="(item, i) in node.selector" :key="i" :value="item">
+            {{ item }}
+          </option>
+        </select>
+      </template>
 
-        <!-- 开关 -->
-        <template v-else-if="node.type === 'boolean'">
-          <input type="checkbox" v-model="value" @change="onChange">
-        </template>
+      <!-- 开关 -->
+      <template v-else-if="node.type === 'boolean'">
+        <input type="checkbox" v-model="value" @change="onChange" />
+      </template>
 
-        <!-- 文本框 -->
-        <template v-else>
-          <input
-            type="text"
-            v-model="value"
-            @change="onChange"
-          />
-        </template>
-      </div>
+      <!-- 文本框 -->
+      <template v-else>
+        <input type="text" v-model="value" @change="onChange" />
+      </template>
+    </div>
   </div>
 </template>
 

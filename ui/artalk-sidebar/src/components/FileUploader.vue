@@ -14,8 +14,8 @@ const emit = defineEmits<{
 
 const { apiUrl } = toRefs(props)
 
-let xhr: XMLHttpRequest|null = null
-const fileInputEl = ref<HTMLInputElement|null>(null)
+let xhr: XMLHttpRequest | null = null
+const fileInputEl = ref<HTMLInputElement | null>(null)
 const remoteFilename = ref('')
 const isUploading = ref(false)
 const progress = ref(0)
@@ -45,7 +45,7 @@ async function startUploadFile(file: File) {
     const fileSize = file.size
     if (evt.loaded <= fileSize) {
       // 正在上传
-      progress.value = Math.round(evt.loaded / fileSize * 100)
+      progress.value = Math.round((evt.loaded / fileSize) * 100)
     }
   })
 
@@ -56,7 +56,7 @@ async function startUploadFile(file: File) {
 
   // 开始上传
   xhr.open('post', apiUrl.value)
-  xhr.timeout = 5*60*1000 // 5分钟超时
+  xhr.timeout = 5 * 60 * 1000 // 5分钟超时
   xhr.send(formData)
 
   // 上传成功事件
@@ -72,7 +72,7 @@ async function startUploadFile(file: File) {
       return
     }
 
-    const ok = (xhr.status >= 200) && (xhr.status <= 299)
+    const ok = xhr.status >= 200 && xhr.status <= 299
     if (!ok) {
       setErr(`Response HTTP Code: ${xhr.status}, Body: ${xhr.response}`)
       return
@@ -120,7 +120,13 @@ function abortUpload() {
 <template>
   <div class="atk-file-upload-group">
     <div v-show="!isUploading" class="atk-file-input-wrap atk-fade-in">
-      <input ref="fileInputEl" type="file" name="AtkDataFile" accept=".artrans" @change="onFileInputChange()" />
+      <input
+        ref="fileInputEl"
+        type="file"
+        name="AtkDataFile"
+        accept=".artrans"
+        @change="onFileInputChange()"
+      />
       <div class="atk-desc">
         <slot v-if="!isDone" name="tip"></slot>
         <slot v-if="isDone" name="done-msg"></slot>
@@ -140,6 +146,4 @@ function abortUpload() {
   </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

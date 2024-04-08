@@ -1,4 +1,5 @@
-.artalk, .atk-layer-wrap {
+.artalk,
+.atk-layer-wrap {
   --at-color-font: #2a2e2e;
   --at-color-deep: #2a2e2e;
   --at-color-sub: #757575;
@@ -6,7 +7,7 @@
   --at-color-meta: #697182;
   --at-color-border: #eceff2;
   --at-color-light: #4285f4;
-  --at-color-bg: #FFF;
+  --at-color-bg: #fff;
   --at-color-bg-transl: rgba(255, 255, 255, 0.94);
   --at-color-bg-grey: #f3f4f5;
   --at-color-bg-grey-transl: rgba(244, 244, 244, 0.75);
@@ -29,7 +30,7 @@
     --at-color-bg: #1e2224;
     --at-color-bg-transl: rgba(30, 34, 36, 0.95);
     --at-color-bg-grey: #46494e;
-    --at-color-bg-grey-transl:  rgba(8, 8, 8, 0.95);
+    --at-color-bg-grey-transl: rgba(8, 8, 8, 0.95);
     --at-color-bg-light: rgba(29, 161, 242, 0.1);
     --at-color-main: #0083ff;
     --at-color-red: #ff5652;

@@ -8,13 +8,19 @@ describe('Normal operations', () => {
   })
 
   it('should merge objects (2 levels)', () => {
-    expect(mergeDeep({ a: { b: 1 } }, { a: { c: 2 } })).toEqual({ a: { b: 1, c: 2 } })
+    expect(mergeDeep({ a: { b: 1 } }, { a: { c: 2 } })).toEqual({
+      a: { b: 1, c: 2 },
+    })
     expect(mergeDeep({ a: { b: 1 } }, { a: { b: 2 } })).toEqual({ a: { b: 2 } })
   })
 
   it('should merge objects (3 levels)', () => {
-    expect(mergeDeep({ a: { b: { c: 1 } } }, { a: { b: { d: 2 } } })).toEqual({ a: { b: { c: 1, d: 2 } } })
-    expect(mergeDeep({ a: { b: { c: 1 } } }, { a: { b: { c: 2 } } })).toEqual({ a: { b: { c: 2 } } })
+    expect(mergeDeep({ a: { b: { c: 1 } } }, { a: { b: { d: 2 } } })).toEqual({
+      a: { b: { c: 1, d: 2 } },
+    })
+    expect(mergeDeep({ a: { b: { c: 1 } } }, { a: { b: { c: 2 } } })).toEqual({
+      a: { b: { c: 2 } },
+    })
   })
 })
 
@@ -23,10 +29,14 @@ describe('Array merge', () => {
     expect(mergeDeep({ a: [1] }, { a: [2] })).toEqual({ a: [1, 2] })
   })
   it('should merge arrays (2 levels)', () => {
-    expect(mergeDeep({ a: { b: [1] } }, { a: { b: [2] } })).toEqual({ a: { b: [1, 2] } })
+    expect(mergeDeep({ a: { b: [1] } }, { a: { b: [2] } })).toEqual({
+      a: { b: [1, 2] },
+    })
   })
   it('should merge arrays (3 levels)', () => {
-    expect(mergeDeep({ a: { b: { c: [1] } } }, { a: { b: { c: [2] } } })).toEqual({ a: { b: { c: [1, 2] } } })
+    expect(mergeDeep({ a: { b: { c: [1] } } }, { a: { b: { c: [2] } } })).toEqual({
+      a: { b: { c: [1, 2] } },
+    })
   })
 })
 

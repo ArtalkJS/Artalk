@@ -2,12 +2,12 @@ name: Test Docs
 
 on:
   push:
-    branches: ['*', '!release/*', '!nightly']
-    paths: ['docs/**']
-    tags-ignore: ['v*']
+    branches: ["*", "!release/*", "!nightly"]
+    paths: ["docs/**"]
+    tags-ignore: ["v*"]
   pull_request:
-    paths: ['docs/**']
-    branches: ['*', '!release/*', '!nightly']
+    paths: ["docs/**"]
+    branches: ["*", "!release/*", "!nightly"]
 
 jobs:
   test_docs:

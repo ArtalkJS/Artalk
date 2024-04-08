@@ -14,7 +14,8 @@ export interface ErrorDialogOptions {
 
 export function showErrorDialog(opts: ErrorDialogOptions) {
   const errEl = Utils.createElement(`<span><span class="error-message"></span><br/><br/></span>`)
-  errEl.querySelector<HTMLElement>('.error-message')!.innerText = `${$t('listLoadFailMsg')}\n${opts.errMsg}`
+  errEl.querySelector<HTMLElement>('.error-message')!.innerText =
+    `${$t('listLoadFailMsg')}\n${opts.errMsg}`
 
   if (opts.retryFn) {
     const $retryBtn = Utils.createElement(`<span style="cursor:pointer;">${$t('listRetry')}</span>`)
@@ -23,7 +24,9 @@ export function showErrorDialog(opts: ErrorDialogOptions) {
   }
 
   if (opts.onOpenSidebar) {
-    const $openSidebar = Utils.createElement(`<span atk-only-admin-show> | <span style="cursor:pointer;">${$t('openName', { name: $t('ctrlCenter') })}</span></span>`)
+    const $openSidebar = Utils.createElement(
+      `<span atk-only-admin-show> | <span style="cursor:pointer;">${$t('openName', { name: $t('ctrlCenter') })}</span></span>`,
+    )
     errEl.appendChild($openSidebar)
     $openSidebar.onclick = () => opts.onOpenSidebar && opts.onOpenSidebar()
   }

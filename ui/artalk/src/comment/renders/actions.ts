@@ -8,14 +8,18 @@ import type Render from '../render'
  */
 export default function renderActions(r: Render) {
   Object.entries({
-    renderVote, renderReply,
+    renderVote,
+    renderReply,
     // 管理员操作
-    renderCollapse, renderModerator, renderPin, renderEdit, renderDel
+    renderCollapse,
+    renderModerator,
+    renderPin,
+    renderEdit,
+    renderDel,
   }).forEach(([name, render]) => {
     render(r)
   })
 }
-
 
 // 操作按钮 - 投票
 function renderVote(r: Render) {
@@ -29,7 +33,9 @@ function renderVote(r: Render) {
 
   // 反对按钮
   if (r.opts.voteDown) {
-    r.voteBtnDown = new ActionBtn(() => `${$t('voteDown')} (${r.data.vote_down || 0})`).appendTo(r.$actions)
+    r.voteBtnDown = new ActionBtn(() => `${$t('voteDown')} (${r.data.vote_down || 0})`).appendTo(
+      r.$actions,
+    )
     r.voteBtnDown.setClick(() => {
       r.comment.getActions().vote('down')
     })
@@ -52,7 +58,7 @@ function renderReply(r: Render) {
 function renderCollapse(r: Render) {
   const collapseBtn = new ActionBtn({
     text: () => (r.data.is_collapsed ? $t('expand') : $t('collapse')),
-    adminOnly: true
+    adminOnly: true,
   })
   collapseBtn.appendTo(r.$actions)
   collapseBtn.setClick(() => {
@@ -64,7 +70,7 @@ function renderCollapse(r: Render) {
 function renderModerator(r: Render) {
   const pendingBtn = new ActionBtn({
     text: () => (r.data.is_pending ? $t('pending') : $t('approved')),
-    adminOnly: true
+    adminOnly: true,
   })
   pendingBtn.appendTo(r.$actions)
   pendingBtn.setClick(() => {
@@ -76,7 +82,7 @@ function renderModerator(r: Render) {
 function renderPin(r: Render) {
   const pinnedBtn = new ActionBtn({
     text: () => (r.data.is_pinned ? $t('unpin') : $t('pin')),
-    adminOnly: true
+    adminOnly: true,
   })
   pinnedBtn.appendTo(r.$actions)
   pinnedBtn.setClick(() => {
@@ -88,7 +94,7 @@ function renderPin(r: Render) {
 function renderEdit(r: Render) {
   const editBtn = new ActionBtn({
     text: $t('edit'),
-    adminOnly: true
+    adminOnly: true,
   })
   editBtn.appendTo(r.$actions)
   editBtn.setClick(() => {

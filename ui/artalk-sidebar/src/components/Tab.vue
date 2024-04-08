@@ -3,7 +3,7 @@ import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 import { storeToRefs } from 'pinia'
 
-type PageItem = { label: string, link: string, hide?: boolean }
+type PageItem = { label: string; link: string; hide?: boolean }
 
 const router = useRouter()
 const route = useRoute()
@@ -12,8 +12,8 @@ const { t } = useI18n()
 
 const { curtPage, curtTab, tabs, isSearchEnabled } = storeToRefs(nav)
 const { isAdmin } = storeToRefs(useUserStore())
-const indicator = ref<'pages'|'tabs'>('tabs')
-const tabListEl = ref<HTMLElement|null>(null)
+const indicator = ref<'pages' | 'tabs'>('tabs')
+const tabListEl = ref<HTMLElement | null>(null)
 
 const pages = computed((): { [name: string]: PageItem } => {
   if (isAdmin.value) {
@@ -42,22 +42,22 @@ const pages = computed((): { [name: string]: PageItem } => {
       },
       settings: {
         label: 'settings',
-        link: '/settings'
-      }
+        link: '/settings',
+      },
     }
   } else {
     return {
       comments: {
         label: 'comment',
         link: '/comments',
-      }
+      },
     }
   }
 })
 
 const isSearchShow = ref(false)
 const searchValue = ref('')
-const searchInputEl = ref<HTMLInputElement|null>(null)
+const searchInputEl = ref<HTMLInputElement | null>(null)
 
 onMounted(() => {
   tabListEl.value!.addEventListener('wheel', (evt) => {
@@ -67,7 +67,7 @@ onMounted(() => {
 })
 
 function toggleIndicator() {
-  indicator.value = (indicator.value !== 'tabs') ? 'tabs' : 'pages'
+  indicator.value = indicator.value !== 'tabs' ? 'tabs' : 'pages'
 }
 
 function switchPage(pageName: string) {
@@ -119,8 +119,10 @@ function onSearchSubmit(evt: Event) {
 <template>
   <div class="tab">
     <div class="page" @click="toggleIndicator()">
-      <div class="icon" :class="(indicator === 'tabs') ? 'menu' : 'arrow'"></div>
-      <div class="text" v-if="pages[curtPage]?.label">{{ t(pages[curtPage].label) }}</div>
+      <div class="icon" :class="indicator === 'tabs' ? 'menu' : 'arrow'"></div>
+      <div class="text" v-if="pages[curtPage]?.label">
+        {{ t(pages[curtPage].label) }}
+      </div>
     </div>
 
     <div ref="tabListEl" class="tab-list">
@@ -132,13 +134,11 @@ function onSearchSubmit(evt: Event) {
           class="item"
           :class="{ active: curtTab === tabName }"
           @click="switchTab(tabName as string)"
-        >{{ t(tabLabel) }}</div>
+        >
+          {{ t(tabLabel) }}
+        </div>
 
-        <div
-          v-if="isSearchEnabled"
-          class="item search-btn"
-          @click="showSearch()"
-        ></div>
+        <div v-if="isSearchEnabled" class="item search-btn" @click="showSearch()"></div>
       </template>
 
       <!-- pages -->
@@ -150,19 +150,23 @@ function onSearchSubmit(evt: Event) {
           v-show="!page.hide"
           :class="{ active: pageName === curtPage }"
           @click="switchPage(pageName as string)"
-        >{{ t(page.label) }}</div>
+        >
+          {{ t(page.label) }}
+        </div>
       </template>
     </div>
 
-    <form
-      v-if="isSearchShow"
-      class="search-layer atk-fade-in"
-      @submit.prevent="onSearchSubmit"
-    >
+    <form v-if="isSearchShow" class="search-layer atk-fade-in" @submit.prevent="onSearchSubmit">
       <div class="item back-btn" @click="hideSearch()">
         <div class="icon arrow"></div>
       </div>
-      <input ref="searchInputEl" type="text" :placeholder="t('searchHint')" v-model="searchValue" required>
+      <input
+        ref="searchInputEl"
+        type="text"
+        :placeholder="t('searchHint')"
+        v-model="searchValue"
+        required
+      />
       <button type="submit" class="item search-btn"></button>
     </form>
   </div>

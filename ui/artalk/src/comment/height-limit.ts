@@ -10,7 +10,7 @@ export interface IHeightLimitConf {
 
 export interface IHeightLimitRule {
   /** Target element need to check */
-  el: HTMLElement|null|undefined
+  el: HTMLElement | null | undefined
 
   /** Max height (unit: px) */
   max: number
@@ -23,15 +23,16 @@ export type THeightLimitRuleSet = IHeightLimitRule[]
 
 /** Check all elements below the max height limit */
 export function check(conf: IHeightLimitConf, rules: THeightLimitRuleSet) {
-  rules.forEach(({
-    el, max: maxHeight, imgContains
-  }) => {
+  rules.forEach(({ el, max: maxHeight, imgContains }) => {
     const _apply = () => {
       if (!el) return
       if (!conf.scrollable)
-        applyHeightLimit({ el, maxHeight, postBtnClick: conf.postExpandBtnClick })
-      else
-        applyScrollableHeightLimit({ el, maxHeight })
+        applyHeightLimit({
+          el,
+          maxHeight,
+          postBtnClick: conf.postExpandBtnClick,
+        })
+      else applyScrollableHeightLimit({ el, maxHeight })
     }
 
     // checking
@@ -39,7 +40,8 @@ export function check(conf: IHeightLimitConf, rules: THeightLimitRuleSet) {
       if (el && Utils.getHeight(el) > maxHeight) _apply() // 是否超过高度
     }
     _check() // check now
-    if (imgContains && el) // check again if img contains
+    if (imgContains && el)
+      // check again if img contains
       Utils.onImagesLoaded(el, () => _check())
   })
 }
@@ -49,8 +51,8 @@ const HEIGHT_LIMIT_CSS = 'atk-height-limit'
 
 /** Apply height limit on an element and add expand btn */
 export function applyHeightLimit(obj: {
-  el: HTMLElement,
-  maxHeight: number,
+  el: HTMLElement
+  maxHeight: number
   postBtnClick?: (e: MouseEvent) => void
 }) {
   if (!obj.el) return
@@ -62,7 +64,9 @@ export function applyHeightLimit(obj: {
   obj.el.style.overflow = 'hidden'
 
   /* Expand button */
-  const $expandBtn = Utils.createElement(`<div class="atk-height-limit-btn">${$t('readMore')}</span>`)
+  const $expandBtn = Utils.createElement(
+    `<div class="atk-height-limit-btn">${$t('readMore')}</span>`,
+  )
   $expandBtn.onclick = (e) => {
     e.stopPropagation()
     disposeHeightLimit(obj.el)
@@ -89,10 +93,7 @@ export function disposeHeightLimit($el: HTMLElement) {
 const HEIGHT_LIMIT_SCROLL_CSS = 'atk-height-limit-scroll'
 
 /** Apply scrollable height limit */
-export function applyScrollableHeightLimit(obj: {
-  el: HTMLElement,
-  maxHeight: number
-}) {
+export function applyScrollableHeightLimit(obj: { el: HTMLElement; maxHeight: number }) {
   if (!obj.el) return
   if (obj.el.classList.contains(HEIGHT_LIMIT_SCROLL_CSS)) return
   obj.el.classList.add(HEIGHT_LIMIT_SCROLL_CSS)

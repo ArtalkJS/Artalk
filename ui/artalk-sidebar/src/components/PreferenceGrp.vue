@@ -31,8 +31,16 @@ const hiddenNodes = ['admin_users']
 </script>
 
 <template>
-  <div v-if="!hiddenNodes.includes(node.name)" class="pf-grp" :class="[`level-${node.level}`, expanded ? 'expand' : '']">
-    <div v-if="node.level > 0 && (node.type === 'object' || node.type === 'array')" class="pf-head" @click="onHeadClick">
+  <div
+    v-if="!hiddenNodes.includes(node.name)"
+    class="pf-grp"
+    :class="[`level-${node.level}`, expanded ? 'expand' : '']"
+  >
+    <div
+      v-if="node.level > 0 && (node.type === 'object' || node.type === 'array')"
+      class="pf-head"
+      @click="onHeadClick"
+    >
       <div class="title">{{ node.title }}</div>
       <div v-if="!!node.subTitle" class="sub-title">{{ node.subTitle }}</div>
     </div>
@@ -71,7 +79,7 @@ const hiddenNodes = ['admin_users']
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        transition: height ease .2s;
+        transition: height ease 0.2s;
         left: -10px;
         content: '';
         height: 10px;
@@ -102,7 +110,8 @@ const hiddenNodes = ['admin_users']
   }
 }
 
-.pf-grp.level-1, .pf-grp.level-2 {
+.pf-grp.level-1,
+.pf-grp.level-2 {
   & > .pf-head > .sub-title {
     padding: 0 10px 0 10px;
     margin-left: 4px;
@@ -110,7 +119,6 @@ const hiddenNodes = ['admin_users']
     border-left: 2px solid var(--at-color-border);
   }
 }
-
 
 .pf-grp.level-3 {
   margin-left: 10px;

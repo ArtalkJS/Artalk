@@ -1,4 +1,4 @@
 packages:
-  - 'ui/*'
-  - 'docs/*'
-  - 'test/*'
+  - "ui/*"
+  - "docs/*"
+  - "test/*"

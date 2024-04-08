@@ -4,7 +4,7 @@ import type { EditorApi } from './editor'
 
 export interface ArtalkConfig {
   /** 装载元素 */
-  el: string|HTMLElement
+  el: string | HTMLElement
 
   /** 页面唯一标识（完整 URL） */
   pageKey: string
@@ -31,7 +31,7 @@ export interface ArtalkConfig {
   editorTravel: boolean
 
   /** 表情包 */
-  emoticons: object|any[]|string|false
+  emoticons: object | any[] | string | false
 
   /** Gravatar 头像 */
   gravatar: {
@@ -42,7 +42,7 @@ export interface ArtalkConfig {
   }
 
   /** 头像链接生成器 */
-  avatarURLBuilder?: (comment: CommentData) => string,
+  avatarURLBuilder?: (comment: CommentData) => string
 
   /** 分页配置 */
   pagination: {
@@ -82,19 +82,19 @@ export interface ArtalkConfig {
   pvEl: string
 
   /** 夜间模式 */
-  darkMode: boolean|'auto'
+  darkMode: boolean | 'auto'
 
   /** 请求超时（单位：秒） */
   reqTimeout: number
 
   /** 平铺模式 */
-  flatMode: boolean|'auto'
+  flatMode: boolean | 'auto'
 
   /** 嵌套模式 · 最大层数 */
   nestMax: number
 
   /** 嵌套模式 · 排序方式 */
-  nestSort: 'DATE_ASC'|'DATE_DESC'
+  nestSort: 'DATE_ASC' | 'DATE_DESC'
 
   /** 显示 UA 徽标 */
   uaBadge: boolean
@@ -115,7 +115,7 @@ export interface ArtalkConfig {
   useBackendConf: boolean
 
   /** 语言本地化 */
-  locale: I18n|string
+  locale: I18n | string
 
   /** 后端版本 (系统数据，用户不允许更改) */
   apiVersion?: string

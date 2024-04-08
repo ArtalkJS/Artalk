@@ -9,7 +9,11 @@ export const Count: ArtalkPlugin = (ctx) => {
     const $count = list.$el.querySelector('.atk-comment-count .atk-text')
     if (!$count) return
 
-    const text = Utils.htmlEncode($t('counter', { count: `${Number(ctx.getData().getListLastFetch()?.data?.count) || 0}` }))
+    const text = Utils.htmlEncode(
+      $t('counter', {
+        count: `${Number(ctx.getData().getListLastFetch()?.data?.count) || 0}`,
+      }),
+    )
     $count.innerHTML = text.replace(/(\d+)/, '<span class="atk-comment-count-num">$1</span>')
   }
 

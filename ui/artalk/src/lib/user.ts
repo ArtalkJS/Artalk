@@ -9,9 +9,7 @@ interface UserOpts {
 class User {
   private data: LocalUser
 
-  constructor(
-    private opts: UserOpts
-  ) {
+  constructor(private opts: UserOpts) {
     // Import from localStorage
     const localUser = JSON.parse(window.localStorage.getItem(LOCAL_USER_KEY) || '{}')
 
@@ -21,7 +19,7 @@ class User {
       email: localUser.email || '',
       link: localUser.link || '',
       token: localUser.token || '',
-      isAdmin: localUser.isAdmin || false
+      isAdmin: localUser.isAdmin || false,
     }
   }
 
@@ -47,7 +45,7 @@ class User {
   logout() {
     this.update({
       token: '',
-      isAdmin: false
+      isAdmin: false,
     })
   }
 

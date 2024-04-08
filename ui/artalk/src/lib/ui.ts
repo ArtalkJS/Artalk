@@ -7,11 +7,12 @@ export function showLoading(parentElem: HTMLElement, conf?: { transparentBg?: bo
   let $loading = parentElem.querySelector<HTMLElement>(':scope > .atk-loading')
   if (!$loading) {
     $loading = Utils.createElement(
-    `<div class="atk-loading" style="display: none;">
+      `<div class="atk-loading" style="display: none;">
       <div class="atk-loading-spinner">
         <svg viewBox="25 25 50 50"><circle cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle></svg>
       </div>
-    </div>`)
+    </div>`,
+    )
     if (conf?.transparentBg) $loading.style.background = 'transparent'
     parentElem.appendChild($loading)
   }
@@ -50,17 +51,26 @@ export function isVisible(el: HTMLElement, viewport: HTMLElement = document.docu
   const elemTop = rect.top + docViewTop
   const elemBottom = elemTop + rect.height
 
-  return (elemBottom <= docViewBottom) //&& (elemTop >= docViewTop) 注释因为假如 el 比 viewport 还高就会失效
+  return elemBottom <= docViewBottom //&& (elemTop >= docViewTop) 注释因为假如 el 比 viewport 还高就会失效
 }
 
 /** 滚动到元素中心 */
-export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true, relativeTo?: HTMLElement) {
+export function scrollIntoView(
+  elem: HTMLElement,
+  enableAnim: boolean = true,
+  relativeTo?: HTMLElement,
+) {
   let top: number
 
   if (relativeTo) {
     const containerRect = relativeTo.getBoundingClientRect()
     const elementRect = elem.getBoundingClientRect()
-    top = elementRect.top - containerRect.top + relativeTo.scrollTop - relativeTo.clientHeight / 2 + elem.clientHeight / 2
+    top =
+      elementRect.top -
+      containerRect.top +
+      relativeTo.scrollTop -
+      relativeTo.clientHeight / 2 +
+      elem.clientHeight / 2
   } else {
     const rect = elem.getBoundingClientRect()
     const elemTop = rect.top + window.scrollY
@@ -68,9 +78,10 @@ export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true, re
   }
 
   const scrollOptions: ScrollToOptions = {
-    top, left: 0,
+    top,
+    left: 0,
     // behavior: enableAnim ? 'smooth' : 'instant',
-    behavior: 'instant'
+    behavior: 'instant',
   }
 
   if (relativeTo) relativeTo.scroll(scrollOptions)
@@ -78,16 +89,12 @@ export function scrollIntoView(elem: HTMLElement, enableAnim: boolean = true, re
 }
 
 /** 显示消息 */
-export function showNotify(
-  wrapElem: HTMLElement,
-  msg: string,
-  type: NotifyLevel,
-) {
+export function showNotify(wrapElem: HTMLElement, msg: string, type: NotifyLevel) {
   const colors = { s: '#57d59f', e: '#ff6f6c', w: '#ffc721', i: '#2ebcfc' }
   const timeout = 3000 // 持续显示时间 ms
 
   const notifyElem = Utils.createElement(
-    `<div class="atk-notify atk-fade-in" style="background-color: ${colors[type]}"><span class="atk-notify-content"></span></div>`
+    `<div class="atk-notify atk-fade-in" style="background-color: ${colors[type]}"><span class="atk-notify-content"></span></div>`,
   )
   const notifyContentEl = notifyElem.querySelector<HTMLElement>('.atk-notify-content')!
   notifyContentEl.innerHTML = Utils.htmlEncode(msg).replace('\n', '<br/>')
@@ -115,11 +122,7 @@ export function showNotify(
 }
 
 /** fade 动画 */
-export function playFadeAnim(
-  elem: HTMLElement,
-  after?: () => void,
-  type: 'in' | 'out' = 'in'
-) {
+export function playFadeAnim(elem: HTMLElement, after?: () => void, type: 'in' | 'out' = 'in') {
   elem.classList.add(`atk-fade-${type}`)
   // 动画结束清除 class
   const onAnimEnded = () => {
@@ -141,7 +144,11 @@ export function playFadeOutAnim(elem: HTMLElement, after?: () => void) {
 }
 
 /** 设置全局错误 */
-export function setError(parentElem: HTMLElement, html: string | HTMLElement | null, title: string = '<span class="atk-error-title">Artalk Error</span>') {
+export function setError(
+  parentElem: HTMLElement,
+  html: string | HTMLElement | null,
+  title: string = '<span class="atk-error-title">Artalk Error</span>',
+) {
   let elem = parentElem.querySelector<HTMLElement>('.atk-error-layer')
   if (html === null) {
     if (elem !== null) elem.remove()
@@ -149,7 +156,7 @@ export function setError(parentElem: HTMLElement, html: string | HTMLElement | n
   }
   if (!elem) {
     elem = Utils.createElement(
-      `<div class="atk-error-layer">${title}<span class="atk-error-text"></span></div>`
+      `<div class="atk-error-layer">${title}<span class="atk-error-text"></span></div>`,
     )
     parentElem.appendChild(elem)
   }
@@ -188,5 +195,5 @@ export function getScrollBarWidth() {
 
   document.body.removeChild(outer)
 
-  return (w1 - w2)
+  return w1 - w2
 }

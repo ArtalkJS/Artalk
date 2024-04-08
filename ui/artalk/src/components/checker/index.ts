@@ -26,35 +26,36 @@ export interface CheckerLauncherOptions {
 }
 
 function wrapPromise<P extends CheckerPayload = CheckerPayload>(fn: (p: P) => void) {
-  return (payload: P) => new Promise<void>((resolve, reject) => {
-    const cancelFn = payload.onCancel
-    payload.onCancel = () => {
-      cancelFn && cancelFn()
-      reject(new Error('user canceled the checker'))
-    }
-    const successFn = payload.onSuccess
-    payload.onSuccess = () => {
-      successFn && successFn()
-      resolve()
-    }
-    fn(payload)
-  })
+  return (payload: P) =>
+    new Promise<void>((resolve, reject) => {
+      const cancelFn = payload.onCancel
+      payload.onCancel = () => {
+        cancelFn && cancelFn()
+        reject(new Error('user canceled the checker'))
+      }
+      const successFn = payload.onSuccess
+      payload.onSuccess = () => {
+        successFn && successFn()
+        resolve()
+      }
+      fn(payload)
+    })
 }
 
 /**
  * Checker 发射台
  */
 export default class CheckerLauncher {
-  constructor(private opts: CheckerLauncherOptions) { }
+  constructor(private opts: CheckerLauncherOptions) {}
 
-  public checkCaptcha: ((payload: CheckerCaptchaPayload) => Promise<void>) = wrapPromise((p) => {
+  public checkCaptcha: (payload: CheckerCaptchaPayload) => Promise<void> = wrapPromise((p) => {
     this.fire(CaptchaChecker, p, (ctx) => {
       ctx.set('img_data', p.img_data)
       ctx.set('iframe', p.iframe)
     })
   })
 
-  public checkAdmin: ((payload: CheckerPayload) => Promise<void>) = wrapPromise((p) => {
+  public checkAdmin: (payload: CheckerPayload) => Promise<void> = wrapPromise((p) => {
     this.fire(AdminChecker, p)
   })
 
@@ -71,23 +72,25 @@ export default class CheckerLauncher {
     const checkerStore: CheckerStore = {}
     let hideInteractInput = false
     const checkerCtx: CheckerCtx = {
-      set: (key, val) => { checkerStore[key] = val },
-      get: (key) => (checkerStore[key]),
-      getOpts: () => (this.opts),
-      getUser: () => (this.opts.getCtx().get('user')),
+      set: (key, val) => {
+        checkerStore[key] = val
+      },
+      get: (key) => checkerStore[key],
+      getOpts: () => this.opts,
+      getUser: () => this.opts.getCtx().get('user'),
       getApi: () => this.opts.getApi(),
       hideInteractInput: () => {
         hideInteractInput = true
       },
       triggerSuccess: () => {
         close()
-        if (checker.onSuccess) checker.onSuccess(checkerCtx, "", "", formEl)
+        if (checker.onSuccess) checker.onSuccess(checkerCtx, '', '', formEl)
         if (payload.onSuccess) payload.onSuccess()
       },
       cancel: () => {
         close()
         if (payload.onCancel) payload.onCancel()
-      }
+      },
     }
 
     if (postFire) postFire(checkerCtx)
@@ -98,7 +101,7 @@ export default class CheckerLauncher {
 
     // 输入框
     const $input = Utils.createElement<HTMLInputElement>(
-      `<input id="check" type="${checker.inputType || 'text'}" autocomplete="off" required placeholder="">`
+      `<input id="check" type="${checker.inputType || 'text'}" autocomplete="off" required placeholder="">`,
     )
     formEl.appendChild($input)
     setTimeout(() => $input.focus(), 80) // 延迟 Focus
@@ -108,10 +111,7 @@ export default class CheckerLauncher {
       if (evt.key === 'Enter' || evt.keyCode === 13) {
         // 按下回车键
         evt.preventDefault()
-        layer
-          .getEl()
-          .querySelector<HTMLButtonElement>('button[data-action="confirm"]')!
-          .click()
+        layer.getEl().querySelector<HTMLButtonElement>('button[data-action="confirm"]')!.click()
       }
     }
 

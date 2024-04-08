@@ -19,7 +19,9 @@ export default function renderReplyTo(r: Render) {
   // Comment author name
   const $nick = r.$replyTo.querySelector<HTMLElement>('.atk-nick')!
   $nick.innerText = `@${r.opts.replyTo.nick}`
-  $nick.onclick = () => { r.comment.getActions().goToReplyComment() }
+  $nick.onclick = () => {
+    r.comment.getActions().goToReplyComment()
+  }
 
   // Comment content
   let replyContent = marked(r.opts.replyTo.content)

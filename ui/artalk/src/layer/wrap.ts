@@ -9,7 +9,7 @@ export class LayerWrap {
 
   constructor() {
     this.$wrap = Utils.createElement(
-      `<div class="atk-layer-wrap" style="display: none;"><div class="atk-layer-mask"></div></div>`
+      `<div class="atk-layer-wrap" style="display: none;"><div class="atk-layer-mask"></div></div>`,
     )
     this.$mask = this.$wrap.querySelector<HTMLElement>('.atk-layer-mask')!
   }
@@ -23,7 +23,7 @@ export class LayerWrap {
     // create layer instance
     const layer = new Layer(el, {
       onHide: () => this.hideWrap(el!),
-      onShow: () => this.showWrap()
+      onShow: () => this.showWrap(),
     })
 
     // register mask click event
@@ -62,7 +62,11 @@ export class LayerWrap {
 
   hideWrap($el: HTMLElement) {
     // if wrap contains more than one item, do not hide entire wrap
-    if (this.items.map(l => l.getEl()).filter(e => e !== $el && e.isConnected && e.style.display !== 'none').length > 0) {
+    if (
+      this.items
+        .map((l) => l.getEl())
+        .filter((e) => e !== $el && e.isConnected && e.style.display !== 'none').length > 0
+    ) {
       return
     }
 

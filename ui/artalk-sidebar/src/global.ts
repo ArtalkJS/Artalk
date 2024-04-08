@@ -1,7 +1,7 @@
 import Artalk from 'artalk'
 import type { ArtalkType } from 'artalk'
 
-export let artalk: Artalk|null = null
+export let artalk: Artalk | null = null
 
 export function setArtalk(artalkInstance: Artalk) {
   artalk = artalkInstance
@@ -25,12 +25,12 @@ function getBootParams() {
   }
 
   return {
-    pageKey:    p.get('pageKey') || '',
-    site:       p.get('site') || '',
-    user:       <ArtalkType.LocalUser>JSON.parse(p.get('user') || '{}'),
-    view:       p.get('view') || '',
+    pageKey: p.get('pageKey') || '',
+    site: p.get('site') || '',
+    user: <ArtalkType.LocalUser>JSON.parse(p.get('user') || '{}'),
+    view: p.get('view') || '',
     viewParams: <any>null,
-    darkMode:   p.get('darkMode') === '1',
+    darkMode: p.get('darkMode') === '1',
   }
 }
 
@@ -56,6 +56,6 @@ export function initArtalk() {
         autoLoad: false,
       }
       conf.listUnreadHighlight = true
-    }
+    },
   })
 }

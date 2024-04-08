@@ -25,7 +25,7 @@ export default class StateReply extends EditorPlug {
     // register submit preset
     this.kit.useEvents().on('mounted', () => {
       const submitPlug = this.kit.useDeps(Submit)
-      if (!submitPlug) throw Error("SubmitPlug not initialized")
+      if (!submitPlug) throw Error('SubmitPlug not initialized')
 
       const defaultPreset = new SubmitAddPreset(this.kit)
 
@@ -34,13 +34,15 @@ export default class StateReply extends EditorPlug {
         req: async () => {
           if (!this.comment) throw new Error('reply comment cannot be empty')
 
-          const nComment = (await this.kit.useApi().comments.createComment({
-            ...(await defaultPreset.getSubmitAddParams()),
-            rid: this.comment.id,
-            page_key: this.comment.page_key,
-            page_title: undefined,
-            site_name: this.comment.site_name
-          })).data
+          const nComment = (
+            await this.kit.useApi().comments.createComment({
+              ...(await defaultPreset.getSubmitAddParams()),
+              rid: this.comment.id,
+              page_key: this.comment.page_key,
+              page_title: undefined,
+              site_name: this.comment.site_name,
+            })
+          ).data
 
           return nComment
         },
@@ -52,7 +54,7 @@ export default class StateReply extends EditorPlug {
           }
 
           defaultPreset.postSubmitAdd(nComment)
-        }
+        },
       })
     })
   }
@@ -66,7 +68,7 @@ export default class StateReply extends EditorPlug {
           `${$t('reply')} <span class="atk-text"></span>` +
           `</span>` +
           `<span class="atk-cancel atk-icon-close atk-icon"></span>` +
-        `</span>`
+          `</span>`,
       )
       $btn.querySelector<HTMLElement>('.atk-text')!.innerText = `@${commentData.nick}`
       $btn.addEventListener('click', () => {

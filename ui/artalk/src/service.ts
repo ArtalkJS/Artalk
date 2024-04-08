@@ -30,7 +30,7 @@ const services = {
     const user = new User({
       onUserChanged: (data) => {
         ctx.trigger('user-changed', data)
-      }
+      },
     })
     return user
   },
@@ -48,7 +48,7 @@ const services = {
       onReload: () => ctx.reload(),
 
       // make sure suffix with a slash, because it will be used as a base url when call `fetch`
-      getCaptchaIframeURL: () => `${ctx.conf.server}/api/v2/captcha/?t=${+new Date()}`
+      getCaptchaIframeURL: () => `${ctx.conf.server}/api/v2/captcha/?t=${+new Date()}`,
     })
     return checkerLauncher
   },
@@ -79,17 +79,21 @@ const services = {
   // Not inject to ctx immediately,
   // but can be injected by other occasions
 
-  editorPlugs(): PlugManager|undefined {
+  editorPlugs(): PlugManager | undefined {
     return undefined
-  }
+  },
 }
 
 export default services
 
 // type tricks for dependency injection
 type TServiceImps = typeof services
-type TObjectWithFuncs = {[k: string]: (...args: any) => any}
-type TKeysOnlyReturn<T extends TObjectWithFuncs, V> = {[K in keyof T]: ReturnType<T[K]> extends V ? K : never}[keyof T]
+type TObjectWithFuncs = { [k: string]: (...args: any) => any }
+type TKeysOnlyReturn<T extends TObjectWithFuncs, V> = {
+  [K in keyof T]: ReturnType<T[K]> extends V ? K : never
+}[keyof T]
 type TOmitConditions = TKeysOnlyReturn<TServiceImps, void>
 type TServiceInjectors = Omit<TServiceImps, TOmitConditions>
-export type TInjectedServices = {[K in keyof TServiceInjectors]: ReturnType<TServiceInjectors[K]>}
+export type TInjectedServices = {
+  [K in keyof TServiceInjectors]: ReturnType<TServiceInjectors[K]>
+}

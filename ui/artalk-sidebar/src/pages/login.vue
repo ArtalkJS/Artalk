@@ -15,19 +15,22 @@ const router = useRouter()
 const { t } = useI18n()
 
 let userForm = ref({
-  email:    '',
-  password: ''
+  email: '',
+  password: '',
 })
 let version = ref('')
 let buildHash = ref('')
 let loginErr = ref('')
-let userSelector = ref<string[]|null>(null)
+let userSelector = ref<string[] | null>(null)
 
 onMounted(() => {
-  getArtalk()!.ctx.getApi().version.getVersion().then((res) => {
-    version.value = res.data.version
-    buildHash.value = res.data.commit_hash
-  })
+  getArtalk()!
+    .ctx.getApi()
+    .version.getVersion()
+    .then((res) => {
+      version.value = res.data.version
+      buildHash.value = res.data.commit_hash
+    })
 })
 
 function onFocus() {
@@ -40,28 +43,37 @@ function login(username?: string) {
   const artalk = getArtalk()
   if (!artalk) throw new Error('Artalk instance not initialized')
 
-  artalk.ctx.getApi().user.login({
-    name: username || '',
-    email: userForm.value.email,
-    password: userForm.value.password
-  }).then((res) => {
-    const user = res.data.user
-    artalk.ctx.get('user').update({
-      nick: user.name,
-      email: user.email,
-      link: user.link,
-      isAdmin: user.is_admin,
-      token: res.data.token,
+  artalk.ctx
+    .getApi()
+    .user.login({
+      name: username || '',
+      email: userForm.value.email,
+      password: userForm.value.password,
     })
-    useUserStore().sync()
-    router.replace('/')
-  }).catch((e: ArtalkType.FetchError) => {
-    if (e.data?.need_name_select) {
-      userSelector.value = e.data?.need_name_select
-    } else {
-      loginErr.value = e.message || t('loginFailure')
-    }
-  })
+    .then((res) => {
+      const user = res.data.user
+      artalk.ctx.get('user').update({
+        nick: user.name,
+        email: user.email,
+        link: user.link,
+        isAdmin: user.is_admin,
+        token: res.data.token,
+      })
+      useUserStore().sync()
+      router.replace('/')
+    })
+    .catch((e: ArtalkType.FetchError) => {
+      if (e.data?.need_name_select) {
+        userSelector.value = e.data?.need_name_select
+      } else {
+        loginErr.value = e.message || t('loginFailure')
+      }
+    })
+}
+
+function selectUser(username: string) {
+  userSelector.value = null
+  login(username)
 }
 </script>
 
@@ -71,20 +83,29 @@ function login(username?: string) {
       <img class="logo" src="../assets/favicon.png" alt="logo" draggable="false" />
     </a>
     <form class="login-form" @submit.prevent="login()">
-      <input type="text" :placeholder="t('email')" v-model="userForm.email" @focus="onFocus">
-      <input type="password" :placeholder="t('password')" v-model="userForm.password" @focus="onFocus">
-      <div v-if="!!loginErr" class="err-msg atk-fade-in">{{loginErr}}</div>
+      <input type="text" :placeholder="t('email')" v-model="userForm.email" @focus="onFocus" />
+      <input
+        type="password"
+        :placeholder="t('password')"
+        v-model="userForm.password"
+        @focus="onFocus"
+      />
+      <div v-if="!!loginErr" class="err-msg atk-fade-in">{{ loginErr }}</div>
       <button type="submit">{{ t('login') }}</button>
     </form>
     <div class="copyright">
-      Powered by <a href="https://artalk.js.org" target="_blank">Artalk</a> (v{{version}} / {{buildHash}})
+      Powered by
+      <a href="https://artalk.js.org" target="_blank">Artalk</a>
+      (v{{ version }} / {{ buildHash }})
     </div>
 
     <div v-if="userSelector" class="layer">
       <div class="user-selector atk-fade-in">
         <div class="text">{{ t('loginSelectHint') }}</div>
         <div class="user-list">
-          <div v-for="(u, i) in userSelector" :key="i" class="item" @click="userSelector = null; login(u)">{{u}}</div>
+          <div v-for="(u, i) in userSelector" :key="i" class="item" @click="selectUser(u)">
+            {{ u }}
+          </div>
         </div>
       </div>
     </div>
@@ -156,7 +177,7 @@ function login(username?: string) {
     display: block;
 
     &:hover {
-      opacity: .95;
+      opacity: 0.95;
     }
   }
 
@@ -211,7 +232,7 @@ function login(username?: string) {
     & > .item {
       cursor: pointer;
       padding: 10px 20px;
-      transition: border .3s ease;
+      transition: border 0.3s ease;
       border-left: 2px solid transparent;
 
       &:hover {

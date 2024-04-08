@@ -1,3 +1,3 @@
 export interface SidebarShowPayload {
-  view?: 'comments'|'sites'|'pages'|'transfer'
+  view?: 'comments' | 'sites' | 'pages' | 'transfer'
 }

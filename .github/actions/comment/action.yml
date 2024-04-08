@@ -10,7 +10,7 @@ inputs:
     description: The content of comment
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - uses: actions/github-script@v7
       env:

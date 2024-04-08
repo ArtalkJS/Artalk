@@ -1,4 +1,11 @@
-import type { ArtalkConfig, CommentData, ListFetchParams, ContextApi, EventPayloadMap, SidebarShowPayload } from '@/types'
+import type {
+  ArtalkConfig,
+  CommentData,
+  ListFetchParams,
+  ContextApi,
+  EventPayloadMap,
+  SidebarShowPayload,
+} from '@/types'
 import type { TInjectedServices } from './service'
 import { Api, ApiHandlers } from './api'
 
@@ -14,7 +21,7 @@ import { convertApiOptions, createNewApiHandlers, handelCustomConf } from './con
 import { watchConf } from './lib/watch-conf'
 
 // Auto dependency injection
-interface Context extends TInjectedServices { }
+interface Context extends TInjectedServices {}
 
 /**
  * Artalk Context
@@ -55,7 +62,7 @@ class Context implements ContextApi {
     return new Api(convertApiOptions(this.conf, this))
   }
 
-  private apiHandlers = <ApiHandlers|null> null
+  private apiHandlers = <ApiHandlers | null>null
   getApiHandlers() {
     if (!this.apiHandlers) this.apiHandlers = createNewApiHandlers(this)
     return this.apiHandlers
@@ -146,11 +153,11 @@ class Context implements ContextApi {
   }
 
   /* i18n */
-  $t(key: I18n.I18nKeys, args: {[key: string]: string} = {}): string {
+  $t(key: I18n.I18nKeys, args: { [key: string]: string } = {}): string {
     return I18n.t(key, args)
   }
 
-  setDarkMode(darkMode: boolean|'auto'): void {
+  setDarkMode(darkMode: boolean | 'auto'): void {
     this.updateConf({ darkMode })
   }
 
@@ -171,7 +178,10 @@ class Context implements ContextApi {
     return marked.getInstance()
   }
 
-  watchConf<T extends (keyof ArtalkConfig)[]>(keys: T, effect: (conf: Pick<ArtalkConfig, T[number]>) => void): void {
+  watchConf<T extends (keyof ArtalkConfig)[]>(
+    keys: T,
+    effect: (conf: Pick<ArtalkConfig, T[number]>) => void,
+  ): void {
     watchConf(this, keys, effect)
   }
 }

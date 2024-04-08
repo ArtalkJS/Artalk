@@ -19,20 +19,29 @@ import Preview from './preview'
 const EDITOR_PLUGS: (typeof EditorPlug)[] = [
   // Core
   LocalStorage,
-  HeaderEvent, HeaderUser, HeaderLink,
+  HeaderEvent,
+  HeaderUser,
+  HeaderLink,
   Textarea,
-  Submit, SubmitBtn,
-  Mover, StateReply, StateEdit,
+  Submit,
+  SubmitBtn,
+  Mover,
+  StateReply,
+  StateEdit,
   Closable,
 
   // Extensions
-  Emoticons, Upload, Preview
+  Emoticons,
+  Upload,
+  Preview,
 ]
 
 /**
  * Get the enabled plugs by config
  */
-export function getEnabledPlugs(conf: Pick<ArtalkConfig, 'imgUpload'|'emoticons'|'preview'|'editorTravel'>): (typeof EditorPlug)[] {
+export function getEnabledPlugs(
+  conf: Pick<ArtalkConfig, 'imgUpload' | 'emoticons' | 'preview' | 'editorTravel'>,
+): (typeof EditorPlug)[] {
   // The reference map of config and plugs
   // (for check if the plug is enabled)
   const confRefs = new Map<typeof EditorPlug, any>()
@@ -41,5 +50,5 @@ export function getEnabledPlugs(conf: Pick<ArtalkConfig, 'imgUpload'|'emoticons'
   confRefs.set(Preview, conf.preview)
   confRefs.set(Mover, conf.editorTravel)
 
-  return EDITOR_PLUGS.filter(p => !confRefs.has(p) || !!confRefs.get(p))
+  return EDITOR_PLUGS.filter((p) => !confRefs.has(p) || !!confRefs.get(p))
 }

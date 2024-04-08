@@ -7,14 +7,14 @@
 
   &::-webkit-scrollbar-thumb,
   &::-webkit-scrollbar-thumb:window-inactive {
-    background: rgba(86,86,86,.3);
+    background: rgba(86, 86, 86, 0.3);
   }
 
   &::-webkit-scrollbar-thumb:vertical:hover {
-    background: rgba(65,74,82,.77);
+    background: rgba(65, 74, 82, 0.77);
   }
 
   &::-webkit-scrollbar-thumb:vertical:active {
-    background: rgba(41,47,53,.77);
+    background: rgba(41, 47, 53, 0.77);
   }
 }

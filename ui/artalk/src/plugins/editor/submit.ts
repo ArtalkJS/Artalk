@@ -42,7 +42,7 @@ export default class Submit extends EditorPlug {
       return
     }
 
-    const custom = this.customs.find(o => o.activeCond())
+    const custom = this.customs.find((o) => o.activeCond())
 
     this.kit.useEditor().showLoading()
 

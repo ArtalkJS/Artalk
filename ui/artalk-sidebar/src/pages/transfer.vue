@@ -2,7 +2,7 @@
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 import { artalk } from '../global'
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from 'pinia'
 
 const nav = useNavStore()
 const user = useUserStore()
@@ -12,7 +12,7 @@ const { t } = useI18n()
 const importParams = ref({
   siteName: '',
   siteURL: '',
-  payload: ''
+  payload: '',
 })
 
 const isLoading = ref(false)
@@ -28,10 +28,13 @@ const importTaskParams = ref<Record<string, string>>({})
 const exportTaskStarted = ref(false)
 
 onMounted(() => {
-  nav.updateTabs({
-    'import': 'import',
-    'export': 'export',
-  }, 'import')
+  nav.updateTabs(
+    {
+      import: 'import',
+      export: 'export',
+    },
+    'import',
+  )
   watch(curtTab, (tab) => {
     if (tab === 'export') {
       startExportTask()
@@ -113,7 +116,7 @@ async function startExportTask() {
 
 function downloadFile(filename: string, text: string) {
   const el = document.createElement('a')
-  el.setAttribute('href', `data:text/json;charset=utf-8,${encodeURIComponent(text)}`);
+  el.setAttribute('href', `data:text/json;charset=utf-8,${encodeURIComponent(text)}`)
   el.setAttribute('download', filename)
   el.style.display = 'none'
   document.body.appendChild(el)
@@ -142,12 +145,22 @@ function padWithZeros(vNumber: number, width: number) {
   return numAsString
 }
 
-const artransferToolHint = computed(() => t('artransferToolHint', { link: '__LINK__' }).replace('__LINK__', `<a href="https://artalk.js.org/guide/transfer.html" target="_blank">${t('artransfer')}</a>`))
+const artransferToolHint = computed(() =>
+  t('artransferToolHint', { link: '__LINK__' }).replace(
+    '__LINK__',
+    `<a href="https://artalk.js.org/guide/transfer.html" target="_blank">${t('artransfer')}</a>`,
+  ),
+)
 </script>
 
 <template>
   <LoadingLayer v-if="isLoading" />
-  <LogTerminal v-if="importTaskStarted" :api-url="importTaskApiURL" :req-params="importTaskParams" @back="importTaskDone()" />
+  <LogTerminal
+    v-if="importTaskStarted"
+    :api-url="importTaskApiURL"
+    :req-params="importTaskParams"
+    @back="importTaskDone()"
+  />
   <div v-show="!importTaskStarted" class="atk-form">
     <div class="atk-label atk-data-file-label">Artrans {{ t('dataFile') }}</div>
     <FileUploader :api-url="uploadApiURL" @done="fileUploaded">
@@ -177,12 +190,14 @@ const artransferToolHint = computed(() => t('artransferToolHint', { link: '__LIN
     <div class="atk-label">{{ t('payload') }} ({{ t('optional') }})</div>
     <textarea name="AtkPayload" v-model="importParams.payload"></textarea>
     <span class="atk-desc">
-      <a href="https://artalk.js.org/guide/transfer.html" target="_blank">{{ t('moreDetails') }}</a>
+      <a href="https://artalk.js.org/guide/transfer.html" target="_blank">
+        {{ t('moreDetails') }}
+      </a>
     </span>
-    <button class="atk-btn" name="AtkSubmit" @click="startImportTask()">{{ t('import') }}</button>
+    <button class="atk-btn" name="AtkSubmit" @click="startImportTask()">
+      {{ t('import') }}
+    </button>
   </div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

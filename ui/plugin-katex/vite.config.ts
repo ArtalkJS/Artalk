@@ -6,13 +6,14 @@ export default defineConfig({
   base: './',
   build: {
     target: 'es2015',
-    outDir: resolve(__dirname, "dist"),
+    outDir: resolve(__dirname, 'dist'),
     minify: 'terser',
     lib: {
       entry: resolve(__dirname, './main.ts'),
       name: 'artalk-plugin-katex',
-      fileName: (format) => ((format == "umd") ? 'artalk-plugin-katex.js' : `artalk-plugin-katex.${format}.js`),
-      formats: ["es", "umd", "iife"]
+      fileName: (format) =>
+        format == 'umd' ? 'artalk-plugin-katex.js' : `artalk-plugin-katex.${format}.js`,
+      formats: ['es', 'umd', 'iife'],
     },
     rollupOptions: {
       // 确保外部化处理那些你不想打包进库的依赖
@@ -23,9 +24,9 @@ export default defineConfig({
           artalk: 'Artalk',
           katex: 'katex',
         },
-        extend: true
-      }
-    }
+        extend: true,
+      },
+    },
   },
   plugins: [tsconfigPaths()],
 })

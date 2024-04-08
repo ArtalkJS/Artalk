@@ -1,5 +1,6 @@
 export type EventHandler<T> = (payload: T) => void
-export interface Event<PayloadMap, K extends keyof PayloadMap = keyof PayloadMap> extends EventOptions {
+export interface Event<PayloadMap, K extends keyof PayloadMap = keyof PayloadMap>
+  extends EventOptions {
   name: K
   handler: EventHandler<PayloadMap[K]>
 }
@@ -8,7 +9,11 @@ export interface EventOptions {
 }
 
 export interface EventManagerFuncs<PayloadMap> {
-  on<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>, opts?: EventOptions): void
+  on<K extends keyof PayloadMap>(
+    name: K,
+    handler: EventHandler<PayloadMap[K]>,
+    opts?: EventOptions,
+  ): void
   off<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>): void
   trigger<K extends keyof PayloadMap>(name: K, payload?: PayloadMap[K]): void
 }
@@ -19,8 +24,16 @@ export default class EventManager<PayloadMap> implements EventManagerFuncs<Paylo
   /**
    * Add an event listener for a specific event name
    */
-  public on<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>, opts: EventOptions = {}) {
-    this.events.push({ name, handler: handler as EventHandler<PayloadMap[keyof PayloadMap]>, ...opts })
+  public on<K extends keyof PayloadMap>(
+    name: K,
+    handler: EventHandler<PayloadMap[K]>,
+    opts: EventOptions = {},
+  ) {
+    this.events.push({
+      name,
+      handler: handler as EventHandler<PayloadMap[keyof PayloadMap]>,
+      ...opts,
+    })
   }
 
   /**
@@ -28,8 +41,7 @@ export default class EventManager<PayloadMap> implements EventManagerFuncs<Paylo
    */
   public off<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>) {
     if (!handler) return // not allow remove all events with same name
-    this.events = this.events.filter((evt) =>
-      !(evt.name === name && evt.handler === handler))
+    this.events = this.events.filter((evt) => !(evt.name === name && evt.handler === handler))
   }
 
   /**

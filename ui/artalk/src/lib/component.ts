@@ -6,9 +6,7 @@ export default abstract class Component {
     return this.ctx.conf
   }
 
-  public constructor(
-    public ctx: ContextApi
-  ) {}
+  public constructor(public ctx: ContextApi) {}
 
   getEl() {
     return this.$el

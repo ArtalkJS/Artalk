@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { artalk } from '../global'
 import type { ArtalkType } from 'artalk'
 
-type TabsObj = {[name: string]: string}
+type TabsObj = { [name: string]: string }
 
 export const useNavStore = defineStore('nav', () => {
   const curtTab = ref('')
@@ -13,11 +13,11 @@ export const useNavStore = defineStore('nav', () => {
   const siteSwitcherShow = ref(false)
 
   const isSearchEnabled = ref(false)
-  const searchEvent = ref<((val: string) => void)|null>(null)
-  const searchResetEvent = ref<(() => void)|null>(null)
+  const searchEvent = ref<((val: string) => void) | null>(null)
+  const searchResetEvent = ref<(() => void) | null>(null)
 
   const isPageLoading = ref(false)
-  const scrollableArea = ref<HTMLElement|null>(null)
+  const scrollableArea = ref<HTMLElement | null>(null)
 
   const updateTabs = (aTabs: TabsObj, activeTab?: string) => {
     tabs.value = aTabs
@@ -53,23 +53,40 @@ export const useNavStore = defineStore('nav', () => {
   }
 
   const refreshSites = () => {
-    artalk?.ctx.getApi().sites.getSites().then((res) => {
-      sites.value = res.data.sites
-    })
+    artalk?.ctx
+      .getApi()
+      .sites.getSites()
+      .then((res) => {
+        sites.value = res.data.sites
+      })
   }
 
-  const enableSearch = (searchEvt: ((val: string) => void), searchResetEvt: () => void) => {
+  const enableSearch = (searchEvt: (val: string) => void, searchResetEvt: () => void) => {
     isSearchEnabled.value = true
     searchEvent.value = searchEvt
     searchResetEvent.value = searchResetEvt
   }
 
   return {
-    sites, curtPage, curtTab, tabs, siteSwitcherShow, scrollableArea, isPageLoading,
-    updateTabs, setTabActive,
-    showSiteSwitcher, hideSiteSwitcher, toggleSiteSwitcher,
-    scrollPageToTop, scrollPageToEl, setPageLoading,
+    sites,
+    curtPage,
+    curtTab,
+    tabs,
+    siteSwitcherShow,
+    scrollableArea,
+    isPageLoading,
+    updateTabs,
+    setTabActive,
+    showSiteSwitcher,
+    hideSiteSwitcher,
+    toggleSiteSwitcher,
+    scrollPageToTop,
+    scrollPageToEl,
+    setPageLoading,
     refreshSites,
-    isSearchEnabled, searchEvent, searchResetEvent, enableSearch,
+    isSearchEnabled,
+    searchEvent,
+    searchResetEvent,
+    enableSearch,
   }
 })

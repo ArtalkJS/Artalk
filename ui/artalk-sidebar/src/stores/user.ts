@@ -29,7 +29,6 @@ export const useUserStore = defineStore('user', {
       this.email = userData.email
       this.isAdmin = userData.isAdmin
       this.token = userData.token
-    }
-  }
+    },
+  },
 })
-

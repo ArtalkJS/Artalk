@@ -61,6 +61,9 @@ Reference to：[**Documentation**](https://artalk.js.org/guide/deploy.html)
 $ pnpm add artalk
 ```
 
+<!-- prettier-ignore-start -->
+
+
 ```ts
 import Artalk from 'artalk'
 
@@ -73,6 +76,8 @@ Artalk.init({
   locale:    'en'
 })
 ```
+
+<!-- prettier-ignore-end -->
 
 ### Docker
 
@@ -94,7 +99,7 @@ vim docker-compose.yaml
 ```
 
 ```yaml
-version: "3.5"
+version: '3.5'
 services:
   artalk:
     container_name: artalk

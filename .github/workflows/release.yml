@@ -49,9 +49,9 @@ jobs:
 
       - name: Setup git-chglog
         run: |
-            curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
-              | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
-            git-chglog --version
+          curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
+            | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
+          git-chglog --version
 
       - name: Version Changelog
         run: |
@@ -72,9 +72,9 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         if: ${{ !inputs.dry_run }}
         with:
-          branch: "release/${{ env.VERSION }}"
-          commit-message: "chore: release ${{ env.VERSION }}"
-          title: "chore: release ${{ env.VERSION }}"
+          branch: 'release/${{ env.VERSION }}'
+          commit-message: 'chore: release ${{ env.VERSION }}'
+          title: 'chore: release ${{ env.VERSION }}'
           labels: release
           body: |
             ## Release ${{ env.VERSION }} 📦🚀

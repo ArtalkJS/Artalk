@@ -5,7 +5,7 @@ info:
   repository_url: https://github.com/ArtalkJS/Artalk
 options:
   tag_filter_pattern: '^v'
-  sort: "date"
+  sort: date
   commits:
     filters:
       Type:

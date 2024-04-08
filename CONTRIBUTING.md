@@ -84,9 +84,9 @@ And open <http://localhost:1313/> in your browser to view the example site.
 Here is the default admin account (only created in test mode):
 
 ```yaml
-name: "admin"
-email: "admin@test.com"
-password: "admin"
+name: 'admin'
+email: 'admin@test.com'
+password: 'admin'
 ```
 
 ## Testing

@@ -11,6 +11,9 @@
     "build:all": "pnpm build && pnpm build:sidebar",
     "build:docs": "pnpm build && pnpm -F=docs-landing build && pnpm -F=docs-swagger swagger:build && pnpm -F=docs build:docs && pnpm patch:docs",
     "patch:docs": "cp -rf docs/landing/dist/* docs/swagger/dist/* docs/docs/.vitepress/dist",
+    "lint": "pnpm lint:prettier && pnpm lint:eslint",
+    "lint:eslint": "eslint --fix --ext .ts,.tsx,.js,.jsx,.vue .",
+    "lint:prettier": "prettier --check --write .",
     "test": "pnpm -F artalk test"
   },
   "devDependencies": {

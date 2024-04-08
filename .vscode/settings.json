@@ -1,19 +1,19 @@
 {
-    "cSpell.words": [
-        "akismet",
-        "artalk",
-        "artran",
-        "artrans",
-        "artransfer",
-        "gomail",
-        "Goreleaser",
-        "gorm",
-        "ldflags",
-        "lfshook",
-        "Metas",
-        "pgsql",
-        "sendmail",
-        "sqlite",
-        "pkged"
-    ]
+  "cSpell.words": [
+    "akismet",
+    "artalk",
+    "artran",
+    "artrans",
+    "artransfer",
+    "gomail",
+    "Goreleaser",
+    "gorm",
+    "ldflags",
+    "lfshook",
+    "Metas",
+    "pgsql",
+    "sendmail",
+    "sqlite",
+    "pkged"
+  ]
 }

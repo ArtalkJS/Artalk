@@ -1,163 +1,163 @@
-host: "0.0.0.0"
+host: '0.0.0.0'
 port: 23366
-app_key: ""
+app_key: ''
 debug: false
-locale: "en"
-timezone: "Asia/Shanghai"
-site_default: "Default Site"
+locale: en
+timezone: Asia/Shanghai
+site_default: Default Site
 login_timeout: 259200
 db:
-  type: "sqlite"
-  file: "./data/artalk.db"
-  table_prefix: ""
-  name: "artalk"
-  host: "localhost"
+  type: sqlite
+  file: ./data/artalk.db
+  table_prefix: ''
+  name: artalk
+  host: localhost
   port: 3306
-  user: "root"
-  password: ""
-  charset: "utf8mb4"
+  user: root
+  password: ''
+  charset: utf8mb4
   ssl: false
   prepare_stmt: true
 log:
   enabled: true
-  filename: "./data/artalk.log"
+  filename: ./data/artalk.log
 cache:
   enabled: false
-  type: "builtin"
+  type: builtin
   expires: 30
   warm_up: false
-  server: ""
+  server: ''
   redis:
-    network: "tcp"
-    username: ""
-    password: ""
+    network: tcp
+    username: ''
+    password: ''
     db: 0
 trusted_domains: []
 ssl:
   enabled: false
-  cert_path: ""
-  key_path: ""
+  cert_path: ''
+  key_path: ''
 moderator:
   pending_default: false
   api_fail_block: false
-  akismet_key: ""
+  akismet_key: ''
   tencent:
     enabled: false
-    secret_id: ""
-    secret_key: ""
-    region: "ap-guangzhou"
+    secret_id: ''
+    secret_key: ''
+    region: ap-guangzhou
   aliyun:
     enabled: false
-    access_key_id: ""
-    access_key_secret: ""
-    region: "cn-shanghai"
+    access_key_id: ''
+    access_key_secret: ''
+    region: cn-shanghai
   keywords:
     enabled: false
     pending: false
     files:
-      - "./data/keywords_1.txt"
+      - ./data/keywords_1.txt
     file_sep: "\n"
-    replac_to: "x"
+    replac_to: x
 captcha:
   enabled: true
   always: false
-  captcha_type: "image"
+  captcha_type: image
   action_limit: 3
   action_reset: 60
   turnstile:
-    site_key: ""
-    secret_key: ""
+    site_key: ''
+    secret_key: ''
   recaptcha:
-    site_key: ""
-    secret_key: ""
+    site_key: ''
+    secret_key: ''
   hcaptcha:
-    site_key: ""
-    secret_key: ""
+    site_key: ''
+    secret_key: ''
   geetest:
-    captcha_id: ""
-    captcha_key: ""
+    captcha_id: ''
+    captcha_key: ''
 img_upload:
   enabled: true
-  path: "./data/artalk-img/"
+  path: ./data/artalk-img/
   max_size: 5
   public_path: null
   upgit:
     enabled: false
-    exec: "upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img"
+    exec: upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img
     del_local: true
 email:
   enabled: false
-  send_type: "smtp"
-  send_name: "{{reply_nick}}"
-  send_addr: "noreply@example.com"
-  mail_subject: "[{{site_name}}] You got a reply from @{{reply_nick}}"
-  mail_tpl: "default"
+  send_type: smtp
+  send_name: '{{reply_nick}}'
+  send_addr: noreply@example.com
+  mail_subject: '[{{site_name}}] You got a reply from @{{reply_nick}}'
+  mail_tpl: default
   smtp:
-    host: "smtp.qq.com"
+    host: smtp.qq.com
     port: 587
-    username: "example@qq.com"
-    password: ""
+    username: example@qq.com
+    password: ''
   ali_dm:
-    access_key_id: ""
-    access_key_secret: ""
-    account_name: "noreply@example.com"
+    access_key_id: ''
+    access_key_secret: ''
+    account_name: noreply@example.com
 admin_notify:
-  notify_tpl: "default"
+  notify_tpl: default
   notify_pending: false
   noise_mode: false
   email:
     enabled: true
     mail_subject: '[{{site_name}}] Post "{{page_title}}" has new a comment'
-    mail_tpl: ""
+    mail_tpl: ''
   telegram:
     enabled: false
-    api_token: ""
+    api_token: ''
     receivers:
       - 7777777
   bark:
     enabled: false
-    server: "http://day.app/xxxxxxx/"
+    server: http://day.app/xxxxxxx/
   lark:
     enabled: false
-    webhook_url: ""
+    webhook_url: ''
   webhook:
     enabled: false
-    url: ""
+    url: ''
   ding_talk:
     enabled: false
-    token: ""
-    secret: ""
+    token: ''
+    secret: ''
   slack:
     enabled: false
-    oauth_token: ""
+    oauth_token: ''
     receivers:
-      - "CHANNEL_ID"
+      - 'CHANNEL_ID'
   line:
     enabled: false
-    channel_secret: ""
-    channel_access_token: ""
+    channel_secret: ''
+    channel_access_token: ''
     receivers:
-      - "USER_ID_1"
-      - "GROUP_ID_1"
+      - USER_ID_1
+      - GROUP_ID_1
 frontend:
-  placeholder: ""
-  noComment: ""
-  sendBtn: ""
+  placeholder: ''
+  noComment: ''
+  sendBtn: ''
   editorTravel: true
-  emoticons: "https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"
+  emoticons: https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json
   vote: true
   voteDown: false
   uaBadge: false
   listSort: true
-  pvEl: "#ArtalkPV"
-  countEl: "#ArtalkCount"
+  pvEl: '#ArtalkPV'
+  countEl: '#ArtalkCount'
   preview: true
-  flatMode: "auto"
+  flatMode: auto
   nestMax: 2
   nestSort: DATE_ASC
   gravatar:
-    mirror: "https://www.gravatar.com/avatar/"
-    params: "d=mp&s=240"
+    mirror: https://www.gravatar.com/avatar/
+    params: d=mp&s=240
   pagination:
     pageSize: 20
     readMore: true

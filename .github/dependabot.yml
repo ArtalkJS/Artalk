@@ -10,7 +10,7 @@ updates:
     schedule:
       interval: monthly
     commit-message:
-      prefix: "chore(deps/go): "
+      prefix: 'chore(deps/go): '
     groups:
       deps:
         patterns:
@@ -22,7 +22,7 @@ updates:
     schedule:
       interval: monthly
     commit-message:
-      prefix: "chore(deps/ui): "
+      prefix: 'chore(deps/ui): '
     groups:
       prod-deps:
         dependency-type: production
@@ -35,7 +35,7 @@ updates:
     schedule:
       interval: monthly
     commit-message:
-      prefix: "chore(deps/docs): "
+      prefix: 'chore(deps/docs): '
     groups:
       deps:
         patterns:
@@ -47,7 +47,7 @@ updates:
     schedule:
       interval: monthly
     commit-message:
-      prefix: "chore(deps/docker): "
+      prefix: 'chore(deps/docker): '
     groups:
       deps:
         patterns:
@@ -59,7 +59,7 @@ updates:
     schedule:
       interval: monthly
     commit-message:
-      prefix: "chore(deps/ci): "
+      prefix: 'chore(deps/ci): '
     groups:
       deps:
         patterns:

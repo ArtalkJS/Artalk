@@ -12,6 +12,7 @@
 
 ### 博客
 
+- [晓雨杂记](https://www.lihaoyu.cn)
 - [一蓑烟雨](https://easyf12.top/)
 - [二丫讲梵](https://wiki.eryajf.net)
 - [Alliot’s blog](https://www.iots.vip/)

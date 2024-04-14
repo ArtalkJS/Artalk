@@ -28,7 +28,7 @@ type Comment struct {
 
 	RootID uint  `gorm:"index"` // Root Node ID (can be derived from `Rid`)
 	Page   *Page `gorm:"foreignKey:page_key;references:key"`
-	User   *User `gorm:"foreignKey:id;references:user_id"`
+	User   *User `gorm:"foreignKey:user_id;references:id"`
 }
 
 func (c Comment) IsEmpty() bool {

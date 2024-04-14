@@ -201,18 +201,20 @@ func fetchIPRegionForComment(app *core.App, comment entity.CookedComment) entity
 }
 
 func isAllowComment(app *core.App, c *fiber.Ctx, name string, email string, pageAdminOnly bool) (bool, error) {
-	user, err := common.GetUserByReq(app, c)
-	if !errors.Is(err, common.ErrTokenNotProvided) && user.IsEmpty() {
-		return false, common.RespError(c, 401, i18n.T("Login required"), Map{"need_auth_login": true})
-	}
-
+	// if the user is an admin user or page is admin only
 	isAdminUser := app.Dao().IsAdminUserByNameEmail(name, email)
-
-	// 如果用户是管理员，或者当前页只能管理员评论
 	if isAdminUser || pageAdminOnly {
+		// then check has admin access
 		if !common.CheckIsAdminReq(app, c) {
 			return false, common.RespError(c, 403, i18n.T("Admin access required"), Map{"need_login": true})
 		}
+	}
+
+	// if token is provided, then check token is valid
+	user, err := common.GetUserByReq(app, c)
+	if !errors.Is(err, common.ErrTokenNotProvided) && user.IsEmpty() {
+		// need_auth_login is a hook for frontend to show login modal (new Auth api)
+		return false, common.RespError(c, 401, i18n.T("Login required"), Map{"need_auth_login": true})
 	}
 
 	return true, nil

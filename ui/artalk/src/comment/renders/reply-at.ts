@@ -2,11 +2,11 @@ import * as Utils from '../../lib/utils'
 import type Render from '../render'
 
 /**
- * 层级嵌套模式显示 AT 界面
+ * Reply user indicator (with arrow icon) in the comment meta header
  */
 export default function renderReplyAt(r: Render) {
-  if (r.opts.flatMode || r.data.rid === 0) return // not 平铺模式 或 根评论
-  if (!r.opts.replyTo) return
+  if (r.opts.flatMode || r.data.rid === 0) return // if not nested mode or root comment
+  if (!r.opts.replyTo) return // if no replyTo data
 
   r.$replyAt = Utils.createElement(
     `<span class="atk-item atk-reply-at"><span class="atk-arrow"></span><span class="atk-nick"></span></span>`,

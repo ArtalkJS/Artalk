@@ -89,8 +89,8 @@ function updateUser(user: ArtalkType.UserDataForAdmin) {
   if (index != -1) {
     // 修改用户
     const orgUser = users.value[index]
-    Object.keys(users).forEach((key) => {
-      ;(orgUser as any)[key] = (users as any)[key]
+    Object.keys(user).forEach((key) => {
+      ;(orgUser as any)[key] = (user as any)[key]
     })
   } else {
     // 创建用户

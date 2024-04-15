@@ -65,7 +65,9 @@ export default class List extends Component {
 
     // When comment insert
     this.ctx.on('comment-inserted', (comment) => {
-      const replyComment = comment.rid ? this.commentNodes.find((c) => c.getID() === comment.rid)?.getData() : undefined
+      const replyComment = comment.rid
+        ? this.commentNodes.find((c) => c.getID() === comment.rid)?.getData()
+        : undefined
       this.getListLayout().insert(comment, replyComment)
     })
 

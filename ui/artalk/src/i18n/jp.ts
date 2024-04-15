@@ -83,7 +83,7 @@ export default defineLocaleExternal(
     deleteFail: '削除に失敗しました',
     reqGot: 'リクエストが受信されました',
     reqAborted: 'リクエストがタイムアウトまたは予期せず中止されました',
-    updateMsg: '完全な体験を得るにはArtalk {name}を更新してください',
+    updateMsg: 'Artalk {name} を更新して、より良い体験をしてください！',
     currentVersion: '現在のバージョン',
     ignore: '無視',
     open: '開く',

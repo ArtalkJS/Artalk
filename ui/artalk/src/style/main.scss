@@ -368,6 +368,27 @@
   }
 }
 
+.atk-version-check-notice {
+  background: var(--at-color-bg-grey);
+  border-radius: $block-radius;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  font-size: 14px;
+
+  .atk-info {
+    color: var(--at-color-meta);
+  }
+
+  .atk-ignore-btn {
+    cursor: pointer;
+    float: right;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
 .atk-layer-dialog-wrap {
   $formInputHeight: 30px;
   @extend .atk-full-layer;

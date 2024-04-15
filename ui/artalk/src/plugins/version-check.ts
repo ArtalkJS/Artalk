@@ -21,17 +21,17 @@ function versionCheck(list: List, feVer: string, beVer: string) {
   if (sameVer) return
 
   const errEl = Utils.createElement(
-    `<div>${$t('updateMsg', { name: comp < 0 ? $t('frontend') : $t('backend') })}` +
-      `<br/><br/><span style="color: var(--at-color-meta);">` +
+    `<div class="atk-version-check-notice">${$t('updateMsg', {
+      name: comp < 0 ? $t('frontend') : $t('backend'),
+    })}<span class="atk-info">` +
       `${$t('currentVersion')}: ${$t('frontend')} ${feVer} / ${$t('backend')} ${beVer}` +
-      `</span><br/><br/></div>`,
+      `</span></div>`,
   )
-  const ignoreBtn = Utils.createElement(`<span style="cursor:pointer">${$t('ignore')}</span>`)
+  const ignoreBtn = Utils.createElement(`<span class="atk-ignore-btn">${$t('ignore')}</span>`)
   ignoreBtn.onclick = () => {
-    Ui.setError(list.$el.parentElement!, null)
+    errEl.remove()
     IgnoreVersionCheck = true
-    list.ctx.fetch({ offset: 0 })
   }
   errEl.append(ignoreBtn)
-  Ui.setError(list.$el.parentElement!, errEl, '<span class="atk-warn-title">Artalk Warn</span>')
+  list.$el.parentElement!.prepend(errEl)
 }

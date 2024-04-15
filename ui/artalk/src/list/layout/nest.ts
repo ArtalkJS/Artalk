@@ -17,8 +17,9 @@ export const createNestStrategy: LayoutStrategyCreator = (opts) => ({
       // 加载子评论
       const loadChildren = (parentC: CommentNode, parentNode: ListNest.CommentNode) => {
         parentNode.children.forEach((node: ListNest.CommentNode) => {
+          const replyD = comments.find((c) => c.id === node.comment.rid)
           const childD = node.comment
-          const childC = opts.createCommentNode(childD, parentC.getData())
+          const childC = opts.createCommentNode(childD, replyD)
 
           // 插入到父评论中
           parentC.putChild(childC)

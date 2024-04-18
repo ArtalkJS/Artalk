@@ -5,8 +5,11 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/gofiber/fiber/v2"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type Map = map[string]interface{}
@@ -88,7 +91,9 @@ func ValidateRequired(c *fiber.Ctx, destParams interface{}) (isContinue bool, re
 
 		// check required param
 		if strings.TrimSpace(paramVal) == "" {
-			return false, RespError(c, 400, "Param `"+paramKey+"` is required")
+			return false, RespError(c, 400, i18n.T("{{name}} is required", map[string]interface{}{
+				"name": i18n.T(cases.Title(language.English, cases.Compact).String(paramKey)),
+			}))
 		}
 	}
 

@@ -97,7 +97,7 @@ export default class Upload extends EditorPlug {
 
   async uploadImg(file: File) {
     const fileExt = /[^.]+$/.exec(file.name)
-    if (!fileExt || !AllowImgExts.includes(fileExt[0])) return
+    if (!fileExt || !AllowImgExts.includes(String(fileExt[0]).toLowerCase())) return
 
     // 未登录提示
     if (!this.kit.useUser().checkHasBasicUserInfo()) {

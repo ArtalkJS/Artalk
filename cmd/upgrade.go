@@ -32,7 +32,7 @@ func NewUpgradeCommand() *cobra.Command {
 			if !ignoreVersionCheck {
 				v := semver.MustParse(strings.TrimPrefix(config.Version, "v"))
 				if !found || latest.Version.LTE(v) {
-					log.Println(i18n.T("Current version is the latest") + " (v" + v.String() + ")")
+					log.Info(i18n.T("Current version is the latest") + " (v" + v.String() + ")")
 					return
 				}
 			}
@@ -49,7 +49,7 @@ func NewUpgradeCommand() *cobra.Command {
 				log.Fatal(i18n.T("Update failed")+" ", err)
 			}
 
-			log.Println(i18n.T("Update complete"))
+			log.Info(i18n.T("Update complete"))
 			fmt.Printf("\n"+
 				"-------------------------------\n"+
 				"    v%s  Release Note\n"+

@@ -81,7 +81,7 @@ func (app *App) Bootstrap() error {
 	app.initI18n()
 
 	// log
-	log.LoadGlobal(log.Options{
+	log.Init(log.Options{
 		IsDiscard: !app.Conf().Log.Enabled,
 		IsDebug:   app.Conf().Debug,
 		LogFile:   app.Conf().Log.Filename,
@@ -147,6 +147,11 @@ func (app *App) ResetBootstrapState() error {
 				return fmt.Errorf("service %s release error: %w", name, err)
 			}
 		}
+	}
+
+	// sync log
+	if err := log.Sync(); err != nil {
+		return fmt.Errorf("log sync error: %w", err)
 	}
 
 	return nil

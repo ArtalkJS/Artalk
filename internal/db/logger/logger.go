@@ -3,59 +3,123 @@ package logger
 import (
 	"context"
 	"errors"
+	"path/filepath"
+	"runtime"
+	"strings"
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/log"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"gorm.io/gorm"
-	gormlogger "gorm.io/gorm/logger"
-	"gorm.io/gorm/utils"
+	gorm_logger "gorm.io/gorm/logger"
 )
 
-type gLogger struct {
-	SlowThreshold         time.Duration
-	SourceField           string
-	SkipErrRecordNotFound bool
+var (
+	Info   = gorm_logger.Info
+	Warn   = gorm_logger.Warn
+	Error  = gorm_logger.Error
+	Silent = gorm_logger.Silent
+)
+
+type ContextInfoGetterFn func(ctx context.Context) []zapcore.Field
+
+type Logger struct {
+	LogLevel                  gorm_logger.LogLevel
+	SlowThreshold             time.Duration
+	SkipCallerLookup          bool
+	IgnoreRecordNotFoundError bool
+	ContextInfoGetter         ContextInfoGetterFn
 }
 
-func NewGormLogger() *gLogger {
-	return &gLogger{
-		SkipErrRecordNotFound: true,
+func New() Logger {
+	level := gorm_logger.Warn
+	if zap.L().Core().Enabled(zapcore.DebugLevel) {
+		level = gorm_logger.Info
+	}
+
+	return Logger{
+		LogLevel:                  level,
+		SlowThreshold:             100 * time.Millisecond,
+		SkipCallerLookup:          false,
+		IgnoreRecordNotFoundError: true,
+		ContextInfoGetter:         nil,
 	}
 }
 
-func (l *gLogger) LogMode(gormlogger.LogLevel) gormlogger.Interface {
+func (l Logger) SetAsDefault() {
+	gorm_logger.Default = l
+}
+
+func (l Logger) LogMode(level gorm_logger.LogLevel) gorm_logger.Interface {
+	l.LogLevel = level
 	return l
 }
 
-func (l *gLogger) Info(ctx context.Context, s string, args ...interface{}) {
-	log.WithContext(ctx).Infof(s, args...)
+func (l Logger) Info(ctx context.Context, str string, args ...interface{}) {
+	if l.LogLevel < gorm_logger.Info {
+		return
+	}
+	l.logger(ctx).Sugar().Debugf(str, args...)
 }
 
-func (l *gLogger) Warn(ctx context.Context, s string, args ...interface{}) {
-	log.WithContext(ctx).Warnf(s, args...)
+func (l Logger) Warn(ctx context.Context, str string, args ...interface{}) {
+	if l.LogLevel < gorm_logger.Warn {
+		return
+	}
+	l.logger(ctx).Sugar().Warnf(str, args...)
 }
 
-func (l *gLogger) Error(ctx context.Context, s string, args ...interface{}) {
-	log.WithContext(ctx).Errorf(s, args...)
+func (l Logger) Error(ctx context.Context, str string, args ...interface{}) {
+	if l.LogLevel < gorm_logger.Error {
+		return
+	}
+	l.logger(ctx).Sugar().Errorf(str, args...)
 }
 
-func (l *gLogger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
+func (l Logger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
+	if l.LogLevel <= 0 {
+		return
+	}
 	elapsed := time.Since(begin)
-	sql, _ := fc()
-	fields := log.Fields{}
-	if l.SourceField != "" {
-		fields[l.SourceField] = utils.FileWithLineNum()
+	logger := l.logger(ctx)
+	switch {
+	case err != nil && l.LogLevel >= gorm_logger.Error && (!l.IgnoreRecordNotFoundError || !errors.Is(err, gorm.ErrRecordNotFound)):
+		sql, rows := fc()
+		logger.Error("[DB]", zap.Error(err), zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))
+	case l.SlowThreshold != 0 && elapsed > l.SlowThreshold && l.LogLevel >= gorm_logger.Warn:
+		sql, rows := fc()
+		logger.Warn("[DB]", zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))
+	case l.LogLevel >= gorm_logger.Info:
+		sql, rows := fc()
+		logger.Debug("[DB]", zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))
 	}
-	if err != nil && !(errors.Is(err, gorm.ErrRecordNotFound) && l.SkipErrRecordNotFound) {
-		fields[log.ErrorKey] = err
-		log.WithContext(ctx).WithFields(fields).Errorf("%s [%s]", sql, elapsed)
-		return
+}
+
+var (
+	gormPackage = filepath.Join("gorm.io", "gorm")
+)
+
+func (l Logger) logger(ctx context.Context) *zap.Logger {
+	logger := log.StandardLogger()
+	if l.ContextInfoGetter != nil {
+		fields := l.ContextInfoGetter(ctx)
+		logger = logger.With(fields...)
 	}
 
-	if l.SlowThreshold != 0 && elapsed > l.SlowThreshold {
-		log.WithContext(ctx).WithFields(fields).Warnf("%s [%s]", sql, elapsed)
-		return
+	if l.SkipCallerLookup {
+		return logger
 	}
 
-	log.WithContext(ctx).WithFields(fields).Debugf("%s [%s]", sql, elapsed)
+	for i := 2; i < 15; i++ {
+		_, file, _, ok := runtime.Caller(i)
+		switch {
+		case !ok:
+		case strings.HasSuffix(file, "_test.go"): // skip test files
+		case strings.Contains(file, gormPackage): // skip gorm pkg
+		default:
+			return logger.WithOptions(zap.AddCallerSkip(i))
+		}
+	}
+	return logger
 }

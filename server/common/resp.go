@@ -2,11 +2,10 @@ package common
 
 import (
 	"net/http"
-	"strconv"
-	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
 )
 
 // JSONResult JSON Response data structure
@@ -36,13 +35,6 @@ func RespSuccess(c *fiber.Ctx, msg ...string) error {
 
 // RespError is just response error
 func RespError(c *fiber.Ctx, code int, msg string, data ...Map) error {
-	// log
-	path := c.Path()
-	if path == "" {
-		path = "/"
-	}
-	LogWithHttpInfo(c).Errorf("[Response] %s %s ==> %s", c.Method(), path, strconv.Quote(msg))
-
 	respData := Map{}
 	if len(data) > 0 {
 		respData = data[0]
@@ -50,16 +42,17 @@ func RespError(c *fiber.Ctx, code int, msg string, data ...Map) error {
 
 	respData["msg"] = msg
 
-	return c.Status(code).JSON(respData)
+	c.Status(code)
+
+	LogWithHttpInfo(c, func(l *zap.SugaredLogger) {
+		l.Error(msg)
+	})
+
+	return c.JSON(respData)
 }
 
-func LogWithHttpInfo(c *fiber.Ctx) *log.Entry {
-	fields := log.Fields{}
-
-	req := c.Request()
-	res := c.Response()
-
-	path := string(req.URI().Path())
+func LogWithHttpInfo(c *fiber.Ctx, logFn func(l *zap.SugaredLogger)) {
+	path := string(c.Request().URI().Path())
 	if path == "" {
 		path = "/"
 	}
@@ -68,13 +61,23 @@ func LogWithHttpInfo(c *fiber.Ctx) *log.Entry {
 	if id == "" {
 		id = c.GetRespHeader(fiber.HeaderXRequestID)
 	}
-	fields["id"] = id
-	fields["ip"] = strings.Join(c.IPs(), ", ")
-	fields["host"] = string(req.Host())
-	fields["referer"] = string(req.Header.Referer())
-	fields["user_agent"] = string(req.Header.UserAgent())
-	fields["status"] = res.StatusCode()
-	//fields["headers"] = req.Header
 
-	return log.WithFields(fields)
+	logger := log.StandardLogger().Sugar().With(
+		"id", id,
+		"path", path,
+		"method", c.Method(),
+		"ip", c.IP(),
+		"remote_addr", c.Context().RemoteAddr().String(),
+		"host", string(c.Request().Host()),
+		"referer", string(c.Request().Header.Referer()),
+		"user_agent", string(c.Request().Header.UserAgent()),
+		"status", c.Response().StatusCode(),
+		// "headers", req.Header,
+	)
+
+	var skipper = func(l *zap.SugaredLogger) *zap.SugaredLogger {
+		return l.WithOptions(zap.AddCallerSkip(2))
+	}
+
+	logFn(skipper(logger))
 }

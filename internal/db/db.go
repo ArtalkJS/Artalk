@@ -11,7 +11,7 @@ import (
 
 func NewDB(conf config.DBConf) (*gorm.DB, error) {
 	gormConfig := &gorm.Config{
-		Logger: logger.NewGormLogger(),
+		Logger: logger.New(),
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix: conf.TablePrefix,
 		},

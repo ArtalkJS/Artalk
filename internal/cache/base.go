@@ -2,11 +2,11 @@ package cache
 
 import (
 	"context"
-	"log"
 	"strings"
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/allegro/bigcache/v3"
 	"github.com/bradfitz/gomemcache/memcache"
 	lib_cache "github.com/eko/gocache/lib/v4/cache"

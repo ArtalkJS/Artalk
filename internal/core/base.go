@@ -81,7 +81,7 @@ func (app *App) Bootstrap() error {
 	app.initI18n()
 
 	// log
-	log.LoadGlobal(log.Options{
+	log.Init(log.Options{
 		IsDiscard: !app.Conf().Log.Enabled,
 		IsDebug:   app.Conf().Debug,
 		LogFile:   app.Conf().Log.Filename,
@@ -104,7 +104,7 @@ func (app *App) Bootstrap() error {
 		// load cache plugin on dao
 		app.dao.SetCache(dao.NewCacheAdaptor(app.Cache()))
 
-		// 缓存预热
+		// warm up cache
 		if app.Conf().Cache.WarmUp {
 			app.Dao().CacheWarmUp()
 		}
@@ -113,7 +113,7 @@ func (app *App) Bootstrap() error {
 	// keep config file and databases consistent
 	app.syncFromConf()
 
-	// 初始化 services（请勿依赖初始化顺序）
+	// init services (do not depend on the order of dependency injection)
 	for name, s := range *app.service {
 		if err := s.Init(); err != nil {
 			return fmt.Errorf("Service %s init error: %w", name, err)
@@ -148,6 +148,9 @@ func (app *App) ResetBootstrapState() error {
 			}
 		}
 	}
+
+	// sync log
+	_ = log.Sync() // ignore error @see https://github.com/uber-go/zap/issues/991
 
 	return nil
 }

@@ -48,7 +48,7 @@ func NewTestApp() (*TestApp, error) {
 
 	// open a sqlite db
 	dbInstance, err := gorm.Open(sqlite.Open(dbFile), &gorm.Config{
-		Logger:                                   db_logger.NewGormLogger(),
+		Logger:                                   db_logger.New(),
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {

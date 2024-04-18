@@ -18,7 +18,10 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	fiber_logger "github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/gofiber/swagger"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 // @Title          Artalk API
@@ -52,26 +55,14 @@ func Serve(app *core.App) (*fiber.App, error) {
 		ErrorHandler: common.ErrorHandler,
 	})
 
-	// logger
-	fb.Use(fiber_logger.New(fiber_logger.Config{
-		Format: "[${status}] ${method} ${path} ${latency} ${ip} ${reqHeader:X-Request-ID} ${referer} ${ua}\n",
-		Output: io.Discard,
-		Done: func(c *fiber.Ctx, logString []byte) {
-			code := c.Response().StatusCode()
-			if (code >= 200 && code <= 299) || (code >= 300 && code <= 308) {
-				log.StandardLogger().WriterLevel(log.DebugLevel).Write(logString)
-			} else {
-				log.StandardLogger().WriterLevel(log.ErrorLevel).Write(logString)
-			}
-		},
-	}))
-
+	reqID(fb)
+	logger(fb, app.Conf().Debug)
 	swaggerDocs(fb)
-
 	cors(app, fb)
 	actionLimit(app, fb)
 
 	if app.Conf().Debug {
+		log.Debug("[PPROF] pprof enabled, you can access it via `/debug/pprof`.")
 		fb.Use(pprof.New())
 	}
 
@@ -150,6 +141,32 @@ func admin(app *core.App, api fiber.Router) {
 	h.Transfer(app, api)
 }
 
+func reqID(fb *fiber.App) {
+	fb.Use(requestid.New())
+}
+
+func logger(fb *fiber.App, debugMode bool) {
+	fb.Use(fiber_logger.New(fiber_logger.Config{
+		Format:        "[HTTP] ${time} | ${status} | ${latency} | ${ip} | ${method} | ${path} | ${error} | ${respHeader:X-Request-ID}",
+		Output:        io.Discard,
+		DisableColors: true,
+		Done: func(c *fiber.Ctx, msg []byte) {
+			l := log.StandardLogger().WithOptions(
+				zap.AddStacktrace(zapcore.DPanicLevel),
+				zap.WithCaller(false),
+			)
+			code := c.Response().StatusCode()
+			if (code >= 200 && code <= 299) || (code >= 300 && code <= 308) {
+				if debugMode {
+					l.Info(string(msg))
+				}
+			} else {
+				l.Error(string(msg))
+			}
+		},
+	}))
+}
+
 func cors(app *core.App, f fiber.Router) {
 	f.Use(middleware.CorsMiddleware(app))
 }
@@ -177,7 +194,7 @@ func index(f fiber.Router) {
 }
 
 func uploadedStatic(app *core.App, f fiber.Router) {
-	// 图片上传静态资源可访问路径
+	// upload static resource accessible path
 	f.Static(config.IMG_UPLOAD_PUBLIC_PATH, app.Conf().ImgUpload.Path)
 }
 

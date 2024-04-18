@@ -54,6 +54,9 @@ db:
 http:
   # Body size limit (unit: MB)
   body_limit: 100
+  # Proxy Header (fill `X-Forwarded-For` to get user real IP if behind a trusted reverse proxy or CDN)
+  proxy_header: ""
+
 # Logging
 log:
   # Enable logging

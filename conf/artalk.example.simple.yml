@@ -20,6 +20,7 @@ db:
   prepare_stmt: true
 http:
   body_limit: 100
+  proxy_header: ""
 log:
   enabled: true
   filename: ./data/artalk.log

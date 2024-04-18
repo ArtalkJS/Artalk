@@ -49,6 +49,7 @@ func Serve(app *core.App) (*fiber.App, error) {
 		Immutable: true,
 
 		ErrorHandler:       common.ErrorHandler,
+		ProxyHeader:        app.Conf().HTTP.GetProxyHeader(),
 		BodyLimit:          app.Conf().HTTP.BodyLimit * 1024 * 1024, // MB
 		StreamRequestBody:  true,
 		EnableIPValidation: true,

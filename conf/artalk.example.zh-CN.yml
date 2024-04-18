@@ -47,6 +47,10 @@ db:
   # 预编译语句
   prepare_stmt: true
 
+# 服务器
+http:
+  # 请求体大小限制 (单位：MB)
+  body_limit: 100
 # 日志
 log:
   # 启用日志

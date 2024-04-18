@@ -124,6 +124,11 @@ func (conf *Config) normalPatch() {
 		conf.ImgUpload.Path = "./data/artalk-img/"
 		log.Warn("[Image Upload] img_upload.path is not configured, using the default value: " + strconv.Quote(conf.ImgUpload.Path))
 	}
+
+	// HTTP 配置默认值
+	if conf.HTTP.BodyLimit <= 0 {
+		conf.HTTP.BodyLimit = 100
+	}
 }
 
 // 多语言配置修补

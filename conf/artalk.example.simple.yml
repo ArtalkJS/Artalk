@@ -18,6 +18,8 @@ db:
   charset: utf8mb4
   ssl: false
   prepare_stmt: true
+http:
+  body_limit: 100
 log:
   enabled: true
   filename: ./data/artalk.log

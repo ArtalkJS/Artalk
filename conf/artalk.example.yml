@@ -50,6 +50,10 @@ db:
   # Prepared Statement
   prepare_stmt: true
 
+# Web server
+http:
+  # Body size limit (unit: MB)
+  body_limit: 100
 # Logging
 log:
   # Enable logging

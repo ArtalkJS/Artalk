@@ -48,11 +48,10 @@ func Serve(app *core.App) (*fiber.App, error) {
 		// @see https://github.com/gofiber/fiber/issues/185
 		Immutable: true,
 
-		// TODO add config to set ProxyHeader
-		ProxyHeader:        "X-Forwarded-For",
+		ErrorHandler:       common.ErrorHandler,
+		BodyLimit:          app.Conf().HTTP.BodyLimit * 1024 * 1024, // MB
+		StreamRequestBody:  true,
 		EnableIPValidation: true,
-
-		ErrorHandler: common.ErrorHandler,
 	})
 
 	reqID(fb)

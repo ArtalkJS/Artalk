@@ -14,6 +14,7 @@ type Config struct {
 	Host           string                 `koanf:"host" json:"host"`                       // HTTP Server 监听 IP
 	Port           int                    `koanf:"port" json:"port"`                       // HTTP Server 监听 Port
 	DB             DBConf                 `koanf:"db" json:"db"`                           // 数据库配置
+	HTTP           HTTPConf               `koanf:"http" json:"http"`                       // HTTP 配置
 	Cache          CacheConf              `koanf:"cache" json:"cache"`                     // 缓存
 	Log            LogConf                `koanf:"log" json:"log"`                         // 日志文件
 	TrustedDomains []string               `koanf:"trusted_domains" json:"trusted_domains"` // 可信任的域名 (新)
@@ -40,6 +41,18 @@ type Config struct {
 	// ---------------------------
 
 	cfgFile string
+}
+
+type HTTPConf struct {
+	BodyLimit   int     `koanf:"body_limit" json:"body_limit"`     // 请求体大小限制 MB
+	ProxyHeader *string `koanf:"proxy_header" json:"proxy_header"` // 代理头
+}
+
+func (c *HTTPConf) GetProxyHeader() string {
+	if c.ProxyHeader == nil {
+		return ""
+	}
+	return *c.ProxyHeader
 }
 
 type DBConf struct {

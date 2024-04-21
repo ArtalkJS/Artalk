@@ -78,14 +78,10 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 	print("\n")
 
 	importComments := []*entity.Comment{}
-	srcIdToIndexMap := map[string]uint{} // 源 ID 映射表 srcID => index
+	rawId2GenId := buildGenIdMap(comments)                    // Original ID => GenId (GenId is comment index +1)
+	rawRid2RootGenId := buildRootIdMap(comments, rawId2GenId) // Original Rid => RootGenId
 	createdDates := map[int]time.Time{}
 	updatedDates := map[int]time.Time{}
-
-	// 解析 comments
-	for i, c := range comments {
-		srcIdToIndexMap[c.ID] = uint(i + 1) // 防 0 出没
-	}
 
 	for i, c := range comments {
 		siteName := c.SiteName
@@ -146,7 +142,8 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 
 		// 创建新 comment 实例
 		nComment := entity.Comment{
-			Rid: srcIdToIndexMap[c.Rid], // [-1-] rid => index+1
+			Rid:    rawId2GenId[c.Rid], // [M_Step.1] Rid => GenId
+			RootID: rawRid2RootGenId[c.Rid],
 
 			Content: c.Content,
 
@@ -182,10 +179,10 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 	// @link https://gorm.io/docs/create.html#Batch-Insert
 	dao.DB().CreateInBatches(&importComments, 100)
 
-	// ID 变更映射表 index => new_db_id
-	indexToDbIdMap := map[uint]uint{}
+	// ID 变更映射表
+	genId2DBRealIdMap := map[uint]uint{}
 	for i, savedComment := range importComments {
-		indexToDbIdMap[uint(i+1)] = savedComment.ID
+		genId2DBRealIdMap[uint(i+1)] = savedComment.ID // [M_Step.2] Create GenId => DBRealId Map
 	}
 
 	// 进度条
@@ -199,8 +196,7 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 	for i, savedComment := range importComments {
 		// 日期恢复
 		// @see https://gorm.io/zh_CN/docs/conventions.html#CreatedAt
-		// @see https://github.com/go-gorm/gorm/issues/4827#issuecomment-960480148 无语...
-		// TODO
+		// @see https://github.com/go-gorm/gorm/issues/4827#issuecomment-960480148
 		// savedComment.CreatedAt = createdDates[i] // 无效
 		// savedComment.UpdatedAt = updatedDates[i]
 
@@ -211,7 +207,8 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 
 		// Rid 重建
 		if savedComment.Rid != 0 {
-			updateData["Rid"] = indexToDbIdMap[savedComment.Rid] // [-2-] index+1 => db_new_id
+			updateData["Rid"] = genId2DBRealIdMap[savedComment.Rid] // [M_Step.3] GenId => DBRealId
+			updateData["RootID"] = genId2DBRealIdMap[savedComment.RootID]
 		}
 
 		dao.DB().Model(&savedComment).Updates(updateData)
@@ -292,4 +289,45 @@ func siteReady(dao *dao.Dao, tSiteName string, tSiteUrls string) (*entity.Site, 
 	}
 
 	return &site, nil
+}
+
+func buildGenIdMap(comments []*entity.Artran) map[string]uint {
+	genIdMap := map[string]uint{}
+	for i, c := range comments {
+		genIdMap[c.ID] = uint(i + 1) // [Step.0] GenId is the comment index + 1
+	}
+	return genIdMap
+}
+
+func buildRootIdMap(comments []*entity.Artran, genIdMap map[string]uint) map[string]uint {
+	getRooID := func(rid string) uint {
+		if rid, _ := strconv.Atoi(rid); rid == 0 {
+			return 0
+		}
+
+		// loop to find the root comment
+		visited := map[uint]bool{}
+		rootId := genIdMap[rid]
+		for rootId != 0 && !visited[rootId] {
+			visited[rootId] = true // avoid infinite loop (rid = id)
+
+			comment := comments[int(rootId)-1]
+			if comment == nil {
+				return rootId
+			}
+			if rid, _ := strconv.Atoi(comment.Rid); rid == 0 {
+				return rootId
+			}
+
+			rootId = genIdMap[comment.Rid]
+		}
+		return rootId
+	}
+
+	rootIdMap := map[string]uint{}
+	for _, c := range comments {
+		rootIdMap[c.Rid] = getRooID(c.Rid)
+	}
+
+	return rootIdMap
 }

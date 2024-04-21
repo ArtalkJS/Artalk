@@ -23,7 +23,7 @@ function versionCheck(list: List, feVer: string, beVer: string) {
   const errEl = Utils.createElement(
     `<div class="atk-version-check-notice">${$t('updateMsg', {
       name: comp < 0 ? $t('frontend') : $t('backend'),
-    })}<span class="atk-info">` +
+    })} <span class="atk-info">` +
       `${$t('currentVersion')}: ${$t('frontend')} ${feVer} / ${$t('backend')} ${beVer}` +
       `</span></div>`,
   )

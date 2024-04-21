@@ -16,7 +16,7 @@ func findNestedChildren(dao *dao.Dao, comments []entity.CookedComment, commonSco
 	var children []*entity.Comment
 	dao.DB().Model(&entity.Comment{}).
 		Scopes(commonScopes...).
-		Where("root_id IN ?", allRootIDs).
+		Where("root_id IN ? AND rid != 0", allRootIDs).
 		Find(&children)
 	comments = append(comments, dao.CookAllComments(children)...)
 	return comments

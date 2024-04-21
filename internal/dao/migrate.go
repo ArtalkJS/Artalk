@@ -7,7 +7,10 @@ import (
 
 func (dao *Dao) MigrateModels() {
 	// Upgrade the database
-	dao.MigrateRootID()
+	if dao.DB().Migrator().HasTable(&entity.Comment{}) &&
+		!dao.DB().Migrator().HasColumn(&entity.Comment{}, "root_id") {
+		dao.MigrateRootID()
+	}
 
 	// Migrate the schema
 	dao.DB().AutoMigrate(&entity.Site{}, &entity.Page{}, &entity.User{},
@@ -51,17 +54,7 @@ func (dao *Dao) DropConstraintsIfExist() {
 func (dao *Dao) MigrateRootID() {
 	const TAG = "[DB Migrator] "
 
-	// if comments table does not exist which means the first time to setup Artalk
-	if !dao.DB().Migrator().HasTable(&entity.Comment{}) {
-		return // so no need to upgrade
-	}
-
-	// if root_id column already exists which means the migration has been done
-	if dao.DB().Migrator().HasColumn(&entity.Comment{}, "root_id") {
-		return // so no need to migrate again
-	}
-
-	log.Info(TAG, "Generating root IDs...")
+	log.Info(TAG, "Generating Root IDs...")
 
 	dao.DB().Migrator().AddColumn(&entity.Comment{}, "root_id")
 
@@ -84,9 +77,12 @@ func (dao *Dao) MigrateRootID() {
 	`).Scan(&struct{}{}).Error
 
 	if err != nil {
-		dao.DB().Migrator().DropColumn(&entity.Comment{}, "root_id")
+		dao.DB().Migrator().DropColumn(&entity.Comment{}, "root_id") // clean up the failed migration
 		log.Fatal(TAG, "Failed to generate root IDs, please feedback this issue to the Artalk team.")
 	}
+
+	// do some patch
+	dao.DB().Table("comments").Where("id = root_id").Update("root_id", 0)
 
 	log.Info(TAG, "Root IDs generated successfully.")
 }

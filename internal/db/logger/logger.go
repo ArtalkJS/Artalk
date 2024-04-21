@@ -89,7 +89,7 @@ func (l Logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 		logger.Error("[DB]", zap.Error(err), zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))
 	case l.SlowThreshold != 0 && elapsed > l.SlowThreshold && l.LogLevel >= gorm_logger.Warn:
 		sql, rows := fc()
-		logger.Warn("[DB]", zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))
+		logger.Warn("[DB] Time-consuming SQL", zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))
 	case l.LogLevel >= gorm_logger.Info:
 		sql, rows := fc()
 		logger.Debug("[DB]", zap.Duration("elapsed", elapsed), zap.Int64("rows", rows), zap.String("sql", sql))

@@ -35,15 +35,20 @@ func (dao *Dao) FindComment(id uint, checkers ...func(*entity.Comment) bool) ent
 }
 
 func (dao *Dao) FindCommentRootID(rid uint) uint {
-	for rid != 0 {
+	visited := map[uint]bool{}
+	rootId := rid
+	for rootId != 0 && !visited[rootId] {
+		visited[rootId] = true // avoid infinite loop (rid = id)
+
 		var comment entity.Comment
-		dao.DB().First(&comment, rid)
-		if comment.Rid == 0 {
-			return comment.ID
+		dao.DB().First(&comment, rootId)
+		if comment.Rid == 0 { // if comment is root
+			return rootId
 		}
-		rid = comment.Rid
+
+		rootId = comment.Rid // continue to find root
 	}
-	return 0
+	return rootId
 }
 
 // (Cached：parent-comments)

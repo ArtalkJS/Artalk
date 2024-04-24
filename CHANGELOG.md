@@ -1,4 +1,51 @@
 
+## [v2.8.5](https://github.com/ArtalkJS/Artalk/compare/v2.8.3...v2.8.5) (2024-04-21)
+
+### Features
+
+* **ci/build:** add nightly build workflow
+* **conf/http:** add `http.proxy_header` config option
+* **go:** upgrade golang to v1.22.1 and some deps
+
+### Bug Fixes
+
+* **cmd/gen:** ensure directory before saving in `gen` cmd ([#612](https://github.com/ArtalkJS/Artalk/issues/612))
+* **dao:** prevent potential infinite loop in `FindCommentRootID`
+* **db/migrate:** issue with root id generation
+* **db/migrator:** remove foreign key constraints and better `root_id` generation ([#835](https://github.com/ArtalkJS/Artalk/issues/835))
+* **log:** improve log system and fix memory leaks ([#843](https://github.com/ArtalkJS/Artalk/issues/843))
+* **transfer:** retrieve root_id for imported comment data
+* **ui/comment:** missing reply comment data when inserting ([#838](https://github.com/ArtalkJS/Artalk/issues/838))
+* **ui/comment:** incorrect reply comment data in nested mode ([#771](https://github.com/ArtalkJS/Artalk/issues/771)) ([#837](https://github.com/ArtalkJS/Artalk/issues/837))
+* **ui/lifecycle:** keep root element during destroy ([#810](https://github.com/ArtalkJS/Artalk/issues/810))
+* **ui/sidebar:** user list not refresh when data is modified
+* **ui/upload:** unable to upload image when file extension is uppercase
+* **upload:** add config option to solve request entity too large issue ([#834](https://github.com/ArtalkJS/Artalk/issues/834))
+
+### Performance Improvements
+
+* **conf/upgit:** disallow custom executable path of `upgit` for security ([#817](https://github.com/ArtalkJS/Artalk/issues/817))
+* **db:** optimize N+1 query in comment list ([#799](https://github.com/ArtalkJS/Artalk/issues/799))
+* **i18n:** add translation for 'parameter is required'
+* **ui/pkg:** add shorter export names ([#821](https://github.com/ArtalkJS/Artalk/issues/821))
+* **ui/version_check:** beautify version upgrade notice
+
+### Code Refactoring
+
+* **comments_get:** reduce api complexity by introducing `LiteDB` ([#800](https://github.com/ArtalkJS/Artalk/issues/800))
+* **ui/prettier:** add prettier code formatter
+
+### Documentation
+
+* **extras:** add deploy guide for Valaxy ([#836](https://github.com/ArtalkJS/Artalk/issues/836))
+* **i18n:** add French translation ([#797](https://github.com/ArtalkJS/Artalk/issues/797))
+
+### BREAKING CHANGE
+
+
+For UpGit users: Due to security reasons, Artalk no longer allows configuring the executable file path (img_upload.upgit.exec) for upgit. Please add it to system environment variables instead.
+
+
 ## [v2.8.3](https://github.com/ArtalkJS/Artalk/compare/v2.8.2...v2.8.3) (2024-03-04)
 
 ### Features

@@ -22,8 +22,9 @@ jobs:
         run: |
           # `github.head_ref` only exists for pull_request events
           REF="${{ github.head_ref || github.ref }}"
-          VERSION="${REF#release/}"
-          VERSION="${VERSION#refs/tags/}"
+          VERSION="${REF#refs/tags/}"
+          VERSION="${VERSION#refs/heads/}"
+          VERSION="${VERSION#release/}"
 
           echo "Version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV

@@ -54,11 +54,7 @@ jobs:
         # since docker push actions will override the previous images,
         # so need to build `linux/amd64` and push first,
         # then build `linux/amd64` twice with other archs (build very slow so keep it last).
-        target:
-          - linux/amd64
-          - linux/amd64
-          - linux/arm64
-          - linux/arm/v7
+        target: ["linux/amd64", "linux/amd64,linux/arm64,linux/arm/v7"]
     with:
       version: ${{ needs.tagging.outputs.version }}
       dry_run: ${{ inputs.dry_run || false }}

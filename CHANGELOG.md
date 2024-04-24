@@ -5,7 +5,7 @@
 
 * **ci/build:** add nightly build workflow
 * **conf/http:** add `http.proxy_header` config option
-* **go:** upgrade golang to v1.22.1 and some deps
+* **go:** upgrade golang to v1.22.2 and some deps
 
 ### Bug Fixes
 

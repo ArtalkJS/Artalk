@@ -40,7 +40,7 @@ func New() Logger {
 
 	return Logger{
 		LogLevel:                  level,
-		SlowThreshold:             100 * time.Millisecond,
+		SlowThreshold:             1500 * time.Millisecond,
 		SkipCallerLookup:          false,
 		IgnoreRecordNotFoundError: true,
 		ContextInfoGetter:         nil,

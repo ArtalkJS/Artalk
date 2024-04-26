@@ -38,6 +38,7 @@ func (dao *Dao) DropConstraintsIfExist() {
 		{&entity.Comment{}, "fk_comments_page"},
 		{&entity.Comment{}, "fk_comments_user"},
 		{&entity.Page{}, "fk_pages_site"},
+		{&entity.User{}, "fk_comments_user"},
 	}
 
 	for _, item := range list {

@@ -26,9 +26,15 @@ type Comment struct {
 	VoteUp   int
 	VoteDown int
 
-	RootID uint  `gorm:"index"` // Root Node ID (can be derived from `Rid`)
-	Page   *Page `gorm:"foreignKey:page_key;references:key"`
-	User   *User `gorm:"foreignKey:user_id;references:id"`
+	RootID uint `gorm:"index"` // Root Node ID (can be derived from `Rid`)
+
+	// Associated Page
+	//
+	// Use Composite Foreign Keys for multiple-site support.
+	Page *Page `gorm:"foreignKey:page_key,site_name;references:key,site_name"`
+
+	// Associated User
+	User *User `gorm:"foreignKey:user_id;references:id"`
 }
 
 func (c Comment) IsEmpty() bool {

@@ -10,7 +10,7 @@ app_key: ""
 # 调试模式
 debug: false
 
-# 语言 ["en", "zh-CN", "zh-TW", "jp"]
+# 语言 ["en", "zh-CN", "zh-TW", "jp", "fr", "ko", "ru"]
 locale: zh-CN
 
 # 时间区域

@@ -10,20 +10,27 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 var (
 	workDir    string
 	scanDirs   string
 	outputFile string
+	updateDir  string
+	originFile string
 )
 
 func init() {
 	flag.StringVar(&workDir, "w", "", "specify work directory")
 	flag.StringVar(&scanDirs, "d", "./internal", "specify which directory to scan")
-	flag.StringVar(&outputFile, "o", "./i18n/en.yml", "specify output filename")
+	flag.StringVar(&outputFile, "o", "", "specify output filename")
+	flag.StringVar(&updateDir, "u", "", "specify which directory to update")
+	flag.StringVar(&originFile, "origin-file", "i18n/en.yml", "specify origin file such as `i18n/en.yml`")
 }
 
 func main() {
@@ -34,6 +41,8 @@ func main() {
 			panic(err)
 		}
 	}
+
+	originFile, _ = filepath.Abs(originFile)
 
 	// Initialize an empty map to store the keys
 	keys := make(map[string]bool)
@@ -54,14 +63,10 @@ func main() {
 	}
 	sort.Strings(keysSlice)
 
-	// Use the ioutil package to write the keys to the YAML file
-	content := ""
-	for _, key := range keysSlice {
-		content += fmt.Sprintf("%s:\n", key)
-	}
-	err := os.WriteFile(outputFile, []byte(content), 0644)
-	if err != nil {
-		panic(err)
+	if outputFile != "" {
+		saveToFile(outputFile, keysSlice)
+	} else if updateDir != "" {
+		updateDirectory(updateDir, keysSlice)
 	}
 }
 
@@ -89,12 +94,12 @@ func scan(dir string) []string {
 				return nil
 			}
 
-			extKeys := extractFromCode(codeStr)
+			keys := extractFromCode(codeStr)
 
-			if len(extKeys) > 0 {
-				result = append(result, extKeys...)
+			if len(keys) > 0 {
+				result = append(result, keys...)
 				duration := time.Since(start)
-				fmt.Printf("found %d msgs in `%s` (duration: %v)\n", len(extKeys), path, duration)
+				fmt.Printf("found %d msgs in `%s` (duration: %v)\n", len(keys), path, duration)
 			}
 		}
 
@@ -131,7 +136,8 @@ func extractFromCode(src string) []string {
 					return true
 				}
 				if lit, ok := call.Args[0].(*ast.BasicLit); ok {
-					i18nKeySet = append(i18nKeySet, lit.Value)
+					// string without quotes
+					i18nKeySet = append(i18nKeySet, lit.Value[1:len(lit.Value)-1])
 					return true
 				}
 			}
@@ -140,4 +146,73 @@ func extractFromCode(src string) []string {
 	})
 
 	return i18nKeySet
+}
+
+func saveToFile(filename string, keys []string) error {
+	// write the keys to the YAML file
+	content := ""
+	for _, key := range keys {
+		content += fmt.Sprintf("%s:\n", key)
+	}
+	err := os.WriteFile(filename, []byte(content), 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func updateDirectory(directory string, keys []string) error {
+	// check if the directory exists
+	if _, err := os.Stat(directory); os.IsNotExist(err) {
+		return fmt.Errorf("directory `%s` does not exist", directory)
+	}
+
+	// walk through the directory, and find all yaml files
+	return filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() || (!strings.HasSuffix(path, ".yml") && !strings.HasSuffix(path, ".yaml")) {
+			return err
+		}
+
+		defer func() {
+			fmt.Printf("updated `%s`\n", path)
+		}()
+
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		buf, err := io.ReadAll(file)
+		if err != nil {
+			return err
+		}
+
+		// parse yaml and update the keys
+		yamlMap := make(map[string]string)
+		err = yaml.Unmarshal(buf, &yamlMap)
+		if err != nil {
+			return err
+		}
+
+		// write the yaml back to the file
+		content := ""
+		for _, key := range keys {
+			value, ok := yamlMap[key]
+			if !ok {
+				pathAbs, _ := filepath.Abs(path)
+				if pathAbs != originFile {
+					value = "__MISSING__"
+				}
+			}
+			content += fmt.Sprintf("%s: %s\n", strconv.Quote(key), strconv.Quote(value))
+		}
+
+		err = os.WriteFile(path, []byte(content), 0644)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 }

@@ -6,7 +6,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//go:generate go run ./gen -w ../../ -d internal,server,cmd -o i18n/en.yml
+//go:generate go run ./gen -w ../../ -d internal,server,cmd -u i18n/
 
 var Locales map[string]string
 

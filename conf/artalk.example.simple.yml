@@ -157,6 +157,7 @@ frontend:
   countEl: "#ArtalkCount"
   preview: true
   flatMode: auto
+  darkMode: inherit
   nestMax: 2
   nestSort: DATE_ASC
   gravatar:

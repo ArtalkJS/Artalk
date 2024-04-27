@@ -310,6 +310,8 @@ frontend:
   preview: true
   # Flatten mode ["auto", true, false]
   flatMode: auto
+  # Dark mode ["inherit", "auto"]
+  darkMode: inherit
   # Maximum nesting level
   nestMax: 2
   # Nesting comment sorting rules ["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]

@@ -48,11 +48,11 @@ func TestAntiSpam(t *testing.T) {
 			return &AntiSpamConf{
 				ModeratorConf: config.ModeratorConf{
 					Keywords: config.KeyWordsAntispamConf{
-						Enabled:  true,
-						Pending:  false,
-						Files:    []string{kwFile1},
-						FileSep:  "\n",
-						ReplacTo: "*",
+						Enabled:   true,
+						Pending:   false,
+						Files:     []string{kwFile1},
+						FileSep:   "\n",
+						ReplaceTo: "*",
 					},
 				},
 

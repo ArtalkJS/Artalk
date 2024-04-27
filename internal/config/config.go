@@ -142,11 +142,11 @@ type AliyunAntispamConf struct {
 
 // 关键词词库过滤
 type KeyWordsAntispamConf struct {
-	Enabled  bool     `koanf:"enabled" json:"enabled"`
-	Pending  bool     `koanf:"pending" json:"pending"`
-	Files    []string `koanf:"files" json:"files"`
-	FileSep  string   `koanf:"file_sep" json:"file_sep"`
-	ReplacTo string   `koanf:"replac_to" json:"replac_to"`
+	Enabled   bool     `koanf:"enabled" json:"enabled"`
+	Pending   bool     `koanf:"pending" json:"pending"`
+	Files     []string `koanf:"files" json:"files"`
+	FileSep   string   `koanf:"file_sep" json:"file_sep"`
+	ReplaceTo string   `koanf:"replace_to" json:"replace_to"`
 }
 
 type CaptchaConf struct {

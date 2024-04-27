@@ -61,7 +61,7 @@ moderator:
     pending: false
     files:
     file_sep: "\n"
-    replac_to: x
+    replace_to: x
 captcha:
   enabled: true
   always: false

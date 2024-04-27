@@ -138,7 +138,7 @@ moderator:
     # 词库文件内容分割符 (例如填写 "\n" 文件中一行一个关键词)
     file_sep: "\n"
     # 替换字符
-    replac_to: x
+    replace_to: x
 
 # 验证码
 captcha:

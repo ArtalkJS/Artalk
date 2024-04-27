@@ -34,7 +34,7 @@ moderator:
     files: # 支持多个词库文件
       - './data/词库_1.txt'
     file_sep: "\n" # 词库文件内容分割符
-    replac_to: 'x' # 替换字符
+    replace_to: 'x' # 替换字符
 ```
 
 ## 默认待审模式
@@ -103,15 +103,15 @@ moderator:
     files: # 支持多个词库文件
       - ./data/词库_1.txt
     file_sep: "\n" # 词库文件内容分割符
-    replac_to: 'x' # 替换字符
+    replace_to: 'x' # 替换字符
 ```
 
 - **pending**：当成功匹配时，是否将评论设为待审核状态。
 - **files**：词库文件。允许多个文件，Artalk 启动时会合并词库。
 - **file_sep**：词库文件内容分割符。例如：文件中每行一个词语，该项配置 `\n`。
-- **replac_to**：替换字符。例如：该项设置为 `x`，你可以将 `pending` 设置为 `false`，评论自动过审，但匹配到的词语会被替换为 `x`，例如 `fxxk`、`xxxx`。
+- **replace_to**：替换字符。例如：该项设置为 `x`，你可以将 `pending` 设置为 `false`，评论自动过审，但匹配到的词语会被替换为 `x`，例如 `fxxk`、`xxxx`。
 
-注：`replac_to` 不建议使用 `*` 星号，应为它和 Markdown 的加粗语法冲突。
+注：`replace_to` 不建议使用 `*` 星号，应为它和 Markdown 的加粗语法冲突。
 
 ## 使用验证码
 

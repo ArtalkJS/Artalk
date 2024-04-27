@@ -112,7 +112,7 @@ func (as AntiSpam) getEnabledCheckers() []Checker {
 		checkers = append(checkers, NewKeywordsChecker(&KeywordsCheckerConf{
 			Files:     as.conf.Keywords.Files,
 			FileSep:   as.conf.Keywords.FileSep,
-			ReplaceTo: as.conf.Keywords.ReplacTo,
+			ReplaceTo: as.conf.Keywords.ReplaceTo,
 			Mode:      kwCheckerMode,
 			OnUpdateComment: func(commentID uint, content string) {
 				if as.conf.OnUpdateComment != nil {

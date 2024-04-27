@@ -2,6 +2,7 @@ package sender
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -19,6 +20,11 @@ func SendBark(serverURL string, title string, msg string) {
 	if err != nil {
 		log.Error("[Bark] ", "Failed to send msg:", err)
 		return
+	}
+
+	if result.StatusCode != 200 {
+		body, _ := io.ReadAll(result.Body)
+		log.Error("[Bark] Failed to send msg:", string(body))
 	}
 
 	defer result.Body.Close()

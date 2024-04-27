@@ -54,10 +54,10 @@ export default class SidebarLayer extends Component {
       // Sync Dark Mode (reload iframe if not match)
       const $iframe = this.$iframe!
       const iFrameSrc = $iframe.src
-      if (this.conf.darkMode !== iFrameSrc.includes('darkMode=1')) {
+      if (this.getDarkMode() !== iFrameSrc.includes('&darkMode=1')) {
         this.iframeLoad(
           $iframe,
-          this.conf.darkMode
+          this.getDarkMode()
             ? iFrameSrc.concat('&darkMode=1')
             : iFrameSrc.replace('&darkMode=1', ''),
         )
@@ -155,12 +155,18 @@ export default class SidebarLayer extends Component {
     }
 
     if (view) query.view = view
-    if (this.conf.darkMode) query.darkMode = '1'
+    if (this.getDarkMode()) query.darkMode = '1'
 
     const urlParams = new URLSearchParams(query)
     this.iframeLoad($iframe, `${baseURL}?${urlParams.toString()}`)
 
     return $iframe
+  }
+
+  private getDarkMode() {
+    return this.conf.darkMode === 'auto'
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches
+      : this.conf.darkMode
   }
 
   private iframeLoad($iframe: HTMLIFrameElement, src: string) {

@@ -252,13 +252,17 @@ admin_notify:
   bark:
     enabled: false
     server: http://day.app/xxxxxxx/
+  # Lark
   lark:
     enabled: false
     webhook_url: ""
+    # Message type ["text", "card"]
+    msg_type: "text"
   # WebHook
   webhook:
     enabled: false
     url: ""
+  # DingTalk
   ding_talk:
     enabled: false
     token: ""

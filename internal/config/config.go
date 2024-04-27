@@ -330,6 +330,7 @@ type NotifyDingTalkConf struct {
 type NotifyLarkConf struct {
 	Enabled    bool   `koanf:"enabled" json:"enabled"`
 	WebhookURL string `koanf:"webhook_url" json:"webhook_url"`
+	MsgType    string `koanf:"msg_type" json:"msg_type"`
 }
 
 type NotifyBarkConf struct {

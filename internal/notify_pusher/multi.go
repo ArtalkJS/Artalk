@@ -35,7 +35,7 @@ func (pusher *NotifyPusher) multiPush(comment *entity.Comment, pComment *entity.
 
 	// 飞书
 	if pusher.conf.Lark.Enabled {
-		sender.SendLark(pusher.conf.Lark.WebhookURL, subject, body)
+		sender.SendLark(pusher.conf.Lark.WebhookURL, subject, body, pusher.conf.Lark.MsgType == "card")
 	}
 
 	// Bark

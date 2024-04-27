@@ -261,6 +261,8 @@ admin_notify:
   lark:
     enabled: false
     webhook_url: ""
+    # 消息类型 ["text", "card"]
+    msg_type: "text"
   # WebHook
   webhook:
     enabled: false

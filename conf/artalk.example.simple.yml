@@ -123,6 +123,7 @@ admin_notify:
   lark:
     enabled: false
     webhook_url: ""
+    msg_type: "text"
   webhook:
     enabled: false
     url: ""

@@ -1,8 +1,12 @@
 package dao_test
 
 import (
+	"fmt"
+	"sync"
 	"testing"
+	"time"
 
+	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/test"
 	"github.com/stretchr/testify/assert"
 )
@@ -55,7 +59,41 @@ func TestFindCreatePage(t *testing.T) {
 	t.Run("Find Existed Page", func(t *testing.T) {
 		result := app.Dao().FindCreatePage("/test/1000.html", "", "Site A")
 		assert.False(t, result.IsEmpty())
-		assert.Equal(t, app.Dao().FindPage("/test/1000.html", "Site A"), result)
+		findPage := app.Dao().FindPage("/test/1000.html", "Site A")
+		assert.Equal(t, app.Dao().CookPage(&findPage), app.Dao().CookPage(&result))
+	})
+
+	t.Run("Concurrent FindCreatePage", func(t *testing.T) {
+		var (
+			pageKey   = "/" + time.Now().String() + ".html"
+			pageTitle = "New Page Title " + time.Now().String()
+			siteName  = "Site A"
+		)
+
+		// simulate concurrent requests
+		var wg sync.WaitGroup
+
+		var idMap sync.Map
+		n := 10000
+		for i := 0; i < n; i++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				result := app.Dao().FindCreatePage(pageKey, pageTitle, siteName)
+				idMap.Store(result.ID, true)
+			}()
+		}
+
+		wg.Wait()
+
+		// count the number of different pages
+		count := 0
+		idMap.Range(func(_, _ interface{}) bool {
+			count++
+			return true
+		})
+
+		assert.Equal(t, 1, count, fmt.Sprintf("Concurrent FindCreatePage should return the same page, but got %d different pages", count))
 	})
 }
 
@@ -111,5 +149,66 @@ func TestFindCreateUser(t *testing.T) {
 		assert.NoError(t, err)
 		assert.False(t, result.IsEmpty())
 		assert.Equal(t, app.Dao().FindUser("userA", "user_a@qwqaq.com"), result)
+	})
+}
+
+type mockEntity struct {
+	ID   int
+	Name string
+}
+
+func (e mockEntity) IsEmpty() bool {
+	return e.ID == 0
+}
+
+func TestFindCreateAction(t *testing.T) {
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
+
+	var calledTimes int32
+	var mutex sync.Mutex
+
+	increaseCalledTimes := func() {
+		mutex.Lock()
+		defer mutex.Unlock()
+		calledTimes++
+	}
+
+	t.Run("Concurrent FindCreateAction", func(t *testing.T) {
+		var wg sync.WaitGroup
+
+		var instance mockEntity
+		findCreateFunc := func() (mockEntity, error) {
+			randKey := fmt.Sprintf("rand_key_%d", time.Now().UnixNano())
+			return dao.FindCreateAction(randKey, func() (mockEntity, error) {
+				// findAction
+				time.Sleep(200 * time.Millisecond) // mock time consuming
+				return instance, nil
+			}, func() (mockEntity, error) {
+				// createAction
+				instance = mockEntity{
+					ID:   1,
+					Name: "mockEntity",
+				}
+				time.Sleep(500 * time.Millisecond) // mock time consuming
+				increaseCalledTimes()
+				return instance, nil
+			})
+		}
+
+		n := 10000
+		for i := 0; i < n; i++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				result, err := findCreateFunc()
+				assert.NoError(t, err)
+				assert.False(t, result.IsEmpty(), "FindCreateAction should always return a non-empty entity")
+			}()
+		}
+
+		wg.Wait()
+
+		assert.Equal(t, int32(1), calledTimes, "Concurrent FindCreateAction should only call createAction once")
 	})
 }

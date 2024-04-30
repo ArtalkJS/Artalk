@@ -8,18 +8,25 @@ export function getRenderer() {
   return renderer
 }
 
-export const markedLinkRenderer =
+const markedLinkRenderer =
   (renderer: any, orgLinkRenderer: Function) =>
   (href: string, title: string, text: string): string => {
-    const localLink = href?.startsWith(`${window.location.protocol}//${window.location.hostname}`)
+    const getLinkOrigin = (link: string) => {
+      try {
+        return new URL(link).origin
+      } catch {
+        return ''
+      }
+    }
+    const isSameOriginLink = getLinkOrigin(href) === window.location.origin
     const html = orgLinkRenderer.call(renderer, href, title, text)
     return html.replace(
       /^<a /,
-      `<a target="_blank" ${!localLink ? `rel="noreferrer noopener nofollow"` : ''} `,
+      `<a target="_blank" ${!isSameOriginLink ? `rel="noreferrer noopener nofollow"` : ''} `,
     )
   }
 
-export const markedCodeRenderer =
+const markedCodeRenderer =
   () =>
   (block: string, lang: string | undefined): string => {
     // Colorize the block only if the language is known to highlight.js

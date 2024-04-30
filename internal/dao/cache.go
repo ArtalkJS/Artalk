@@ -19,6 +19,7 @@ const (
 	PageByKeySiteNameKey   = "page#key=%s;site_name=%s"
 	CommentByIDKey         = "comment#id=%d"
 	CommentChildIDsByIDKey = "comment_child_ids#id=%d"
+	NotifyByUserCommentKey = "notify#user_id=%d;comment_id=%d"
 )
 
 type DaoCache struct {

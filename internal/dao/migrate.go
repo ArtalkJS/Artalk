@@ -10,7 +10,8 @@ import (
 func (dao *Dao) MigrateModels() {
 	// Upgrade the database
 	if dao.DB().Migrator().HasTable(&entity.Comment{}) &&
-		!dao.DB().Migrator().HasColumn(&entity.Comment{}, "root_id") {
+		(!dao.DB().Migrator().HasColumn(&entity.Comment{}, "root_id") ||
+			os.Getenv("ATK_DB_MIGRATOR_FUNC_MIGRATE_ROOT_ID") == "1") {
 		dao.MigrateRootID()
 	}
 
@@ -64,9 +65,11 @@ func (dao *Dao) MigrateRootID() {
 
 	log.Info(TAG, "Generating Root IDs...")
 
-	dao.DB().Migrator().AddColumn(&entity.Comment{}, "root_id")
+	if !dao.DB().Migrator().HasColumn(&entity.Comment{}, "root_id") {
+		dao.DB().Migrator().AddColumn(&entity.Comment{}, "root_id")
+	}
 
-	err := dao.DB().Raw(`WITH RECURSIVE CommentHierarchy AS (
+	if err := dao.DB().Raw(`WITH RECURSIVE CommentHierarchy AS (
 		SELECT id, id AS root_id, rid
 		FROM comments
 		WHERE rid = 0
@@ -82,15 +85,25 @@ func (dao *Dao) MigrateRootID() {
 		FROM CommentHierarchy
 		WHERE comments.id = CommentHierarchy.id
 	);
-	`).Scan(&struct{}{}).Error
+	`).Scan(&struct{}{}).Error; err == nil {
+		// no error, then do some patch
+		dao.DB().Table("comments").Where("id = root_id").Update("root_id", 0)
+	} else {
+		// try backup plan (if recursive CTE is not supported)
+		log.Info(TAG, "Recursive CTE is not supported, trying backup plan... Please wait a moment. This may take a long time if there are many comments.")
 
-	if err != nil {
-		dao.DB().Migrator().DropColumn(&entity.Comment{}, "root_id") // clean up the failed migration
-		log.Fatal(TAG, "Failed to generate root IDs, please feedback this issue to the Artalk team.")
+		comments := []entity.Comment{}
+		if err := dao.DB().Find(&comments).Error; err != nil {
+			log.Fatal(TAG, "Failed to load comments. ", err.Error)
+		}
+
+		// update root_id
+		for _, comment := range comments {
+			if err := dao.DB().Model(&comment).Update("root_id", dao.FindCommentRootID(comment.ID)).Error; err != nil {
+				log.Error(TAG, "Failed to update root ID. ", err.Error, " ID=", comment.ID)
+			}
+		}
 	}
-
-	// do some patch
-	dao.DB().Table("comments").Where("id = root_id").Update("root_id", 0)
 
 	log.Info(TAG, "Root IDs generated successfully.")
 }

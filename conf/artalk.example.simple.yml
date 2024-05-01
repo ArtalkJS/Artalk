@@ -171,6 +171,7 @@ frontend:
     content: 300
     children: 400
     scrollable: false
+  imgLazyLoad: false
   reqTimeout: 15000
   versionCheck: true
   pluginURLs: []

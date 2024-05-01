@@ -177,7 +177,7 @@ Artalk.init({ site: 'Artalk 官网' })
 
 这样，你就无需在侧边栏的[控制中心](../frontend/sidebar.md#控制中心)手动创建站点。
 
-## 前端配置 `frontend`
+## 界面配置 `frontend`
 
 增加 `frontend` 字段内容可以在后端控制前端的配置，详情可参考：[在后端控制前端](/guide/backend/fe-control)。
 

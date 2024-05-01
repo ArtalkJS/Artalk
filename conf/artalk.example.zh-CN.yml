@@ -343,6 +343,8 @@ frontend:
     children: 400
     # 滚动限高 (允许限高区域滚动)
     scrollable: false
+  # 图片懒加载 [false, "native", "data-src"]
+  imgLazyLoad: false
   # 请求超时 (单位：毫秒)
   reqTimeout: 15000
   # 版本检测

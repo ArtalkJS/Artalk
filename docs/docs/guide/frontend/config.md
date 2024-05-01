@@ -314,6 +314,17 @@ Artalk.init({
 })
 ```
 
+### imgLazyLoad
+
+**图片懒加载**
+
+- 类型：`"native"|"data-src"|Boolean`
+- 默认值：`false`
+
+为评论中的图片启用懒加载功能。
+
+详情参考：[图片懒加载](./img-lazy-load.md)
+
 ### preview
 
 **编辑器实时预览功能**

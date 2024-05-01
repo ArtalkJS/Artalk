@@ -2,8 +2,8 @@ import * as Utils from '../lib/utils'
 import $t from '../i18n'
 
 export interface IHeightLimitConf {
-  /** Post expand btn click */
-  postExpandBtnClick?: (e: MouseEvent) => void
+  /** After expand btn click */
+  afterExpandBtnClick?: () => void
   /** Allow Scroll */
   scrollable?: boolean
 }
@@ -27,23 +27,27 @@ export function check(conf: IHeightLimitConf, rules: THeightLimitRuleSet) {
     if (!el) return
 
     // set max height to limit the height
-    if (imgCheck) el.style.maxHeight = `${max + 1}px` // allow 2px more for next detecting
+    if (imgCheck) el.style.maxHeight = `${max + 1}px` // allow 1px more for next detecting
 
-    const _apply = () => {
-      const postBtnClick = conf.postExpandBtnClick
+    let lock = false
+    const _check = () => {
+      if (lock) return
+      if (Utils.getHeight(el) <= max) return // if not exceed the limit, do nothing
+
+      const afterExpandBtnClick = () => {
+        lock = true // add lock to prevent collapse again after expand when image lazy loaded
+        conf.afterExpandBtnClick?.()
+      }
+
       !conf.scrollable
-        ? applyHeightLimit({ el, max, postBtnClick })
+        ? applyHeightLimit({ el, max, afterExpandBtnClick })
         : applyScrollableHeightLimit({ el, max })
     }
 
-    // checking
-    const _check = () => {
-      if (Utils.getHeight(el) > max) _apply() // 是否超过高度
-    }
+    // check immediately
+    _check()
 
-    _check() // check immediately
-
-    // image check
+    // check images after loaded
     if (imgCheck) {
       // check again when image loaded
       el.querySelectorAll<HTMLImageElement>('.atk-content img').forEach((img) => {
@@ -60,7 +64,7 @@ const HEIGHT_LIMIT_CSS = 'atk-height-limit'
 export function applyHeightLimit(obj: {
   el: HTMLElement
   max: number
-  postBtnClick?: (e: MouseEvent) => void
+  afterExpandBtnClick?: (e: MouseEvent) => void
 }) {
   if (!obj.el) return
   if (!obj.max) return
@@ -78,7 +82,7 @@ export function applyHeightLimit(obj: {
     e.stopPropagation()
     disposeHeightLimit(obj.el)
 
-    if (obj.postBtnClick) obj.postBtnClick(e)
+    if (obj.afterExpandBtnClick) obj.afterExpandBtnClick(e)
   }
   obj.el.append($expandBtn)
 }

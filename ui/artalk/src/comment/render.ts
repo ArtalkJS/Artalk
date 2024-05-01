@@ -78,7 +78,7 @@ export default class Render {
 
     HeightLimit.check(
       {
-        postExpandBtnClick: () => {
+        afterExpandBtnClick: () => {
           // 子评论数仅有 1，直接取消限高
           const children = this.comment.getChildren()
           if (children.length === 1)

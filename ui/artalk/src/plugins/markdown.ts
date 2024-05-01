@@ -2,9 +2,12 @@ import type { ArtalkPlugin } from '@/types'
 import * as marked from '@/lib/marked'
 
 export const Markdown: ArtalkPlugin = (ctx) => {
-  marked.initMarked()
+  ctx.watchConf(['markedReplacers', 'imgLazyLoad', 'markedOptions'], (conf) => {
+    marked.initMarked({
+      markedOptions: ctx.getConf().markedOptions,
+      imgLazyLoad: ctx.getConf().imgLazyLoad,
+    })
 
-  ctx.on('updated', (conf) => {
     if (conf.markedReplacers) marked.setReplacers(conf.markedReplacers)
   })
 }

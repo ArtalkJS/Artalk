@@ -117,6 +117,7 @@ export default defineConfig({
             { text: '浏览量统计', link: '/guide/frontend/pv.md' },
             { text: 'Latex', link: '/guide/frontend/latex.md' },
             { text: '图片灯箱', link: '/guide/frontend/lightbox.md' },
+            { text: '图片懒加载', link: '/guide/frontend/img-lazy-load.md' },
             { text: 'IP 属地', link: '/guide/frontend/ip-region.md' },
             { text: '精简版本', link: '/guide/frontend/artalk-lite.md' },
             { text: '置入博客', link: '/guide/frontend/import-blog.md' },

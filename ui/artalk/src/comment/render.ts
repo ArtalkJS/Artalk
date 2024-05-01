@@ -88,10 +88,10 @@ export default class Render {
       },
       [
         // 评论内容限高
-        { el: this.$content, max: contentMaxH, imgContains: true },
-        { el: this.$replyTo, max: contentMaxH, imgContains: true },
+        { el: this.$content, max: contentMaxH, imgCheck: true },
+        { el: this.$replyTo, max: contentMaxH, imgCheck: true },
         // 子评论区域限高（仅嵌套模式）
-        { el: this.$childrenWrap, max: childrenMaxH, imgContains: false },
+        { el: this.$childrenWrap, max: childrenMaxH, imgCheck: false },
       ],
     )
   }

@@ -106,27 +106,6 @@ export function timeAgo(date: Date, $t: Function = (n: string) => n) {
   }
 }
 
-/** 所有图片加载完毕后执行 */
-export function onImagesLoaded($container: HTMLElement, event: Function) {
-  if (!$container) return
-  const images = $container.getElementsByTagName('img')
-  if (!images.length) return
-  let loaded = images.length
-  for (let i = 0; i < images.length; i++) {
-    if (images[i].complete) {
-      loaded--
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-loop-func
-      images[i].addEventListener('load', () => {
-        loaded--
-        if (loaded === 0) event()
-      })
-    }
-
-    if (loaded === 0) event()
-  }
-}
-
 export function getGravatarURL(opts: { params: string; mirror: string; emailMD5: string }) {
   return `${opts.mirror.replace(/\/$/, '')}/${opts.emailMD5}?${opts.params.replace(/^\?/, '')}`
 }

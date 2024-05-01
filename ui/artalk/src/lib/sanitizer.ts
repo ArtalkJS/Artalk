@@ -61,16 +61,17 @@ const insaneOptions = {
   allowedAttributes: {
     '*': ['title', 'accesskey'],
     a: ['href', 'name', 'target', 'aria-label', 'rel'],
-    img: ['src', 'alt', 'title', 'atk-emoticon', 'aria-label'],
+    img: ['src', 'alt', 'title', 'atk-emoticon', 'aria-label', 'data-src', 'class', 'loading'],
     // for code highlight
     code: ['class'],
     span: ['class', 'style'],
   },
   filter: (node) => {
-    // allow hljs style
+    // class whitelist
     const allowed = [
       ['code', /^hljs\W+language-(.*)$/],
       ['span', /^(hljs-.*)$/],
+      ['img', /^lazyload$/],
     ]
     allowed.forEach(([tag, reg]) => {
       if (node.tag === tag && !!node.attrs.class && !(reg as RegExp).test(node.attrs.class)) {

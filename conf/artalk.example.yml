@@ -338,6 +338,8 @@ frontend:
     children: 400
     # Scrollable (scrollable height limit area)
     scrollable: false
+  # Image lazy load [false, "native", "data-src"]
+  imgLazyLoad: false
   # Request timeout (unit: ms)
   reqTimeout: 15000
   # Version check

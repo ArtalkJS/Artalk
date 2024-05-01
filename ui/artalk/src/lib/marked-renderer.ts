@@ -1,10 +1,16 @@
 import { marked as libMarked } from 'marked'
+import type { ArtalkConfig } from '@/types'
 import { renderCode } from './highlight'
 
-export function getRenderer() {
+export interface RendererOptions {
+  imgLazyLoad: ArtalkConfig['imgLazyLoad']
+}
+
+export function getRenderer(options: RendererOptions) {
   const renderer = new libMarked.Renderer()
   renderer.link = markedLinkRenderer(renderer, renderer.link)
   renderer.code = markedCodeRenderer()
+  renderer.image = markedImageRenderer(renderer, renderer.image, options)
   return renderer
 }
 
@@ -45,4 +51,16 @@ const markedCodeRenderer =
       `<code class="hljs language-${realLang}">${colorized.replace(/&amp;/g, '&')}</code>\n` +
       `</pre>`
     )
+  }
+
+const markedImageRenderer =
+  (renderer: any, orgImageRenderer: Function, { imgLazyLoad }: RendererOptions) =>
+  (href: string, title: string | null, text: string): string => {
+    const html = orgImageRenderer.call(renderer, href, title, text)
+    if (!imgLazyLoad) return html
+    if (imgLazyLoad === 'native' || (imgLazyLoad as any) === true)
+      return html.replace(/^<img /, '<img class="lazyload" loading="lazy" ')
+    if (imgLazyLoad === 'data-src')
+      return html.replace(/^<img /, '<img class="lazyload" ').replace('src=', 'data-src=')
+    return html
   }

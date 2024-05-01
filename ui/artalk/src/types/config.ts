@@ -1,3 +1,4 @@
+import type { MarkedOptions } from 'marked'
 import type { I18n } from '@/i18n'
 import type { CommentData } from './data'
 import type { EditorApi } from './editor'
@@ -108,6 +109,9 @@ export interface ArtalkConfig {
   /** 图片上传器 */
   imgUploader?: (file: File) => Promise<string>
 
+  /** Image lazy load */
+  imgLazyLoad?: 'native' | 'data-src'
+
   /** 版本检测 */
   versionCheck: boolean
 
@@ -125,6 +129,9 @@ export interface ArtalkConfig {
 
   /** Replacer for marked */
   markedReplacers?: ((raw: string) => string)[]
+
+  /** Marked options */
+  markedOptions?: MarkedOptions
 
   /** 列表请求参数修改器 */
   listFetchParamsModifier?: (params: any) => void

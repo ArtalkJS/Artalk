@@ -49,7 +49,7 @@ func NewRenderer(dao *dao.Dao, renderType RenderType, defaultTemplateLoader Temp
 	// Render type
 	var renderStrategies = map[RenderType]func() RenderStrategy{
 		TYPE_EMAIL: func() RenderStrategy {
-			return NewEmailRenderStrategy()
+			return NewEmailRenderer()
 		},
 		TYPE_NOTIFY: func() RenderStrategy {
 			return NewNotifyRenderer()
@@ -60,7 +60,7 @@ func NewRenderer(dao *dao.Dao, renderType RenderType, defaultTemplateLoader Temp
 	if strategyFunc, ok := renderStrategies[renderType]; ok {
 		r.strategy = strategyFunc()
 	} else {
-		r.strategy = NewEmailRenderStrategy() // Default
+		r.strategy = NewEmailRenderer() // Default
 	}
 
 	return r

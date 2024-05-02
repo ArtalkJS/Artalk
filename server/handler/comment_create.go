@@ -82,6 +82,10 @@ func CommentCreate(app *core.App, router fiber.Router) {
 
 		// find page
 		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
+		if page.Key == "" {
+			log.Error("[CommentCreate] FindCreatePage error")
+			return common.RespError(c, 500, i18n.T("Comment failed"))
+		}
 
 		// check if the user is allowed to comment
 		if isAllowed, resp := isAllowComment(app, c, p.Name, p.Email, page.AdminOnly); !isAllowed {

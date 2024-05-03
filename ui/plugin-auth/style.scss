@@ -1,0 +1,340 @@
+.atk-auth-plugin-dialog-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+
+  .atk-skip-btn {
+    cursor: pointer;
+    margin: 0 auto;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    place-items: center;
+    height: 40px;
+    padding: 0 20px;
+    font-size: 16px;
+    border-radius: 50px;
+    color: var(--at-color-bg);
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+.atk-auth-plugin-dialog {
+  $h: 500px;
+  $w: 360px;
+
+  overflow: hidden;
+  transform: translateY(0px) scale(1);
+  animation: atkLoginDialogShowAnim 0.3s ease-in-out;
+  will-change: transform, opacity, width, height;
+  transition-property: transform, opacity, width, height;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  width: $w;
+  max-height: $h;
+  background: var(--at-color-bg);
+  border-radius: 18px;
+
+  @keyframes atkLoginDialogShowAnim {
+    0% {
+      opacity: 0;
+      transform: translateY(15px) scale(1.02);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0px) scale(1);
+    }
+  }
+
+  .atk-auth-dialog-title {
+    display: flex;
+    justify-content: space-between;
+    place-items: center;
+    padding: 25px 25px 0;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--at-color-font);
+
+    .atk-text {
+      margin: 0 10px;
+    }
+
+    .atk-icon {
+      display: flex;
+      justify-content: center;
+      place-items: center;
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+
+      &:hover {
+        background: var(--at-color-bg-grey);
+      }
+    }
+  }
+
+  .atk-view-wrap {
+    max-height: calc(100% - 65px);
+    overflow-y: auto;
+  }
+
+  // Methods Page
+  .atk-methods-page .atk-methods {
+    padding: 12px 20px 20px 20px;
+
+    .atk-method-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 25px;
+      cursor: pointer;
+      border-radius: 10px;
+
+      &:hover {
+        background: var(--at-color-bg-grey);
+      }
+
+      .atk-method-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 20px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+      }
+
+      .atk-method-text {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--at-color-font);
+      }
+    }
+  }
+
+  .atk-register-page {
+  }
+
+  .atk-form {
+    padding: 20px 30px;
+
+    .atk-form-bottom {
+      padding: 5px 0;
+      text-align: center;
+      font-size: 14px;
+
+      .atk-link {
+        cursor: pointer;
+        text-align: center;
+        color: var(--at-color-main);
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 20px;
+      margin: 5px 0;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--at-color-bg-grey);
+      background: var(--at-color-bg-grey);
+      color: var(--at-color-font);
+      transition: border-color 0.2s;
+      outline: none;
+
+      &:focus {
+        border-color: var(--at-color-primary);
+      }
+    }
+
+    button[type='submit'] {
+      width: 100%;
+      padding: 10px 20px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 10px;
+      background: var(--at-color-main);
+      color: var(--at-color-bg);
+      cursor: pointer;
+      transition: background 0.2s;
+      border: 0;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    .atk-input-grp {
+      position: relative;
+
+      & > input {
+        padding-right: 115px;
+      }
+    }
+
+    .atk-input-grp-btn {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 10px 15px;
+      font-size: 14px;
+      color: var(--at-color-main);
+      cursor: pointer;
+    }
+  }
+
+  &[data-dialog-name='merge'] {
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-image: url('data:image/svg+xml,<svg fill="none" height="159" viewBox="0 0 390 159" width="390" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><linearGradient id="a" gradientUnits="userSpaceOnUse" x1="195" x2="195" y1="0" y2="159"><stop offset="0" stop-color="%23f6f0fe"/><stop offset=".835" stop-color="%23f6f0fe" stop-opacity="0"/></linearGradient><clipPath id="b"><path d="m0 0h390v159h-390z"/></clipPath><g clip-path="url(%23b)"><path d="m0 0h390v159h-390z" fill="url(%23a)"/><g clip-rule="evenodd" fill="%23743fc8" fill-rule="evenodd"><path d="m76.0859 23.5c-1.5187 0-2.75 1.2312-2.75 2.75s1.2313 2.75 2.75 2.75c1.5188 0 2.75-1.2312 2.75-2.75s-1.2312-2.75-2.75-2.75zm-5.5 2.75c0-3.0376 2.4625-5.5 5.5-5.5 3.0376 0 5.5 2.4624 5.5 5.5s-2.4624 5.5-5.5 5.5c-3.0375 0-5.5-2.4624-5.5-5.5z"/><path d="m76.0859 51c-1.5187 0-2.75 1.2312-2.75 2.75s1.2313 2.75 2.75 2.75c1.5188 0 2.75-1.2312 2.75-2.75s-1.2312-2.75-2.75-2.75zm-5.5 2.75c0-3.0376 2.4625-5.5 5.5-5.5 3.0376 0 5.5 2.4624 5.5 5.5s-2.4624 5.5-5.5 5.5c-3.0375 0-5.5-2.4624-5.5-5.5z"/><path d="m76.0859 29c.7594 0 1.375.6156 1.375 1.375v19.25c0 .7594-.6156 1.375-1.375 1.375s-1.375-.6156-1.375-1.375v-19.25c0-.7594.6156-1.375 1.375-1.375z"/><path d="m98.0859 40c-1.5187 0-2.75 1.2312-2.75 2.75s1.2313 2.75 2.75 2.75c1.5188 0 2.7501-1.2312 2.7501-2.75s-1.2313-2.75-2.7501-2.75zm-5.5 2.75c0-3.0376 2.4625-5.5 5.5-5.5 3.0381 0 5.5001 2.4624 5.5001 5.5s-2.462 5.5-5.5001 5.5c-3.0375 0-5.5-2.4624-5.5-5.5z"/><path d="m76.0859 29c.7594 0 1.375.6156 1.375 1.375 0 3.4986 2.013 6.2043 5.1762 8.1022 3.1845 1.9107 7.3979 2.8978 11.3238 2.8978.7594 0 1.375.6156 1.375 1.375s-.6156 1.375-1.375 1.375c-4.324 0-9.0482-1.0754-12.7386-3.2897-3.7118-2.2271-6.5114-5.7089-6.5114-10.4603 0-.7594.6156-1.375 1.375-1.375z"/><path d="m144 13.5c-.828 0-1.5.6716-1.5 1.5s.672 1.5 1.5 1.5 1.5-.6716 1.5-1.5-.672-1.5-1.5-1.5zm-3 1.5c0-1.6569 1.343-3 3-3s3 1.3431 3 3-1.343 3-3 3-3-1.3431-3-3z" fill-opacity=".5"/><path d="m144 28.5c-.828 0-1.5.6716-1.5 1.5s.672 1.5 1.5 1.5 1.5-.6716 1.5-1.5-.672-1.5-1.5-1.5zm-3 1.5c0-1.6569 1.343-3 3-3s3 1.3431 3 3-1.343 3-3 3-3-1.3431-3-3z" fill-opacity=".5"/><path d="m144 16.5c.414 0 .75.3358.75.75v10.5c0 .4142-.336.75-.75.75s-.75-.3358-.75-.75v-10.5c0-.4142.336-.75.75-.75z" fill-opacity=".5"/><path d="m156 22.5c-.828 0-1.5.6716-1.5 1.5s.672 1.5 1.5 1.5 1.5-.6716 1.5-1.5-.672-1.5-1.5-1.5zm-3 1.5c0-1.6569 1.343-3 3-3s3 1.3431 3 3-1.343 3-3 3-3-1.3431-3-3z" fill-opacity=".5"/><path d="m144 16.5c.414 0 .75.3358.75.75 0 1.9083 1.098 3.3841 2.823 4.4194 1.737 1.0422 4.036 1.5806 6.177 1.5806.414 0 .75.3358.75.75s-.336.75-.75.75c-2.359 0-4.935-.5866-6.948-1.7944-2.025-1.2147-3.552-3.1139-3.552-5.7056 0-.4142.336-.75.75-.75z" fill-opacity=".5"/><path d="m24.5 58.2857c-.6904 0-1.25.5756-1.25 1.2857s.5596 1.2857 1.25 1.2857 1.25-.5756 1.25-1.2857-.5596-1.2857-1.25-1.2857zm-2.5 1.2857c0-1.4201 1.1193-2.5714 2.5-2.5714s2.5 1.1513 2.5 2.5714c0 1.4202-1.1193 2.5715-2.5 2.5715s-2.5-1.1513-2.5-2.5715z" fill-opacity=".3"/><path d="m24.5 71.1429c-.6904 0-1.25.5756-1.25 1.2857s.5596 1.2857 1.25 1.2857 1.25-.5756 1.25-1.2857-.5596-1.2857-1.25-1.2857zm-2.5 1.2857c0-1.4202 1.1193-2.5715 2.5-2.5715s2.5 1.1513 2.5 2.5715c0 1.4201-1.1193 2.5714-2.5 2.5714s-2.5-1.1513-2.5-2.5714z" fill-opacity=".3"/><path d="m24.5 60.8571c.3452 0 .625.2879.625.6429v9c0 .355-.2798.6429-.625.6429s-.625-.2879-.625-.6429v-9c0-.355.2798-.6429.625-.6429z" fill-opacity=".3"/><path d="m34.5 66c-.6904 0-1.25.5756-1.25 1.2857s.5596 1.2857 1.25 1.2857 1.25-.5756 1.25-1.2857-.5596-1.2857-1.25-1.2857zm-2.5 1.2857c0-1.4201 1.1193-2.5714 2.5-2.5714s2.5 1.1513 2.5 2.5714c0 1.4202-1.1193 2.5714-2.5 2.5714s-2.5-1.1512-2.5-2.5714z" fill-opacity=".3"/><path d="m24.5 60.8571c.3452 0 .625.2879.625.6429 0 1.6357.915 2.9007 2.3528 3.788 1.4475.8934 3.3627 1.3549 5.1472 1.3549.3452 0 .625.2878.625.6428 0 .3551-.2798.6429-.625.6429-1.9655 0-4.1128-.5028-5.7903-1.5381-1.6872-1.0412-2.9597-2.6691-2.9597-4.8905 0-.355.2798-.6429.625-.6429z" fill-opacity=".3"/><path d="m201.222 41.1429c-.613 0-1.111.5116-1.111 1.1428s.498 1.1429 1.111 1.1429c.614 0 1.111-.5117 1.111-1.1429s-.497-1.1428-1.111-1.1428zm-2.222 1.1428c0-1.2624.995-2.2857 2.222-2.2857 1.228 0 2.222 1.0233 2.222 2.2857s-.994 2.2857-2.222 2.2857c-1.227 0-2.222-1.0233-2.222-2.2857z" fill-opacity=".2"/><path d="m201.222 52.5714c-.613 0-1.111.5117-1.111 1.1429s.498 1.1428 1.111 1.1428c.614 0 1.111-.5116 1.111-1.1428s-.497-1.1429-1.111-1.1429zm-2.222 1.1429c0-1.2624.995-2.2857 2.222-2.2857 1.228 0 2.222 1.0233 2.222 2.2857s-.994 2.2857-2.222 2.2857c-1.227 0-2.222-1.0233-2.222-2.2857z" fill-opacity=".2"/><path d="m201.222 43.4286c.307 0 .556.2558.556.5714v8c0 .3156-.249.5714-.556.5714s-.555-.2558-.555-.5714v-8c0-.3156.248-.5714.555-.5714z" fill-opacity=".2"/><path d="m210.111 48c-.614 0-1.111.5117-1.111 1.1429 0 .6311.497 1.1428 1.111 1.1428s1.111-.5117 1.111-1.1428c0-.6312-.497-1.1429-1.111-1.1429zm-2.222 1.1429c0-1.2624.995-2.2858 2.222-2.2858s2.222 1.0234 2.222 2.2858c0 1.2623-.995 2.2857-2.222 2.2857s-2.222-1.0234-2.222-2.2857z" fill-opacity=".2"/><path d="m201.222 43.4286c.307 0 .556.2558.556.5714 0 1.454.813 2.5784 2.091 3.3671 1.287.7941 2.989 1.2043 4.575 1.2043.307 0 .556.2559.556.5715 0 .3155-.249.5714-.556.5714-1.747 0-3.655-.4469-5.146-1.3672-1.5-.9255-2.631-2.3725-2.631-4.3471 0-.3156.248-.5714.555-.5714z" fill-opacity=".2"/><path d="m254.222 24.1429c-.613 0-1.111.5116-1.111 1.1428s.498 1.1429 1.111 1.1429c.614 0 1.111-.5117 1.111-1.1429s-.497-1.1428-1.111-1.1428zm-2.222 1.1428c0-1.2624.995-2.2857 2.222-2.2857 1.228 0 2.222 1.0233 2.222 2.2857s-.994 2.2857-2.222 2.2857c-1.227 0-2.222-1.0233-2.222-2.2857z" fill-opacity=".7"/><path d="m254.222 35.5714c-.613 0-1.111.5117-1.111 1.1429s.498 1.1428 1.111 1.1428c.614 0 1.111-.5116 1.111-1.1428s-.497-1.1429-1.111-1.1429zm-2.222 1.1429c0-1.2624.995-2.2857 2.222-2.2857 1.228 0 2.222 1.0233 2.222 2.2857s-.994 2.2857-2.222 2.2857c-1.227 0-2.222-1.0233-2.222-2.2857z" fill-opacity=".7"/><path d="m254.222 26.4286c.307 0 .556.2558.556.5714v8c0 .3156-.249.5714-.556.5714s-.555-.2558-.555-.5714v-8c0-.3156.248-.5714.555-.5714z" fill-opacity=".7"/><path d="m263.111 31c-.614 0-1.111.5117-1.111 1.1429 0 .6311.497 1.1428 1.111 1.1428s1.111-.5117 1.111-1.1428c0-.6312-.497-1.1429-1.111-1.1429zm-2.222 1.1429c0-1.2624.995-2.2858 2.222-2.2858s2.222 1.0234 2.222 2.2858c0 1.2623-.995 2.2857-2.222 2.2857s-2.222-1.0234-2.222-2.2857z" fill-opacity=".7"/><path d="m254.222 26.4286c.307 0 .556.2558.556.5714 0 1.454.813 2.5784 2.091 3.3671 1.287.7941 2.989 1.2043 4.575 1.2043.307 0 .556.2559.556.5715 0 .3155-.249.5714-.556.5714-1.747 0-3.655-.4469-5.146-1.3672-1.5-.9255-2.631-2.3725-2.631-4.3471 0-.3156.248-.5714.555-.5714z" fill-opacity=".7"/><path d="m300-2.42857c-1.933 0-3.5 1.598982-3.5 3.57143 0 1.97244 1.567 3.57143 3.5 3.57143s3.5-1.59899 3.5-3.57143c0-1.972448-1.567-3.57143-3.5-3.57143zm-7 3.57143c0-3.94489 3.134-7.14286 7-7.14286s7 3.19797 7 7.14286-3.134 7.14285-7 7.14285-7-3.19796-7-7.14285z" fill-opacity=".7"/><path d="m300 33.2857c-1.933 0-3.5 1.599-3.5 3.5714 0 1.9725 1.567 3.5715 3.5 3.5715s3.5-1.599 3.5-3.5715c0-1.9724-1.567-3.5714-3.5-3.5714zm-7 3.5714c0-3.9448 3.134-7.1428 7-7.1428s7 3.198 7 7.1428c0 3.9449-3.134 7.1429-7 7.1429s-7-3.198-7-7.1429z" fill-opacity=".7"/><path d="m300 4.71429c.966 0 1.75.79949 1.75 1.78571v25c0 .9862-.784 1.7857-1.75 1.7857s-1.75-.7995-1.75-1.7857v-25c0-.98622.784-1.78571 1.75-1.78571z" fill-opacity=".7"/><path d="m328 19c-1.933 0-3.5 1.599-3.5 3.5714 0 1.9725 1.567 3.5715 3.5 3.5715s3.5-1.599 3.5-3.5715c0-1.9724-1.567-3.5714-3.5-3.5714zm-7 3.5714c0-3.9449 3.134-7.1428 7-7.1428s7 3.1979 7 7.1428-3.134 7.1429-7 7.1429-7-3.198-7-7.1429z" fill-opacity=".7"/><path d="m300 4.71429c.966 0 1.75.79949 1.75 1.78571 0 4.5436 2.562 8.0575 6.588 10.5223 4.053 2.4815 9.415 3.7634 14.412 3.7634.966 0 1.75.7995 1.75 1.7857 0 .9863-.784 1.7857-1.75 1.7857-5.503 0-11.516-1.3966-16.213-4.2723-4.724-2.8923-8.287-7.4142-8.287-13.5848 0-.98622.784-1.78571 1.75-1.78571z" fill-opacity=".7"/><path d="m360.333 34.2143c-.644 0-1.166.5436-1.166 1.2143 0 .6706.522 1.2143 1.166 1.2143.645 0 1.167-.5437 1.167-1.2143 0-.6707-.522-1.2143-1.167-1.2143zm-2.333 1.2143c0-1.3413 1.045-2.4286 2.333-2.4286 1.289 0 2.334 1.0873 2.334 2.4286 0 1.3412-1.045 2.4285-2.334 2.4285-1.288 0-2.333-1.0873-2.333-2.4285z" fill-opacity=".7"/><path d="m360.333 46.3571c-.644 0-1.166.5437-1.166 1.2143 0 .6707.522 1.2143 1.166 1.2143.645 0 1.167-.5436 1.167-1.2143 0-.6706-.522-1.2143-1.167-1.2143zm-2.333 1.2143c0-1.3412 1.045-2.4285 2.333-2.4285 1.289 0 2.334 1.0873 2.334 2.4285 0 1.3413-1.045 2.4286-2.334 2.4286-1.288 0-2.333-1.0873-2.333-2.4286z" fill-opacity=".7"/><path d="m360.333 36.6429c.322 0 .584.2718.584.6071v8.5c0 .3353-.262.6071-.584.6071s-.583-.2718-.583-.6071v-8.5c0-.3353.261-.6071.583-.6071z" fill-opacity=".7"/><path d="m369.667 41.5c-.645 0-1.167.5437-1.167 1.2143s.522 1.2143 1.167 1.2143c.644 0 1.166-.5437 1.166-1.2143s-.522-1.2143-1.166-1.2143zm-2.334 1.2143c0-1.3413 1.045-2.4286 2.334-2.4286 1.288 0 2.333 1.0873 2.333 2.4286 0 1.3412-1.045 2.4286-2.333 2.4286-1.289 0-2.334-1.0874-2.334-2.4286z" fill-opacity=".7"/><path d="m360.333 36.6429c.322 0 .584.2718.584.6071 0 1.5448.854 2.7395 2.196 3.5776 1.351.8437 3.138 1.2795 4.804 1.2795.322 0 .583.2719.583.6072s-.261.6071-.583.6071c-1.835 0-3.839-.4748-5.405-1.4526-1.574-.9833-2.762-2.5208-2.762-4.6188 0-.3353.261-.6071.583-.6071z" fill-opacity=".7"/></g></g></svg>');
+
+    .atk-auth-dialog-title {
+      padding-top: 50px;
+      color: #361e6a;
+    }
+
+    .atk-text:first-of-type {
+      color: #472a84;
+    }
+  }
+
+  /* Merge Tool */
+  .atk-merge-confirm-page {
+    padding: 15px 35px 30px 35px;
+
+    .atk-text {
+      font-size: 16px;
+      color: var(--at-color-font);
+      margin-bottom: 20px;
+    }
+
+    .atk-usernames {
+      display: flex;
+      flex-direction: column;
+      color: var(--at-color-font);
+      margin-bottom: 20px;
+
+      .atk-item {
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin: 5px 0;
+        display: flex;
+        justify-content: space-between;
+        place-items: center;
+        cursor: pointer;
+        border: 1px solid var(--at-color-border);
+
+        &.active {
+          background: var(--at-color-bg-grey);
+        }
+
+        .atk-username {
+          flex: auto;
+          text-align: center;
+        }
+      }
+    }
+
+    .atk-dialog-footer {
+      display: flex;
+      justify-content: space-between;
+      place-items: center;
+      margin-top: 20px;
+
+      .atk-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 10px;
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.9;
+        }
+
+        &.atk-btn-no {
+          background: var(--at-color-bg-grey);
+          color: var(--at-color-font);
+        }
+
+        &.atk-btn-yes {
+          background: var(--at-color-main);
+          color: var(--at-color-bg);
+
+          &.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+}
+
+.atk-main-editor {
+  .atk-editor-user-wrap {
+    margin-top: 10px;
+
+    .atk-editor-user {
+      display: inline-flex;
+      flex-direction: row;
+      place-items: center;
+      cursor: pointer;
+      border-radius: 3px;
+      padding: 0 10px;
+
+      .atk-user-btn {
+        display: flex;
+        place-items: center;
+        justify-content: center;
+        padding: 5px;
+        border-radius: 3px;
+
+        &:hover {
+          background: var(--at-color-bg-grey-transl);
+        }
+
+        &:not(:last-child) {
+          margin-right: 5px;
+        }
+      }
+
+      .atk-user-profile-btn {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .atk-name {
+        color: var(--at-color-font);
+      }
+
+      .atk-avatar {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 15px;
+        background-position: center;
+        background-size: cover;
+        background-color: #d5d5d5;
+      }
+
+      .atk-logout {
+        height: 100%;
+        color: var(--at-color-font);
+        font-size: 1.3em;
+        display: flex;
+        place-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}

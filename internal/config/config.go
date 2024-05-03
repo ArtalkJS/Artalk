@@ -28,6 +28,7 @@ type Config struct {
 	IPRegion       IPRegionConf           `koanf:"ip_region" json:"ip_region"`             // IP 属地展示
 	ImgUpload      ImgUploadConf          `koanf:"img_upload" json:"img_upload"`           // 图片上传
 	AdminNotify    AdminNotifyConf        `koanf:"admin_notify" json:"admin_notify"`       // 其他通知方式
+	Auth           AuthConf               `koanf:"auth" json:"auth"`                       // Social Login
 	Frontend       map[string]interface{} `koanf:"frontend" json:"frontend"`
 
 	// deprecated options
@@ -354,4 +355,102 @@ type NotifyLINEConf struct {
 type NotifyWebHookConf struct {
 	Enabled bool   `koanf:"enabled" json:"enabled"`
 	URL     string `koanf:"url" json:"url"`
+}
+
+type AuthEmailConf struct {
+	Enabled       bool   `koanf:"enabled" json:"enabled"`
+	VerifySubject string `koanf:"verify_subject" json:"verify_subject"`
+	VerifyTpl     string `koanf:"verify_tpl" json:"verify_tpl"`
+}
+
+type AuthConf struct {
+	Enabled   bool          `koanf:"enabled" json:"enabled"`
+	Anonymous bool          `koanf:"anonymous" json:"anonymous"`
+	Callback  string        `koanf:"callback" json:"callback"`
+	Email     AuthEmailConf `koanf:"email" json:"email"`
+	Github    struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"github" json:"github"`
+	Gitlab struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"gitlab" json:"gitlab"`
+	Gitea struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"gitea" json:"gitea"`
+	Google struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"google" json:"google"`
+	Mastodon struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"mastodon" json:"mastodon"`
+	Twitter struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"twitter" json:"twitter"`
+	Facebook struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"facebook" json:"facebook"`
+	Discord struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"discord" json:"discord"`
+	Steam struct {
+		Enabled bool   `koanf:"enabled" json:"enabled"`
+		ApiKey  string `koanf:"api_key" json:"api_key"`
+	} `koanf:"steam" json:"steam"`
+	Apple struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"apple" json:"apple"`
+	Microsoft struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"microsoft" json:"microsoft"`
+	Wechat struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"wechat" json:"wechat"`
+	Tiktok struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"tiktok" json:"tiktok"`
+	Slack struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"slack" json:"slack"`
+	Line struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"line" json:"line"`
+	Patreon struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+	} `koanf:"patreon" json:"patreon"`
+	Auth0 struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+		Domain       string `koanf:"domain" json:"domain"`
+	} `koanf:"auth0" json:"auth0"`
 }

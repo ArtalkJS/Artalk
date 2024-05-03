@@ -63,6 +63,8 @@
 "Username": "用户名"
 "Verification failed": "验证失败"
 "Wrong captcha": "验证码错误"
+"Your Code - {{code}}": "您的验证码 - {{code}}"
+"Your code is: {{code}}. Use it to verify your email and sign in Artalk. If you didn't request this, simply ignore this message.": "您的验证码是：{{code}}。请使用它来验证您的电子邮件并登录到 Artalk。如果您没有请求此操作，请忽略此消息。"
 "{{count}} items imported": "已导入 {{count}} 个项目"
 "{{done}} of {{total}} done": "已完成 {{done}} 共 {{total}} 个"
 "{{name}} already exists": "{{name}}已存在"

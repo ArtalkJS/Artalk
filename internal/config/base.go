@@ -141,6 +141,13 @@ func (conf *Config) normalPatch() {
 	} else {
 		*conf.HTTP.ProxyHeader = strings.TrimSpace(*conf.HTTP.ProxyHeader)
 	}
+
+	// 社交登录配置
+	if conf.Auth.Enabled && strings.TrimSpace(conf.Auth.Callback) == "" {
+		callbackURL := "http://localhost:23366/api/v2/auth/:provider/callback"
+		log.Warn("[SocialLogin] config `auth.callback` is not set, now it is: ", strconv.Quote(callbackURL))
+		conf.Auth.Callback = callbackURL
+	}
 }
 
 // 多语言配置修补

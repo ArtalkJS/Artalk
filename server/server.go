@@ -86,6 +86,13 @@ func Serve(app *core.App) (*fiber.App, error) {
 		// captcha
 		h.Captcha(app, api)
 
+		// auth
+		h.AuthEmailLogin(app, api)
+		h.AuthEmailRegister(app, api)
+		h.AuthEmailSend(app, api)
+
+		h.AuthSocialLogin(app, api)
+
 		// user
 		h.UserInfo(app, api)
 		h.UserLogin(app, api)

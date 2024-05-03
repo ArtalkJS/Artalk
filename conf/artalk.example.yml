@@ -282,6 +282,108 @@ admin_notify:
       - USER_ID_1
       - GROUP_ID_1
 
+# Social Login
+auth:
+  # Enable Social Login
+  enabled: false
+  # Allow anonymous commenting (Allow skipping verification, only fill in an anonymous nickname and email)
+  anonymous: true
+  # Callback URL (https://example.com/api/v2/auth/{provider}/callback)
+  callback: "http://localhost:23366/api/v2/auth/{provider}/callback"
+  # Email
+  email:
+    # Enable email password login
+    enabled: true
+    # Verification email subject
+    verify_subject: "Your Code - {{code}}"
+    # Verification email template (set to file path to use custom template)
+    verify_tpl: default
+  # GitHub
+  github:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # GitLab
+  gitlab:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Gitea
+  gitea:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Google
+  google:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Mastodon
+  mastodon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Twitter
+  twitter:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Facebook
+  facebook:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Discord
+  discord:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Steam
+  steam:
+    enabled: false
+    api_key: ""
+  # Apple
+  apple:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Microsoft
+  microsoft:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # WeChat
+  wechat:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Tiktok
+  tiktok:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Slack
+  slack:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Line
+  line:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Patreon
+  patreon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Auth0
+  auth0:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    domain: ""
+
 # UI Settings
 frontend:
   # Comment box placeholder

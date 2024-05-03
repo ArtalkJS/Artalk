@@ -141,8 +141,84 @@ admin_notify:
     channel_secret: ""
     channel_access_token: ""
     receivers:
-      - USER_ID_1
-      - GROUP_ID_1
+      - "USER_ID_1"
+      - "GROUP_ID_1"
+auth:
+  enabled: false
+  anonymous: true
+  callback: "http://localhost:23366/api/v2/auth/{provider}/callback"
+  email:
+    enabled: true
+    verify_subject: "Your Code - {{code}}"
+    verify_tpl: default
+  github:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  gitlab:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  gitea:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  google:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  mastodon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  twitter:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  facebook:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  discord:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  steam:
+    enabled: false
+    api_key: ""
+  apple:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  microsoft:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  wechat:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  tiktok:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  slack:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  line:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  patreon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  auth0:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    domain: ""
 frontend:
   placeholder: ""
   noComment: ""

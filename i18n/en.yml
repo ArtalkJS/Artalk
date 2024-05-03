@@ -63,6 +63,8 @@
 "Username": ""
 "Verification failed": ""
 "Wrong captcha": ""
+"Your Code - {{code}}": ""
+"Your code is: {{code}}. Use it to verify your email and sign in Artalk. If you didn't request this, simply ignore this message.": ""
 "{{count}} items imported": ""
 "{{done}} of {{total}} done": ""
 "{{name}} already exists": ""

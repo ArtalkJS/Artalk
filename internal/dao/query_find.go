@@ -277,3 +277,21 @@ func (dao *Dao) IsAdminUserByNameEmail(name string, email string) bool {
 }
 
 //#endregion
+
+func (dao *Dao) FindAuthIdentityByToken(provider string, token string) entity.AuthIdentity {
+	var identity entity.AuthIdentity
+	dao.DB().Where("provider = ? AND token = ?", provider, token).First(&identity)
+	return identity
+}
+
+func (dao *Dao) FindAuthIdentityByRemoteUID(provider string, remoteUID string) entity.AuthIdentity {
+	var identity entity.AuthIdentity
+	dao.DB().Where("provider = ? AND remote_uid = ?", provider, remoteUID).First(&identity)
+	return identity
+}
+
+func (dao *Dao) FindAuthIdentityByUserID(provider string, userID uint) entity.AuthIdentity {
+	var identity entity.AuthIdentity
+	dao.DB().Where("provider = ? AND user_id = ?", provider, userID).First(&identity)
+	return identity
+}

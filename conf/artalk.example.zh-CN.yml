@@ -287,6 +287,108 @@ admin_notify:
       - USER_ID_1
       - GROUP_ID_1
 
+# 社交登录
+auth:
+  # 启用社交登录
+  enabled: false
+  # 允许匿名评论 (允许跳过验证，仅填写匿名的昵称和邮箱)
+  anonymous: true
+  # 回调地址 (https://example.com/api/v2/auth/{provider}/callback)
+  callback: "http://localhost:23366/api/v2/auth/{provider}/callback"
+  # Email
+  email:
+    # 启用邮箱密码登录
+    enabled: true
+    # 邮箱验证邮件标题
+    verify_subject: "您的验证码是 - {{code}}"
+    # 邮箱验证邮件模板 (填入文件路径使用自定义模板)
+    verify_tpl: default
+  # GitHub
+  github:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # GitLab
+  gitlab:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Gitea
+  gitea:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Google
+  google:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Mastodon
+  mastodon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Twitter
+  twitter:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Facebook
+  facebook:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Discord
+  discord:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Steam
+  steam:
+    enabled: false
+    api_key: ""
+  # Apple
+  apple:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Microsoft
+  microsoft:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # 微信
+  wechat:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Tiktok
+  tiktok:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Slack
+  slack:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Line
+  line:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Patreon
+  patreon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Auth0
+  auth0:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    domain: ""
+
 # 界面配置
 frontend:
   # 评论框占位文字

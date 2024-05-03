@@ -108,19 +108,29 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		}
 
 		// find user
-		user, err := app.Dao().FindCreateUser(p.Name, p.Email, p.Link)
-		if err != nil || page.Key == "" {
-			log.Error("Cannot get user or page")
+		isVerified := true
+		user, err := common.GetUserByReq(app, c)
+		if errors.Is(err, common.ErrTokenNotProvided) {
+			// Anonymous user
+			isVerified = false
+			user, err = app.Dao().FindCreateUser(p.Name, p.Email, p.Link)
+			if err != nil {
+				log.Error("[CommentCreate] Create user error: ", err)
+				return common.RespError(c, 500, i18n.T("Comment failed"))
+			}
+
+			// Update user
+			user.Link = p.Link
+			user.LastIP = ip
+			user.LastUA = ua
+			user.Name = p.Name // for 若用户修改用户名大小写
+			user.Email = p.Email
+			app.Dao().UpdateUser(&user)
+		} else if err != nil {
+			// Login user error
+			log.Error("[CommentCreate] Get user error: ", err)
 			return common.RespError(c, 500, i18n.T("Comment failed"))
 		}
-
-		// update user
-		user.Link = p.Link
-		user.LastIP = ip
-		user.LastUA = ua
-		user.Name = p.Name // for 若用户修改用户名大小写
-		user.Email = p.Email
-		app.Dao().UpdateUser(&user)
 
 		comment := entity.Comment{
 			Content:  p.Content,
@@ -137,6 +147,7 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			IsPending:   false,
 			IsCollapsed: false,
 			IsPinned:    false,
+			IsVerified:  isVerified,
 		}
 
 		// default comment type

@@ -90,6 +90,8 @@ func Serve(app *core.App) (*fiber.App, error) {
 		h.AuthEmailLogin(app, api)
 		h.AuthEmailRegister(app, api)
 		h.AuthEmailSend(app, api)
+		h.AuthMergeApply(app, api)
+		h.AuthMergeCheck(app, api)
 
 		h.AuthSocialLogin(app, api)
 

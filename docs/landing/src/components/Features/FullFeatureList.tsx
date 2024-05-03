@@ -1,9 +1,10 @@
 import React from 'react'
-import { TbLayoutSidebarRightExpandFilled, TbMailFilled, TbEyeFilled, TbTransformFilled, TbLocationFilled, TbCardsFilled, TbPhotoSearch, TbMath, TbPlug, TbLanguage, TbTerminal, TbApi } from 'react-icons/tb'
+import { TbLayoutSidebarRightExpandFilled, TbMailFilled, TbEyeFilled, TbTransformFilled, TbLocationFilled, TbCardsFilled, TbPhotoSearch, TbMath, TbPlug, TbLanguage, TbTerminal, TbApi, TbSocial } from 'react-icons/tb'
 import { BiSolidNotification, BiSolidBadgeCheck } from 'react-icons/bi'
-import { RiRobot2Fill, RiUpload2Fill } from 'react-icons/ri'
+import { RiLoader4Fill, RiRobot2Fill, RiUpload2Fill } from 'react-icons/ri'
 import { BsFillShieldLockFill } from 'react-icons/bs'
 import { PiSmileyWinkBold } from 'react-icons/pi'
+import { GrUpgrade } from 'react-icons/gr'
 
 interface FuncItem {
   icon: React.ReactNode
@@ -44,6 +45,12 @@ const FuncList: FuncItem[] = [
     link: 'https://artalk.js.org/guide/backend/moderator.html'
   },
   {
+    icon: <TbSocial />,
+    name: '社交登录',
+    desc: 'GitHub 等多种登录方式',
+    link: 'https://artalk.js.org/guide/frontend/auth.html'
+  },
+  {
     icon: <RiUpload2Fill />,
     name: '图片上传',
     desc: '自定义上传、支持图床',
@@ -80,16 +87,22 @@ const FuncList: FuncItem[] = [
     link: 'https://artalk.js.org/guide/transfer.html'
   },
   {
-    icon: <TbLocationFilled />,
-    name: 'IP 属地',
-    desc: '用户 IP 属地展示',
-    link: 'https://artalk.js.org/guide/frontend/ip-region.html'
+    icon: <RiLoader4Fill />,
+    name: '图片懒加载',
+    desc: '延迟加载图片，优化体验',
+    link: 'https://artalk.js.org/guide/frontend/img-lazy-load.html'
   },
   {
     icon: <TbPhotoSearch />,
     name: '图片灯箱',
     desc: '快速集成图片灯箱',
     link: 'https://artalk.js.org/guide/frontend/lightbox.html'
+  },
+  {
+    icon: <TbLocationFilled />,
+    name: 'IP 属地',
+    desc: '用户 IP 属地展示',
+    link: 'https://artalk.js.org/guide/frontend/ip-region.html'
   },
   {
     icon: <TbMath />,
@@ -121,6 +134,12 @@ const FuncList: FuncItem[] = [
     desc: '提供 OpenAPI 格式文档',
     link: 'https://artalk.js.org/develop/'
   },
+  {
+    icon: <GrUpgrade />,
+    name: '程序升级',
+    desc: '版本检测，一键升级',
+    link: 'https://artalk.js.org/guide/backend/update.html'
+  }
 ]
 
 export const FullFeatureList: React.FC = () => {

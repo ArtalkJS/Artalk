@@ -18,8 +18,9 @@
 
   - Markdown 语法 + 代码高亮
   - [通知中心](./frontend/sidebar.md) - 站内：侧边栏 + 红点标记
-  - [多形式推送](./backend/admin_notify.md) - 站外：邮件、TG、钉钉、飞书 + 异步执行
+  - [多元推送](./backend/admin_notify.md) - 站外：邮件、TG、钉钉、飞书 + 异步执行
   - [评论审核](./backend/moderator.md)：折叠 / 反垃圾 / 频率限制 / 滑动验证
+  - [社交登录](./frontend/auth.md)：邮箱密码、GitHub、Google 等多种登录方式
   - [多站点](./backend/multi-site.md)：共用同一个后端程序，多站点集中化管理
   - [表情包](./frontend/emoticons.md)：支持 OwO 格式 + 动态加载
   - [Artrans](./transfer.md)：评论数据快速迁移 (导入 / 导出) 工具

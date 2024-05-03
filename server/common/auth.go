@@ -93,7 +93,7 @@ func GetUserByReq(app *core.App, c *fiber.Ctx) (entity.User, error) {
 	}
 
 	// check tokenValidFrom
-	if user.TokenValidFrom.Valid && user.TokenValidFrom.Time.After(time.Unix(claims.IssuedAt, 0)) {
+	if user.TokenValidFrom.Valid && claims.IssuedAt < user.TokenValidFrom.Time.Unix() {
 		return entity.User{}, ErrTokenInvalidFromDate
 	}
 

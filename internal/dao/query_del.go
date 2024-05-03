@@ -119,3 +119,17 @@ func (dao *Dao) DelUser(user *entity.User) error {
 
 	return nil
 }
+
+func (dao *Dao) DelAuthIdentity(authIdentity *entity.AuthIdentity) error {
+	err := dao.DB().Unscoped().Delete(&authIdentity).Error
+	if err != nil {
+		return err
+	}
+
+	// TODO 删除缓存
+	// dao.CacheAction(func(cache *DaoCache) {
+	// 	cache.AuthIdentityCacheDel(authIdentity)
+	// })
+
+	return nil
+}

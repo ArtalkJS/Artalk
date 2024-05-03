@@ -63,6 +63,8 @@
 "Username": "ユーザー名"
 "Verification failed": "検証失敗"
 "Wrong captcha": "間違ったキャプチャ"
+"Your Code - {{code}}": "あなたのコード - {{code}}"
+"Your code is: {{code}}. Use it to verify your email and sign in Artalk. If you didn't request this, simply ignore this message.": "あなたのコードは: {{code}} です。これを使用してメールを確認し、Artalk にサインインしてください。これをリクエストしていない場合は、このメッセージを単に無視してください。"
 "{{count}} items imported": "{{count}}アイテムがインポートされました"
 "{{done}} of {{total}} done": "{{done}} / {{total}} 完了"
 "{{name}} already exists": "{{name}}はすでに存在します"

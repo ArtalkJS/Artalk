@@ -63,6 +63,8 @@
 "Username": "Nom d'utilisateur"
 "Verification failed": "Échec de la vérification"
 "Wrong captcha": "Mauvais captcha"
+"Your Code - {{code}}": "Votre code - {{code}}"
+"Your code is: {{code}}. Use it to verify your email and sign in Artalk. If you didn't request this, simply ignore this message.": "Votre code est : {{code}}. Utilisez-le pour vérifier votre e-mail et vous connecter à Artalk. Si vous n'avez pas demandé cela, ignorez simplement ce message."
 "{{count}} items imported": "{{count}} articles importés"
 "{{done}} of {{total}} done": "{{done}} de {{total}} fait"
 "{{name}} already exists": "{{name}} existe déjà"

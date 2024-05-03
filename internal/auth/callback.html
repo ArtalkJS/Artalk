@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Artalk Auth</title>
+    <meta name="referrer" content="no-referrer" />
+    <script>
+      // listen post message passed from parent window
+      var callbackOrigin = ''
+      window.addEventListener('message', function (e) {
+        if (e.data.type === 'ATK_LOGIN' && !callbackOrigin) {
+          callbackOrigin = e.origin
+          checkAndCallback()
+        }
+      })
+      // check if trusted origin and callback
+      function checkAndCallback() {
+        if (!callbackOrigin) return
+
+        fetch('../../conf/domain?url=' + encodeURIComponent(callbackOrigin))
+          .then(function (res) {
+            return res.json()
+          })
+          .then(function (data) {
+            if (data.is_trusted === true) {
+              // callback token to parent window
+              window.opener.postMessage(
+                { type: 'ATK_AUTH_CALLBACK', payload: '{{.token}}' },
+                callbackOrigin,
+              )
+              window.close()
+            } else {
+              console.error('Untrusted callback origin:', callbackOrigin)
+              document.body.innerHTML = '<h1 style="color:red">⚠️ Untrusted callback origin</h1>'
+            }
+          })
+          .catch(function (err) {
+            console.error('Request failed:', err)
+            document.body.innerHTML = '<h1>Request failed</h1>'
+          })
+      }
+    </script>
+    <style>
+      body {
+        height: 100vh;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        text-align: center;
+      }
+      .atk-loading {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        place-items: center;
+      }
+      .atk-loading-spinner {
+        position: relative;
+        width: 50px;
+        height: 50px;
+      }
+      .atk-loading-spinner svg {
+        animation: atkRotate 2s linear infinite;
+        transform-origin: center center;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .atk-loading-spinner circle {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+        animation:
+          atkDash 1.5s ease-in-out infinite,
+          atkColor 6s ease-in-out infinite;
+        stroke-linecap: round;
+      }
+      @keyframes atkRotate {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes atkDash {
+        0% {
+          stroke-dasharray: 1, 200;
+          stroke-dashoffset: 0;
+        }
+        50% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -35px;
+        }
+        100% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -124px;
+        }
+      }
+      @keyframes atkColor {
+        0%,
+        100% {
+          stroke: #ff5652;
+        }
+        40% {
+          stroke: #2196f3;
+        }
+        66% {
+          stroke: #32c787;
+        }
+        80%,
+        90% {
+          stroke: #ffc107;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="atk-loading">
+      <div class="atk-loading-spinner">
+        <svg viewBox="25 25 50 50">
+          <circle
+            cx="50"
+            cy="50"
+            r="20"
+            fill="none"
+            stroke-width="2"
+            stroke-miterlimit="10"
+          ></circle>
+        </svg>
+      </div>
+    </div>
+  </body>
+</html>

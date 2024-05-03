@@ -63,6 +63,8 @@
 "Username": "Имя пользователя"
 "Verification failed": "Ошибка верификации"
 "Wrong captcha": "Неверная капча"
+"Your Code - {{code}}": "Ваш код - {{code}}"
+"Your code is: {{code}}. Use it to verify your email and sign in Artalk. If you didn't request this, simply ignore this message.": "Ваш код: {{code}}. Используйте его для подтверждения своего адреса электронной почты и входа в Artalk. Если вы не запрашивали это, просто проигнорируйте это сообщение."
 "{{count}} items imported": "{{count}} элементов импортировано"
 "{{done}} of {{total}} done": "{{done}} из {{total}} выполнено"
 "{{name}} already exists": "{{name}} уже существует"

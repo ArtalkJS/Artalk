@@ -68,3 +68,15 @@ func (dao *Dao) UserNotifyMarkAllAsRead(userID uint) error {
 
 	return nil
 }
+
+func (dao *Dao) UpdateAuthIdentity(authIdentity *entity.AuthIdentity) error {
+	err := dao.DB().Save(authIdentity).Error
+	if err != nil {
+		log.Error("Update AuthIdentity error: ", err)
+	}
+	// TODO: 更新缓存
+	// dao.CacheAction(func(cache *DaoCache) {
+	// 	cache.AuthIdentityCacheSave(authIdentity)
+	// })
+	return err
+}

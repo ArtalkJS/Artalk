@@ -139,3 +139,17 @@ func (dao *Dao) NewVote(targetID uint, voteType entity.VoteType, userID uint, ua
 
 	return vote, err
 }
+
+func (dao *Dao) CreateAuthIdentity(identity *entity.AuthIdentity) error {
+	err := dao.DB().Create(&identity).Error
+	if err != nil {
+		return err
+	}
+
+	// TODO
+	// dao.CacheAction(func(cache *DaoCache) {
+	// 	cache.AuthIdentityCacheSave(identity)
+	// })
+
+	return nil
+}

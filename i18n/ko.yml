@@ -63,6 +63,8 @@
 "Username": "사용자 이름"
 "Verification failed": "검증 실패"
 "Wrong captcha": "잘못된 Captcha"
+"Your Code - {{code}}": "당신의 코드 - {{code}}"
+"Your code is: {{code}}. Use it to verify your email and sign in Artalk. If you didn't request this, simply ignore this message.": "당신의 코드는 다음과 같습니다: {{code}}. 이를 사용하여 이메일을 확인하고 Artalk에 로그인하세요. 요청하지 않은 경우 이 메시지를 무시하십시오."
 "{{count}} items imported": "{{count}}개 항목 가져옴"
 "{{done}} of {{total}} done": "{{total}} 중 {{done}} 완료"
 "{{name}} already exists": "{{name}}이(가) 이미 존재합니다"

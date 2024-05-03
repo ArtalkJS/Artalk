@@ -100,6 +100,7 @@ export default defineConfig({
             { text: '侧边栏', link: '/guide/frontend/sidebar.md' },
             { text: '邮件通知', link: '/guide/backend/email.md' },
             { text: '多元推送', link: '/guide/backend/admin_notify.md' },
+            { text: '社交登录', link: '/guide/frontend/auth.md' },
             { text: '评论审核', link: '/guide/backend/moderator.md' },
             { text: '验证码', link: '/guide/backend/captcha.md' },
             { text: '图片上传', link: '/guide/backend/img-upload.md' },

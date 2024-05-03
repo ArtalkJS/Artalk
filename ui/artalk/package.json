@@ -121,6 +121,6 @@
     "abortcontroller-polyfill": "^1.7.5",
     "hanabi": "^0.4.0",
     "insane": "^2.6.2",
-    "marked": "^12.0.1"
+    "marked": "^12.0.2"
   }
 }

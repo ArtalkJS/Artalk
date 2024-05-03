@@ -104,6 +104,7 @@ func (dao *Dao) FindUserIdsByEmail(email string) []uint {
 	var userIds = []uint{}
 
 	// 查询缓存
+	// TODO: Cache not delete after merged user account
 	dao.QueryDBWithCache(fmt.Sprintf(UserIDByEmailKey, strings.ToLower(email)), &userIds, func() {
 		dao.DB().Model(&entity.User{}).Where("LOWER(email) = LOWER(?)", email).Pluck("id", &userIds)
 	})

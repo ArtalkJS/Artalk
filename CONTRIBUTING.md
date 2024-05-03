@@ -6,7 +6,8 @@ This guide is for developers who want to contribute to the project.
 
 To develop Artalk, including the frontend and backend, you need to install the following tools:
 
-- [Node.js](https://nodejs.org/en/) (>= 20.12.1)
+- [Node.js](https://nodejs.org/en/) (>= 20.12.2)
+- [PNPM](https://pnpm.io/) (>= 9.0.6)
 - [Go](https://golang.org/) (>= 1.22)
 - [Docker](https://www.docker.com/) (>= 20.10.0) (optional)
 - [Docker Compose](https://docs.docker.com/compose/) (>= 1.29.0) (optional)

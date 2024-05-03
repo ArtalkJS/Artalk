@@ -30,7 +30,9 @@ func (ipRegion *IPRegion) IP2Region(ip string) string {
 	ip = ipScraper(ip)
 	region, err := search(ip, ipRegion.conf.DBPath, ipRegion.conf.CacheEnabled)
 	if err != nil {
-		log.Warn("[IP2Region] ", err)
+		if !strings.HasPrefix(err.Error(), "invalid ip address") {
+			log.Warn("[IP2Region] ", err)
+		}
 		return ""
 	}
 

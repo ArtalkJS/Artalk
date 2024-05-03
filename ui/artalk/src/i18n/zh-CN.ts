@@ -5,6 +5,8 @@ const zhCN: I18n = {
   placeholder: '键入内容...',
   noComment: '「此时无声胜有声」',
   send: '发送',
+  signIn: '登录',
+  signUp: '注册',
   save: '保存',
   nick: '昵称',
   email: '邮箱',
@@ -68,7 +70,27 @@ const zhCN: I18n = {
   /* Sidebar */
   msgCenter: '通知中心',
   ctrlCenter: '控制中心',
+
+  /* Auth */
+  noAccountPrompt: '没有账号？',
+  haveAccountPrompt: '已有账号？',
+  forgetPassword: '忘记密码',
+  resetPassword: '重置密码',
+  verificationCode: '验证码',
+  verifySend: '发送验证码',
+  verifyResend: '重新发送',
+  waitSeconds: '等待 {seconds}秒',
   emailVerified: '邮箱已验证',
+  password: '密码',
+  username: '用户名',
+  nextStep: '下一步',
+  skipNotVerify: '跳过，不验证',
+  logoutConfirm: '确定要退出登录吗？',
+  accountMergeNotice: '您的电子邮件下有多个不同 ID 的账户。',
+  accountMergeSelectOne: '请选择将所有数据合并到其中的一个。',
+  accountMergeConfirm: '所有数据将合并到 ID 为 {id} 的账户中。',
+  dismiss: '忽略',
+  merge: '合并',
 
   /* General */
   frontend: '前端',

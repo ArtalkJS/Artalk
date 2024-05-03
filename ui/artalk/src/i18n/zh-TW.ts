@@ -5,6 +5,8 @@ export default defineLocaleExternal('zh-TW', {
   placeholder: '輸入內容...',
   noComment: '「此時無聲勝有聲」',
   send: '發送',
+  signIn: '登入',
+  signUp: '註冊',
   save: '保存',
   nick: '暱稱',
   email: '電子郵件',
@@ -68,7 +70,27 @@ export default defineLocaleExternal('zh-TW', {
   /* Sidebar */
   msgCenter: '通知中心',
   ctrlCenter: '控制中心',
+
+  /* Auth */
+  noAccountPrompt: '沒有帳號？',
+  haveAccountPrompt: '已有帳號？',
+  forgetPassword: '忘記密碼',
+  resetPassword: '重置密碼',
+  verificationCode: '驗證碼',
+  verifySend: '發送驗證碼',
+  verifyResend: '重新發送',
+  waitSeconds: '等待 {seconds}秒',
   emailVerified: '郵箱已驗證',
+  password: '密碼',
+  username: '用戶名',
+  nextStep: '下一步',
+  skipNotVerify: '跳過，不驗證',
+  logoutConfirm: '確定要登出嗎？',
+  accountMergeNotice: '您的電子郵件下有多個不同 ID 的帳戶。',
+  accountMergeSelectOne: '請選擇要將所有數據合併到其中的一個。',
+  accountMergeConfirm: '所有數據將合併到 ID 為 {id} 的帳戶中。',
+  dismiss: '忽略',
+  merge: '合併',
 
   /* General */
   frontend: '前端',

@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>plugin-auth</title>
+  </head>
+  <body>
+    <div id="comments"></div>
+
+    <script type="module">
+      import Artalk from 'artalk'
+      import './main.tsx'
+      import 'artalk/dist/Artalk.css'
+
+      var artalk = Artalk.init({
+        el: '#comments',
+        pageKey: 'https://artalk.js.org/',
+        pageTitle: 'Artalk Home',
+        server: import.meta.env.DEV ? 'http://localhost:23366' : 'https://artalk.qwqaq.com',
+        site: 'ArtalkDocs',
+      })
+    </script>
+  </body>
+</html>

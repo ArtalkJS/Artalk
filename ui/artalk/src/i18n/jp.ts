@@ -7,6 +7,8 @@ export default defineLocaleExternal(
     placeholder: '内容を入力してください...',
     noComment: 'コメントなし',
     send: 'コメントを送信',
+    signIn: 'サインイン',
+    signUp: 'サインアップ',
     save: 'コメントを保存',
     nick: 'ニックネーム',
     email: 'Eメール',
@@ -70,7 +72,27 @@ export default defineLocaleExternal(
     /* Sidebar */
     msgCenter: '通知センター',
     ctrlCenter: 'コントロールセンター',
+
+    /* Auth */
+    noAccountPrompt: 'アカウントがありませんか？',
+    haveAccountPrompt: 'アカウントをお持ちですか？',
+    forgetPassword: 'パスワードを忘れた',
+    resetPassword: 'パスワードをリセット',
+    verificationCode: '検証コード',
+    verifySend: '検証',
+    verifyResend: '再送信',
+    waitSeconds: '{seconds}秒待つ',
     emailVerified: 'メールアドレスが確認されました',
+    password: 'パスワード',
+    username: 'ユーザー名',
+    nextStep: '次のステップ',
+    skipNotVerify: 'スキップ、検証しない',
+    logoutConfirm: 'ログアウトしてもよろしいですか？',
+    accountMergeNotice: 'あなたのメールには異なるIDを持つ複数のアカウントがあります。',
+    accountMergeSelectOne: 'すべてのデータを統合するアカウントを選択してください。',
+    accountMergeConfirm: 'すべてのデータは1つのアカウントに統合されます。そのIDは{id}です。',
+    dismiss: '閉じる',
+    merge: '統合する',
 
     /* General */
     frontend: 'フロントエンド',

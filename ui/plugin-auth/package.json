@@ -1,0 +1,40 @@
+{
+  "name": "@artalk/plugin-auth",
+  "version": "0.0.1",
+  "license": "LGPL-3.0-only",
+  "description": "Auth plugin for artalk",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/artalk-plugin-auth.js",
+  "module": "./dist/artalk-plugin-auth.mjs",
+  "types": "./dist/artalk-plugin-auth.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/artalk-plugin-auth.d.ts",
+        "default": "./dist/artalk-plugin-auth.mjs"
+      },
+      "require": {
+        "types": "./dist/artalk-plugin-auth.d.cts",
+        "default": "./dist/artalk-plugin-auth.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "prepublish": "pnpm build",
+    "publish": "pnpm publish --access=public"
+  },
+  "dependencies": {
+    "artalk": "workspace:^",
+    "solid-js": "^1.8.14"
+  },
+  "devDependencies": {
+    "vite-plugin-css-injected-by-js": "^3.4.0",
+    "vite-plugin-solid": "^2.9.1"
+  }
+}

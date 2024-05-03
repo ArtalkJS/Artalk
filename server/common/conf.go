@@ -52,9 +52,8 @@ func GetApiPublicConfDataMap(app *core.App, c *fiber.Ctx) ConfData {
 	}
 
 	if _, ok := frontendConf["pluginURLs"].([]any); !ok {
-		frontendConf["pluginURLs"] = []string{}
+		frontendConf["pluginURLs"] = []any{}
 	}
-
 	pluginURLs := frontendConf["pluginURLs"].([]any)
 
 	if app.Conf().Auth.Enabled {

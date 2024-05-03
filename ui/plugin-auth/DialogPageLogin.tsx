@@ -25,7 +25,7 @@ export const DialogPageLogin = (props: DialogPageLoginProps) => {
       .getApi()
       .auth.loginByEmail(fields)
       .then((res) => {
-        console.log(res.data)
+        // console.log(res.data)
         loginByApiRes(ctx, res.data)
         props.onComplete()
       })

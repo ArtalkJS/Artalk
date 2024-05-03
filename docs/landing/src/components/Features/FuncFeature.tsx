@@ -7,6 +7,7 @@ import { Reveal } from '../Reveal'
 import { FaArrowRight } from 'react-icons/fa'
 
 const FuncGrps: {name: string, items: string[], link?: string}[] = [
+  { name: '社交登录', items: ['Github', 'GitLab', 'Twitter', 'Facebook', 'Mastodon', 'Google', 'Microsoft', 'Apple', 'Discord', 'Slack', 'Tiktok', 'Steam'], link: 'https://artalk.js.org/guide/frontend/auth.html' },
   { name: '邮箱发送', items: ['SMTP', '阿里云邮件', 'sendmail'], link: 'https://artalk.js.org/guide/backend/email.html' },
   { name: '验证码', items: ['Turnstile', 'reCAPTCHA', 'hCaptcha', '极验'], link: 'https://artalk.js.org/guide/backend/captcha.html' },
   { name: '消息推送', items: ['Telegram', '飞书', '钉钉', 'Bark', 'WebHook', 'Slack', 'LINE'], link: 'https://artalk.js.org/guide/backend/admin_notify.html' },

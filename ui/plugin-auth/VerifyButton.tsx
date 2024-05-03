@@ -38,7 +38,7 @@ export const VerifyButton = (props: VerifyButtonProps) => {
       })
       .catch((e) => {
         sent = false
-        console.log(e.message)
+        // console.log(e.message)
         alert(e.message)
       })
   }

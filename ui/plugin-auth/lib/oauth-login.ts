@@ -37,7 +37,7 @@ export const startOAuthLogin = (ctx: ContextApi, url: string) => {
         clearListener()
 
         handler?.close()
-        console.log(data.payload)
+        // console.log(data.payload)
         resolve({ token: data.payload })
       }
     }

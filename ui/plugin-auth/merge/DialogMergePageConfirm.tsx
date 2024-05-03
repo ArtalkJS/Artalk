@@ -25,7 +25,7 @@ export const DialogMergePageConfirm = (props: DialogMergePageConfirmProps) => {
       })
       .then(({ data }) => {
         loginByToken(ctx, data.user_token)
-        console.log(data)
+        // console.log(data)
         onClose()
       })
   }

@@ -10,7 +10,7 @@ import (
 	"github.com/samber/lo"
 )
 
-const LOG_TAG = "[AntiSpam]"
+const LOG_TAG = "[AntiSpam] "
 
 // -------------------------------------------------------------------
 //  AntiSpam

@@ -45,16 +45,16 @@ func RemoveDuplicates(arr []string) []string {
 }
 
 func SplitAndTrimSpace(s string, sep string) []string {
-	splitted := strings.Split(s, sep)
+	split := strings.Split(s, sep)
 	arr := []string{}
-	for _, v := range splitted {
+	for _, v := range split {
 		arr = append(arr, strings.TrimSpace(v))
 	}
 	return RemoveBlankStrings(arr)
 }
 
 func RemoveBlankStrings(s []string) []string {
-	var r []string
+	r := []string{}
 	for _, str := range s {
 		if strings.TrimSpace(str) != "" {
 			r = append(r, str)

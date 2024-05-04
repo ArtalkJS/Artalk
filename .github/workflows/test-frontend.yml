@@ -43,4 +43,5 @@ jobs:
 
       # https://github.com/arethetypeswrong/arethetypeswrong.github.io
       - name: "arethetypeswrong test"
+        if: runner.os == 'ubuntu-latest'
         run: pnpm -F artalk attw || true

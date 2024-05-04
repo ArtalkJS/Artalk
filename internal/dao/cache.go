@@ -41,6 +41,7 @@ func (c *DaoCache) UserCacheDel(user *entity.User) {
 	c.DelCache(
 		fmt.Sprintf(UserByIDKey, user.ID),
 		fmt.Sprintf(UserByNameEmailKey, strings.ToLower(user.Name), strings.ToLower(user.Email)),
+		fmt.Sprintf(UserIDByEmailKey, strings.ToLower(user.Email)),
 	)
 }
 

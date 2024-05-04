@@ -1,43 +1,64 @@
 # <span class="wave">👋</span> Hello Friend
 
-**Artalk** 是一款简洁的**自托管**评论系统，你可以在服务器上**轻松部署**并置入前端页面中。
-
-来到你的博客，或是任意位置，放置 Artalk 评论框，让页面具备丰富的**社会化**功能。
+Artalk 是一款简单易用但功能丰富的评论系统，你可以开箱即用地部署并置入任何博客、网站、Web 应用。
 
 ![](https://user-images.githubusercontent.com/22412567/141147152-df30a0ff-bf41-42ee-9958-4722206a7a90.png)
 
 ## 功能亮点
 
-- **轻量设计**
+**轻量设计**
 
-  前端采用 TypeScript (Vanilla JS)，轻量级，无冗余依赖，仅 ~30KB (gzipped)。
+前端采用 TypeScript (Vanilla JS)，轻量级，无冗余依赖，仅 ~40KB (gzipped)。
 
-  后端采用 Golang 重制 (Artalk v2)，跨平台，体积小巧，五脏俱全，快速部署。
+后端采用 Golang 重制 (Artalk v2)，跨平台，体积小巧，五脏俱全，快速部署。
 
-- **“麻雀虽小，五脏俱全”**
+**“麻雀虽小，五脏俱全”**
 
-  - Markdown 语法 + 代码高亮
-  - [通知中心](./frontend/sidebar.md) - 站内：侧边栏 + 红点标记
-  - [多元推送](./backend/admin_notify.md) - 站外：邮件、TG、钉钉、飞书 + 异步执行
-  - [评论审核](./backend/moderator.md)：折叠 / 反垃圾 / 频率限制 / 滑动验证
-  - [社交登录](./frontend/auth.md)：邮箱密码、GitHub、Google 等多种登录方式
-  - [多站点](./backend/multi-site.md)：共用同一个后端程序，多站点集中化管理
-  - [表情包](./frontend/emoticons.md)：支持 OwO 格式 + 动态加载
-  - [Artrans](./transfer.md)：评论数据快速迁移 (导入 / 导出) 工具
-  - 评论投票 / 身份徽章 / 密码验证 / 说说模式
-  - 评论盖楼 / 评论分页 / 滚动加载 / 实时预览
-  - 评论排序 / 评论置顶 / 评论防丢 / 自动填充
-  - 图片上传 / 页面管理 / 站点隔离 / 夜间模式
+Artalk 的功能包括但不限于：
 
-  穷举不是我们的特长，更多有趣的功能期待你来探索！
+<!-- features -->
+* [侧边栏](https://artalk.js.org/guide/frontend/sidebar.html): 快速管理、直观浏览
+* [社交登录](https://artalk.js.org/guide/frontend/auth.html): 通过社交账号快速登录
+* [邮件通知](https://artalk.js.org/guide/backend/email.html): 多种发送方式、邮件模板
+* [多元推送](https://artalk.js.org/guide/backend/admin_notify.html): 多种推送方式、通知模版
+* [站内通知](https://artalk.js.org/guide/frontend/sidebar.html): 红点标记、提及列表
+* [验证码](https://artalk.js.org/guide/backend/captcha.html): 多种验证类型、频率限制
+* [评论审核](https://artalk.js.org/guide/backend/moderator.html): 内容检测、垃圾拦截
+* [图片上传](https://artalk.js.org/guide/backend/img-upload.html): 自定义上传、支持图床
+* [Markdown](https://artalk.js.org/guide/intro.html): 支持 Markdown 语法
+* [表情包](https://artalk.js.org/guide/frontend/emoticons.html): 兼容 OwO，快速集成
+* [多站点](https://artalk.js.org/guide/backend/multi-site.html): 站点隔离、集中管理
+* [管理员](https://artalk.js.org/guide/backend/multi-site.html): 密码验证、徽章标识
+* [页面管理](https://artalk.js.org/guide/frontend/sidebar.html): 快速查看、标题一键跳转
+* [浏览量统计](https://artalk.js.org/guide/frontend/pv.html): 轻松统计网页浏览量
+* [层级结构](https://artalk.js.org/guide/frontend/config.html#nestmax): 嵌套分页列表、滚动加载
+* [评论投票](https://artalk.js.org/guide/frontend/config.html#vote): 赞同或反对评论
+* [评论排序](https://artalk.js.org/guide/frontend/config.html#listsort): 多种排序方式，自由选择
+* [评论搜索](https://artalk.js.org/guide/frontend/sidebar.html): 快速搜索评论内容
+* [评论置顶](https://artalk.js.org/guide/frontend/sidebar.html): 重要消息置顶显示
+* [仅看作者](https://artalk.js.org/guide/frontend/config.html): 仅显示作者的评论
+* [评论跳转](https://artalk.js.org/guide/intro.html): 快速跳转到引用的评论
+* [自动保存](https://artalk.js.org/guide/frontend/config.html): 输入内容防丢功能
+* [IP 属地](https://artalk.js.org/guide/frontend/ip-region.html): 用户 IP 属地展示
+* [数据迁移](https://artalk.js.org/guide/transfer.html): 自由迁移、快速备份
+* [图片灯箱](https://artalk.js.org/guide/frontend/lightbox.html): 图片灯箱快速集成
+* [图片懒加载](https://artalk.js.org/guide/frontend/img-lazy-load.html): 延迟加载图片，优化体验
+* [Latex](https://artalk.js.org/guide/frontend/latex.html): Latex 公式解析集成
+* [夜间模式](https://artalk.js.org/guide/frontend/config.html#darkmode): 夜间模式切换
+* [扩展插件](https://artalk.js.org/develop/): 创造更多可能性
+* [多语言](https://artalk.js.org/guide/frontend/i18n.html): 多国语言切换
+* [命令行](https://artalk.js.org/guide/backend/config.html): 命令行操作管理能力
+* [API 文档](https://artalk.js.org/develop/): 提供 OpenAPI 格式文档
+* [程序升级](https://artalk.js.org/guide/backend/update.html): 版本检测，一键升级
+<!-- /features -->
 
-- **“Unlimited Blade Works”**
+穷举不是我们的特长，更多有趣的功能期待你来探索！
 
-  Artalk 正在持续成长，创意由你发挥，价值由你赋予！
+**“Unlimited Blade Works”**
 
-  不论是 Vue、React、Svelte 的前端项目，还是 WordPress、Typecho、Hexo 等博客系统，都可以快速引入 Artalk，结合诸位的聪明才智，我们相信 Artalk 能够自如应对各种业务场景。
+Artalk 正在持续成长，创意由你发挥，价值由你赋予！
 
-> 更多支持 / 计划的功能，详见：[README.md](https://github.com/ArtalkJS/Artalk#todos)。
+不论是 Vue、React、Svelte 的前端项目，还是 WordPress、Typecho、Hexo 等博客系统，都可以快速引入 Artalk，结合诸位的聪明才智，我们相信 Artalk 能够自如应对各种业务场景。
 
 ## 用户体验
 

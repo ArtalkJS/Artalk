@@ -1,124 +1,104 @@
+
 <p align="center">
-<img src="https://user-images.githubusercontent.com/22412567/137740516-d9e97af0-fb3b-4dab-b331-671a9a2a3a63.png" alt="Artalk" width="100%">
+<img src="https://user-images.githubusercontent.com/22412567/171680920-6e74b77c-c565-487b-bff1-4f94976ecbe7.png" alt="Artalk" width="100%">
 </p>
 
 # Artalk
 
-[![npm 版本](https://img.shields.io/npm/v/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
-[![npm 下载量](https://img.shields.io/npm/dt/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
-[![尺寸](https://badgen.net/bundlephobia/minzip/artalk?style=flat-square)](https://bundlephobia.com/package/artalk)
-[![CircleCI](https://circleci.com/gh/ArtalkJS/Artalk/tree/master.svg?style=svg)](https://circleci.com/gh/ArtalkJS/Artalk/tree/master)
+[![npm version](https://img.shields.io/npm/v/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
+[![npm downloads](https://img.shields.io/npm/dt/artalk.svg?style=flat-square)](https://www.npmjs.com/package/artalk)
+[![Docker Pulls](https://img.shields.io/docker/pulls/artalk/artalk-go?style=flat-square)](https://hub.docker.com/r/artalk/artalk-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ArtalkJS/Artalk?style=flat-square)](https://goreportcard.com/report/github.com/ArtalkJS/Artalk)
+[![CircleCI](https://img.shields.io/circleci/build/gh/ArtalkJS/Artalk?style=flat-square)](https://circleci.com/gh/ArtalkJS/Artalk/tree/master)
+[![Codecov](https://img.shields.io/codecov/c/gh/ArtalkJS/Artalk?style=flat-square)](https://codecov.io/gh/ArtalkJS/Artalk)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/artalk?style=flat-square)](https://bundlephobia.com/package/artalk)
 
-> 🌌 A self-hosted comment system
+[中文](./README.md) • [Official Website](https://artalk.js.org) • [Latest Release](https://github.com/ArtalkJS/Artalk/releases) • [Changelog](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md)
 
-[简体中文](./README.md) / [Documentation](https://artalk.js.org) / [Releases](https://github.com/ArtalkJS/Artalk/releases) / [Artalk](https://github.com/ArtalkJS/Artalk)
+🌌 Artalk is a simple yet feature-rich commenting system that you can deploy out of the box and integrate into any blog, website, or web application.
 
----
-
-- 🍃 Lightweight (~30kB)
-- 👨‍👧‍👦 Secure (Self-hosted)
-- 🐳 Easy to use (Very Easy)
-- 🍱 Golang backend (Fast and Cross Platform)
-- 🌊 TypeScript × Vanilla × Vite (No Dependencies)
+- 🍃 Frontend ~40KB, pure Vanilla JS
+- 🍱 Backend Golang, efficient lightweight cross-platform
+- 🐳 One-click deployment via Docker, convenient and fast
+- 🌈 Open-source program, self-hosted, privacy-first
 
 ## Features
 
-- Sidebar: Multi-site centralized management
-- Notification Center: Red badge alert / Mark as read
-- Verification: User Verification Badge / Password access
-- Moderation: Anti-spam detection / Captcha frequency limit
-- Emoticons: Insert emoji / Quickly import presets
-- Email Notify: Template customization / Send to multi-admin
-- Site Isolation: Multi-site management / Admin assignment
-- Page Management: Provide page title / Easy to look up
-- Image Upload: Upload to localhost / various remote image host
-- Private Space Mode: Only visible to yourself / Message board
-- Multiple Msg Pushers: Support Telegram / Slack / LINE
-- Nested Comments: Switchable to Flat Mode
-- Comment Vote: For or against comments
-- Comment Sort: Sort by popularity or time
-- Comment PIN: Pin important comments
-- Track only author: Show only author's comments
-- Asynchronous: Send comments without waiting
-- Infinite Scrolling: Provide various comment content pagination custom
-- AutoSave: A anti-lost editor
-- AutoFill: Autofill user profile
-- Preview: Real-time preview of markdown
-- Dark Mode: Prevents eye disease damage
-- Collapse Comment: I do not want you to see this comment
-- Data Backup: Prevent comment data loss
-- Data Migration: Switch back and forth between different commenting systems
-- Multiple comments on one page: Multiple comment areas on one page (seems useless
-- Markdown: Markdown syntax was supported by default
-- LaTex support: Import KaTex plugin to integrate LaTex parser for artalk
-- Using [Vite](https://github.com/vitejs/vite): The ultimate developer experience
+<!-- prettier-ignore-start -->
 
-## Getting Started
+<!-- features -->
+* [Sidebar](https://artalk.js.org/guide/frontend/sidebar.html): Quick management, intuitive browsing
+* [Social Login](https://artalk.js.org/guide/frontend/auth.html): Quick login via social accounts
+* [Email Notification](https://artalk.js.org/guide/backend/email.html): Multiple sending methods, email templates
+* [Multi-channel Push](https://artalk.js.org/guide/backend/admin_notify.html): Multiple push methods, notification templates
+* [In-site Notifications](https://artalk.js.org/guide/frontend/sidebar.html): Red dot marking, mention list
+* [CAPTCHA](https://artalk.js.org/guide/backend/captcha.html): Multiple verification types, frequency limitation
+* [Comment Moderation](https://artalk.js.org/guide/backend/moderator.html): Content detection, spam interception
+* [Image Upload](https://artalk.js.org/guide/backend/img-upload.html): Custom upload, support for image hosting
+* [Markdown](https://artalk.js.org/guide/intro.html): Support Markdown syntax
+* [Emoticons](https://artalk.js.org/guide/frontend/emoticons.html): Compatible with OwO, quick integration
+* [Multi-site](https://artalk.js.org/guide/backend/multi-site.html): Site isolation, centralized management
+* [Admin](https://artalk.js.org/guide/backend/multi-site.html): Password verification, badge identification
+* [Page Management](https://artalk.js.org/guide/frontend/sidebar.html): Quick view, one-click title jump
+* [Page Views Statistics](https://artalk.js.org/guide/frontend/pv.html): Easily track page views
+* [Hierarchy](https://artalk.js.org/guide/frontend/config.html#nestmax): Nested paginated lists, scroll loading
+* [Comment Voting](https://artalk.js.org/guide/frontend/config.html#vote): Upvote or downvote comments
+* [Comment Sorting](https://artalk.js.org/guide/frontend/config.html#listsort): Multiple sorting options, freedom to choose
+* [Comment Search](https://artalk.js.org/guide/frontend/sidebar.html): Quickly search comment content
+* [Comment Pinning](https://artalk.js.org/guide/frontend/sidebar.html): Pin important messages
+* [Author-only View](https://artalk.js.org/guide/frontend/config.html): Show only comments from the author
+* [Comment Jumping](https://artalk.js.org/guide/intro.html): Quickly jump to referenced comments
+* [Auto Save](https://artalk.js.org/guide/frontend/config.html): Content input auto-saving
+* [IP Geolocation](https://artalk.js.org/guide/frontend/ip-region.html): User IP location display
+* [Data Migration](https://artalk.js.org/guide/transfer.html): Free migration, quick backup
+* [Image Lightbox](https://artalk.js.org/guide/frontend/lightbox.html): Quickly integrate image lightbox
+* [Image Lazy Loading](https://artalk.js.org/guide/frontend/img-lazy-load.html): Delay loading images, optimize experience
+* [Latex](https://artalk.js.org/guide/frontend/latex.html): Latex formula parsing integration
+* [Dark Mode](https://artalk.js.org/guide/frontend/config.html#darkmode): Dark mode switching
+* [Extension Plugins](https://artalk.js.org/develop/): Create more possibilities
+* [Multi-language](https://artalk.js.org/guide/frontend/i18n.html): Multi-language switching
+* [Command Line](https://artalk.js.org/guide/backend/config.html): Command line operation management capability
+* [API Documentation](https://artalk.js.org/develop/): Provides OpenAPI format documentation
+* [Program Upgrade](https://artalk.js.org/guide/backend/update.html): Version detection, one-click upgrade
+<!-- /features -->
 
-Reference to：[**Documentation**](https://artalk.js.org/guide/deploy.html)
+<!-- prettier-ignore-end -->
 
-```sh
-$ pnpm add artalk
+## Installation
+
+Deploy via Docker with one click:
+
+```bash
+docker run -d --name artalk -p 8080:23366 -v $(pwd)/data:/data artalk/artalk-go
 ```
+
+Integrate Artalk into your webpage:
 
 <!-- prettier-ignore-start -->
 
-
 ```ts
-import Artalk from 'artalk'
-
 Artalk.init({
-  el:        '#Comments',
-  pageKey:   'http://your_domain/post/1', // Page Link
-  pageTitle: 'The title of your page',    // Page Title
-  server:    'http://localhost:8080/api', // Server URL
-  site:      'Site Name',
-  locale:    'en'
+  el:      '#Comments',
+  site:    'Artalk Blog',
+  server:  'https://artalk.example.com',
+  pageKey: '/2018/10/02/hello-world.html'
 })
 ```
 
 <!-- prettier-ignore-end -->
 
-### Docker
+[**Learn More →**](https://artalk.js.org/guide/deploy.html)
 
-```sh
-docker run -d \
-  --name artalk \
-  -p 8080:23366 \
-  -v $(pwd)/data:/data \
-  artalk/artalk-go
-```
 
-### Docker Compose
+## For Developers
 
-```sh
-mkdir Artalk
-cd Artalk
+Pull requests are welcome!
 
-vim docker-compose.yaml
-```
-
-```yaml
-version: '3.5'
-services:
-  artalk:
-    container_name: artalk
-    image: artalk/artalk-go
-    ports:
-      - 8080:23366
-    volumes:
-      - ./data:/data
-```
-
-```sh
-docker-compose up -d
-```
-
-## Development
-
-see [CONTRIBUTING.md](./CONTRIBUTING.md)
+See [Development](https://artalk.js.org/develop/) and [Contributing](./CONTRIBUTING.md) for information on working with the codebase, getting a local development setup, and contributing changes.
 
 ## Contributors
+
+Your contributions enrich the open-source community, fostering learning, inspiration, and innovation. We deeply value your involvement. Thank you for being a vital part of our community! 🥰
 
 [![](https://contrib.rocks/image?repo=ArtalkJS/Artalk)](https://github.com/ArtalkJS/Artalk/graphs/contributors)
 
@@ -126,9 +106,9 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 [![Stargazers repo roster for @ArtalkJS/Artalk](https://reporoster.com/stars/ArtalkJS/Artalk)](https://github.com/ArtalkJS/Artalk/stargazers)
 
-## Feedback
+## Repobeats Analytics
 
-Thanks for the help and feedback provided by the community, if you have good suggestions or comments, please go to [issues](https://github.com/ArtalkJS/Artalk/issues) to let us know at any time.
+![Alt](https://repobeats.axiom.co/api/embed/a9fc9191ac561bc5a8ee2cddc81e635ecaebafb6.svg 'Repobeats analytics image')
 
 ## Stargazers over time
 

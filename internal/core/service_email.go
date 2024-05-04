@@ -71,7 +71,7 @@ func (e *EmailService) AsyncSendTo(subject string, body string, toAddr string) {
 
 	e.queue.Push(&email.Email{
 		FromAddr: e.app.Conf().Email.SendAddr,
-		FromName: e.app.Conf().Email.SendName,
+		FromName: e.app.Conf().SiteDefault, // e.app.Conf().Email.SendName,
 		ToAddr:   toAddr,
 		Subject:  subject,
 		Body:     body,

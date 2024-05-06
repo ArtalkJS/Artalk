@@ -15,7 +15,7 @@ Vue 3 + TypeScript 例：
 ```vue
 <script lang="ts" setup>
 import Artalk from 'artalk'
-import { onBeforeUnmounted, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import 'artalk/dist/Artalk.css'
@@ -36,7 +36,7 @@ onMounted(() => {
   })
 })
 
-onBeforeUnmounted(() => {
+onBeforeUnmount(() => {
   artalk.destroy()
 })
 </script>

@@ -75,6 +75,11 @@
     margin: 0 80px;
   }
 
+  .airplane {
+    opacity: 0;
+    transition: opacity .4s;
+  }
+
   &.visible {
     @keyframes airplaneAnim {
       from {
@@ -83,6 +88,7 @@
     }
 
     .airplane {
+      opacity: 1;
       animation: airplaneAnim 2s cubic-bezier(0.075, 0.820, 0.165, 1.000);
     }
   }

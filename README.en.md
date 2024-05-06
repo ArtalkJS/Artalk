@@ -1,4 +1,3 @@
-
 <p align="center">
 <img src="https://user-images.githubusercontent.com/22412567/171680920-6e74b77c-c565-487b-bff1-4f94976ecbe7.png" alt="Artalk" width="100%">
 </p>
@@ -88,7 +87,6 @@ Artalk.init({
 <!-- prettier-ignore-end -->
 
 [**Learn More →**](https://artalk.js.org/guide/deploy.html)
-
 
 ## For Developers
 

@@ -2,6 +2,19 @@
   .content .ship-icon {
     margin: 0 80px;
     margin-top: -70px;
+
+    @keyframes WaveAnim {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-24px);
+      }
+    }
+
+    .wave {
+      animation: .5s linear WaveAnim infinite;
+    }
   }
 
   .func-grps {

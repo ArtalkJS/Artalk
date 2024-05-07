@@ -162,7 +162,7 @@ function snakeToCamel(str: string) {
  * @returns Patched value
  */
 export function patchOptionValue(value: any, node: OptionNode) {
-  console.log(value, node)
+  // console.log(value, node)
   switch (node.type) {
     case 'boolean':
       if (value === 'true') value = true

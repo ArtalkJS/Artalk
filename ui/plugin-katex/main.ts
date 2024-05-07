@@ -7,7 +7,7 @@ import katex from 'katex'
 Artalk.use((ctx) => {
   const markedInstance = ctx.getMarked()
   if (!markedInstance) {
-    console.log('[artalk-plugin-katex] no marked instance found')
+    console.error('[artalk-plugin-katex] no marked instance found')
     return
   }
 

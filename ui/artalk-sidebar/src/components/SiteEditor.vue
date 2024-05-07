@@ -44,7 +44,7 @@ function del() {
     try {
       await artalk!.ctx.getApi().sites.deleteSite(site.value.id)
     } catch (err: any) {
-      console.log(err)
+      console.error(err)
       alert(`删除失败 ${String(err)}`)
       return
     } finally {

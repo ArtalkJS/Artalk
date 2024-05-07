@@ -105,7 +105,7 @@ async function startExportTask() {
     const res = await artalk!.ctx.getApi().transfer.exportArtrans()
     downloadFile(`backup-${getYmdHisFilename()}.artrans`, res.data.artrans)
   } catch (err: any) {
-    console.log(err)
+    console.error(err)
     window.alert(`${String(err)}`)
     return
   } finally {

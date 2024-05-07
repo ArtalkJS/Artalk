@@ -31,7 +31,7 @@ onMounted(() => {
   ]).then(([template, custom]) => {
     const yamlObj = YAML.parseDocument(template.data.yaml)
     tree.value = settings.init(yamlObj).getTree()
-    console.log(tree.value)
+    // console.log(tree.value)
     settings.get().setCustoms(custom.data.yaml)
   })
 })
@@ -46,7 +46,7 @@ function save() {
     return
   }
 
-  console.log(yamlStr)
+  // console.log(yamlStr)
   if (!yamlStr) {
     alert('YAML export error: data is empty')
     return

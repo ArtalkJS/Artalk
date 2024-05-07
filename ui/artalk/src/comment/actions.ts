@@ -36,7 +36,7 @@ export default class CommentActions {
       })
       .catch((err) => {
         actionBtn?.setError($t('voteFail'))
-        console.log(err)
+        console.error(err)
       })
   }
 

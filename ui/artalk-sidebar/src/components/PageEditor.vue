@@ -40,7 +40,7 @@ async function editAdminOnly() {
     ).data
   } catch (err: any) {
     alert(`修改失败：${err.message || '未知错误'}`)
-    console.log(err)
+    console.error(err)
     return
   } finally {
     isLoading.value = false
@@ -55,7 +55,7 @@ async function sync() {
     p = (await artalk!.ctx.getApi().pages.fetchPage(page.value.id)).data
   } catch (err: any) {
     alert(`同步失败：${err.message || '未知错误'}`)
-    console.log(err)
+    console.error(err)
     return
   } finally {
     isLoading.value = false
@@ -69,7 +69,7 @@ function del() {
     try {
       await artalk!.ctx.getApi().pages.deletePage(page.value.id)
     } catch (err: any) {
-      console.log(err)
+      console.error(err)
       alert(`删除失败 ${String(err)}`)
       return
     } finally {

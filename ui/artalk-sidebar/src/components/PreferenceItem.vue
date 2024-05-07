@@ -15,7 +15,7 @@ onBeforeMount(() => {
 function onChange() {
   const v = patchOptionValue(value.value, props.node)
   settings.get().setCustom(props.node.path, v)
-  console.log('[SET]', props.node.path, v)
+  // console.log('[SET]', props.node.path, v)
 }
 </script>
 

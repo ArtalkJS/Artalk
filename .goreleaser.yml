@@ -175,3 +175,5 @@ release:
     name: Artalk
   prerelease: auto
   draft: false
+  extra_files:
+    - glob: ./local/release_includes/*

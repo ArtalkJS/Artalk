@@ -18,8 +18,11 @@ fi
 pnpm install --frozen-lockfile
 pnpm build:all
 
-## dist
+## dist folders
 DIST_DIR="./public/dist"
+SIDEBAR_DIR="./public/sidebar"
+
+## dist
 rm -rf ${DIST_DIR} && mkdir -p ${DIST_DIR}
 cp -r ./ui/artalk/dist/{Artalk.css,Artalk.js} ${DIST_DIR}
 cp -r ./ui/artalk/dist/{ArtalkLite.css,ArtalkLite.js} ${DIST_DIR}
@@ -29,7 +32,6 @@ mkdir -p ${I18N_DIR}
 cp -r ./ui/artalk/dist/i18n/*.js ${I18N_DIR}
 
 ## sidebar
-SIDEBAR_DIR="./public/sidebar"
 rm -rf ${SIDEBAR_DIR} && mkdir -p ${SIDEBAR_DIR}
 cp -r ./ui/artalk-sidebar/dist/* ${SIDEBAR_DIR}
 
@@ -39,3 +41,10 @@ mkdir -p ${PLUGIN_DIR}
 
 pnpm build:auth
 cp -r ./ui/plugin-auth/dist/artalk-plugin-auth.js ${PLUGIN_DIR}
+
+## create tarball for release
+mkdir -p ./local/artalk_ui
+cp -r ${DIST_DIR} ${SIDEBAR_DIR} ./local/artalk_ui
+
+mkdir -p ./local/release_includes
+tar -czf ./local/release_includes/artalk_ui.tar.gz -C ./local artalk_ui

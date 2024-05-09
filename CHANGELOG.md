@@ -1,4 +1,38 @@
 
+## [v2.8.6](https://github.com/ArtalkJS/Artalk/compare/v2.8.5...v2.8.6) (2024-05-09)
+
+### Features
+
+* **auth:** user accounts merge tool ([#854](https://github.com/ArtalkJS/Artalk/issues/854))
+* **auth:** social login api endpoints ([#854](https://github.com/ArtalkJS/Artalk/issues/854))
+* **ci:** include frontend dist files in release ([#860](https://github.com/ArtalkJS/Artalk/issues/860))
+* **i18n:** add incremental updates feature for i18n code scan tool
+* **multi_push/lark:** add card mode for lark push ([#839](https://github.com/ArtalkJS/Artalk/issues/839))
+* **sync:** add keyed mutex
+* **ui/auth:** plugin-auth for integrating social login ([#854](https://github.com/ArtalkJS/Artalk/issues/854))
+* **ui/img_lazyload:** add support for lazy loading images ([#850](https://github.com/ArtalkJS/Artalk/issues/850))
+
+### Bug Fixes
+
+* **api/pv:** add mutex for page pv record endpoint
+* **cache/user:** user id cache from email lookup not cleared
+* **comments_get:** include `site_name` for isolation in associated query for comment's page
+* **dao:** ensure find and create functions thread safe ([#845](https://github.com/ArtalkJS/Artalk/issues/845))
+* **db/migrate:** fix root_id migrate for database lacking recursive CTE support ([#848](https://github.com/ArtalkJS/Artalk/issues/848)) ([#846](https://github.com/ArtalkJS/Artalk/issues/846))
+* **db_migrate:** drop `fk_comments_user` foreign key constraint of the users table
+* **sidebar/site:** unable to edit the new site urls
+* **ui/dark_mode:** add support for configuring dark mode in backend ([#790](https://github.com/ArtalkJS/Artalk/issues/790))
+* **ui/dark_mode:** unable to toggle dark mode for sidebar in auto mode
+* **ui/height_limit:** height limit not working while loading images ([#849](https://github.com/ArtalkJS/Artalk/issues/849))
+* **ui/marked:** optimize same origin link judgment logic
+
+### Documentation
+
+* update introduction document
+* **auth:** add social login feature ([#854](https://github.com/ArtalkJS/Artalk/issues/854))
+* **i18n:** add translation for Korean and Russian
+
+
 ## [v2.8.5](https://github.com/ArtalkJS/Artalk/compare/v2.8.3...v2.8.5) (2024-04-21)
 
 ### Features

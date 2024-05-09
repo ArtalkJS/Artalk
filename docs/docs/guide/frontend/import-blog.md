@@ -76,7 +76,7 @@ params:
     el: '#Comments',
     pageKey: '<%= page.permalink %>',
     pageTitle: '<%= page.title %>',
-    server: '<%= theme.comment.artalk.server %>'
+    server: '<%= theme.comment.artalk.server %>',
     site: '<%= theme.comment.artalk.site %>',
   })
 </script>

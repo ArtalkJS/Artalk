@@ -6,9 +6,8 @@ import { renderCode } from './highlight'
 import { getRenderer } from './marked-renderer'
 
 type Replacer = (raw: string) => string
-export type TMarked = typeof libMarked
 
-let instance: TMarked | undefined
+let instance: (typeof libMarked) | undefined
 let replacers: Replacer[] = []
 
 const markedOptions: MarkedOptions = {

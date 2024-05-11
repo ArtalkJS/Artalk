@@ -1,4 +1,4 @@
-import { marked as libMarked } from 'marked'
+import { marked } from 'marked'
 import type { ArtalkConfig } from '@/types'
 import { renderCode } from './highlight'
 
@@ -7,7 +7,7 @@ export interface RendererOptions {
 }
 
 export function getRenderer(options: RendererOptions) {
-  const renderer = new libMarked.Renderer()
+  const renderer = new marked.Renderer()
   renderer.link = markedLinkRenderer(renderer, renderer.link)
   renderer.code = markedCodeRenderer()
   renderer.image = markedImageRenderer(renderer, renderer.image, options)

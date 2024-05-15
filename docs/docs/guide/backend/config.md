@@ -113,6 +113,16 @@ db:
 
 更多内容参考：[@go-sql-driver/mysql:README.md](https://github.com/go-sql-driver/mysql)
 
+## 服务器 `http`
+
+```yaml
+http:
+  # 请求体大小限制 (单位：MB)
+  body_limit: 100
+  # 代理标头名 (当使用 CDN 时填写 `X-Forwarded-For` 获取用户真实 IP)
+  proxy_header: ""
+```
+
 ## 管理员 `admin_users`
 
 你需要配置管理员账户，这样才能通过「[控制中心](../frontend/sidebar.md)」对站点内容进行管理。

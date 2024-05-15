@@ -118,3 +118,7 @@ Artalk.init({ server: 'http://artalk.your_domain.com' })
 打开「反向代理」选项卡，点击「添加反向代理」，「目标 URL」填写 `http://localhost:端口号`（端口号与 Artalk 端口对应），「发送域名」填写 `$host`，如图：
 
 ![](/images/baota-proxy/2.png)
+
+## 获取准确的 IP 地址
+
+当使用反向代理服务器后，需要配置代理标头才能获取到用户的准确 IP 地址，参考 [IP 属地](../frontend/ip-region.md#获取准确的-ip-地址) 的说明。

@@ -184,7 +184,8 @@ Artalk 导入功能的通用启动参数：
 | :----------------: | ------- | --------------------------------------------------------------------------------------------------------- |
 | `target_site_name` | String  | 导入站点名称                                                                                              |
 | `target_site_url`  | String  | 导入站点 URL                                                                                              |
-|   `url_resolver`   | Boolean | 默认关闭，URL 解析器。将 `page_key` 基于 `target_site_url` 参数重新生成为完整 URL 作为评论的新 `page_key` |
+|   `url_resolver`   | Boolean | 默认关闭，URL 解析器。将 `page_key` 基于 `target_site_url` 参数重新生成为完整 URL 作为评论的新 `page_key`     |
+|   `url_keep_domain`| Boolean | 默认关闭，是否保留原有 URL 的域名部分。当关闭时将去除 `pageKey` 中的域名。当 `url_resolver` 开启时，`url_keep_domain` 将被同时启用 |
 |    `json_file`     | String  | JSON 数据文件路径                                                                                         |
 |    `json_data`     | String  | JSON 数据字符串内容                                                                                       |
 |    `assumeyes`     | Boolean | 不提确认 `y/n`，直接执行                                                                                  |

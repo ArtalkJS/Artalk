@@ -18,6 +18,7 @@ type ImportParams struct {
 	TargetSiteName string `json:"target_site_name" form:"target_site_name" validate:"optional"` // The target site name
 	TargetSiteUrl  string `json:"target_site_url" form:"target_site_url" validate:"optional"`   // The target site url
 	UrlResolver    bool   `json:"url_resolver" form:"url_resolver" validate:"optional"`         // Enable URL resolver
+	UrlKeepDomain  bool   `json:"url_keep_domain" form:"url_keep_domain" validate:"optional"`   // Keep domain
 	JsonFile       string `json:"json_file,omitempty" form:"json_file" validate:"optional"`     // The JSON file path
 	JsonData       string `json:"json_data,omitempty" form:"json_data" validate:"optional"`     // The JSON data
 	Assumeyes      bool   `json:"assumeyes" form:"assumeyes" validate:"optional"`               // Automatically answer yes for all questions.
@@ -32,6 +33,10 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 	if params.TargetSiteUrl != "" && !utils.ValidateURL(params.TargetSiteUrl) {
 		logFatal(i18n.T("Invalid {{name}}", map[string]interface{}{"name": i18n.T("Target Site") + " " + "URL"}))
 		return
+	}
+
+	if params.UrlResolver {
+		params.UrlKeepDomain = true
 	}
 
 	// 汇总
@@ -127,6 +132,9 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 				return
 			}
 			nPageKey = urlResolverGetPageKey(splittedURLs[0], c.PageKey)
+		}
+		if !params.UrlKeepDomain { // strip domain from page key
+			nPageKey = stripDomainFromURL(nPageKey)
 		}
 
 		page := dao.FindCreatePage(nPageKey, c.PageTitle, site.Name)

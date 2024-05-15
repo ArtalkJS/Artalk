@@ -44,11 +44,13 @@ func ArrToImportParams(arr []string) *ImportParams {
 	params := ImportParams{}
 
 	params.UrlResolver = false // 默认关闭
+	params.UrlKeepDomain = false
 
 	getParamsFrom(arr).To(map[string]any{
 		"target_site_name": &params.TargetSiteName,
 		"target_site_url":  &params.TargetSiteUrl,
 		"url_resolver":     &params.UrlResolver,
+		"url_keep_domain":  &params.UrlKeepDomain,
 		"json_file":        &params.JsonFile,
 		"json_data":        &params.JsonData,
 		"assumeyes":        &params.Assumeyes,

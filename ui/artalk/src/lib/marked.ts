@@ -7,7 +7,7 @@ import { getRenderer } from './marked-renderer'
 
 type Replacer = (raw: string) => string
 
-let instance: (typeof libMarked) | undefined
+let instance: typeof libMarked | undefined
 let replacers: Replacer[] = []
 
 const markedOptions: MarkedOptions = {

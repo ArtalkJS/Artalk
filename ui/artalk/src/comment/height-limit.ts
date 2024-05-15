@@ -26,8 +26,8 @@ export function check(conf: IHeightLimitConf, rules: THeightLimitRuleSet) {
   rules.forEach(({ el, max, imgCheck }) => {
     if (!el) return
 
-    // set max height to limit the height
-    if (imgCheck) el.style.maxHeight = `${max + 1}px` // allow 1px more for next detecting
+    // set max height for avoiding img exceed the limit while loading
+    if (imgCheck) el.style.maxHeight = `${max + 1}px`  // allow 1px more for next detecting
 
     let lock = false
     const _check = () => {
@@ -50,7 +50,9 @@ export function check(conf: IHeightLimitConf, rules: THeightLimitRuleSet) {
     // check images after loaded
     if (imgCheck) {
       // check again when image loaded
-      el.querySelectorAll<HTMLImageElement>('.atk-content img').forEach((img) => {
+      const imgs = el.querySelectorAll<HTMLImageElement>('.atk-content img')
+      if (imgs.length === 0) el.style.maxHeight = ''
+      imgs.forEach((img) => {
         img.onload = () => _check()
       })
     }

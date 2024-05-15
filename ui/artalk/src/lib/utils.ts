@@ -4,8 +4,9 @@ export function createElement<E extends HTMLElement = HTMLElement>(htmlStr: stri
   return (div.firstElementChild || div) as E
 }
 
-export function getHeight(el: HTMLElement) {
-  return parseFloat(getComputedStyle(el, null).height.replace('px', ''))
+export function getHeight(el: HTMLElement): number {
+  const num = parseFloat(getComputedStyle(el, null).height.replace('px', ''))
+  return num || 0 // NaN -> 0
 }
 
 export function htmlEncode(str: string) {

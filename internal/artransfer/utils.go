@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode/utf8"
 
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/araddon/dateparse"
@@ -26,18 +25,6 @@ func readJsonFile(filename string) (string, error) {
 	}
 
 	return string(buf), nil
-}
-
-func hideJsonLongText(key string, text string) string {
-	r := regexp.MustCompile(key + `:"(.+?)"`)
-	sm := r.FindStringSubmatch(text)
-	postText := ""
-	if len(sm) > 0 {
-		postText = sm[1]
-	}
-
-	text = r.ReplaceAllString(text, fmt.Sprintf(key+": <!-- 省略 %d 个字符 -->", utf8.RuneCountInString(postText)))
-	return text
 }
 
 func parseDate(s string) time.Time {
@@ -78,4 +65,13 @@ func getParamsFrom(arr []string) getParamsFromTo {
 		}
 	}
 	return a
+}
+
+func stripDomainFromURL(fullURL string) string {
+	re := regexp.MustCompile(`^https?://[^/]+`)
+	result := re.ReplaceAllString(fullURL, "")
+	if result == "" {
+		result = "/"
+	}
+	return result
 }

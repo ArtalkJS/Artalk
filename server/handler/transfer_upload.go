@@ -56,6 +56,7 @@ func TransferUpload(app *core.App, router fiber.Router) {
 			log.Error(err)
 			return common.RespError(c, 500, "tmp file creation failed")
 		}
+		defer tmpFile.Close()
 
 		// Write buffer to temp file
 		tmpFile.Write(buf)

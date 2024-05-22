@@ -111,6 +111,7 @@ export default class Artalk {
       siteName: conf.site,
       countEl: conf.countEl,
       pvEl: conf.pvEl,
+      pageKeyAttr: conf.statPageKeyAttr,
       pvAdd: false,
     })
   }

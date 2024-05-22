@@ -27,7 +27,7 @@ export function check(conf: IHeightLimitConf, rules: THeightLimitRuleSet) {
     if (!el) return
 
     // set max height for avoiding img exceed the limit while loading
-    if (imgCheck) el.style.maxHeight = `${max + 1}px`  // allow 1px more for next detecting
+    if (imgCheck) el.style.maxHeight = `${max + 1}px` // allow 1px more for next detecting
 
     let lock = false
     const _check = () => {

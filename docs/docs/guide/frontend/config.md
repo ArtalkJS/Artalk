@@ -221,30 +221,41 @@ artalk.setDarkMode(true)
 **页面浏览量 (PV) 绑定元素**
 
 - 类型：`String`
-- 默认值：`"#ArtalkPV"`
+- 默认值：`".artalk-pv-count"`
 
-你可以在页面任意位置，放置 HTML 标签：`<span id="ArtalkPV"></span>`
+你可以在页面任意位置，放置 HTML 标签：`<span class="artalk-pv-count"></span>`
 
 当 Artalk 完成加载时展示页面的浏览量。
 
-该项填入绑定元素的 Selector，默认为 `#ArtalkPV`。
+该项填入绑定元素的 Selector，默认为 `.artalk-pv-count`。
 
 ### countEl
 
 **评论数绑定元素**
 
 - 类型：`String`
-- 默认值：`"#ArtalkCount"`
+- 默认值：`".artalk-comment-count"`
 
-你可以在页面任意位置，放置 HTML 标签：`<span id="ArtalkCount"></span>` 显示当前页面的评论数。
+你可以在页面任意位置，放置 HTML 标签：`<span class="artalk-comment-count"></span>` 显示当前页面的评论数。
 
 ::: tip
 
-pvEl 和 countEl 元素标签都可以设置 `data-page-key` 属性值，来指定显示某个页面的统计数目，例如：`<span id="ArtalkCount" data-page-key="/t/1.html"></span>`
+pvEl 和 countEl 元素标签都可以设置 `data-page-key` 属性值，来指定显示某个页面的统计数目，例如：`<span class="artalk-comment-count" data-page-key="/t/1.html"></span>`
 
-详情参考：[浏览量统计](./pv.md#显示多个页面的浏览量)
+详情参考：[浏览量统计](./pv.md#同时加载多个页面的统计数)
 
 :::
+
+### statPageKeyAttr
+
+**统计组件 PageKey 属性名**
+
+- 类型：`String`
+- 默认值：`"data-page-key"`
+
+Artalk 统计组件查询评论数和浏览量时，会通过该属性名来查询指定页面，例如：`<span data-page-key="/t/1.html"></span>`。
+
+为了便于主题适配，可根据需要自定义属性名，例如将其替换为 `data-path`，则 HTML 标签为 `<span data-path="/t/1.html"></span>`。
 
 ### vote
 

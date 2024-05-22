@@ -9,13 +9,14 @@ export interface CountOptions {
   pageTitle?: string
   countEl: string
   pvEl: string
+  pageKeyAttr: string
 
   /** 是否增加当前页面 PV 数 */
   pvAdd?: boolean
 }
 
 export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
-  ctx.watchConf(['site', 'pageKey', 'pageTitle', 'countEl', 'pvEl'], (conf) => {
+  ctx.watchConf(['site', 'pageKey', 'pageTitle', 'countEl', 'pvEl', 'statPageKeyAttr'], (conf) => {
     initCountWidget({
       getApi: () => ctx.getApi(),
       siteName: conf.site,
@@ -23,6 +24,7 @@ export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
       pageTitle: conf.pageTitle,
       countEl: conf.countEl,
       pvEl: conf.pvEl,
+      pageKeyAttr: conf.statPageKeyAttr,
       pvAdd: typeof ctx.conf.pvAdd === 'boolean' ? ctx.conf.pvAdd : true,
     })
   })
@@ -36,7 +38,7 @@ export async function initCountWidget(opt: CountOptions) {
   }
 
   // PV
-  const initialData =
+  const cacheData =
     opt.pvAdd && opt.pageKey
       ? {
           [opt.pageKey]: (
@@ -53,7 +55,7 @@ export async function initCountWidget(opt: CountOptions) {
     refreshStatCount(opt, {
       query: 'page_pv',
       numEl: opt.pvEl,
-      data: initialData,
+      cacheData,
     })
   }
 }
@@ -65,23 +67,26 @@ async function refreshStatCount(
   args: {
     query: 'page_pv' | 'page_comment'
     numEl: string
-    data?: CountData
+    cacheData?: CountData
   },
 ) {
-  let data: CountData = args.data || {}
+  let data: CountData = args.cacheData || {}
+
+  // Retrieve elements
+  const els = Array.from(document.querySelectorAll<HTMLElement>(args.numEl))
 
   // Get page keys which will be queried
-  let queryPageKeys = Array.from(document.querySelectorAll(args.numEl))
-    .map((e) => e.getAttribute('data-page-key') || opt.pageKey)
-    .filter((k) => k && typeof data[k] !== 'number') // filter out keys that already have data
+  let pageKeys = els
+    .map((el) => el.getAttribute(opt.pageKeyAttr) || opt.pageKey)
+    .filter((pageKey) => pageKey && typeof data[pageKey] !== 'number') // filter out keys that already have data
 
-  queryPageKeys = [...new Set(queryPageKeys)] // deduplicate
+  pageKeys = [...new Set(pageKeys)] // deduplicate
 
   // Fetch count data from server
-  if (queryPageKeys.length > 0) {
+  if (pageKeys.length > 0) {
     const res = (
       await opt.getApi().stats.getStats(args.query, {
-        page_keys: queryPageKeys.join(','),
+        page_keys: pageKeys.join(','),
         site_name: opt.siteName,
       })
     ).data.data as CountData
@@ -89,13 +94,13 @@ async function refreshStatCount(
   }
 
   const defaultCount = opt.pageKey ? data[opt.pageKey] : 0
-  applyCountData(args.numEl, data, defaultCount)
+  applyCountData(els, data, defaultCount, opt.pageKeyAttr)
 }
 
-function applyCountData(selector: string, data: CountData, defaultCount: number) {
-  document.querySelectorAll(selector).forEach((el) => {
-    const pageKey = el.getAttribute('data-page-key')
-    const count = Number(pageKey ? data[pageKey] : defaultCount)
-    el.innerHTML = `${count}`
+function applyCountData(elements: HTMLElement[], data: CountData, defaultCount: number, pageKeyAttr: string) {
+  elements.forEach((el) => {
+    const pageKey = el.getAttribute(pageKeyAttr)
+    const count = Number(pageKey ? data[pageKey] : defaultCount) // if pageKey is not set, use defaultCount
+    el.innerText = `${count}`
   })
 }

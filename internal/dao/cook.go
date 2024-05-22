@@ -36,7 +36,7 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		ContentMarked:  markedContent,
 		UserID:         c.UserID,
 		Nick:           user.Name,
-		EmailEncrypted: utils.GetMD5Hash(user.Email),
+		EmailEncrypted: utils.GetSha256Hash(user.Email),
 		Link:           user.Link,
 		UA:             c.UA,
 		Date:           c.CreatedAt.Local().Format("2006-01-02 15:04:05"),
@@ -88,7 +88,7 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 		Site:       dao.CookSite(&site),
 		CookedComment: entity.CookedComment{
 			ID:             c.ID,
-			EmailEncrypted: utils.GetMD5Hash(user.Email),
+			EmailEncrypted: utils.GetSha256Hash(user.Email),
 			Link:           user.Link,
 			UA:             c.UA,
 			IsCollapsed:    c.IsCollapsed,

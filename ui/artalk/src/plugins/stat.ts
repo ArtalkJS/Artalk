@@ -1,6 +1,8 @@
 import type { ContextApi, ArtalkPlugin, ArtalkConfig } from '@/types'
 import { Api } from '@/api'
 
+type CountCache = { [pageKey: string]: number }
+
 export interface CountOptions {
   getApi(): Api
 
@@ -11,7 +13,7 @@ export interface CountOptions {
   pvEl: string
   pageKeyAttr: string
 
-  /** 是否增加当前页面 PV 数 */
+  /** Whether to add PV count when initializing */
   pvAdd?: boolean
 }
 
@@ -30,57 +32,59 @@ export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
   })
 }
 
-/** 初始化评论数和 PV 数量展示元素 */
+/** Initialize count widgets */
 export async function initCountWidget(opt: CountOptions) {
-  // 评论数
-  if (opt.countEl && document.querySelector(opt.countEl)) {
-    refreshStatCount(opt, { query: 'page_comment', numEl: opt.countEl })
-  }
+  // Load comment count
+  await loadCommentCount(opt)
 
-  // PV
-  const cacheData =
-    opt.pvAdd && opt.pageKey
-      ? {
-          [opt.pageKey]: (
-            await opt.getApi().pages.logPv({
-              page_key: opt.pageKey,
-              page_title: opt.pageTitle,
-              site_name: opt.siteName,
-            })
-          ).data.pv, // pv+1 and get pv count
-        }
-      : undefined
+  // Increment PV count
+  const cacheData = await incrementPvCount(opt)
 
-  if (opt.pvEl && document.querySelector(opt.pvEl)) {
-    refreshStatCount(opt, {
-      query: 'page_pv',
-      numEl: opt.pvEl,
-      cacheData,
+  // Load PV count
+  await loadPvCount(opt, cacheData)
+}
+
+/** Increment PV count and get cache data that contains PV count */
+async function incrementPvCount(opt: CountOptions) {
+  if (!opt.pvAdd || !opt.pageKey) return undefined
+
+  const pvCount = (
+    await opt.getApi().pages.logPv({
+      page_key: opt.pageKey,
+      page_title: opt.pageTitle,
+      site_name: opt.siteName,
     })
+  ).data.pv // pv+1 and get pv count
+
+  return {
+    [opt.pageKey]: pvCount,
   }
 }
 
-type CountData = { [pageKey: string]: number }
+/** Load comment count */
+async function loadCommentCount(opt: CountOptions) {
+  await loadStatCount({ opt, query: 'page_comment', containers: [opt.countEl, '#ArtalkCount'] })
+}
 
-async function refreshStatCount(
-  opt: CountOptions,
-  args: {
-    query: 'page_pv' | 'page_comment'
-    numEl: string
-    cacheData?: CountData
-  },
-) {
-  let data: CountData = args.cacheData || {}
+/** Load PV count */
+async function loadPvCount(opt: CountOptions, cache?: CountCache) {
+  await loadStatCount({ opt, query: 'page_pv', containers: [opt.pvEl, '#ArtalkPv'], cache })
+}
+
+async function loadStatCount(args: {
+  opt: CountOptions
+  query: 'page_pv' | 'page_comment'
+  containers: string[]
+  cache?: CountCache
+}) {
+  const { opt } = args
+  let cache: CountCache = args.cache || {}
 
   // Retrieve elements
-  const els = Array.from(document.querySelectorAll<HTMLElement>(args.numEl))
+  const els = retrieveElements(args.containers)
 
   // Get page keys which will be queried
-  let pageKeys = els
-    .map((el) => el.getAttribute(opt.pageKeyAttr) || opt.pageKey)
-    .filter((pageKey) => pageKey && typeof data[pageKey] !== 'number') // filter out keys that already have data
-
-  pageKeys = [...new Set(pageKeys)] // deduplicate
+  const pageKeys = getPageKeys(els, opt.pageKeyAttr, opt.pageKey, cache)
 
   // Fetch count data from server
   if (pageKeys.length > 0) {
@@ -89,18 +93,50 @@ async function refreshStatCount(
         page_keys: pageKeys.join(','),
         site_name: opt.siteName,
       })
-    ).data.data as CountData
-    data = { ...data, ...res }
+    ).data.data as CountCache
+    cache = { ...cache, ...res }
   }
 
-  const defaultCount = opt.pageKey ? data[opt.pageKey] : 0
-  applyCountData(els, data, defaultCount, opt.pageKeyAttr)
+  updateElementsText(els, cache, opt.pageKey)
 }
 
-function applyCountData(elements: HTMLElement[], data: CountData, defaultCount: number, pageKeyAttr: string) {
-  elements.forEach((el) => {
-    const pageKey = el.getAttribute(pageKeyAttr)
-    const count = Number(pageKey ? data[pageKey] : defaultCount) // if pageKey is not set, use defaultCount
-    el.innerText = `${count}`
+/** Retrieve elements based on selectors */
+function retrieveElements(containers: string[]): Set<HTMLElement> {
+  const els = new Set<HTMLElement>()
+  containers.forEach((selector) => {
+    document.querySelectorAll<HTMLElement>(selector).forEach((el) => els.add(el))
   })
+  return els
+}
+
+/** Get page keys to be queried */
+function getPageKeys(
+  els: Set<HTMLElement>,
+  pageKeyAttr: string,
+  pageKey: string | undefined,
+  cache: CountCache,
+): string[] {
+  const pageKeys = Array.from(els)
+    .map((el) => el.getAttribute(pageKeyAttr) || pageKey)
+    .filter((key) => key && typeof cache[key] !== 'number') // filter out keys that already have data
+
+  return [...new Set(pageKeys as string[])] // deduplicate
+}
+
+/** Update elements text content with the count data */
+function updateElementsText(els: Set<HTMLElement>, data: CountCache, defaultPageKey?: string) {
+  els.forEach((el) => {
+    const pageKey = el.getAttribute('data-page-key')
+    const count = (pageKey && data[pageKey]) || (defaultPageKey && data[defaultPageKey]) || 0 // if pageKey is not set, use defaultCount
+    el.innerText = `${Number(count)}`
+  })
+}
+
+export const exportedForTesting = {
+  incrementPvCount,
+  loadCommentCount,
+  loadPvCount,
+  retrieveElements,
+  getPageKeys,
+  updateElementsText,
 }

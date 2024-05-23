@@ -229,8 +229,9 @@ frontend:
   voteDown: false
   uaBadge: false
   listSort: true
-  pvEl: "#ArtalkPV"
-  countEl: "#ArtalkCount"
+  pvEl: ".artalk-pv-count"
+  countEl: ".artalk-comment-count"
+  statPageKeyAttr: "data-page-key"
   preview: true
   flatMode: auto
   darkMode: inherit

@@ -24,8 +24,9 @@ const defaults: ArtalkConfig = {
   uaBadge: true,
   listSort: true,
   preview: true,
-  countEl: '#ArtalkCount',
-  pvEl: '#ArtalkPV',
+  countEl: '.artalk-comment-count',
+  pvEl: '.artalk-pv-count',
+  statPageKeyAttr: 'data-page-key',
 
   gravatar: {
     mirror: 'https://cravatar.cn/avatar/',

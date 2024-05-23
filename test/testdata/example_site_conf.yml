@@ -141,8 +141,8 @@ frontend:
   voteDown: false
   uaBadge: true
   listSort: true
-  pvEl: "#ArtalkPV"
-  countEl: "#ArtalkCount"
+  pvEl: ".artalk-pv-count"
+  countEl: ".artalk-comment-count"
   preview: true
   flatMode: auto
   nestMax: 2

@@ -81,6 +81,9 @@ export interface ArtalkConfig {
   /** PV 数绑定元素 Selector */
   pvEl: string
 
+  /** 统计组件 PageKey 属性名 */
+  statPageKeyAttr: string
+
   /** 夜间模式 */
   darkMode: boolean | 'auto'
 

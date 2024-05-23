@@ -103,7 +103,7 @@ async function loadStatCount(args: {
 /** Retrieve elements based on selectors */
 function retrieveElements(containers: string[]): Set<HTMLElement> {
   const els = new Set<HTMLElement>()
-  containers.forEach((selector) => {
+  new Set(containers).forEach((selector) => {
     document.querySelectorAll<HTMLElement>(selector).forEach((el) => els.add(el))
   })
   return els

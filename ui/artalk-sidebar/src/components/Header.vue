@@ -4,9 +4,10 @@ import MD5 from '../lib/md5'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '../stores/user'
 import { useNavStore } from '../stores/nav'
-import { artalk } from '../global'
+import { artalk, isOpenFromSidebar } from '../global'
 
 const nav = useNavStore()
+const router = useRouter()
 const user = useUserStore()
 const { t } = useI18n()
 const { site: curtSite, isAdmin, email } = storeToRefs(user)
@@ -16,6 +17,19 @@ const userAvatarImgURL = computed(() => {
   if (!conf) return ``
   return `${conf.mirror.replace(/\/$/, '')}/${MD5(email.value)}?${conf.params.replace(/^\?/, '')}`
 })
+
+const avatarClickHandler = () => {
+  if (!isOpenFromSidebar()) logout()
+}
+
+const logout = () => {
+  if (!window.confirm(t('logoutConfirm'))) return
+
+  useUserStore().logout()
+  nextTick(() => {
+    router.replace('/login')
+  })
+}
 </script>
 
 <template>
@@ -30,7 +44,7 @@ const userAvatarImgURL = computed(() => {
       </div>
     </template>
     <template v-else>
-      <div class="avatar">
+      <div class="avatar" @click="avatarClickHandler">
         <img :src="userAvatarImgURL" />
       </div>
     </template>

@@ -77,6 +77,7 @@ const en = {
   loginFailure: 'Login failure',
   login: 'Login',
   logout: 'Logout',
+  logoutConfirm: 'Are you sure you want to log out?',
   loginSelectHint: 'Please select the account you wish to log into:',
 }
 
@@ -159,6 +160,7 @@ const zhCN: typeof en = {
   loginFailure: '登录发生异常',
   login: '登录',
   logout: '退出登录',
+  logoutConfirm: '确定要退出登录吗？',
   loginSelectHint: '请选择您要登录的账户：',
 }
 
@@ -241,6 +243,7 @@ const zhTW: typeof en = {
   loginFailure: '登入失敗',
   login: '登入',
   logout: '登出',
+  logoutConfirm: '確定要登出嗎？',
   loginSelectHint: '請選擇您要登入的帳號：',
 }
 

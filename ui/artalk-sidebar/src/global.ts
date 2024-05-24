@@ -59,3 +59,7 @@ export function initArtalk() {
     },
   })
 }
+
+export function isOpenFromSidebar() {
+  return !!bootParams.user?.email
+}

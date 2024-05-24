@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
-import { bootParams } from '@/global'
+import { isOpenFromSidebar } from '@/global'
 
 const el = ref<HTMLElement | null>(null)
 
@@ -69,6 +69,8 @@ watch(curtShow, (value) => {
 })
 
 function logout() {
+  if (!window.confirm(t('logoutConfirm'))) return
+
   useUserStore().logout()
   nextTick(() => {
     router.replace('/login')
@@ -92,7 +94,7 @@ function logout() {
         </div>
 
         <!-- Logout Button -->
-        <div v-if="!bootParams.user?.email" class="atk-site-item" @click="logout()">
+        <div v-if="!isOpenFromSidebar()" class="atk-site-item" @click="logout()">
           <svg
             class="atk-site-logo"
             stroke="currentColor"

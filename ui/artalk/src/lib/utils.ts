@@ -108,7 +108,7 @@ export function timeAgo(date: Date, $t: Function = (n: string) => n) {
 }
 
 export function getGravatarURL(opts: { params: string; mirror: string; emailHash: string; nick: string }) {
-  return `${opts.mirror.replace(/\/$/, '')}/${opts.emailHash}?${opts.params.replace(/^\?/, '')}&letter=${opts.nick}`
+  return `${opts.mirror.replace(/\/$/, '')}/${opts.emailHash}?${opts.params.replace(/^\?/, '')}&letter=${opts.nick.charAt(0)}`
 }
 
 export function sleep(ms: number) {

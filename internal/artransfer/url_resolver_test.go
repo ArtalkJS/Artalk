@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func Test_urlResolverGetPageKey(t *testing.T) {
+func Test_getResolvedPageKey(t *testing.T) {
 	type args struct {
 		baseUrlRaw    string
 		commentUrlRaw string
@@ -23,8 +23,8 @@ func Test_urlResolverGetPageKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := urlResolverGetPageKey(tt.args.baseUrlRaw, tt.args.commentUrlRaw); got != tt.want {
-				t.Errorf("urlResolverGetPageKey() = %v, want %v", got, tt.want)
+			if got := getResolvedPageKey(tt.args.baseUrlRaw, tt.args.commentUrlRaw); got != tt.want {
+				t.Errorf("getResolvedPageKey() = %v, want %v", got, tt.want)
 			}
 		})
 	}

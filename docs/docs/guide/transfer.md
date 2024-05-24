@@ -159,22 +159,23 @@ typecho-20220424-202246.artrans
 执行 `artalk import -h` 查看帮助文档。
 
 ```bash
-./artalk import 数据类型 [参数...]
+./artalk import [参数...] [文件名]
 ```
 
-参数格式遵循 `<key>:<value>`，例如：
+通过命令行的 `-p` Flag 设定导入参数：
 
 ```bash
-./artalk import 类型 target_site_name:"Site" target_site_url:"https://xx.com" json_file:"文件路径"
+./artalk import -p '{ "target_site_name": "Site", "target_site_url": "https://xx.com", "json_file": "", "url_resolver": true }' ./artrans.json
 ```
 
-前端的导入同样可以手动输入启动参数，例如：
+如果在网页后台导入可将 JSON 填入文本框：
 
 ```json
 {
   "target_site_name": "Site",
   "target_site_url": "https://xx.com",
-  "json_file": "服务器上的文件路径"
+  "json_file": "服务器上的文件路径",
+  "url_resolver": true
 }
 ```
 

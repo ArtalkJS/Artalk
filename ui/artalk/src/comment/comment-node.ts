@@ -204,7 +204,8 @@ export default class CommentNode {
     return Utils.getGravatarURL({
       mirror: this.opts.gravatar.mirror,
       params: this.opts.gravatar.params,
-      emailMD5: this.data.email_encrypted,
+      emailHash: this.data.email_encrypted,
+      nick: this.data.nick,
     })
   }
 

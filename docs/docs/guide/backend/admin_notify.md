@@ -284,7 +284,7 @@ admin_notify:
     "content": "测试内容",
     "user_id": 226,
     "nick": "测试用户",
-    "email_encrypted": "654236c1e78i4c09a17c4869c9d43910",
+    "email_encrypted": "68f8397b4a212a6d281a6ac8a9c25556215729054b8cb331c03882b91fe31758",
     "link": "https://qwqaq.com",
     "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 12_4_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36",
     "date": "2022-05-23 17:00:23",

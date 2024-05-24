@@ -40,7 +40,7 @@ function initArtalk(conf: any) {
     el: el.value,
     emoticons: '/assets/emoticons/default.json',
     gravatar: {
-      mirror: 'https://cravatar.cn/avatar/',
+      mirror: 'https://weavatar.com/avatar/',
     },
     ...conf,
   })

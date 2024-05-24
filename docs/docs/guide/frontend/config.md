@@ -359,7 +359,7 @@ gravatar: {
 **Gravatar 镜像地址**
 
 - 类型：`String`
-- 默认值：`"https://sdn.geekzu.org/avatar/"`
+- 默认值：`"https://weavatar.com/avatar/"`
 
 如果你觉得 Gravatar 头像加载速度不理想，可以尝试替换。
 
@@ -378,11 +378,11 @@ gravatar: {
 **Gravatar API 参数**
 
 - 类型：`String`
-- 默认值：`"d=mp&s=240"`
+- 默认值：`"s=240&d=letter"`
 
 例如，你可以通过该配置项设置默认头像 (`d=mp`) 和头像尺寸 (`s=240`)。
 
-参考：[Gravatar API 文档](http://cn.gravatar.org/site/implement/images/)
+参考：[Gravatar API 文档](https://docs.gravatar.com/api/avatars/images/)
 
 该配置项格式为 HTTP Query。
 

@@ -428,9 +428,9 @@ frontend:
   # 头像 Gravatar
   gravatar:
     # API 地址
-    mirror: https://cravatar.cn/avatar/
+    mirror: https://weavatar.com/avatar/
     # API 参数
-    params: d=mp&s=240
+    params: s=240&d=letter
   # 评论分页
   pagination:
     # 每页评论数

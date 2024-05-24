@@ -148,7 +148,7 @@ frontend:
   nestMax: 2
   nestSort: DATE_ASC
   gravatar:
-    mirror: https://cravatar.cn/avatar/
+    mirror: https://weavatar.com/avatar/
     default: mp
   pagination:
     pageSize: 20

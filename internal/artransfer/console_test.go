@@ -33,7 +33,7 @@ func TestConsole(t *testing.T) {
 		c := NewConsole()
 		c.SetOutputFunc(outputFunc)
 		c.Error("error message")
-		assert.Equal(t, "[E] error message", output)
+		assert.Equal(t, "[E] error message\n", output)
 	})
 
 	// Test Fatal method
@@ -45,7 +45,7 @@ func TestConsole(t *testing.T) {
 		c := NewConsole()
 		c.SetOutputFunc(outputFunc)
 		c.Fatal("fatal message")
-		assert.Equal(t, "[F] fatal message", output)
+		assert.Equal(t, "[F] fatal message\n", output)
 	})
 
 	// Test Warn method
@@ -57,7 +57,7 @@ func TestConsole(t *testing.T) {
 		c := NewConsole()
 		c.SetOutputFunc(outputFunc)
 		c.Warn("warn message")
-		assert.Equal(t, "[W] warn message", output)
+		assert.Equal(t, "[W] warn message\n", output)
 	})
 
 	// Test Info method
@@ -69,7 +69,7 @@ func TestConsole(t *testing.T) {
 		c := NewConsole()
 		c.SetOutputFunc(outputFunc)
 		c.Info("info message")
-		assert.Equal(t, "[I] info message", output)
+		assert.Equal(t, "[I] info message\n", output)
 	})
 
 	// Test Print method

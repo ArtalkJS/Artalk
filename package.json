@@ -2,7 +2,7 @@
   "name": "artalk-monorepo",
   "private": true,
   "homepage": "https://artalk.js.org",
-  "packageManager": "pnpm@9.1.0",
+  "packageManager": "pnpm@9.1.2",
   "scripts": {
     "dev": "pnpm -F artalk dev",
     "dev:sidebar": "pnpm -F @artalk/artalk-sidebar dev",

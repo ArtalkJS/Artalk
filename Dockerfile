@@ -1,5 +1,5 @@
 ### build Artalk
-FROM golang:1.22.2-alpine3.19 as builder
+FROM golang:1.22.3-alpine3.20 as builder
 
 WORKDIR /source
 
@@ -22,7 +22,7 @@ ARG SKIP_UI_BUILD=false
 RUN set -ex \
     && if [ "$SKIP_UI_BUILD" = "false" ]; then \
         apk add --no-cache nodejs npm \
-        && npm install -g pnpm@9.1.0 \
+        && npm install -g pnpm@9.1.2 \
     ;fi
 
 RUN set -ex \
@@ -40,7 +40,7 @@ RUN set -ex \
     && make build
 
 ### build final image
-FROM alpine:3.19
+FROM alpine:3.20
 
 # we set the timezone `Asia/Shanghai` by default, you can be modified
 # by `docker build --build-arg="TZ=Other_Timezone ..."`

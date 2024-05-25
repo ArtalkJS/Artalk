@@ -1,60 +1,58 @@
 package artransfer
 
 import (
+	"fmt"
+
 	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"gorm.io/gorm"
 )
 
 func RunExportArtrans(dao *dao.Dao, params *ExportParams) (string, error) {
-	return exportArtrans(dao, params)
+	return exportArtrans(dao.DB(), params)
 }
 
-func RunImportArtrans(dao *dao.Dao, params *ImportParams) {
-	// 读取 JSON
+func RunImportArtrans(dao *dao.Dao, params *ImportParams, outputFunc ...func(string)) error {
+	console := NewConsole()
+	if len(outputFunc) > 0 {
+		console.SetOutputFunc(outputFunc[0])
+	}
+	params.SetConsole(console)
+
+	// Read JSON
 	if params.JsonData == "" {
 		if params.JsonFile == "" {
-			logFatal(i18n.T("{{name}} is required", map[string]any{"name": "json_file:<JSON file path>"}))
-			return
+			err := fmt.Errorf(i18n.T("{{name}} is required", map[string]any{"name": "json_file:<JSON file path>"}))
+			console.Error(err)
+			return err
 		}
 
 		var err error
 		params.JsonData, err = readJsonFile(params.JsonFile)
 		if err != nil {
-			logFatal(err)
-			return
+			console.Error(err)
+			return err
 		}
 	}
 
-	// Json 转 Artran 实例列表
+	// Json to Artrans
 	comments := []*entity.Artran{}
 	if err := jsonDecodeFAS(params.JsonData, &comments); err != nil {
-		logFatal(err)
-		return
+		console.Error(err)
+		return err
 	}
 
-	// 执行导入数据
-	importArtrans(dao, params, comments)
-
-	print("\n")
-	logInfo(i18n.T("Import complete"))
-}
-
-func ArrToImportParams(arr []string) *ImportParams {
-	params := ImportParams{}
-
-	params.UrlResolver = false // 默认关闭
-	params.UrlKeepDomain = false
-
-	getParamsFrom(arr).To(map[string]any{
-		"target_site_name": &params.TargetSiteName,
-		"target_site_url":  &params.TargetSiteUrl,
-		"url_resolver":     &params.UrlResolver,
-		"url_keep_domain":  &params.UrlKeepDomain,
-		"json_file":        &params.JsonFile,
-		"json_data":        &params.JsonData,
-		"assumeyes":        &params.Assumeyes,
+	// Execute import
+	err := dao.DB().Transaction(func(tx *gorm.DB) error {
+		return importArtrans(tx, params, comments)
 	})
 
-	return &params
+	if err != nil {
+		console.Error("[Artransfer] ", i18n.T("Import failed"), ": ", err)
+	} else {
+		console.Info("[Artransfer] ", i18n.T("Import completed"))
+	}
+
+	return err
 }

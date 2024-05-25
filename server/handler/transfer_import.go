@@ -2,6 +2,8 @@ package handler
 
 import (
 	"bytes"
+	"html"
+	"sync"
 
 	"github.com/ArtalkJS/Artalk/internal/artransfer"
 	"github.com/ArtalkJS/Artalk/internal/core"
@@ -24,7 +26,14 @@ type ParamsTransferImport struct {
 // @Success      200  {string}  string
 // @Router       /transfer/import  [post]
 func TransferImport(app *core.App, router fiber.Router) {
+	var mu sync.Mutex
+
 	router.Post("/transfer/import", common.AdminGuard(app, func(c *fiber.Ctx) error {
+		if !mu.TryLock() {
+			return common.RespError(c, fiber.StatusTooManyRequests, "Another import is in progress")
+		}
+		defer mu.Unlock()
+
 		var p ParamsTransferImport
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
@@ -45,13 +54,11 @@ func TransferImport(app *core.App, router fiber.Router) {
 			`<style>* { font-family: Menlo, Consolas, Monaco, monospace;word-wrap: break-word;white-space: pre-wrap;font-size: 13px; }</style>
 		<script>function scroll() { if (!!document.body) { document.body.scrollTo(0, 999999999999); } }</script>`))
 
-		artransfer.HttpOutput = func(continueRun bool, text string) {
-			buf.Write([]byte(text))
-			buf.Write([]byte("<script>scroll();</script>"))
-		}
-
 		p.Assumeyes = true
-		artransfer.RunImportArtrans(app.Dao(), &p.ImportParams)
+		artransfer.RunImportArtrans(app.Dao(), &p.ImportParams, func(s string) {
+			buf.Write([]byte(html.EscapeString(s)))
+			buf.Write([]byte("<script>scroll();</script>"))
+		})
 
 		return nil
 	}))

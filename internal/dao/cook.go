@@ -102,37 +102,6 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 	}
 }
 
-func (dao *Dao) CommentToArtran(c *entity.Comment) entity.Artran {
-	user := dao.FetchUserForComment(c)
-	page := dao.FetchPageForComment(c)
-	site := dao.FetchSiteForComment(c)
-
-	return entity.Artran{
-		ID:            utils.ToString(c.ID),
-		Rid:           utils.ToString(c.Rid),
-		Content:       c.Content,
-		UA:            c.UA,
-		IP:            c.IP,
-		IsCollapsed:   utils.ToString(c.IsCollapsed),
-		IsPending:     utils.ToString(c.IsPending),
-		IsPinned:      utils.ToString(c.IsPinned),
-		VoteUp:        utils.ToString(c.VoteUp),
-		VoteDown:      utils.ToString(c.VoteDown),
-		CreatedAt:     c.CreatedAt.String(),
-		UpdatedAt:     c.UpdatedAt.String(),
-		Nick:          user.Name,
-		Email:         user.Email,
-		Link:          user.Link,
-		BadgeName:     user.BadgeName,
-		BadgeColor:    user.BadgeColor,
-		PageKey:       page.Key,
-		PageTitle:     page.Title,
-		PageAdminOnly: utils.ToString(page.AdminOnly),
-		SiteName:      site.Name,
-		SiteUrls:      site.Urls,
-	}
-}
-
 // ===============
 //  Page
 // ===============

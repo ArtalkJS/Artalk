@@ -36,5 +36,5 @@ type Artran struct {
 
 	// site
 	SiteName string `json:"site_name"`
-	SiteUrls string `json:"site_urls"`
+	SiteURLs string `json:"site_urls"`
 }

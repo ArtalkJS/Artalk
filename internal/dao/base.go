@@ -4,8 +4,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type DB = gorm.DB
+
 type Dao struct {
-	db *gorm.DB
+	db *DB
 
 	// Cache to speed up database query
 	//
@@ -19,7 +21,7 @@ type Dao struct {
 // Create new dao instance
 //
 // This function will auto migrate database tables
-func NewDao(db *gorm.DB) *Dao {
+func NewDao(db *DB) *Dao {
 	dao := &Dao{
 		db: db,
 	}
@@ -29,7 +31,7 @@ func NewDao(db *gorm.DB) *Dao {
 	return dao
 }
 
-func (dao *Dao) DB() *gorm.DB {
+func (dao *Dao) DB() *DB {
 	return dao.db
 }
 

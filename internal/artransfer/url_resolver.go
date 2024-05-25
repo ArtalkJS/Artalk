@@ -2,35 +2,28 @@ package artransfer
 
 import "net/url"
 
-// PageKey (commentUrlVal 不确定是否为完整 URL 还是一个 path)
-//
-// @examples
-// ("https://github.com", "/1.html")                => "https://github.com/1.html"
-// ("https://github.com", "https://xxx.com/1.html") => "https://github.com/1.html"
-// ("https://github.com/", "/1.html")               => "https://github.com/1.html"
-// ("", "/1.html")                                  => "/1.html"
-// ("", "https://xxx.com/1.html")                   => "https://xxx.com/1.html"
-// ("https://github.com/233", "/1/")                => "https://github.com/1/"
-func urlResolverGetPageKey(baseUrlRaw string, commentUrlRaw string) string {
-	if baseUrlRaw == "" {
-		return commentUrlRaw
+// Page key may be a relative path or a full URL,
+// this function will resolve the full URL based on the baseURL.
+func getResolvedPageKey(baseURL string, pageKey string) string {
+	if baseURL == "" {
+		return pageKey
 	}
 
-	baseUrl, err := url.Parse(baseUrlRaw)
+	baseUrl, err := url.Parse(baseURL)
 	if err != nil {
-		return commentUrlRaw
+		return pageKey
 	}
 
-	commentUrl, err := url.Parse(commentUrlRaw)
+	commentUrl, err := url.Parse(pageKey)
 	if err != nil {
-		return commentUrlRaw
+		return pageKey
 	}
 
 	// "https://artalk.js.org/guide/describe.html?233" => "/guide/describe.html?233"
 	commentUrl.Scheme = ""
 	commentUrl.Host = ""
 
-	// 解决拼接路径中的相对地址，例如：https://atk.xxx/abc/../artalk => https://atk.xxx/artalk
+	// Remove dots and slashes from the relative path, e.g. "https://atk.xxx/abc/../artalk" => "https://atk.xxx/artalk"
 	url := baseUrl.ResolveReference(commentUrl)
 
 	return url.String()

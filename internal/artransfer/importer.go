@@ -1,114 +1,149 @@
 package artransfer
 
 import (
+	"cmp"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/cheggaaa/pb/v3"
+	"github.com/samber/lo"
+	"gorm.io/gorm"
 )
 
 type ImportParams struct {
 	TargetSiteName string `json:"target_site_name" form:"target_site_name" validate:"optional"` // The target site name
-	TargetSiteUrl  string `json:"target_site_url" form:"target_site_url" validate:"optional"`   // The target site url
-	UrlResolver    bool   `json:"url_resolver" form:"url_resolver" validate:"optional"`         // Enable URL resolver
-	UrlKeepDomain  bool   `json:"url_keep_domain" form:"url_keep_domain" validate:"optional"`   // Keep domain
+	TargetSiteURL  string `json:"target_site_url" form:"target_site_url" validate:"optional"`   // The target site url
+	URLResolver    bool   `json:"url_resolver" form:"url_resolver" validate:"optional"`         // Enable URL resolver
+	URLKeepDomain  bool   `json:"url_keep_domain" form:"url_keep_domain" validate:"optional"`   // Keep domain
 	JsonFile       string `json:"json_file,omitempty" form:"json_file" validate:"optional"`     // The JSON file path
 	JsonData       string `json:"json_data,omitempty" form:"json_data" validate:"optional"`     // The JSON data
-	Assumeyes      bool   `json:"assumeyes" form:"assumeyes" validate:"optional"`               // Automatically answer yes for all questions.
+	Assumeyes      bool   `json:"assumeyes" form:"assumeyes" validate:"optional"`               // Automatically answer yes for all questions
+
+	console *Console `json:"-"`
 }
 
-func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran) {
+func (p *ImportParams) SetConsole(c *Console) {
+	p.console = c
+}
+
+func (p *ImportParams) Console() *Console {
+	if p.console == nil {
+		p.console = NewConsole()
+	}
+	return p.console
+}
+
+func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran) error {
+	console := params.Console()
+	isTrue := func(val string) bool { return val == "true" || val == "1" }
+
 	if len(comments) == 0 {
-		logFatal(i18n.T("No comment"))
-		return
+		return fmt.Errorf(i18n.T("No comment"))
 	}
 
-	if params.TargetSiteUrl != "" && !utils.ValidateURL(params.TargetSiteUrl) {
-		logFatal(i18n.T("Invalid {{name}}", map[string]interface{}{"name": i18n.T("Target Site") + " " + "URL"}))
-		return
+	if params.TargetSiteURL != "" && !utils.ValidateURL(params.TargetSiteURL) {
+		return fmt.Errorf(i18n.T("Invalid {{name}}", map[string]interface{}{"name": i18n.T("Target Site") + " " + "URL"}))
 	}
 
-	if params.UrlResolver {
-		params.UrlKeepDomain = true
-	}
+	console.Println()
+	console.Print("# " + i18n.T("Please review") + ":\n\n")
 
-	// 汇总
-	print("# " + i18n.T("Please review") + ":\n\n")
+	// Print the first comment
+	console.PrintEncodeData(i18n.T("First comment"), comments[0])
 
-	// 第一条评论
-	printEncodeData(i18n.T("First comment"), comments[0])
-
-	showTSiteName := params.TargetSiteName
-	showTSiteUrl := params.TargetSiteUrl
-	if showTSiteName == "" {
-		showTSiteName = i18n.T("Unspecified")
-
-	}
-	if showTSiteUrl == "" {
-		showTSiteUrl = i18n.T("Unspecified")
-	}
-
-	// 目标站点名和目标站点URL都不为空，才开启 URL 解析器
-	showUrlResolver := "off"
-	if params.UrlResolver {
-		showUrlResolver = "on"
-	}
-	// if basic.TargetSiteName != "" && basic.TargetSiteUrl != "" {
-	// 	basic.UrlResolver = true
-	// 	showUrlResolver = "on"
-	// }
-
-	printTable([][]interface{}{
-		{i18n.T("Target Site") + " " + i18n.T("Name"), showTSiteName},
-		{i18n.T("Target Site") + " URL", showTSiteUrl},
+	// Print parameters
+	console.PrintTable([][]interface{}{
+		{i18n.T("Target Site") + " " + i18n.T("Name"), cmp.Or(params.TargetSiteName, i18n.T("Unspecified"))},
+		{i18n.T("Target Site") + " URL", cmp.Or(params.TargetSiteURL, i18n.T("Unspecified"))},
 		{i18n.T("Comment count"), fmt.Sprintf("%d", len(comments))},
-		{i18n.T("URL Resolver"), showUrlResolver},
+		{i18n.T("URL Resolver"), lo.If(params.URLResolver, "on").Else("off")},
 	})
 
-	print("\n")
+	console.Println()
 
-	// 确认开始
-	if !params.Assumeyes && !confirm(i18n.T("Confirm to continue?")) {
+	// Confirm to continue
+	if !params.Assumeyes && !console.Confirm(i18n.T("Confirm to continue?")) {
 		os.Exit(0)
 	}
 
-	// 准备导入评论
-	print("\n")
+	console.Println()
 
+	// ---------------------
+	//  Start importing
+	// ---------------------
 	importComments := []*entity.Comment{}
-	rawId2GenId := buildGenIdMap(comments)                    // Original ID => GenId (GenId is comment index +1)
-	rawRid2RootGenId := buildRootIdMap(comments, rawId2GenId) // Original Rid => RootGenId
+	rawId2GenId := buildGenIdMap(comments)                           // Original ID => GenId (GenId is comment index +1)
+	rawRid2RootGenId := buildRid2RootGenIdMap(comments, rawId2GenId) // Original Rid => RootGenId
 	createdDates := map[int]time.Time{}
 	updatedDates := map[int]time.Time{}
 
 	for i, c := range comments {
-		siteName := c.SiteName
-		siteUrls := c.SiteUrls
-
-		if params.TargetSiteName != "" {
-			siteName = params.TargetSiteName
+		// ---------------------
+		//  Prepare site
+		// ---------------------
+		siteName := strings.TrimSpace(cmp.Or(params.TargetSiteName, c.SiteName))
+		siteURLs := strings.TrimSpace(cmp.Or(params.TargetSiteURL, c.SiteURLs))
+		if siteName == "" {
+			console.Warn(fmt.Sprintf("skip comment id %s since `importParams.target_site_name` and `comment.site_name` are both empty", c.ID))
+			continue
 		}
-		if params.TargetSiteUrl != "" {
-			siteUrls = params.TargetSiteUrl
-		}
 
-		// 准备 site
-		site, sErr := siteReady(dao, siteName, siteUrls)
+		site, sErr := prepareSite(tx, siteName, siteURLs)
 		if sErr != nil {
-			logFatal(sErr)
-			return
+			return fmt.Errorf("failed to prepare site, %w", sErr)
 		}
 
-		// 准备 user
-		user, err := dao.FindCreateUser(c.Nick, c.Email, c.Link)
-		if err == nil && !user.IsAdmin {
+		// ---------------------
+		//  Prepare page
+		// ---------------------
+		pageKey := strings.TrimSpace(c.PageKey)
+		if pageKey == "" {
+			console.Warn(fmt.Sprintf("skip comment id %s since `comment.page_key` is empty", c.ID))
+			continue
+		}
+
+		if params.URLResolver { // Enable URL resolver
+			splitURLs := utils.SplitAndTrimSpace(params.TargetSiteURL, ",")
+			if len(splitURLs) == 0 {
+				return fmt.Errorf("\"target_site_url\" cannot be empty if URL resolver is enabled")
+			}
+			// Use the first URL (form the TargetSiteUrl of import params) as the PageKey (domain part)
+			pageKey = getResolvedPageKey(splitURLs[0], c.PageKey)
+		}
+
+		if !params.URLResolver && !params.URLKeepDomain { // Strip domain from PageKey
+			pageKey = stripDomainFromURL(pageKey)
+		}
+
+		page, err := findCreatePage(tx, pageKey, c.PageTitle, site.Name)
+		if err != nil {
+			return fmt.Errorf("failed to prepare page, %w", err)
+		}
+
+		adminOnlyVal := isTrue(c.PageAdminOnly)
+		if page.AdminOnly != adminOnlyVal {
+			page.AdminOnly = adminOnlyVal
+			if pErr := dbSave(tx, &page); pErr != nil {
+				return fmt.Errorf("failed to update page, %w", pErr)
+			}
+		}
+
+		// ---------------------
+		//  Prepare user
+		// ---------------------
+		correctUserBasicInfo(c, console)
+		user, uErr := findCreateUser(tx, c.Nick, c.Email, c.Link)
+		if uErr != nil {
+			return fmt.Errorf("failed to prepare user, %w", uErr)
+		}
+
+		if !user.IsAdmin {
 			userModified := false
 			if c.BadgeName != "" && c.BadgeName != user.BadgeName {
 				user.BadgeName = c.BadgeName
@@ -119,36 +154,21 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 				userModified = true
 			}
 			if userModified {
-				dao.UpdateUser(&user)
+				if uErr := dbSave(tx, &user); uErr != nil {
+					return fmt.Errorf("failed to update user, %w", uErr)
+				}
 			}
 		}
 
-		// 准备 page
-		nPageKey := c.PageKey
-		if params.UrlResolver { // 使用 URL 解析器
-			splittedURLs := utils.SplitAndTrimSpace(params.TargetSiteUrl, ",")
-			if len(splittedURLs) == 0 {
-				logFatal("[URL Resolver] " + i18n.T("{{name}} cannot be empty", map[string]interface{}{"name": i18n.T("Target Site") + " " + "URL"}))
-				return
-			}
-			nPageKey = urlResolverGetPageKey(splittedURLs[0], c.PageKey)
-		}
-		if !params.UrlKeepDomain { // strip domain from page key
-			nPageKey = stripDomainFromURL(nPageKey)
-		}
-
-		page := dao.FindCreatePage(nPageKey, c.PageTitle, site.Name)
-
-		adminOnlyVal := c.PageAdminOnly == utils.ToString(true)
-		if page.AdminOnly != adminOnlyVal {
-			page.AdminOnly = adminOnlyVal
-			dao.UpdatePage(&page)
-		}
-
+		// ---------------------
+		//  Prepare vote
+		// ---------------------
 		voteUp, _ := strconv.Atoi(c.VoteUp)
 		voteDown, _ := strconv.Atoi(c.VoteDown)
 
-		// 创建新 comment 实例
+		// ---------------------
+		//  Create new comment
+		// ---------------------
 		nComment := entity.Comment{
 			Rid:    rawId2GenId[c.Rid], // [M_Step.1] Rid => GenId
 			RootID: rawRid2RootGenId[c.Rid],
@@ -158,9 +178,9 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 			UA: c.UA,
 			IP: c.IP,
 
-			IsCollapsed: c.IsCollapsed == utils.ToString(true),
-			IsPending:   c.IsPending == utils.ToString(true),
-			IsPinned:    c.IsPinned == utils.ToString(true),
+			IsCollapsed: isTrue(c.IsCollapsed),
+			IsPending:   isTrue(c.IsPending),
+			IsPinned:    isTrue(c.IsPinned),
 
 			VoteUp:   voteUp,
 			VoteDown: voteDown,
@@ -170,7 +190,7 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 			SiteName: site.Name,
 		}
 
-		// 时间还原
+		// Prepare slices for restoring CreatedAt and UpdatedAt
 		createdDates[i] = parseDate(c.CreatedAt)
 		if c.UpdatedAt != "" {
 			updatedDates[i] = parseDate(c.UpdatedAt)
@@ -178,34 +198,42 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 			updatedDates[i] = parseDate(c.CreatedAt)
 		}
 
+		// Append to importComments for batch insert
 		importComments = append(importComments, &nComment)
 	}
 
-	println(i18n.T("Saving") + "...")
+	console.Println(i18n.T("Importing") + "...")
+	console.Println()
 
-	// Batch Insert
+	// ---------------------
+	//  Batch insert
+	// ---------------------
 	// @link https://gorm.io/docs/create.html#Batch-Insert
-	dao.DB().CreateInBatches(&importComments, 100)
+	if err := tx.CreateInBatches(&importComments, 100).Error; err != nil {
+		return fmt.Errorf("failed to batch insert comments, %w", err)
+	}
 
-	// ID 变更映射表
+	// GenId => DBRealId Mapping
 	genId2DBRealIdMap := map[uint]uint{}
 	for i, savedComment := range importComments {
 		genId2DBRealIdMap[uint(i+1)] = savedComment.ID // [M_Step.2] Create GenId => DBRealId Map
 	}
 
-	// 进度条
+	// Progress bar
 	var bar *pb.ProgressBar
-	if HttpOutput == nil {
+	if !console.IsOutputFuncSet() {
 		bar = pb.StartNew(len(comments))
 	}
 
 	total := len(comments)
-
 	for i, savedComment := range importComments {
-		// 日期恢复
+		// Restore CreatedAt and UpdatedAt
+
+		// Invalid operation for GORM to save `CreatedAt` or `UpdatedAt` field values by using `Create()` or `Save()`,
+		// only `Updates()` as a alternative way to update these fields.
 		// @see https://gorm.io/zh_CN/docs/conventions.html#CreatedAt
 		// @see https://github.com/go-gorm/gorm/issues/4827#issuecomment-960480148
-		// savedComment.CreatedAt = createdDates[i] // 无效
+		// savedComment.CreatedAt = createdDates[i]
 		// savedComment.UpdatedAt = updatedDates[i]
 
 		updateData := map[string]interface{}{
@@ -213,86 +241,116 @@ func importArtrans(dao *dao.Dao, params *ImportParams, comments []*entity.Artran
 			"UpdatedAt": updatedDates[i],
 		}
 
-		// Rid 重建
+		// Rebuild Rid
 		if savedComment.Rid != 0 {
 			updateData["Rid"] = genId2DBRealIdMap[savedComment.Rid] // [M_Step.3] GenId => DBRealId
 			updateData["RootID"] = genId2DBRealIdMap[savedComment.RootID]
 		}
 
-		dao.DB().Model(&savedComment).Updates(updateData)
+		// Perform update
+		err := tx.Model(&savedComment).Updates(updateData)
+		if err.Error != nil {
+			return fmt.Errorf("failed to update comment, %w", err.Error)
+		}
 
-		// Vote 重建 (伪投票)
+		// Rebuild Vote (mock vote)
+		createMockVote := func(voteType entity.VoteType, count int) error {
+			for i := 0; i < count; i++ {
+				if vErr := dbSave(tx, &entity.Vote{
+					TargetID: savedComment.ID,
+					Type:     voteType,
+				}); vErr != nil {
+					return fmt.Errorf("failed to create vote, %w", vErr)
+				}
+			}
+			return nil
+		}
+
 		if savedComment.VoteUp > 0 {
-			for i := 0; i < savedComment.VoteUp; i++ {
-				dao.NewVote(savedComment.ID, entity.VoteTypeCommentUp, 0, "", "")
+			if err := createMockVote(entity.VoteTypeCommentUp, savedComment.VoteUp); err != nil {
+				return err
 			}
 		}
 		if savedComment.VoteDown > 0 {
-			for i := 0; i < savedComment.VoteDown; i++ {
-				dao.NewVote(savedComment.ID, entity.VoteTypeCommentDown, 0, "", "")
+			if err := createMockVote(entity.VoteTypeCommentDown, savedComment.VoteDown); err != nil {
+				return err
 			}
 		}
 
+		// Output progress
 		if bar != nil {
 			bar.Increment()
 		}
-		if HttpOutput != nil && i%50 == 0 {
-			print(fmt.Sprintf("%.0f%%... ", float64(i)/float64(total)*100))
+		if console.IsOutputFuncSet() && i%50 == 0 {
+			console.Print(fmt.Sprintf("%.0f%%... ", float64(i)/float64(total)*100))
 		}
 	}
 
+	// Finish progress
 	if bar != nil {
 		bar.Finish()
 	}
-	if HttpOutput != nil {
-		println()
+	if console.IsOutputFuncSet() {
+		console.Println()
 	}
 
-	logInfo(i18n.T("{{count}} items imported", map[string]interface{}{"count": len(comments)}))
+	// Done
+	console.Println()
+	console.Info(i18n.T("{{count}} items imported", map[string]interface{}{"count": len(comments)}))
+
+	return nil
 }
 
-// 站点准备
-func siteReady(dao *dao.Dao, tSiteName string, tSiteUrls string) (*entity.Site, error) {
-	site := dao.FindSite(tSiteName)
+// Prepare site
+func prepareSite(tx *gorm.DB, targetSiteName string, targetSiteURLs string) (*entity.Site, error) {
+	if targetSiteName == "" {
+		return nil, fmt.Errorf("target_site_name is required for prepareSite()`")
+	}
+
+	site := findSite(tx, targetSiteName)
+
+	// Create site
 	if site.IsEmpty() {
-		// 创建新站点
 		site = entity.Site{}
-		site.Name = tSiteName
-		site.Urls = tSiteUrls
-		err := dao.CreateSite(&site)
-		if err != nil {
+		site.Name = targetSiteName
+		site.Urls = targetSiteURLs
+
+		if err := dbSave(tx, &site); err != nil {
 			return nil, fmt.Errorf("failed to create site")
 		}
-	} else {
-		// 追加 URL
-		siteCooked := dao.CookSite(&site)
 
-		urlExist := func(tUrl string) bool {
-			for _, u := range siteCooked.Urls {
-				if u == tUrl {
-					return true
+		return &site, nil
+	}
+
+	// Edit existing site
+	originalURLs := strings.Split(site.Urls, ",")
+	newURLs := []string{}
+	{
+		targetURLsSpit := utils.SplitAndTrimSpace(targetSiteURLs, ",")
+		for _, u := range targetURLsSpit {
+			isInCurrentList := func(u string) bool {
+				for _, uu := range originalURLs {
+					if uu == u {
+						return true
+					}
 				}
+				return false
 			}
-			return false
-		}
 
-		tUrlsSpit := utils.SplitAndTrimSpace(tSiteUrls, ",")
-
-		rUrls := []string{}
-		for _, u := range tUrlsSpit {
-			if !urlExist(u) {
-				rUrls = append(rUrls, u) // prepend 不存在的站点
+			// if target url item not exist in current site url list, then append to newURLs
+			if !isInCurrentList(u) {
+				newURLs = append(newURLs, u)
 			}
 		}
+	}
 
-		if len(rUrls) > 0 {
-			// 保存
-			rUrls = append(rUrls, siteCooked.Urls...)
-			site.Urls = strings.Join(rUrls, ",")
-			err := dao.UpdateSite(&site)
-			if err != nil {
-				return nil, fmt.Errorf("update site data failed")
-			}
+	// Update site urls
+	if len(newURLs) > 0 {
+		newURLs = append(newURLs, originalURLs...) // Prepend new urls
+		site.Urls = strings.Join(newURLs, ",")
+
+		if err := dbSave(tx, &site); err != nil {
+			return nil, fmt.Errorf("failed to update site urls")
 		}
 	}
 
@@ -307,23 +365,20 @@ func buildGenIdMap(comments []*entity.Artran) map[string]uint {
 	return genIdMap
 }
 
-func buildRootIdMap(comments []*entity.Artran, genIdMap map[string]uint) map[string]uint {
-	getRooID := func(rid string) uint {
-		if rid, _ := strconv.Atoi(rid); rid == 0 {
-			return 0
-		}
+func getCommentByGenId(comments []*entity.Artran, genId uint) *entity.Artran {
+	return comments[int(genId)-1]
+}
 
+func buildRid2RootGenIdMap(comments []*entity.Artran, genIdMap map[string]uint) map[string]uint {
+	getRooID := func(rid string) uint {
 		// loop to find the root comment
 		visited := map[uint]bool{}
 		rootId := genIdMap[rid]
 		for rootId != 0 && !visited[rootId] {
 			visited[rootId] = true // avoid infinite loop (rid = id)
 
-			comment := comments[int(rootId)-1]
-			if comment == nil {
-				return rootId
-			}
-			if rid, _ := strconv.Atoi(comment.Rid); rid == 0 {
+			comment := getCommentByGenId(comments, rootId)
+			if comment == nil || comment.Rid == "0" || comment.Rid == "" {
 				return rootId
 			}
 
@@ -338,4 +393,19 @@ func buildRootIdMap(comments []*entity.Artran, genIdMap map[string]uint) map[str
 	}
 
 	return rootIdMap
+}
+
+func correctUserBasicInfo(c *entity.Artran, console *Console) {
+	if strings.TrimSpace(c.Nick) == "" {
+		console.Warn("Detected empty user nick, set to \"Anonymous\" for comment ID: " + c.ID)
+		c.Nick = "Anonymous"
+	}
+	if strings.TrimSpace(c.Email) == "" || !utils.ValidateEmail(c.Email) {
+		console.Warn("Detected invalid user email " + strconv.Quote(c.Email) + ", set to \"anonymous@example.org\" for comment ID: " + c.ID)
+		c.Email = "anonymous@example.org"
+	}
+	if strings.TrimSpace(c.Link) != "" && !utils.ValidateURL(c.Link) {
+		console.Warn("Detected invalid user link " + strconv.Quote(c.Link) + ", append \"https://\" for comment ID: " + c.ID)
+		c.Link = "https://" + c.Link
+	}
 }

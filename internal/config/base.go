@@ -7,11 +7,11 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/ArtalkJS/Artalk/internal/config/env_provider"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
-	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
 )
 
@@ -32,13 +32,7 @@ func NewFromFile(cfgFile string) (*Config, error) {
 
 	// load environment variables and merge into the loaded config
 	const envPrefix = "ATK_"
-	if err := kf.Load(env.Provider(envPrefix, ".", func(s string) string {
-		// FOO__BAR -> foo_bar to handle dash in config names
-		s = strings.ToLower(strings.TrimPrefix(s, envPrefix))
-		s = strings.ReplaceAll(s, "__", "-")
-		s = strings.ReplaceAll(s, "_", ".")
-		return strings.ReplaceAll(s, "-", "_")
-	}), nil); err != nil {
+	if err := kf.Load(env_provider.Provider(envPrefix, GetConfigEnvNameMapping()), nil); err != nil {
 		return nil, fmt.Errorf("config environment variable parse error: %w", err)
 	}
 

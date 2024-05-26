@@ -3,13 +3,15 @@ package cache_test
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"testing"
 
+	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAction(t *testing.T) {
-	cache := newCache(t)
+	cache := newTestCache(t)
 	defer cache.Close()
 
 	doCrudTest := func(t *testing.T, testKey string, testData any) {
@@ -85,63 +87,89 @@ func TestAction(t *testing.T) {
 }
 
 func TestQueryDBWithCache(t *testing.T) {
-	cache := newCache(t)
-	defer cache.Close()
+	t.Run("Simple", func(t *testing.T) {
+		cacheInstance := newTestCache(t)
+		defer cacheInstance.Close()
 
-	type user struct {
-		Name  string
-		Email string
-	}
-
-	const key = "data_key_233"
-	var value = user{
-		Name:  "qwqcode",
-		Email: "artalkjs@example.com",
-	}
-
-	doCachedFind := func() bool {
-		var data user
-		dbQueried := false
-
-		err := cache.QueryDBWithCache(key, &data, func() {
-			// simulate db query result
-			data = user{
-				Name:  value.Name,
-				Email: value.Email,
-			}
-			dbQueried = true
-		})
-
-		if assert.NoError(t, err) {
-			assert.Equal(t, value, data)
+		type user struct {
+			Name  string
+			Email string
 		}
 
-		return dbQueried
-	}
+		const key = "data_key_233"
+		var value = user{
+			Name:  "qwqcode",
+			Email: "artalkjs@example.com",
+		}
 
-	if dbQueried := doCachedFind(); dbQueried {
-		assert.True(t, dbQueried, "first call `QueryDBWithCache`, db should be queried")
-	}
+		doCachedFind := func() bool {
+			dbQueried := false
 
-	if dbQueried := doCachedFind(); dbQueried {
-		assert.False(t, dbQueried, "second call `QueryDBWithCache`, db should not be queried")
-	}
+			data, err := cache.QueryDBWithCache(cacheInstance, key, func() (data user, err error) {
+				// simulate db query result
+				data = user{
+					Name:  value.Name,
+					Email: value.Email,
+				}
+				dbQueried = true
+				return data, nil
+			})
+
+			if assert.NoError(t, err) {
+				assert.Equal(t, value, data)
+			}
+
+			return dbQueried
+		}
+
+		if dbQueried := doCachedFind(); dbQueried {
+			assert.True(t, dbQueried, "first call `QueryDBWithCache`, db should be queried")
+		}
+
+		if dbQueried := doCachedFind(); dbQueried {
+			assert.False(t, dbQueried, "second call `QueryDBWithCache`, db should not be queried")
+		}
+	})
 
 	t.Run("Concurrency", func(t *testing.T) {
-		const numRoutines = 100
+		cacheInstance := newTestCache(t)
+		defer cacheInstance.Close()
 
-		var wg sync.WaitGroup
-		wg.Add(numRoutines)
+		type mockStruct struct {
+			Value string
+		}
 
-		for i := 0; i < numRoutines; i++ {
+		wg := sync.WaitGroup{}
+		ready := make(chan struct{})
+		findCallTimes := int32(0)
+
+		const n = 1000
+		for i := 0; i < n; i++ {
+			wg.Add(1)
 			go func() {
 				defer wg.Done()
+				<-ready // make sure all goroutines start at the same time
 
-				dbQueried := doCachedFind()
-				assert.False(t, dbQueried)
+				data, err := cache.QueryDBWithCache(cacheInstance, "key", func() (data mockStruct, err error) {
+					atomic.AddInt32(&findCallTimes, 1)
+
+					return mockStruct{
+						Value: "concurrency_value",
+					}, nil
+				})
+
+				if assert.NoError(t, err) {
+					assert.Equal(t, "concurrency_value", data.Value, "data should be equal to the value returned by the query function")
+				}
 			}()
 		}
 
+		close(ready) // start all goroutines at the same time
+
 		wg.Wait()
+
+		if got := atomic.LoadInt32(&findCallTimes); got != 1 {
+			t.Errorf("expected findCallTimes to be 1, got %d", got)
+		}
 	})
 }

@@ -3,6 +3,7 @@ package dao_test
 import (
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -166,49 +167,52 @@ func TestFindCreateAction(t *testing.T) {
 	defer app.Cleanup()
 
 	var calledTimes int32
-	var mutex sync.Mutex
 
-	increaseCalledTimes := func() {
-		mutex.Lock()
-		defer mutex.Unlock()
-		calledTimes++
-	}
+	ready := make(chan struct{})
 
 	t.Run("Concurrent FindCreateAction", func(t *testing.T) {
 		var wg sync.WaitGroup
 
-		var instance mockEntity
+		var result mockEntity
+
 		findCreateFunc := func() (mockEntity, error) {
-			randKey := fmt.Sprintf("rand_key_%d", time.Now().UnixNano())
-			return dao.FindCreateAction(randKey, func() (mockEntity, error) {
+			return dao.FindCreateAction("key", func() (mockEntity, error) {
 				// findAction
-				time.Sleep(200 * time.Millisecond) // mock time consuming
-				return instance, nil
+				time.Sleep(10 * time.Millisecond)
+				return result, nil
 			}, func() (mockEntity, error) {
 				// createAction
-				instance = mockEntity{
+				atomic.AddInt32(&calledTimes, 1)
+
+				time.Sleep(10 * time.Millisecond)
+				result = mockEntity{
 					ID:   1,
-					Name: "mockEntity",
+					Name: "create",
 				}
-				time.Sleep(500 * time.Millisecond) // mock time consuming
-				increaseCalledTimes()
-				return instance, nil
+
+				return result, nil
 			})
 		}
 
-		n := 10000
+		const n = 1000
 		for i := 0; i < n; i++ {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				result, err := findCreateFunc()
+				<-ready // wait for all goroutines to start at the same time
+				r, err := findCreateFunc()
 				assert.NoError(t, err)
-				assert.False(t, result.IsEmpty(), "FindCreateAction should always return a non-empty entity")
+				assert.False(t, r.IsEmpty(), "FindCreateAction should always return a non-empty entity")
 			}()
 		}
 
+		// start all goroutines at the same time
+		close(ready)
+
 		wg.Wait()
 
-		assert.Equal(t, int32(1), calledTimes, "Concurrent FindCreateAction should only call createAction once")
+		if got := atomic.LoadInt32(&calledTimes); got != 1 {
+			t.Fatalf("FindCreateAction should only call createAction once, but got %d times", got)
+		}
 	})
 }

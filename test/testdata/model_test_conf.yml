@@ -7,6 +7,8 @@ debug: false
 # 时区
 timezone: Asia/Shanghai
 
+locale: en
+
 # 日志
 log:
   enabled: false
@@ -29,3 +31,9 @@ admin_users:
     password: "123456" # 密码支持 bcrypt 或 md5 加密，例如填写："(md5)50c21190c6e4e5418c6a90d2b5031119"
     badge_name: 管理员
     badge_color: "#FF6C00"
+
+http:
+  proxy_header: ""
+
+img_upload:
+  path: ./data/artalk-img

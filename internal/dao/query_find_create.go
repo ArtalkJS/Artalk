@@ -38,7 +38,7 @@ func FindCreateAction[T EntityHasIsEmpty](
 	})
 	if err != nil {
 		log.Error("[FindCreate] ", err)
-		return result.(T), err
+		return *new(T), err
 	}
 	return result.(T), nil
 }

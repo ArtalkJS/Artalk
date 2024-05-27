@@ -47,15 +47,15 @@ func Test_Provider(t *testing.T) {
 	confJson, _ := json.Marshal(conf)
 
 	assert.JSONEq(t, `{
-		"admin_users": {
-		  "0": {
-			"emails": {
-			  "0": "a",
-			  "1": "b",
-			  "2": "2"
-			}
+		"admin_users": [
+		  {
+			"emails": [
+			  "a",
+			  "b",
+			  "2"
+			]
 		  }
-		},
+		],
 		"auth": {
 		  "auth0": {
 			"client_id": "123456"
@@ -67,14 +67,14 @@ func Test_Provider(t *testing.T) {
 		},
 		"debug": "true",
 		"login_timeout": "10",
-		"simple_array": {
-		  "0": "test0"
-		},
-		"trusted_domains": {
-		  "0": "666",
-		  "1": "2",
-		  "2": "3"
-		}
+		"simple_array": [
+		  "test0"
+		],
+		"trusted_domains": [
+		  "666",
+		  "2",
+		  "3"
+		]
 	  }`, string(confJson))
 
 	// format print json with tab indent
@@ -105,11 +105,7 @@ func Test_ProviderDetailer(t *testing.T) {
 		}, []string{
 			"ATK_ARRAY=1 2 3",
 		}, `{
-			"array": {
-				"0": "1",
-				"1": "2",
-				"2": "3"
-			}
+			"array": [ "1", "2", "3" ]
 		}`)
 	})
 
@@ -121,11 +117,7 @@ func Test_ProviderDetailer(t *testing.T) {
 			"ATK_ARRAY_1=2",
 			"ATK_ARRAY_2=3",
 		}, `{
-			"array": {
-				"0": "1",
-				"1": "2",
-				"2": "3"
-			}
+			"array": [ "1", "2", "3" ]
 		}`)
 	})
 
@@ -136,11 +128,7 @@ func Test_ProviderDetailer(t *testing.T) {
 			"ATK_ARRAY_0=1 2 3",
 			"ATK_ARRAY=4 5 6",
 		}, `{
-			"array": {
-				"0": "4",
-				"1": "5",
-				"2": "6"
-			}
+			"array": [ "4", "5", "6" ]
 		}`)
 	})
 
@@ -153,20 +141,14 @@ func Test_ProviderDetailer(t *testing.T) {
 			"ATK_ARRAY_0_ITEMS_2=c",
 			"ATK_ARRAY_1_ITEMS_0=d",
 		}, `{
-			"array": {
-				"0": {
-					"items": {
-						"0": "a",
-						"1": "b",
-						"2": "c"
-					}
+			"array": [
+				{
+					"items": [ "a", "b", "c" ]
 				},
-				"1": {
-					"items": {
-						"0": "d"
-					}
+				{
+					"items": [ "d" ]
 				}
-			}
+			]
 		}`)
 	})
 
@@ -177,20 +159,20 @@ func Test_ProviderDetailer(t *testing.T) {
 			"ATK_ARRAY_0_ITEMS=a b c",
 			"ATK_ARRAY_1_ITEMS=d",
 		}, `{
-			"array": {
-				"0": {
-					"items": {
-						"0": "a",
-						"1": "b",
-						"2": "c"
-					}
+			"array": [
+				{
+					"items": [
+						"a",
+						"b",
+						"c"
+					]
 				},
-				"1": {
-					"items": {
-						"0": "d"
-					}
+				{
+					"items": [
+						"d"
+					]
 				}
-			}
+			]
 		}`)
 	})
 
@@ -203,17 +185,17 @@ func Test_ProviderDetailer(t *testing.T) {
 			"ATK_ARRAY_2_ITEMS=c",
 			"ATK_ARRAY_1_ITEMS=d",
 		}, `{
-			"array": {
-				"0": {
+			"array": [
+				{
 					"items": "a"
 				},
-				"1": {
+				{
 					"items": "d"
 				},
-				"2": {
+				{
 					"items": "c"
 				}
-			}
+			]
 		}`)
 	})
 
@@ -225,14 +207,14 @@ func Test_ProviderDetailer(t *testing.T) {
 			"ATK_ARRAY_1_ITEMS=d",
 			"ATK_ARRAY_0_ITEMS=a b c",
 		}, `{
-			"array": {
-				"0": {
+			"array": [
+				{
 					"items": "a b c"
 				},
-				"1": {
+				{
 					"items": "d"
 				}
-			}
+			]
 		}`)
 	})
 }
@@ -302,40 +284,4 @@ func Test_getSimpleElemArrayPaths(t *testing.T) {
 
 	paths := getSimpleElemArrayPaths(envPathMap)
 	assert.Equal(t, []string{"array.$$"}, paths)
-}
-
-func Test_fixUnflattenResult(t *testing.T) {
-	result := fixUnflattenResult(map[string]interface{}{
-		"array": map[string]interface{}{
-			"0": "1",
-			"1": "2",
-			"2": "3",
-		},
-		"a": "b",
-		"b": map[string]interface{}{
-			"c": map[string]interface{}{
-				"d": "d",
-			},
-		},
-		"c": map[string]interface{}{
-			"c": map[string]interface{}{
-				"1": "a",
-				"2": "b",
-				"3": "c",
-			},
-		},
-	})
-
-	assert.Equal(t, map[string]interface{}{
-		"array": []interface{}{"1", "2", "3"},
-		"a":     "b",
-		"b": map[string]interface{}{
-			"c": map[string]interface{}{
-				"d": "d",
-			},
-		},
-		"c": map[string]interface{}{
-			"c": []interface{}{nil, "a", "b", "c"},
-		},
-	}, result)
 }

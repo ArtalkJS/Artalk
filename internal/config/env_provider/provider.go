@@ -8,10 +8,7 @@ import (
 	"os"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
-
-	"github.com/knadh/koanf/maps"
 )
 
 // Env implements an environment variables provider.
@@ -114,7 +111,7 @@ func (e *Env) Read() (map[string]interface{}, error) {
 		mp[finalPath] = finalValue
 	}
 
-	return fixUnflattenResult(maps.Unflatten(mp, ".")), nil
+	return Unflatten(mp), nil
 }
 
 func handleEnvPathMap(envPathMap map[string]string) map[string]string {
@@ -193,37 +190,4 @@ func getSimpleElemArrayPaths(m map[string]string) []string {
 		pathSlice = append(pathSlice, k)
 	}
 	return pathSlice
-}
-
-func fixUnflattenResult(m map[string]interface{}) map[string]interface{} {
-	// check every map, if key all number, convert to array
-	// { "a": { "0": 1, "1": 2 } } => { "a": [1, 2] }
-	allNumberKeys := func(m map[string]interface{}) (r bool, maxNum int) {
-		maxNum = 0
-		for k := range m {
-			n, err := strconv.Atoi(k)
-			if err != nil {
-				return false, maxNum
-			}
-			maxNum = max(maxNum, n)
-		}
-		return true, maxNum + 1
-	}
-
-	for k, v := range m {
-		if mm, ok := v.(map[string]interface{}); ok {
-			if ok, maxNum := allNumberKeys(mm); ok {
-				arr := make([]interface{}, maxNum)
-				for k, v := range mm {
-					i, _ := strconv.Atoi(k)
-					arr[i] = v
-				}
-				m[k] = arr
-			} else {
-				m[k] = fixUnflattenResult(mm)
-			}
-		}
-	}
-
-	return m
 }

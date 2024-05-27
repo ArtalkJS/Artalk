@@ -1,13 +1,17 @@
-package config
+package meta_test
 
 import (
 	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/internal/config/meta"
+	"github.com/ArtalkJS/Artalk/test"
 )
 
-func TestGetConfigEnvNameMapping(t *testing.T) {
-	m := GetConfigEnvNameMapping()
+func Test_GetEnvPathMapByModel(t *testing.T) {
+	m := meta.GetEnvPathMapByModel(config.Config{})
 
 	// print the mapping with pretty format
 	for k, v := range m {
@@ -52,5 +56,20 @@ func TestGetConfigEnvNameMapping(t *testing.T) {
 	}
 	if !containsArrayFiledInPath {
 		t.Error("should contains array field path (eg. trusted_domains.$$), but not found")
+	}
+}
+
+func Test_GetEnvPathMap(t *testing.T) {
+	app, _ := test.NewTestApp()
+	defer app.Cleanup()
+
+	m := meta.GetEnvPathMap(config.Config{}, config.Template("zh-CN"))
+
+	for k, v := range m {
+		fmt.Printf("%s: %s\n", k, v)
+	}
+
+	if len(m) == 0 {
+		t.Error("should have env path map")
 	}
 }

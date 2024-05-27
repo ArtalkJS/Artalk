@@ -4,31 +4,16 @@
 
 推荐在侧边栏 “[控制中心](/guide/frontend/sidebar.md)” 通过图形界面修改配置，无需手动编辑配置文件。
 
+## 环境变量
+
+可通过环境变量配置，参考文档：[环境变量](../env.md)。
+
 ## 指定配置文件路径
 
 Artalk 默认以工作目录下的 `artalk.yml` 作为配置文件，可使用参数 `-c` 来指定具体文件：
 
 ```bash
 artalk -c ./conf.yml
-```
-
-## 通过环境变量配置
-
-Artalk 读取以 `ATK_` 为前缀的环境变量，并且全部大写，子节点用单个下划线表示，配置名含下划线请用双下划线表示：
-
-- `_` (单下划线) 转为 `.` 表示子节点
-- `__` (双下划线) 转为 `_` 表示配置名的下划线
-
-e.g.
-
-```bash
-ATK_TIMEZONE             -> timezone
-ATK_LOGIN__TIMEOUT       -> login_timeout
-ATK_SITE__DEFAULT        -> site_default
-ATK_DB_TYPE              -> db.type
-ATK_DB_TABLE__PREFIX     -> db.table_prefix
-ATK_CACHE_REDIS_USERNAME -> cache.redis.username
-ATK_ADMIN_USERS_0_NAME   -> admin_users[0].name
 ```
 
 ## 获取模版配置文件

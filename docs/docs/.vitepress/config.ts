@@ -131,6 +131,7 @@ export default defineConfig({
           text: '配置文档',
           collapsed: true,
           items: [
+            { text: '环境变量', link: '/guide/env.md' },
             { text: '后端配置', link: '/guide/backend/config.md' },
             { text: '前端配置', link: '/guide/frontend/config.md' },
           ],

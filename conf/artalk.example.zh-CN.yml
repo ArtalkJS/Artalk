@@ -85,7 +85,8 @@ cache:
     db: 0
 
 # 可信域名
-trusted_domains: [] # 例如：["https://artalk.example.com:23366"]
+# -- 例如：["https://artalk.example.com:23366"] --
+trusted_domains: []
 
 # SSL
 ssl:
@@ -97,12 +98,14 @@ ssl:
   key_path: ""
 
 # 管理员账户
-admin_users:
-  # - name: "admin"
-  #   email: "admin@example.com"
-  #   password: "" # 支持 bcrypt 或 md5 加密，如："(md5)50c21190c6e4e5418c6a90d2b5031119"
-  #   badge_name: "管理员"
-  #   badge_color: "#0083FF"
+# --
+# - name: "admin"
+#   email: "admin@example.com"
+#   password: "" # 支持 bcrypt 或 md5 加密，如："(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
+#   badge_name: "管理员"
+#   badge_color: "#0083FF"
+# --
+admin_users: []
 
 # 评论审核
 moderator:

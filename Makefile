@@ -50,6 +50,9 @@ test-coverage-html:
 update-i18n:
 	go generate ./internal/i18n
 
+update-conf-docs:
+	go run ./internal/config/meta/gen -f ./docs/docs/guide/env.md
+
 update-swagger:
 	go install github.com/swaggo/swag/cmd/swag@latest
 	swag init -g server/server.go --output ./docs/swagger --requiredByDefault

@@ -1,5 +1,6 @@
 - id: 1000
   rid: 0
+  root_id: 0
   content: Hello Artalk, 你好 Artalk!
   page_key: /test/1000.html
   site_name: Site A
@@ -11,6 +12,7 @@
 
 - id: 1001
   rid: 1000
+  root_id: 1000
   content: 回复测试 1001
   page_key: /test/1000.html
   site_name: Site A
@@ -22,6 +24,7 @@
 
 - id: 1002
   rid: 1001
+  root_id: 1000
   content: 测试二层嵌套回复 A
   page_key: /test/1000.html
   site_name: Site A
@@ -33,6 +36,7 @@
 
 - id: 1003
   rid: 1001
+  root_id: 1000
   content: 测试二层嵌套回复 B
   page_key: /test/1000.html
   site_name: Site A
@@ -44,6 +48,7 @@
 
 - id: 1004
   rid: 1002
+  root_id: 1000
   content: 测试第三层嵌套回复
   page_key: /test/1000.html
   site_name: Site A
@@ -55,6 +60,7 @@
 
 - id: 1005
   rid: 0
+  root_id: 0
   content: "「我愛花，我愛詩歌…薇鷗萊特這個名字正是從我最喜歡的薔薇、砂糖與紫羅蘭的詩中得來的。」\n\n《紫羅蘭永恆花園》原作者曉佳奈在小說下卷的前言中這樣寫道。而紫羅蘭的花語是「忠貞不渝的愛情」，正是「永恆」。另外，故事中其他角色的姓名也有許多源於花卉：\n\n - **吉爾伯特** 少佐的姓 **布甘比利亞** 來自三角梅（Bougainvillea），寓意是「熱忱、熱戀」。\n - **嘉德麗雅** 這個名字源自蘭科中的嘉德麗雅蘭（Cattleya），象徵「成熟女性的魅力」。\n - **埃麗卡** 這個名字英語又有歐石楠（Erica）的意思，花語是「孤獨、愛的幸福」。\n - **艾麗絲** 的名字來自希臘神話，同時也指鳶尾花（Iris），花語是「等待愛情」。\n - **莉莉安**（Lilian）這個名字源自拉丁語的百合（Lilium），其花語是「純潔、偉大的愛」。\n - **娜麗** 這個名字源自娜麗花（Nerine），花語是「期待再次見面」。\n - **璐琪莉亞** 這個名字出自法語滇丁香（Luculia），花語是「端莊、優雅的人」。\n - **絡丹瑟** 這個名字是源自希臘語的鱗托菊（Rhodanthe），花語是「永恆的感情」。\n - **布魯貝露** 這個名字英語意為風鈴草（Bluebell），花語是「亙古不變的心」。\n - **依貝莉斯** 這個名字源自希臘語屈曲花（Iberis），花語是「心靈誘惑」。\n - **利昂** 的姓 **斯蒂法諾蒂斯** 出自馬達加斯加茉莉的學名（Stephanotis floribunda），花語是「共赴悠遠旅途、傾聽」。\n - **安** 和她媽媽 **克拉拉** 的姓 **瑪格諾利亞** 出自法語木蘭（Magnolia），其花語是「崇高」。\n\n可以說，這是一部花與愛的故事。\n\n> Roses are red. Violets are blue. Sugar is sweet. And so are you.\n> 玫瑰如此嫣紅，紫羅蘭如此綺麗，砂糖如此甜蜜，正如我心愛的你。"
   page_key: /test/1000.html
   site_name: Site A
@@ -66,6 +72,7 @@
 
 - id: 1006
   rid: 0
+  root_id: 0
   content: 在测试站点 2 的评论
   page_key: /site_b/1001.html
   site_name: Site B
@@ -77,6 +84,7 @@
 
 - id: 1007
   rid: 1006
+  root_id: 1006
   content: 测试在站点 2 的『待审评论』
   page_key: /site_b/1001.html
   site_name: Site B

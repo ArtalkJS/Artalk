@@ -4,10 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"reflect"
 	"regexp"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/ArtalkJS/Artalk/internal/i18n"
@@ -28,43 +25,10 @@ func readJsonFile(filename string) (string, error) {
 }
 
 func parseDate(s string) time.Time {
-	// TODO should be restricted to using only the RFC3339 standard time format
+	// TODO consider using time.Parse() instead of dateparse.ParseIn(), the 3rd party package, restricted to using only the RFC3339 standard time format
 	t, _ := dateparse.ParseIn(s, time.Local)
 
 	return t
-}
-
-type getParamsFromTo struct {
-	To func(variables map[string]any)
-}
-
-func getParamsFrom(arr []string) getParamsFromTo {
-	a := getParamsFromTo{}
-	a.To = func(variables map[string]any) {
-		for _, pVal := range arr {
-			for fromName, toVar := range variables {
-				if !strings.HasPrefix(pVal, fromName+":") {
-					continue
-				}
-
-				valStr := strings.TrimPrefix(pVal, fromName+":")
-
-				switch reflect.ValueOf(toVar).Interface().(type) {
-				case *string:
-					*toVar.(*string) = valStr
-				case *bool:
-					*toVar.(*bool) = strings.EqualFold(valStr, "true")
-				case *int:
-					num, err := strconv.Atoi(valStr)
-					if err != nil {
-						*toVar.(*int) = num
-					}
-				}
-				break
-			}
-		}
-	}
-	return a
 }
 
 func stripDomainFromURL(fullURL string) string {

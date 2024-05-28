@@ -52,7 +52,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 9.1.0
+          version: 9.1.2
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -130,7 +130,6 @@ jobs:
         platform:
           - linux/amd64
           - linux/arm64
-          - linux/arm/v7
         # exclude:
         #   # exclude build x86 on arm, and vice versa.
         #   - { os: macos-14, platform: linux/amd64 }

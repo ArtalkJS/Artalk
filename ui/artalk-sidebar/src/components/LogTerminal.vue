@@ -59,6 +59,8 @@ function back() {
 
 <style scoped lang="scss">
 .atk-log-wrap {
+  margin-bottom: -40px;
+
   .atk-log-back-btn {
     display: inline-block;
     padding: 5px 33px;

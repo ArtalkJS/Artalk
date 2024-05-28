@@ -58,7 +58,7 @@
 转换为 `.artrans` 格式的数据文件可以导入 Artalk：
 
 - **控制中心导入**：你可在「[控制中心](./frontend/sidebar.md#控制中心)」找到「迁移」选项卡，并根据提示导入 Artrans。
-- **命令行导入**：执行 `artalk import -h` 查阅帮助文档。
+- **命令行导入**：参考 [命令行导入](#命令行导入)。
 
 ## 获取源数据
 
@@ -159,26 +159,27 @@ typecho-20220424-202246.artrans
 执行 `artalk import -h` 查看帮助文档。
 
 ```bash
-./artalk import 数据类型 [参数...]
+./artalk import [参数...] [文件名]
 ```
 
-参数格式遵循 `<key>:<value>`，例如：
+通过命令行的 `-p` Flag 设定导入参数：
 
 ```bash
-./artalk import 类型 target_site_name:"Site" target_site_url:"https://xx.com" json_file:"文件路径"
+./artalk import -p '{ "target_site_name": "Site", "target_site_url": "https://xx.com", "json_file": "", "url_resolver": true }' ./artrans.json
 ```
 
-前端的导入同样可以手动输入启动参数，例如：
+如果在网页后台导入可将 JSON 填入文本框：
 
 ```json
 {
   "target_site_name": "Site",
   "target_site_url": "https://xx.com",
-  "json_file": "服务器上的文件路径"
+  "json_file": "服务器上的文件路径",
+  "url_resolver": true
 }
 ```
 
-Artalk 导入功能的通用启动参数：
+Artalk 导入参数：
 
 |        参数        | 类型    | 说明                                                                                                      |
 | :----------------: | ------- | --------------------------------------------------------------------------------------------------------- |

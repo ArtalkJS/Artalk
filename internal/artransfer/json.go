@@ -4,51 +4,43 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/tidwall/gjson"
 )
 
-func checkIfJsonArr(str string) bool {
+func isJsonArray(str string) bool {
 	x := bytes.TrimSpace([]byte(str))
 	return len(x) > 0 && x[0] == '['
 }
 
-func checkIfJsonObj(str string) bool {
-	x := bytes.TrimSpace([]byte(str))
-	return len(x) > 0 && x[0] == '{'
-}
-
-func tryConvertLineJsonToArr(str string) (string, error) {
-	// 尝试将一行一行的 Obj 转成 Arr
-	arrTmp := []map[string]interface{}{}
-	for _, line := range strings.Split(strings.TrimSpace(str), "\n") {
-		var tmp map[string]interface{}
-		err := json.Unmarshal([]byte(line), &tmp)
-		if err != nil {
-			return "", err
-		}
-		arrTmp = append(arrTmp, tmp)
+// Convert JSON "Array of" Object's Values to String type
+//
+// Example:
+//
+//	[{"a":233}, {"b":true}, {"c":"233"}]
+//	 => [{"a":"233"}, {"b":"true"}, {"c":"233"}]
+func convertJSONValuesToString(jsonStr string) string {
+	dest := []map[string]string{}
+	for _, item := range gjson.Parse(jsonStr).Array() {
+		dItem := map[string]string{}
+		item.ForEach(func(key, value gjson.Result) bool {
+			dItem[key.String()] = value.String()
+			return true
+		})
+		dest = append(dest, dItem)
 	}
-	r, err := json.Marshal(arrTmp)
-	if err != nil {
-		return "", err
-	}
-	return string(r), nil
+	j, _ := json.Marshal(dest)
+	return string(j)
 }
 
 // Json Decode (FAS: Fields All String Type)
-// 解析 json 为字段全部是 string 类型的 struct
-func jsonDecodeFAS(str string, fasStructure interface{}) error {
-	if !checkIfJsonArr(str) {
-		var err error
-		str, err = tryConvertLineJsonToArr(str)
-		if err != nil {
-			return fmt.Errorf("JSON of array type is required: %w", err)
-		}
+// Parse json to struct with all fields are string type
+func jsonDecodeFAS(str string, fasStructure any) error {
+	if !isJsonArray(str) {
+		return fmt.Errorf("JSON of array type is required")
 	}
 
-	err := json.Unmarshal([]byte(utils.JsonObjInArrAnyStr(str)), fasStructure) // lib.ToString()
+	err := json.Unmarshal([]byte(convertJSONValuesToString(str)), fasStructure)
 	if err != nil {
 		return fmt.Errorf("failed to parse JSON: %w", err)
 	}

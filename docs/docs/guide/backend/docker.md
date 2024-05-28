@@ -6,7 +6,9 @@ Artalk 提供后端程序的 Docker 镜像，以便加速部署流程，提供�
 
 ## 镜像拉取
 
-`docker pull artalk/artalk-go`
+```bash
+docker pull artalk/artalk-go
+```
 
 ## 容器创建
 
@@ -16,34 +18,10 @@ Artalk 提供后端程序的 Docker 镜像，以便加速部署流程，提供�
 
 :::
 
-Docker 容器创建：
+## 生成配置文件
 
 ```bash
-# 为 Artalk 创建一个目录
-mkdir Artalk
-cd Artalk
-
-# 拉取 docker 镜像
-docker pull artalk/artalk-go
-
-# 生成配置文件
 docker run -it -v $(pwd)/data:/data --rm artalk/artalk-go gen config data/artalk.yml
-
-# 编辑配置文件
-vim data/artalk.yml
-
-# 运行 docker 容器
-docker run -d \
-  --name artalk \
-  -p 0.0.0.0:8080:23366 \
-  -v $(pwd)/data:/data \
-  artalk/artalk-go
-```
-
-然后，在前端配置填入后端地址：
-
-```js
-Artalk.init({ server: 'http://your_domain:8080' })
 ```
 
 ## 重启
@@ -92,12 +70,20 @@ docker pull artalk/artalk-go
 突破性变动请注意查看版本更新日志中的提示：[CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md)
 :::
 
-## 拉取历史镜像
+## 测试版本
+
+Nightly 镜像为测试版本，每日更新，通过代码仓库最新代码自动构建。
+
+```bash
+docker pull artalk/artalk-go:nightly
+```
+
+## 历史版本
 
 镜像会随代码仓库 tags 自动构建发布，您可拉取不同版本号的镜像。
 
 ```bash
-docker pull artalk/artalk-go@版本号
+docker pull artalk/artalk-go:版本号
 ```
 
 ## 进入容器

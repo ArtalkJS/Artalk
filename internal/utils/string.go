@@ -1,12 +1,9 @@
 package utils
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"strings"
-
-	"github.com/tidwall/gjson"
 )
 
 func AddQueryToURL(urlStr string, queryMap map[string]string) string {
@@ -88,9 +85,6 @@ func TruncateString(str string, length int) string {
 	return truncated
 }
 
-//#region JSON Any To String (for Transfer)
-//******************************************
-
 // 任何类型转 String
 //
 //	(bool) true => (string) "true"
@@ -98,26 +92,3 @@ func TruncateString(str string, length int) string {
 func ToString(val interface{}) string {
 	return fmt.Sprintf("%v", val)
 }
-
-// 将 JSON "数组中的"对象的 Values 全部转成 String 类型
-// @note Array style is not the same as JSON Array, it uses the ToString() function.
-//
-//	[{"a":233}, {"b":true}, {"c":"233"}]
-//	=> [{"a":"233"}, {"b":"true"}, {"c":"233"}]
-//
-// @relevant ToString()
-func JsonObjInArrAnyStr(jsonStr string) string {
-	var dest []map[string]string
-	for _, item := range gjson.Parse(jsonStr).Array() {
-		dItem := map[string]string{}
-		item.ForEach(func(key, value gjson.Result) bool {
-			dItem[key.String()] = value.String()
-			return true
-		})
-		dest = append(dest, dItem)
-	}
-	j, _ := json.Marshal(dest)
-	return string(j)
-}
-
-//#endregion

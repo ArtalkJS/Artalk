@@ -90,11 +90,3 @@ func TestToString(t *testing.T) {
 		assert.Equal(t, test.expected, result, "For %v, expected %s, but got %s", test.value, test.expected, result)
 	}
 }
-
-func TestJsonObjInArrAnyStr(t *testing.T) {
-	jsonStr := `[{"a":233},{"b":true},{"c":"233"}]`
-	expected := `[{"a":"233"},{"b":"true"},{"c":"233"}]`
-
-	result := JsonObjInArrAnyStr(jsonStr)
-	assert.Equal(t, expected, result)
-}

@@ -13,6 +13,11 @@
 
 ### 博客
 
+- [百合花船·教程](https://jc.yuriboat.cn)
+- [Misaka の 💭](https://blog.misaka.ink/)
+- [备胎书屋](https://beitai.cc)
+- [1nonly's blog](https://blog.nonly.cn)
+- [慕雪的寒舍](https://blog.musnow.top/)
 - [晓雨杂记](https://www.lihaoyu.cn)
 - [一蓑烟雨](https://easyf12.top/)
 - [二丫讲梵](https://wiki.eryajf.net)
@@ -32,9 +37,7 @@
 
 ::: tip
 
-此页面案例由团队成员整理...
-
-如果希望 / 不希望你使用到 Artalk 的项目在此展示，欢迎在下方留言！
+如果你希望你的项目在此展示，欢迎在下方留言，或者点击左下角的「完善文档」按钮，在 GitHub 编辑此页提交 PR。
 
 非常感谢你为 Artalk 社区做出的贡献 😘
 

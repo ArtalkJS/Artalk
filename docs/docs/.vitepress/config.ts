@@ -242,7 +242,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: 'https://github.com/ArtalkJS/Artalk/edit/master/docs/:path',
+      pattern: 'https://github.com/ArtalkJS/Artalk/edit/master/docs/docs/:path',
       text: '完善文档',
     },
   },

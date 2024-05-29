@@ -3757,6 +3757,7 @@
             "type": "object",
             "required": [
                 "admin_only",
+                "date",
                 "id",
                 "key",
                 "pv",
@@ -3769,6 +3770,9 @@
             "properties": {
                 "admin_only": {
                     "type": "boolean"
+                },
+                "date": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
@@ -4197,7 +4201,7 @@
             "type": "object",
             "properties": {
                 "assumeyes": {
-                    "description": "Automatically answer yes for all questions.",
+                    "description": "Automatically answer yes for all questions",
                     "type": "boolean"
                 },
                 "json_data": {
@@ -4215,6 +4219,10 @@
                 "target_site_url": {
                     "description": "The target site url",
                     "type": "string"
+                },
+                "url_keep_domain": {
+                    "description": "Keep domain",
+                    "type": "boolean"
                 },
                 "url_resolver": {
                     "description": "Enable URL resolver",
@@ -4806,6 +4814,7 @@
             "type": "object",
             "required": [
                 "admin_only",
+                "date",
                 "id",
                 "key",
                 "pv",
@@ -4818,6 +4827,9 @@
             "properties": {
                 "admin_only": {
                     "type": "boolean"
+                },
+                "date": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
@@ -4905,6 +4917,7 @@
             "type": "object",
             "required": [
                 "admin_only",
+                "date",
                 "id",
                 "key",
                 "pv",
@@ -4917,6 +4930,9 @@
             "properties": {
                 "admin_only": {
                     "type": "boolean"
+                },
+                "date": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"

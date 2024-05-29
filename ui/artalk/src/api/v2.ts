@@ -74,6 +74,7 @@ export interface EntityCookedNotify {
 
 export interface EntityCookedPage {
   admin_only: boolean
+  date: string
   id: number
   key: string
   pv: number
@@ -234,7 +235,7 @@ export interface HandlerParamsSiteUpdate {
 }
 
 export interface HandlerParamsTransferImport {
-  /** Automatically answer yes for all questions. */
+  /** Automatically answer yes for all questions */
   assumeyes?: boolean
   /** The JSON data */
   json_data?: string
@@ -244,6 +245,8 @@ export interface HandlerParamsTransferImport {
   target_site_name?: string
   /** The target site url */
   target_site_url?: string
+  /** Keep domain */
+  url_keep_domain?: boolean
   /** Enable URL resolver */
   url_resolver?: boolean
 }
@@ -438,6 +441,7 @@ export interface HandlerResponseNotifyList {
 
 export interface HandlerResponsePageFetch {
   admin_only: boolean
+  date: string
   id: number
   key: string
   pv: number
@@ -470,6 +474,7 @@ export interface HandlerResponsePagePV {
 
 export interface HandlerResponsePageUpdate {
   admin_only: boolean
+  date: string
   id: number
   key: string
   pv: number

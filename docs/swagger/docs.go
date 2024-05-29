@@ -3764,6 +3764,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "admin_only",
+                "date",
                 "id",
                 "key",
                 "pv",
@@ -3776,6 +3777,9 @@ const docTemplate = `{
             "properties": {
                 "admin_only": {
                     "type": "boolean"
+                },
+                "date": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
@@ -4204,7 +4208,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "assumeyes": {
-                    "description": "Automatically answer yes for all questions.",
+                    "description": "Automatically answer yes for all questions",
                     "type": "boolean"
                 },
                 "json_data": {
@@ -4222,6 +4226,10 @@ const docTemplate = `{
                 "target_site_url": {
                     "description": "The target site url",
                     "type": "string"
+                },
+                "url_keep_domain": {
+                    "description": "Keep domain",
+                    "type": "boolean"
                 },
                 "url_resolver": {
                     "description": "Enable URL resolver",
@@ -4813,6 +4821,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "admin_only",
+                "date",
                 "id",
                 "key",
                 "pv",
@@ -4825,6 +4834,9 @@ const docTemplate = `{
             "properties": {
                 "admin_only": {
                     "type": "boolean"
+                },
+                "date": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
@@ -4912,6 +4924,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "admin_only",
+                "date",
                 "id",
                 "key",
                 "pv",
@@ -4924,6 +4937,9 @@ const docTemplate = `{
             "properties": {
                 "admin_only": {
                     "type": "boolean"
+                },
+                "date": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"

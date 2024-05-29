@@ -6,6 +6,8 @@ import (
 	"github.com/samber/lo"
 )
 
+const CommonDateTimeFormat = "2006-01-02 15:04:05"
+
 // ===============
 //  Comment
 // ===============
@@ -39,7 +41,7 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		EmailEncrypted: utils.GetSha256Hash(user.Email),
 		Link:           user.Link,
 		UA:             c.UA,
-		Date:           c.CreatedAt.Local().Format("2006-01-02 15:04:05"),
+		Date:           c.CreatedAt.Local().Format(CommonDateTimeFormat),
 		IsCollapsed:    c.IsCollapsed,
 		IsPending:      c.IsPending,
 		IsPinned:       c.IsPinned,
@@ -78,7 +80,7 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 		Nick:       user.Name,
 		Email:      user.Email,
 		IP:         c.IP,
-		Datetime:   c.CreatedAt.Local().Format("2006-01-02 15:04:05"),
+		Datetime:   c.CreatedAt.Local().Format(CommonDateTimeFormat),
 		Date:       c.CreatedAt.Local().Format("2006-01-02"),
 		Time:       c.CreatedAt.Local().Format("15:04:05"),
 		PageKey:    c.PageKey,
@@ -117,6 +119,7 @@ func (dao *Dao) CookPage(p *entity.Page) entity.CookedPage {
 		VoteUp:    p.VoteUp,
 		VoteDown:  p.VoteDown,
 		PV:        p.PV,
+		Date:      p.CreatedAt.Local().Format(CommonDateTimeFormat),
 	}
 }
 

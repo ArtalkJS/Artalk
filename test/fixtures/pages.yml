@@ -21,3 +21,30 @@
   site_name: Site A
   created_at: 2022-04-29 14:47:59
   updated_at: 2022-04-29 14:47:59
+
+## ----------------------------
+## Pages with PV
+## ----------------------------
+- id: 1003
+  key: /test/pv_is_100.html
+  title: PV 为 100 的页面
+  site_name: Site A
+  pv: 100
+  created_at: 2024-05-29 14:49:59
+  updated_at: 2024-05-29 14:49:59
+
+- id: 1004
+  key: /test/pv_is_1000.html
+  title: PV 为 1000 的页面
+  site_name: Site A
+  pv: 1000
+  created_at: 2024-05-29 14:51:59
+  updated_at: 2024-05-29 14:51:59
+
+- id: 1005
+  key: /test/pv_is_10000.html
+  title: PV 为 10000 的页面
+  site_name: Site A
+  pv: 10000
+  created_at: 2024-05-29 14:53:59
+  updated_at: 2024-05-29 14:53:59

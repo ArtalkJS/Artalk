@@ -44,24 +44,28 @@ func Stat(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		// Limit 限定
+		// Limit parameter
 		if p.Limit <= 0 {
 			p.Limit = 5
 		}
 		if p.Limit > 100 {
+			// The maximum limit is 100 for data security reasons
 			p.Limit = 100
 		}
 
-		// 公共查询规则
+		// Reusable query scopes
+		// Query Pages by `site_name`
 		QueryPages := func(d *gorm.DB) *gorm.DB {
-			return d.Model(&entity.Page{}).Where("site_name = ?", p.SiteName)
+			return d.Model(&entity.Page{}).Where(&entity.Page{SiteName: p.SiteName})
 		}
+		// Query Comments by `site_name` and `is_pending=false`
 		QueryComments := func(d *gorm.DB) *gorm.DB {
-			return d.Model(&entity.Comment{}).Where("site_name = ? AND is_pending = ?", p.SiteName, false)
+			return d.Model(&entity.Comment{}).Where(&entity.Comment{SiteName: p.SiteName, IsPending: false})
 		}
+		// Query Order by RAND()
 		QueryOrderRand := func(d *gorm.DB) *gorm.DB {
 			if app.Conf().DB.Type == config.TypeSQLite {
-				return d.Order("RANDOM()") // SQLite case
+				return d.Order("RANDOM()") // SQLite
 			} else {
 				return d.Order("RAND()")
 			}
@@ -69,7 +73,9 @@ func Stat(app *core.App, router fiber.Router) {
 
 		switch queryType {
 		case "latest_comments":
-			// 最新评论
+			// ------------------------------------
+			//  Latest comments
+			// ------------------------------------
 			var comments []*entity.Comment
 			app.Dao().DB().Scopes(QueryComments).
 				Order("created_at DESC").
@@ -81,7 +87,9 @@ func Stat(app *core.App, router fiber.Router) {
 			})
 
 		case "latest_pages":
-			// 最新页面
+			// ------------------------------------
+			//  Latest pages
+			// ------------------------------------
 			var pages []entity.Page
 			app.Dao().DB().Scopes(QueryPages).
 				Order("created_at DESC").
@@ -93,7 +101,9 @@ func Stat(app *core.App, router fiber.Router) {
 			})
 
 		case "pv_most_pages":
-			// PV 数最多的页面
+			// ------------------------------------
+			//  PV most pages
+			// ------------------------------------
 			var pages []entity.Page
 			app.Dao().DB().Scopes(QueryPages).
 				Order("pv DESC").
@@ -105,7 +115,9 @@ func Stat(app *core.App, router fiber.Router) {
 			})
 
 		case "comment_most_pages":
-			// 评论数最多的页面
+			// ------------------------------------
+			//  Comment most pages
+			// ------------------------------------
 			var pages []entity.Page
 			app.Dao().DB().Raw(
 				"SELECT * FROM pages p WHERE p.site_name = ? ORDER BY (SELECT COUNT(*) FROM comments c WHERE c.page_key = p.key AND c.is_pending = ?) DESC LIMIT ?",
@@ -117,7 +129,9 @@ func Stat(app *core.App, router fiber.Router) {
 			})
 
 		case "page_pv":
-			// 查询页面的 PV 数
+			// ------------------------------------
+			//  Query Multiple page PV
+			// ------------------------------------
 			keys := utils.SplitAndTrimSpace(p.PageKeys, ",")
 			pvs := map[string]int{}
 			for _, k := range keys {
@@ -134,14 +148,20 @@ func Stat(app *core.App, router fiber.Router) {
 			})
 
 		case "site_pv":
-			// 全站 PV 数
+			// ------------------------------------
+			//  Query Site total PV
+			// ------------------------------------
 			var pv int64
 			app.Dao().DB().Raw("SELECT SUM(pv) FROM pages WHERE site_name = ?", p.SiteName).Row().Scan(&pv)
 
-			return common.RespData(c, pv)
+			return common.RespData(c, ResponseStat{
+				Data: pv,
+			})
 
 		case "page_comment":
-			// 查询页面的评论数
+			// ------------------------------------
+			//  Query Multiple page comments
+			// ------------------------------------
 			keys := utils.SplitAndTrimSpace(p.PageKeys, ",")
 			counts := map[string]int64{}
 			for _, k := range keys {
@@ -156,7 +176,9 @@ func Stat(app *core.App, router fiber.Router) {
 			})
 
 		case "site_comment":
-			// 全站评论数
+			// ------------------------------------
+			//  Query Site total comments
+			// ------------------------------------
 			var count int64
 			app.Dao().DB().Scopes(QueryComments).Count(&count)
 
@@ -165,7 +187,9 @@ func Stat(app *core.App, router fiber.Router) {
 			})
 
 		case "rand_comments":
-			// 随机评论
+			// ------------------------------------
+			//  Random comments
+			// ------------------------------------
 			var comments []*entity.Comment
 			app.Dao().DB().Scopes(QueryComments, QueryOrderRand).
 				Limit(p.Limit).
@@ -176,7 +200,9 @@ func Stat(app *core.App, router fiber.Router) {
 			})
 
 		case "rand_pages":
-			// 随机页面
+			// ------------------------------------
+			//  Random pages
+			// ------------------------------------
 			var pages []entity.Page
 			app.Dao().DB().Scopes(QueryPages, QueryOrderRand).
 				Limit(p.Limit).

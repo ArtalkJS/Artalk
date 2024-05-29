@@ -38,13 +38,13 @@ dev: build-debug
 	$(BIN_NAME) $(ARGS)
 
 test:
-	$(GOTEST) -timeout 20m ./internal/...
+	$(GOTEST) -timeout 20m $(or $(TEST_PATHS), ./...)
 
 test-coverage:
-	$(GOTEST) -cover ./...
+	$(GOTEST) -cover $(or $(TEST_PATHS), ./...)
 
 test-coverage-html:
-	$(GOTEST) -v -coverprofile=coverage.out ./...
+	$(GOTEST) -v -coverprofile=coverage.out $(or $(TEST_PATHS), ./...)
 	go tool cover -html=coverage.out
 
 update-i18n:

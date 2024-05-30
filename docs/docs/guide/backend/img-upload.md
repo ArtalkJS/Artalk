@@ -2,7 +2,7 @@
 
 Artalk 提供图片上传功能，支持限制图片大小、上传频率等，你还能结合 UpGit 将图片上传到图床。
 
-你可以在[控制中心](/guide/frontend/sidebar.md#控制中心)找到「设置」界面修改此配置。
+你可以在 [控制中心](/guide/frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](/guide/backend/config.md#图片上传-img_upload) 或 [环境变量](/guide/env.md#图片上传) 进行配置。
 
 ## 配置文件
 

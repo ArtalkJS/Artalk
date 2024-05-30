@@ -1,4 +1,4 @@
-# 后端配置
+# 配置文件
 
 ## 轻松配置
 
@@ -174,7 +174,19 @@ Artalk.init({ site: 'Artalk 官网' })
 
 ## 界面配置 `frontend`
 
-增加 `frontend` 字段内容可以在后端控制前端的配置，详情可参考：[在后端控制前端](/guide/backend/fe-control)。
+在 Artalk 的配置文件 `artalk.yml` 可以配置 `frontend` 字段来控制前端界面，例如：
+
+```yaml
+frontend:
+  placeholder: 键入内容...
+  noComment: 「此时无声胜有声」
+  sendBtn: 发送评论
+  emoticons: 'https://raw.githubusercontent.com/ArtalkJS/Emoticons/master/grps/default.json'
+  # ----- 此处省略 -------
+  # 与前端配置项名称保持一致
+```
+
+一份完整的后端 `frontend` 字段配置文件可供参考：[artalk.example.zh-CN.yml](https://github.com/ArtalkJS/Artalk/blob/master/conf/artalk.example.zh-CN.yml)
 
 ## 邮件通知 `email`
 

@@ -1,19 +1,32 @@
-# 前端配置
+# 界面配置
+
+可在「[控制中心](/guide/frontend/sidebar.md)」修改界面配置，而无需改动前端代码。另外也支持 [配置文件](/guide/backend/config.md#界面配置-frontend) 和 [环境变量](/guide/env.md#界面配置)。
+
+界面配置的优先级如下：
+
+```
+环境变量 > 配置文件 = 控制中心 > 前端代码
+```
+
+## 通过 `Artalk.init` 配置界面
+
+在前端页面调用 `Artalk.init` 初始化时传入参数来配置界面，本文列出了所有可用的配置项。
 
 ```js
-const artalk = Artalk.init({ ... })
+const artalk = Artalk.init({
+  el:        '#Comments',
+  pageKey:   '/post/1', 
+  pageTitle: '页面标题',
+  server:    'http://your_domain:8080',
+  site:      'Artalk 的博客',
+})
 
+// 更新配置
 artalk.update({ ... })
 ```
 
 - 默认配置：[defaults.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/src/defaults.ts)
 - 声明文件：[config.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/src/types/config.ts)
-
-## 轻松配置
-
-推荐在侧边栏 “[控制中心](/guide/frontend/sidebar.md)” 通过图形界面修改前端的配置，而无需在代码中对界面进行设定。
-
-注：前端的设定可能会被后端覆盖，更多内容参考：[在后端控制前端](/guide/backend/fe-control.md)
 
 ## 基本配置（必填项）
 
@@ -59,12 +72,6 @@ artalk.update({ ... })
 
 > 例如：http://yourdomain.xxx
 
-::: warning 更新注意
-
-从 v2.2.6 版本开始，`server` 无需在结尾带上 `/api/` 路径。
-
-:::
-
 ### site
 
 **站点名称**
@@ -72,20 +79,16 @@ artalk.update({ ... })
 - 类型：`String`
 - 默认值：`undefined`
 
-可留空使用后端配置的 “默认站点”，
-
 Artalk 支持多站点统一管理，此项用于站点隔离。
 
 ### useBackendConf
 
-**跟随后端的配置**
+**引用后端的配置**
 
 - 类型：`Boolean`
 - 默认值：`true`（默认启用）
 
-可以在后端的配置文件中定义前端的配置，让前端配置始终跟随后端。
-
-详情可参考：[在后端控制前端](/guide/backend/fe-control)
+可以在后端的配置文件中定义前端的配置，让前端配置始终引用后端。
 
 ## 国际化 (i18n)
 
@@ -127,10 +130,6 @@ Artalk 支持多站点统一管理，此项用于站点隔离。
 更新兼容 [OwO 格式](https://github.com/DIYgod/OwO)，支持 URL 动态加载。
 
 设置为 `false` 关闭表情包功能。
-
-:::warning 请替换 CDN 资源
-JS DELIVR 在中国大陆的 [ICP 牌照已被吊销](https://github.com/jsdelivr/jsdelivr/issues/18348#issuecomment-997777996)。
-:::
 
 ## 界面
 

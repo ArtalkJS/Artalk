@@ -20,7 +20,7 @@ docker exec -it artalk artalk admin
 
 ## 站点的创建和管理
 
-你可以在侧边栏「[控制中心](../frontend/sidebar.md#控制中心)」创建多个站点，管理站点和快速切换站点，详情可参考：[侧边栏](/guide/frontend/sidebar.html)。
+你可以在侧边栏「[控制中心](../frontend/sidebar.md#控制中心)」创建多个站点，管理站点和快速切换站点。
 
 ## 管理员配置
 
@@ -64,6 +64,12 @@ admin_users:
 
 - **badge_name**：用户显示的头衔徽标文字。
 - **badge_color**：用户显示的头衔徽标背景颜色。
+
+::: tip
+
+可以通过环境变量配置管理员账户，参考：[环境变量配置](/guide/env.md)
+
+:::
 
 ### 控制管理员接收邮件通知
 

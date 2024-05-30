@@ -106,8 +106,6 @@ export default defineConfig({
             { text: '图片上传', link: '/guide/backend/img-upload.md' },
             { text: '账户与多站点', link: '/guide/backend/multi-site.md' },
             { text: '解析相对路径', link: '/guide/backend/relative-path.md' },
-            { text: '如何配置界面', link: '/guide/backend/fe-control.md' },
-            { text: 'English (i18n)', link: '/guide/frontend/i18n.md' },
           ],
         },
         {
@@ -116,24 +114,21 @@ export default defineConfig({
           items: [
             { text: '表情包', link: '/guide/frontend/emoticons.md' },
             { text: '浏览量统计', link: '/guide/frontend/pv.md' },
-            { text: 'Latex', link: '/guide/frontend/latex.md' },
+            { text: 'LaTeX', link: '/guide/frontend/latex.md' },
             { text: '图片灯箱', link: '/guide/frontend/lightbox.md' },
             { text: '图片懒加载', link: '/guide/frontend/img-lazy-load.md' },
             { text: 'IP 属地', link: '/guide/frontend/ip-region.md' },
-            { text: '精简版本', link: '/guide/frontend/artalk-lite.md' },
-            { text: '置入博客', link: '/guide/frontend/import-blog.md' },
-            { text: '置入框架', link: '/guide/frontend/import-framework.md' },
-            { text: '前端 API', link: '/develop/fe-api.md' },
+            { text: '多语言', link: '/guide/frontend/i18n.md' },
             { text: '开发文档', link: '/develop/index.md' },
           ],
         },
         {
           text: '配置文档',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: '环境变量', link: '/guide/env.md' },
-            { text: '后端配置', link: '/guide/backend/config.md' },
-            { text: '前端配置', link: '/guide/frontend/config.md' },
+            { text: '配置文件', link: '/guide/backend/config.md' },
+            { text: '界面配置', link: '/guide/frontend/config.md' },
           ],
         },
         {
@@ -163,20 +158,18 @@ export default defineConfig({
           text: '开发文档',
           items: [
             { text: '开发说明', link: '/develop/index.md' },
+            { text: '置入博客', link: '/develop/import-blog.md' },
+            { text: '置入框架', link: '/develop/import-framework.md' },
             { text: '前端 API', link: '/develop/fe-api.md' },
             { text: '前端 Event', link: '/develop/event.md' },
             { text: '插件开发', link: '/develop/plugs.md' },
             {
-              text: '🔬 HTTP API',
+              text: 'HTTP API',
               link: 'https://artalk.js.org/http-api.html',
             },
             {
-              text: '📖 Contributing Guide',
+              text: '贡献指南',
               link: 'https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md',
-            },
-            {
-              text: '🔖 Code of Conduct',
-              link: 'https://github.com/ArtalkJS/Artalk/blob/master/CODE_OF_CONDUCT.md',
             },
           ],
         },

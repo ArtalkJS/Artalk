@@ -1,6 +1,8 @@
 # 表情包
 
-编辑后端 `artalk.yml` 配置文件并修改配置项 `frontend.emoticons` 填入表情包列表 URL：
+你可以在 [控制中心](/guide/frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](../backend/config.md#界面配置-frontend) 或 [环境变量](../env.md#界面配置) 进行配置。
+
+在配置文件中，可在 `frontend.emoticons` 填入表情包列表 URL：
 
 ```yaml
 frontend:
@@ -22,17 +24,17 @@ Artalk 的表情包功能借鉴了其优秀的设计，并且 Artalk 原生适�
 ```yaml
 frontend:
   emoticons: https://raw.githubusercontent.com/DIYgod/OwO/master/demo/OwO.json
-  # 直接食用 OwO 格式的表情包 ↑↑
+  # 直接使用 OwO 格式的表情包 ↑↑
 ```
 
-社区也有许多可以直接食用的 OwO 格式表情包资源，例如：[@2X-ercha/Twikoo-Magic](https://github.com/2X-ercha/Twikoo-Magic)。
+社区也有许多可以直接使用的 OwO 格式表情包资源，例如：[@2X-ercha/Twikoo-Magic](https://github.com/2X-ercha/Twikoo-Magic)。
 
 ### Artalk 表情包列表文件标准格式
 
 Artalk 除了支持 OwO 格式外，还内置支持一种标准的表情包列表文件格式：
 
 ```js
-;[
+[
   {
     name: '颜表情',
     type: 'emoticon', // 字符类型
@@ -58,11 +60,6 @@ Artalk 除了支持 OwO 格式外，还内置支持一种标准的表情包列�
 
 ## 前端配置
 
-::: warning
-
-前端的配置可能会被后端所覆盖，详情参考：[在后端控制前端](/guide/backend/fe-control.html)
-
-:::
 
 在前端配置表情包列表，例如：
 
@@ -73,6 +70,12 @@ Artalk.init({
     'https://raw.githubusercontent.com/ArtalkJS/Emoticons/master/grps/default.json',
 })
 ```
+
+::: tip
+
+配置文件和控制中心的表情包设置优先级高于前端配置。
+
+:::
 
 ## 关闭表情包
 

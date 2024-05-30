@@ -1,27 +1,38 @@
-# 开发说明
+# 开发文档
 
-## 参考资源
+欢迎来到 Artalk 官方开发文档，这里提供了构建 Artalk 插件和主题的指南。如果你需要搭建 Artalk 的开发环境，可以阅读[开发者贡献指南](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)。
 
-📖 [开发者贡献指南 (CONTRIBUTING.md)](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)
+感谢对 Artalk 的关注和支持。我们深知开源项目的成功离不开每一位开发者的贡献，无论是代码、文档、测试还是意见反馈，您的参与都是推动项目不断前进的动力。诚挚地邀请您加入我们，共同完善和提升 Artalk。
 
-🔬 <a href="/http-api.html" target="_blank">HTTP API 文档 (OpenAPI)</a>
+## 索引
 
-🔖 [贡献者契约行为准则 (CODE_OF_CONDUCT.md)](https://github.com/ArtalkJS/Artalk/blob/master/CODE_OF_CONDUCT.md)
+- [开发者贡献指南](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md) ⭐️
 
-## 配置文档
+**前端界面**
 
-- [后端配置](../guide/backend/config.md)
+- [置入博客](./import-blog.md)
+- [置入框架](./import-framework.md)
+- [前端 API 文档](./fe-api.md)
+- [前端 Event](./event.md)
 - [前端配置](../guide/frontend/config.md)
 
-## 补充说明
+**插件开发**
 
-由于 Artalk 正处于开发阶段，使用此文档中 `API`、`Event` 前请务必检查时效性。
+- [插件开发](./plugs.md)
+- [插件开发 Vite 集成](https://github.com/ArtalkJS/Artalk/blob/master/ui/plugin-kit/README.md)
 
-- `API` 部分参考源码
-  - [@ArtalkJS/Artalk - src/api/](https://github.com/ArtalkJS/Artalk/tree/master/ui/artalk/src/api)
-  - [@ArtalkJS/Artalk - server/server.go](https://github.com/ArtalkJS/Artalk/blob/master/server/server.go)
-- `UI` 及 `Event` 部分参考源码
-  - [@ArtalkJS/Artalk - src/artalk.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/src/artalk.ts)
-  - [@ArtalkJS/Artalk - src/types/event.ts](https://github.com/ArtalkJS/Artalk/blob/master/ui/artalk/src/types/event.ts)
+**后端程序**
 
-通过 Artalk 提供的 `API` 和 `Event`，你可以实现很多高级功能，比如编写评论管理机器人、评论提醒推送插件等。Artalk 并不为此提供技术指导，但鼓励你参考此处的文档自行定制。
+- <a href="/http-api.html" target="_blank">HTTP API 文档</a>
+- [环境变量](../guide/env.md)
+- [配置文件](../guide/backend/config.md)
+
+**其他内容**
+
+- [更新日志](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md)
+- [i18n 多语言贡献指南](../guide/frontend/i18n.md#贡献翻译)
+- [贡献者契约行为准则](https://github.com/ArtalkJS/Artalk/blob/master/CODE_OF_CONDUCT.md)
+
+::: tip
+Artalk 正处于积极维护阶段，请注意 API 版本兼容性。升级可能有突破性变更参考 [更新日志](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md)。
+:::

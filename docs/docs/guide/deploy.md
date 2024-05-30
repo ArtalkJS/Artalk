@@ -210,8 +210,8 @@ Artalk.init({
 
 更多参考：
 
-- [置入框架文档](./frontend/import-framework.md)
-- [置入博客文档](./frontend/import-blog.md)
+- [置入博客文档](../develop/import-blog.md)
+- [置入框架文档](../develop/import-framework.md)
 - [前端配置](./frontend/config.md)
 - [前端 API](../develop/fe-api.md)
 

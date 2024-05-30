@@ -1,5 +1,17 @@
 # 插件开发
 
+## 使用 Vite 开发
+
+我们提供了 Vite 的集成插件，使用 Vite 开发能够开箱即用地构建 Artalk 插件，简化 Vite 配置。
+
+参考文档：[@artalk/plugin-kit](https://github.com/ArtalkJS/Artalk/blob/master/ui/plugin-kit/README.md)。
+
+同时，我们提供了一个模版代码仓库，你可以直接 fork 来开发插件：[artalk-plugin-sample](https://github.com/ArtalkJS/artalk-plugin-sample)。
+
+通过 Vite 结合前端生态，你可以任选你喜欢的技术栈，如 Vue、React、Svelte、SolidJS 等框架开发 Artalk 插件。
+
+## `Artalk.use`
+
 使用 `Artalk.use` 来扩展 Artalk。
 
 ```js
@@ -43,7 +55,7 @@ const artalk = Artalk.init({ ... })
 
 在 use 函数中，你可以通过 `ctx` 来访问 Artalk 的 Context 对象。
 
-## Context
+## ContextAPI
 
 Context 对象包含了 Artalk 的上下文信息。
 
@@ -78,13 +90,19 @@ Artalk 包含完整的 TypeScript 类型定义，你可以通过编辑器的自�
 
 ## 示例插件
 
-Artalk 有很多内置的插件，你可以参考它们的源码来开发自己的插件。
-
-[@ArtalkJS/Artalk - src/plugins](https://github.com/ArtalkJS/Artalk/tree/master/ui/artalk/src/plugins)
-
-我们还提供了一些外置的插件，同样可以参考：
+以下为 Artalk 官方维护的外置插件列表：
 
 | 插件                                                                                         | 说明           |
 | -------------------------------------------------------------------------------------------- | -------------- |
+| [artalk-plugin-sample](https://github.com/ArtalkJS/artalk-plugin-sample)                     | 示例插件       |
 | [@artalk/plugin-katex](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-katex)       | LaTeX 公式插件 |
-| [@artalk/plugin-lightbox](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-lightbox) | 图片灯箱插件   |
+| [@artalk/plugin-auth](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-auth)         | Auth 插件 (SolidJS) |
+| [@artalk/plugin-lightbox](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-lightbox) | 图片灯箱基础插件   |
+
+同时 Artalk 内部也有很多插件的实现，你可以参考源码来开发插件：
+
+[@ArtalkJS/Artalk - src/plugins](https://github.com/ArtalkJS/Artalk/tree/master/ui/artalk/src/plugins)
+
+## 后端插件开发
+
+【TODO】

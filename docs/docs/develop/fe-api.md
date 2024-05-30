@@ -39,7 +39,7 @@ const artalk = Artalk.init({
 
 评论列表加载完毕后会触发 `list-loaded` 事件。
 
-注：前端界面配置可能会被覆盖，详情见：[在后端控制前端](../guide/backend/fe-control.md)。
+> 注：前端界面配置可能会被覆盖，详情见：[界面配置](../guide/frontend/config.md)。
 
 ## 释放资源 `destroy`
 

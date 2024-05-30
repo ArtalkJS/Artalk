@@ -4,7 +4,7 @@ Artalk 支持通过多元推送功能以多种方式发送管理员通知。
 
 支持 **Telegram**、**飞书**、**钉钉**、**Bark**、**Slack**、**LINE**，并且多种方式可以同时启用。
 
-你可以在[控制中心](/guide/frontend/sidebar.md#控制中心)找到「设置」界面修改此配置。
+你可以在 [控制中心](/guide/frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](/guide/backend/config.md#多元推送-admin-notify) 或 [环境变量](/guide/env.md#多元推送) 进行配置。
 
 ## 配置文件
 

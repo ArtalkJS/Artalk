@@ -1,0 +1,37 @@
+{
+  "name": "@artalk/plugin-kit",
+  "version": "1.0.0",
+  "description": "The plugin kit for Artalk",
+  "type": "module",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/main.d.cjs",
+        "default": "./dist/main.cjs"
+      },
+      "default": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/main.js"
+      }
+    },
+    "./client": "./client.d.ts"
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "artalk": "workspace:^",
+    "picocolors": "^1.0.1"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.46.1",
+    "esbuild-plugin-raw": "^0.1.8",
+    "tsup": "^8.0.2"
+  }
+}

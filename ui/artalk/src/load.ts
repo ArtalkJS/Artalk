@@ -6,15 +6,15 @@ import { DefaultPlugins } from './plugins'
 /**
  * Global Plugins for all Artalk instances
  */
-export const GlobalPlugins: ArtalkPlugin[] = [...DefaultPlugins]
+export const GlobalPlugins: Set<ArtalkPlugin> = new Set([...DefaultPlugins])
 
 export async function load(ctx: ContextApi) {
-  const loadedPlugins: ArtalkPlugin[] = []
-  const loadPlugins = (plugins: ArtalkPlugin[]) => {
+  const loadedPlugins = new Set<ArtalkPlugin>()
+  const loadPlugins = (plugins: Set<ArtalkPlugin>) => {
     plugins.forEach((plugin) => {
-      if (typeof plugin === 'function' && !loadedPlugins.includes(plugin)) {
+      if (typeof plugin === 'function' && !loadedPlugins.has(plugin)) {
         plugin(ctx)
-        loadedPlugins.push(plugin)
+        loadedPlugins.add(plugin)
       }
     })
   }
@@ -77,8 +77,9 @@ export async function load(ctx: ContextApi) {
 /**
  * Dynamically load plugins from Network
  */
-async function loadNetworkPlugins(scripts: string[], apiBase: string): Promise<ArtalkPlugin[]> {
-  if (!scripts || !Array.isArray(scripts)) return []
+async function loadNetworkPlugins(scripts: string[], apiBase: string): Promise<Set<ArtalkPlugin>> {
+  const networkPlugins = new Set<ArtalkPlugin>()
+  if (!scripts || !Array.isArray(scripts)) return networkPlugins
 
   const tasks: Promise<void>[] = []
 
@@ -107,7 +108,12 @@ async function loadNetworkPlugins(scripts: string[], apiBase: string): Promise<A
 
   await Promise.all(tasks)
 
-  return Object.values(window.ArtalkPlugins || {})
+  // Read ArtalkPlugins object from window
+  Object.values(window.ArtalkPlugins || {}).forEach((plugin) => {
+    if (typeof plugin === 'function') networkPlugins.add(plugin)
+  })
+
+  return networkPlugins
 }
 
 export function onLoadErr(ctx: ContextApi, err: any) {

@@ -98,8 +98,7 @@ export default class Artalk {
 
   /** Use plugin, the plugin will be used when Artalk.init */
   public static use(plugin: ArtalkPlugin) {
-    if (GlobalPlugins.includes(plugin)) return
-    GlobalPlugins.push(plugin)
+    GlobalPlugins.add(plugin)
   }
 
   /** Load count widget */

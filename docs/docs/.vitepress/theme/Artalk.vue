@@ -6,6 +6,7 @@
 import { watch, nextTick, ref, onMounted, onUnmounted } from 'vue'
 import { useData, useRouter } from 'vitepress'
 import Artalk from 'artalk'
+import { ArtalkKatexPlugin } from '@artalk/plugin-katex'
 import 'artalk/dist/Artalk.css'
 
 const el = ref<HTMLElement | null>(null)
@@ -36,6 +37,8 @@ onUnmounted(() => {
 })
 
 function initArtalk(conf: any) {
+  Artalk.use(ArtalkKatexPlugin)
+
   artalk = Artalk.init({
     el: el.value,
     emoticons: '/assets/emoticons/default.json',

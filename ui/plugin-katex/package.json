@@ -1,10 +1,16 @@
 {
   "name": "@artalk/plugin-katex",
-  "version": "0.1.6",
+  "version": "0.1.7",
+  "minAppVersion": "2.8.6",
   "license": "MIT",
   "description": "The katex plugin for artalk",
+  "type": "module",
   "main": "./dist/artalk-plugin-katex.js",
-  "module": "./dist/artalk-plugin-katex.es.js",
+  "module": "./dist/artalk-plugin-katex.mjs",
+  "types": "./dist/artalk-plugin-katex.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -17,6 +23,19 @@
     "katex": "^0.16.10"
   },
   "devDependencies": {
+    "@artalk/plugin-kit": "workspace:^",
     "@types/katex": "0.16.7"
+  },
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/artalk-plugin-katex.d.cts",
+        "default": "./dist/artalk-plugin-katex.cjs"
+      },
+      "default": {
+        "types": "./dist/artalk-plugin-katex.d.ts",
+        "default": "./dist/artalk-plugin-katex.mjs"
+      }
+    }
   }
 }

@@ -98,6 +98,9 @@ importers:
 
   docs/docs:
     dependencies:
+      '@artalk/plugin-katex':
+        specifier: ^0.1.7
+        version: 0.1.7
       vue:
         specifier: ^3.4.26
         version: 3.4.26(typescript@5.4.5)
@@ -311,6 +314,9 @@ importers:
         specifier: ^1.8.17
         version: 1.8.17
     devDependencies:
+      '@artalk/plugin-kit':
+        specifier: workspace:^
+        version: link:../plugin-kit
       vite-plugin-css-injected-by-js:
         specifier: ^3.5.1
         version: 3.5.1(vite@5.2.11(@types/node@20.12.8)(sass@1.76.0)(terser@5.31.0))
@@ -327,6 +333,9 @@ importers:
         specifier: ^0.16.10
         version: 0.16.10
     devDependencies:
+      '@artalk/plugin-kit':
+        specifier: workspace:^
+        version: link:../plugin-kit
       '@types/katex':
         specifier: 0.16.7
         version: 0.16.7
@@ -447,6 +456,12 @@ packages:
 
   '@antfu/utils@0.7.7':
     resolution: {integrity: sha512-gFPqTG7otEJ8uP6wrhDv6mqwGWYZKNvAcCq6u9hOj0c+IKCEsY4L1oC9trPq2SaWIzAfHvqfBDxF591JkMf+kg==}
+
+  '@artalk/plugin-katex@0.1.7':
+    resolution: {integrity: sha512-2TaEmSx4EPOAcffeRnbME2P4fmzbKd6nbO4sL6Ol/Xweg1hDptmWS4ecpSYrYs0X0NyUIyzptTsnhmJG3TSWNQ==}
+
+  '@artalk/plugin-kit@1.0.0':
+    resolution: {integrity: sha512-MSOgI9k2yfvKkvf8mrUWOy17FLRigMNtsZlRtdwTwAsFizm7dk9TaOc9b5qLGyCkDMpREtCXvnbDxCyp7716rA==}
 
   '@babel/code-frame@7.24.2':
     resolution: {integrity: sha512-y5+tLQyV8pg3fsiln67BVLD1P13Eg4lh5RW9mF0zUuvLrv9uIQ4MCL+CRT+FTsBlBjcIan6PGsLcBN0m3ClUyQ==}
@@ -1840,6 +1855,9 @@ packages:
   arraybuffer.prototype.slice@1.0.3:
     resolution: {integrity: sha512-bMxMKAjg13EBSVscxTaYA4mRc5t1UAXa2kXiGTNfZ079HIWXEkKmkgFrh/nJqamaLSrXO5H4WFFkPEaLJWbs3A==}
     engines: {node: '>= 0.4'}
+
+  artalk@2.8.6:
+    resolution: {integrity: sha512-Wt6x9F6A9l7Bw6y8tZayheHkJJ2tF0T3yZVxtqHTpDgZOKlOI91UzBvZ2bSjScayy7JH9ZSAkTC/qVDODeUhbA==}
 
   assertion-error@1.1.0:
     resolution: {integrity: sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==}
@@ -4812,6 +4830,17 @@ snapshots:
 
   '@antfu/utils@0.7.7': {}
 
+  '@artalk/plugin-katex@0.1.7':
+    dependencies:
+      '@artalk/plugin-kit': 1.0.0
+      artalk: 2.8.6
+      katex: 0.16.10
+
+  '@artalk/plugin-kit@1.0.0':
+    dependencies:
+      artalk: 2.8.6
+      picocolors: 1.0.1
+
   '@babel/code-frame@7.24.2':
     dependencies:
       '@babel/highlight': 7.24.2
@@ -6369,6 +6398,13 @@ snapshots:
       get-intrinsic: 1.2.4
       is-array-buffer: 3.0.4
       is-shared-array-buffer: 1.0.3
+
+  artalk@2.8.6:
+    dependencies:
+      abortcontroller-polyfill: 1.7.5
+      hanabi: 0.4.0
+      insane: 2.6.2
+      marked: 12.0.2
 
   assertion-error@1.1.0: {}
 

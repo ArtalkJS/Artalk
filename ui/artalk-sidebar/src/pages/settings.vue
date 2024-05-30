@@ -162,6 +162,8 @@ function save() {
     border-bottom: 1px solid var(--at-color-border);
     outline: none;
     background: transparent;
+    -webkit-appearance: none;
+    border-radius: 0;
 
     &:focus {
       border-bottom-color: var(--at-color-main);

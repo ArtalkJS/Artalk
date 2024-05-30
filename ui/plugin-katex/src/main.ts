@@ -1,6 +1,9 @@
 import { ArtalkPlugin } from 'artalk'
 import katex from 'katex'
-import 'katex/dist/katex.min.css'
+
+if (import.meta.env.DEV) {
+  import('katex/dist/katex.min.css')
+}
 
 export const ArtalkKatexPlugin: ArtalkPlugin = (ctx) => {
   ctx.on('mounted', () => {

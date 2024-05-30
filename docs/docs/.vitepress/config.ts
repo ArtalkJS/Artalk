@@ -40,7 +40,6 @@ export default defineConfig({
       },
     ],
     ['script', { src: 'https://unpkg.com/katex@0.15.3/dist/katex.min.js' }],
-    // ['script', { src: 'https://unpkg.com/@artalk/plugin-katex/dist/artalk-plugin-katex.js' }],
   ],
 
   lastUpdated: true,

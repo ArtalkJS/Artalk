@@ -99,8 +99,8 @@ importers:
   docs/docs:
     dependencies:
       '@artalk/plugin-katex':
-        specifier: ^0.1.7
-        version: 0.1.7
+        specifier: ^0.1.8
+        version: 0.1.8
       vue:
         specifier: ^3.4.26
         version: 3.4.26(typescript@5.4.5)
@@ -457,11 +457,8 @@ packages:
   '@antfu/utils@0.7.7':
     resolution: {integrity: sha512-gFPqTG7otEJ8uP6wrhDv6mqwGWYZKNvAcCq6u9hOj0c+IKCEsY4L1oC9trPq2SaWIzAfHvqfBDxF591JkMf+kg==}
 
-  '@artalk/plugin-katex@0.1.7':
-    resolution: {integrity: sha512-2TaEmSx4EPOAcffeRnbME2P4fmzbKd6nbO4sL6Ol/Xweg1hDptmWS4ecpSYrYs0X0NyUIyzptTsnhmJG3TSWNQ==}
-
-  '@artalk/plugin-kit@1.0.0':
-    resolution: {integrity: sha512-MSOgI9k2yfvKkvf8mrUWOy17FLRigMNtsZlRtdwTwAsFizm7dk9TaOc9b5qLGyCkDMpREtCXvnbDxCyp7716rA==}
+  '@artalk/plugin-katex@0.1.8':
+    resolution: {integrity: sha512-LU8Yvg57ODNVLs0F7H6x6ZiSmS+62d9qHjZDWxhRTAgba6cxURBUUgDWxwYvonJBa6q8FKF/2rXCApkKm8VNXg==}
 
   '@babel/code-frame@7.24.2':
     resolution: {integrity: sha512-y5+tLQyV8pg3fsiln67BVLD1P13Eg4lh5RW9mF0zUuvLrv9uIQ4MCL+CRT+FTsBlBjcIan6PGsLcBN0m3ClUyQ==}
@@ -4830,16 +4827,10 @@ snapshots:
 
   '@antfu/utils@0.7.7': {}
 
-  '@artalk/plugin-katex@0.1.7':
+  '@artalk/plugin-katex@0.1.8':
     dependencies:
-      '@artalk/plugin-kit': 1.0.0
       artalk: 2.8.6
       katex: 0.16.10
-
-  '@artalk/plugin-kit@1.0.0':
-    dependencies:
-      artalk: 2.8.6
-      picocolors: 1.0.1
 
   '@babel/code-frame@7.24.2':
     dependencies:

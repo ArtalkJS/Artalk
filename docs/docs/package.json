@@ -21,7 +21,7 @@
     "vitepress": "1.1.4"
   },
   "dependencies": {
-    "@artalk/plugin-katex": "^0.1.8",
+    "@artalk/plugin-katex": "^0.1.9",
     "vue": "^3.4.26"
   }
 }

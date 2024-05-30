@@ -128,6 +128,7 @@ export const ViteArtalkPluginKit = (opts: ViteArtalkPluginKitOptions = {}): Plug
         preserveSymlinks: false,
         noEmitOnError: undefined,
         target: ts.ScriptTarget.ESNext,
+        moduleResolution: ts.ModuleResolutionKind.Bundler,
         outDir: '.',
         declarationDir: '.',
       }
@@ -153,7 +154,7 @@ export const ViteArtalkPluginKit = (opts: ViteArtalkPluginKitOptions = {}): Plug
         return {
           code: `${code}
           // Mount plugin to browser window global
-          if (window) {
+          if (typeof window !== 'undefined') {
             !window.ArtalkPlugins && (window.ArtalkPlugins = {})
             window.ArtalkPlugins.${ctx.entryExportName} = ${ctx.entryExportName}
             window.Artalk?.use(${ctx.entryExportName})

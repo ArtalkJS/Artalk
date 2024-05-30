@@ -1,6 +1,6 @@
 {
   "name": "@artalk/plugin-katex",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "minAppVersion": "2.8.6",
   "license": "MIT",
   "description": "The katex plugin for artalk",
@@ -14,9 +14,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview",
-    "prepublish": "pnpm build",
-    "publish": "pnpm publish --access=public"
+    "serve": "vite preview"
   },
   "dependencies": {
     "artalk": "workspace:^",

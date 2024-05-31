@@ -5,7 +5,7 @@
 ```html
 <!-- 1. 引入 Katex -->
 <link rel="stylesheet" href="https://unpkg.com/katex@0.16.7/dist/katex.min.css" />
-<script defer src="https://unpkg.com/katex@0.16.7/dist/katex.min.js"></script>
+<script src="https://unpkg.com/katex@0.16.7/dist/katex.min.js"></script>
 
 <!-- 2. 引入 Artalk -->
 <link href="/lib/artalk/Artalk.css" rel="stylesheet" />

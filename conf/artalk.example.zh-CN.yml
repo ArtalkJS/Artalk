@@ -412,12 +412,6 @@ frontend:
   uaBadge: false
   # 评论排序功能
   listSort: true
-  # 页面 PV 绑定元素
-  pvEl: ".artalk-pv-count"
-  # 评论数绑定元素
-  countEl: ".artalk-comment-count"
-  # 统计组件 PageKey 属性名
-  statPageKeyAttr: "data-page-key"
   # 编辑器实时预览功能
   preview: true
   # 平铺模式 ["auto", true, false]

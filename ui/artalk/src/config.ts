@@ -60,9 +60,18 @@ export function handelCustomConf(customConf: Partial<ArtalkConfig>, full = false
  * @returns The config for Artalk instance creation
  */
 export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
-  const DisabledKeys: (keyof ArtalkConfig)[] = ['el', 'pageKey', 'pageTitle', 'server', 'site']
+  const ExcludedKeys: (keyof ArtalkConfig)[] = [
+    'el',
+    'pageKey',
+    'pageTitle',
+    'server',
+    'site',
+    'pvEl',
+    'countEl',
+    'statPageKeyAttr',
+  ]
   Object.keys(conf).forEach((k) => {
-    if (DisabledKeys.includes(k as any)) delete conf[k]
+    if (ExcludedKeys.includes(k as any)) delete conf[k]
     if (k === 'darkMode' && conf[k] !== 'auto') delete conf[k]
   })
 

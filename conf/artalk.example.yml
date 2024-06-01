@@ -404,12 +404,6 @@ frontend:
   uaBadge: false
   # Comment sorting
   listSort: true
-  # Page PV binding element
-  pvEl: ".artalk-pv-count"
-  # Comment count binding element
-  countEl: ".artalk-comment-count"
-  # Statistic PageKey attribute
-  statPageKeyAttr: "data-page-key"
   # Editor real-time preview
   preview: true
   # Flatten mode ["auto", true, false]

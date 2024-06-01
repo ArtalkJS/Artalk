@@ -1,12 +1,12 @@
 # 开发文档
 
-欢迎来到 Artalk 官方开发文档，这里提供了构建 Artalk 插件和主题的指南。如果你需要搭建 Artalk 的开发环境，可以阅读[开发者贡献指南](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)。
+欢迎来到 Artalk 官方开发文档，这里提供了构建 Artalk 插件和主题的指南。如果你需要搭建 Artalk 的开发环境，可以阅读 [开发者贡献指南](./contributing.md)。
 
 感谢对 Artalk 的关注和支持。我们深知开源项目的成功离不开每一位开发者的贡献，无论是代码、文档、测试还是意见反馈，您的参与都是推动项目不断前进的动力。诚挚地邀请您加入我们，共同完善和提升 Artalk。
 
 ## 索引
 
-- [开发者贡献指南](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md) ⭐️
+- [开发者贡献指南](./contributing.md) ⭐️
 
 **前端界面**
 

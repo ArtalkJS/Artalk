@@ -1,10 +1,28 @@
 # Developer Contributing Guide
 
-This guide is for developers who want to contribute to the project.
+This guide helps developers understand how to contribute code, documentation, tests, and feedback to the Artalk project. We welcome all forms of contributions, whether it's large feature development, small fixes, documentation improvements, or testing. We believe that every contribution is an important part of moving the project forward.
+
+This guide is available in multiple languages: [English](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md) • [简体中文](https://artalk.js.org/develop/contributing.html)
+
+## Setup
+
+Clone the repository:
+
+```sh
+git clone https://github.com/ArtalkJS/Artalk.git
+```
+
+It's recommended to fork the repository first, and then clone the forked repository.
+
+Navigate to the directory:
+
+```sh
+cd Artalk
+```
 
 ## Development Environment
 
-To develop Artalk, including the frontend and backend, you need to install the following tools:
+To develop Artalk, both frontend and backend, install the following tools:
 
 - [Node.js](https://nodejs.org/en/) (>= 20.13.1)
 - [PNPM](https://pnpm.io/) (>= 9.1.2)
@@ -12,116 +30,251 @@ To develop Artalk, including the frontend and backend, you need to install the f
 - [Docker](https://www.docker.com/) (>= 20.10.0) (optional)
 - [Docker Compose](https://docs.docker.com/compose/) (>= 1.29.0) (optional)
 
-Then we'll setup the development environment.
+## Development Workflow Overview
 
-### Get the source code
+The development workflow consists of the following steps:
 
-Run the following command to clone the repository:
+1. **Set Up Complete Development Instance**:
 
-```sh
-git clone https://github.com/ArtalkJS/Artalk
-```
+   - Navigate to the Artalk Repo directory.
+   - Execute `make dev` to run the backend on port `23366`.
+   - Execute `pnpm dev` to run the frontend on port `5173`.
+   - Optionally, execute `pnpm dev:sidebar` to run the sidebar frontend on port `23367`.
 
-It is recommended to fork the repository first, and then clone the forked repository.
+2. **Access Frontend for Development**:
 
-Enter the directory:
+   - Open your browser and go to `http://localhost:5173` to perform your development and testing.
 
-```sh
-cd Artalk
-```
+3. **Testing**:
 
-### Build Backend
+   - Run the backend unit tests using `make test`.
+   - Run the ui unit tests using `pnpm test`.
+   - Run the ui E2E tests using `make test-frontend-e2e`.
 
-First, you need to install the dependencies for the backend written in Go. Simply run the `make install` command to install the dependencies.
+4. **Building Frontend Code**:
 
-Then, run the `make dev` to build and run `./bin/artalk`, and you can pass startup parameters to the program using `ARGS="version" make dev`.
+   - When you make changes to the frontend code, build the complete frontend program using `pnpm build:all`.
+   - The JavaScript and CSS code will be found in `ui/artalk/dist`.
+   - The frontend code is automatically deployed to NPM by GitHub Actions.
 
-This will build the backend with debugging symbols. The binary file will be placed under the `./bin` directory.
+5. **Building Backend Code**:
 
-The backend program will run by default on port `23366`. You can access it through a browser at `http://localhost:23366`. It's recommended not to change this port number for testing the backend program.
+   - When you make changes to the backend code, note that the backend program embeds the frontend code.
+   - Before building the backend, run `make build-frontend` (which runs `scripts/build-frontend.sh`). This will place the embedded frontend main program and sidebar frontend program in `/public`.
+   - Then, build the backend program using `make build`.
 
-### Build Frontend
+More exploration:
 
-First, you need to install the dependencies for the frontend. Simply run the `pnpm install` command to install the dependencies.
+- **Developing Artalk Plugins or Themes**:
+  Refer to the [Artalk Plugin Development Guide](https://artalk.js.org/develop/plugs.html).
 
-Then, run the `pnpm dev` to build and run the frontend, and you can pass startup parameters to the program using `ARGS="--port 5173" pnpm dev`.
+- **Makefile**:
+  You can explore the process and commands in the `Makefile`.
 
-The frontend program will run by default on port `5173`, and you can access it in a browser at `http://localhost:5173`. The frontend testing client will, by default, request the backend on port `23366`, so it's essential to keep the backend on this port.
+- **Automated CI on GitHub**:
+  The automated CI pipeline on GitHub, located in the `.github/workflows` directory, builds the frontend, backend, and Docker images. It publishes Docker images to Docker Hub, handles npm package publishing, and creates GitHub Releases. And also testing the frontend and backend.
 
-The frontend program is divided into the main program and a sidebar program, with the sidebar program running on a separate port, which is `23367`.
-
-### Development Workflow
-
-In most cases, to set up a complete development instance, you need to navigate to the Artalk Repo directory and then execute `make dev`. This will run the backend on port `23366`. Then, execute `pnpm dev`, which will run the frontend on port `5173`. You can optionally execute `pnpm dev:sidebar` to run the sidebar frontend on port `23367`. For frontend development, you need to access `http://localhost:5173` in your browser to perform your development and testing.
-
-When you make changes to the frontend code, you can build the complete frontend program using `pnpm build:all`. The JavaScript and CSS code can be found in `ui/artalk/dist`.
-
-When you make changes to the backend code, running `make all` will build the complete backend program. Note that since the backend program also embeds the frontend code, the `scripts/build-frontend.sh` script will run during backend program building, which includes the embedded frontend main program and sidebar frontend program. If you are interested, you can explore the complete frontend build process in the `Makefile` code.
-
-Additionally, there is automated CI on GitHub for building. You can find the relevant code in the `.github/workflows` directory.
-
-### Optional: Use a One-Key Script to Run a Demo Site
-
-When you access `http://localhost:5173` during frontend development, you will get a minimalist interface that only contains the Artalk program interface and not a real blog environment. If you want to make testing closer to a real environment, you can create a demo blog site using the following steps.
-
-Run the following command:
-
-```sh
-./scripts/setup-example-site.sh
-```
-
-This script sets up a local example site for testing at `data` folder, with Artalk integrated into its theme.
-
-After running this script, run:
-
-```sh
-./bin/artalk server -c ./data/artalk.yml
-```
-
-to start the artalk server.
-
-And open <http://localhost:1313/> in your browser to view the example site.
-
-Here is the default admin account (only created in test mode):
-
-```yaml
-name: 'admin'
-email: 'admin@test.com'
-password: 'admin'
-```
-
-## Testing
-
-The backend Go program can be tested by running `make test` for unit testing. The test results will be outputted in the terminal. You can also execute `test-coverage` to check the code test coverage.
-
-Frontend testing is conducted using Playwright for end-to-end (E2E) testing. To start the E2E testing, run `make test-frontend-e2e`.
-
-Both frontend and backend testing are automated and will be performed during Git pull requests and as part of the build process using CircleCI or GitHub Actions.
+The following sections provide more detailed information on the development workflow.
 
 ## Project Structure
 
-Artalk is a monorepo project, which means all the source code is in the same repository. However, the frontend and backend are separated. The frontend part is located in `./ui` directory.
+Artalk is a monorepo project, meaning all the source code resides in a single repository. Despite this, the frontend and backend are kept separate. The frontend part is located in the `./ui` directory.
 
-- `bin/` - The compiled binary files. This directory is ignored by git.
-- `cmd/` - The source code for the command line tools.
-- `conf/` - The sample configuration files.
-- `docs/` - The documentation site source code.
-- `i18n/` - The translation files.
-- `internal/` - The internal packages.
-- `data/` - The local data. This directory is ignored by git.
-- `public/` - The static files. Built frontend files will be copied here.
-- `scripts/` - The scripts for development.
-- `server/` - The source code for the server.
-- `ui/` - The source code for the frontend.
+### Directory Overview
 
-## Translation
+- **`bin/`**: The compiled binary files. (This directory is ignored by git).
+- **`cmd/`**: The source code for the command line tools.
+- **`conf/`**: The sample configuration files.
+- **`data/`**: The local data. (This directory is ignored by git).
+- **`docs/`**: The documentation site source code.
+- **`i18n/`**: The translation files.
+- **`local/`**: The local files. (This directory is ignored by git).
+- **`internal/`**: The Go source code for the internal packages.
+- **`public/`**: The static files. Built frontend files will be copied here.
+- **`scripts/`**: The scripts for development and building.
+- **`server/`**: The Go source code for the backend.
+- **`ui/`**: The UI source code for the frontend.
+- **`.github/`**: The GitHub Actions workflows.
+- **`.vscode/`**: The VSCode settings.
 
-Artalk aims to be a multilingual project. If you would like to contribute to the translation, here are some tips:
+## Backend Development
 
-If you just write some new features or do some fixes/refactoring, use the following command to generate the translation template
+### Run Backend
+
+1. **Create Configuration File**:
+
+   - Copy `./conf/artalk.yml` to the root directory.
+   - Rename it to `artalk.yml`.
+   - Modify the file as needed.
+
+2. **Start Backend Program**:
+
+   - Run `make dev` to start the backend on port `23366`.
+   - Access it via `http://localhost:23366`.
+   - It's recommended to keep the default port for testing.
+   - (Alternative) Use `ARGS="version" make dev` to pass startup parameters (default is `ARGS="server"`).
+
+The `make dev` builds the backend with debugging symbols, which is convenient for debugging with GDB.
+
+If you are using the VSCode, you can use the `F5` key (or RUN button) to start debugging the backend program directly.
+
+### Build Backend
+
+1. **Fetch Latest Git Tag**:
+   Execute `git fetch --tags` to get the latest git tag information. This tag will be used as the version number of the backend app. Alternatively, specify it using environment variables: `VERSION="v1.0.0"` and `COMMIT_HASH="66128e"`.
+
+2. **Build Frontend**:
+   Run `make build-fronted` to build the frontend, as the backend app embeds the frontend code.
+
+3. **Build Backend**:
+   Execute `make build` to build the backend program.
+
+The built binary file will be located in the `./bin` directory.
+
+## Frontend Development (UI)
+
+### Run Frontend
+
+1. **Install Dependencies**:  
+   Run `pnpm install` to install all necessary dependencies.
+
+2. **Start Development Server**:  
+   Execute `pnpm dev --port 5173` to start the frontend development server.
+
+3. **Access the Frontend**:  
+   The frontend application will run on port `5173` by default. Access it in your browser at `http://localhost:5173`.
+
+4. **Sidebar Development**:  
+   To run the sidebar part of the frontend, use `pnpm dev:sidebar`.
+
+The ports `5173` and `23367` are used for frontend development and testing. These ports are included in the `ATK_TRUSTED_DOMAINS` configuration of the backend program.
+
+### Build Frontend
+
+To build the frontend, run the following command:
 
 ```sh
-go run ./internal/i18n/gen -w . -d .
+make build-frontend
 ```
 
-If you're not a programmer and would like to help us improve the translation, you can edit the translation files directly in the `.i18n' directory and then submit a pull request.
+The compiled JavaScript and CSS files will be located in the `/public` directory, embedded into the backend program.
+
+For more details, refer to the `scripts/build-frontend.sh` script.
+
+## Docker Development
+
+### Build Docker Image
+
+To build the Docker image, run the following command:
+
+```sh
+docker build -t artalk:TAG .
+```
+
+Replace `TAG` with the desired tag name (e.g., `latest`).
+
+### Skip Frontend Build
+
+If you have already built the frontend outside the Docker container, you can skip the frontend build process inside the container to speed up the build. Use the following command:
+
+```sh
+docker build --build-arg SKIP_FRONTEND_BUILD=true -t artalk:latest .
+```
+
+For more details, refer to the `Dockerfile`.
+
+## Testing
+
+### Testing the Backend
+
+To test the backend Go program, you can use the following commands:
+
+- **Unit Testing**:
+  Run `make test` to execute unit tests. The results will be outputted in the terminal.
+
+- **Test Coverage**:
+  Run `make test-coverage` to check the code test coverage.
+
+- **HTML Coverage Report**:
+  Run `make test-coverage-html` to generate and browse the test coverage report in HTML format.
+
+- **Run Specific Tests**:
+  To run specific tests, use the command with an environment variable:
+  ```sh
+  TEST_PATHS="./server/..." make test
+  ```
+
+### Testing the Frontend
+
+Frontend testing includes unit tests and end-to-end (E2E) tests.
+
+- **Unit Testing**:
+  The unit tests for the frontend are conducted using Vitest. Run `pnpm test` to start the unit testing.
+
+- **End-to-End Testing**:
+  E2E testing is conducted using Playwright. To start the E2E testing, run:
+  ```sh
+  make test-frontend-e2e
+  ```
+
+### Continuous Integration for Testing
+
+Both frontend and backend testing are automated and will be performed during Git pull requests and as part of the build process using CircleCI or GitHub Actions.
+
+## Documentations
+
+The documentation consists of three parts, each associated with a specific package: **Guide documentation**, **Landing page**, and **Swagger API documentation**. Below is an organized summary of the relevant commands and their outputs for each package.
+
+### Guide Documentation (`docs`)
+
+- **Directory**: `docs/docs/guide`
+- **Dev Command**: `pnpm -F docs dev:docs`
+- **Build Command**: `pnpm -F docs build:docs`
+- **Output Directory**: `docs/docs/.vitepress/dist`
+
+### Landing Page (`docs-landing`)
+
+- **Directory**: `docs/landing`
+- **Dev Command**: `pnpm -F docs-landing dev:landing`
+- **Build Command**: `pnpm -F docs-landing build:landing`
+- **Output Directory**: `docs/landing/dist`
+
+### Swagger API Documentation (`docs-swagger`)
+
+- **Directory**: `docs/swagger`
+- **Build Command**: `make update-swagger`
+- **Output Directory**: `docs/swagger`
+
+Swagger definitions are located in the backend code at `/server`. After modifying the Swagger definitions, running the build command will update the Swagger docs and generate HTTP client code at `/ui/artalk/src/api/v2.ts`.
+
+### Combined Build
+
+- **Command to Build All Packages**: `pnpm build:docs`
+- **Combined Output Directory**: `docs/docs/.vitepress/dist`
+
+This command builds and combines all three packages into a single directory, ready for publishing.
+
+### Environment Variable Documentation
+
+- **File**: `docs/docs/guide/env.md`
+- **Command to Update**: `make update-conf-docs`
+
+This command reads the configuration template file located in `/conf` to update the environment variable documentation. Run this command after modifying the configuration template file.
+
+## Translation (i18n)
+
+If you write new features or make fixes/refactoring, use the following command to incrementally generate the translation files by parsing the source code for `i18n.T` function calls:
+
+```sh
+make update-i18n
+```
+
+If you're not a programmer and would like to help improve the translation, you can edit the translation files directly in the `/i18n` directory and then submit a pull request.
+
+## The End
+
+Thank you for your patience in reading this and for your interest and support in Artalk. We understand that the success of an open-source project relies on the contributions of every developer. Whether through code, documentation, testing, or feedback, your participation is the driving force behind the project's continuous progress. We sincerely invite you to join us in improving and enhancing Artalk.
+
+By collaborating, we can create a more robust and versatile platform that benefits the entire community. Your unique insights and expertise are invaluable, and together, we can achieve remarkable advancements. Whether you are a seasoned developer or just starting, there is always a place for your contributions in our project.
+
+If you have any questions or need assistance, please feel free to ask in the issue section on our GitHub page: https://github.com/ArtalkJS/Artalk/issues. Thank you once again for your support, and we look forward to working with you.

@@ -157,6 +157,7 @@ export default defineConfig({
           text: '开发文档',
           items: [
             { text: '开发说明', link: '/develop/index.md' },
+            { text: '贡献指南', link: '/develop/contributing.md' },
             { text: '置入博客', link: '/develop/import-blog.md' },
             { text: '置入框架', link: '/develop/import-framework.md' },
             { text: '前端 API', link: '/develop/fe-api.md' },

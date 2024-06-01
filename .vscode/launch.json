@@ -8,7 +8,10 @@
       "mode": "exec",
       "program": "${workspaceFolder}/bin/artalk",
       "preLaunchTask": "Build for debugging",
-      "args": ["server", "-c", "${workspaceFolder}/data/artalk.yml"]
+      "env": {
+        "ATK_TRUSTED_DOMAINS": "http://localhost:5173 http://localhost:23367",
+      },
+      "args": ["server", "-c", "${workspaceFolder}/artalk.yml"]
     }
   ]
 }

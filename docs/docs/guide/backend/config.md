@@ -124,37 +124,27 @@ trusted_domains:
   - https://前端使用域名B.com
 ```
 
-配置该项能限制来自列表外的 Referer 和跨域请求。
+仅允许列表中的域名访问后端 API，限制来自列表外的域名跨域请求。
 
 :::tip
 
-你需要将「使用该后端的前端」URL 地址加入可信域名列表中，
+你需要将「前端页面」的 URL 地址加入可信域名列表中，
 
 若非默认 80/443 端口需额外附带端口号，例如：`https://example.com:8080`
 
 :::
 
-在侧边栏[控制中心](../frontend/sidebar.md#控制中心)「站点」选项卡 - 选择站点「修改 URL」，填入站点 URL 也具有相同的效果；添加多个 URL 可使用 `","` 英文逗号分隔，修改后请重启 Artalk。
+在侧边栏 [控制中心](../frontend/sidebar.md#控制中心) 的「站点」选项卡 - 选择站点「修改 URL」，填入站点 URL 也具有相同的设置效果；添加多个 URL 可使用 `,` 英文逗号分隔，修改后请手动重启 Artalk。
 
-可以将其关闭：
+另外，你也可以在启动时通过环境变量 `TRUSTED_DOMAINS` 来配置可信域名，例如：
 
-```yaml
-trusted_domains:
-  - '*'
+```bash
+ATK_TRUSTED_DOMAINS="https://a.com https://b.org" artalk server
 ```
 
-::: danger
+请注意，环境变量将覆盖配置文件中的设置。
 
-但并不建议这样做，关闭后将存在潜在安全风险，例如可能遭受 CSRF 跨域攻击。
-
-:::
-
-细节：`trusted_domains` 配置项实际上是对响应标头：
-
-- `Access-Control-Allow-Origin` 的控制 (参考：[W3C Cross-Origin Resource Sharing](https://fetch.spec.whatwg.org/#http-cors-protocol))
-- `Referer` 的限制 (参考：[Referer - HTTP | MDN](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Referer))
-
-CSRF 跨域攻击防范措施参考：[OWASP 安全备忘单](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)
+技术细节：`trusted_domains` 配置通过控制 HTTP 响应标头 `Access-Control-Allow-Origin` 来对跨域请求进行限制 (参考：[W3C Cross-Origin Resource Sharing](https://fetch.spec.whatwg.org/#http-cors-protocol) / [OWASP 安全备忘单](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)).
 
 ## 默认站点 `site_default`
 

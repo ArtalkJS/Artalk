@@ -10,14 +10,16 @@ require (
 	github.com/bradfitz/gomemcache v0.0.0-20230905024940-24af94b03874
 	github.com/cheggaaa/pb/v3 v3.1.5
 	github.com/eko/gocache/lib/v4 v4.1.6
-	github.com/eko/gocache/store/bigcache/v4 v4.2.1
-	github.com/eko/gocache/store/memcache/v4 v4.2.1
-	github.com/eko/gocache/store/redis/v4 v4.2.1
+	github.com/eko/gocache/store/bigcache/v4 v4.2.2
+	github.com/eko/gocache/store/memcache/v4 v4.2.2
+	github.com/eko/gocache/store/redis/v4 v4.2.2
 	github.com/fatih/color v1.17.0
-	github.com/go-testfixtures/testfixtures/v3 v3.10.0
+	github.com/go-testfixtures/testfixtures/v3 v3.11.0
+	github.com/goccy/go-yaml v1.11.3
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/gofiber/swagger v1.0.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/iancoleman/strcase v0.3.0
 	github.com/jedib0t/go-pretty/v6 v6.5.9
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/knadh/koanf v1.5.0
@@ -27,7 +29,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.26
 	github.com/nikoksr/notify v0.41.0
 	github.com/qwqcode/go-aliyun-email v0.0.0-20180120030821-cb6e7b1382bf
-	github.com/redis/go-redis/v9 v9.5.1
+	github.com/redis/go-redis/v9 v9.5.2
 	github.com/rhysd/go-github-selfupdate v1.2.3
 	github.com/samber/lo v1.39.0
 	github.com/spf13/cobra v1.8.0
@@ -78,7 +80,6 @@ require (
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
-	github.com/goccy/go-yaml v1.11.3 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
@@ -90,7 +91,6 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
-	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect

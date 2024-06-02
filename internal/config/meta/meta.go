@@ -2,6 +2,7 @@ package meta
 
 import (
 	"cmp"
+	"fmt"
 	"regexp"
 	"sort"
 	"strings"
@@ -65,7 +66,7 @@ func GetOptionsMetaData(yamlTemplate string) ([]OptionsMeta, error) {
 		metas = append(metas, OptionsMeta{
 			Title:      title,
 			Desc:       desc,
-			Type:       "string",
+			Type:       fmt.Sprintf("%T", defaults[path]),
 			Options:    options,
 			Env:        EnvPrefix + strings.ReplaceAll(strings.ToUpper(path), ".", "_"),
 			Path:       path,

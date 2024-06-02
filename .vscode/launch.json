@@ -9,7 +9,7 @@
       "program": "${workspaceFolder}/bin/artalk",
       "preLaunchTask": "Build for debugging",
       "env": {
-        "ATK_TRUSTED_DOMAINS": "http://localhost:5173 http://localhost:23367",
+        "ATK_TRUSTED_DOMAINS": "http://localhost:5173 http://localhost:23367"
       },
       "args": ["server", "-c", "${workspaceFolder}/artalk.yml"]
     }

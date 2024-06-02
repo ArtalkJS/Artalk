@@ -1,5 +1,7 @@
 package config
 
+//go:generate go run ./meta/gen --format go --locale en --pkg config -o ./cache.go
+
 import (
 	"fmt"
 	"os"
@@ -8,7 +10,6 @@ import (
 	"unicode"
 
 	"github.com/ArtalkJS/Artalk/internal/config/env_provider"
-	"github.com/ArtalkJS/Artalk/internal/config/meta"
 	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/knadh/koanf"
@@ -33,7 +34,7 @@ func NewFromFile(cfgFile string) (*Config, error) {
 
 	// load environment variables and merge into the loaded config
 	const envPrefix = "ATK_"
-	if err := kf.Load(env_provider.Provider(envPrefix, meta.GetEnvPathMap(Config{}, Template("en"))), nil); err != nil {
+	if err := kf.Load(env_provider.Provider(envPrefix, EnvPathMapCache), nil); err != nil {
 		return nil, fmt.Errorf("config environment variable parse error: %w", err)
 	}
 

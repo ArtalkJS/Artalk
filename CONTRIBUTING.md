@@ -82,20 +82,20 @@ Artalk is a monorepo project, meaning all the source code resides in a single re
 
 ### Directory Overview
 
-- **`bin/`**: The compiled binary files. (This directory is ignored by git).
-- **`cmd/`**: The source code for the command line tools.
-- **`conf/`**: The sample configuration files.
-- **`data/`**: The local data. (This directory is ignored by git).
-- **`docs/`**: The documentation site source code.
-- **`i18n/`**: The translation files.
-- **`local/`**: The local files. (This directory is ignored by git).
-- **`internal/`**: The Go source code for the internal packages.
-- **`public/`**: The static files. Built frontend files will be copied here.
-- **`scripts/`**: The scripts for development and building.
-- **`server/`**: The Go source code for the backend.
-- **`ui/`**: The UI source code for the frontend.
-- **`.github/`**: The GitHub Actions workflows.
-- **`.vscode/`**: The VSCode settings.
+- `bin/`: The compiled binary files. (This directory is ignored by git).
+- `cmd/`: The source code for the command line tools.
+- `conf/`: The sample configuration files.
+- `data/`: The local data. (This directory is ignored by git).
+- `docs/`: The documentation site source code.
+- `i18n/`: The translation files.
+- `local/`: The local files. (This directory is ignored by git).
+- `internal/`: The Go source code for the internal packages.
+- `public/`: The static files. Built frontend files will be copied here.
+- `scripts/`: The scripts for development and building.
+- `server/`: The Go source code for the backend.
+- `ui/`: The UI source code for the frontend.
+- `.github/`: The GitHub Actions workflows.
+- `.vscode/`: The VSCode settings.
 
 ## Backend Development
 
@@ -103,7 +103,7 @@ Artalk is a monorepo project, meaning all the source code resides in a single re
 
 1. **Create Configuration File**:
 
-   - Copy `./conf/artalk.yml` to the root directory.
+   - Copy `./conf/artalk.example.yml` to the root directory.
    - Rename it to `artalk.yml`.
    - Modify the file as needed.
 
@@ -220,6 +220,24 @@ Frontend testing includes unit tests and end-to-end (E2E) tests.
 ### Continuous Integration for Testing
 
 Both frontend and backend testing are automated and will be performed during Git pull requests and as part of the build process using CircleCI or GitHub Actions.
+
+## Configurations
+
+The template configuration files are located in the `/conf` directory, with templates annotated in multiple languages named in the format `artalk.example.[lang].yml` (e.g., `artalk.example.zh-CN.yml`). Artalk will parse these template configuration files to generate the settings interface, environment variable names, and documentation. To improve performance, some data will be cached during the program's runtime to eliminate parsing time.
+
+In the `internal/config/config.go` file, there is a definition of the `Config` struct, which is used to parse the yml files into Go structs. This struct contains more precise type definitions. If you need to add, modify, or delete a configuration item, you must make changes to both the configuration file templates in `/conf` and the `Config` struct.
+
+When you modify the configuration files, please run the following command to update the configuration data cache:
+
+```sh
+make update-conf
+```
+
+To update the environment variable documentation, you can run the command:
+
+```sh
+make update-conf-docs
+```
 
 ## Documentations
 

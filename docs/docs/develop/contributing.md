@@ -82,20 +82,20 @@ Artalk 是一个 monorepo 项目，这意味着所有源代码都在一个仓库
 
 ### 目录概览
 
-- **`bin/`**：编译的二进制文件。（此目录被 git 忽略）
-- **`cmd/`**：命令行工具的源代码。
-- **`conf/`**：示例配置文件。
-- **`data/`**：本地数据。（此目录被 git 忽略）
-- **`docs/`**：文档站点的源代码。
-- **`i18n/`**：翻译文件。
-- **`local/`**：本地文件。（此目录被 git 忽略）
-- **`internal/`**：内部包的 Go 源代码。
-- **`public/`**：静态文件。构建的前端文件将被复制到这里。
-- **`scripts/`**：开发和构建的脚本。
-- **`server/`**：后端的 Go 源代码。
-- **`ui/`**：前端的 UI 源代码。
-- **`.github/`**：GitHub Actions 工作流。
-- **`.vscode/`**：VSCode 设置。
+- `bin/`：编译的二进制文件。（此目录被 git 忽略）
+- `cmd/`：命令行工具的源代码。
+- `conf/`：示例配置文件。
+- `data/`：本地数据。（此目录被 git 忽略）
+- `docs/`：文档站点的源代码。
+- `i18n/`：翻译文件。
+- `local/`：本地文件。（此目录被 git 忽略）
+- `internal/`：内部包的 Go 源代码。
+- `public/`：静态文件。构建的前端文件将被复制到这里。
+- `scripts/`：开发和构建的脚本。
+- `server/`：后端的 Go 源代码。
+- `ui/`：前端的 UI 源代码。
+- `.github/`：GitHub Actions 工作流。
+- `.vscode/`：VSCode 设置。
 
 ## 后端开发
 
@@ -103,7 +103,7 @@ Artalk 是一个 monorepo 项目，这意味着所有源代码都在一个仓库
 
 1. **创建配置文件**：
 
-   - 将 `./conf/artalk.yml` 复制到根目录。
+   - 将 `./conf/artalk.example.yml` 复制到根目录。
    - 重命名为 `artalk.yml`。
    - 根据需要修改文件。
 
@@ -220,6 +220,24 @@ docker build --build-arg SKIP_FRONTEND_BUILD=true -t artalk:latest .
 ### 持续集成测试
 
 前端和后端的测试都是自动化的，并将在 Git pull 请求和构建过程中使用 CircleCI 或 GitHub Actions 执行。
+
+## 配置
+
+模板配置文件位于 `/conf` 目录中，模板以多种语言注释，命名格式为 `artalk.example.[lang].yml`（例如，`artalk.example.zh-CN.yml`）。Artalk 将解析这些模板配置文件以生成设置界面、环境变量名称和文档。为了提高性能，程序运行期间将缓存部分数据以消除解析时间。
+
+在 `internal/config/config.go` 文件中，有一个名为 `Config` 的结构体定义，该结构体用于将 yml 文件解析为 Go 结构体。该结构体包含更精确的类型定义。如果需要添加、修改或删除配置项，必须同时修改 `/conf` 目录中的配置文件模板和 `Config` 结构体。
+
+当您修改配置文件后，请运行以下命令以更新配置数据缓存：
+
+```sh
+make update-conf
+```
+
+要更新环境变量文档，可以运行以下命令：
+
+```sh
+make update-conf-docs
+```
 
 ## 文档
 

@@ -66,7 +66,7 @@ The development workflow consists of the following steps:
 More exploration:
 
 - **Developing Artalk Plugins or Themes**:
-  Refer to the [Artalk Plugin Development Guide](https://artalk.js.org/develop/plugs.html).
+  Refer to the [Artalk Plugin Development Guide](https://artalk.js.org/develop/plugin.html).
 
 - **Makefile**:
   You can explore the process and commands in the `Makefile`.

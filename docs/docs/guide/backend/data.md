@@ -1,5 +1,7 @@
 # 数据
 
-## 备份
+本页面内容已移动至 <https://artalk.js.org/guide/transfer.html>。
 
-前往：[数据迁移 · 备份](/guide/transfer.md)
+<script setup lang="ts">
+if (!import.meta.env.SSR) window.location = 'https://artalk.js.org/guide/transfer.html';
+</script>

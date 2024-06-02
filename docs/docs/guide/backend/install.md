@@ -1,3 +1,7 @@
 # 后端部署
 
-参考：[程序部署](../deploy.md)
+本页面内容已移动至 <https://artalk.js.org/guide/deploy.html>。
+
+<script setup lang="ts">
+if (!import.meta.env.SSR) window.location = 'https://artalk.js.org/guide/deploy.html';
+</script>

@@ -68,7 +68,7 @@ Artalk.init({
 
 - [守护进程 (Systemd, Supervisor)](./backend/daemon.md)
 - [反向代理 (Caddy, Nginx, Apache)](./backend/reverse-proxy.md)
-- [自编译 (通过最新代码构建)](./backend/build.md)
+- [自编译 (通过最新代码构建)](../develop/contributing.md)
 
 ## Compose 部署
 

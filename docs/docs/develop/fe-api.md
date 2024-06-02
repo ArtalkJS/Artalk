@@ -149,7 +149,7 @@ Artalk.use((ctx) => {
 const artalk = Artalk.init({ ... })
 ```
 
-详情见：[插件开发](./plugs.md)
+详情见：[插件开发](./plugin.md)
 
 ## 夜间模式 `setDarkMode`
 

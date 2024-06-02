@@ -1,3 +1,7 @@
 # 如何配置界面
 
-页面已移动，可以参考[界面配置](/guide/frontend/config.md)。😉
+本页面内容已移动至 <https://artalk.js.org/guide/frontend/config.html>。
+
+<script setup lang="ts">
+if (!import.meta.env.SSR) window.location = 'https://artalk.js.org/guide/frontend/config.html';
+</script>

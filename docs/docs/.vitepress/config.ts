@@ -136,7 +136,7 @@ export default defineConfig({
           items: [
             { text: '守护进程', link: '/guide/backend/daemon.md' },
             { text: '反向代理', link: '/guide/backend/reverse-proxy.md' },
-            { text: '编译构建', link: '/guide/backend/build.md' },
+            { text: '编译构建', link: '/develop/contributing.md' },
             { text: '程序升级', link: '/guide/backend/update.md' },
             { text: 'Docker', link: '/guide/backend/docker.md' },
           ],
@@ -162,7 +162,7 @@ export default defineConfig({
             { text: '置入框架', link: '/develop/import-framework.md' },
             { text: '前端 API', link: '/develop/fe-api.md' },
             { text: '前端 Event', link: '/develop/event.md' },
-            { text: '插件开发', link: '/develop/plugs.md' },
+            { text: '插件开发', link: '/develop/plugin.md' },
             {
               text: 'HTTP API',
               link: 'https://artalk.js.org/http-api.html',

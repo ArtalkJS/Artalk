@@ -72,7 +72,7 @@ export const QuickFeature: React.FC = () => {
           </Reveal>
         </div>
         <div className="self-compile">
-          <LearnMoreLink prompt='打算使用代码自编译？' link='https://artalk.js.org/guide/backend/build.html' />
+          <LearnMoreLink prompt='打算使用代码自编译？' link='https://artalk.js.org/develop/contributing.html' />
         </div>
       </div>
     </FeatureBase>

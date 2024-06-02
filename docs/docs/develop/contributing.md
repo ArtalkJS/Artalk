@@ -66,7 +66,7 @@ cd Artalk
 更多探索：
 
 - **开发 Artalk 插件或主题**：
-  请参考 [Artalk 插件开发指南](https://artalk.js.org/develop/plugs.html)。
+  请参考 [Artalk 插件开发指南](https://artalk.js.org/develop/plugin.html)。
 
 - **Makefile**：
   您可以探索 `Makefile` 中的过程和命令。

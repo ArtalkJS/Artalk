@@ -192,7 +192,7 @@ export const FuncList: FuncItem[] = [
     icon: <TbPlug />,
     name: '扩展插件',
     desc: '创造更多可能性',
-    link: 'https://artalk.js.org/develop/'
+    link: 'https://artalk.js.org/develop/plugin.html'
   },
   {
     icon: <TbLanguage />,
@@ -210,7 +210,7 @@ export const FuncList: FuncItem[] = [
     icon: <TbApi />,
     name: 'API 文档',
     desc: '提供 OpenAPI 格式文档',
-    link: 'https://artalk.js.org/develop/'
+    link: 'https://artalk.js.org/http-api.html'
   },
   {
     icon: <GrUpgrade />,

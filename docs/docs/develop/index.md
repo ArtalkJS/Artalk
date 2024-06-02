@@ -18,7 +18,7 @@
 
 **插件开发**
 
-- [插件开发](./plugs.md)
+- [插件开发](./plugin.md)
 - [插件开发 Vite 集成](https://github.com/ArtalkJS/Artalk/blob/master/ui/plugin-kit/README.md)
 
 **后端程序**

@@ -43,7 +43,7 @@
 | `data.comment.id`              | Number   |   -    | 评论 ID                                |
 | `data.comment.content`         | String   |   -    | 评论正文                               |
 | `data.comment.nick`            | String   |   -    | 评论者昵称                             |
-| `data.comment.email_encrypted` | String   |   -    | 评论者邮箱 MD5 加密值                  |
+| `data.comment.email_encrypted` | String   |   -    | 评论者邮箱 SHA256 加密值                |
 | `data.comment.link`            | String   |   -    | 评论者链接                             |
 | `data.comment.ua`              | String   |   -    | 评论者 User-Agent                      |
 | `data.comment.date`            | String   |   -    | 评论时间，格式为 `1970-01-01 00:00:00` |

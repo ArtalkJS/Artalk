@@ -1,6 +1,5 @@
 <script setup lang="ts">
-// @ts-ignore
-import MD5 from '../lib/md5'
+import sha256 from 'crypto-js/sha256'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '../stores/user'
 import { useNavStore } from '../stores/nav'
@@ -15,7 +14,7 @@ const { site: curtSite, isAdmin, email } = storeToRefs(user)
 const userAvatarImgURL = computed(() => {
   const conf = artalk?.ctx.conf?.gravatar
   if (!conf) return ``
-  return `${conf.mirror.replace(/\/$/, '')}/${MD5(email.value)}?${conf.params.replace(/^\?/, '')}`
+  return `${conf.mirror.replace(/\/$/, '')}/${sha256(email.value.toLowerCase())}?${conf.params.replace(/^\?/, '')}`
 })
 
 const avatarClickHandler = () => {

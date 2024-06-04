@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"strings"
+
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/utils"
 	"github.com/samber/lo"
@@ -38,7 +40,7 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		ContentMarked:  markedContent,
 		UserID:         c.UserID,
 		Nick:           user.Name,
-		EmailEncrypted: utils.GetSha256Hash(user.Email),
+		EmailEncrypted: utils.GetSha256Hash(strings.ToLower(user.Email)),
 		Link:           user.Link,
 		UA:             c.UA,
 		Date:           c.CreatedAt.Local().Format(CommonDateTimeFormat),
@@ -90,7 +92,7 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 		Site:       dao.CookSite(&site),
 		CookedComment: entity.CookedComment{
 			ID:             c.ID,
-			EmailEncrypted: utils.GetSha256Hash(user.Email),
+			EmailEncrypted: utils.GetSha256Hash(strings.ToLower(user.Email)),
 			Link:           user.Link,
 			UA:             c.UA,
 			IsCollapsed:    c.IsCollapsed,

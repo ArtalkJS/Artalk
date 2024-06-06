@@ -1,6 +1,10 @@
 package auth
 
-import "github.com/markbates/goth"
+import (
+	"strings"
+
+	"github.com/markbates/goth"
+)
 
 type SocialUser struct {
 	goth.User
@@ -25,6 +29,12 @@ func GetSocialUser(u goth.User) SocialUser {
 	}
 	if u.Email == "" {
 		u.Email = u.UserID + "@" + u.Provider + ".com"
+	}
+
+	// Name patch
+	if u.Name == "" && u.Email != "" {
+		// try extract name from email
+		u.Name = strings.Split(u.Email, "@")[0]
 	}
 
 	return SocialUser{

@@ -45,11 +45,13 @@ func GetProviders(conf *config.Config) []goth.Provider {
 	}
 	// @see https://docs.gitlab.com/ee/integration/oauth_provider.html
 	if gitlabConf := conf.Auth.Gitlab; gitlabConf.Enabled {
-		providers = append(providers, gitlab.New(gitlabConf.ClientID, gitlabConf.ClientSecret, callbackURL("gitlab")))
+		providers = append(providers, gitlab.New(gitlabConf.ClientID, gitlabConf.ClientSecret, callbackURL("gitlab"),
+			"read_user", "email"))
 	}
 	// @see https://docs.gitea.io/en-us/oauth2-provider/
 	if giteaConf := conf.Auth.Gitea; giteaConf.Enabled {
-		providers = append(providers, gitea.New(giteaConf.ClientID, giteaConf.ClientSecret, callbackURL("gitea")))
+		providers = append(providers, gitea.New(giteaConf.ClientID, giteaConf.ClientSecret, callbackURL("gitea"),
+			"read:user"))
 	}
 	// @see https://developers.google.com/identity/protocols/oauth2
 	if googleConf := conf.Auth.Google; googleConf.Enabled {
@@ -102,12 +104,12 @@ func GetProviders(conf *config.Config) []goth.Provider {
 	// @see https://www.patreon.com/portal/registration
 	if patreonConf := conf.Auth.Patreon; patreonConf.Enabled {
 		providers = append(providers, patreon.New(patreonConf.ClientID, patreonConf.ClientSecret, callbackURL("patreon"),
-			patreon.ScopeIdentityEmail))
+			patreon.ScopeIdentity, patreon.ScopeIdentityEmail))
 	}
 	// @see https://auth0.com/docs/api/authentication
 	if auth0Conf := conf.Auth.Auth0; auth0Conf.Enabled {
 		providers = append(providers, auth0.New(auth0Conf.ClientID, auth0Conf.ClientSecret, callbackURL("auth0"),
-			auth0Conf.Domain))
+			auth0Conf.Domain, "openid", "profile", "email"))
 	}
 
 	return providers

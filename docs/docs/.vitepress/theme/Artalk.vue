@@ -42,9 +42,6 @@ function initArtalk(conf: any) {
   artalk = Artalk.init({
     el: el.value,
     emoticons: '/assets/emoticons/default.json',
-    gravatar: {
-      mirror: 'https://cravatar.cn/avatar/',
-    },
     ...conf,
   })
 

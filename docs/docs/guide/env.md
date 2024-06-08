@@ -251,8 +251,8 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_FRONTEND_EDITORTRAVEL** | `true` | 评论框穿梭 | frontend.editorTravel (界面配置 > 评论框穿梭) |
 | **ATK_FRONTEND_EMOTICONS** | `"https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json"` | 表情包 | frontend.emoticons (界面配置 > 表情包) |
 | **ATK_FRONTEND_FLATMODE** | `"auto"` | 平铺模式 (可选：`["auto", "true", "false"]`) | frontend.flatMode (界面配置 > 平铺模式) |
-| **ATK_FRONTEND_GRAVATAR_MIRROR** | `"https://cravatar.cn/avatar/"` | API 地址 | frontend.gravatar.mirror (界面配置 > 头像 Gravatar > API 地址) |
-| **ATK_FRONTEND_GRAVATAR_PARAMS** | `"d=mp&s=240"` | API 参数 | frontend.gravatar.params (界面配置 > 头像 Gravatar > API 参数) |
+| **ATK_FRONTEND_GRAVATAR_MIRROR** | `"https://weavatar.com/avatar/"` | API 地址 | frontend.gravatar.mirror (界面配置 > 头像 Gravatar > API 地址) |
+| **ATK_FRONTEND_GRAVATAR_PARAMS** | `"sha256=1&d=mp&s=240"` | API 参数 | frontend.gravatar.params (界面配置 > 头像 Gravatar > API 参数) |
 | **ATK_FRONTEND_HEIGHTLIMIT_CHILDREN** | `400` | 子评论区域限高 (单位：px) | frontend.heightLimit.children (界面配置 > 内容限高 > 子评论区域限高) |
 | **ATK_FRONTEND_HEIGHTLIMIT_CONTENT** | `300` | 评论内容限高 (单位：px) | frontend.heightLimit.content (界面配置 > 内容限高 > 评论内容限高) |
 | **ATK_FRONTEND_HEIGHTLIMIT_SCROLLABLE** | `false` | 滚动限高 (允许限高区域滚动) | frontend.heightLimit.scrollable (界面配置 > 内容限高 > 滚动限高) |

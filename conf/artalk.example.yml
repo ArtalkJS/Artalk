@@ -419,7 +419,7 @@ frontend:
     # API URL
     mirror: https://www.gravatar.com/avatar/
     # API parameters
-    params: d=mp&s=240
+    params: sha256=1&d=mp&s=240
   # Comment pagination
   pagination:
     # Number of comments per page

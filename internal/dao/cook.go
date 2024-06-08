@@ -1,3 +1,5 @@
+// Convert Entity to JSON Response Data Structure for API
+// TODO: (refactor) consider to extract this file to a new package
 package dao
 
 import (
@@ -9,6 +11,13 @@ import (
 )
 
 const CommonDateTimeFormat = "2006-01-02 15:04:05"
+
+// TODO: (refactor) remove this global variable
+var getCommentEmailHash = func(email string) string { return utils.GetMD5Hash(strings.ToLower(email)) }
+
+func (dao *Dao) SetCommentEmailHashFunc(fn func(string) string) {
+	getCommentEmailHash = fn
+}
 
 // ===============
 //  Comment
@@ -40,7 +49,7 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		ContentMarked:  markedContent,
 		UserID:         c.UserID,
 		Nick:           user.Name,
-		EmailEncrypted: utils.GetSha256Hash(strings.ToLower(user.Email)),
+		EmailEncrypted: getCommentEmailHash(user.Email),
 		Link:           user.Link,
 		UA:             c.UA,
 		Date:           c.CreatedAt.Local().Format(CommonDateTimeFormat),
@@ -92,7 +101,7 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 		Site:       dao.CookSite(&site),
 		CookedComment: entity.CookedComment{
 			ID:             c.ID,
-			EmailEncrypted: utils.GetSha256Hash(strings.ToLower(user.Email)),
+			EmailEncrypted: getCommentEmailHash(user.Email),
 			Link:           user.Link,
 			UA:             c.UA,
 			IsCollapsed:    c.IsCollapsed,

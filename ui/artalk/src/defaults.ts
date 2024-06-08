@@ -29,8 +29,8 @@ const defaults: ArtalkConfig = {
   statPageKeyAttr: 'data-page-key',
 
   gravatar: {
-    mirror: 'https://cravatar.cn/avatar/',
-    params: 'd=mp&s=240',
+    mirror: 'https://www.gravatar.com/avatar/',
+    params: 'sha256=1&d=mp&s=240',
   },
 
   pagination: {

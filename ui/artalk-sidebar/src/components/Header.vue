@@ -1,21 +1,14 @@
 <script setup lang="ts">
-import sha256 from 'crypto-js/sha256'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '../stores/user'
 import { useNavStore } from '../stores/nav'
-import { artalk, isOpenFromSidebar } from '../global'
+import { isOpenFromSidebar } from '../global'
 
 const nav = useNavStore()
 const router = useRouter()
 const user = useUserStore()
 const { t } = useI18n()
-const { site: curtSite, isAdmin, email } = storeToRefs(user)
-
-const userAvatarImgURL = computed(() => {
-  const conf = artalk?.ctx.conf?.gravatar
-  if (!conf) return ``
-  return `${conf.mirror.replace(/\/$/, '')}/${sha256(email.value.toLowerCase())}?${conf.params.replace(/^\?/, '')}`
-})
+const { site: curtSite, isAdmin, avatar } = storeToRefs(user)
 
 const avatarClickHandler = () => {
   if (!isOpenFromSidebar()) logout()
@@ -44,7 +37,7 @@ const logout = () => {
     </template>
     <template v-else>
       <div class="avatar" @click="avatarClickHandler">
-        <img :src="userAvatarImgURL" />
+        <img :src="avatar" />
       </div>
     </template>
 

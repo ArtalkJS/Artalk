@@ -236,7 +236,7 @@ frontend:
   nestSort: DATE_ASC
   gravatar:
     mirror: https://www.gravatar.com/avatar/
-    params: d=mp&s=240
+    params: sha256=1&d=mp&s=240
   pagination:
     pageSize: 20
     readMore: true

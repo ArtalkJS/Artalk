@@ -9,9 +9,7 @@ import (
 	"golang.org/x/sync/singleflight"
 )
 
-var (
-	cacheSingleflightGroup = new(singleflight.Group)
-)
+var cacheSingleflightGroup = new(singleflight.Group)
 
 func QueryDBWithCache[T any](c *Cache, name string, queryDB func() (T, error)) (T, error) {
 	// Use SingleFlight to prevent Cache Breakdown

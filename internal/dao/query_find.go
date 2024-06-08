@@ -6,18 +6,26 @@ import (
 
 	"github.com/ArtalkJS/Artalk/internal/cache"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"golang.org/x/sync/singleflight"
 )
 
 func QueryDBWithCache[T any](dao *Dao, name string, queryDB func() (T, error)) (T, error) {
 	if dao.cache == nil {
-		// directly call queryDB while cache is disabled
-
-		// gorm db query is thread-safe almost
-		// see "Method Chain Safety/Goroutine Safety" in https://gorm.io/docs/v2_release_note.html#Method-Chain-Safety-x2F-Goroutine-Safety
-		return queryDB()
+		return QueryDBWithoutCache(dao, name, queryDB) // directly call queryDB while cache is disabled
 	}
-
 	return cache.QueryDBWithCache(dao.cache.Cache, name, queryDB)
+}
+
+var noCacheFindSingleflightGroup = new(singleflight.Group)
+
+func QueryDBWithoutCache[T any](dao *Dao, name string, queryDB func() (T, error)) (T, error) {
+	v, err, _ := noCacheFindSingleflightGroup.Do(name, func() (any, error) {
+		return queryDB() // queryDB() may not be thread safe, so use singleflight.Group
+	})
+	if err != nil {
+		return *new(T), err
+	}
+	return v.(T), err
 }
 
 func (dao *Dao) FindComment(id uint, checkers ...func(*entity.Comment) bool) entity.Comment {

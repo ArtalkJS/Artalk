@@ -66,7 +66,7 @@ func TestFindCreatePage(t *testing.T) {
 
 	t.Run("Concurrent FindCreatePage", func(t *testing.T) {
 		var (
-			pageKey   = "/" + time.Now().String() + ".html"
+			pageKey   = "/TEST_CONCURRENT_PAGE_KEY.html"
 			pageTitle = "New Page Title " + time.Now().String()
 			siteName  = "Site A"
 		)
@@ -74,22 +74,28 @@ func TestFindCreatePage(t *testing.T) {
 		// simulate concurrent requests
 		var wg sync.WaitGroup
 
+		ready := make(chan struct{})
+
 		var idMap sync.Map
 		n := 10000
 		for i := 0; i < n; i++ {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
+				<-ready // wait for all goroutines to start at the same time
 				result := app.Dao().FindCreatePage(pageKey, pageTitle, siteName)
 				idMap.Store(result.ID, true)
 			}()
 		}
 
+		close(ready)
+
 		wg.Wait()
 
 		// count the number of different pages
 		count := 0
-		idMap.Range(func(_, _ interface{}) bool {
+		idMap.Range(func(k, v interface{}) bool {
+			t.Log("Page ID", k)
 			count++
 			return true
 		})

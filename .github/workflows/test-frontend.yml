@@ -22,9 +22,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
         with:
-          version: 9.1.2
+          version: 9.2.0
 
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v4

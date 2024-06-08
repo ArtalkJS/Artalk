@@ -21,9 +21,9 @@ jobs:
           ref: ${{ inputs.version }}
 
       - name: Use pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
-          version: 9.1.2
+          version: 9.2.0
 
       - name: Setup node
         uses: actions/setup-node@v4

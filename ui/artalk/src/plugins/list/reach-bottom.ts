@@ -6,7 +6,6 @@ export const ReachBottom: ArtalkPlugin = (ctx) => {
   const setupObserver = ($target: HTMLElement) => {
     const scrollEvtAt = (ctx.conf.scrollRelativeTo && ctx.conf.scrollRelativeTo()) || null
 
-    // eslint-disable-next-line compat/compat
     observer = new IntersectionObserver(
       ([entries]) => {
         if (entries.isIntersecting) {

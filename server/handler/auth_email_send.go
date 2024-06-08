@@ -83,15 +83,14 @@ func AuthEmailSend(app *core.App, router fiber.Router) {
 		}
 
 		// Email template
-		emailSubject := cmp.Or(app.Conf().Auth.Email.VerifySubject, i18n.T("Your Code - {{code}}", map[string]any{"code": code}))
+		tplParams := map[string]any{"code": code}
+		emailSubject := cmp.Or(utils.RenderMustaches(app.Conf().Auth.Email.VerifySubject, tplParams), i18n.T("Your Code - {{code}}", tplParams))
 		emailBody := ""
 
 		if tpl := loadAuthEmailVerifyTemplate(&app.Conf().Auth.Email); tpl != "" {
-			emailBody = utils.RenderMustaches(tpl, map[string]any{
-				"code": code,
-			})
+			emailBody = utils.RenderMustaches(tpl, tplParams)
 		} else {
-			emailBody = i18n.T("Your code is: {{code}}. Use it to verify your email and sign in Artalk. If you didn't request this, simply ignore this message.", map[string]any{"code": code})
+			emailBody = i18n.T("Your code is: {{code}}. Use it to verify your email and sign in Artalk. If you didn't request this, simply ignore this message.", tplParams)
 		}
 
 		log.Debug("Send email to: ", p.Email, " subject: ", emailSubject, " body: ", emailBody)

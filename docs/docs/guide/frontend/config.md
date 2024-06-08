@@ -358,12 +358,14 @@ gravatar: {
 **Gravatar 镜像地址**
 
 - 类型：`String`
-- 默认值：`"https://sdn.geekzu.org/avatar/"`
+- 默认值：`"https://www.gravatar.com/avatar/"`
 
 如果你觉得 Gravatar 头像加载速度不理想，可以尝试替换。
 
 例如：
 
+> WeAvatar：https://weavatar.com/avatar/
+>
 > Cravatar：https://cravatar.cn/avatar/
 >
 > V2EX：https://cdn.v2ex.com/gravatar/
@@ -377,7 +379,7 @@ gravatar: {
 **Gravatar API 参数**
 
 - 类型：`String`
-- 默认值：`"d=mp&s=240"`
+- 默认值：`"sha256=1&d=mp&s=240"`
 
 例如，你可以通过该配置项设置默认头像 (`d=mp`) 和头像尺寸 (`s=240`)。
 
@@ -386,6 +388,8 @@ gravatar: {
 该配置项格式为 HTTP Query。
 
 ::: warning 更新注意
+
+v2.8.7 支持通过 SHA256 加密算法生成 Gravatar 头像链接，以提高用户隐私保护，请在 `params` 中填入 `sha256=1` 启用该加密（[#874](https://github.com/ArtalkJS/Artalk/issues/874)）。
 
 v2.5.5 已废弃 `gravatar.default` 配置项，请使用 `gravatar.params` 替代。
 

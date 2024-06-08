@@ -42,11 +42,11 @@ func NewApp(conf *config.Config) *App {
 }
 
 func (app *App) injectDefaultServices() {
-	// 请勿依赖注入顺序
-	AppInject[*EmailService](app, NewEmailService(app))
-	AppInject[*IPRegionService](app, NewIPRegionService(app))
-	AppInject[*NotifyService](app, NewNotifyService(app))
-	AppInject[*AntiSpamService](app, NewAntiSpamService(app))
+	// Please do not depend on the order of dependency injection
+	AppInject(app, NewEmailService(app))
+	AppInject(app, NewIPRegionService(app))
+	AppInject(app, NewNotifyService(app))
+	AppInject(app, NewAntiSpamService(app))
 }
 
 func (app *App) registerDefaultHooks() {
@@ -269,6 +269,11 @@ func (app *App) initDao() error {
 
 	// create new dao instance
 	app.SetDao(dao.NewDao(dbInstance))
+
+	// patch: switch comment email hash algorithm by config
+	app.Dao().SetCommentEmailHashFunc(func(email string) string {
+		return config.GetHashFuncByFrontendConf(app.Conf())(strings.ToLower(email))
+	})
 
 	return nil
 }

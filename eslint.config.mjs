@@ -1,59 +1,49 @@
 // @ts-check
 import path from 'node:path'
 import url from 'node:url'
-import eslintTs from 'typescript-eslint'
-import pluginTS from '@typescript-eslint/eslint-plugin'
-import pluginVue from 'eslint-plugin-vue'
-import vueParser from 'vue-eslint-parser'
-import pluginFunctional from 'eslint-plugin-functional/flat'
-import globals from 'globals'
-import eslintJs from '@eslint/js'
-import eslintConfigPrettier from 'eslint-config-prettier'
-import { FlatCompat } from '@eslint/eslintrc'
+
 import { fixupPluginRules } from '@eslint/compat'
+// eslint-disable-next-line import-x/namespace
+import { FlatCompat } from '@eslint/eslintrc'
+import eslintJs from '@eslint/js'
+import pluginTS from '@typescript-eslint/eslint-plugin'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import pluginFunctional from 'eslint-plugin-functional/flat'
+import pluginImportX from 'eslint-plugin-import-x'
+import pluginReact from 'eslint-plugin-react'
+import pluginReactHooks from 'eslint-plugin-react-hooks'
+import pluginReactRefresh from 'eslint-plugin-react-refresh'
+import pluginVue from 'eslint-plugin-vue'
+import globals from 'globals'
+import eslintTs from 'typescript-eslint'
+import vueParser from 'vue-eslint-parser'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
+const tsProjects = ['./tsconfig.base.json', './ui/*/tsconfig.json', './docs/*/tsconfig.json']
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: eslintJs.configs.recommended,
 })
 
-function legacyPlugin(name, alias = name) {
-  const plugin = compat.plugins(name)[0]?.plugins?.[alias]
-
-  if (!plugin) {
-    throw new Error(`Unable to resolve plugin ${name} and/or alias ${alias}`)
-  }
-
-  return fixupPluginRules(plugin)
-}
-
 export default eslintTs.config(
   eslintJs.configs.recommended,
   ...eslintTs.configs.recommended,
-
   // @ts-expect-error the type of `pluginVue` is not compatible with the latest `eslint` v9 package yet
   ...pluginVue.configs['flat/recommended'],
-
-  ...compat.extends('plugin:import/typescript'),
-  ...compat.extends('plugin:react-hooks/recommended'),
-
   // FIXME: TypeError SEE https://github.com/amilajack/eslint-plugin-compat/pull/609#issuecomment-2123734301
   // ...compat.extends('plugin:compat/recommended'),
+  // {
+  //   ...pluginFunctional.configs.recommended,
+  //   // FIXME: https://github.com/eslint-functional/eslint-plugin-functional/issues/766#issuecomment-1904715609
+  //   rules: {
+  //     ...pluginFunctional.configs.recommended.rules,
+  //     'functional/immutable-data': 'off',
+  //     'functional/no-return-void': 'off',
+  //   },
+  // },
 
-  {
-    ...pluginFunctional.configs.recommended,
-
-    // FIXME: https://github.com/eslint-functional/eslint-plugin-functional/issues/766#issuecomment-1904715609
-    rules: {
-      ...pluginFunctional.configs.recommended.rules,
-      'functional/immutable-data': 'off',
-      'functional/no-return-void': 'off',
-    },
-  },
-
-  eslintConfigPrettier,
+  /* Global Ignores */
   {
     // `ignores` key must been defined in a separate object without any other keys
     // see https://eslint.org/docs/latest/use/configure/ignore#ignoring-files
@@ -70,13 +60,15 @@ export default eslintTs.config(
       '**/*.d.ts',
     ],
   },
+
+  /* TypeScript */
   {
-    files: ['**/*.{ts,tsx,js,vue}'],
+    files: ['**/*.{ts,mts,cts,tsx,js,mjs,cjs,vue}'],
     languageOptions: {
       parser: vueParser,
       parserOptions: {
         parser: eslintTs.parser,
-        project: ['./ui/*/tsconfig.json', './docs/*/tsconfig.json'],
+        project: tsProjects,
         tsconfigRootDir: __dirname,
         globals: {
           ...globals.browser,
@@ -90,24 +82,40 @@ export default eslintTs.config(
     },
     plugins: {
       '@typescript-eslint': pluginTS,
-
-      // FIXME: eslint `import` plugin is not fully support eslint v9 yet
-      // see https://github.com/import-js/eslint-plugin-import/issues/2948#issuecomment-2148832701
-      import: legacyPlugin('eslint-plugin-import', 'import'),
+      'import-x': pluginImportX,
     },
     rules: {
+      ...pluginImportX.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
+      'import-x/no-named-as-default-member': 'off',
+      'import-x/default': 'off', // FIXME: No default export found in imported module "react", SEE https://github.com/import-js/eslint-plugin-import/issues/1800
+      'import-x/order': [
+        'warn',
+        {
+          'newlines-between': 'always',
+          alphabetize: {
+            order: 'asc',
+          },
+        },
+      ],
+      // 'import-x/no-default-export': 'warn'
     },
     settings: {
-      'import/resolver': {
+      'import-x/parsers': {
+        '@typescript-eslint/parser': ['.ts', '.tsx'],
+      },
+      'import-x/resolver': {
         typescript: {
-          project: ['ui/artalk/tsconfig.json'].map((p) => path.resolve(__dirname, p)),
+          project: tsProjects,
         },
+        node: true,
       },
       polyfills: ['AbortController'],
     },
   },
+
+  /* Vue */
   {
     files: ['**/*.vue'],
     languageOptions: {
@@ -141,8 +149,31 @@ export default eslintTs.config(
     },
     rules: {},
   },
+
+  /* React */
   {
     files: ['**/*.tsx'],
-    rules: {},
+    plugins: {
+      react: pluginReact,
+      // @ts-expect-error SEE https://github.com/facebook/react/issues/28313
+      'react-hooks': fixupPluginRules(pluginReactHooks),
+      'react-refresh': pluginReactRefresh,
+    },
+    rules: {
+      ...pluginReact.configs.recommended.rules,
+      ...pluginReact.configs['jsx-runtime'].rules,
+      ...pluginReactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': 'warn',
+    },
+    languageOptions: {
+      ...pluginReact.configs.recommended.languageOptions,
+    },
+    settings: {
+      react: {
+        version: '18.3',
+      },
+    },
   },
+
+  eslintConfigPrettier, // disable conflicting rules with Prettier
 )

@@ -1,9 +1,9 @@
 import React from 'react'
 import './FullFeature.scss'
-import { FeatureBase } from './FeatureBase'
 import { FeatureTitle } from '../FeatureTitle'
 import { FeatureDesc } from '../FeatureDesc'
 import { Reveal } from '../Reveal'
+import { FeatureBase } from './FeatureBase'
 import { FolderIcon } from './FullFeatureIcon'
 import { FullFeatureList } from './FullFeatureList'
 

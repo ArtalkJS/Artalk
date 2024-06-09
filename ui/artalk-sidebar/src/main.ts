@@ -1,13 +1,14 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
+import Artalk from 'artalk'
+// eslint-disable-next-line import-x/named
 import { createRouter, createWebHashHistory } from 'vue-router/auto'
 import messages from './i18n/messages'
 import 'artalk/dist/Artalk.css'
 import './style.scss'
 import App from './App.vue'
 import { setArtalk, initArtalk } from './global'
-import Artalk from 'artalk'
 
 // i18n
 const i18n = createI18n({

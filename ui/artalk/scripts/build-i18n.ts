@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { build, LibraryOptions } from 'vite'
 import { fileURLToPath } from 'node:url'
+import { build, LibraryOptions } from 'vite'
 import { getFileName } from '../vite.config'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

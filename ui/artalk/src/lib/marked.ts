@@ -1,9 +1,9 @@
 import { marked as libMarked, MarkedOptions } from 'marked'
 
-import type { ArtalkConfig } from '@/types'
 import { sanitize } from './sanitizer'
 import { renderCode } from './highlight'
 import { getRenderer } from './marked-renderer'
+import type { ArtalkConfig } from '@/types'
 
 type Replacer = (raw: string) => string
 

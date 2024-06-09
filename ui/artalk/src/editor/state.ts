@@ -1,7 +1,7 @@
+import Mover from '../plugins/editor/mover'
+import type Editor from './editor'
 import type { EditorState, CommentData } from '@/types'
 import * as Ui from '@/lib/ui'
-import type Editor from './editor'
-import Mover from '../plugins/editor/mover'
 
 export default class EditorStateManager {
   constructor(private editor: Editor) {}

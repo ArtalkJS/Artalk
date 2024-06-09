@@ -60,14 +60,14 @@ async function submit(type: 'yes' | 'no') {
     <div class="atk-edit-form">
       <input
         ref="inputEl"
+        v-model="inputVal"
         class="atk-main-input"
         type="text"
         :placeholder="props.placeholder || t('inputHint')"
         autocomplete="off"
-        v-model="inputVal"
+        :class="{ 'atk-invalid': inputInvalid }"
         @input="onInput()"
         @keyup="onKeyUp"
-        :class="{ 'atk-invalid': inputInvalid }"
       />
     </div>
     <div class="atk-actions">

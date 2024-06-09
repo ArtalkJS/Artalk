@@ -1,9 +1,6 @@
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-continue */
-/* eslint-disable consistent-return */
-import type { LibraryOptions, Plugin } from 'vite'
 import path from 'node:path'
 import fs from 'node:fs'
+import type { LibraryOptions, Plugin } from 'vite'
 import ts from 'typescript'
 import type { ArtalkConfig } from 'artalk'
 

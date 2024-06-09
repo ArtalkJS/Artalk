@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import { artalk } from '../global'
 import type { ArtalkType } from 'artalk'
+import { artalk } from '../global'
 
 type TabsObj = { [name: string]: string }
 

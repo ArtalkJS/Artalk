@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
-import { storeToRefs } from 'pinia'
 
 type PageItem = { label: string; link: string; hide?: boolean }
 
@@ -120,7 +120,7 @@ function onSearchSubmit(evt: Event) {
   <div class="tab">
     <div class="page" @click="toggleIndicator()">
       <div class="icon" :class="indicator === 'tabs' ? 'menu' : 'arrow'"></div>
-      <div class="text" v-if="pages[curtPage]?.label">
+      <div v-if="pages[curtPage]?.label" class="text">
         {{ t(pages[curtPage].label) }}
       </div>
     </div>
@@ -145,9 +145,9 @@ function onSearchSubmit(evt: Event) {
       <template v-else>
         <div
           v-for="(page, pageName) in pages"
+          v-show="!page.hide"
           :key="pageName"
           class="item"
-          v-show="!page.hide"
           :class="{ active: pageName === curtPage }"
           @click="switchPage(pageName as string)"
         >
@@ -162,9 +162,9 @@ function onSearchSubmit(evt: Event) {
       </div>
       <input
         ref="searchInputEl"
+        v-model="searchValue"
         type="text"
         :placeholder="t('searchHint')"
-        v-model="searchValue"
         required
       />
       <button type="submit" class="item search-btn"></button>

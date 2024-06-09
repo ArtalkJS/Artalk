@@ -1,9 +1,9 @@
 import path from 'node:path'
-import { FuncList } from '../src/components/Features/FullFeatureList.tsx'
 import { writeFileSync, readFileSync } from 'node:fs'
+import { Features } from '../src/Features'
 
 const __dirname = new URL('.', import.meta.url).pathname
-const features = FuncList.map(o => `* [${o.name}](${o.link}): ${o.desc}`).join('\n')
+const features = Features.map(o => `* [${o.name}](${o.link}): ${o.desc}`).join('\n')
 
 const pathList = [
   '../../../README.md',

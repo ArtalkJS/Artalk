@@ -1,7 +1,7 @@
+import type { Paginator, IPgHolderOpt } from '.'
 import type { ListFetchParams } from '@/types'
 import ReadMoreBtn from '@/components/read-more-btn'
 import $t from '@/i18n'
-import type { Paginator, IPgHolderOpt } from '.'
 
 /**
  * 阅读更多形式的分页

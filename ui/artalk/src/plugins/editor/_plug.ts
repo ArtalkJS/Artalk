@@ -1,6 +1,6 @@
+import type PlugKit from './_kit'
 import type { CommentData, EditorState } from '@/types'
 import * as Utils from '@/lib/utils'
-import type PlugKit from './_kit'
 
 /**
  * Editor 插件

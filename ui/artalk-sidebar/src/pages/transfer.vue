@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 import { artalk } from '../global'
-import { storeToRefs } from 'pinia'
 
 const nav = useNavStore()
 const user = useUserStore()
@@ -164,31 +164,32 @@ const artransferToolHint = computed(() =>
   <div v-show="!importTaskStarted" class="atk-form">
     <div class="atk-label atk-data-file-label">Artrans {{ t('dataFile') }}</div>
     <FileUploader :api-url="uploadApiURL" @done="fileUploaded">
-      <template v-slot:tip>
+      <template #tip>
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <span v-html="artransferToolHint" />
       </template>
-      <template v-slot:done-msg>
+      <template #done-msg>
         {{ t('uploadReadyToImport') }}
       </template>
     </FileUploader>
     <div class="atk-label">{{ t('targetSiteName') }}</div>
     <input
+      v-model="importParams.siteName"
       type="text"
       name="AtkSiteName"
       :placeholder="t('inputHint')"
       autocomplete="off"
-      v-model="importParams.siteName"
     />
     <div class="atk-label">{{ t('targetSiteURL') }}</div>
     <input
+      v-model="importParams.siteURL"
       type="text"
       name="AtkSiteURL"
       :placeholder="t('inputHint')"
       autocomplete="off"
-      v-model="importParams.siteURL"
     />
     <div class="atk-label">{{ t('payload') }} ({{ t('optional') }})</div>
-    <textarea name="AtkPayload" v-model="importParams.payload"></textarea>
+    <textarea v-model="importParams.payload" name="AtkPayload"></textarea>
     <span class="atk-desc">
       <a href="https://artalk.js.org/guide/transfer.html" target="_blank">
         {{ t('moreDetails') }}

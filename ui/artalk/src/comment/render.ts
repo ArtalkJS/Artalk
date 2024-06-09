@@ -1,4 +1,3 @@
-import type { CommentNode } from '.'
 import ActionBtn from '../components/action-btn'
 import * as Utils from '../lib/utils'
 import * as Ui from '../lib/ui'
@@ -6,6 +5,7 @@ import * as Ui from '../lib/ui'
 import * as HeightLimit from './height-limit'
 import CommentHTML from './comment.html?raw'
 import loadRenders from './renders'
+import type { CommentNode } from '.'
 
 export default class Render {
   public comment: CommentNode

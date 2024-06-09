@@ -1,6 +1,6 @@
+import type PlugKit from './_kit'
 import type { CommentData } from '@/types'
 import * as Utils from '@/lib/utils'
-import type PlugKit from './_kit'
 
 export default class SubmitAddPreset {
   constructor(private kit: PlugKit) {}

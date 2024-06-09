@@ -41,7 +41,10 @@ jobs:
       - name: Unit test
         run: pnpm test
 
+      - name: Lint
+        run: pnpm eslint ui && pnpm prettier --check ui
+
       # https://github.com/arethetypeswrong/arethetypeswrong.github.io
       - name: "arethetypeswrong test"
         if: runner.os == 'ubuntu-latest'
-        run: pnpm -F artalk attw || true
+        run: pnpm -F artalk test:attw || true

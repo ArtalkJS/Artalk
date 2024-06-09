@@ -1,6 +1,6 @@
-import type { I18n } from '@/i18n'
 import type { CommentData } from './data'
 import type { EditorApi } from './editor'
+import type { I18n } from '@/i18n'
 
 export interface ArtalkConfig {
   /** 装载元素 */

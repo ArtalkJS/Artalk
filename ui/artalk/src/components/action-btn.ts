@@ -1,5 +1,5 @@
-import $t from '@/i18n'
 import * as Utils from '../lib/utils'
+import $t from '@/i18n'
 
 interface ActionBtnOptions {
   /** 按钮文字 (动态/静态) */
@@ -25,7 +25,7 @@ export default class ActionBtn {
   public isLoading = false // 正在加载
 
   public msgRecTimer?: number // 消息显示复原定时器
-  public msgRecTimerFunc?: Function // 消息显示复原操作
+  public msgRecTimerFunc?: () => void // 消息显示复原操作
   public get isMessaging() {
     return !!this.msgRecTimer
   } // 消息正在显示
@@ -56,7 +56,7 @@ export default class ActionBtn {
   }
 
   /** 设置点击事件 */
-  public setClick(func: Function) {
+  public setClick(func: () => void) {
     this.$el.onclick = (e) => {
       e.stopPropagation() // 防止穿透
 
@@ -133,7 +133,7 @@ export default class ActionBtn {
   }
 
   /** 设置消息 */
-  public setMsg(text: string, className?: string, duringTime?: number, after?: Function) {
+  public setMsg(text: string, className?: string, duringTime?: number, after?: () => void) {
     this.setLoading(false)
     if (className) this.$el.classList.add(className)
     this.$el.innerText = text
@@ -147,7 +147,7 @@ export default class ActionBtn {
   }
 
   /** 设置消息复原操作定时器 */
-  private setMsgRecTimer(func: Function, duringTime: number) {
+  private setMsgRecTimer(func: () => void, duringTime: number) {
     this.fireMsgRecTimer()
     this.clearMsgRecTimer()
 

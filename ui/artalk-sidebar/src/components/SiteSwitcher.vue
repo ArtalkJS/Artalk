@@ -80,7 +80,7 @@ function logout() {
 
 <template>
   <Transition>
-    <div ref="el" v-show="curtShow" class="atk-site-list-floater">
+    <div v-show="curtShow" ref="el" class="atk-site-list-floater">
       <div class="atk-sites">
         <div
           v-for="(site, i) in displaySites"

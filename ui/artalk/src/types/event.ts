@@ -1,6 +1,6 @@
-import type { CommentNode } from '@/comment'
 import { CommentData, ListData, ListFetchParams, NotifyData, PageData } from './data'
 import { ArtalkConfig, LocalUser } from './config'
+import type { CommentNode } from '@/comment'
 
 export interface ListErrorData {
   msg: string

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import YAML from 'yaml'
 import { shallowRef } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useNavStore } from '../stores/nav'
 import { artalk } from '../global'
 import settings, { type OptionNode } from '../lib/settings'
-import { storeToRefs } from 'pinia'
 import LoadingLayer from '../components/LoadingLayer.vue'
 
 const nav = useNavStore()

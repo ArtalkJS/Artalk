@@ -1,7 +1,7 @@
+import type Render from '../render'
 import * as Utils from '@/lib/utils'
 import marked from '@/lib/marked'
 import $t from '@/i18n'
-import type Render from '../render'
 
 /**
  * 关联评论显示 (被回复的评论)

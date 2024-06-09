@@ -33,3 +33,6 @@ jobs:
 
       - name: Build Docs
         run: pnpm build:docs
+
+      - name: Lint Docs
+        run: pnpm eslint docs && pnpm prettier --check docs

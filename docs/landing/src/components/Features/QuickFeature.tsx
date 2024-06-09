@@ -1,11 +1,11 @@
 import React from 'react'
 import './QuickFeature.scss'
 import { FiArrowUpRight } from 'react-icons/fi'
-import { FeatureBase } from './FeatureBase'
 import { FeatureTitle } from '../FeatureTitle'
 import { LearnMoreLink } from '../LearnMoreLink'
 import { FeatureDesc } from '../FeatureDesc'
 import { Reveal } from '../Reveal'
+import { FeatureBase } from './FeatureBase'
 
 export const QuickFeature: React.FC = () => {
   const ArrowIcon = (
@@ -22,10 +22,10 @@ export const QuickFeature: React.FC = () => {
       <div className='content'>
         <main>
           <div className="deploy-links">
-            <a className="item" href='https://artalk.js.org/guide/deploy.html#普通方式部署' target="_blank">
+            <a className="item" href='https://artalk.js.org/guide/deploy.html#普通方式部署' target="_blank" rel="noreferrer">
               <span className='bold'>二进制</span> <span>文件部署</span>{ArrowIcon}
             </a>
-            <a className="item" href='https://artalk.js.org/guide/deploy.html#docker-部署' target="_blank">
+            <a className="item" href='https://artalk.js.org/guide/deploy.html#docker-部署' target="_blank" rel="noreferrer">
               <span className='bold'>Docker</span> <span>镜像部署</span>{ArrowIcon}
             </a>
           </div>
@@ -49,7 +49,7 @@ export const QuickFeature: React.FC = () => {
       <div className='extra-desc'>
         <div className="golang-icon">
           <svg width="292" height="109" viewBox="0 0 292 109" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g clip-path="url(#clip0_406_120)">
+          <g clipPath="url(#clip0_406_120)">
           <path d="M22.035 32.9701C21.4664 32.9701 21.3242 32.6858 21.6086 32.2595L24.594 28.4225C24.8783 27.9961 25.5891 27.7119 26.1577 27.7119H76.9094C77.4781 27.7119 77.6203 28.1383 77.3359 28.5646L74.9192 32.2595C74.6349 32.6858 73.924 33.1122 73.4976 33.1122L22.035 32.9701Z" fill="#00ACD7"/>
           <path d="M0.568647 46.0443C0 46.0443 -0.142162 45.7601 0.142162 45.3337L3.12756 41.4967C3.41188 41.0704 4.12269 40.7861 4.69133 40.7861H69.517C70.0857 40.7861 70.37 41.2125 70.2278 41.6388L69.0906 45.0495C68.9484 45.6179 68.3797 45.9022 67.8111 45.9022L0.568647 46.0443Z" fill="#00ACD7"/>
           <path d="M34.9718 59.1185C34.4031 59.1185 34.2609 58.6922 34.5453 58.2658L36.5355 54.713C36.8199 54.2867 37.3885 53.8604 37.9571 53.8604H66.3895C66.9581 53.8604 67.2424 54.2867 67.2424 54.8551L66.9581 58.2658C66.9581 58.8343 66.3895 59.2606 65.963 59.2606L34.9718 59.1185Z" fill="#00ACD7"/>

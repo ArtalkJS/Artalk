@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import type { ArtalkType } from 'artalk'
+import { storeToRefs } from 'pinia'
 import { useNavStore } from '../stores/nav'
 import { artalk, bootParams } from '../global'
 import Pagination from '../components/Pagination.vue'
-import type { ArtalkType } from 'artalk'
-import { storeToRefs } from 'pinia'
 
 const nav = useNavStore()
 const router = useRouter()
@@ -164,7 +164,7 @@ function delUser(user: ArtalkType.UserDataForAdmin) {
     </div>
     <Pagination
       ref="pagination"
-      :pageSize="pageSize"
+      :page-size="pageSize"
       :total="pageTotal"
       :disabled="nav.isPageLoading"
       @change="onChangePage"

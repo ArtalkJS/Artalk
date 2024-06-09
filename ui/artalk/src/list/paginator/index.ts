@@ -1,6 +1,6 @@
-import type { ContextApi, ListFetchParams } from '@/types'
 import UpDownPaginator from './up-down'
 import ReadMorePaginator from './read-more'
+import type { ContextApi, ListFetchParams } from '@/types'
 
 export interface IPgHolderOpt {
   ctx: ContextApi

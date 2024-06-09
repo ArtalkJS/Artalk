@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { ArtalkType } from 'artalk'
 import { useNavStore } from '../stores/nav'
 import { artalk, bootParams } from '../global'
-import type { ArtalkType } from 'artalk'
 
 const nav = useNavStore()
 const sites = ref<ArtalkType.SiteData[]>([])
@@ -104,10 +104,10 @@ function onSiteItemRemove(id: number) {
       @done="onNewSiteCreated"
     />
     <div class="atk-site-rows-wrap">
-      <template v-for="(sites, i) in sitesGrouped" :key="i">
+      <template v-for="(ss, i) in sitesGrouped" :key="i">
         <template v-if="curtEditSite !== null">
           <SiteEditor
-            v-if="!!sites.includes(curtEditSite)"
+            v-if="!!ss.includes(curtEditSite)"
             :site="curtEditSite"
             @close="curtEditSite = null"
             @update="onSiteItemUpdate"
@@ -116,7 +116,7 @@ function onSiteItemRemove(id: number) {
         </template>
         <div class="atk-site-row">
           <div
-            v-for="site in sites"
+            v-for="site in ss"
             :key="site.id"
             class="atk-site-item"
             :class="{ 'atk-active': curtEditSite === site }"

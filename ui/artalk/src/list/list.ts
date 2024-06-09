@@ -1,11 +1,11 @@
-import type { ContextApi } from '@/types'
-import Component from '@/lib/component'
-import * as Utils from '@/lib/utils'
-import { CommentNode } from '@/comment'
 import ListHTML from './list.html?raw'
 import { ListLayout } from './layout'
 import { createCommentNode } from './comment'
 import { initListPaginatorFunc } from './page'
+import type { ContextApi } from '@/types'
+import Component from '@/lib/component'
+import * as Utils from '@/lib/utils'
+import { CommentNode } from '@/comment'
 
 export default class List extends Component {
   /** 列表评论集区域元素 */

@@ -1,8 +1,8 @@
-import type { CommentData } from '@/types'
-import type { CommentNode } from '@/comment'
 import * as ListNest from '../nest'
 import { createNestStrategy } from './nest'
 import { createFlatStrategy } from './flat'
+import type { CommentNode } from '@/comment'
+import type { CommentData } from '@/types'
 
 export interface LayoutOptions {
   /** The comments wrap of list */

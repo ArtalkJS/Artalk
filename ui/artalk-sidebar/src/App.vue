@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import type Artalk from 'artalk'
 import { useNavStore } from './stores/nav'
 import { useUserStore } from './stores/user'
-import type Artalk from 'artalk'
 import { getArtalk, bootParams } from './global'
 
 const nav = useNavStore()

@@ -1,4 +1,3 @@
-import type { ArtalkPlugin } from '@/types'
 import { Markdown } from './markdown'
 import { EditorKit } from './editor-kit'
 import { ListPlugins } from './list'
@@ -7,6 +6,7 @@ import { PvCountWidget } from './stat'
 import { VersionCheck } from './version-check'
 import { AdminOnlyElem } from './admin-only-elem'
 import { DarkMode } from './dark-mode'
+import type { ArtalkPlugin } from '@/types'
 
 export const DefaultPlugins: ArtalkPlugin[] = [
   Markdown,

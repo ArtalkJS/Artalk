@@ -43,12 +43,12 @@ function onChange() {
 
       <!-- 开关 -->
       <template v-else-if="node.type === 'boolean'">
-        <input type="checkbox" v-model="value" @change="onChange" />
+        <input v-model="value" type="checkbox" @change="onChange" />
       </template>
 
       <!-- 文本框 -->
       <template v-else>
-        <input type="text" v-model="value" @change="onChange" />
+        <input v-model="value" type="text" @change="onChange" />
       </template>
     </div>
   </div>

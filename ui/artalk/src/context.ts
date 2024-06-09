@@ -1,11 +1,3 @@
-import type {
-  ArtalkConfig,
-  CommentData,
-  ListFetchParams,
-  ContextApi,
-  EventPayloadMap,
-  SidebarShowPayload,
-} from '@/types'
 import type { TInjectedServices } from './service'
 import { Api, ApiHandlers } from './api'
 
@@ -19,6 +11,15 @@ import * as I18n from './i18n'
 import EventManager from './lib/event-manager'
 import { convertApiOptions, createNewApiHandlers, handelCustomConf } from './config'
 import { watchConf } from './lib/watch-conf'
+
+import type {
+  ArtalkConfig,
+  CommentData,
+  ListFetchParams,
+  ContextApi,
+  EventPayloadMap,
+  SidebarShowPayload,
+} from '@/types'
 
 // Auto dependency injection
 interface Context extends TInjectedServices {}

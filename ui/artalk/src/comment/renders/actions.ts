@@ -1,7 +1,7 @@
-import $t from '@/i18n'
 import * as Utils from '../../lib/utils'
 import ActionBtn from '../../components/action-btn'
 import type Render from '../render'
+import $t from '@/i18n'
 
 /**
  * 评论操作按钮界面

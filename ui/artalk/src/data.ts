@@ -1,3 +1,4 @@
+import EventManager from './lib/event-manager'
 import type {
   NotifyData,
   PageData,
@@ -7,7 +8,6 @@ import type {
   ListLastFetchData,
   EventPayloadMap,
 } from '@/types'
-import EventManager from './lib/event-manager'
 
 export class DataManager implements DataManagerApi {
   private loading: boolean = false

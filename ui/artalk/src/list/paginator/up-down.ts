@@ -1,5 +1,5 @@
-import PaginationComponent from '@/components/pagination'
 import type { Paginator, IPgHolderOpt } from '.'
+import PaginationComponent from '@/components/pagination'
 
 /**
  * 翻页形式的分页

@@ -1,7 +1,6 @@
 // @ts-check
 import path from 'node:path'
 import url from 'node:url'
-
 import { fixupPluginRules } from '@eslint/compat'
 // eslint-disable-next-line import-x/namespace
 import { FlatCompat } from '@eslint/eslintrc'
@@ -88,17 +87,12 @@ export default eslintTs.config(
       ...pluginImportX.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-unsafe-declaration-merging': 'off',
+      'vue/multi-word-component-names': 'off',
       'import-x/no-named-as-default-member': 'off',
-      'import-x/default': 'off', // FIXME: No default export found in imported module "react", SEE https://github.com/import-js/eslint-plugin-import/issues/1800
-      'import-x/order': [
-        'warn',
-        {
-          'newlines-between': 'always',
-          alphabetize: {
-            order: 'asc',
-          },
-        },
-      ],
+      'import-x/no-named-as-default': 'off',
+      'import-x/default': 'off', // fix https://github.com/import-js/eslint-plugin-import/issues/1800
+      'import-x/order': 'warn',
       // 'import-x/no-default-export': 'warn'
     },
     settings: {
@@ -145,14 +139,14 @@ export default eslintTs.config(
         useRouter: 'readonly',
         useStore: 'readonly',
         useI18n: 'readonly',
+        nextTick: 'readonly',
       },
     },
-    rules: {},
   },
 
   /* React */
   {
-    files: ['**/*.tsx'],
+    files: ['docs/landing/**/*.tsx'],
     plugins: {
       react: pluginReact,
       // @ts-expect-error SEE https://github.com/facebook/react/issues/28313
@@ -164,6 +158,7 @@ export default eslintTs.config(
       ...pluginReact.configs['jsx-runtime'].rules,
       ...pluginReactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': 'warn',
+      'react/prop-types': 'off',
     },
     languageOptions: {
       ...pluginReact.configs.recommended.languageOptions,

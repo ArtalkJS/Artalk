@@ -19,6 +19,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - if: matrix.os == 'windows-latest'
+        name: Set git to use LF (for Windows environment)
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
       - name: Checkout Code
         uses: actions/checkout@v4
 

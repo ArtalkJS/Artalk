@@ -24,6 +24,7 @@ services:
     volumes:
       - ./data:/data
     environment:
+      - ATK_LOCALE="zh-CN"
       - ATK_TRUSTED_DOMAINS="https://your_domain https://your_domain2"
       - ATK_ADMIN_USERS_0_NAME=admin
       - ATK_ADMIN_USERS_0_EMAIL=admin@example.org

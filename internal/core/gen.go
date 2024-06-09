@@ -1,6 +1,7 @@
 package core
 
 import (
+	"cmp"
 	"fmt"
 	"io"
 	"os"
@@ -15,6 +16,8 @@ import (
 )
 
 func Gen(genType string, specificPath string, overwrite bool) {
+	locale := cmp.Or(os.Getenv("ATK_LOCALE"), "en")
+
 	// check if generate config file
 	isGenConf := false
 	if genType == "config" || genType == "conf" || genType == "artalk.yml" {
@@ -25,8 +28,7 @@ func Gen(genType string, specificPath string, overwrite bool) {
 	// get generation content
 	var fileStr string
 	if isGenConf {
-		// TODO detect the user env language
-		fileStr = config.Template("en")
+		fileStr = config.Template(locale)
 		// gen random `app_key`
 		appKey := utils.RandomStringWithAlphabet(16, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*1234567890")
 		fileStr = strings.Replace(fileStr, `app_key: ""`, fmt.Sprintf(`app_key: "%s"`, appKey), 1)

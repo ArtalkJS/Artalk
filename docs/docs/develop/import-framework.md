@@ -10,25 +10,23 @@ pnpm add artalk
 
 ## Vue
 
-Vue 3 + TypeScript 例：
+::: code-group
 
-```vue
+```vue [Vue 3]
 <script lang="ts" setup>
 import Artalk from 'artalk'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 
 import 'artalk/dist/Artalk.css'
 
 const el = ref<HTMLElement>()
-const route = useRoute()
 
 let artalk: Artalk
 
 onMounted(() => {
   artalk = Artalk.init({
     el: el.value,
-    pageKey: route.path,
+    pageKey: location.pathname,
     pageTitle: `${document.title}`,
     server: 'http://localhost:8080',
     site: 'Artalk 的博客',
@@ -46,22 +44,73 @@ onBeforeUnmount(() => {
 </template>
 ```
 
+```vue [Vue 3 + Vue Router]
+<script lang="ts" setup>
+import Artalk from 'artalk'
+import { onMounted, onBeforeUnmount, ref, watch, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
+
+import 'artalk/dist/Artalk.css'
+
+const el = ref<HTMLElement>()
+const router = useRouter()
+
+let artalk: Artalk
+
+onMounted(() => {
+  artalk = Artalk.init({
+    el: el.value,
+    pageKey: router.route.path,
+    pageTitle: document.title,
+    server: 'http://localhost:8080',
+    site: 'Artalk 的博客',
+    // ...
+  })
+})
+
+watch(
+  () => router.route.path,
+  (path) => {
+    nextTick(() => {
+      artalk.update({
+        pageKey: path,
+        pageTitle: document.title,
+      })
+      artalk.reload()
+    })
+  }
+)
+
+onBeforeUnmount(() => {
+  artalk.destroy()
+})
+</script>
+
+<template>
+  <view ref="el"></view>
+</template>
+```
+
+:::
+
 ## React
 
-```tsx
+::: code-group
+
+```tsx [React Hooks]
 import React, { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import 'artalk/dist/Artalk.css'
 import Artalk from 'artalk'
 
 const ArtalkComment = () => {
-  const el = useRef(null)
+  const container = useRef<HTMLDivElement>(null)
   const location = useLocation()
-  let artalk = null
+  const artalk = useRef<Artalk>()
 
   useEffect(() => {
-    artalk = new Artalk({
-      el: el.current,
+    artalk.current = Artalk.init({
+      el: container.current!,
       pageKey: location.pathname,
       pageTitle: document.title,
       server: 'http://localhost:8080',
@@ -70,19 +119,19 @@ const ArtalkComment = () => {
     })
 
     return () => {
-      if (artalk) {
-        artalk.destroy()
-      }
+      artalk.current?.destroy()
     }
-  }, [location.pathname])
+  }, [container, location.pathname])
 
-  return <div ref={el}></div>
+  return <div ref={container}></div>
 }
 
 export default ArtalkComment
 ```
 
-```jsx
+
+
+```jsx [React Class]
 import React, { createRef } from 'react'
 import 'artalk/dist/Artalk.css'
 import Artalk from 'artalk'
@@ -94,8 +143,8 @@ export default class Artalk extends React.Component {
   componentDidMount() {
     this.artalk = Artalk.init({
       el: this.el.current,
-      pageKey: `${location.pathname}`,
-      pageTitle: `${document.title}`,
+      pageKey: location.pathname,
+      pageTitle: document.title,
       server: 'http://localhost:8080',
       site: 'Artalk 的博客',
       // ...
@@ -112,17 +161,18 @@ export default class Artalk extends React.Component {
 }
 ```
 
-## Svelte
+:::
 
-```html
-<script>
-  import Artalk from 'artalk'
-  import { onMount, onDestroy } from 'svelte'
+## SolidJS
 
-  import 'artalk/dist/Artalk.css'
+```tsx
+import { onCleanup, onMount } from 'solid-js'
+import Artalk from 'artalk'
+import 'artalk/dist/Artalk.css'
 
-  let el
-  let artalk
+const ArtalkComment = () => {
+  let el: HTMLDivElement
+  let artalk: Artalk
 
   onMount(() => {
     artalk = Artalk.init({
@@ -134,12 +184,43 @@ export default class Artalk extends React.Component {
       // ...
     })
 
-    onDestroy(() => {
-      if (artalk) {
-        artalk.destroy()
-      }
+    onCleanup(() => {
+      artalk.destroy()
     })
   })
+
+  return <div ref={el} />
+}
+```
+
+## Svelte
+
+```html
+<script>
+import Artalk from 'artalk'
+import { onMount, onDestroy } from 'svelte'
+
+import 'artalk/dist/Artalk.css'
+
+let el
+let artalk
+
+onMount(() => {
+  artalk = Artalk.init({
+    el: el,
+    pageKey: location.pathname,
+    pageTitle: document.title,
+    server: 'http://localhost:8080',
+    site: 'Artalk 的博客',
+    // ...
+  })
+
+  onDestroy(() => {
+    if (artalk) {
+      artalk.destroy()
+    }
+  })
+})
 </script>
 
 <div bind:this="{el}"></div>

@@ -1,7 +1,7 @@
 export interface ApiHandlerPayload {
   need_captcha: { img_data?: string; iframe?: string }
-  need_login: {}
-  need_auth_login: {}
+  need_login: object
+  need_auth_login: object
 }
 
 type PayloadKey = keyof ApiHandlerPayload

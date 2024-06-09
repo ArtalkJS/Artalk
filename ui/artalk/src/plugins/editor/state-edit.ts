@@ -1,9 +1,9 @@
-import type { CommentData } from '@/types'
-import $t from '@/i18n'
-import * as Utils from '@/lib/utils'
 import type PlugKit from './_kit'
 import EditorPlug from './_plug'
 import Submit from './submit'
+import type { CommentData } from '@/types'
+import $t from '@/i18n'
+import * as Utils from '@/lib/utils'
 
 export default class StateEdit extends EditorPlug {
   private comment?: CommentData

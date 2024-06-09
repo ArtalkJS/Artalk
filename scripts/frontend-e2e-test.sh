@@ -25,5 +25,5 @@ pnpm -F artalk run test:e2e
 
 # if args contains `--show-report` then open report
 if [[ $* == *--show-report* ]]; then
-    pnpm -F artalk run test:report
+    pnpm -F artalk run test:e2e-report
 fi

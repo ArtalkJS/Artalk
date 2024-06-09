@@ -1,7 +1,7 @@
 import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 
-import { FetchError } from '@/types'
 import { ApiOptions } from './options'
+import { FetchError } from '@/types'
 
 export const Fetch = async (
   opts: ApiOptions,

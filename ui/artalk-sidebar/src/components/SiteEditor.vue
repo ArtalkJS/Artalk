@@ -17,7 +17,7 @@ const isLoading = ref(false)
 const editFieldKey = ref<keyof ArtalkType.SiteData | null>(null)
 const editFieldVal = computed(() => {
   if (editFieldKey.value === 'urls') return site.value.urls_raw || ''
-  return String(editFieldKey ? site.value[editFieldKey.value!] || '' : '')
+  return String(editFieldKey.value ? site.value[editFieldKey.value!] || '' : '')
 })
 
 const { t } = useI18n()

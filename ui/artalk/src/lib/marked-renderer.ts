@@ -1,6 +1,6 @@
 import { marked } from 'marked'
-import type { ArtalkConfig } from '@/types'
 import { renderCode } from './highlight'
+import type { ArtalkConfig } from '@/types'
 
 export interface RendererOptions {
   imgLazyLoad: ArtalkConfig['imgLazyLoad']
@@ -15,7 +15,7 @@ export function getRenderer(options: RendererOptions) {
 }
 
 const markedLinkRenderer =
-  (renderer: any, orgLinkRenderer: Function) =>
+  (renderer: any, orgLinkRenderer: (href: string, title: string, text: string) => string) =>
   (href: string, title: string, text: string): string => {
     const getLinkOrigin = (link: string) => {
       try {
@@ -54,7 +54,11 @@ const markedCodeRenderer =
   }
 
 const markedImageRenderer =
-  (renderer: any, orgImageRenderer: Function, { imgLazyLoad }: RendererOptions) =>
+  (
+    renderer: any,
+    orgImageRenderer: (href: string, title: string | null, text: string) => string,
+    { imgLazyLoad }: RendererOptions,
+  ) =>
   (href: string, title: string | null, text: string): string => {
     const html = orgImageRenderer.call(renderer, href, title, text)
     if (!imgLazyLoad) return html

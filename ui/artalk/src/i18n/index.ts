@@ -1,7 +1,7 @@
+import * as Utils from '../lib/utils'
 import en, { I18n, I18nKeys } from './en'
 import zhCN from './zh-CN'
 import { GLOBAL_LOCALES_KEY } from './external'
-import * as Utils from '../lib/utils'
 
 export type * from './en'
 

@@ -68,7 +68,7 @@ export function dateFormat(date: Date) {
   return `${vYear}-${vMonth}-${vDay}`
 }
 
-export function timeAgo(date: Date, $t: Function = (n: string) => n) {
+export function timeAgo(date: Date, $t = (n: any) => n) {
   try {
     const oldTime = date.getTime()
     const currTime = new Date().getTime()

@@ -1,5 +1,5 @@
-import type { NotifyLevel } from '@/types'
 import * as Utils from './utils'
+import type { NotifyLevel } from '@/types'
 
 /** 显示加载 */
 export function showLoading(parentElem: HTMLElement, conf?: { transparentBg?: boolean }) {

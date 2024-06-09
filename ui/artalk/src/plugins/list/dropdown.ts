@@ -81,7 +81,7 @@ function renderDropdown(conf: {
 
   // 列表项点击事件
   let curtActive = 0 // 当前选中
-  const onItemClick = (i: number, $item: HTMLElement, name: string, action: Function) => {
+  const onItemClick = (i: number, $item: HTMLElement, name: string, action: () => void) => {
     action()
 
     // set active
@@ -101,8 +101,7 @@ function renderDropdown(conf: {
   // 生成列表元素
   const $dropdown = Utils.createElement(`<ul class="atk-dropdown atk-fade-in"></ul>`)
   dropdownList.forEach((item, i) => {
-    const name = item[0] as string
-    const action = item[1] as Function
+    const [name, action] = item
 
     const $item = Utils.createElement(`<li class="atk-dropdown-item"><span></span></li>`)
     const $link = $item.querySelector<HTMLElement>('span')!

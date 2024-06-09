@@ -1,9 +1,9 @@
+import SidebarHTML from './sidebar-layer.html?raw'
+import type { Layer } from './layer'
 import type { ContextApi, SidebarShowPayload } from '@/types'
 import Component from '@/lib/component'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
-import SidebarHTML from './sidebar-layer.html?raw'
-import type { Layer } from './layer'
 
 export default class SidebarLayer extends Component {
   public layer?: Layer

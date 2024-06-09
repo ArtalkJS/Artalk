@@ -1,8 +1,8 @@
-import type { ArtalkConfig, ContextApi } from '@/types'
 import type { ApiOptions } from './api/options'
 import { mergeDeep } from './lib/merge-deep'
 import { createApiHandlers } from './api'
 import Defaults from './defaults'
+import type { ArtalkConfig, ContextApi } from '@/types'
 
 /**
  * Handle the custom config which is provided by the user

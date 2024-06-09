@@ -1,11 +1,11 @@
-import type { CommentData } from '@/types'
-import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
-import $t from '@/i18n'
 import EditorPlug from './_plug'
 import type PlugKit from './_kit'
 import Submit from './submit'
 import SubmitAddPreset from './submit-add'
+import type { CommentData } from '@/types'
+import * as Utils from '@/lib/utils'
+import * as Ui from '@/lib/ui'
+import $t from '@/i18n'
 
 export default class StateReply extends EditorPlug {
   private comment?: CommentData

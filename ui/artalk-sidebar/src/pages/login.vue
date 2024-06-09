@@ -83,11 +83,11 @@ function selectUser(username: string) {
       <img class="logo" src="../assets/favicon.png" alt="logo" draggable="false" />
     </a>
     <form class="login-form" @submit.prevent="login()">
-      <input type="text" :placeholder="t('email')" v-model="userForm.email" @focus="onFocus" />
+      <input v-model="userForm.email" type="text" :placeholder="t('email')" @focus="onFocus" />
       <input
+        v-model="userForm.password"
         type="password"
         :placeholder="t('password')"
-        v-model="userForm.password"
         @focus="onFocus"
       />
       <div v-if="!!loginErr" class="err-msg atk-fade-in">{{ loginErr }}</div>

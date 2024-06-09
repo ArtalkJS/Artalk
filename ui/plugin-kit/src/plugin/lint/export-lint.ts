@@ -22,7 +22,6 @@ export function runExportLint(codePath: string, expectedName: string): LintResul
         node.modifiers &&
         node.modifiers.some((mod) => mod.kind === ts.SyntaxKind.ExportKeyword)
       ) {
-        // eslint-disable-next-line no-restricted-syntax
         for (const decl of node.declarationList.declarations) {
           if (ts.isIdentifier(decl.name)) {
             exportNames.add(decl.name.text)
@@ -31,7 +30,6 @@ export function runExportLint(codePath: string, expectedName: string): LintResul
       }
     } else if (ts.isExportDeclaration(node)) {
       if (node.exportClause && ts.isNamedExports(node.exportClause)) {
-        // eslint-disable-next-line no-restricted-syntax
         for (const elem of node.exportClause.elements) {
           exportNames.add(elem.name.text)
         }

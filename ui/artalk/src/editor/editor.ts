@@ -1,9 +1,9 @@
-import type { CommentData, ContextApi, EditorApi } from '@/types'
 import Component from '../lib/component'
 import * as Ui from '../lib/ui'
 import marked from '../lib/marked'
 import { render, EditorUI } from './ui'
 import EditorStateManager from './state'
+import type { CommentData, ContextApi, EditorApi } from '@/types'
 
 class Editor extends Component implements EditorApi {
   private ui: EditorUI

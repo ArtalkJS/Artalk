@@ -1,6 +1,6 @@
+import type { Checker } from '.'
 import $t from '@/i18n'
 import * as Utils from '@/lib/utils'
-import type { Checker } from '.'
 
 const AdminChecker: Checker<{ token: string }> = {
   inputType: 'password',

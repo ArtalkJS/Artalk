@@ -1,11 +1,11 @@
+import CaptchaChecker from './captcha'
+import AdminChecker from './admin'
 import type { Api } from '@/api'
 import Dialog from '@/components/dialog'
 import $t from '@/i18n'
 import type { ContextApi } from '@/types'
 import type User from '@/lib/user'
 import * as Utils from '@/lib/utils'
-import CaptchaChecker from './captcha'
-import AdminChecker from './admin'
 
 export interface CheckerCaptchaPayload extends CheckerPayload {
   img_data?: string

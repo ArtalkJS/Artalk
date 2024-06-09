@@ -1,8 +1,8 @@
 <template>
   <iframe
+    id="artransferIframe"
     src="https://artransfer.netlify.app/?iframe=1"
     style="width: 100%; height: 520px; border: 0"
-    id="artransferIframe"
   ></iframe>
 </template>
 
@@ -28,8 +28,7 @@ export default defineComponent({
       mList.forEach((m) => {
         if (m.attributeName !== 'class') return
 
-        // @ts-ignore
-        const darkMode = m.target.classList.contains('dark')
+        const darkMode = (<HTMLElement>m.target).classList.contains('dark')
         setArtransferIframeDarkMode(darkMode)
       })
     }).observe(document.querySelector('html'), { attributes: true })

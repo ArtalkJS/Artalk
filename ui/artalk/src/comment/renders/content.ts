@@ -1,7 +1,7 @@
-import $t from '@/i18n'
 import * as Utils from '../../lib/utils'
 import * as Ui from '../../lib/ui'
 import type Render from '../render'
+import $t from '@/i18n'
 
 /**
  * 评论内容界面

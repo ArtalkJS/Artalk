@@ -1,10 +1,10 @@
 import React from 'react'
 import './FuncFeature.scss'
-import { FeatureBase } from './FeatureBase'
+import { FaArrowRight } from 'react-icons/fa'
 import { FeatureTitle } from '../FeatureTitle'
 import { FeatureDesc } from '../FeatureDesc'
 import { Reveal } from '../Reveal'
-import { FaArrowRight } from 'react-icons/fa'
+import { FeatureBase } from './FeatureBase'
 
 const FuncGrps: {name: string, items: string[], link?: string}[] = [
   { name: '社交登录', items: ['Github', 'GitLab', 'Twitter', 'Facebook', 'Mastodon', 'Google', 'Microsoft', 'Apple', 'Discord', 'Slack', 'Tiktok', 'Steam'], link: 'https://artalk.js.org/guide/frontend/auth.html' },
@@ -41,7 +41,7 @@ export const FuncFeature: React.FC = () => {
         </main>
         <aside>
             <svg className="ship-icon" width="177" height="177" viewBox="0 0 177 177" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <g clip-path="url(#clip0_174_446)"><path d="M78.6667 0H98.3333V24.5833H78.6667V0Z" fill="#292F33"/><path d="M78.6667 9.8335H98.3333V29.5002H78.6667V9.8335Z" fill="#D1D3D4"/><path d="M88.5 9.8335H98.3333V29.5002H88.5V9.8335Z" fill="#A7A9AC"/><path d="M88.5 93.4165H24.5833C24.5833 93.4165 31.2454 132.75 48.5521 162.25C65.8538 191.75 88.5 162.25 88.5 162.25C88.5 162.25 111.146 191.75 128.448 162.25C145.755 132.75 152.417 93.4165 152.417 93.4165H88.5Z" fill="#66757F"/><path d="M88.5 93.4165H24.5833C24.5833 93.4165 31.2454 132.75 48.5521 162.25C65.8538 191.75 88.5 162.25 88.5 162.25V93.4165Z" fill="#99AAB5"/>
+              <g clipPath="url(#clip0_174_446)"><path d="M78.6667 0H98.3333V24.5833H78.6667V0Z" fill="#292F33"/><path d="M78.6667 9.8335H98.3333V29.5002H78.6667V9.8335Z" fill="#D1D3D4"/><path d="M88.5 9.8335H98.3333V29.5002H88.5V9.8335Z" fill="#A7A9AC"/><path d="M88.5 93.4165H24.5833C24.5833 93.4165 31.2454 132.75 48.5521 162.25C65.8538 191.75 88.5 162.25 88.5 162.25C88.5 162.25 111.146 191.75 128.448 162.25C145.755 132.75 152.417 93.4165 152.417 93.4165H88.5Z" fill="#66757F"/><path d="M88.5 93.4165H24.5833C24.5833 93.4165 31.2454 132.75 48.5521 162.25C65.8538 191.75 88.5 162.25 88.5 162.25V93.4165Z" fill="#99AAB5"/>
               <g fill="#00A6ED" className="wave">
                 <path d="m10.7 134.3c.2-9.5 12.7 14 12.7 14l-25.4 0c0 0 12.5-4.5 12.7-14zm24.4 0c.2-9.5 12.7 14 12.7 14l-25.4 0c0 0 12.5-4.5 12.7-14zm24.4 0c.2-9.5 12.7 14 12.7 14l-25.4 0c0 0 12.5-4.5 12.7-14zm24.4 0c.2-9.5 12.7 14 12.7 14l-25.4 0c0 0 12.5-4.5 12.7-14zm24.4 0c.2-9.5 12.7 14 12.7 14l-25.4 0c0 0 12.5-4.5 12.7-14zm24.4 0c.2-9.5 12.7 14 12.7 14l-25.4 0c0 0 12.5-4.5 12.7-14zm24.4 0c.2-9.5 12.7 14 12.7 14l-25.4 0c0 0 12.5-4.5 12.7-14zm24.4 0c.2-9.5 12.7 14 12.7 14l-25.4 0c0 0 12.5-4.5 12.7-14zm24.4 0c.2-9.5 12.7 14 12.7 14l-25.4 0c0 0 12.5-4.5 12.7-14z"/>
               </g>
@@ -52,16 +52,16 @@ export const FuncFeature: React.FC = () => {
       </div>
 
       <div className="func-grps">
-        {FuncGrps.map((grp) => (
-          <div className="grp">
+        {FuncGrps.map((grp, i) => (
+          <div key={i} className="grp">
             {grp.link ? (
-              <a className="name" href={grp.link} target='_blank'>{grp.name}<FaArrowRight /></a>
+              <a className="name" href={grp.link} target='_blank' rel="noreferrer">{grp.name}<FaArrowRight /></a>
             ) : (
               <div className='name'>{grp.name}</div>
             )}
             <div className="items">
-              {grp.items.map((item) => (
-                <div className='item'>{item}</div>
+              {grp.items.map((item, j) => (
+                <div key={j} className='item'>{item}</div>
               ))}
             </div>
           </div>

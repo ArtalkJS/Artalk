@@ -1,6 +1,5 @@
 import './style/main.scss'
 
-import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '@/types'
 import type { EventHandler } from './lib/event-manager'
 import Context from './context'
 import { handelCustomConf, convertApiOptions } from './config'
@@ -9,6 +8,7 @@ import * as Stat from './plugins/stat'
 import { Api } from './api'
 import type { TInjectedServices } from './service'
 import { GlobalPlugins, load } from './load'
+import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '@/types'
 
 /**
  * Artalk

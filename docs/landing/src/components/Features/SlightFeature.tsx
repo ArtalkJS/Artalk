@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { FeatureTitle } from '../FeatureTitle'
 import { Reveal } from '../Reveal'
+import { FeatureDesc } from '../FeatureDesc'
 import { FeatureBase } from './FeatureBase'
 import './SlightFeature.scss'
-import { FeatureDesc } from '../FeatureDesc'
 
 export const SlightFeature: React.FC = () => {
   const [percent, setPercent] = useState(0)

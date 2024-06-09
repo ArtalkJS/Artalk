@@ -6,15 +6,18 @@
   "scripts": {
     "dev": "pnpm -F artalk dev",
     "dev:sidebar": "pnpm -F @artalk/artalk-sidebar dev",
+    "dev:docs": "pnpm -F=docs dev:docs",
+    "dev:landing": "pnpm -F=docs-landing dev",
     "build": "pnpm -F artalk build",
     "build:sidebar": "pnpm -F @artalk/artalk-sidebar build",
     "build:auth": "pnpm -F @artalk/plugin-auth build",
     "build:all": "pnpm build && pnpm build:sidebar",
     "build:docs": "pnpm build && pnpm -F=docs-landing build && pnpm -F=docs-swagger swagger:build && pnpm -F=docs build:docs && pnpm patch:docs",
     "patch:docs": "cp -rf docs/landing/dist/* docs/swagger/dist/* docs/docs/.vitepress/dist",
-    "lint": "pnpm lint:prettier && pnpm lint:eslint",
-    "lint:eslint": "eslint -c eslint.config.mjs",
-    "lint:prettier": "prettier --check --write .",
+    "lint:eslint": "eslint .",
+    "lint:prettier": "prettier --check .",
+    "lint": "pnpm lint:eslint && pnpm lint:prettier",
+    "lint:fix": "pnpm lint:eslint --fix && pnpm lint:prettier --write",
     "test": "pnpm -F artalk test"
   },
   "devDependencies": {

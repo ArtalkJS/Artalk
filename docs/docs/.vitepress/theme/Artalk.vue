@@ -75,8 +75,7 @@ function loadExtraFuncs() {
           linkEl.append(imgEl.cloneNode())
           imgEl.replaceWith(linkEl)
         })
-        // @ts-ignore
-        if (imgEls.length) lightGallery($content, { selector: '.atk-img-link' })
+        if (imgEls.length && typeof window !== 'undefined' && typeof (<any>window).lightGallery !== 'undefined') (<any>window).lightGallery($content, { selector: '.atk-img-link' })
       })
   })
 
@@ -88,8 +87,7 @@ function loadExtraFuncs() {
     mList.forEach((m) => {
       if (m.attributeName !== 'class') return
 
-      // @ts-ignore
-      const darkMode = m.target.classList.contains('dark')
+      const darkMode = (<HTMLElement>m.target).classList.contains('dark')
       artalk.setDarkMode(darkMode)
     })
   }).observe(document.querySelector('html'), { attributes: true })

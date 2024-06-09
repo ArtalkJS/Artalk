@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { artalk, bootParams } from '../global'
 import type { ArtalkType } from 'artalk'
+import { artalk, bootParams } from '../global'
 
 const { t } = useI18n()
 
@@ -128,8 +128,8 @@ function submit() {
         </template>
         <template v-else>
           <span
-            @click="showFullDetails = true"
             style="cursor: pointer; color: var(--at-color-main)"
+            @click="showFullDetails = true"
           >
             {{ t('Show') }}
           </span>

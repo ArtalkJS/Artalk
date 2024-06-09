@@ -1,9 +1,8 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { artalk } from '../global'
-import Artalk from 'artalk'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
-import { storeToRefs } from 'pinia'
 
 const wrapEl = ref<HTMLElement>()
 const listEl = ref<HTMLElement>()
@@ -77,10 +76,8 @@ onMounted(() => {
 
   const $el = artalk!.ctx.get('list')!.$el
 
-  // @ts-ignore
-  $el.querySelector<HTMLElement>('.atk-list-header').style.display = 'none'
-  // @ts-ignore
-  $el.querySelector<HTMLElement>('.atk-list-footer').style.display = 'none'
+  $el.querySelector<HTMLElement>('.atk-list-header')!.style.display = 'none'
+  $el.querySelector<HTMLElement>('.atk-list-footer')!.style.display = 'none'
 
   listEl.value?.append($el)
 

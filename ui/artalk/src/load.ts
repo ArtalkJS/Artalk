@@ -1,7 +1,7 @@
+import { DefaultPlugins } from './plugins'
 import type { ArtalkConfig, ArtalkPlugin, ContextApi } from '@/types'
 import { handleConfFormServer } from '@/config'
 import { showErrorDialog } from '@/components/error-dialog'
-import { DefaultPlugins } from './plugins'
 
 /**
  * Global Plugins for all Artalk instances

@@ -1,4 +1,3 @@
-import type { ArtalkPlugin } from '@/types'
 import { WithEditor } from './with-editor'
 import { Unread } from './unread'
 import { Count } from './count'
@@ -15,6 +14,7 @@ import { Loading } from './loading'
 import { Fetch } from './fetch'
 import { ReachBottom } from './reach-bottom'
 import { GotoFirst } from './goto-first'
+import type { ArtalkPlugin } from '@/types'
 
 const ListPlugins: ArtalkPlugin[] = [
   Fetch,

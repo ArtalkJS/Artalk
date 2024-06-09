@@ -1,5 +1,3 @@
-import type { CommentData, ArtalkConfig, ContextApi } from '@/types'
-import $t from '@/i18n'
 import type { Api } from '../api'
 import * as Ui from '../lib/ui'
 import * as Utils from '../lib/utils'
@@ -7,11 +5,13 @@ import marked from '../lib/marked'
 import UADetect from '../lib/detect'
 import CommentUI from './render'
 import CommentActions from './actions'
+import $t from '@/i18n'
+import type { CommentData, ArtalkConfig, ContextApi } from '@/types'
 
 export interface CommentOptions {
   // Hooks
   onAfterRender?: () => void
-  onDelete?: Function
+  onDelete?: (c: CommentNode) => void
 
   /** The comment being replied to (linked comment) */
   replyTo?: CommentData

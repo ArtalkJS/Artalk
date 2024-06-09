@@ -19,6 +19,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - if: matrix.os == 'windows-latest'
+        name: Set git to use LF (for Windows environment)
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -41,7 +47,10 @@ jobs:
       - name: Unit test
         run: pnpm test
 
+      - name: Lint
+        run: pnpm eslint ui && pnpm prettier --check ui
+
       # https://github.com/arethetypeswrong/arethetypeswrong.github.io
       - name: "arethetypeswrong test"
         if: runner.os == 'ubuntu-latest'
-        run: pnpm -F artalk attw || true
+        run: pnpm -F artalk test:attw || true

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { artalk } from '../global'
 import type { ArtalkType } from 'artalk'
+import { artalk } from '../global'
 
 const { t } = useI18n()
 

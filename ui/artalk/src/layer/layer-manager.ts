@@ -1,6 +1,6 @@
-import type { ContextApi } from '@/types'
 import { getScrollbarHelper } from './scrollbar-helper'
 import { LayerWrap } from './wrap'
+import type { ContextApi } from '@/types'
 
 export class LayerManager {
   private wrap: LayerWrap

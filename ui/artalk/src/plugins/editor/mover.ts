@@ -1,5 +1,5 @@
-import * as Utils from '@/lib/utils'
 import EditorPlug from './_plug'
+import * as Utils from '@/lib/utils'
 
 export default class Mover extends EditorPlug {
   private isMoved = false

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { artalk } from '../global'
 import type { ArtalkType } from 'artalk'
+import { artalk } from '../global'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
 import Pagination from '../components/Pagination.vue'
@@ -199,7 +199,7 @@ function openPage(url: string) {
     </div>
     <Pagination
       ref="pagination"
-      :pageSize="pageSize"
+      :page-size="pageSize"
       :total="pageTotal"
       :disabled="nav.isPageLoading"
       @change="onChangePage"

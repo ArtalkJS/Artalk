@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { bootParams, getArtalk } from '../global'
 import sha256 from 'crypto-js/sha256'
 import md5 from 'crypto-js/md5'
+import { bootParams, getArtalk } from '../global'
 
 export const useUserStore = defineStore('user', {
   state: () => ({

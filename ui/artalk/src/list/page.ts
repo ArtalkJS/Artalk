@@ -1,8 +1,8 @@
-import type { ArtalkConfig, ContextApi } from '@/types'
-import $t from '@/i18n'
 import { Paginator } from './paginator'
 import ReadMorePaginator from './paginator/read-more'
 import UpDownPaginator from './paginator/up-down'
+import $t from '@/i18n'
+import type { ArtalkConfig, ContextApi } from '@/types'
 
 function createPaginatorByConf(conf: Pick<ArtalkConfig, 'pagination'>): Paginator {
   if (conf.pagination.readMore) return new ReadMorePaginator()

@@ -15,7 +15,7 @@ const emit = defineEmits<{
 const { page } = toRefs(props)
 const editFieldKey = ref<keyof ArtalkType.PageData | null>(null)
 const editFieldVal = computed(() =>
-  String(editFieldKey ? page.value[editFieldKey.value!] || '' : ''),
+  String(editFieldKey.value ? page.value[editFieldKey.value!] || '' : ''),
 )
 const isLoading = ref(false)
 const { t } = useI18n()

@@ -1,7 +1,7 @@
-import $t from '@/i18n'
-import type { UserInfoApiResponseData } from '@/types'
 import EditorPlug from './_plug'
 import type PlugKit from './_kit'
+import $t from '@/i18n'
+import type { UserInfoApiResponseData } from '@/types'
 
 export default class HeaderUser extends EditorPlug {
   constructor(kit: PlugKit) {

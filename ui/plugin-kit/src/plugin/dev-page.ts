@@ -1,5 +1,4 @@
 import type { Connect, HtmlTagDescriptor } from 'vite'
-// eslint-disable-next-line import/no-relative-packages
 import DevHTML from '../../../artalk/index.html?raw'
 import { RUNTIME_PATH } from './runtime-helper'
 

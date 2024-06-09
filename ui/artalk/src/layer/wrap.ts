@@ -1,6 +1,6 @@
-import * as Utils from '@/lib/utils'
 import { getScrollbarHelper } from './scrollbar-helper'
 import { Layer } from './layer'
+import * as Utils from '@/lib/utils'
 
 export class LayerWrap {
   private $wrap: HTMLElement

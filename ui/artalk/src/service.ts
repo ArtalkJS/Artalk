@@ -1,4 +1,3 @@
-import type { ContextApi } from '@/types'
 import CheckerLauncher from './components/checker'
 import Editor from './editor/editor'
 import SidebarLayer from './layer/sidebar-layer'
@@ -9,6 +8,7 @@ import * as I18n from './i18n'
 import { PlugManager } from './plugins/editor-kit'
 import { LayerManager } from './layer/layer-manager'
 import User from './lib/user'
+import type { ContextApi } from '@/types'
 
 /**
  * Services

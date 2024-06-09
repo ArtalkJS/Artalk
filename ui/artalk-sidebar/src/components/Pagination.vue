@@ -129,8 +129,8 @@ defineExpose({ prev, next, reset })
       <div
         class="atk-btn atk-btn-prev"
         :class="{ 'atk-disabled': disabled || prevDisabled }"
-        @click="prev()"
         aria-label="Previous page"
+        @click="prev()"
       >
         <svg
           stroke="currentColor"
@@ -147,19 +147,19 @@ defineExpose({ prev, next, reset })
         </svg>
       </div>
       <input
+        v-model="inputValue"
         type="text"
         class="atk-input"
         aria-label="Enter the number of page"
-        v-model="inputValue"
+        :disabled="disabled"
         @input="triggerInput(false)"
         @keydown="onInputKeydown"
-        :disabled="disabled"
       />
       <div
         class="atk-btn atk-btn-next"
         :class="{ 'atk-disabled': disabled || nextDisabled }"
-        @click="next()"
         aria-label="Next page"
+        @click="next()"
       >
         <svg
           stroke="currentColor"

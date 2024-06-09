@@ -1,4 +1,51 @@
 
+## [v2.8.7](https://github.com/ArtalkJS/Artalk/compare/v2.8.6...v2.8.7) (2024-06-09)
+
+### Features
+
+* **go:** upgrade golang to v1.22.3 and some deps
+* **plugin_kit:** add vite plugin for developing artalk plugins ([#904](https://github.com/ArtalkJS/Artalk/issues/904))
+* **sync:** add keyed rw-mutex
+
+### Bug Fixes
+
+* **api/auth:** include render mustache params for verification email subject ([#910](https://github.com/ArtalkJS/Artalk/issues/910))
+* **api/stats:** fix `site_pv` response body and add unit tests ([#896](https://github.com/ArtalkJS/Artalk/issues/896))
+* **api/transfer_upload:** close temp file in transfer upload endpoint ([#877](https://github.com/ArtalkJS/Artalk/issues/877))
+* **auth:** failed to register by social account on mysql database ([#902](https://github.com/ArtalkJS/Artalk/issues/902))
+* **conf_env:** enhance environment variable loading for config ([#892](https://github.com/ArtalkJS/Artalk/issues/892))
+* **plugin_katex:** fix event issue causing katex integration failure ([#897](https://github.com/ArtalkJS/Artalk/issues/897))
+* **ui/height_limit:** height limit issue for collapsed comments ([#865](https://github.com/ArtalkJS/Artalk/issues/865))
+* **ui/sidebar:** unable to logout if user is not admin in control center
+* **ui/types:** remove marked dependency in dts ([#868](https://github.com/ArtalkJS/Artalk/issues/868))
+
+### Performance Improvements
+
+* **conf:** add cache for config metadata to boost startup speed ([#892](https://github.com/ArtalkJS/Artalk/issues/892))
+* **dao:** add singleflight for no-cache db find func
+* **gravatar:** support both sha256 and md5 hash for gravatar ([#912](https://github.com/ArtalkJS/Artalk/issues/912))
+* **gravatar:** convert email to lowercase before hashing for gravatar
+* **gravatar:** use sha256 hashing algorithm for gravatar ([#874](https://github.com/ArtalkJS/Artalk/issues/874))
+* **ui/conf:** exclude conf `pvEl`, `countEl` and `statPageKeyAttr` from remove server ([#905](https://github.com/ArtalkJS/Artalk/issues/905))
+* **ui/dev:** bump eslint to v9 ([#915](https://github.com/ArtalkJS/Artalk/issues/915))
+
+### Code Refactoring
+
+* **dao:** add `date` field to the page json entity
+* **dao:** improve `QueryDBWithCache` func and concurrent unit tests ([#884](https://github.com/ArtalkJS/Artalk/issues/884))
+* **transfer:** improve the reliability of the transfer ([#883](https://github.com/ArtalkJS/Artalk/issues/883))
+* **transfer:** strip domain from page key by default ([#873](https://github.com/ArtalkJS/Artalk/issues/873))
+* **ui:** fix linter issues for ui and docs ([#917](https://github.com/ArtalkJS/Artalk/issues/917))
+* **ui/stat:** use class selector for pageview elements by default ([#880](https://github.com/ArtalkJS/Artalk/issues/880))
+
+### Documentation
+
+* refine documentation
+* **dev:** refine contributing.md and translate to chinese
+* **i18n:** revise French translation ([#913](https://github.com/ArtalkJS/Artalk/issues/913))
+* **ip_region:** add instructions for obtaining accurate IP under proxy
+
+
 ## [v2.8.6](https://github.com/ArtalkJS/Artalk/compare/v2.8.5...v2.8.6) (2024-05-09)
 
 ### Features

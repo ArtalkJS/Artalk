@@ -1,5 +1,3 @@
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
-
 import { ApiOptions } from './options'
 import { FetchError } from '@/types'
 

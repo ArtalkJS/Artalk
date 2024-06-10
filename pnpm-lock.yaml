@@ -243,9 +243,6 @@ importers:
 
   ui/artalk:
     dependencies:
-      abortcontroller-polyfill:
-        specifier: ^1.7.5
-        version: 1.7.5
       hanabi:
         specifier: ^0.4.0
         version: 0.4.0

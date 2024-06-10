@@ -105,7 +105,6 @@ export default eslintTs.config(
         },
         node: true,
       },
-      polyfills: ['AbortController'],
     },
   },
 

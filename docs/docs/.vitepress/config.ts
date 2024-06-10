@@ -163,6 +163,7 @@ export default defineConfig({
             { text: '前端 API', link: '/develop/fe-api.md' },
             { text: '前端 Event', link: '/develop/event.md' },
             { text: '插件开发', link: '/develop/plugin.md' },
+            { text: '兼容性', link: '/develop/compatibility.md' },
             {
               text: 'HTTP API',
               link: 'https://artalk.js.org/http-api.html',

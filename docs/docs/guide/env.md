@@ -13,12 +13,12 @@ artalk config
 使用 Docker Compose 部署 Artalk，可在 `compose.yml` 文件添加环境变量，例如：
 
 ```yaml
-version: '3.5'
+version: '3.8'
 services:
   artalk:
     container_name: artalk
     image: artalk/artalk-go
-    restart: always
+    restart: unless-stopped
     ports:
       - 8080:23366
     volumes:

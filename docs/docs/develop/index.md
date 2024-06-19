@@ -29,6 +29,7 @@
 
 **其他内容**
 
+- [兼容性](../develop/compatibility.md)
 - [更新日志](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md)
 - [i18n 多语言贡献指南](../guide/frontend/i18n.md#贡献翻译)
 - [贡献者契约行为准则](https://github.com/ArtalkJS/Artalk/blob/master/CODE_OF_CONDUCT.md)

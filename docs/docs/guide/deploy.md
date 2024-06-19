@@ -76,12 +76,12 @@ Artalk.init({
 **compose.yaml**
 
 ```yaml
-version: '3.5'
+version: '3.8'
 services:
   artalk:
     container_name: artalk
     image: artalk/artalk-go
-    restart: always
+    restart: unless-stopped
     ports:
       - 8080:23366
     volumes:

@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { createRequire } from 'node:module'
 
 const asDefaultRE = /export\s*\{.*\w+\s*\bas\s+default\b.*\}\s*from\s*['"].+['"]/
 
@@ -39,4 +40,10 @@ export function getDistFileName(name: string, format: string) {
   if (format === 'cjs') return `${name}.cjs`
   if (format === 'es') return `${name}.mjs`
   return `${name}.${format}.js`
+}
+
+export function getTypescriptLibFolder() {
+  return createRequire(import.meta.url)
+    .resolve('typescript')
+    .replace(/node_modules\/typescript.*/, 'node_modules/typescript')
 }

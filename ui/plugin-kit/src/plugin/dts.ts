@@ -33,7 +33,6 @@ export function generateDts(
 export interface BundleOptions {
   rootDir: string
   tsConfigPath?: string
-  compilerOptions: ts.CompilerOptions
   outDir: string
   entryPath: string
   fileName: string
@@ -46,7 +45,6 @@ const dtsRE = /\.d\.tsx?$/
 export function rollupDeclarationFiles({
   rootDir,
   tsConfigPath,
-  compilerOptions,
   outDir,
   entryPath,
   fileName,
@@ -63,10 +61,6 @@ export function rollupDeclarationFiles({
       mainEntryPointFilePath: entryPath,
       compiler: {
         tsconfigFilePath: tsConfigPath,
-        overrideTsconfig: {
-          $schema: 'http://json.schemastore.org/tsconfig',
-          compilerOptions,
-        },
       },
       apiReport: {
         enabled: false,

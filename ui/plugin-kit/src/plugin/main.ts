@@ -107,13 +107,40 @@ export const ViteArtalkPluginKit = (opts: ViteArtalkPluginKitOptions = {}): Plug
       }
       ctx.tsConfigPath = tsConfigPath
 
-      const tsConfig = ts.readConfigFile(tsConfigPath, ts.sys.readFile)
-      if (tsConfig.error) {
+      // read tsconfig.json
+      const readConfigFile = ts.readConfigFile(tsConfigPath, ts.sys.readFile)
+      if (readConfigFile.error) {
         logger.error(`Cannot read tsconfig.json in "${tsConfigPath}"`)
+        logger.error(
+          ts.formatDiagnosticsWithColorAndContext([readConfigFile.error], {
+            getCanonicalFileName: (fileName) => fileName,
+            getCurrentDirectory: ts.sys.getCurrentDirectory,
+            getNewLine: () => ts.sys.newLine,
+          }),
+        )
         process.exit(1)
       }
 
-      ctx.tsCompilerOptionsRaw = tsConfig.config.compilerOptions
+      // parse tsconfig.json
+      const parsedConfig = ts.parseJsonConfigFileContent(
+        readConfigFile.config,
+        ts.sys,
+        path.dirname(tsConfigPath),
+      )
+      if (parsedConfig.errors.length > 0) {
+        logger.error(`Error parsing tsconfig.json in "${tsConfigPath}"`)
+        logger.error(
+          ts.formatDiagnosticsWithColorAndContext(parsedConfig.errors, {
+            getCanonicalFileName: (fileName) => fileName,
+            getCurrentDirectory: ts.sys.getCurrentDirectory,
+            getNewLine: () => ts.sys.newLine,
+          }),
+        )
+        process.exit(1)
+      }
+      const compilerOptions = parsedConfig.options
+
+      ctx.tsCompilerOptionsRaw = compilerOptions
       ctx.tsCompilerOptions = {
         ...ctx.tsCompilerOptionsRaw,
         noEmit: false,
@@ -197,16 +224,14 @@ export const ViteArtalkPluginKit = (opts: ViteArtalkPluginKitOptions = {}): Plug
       fs.writeFileSync(dtsIndexFilePath, content, 'utf-8')
 
       // Rollup
-      const conf = {
+      rollupDeclarationFiles({
         entryPath: dtsIndexFilePath,
         fileName: dtsIndexFileName,
         rootDir: ctx.rootDir,
         outDir: ctx.dtsTempDir,
         tsConfigPath: ctx.tsConfigPath,
-        compilerOptions: ctx.tsCompilerOptionsRaw!,
-        libFolder: path.resolve(ctx.rootDir, 'node_modules/typescript'),
-      }
-      rollupDeclarationFiles(conf)
+        libFolder: utils.getTypescriptLibFolder(),
+      })
 
       // Copy dts files to dist
       const distDtsPath = path.resolve(ctx.outDir, dtsIndexFileName)

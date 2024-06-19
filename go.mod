@@ -109,6 +109,7 @@ require (
 	github.com/lestrrat-go/option v1.0.1 // indirect
 	github.com/line/line-bot-sdk-go v7.8.0+incompatible // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/markbates/going v1.0.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect

@@ -18,6 +18,7 @@ import (
 	"github.com/markbates/goth/providers/google"
 	"github.com/markbates/goth/providers/line"
 	"github.com/markbates/goth/providers/mastodon"
+	"github.com/markbates/goth/providers/microsoftonline"
 	"github.com/markbates/goth/providers/patreon"
 	"github.com/markbates/goth/providers/slack"
 	"github.com/markbates/goth/providers/steam"
@@ -82,6 +83,11 @@ func GetProviders(conf *config.Config) []goth.Provider {
 	if appleConf := conf.Auth.Apple; appleConf.Enabled {
 		providers = append(providers, apple.New(appleConf.ClientID, appleConf.ClientSecret, callbackURL("apple"), nil,
 			apple.ScopeEmail, apple.ScopeName))
+	}
+	// @see https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
+	if microsoftConf := conf.Auth.Microsoft; microsoftConf.Enabled {
+		providers = append(providers, microsoftonline.New(microsoftConf.ClientID, microsoftConf.ClientSecret, callbackURL("microsoft"),
+			"openid", "offline_access", "profile", "user.read", "email"))
 	}
 	// @see https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html
 	if wechatConf := conf.Auth.Wechat; wechatConf.Enabled {

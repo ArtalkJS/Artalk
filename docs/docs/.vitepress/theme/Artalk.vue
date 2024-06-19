@@ -7,6 +7,9 @@ import { watch, nextTick, ref, onMounted, onUnmounted } from 'vue'
 import { useData, useRouter } from 'vitepress'
 import Artalk from 'artalk'
 import { ArtalkKatexPlugin } from '@artalk/plugin-katex'
+import { ArtalkLightboxPlugin } from '@artalk/plugin-lightbox'
+import 'lightgallery/css/lightgallery.css'
+import 'katex/dist/katex.min.css'
 import 'artalk/dist/Artalk.css'
 
 const el = ref<HTMLElement | null>(null)
@@ -38,6 +41,11 @@ onUnmounted(() => {
 
 function initArtalk(conf: any) {
   Artalk.use(ArtalkKatexPlugin)
+  Artalk.use(ArtalkLightboxPlugin, {
+    lightGallery: {
+      lib: async () => (await import('lightgallery')).default
+    }
+  })
 
   artalk = Artalk.init({
     el: el.value,
@@ -58,27 +66,6 @@ function getConfByPage() {
 }
 
 function loadExtraFuncs() {
-  // 图片灯箱插件
-  artalk.on('list-loaded', () => {
-    document
-      .querySelectorAll('.atk-comment .atk-content')
-      .forEach(($content) => {
-        const imgEls = $content.querySelectorAll<HTMLImageElement>(
-          'img:not([atk-emoticon]):not([atk-lightbox])',
-        )
-        imgEls.forEach((imgEl) => {
-          imgEl.setAttribute('atk-lightbox', '')
-          const linkEl = document.createElement('a')
-          linkEl.setAttribute('class', 'atk-img-link')
-          linkEl.setAttribute('href', imgEl.src)
-          linkEl.setAttribute('data-src', imgEl.src)
-          linkEl.append(imgEl.cloneNode())
-          imgEl.replaceWith(linkEl)
-        })
-        if (imgEls.length && typeof window !== 'undefined' && typeof (<any>window).lightGallery !== 'undefined') (<any>window).lightGallery($content, { selector: '.atk-img-link' })
-      })
-  })
-
   // 夜间模式
   const darkMode = document.querySelector('html').classList.contains('dark')
   artalk.setDarkMode(darkMode)

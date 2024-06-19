@@ -55,6 +55,28 @@ const artalk = Artalk.init({ ... })
 
 在 use 函数中，你可以通过 `ctx` 来访问 Artalk 的 Context 对象。
 
+### 插件可配置选项
+
+在 TypeScript 中，你可以通过 `ArtalkPlugin<T>` 来定义一个带选项的插件类型。
+
+```ts
+export interface DemoPluginOptions {
+  foo?: string
+}
+
+export const ArtalkDemoPlugin: ArtalkPlugin<DemoPluginOptions> = (ctx, options = {}) => {
+  console.log(options.foo)
+}
+```
+
+在执行 `Artalk.use` 时，传入选项：
+
+```ts
+import { ArtalkDemoPlugin } from 'artalk-plugin-demo'
+
+Artalk.use(ArtalkDemoPlugin, { foo: 'bar' })
+```
+
 ## ContextAPI
 
 Context 对象包含了 Artalk 的上下文信息。

@@ -8,12 +8,17 @@ import { showErrorDialog } from '@/components/error-dialog'
  */
 export const GlobalPlugins: Set<ArtalkPlugin> = new Set([...DefaultPlugins])
 
+/**
+ * Plugin options for plugin initialization
+ */
+export const PluginOptions: WeakMap<ArtalkPlugin, any> = new WeakMap()
+
 export async function load(ctx: ContextApi) {
   const loadedPlugins = new Set<ArtalkPlugin>()
   const loadPlugins = (plugins: Set<ArtalkPlugin>) => {
     plugins.forEach((plugin) => {
       if (typeof plugin === 'function' && !loadedPlugins.has(plugin)) {
-        plugin(ctx)
+        plugin(ctx, PluginOptions.get(plugin))
         loadedPlugins.add(plugin)
       }
     })

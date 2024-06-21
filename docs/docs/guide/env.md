@@ -24,8 +24,8 @@ services:
     volumes:
       - ./data:/data
     environment:
-      - ATK_LOCALE="zh-CN"
-      - ATK_TRUSTED_DOMAINS="https://your_domain https://your_domain2"
+      - ATK_LOCALE=zh-CN
+      - ATK_TRUSTED_DOMAINS=https://your_domain https://your_domain2
       - ATK_ADMIN_USERS_0_NAME=admin
       - ATK_ADMIN_USERS_0_EMAIL=admin@example.org
       - ATK_ADMIN_USERS_0_PASSWORD=(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm

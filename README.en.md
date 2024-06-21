@@ -72,9 +72,9 @@ docker run -d \
     --name artalk \
     -p 8080:23366 \
     -v $(pwd)/data:/data \
-    -e ATK_LOCALE="en" \
-    -e ATK_SITE_DEFAULT="Artalk Blog" \
-    -e ATK_TRUSTED_DOMAINS="https://your_domain" \
+    -e "ATK_LOCALE=en" \
+    -e "ATK_SITE_DEFAULT=Artalk Blog" \
+    -e "ATK_TRUSTED_DOMAINS=https://your_domain" \
     artalk/artalk-go
 ```
 

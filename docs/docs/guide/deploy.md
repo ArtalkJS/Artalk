@@ -9,9 +9,9 @@ docker run -d \
     --name artalk \
     -p 8080:23366 \
     -v $(pwd)/data:/data \
-    -e ATK_LOCALE="zh-CN" \
-    -e ATK_SITE_DEFAULT="Artalk 的博客" \
-    -e ATK_TRUSTED_DOMAINS="https://your_domain" \
+    -e "ATK_LOCALE=zh-CN" \
+    -e "ATK_SITE_DEFAULT=Artalk 的博客" \
+    -e "ATK_TRUSTED_DOMAINS=https://your_domain" \
     artalk/artalk-go
 ```
 
@@ -88,9 +88,9 @@ services:
       - ./data:/data
     environment:
       - TZ=Asia/Shanghai
-      - ATK_LOCALE="zh-CN"
-      - ATK_SITE_DEFAULT="Artalk 的博客"
-      - ATK_TRUSTED_DOMAINS="https://your_domain"
+      - ATK_LOCALE=zh-CN
+      - ATK_SITE_DEFAULT=Artalk 的博客
+      - ATK_TRUSTED_DOMAINS=https://your_domain
 ```
 
 创建容器：

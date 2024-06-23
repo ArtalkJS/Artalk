@@ -17,29 +17,6 @@ export default defineConfig({
           'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi',
       },
     ],
-    // light gallery
-    [
-      'link',
-      {
-        href: 'https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.3.0/css/lightgallery.css',
-        rel: 'stylesheet',
-      },
-    ],
-    [
-      'script',
-      {
-        src: 'https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.3.0/lightgallery.min.js',
-      },
-    ],
-    // katex
-    [
-      'link',
-      {
-        href: 'https://unpkg.com/katex@0.15.3/dist/katex.min.css',
-        rel: 'stylesheet',
-      },
-    ],
-    ['script', { src: 'https://unpkg.com/katex@0.15.3/dist/katex.min.js' }],
   ],
 
   lastUpdated: true,
@@ -167,10 +144,6 @@ export default defineConfig({
             {
               text: 'HTTP API',
               link: 'https://artalk.js.org/http-api.html',
-            },
-            {
-              text: '贡献指南',
-              link: 'https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md',
             },
           ],
         },

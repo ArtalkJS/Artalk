@@ -16,7 +16,7 @@ require (
 	github.com/fatih/color v1.17.0
 	github.com/go-testfixtures/testfixtures/v3 v3.11.0
 	github.com/goccy/go-yaml v1.11.3
-	github.com/gofiber/fiber/v2 v2.52.4
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/swagger v1.0.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/iancoleman/strcase v0.3.0
@@ -31,14 +31,14 @@ require (
 	github.com/qwqcode/go-aliyun-email v0.0.0-20180120030821-cb6e7b1382bf
 	github.com/redis/go-redis/v9 v9.5.3
 	github.com/rhysd/go-github-selfupdate v1.2.3
-	github.com/samber/lo v1.39.0
-	github.com/spf13/cobra v1.8.0
+	github.com/samber/lo v1.44.0
+	github.com/spf13/cobra v1.8.1
 	github.com/steambap/captcha v1.4.1
 	github.com/stretchr/testify v1.9.0
 	github.com/swaggo/swag v1.16.3
 	github.com/tidwall/gjson v1.17.1
 	github.com/vmihailenco/msgpack v4.0.4+incompatible
-	github.com/yuin/goldmark v1.7.1
+	github.com/yuin/goldmark v1.7.4
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.24.0
 	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8
@@ -48,9 +48,9 @@ require (
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/driver/mysql v1.5.6
-	gorm.io/driver/postgres v1.5.7
-	gorm.io/driver/sqlite v1.5.5
+	gorm.io/driver/mysql v1.5.7
+	gorm.io/driver/postgres v1.5.9
+	gorm.io/driver/sqlite v1.5.6
 	gorm.io/driver/sqlserver v1.5.3
 	gorm.io/gorm v1.25.10
 )

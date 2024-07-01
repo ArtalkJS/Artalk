@@ -1,5 +1,5 @@
 ### build Artalk
-FROM golang:1.22.3-alpine3.20 as builder
+FROM golang:1.22.4-alpine3.20 as builder
 
 WORKDIR /source
 

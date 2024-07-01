@@ -175,7 +175,7 @@ jobs:
           name: ui-src
 
       - name: Build and push by digest
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         id: build
         with:
           context: .

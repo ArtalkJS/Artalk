@@ -6,6 +6,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/config"
 	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/dingding"
 	"github.com/nikoksr/notify/service/line"
@@ -50,9 +51,12 @@ func (pusher *NotifyPusher) loadHelper() {
 	// Telegram
 	tgConf := conf.Telegram
 	if tgConf.Enabled {
-		telegramService, _ := telegram.New(tgConf.ApiToken)
-		telegramService.AddReceivers(tgConf.Receivers...)
-		helper.UseServices(telegramService)
+		if telegramService, err := telegram.New(tgConf.ApiToken); err == nil {
+			telegramService.AddReceivers(tgConf.Receivers...)
+			helper.UseServices(telegramService)
+		} else {
+			log.Error("[Notify] Telegram service init error: ", err)
+		}
 	}
 
 	// 钉钉
@@ -73,8 +77,11 @@ func (pusher *NotifyPusher) loadHelper() {
 	// LINE
 	LINEConf := conf.LINE
 	if LINEConf.Enabled {
-		lineService, _ := line.New(pusher.conf.LINE.ChannelSecret, pusher.conf.LINE.ChannelAccessToken)
-		lineService.AddReceivers(LINEConf.Receivers...)
-		helper.UseServices(lineService)
+		if lineService, err := line.New(pusher.conf.LINE.ChannelSecret, pusher.conf.LINE.ChannelAccessToken); err == nil {
+			lineService.AddReceivers(LINEConf.Receivers...)
+			helper.UseServices(lineService)
+		} else {
+			log.Error("[Notify] LINE service init error: ", err)
+		}
 	}
 }

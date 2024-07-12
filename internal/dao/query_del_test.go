@@ -3,6 +3,7 @@ package dao_test
 import (
 	"testing"
 
+	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/test"
 	"github.com/stretchr/testify/assert"
 )
@@ -71,4 +72,13 @@ func TestDelUser(t *testing.T) {
 	assert.NoError(t, err, "用户删除发生错误")
 
 	assert.True(t, app.Dao().FindUserByID(1000).IsEmpty(), "用户没有删成功")
+
+	// Check related records cleaned
+	var commentsCount int64
+	app.Dao().DB().Where("user_id = ?", 1000).Model(&entity.Comment{}).Count(&commentsCount)
+	assert.Equal(t, int64(0), commentsCount, "User comments not cleaned")
+
+	var authIdentityCount int64
+	app.Dao().DB().Where("user_id = ?", 1000).Model(&entity.AuthIdentity{}).Count(&authIdentityCount)
+	assert.Equal(t, int64(0), authIdentityCount, "User auth identities not cleaned")
 }

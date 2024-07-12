@@ -99,6 +99,7 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 		// Begin a transaction to Merge all user data to target user
 		if err := app.Dao().DB().Transaction(func(tx *gorm.DB) error {
 			// Merge all user data to target user
+			// @note Search code files under `./internal/entity` keyword 'UserID` to find all related tables
 			for _, u := range otherUsers {
 				// comments
 				if tx := app.Dao().DB().Model(&entity.Comment{}).
@@ -122,6 +123,12 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 					return tx.Error
 				} else {
 					resp.UpdatedVote += tx.RowsAffected
+				}
+
+				// auth_identities
+				if tx := app.Dao().DB().Model(&entity.AuthIdentity{}).
+					Where("user_id = ?", u.ID).Update("user_id", targetUser.ID); tx.Error != nil {
+					return tx.Error
 				}
 			}
 

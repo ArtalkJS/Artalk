@@ -30,9 +30,14 @@ func GetProviderInfo(conf *config.Config, providers []goth.Provider) []AuthProvi
 
 	for _, provider := range providers {
 		name := strings.ToLower(provider.Name())
+		title := cases.Title(language.Und, cases.NoLower).String(name)
+		// Patch for Microsoft
+		if title == "Microsoftonline" {
+			title = "Microsoft"
+		}
 		info = append(info, AuthProviderInfo{
 			Name:  name,
-			Label: cases.Title(language.Und, cases.NoLower).String(name),
+			Label: title,
 			Path:  "/api/v2/auth/" + name,
 			Icon:  GetProviderIconBase64(name),
 		})

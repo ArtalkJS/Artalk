@@ -86,7 +86,7 @@ func GetProviders(conf *config.Config) []goth.Provider {
 	}
 	// @see https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
 	if microsoftConf := conf.Auth.Microsoft; microsoftConf.Enabled {
-		providers = append(providers, microsoftonline.New(microsoftConf.ClientID, microsoftConf.ClientSecret, callbackURL("microsoft"),
+		providers = append(providers, microsoftonline.New(microsoftConf.ClientID, microsoftConf.ClientSecret, callbackURL("microsoftonline"),
 			"openid", "offline_access", "profile", "user.read", "email"))
 	}
 	// @see https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html

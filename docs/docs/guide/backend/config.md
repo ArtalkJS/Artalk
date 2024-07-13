@@ -308,6 +308,14 @@ log:
   filename: ./data/artalk.log # 日志文件路径
 ```
 
+日志为 JSON 格式，可以通过使用 Linux 的 `tail` 命令结合 `jq` 工具查看：
+
+```bash
+tail -f ./data/artalk.log | jq
+```
+
+如果你是 Grafana 用户，可以结合 Loki 和 Promtail 来实现日志的收集和查询。
+
 ## 调试模式 `debug`
 
 将 `debug` 配置为 `true` 启用调试模式。

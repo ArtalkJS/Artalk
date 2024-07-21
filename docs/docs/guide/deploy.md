@@ -165,18 +165,6 @@ Artalk 后端程序内嵌了前端 JS、CSS 文件，使用公共 CDN 资源请�
 >
 > <https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.css>
 
-**BootCDN (境内)**
-
-> <https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.js>
->
-> <https://cdn.bootcdn.net/ajax/libs/artalk/:ArtalkVersion:/Artalk.css>
-
-**75CDN (境内)**
-
-> <https://lib.baomitu.com/artalk/:ArtalkVersion:/Artalk.js>
->
-> <https://lib.baomitu.com/artalk/:ArtalkVersion:/Artalk.css>
-
 **UNPKG**
 
 > <https://unpkg.com/artalk@:ArtalkVersion:/dist/Artalk.js>

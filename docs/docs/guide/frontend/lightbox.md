@@ -1,6 +1,10 @@
 # 图片灯箱
 
-Artalk LightBox 插件能帮助你将网站**现有的图片灯箱**功能自动集成到 Artalk 中。
+Artalk 图片灯箱插件帮助你将网站**现有的图片灯箱**功能自动集成到 Artalk 中。
+
+## 浏览器环境
+
+如果处于浏览器环境，博客主题通常自带图片灯箱，插件将自动检测 `window` 全局对象中的灯箱库，并集成到 Artalk 中，无需额外配置。
 
 ```html
 <!-- 1. 引入图片灯箱依赖，例如 LightGallery (通常博客主题已提供，无需再引入) -->
@@ -14,48 +18,104 @@ Artalk LightBox 插件能帮助你将网站**现有的图片灯箱**功能自动
 <script src="https://unpkg.com/@artalk/plugin-lightbox/dist/artalk-plugin-lightbox.js"></script>
 ```
 
-如上所示，额外引入一个 `artalk-plugin-lightbox.js` 文件即可。
-
-目前自动集成支持：[LightGallery](https://github.com/sachinchoolur/lightGallery) [v2.5.0] / [FancyBox](https://github.com/fancyapps/fancybox) [v4.0.27] / [lightbox2](https://github.com/lokesh/lightbox2) [v2.11.3]
-
-对于还未适配的图片灯箱，欢迎提交 PR -> [查看代码](https://github.com/ArtalkJS/Artalk/blob/master/ui/plugin-lightbox/main.ts)
-
-::: details 附：图片灯箱依赖 CDN 资源
-
-注：通常一个博客主题本来就是有图片灯箱插件的，所以无需重复引入。
-
-#### LightGallery
+如有需要，可以通过全局变量 `ATK_LIGHTBOX_CONF` 对灯箱库进行额外的配置：
 
 ```html
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/lightgallery@2.5.0/css/lightgallery.css"
-/>
-<script src="https://unpkg.com/lightgallery@2.5.0/lightgallery.min.js"></script>
+<script>
+// Config for LightGallery
+window.ATK_LIGHTBOX_CONF = {
+  plugins: [lgZoom, lgThumbnail],
+  speed: 500,
+  licenseKey: 'your_license_key'
+}
+</script>
 ```
 
-#### FancyBox
+## Node 环境
 
-```html
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/@fancyapps/ui@4.0.27/dist/fancybox.css"
-/>
-<script src="https://unpkg.com/@fancyapps/ui@4.0.27/dist/fancybox.umd.js"></script>
+安装图片灯箱插件：
+
+```bash
+pnpm add @artalk/plugin-lightbox
+```
+
+配置插件，通过 `import` 动态引入灯箱库：
+
+::: code-group
+
+```ts [LightGallery]
+import Artalk from 'artalk'
+import { ArtalkLightboxPlugin } from '@artalk/plugin-lightbox'
+import 'lightgallery/css/lightgallery.css'
+
+Artalk.use(ArtalkLightboxPlugin, {
+  lightGallery: {
+    lib: () => import('lightgallery'),
+  },
+})
+```
+
+```ts [PhotoSwipe]
+import Artalk from 'artalk'
+import { ArtalkLightboxPlugin } from '@artalk/plugin-lightbox'
+import 'photoswipe/style.css'
+
+Artalk.use(ArtalkLightboxPlugin, {
+  photoSwipe: {
+    lib: () => import('photoswipe/lightbox'),
+    pswpModule: () => import('photoswipe'),
+  },
+})
+```
+
+```ts [LightBox]
+import Artalk from 'artalk'
+import { ArtalkLightboxPlugin } from '@artalk/plugin-lightbox'
+import 'lightbox2/dist/css/lightbox.min.css'
+import jQuery from 'jquery'
+
+window.$ = jQuery
+
+Artalk.use(ArtalkLightboxPlugin, {
+  lightBox: {
+    // @ts-ignore
+    lib: () => import('lightbox2'),
+  },
+})
+```
+
+```ts [FancyBox]
+import Artalk from 'artalk'
+import { ArtalkLightboxPlugin } from '@artalk/plugin-lightbox'
+import 'fancybox/dist/css/jquery.fancybox.css'
+import jQuery from 'jquery'
+
+window.$ = jQuery
+
+Artalk.use(ArtalkLightboxPlugin, {
+  fancyBox: {
+    // @ts-ignore
+    lib: () => import('fancybox'),
+  },
+})
 ```
 
 :::
 
-### 配置灯箱
+在 Node 环境中，如有需要对灯箱库进行额外的配置，可以通过 `config` 选项配置：
 
-在引入 `artalk-plugin-lightbox.js` 之前对全局变量 `ATK_LIGHTBOX_CONF` 进行设置，如下：
-
-```html
-<script>
-  window.ATK_LIGHTBOX_CONF = {
-    groupAll: true,
-    // ...其他配置
-  }
-</script>
-<script src="artalk-plugin-lightbox.js"></script>
+```ts
+Artalk.use(ArtalkLightboxPlugin, {
+  // ...
+  // Config for LightGallery
+  config: {
+    speed: 500,
+  },
+})
 ```
+
+---
+
+目前自动集成支持：[LightGallery](https://github.com/sachinchoolur/lightGallery) • [FancyBox](https://github.com/fancyapps/fancybox) • [lightbox2](https://github.com/lokesh/lightbox2) • [PhotoSwipe](https://photoswipe.com/)
+
+一些灯箱库暂未适配，期待你的 PR 😉：[@artalk/plugin-lightbox](https://github.com/ArtalkJS/Artalk/blob/master/ui/plugin-lightbox/src/main.ts)。

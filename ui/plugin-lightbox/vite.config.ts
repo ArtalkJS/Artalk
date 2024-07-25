@@ -1,30 +1,15 @@
 import { defineConfig } from 'vite'
-import { resolve } from 'path'
-import tsconfigPaths from 'vite-tsconfig-paths'
+
+import { ViteArtalkPluginKit } from '@artalk/plugin-kit'
 
 export default defineConfig({
-  base: './',
   build: {
-    target: 'es2015',
-    outDir: resolve(__dirname, 'dist'),
-    minify: 'terser',
-    lib: {
-      entry: resolve(__dirname, './main.ts'),
-      name: 'artalk-plugin-lightbox',
-      fileName: (format) =>
-        format == 'umd' ? 'artalk-plugin-lightbox.js' : `artalk-plugin-lightbox.${format}.js`,
-      formats: ['es', 'umd', 'iife'],
-    },
     rollupOptions: {
-      external: ['artalk', 'lightgallery'],
+      external: ['lightgallery', 'lightbox2', 'photoswipe', 'fancybox'],
       output: {
-        globals: {
-          artalk: 'Artalk',
-          lightgallery: 'lightgallery',
-        },
-        extend: true,
+        dynamicImportInCjs: false,
       },
     },
   },
-  plugins: [tsconfigPaths()],
+  plugins: [ViteArtalkPluginKit()],
 })

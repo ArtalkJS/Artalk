@@ -18,12 +18,18 @@ export interface ArtalkLightboxPluginOptions {
   }
   photoSwipe?: {
     lib?: () => Promise<any>
+    pswpModule?: () => Promise<any>
   }
+
+  /** Config for all lightbox plugins */
+  config?: any
 }
 
 export const ArtalkLightboxPlugin: ArtalkPlugin<ArtalkLightboxPluginOptions> = (ctx, opts) => {
   // add artalk event listener
   ctx.on('list-loaded', async () => {
+    const deps = await getDeps(opts)
+
     const $imgLinks: HTMLAnchorElement[] = []
     const $contents = new Set<HTMLElement>()
 
@@ -32,12 +38,25 @@ export const ArtalkLightboxPlugin: ArtalkPlugin<ArtalkLightboxPluginOptions> = (
       $content
         .querySelectorAll<HTMLImageElement>(`img:not([atk-emoticon]):not([${LOADED_ATTR}])`)
         .forEach(($img) => {
-          $img.setAttribute(LOADED_ATTR, '') // 初始化标记
+          $img.setAttribute(LOADED_ATTR, '') // mark as loaded
 
           const $imgLink = document.createElement('a')
           $imgLink.setAttribute('class', IMG_LINK_EL_CLASS)
           $imgLink.setAttribute('href', $img.src)
           $imgLink.setAttribute('data-src', $img.src)
+
+          // set image size for PhotoSwipe
+          if (deps.photoSwipe) {
+            // @see https://photoswipe.com/getting-started/#required-html-markup
+            const updateImageSize = () => {
+              $imgLink.setAttribute('data-pswp-width', $img.naturalWidth.toString())
+              $imgLink.setAttribute('data-pswp-height', $img.naturalHeight.toString())
+              $img.removeEventListener('load', updateImageSize)
+            }
+            updateImageSize()
+            $img.addEventListener('load', updateImageSize)
+          }
+
           $imgLink.append($img.cloneNode())
 
           $img.replaceWith($imgLink)
@@ -47,26 +66,24 @@ export const ArtalkLightboxPlugin: ArtalkPlugin<ArtalkLightboxPluginOptions> = (
       $contents.add($content)
     })
 
-    const deps = await getDeps(opts)
-
     // lightgallery
     if (deps.lightGallery) {
       // lightGallery
-      // @link https://github.com/sachinchoolur/lightGallery
+      // @see https://github.com/sachinchoolur/lightGallery
       $contents.forEach((el) => {
         deps.lightGallery!(el, {
           selector: IMG_LINK_EL_SEL,
-          ...(window.ATK_LIGHTBOX_CONF || {}),
+          ...(opts?.config || window.ATK_LIGHTBOX_CONF || {}),
         })
       })
     }
 
     if (deps.lightBox) {
       // lightbox2
-      // @link https://github.com/lokesh/lightbox2
+      // @see https://github.com/lokesh/lightbox2
       $imgLinks.forEach((el) => {
-        window.$(el).attr('data-title', window.$(el).find('img').attr('alt'))
-        window.$(el).attr('rel', 'lightbox')
+        el.setAttribute('data-title', el.querySelector('img')!.alt)
+        el.setAttribute('rel', 'lightbox')
         el.onclick = (evt) => {
           evt.preventDefault()
           deps.lightBox!.start(window.$(el))
@@ -76,34 +93,27 @@ export const ArtalkLightboxPlugin: ArtalkPlugin<ArtalkLightboxPluginOptions> = (
 
     if (deps.photoSwipe) {
       // PhotoSwipe
-      // @link https://github.com/dimsemenov/photoswipe
-      const dataSource: any[] = []
+      // @see https://github.com/dimsemenov/photoswipe
       const lightbox = new deps.photoSwipe({
-        dataSource,
-        ...(window.ATK_LIGHTBOX_CONF || {}),
+        gallery: `.atk-content`,
+        showHideAnimationType: 'fade',
+        thumbSelector: `${IMG_LINK_EL_SEL}`,
+        children: `${IMG_LINK_EL_SEL}`,
+        pswpModule: opts?.photoSwipe!.pswpModule,
+        ...(opts?.config || window.ATK_LIGHTBOX_CONF || {}),
       })
-
-      $imgLinks.forEach((el) => {
-        const $img = el.querySelector<HTMLImageElement>('img')!
-        dataSource.push({ src: $img.src })
-
-        el.onclick = (evt) => {
-          evt.preventDefault()
-          // @ts-expect-error missing type but works
-          lightbox.loadAndOpen(0)
-        }
-      })
-
       lightbox.init()
     }
 
     if (deps.fancyBox) {
-      // Fancybox Event bind
-      // @link https://github.com/fancyapps/fancybox
-      deps.fancyBox.then(({ FancyBox }) => {
-        if (!FancyBox) return
-        FancyBox.bind(`.artalk .atk-list ${IMG_LINK_EL_SEL}`, window.ATK_LIGHTBOX_CONF)
-      })
+      // Fancybox
+      // @see https://github.com/fancyapps/fancybox
+      if (!window.$)
+        throw new Error('Fancybox requires jQuery which is available in window global scope')
+      if (!window.$.fancybox) deps.fancyBox(window.$)
+      window
+        .$(`.artalk .atk-list ${IMG_LINK_EL_SEL}`, opts?.config || window.ATK_LIGHTBOX_CONF)
+        .fancybox()
     }
   })
 }

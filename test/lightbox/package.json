@@ -1,0 +1,24 @@
+{
+  "name": "test-lightbox",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.3.4"
+  },
+  "dependencies": {
+    "jquery": "^3.7.1",
+    "@artalk/plugin-lightbox": "workspace:^",
+    "artalk": "workspace:^",
+    "lightgallery": "^2.7.2",
+    "lightbox2": "^2.11.4",
+    "photoswipe": "^5.4.4",
+    "fancybox": "^3.0.1"
+  }
+}

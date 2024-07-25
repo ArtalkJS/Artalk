@@ -26,6 +26,7 @@ export async function getDeps(opts?: ArtalkLightboxPluginOptions) {
       } else {
         deps[key] = await opts?.[key]?.lib?.()
       }
+      if (deps[key].default) deps[key] = deps[key].default
       if (deps[key]) return deps
     } catch {
       void 0

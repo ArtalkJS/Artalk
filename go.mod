@@ -16,7 +16,7 @@ require (
 	github.com/fatih/color v1.17.0
 	github.com/go-testfixtures/testfixtures/v3 v3.11.0
 	github.com/goccy/go-yaml v1.11.3
-	github.com/gofiber/fiber/v2 v2.52.4
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/swagger v1.0.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/iancoleman/strcase v0.3.0

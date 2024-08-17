@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
 import type { TInjectedServices } from './service'
 import { Api, ApiHandlers } from './api'
 
@@ -22,6 +23,7 @@ import type {
 } from '@/types'
 
 // Auto dependency injection
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface Context extends TInjectedServices {}
 
 /**

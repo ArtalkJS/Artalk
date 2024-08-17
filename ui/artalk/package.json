@@ -115,9 +115,9 @@
     "test:attw": "pnpx @arethetypeswrong/cli --pack .",
     "lint": "eslint ."
   },
-  "dependencies": {
+  "devDependencies": {
     "hanabi": "^0.4.0",
     "insane": "^2.6.2",
-    "marked": "^12.0.2"
+    "marked": "^14.0.0"
   }
 }

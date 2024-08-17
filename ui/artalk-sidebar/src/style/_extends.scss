@@ -68,14 +68,6 @@
   padding: 0 20px;
 
   .atk-item {
-    &:hover {
-      background: var(--at-color-bg-grey);
-    }
-
-    &:not(:last-child) {
-      margin-right: 15px;
-    }
-
     cursor: pointer;
     user-select: none;
     display: flex;
@@ -84,6 +76,14 @@
     border-radius: 2px;
     align-items: center;
     justify-content: center;
+
+    &:hover {
+      background: var(--at-color-bg-grey);
+    }
+
+    &:not(:last-child) {
+      margin-right: 15px;
+    }
 
     &.atk-item-close {
       margin-left: 10px;

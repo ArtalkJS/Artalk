@@ -57,9 +57,6 @@
   }
 
   pre code {
-    * {
-      font-family: $codeFont;
-    }
     line-height: $line-height;
     display: block;
     padding: 10px 15px;
@@ -67,6 +64,10 @@
     background-color: var(--at-color-bg-grey);
     color: var(--at-color-font);
     margin: 0;
+
+    * {
+      font-family: $codeFont;
+    }
   }
 
   a {

@@ -10,7 +10,7 @@ executors:
       - image: cimg/base:stable
   node:
     docker:
-      - image: "cimg/node:20.14.0"
+      - image: "cimg/node:20.16.0"
   go:
     docker:
       - image: cimg/go:1.22.3

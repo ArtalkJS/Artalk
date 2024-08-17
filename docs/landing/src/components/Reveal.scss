@@ -1,4 +1,6 @@
 .reveal {
+  opacity: 0;
+
   @keyframes fadeInUp {
     0% {
       opacity: 0;
@@ -10,7 +12,6 @@
       transform: translateZ(0);
     }
   }
-  opacity: 0;
 
   &.animate {
     animation-name: fadeInUp;

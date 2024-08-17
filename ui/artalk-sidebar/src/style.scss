@@ -140,10 +140,6 @@ body {
     }
 
     button {
-      &:hover {
-        background: var(--at-color-bg-light);
-      }
-
       text-align: center;
       color: var(--at-color-light);
       background: transparent;
@@ -156,6 +152,10 @@ body {
       margin: 0 5px;
       width: 100%;
       user-select: none;
+
+      &:hover {
+        background: var(--at-color-bg-light);
+      }
     }
 
     input,

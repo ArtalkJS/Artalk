@@ -2,12 +2,10 @@
 import path from 'node:path'
 import url from 'node:url'
 import { fixupPluginRules } from '@eslint/compat'
-// eslint-disable-next-line import-x/namespace
-import { FlatCompat } from '@eslint/eslintrc'
+import pluginCompat from 'eslint-plugin-compat'
 import eslintJs from '@eslint/js'
 import pluginTS from '@typescript-eslint/eslint-plugin'
 import eslintConfigPrettier from 'eslint-config-prettier'
-import pluginFunctional from 'eslint-plugin-functional/flat'
 import pluginImportX from 'eslint-plugin-import-x'
 import pluginReact from 'eslint-plugin-react'
 import pluginReactHooks from 'eslint-plugin-react-hooks'
@@ -20,27 +18,12 @@ import vueParser from 'vue-eslint-parser'
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 const tsProjects = ['./tsconfig.base.json', './ui/*/tsconfig.json', './docs/*/tsconfig.json']
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: eslintJs.configs.recommended,
-})
-
 export default eslintTs.config(
   eslintJs.configs.recommended,
   ...eslintTs.configs.recommended,
   // @ts-expect-error the type of `pluginVue` is not compatible with the latest `eslint` v9 package yet
   ...pluginVue.configs['flat/recommended'],
-  // FIXME: TypeError SEE https://github.com/amilajack/eslint-plugin-compat/pull/609#issuecomment-2123734301
-  // ...compat.extends('plugin:compat/recommended'),
-  // {
-  //   ...pluginFunctional.configs.recommended,
-  //   // FIXME: https://github.com/eslint-functional/eslint-plugin-functional/issues/766#issuecomment-1904715609
-  //   rules: {
-  //     ...pluginFunctional.configs.recommended.rules,
-  //     'functional/immutable-data': 'off',
-  //     'functional/no-return-void': 'off',
-  //   },
-  // },
+  pluginCompat.configs['flat/recommended'],
 
   /* Global Ignores */
   {
@@ -87,13 +70,15 @@ export default eslintTs.config(
       ...pluginImportX.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/no-unsafe-declaration-merging': 'off',
+      '@typescript-eslint/no-unused-expressions': [
+        'error',
+        { allowShortCircuit: true, allowTernary: true },
+      ],
       'vue/multi-word-component-names': 'off',
       'import-x/no-named-as-default-member': 'off',
       'import-x/no-named-as-default': 'off',
       'import-x/default': 'off', // fix https://github.com/import-js/eslint-plugin-import/issues/1800
       'import-x/order': 'warn',
-      // 'import-x/no-default-export': 'warn'
     },
     settings: {
       'import-x/parsers': {

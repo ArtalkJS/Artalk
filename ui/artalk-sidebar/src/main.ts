@@ -2,8 +2,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
 import Artalk from 'artalk'
-// eslint-disable-next-line import-x/named
-import { createRouter, createWebHashHistory } from 'vue-router/auto'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import { routes } from 'vue-router/auto-routes'
 import messages from './i18n/messages'
 import 'artalk/dist/Artalk.css'
 import './style.scss'
@@ -35,8 +35,10 @@ app.use(i18n)
 setArtalk(initArtalk())
 
 // router
+// @see https://github.com/posva/unplugin-vue-router
 const router = createRouter({
   history: createWebHashHistory(),
+  routes,
 })
 
 app.use(router)

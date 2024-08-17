@@ -1,28 +1,23 @@
 {
-  "name": "vue",
+  "name": "vue-test",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build --force"
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "artalk": "workspace:*",
-    "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue": "^3.4.38",
+    "vue-router": "^4.4.3"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",
-    "@types/node": "^20.12.5",
-    "@vitejs/plugin-vue": "^5.0.4",
+    "@types/node": "^22.4.0",
+    "@vitejs/plugin-vue": "^5.1.2",
     "@vue/tsconfig": "^0.5.1",
-    "npm-run-all2": "^6.1.2",
-    "typescript": "~5.4.4",
-    "vite": "^5.2.8",
-    "vue-tsc": "^2.0.11"
+    "vue-tsc": "^2.0.29"
   }
 }

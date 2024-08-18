@@ -1,3 +1,4 @@
+import type { Marked } from 'marked'
 import type {
   SidebarShowPayload,
   EventPayloadMap,
@@ -32,7 +33,7 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   conf: ArtalkConfig
 
   /** marked 依赖对象 */
-  getMarked(): any | undefined
+  getMarked(): Marked | undefined
 
   /** 获取 API 以供 HTTP 请求 */
   getApi(): Api

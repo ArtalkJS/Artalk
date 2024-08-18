@@ -1,3 +1,4 @@
+import type { MarkedOptions } from 'marked'
 import type { CommentData } from './data'
 import type { EditorApi } from './editor'
 import type { I18n } from '@/i18n'
@@ -133,7 +134,7 @@ export interface ArtalkConfig {
   markedReplacers?: ((raw: string) => string)[]
 
   /** Marked options */
-  markedOptions?: any // MarkedOptions
+  markedOptions?: MarkedOptions
 
   /** 列表请求参数修改器 */
   listFetchParamsModifier?: (params: any) => void

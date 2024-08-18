@@ -86,7 +86,7 @@ router.beforeEach((to, from) => {
 })
 
 router.afterEach((to, from, failure) => {
-  curtPage.value = to.name.replace(/^\//, '')
+  curtPage.value = String(to.name).replace(/^\//, '')
 })
 
 function showSearch() {

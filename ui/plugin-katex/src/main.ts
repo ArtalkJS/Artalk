@@ -1,83 +1,103 @@
 import { ArtalkPlugin } from 'artalk'
 import katex from 'katex'
+import type { TokenizerExtension } from 'marked'
 
 if (import.meta.env.DEV) {
+  // only dev mode, because some client may not support or require css import
   import('katex/dist/katex.min.css')
 }
 
+const inlineMathStart = /\$.*?\$/
+const inlineMathReg = /^\$(.*?)\$/
+const blockMathReg = /^(?:\s{0,3})\$\$((?:[^\n]|\n[^\n])+?)\n{0,1}\$\$/
+
 export const ArtalkKatexPlugin: ArtalkPlugin = (ctx) => {
+  // Using placeholder to replace the tex expressions in order to bypass the HTML sanitization
+  let curtIdx = 0
+  const next = () => `__atk_katex_id_${curtIdx++}__`
+  const texExprs: {
+    [key: string]: { isBlock: boolean; tex: string }
+  } = {}
+
+  const getPlaceholder = (tex: string, isBlock: boolean) => {
+    const key = next()
+    texExprs[key] = {
+      isBlock,
+      tex,
+    }
+    return key
+  }
+
+  const blockMathExtension: TokenizerExtension = {
+    name: 'blockMath',
+    level: 'block',
+    tokenizer: (src: string) => {
+      const cap = blockMathReg.exec(src)
+
+      if (cap) {
+        return {
+          type: 'html',
+          raw: cap[0],
+          text: getPlaceholder(cap[1], true),
+        }
+      }
+
+      return undefined
+    },
+  }
+
+  const inlineMathExtension: TokenizerExtension = {
+    name: 'inlineMath',
+    level: 'inline',
+    start: (src: string) => {
+      const idx = src.search(inlineMathStart)
+      return idx !== -1 ? idx : src.length
+    },
+    tokenizer: (src: string) => {
+      const cap = inlineMathReg.exec(src)
+
+      if (cap) {
+        return {
+          type: 'html',
+          raw: cap[0],
+          text: getPlaceholder(cap[1], false),
+        }
+      }
+
+      return undefined
+    },
+  }
+
   ctx.on('mounted', () => {
-    // @see https://github.com/markedjs/marked/issues/1538#issuecomment-575838181
     const markedInstance = ctx.getMarked() // must be called after `mounted` event
     if (!markedInstance) {
-      console.error('[artalk-plugin-katex] no marked instance found')
+      console.error('[artalk-plugin-katex] no marked instance found in artalk context')
       return
     }
 
-    let i = 0
-    const nextID = () => `__atk_katex_id_${i++}__`
-    const mathExpressions: {
-      [key: string]: { type: 'block' | 'inline'; expression: string }
-    } = {}
-
-    function replaceMathWithIds(text: string) {
-      // Allowing newlines inside of `$$...$$`
-      text = text.replace(/\$\$([\s\S]+?)\$\$/g, (_match, expression) => {
-        const id = nextID()
-        mathExpressions[id] = { type: 'block', expression }
-        return id
-      })
-
-      // Not allowing newlines or space inside of `$...$`
-      text = text.replace(/\$([^\n]+?)\$/g, (_match, expression) => {
-        const id = nextID()
-        mathExpressions[id] = { type: 'inline', expression }
-        return id
-      })
-
-      return text
-    }
-
-    // Marked render
-    const renderer = new markedInstance.Renderer() as any
-
-    const orgListitem = renderer.listitem
-    const orgParagraph = renderer.paragraph
-    const orgTablecell = renderer.tablecell
-    const orgCodespan = renderer.codespan
-    const orgText = renderer.text
-
-    renderer.listitem = (text: string, task: boolean, checked: boolean) =>
-      orgListitem(replaceMathWithIds(text), task, checked)
-    renderer.paragraph = (text: string) => orgParagraph(replaceMathWithIds(text))
-    renderer.tablecell = (content: string, flags: any) =>
-      orgTablecell(replaceMathWithIds(content), flags)
-    renderer.codespan = (code: string) => orgCodespan(replaceMathWithIds(code))
-    renderer.text = (text: string) => orgText(replaceMathWithIds(text)) // Inline level, maybe unneeded
+    markedInstance.use({
+      extensions: [blockMathExtension, inlineMathExtension],
+    })
 
     ctx.updateConf({
       markedReplacers: [
         (text) => {
-          text = text.replace(/(__atk_katex_id_\d+__)/g, (_match, capture) => {
-            const v = mathExpressions[capture]
-            const type = v.type
-            let expression = v.expression
+          text = text.replace(/(__atk_katex_id_\d+__)/g, (_match, key) => {
+            const { tex, isBlock } = texExprs[key]
 
-            // replace <br/> tag to \n
-            expression = expression.replace(/<br\s*\/?>/gm, '\n')
-
-            return katex.renderToString(expression, {
-              displayMode: type === 'block',
-            })
+            try {
+              return katex.renderToString(tex, {
+                displayMode: isBlock,
+              })
+            } catch (e) {
+              console.error('[artalk-plugin-katex] failed to render katex:', e)
+              return `<code>${e}</code>`
+            }
           })
 
           return text
         },
       ],
-    })
-
-    markedInstance.use({
-      renderer,
     })
   })
 }

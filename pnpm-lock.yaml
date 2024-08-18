@@ -301,6 +301,9 @@ importers:
 
   ui/plugin-katex:
     dependencies:
+      '@types/katex':
+        specifier: ^0.16.7
+        version: 0.16.7
       artalk:
         specifier: workspace:^
         version: link:../artalk
@@ -311,9 +314,9 @@ importers:
       '@artalk/plugin-kit':
         specifier: workspace:^
         version: link:../plugin-kit
-      '@types/katex':
-        specifier: 0.16.7
-        version: 0.16.7
+      marked:
+        specifier: ^14.0.0
+        version: 14.0.0
 
   ui/plugin-kit:
     dependencies:

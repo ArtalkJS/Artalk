@@ -117,7 +117,12 @@
   },
   "devDependencies": {
     "hanabi": "^0.4.0",
-    "insane": "^2.6.2",
+    "insane": "^2.6.2"
+  },
+  "dependencies": {
+    "marked": "^14.0.0"
+  },
+  "peerDependencies": {
     "marked": "^14.0.0"
   }
 }

@@ -1,4 +1,5 @@
-import { marked as libMarked, MarkedOptions } from 'marked'
+import { Marked } from 'marked'
+import type { MarkedOptions } from 'marked'
 
 import { sanitize } from './sanitizer'
 import { renderCode } from './highlight'
@@ -7,7 +8,7 @@ import type { ArtalkConfig } from '@/types'
 
 type Replacer = (raw: string) => string
 
-let instance: typeof libMarked | undefined
+let instance: Marked | undefined
 let replacers: Replacer[] = []
 
 const markedOptions: MarkedOptions = {
@@ -33,13 +34,14 @@ export interface MarkedInitOptions {
 /** 初始化 marked */
 export function initMarked(options: MarkedInitOptions) {
   try {
-    if (!libMarked.name) return
+    if (!Marked.name) return
   } catch {
     return
   }
 
   // @see https://github.com/markedjs/marked/blob/4afb228d956a415624c4e5554bb8f25d047676fe/src/Tokenizer.js#L329
-  libMarked.setOptions({
+  const marked = new Marked()
+  marked.setOptions({
     renderer: getRenderer({
       imgLazyLoad: options.imgLazyLoad,
     }),
@@ -47,7 +49,7 @@ export function initMarked(options: MarkedInitOptions) {
     ...options.markedOptions,
   })
 
-  instance = libMarked
+  instance = marked
 }
 
 /** 解析 markdown */

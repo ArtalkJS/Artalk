@@ -6,6 +6,7 @@ const props = defineProps<{
 }>()
 
 const customValue = ref<string[]>([])
+const disabled = ref(false)
 
 onMounted(() => {
   sync()
@@ -13,7 +14,14 @@ onMounted(() => {
 
 function sync() {
   const value = settings.get().getCustom(props.node.path)
-  customValue.value = value && typeof value.toJSON === 'function' ? value.toJSON() : []
+  disabled.value = !!settings.get().getEnvByPath(props.node.path)
+  if (typeof value === 'object' && 'toJSON' in value && typeof value.toJSON === 'function') {
+    customValue.value = value.toJSON()
+  } else if (typeof value === 'string') {
+    customValue.value = value.split(' ')
+  } else {
+    customValue.value = []
+  }
 }
 
 function save() {
@@ -43,21 +51,25 @@ function add() {
       <input
         type="text"
         :value="String(item)"
+        :disabled="disabled"
         @change="onChange(index, ($event.target as any).value)"
       />
-      <button class="act-btn" @click="remove(index)">-</button>
+      <button v-if="!disabled" class="act-btn" @click="remove(index)">-</button>
     </div>
-    <div class="act-grp">
+    <div v-if="!disabled" class="act-grp">
       <button class="act-btn" @click="add()">+</button>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+.arr-grp {
+  width: 100%;
+}
+
 .arr-item {
   position: relative;
   margin-bottom: 20px;
-  margin-left: 10px;
   padding-right: 50px;
 
   .act-btn {

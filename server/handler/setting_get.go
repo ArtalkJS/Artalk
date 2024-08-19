@@ -2,15 +2,18 @@ package handler
 
 import (
 	"os"
+	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
+	"github.com/samber/lo"
 )
 
 type ResponseSettingGet struct {
-	Yaml string `json:"yaml"`
+	Yaml string   `json:"yaml"`
+	Envs []string `json:"envs"`
 }
 
 // @Id           GetSettings
@@ -30,8 +33,14 @@ func SettingGet(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("Config file read failed"))
 		}
 
+		// get all environment variables which start with ATK_
+		envs := lo.Filter(os.Environ(), func(v string, _ int) bool {
+			return strings.HasPrefix(v, "ATK_")
+		})
+
 		return common.RespData(c, ResponseSettingGet{
 			Yaml: string(dat),
+			Envs: envs,
 		})
 	}))
 }

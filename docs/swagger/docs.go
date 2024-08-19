@@ -4970,9 +4970,16 @@ const docTemplate = `{
         "handler.ResponseSettingGet": {
             "type": "object",
             "required": [
+                "envs",
                 "yaml"
             ],
             "properties": {
+                "envs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "yaml": {
                     "type": "string"
                 }

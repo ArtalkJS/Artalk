@@ -18,49 +18,48 @@ const ContainerID = 'artalk-container'
 
 beforeAll(() => {
   // mock fetch
-  global.fetch = vi.fn().mockImplementation((url: string, init: RequestInit) =>
-    Promise.resolve({
-      ok: true,
-      status: 200,
-      json: () => {
-        let resp: any = {}
+  global.fetch = vi.fn().mockImplementation((url: string, init: RequestInit) => {
+    let resp: any = {}
 
-        const map = {
-          '/api/v2/conf': {
-            frontend_conf: RemoteConf,
-            version: {},
-          },
-          '/api/v2/stat': { data: { '/': 0 } },
-          '/api/v2/pages/pv': { pv: 2 },
-          '/api/v2/notifies': { notifies: [], count: 0 },
-          '/api/v2/comments': {
-            comments: [],
-            count: 0,
-            roots_count: 0,
-            page: {
-              id: 4,
-              admin_only: false,
-              key: '/',
-              url: '/',
-              title: 'Artalk DEMO',
-              site_name: 'ArtalkDocs',
-              vote_up: 0,
-              vote_down: 0,
-              pv: 1,
-            },
-          },
-        }
-
-        const path = new URL(url).pathname
-
-        Object.entries(map).forEach(([k, v]) => {
-          if (path.startsWith(k)) resp = v
-        })
-
-        return Promise.resolve(resp)
+    const map = {
+      '/api/v2/conf': {
+        frontend_conf: RemoteConf,
+        version: {},
       },
-    }),
-  ) as any
+      '/api/v2/stat': { data: { '/': 0 } },
+      '/api/v2/pages/pv': { pv: 2 },
+      '/api/v2/notifies': { notifies: [], count: 0 },
+      '/api/v2/comments': {
+        comments: [],
+        count: 0,
+        roots_count: 0,
+        page: {
+          id: 4,
+          admin_only: false,
+          key: '/',
+          url: '/',
+          title: 'Artalk DEMO',
+          site_name: 'ArtalkDocs',
+          vote_up: 0,
+          vote_down: 0,
+          pv: 1,
+        },
+      },
+    }
+
+    const path = new URL(url).pathname
+    Object.entries(map).forEach(([k, v]) => {
+      if (path.startsWith(k)) resp = v
+    })
+
+    const mockResponse = new Response(JSON.stringify(resp), {
+      status: 200,
+      statusText: 'OK',
+      headers: { 'Content-Type': 'application/json' },
+    })
+
+    return Promise.resolve(mockResponse)
+  })
 })
 
 describe('Artalk instance', () => {

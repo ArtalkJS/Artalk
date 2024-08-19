@@ -1012,9 +1012,14 @@ definitions:
     type: object
   handler.ResponseSettingGet:
     properties:
+      envs:
+        items:
+          type: string
+        type: array
       yaml:
         type: string
     required:
+    - envs
     - yaml
     type: object
   handler.ResponseSettingTemplate:

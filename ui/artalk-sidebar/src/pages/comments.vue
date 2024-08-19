@@ -104,9 +104,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .comments-wrap {
-  overflow-y: auto;
-  height: 100%;
-
   :deep(.atk-comment-wrap) {
     border-bottom: 1px solid var(--at-color-border);
   }

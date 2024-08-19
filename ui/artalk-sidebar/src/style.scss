@@ -12,9 +12,6 @@ body {
 }
 
 .atk-sidebar {
-  .atk-sidebar-inner {
-  }
-
   .atk-list {
     .atk-main-editor {
       margin-top: -4px;
@@ -74,7 +71,7 @@ body {
       padding: 0 10px;
       margin: 0;
       border: none;
-      border-bottom: 2px solid var(--at-color-border);
+      border-bottom: 1px solid var(--at-color-border);
       outline: none;
       width: 100%;
       margin-bottom: 25px;
@@ -86,13 +83,13 @@ body {
 
       &[type='file'] {
         background: transparent;
-        border: 2px solid var(--at-color-border);
+        border: 1px solid var(--at-color-border);
         cursor: pointer;
         position: relative;
         padding: 6px 15px;
         line-height: 0;
         margin-bottom: 17px;
-        border-radius: 50px;
+        border-radius: 4px;
 
         &:hover {
           background: var(--at-color-bg-light);
@@ -104,7 +101,7 @@ body {
         background: transparent;
         color: var(--at-color-font);
         border: 0;
-        border-right: 2px solid var(--at-color-border);
+        border-right: 1px solid var(--at-color-border);
         border-left: 0;
         border-top: 0;
         border-bottom: 0;
@@ -143,12 +140,12 @@ body {
       text-align: center;
       color: var(--at-color-light);
       background: transparent;
-      border: 2px solid var(--at-color-bg-light);
+      border: 1px solid var(--at-color-bg-light);
       line-height: $form-height;
       cursor: pointer;
       outline: none;
       padding: 0 20px;
-      border-radius: 50px;
+      border-radius: 4px;
       margin: 0 5px;
       width: 100%;
       user-select: none;

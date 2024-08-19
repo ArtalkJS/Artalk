@@ -192,7 +192,7 @@ function onSiteItemRemove(id: number) {
         height: 65px;
         width: 65px;
         line-height: 65px;
-        background: #687a86;
+        background: #5b6f7e;
         color: #fff;
         border-radius: 4px;
       }
@@ -232,6 +232,13 @@ function onSiteItemRemove(id: number) {
     border-top: 1px solid var(--at-color-border);
     border-bottom: 1px solid var(--at-color-border);
     margin-bottom: -10px;
+
+    @media (min-width: 1024px) {
+      border-left: 1px solid var(--at-color-border);
+      border-right: 1px solid var(--at-color-border);
+      border-radius: 4px;
+      padding-top: 10px;
+    }
 
     .atk-header {
       display: flex;

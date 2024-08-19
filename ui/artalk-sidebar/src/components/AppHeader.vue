@@ -42,7 +42,14 @@ const logout = () => {
     </template>
 
     <div class="title">
-      <div class="text">{{ isAdmin ? t('ctrlCenter') : t('msgCenter') }}</div>
+      <div class="text show-mobile">{{ isAdmin ? t('ctrlCenter') : t('msgCenter') }}</div>
+      <div class="text show-desktop">
+        <template v-if="!isAdmin">{{ t('msgCenter') }}</template>
+        <template v-else-if="!!curtSite">{{ curtSite }}</template>
+        <template v-else>
+          <img src="../assets/favicon.png" class="artalk-logo" draggable="false" />
+        </template>
+      </div>
     </div>
 
     <div class="close-btn"></div>
@@ -56,6 +63,10 @@ const logout = () => {
   flex-direction: row;
   align-items: center;
   border-bottom: 1px solid var(--at-color-border);
+
+  @media (min-width: 1024px) {
+    background: #f6f8fa;
+  }
 
   .avatar {
     position: relative;
@@ -122,6 +133,28 @@ const logout = () => {
       color: var(--at-color-deep);
       font-size: 20px;
 
+      &.show-mobile {
+        display: none;
+      }
+
+      &.show-desktop {
+        display: inline-block;
+
+        &::after {
+          display: none;
+        }
+      }
+
+      @media (max-width: 1023px) {
+        &.show-mobile {
+          display: inline-block;
+        }
+
+        &.show-desktop {
+          display: none;
+        }
+      }
+
       &::after {
         content: '';
         position: absolute;
@@ -132,6 +165,17 @@ const logout = () => {
         background: #0083ff;
         opacity: 0.4;
       }
+    }
+
+    .artalk-logo {
+      border-radius: 2px;
+      height: 40px;
+      width: 40px;
+      background: #697182;
+      text-align: center;
+      line-height: 30px;
+      font-size: 13px;
+      color: #fff;
     }
   }
 

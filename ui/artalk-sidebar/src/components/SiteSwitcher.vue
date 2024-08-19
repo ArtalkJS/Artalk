@@ -132,6 +132,11 @@ function logout() {
   overflow-y: auto;
   transition: all 0.2s ease;
 
+  @media (min-width: 1024px) {
+    left: 10px;
+    max-width: 260px;
+  }
+
   .atk-sites {
     display: flex;
     flex-direction: column;
@@ -149,7 +154,7 @@ function logout() {
         width: 20px;
         height: 20px;
         line-height: 20px;
-        background: #697182;
+        background: #5b6f7e;
         margin: 10px;
         border-radius: 3px;
         text-align: center;

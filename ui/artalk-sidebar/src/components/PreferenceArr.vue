@@ -70,13 +70,13 @@ function add() {
 .arr-item {
   position: relative;
   margin-bottom: 20px;
-  padding-right: 50px;
+  padding-right: 40px;
 
   .act-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    right: 10px;
+    right: 0;
   }
 }
 

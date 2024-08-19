@@ -5,6 +5,7 @@ export class Settings {
   private tree: OptionNode
   private flatten: { [path: string]: OptionNode }
   private customs = shallowRef<YAML.Document.Parsed<YAML.ParsedNode>>()
+  private envs = shallowRef<{ [key: string]: string }>()
 
   constructor(yamlObj: YAML.Document.Parsed) {
     this.tree = getTree(yamlObj)
@@ -27,7 +28,35 @@ export class Settings {
     this.customs.value = YAML.parseDocument(yamlStr)
   }
 
+  setEnvs(envs: string[]) {
+    const envsObj: { [key: string]: string } = {}
+    envs.forEach((env) => {
+      const [key, value] = env.split('=')
+      envsObj[key] = value
+    })
+    this.envs.value = envsObj
+  }
+
+  getEnv(key: string) {
+    return this.envs.value?.[key] || null
+  }
+
+  getEnvByPath(path: string) {
+    // replace `.` to `_` and uppercase
+    // replace `ATK_TRUSTED_DOMAINS_0` to `ATK_TRUSTED_DOMAINS`
+    // replace `ATK_ADMIN_USERS_0_NAME` to `ATK_ADMIN_USERS`
+    return this.getEnv(
+      'ATK_' +
+        path
+          .replace(/\./g, '_')
+          .toUpperCase()
+          .replace(/(_\d+?_\w+|_\d+)$/, ''),
+    )
+  }
+
   getCustom(path: string) {
+    const env = this.getEnvByPath(path)
+    if (env) return env
     return this.customs.value?.getIn(path.split('.')) as any
   }
 

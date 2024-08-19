@@ -33,6 +33,7 @@ onMounted(() => {
     tree.value = settings.init(yamlObj).getTree()
     // console.log(tree.value)
     settings.get().setCustoms(custom.data.yaml)
+    settings.get().setEnvs(custom.data.envs)
   })
 })
 

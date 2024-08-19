@@ -114,6 +114,7 @@ function selectUser(username: string) {
 
 <style lang="scss" scoped>
 .login-dialog {
+  z-index: 11;
   position: fixed;
   display: flex;
   flex-direction: column;

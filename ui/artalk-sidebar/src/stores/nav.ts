@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { ArtalkType } from 'artalk'
 import { artalk } from '../global'
+import { useMobileWidth } from '@/hooks/MobileWidth'
 
 type TabsObj = { [name: string]: string }
 
@@ -67,6 +68,12 @@ export const useNavStore = defineStore('nav', () => {
     searchResetEvent.value = searchResetEvt
   }
 
+  useRouter().beforeEach((to, from) => {
+    isSearchEnabled.value = false
+  })
+
+  const isMobile = useMobileWidth()
+
   return {
     sites,
     curtPage,
@@ -88,5 +95,6 @@ export const useNavStore = defineStore('nav', () => {
     searchEvent,
     searchResetEvent,
     enableSearch,
+    isMobile,
   }
 })

@@ -7,6 +7,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AppHeader: typeof import('./src/components/AppHeader.vue')['default']
+    AppNavigation: typeof import('./src/components/AppNavigation.vue')['default']
+    AppNavigationDesktop: typeof import('./src/components/AppNavigationDesktop.vue')['default']
+    AppNavigationMobile: typeof import('./src/components/AppNavigationMobile.vue')['default']
+    AppNavigationSearch: typeof import('./src/components/AppNavigationSearch.vue')['default']
     FileUploader: typeof import('./src/components/FileUploader.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
     ItemTextEditor: typeof import('./src/components/ItemTextEditor.vue')['default']
@@ -22,7 +27,6 @@ declare module 'vue' {
     SiteCreate: typeof import('./src/components/SiteCreate.vue')['default']
     SiteEditor: typeof import('./src/components/SiteEditor.vue')['default']
     SiteSwitcher: typeof import('./src/components/SiteSwitcher.vue')['default']
-    Tab: typeof import('./src/components/Tab.vue')['default']
     UserEditor: typeof import('./src/components/UserEditor.vue')['default']
   }
 }

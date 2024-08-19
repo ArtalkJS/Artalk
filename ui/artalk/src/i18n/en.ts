@@ -67,7 +67,7 @@ const en = {
 
   /* Sidebar */
   msgCenter: 'Messages',
-  ctrlCenter: 'Admin',
+  ctrlCenter: 'Dashboard',
 
   /* Auth */
   noAccountPrompt: "Don't have an account?",

@@ -174,12 +174,13 @@ function submit() {
 
 <style scoped lang="scss">
 .user-editor-layer {
-  z-index: 201;
+  z-index: 5;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  min-height: calc(100vh - 160px);
   background: var(--at-color-bg);
   overflow-y: auto;
 }

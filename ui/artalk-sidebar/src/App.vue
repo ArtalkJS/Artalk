@@ -87,12 +87,14 @@ const darkMode = ref(bootParams.darkMode)
     class="app-wrap artalk atk-sidebar"
     :class="{ 'atk-dark-mode': darkMode }"
   >
-    <Header />
-    <Tab />
+    <AppHeader />
+    <AppNavigation />
 
     <div class="main">
       <div ref="scrollableArea" class="atk-sidebar-inner">
-        <router-view />
+        <div class="atk-sidebar-container">
+          <router-view />
+        </div>
       </div>
       <LoadingLayer v-if="nav.isPageLoading" />
     </div>
@@ -100,6 +102,11 @@ const darkMode = ref(bootParams.darkMode)
 </template>
 
 <style scoped lang="scss">
+$headerHeight: 61px;
+$subHeaderHeight: 41px;
+$maxWidth: 1100px;
+$sidebarWidth: 280px;
+
 .app-wrap {
   background: var(--at-color-bg);
   color: var(--at-color-font);
@@ -110,8 +117,12 @@ const darkMode = ref(bootParams.darkMode)
 
   .atk-sidebar-inner {
     overflow-y: auto;
-    height: calc(100vh - 61px - 41px);
+    height: calc(100vh - $headerHeight - $subHeaderHeight);
     padding-bottom: 50px;
+
+    @media (min-width: 1024px) {
+      height: calc(100vh - $headerHeight - 51px);
+    }
   }
 
   // 分页条占位
@@ -123,15 +134,25 @@ const darkMode = ref(bootParams.darkMode)
     left: 0;
     background: var(--at-color-bg);
     border-top: 1px solid var(--at-color-border);
+  }
+}
 
-    // A patch for loading
-    // Because the parent position set to fixed,
-    // the loading layer will be fixed to the area if position is absolute (which is default for atk-loading)
-    .atk-loading {
-      position: fixed;
-      top: 102px;
-      height: calc(100% - 102px);
-    }
+:deep(.atk-sidebar-container) {
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  :deep(.atk-sidebar-container) {
+    max-width: $maxWidth;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: calc($maxWidth + $sidebarWidth * 2)) {
+  :deep(.atk-sidebar-container) {
+    margin-left: $sidebarWidth;
+    max-width: calc(100% - $sidebarWidth);
   }
 }
 </style>

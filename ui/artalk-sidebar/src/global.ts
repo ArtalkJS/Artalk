@@ -48,7 +48,7 @@ export function initArtalk() {
     useBackendConf: true,
     pvAdd: false,
     remoteConfModifier: (conf) => {
-      conf.noComment = `<div class="atk-sidebar-no-content">No Content</div>` // TODO i18n t('noComment')
+      conf.noComment = `<div class="atk-sidebar-no-content"></div>` // TODO i18n t('noComment')
       conf.flatMode = true
       conf.pagination = {
         pageSize: 20,

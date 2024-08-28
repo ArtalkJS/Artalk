@@ -4,6 +4,7 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -59,7 +60,7 @@ func AuthEmailLogin(app *core.App, router fiber.Router) {
 
 			// Check password
 			if !user.CheckPassword(p.Password) {
-				return common.RespError(c, 401, i18n.T("Login failed"))
+				return common.RespError(c, 401, i18n.T("Password is incorrect"))
 			}
 		} else {
 			return common.RespError(c, 400, "Password or code is required")
@@ -72,7 +73,8 @@ func AuthEmailLogin(app *core.App, router fiber.Router) {
 		// Get user token
 		jwtToken, err := common.LoginGetUserToken(user, app.Conf().AppKey, app.Conf().LoginTimeout)
 		if err != nil {
-			return common.RespError(c, 500, err.Error())
+			log.Error("[LoginGetUserToken] ", err)
+			return common.RespError(c, 500, i18n.T("Login failed"))
 		}
 
 		return common.RespData(c, ResponseUserLogin{

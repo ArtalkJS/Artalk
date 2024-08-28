@@ -139,6 +139,13 @@ export interface ArtalkConfig {
   /** 列表请求参数修改器 */
   listFetchParamsModifier?: (params: any) => void
 
+  /**
+   * Date formatter for custom date format
+   * @param date - Date object
+   * @returns Formatted date string
+   */
+  dateFormatter?: (date: Date) => string
+
   // TODO consider merge list related config into one object, or flatten all to keep simple (keep consistency)
   remoteConfModifier?: (conf: Partial<ArtalkConfig>) => void
   listUnreadHighlight?: boolean

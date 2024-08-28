@@ -34,6 +34,7 @@ export function createCommentNode(
     vote: ctx.conf.vote,
     voteDown: ctx.conf.voteDown,
     uaBadge: ctx.conf.uaBadge,
+    dateFormatter: ctx.conf.dateFormatter,
 
     // TODO: move to plugin folder and remove from core
     getApi: () => ctx.getApi(),

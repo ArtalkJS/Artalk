@@ -26,6 +26,7 @@ export interface CommentOptions {
   heightLimit: ArtalkConfig['heightLimit']
   avatarURLBuilder: ArtalkConfig['avatarURLBuilder']
   scrollRelativeTo: ArtalkConfig['scrollRelativeTo']
+  dateFormatter: ArtalkConfig['dateFormatter']
 
   // TODO: Move to plugin folder and remove from core
   getApi: () => Api
@@ -215,7 +216,8 @@ export default class CommentNode {
 
   /** 获取格式化后的日期 */
   public getDateFormatted() {
-    return Utils.timeAgo(new Date(this.data.date), $t)
+    const date = new Date(this.data.date)
+    return this.opts.dateFormatter?.(date) || Utils.timeAgo(date, $t)
   }
 
   /** 获取用户 UserAgent 信息 */

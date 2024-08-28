@@ -105,6 +105,28 @@ Artalk 支持多站点统一管理，此项用于站点隔离。
 
 详情参考：[多语言](./i18n.md)
 
+### dateFormatter
+
+**时间格式化函数**
+
+- 类型：`(date: Date) => string`
+- 默认值：`undefined`
+
+默认显示几秒前、几分钟前、几小时前、几天前，如果超过 7 天则显示具体日期，格式为 `YYYY-MM-DD`。
+
+你也可以自定义时间格式化函数，以下的例子演示了使用 [toLocaleString](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString) 和 [dayjs](https://day.js.org/) 格式化时间。
+
+```js
+import dayjs from 'dayjs'
+
+Artalk.init({
+  dateFormatter: (date) => {
+    // return date.toLocaleString()  // '2024/8/28 17:51:31'
+    return dayjs(date).fromNow("MMMM D, YYYY h:mm A")  // 'August 28, 2024 5:51 PM'
+  },
+})
+```
+
 ## 请求
 
 ### reqTimeout

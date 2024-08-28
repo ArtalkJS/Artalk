@@ -45,6 +45,7 @@ class Context implements ContextApi {
     this.$root = conf.el as HTMLElement
     this.$root.classList.add('artalk')
     this.$root.innerHTML = ''
+    conf.darkMode && this.$root.classList.add('atk-dark-mode')
 
     this.data = new DataManager(this.events)
 

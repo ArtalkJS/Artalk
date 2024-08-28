@@ -13,7 +13,6 @@ declare module 'vue' {
     AppNavigationMobile: typeof import('./src/components/AppNavigationMobile.vue')['default']
     AppNavigationSearch: typeof import('./src/components/AppNavigationSearch.vue')['default']
     FileUploader: typeof import('./src/components/FileUploader.vue')['default']
-    Header: typeof import('./src/components/Header.vue')['default']
     ItemTextEditor: typeof import('./src/components/ItemTextEditor.vue')['default']
     LoadingLayer: typeof import('./src/components/LoadingLayer.vue')['default']
     LogTerminal: typeof import('./src/components/LogTerminal.vue')['default']

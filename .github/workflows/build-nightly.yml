@@ -52,7 +52,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9.7.1
+          version: 9.9.0
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -175,7 +175,7 @@ jobs:
           name: ui-src
 
       - name: Build and push by digest
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         id: build
         with:
           context: .

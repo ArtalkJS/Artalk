@@ -24,8 +24,8 @@ cd Artalk
 
 为了开发 Artalk 的前端和后端，请安装以下工具：
 
-- [Node.js](https://nodejs.org/en/) (>= 20.16.0)
-- [PNPM](https://pnpm.io/) (>= 9.7.1)
+- [Node.js](https://nodejs.org/en/) (>= 20.17.0)
+- [PNPM](https://pnpm.io/) (>= 9.9.0)
 - [Go](https://golang.org/) (>= 1.22)
 - [Docker](https://www.docker.com/) (>= 20.10.0)（可选）
 - [Docker Compose](https://docs.docker.com/compose/) (>= 1.29.0)（可选）

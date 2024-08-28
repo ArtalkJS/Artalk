@@ -1,6 +1,6 @@
 {
   "name": "@artalk/plugin-lightbox",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "MIT",
   "description": "The image lightbox plugin for artalk",
   "type": "module",

@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "artalk": "workspace:^",
-    "solid-js": "^1.8.17"
+    "solid-js": "^1.8.22"
   },
   "devDependencies": {
     "@artalk/plugin-kit": "workspace:^",

@@ -3344,6 +3344,12 @@ const docTemplate = `{
                         "description": "The offset for pagination",
                         "name": "offset",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search keywords",
+                        "name": "search",
+                        "in": "query"
                     }
                 ],
                 "responses": {

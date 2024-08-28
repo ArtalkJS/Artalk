@@ -3172,6 +3172,10 @@ paths:
         in: query
         name: offset
         type: integer
+      - description: Search keywords
+        in: query
+        name: search
+        type: string
       produces:
       - application/json
       responses:

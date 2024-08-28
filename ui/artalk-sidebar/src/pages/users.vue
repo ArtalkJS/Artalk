@@ -6,7 +6,6 @@ import { artalk, bootParams } from '../global'
 import Pagination from '../components/Pagination.vue'
 
 const nav = useNavStore()
-const router = useRouter()
 const { curtTab } = storeToRefs(nav)
 const users = ref<ArtalkType.UserDataForAdmin[]>([])
 const { t } = useI18n()
@@ -14,10 +13,12 @@ const { t } = useI18n()
 const pageSize = ref(30)
 const pageTotal = ref(0)
 const pagination = ref<InstanceType<typeof Pagination>>()
-const curtType = ref('all')
+const curtType = ref<'all' | 'admin' | 'in_conf' | undefined>('all')
 
 const addingUser = ref(false)
 const editingUser = ref<ArtalkType.UserDataForAdmin | undefined>()
+
+const search = ref('')
 
 onMounted(() => {
   nav.updateTabs(
@@ -43,22 +44,36 @@ onMounted(() => {
       addingUser.value = false
       editingUser.value = undefined
 
-      curtType.value = tab
+      curtType.value = tab as any
       pagination.value?.reset()
       reqUsers(0)
     }
   })
 
   reqUsers(0)
+
+  // Users search
+  nav.enableSearch(
+    (value: string) => {
+      search.value = value
+      reqUsers(0)
+    },
+    () => {
+      if (search.value === '') return
+      search.value = ''
+      reqUsers(0)
+    },
+  )
 })
 
 function reqUsers(offset: number) {
   nav.setPageLoading(true)
   artalk?.ctx
     .getApi()
-    .users.getUsers(curtType.value as any, {
+    .users.getUsers(curtType.value, {
       offset,
       limit: pageSize.value,
+      search: search.value,
     })
     .then((res) => {
       pageTotal.value = res.data.count

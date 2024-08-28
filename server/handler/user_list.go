@@ -5,11 +5,13 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 type ParamsUserList struct {
-	Limit  int `query:"limit" json:"limit" validate:"optional"`   // The limit for pagination
-	Offset int `query:"offset" json:"offset" validate:"optional"` // The offset for pagination
+	Limit  int    `query:"limit" json:"limit" validate:"optional"`   // The limit for pagination
+	Offset int    `query:"offset" json:"offset" validate:"optional"` // The offset for pagination
+	Search string `query:"search" json:"search" validate:"optional"` // Search keywords
 }
 
 type ResponseAdminUserList struct {
@@ -38,24 +40,30 @@ func UserList(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		// 准备 query
+		// Prepare query
 		q := app.Dao().DB().Model(&entity.User{}).Order("created_at DESC")
 
-		// 总共条数
+		// Total count
 		var total int64
 		q.Count(&total)
 
-		// 类型筛选
+		// User type
 		if listType == "admin" {
 			q = q.Where("is_admin = ?", true)
 		} else if listType == "in_conf" {
 			q = q.Where("is_in_conf = ?", true)
 		}
 
-		// 数据分页
+		// Search
+		q = q.Scopes(func(d *gorm.DB) *gorm.DB {
+			return d.Where("LOWER(name) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) OR badge_name = ? OR last_ip = ?",
+				"%"+p.Search+"%", "%"+p.Search+"%", p.Search, p.Search)
+		})
+
+		// Pagination
 		q = q.Scopes(Paginate(p.Offset, p.Limit))
 
-		// 查找
+		// Find users
 		var users []entity.User
 		q.Find(&users)
 

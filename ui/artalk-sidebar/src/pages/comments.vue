@@ -10,7 +10,6 @@ const user = useUserStore()
 const nav = useNavStore()
 const { curtTab } = storeToRefs(nav)
 const { site: curtSite } = storeToRefs(user)
-const { t } = useI18n()
 
 const search = ref('')
 
@@ -81,7 +80,7 @@ onMounted(() => {
 
   listEl.value?.append($el)
 
-  // 搜索功能
+  // Comments search
   nav.enableSearch(
     (value: string) => {
       search.value = value

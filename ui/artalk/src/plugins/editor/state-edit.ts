@@ -30,7 +30,7 @@ export default class StateEdit extends EditorPlug {
         req: async () => {
           const saveData = {
             content: this.kit.useEditor().getContentFinal(),
-            nick: this.kit.useUI().$nick.value,
+            nick: this.kit.useUI().$name.value,
             email: this.kit.useUI().$email.value,
             link: this.kit.useUI().$link.value,
           }
@@ -69,7 +69,7 @@ export default class StateEdit extends EditorPlug {
 
     ui.$header.style.display = 'none' // TODO: support modify header information
 
-    ui.$nick.value = comment.nick || ''
+    ui.$name.value = comment.nick || ''
     ui.$email.value = comment.email || ''
     ui.$link.value = comment.link || ''
 
@@ -91,8 +91,8 @@ export default class StateEdit extends EditorPlug {
 
     this.comment = undefined
 
-    const { nick, email, link } = this.kit.useUser().getData()
-    ui.$nick.value = nick
+    const { name, email, link } = this.kit.useUser().getData()
+    ui.$name.value = name
     ui.$email.value = email
     ui.$link.value = link
 

@@ -1,22 +1,13 @@
-import type { ContextApi } from 'artalk'
+import type { ContextApi, LocalUser } from 'artalk'
 
 interface ResponseLoginData {
-  user: {
-    name: string
-    email: string
-    link: string
-    is_admin: boolean
-  }
+  user: LocalUser
   token: string
 }
 
-export const loginByApiRes = (ctx: ContextApi, data: ResponseLoginData) => {
-  const { user, token } = data
+export const loginByApiRes = (ctx: ContextApi, { user, token }: ResponseLoginData) => {
   ctx.get('user').update({
-    nick: user.name,
-    email: user.email,
-    link: user.link,
-    isAdmin: user.is_admin,
+    ...user,
     token,
   })
 }
@@ -29,10 +20,10 @@ export const loginByToken = (ctx: ContextApi, token: string) => {
     .then((res) => {
       const { user } = res.data
       ctx.get('user').update({
-        nick: user.name,
+        name: user.name,
         email: user.email,
         link: user.link,
-        isAdmin: user.is_admin,
+        is_admin: user.is_admin,
       })
     })
 }

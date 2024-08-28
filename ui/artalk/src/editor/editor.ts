@@ -31,7 +31,7 @@ class Editor extends Component implements EditorApi {
   }
 
   getHeaderInputEls() {
-    return { nick: this.ui.$nick, email: this.ui.$email, link: this.ui.$link }
+    return { name: this.ui.$name, email: this.ui.$email, link: this.ui.$link }
   }
 
   getContentFinal() {

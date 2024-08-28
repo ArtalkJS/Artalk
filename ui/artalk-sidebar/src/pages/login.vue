@@ -51,12 +51,8 @@ function login(username?: string) {
       password: userForm.value.password,
     })
     .then((res) => {
-      const user = res.data.user
       artalk.ctx.get('user').update({
-        nick: user.name,
-        email: user.email,
-        link: user.link,
-        isAdmin: user.is_admin,
+        ...res.data.user,
         token: res.data.token,
       })
       useUserStore().sync()

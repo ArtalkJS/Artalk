@@ -8,7 +8,7 @@ const AdminChecker: Checker<{ token: string }> = {
   async request(checker, inputVal) {
     return (
       await checker.getApi().user.login({
-        name: checker.getUser().getData().nick,
+        name: checker.getUser().getData().name,
         email: checker.getUser().getData().email,
         password: inputVal,
       })
@@ -21,7 +21,7 @@ const AdminChecker: Checker<{ token: string }> = {
 
   onSuccess(checker, res, inputVal, formEl) {
     checker.getUser().update({
-      isAdmin: true,
+      is_admin: true,
       token: res.token,
     })
     checker.getOpts().onReload()

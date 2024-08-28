@@ -67,7 +67,7 @@ function syncArtalk(artalk: Artalk) {
     .getApi()
     .user.getUserStatus({
       email: artalkUserData.email,
-      name: artalkUserData.nick,
+      name: artalkUserData.name,
     })
     .then((res) => {
       if (res.data.is_admin && !res.data.is_login) {
@@ -76,7 +76,7 @@ function syncArtalk(artalk: Artalk) {
         // 将全部通知标记为已读
         artalk.ctx.getApi().notifies.markAllNotifyRead({
           email: artalkUserData.email,
-          name: artalkUserData.nick,
+          name: artalkUserData.name,
         })
       }
     })

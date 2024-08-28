@@ -9,12 +9,12 @@ export const SidebarBtn: ArtalkPlugin = (ctx) => {
     const user = ctx.get('user').getData()
 
     // 已输入个人信息
-    if (!!user.nick && !!user.email) {
+    if (!!user.name && !!user.email) {
       $openSidebarBtn.classList.remove('atk-hide')
 
       // update button text (normal user or admin)
       const $btnText = $openSidebarBtn.querySelector<HTMLElement>('.atk-text')
-      if ($btnText) $btnText.innerText = !user.isAdmin ? $t('msgCenter') : $t('ctrlCenter')
+      if ($btnText) $btnText.innerText = !user.is_admin ? $t('msgCenter') : $t('ctrlCenter')
     } else {
       $openSidebarBtn.classList.add('atk-hide')
     }

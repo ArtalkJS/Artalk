@@ -34,7 +34,7 @@ export default class Closable extends EditorPlug {
           Utils.createElement(`<div class="atk-comment-closed">${$t('onlyAdminCanReply')}</div>`),
         )
 
-    if (!this.kit.useUser().getData().isAdmin) {
+    if (!this.kit.useUser().getData().is_admin) {
       this.kit.useUI().$textarea.style.display = 'none'
       this.kit.useEvents().trigger('panel-close')
       this.kit.useUI().$bottom.style.display = 'none'

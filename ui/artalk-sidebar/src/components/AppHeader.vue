@@ -8,7 +8,7 @@ const nav = useNavStore()
 const router = useRouter()
 const user = useUserStore()
 const { t } = useI18n()
-const { site: curtSite, isAdmin, avatar } = storeToRefs(user)
+const { site: curtSite, is_admin: isAdmin, avatar } = storeToRefs(user)
 
 const avatarClickHandler = () => {
   if (!isOpenFromSidebar()) logout()

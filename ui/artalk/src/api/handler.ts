@@ -16,6 +16,7 @@ export interface ApiHandlers {
     action: T,
     handler: (data: ApiHandlerPayload[T]) => Promise<void>,
   ) => void
+  remove: (action: PayloadKey) => void
   get: () => ApiHandler[]
 }
 
@@ -24,6 +25,10 @@ export function createApiHandlers(): ApiHandlers {
   return {
     add: (action, handler) => {
       handlers.push({ action, handler })
+    },
+    remove: (action) => {
+      const index = handlers.findIndex((h) => h.action === action)
+      if (index !== -1) handlers.splice(index, 1)
     },
     get: () => handlers,
   }

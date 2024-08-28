@@ -48,6 +48,21 @@ function syncArtalk(artalk: Artalk) {
   const artalkUser = artalk.ctx.get('user')
   const artalkUserData = artalkUser.getData()
 
+  const logout = () => {
+    user.logout()
+    nextTick(() => {
+      router.replace('/login')
+    })
+  }
+
+  // Remove login failed dialog if sidebar
+  artalk.ctx.getApiHandlers().remove('need_login')
+  artalk.ctx.getApiHandlers().add('need_login', async () => {
+    logout()
+    throw new Error('Need login')
+  })
+
+  // Check user status
   artalk.ctx
     .getApi()
     .user.getUserStatus({
@@ -56,10 +71,7 @@ function syncArtalk(artalk: Artalk) {
     })
     .then((res) => {
       if (res.data.is_admin && !res.data.is_login) {
-        user.logout()
-        nextTick(() => {
-          router.replace('/login')
-        })
+        logout()
       } else {
         // 将全部通知标记为已读
         artalk.ctx.getApi().notifies.markAllNotifyRead({

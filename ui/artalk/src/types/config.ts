@@ -155,22 +155,23 @@ export interface ArtalkConfig {
 }
 
 /**
- * 本地持久化用户数据
- * @note 始终保持一层结构，不支持多层结构
+ * Local User Data (in localStorage)
+ *
+ * @note Keep flat for easy handling
  */
 export interface LocalUser {
-  /** 昵称 */
-  nick: string
+  /** Username (aka. Nickname) */
+  name: string
 
-  /** 邮箱 */
+  /** Email */
   email: string
 
-  /** 链接 */
+  /** Link (aka. Website) */
   link: string
 
-  /** TOKEN */
+  /** Token (for authorization) */
   token: string
 
-  /** 是否为管理员 */
-  isAdmin: boolean
+  /** Admin flag */
+  is_admin: boolean
 }

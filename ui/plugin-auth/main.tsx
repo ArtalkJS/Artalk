@@ -30,7 +30,7 @@ export const ArtalkAuthPlugin: ArtalkPlugin = (ctx) => {
 
   const onSkip = () => {
     ctx.get('editor').getUI().$header.style.display = ''
-    ctx.get('editor').getUI().$nick.focus()
+    ctx.get('editor').getUI().$name.focus()
     ctx.updateConf({
       beforeSubmit: undefined,
     })

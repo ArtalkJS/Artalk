@@ -14,13 +14,19 @@ export default class HeaderUser extends EditorPlug {
       this.kit.useUser().update({ [field]: $input.value.trim() })
 
       // remote fetch user info
-      if (field === 'nick' || field === 'email') this.fetchUserInfo() // must after update user data, since fetchUserInfo() will use User.data
+      if (field === 'name' || field === 'email') this.fetchUserInfo() // must after update user data, since fetchUserInfo() will use User.data
+    }
+
+    const placeholders = {
+      name: $t('nick'),
+      email: $t('email'),
+      link: $t('link'),
     }
 
     this.kit.useMounted(() => {
       Object.entries(this.kit.useEditor().getHeaderInputEls()).forEach(([key, $input]) => {
         // set placeholder
-        $input.placeholder = `${$t(key as any)}`
+        $input.placeholder = placeholders[key]
 
         // sync header values from User.data
         $input.value = this.kit.useUser().getData()[key] || ''

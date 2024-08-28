@@ -15,11 +15,11 @@ class User {
 
     // Initialize
     this.data = {
-      nick: localUser.nick || '',
+      name: localUser.name || localUser.nick || '', // nick is deprecated (for historical compatibility)
       email: localUser.email || '',
       link: localUser.link || '',
       token: localUser.token || '',
-      isAdmin: localUser.isAdmin || false,
+      is_admin: localUser.is_admin || localUser.isAdmin || false,
     }
   }
 
@@ -40,18 +40,18 @@ class User {
   /**
    * Logout
    *
-   * @description Logout will clear login status, but not clear user data (nick, email, link)
+   * @description Logout will clear login status, but not clear user data (name, email, link)
    */
   logout() {
     this.update({
       token: '',
-      isAdmin: false,
+      is_admin: false,
     })
   }
 
   /** Check if user has filled basic data */
   checkHasBasicUserInfo() {
-    return !!this.data.nick && !!this.data.email
+    return !!this.data.name && !!this.data.email
   }
 }
 

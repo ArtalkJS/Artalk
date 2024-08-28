@@ -15,7 +15,7 @@ const search = ref('')
 
 onMounted(() => {
   // 初始化导航条
-  if (user.isAdmin) {
+  if (user.is_admin) {
     nav.updateTabs(
       {
         all: 'all',
@@ -55,7 +55,7 @@ onMounted(() => {
     listFetchParamsModifier: (params) => {
       params.site_name = curtSite.value // 站点名
 
-      let scope = user.isAdmin ? 'site' : 'user'
+      let scope = user.is_admin ? 'site' : 'user'
       let type = curtTab.value
 
       if (curtTab.value === 'personal_all') {

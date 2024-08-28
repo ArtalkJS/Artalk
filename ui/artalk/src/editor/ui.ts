@@ -3,7 +3,7 @@ import EditorHTML from './editor.html?raw'
 
 const Sel = {
   $header: '.atk-header',
-  $nick: '.atk-header [name="nick"]',
+  $name: '.atk-header [name="name"]',
   $email: '.atk-header [name="email"]',
   $link: '.atk-header [name="link"]',
   $textareaWrap: '.atk-textarea-wrap',
@@ -19,7 +19,7 @@ const Sel = {
 
 export interface EditorUI extends Record<keyof typeof Sel, HTMLElement> {
   $el: HTMLElement
-  $nick: HTMLInputElement
+  $name: HTMLInputElement
   $email: HTMLInputElement
   $link: HTMLInputElement
   $textarea: HTMLTextAreaElement

@@ -7,10 +7,10 @@ const EditorUser = ({ ctx }: { ctx: ContextApi }) => {
     window.confirm(ctx.$t('logoutConfirm')) &&
       ctx.get('user').update({
         token: '',
-        nick: '',
+        name: '',
         email: '',
         link: '',
-        isAdmin: false,
+        is_admin: false,
       })
   }
 
@@ -33,7 +33,7 @@ const EditorUser = ({ ctx }: { ctx: ContextApi }) => {
         <div class="atk-editor-user">
           <div class="atk-user-profile-btn atk-user-btn">
             {/* <div class="atk-avatar" style={{ "background-image": `url('https://avatars.githubusercontent.com/u/76841221?s=200&v=4')` }}></div> */}
-            <div class="atk-name">{user().nick}</div>
+            <div class="atk-name">{user().name}</div>
           </div>
           <div class="atk-logout atk-user-btn" onClick={logoutHandler} aria-label="Logout">
             <svg

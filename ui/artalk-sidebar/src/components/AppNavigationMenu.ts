@@ -79,7 +79,7 @@ export interface SearchStateApi {
  */
 export const useNavigationMenu = (props: NavigationStoreProps = {}) => {
   const router = useRouter()
-  const { isAdmin } = storeToRefs(useUserStore())
+  const { is_admin: isAdmin } = storeToRefs(useUserStore())
   const { tabs, curtPage, curtTab, isMobile, isSearchEnabled } = storeToRefs(useNavStore())
 
   /**

@@ -1,5 +1,5 @@
 import Artalk from 'artalk'
-import type { ArtalkType } from 'artalk'
+import type { LocalUser } from 'artalk'
 
 export let artalk: Artalk | null = null
 
@@ -24,10 +24,19 @@ function getBootParams() {
     window.history.replaceState({}, '', window.location.pathname)
   }
 
+  const userFromURL = JSON.parse(p.get('user') || '{}')
+  const user: LocalUser = {
+    name: userFromURL.name || '',
+    email: userFromURL.email || '',
+    link: userFromURL.link || '',
+    token: userFromURL.token || '',
+    is_admin: userFromURL.is_admin || false,
+  }
+
   return {
+    user,
     pageKey: p.get('pageKey') || '',
     site: p.get('site') || '',
-    user: <ArtalkType.LocalUser>JSON.parse(p.get('user') || '{}'),
     view: p.get('view') || '',
     viewParams: <any>null,
     darkMode: p.get('darkMode') === '1',

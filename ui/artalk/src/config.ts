@@ -105,7 +105,7 @@ export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi)
     getApiToken: () => ctx?.get('user').getData().token,
     userInfo: ctx?.get('user').checkHasBasicUserInfo()
       ? {
-          name: ctx?.get('user').getData().nick,
+          name: ctx?.get('user').getData().name,
           email: ctx?.get('user').getData().email,
         }
       : undefined,

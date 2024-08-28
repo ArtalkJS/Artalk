@@ -3,7 +3,7 @@ import type { ArtalkPlugin } from '@/types'
 export const AdminOnlyElem: ArtalkPlugin = (ctx) => {
   const scanApply = () => {
     applyAdminOnlyEls(
-      ctx.get('user').getData().isAdmin,
+      ctx.get('user').getData().is_admin,
       getAdminOnlyEls({
         $root: ctx.$root,
       }),

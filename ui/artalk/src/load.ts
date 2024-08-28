@@ -138,7 +138,7 @@ export function onLoadErr(ctx: ContextApi, err: any) {
     errMsg: err.msg || String(err),
     errData: err.data,
     retryFn: () => load(ctx),
-    onOpenSidebar: ctx.get('user').getData().isAdmin
+    onOpenSidebar: ctx.get('user').getData().is_admin
       ? () =>
           ctx.showSidebar({
             view: sidebarOpenView as any,

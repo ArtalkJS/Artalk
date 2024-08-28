@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import settings, { patchOptionValue, type OptionNode } from '../lib/settings'
+import { isSensitiveConfigPath } from '@/lib/settings-sensitive'
 
 const props = defineProps<{
   node: OptionNode
@@ -7,6 +8,7 @@ const props = defineProps<{
 
 const value = ref('')
 const disabled = ref(false)
+const sensitiveHidden = ref(true)
 
 const { t } = useI18n()
 
@@ -21,12 +23,19 @@ function onChange() {
   settings.get().setCustom(props.node.path, v)
   // console.log('[SET]', props.node.path, v)
 }
+
+const envVariableName = computed(() => `ATK_${props.node.path.replace(/\./g, '_').toUpperCase()}`)
+const isSensitive = computed(() => isSensitiveConfigPath(props.node.path))
+
+function toggleSensitiveHidden() {
+  sensitiveHidden.value = !sensitiveHidden.value
+}
 </script>
 
 <template>
   <div class="pf-item">
     <div class="info">
-      <div class="title">{{ node.title }}</div>
+      <div class="title" :title="envVariableName">{{ node.title }}</div>
       <div v-if="node.subTitle" class="sub-title">{{ node.subTitle }}</div>
     </div>
 
@@ -40,7 +49,7 @@ function onChange() {
         <PreferenceArr :node="node" />
       </template>
 
-      <!-- 候选框 -->
+      <!-- Dropdown -->
       <template v-else-if="node.selector">
         <select v-model="value" :disabled="disabled" @change="onChange">
           <option v-for="(item, i) in node.selector" :key="i" :value="item">
@@ -49,14 +58,24 @@ function onChange() {
         </select>
       </template>
 
-      <!-- 开关 -->
+      <!-- Toggle -->
       <template v-else-if="node.type === 'boolean'">
         <input v-model="value" type="checkbox" :disabled="disabled" @change="onChange" />
       </template>
 
-      <!-- 文本框 -->
+      <!-- Text -->
       <template v-else>
-        <input v-model="value" type="text" :disabled="disabled" @change="onChange" />
+        <input
+          v-model="value"
+          :type="!isSensitive || !sensitiveHidden ? 'text' : 'password'"
+          :disabled="disabled"
+          @change="onChange"
+        />
+        <div v-if="isSensitive" class="input-suffix">
+          <div class="hidden-switch" @click="toggleSensitiveHidden()">
+            <i :class="['atk-icon', `atk-icon-eye-${sensitiveHidden ? 'on' : 'off'}`]" />
+          </div>
+        </div>
       </template>
     </div>
   </div>
@@ -111,6 +130,29 @@ function onChange() {
       left: 0;
       opacity: 0;
       transition: opacity 0.2s;
+    }
+
+    .input-suffix {
+      margin-left: 5px;
+    }
+
+    .hidden-switch {
+      cursor: pointer;
+      padding-left: 10px;
+
+      .atk-icon {
+        &::after {
+          background-color: #697182;
+        }
+
+        &.atk-icon-eye-on::after {
+          mask-image: url('@/assets/icon-eye-on.svg');
+        }
+
+        &.atk-icon-eye-off::after {
+          mask-image: url('@/assets/icon-eye-off.svg');
+        }
+      }
     }
   }
 }

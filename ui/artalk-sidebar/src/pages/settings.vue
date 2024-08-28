@@ -160,6 +160,7 @@ function save() {
   }
 
   :deep(input[type='text']),
+  :deep(input[type='password']),
   :deep(select) {
     font-size: 17px;
     width: 100%;

@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/ArtalkJS/Artalk/internal/config"
@@ -58,6 +59,10 @@ func GetApiPublicConfDataMap(app *core.App, c *fiber.Ctx) ConfData {
 
 	if app.Conf().Auth.Enabled {
 		pluginURLs = append(pluginURLs, "dist/plugins/artalk-plugin-auth.js")
+	}
+
+	if !slices.Contains([]string{"en", "zh-CN", ""}, app.Conf().Locale) {
+		pluginURLs = append(pluginURLs, fmt.Sprintf("dist/i18n/%s.js", app.Conf().Locale))
 	}
 
 	frontendConf["pluginURLs"] = handlePluginURLs(app,

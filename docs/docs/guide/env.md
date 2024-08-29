@@ -71,7 +71,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_APP_KEY** | `""` | 加密密钥 | app_key (加密密钥) |
 | **ATK_DEBUG** | `false` | 调试模式 | debug (调试模式) |
 | **ATK_HOST** | `"0.0.0.0"` | 服务器地址 | host (服务器地址) |
-| **ATK_LOCALE** | `"zh-CN"` | 语言 (可选：`["en", "zh-CN", "zh-TW", "jp", "fr", "ko", "ru"]`) | locale (语言) |
+| **ATK_LOCALE** | `"zh-CN"` | 语言 (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru"]`) | locale (语言) |
 | **ATK_LOGIN_TIMEOUT** | `259200` | 登录有效时长 (单位：秒) | login_timeout (登录有效时长) |
 | **ATK_PORT** | `23366` | 服务器端口 | port (服务器端口) |
 | **ATK_SITE_DEFAULT** | `"默认站点"` | 默认站点名 | site_default (默认站点名) |

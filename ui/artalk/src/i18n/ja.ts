@@ -1,7 +1,7 @@
 import { defineLocaleExternal } from './external'
 
 export default defineLocaleExternal(
-  'jp',
+  'ja',
   {
     /* Editor */
     placeholder: '内容を入力してください...',
@@ -71,7 +71,7 @@ export default defineLocaleExternal(
 
     /* Sidebar */
     msgCenter: '通知センター',
-    ctrlCenter: 'コントロールセンター',
+    ctrlCenter: 'ダッシュボード',
 
     /* Auth */
     noAccountPrompt: 'アカウントがありませんか？',
@@ -111,5 +111,5 @@ export default defineLocaleExternal(
     open: '開く',
     openName: '{name}を開く',
   },
-  ['jp-JP'],
+  ['ja-JP'],
 )

@@ -46,10 +46,6 @@ func SiteUpdate(app *core.App, router fiber.Router) {
 			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Site")}))
 		}
 
-		if strings.TrimSpace(p.Name) == "" {
-			return common.RespError(c, 400, i18n.T("{{name}} cannot be empty", Map{"name": "name"}))
-		}
-
 		// 重命名合法性检测
 		modifyName := p.Name != site.Name
 		if modifyName && !app.Dao().FindSite(p.Name).IsEmpty() {

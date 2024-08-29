@@ -1,8 +1,9 @@
 package handler
 
 import (
+	"cmp"
 	"errors"
-	"strings"
+	"fmt"
 
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/entity"
@@ -50,13 +51,6 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		if strings.TrimSpace(p.Name) == "" {
-			return common.RespError(c, 400, i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Nickname")}))
-		}
-		if strings.TrimSpace(p.Email) == "" {
-			return common.RespError(c, 400, i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Email")}))
-		}
-
 		if !utils.ValidateEmail(p.Email) {
 			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Email")}))
 		}
@@ -68,31 +62,28 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			return resp
 		}
 
+		// Prepare the arguments for creating comment
 		var (
-			ip      = c.IP()
-			ua      = string(c.Request().Header.UserAgent())
-			referer = string(c.Request().Header.Referer())
-			isAdmin = common.CheckIsAdminReq(app, c)
+			ip         = c.IP()
+			ua         = cmp.Or(p.UA, string(c.Request().Header.UserAgent())) // allows the patched UA from the post data
+			referer    = string(c.Request().Header.Referer())
+			isAdmin    = common.CheckIsAdminReq(app, c)
+			isVerified = true // for display the verified badge
 		)
 
-		// 允许传入修正后的 UA
-		if p.UA != "" {
-			ua = p.UA
-		}
-
-		// find page
+		// Find or create page
 		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
 		if page.Key == "" {
 			log.Error("[CommentCreate] FindCreatePage error")
 			return common.RespError(c, 500, i18n.T("Comment failed"))
 		}
 
-		// check if the user is allowed to comment
+		// Check the page and the user is allowed to comment (admin only check)
 		if isAllowed, resp := isAllowComment(app, c, p.Name, p.Email, page.AdminOnly); !isAllowed {
 			return resp
 		}
 
-		// check reply comment
+		// Check parent comment (reply a comment)
 		var parentComment entity.Comment
 		if p.Rid != 0 {
 			parentComment = app.Dao().FindComment(p.Rid)
@@ -107,31 +98,21 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			}
 		}
 
-		// find user
-		isVerified := true
-		user, err := common.GetUserByReq(app, c)
+		// Get the user data
+		user, err := common.GetUserByReq(app, c) // if token is provided and a login user
 		if errors.Is(err, common.ErrTokenNotProvided) {
 			// Anonymous user
 			isVerified = false
-			user, err = app.Dao().FindCreateUser(p.Name, p.Email, p.Link)
-			if err != nil {
-				log.Error("[CommentCreate] Create user error: ", err)
-				return common.RespError(c, 500, i18n.T("Comment failed"))
+			if user, err = getUpdateAnonymousUser(app, p.Name, p.Email, p.Link, ip, ua); err != nil {
+				return common.RespError(c, 500, err.Error())
 			}
-
-			// Update user
-			user.Link = p.Link
-			user.LastIP = ip
-			user.LastUA = ua
-			user.Name = p.Name // for 若用户修改用户名大小写
-			user.Email = p.Email
-			app.Dao().UpdateUser(&user)
 		} else if err != nil {
 			// Login user error
 			log.Error("[CommentCreate] Get user error: ", err)
 			return common.RespError(c, 500, i18n.T("Comment failed"))
 		}
 
+		// Create new comment entity
 		comment := entity.Comment{
 			Content:  p.Content,
 			PageKey:  page.Key,
@@ -150,50 +131,24 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			IsVerified:  isVerified,
 		}
 
-		// default comment type
+		// Set the default pending status
+		// (if not admin and the `PendingDefault` is enabled)
 		if !isAdmin && app.Conf().Moderator.PendingDefault {
-			// 不是管理员评论 && 配置开启评论默认待审
 			comment.IsPending = true
 		}
 
-		// save to database
+		// Save the comment
 		if err := app.Dao().CreateComment(&comment); err != nil {
 			log.Error("Save Comment error: ", err)
 			return common.RespError(c, 500, i18n.T("Comment failed"))
 		}
 
-		// 异步执行
-		go func() {
-			// Page Update
-			if app.Dao().CookPage(&page).URL != "" && page.Title == "" {
-				app.Dao().FetchPageFromURL(&page)
-			}
+		// Async jobs after comment created
+		go commentCreatedJobs(app, comment, parentComment, commentCreatedJobsArguments{
+			ip, ua, referer, isAdmin, isVerified, page,
+		})
 
-			// 垃圾检测
-			if !isAdmin { // 忽略检查管理员
-				// 同步执行
-				if antiSpamService, err := core.AppService[*core.AntiSpamService](app); err == nil {
-					antiSpamService.CheckAndBlock(&core.AntiSpamCheckPayload{
-						Comment:      &comment,
-						ReqReferer:   referer,
-						ReqIP:        ip,
-						ReqUserAgent: ua,
-					})
-				} else {
-					log.Error("[AntiSpamService] err: ", err)
-				}
-			}
-
-			// 通知发送
-			if notifyService, err := core.AppService[*core.NotifyService](app); err == nil {
-				if err := notifyService.Push(&comment, &parentComment); err != nil {
-					log.Error("[NotifyService] notify push err: ", err)
-				}
-			} else {
-				log.Error("[NotifyService] err: ", err)
-			}
-		}()
-
+		// Response the comment data
 		cookedComment := app.Dao().CookComment(&comment)
 		cookedComment = fetchIPRegionForComment(app, cookedComment)
 
@@ -233,4 +188,85 @@ func isAllowComment(app *core.App, c *fiber.Ctx, name string, email string, page
 	}
 
 	return true, nil
+}
+
+// Get and update anonymous user
+//
+// Call this function will create or find existing user, and update the user profile from the parameters.
+// If auth is enabled, but anonymous is disabled, it will return an error.
+// The column `link` will be updated only when social login is disabled. (GitHub issue #921)
+func getUpdateAnonymousUser(app *core.App, name string, email string, link string, ip string, ua string) (entity.User, error) {
+	// Check anonymous user is allowed
+	if app.Conf().Auth.Enabled && !app.Conf().Auth.Anonymous {
+		return entity.User{}, fmt.Errorf("anonymous user is not allowed")
+	}
+
+	// Create or find existing user
+	user, err := app.Dao().FindCreateUser(name, email, link)
+	if err != nil {
+		log.Error("[CommentCreate] Create user error: ", err)
+		return entity.User{}, fmt.Errorf("anonymous user create error")
+	}
+
+	// Update anonymous user profile
+	// (only works when social login is disabled, @see GitHub issue #921)
+	if !app.Conf().Auth.Enabled {
+		user.Link = link
+		user.LastIP = ip
+		user.LastUA = ua
+
+		// for modify the case of name but with the same name
+		user.Name = name
+		user.Email = email
+
+		app.Dao().UpdateUser(&user)
+	}
+
+	return user, nil
+}
+
+type commentCreatedJobsArguments struct {
+	IP         string
+	UA         string
+	Referer    string
+	IsAdmin    bool
+	IsVerified bool
+	Page       entity.Page
+}
+
+// The jobs after comment created (should call in async)
+//
+// It will do the following jobs:
+//  1. Page Update
+//  2. AntiSpam Check
+//  3. Send Notify (email, webhook, telegram, etc.)
+func commentCreatedJobs(app *core.App, comment entity.Comment, parentComment entity.Comment, args commentCreatedJobsArguments) {
+	// Page Update (if the original page title is empty and the URL is given)
+	if app.Dao().CookPage(&args.Page).URL != "" && args.Page.Title == "" {
+		go app.Dao().FetchPageFromURL(&args.Page)
+	}
+
+	// AntiSpam Check
+	if !args.IsAdmin { // if the user is an admin, skip the anti-spam check
+		if antiSpamService, err := core.AppService[*core.AntiSpamService](app); err == nil {
+			// The check and block is sync, if comment is blocked, the message will not be sent
+			antiSpamService.CheckAndBlock(&core.AntiSpamCheckPayload{
+				Comment:      &comment,
+				ReqReferer:   args.Referer,
+				ReqIP:        args.IP,
+				ReqUserAgent: args.UA,
+			})
+		} else {
+			log.Error("[AntiSpamService] err: ", err)
+		}
+	}
+
+	// Send Notify (email, webhook, telegram, etc.)
+	if notifyService, err := core.AppService[*core.NotifyService](app); err == nil {
+		if err := notifyService.Push(&comment, &parentComment); err != nil {
+			log.Error("[NotifyService] notify push err: ", err)
+		}
+	} else {
+		log.Error("[NotifyService] err: ", err)
+	}
 }

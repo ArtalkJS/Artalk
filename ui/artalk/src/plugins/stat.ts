@@ -68,7 +68,7 @@ async function loadCommentCount(opt: CountOptions) {
 
 /** Load PV count */
 async function loadPvCount(opt: CountOptions, cache?: CountCache) {
-  await loadStatCount({ opt, query: 'page_pv', containers: [opt.pvEl, '#ArtalkPv'], cache })
+  await loadStatCount({ opt, query: 'page_pv', containers: [opt.pvEl, '#ArtalkPV'], cache })
 }
 
 async function loadStatCount(args: {

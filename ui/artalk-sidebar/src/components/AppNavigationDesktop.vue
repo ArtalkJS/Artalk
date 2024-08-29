@@ -58,7 +58,7 @@ $colorMain: #8ecee2;
   top: 61px;
   height: calc(100vh - 61px - 41px);
   padding: 20px;
-  background: #fff;
+  background: var(--at-color-bg);
   border-right: 1px solid var(--at-color-border);
 
   @media (max-width: 1023px) {
@@ -82,7 +82,7 @@ $colorMain: #8ecee2;
 
     &.active {
       font-weight: bold;
-      color: #181a1e;
+      color: var(--at-color-deep);
 
       &::before {
         content: '';
@@ -99,7 +99,7 @@ $colorMain: #8ecee2;
 
     &:hover,
     &.active {
-      background: #f4f5f7;
+      background: var(--at-color-bg-grey-transl);
     }
 
     .icon {

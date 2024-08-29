@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useNavStore } from './stores/nav'
-import { bootParams } from './global'
 
 const nav = useNavStore()
-const { scrollableArea } = storeToRefs(nav)
+const { scrollableArea, darkMode } = storeToRefs(nav)
 
-const darkMode = ref(bootParams.darkMode)
+const query = window.matchMedia('(prefers-color-scheme: dark)')
 
-;(function initDarkModeWatchMedia() {
-  if (!window.matchMedia) return
-  const query = window.matchMedia('(prefers-color-scheme: dark)')
-  query.addEventListener('change', (e) => {
-    darkMode.value = e.matches
-  })
-})()
+onMounted(() => query.addEventListener('change', onDarkModeChange))
+onUnmounted(() => query.removeEventListener('change', onDarkModeChange))
+const onDarkModeChange = (e: MediaQueryListEvent) => {
+  // auto switch when localStorage is empty
+  if (localStorage.getItem('ATK_SIDEBAR_DARK_MODE') === null) darkMode.value = e.matches
+}
 </script>
 
 <template>
@@ -42,6 +40,7 @@ $sidebarWidth: 280px;
 .app-wrap {
   background: var(--at-color-bg);
   color: var(--at-color-font);
+  min-height: 100vh;
 }
 
 .main {

@@ -37,13 +37,23 @@ function getBootParams() {
     is_admin: userFromURL.is_admin || false,
   }
 
+  let darkMode: boolean
+  if (p.get('darkMode') != null) {
+    darkMode = p.get('darkMode') == '1'
+  } else {
+    darkMode =
+      localStorage.getItem('ATK_SIDEBAR_DARK_MODE') != null
+        ? localStorage.getItem('ATK_SIDEBAR_DARK_MODE') == '1'
+        : window.matchMedia('(prefers-color-scheme: dark)').matches
+  }
+
   return {
     user,
     pageKey: p.get('pageKey') || '',
     site: p.get('site') || '',
     view: p.get('view') || '',
     viewParams: <any>null,
-    darkMode: p.get('darkMode') === '1',
+    darkMode,
   }
 }
 

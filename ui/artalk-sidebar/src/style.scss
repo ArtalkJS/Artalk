@@ -11,6 +11,18 @@ body {
   font-family: $font-family;
 }
 
+.artalk {
+  --at-sidebar-header-bg: #f6f8fa;
+}
+
+.artalk.atk-dark-mode {
+  --at-sidebar-header-bg: #1e1e1e;
+
+  .atk-comment-wrap.atk-openable:hover {
+    background: #1e1e1e;
+  }
+}
+
 .atk-sidebar {
   .atk-list {
     .atk-main-editor {

@@ -9,6 +9,7 @@ const router = useRouter()
 const user = useUserStore()
 const { t } = useI18n()
 const { site: curtSite, is_admin: isAdmin, avatar } = storeToRefs(user)
+const { darkMode } = storeToRefs(nav)
 
 const avatarClickHandler = () => {
   if (!isOpenFromSidebar()) logout()
@@ -53,6 +54,11 @@ const logout = () => {
     </div>
 
     <div class="close-btn"></div>
+    <div
+      class="dark-mode-toggle"
+      :data-darkmode="darkMode ? 'on' : 'off'"
+      @click="nav.toggleDarkMode()"
+    ></div>
   </div>
   <SiteSwitcher v-if="isAdmin" />
 </template>
@@ -65,7 +71,7 @@ const logout = () => {
   border-bottom: 1px solid var(--at-color-border);
 
   @media (min-width: 1024px) {
-    background: #f6f8fa;
+    background: var(--at-sidebar-header-bg);
   }
 
   .avatar {
@@ -183,6 +189,47 @@ const logout = () => {
     width: 60px;
     height: 60px;
     margin-left: 10px;
+  }
+
+  .dark-mode-toggle {
+    display: none;
+    width: 60px;
+    height: 60px;
+    margin-left: 10px;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+
+    @media (min-width: 1024px) {
+      display: flex;
+    }
+
+    &:hover {
+      &::after {
+        background-color: var(--at-color-bg-grey);
+      }
+    }
+
+    &::after {
+      content: '';
+      display: block;
+      transition: background-color 0.2s;
+      width: 35px;
+      height: 35px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 60%;
+      border-radius: 50%;
+    }
+
+    &[data-darkmode='on']::after {
+      background-image: url('@/assets/icon-darkmode-on.svg');
+    }
+
+    &[data-darkmode='off']::after {
+      background-image: url('@/assets/icon-darkmode-off.svg');
+    }
   }
 }
 </style>

@@ -32,16 +32,6 @@ type ResponseCommentCreate struct {
 	entity.CookedComment
 }
 
-type CommentCreatingArguments struct {
-	IP         string
-	UA         string
-	Referer    string
-	IsAdmin    bool
-	IsVerified bool
-	Page       entity.Page
-	User       entity.User
-}
-
 // @Id           CreateComment
 // @Summary      Create Comment
 // @Description  Create a new comment
@@ -73,17 +63,16 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		}
 
 		// Prepare the arguments for creating comment
-		args := CommentCreatingArguments{
-			IP:         c.IP(),
-			UA:         cmp.Or(p.UA, string(c.Request().Header.UserAgent())), // allows the patched UA from the post data
-			Referer:    string(c.Request().Header.Referer()),
-			IsAdmin:    common.CheckIsAdminReq(app, c),
-			IsVerified: true, // for display the verified badge
-		}
+		var (
+			ip         = c.IP()
+			ua         = cmp.Or(p.UA, string(c.Request().Header.UserAgent())) // allows the patched UA from the post data
+			referer    = string(c.Request().Header.Referer())
+			isAdmin    = common.CheckIsAdminReq(app, c)
+			isVerified = true // for display the verified badge
+		)
 
 		// Find or create page
 		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
-		args.Page = page
 		if page.Key == "" {
 			log.Error("[CommentCreate] FindCreatePage error")
 			return common.RespError(c, 500, i18n.T("Comment failed"))
@@ -113,8 +102,8 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		user, err := common.GetUserByReq(app, c) // if token is provided and a login user
 		if errors.Is(err, common.ErrTokenNotProvided) {
 			// Anonymous user
-			args.IsVerified = false
-			if user, err = getUpdateAnonymousUser(app, p.Name, p.Email, p.Link, args.IP, args.UA); err != nil {
+			isVerified = false
+			if user, err = getUpdateAnonymousUser(app, p.Name, p.Email, p.Link, ip, ua); err != nil {
 				return common.RespError(c, 500, err.Error())
 			}
 		} else if err != nil {
@@ -130,8 +119,8 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			SiteName: p.SiteName,
 
 			UserID: user.ID,
-			IP:     args.IP,
-			UA:     args.UA,
+			IP:     ip,
+			UA:     ua,
 
 			Rid:    p.Rid,
 			RootID: app.Dao().FindCommentRootID(p.Rid),
@@ -139,12 +128,12 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			IsPending:   false,
 			IsCollapsed: false,
 			IsPinned:    false,
-			IsVerified:  args.IsVerified,
+			IsVerified:  isVerified,
 		}
 
 		// Set the default pending status
 		// (if not admin and the `PendingDefault` is enabled)
-		if !args.IsAdmin && app.Conf().Moderator.PendingDefault {
+		if !isAdmin && app.Conf().Moderator.PendingDefault {
 			comment.IsPending = true
 		}
 
@@ -155,7 +144,9 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		}
 
 		// Async jobs after comment created
-		go commentCreatedJobs(app, comment, parentComment, args)
+		go commentCreatedJobs(app, comment, parentComment, commentCreatedJobsArguments{
+			ip, ua, referer, isAdmin, isVerified, page,
+		})
 
 		// Response the comment data
 		cookedComment := app.Dao().CookComment(&comment)
@@ -234,13 +225,22 @@ func getUpdateAnonymousUser(app *core.App, name string, email string, link strin
 	return user, nil
 }
 
+type commentCreatedJobsArguments struct {
+	IP         string
+	UA         string
+	Referer    string
+	IsAdmin    bool
+	IsVerified bool
+	Page       entity.Page
+}
+
 // The jobs after comment created (should call in async)
 //
 // It will do the following jobs:
 //  1. Page Update
 //  2. AntiSpam Check
 //  3. Send Notify (email, webhook, telegram, etc.)
-func commentCreatedJobs(app *core.App, comment entity.Comment, parentComment entity.Comment, args CommentCreatingArguments) {
+func commentCreatedJobs(app *core.App, comment entity.Comment, parentComment entity.Comment, args commentCreatedJobsArguments) {
 	// Page Update (if the original page title is empty and the URL is given)
 	if app.Dao().CookPage(&args.Page).URL != "" && args.Page.Title == "" {
 		go app.Dao().FetchPageFromURL(&args.Page)

@@ -1,5 +1,5 @@
 ### build Artalk
-FROM golang:1.22.6-alpine3.20 as builder
+FROM golang:1.22.6-alpine3.20 AS builder
 
 WORKDIR /source
 
@@ -46,7 +46,7 @@ FROM alpine:3.20
 # by `docker build --build-arg="TZ=Other_Timezone ..."`
 ARG TZ="Asia/Shanghai"
 
-ENV TZ ${TZ}
+ENV TZ=${TZ}
 
 COPY --from=builder /source/bin/artalk /artalk
 

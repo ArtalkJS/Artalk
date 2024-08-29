@@ -1,50 +1,65 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { createI18n } from 'vue-i18n'
 import Artalk from 'artalk'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { routes } from 'vue-router/auto-routes'
-import messages from './i18n/messages'
+import { setupI18n } from './i18n'
 import 'artalk/dist/Artalk.css'
 import './style.scss'
 import App from './App.vue'
-import { setArtalk, initArtalk } from './global'
+import { setArtalk } from './global'
+import { setupArtalk, syncArtalkUser } from './artalk'
+import './lib/promise-polyfill'
 
-// i18n
-const i18n = createI18n({
-  legacy: false, // use i18n in Composition API
-  locale: 'en',
-  fallbackLocale: 'en',
-  messages,
-})
+// I18n
+// @see https://vue-i18n.intlify.dev
+const { i18n, setLocale } = setupI18n()
 
-// Artalk extension
-Artalk.use((ctx) => {
-  // Sync config from artalk instance to sidebar
-  ctx.watchConf(['locale'], (conf) => {
-    if (typeof conf.locale === 'string' && conf.locale !== 'auto')
-      i18n.global.locale.value = conf.locale as any
-  })
-})
-
-const app = createApp(App)
-
-app.use(i18n)
-
-// Init Artalk
-setArtalk(initArtalk())
-
-// router
+// Router
 // @see https://github.com/posva/unplugin-vue-router
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
 })
 
-app.use(router)
-
-// pinia
+// Pinia
+// @see https://pinia.vuejs.org
 const pinia = createPinia()
-app.use(pinia)
 
-app.mount('#app')
+// Artalk
+// @see https://artalk.js.org
+const artalkLoader = () =>
+  new Promise<Artalk>((notifyArtalkLoaded) => {
+    let artalkLoaded = false
+    let artalk: Artalk | null = null
+
+    Artalk.use((ctx) => {
+      // When artalk is ready, notify the loader and load the locale
+      ctx.watchConf(['locale'], async (conf) => {
+        if (typeof conf.locale === 'string' && conf.locale !== 'auto') await setLocale(conf.locale) // update i18n locale
+
+        if (!artalkLoaded) {
+          artalkLoaded = true
+          notifyArtalkLoaded(artalk!)
+        }
+      })
+    })
+
+    artalk = setupArtalk()
+  })
+
+// Mount Vue app
+;(async () => {
+  const artalk = await artalkLoader()
+  setArtalk(artalk)
+
+  const app = createApp(App)
+  app.use(i18n)
+  app.use(router)
+  app.use(pinia)
+
+  // user sync from artalk to sidebar
+  await syncArtalkUser(artalk, router)
+
+  app.mount('#app')
+})()

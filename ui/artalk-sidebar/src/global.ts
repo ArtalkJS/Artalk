@@ -11,7 +11,11 @@ export function getArtalk() {
   return artalk
 }
 
-// 启动参数
+/**
+ * Boot params from URL search params
+ *
+ * TODO: Refactor to a singleton store
+ */
 export const bootParams = getBootParams()
 
 function getBootParams() {
@@ -41,32 +45,6 @@ function getBootParams() {
     viewParams: <any>null,
     darkMode: p.get('darkMode') === '1',
   }
-}
-
-export function initArtalk() {
-  const artalkEl = document.createElement('div')
-  artalkEl.style.display = 'none'
-  document.body.append(artalkEl)
-
-  return Artalk.init({
-    el: artalkEl,
-    server: '../',
-    pageKey: bootParams.pageKey,
-    site: bootParams.site,
-    darkMode: bootParams.darkMode,
-    useBackendConf: true,
-    pvAdd: false,
-    remoteConfModifier: (conf) => {
-      conf.noComment = `<div class="atk-sidebar-no-content"></div>` // TODO i18n t('noComment')
-      conf.flatMode = true
-      conf.pagination = {
-        pageSize: 20,
-        readMore: false,
-        autoLoad: false,
-      }
-      conf.listUnreadHighlight = true
-    },
-  })
 }
 
 export function isOpenFromSidebar() {

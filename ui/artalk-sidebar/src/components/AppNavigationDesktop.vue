@@ -2,11 +2,12 @@
 /**
  * The part of the navigation bar that is displayed on desktop
  */
-import SearchIcon from '../assets/nav-icon-search.svg'
 import { useNavigationMenu } from './AppNavigationMenu'
 
 const nav = useNavigationMenu()
 const { t } = useI18n()
+
+const getIconCSSAttribute = (icon: string) => `url('${icon.replace(/'/g, "\\'")}')`
 </script>
 
 <template>
@@ -18,7 +19,7 @@ const { t } = useI18n()
       :class="{ active: pageName === nav.curtPage }"
       @click="nav.goPage(pageName as string)"
     >
-      <span class="icon" :style="{ background: `url('${page.icon}')` }"></span>
+      <span class="icon" :style="{ backgroundImage: getIconCSSAttribute(page.icon) }"></span>
       {{ t(page.label) }}
     </div>
   </div>
@@ -37,7 +38,7 @@ const { t } = useI18n()
 
       <div v-if="nav.isSearchEnabled" class="item-wrap search-btn" @click="nav.showSearch()">
         <div class="item">
-          <div class="icon" :style="{ background: `url('${SearchIcon}')` }"></div>
+          <div class="icon"></div>
         </div>
       </div>
     </div>
@@ -152,6 +153,10 @@ $colorMain: #8ecee2;
 
     &.search-btn {
       margin-left: auto;
+
+      .icon {
+        background-image: url('@/assets/nav-icon-search.svg');
+      }
     }
 
     .item {

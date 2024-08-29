@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"strings"
-
 	"github.com/ArtalkJS/Artalk/internal/core"
 	"github.com/ArtalkJS/Artalk/internal/dao"
 	"github.com/ArtalkJS/Artalk/internal/entity"
@@ -45,10 +43,6 @@ func PageUpdate(app *core.App, router fiber.Router) {
 		var p ParamsPageUpdate
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
-		}
-
-		if strings.TrimSpace(p.Key) == "" {
-			return common.RespError(c, 400, i18n.T("{{name}} cannot be empty", Map{"name": "key"}))
 		}
 
 		// check site exist

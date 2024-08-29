@@ -14,6 +14,7 @@ const { t } = useI18n()
 
 const pageSize = ref(20)
 const pageTotal = ref(0)
+const search = ref('')
 const pagination = ref<InstanceType<typeof Pagination>>()
 const showActBarBorder = ref(false)
 const refreshBtn = ref({
@@ -22,7 +23,12 @@ const refreshBtn = ref({
 })
 
 onMounted(() => {
-  nav.updateTabs({}, '')
+  nav.updateTabs(
+    {
+      all: 'all',
+    },
+    'all',
+  )
 
   reqPages(0)
 
@@ -39,6 +45,19 @@ onMounted(() => {
       startRefreshTaskWatchdog()
     }
   })
+
+  // Users search
+  nav.enableSearch(
+    (value: string) => {
+      search.value = value
+      reqPages(0)
+    },
+    () => {
+      if (search.value === '') return
+      search.value = ''
+      reqPages(0)
+    },
+  )
 
   nav.scrollableArea?.addEventListener('scroll', scrollHandler)
 })
@@ -63,6 +82,7 @@ function reqPages(offset: number) {
       site_name: curtSite.value,
       offset: offset,
       limit: pageSize.value,
+      search: search.value,
     })
     .then((res) => {
       pageTotal.value = res.data.count

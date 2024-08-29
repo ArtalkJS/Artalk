@@ -1488,6 +1488,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Search keywords",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "The site name of your content scope",
                         "name": "site_name",
                         "in": "query"

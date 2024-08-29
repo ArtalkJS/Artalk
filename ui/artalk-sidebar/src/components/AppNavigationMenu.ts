@@ -132,6 +132,8 @@ export const useNavigationMenu = (props: NavigationStoreProps = {}) => {
 
   router.afterEach((to, from, failure) => {
     syncCurtPage(to)
+    searchState.value = ''
+    searchState.hideSearch()
   })
 
   return reactive({

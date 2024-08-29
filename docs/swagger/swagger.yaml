@@ -2102,6 +2102,10 @@ paths:
         in: query
         name: offset
         type: integer
+      - description: Search keywords
+        in: query
+        name: search
+        type: string
       - description: The site name of your content scope
         in: query
         name: site_name

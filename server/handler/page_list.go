@@ -5,12 +5,14 @@ import (
 	"github.com/ArtalkJS/Artalk/internal/entity"
 	"github.com/ArtalkJS/Artalk/server/common"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 type ParamsPageList struct {
 	SiteName string `query:"site_name" json:"site_name" validate:"optional"` // The site name of your content scope
 	Limit    int    `query:"limit" json:"limit" validate:"optional"`         // The limit for pagination
 	Offset   int    `query:"offset" json:"offset" validate:"optional"`       // The offset for pagination
+	Search   string `query:"search" json:"search" validate:"optional"`       // Search keywords
 }
 
 type ResponsePageList struct {
@@ -36,7 +38,7 @@ func PageList(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		// 准备 query
+		// Prepare query
 		q := app.Dao().DB().Model(&entity.Page{}).Order("created_at DESC")
 		if p.SiteName != "" {
 			if _, ok, resp := common.CheckSiteExist(app, c, p.SiteName); !ok {
@@ -46,14 +48,20 @@ func PageList(app *core.App, router fiber.Router) {
 			q = q.Where("site_name = ?", p.SiteName)
 		}
 
-		// 总共条数
+		// Total count
 		var total int64
 		q.Count(&total)
 
-		// 数据分页
+		// Search
+		q = q.Scopes(func(d *gorm.DB) *gorm.DB {
+			return d.Where("LOWER(pages.key) LIKE LOWER(?) OR LOWER(title) LIKE LOWER(?)",
+				"%"+p.Search+"%", "%"+p.Search+"%")
+		})
+
+		// Pagination
 		q = q.Scopes(Paginate(p.Offset, p.Limit))
 
-		// 查找
+		// Find database
 		var pages []entity.Page
 		q.Find(&pages)
 

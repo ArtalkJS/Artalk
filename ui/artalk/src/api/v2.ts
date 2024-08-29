@@ -1528,6 +1528,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         limit?: number
         /** The offset for pagination */
         offset?: number
+        /** Search keywords */
+        search?: string
         /** The site name of your content scope */
         site_name?: string
       },

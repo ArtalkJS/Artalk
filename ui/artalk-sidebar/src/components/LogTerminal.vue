@@ -10,10 +10,12 @@ const emit = defineEmits<{
   (evt: 'back'): void
 }>()
 
+const { t } = useI18n()
+
 const logWrapEl = ref<HTMLElement | null>(null)
 
 onMounted(() => {
-  // 创建 iframe
+  // Create iframe element
   const frameName = `f_${+new Date()}`
   const $frame = document.createElement('iframe')
   $frame.className = 'atk-iframe'
@@ -25,7 +27,7 @@ onMounted(() => {
     useNavStore().refreshSites()
   }
 
-  // 创建临时表单，初始化 iframe
+  // Crate temporary form for submitting and load iframe page
   const $formTmp = document.createElement('form')
   $formTmp.style.display = 'none'
   $formTmp.setAttribute('method', 'post')
@@ -52,7 +54,7 @@ function back() {
 
 <template>
   <div class="atk-log-wrap">
-    <div class="atk-log-back-btn" @click="back()">返回</div>
+    <div class="atk-log-back-btn" @click="back()">{{ t('back') }}</div>
     <div ref="logWrapEl" class="atk-log"></div>
   </div>
 </template>

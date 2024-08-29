@@ -23,7 +23,7 @@ onMounted(() => {
 })
 
 function onInput() {
-  // 验证器
+  // Input value validator
   if (props.validator) {
     inputInvalid.value = props.validator(inputVal.value)
   }
@@ -31,7 +31,7 @@ function onInput() {
 
 function onKeyUp(evt: KeyboardEvent) {
   if (evt.key === 'Enter' || evt.keyCode === 13) {
-    // 按下回车键
+    // Press Enter to submit
     evt.preventDefault()
     submit('yes')
   }

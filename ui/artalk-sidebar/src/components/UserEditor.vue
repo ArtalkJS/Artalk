@@ -59,10 +59,9 @@ function close() {
 }
 
 function submit() {
-  // 执行保存
   isLoading.value = true
 
-  // 默认标签颜色
+  // The default badge color
   if (editUser.value!.badge_name !== '' && editUser.value!.badge_color === '') {
     editUser.value!.badge_color = '#0083ff'
   }
@@ -77,7 +76,7 @@ function submit() {
         emit('update', res.data)
       })
       .catch((e: ArtalkType.FetchError) => {
-        alert('用户创建错误：' + e.message)
+        alert(e.message)
       })
       .finally(() => {
         isLoading.value = false
@@ -93,7 +92,7 @@ function submit() {
         emit('update', res.data)
       })
       .catch((e: ArtalkType.FetchError) => {
-        alert('用户保存错误：' + e.message)
+        alert(e.message)
       })
       .finally(() => {
         isLoading.value = false

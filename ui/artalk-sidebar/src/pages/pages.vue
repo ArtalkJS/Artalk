@@ -98,7 +98,7 @@ async function getRefreshTaskStatus() {
 }
 
 function startRefreshTaskWatchdog() {
-  // 不完美的轮询更新状态
+  // TODO: Not perfect polling update status
   const timerID = window.setInterval(async () => {
     const d = await getRefreshTaskStatus()
 
@@ -124,7 +124,6 @@ async function refreshAllPages() {
   refreshBtn.value.isRun = true
   refreshBtn.value.statusText = t('updateReady')
 
-  // 发起任务
   try {
     await artalk!.ctx.getApi().pages.fetchAllPages({
       site_name: curtSite.value,

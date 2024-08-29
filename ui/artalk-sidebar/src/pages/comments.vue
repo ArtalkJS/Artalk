@@ -53,7 +53,7 @@ onMounted(() => {
 
   artalk!.ctx.updateConf({
     listFetchParamsModifier: (params) => {
-      params.site_name = curtSite.value // 站点名
+      params.site_name = curtSite.value
 
       let scope = user.is_admin ? 'site' : 'user'
       let type = curtTab.value

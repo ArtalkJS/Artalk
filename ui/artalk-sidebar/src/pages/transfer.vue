@@ -65,10 +65,10 @@ function startImportTask() {
   const siteURL = p.siteURL.trim()
   const payload = p.payload.trim()
 
-  // 请求 payload 参数制备
+  // Prepare request params
   let rData: any = {}
   if (payload) {
-    // JSON 格式检验
+    // Validate payload JSON
     try {
       rData = JSON.parse(payload)
     } catch (err) {
@@ -85,7 +85,7 @@ function startImportTask() {
   if (siteURL) rData.target_site_url = siteURL
   rData.json_file = uploadedFilename.value
 
-  // 创建导入会话
+  // Create an import task
   importTaskParams.value = {
     ...rData,
     token: user.token,

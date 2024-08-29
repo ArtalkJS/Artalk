@@ -8,7 +8,8 @@ const showSpinner = ref(false)
 let timer: number | undefined
 
 onMounted(() => {
-  // spinner 延迟显示，若加载等待时间太短，没必要显示（闪一下即可）
+  // spinner delay to prevent flash
+  // (no need to show spinner if loading is fast)
   timer = window.setTimeout(() => {
     showSpinner.value = true
     timer = undefined

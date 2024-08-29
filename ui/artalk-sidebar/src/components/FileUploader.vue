@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useUserStore } from '../stores/user'
 
+const { t } = useI18n()
 const user = useUserStore()
 
 const props = defineProps<{
@@ -8,7 +9,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  /** 上传完毕 */
+  /** Upload done event */
   (evt: 'done', filename: string): void
 }>()
 
@@ -34,32 +35,31 @@ async function startUploadFile(file: File) {
 
   xhr = new XMLHttpRequest()
 
-  // 进度条
+  // Progress bar
   xhr.upload.addEventListener('progress', (evt) => {
     if (evt.loaded === evt.total) {
-      // 上传完毕
+      // Upload done
       progress.value = 100
       return
     }
 
     const fileSize = file.size
     if (evt.loaded <= fileSize) {
-      // 正在上传
+      // Uploading
       progress.value = Math.round((evt.loaded / fileSize) * 100)
     }
   })
 
-  // 创建上传参数
+  // Create form data for upload
   const formData = new FormData()
   formData.append('file', file)
   formData.append('token', user.token)
 
-  // 开始上传
+  // Start upload
   xhr.open('post', apiUrl.value)
-  xhr.timeout = 5 * 60 * 1000 // 5分钟超时
   xhr.send(formData)
 
-  // 上传成功事件
+  // Update finished event
   xhr.onload = () => {
     const setErr = (msg: string): void => {
       reset()
@@ -137,10 +137,10 @@ function abortUpload() {
         <div class="atk-bar" :style="{ width: `${progress}%` }"></div>
       </div>
       <div class="atk-status">
-        上传中
+        {{ t('uploading') }}
         <span class="atk-curt">{{ progress }}%</span>
         ...
-        <span class="atk-abort" @click="abortUpload()">取消</span>
+        <span class="atk-abort" @click="abortUpload()">{{ t('cancel') }}</span>
       </div>
     </div>
   </div>

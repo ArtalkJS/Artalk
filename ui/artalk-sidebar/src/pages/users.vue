@@ -91,7 +91,7 @@ function onChangePage(offset: number) {
 
 function editUser(user: ArtalkType.UserDataForAdmin) {
   if (user.is_in_conf) {
-    alert('暂不支持在线编辑配置文件中的用户，请手动修改配置文件')
+    alert(t('userInConfCannotEditHint'))
     return
   }
 
@@ -102,13 +102,13 @@ function editUser(user: ArtalkType.UserDataForAdmin) {
 function updateUser(user: ArtalkType.UserDataForAdmin) {
   const index = users.value.findIndex((u) => u.id === user.id)
   if (index != -1) {
-    // 修改用户
+    // Edit user
     const orgUser = users.value[index]
     Object.keys(user).forEach((key) => {
       ;(orgUser as any)[key] = (user as any)[key]
     })
   } else {
-    // 创建用户
+    // Create user
     pagination.value!.reset()
     reqUsers(0)
   }
@@ -124,7 +124,10 @@ function closeEditUser() {
 function delUser(user: ArtalkType.UserDataForAdmin) {
   if (
     window.confirm(
-      `该操作将删除 用户："${user.name}" 邮箱："${user.email}" 所有评论，包括其评论下面他人的回复评论，是否继续？`,
+      t('userDeleteConfirm', {
+        name: user.name,
+        email: user.email,
+      }),
     )
   ) {
     artalk!.ctx
@@ -135,11 +138,11 @@ function delUser(user: ArtalkType.UserDataForAdmin) {
         users.value.splice(index, 1)
 
         if (user.is_in_conf) {
-          alert('用户已从数据库删除，请手动编辑配置文件并删除用户')
+          alert(t('userDeleteManuallyHint'))
         }
       })
       .catch((e: ArtalkType.FetchError) => {
-        alert('删除失败：' + e.message)
+        alert(e.message)
       })
   }
 }

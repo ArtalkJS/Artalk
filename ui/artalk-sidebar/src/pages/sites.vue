@@ -24,7 +24,7 @@ onMounted(() => {
       nav.setPageLoading(false)
     })
 
-  // 通过启动参数打开站点创建
+  // Open site create dialog by view params (from URL query)
   const vp = bootParams.viewParams
   if (vp && vp.create_name && vp.create_urls) {
     siteCreateInitVal.value = { name: vp.create_name, urls: vp.create_urls }
@@ -49,7 +49,7 @@ const sitesGrouped = computed(() => {
   for (let i = 0; i < sites.value.length; i++) {
     const item = sites.value[i]
     if (i % 4 === 0) {
-      // 每 4 个一组
+      // Each row has 4 items
       grp.push([])
       j++
     }

@@ -1,19 +1,24 @@
 <script setup lang="ts">
+/**
+ * Pagination Component
+ *
+ * (The Vue implementation which should correspond to the Artalk VanillaJS)
+ */
 const props = defineProps<{
-  /** 总页数 */
+  /** Total page number */
   total: number
 
-  /** 每页数量 */
+  /** Page size */
   pageSize: number
 
-  /** 禁用 */
+  /** Disabled */
   disabled?: boolean
 }>()
 
 const { pageSize, total, disabled } = toRefs(props)
 
 const emit = defineEmits<{
-  /** 翻页事件 */
+  /** Page change event */
   (evt: 'change', offset: number): void
 }>()
 
@@ -32,7 +37,9 @@ function changePage(page: number) {
   fillInput(page)
 }
 
-/* 按钮点击操作 */
+/**
+ * Change to previous page
+ */
 function prev() {
   if (disabled?.value) return
   const page = curtPage.value - 1
@@ -42,6 +49,9 @@ function prev() {
   changePage(page)
 }
 
+/**
+ * Change to next page
+ */
 function next() {
   if (disabled?.value) return
   const page = curtPage.value + 1
@@ -56,7 +66,9 @@ function reset() {
   fillInput(1)
 }
 
-/* 页码输入框操作 */
+/**
+ * Fill input value
+ */
 function fillInput(page: number) {
   inputValue.value = String(page)
 }
@@ -90,7 +102,7 @@ function triggerInput(now: boolean = false) {
     changePage(page)
   }
 
-  // 延迟 800ms 执行
+  // Delay input trigger
   if (!now) inputTimer = window.setTimeout(() => modify(), 800)
   else modify()
 }
@@ -99,7 +111,7 @@ function onInputKeydown(evt: KeyboardEvent) {
   const keyCode = evt.keyCode || evt.which
 
   if (keyCode === 38) {
-    // 上键
+    // Up key
     const page = Number(inputValue.value) + 1
     if (page > maxPage.value) {
       return
@@ -107,7 +119,7 @@ function onInputKeydown(evt: KeyboardEvent) {
     fillInput(page)
     triggerInput(false)
   } else if (keyCode === 40) {
-    // 下键
+    // Down key
     const page = Number(inputValue.value) - 1
     if (page < 1) {
       return
@@ -115,7 +127,7 @@ function onInputKeydown(evt: KeyboardEvent) {
     fillInput(page)
     triggerInput(false)
   } else if (keyCode === 13) {
-    // 回车
+    // Enter key
     triggerInput(true)
   }
 }

@@ -33,7 +33,7 @@ async function submit() {
     .filter((v) => !!v)
 
   if (siteName === '') {
-    alert('请输入站点名称')
+    alert(t('siteNameInputHint'))
     return
   }
 
@@ -47,7 +47,7 @@ async function submit() {
       })
     ).data
   } catch (err: any) {
-    window.alert(`创建失败：${err.message || ''}`)
+    window.alert(err.message)
     console.error(err)
     return
   } finally {

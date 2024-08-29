@@ -48,15 +48,15 @@ func PageList(app *core.App, router fiber.Router) {
 			q = q.Where("site_name = ?", p.SiteName)
 		}
 
-		// Total count
-		var total int64
-		q.Count(&total)
-
 		// Search
 		q = q.Scopes(func(d *gorm.DB) *gorm.DB {
 			return d.Where("LOWER(pages.key) LIKE LOWER(?) OR LOWER(title) LIKE LOWER(?)",
 				"%"+p.Search+"%", "%"+p.Search+"%")
 		})
+
+		// Total count
+		var total int64
+		q.Count(&total)
 
 		// Pagination
 		q = q.Scopes(Paginate(p.Offset, p.Limit))

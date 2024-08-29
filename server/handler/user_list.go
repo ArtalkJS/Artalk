@@ -43,10 +43,6 @@ func UserList(app *core.App, router fiber.Router) {
 		// Prepare query
 		q := app.Dao().DB().Model(&entity.User{}).Order("created_at DESC")
 
-		// Total count
-		var total int64
-		q.Count(&total)
-
 		// User type
 		if listType == "admin" {
 			q = q.Where("is_admin = ?", true)
@@ -59,6 +55,10 @@ func UserList(app *core.App, router fiber.Router) {
 			return d.Where("LOWER(name) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) OR badge_name = ? OR last_ip = ?",
 				"%"+p.Search+"%", "%"+p.Search+"%", p.Search, p.Search)
 		})
+
+		// Total count
+		var total int64
+		q.Count(&total)
 
 		// Pagination
 		q = q.Scopes(Paginate(p.Offset, p.Limit))

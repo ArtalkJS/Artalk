@@ -30,12 +30,20 @@ onMounted(() => {
     'all',
   )
 
-  reqPages(0)
+  // Users search
+  nav.enableSearch(
+    (value: string) => {
+      search.value = value
+      fetchPages(0)
+    },
+    () => {
+      if (search.value === '') return
+      search.value = ''
+      fetchPages(0)
+    },
+  )
 
-  watch(curtSite, (value) => {
-    pagination.value?.reset()
-    reqPages(0)
-  })
+  fetchPages(0)
 
   // Refresh task status recovery
   getRefreshTaskStatus().then((d) => {
@@ -45,26 +53,15 @@ onMounted(() => {
       startRefreshTaskWatchdog()
     }
   })
-
-  // Users search
-  nav.enableSearch(
-    (value: string) => {
-      search.value = value
-      reqPages(0)
-    },
-    () => {
-      if (search.value === '') return
-      search.value = ''
-      reqPages(0)
-    },
-  )
-
-  nav.scrollableArea?.addEventListener('scroll', scrollHandler)
 })
 
-onUnmounted(() => {
-  nav.scrollableArea?.removeEventListener('scroll', scrollHandler)
+watch(curtSite, () => {
+  pagination.value?.reset()
+  fetchPages(0)
 })
+
+onMounted(() => nav.scrollableArea?.addEventListener('scroll', scrollHandler))
+onUnmounted(() => nav.scrollableArea?.removeEventListener('scroll', scrollHandler))
 
 function scrollHandler() {
   showActBarBorder.value = nav.scrollableArea!.scrollTop > 10
@@ -74,7 +71,8 @@ function editPage(page: ArtalkType.PageData) {
   curtEditPageID.value = page.id
 }
 
-function reqPages(offset: number) {
+function fetchPages(offset: number) {
+  if (offset === 0) pagination.value?.reset()
   nav.setPageLoading(true)
   artalk?.ctx
     .getApi()
@@ -95,7 +93,7 @@ function reqPages(offset: number) {
 }
 
 function onChangePage(offset: number) {
-  reqPages(offset)
+  fetchPages(offset)
 }
 
 function onPageItemUpdate(page: ArtalkType.PageData) {

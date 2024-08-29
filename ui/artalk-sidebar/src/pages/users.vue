@@ -15,12 +15,25 @@ const pageTotal = ref(0)
 const pagination = ref<InstanceType<typeof Pagination>>()
 const curtType = ref<'all' | 'admin' | 'in_conf' | undefined>('all')
 
-const addingUser = ref(false)
-const editingUser = ref<ArtalkType.UserDataForAdmin | undefined>()
-
+const userEditorState = reactive({
+  show: false,
+  user: undefined as ArtalkType.UserDataForAdmin | undefined,
+})
 const search = ref('')
 
+watch(curtTab, (tab) => {
+  if (tab === 'create') {
+    createUser()
+  } else {
+    curtType.value = tab as any
+    fetchUsers(0)
+    closeUserEditor()
+  }
+})
+
 onMounted(() => {
+  fetchUsers(0)
+
   nav.updateTabs(
     {
       all: 'all',
@@ -30,43 +43,27 @@ onMounted(() => {
     'all',
   )
 
-  watch(curtTab, (tab) => {
-    if (tab === 'create') {
-      if (editingUser.value !== undefined) {
-        editingUser.value = undefined
-        nextTick(() => {
-          addingUser.value = true
-        })
-      } else {
-        addingUser.value = true
-      }
-    } else {
-      addingUser.value = false
-      editingUser.value = undefined
-
-      curtType.value = tab as any
-      pagination.value?.reset()
-      reqUsers(0)
-    }
-  })
-
-  reqUsers(0)
-
   // Users search
   nav.enableSearch(
     (value: string) => {
       search.value = value
-      reqUsers(0)
+      fetchUsers(0)
     },
     () => {
       if (search.value === '') return
       search.value = ''
-      reqUsers(0)
+      fetchUsers(0)
     },
   )
 })
 
-function reqUsers(offset: number) {
+watch(
+  () => userEditorState.show,
+  () => nav.scrollPageToTop(),
+)
+
+function fetchUsers(offset: number) {
+  if (offset === 0) pagination.value?.reset()
   nav.setPageLoading(true)
   artalk?.ctx
     .getApi()
@@ -86,7 +83,7 @@ function reqUsers(offset: number) {
 }
 
 function onChangePage(offset: number) {
-  reqUsers(offset)
+  fetchUsers(offset)
 }
 
 function editUser(user: ArtalkType.UserDataForAdmin) {
@@ -95,8 +92,13 @@ function editUser(user: ArtalkType.UserDataForAdmin) {
     return
   }
 
-  addingUser.value = false
-  editingUser.value = user
+  userEditorState.show = true
+  userEditorState.user = user
+}
+
+function createUser() {
+  userEditorState.show = true
+  userEditorState.user = undefined
 }
 
 function updateUser(user: ArtalkType.UserDataForAdmin) {
@@ -109,16 +111,15 @@ function updateUser(user: ArtalkType.UserDataForAdmin) {
     })
   } else {
     // Create user
-    pagination.value!.reset()
-    reqUsers(0)
+    fetchUsers(0)
   }
 
-  closeEditUser()
+  closeUserEditor()
 }
 
-function closeEditUser() {
-  addingUser.value = false
-  editingUser.value = undefined
+function closeUserEditor() {
+  userEditorState.show = false
+  userEditorState.user = undefined
 }
 
 function delUser(user: ArtalkType.UserDataForAdmin) {
@@ -189,10 +190,10 @@ function delUser(user: ArtalkType.UserDataForAdmin) {
     />
 
     <UserEditor
-      v-if="addingUser || editingUser !== undefined"
-      :user="editingUser"
+      v-if="userEditorState.show"
+      :user="userEditorState.user"
       @update="updateUser"
-      @close="closeEditUser"
+      @close="closeUserEditor"
     />
   </div>
 </template>

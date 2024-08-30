@@ -45,5 +45,6 @@ export function getDistFileName(name: string, format: string) {
 export function getTypescriptLibFolder() {
   return createRequire(import.meta.url)
     .resolve('typescript')
+    .replace(/\\+/g, '/') // fix windows path
     .replace(/node_modules\/typescript.*/, 'node_modules/typescript')
 }

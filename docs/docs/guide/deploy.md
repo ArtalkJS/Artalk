@@ -113,6 +113,14 @@ docker-compose exec artalk bash # 进入容器
 
 参考文档：[Docker](./backend/docker.md) / [环境变量](./env.md)
 
+::: warning
+
+自 2024-06-06 开始，境内的 Docker Hub 镜像相继停止服务，可选择配置代理或自建镜像。
+
+详见：[Docker 镜像加速](https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6)。
+
+:::
+
 ## Linux 发行版
 
 **Arch Linux (AUR)**：
@@ -133,7 +141,7 @@ nix-env -iA nixpkgs.artalk
 pkg install artalk
 ```
 
-![](https://repology.org/badge/vertical-allrepos/artalk.svg)
+[![Packaging status](https://repology.org/badge/vertical-allrepos/artalk.svg)](https://repology.org/project/artalk/versions)
 
 ## CDN 资源
 

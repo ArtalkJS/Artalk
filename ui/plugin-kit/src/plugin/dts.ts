@@ -16,12 +16,14 @@ export function generateDts(
   }
 
   const program = ts.createProgram(fileNames, options, host)
-  const diagnostics = program.getDeclarationDiagnostics()
-  if (diagnostics.length) {
-    logger.error('TypeScript declaration diagnostics:')
-    diagnostics.forEach((diagnostic) => {
-      logger.error(ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'))
-    })
+  const diagnostics = [
+    ...program.getDeclarationDiagnostics(),
+    ...program.getSemanticDiagnostics(),
+    ...program.getSyntacticDiagnostics()
+  ]
+
+  if (diagnostics?.length) {
+    logger.error(ts.formatDiagnosticsWithColorAndContext(diagnostics, host))
     process.exit(1)
   }
 

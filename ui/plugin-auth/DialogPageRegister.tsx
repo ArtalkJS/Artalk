@@ -83,25 +83,25 @@ export const DialogPageRegister = (props: DialogPageRegisterProps) => {
             required
           />
         </Show>
+        <input
+          type="email"
+          placeholder={ctx.$t('email')}
+          name="email"
+          value={fields.email}
+          onInput={(e) => setFields('email', e.target.value.trim())}
+          required
+        />
         <div class="atk-input-grp">
           <input
-            type="email"
-            placeholder={ctx.$t('email')}
-            name="email"
-            value={fields.email}
-            onInput={(e) => setFields('email', e.target.value.trim())}
+            type="text"
+            placeholder={ctx.$t('verificationCode')}
+            name="code"
+            value={fields.code}
+            onInput={(e) => setFields('code', e.target.value.trim())}
             required
           />
           <VerifyButton ctx={ctx} getEmail={() => fields.email} />
         </div>
-        <input
-          type="text"
-          placeholder={ctx.$t('verificationCode')}
-          name="code"
-          value={fields.code}
-          onInput={(e) => setFields('code', e.target.value.trim())}
-          required
-        />
         <Show when={mode() === 'forget'}>
           <input
             type="password"

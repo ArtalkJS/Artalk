@@ -295,7 +295,7 @@ auth:
   # 启用社交登录
   enabled: false
   # 允许匿名评论 (允许跳过验证，仅填写匿名的昵称和邮箱)
-  anonymous: true
+  anonymous: false
   # 回调地址 (https://example.com/api/v2/auth/{provider}/callback)
   callback: "http://localhost:23366/api/v2/auth/{provider}/callback"
   # Email

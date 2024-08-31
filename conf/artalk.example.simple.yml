@@ -145,7 +145,7 @@ admin_notify:
       - "GROUP_ID_1"
 auth:
   enabled: false
-  anonymous: true
+  anonymous: false
   callback: "http://localhost:23366/api/v2/auth/{provider}/callback"
   email:
     enabled: true

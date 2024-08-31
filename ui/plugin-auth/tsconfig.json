@@ -4,6 +4,7 @@
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "baseUrl": ".",
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["@artalk/plugin-kit/client", "vite/client"]
   }
 }

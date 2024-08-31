@@ -12,13 +12,13 @@
   "types": "./dist/artalk-plugin-auth.d.ts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./dist/artalk-plugin-auth.d.ts",
-        "default": "./dist/artalk-plugin-auth.mjs"
-      },
       "require": {
         "types": "./dist/artalk-plugin-auth.d.cts",
         "default": "./dist/artalk-plugin-auth.cjs"
+      },
+      "default": {
+        "types": "./dist/artalk-plugin-auth.d.ts",
+        "default": "./dist/artalk-plugin-auth.mjs"
       }
     }
   },

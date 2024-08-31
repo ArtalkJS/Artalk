@@ -1,7 +1,7 @@
 import type { ContextApi, LocalUser } from 'artalk'
 
 interface ResponseLoginData {
-  user: LocalUser
+  user: Omit<LocalUser, 'token'>
   token: string
 }
 

@@ -86,7 +86,7 @@ export default defineLocaleExternal(
     password: 'Пароль',
     username: 'Имя пользователя',
     nextStep: 'Следующий шаг',
-    skipNotVerify: 'Пропустить, не подтверждать',
+    skipVerify: 'Пропустить проверку',
     logoutConfirm: 'Вы уверены, что хотите выйти?',
     accountMergeNotice:
       'Ваша электронная почта связана с несколькими аккаунтами с разными идентификаторами.',

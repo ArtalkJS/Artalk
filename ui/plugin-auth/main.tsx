@@ -1,6 +1,6 @@
 /* @refresh reload */
 import './style.scss'
-import { ArtalkPlugin } from 'artalk'
+import type { ArtalkPlugin } from 'artalk'
 import { DialogMain } from './DialogMain'
 import { createLayer } from './lib/layer'
 import { RenderEditorUser } from './EditorUser'
@@ -54,11 +54,4 @@ export const ArtalkAuthPlugin: ArtalkPlugin = (ctx) => {
       }
     },
   })
-}
-
-// Mount plugin to browser window global
-if (window) {
-  !window.ArtalkPlugins && (window.ArtalkPlugins = {})
-  window.ArtalkPlugins.Auth = ArtalkAuthPlugin
-  window.Artalk?.use(ArtalkAuthPlugin)
 }

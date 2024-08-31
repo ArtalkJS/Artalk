@@ -86,7 +86,7 @@ export default defineLocaleExternal(
     password: 'パスワード',
     username: 'ユーザー名',
     nextStep: '次のステップ',
-    skipNotVerify: 'スキップ、検証しない',
+    skipVerify: '検証をスキップ',
     logoutConfirm: 'ログアウトしてもよろしいですか？',
     accountMergeNotice: 'あなたのメールには異なるIDを持つ複数のアカウントがあります。',
     accountMergeSelectOne: 'すべてのデータを統合するアカウントを選択してください。',

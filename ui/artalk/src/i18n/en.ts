@@ -82,7 +82,7 @@ const en = {
   password: 'Password',
   username: 'Username',
   nextStep: 'Next Step',
-  skipNotVerify: 'Skip, do not verify',
+  skipVerify: 'Skip verification',
   logoutConfirm: 'Are you sure to logout?',
   accountMergeNotice: 'Your email has multiple accounts with different id.',
   accountMergeSelectOne: 'Please select one you want to merge all the data into it.',

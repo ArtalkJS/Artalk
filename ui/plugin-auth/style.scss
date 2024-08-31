@@ -4,24 +4,6 @@
   justify-content: center;
   flex-direction: column;
   height: 100%;
-
-  .atk-skip-btn {
-    cursor: pointer;
-    margin: 0 auto;
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    place-items: center;
-    height: 40px;
-    padding: 0 20px;
-    font-size: 16px;
-    border-radius: 50px;
-    color: var(--at-color-font);
-
-    &:hover {
-      opacity: 0.9;
-    }
-  }
 }
 
 .atk-auth-plugin-dialog {
@@ -92,7 +74,7 @@
     .atk-method-item {
       display: flex;
       align-items: center;
-      padding: 15px 25px;
+      padding: 12px 18px;
       cursor: pointer;
       border-radius: 10px;
 
@@ -100,10 +82,27 @@
         background: var(--at-color-bg-grey);
       }
 
+      &.atk-methods-loading {
+        pointer-events: none;
+
+        .atk-method-icon {
+          border-radius: 4px;
+          background: var(--at-color-bg-grey);
+        }
+
+        .atk-method-text {
+          flex: auto;
+          display: inline-block;
+          height: 20px;
+          border-radius: 4px;
+          background: var(--at-color-bg-grey);
+        }
+      }
+
       .atk-method-icon {
-        width: 40px;
-        height: 40px;
-        margin-right: 20px;
+        width: 50px;
+        height: 50px;
+        margin-right: 18px;
         background-repeat: no-repeat;
         background-size: contain;
         background-position: center;

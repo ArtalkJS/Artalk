@@ -84,7 +84,7 @@ const zhCN: I18n = {
   password: '密码',
   username: '用户名',
   nextStep: '下一步',
-  skipNotVerify: '跳过，不验证',
+  skipVerify: '跳过验证',
   logoutConfirm: '确定要退出登录吗？',
   accountMergeNotice: '您的电子邮件下有多个不同 ID 的账户。',
   accountMergeSelectOne: '请选择将所有数据合并到其中的一个。',

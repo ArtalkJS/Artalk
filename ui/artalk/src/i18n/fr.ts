@@ -86,7 +86,7 @@ export default defineLocaleExternal(
     password: 'Mot de passe',
     username: 'Nom d’utilisateur',
     nextStep: 'Étape suivante',
-    skipNotVerify: 'Passer, ne pas vérifier',
+    skipVerify: 'Ignorer la vérification',
     logoutConfirm: 'Êtes-vous sûr de vouloir vous déconnecter ?',
     accountMergeNotice: 'Votre email a plusieurs comptes avec des identifiants différents.',
     accountMergeSelectOne:

@@ -2,6 +2,7 @@ import { createEffect, createMemo, createSignal, For, Resource } from 'solid-js'
 import type { ContextApi } from 'artalk'
 import { startOAuthLogin } from './lib/oauth-login'
 import { loginByToken } from './lib/token-login'
+import { LoginMethod } from './lib/methods'
 
 export interface DialogMethodsProps {
   ctx: ContextApi

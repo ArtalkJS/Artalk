@@ -84,7 +84,7 @@ export default defineLocaleExternal('zh-TW', {
   password: '密碼',
   username: '用戶名',
   nextStep: '下一步',
-  skipNotVerify: '跳過，不驗證',
+  skipVerify: '跳過驗證',
   logoutConfirm: '確定要登出嗎？',
   accountMergeNotice: '您的電子郵件下有多個不同 ID 的帳戶。',
   accountMergeSelectOne: '請選擇要將所有數據合併到其中的一個。',

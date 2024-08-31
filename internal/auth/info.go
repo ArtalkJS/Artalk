@@ -43,5 +43,14 @@ func GetProviderInfo(conf *config.Config, providers []goth.Provider) []AuthProvi
 		})
 	}
 
+	// Skip
+	if conf.Auth.Anonymous {
+		info = append(info, AuthProviderInfo{
+			Name:  "skip",
+			Label: "Skip",
+			Icon:  GetProviderIconBase64("skip"),
+		})
+	}
+
 	return info
 }

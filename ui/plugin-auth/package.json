@@ -25,9 +25,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview",
-    "prepublish": "pnpm build",
-    "publish": "pnpm publish --access=public"
+    "serve": "vite preview"
   },
   "dependencies": {
     "artalk": "workspace:^",

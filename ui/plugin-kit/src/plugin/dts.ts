@@ -19,7 +19,7 @@ export function generateDts(
   const diagnostics = [
     ...program.getDeclarationDiagnostics(),
     ...program.getSemanticDiagnostics(),
-    ...program.getSyntacticDiagnostics()
+    ...program.getSyntacticDiagnostics(),
   ]
 
   if (diagnostics?.length) {

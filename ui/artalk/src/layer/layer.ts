@@ -1,9 +1,11 @@
+import type { Layer as LayerApi } from '@/types/layer'
+
 export interface LayerOptions {
   onShow: () => void
   onHide: () => void
 }
 
-export class Layer {
+export class Layer implements LayerApi {
   private allowMaskClose = true
   private onAfterHide?: () => void
 
@@ -33,13 +35,13 @@ export class Layer {
     this.$el.style.display = ''
   }
 
-  async hide() {
+  hide() {
     this.opts.onHide()
     this.$el.style.display = 'none'
     this.onAfterHide && this.onAfterHide()
   }
 
-  async destroy() {
+  destroy() {
     this.opts.onHide()
     this.$el.remove()
     this.onAfterHide && this.onAfterHide()

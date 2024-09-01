@@ -285,13 +285,13 @@ importers:
       artalk:
         specifier: workspace:^
         version: link:../artalk
-      solid-js:
-        specifier: ^1.8.22
-        version: 1.8.22
     devDependencies:
       '@artalk/plugin-kit':
         specifier: workspace:^
         version: link:../plugin-kit
+      solid-js:
+        specifier: ^1.8.22
+        version: 1.8.22
       vite-plugin-css-injected-by-js:
         specifier: ^3.5.1
         version: 3.5.1(vite@5.4.2(@types/node@22.5.1)(sass@1.77.8)(terser@5.31.6))

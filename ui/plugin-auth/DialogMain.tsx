@@ -18,17 +18,24 @@ export const DialogMain = (props: DialogMainProps) => {
   const { ctx, onClose, onSkip, ...others } = props
 
   const [methods] = createResource(async () => {
-    return (await fetchMethods(ctx)).map<LoginMethod>((mm) => {
-      if (mm.name === 'email') mm.onClick = () => setPage('login')
-      if (mm.name === 'skip') {
-        mm.label = ctx.$t('skipVerify')
-        mm.onClick = () => {
-          onSkip()
-          onClose()
-        }
-      }
-      return mm
-    })
+    return fetchMethods(ctx)
+      .then((m) =>
+        m.map<LoginMethod>((mm) => {
+          if (mm.name === 'email') mm.onClick = () => setPage('login')
+          if (mm.name === 'skip') {
+            mm.label = ctx.$t('skipVerify')
+            mm.onClick = () => {
+              onSkip()
+              onClose()
+            }
+          }
+          return mm
+        }),
+      )
+      .catch((e) => {
+        alert('Failed to fetch login methods: ' + e.message)
+        return []
+      })
   })
 
   const [title, setTitle] = createSignal<string>('Login')

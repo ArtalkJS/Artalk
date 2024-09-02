@@ -1,6 +1,8 @@
 import type { ContextApi } from 'artalk'
 import { Show, onCleanup, createSignal } from 'solid-js'
 import { render } from 'solid-js/web'
+import { createLayer } from './lib/layer'
+import { UserProfileDialog } from './UserProfileDialog'
 
 const EditorUser = ({ ctx }: { ctx: ContextApi }) => {
   const logoutHandler = () => {
@@ -27,11 +29,17 @@ const EditorUser = ({ ctx }: { ctx: ContextApi }) => {
     ctx.off('user-changed', userChangedHandler)
   })
 
+  const openUserProfileDialog = () => {
+    createLayer(ctx).show((layer) => (
+      <UserProfileDialog ctx={ctx} onClose={() => layer.destroy()} />
+    ))
+  }
+
   return (
     <div class="atk-editor-user-wrap">
       <Show when={user().token}>
         <div class="atk-editor-user">
-          <div class="atk-user-profile-btn atk-user-btn">
+          <div class="atk-user-profile-btn atk-user-btn" onClick={openUserProfileDialog}>
             {/* <div class="atk-avatar" style={{ "background-image": `url('https://avatars.githubusercontent.com/u/76841221?s=200&v=4')` }}></div> */}
             <div class="atk-name">{user().name}</div>
           </div>

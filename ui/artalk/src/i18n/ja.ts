@@ -74,12 +74,16 @@ export default defineLocaleExternal(
     ctrlCenter: 'ダッシュボード',
 
     /* Auth */
+    userProfile: 'プロフィール',
     noAccountPrompt: 'アカウントがありませんか？',
     haveAccountPrompt: 'アカウントをお持ちですか？',
     forgetPassword: 'パスワードを忘れた',
     resetPassword: 'パスワードをリセット',
+    changePassword: 'パスワードを変更',
+    confirmPassword: 'パスワードを確認',
+    passwordMismatch: '入力されたパスワードが一致しません',
     verificationCode: '検証コード',
-    verifySend: '検証',
+    verifySend: 'コードを送信',
     verifyResend: '再送信',
     waitSeconds: '{seconds}秒待つ',
     emailVerified: 'メールアドレスが確認されました',

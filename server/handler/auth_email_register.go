@@ -19,7 +19,7 @@ type RequestAuthEmailRegister struct {
 
 // @Id           RegisterByEmail
 // @Summary      Register by email
-// @Description  Register by email and verify code (if user exists, will update user, like forget password. Need send email verify code first)
+// @Description  Register by email and verify code (if user exists, will update user, like forget or change password. Need send email verify code first)
 // @Tags         Auth
 // @Param        data  body  RequestAuthEmailRegister  true  "The data to register"
 // @Success      200  {object}  ResponseUserLogin

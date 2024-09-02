@@ -72,10 +72,14 @@ const zhCN: I18n = {
   ctrlCenter: '控制中心',
 
   /* Auth */
+  userProfile: '个人资料',
   noAccountPrompt: '没有账号？',
   haveAccountPrompt: '已有账号？',
   forgetPassword: '忘记密码',
   resetPassword: '重置密码',
+  changePassword: '修改密码',
+  confirmPassword: '确认密码',
+  passwordMismatch: '两次输入的密码不一致',
   verificationCode: '验证码',
   verifySend: '发送验证码',
   verifyResend: '重新发送',

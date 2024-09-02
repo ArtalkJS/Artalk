@@ -154,6 +154,18 @@
       }
     }
 
+    label {
+      display: block;
+      font-size: 16px;
+      color: var(--at-color-font);
+      margin-bottom: 4px;
+      padding: 0px 5px;
+
+      &:not(:first-child) {
+        margin-top: 8px;
+      }
+    }
+
     button[type='submit'] {
       width: 100%;
       padding: 10px 20px;

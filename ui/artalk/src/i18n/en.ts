@@ -70,12 +70,16 @@ const en = {
   ctrlCenter: 'Dashboard',
 
   /* Auth */
+  userProfile: 'Profile',
   noAccountPrompt: "Don't have an account?",
   haveAccountPrompt: 'Already have an account?',
   forgetPassword: 'Forget Password',
   resetPassword: 'Reset Password',
+  changePassword: 'Change Password',
+  confirmPassword: 'Confirm Password',
+  passwordMismatch: 'Passwords do not match',
   verificationCode: 'Verification Code',
-  verifySend: 'Verify',
+  verifySend: 'Send Code',
   verifyResend: 'Resend',
   waitSeconds: 'Wait {seconds}s',
   emailVerified: 'Email has been verified',

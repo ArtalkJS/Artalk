@@ -74,12 +74,16 @@ export default defineLocaleExternal(
     ctrlCenter: 'Tableau de bord',
 
     /* Auth */
+    userProfile: 'Profil',
     noAccountPrompt: 'Vous n’avez pas de compte ?',
     haveAccountPrompt: 'Vous avez déjà un compte ?',
     forgetPassword: 'Mot de passe oublié',
     resetPassword: 'Réinitialiser le mot de passe',
+    changePassword: 'Changer le mot de passe',
+    confirmPassword: 'Confirmer le mot de passe',
+    passwordMismatch: 'Les mots de passe ne correspondent pas',
     verificationCode: 'Code de vérification',
-    verifySend: 'Vérifier',
+    verifySend: 'Envoyer le code',
     verifyResend: 'Renvoyer',
     waitSeconds: 'Attendez {seconds}s',
     emailVerified: 'Email vérifié',

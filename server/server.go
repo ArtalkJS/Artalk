@@ -97,6 +97,7 @@ func Serve(app *core.App) (*fiber.App, error) {
 
 		// user
 		h.UserInfo(app, api)
+		h.UserInfoUpdate(app, api)
 		h.UserLogin(app, api)
 		h.UserStatus(app, api)
 

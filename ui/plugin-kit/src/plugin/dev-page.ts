@@ -46,7 +46,7 @@ export function getInjectHTMLTags(entrySrc: string): HtmlTagDescriptor[] {
       attrs: { type: 'module' },
       children: `
         import Artalk from '/node_modules/artalk'
-        import '/node_modules/artalk/dist/artalk.css'
+        import '/node_modules/artalk/dist/Artalk.css'
         window.Artalk = Artalk
       `,
       injectTo: 'head',

@@ -35,6 +35,7 @@ build-debug:
 		$(PKG_NAME)
 
 dev: build-debug
+	ATK_SITE_DEFAULT="ArtalkDocs" \
 	ATK_TRUSTED_DOMAINS="http://localhost:5173 http://localhost:23367" \
 	$(BIN_NAME) $(ARGS)
 

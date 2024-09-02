@@ -29,7 +29,8 @@ func TestValidateURL(t *testing.T) {
 	}{
 		{"https://example.com", true},
 		{"invalid.url", false},
-		{"https://example.com/path?param=value", true},
+		{"http://example.com/path?param=value", true},
+		{"ftp://example.com", false},
 	}
 
 	for _, tc := range testCases {

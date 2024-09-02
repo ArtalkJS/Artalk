@@ -73,7 +73,7 @@ function toggleSensitiveHidden() {
         />
         <div v-if="isSensitive" class="input-suffix">
           <div class="hidden-switch" @click="toggleSensitiveHidden()">
-            <i :class="['atk-icon', `atk-icon-eye-${sensitiveHidden ? 'on' : 'off'}`]" />
+            <i :class="['atk-icon', `atk-icon-eye-${sensitiveHidden ? 'off' : 'on'}`]" />
           </div>
         </div>
       </template>

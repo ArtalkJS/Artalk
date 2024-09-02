@@ -19,6 +19,7 @@ export const UserProfileDialog = (props: UserProfileDialogProps) => {
     if (!data.is_login) {
       ctx.get('user').logout()
       onClose()
+      throw new Error('No login')
     }
     return { ...data.user, token: '' }
   })
@@ -35,11 +36,9 @@ export const UserProfileDialog = (props: UserProfileDialogProps) => {
   const backHome = () => setPage(homePage)
 
   return (
-    <Show when={() => userInfo.loading} fallback={<>Loading...</>}>
-      <Dialog showBackBtn={showBackBtn} onBack={backHome} onClose={onClose} title={title}>
-        {() => pages[page()]()}
-      </Dialog>
-    </Show>
+    <Dialog showBackBtn={showBackBtn} onBack={backHome} onClose={onClose} title={title}>
+      {() => pages[page()]()}
+    </Dialog>
   )
 }
 
@@ -59,7 +58,7 @@ const UserBasicProfileForm = (
     code: '',
   })
 
-  const needVerify = () => fields.email !== user()?.email
+  const needVerify = () => !user.loading && fields.email !== user()?.email
 
   const submitHandler = (e: SubmitEvent) => {
     e.preventDefault()

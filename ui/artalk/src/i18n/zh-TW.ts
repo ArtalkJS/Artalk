@@ -72,10 +72,14 @@ export default defineLocaleExternal('zh-TW', {
   ctrlCenter: '控制中心',
 
   /* Auth */
+  userProfile: '個人資料',
   noAccountPrompt: '沒有帳號？',
   haveAccountPrompt: '已有帳號？',
   forgetPassword: '忘記密碼',
   resetPassword: '重置密碼',
+  changePassword: '修改密碼',
+  confirmPassword: '確認密碼',
+  passwordMismatch: '兩次輸入的密碼不一致',
   verificationCode: '驗證碼',
   verifySend: '發送驗證碼',
   verifyResend: '重新發送',

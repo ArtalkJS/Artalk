@@ -96,7 +96,7 @@ const docTemplate = `{
         },
         "/auth/email/register": {
             "post": {
-                "description": "Register by email and verify code (if user exists, will update user, like forget password. Need send email verify code first)",
+                "description": "Register by email and verify code (if user exists, will update user, like forget or change password. Need send email verify code first)",
                 "consumes": [
                     "application/json"
                 ],
@@ -2866,6 +2866,80 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update user profile when user is logged in",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Update user profile",
+                "operationId": "UpdateProfile",
+                "parameters": [
+                    {
+                        "description": "The profile data to update",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.RequestUserInfoUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseUserInfoUpdate"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         },
         "/user/access_token": {
@@ -4433,6 +4507,27 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.RequestUserInfoUpdate": {
+            "type": "object",
+            "required": [
+                "email",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "handler.ResponseAdminUserList": {
             "type": "object",
             "required": [
@@ -5205,6 +5300,17 @@ const docTemplate = `{
                 "notifies_count": {
                     "type": "integer"
                 },
+                "user": {
+                    "$ref": "#/definitions/entity.CookedUser"
+                }
+            }
+        },
+        "handler.ResponseUserInfoUpdate": {
+            "type": "object",
+            "required": [
+                "user"
+            ],
+            "properties": {
                 "user": {
                     "$ref": "#/definitions/entity.CookedUser"
                 }

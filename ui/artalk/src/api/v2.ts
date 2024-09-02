@@ -327,6 +327,13 @@ export interface HandlerRequestAuthEmailSend {
   email: string
 }
 
+export interface HandlerRequestUserInfoUpdate {
+  code?: string
+  email: string
+  link?: string
+  name: string
+}
+
 export interface HandlerResponseAdminUserList {
   count: number
   users: EntityCookedUserForAdmin[]
@@ -550,6 +557,10 @@ export interface HandlerResponseUserInfo {
   is_login: boolean
   notifies: EntityCookedNotify[]
   notifies_count: number
+  user: EntityCookedUser
+}
+
+export interface HandlerResponseUserInfoUpdate {
   user: EntityCookedUser
 }
 
@@ -849,7 +860,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
- * @description Register by email and verify code (if user exists, will update user, like forget password. Need send email verify code first)
+ * @description Register by email and verify code (if user exists, will update user, like forget or change password. Need send email verify code first)
  *
  * @tags Auth
  * @name RegisterByEmail
@@ -2204,6 +2215,40 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'GET',
         query: query,
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description Update user profile when user is logged in
+ *
+ * @tags Auth
+ * @name UpdateProfile
+ * @summary Update user profile
+ * @request POST:/user
+ * @secure
+ * @response `200` `HandlerResponseUserInfoUpdate` OK
+ * @response `400` `(HandlerMap & {
+    msg?: string,
+
+})` Bad Request
+ * @response `500` `(HandlerMap & {
+    msg?: string,
+
+})` Internal Server Error
+ */
+    updateProfile: (data: HandlerRequestUserInfoUpdate, params: RequestParams = {}) =>
+      this.request<
+        HandlerResponseUserInfoUpdate,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
+        path: `/user`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

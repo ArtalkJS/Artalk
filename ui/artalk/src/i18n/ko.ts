@@ -74,12 +74,16 @@ export default defineLocaleExternal(
     ctrlCenter: '대시보드',
 
     /* Auth */
+    userProfile: '프로필',
     noAccountPrompt: '계정이 없으신가요?',
     haveAccountPrompt: '이미 계정이 있으신가요?',
     forgetPassword: '비밀번호 찾기',
     resetPassword: '비밀번호 재설정',
+    changePassword: '비밀번호 변경',
+    confirmPassword: '비밀번호 확인',
+    passwordMismatch: '비밀번호가 일치하지 않습니다',
     verificationCode: '인증 코드',
-    verifySend: '인증',
+    verifySend: '인증 코드 전송',
     verifyResend: '재전송',
     waitSeconds: '{seconds}초 대기',
     emailVerified: '이메일 인증 완료',

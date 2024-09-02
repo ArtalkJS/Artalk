@@ -74,12 +74,16 @@ export default defineLocaleExternal(
     ctrlCenter: 'Панель управления',
 
     /* Auth */
+    userProfile: 'Профиль',
     noAccountPrompt: 'Нет аккаунта?',
     haveAccountPrompt: 'Уже есть аккаунт?',
     forgetPassword: 'Забыли пароль',
     resetPassword: 'Сбросить пароль',
+    changePassword: 'Изменить пароль',
+    confirmPassword: 'Подтвердить пароль',
+    passwordMismatch: 'Пароли не совпадают',
     verificationCode: 'Код подтверждения',
-    verifySend: 'Подтвердить',
+    verifySend: 'Отправить код',
     verifyResend: 'Отправить снова',
     waitSeconds: 'Подождите {seconds}с',
     emailVerified: 'Электронная почта подтверждена',

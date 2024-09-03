@@ -28,7 +28,7 @@
   "dependencies": {
     "@microsoft/api-extractor": "^7.47.7",
     "artalk": "workspace:^",
-    "picocolors": "^1.0.1"
+    "picocolors": "^1.1.0"
   },
   "devDependencies": {
     "esbuild-plugin-raw": "^0.1.8",

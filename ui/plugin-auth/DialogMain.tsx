@@ -34,6 +34,7 @@ export const DialogMain = (props: DialogMainProps) => {
       )
       .catch((e) => {
         alert('Failed to fetch login methods: ' + e.message)
+        onClose()
         return []
       })
   })

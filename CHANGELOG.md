@@ -1,4 +1,68 @@
 
+## [v2.9.0](https://github.com/ArtalkJS/Artalk/compare/v2.8.7...v2.9.0) (2024-09-03)
+
+### Features
+
+* **auth:** add user profile and password changing ([#966](https://github.com/ArtalkJS/Artalk/issues/966))
+* **config:** add `site_url` config option ([#967](https://github.com/ArtalkJS/Artalk/issues/967))
+* **go:** upgrade golang to v1.22.6 and some deps
+* **ui/dashboard:** new dashboard ui refresh for desktop devices ([#957](https://github.com/ArtalkJS/Artalk/issues/957))
+* **ui/date:** add `dateFormatter` config option ([#940](https://github.com/ArtalkJS/Artalk/issues/940))
+* **ui/plugin:** make ui plugin configurable
+* **ui/sidebar:** add dark mode toggle for dashboard ([#790](https://github.com/ArtalkJS/Artalk/issues/790))
+* **ui/sidebar:** add page search by keywords in sidebar ([#603](https://github.com/ArtalkJS/Artalk/issues/603))
+* **ui/sidebar:** add user search by keywords in sidebar ([#710](https://github.com/ArtalkJS/Artalk/issues/710))
+
+### Bug Fixes
+
+* **anti_spam:** handle empty `referer` variable in anti-spam check ([#853](https://github.com/ArtalkJS/Artalk/issues/853))
+* **api/auth:** fix missing Microsoft oauth provider configuration ([#929](https://github.com/ArtalkJS/Artalk/issues/929))
+* **api/auth:** migrate auth_identities when account merging ([#920](https://github.com/ArtalkJS/Artalk/issues/920))
+* **api/auth:** register issue due to unremoved auth records after user deletion ([#919](https://github.com/ArtalkJS/Artalk/issues/919))
+* **api/comment_add:** improve the security of comment add api ([#964](https://github.com/ArtalkJS/Artalk/issues/964))
+* **auth:** correct email verification code send button
+* **plugin/lightbox:** fix import for non-browser env ([#931](https://github.com/ArtalkJS/Artalk/issues/931))
+* **plugin_kit:** fix typescript lib path retrieval on win
+* **plugin_kit:** import source path case error on linux
+* **sidebar:** correct total item count for pagination in sidebar
+* **ui/dark_mode:** apply dark mode config option before mounting ui ([#890](https://github.com/ArtalkJS/Artalk/issues/890))
+* **ui/plugin-kit:** fix typescript lib folder for api-extractor in monorepo
+* **ui/sidebar:** disable admin password check dialog in sidebar
+* **ui/sidebar:** show env variables in sidebar settings ui ([#946](https://github.com/ArtalkJS/Artalk/issues/946)) ([#956](https://github.com/ArtalkJS/Artalk/issues/956))
+* **ui/stat:** fix invalid backward compatible strategy ([#880](https://github.com/ArtalkJS/Artalk/issues/880))
+* **validator:** restrict to allow only HTTP protocol
+
+### Performance Improvements
+
+* **api/auth:** add more specific error messages for login failures
+* **app/init:** generate translated config file by env variable `ATK_LOCALE`
+* **auth:** add loading skeleton for login methods list
+* **auth:** enhance visibility of skip button ([#863](https://github.com/ArtalkJS/Artalk/issues/863))
+* **auth:** perform optical adjustment for consistent icon sizing
+* **auth:** correct verify button position in register form
+* **i18n:** auto-load frontend i18n locale js sources
+* **notify:** improve error messages for notify ([#943](https://github.com/ArtalkJS/Artalk/issues/943))
+* **plugin_kit:** improve typescript diagnostics output
+* **style/sidebar:** modify font-family for sidebar
+* **ui/sidebar:** enhance i18n translations for sidebar
+* **ui/sidebar:** mask sensitive input values in sidebar settings ([#494](https://github.com/ArtalkJS/Artalk/issues/494))
+* **ui/sidebar:** optimize setup process and i18n lazy load ([#962](https://github.com/ArtalkJS/Artalk/issues/962))
+
+### Code Refactoring
+
+* **plugin_katex:** use tokenizer extension of marked ([#955](https://github.com/ArtalkJS/Artalk/issues/955))
+* **ui/deps:** remove `abortcontroller-polyfill` ([#923](https://github.com/ArtalkJS/Artalk/issues/923))
+* **ui/marked:** replace pkg-level marked with new class instance ([#954](https://github.com/ArtalkJS/Artalk/issues/954))
+* **ui/types:** add `Layer` interface
+* **ui/user:** rename `nick` to `name` in `LocalUser` data structure ([#961](https://github.com/ArtalkJS/Artalk/issues/961))
+
+### Documentation
+
+* **auth:** set `auth.anonymous` to false as default
+* **ui/i18n:** add more locale support for sidebar
+* **ui/i18n:** add translations for French, Korean, and Russian
+
+
 ## [v2.8.7](https://github.com/ArtalkJS/Artalk/compare/v2.8.6...v2.8.7) (2024-06-09)
 
 ### Features

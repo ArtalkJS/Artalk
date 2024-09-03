@@ -24,6 +24,7 @@ services:
     volumes:
       - ./data:/data
     environment:
+      - TZ=Asia/Shanghai
       - ATK_LOCALE=zh-CN
       - ATK_SITE_DEFAULT=Artalk 的博客
       - ATK_SITE_URL=https://example.com

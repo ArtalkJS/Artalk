@@ -19,6 +19,9 @@ timezone: Asia/Shanghai
 # 默认站点名
 site_default: 默认站点
 
+# 默认站点地址
+site_url: ""
+
 # 登录有效时长 (单位：秒)
 login_timeout: 259200
 

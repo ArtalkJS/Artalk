@@ -18,10 +18,12 @@ func TestFindCreateSite(t *testing.T) {
 
 	t.Run("Create New Site", func(t *testing.T) {
 		siteName := "TestCreateNewSite"
+		siteURL := "https://artalk.example.com"
 
-		result := app.Dao().FindCreateSite(siteName)
+		result := app.Dao().FindCreateSite(siteName, siteURL)
 		assert.False(t, result.IsEmpty(), "直接获取创建后的站点数据有问题")
 		assert.Equal(t, siteName, result.Name)
+		assert.Equal(t, siteURL, result.Urls)
 
 		findSite := app.Dao().FindSite(siteName)
 		assert.False(t, findSite.IsEmpty(), "找不到创建后的站点")
@@ -29,9 +31,9 @@ func TestFindCreateSite(t *testing.T) {
 	})
 
 	t.Run("Find Existed Site", func(t *testing.T) {
-		result := app.Dao().FindCreateSite("Site A")
+		result := app.Dao().FindCreateSite("Site A", "https://qwqaq.com")
 		assert.False(t, result.IsEmpty())
-		assert.Equal(t, "http://localhost:8080/,https://qwqaq.com", result.Urls)
+		assert.Equal(t, "http://localhost:8080/,https://qwqaq.com", result.Urls) // not modified
 	})
 }
 

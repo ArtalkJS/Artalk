@@ -9,9 +9,10 @@ docker run -d \
     --name artalk \
     -p 8080:23366 \
     -v $(pwd)/data:/data \
+    -e "TZ=Asia/Shanghai" \
     -e "ATK_LOCALE=zh-CN" \
     -e "ATK_SITE_DEFAULT=Artalk 的博客" \
-    -e "ATK_TRUSTED_DOMAINS=https://your_domain" \
+    -e "ATK_SITE_URL=https://example.com" \
     artalk/artalk-go
 ```
 
@@ -21,7 +22,7 @@ docker run -d \
 docker exec -it artalk artalk admin
 ```
 
-浏览器输入 `http://your_domain:8080` 进入 Artalk 后台登录界面。
+浏览器输入 `http://artalk.example.com:8080` 进入 Artalk 后台登录界面。
 
 在网页中引入 Artalk 程序内嵌的的前端 JS 和 CSS 资源并初始化 Artalk：
 
@@ -29,10 +30,10 @@ docker exec -it artalk artalk admin
 
 ```html
 <!-- CSS -->
-<link href="http://your_domain:8080/dist/Artalk.css" rel="stylesheet" />
+<link href="http://artalk.example.com:8080/dist/Artalk.css" rel="stylesheet" />
 
 <!-- JS -->
-<script src="http://your_domain:8080/dist/Artalk.js"></script>
+<script src="http://artalk.example.com:8080/dist/Artalk.js"></script>
 
 <!-- Artalk -->
 <div id="Comments"></div>
@@ -41,7 +42,7 @@ Artalk.init({
   el:        '#Comments',                // 绑定元素的 Selector
   pageKey:   '/post/1',                  // 固定链接
   pageTitle: '关于引入 Artalk 的这档子事',  // 页面标题 (留空自动获取)
-  server:    'http://your_domain:8080',  // 后端地址
+  server:    'http://artalk.example.com:8080',  // 后端地址
   site:      'Artalk 的博客',             // 你的站点名
 })
 </script>
@@ -62,7 +63,7 @@ Artalk.init({
 4. 配置
 
    ```js
-   Artalk.init({ server: 'http://your_domain:23366' })
+   Artalk.init({ server: 'http://artalk.example.com:23366' })
    ```
 
 进阶操作：
@@ -90,7 +91,7 @@ services:
       - TZ=Asia/Shanghai
       - ATK_LOCALE=zh-CN
       - ATK_SITE_DEFAULT=Artalk 的博客
-      - ATK_TRUSTED_DOMAINS=https://your_domain
+      - ATK_SITE_URL=https://your_domain
 ```
 
 创建容器：

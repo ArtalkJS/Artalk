@@ -15,4 +15,4 @@ services:
       - TZ=Asia/Shanghai
       - ATK_LOCALE=zh-CN
       - ATK_SITE_DEFAULT=Artalk 的博客
-      - ATK_TRUSTED_DOMAINS=https://your_domain
+      - ATK_SITE_URL=https://example.com

@@ -136,7 +136,9 @@ trusted_domains:
 
 在侧边栏 [控制中心](../frontend/sidebar.md#控制中心) 的「站点」选项卡 - 选择站点「修改 URL」，填入站点 URL 也具有相同的设置效果；添加多个 URL 可使用 `,` 英文逗号分隔，修改后请手动重启 Artalk。
 
-另外，你也可以在启动时通过环境变量 `TRUSTED_DOMAINS` 来配置可信域名，例如：
+默认站点地址 `ATK_SITE_URL` 配置项也会被自动加入可信域名列表。
+
+另外，你也可以在启动时通过环境变量 `ATK_TRUSTED_DOMAINS` 来配置可信域名，例如：
 
 ```bash
 ATK_TRUSTED_DOMAINS="https://a.com https://b.org" artalk server

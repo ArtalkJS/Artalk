@@ -20,6 +20,7 @@ type Config struct {
 	TrustedDomains []string               `koanf:"trusted_domains" json:"trusted_domains"` // 可信任的域名 (新)
 	SSL            SSLConf                `koanf:"ssl" json:"ssl"`                         // SSL
 	SiteDefault    string                 `koanf:"site_default" json:"site_default"`       // 默认站点名（当请求无指定 site_name 时使用）
+	SiteURL        string                 `koanf:"site_url" json:"site_url"`               // 默认站点 URL
 	AdminUsers     []AdminUserConf        `koanf:"admin_users" json:"admin_users"`         // 管理员账户
 	LoginTimeout   int                    `koanf:"login_timeout" json:"login_timeout"`     // 登录超时
 	Moderator      ModeratorConf          `koanf:"moderator" json:"moderator"`             // 评论审查

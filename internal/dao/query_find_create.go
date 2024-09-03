@@ -43,11 +43,11 @@ func FindCreateAction[T EntityHasIsEmpty](
 	return result.(T), nil
 }
 
-func (dao *Dao) FindCreateSite(siteName string) entity.Site {
+func (dao *Dao) FindCreateSite(siteName string, siteURLs string) entity.Site {
 	r, _ := FindCreateAction(fmt.Sprintf(SiteByNameKey, siteName), func() (entity.Site, error) {
 		return dao.FindSite(siteName), nil
 	}, func() (entity.Site, error) {
-		return dao.NewSite(siteName, ""), nil
+		return dao.NewSite(siteName, siteURLs), nil
 	})
 	return r
 }

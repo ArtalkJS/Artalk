@@ -21,6 +21,9 @@ timezone: Asia/Shanghai
 # Default site name (create when app is first launched)
 site_default: Default Site
 
+# Default site url
+site_url: ""
+
 # Login timeout (in seconds)
 login_timeout: 259200
 

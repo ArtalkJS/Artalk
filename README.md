@@ -74,7 +74,7 @@ docker run -d \
     -v $(pwd)/data:/data \
     -e "ATK_LOCALE=zh-CN" \
     -e "ATK_SITE_DEFAULT=Artalk 的博客" \
-    -e "ATK_TRUSTED_DOMAINS=https://your_domain" \
+    -e "ATK_TRUSTED_DOMAINS=https://example.com" \
     artalk/artalk-go
 ```
 

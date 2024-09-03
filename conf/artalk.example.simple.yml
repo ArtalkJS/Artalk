@@ -5,6 +5,7 @@ debug: false
 locale: en
 timezone: Asia/Shanghai
 site_default: Default Site
+site_url: ""
 login_timeout: 259200
 db:
   type: sqlite

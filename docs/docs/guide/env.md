@@ -25,7 +25,9 @@ services:
       - ./data:/data
     environment:
       - ATK_LOCALE=zh-CN
-      - ATK_TRUSTED_DOMAINS=https://your_domain https://your_domain2
+      - ATK_SITE_DEFAULT=Artalk 的博客
+      - ATK_SITE_URL=https://example.com
+      - ATK_TRUSTED_DOMAINS=https://dev.example.com https://localhost:8080
       - ATK_ADMIN_USERS_0_NAME=admin
       - ATK_ADMIN_USERS_0_EMAIL=admin@example.org
       - ATK_ADMIN_USERS_0_PASSWORD=(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm
@@ -75,6 +77,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_LOGIN_TIMEOUT** | `259200` | 登录有效时长 (单位：秒) | login_timeout (登录有效时长) |
 | **ATK_PORT** | `23366` | 服务器端口 | port (服务器端口) |
 | **ATK_SITE_DEFAULT** | `"默认站点"` | 默认站点名 | site_default (默认站点名) |
+| **ATK_SITE_URL** | `""` | 默认站点地址 | site_url (默认站点地址) |
 | **ATK_TIMEZONE** | `"Asia/Shanghai"` | 时间区域 | timezone (时间区域) |
 | **ATK_TRUSTED_DOMAINS** | `[]` | 可信域名 | trusted_domains (可信域名) |
 
@@ -115,7 +118,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 
 | 环境变量 | 默认值 | 描述 | 路径 |
 | --- | --- | --- | --- |
-| **ATK_AUTH_ANONYMOUS** | `true` | 允许匿名评论 (允许跳过验证，仅填写匿名的昵称和邮箱) | auth.anonymous (社交登录 > 允许匿名评论) |
+| **ATK_AUTH_ANONYMOUS** | `false` | 允许匿名评论 (允许跳过验证，仅填写匿名的昵称和邮箱) | auth.anonymous (社交登录 > 允许匿名评论) |
 | **ATK_AUTH_APPLE_CLIENT_ID** | `""` | ClientId | auth.apple.client_id (社交登录 > Apple > ClientId) |
 | **ATK_AUTH_APPLE_CLIENT_SECRET** | `""` | ClientSecret | auth.apple.client_secret (社交登录 > Apple > ClientSecret) |
 | **ATK_AUTH_APPLE_ENABLED** | `false` | 启用 | auth.apple.enabled (社交登录 > Apple > Enabled) |

@@ -66,7 +66,7 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		var (
 			ip         = c.IP()
 			ua         = cmp.Or(p.UA, string(c.Request().Header.UserAgent())) // allows the patched UA from the post data
-			referer    = string(c.Request().Header.Referer())
+			referer    = cmp.Or(c.Get("Referer"), c.Get("Origin"))
 			isAdmin    = common.CheckIsAdminReq(app, c)
 			isVerified = true // for display the verified badge
 		)

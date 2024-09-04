@@ -25,19 +25,13 @@ func FindCreateAction[T EntityHasIsEmpty](
 	createAction func() (T, error),
 ) (T, error) {
 	result, err, _ := findCreateSingleFlightGroup.Do(key, func() (any, error) {
-		r, err := findAction()
-		if err != nil {
-			return nil, err
+		if r, err := findAction(); err != nil || !r.IsEmpty() {
+			return r, err
 		}
-		if r.IsEmpty() {
-			if r, err = createAction(); err != nil {
-				return nil, err
-			}
-		}
-		return r, nil
+		return createAction()
 	})
 	if err != nil {
-		log.Error("[FindCreate] ", err)
+		log.Errorf("[FindCreateAction] key: %s, error: %v", key, err)
 		return *new(T), err
 	}
 	return result.(T), nil

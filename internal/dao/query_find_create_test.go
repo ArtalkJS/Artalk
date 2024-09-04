@@ -181,24 +181,22 @@ func TestFindCreateAction(t *testing.T) {
 	t.Run("Concurrent FindCreateAction", func(t *testing.T) {
 		var wg sync.WaitGroup
 
-		var result mockEntity
+		var atomicResult atomic.Value // Assume that Find and Create actions is Thread-safe
+		atomicResult.Store(mockEntity{})
 
 		findCreateFunc := func() (mockEntity, error) {
 			return dao.FindCreateAction("key", func() (mockEntity, error) {
 				// findAction
-				time.Sleep(10 * time.Millisecond)
-				return result, nil
+				time.Sleep(10 * time.Millisecond)     // Simulate a slow find action
+				r := atomicResult.Load().(mockEntity) // Thread-safe read result
+				return r, nil
 			}, func() (mockEntity, error) {
 				// createAction
-				atomic.AddInt32(&calledTimes, 1)
-
-				time.Sleep(10 * time.Millisecond)
-				result = mockEntity{
-					ID:   1,
-					Name: "create",
-				}
-
-				return result, nil
+				atomic.AddInt32(&calledTimes, 1)  // Record the number of times createAction is called
+				time.Sleep(10 * time.Millisecond) // Simulate a slow create action
+				r := mockEntity{ID: 1, Name: "create"}
+				atomicResult.Store(r) // Thread-safe update result
+				return r, nil
 			})
 		}
 

@@ -51,10 +51,12 @@ func UserList(app *core.App, router fiber.Router) {
 		}
 
 		// Search
-		q = q.Scopes(func(d *gorm.DB) *gorm.DB {
-			return d.Where("LOWER(name) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) OR badge_name = ? OR last_ip = ?",
-				"%"+p.Search+"%", "%"+p.Search+"%", p.Search, p.Search)
-		})
+		if p.Search != "" {
+			q = q.Scopes(func(d *gorm.DB) *gorm.DB {
+				return d.Where("LOWER(name) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) OR badge_name = ? OR last_ip = ?",
+					"%"+p.Search+"%", "%"+p.Search+"%", p.Search, p.Search)
+			})
+		}
 
 		// Total count
 		var total int64

@@ -47,7 +47,12 @@ func NewDB(conf config.DBConf) (*gorm.DB, error) {
 }
 
 func NewTestDB() (*gorm.DB, error) {
-	return OpenSQLite("file::memory:?cache=shared", &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true})
+	return OpenSQLite("file::memory:?cache=shared", &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true,
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix: "atk_",
+		},
+	})
 }
 
 func CloseDB(db *gorm.DB) error {

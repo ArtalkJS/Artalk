@@ -70,25 +70,26 @@ func (dao *Dao) MigrateRootID() {
 		dao.DB().Migrator().AddColumn(&entity.Comment{}, "root_id")
 	}
 
+	tbComments := dao.GetTableName(&entity.Comment{})
 	if err := dao.DB().Raw(`WITH RECURSIVE CommentHierarchy AS (
 		SELECT id, id AS root_id, rid
-		FROM comments
+		FROM ` + tbComments + `
 		WHERE rid = 0
 
 		UNION ALL
 
 		SELECT c.id, ch.root_id, c.rid
-		FROM comments c
+		FROM ` + tbComments + ` c
 		INNER JOIN CommentHierarchy ch ON c.rid = ch.id
 	)
-	UPDATE comments SET root_id = (
+	UPDATE ` + tbComments + ` SET root_id = (
 		SELECT root_id
 		FROM CommentHierarchy
-		WHERE comments.id = CommentHierarchy.id
+		WHERE ` + tbComments + `.id = CommentHierarchy.id
 	);
 	`).Scan(&struct{}{}).Error; err == nil {
 		// no error, then do some patch
-		dao.DB().Table("comments").Where("id = root_id").Update("root_id", 0)
+		dao.DB().Model(&entity.Comment{}).Where("id = root_id").Update("root_id", 0)
 	} else {
 		// try backup plan (if recursive CTE is not supported)
 		log.Info(TAG, "Recursive CTE is not supported, trying backup plan... Please wait a moment. This may take a long time if there are many comments.")
@@ -133,7 +134,7 @@ func (dao *Dao) MergePages() {
 	}
 
 	// delete all pages
-	dao.DB().Exec("DELETE FROM pages")
+	dao.DB().Where("1 = 1").Delete(&entity.Page{})
 
 	// insert merged pages
 	pages = []*entity.Page{}

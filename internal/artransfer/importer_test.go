@@ -192,7 +192,7 @@ func Test_importArtrans(t *testing.T) {
 
 		// Mock db error
 		// make comments table unique on content
-		dao.DB().Exec("CREATE UNIQUE INDEX idx_comments_content ON comments (content)")
+		dao.DB().Exec("CREATE UNIQUE INDEX idx_comments_content ON " + dao.GetTableName(&entity.Comment{}) + " (content)")
 
 		err := RunImportArtrans(dao, &params)
 		assert.Error(t, err, "Import should be failed")

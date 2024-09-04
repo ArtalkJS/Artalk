@@ -13,7 +13,7 @@ type Page struct {
 	//
 	// And must caution that the db query statement quoted the field name `key` with backticks.
 	// Different db may have different rules. The pgsql is not backticks, but double quotes.
-	// So use the pages.key (without any quotes) to instead of `key`.
+	// So use the pages.key (without any quotes) to instead of `key` (Mind the prefix table name).
 	//
 	// Consider to rename this column and make a db migration in the future.
 	Key string `gorm:"index;size:255"` // Page key

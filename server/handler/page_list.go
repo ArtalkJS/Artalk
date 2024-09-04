@@ -49,10 +49,16 @@ func PageList(app *core.App, router fiber.Router) {
 		}
 
 		// Search
-		q = q.Scopes(func(d *gorm.DB) *gorm.DB {
-			return d.Where("LOWER(pages.key) LIKE LOWER(?) OR LOWER(title) LIKE LOWER(?)",
-				"%"+p.Search+"%", "%"+p.Search+"%")
-		})
+		if p.Search != "" {
+			q = q.Scopes(func(d *gorm.DB) *gorm.DB {
+				// Because historical reasons, the naming of this field named `key` does not follow best practices.
+				// In some database, directly use the field name `key` will cause an error.
+				// So must keep the table name before the field name.
+				tbPages := app.Dao().GetTableName(&entity.Page{})
+				return d.Where("LOWER("+tbPages+".key) LIKE LOWER(?) OR LOWER(title) LIKE LOWER(?)",
+					"%"+p.Search+"%", "%"+p.Search+"%")
+			})
+		}
 
 		// Total count
 		var total int64

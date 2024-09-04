@@ -15,6 +15,7 @@ import (
 	"github.com/go-testfixtures/testfixtures/v3"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 type TestApp struct {
@@ -48,7 +49,10 @@ func NewTestApp() (*TestApp, error) {
 
 	// open a sqlite db
 	dbInstance, err := gorm.Open(sqlite.Open(dbFile), &gorm.Config{
-		Logger:                                   db_logger.New(),
+		Logger: db_logger.New(),
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix: "atk_", // Test table prefix, fixture filenames should match this
+		},
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {

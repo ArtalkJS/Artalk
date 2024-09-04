@@ -13,8 +13,10 @@
 
 ### 博客
 
+- [祈星海](https://www.zzzzhi.com)
+- [荏苒](https://blog.renranz.cn)
 - [百合花船·教程](https://jc.yuriboat.cn)
-- [Misaka の 💭](https://blog.misaka.ink/)
+- [Misaka の 💭](https://blog.mska.ink/)
 - [备胎书屋](https://beitai.cc)
 - [1nonly's blog](https://blog.nonly.cn)
 - [慕雪的寒舍](https://blog.musnow.top/)

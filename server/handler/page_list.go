@@ -54,7 +54,8 @@ func PageList(app *core.App, router fiber.Router) {
 				// Because historical reasons, the naming of this field named `key` does not follow best practices.
 				// In some database, directly use the field name `key` will cause an error.
 				// So must keep the table name before the field name.
-				return d.Where("LOWER("+app.Dao().GetTableName(&entity.Page{})+".key) LIKE LOWER(?) OR LOWER(title) LIKE LOWER(?)",
+				tbPages := app.Dao().GetTableName(&entity.Page{})
+				return d.Where("LOWER("+tbPages+".key) LIKE LOWER(?) OR LOWER(title) LIKE LOWER(?)",
 					"%"+p.Search+"%", "%"+p.Search+"%")
 			})
 		}

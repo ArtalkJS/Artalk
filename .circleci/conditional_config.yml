@@ -1,8 +1,9 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.2.0
-  codecov: codecov/codecov@3.3.0
+  node: circleci/node@6.1.0
+  go: circleci/go@1.11.0
+  codecov: codecov/codecov@4.1.0
 
 executors:
   base:
@@ -27,25 +28,15 @@ jobs:
   ## Backend
   test_app:
     executor: go
-    working_directory: ~/go/src/github.com/ArtalkJS/Artalk
-    environment:
-      GO111MODULE: "on"
+    working_directory: ~/repo
     steps:
       - checkout
       - run:
           name: "Print the Go version"
-          command: >
-            go version
-      - restore_cache:
-          keys:
-            - go-mod-1.22.6-{{ checksum "go.sum" }}
-      - run:
-          name: Install Dependencies
-          command: go mod download
-      - save_cache:
-          key: go-mod-1.22.6-{{ checksum "go.sum" }}
-          paths:
-            - "~/go/pkg/mod"
+          command: go version
+      - go/load-cache
+      - go/mod-download
+      - go/save-cache
       - run:
           name: Run tests
           command: |

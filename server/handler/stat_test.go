@@ -55,8 +55,11 @@ func TestStat(t *testing.T) {
 
 				// check if the comments are sorted by created_at
 				for i := 0; i < len(resp.Data)-1; i++ {
-					timeA, _ := dateparse.ParseIn(resp.Data[i].Date, time.Local)
-					timeB, _ := dateparse.ParseIn(resp.Data[i+1].Date, time.Local)
+					commentA := resp.Data[i]
+					commentB := resp.Data[i+1]
+					timeA, _ := dateparse.ParseIn(commentA.Date, time.Local)
+					timeB, _ := dateparse.ParseIn(commentB.Date, time.Local)
+					t.Logf("[ID=%v]TimeA: %v, [ID=%v]TimeB: %v", commentA.ID, timeA, commentB.ID, timeB)
 					assert.True(t, timeA.After(timeB), "Comments should be sorted by created_at")
 				}
 			},

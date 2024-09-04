@@ -2,7 +2,7 @@
   name: admin
   email: admin@qwqaq.com
   link: https://qwqaq.com
-  password: 123456
+  password: "123456"
   badge_name: 管理员
   badge_color: #fff
   last_ip: 10.90.1.1

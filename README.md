@@ -118,6 +118,8 @@ Your contributions enrich the open-source community, fostering learning, inspira
 
 ## Stargazers over time
 
+<a href="https://trendshift.io/repositories/6290" target="_blank"><img src="https://trendshift.io/api/badge/repositories/6290" alt="ArtalkJS%2FArtalk | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+
 [![Stargazers over time](https://starchart.cc/ArtalkJS/Artalk.svg)](https://starchart.cc/ArtalkJS/Artalk)
 
 ## License

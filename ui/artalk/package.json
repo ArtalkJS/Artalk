@@ -150,7 +150,7 @@
     "insane": "^2.6.2"
   },
   "dependencies": {
-    "marked": "^14.1.0"
+    "marked": "^14.1.2"
   },
   "peerDependencies": {
     "marked": "^14.1.0"

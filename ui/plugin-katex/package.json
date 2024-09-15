@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@artalk/plugin-kit": "workspace:^",
-    "marked": "^14.1.0"
+    "marked": "^14.1.2"
   },
   "peerDependencies": {
     "@types/katex": "^0.16.7",

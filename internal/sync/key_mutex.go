@@ -2,34 +2,24 @@ package sync
 
 import "sync"
 
+// KeyMutex provides a per-key mutex mechanism
 type KeyMutex[T any] struct {
-	locks map[any]*sync.Mutex
-
-	mapLock sync.Mutex // to make the map safe concurrently
+	locks sync.Map // sync.Map for concurrent access
 }
 
+// NewKeyMutex creates a new KeyMutex
 func NewKeyMutex[T any]() *KeyMutex[T] {
-	return &KeyMutex[T]{locks: make(map[any]*sync.Mutex)}
+	return &KeyMutex[T]{}
 }
 
-func (l *KeyMutex[T]) getLockBy(key T) *sync.Mutex {
-	l.mapLock.Lock()
-	defer l.mapLock.Unlock()
-
-	ret, found := l.locks[key]
-	if found {
-		return ret
+// GetLock returns the mutex associated with the given key, creating it if necessary
+func (l *KeyMutex[T]) GetLock(key T) *sync.Mutex {
+	if lock, ok := l.locks.Load(key); ok {
+		return lock.(*sync.Mutex)
 	}
-
-	ret = &sync.Mutex{}
-	l.locks[key] = ret
-	return ret
-}
-
-func (l *KeyMutex[T]) Lock(key T) {
-	l.getLockBy(key).Lock()
-}
-
-func (l *KeyMutex[T]) Unlock(key T) {
-	l.getLockBy(key).Unlock()
+	// Create a new mutex if not found
+	newLock := &sync.Mutex{}
+	// Ensure only one mutex is added for the key
+	actualLock, _ := l.locks.LoadOrStore(key, newLock)
+	return actualLock.(*sync.Mutex)
 }

@@ -44,8 +44,9 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 
 	router.Post("/auth/merge", common.LoginGuard(app, func(c *fiber.Ctx, user entity.User) error {
 		// Mutex for each user to avoid concurrent merge operation
-		mutexMap.Lock(user.ID)
-		defer mutexMap.Unlock(user.ID)
+		mutex := mutexMap.GetLock(user.ID)
+		mutex.Lock()
+		defer mutex.Unlock()
 
 		if user.Email == "" {
 			return common.RespError(c, 500, "User email is empty")

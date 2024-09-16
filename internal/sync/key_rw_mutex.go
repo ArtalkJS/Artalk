@@ -1,50 +1,25 @@
 package sync
 
-import (
-	"sync"
-)
+import "sync"
 
 // KeyRWMutex is a read-write lock with keys
 type KeyRWMutex[T any] struct {
-	mutex sync.Mutex
-	locks map[any]*sync.RWMutex
+	locks sync.Map // use sync.Map for concurrent access
 }
 
 // NewKeyRWMutex creates a new KeyRWMutex
 func NewKeyRWMutex[T any]() *KeyRWMutex[T] {
-	return &KeyRWMutex[T]{locks: make(map[any]*sync.RWMutex)}
+	return &KeyRWMutex[T]{}
 }
 
-// getLockByKey retrieves the lock for the given key
-func (kl *KeyRWMutex[T]) getLockByKey(key string) *sync.RWMutex {
-	kl.mutex.Lock()
-	defer kl.mutex.Unlock()
-
-	val, ok := kl.locks[key]
-	if !ok {
-		lock := &sync.RWMutex{}
-		kl.locks[key] = lock
-		return lock
+// GetLock retrieves or creates the lock for the given key
+func (kl *KeyRWMutex[T]) GetLock(key T) *sync.RWMutex {
+	if lock, ok := kl.locks.Load(key); ok {
+		return lock.(*sync.RWMutex)
 	}
-	return val
-}
-
-// Lock acquires the write lock for the given key
-func (kl *KeyRWMutex[T]) Lock(key string) {
-	kl.getLockByKey(key).Lock()
-}
-
-// Unlock releases the write lock for the given key
-func (kl *KeyRWMutex[T]) Unlock(key string) {
-	kl.getLockByKey(key).Unlock()
-}
-
-// RLock acquires the read lock for the given key
-func (kl *KeyRWMutex[T]) RLock(key string) {
-	kl.getLockByKey(key).RLock()
-}
-
-// RUnlock releases the read lock for the given key
-func (kl *KeyRWMutex[T]) RUnlock(key string) {
-	kl.getLockByKey(key).RUnlock()
+	// Create a new RWMutex if not found
+	newLock := &sync.RWMutex{}
+	// Ensure only one RWMutex is added for the key
+	actualLock, _ := kl.locks.LoadOrStore(key, newLock)
+	return actualLock.(*sync.RWMutex)
 }

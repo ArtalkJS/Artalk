@@ -35,9 +35,9 @@ func PagePV(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		lockKey := p.PageKey + "_" + p.SiteName
-		mutexMap.Lock(lockKey)
-		defer mutexMap.Unlock(lockKey)
+		mutex := mutexMap.GetLock(p.PageKey + "_" + p.SiteName)
+		mutex.Lock()
+		defer mutex.Unlock()
 
 		// find page
 		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)

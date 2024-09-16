@@ -52,8 +52,9 @@ func AuthEmailSend(app *core.App, router fiber.Router) {
 		}
 
 		// Mutex for each email to avoid frequency check fail concurrently
-		mutexMap.Lock(p.Email)
-		defer mutexMap.Unlock(p.Email)
+		mutex := mutexMap.GetLock(p.Email)
+		mutex.Lock()
+		defer mutex.Unlock()
 
 		// check if had send email verify code in 1 minutes
 		if err := app.Dao().DB().Model(&entity.UserEmailVerify{}).Where("email = ? OR ip = ?", p.Email, c.IP()).Where("updated_at > ?", time.Now().Add(-time.Minute*1)).First(&entity.UserEmailVerify{}).Error; err == nil {

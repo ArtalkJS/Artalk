@@ -13,6 +13,7 @@ options:
         - fix
         - perf
         - refactor
+        - test
         - docs
   commit_groups:
     sort_by: Custom
@@ -21,12 +22,14 @@ options:
       - fix
       - perf
       - refactor
+      - test
       - docs
     title_maps:
       feat: Features
       fix: Bug Fixes
       perf: Performance Improvements
       refactor: Code Refactoring
+      test: Testing
       docs: Documentation
   header:
     pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s\\/]*)\\))?\\:\\s(.*)$"

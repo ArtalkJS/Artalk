@@ -168,12 +168,6 @@ Artalk 后端程序内嵌了前端 JS、CSS 文件，使用公共 CDN 资源请�
 >
 > <https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/artalk/:ArtalkVersion:/Artalk.css>
 
-**Staticfile CDN (境内)**
-
-> <https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.js>
->
-> <https://cdn.staticfile.org/artalk/:ArtalkVersion:/Artalk.css>
-
 **UNPKG**
 
 > <https://unpkg.com/artalk@:ArtalkVersion:/dist/Artalk.js>

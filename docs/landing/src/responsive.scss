@@ -22,6 +22,10 @@ $breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
 }
 
 @include media("<=md") {
+  .slogan .slogan-inner {
+    padding: 0 40px;
+  }
+
   .app-header {
     padding: 0 25px;
   }
@@ -32,21 +36,30 @@ $breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
 
   .slogan .text {
     zoom: .8;
-    width: 90%;
+    width: 100%;
+  }
+
+  .slogan .demos {
+    display: none;
   }
 
   .slogan .btns {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 
     .btn:not(:last-child) {
-      margin-right: 0;
+      margin-right: 10px;
       margin-bottom: 20px;
     }
   }
 
   .feature {
     padding: 0 30px;
+
+    svg {
+      object-fit: contain;
+      max-height: 300px;
+    }
 
     .content {
       padding: 0;
@@ -78,6 +91,7 @@ $breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
     .item {
       width: 100%;
       padding: 30px 40px;
+      font-size: 21px;
 
       &:not(:last-child) {
         margin-bottom: 40px;
@@ -87,6 +101,25 @@ $breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
 
   .feature.quick .airplane-wrap {
     margin-left: -50px;
+  }
+
+  .feature.quick .extra-desc {
+    display: flex;
+    flex-direction: column;
+    margin: 250px 20px;
+  }
+
+  .feature.quick .extra-desc .golang-icon {
+    margin-top: 50px;
+    zoom: .6;
+  }
+
+  .feature.quick .extra-desc .self-compile {
+    text-align: center;
+  }
+
+  .feature.quick .extra-desc .docker-url {
+    font-size: 20px;
   }
 
   .full.feature .folder-icon {
@@ -120,7 +153,16 @@ $breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
     column-count: 1;
   }
 
+  .feature.quick .deploy-links .item span {
+    font-size: 23px;
+  }
+
+  .feature.quick .deploy-links .item .bold {
+    font-size: 35px;
+  }
+
   .feature-desc {
     text-align: left;
+    font-size: 19px;
   }
 }

@@ -94,9 +94,11 @@
   }
 
   .extra-desc {
-    margin-top: 250px;
-    margin-bottom: 250px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    margin: 250px 100px;
 
     .golang-icon {
       margin-bottom: 100px;
@@ -104,6 +106,38 @@
 
     .self-compile {
       margin-top: 1.5em;
+    }
+
+    .docker-url {
+      overflow: hidden;
+      border-radius: 5px;
+      font-size: 24px;
+      height: 55px;
+      display: inline-flex;
+      align-items: center;
+      flex-direction: row;
+      margin-bottom: 1.5em;
+      background: #f6f8fa;
+      color: #67757F;
+
+      .content {
+        padding: 0 30px;
+      }
+
+      .copy-btn {
+        display: flex;
+        flex-direction: row;
+        place-items: center;
+        padding: 0 20px;
+        height: 100%;
+        background: #00ACD7;
+        color: #fff;
+        cursor: pointer;
+
+        &.copied {
+          background: #50b88e;
+        }
+      }
     }
   }
 }

@@ -15,6 +15,29 @@ export const QuickFeature: React.FC = () => {
     </div>
   )
 
+  const [isCopied, setIsCopied] = React.useState(false)
+
+  let copiedResetTimer: any
+
+  const copyDockerURLHandler = (e: React.MouseEvent) => {
+    e.preventDefault()
+    clearTimeout(copiedResetTimer)
+    setIsCopied(false)
+
+    const dockerURL = 'docker pull artalk/artalk-go'
+    if (!navigator.clipboard.writeText) {
+      alert('Browser does not support clipboard API')
+      return
+    }
+
+    navigator.clipboard.writeText(dockerURL)
+    setIsCopied(true)
+
+    copiedResetTimer = setTimeout(() => {
+      setIsCopied(false)
+    }, 2000)
+  }
+
   return (
     <FeatureBase className='quick'>
       <FeatureTitle text='快捷' color='#5DADEC' />
@@ -47,6 +70,23 @@ export const QuickFeature: React.FC = () => {
 
       {/* Golang Description */}
       <div className='extra-desc'>
+        <div className="left">
+          <div className="text">
+            <Reveal>
+              <FeatureDesc>
+              Artalk 采用 Golang 编写，快速跨平台启动你的评论服务器，<br />我们提供了 Docker 镜像，满足更多部署需求。<br />
+              </FeatureDesc>
+            </Reveal>
+          </div>
+          <a className='docker-url' href='https://hub.docker.com/r/artalk/artalk-go' target='_blank' rel="noreferrer">
+            <div className='content'>docker pull artalk/artalk-go</div>
+            <div className={['copy-btn', isCopied ? 'copied' : ''].join(' ')} onClick={copyDockerURLHandler}>{isCopied ? 'Copied!' : 'Copy'}</div>
+          </a>
+          <div className="self-compile">
+            <LearnMoreLink prompt='打算使用代码自编译？' link='https://artalk.js.org/develop/contributing.html' />
+          </div>
+        </div>
+
         <div className="golang-icon">
           <svg width="292" height="109" viewBox="0 0 292 109" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clipPath="url(#clip0_406_120)">
@@ -62,17 +102,6 @@ export const QuickFeature: React.FC = () => {
           </clipPath>
           </defs>
           </svg>
-        </div>
-
-        <div className="text">
-          <Reveal>
-            <FeatureDesc>
-            Artalk 采用 Golang 编写，支持跨平台，仅需下载二进制文件即可执行，<br />无额外依赖，快速启动你的评论服务器。同时提供 Docker 镜像，满足更多部署需求。
-            </FeatureDesc>
-          </Reveal>
-        </div>
-        <div className="self-compile">
-          <LearnMoreLink prompt='打算使用代码自编译？' link='https://artalk.js.org/develop/contributing.html' />
         </div>
       </div>
     </FeatureBase>

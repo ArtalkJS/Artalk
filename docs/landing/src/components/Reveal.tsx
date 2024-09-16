@@ -22,6 +22,11 @@ export const Reveal: React.FC<RevelProps> = (props) => {
   useEffect(() => {
     const observerRefValue = elementRef.current
 
+    if (!('IntersectionObserver' in window)) {
+      observerRefValue?.classList.add('show')
+      return
+    }
+
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
         setIsVisible(true)

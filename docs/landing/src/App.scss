@@ -22,3 +22,16 @@ body {
 a {
   text-decoration: none;
 }
+
+.anim-fade-in {
+  animation: fadeIn .8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

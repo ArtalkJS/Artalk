@@ -16,9 +16,13 @@ type EntityHasIsEmpty interface {
 	IsEmpty() bool
 }
 
-// FindCreateAction (Thread Safe)
+// FindCreateAction is a thread-safe function that attempts to find an entity
+// using the provided findAction function. If the entity does not exist or the
+// result is empty, it will execute the createAction function to create a new entity.
 //
-// Use singleflight.Group to prevent duplicate creation if multiple goroutines access at the same time.
+// The function ensures that only one goroutine can perform the find or create
+// operation for a given key at a time, using the singleflight mechanism to prevent
+// duplicate operations.
 func FindCreateAction[T EntityHasIsEmpty](
 	key string,
 	findAction func() (T, error),

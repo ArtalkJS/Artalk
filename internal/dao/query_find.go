@@ -20,7 +20,7 @@ var noCacheFindSingleflightGroup = new(singleflight.Group)
 
 func QueryDBWithoutCache[T any](dao *Dao, name string, queryDB func() (T, error)) (T, error) {
 	v, err, _ := noCacheFindSingleflightGroup.Do(name, func() (any, error) {
-		return queryDB() // queryDB() may not be thread safe, so use singleflight.Group
+		return queryDB() // Use singleflight to prevent high concurrency pressure on DB
 	})
 	if err != nil {
 		return *new(T), err

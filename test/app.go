@@ -18,6 +18,16 @@ import (
 	"gorm.io/gorm/schema"
 )
 
+var dbFile *os.File
+
+func init() {
+	var err error
+	dbFile, err = os.CreateTemp("", "atk_test_db")
+	if err != nil {
+		panic(err)
+	}
+}
+
 type TestApp struct {
 	*core.App
 }
@@ -26,6 +36,9 @@ func (t *TestApp) Cleanup() error {
 	if err := t.ResetBootstrapState(); err != nil {
 		return err
 	}
+
+	defer os.Remove(dbFile.Name())
+
 	return nil
 }
 
@@ -44,11 +57,10 @@ func NewTestApp() (*TestApp, error) {
 	pkged.SetFS(dirFS)
 
 	// prepare db folder
-	const dbFile = "./data/test.db"
-	utils.EnsureDir(filepath.Dir(dbFile))
+	utils.EnsureDir(filepath.Dir(dbFile.Name()))
 
 	// open a sqlite db
-	dbInstance, err := gorm.Open(sqlite.Open(dbFile), &gorm.Config{
+	dbInstance, err := gorm.Open(sqlite.Open(dbFile.Name()), &gorm.Config{
 		Logger: db_logger.New(),
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix: "atk_", // Test table prefix, fixture filenames should match this

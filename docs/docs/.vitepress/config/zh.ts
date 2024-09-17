@@ -123,20 +123,6 @@ export const zh = defineConfig({
         text: '开发',
         link: '/develop/',
       },
-      // NavbarGroup
-      {
-        text: '传送',
-        items: [
-          {
-            text: '代码仓库',
-            link: 'https://github.com/ArtalkJS/Artalk',
-          },
-          // {
-          //   text: "文档镜像 (国内)",
-          //   link: "https://artalk-docs.qwqaq.com",
-          // },
-        ],
-      },
     ],
 
     editLink: {

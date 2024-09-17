@@ -70,7 +70,7 @@ Advanced operations:
 
 - [Daemon Process (Systemd, Supervisor)](./backend/daemon.md)
 - [Reverse Proxy (Caddy, Nginx, Apache)](./backend/reverse-proxy.md)
-- [Self-compile (Build from the latest code)](../develop/contributing.md)
+- [Self-compile (Build from the latest code)](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)
 
 ## Compose Deployment
 

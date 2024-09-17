@@ -20,36 +20,36 @@ Artalk's features include but are not limited to:
 * [Sidebar](https://artalk.js.org/guide/frontend/sidebar.html): Quick management, intuitive browsing
 * [Social Login](https://artalk.js.org/guide/frontend/auth.html): Fast login via social accounts
 * [Email Notification](https://artalk.js.org/guide/backend/email.html): Various sending methods, email templates
-* [Multiple Push Notifications](https://artalk.js.org/guide/backend/admin_notify.html): Various push methods, notification templates
-* [In-site Notifications](https://artalk.js.org/guide/frontend/sidebar.html): Red dot markers, mention lists
-* [Captcha](https://artalk.js.org/guide/backend/captcha.html): Multiple verification types, frequency limits
-* [Comment Moderation](https://artalk.js.org/guide/backend/moderator.html): Content detection, spam filtering
-* [Image Upload](https://artalk.js.org/guide/backend/img-upload.html): Custom uploads, image hosting support
-* [Markdown](https://artalk.js.org/guide/intro.html): Markdown syntax support
-* [Emoticons](https://artalk.js.org/guide/frontend/emoticons.html): OwO compatibility, quick integration
-* [Multi-site](https://artalk.js.org/guide/backend/multi-site.html): Site isolation, centralized management
+* [Diverse Push](https://artalk.js.org/guide/backend/admin_notify.html): Multiple push methods, notification templates
+* [Site Notification](https://artalk.js.org/guide/frontend/sidebar.html): Red dot marks, mention list
+* [Captcha](https://artalk.js.org/guide/backend/captcha.html): Various verification types, frequency limits
+* [Comment Moderation](https://artalk.js.org/guide/backend/moderator.html): Content detection, spam interception
+* [Image Upload](https://artalk.js.org/guide/backend/img-upload.html): Custom upload, supports image hosting
+* [Markdown](https://artalk.js.org/guide/intro.html): Supports Markdown syntax
+* [Emoji Pack](https://artalk.js.org/guide/frontend/emoticons.html): Compatible with OwO, quick integration
+* [Multi-Site](https://artalk.js.org/guide/backend/multi-site.html): Site isolation, centralized management
 * [Admin](https://artalk.js.org/guide/backend/multi-site.html): Password verification, badge identification
-* [Page Management](https://artalk.js.org/guide/frontend/sidebar.html): Quick view, one-click title jump
-* [Page Views](https://artalk.js.org/guide/frontend/pv.html): Easily track webpage views
-* [Hierarchical Structure](https://artalk.js.org/guide/frontend/config.html#nestmax): Nested pagination lists, infinite scroll
+* [Page Management](https://artalk.js.org/guide/frontend/sidebar.html): Quick view, one-click title navigation
+* [Page View Statistics](https://artalk.js.org/guide/frontend/pv.html): Easily track page views
+* [Hierarchical Structure](https://artalk.js.org/guide/frontend/config.html#nestmax): Nested paginated list, infinite scroll
 * [Comment Voting](https://artalk.js.org/guide/frontend/config.html#vote): Upvote or downvote comments
-* [Comment Sorting](https://artalk.js.org/guide/frontend/config.html#listsort): Multiple sorting options
-* [Comment Search](https://artalk.js.org/guide/frontend/sidebar.html): Quick search of comment content
-* [Pinned Comments](https://artalk.js.org/guide/frontend/sidebar.html): Pin important messages
-* [Author-only View](https://artalk.js.org/guide/frontend/config.html): Display only the author's comments
-* [Comment Jump](https://artalk.js.org/guide/intro.html): Quick jump to referenced comments
-* [Auto-save](https://artalk.js.org/guide/frontend/config.html): Prevent content loss
+* [Comment Sorting](https://artalk.js.org/guide/frontend/config.html#listsort): Various sorting options, freely selectable
+* [Comment Search](https://artalk.js.org/guide/frontend/sidebar.html): Quick comment content search
+* [Comment Pinning](https://artalk.js.org/guide/frontend/sidebar.html): Pin important messages
+* [View Author Only](https://artalk.js.org/guide/frontend/config.html): Show only the author's comments
+* [Comment Jump](https://artalk.js.org/guide/intro.html): Quickly jump to quoted comment
+* [Auto Save](https://artalk.js.org/guide/frontend/config.html): Content loss prevention
 * [IP Region](https://artalk.js.org/guide/frontend/ip-region.html): Display user's IP region
-* [Data Migration](https://artalk.js.org/guide/transfer.html): Flexible migration, quick backup
-* [Image Lightbox](https://artalk.js.org/guide/frontend/lightbox.html): Quick lightbox integration
-* [Image Lazy Loading](https://artalk.js.org/guide/frontend/img-lazy-load.html): Delay image loading for a better experience
-* [Latex](https://artalk.js.org/guide/frontend/latex.html): Latex formula parsing integration
-* [Dark Mode](https://artalk.js.org/guide/frontend/config.html#darkmode): Toggle dark mode
-* [Plugins](https://artalk.js.org/develop/plugin.html): Create more possibilities
-* [Multi-language](https://artalk.js.org/guide/frontend/i18n.html): Switch languages
-* [Command Line](https://artalk.js.org/guide/backend/config.html): Command line management
-* [API Documentation](https://artalk.js.org/http-api.html): OpenAPI format documentation
-* [Program Upgrade](https://artalk.js.org/guide/backend/update.html): Version checking, one-click upgrade
+* [Data Migration](https://artalk.js.org/guide/transfer.html): Free migration, quick backup
+* [Image Lightbox](https://artalk.js.org/guide/frontend/lightbox.html): Quick integration of image lightbox
+* [Image Lazy Load](https://artalk.js.org/guide/frontend/img-lazy-load.html): Lazy load images, optimize experience
+* [Latex](https://artalk.js.org/guide/frontend/latex.html): Integrate Latex formula parsing
+* [Night Mode](https://artalk.js.org/guide/frontend/config.html#darkmode): Switch to night mode
+* [Extension Plugin](https://artalk.js.org/develop/plugin.html): Create more possibilities
+* [Multi-Language](https://artalk.js.org/guide/frontend/i18n.html): Switch between multiple languages
+* [Command Line](https://artalk.js.org/guide/backend/config.html): Command line operation management
+* [API Documentation](https://artalk.js.org/http-api.html): Provides OpenAPI format documentation
+* [Program Upgrade](https://artalk.js.org/guide/backend/update.html): Version check, one-click upgrade
 <!-- /features -->
 
 We are not exhaustive; more exciting features await your discovery!

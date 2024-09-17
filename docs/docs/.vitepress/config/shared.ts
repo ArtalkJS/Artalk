@@ -5,10 +5,9 @@ import * as Version from '../../code/ArtalkVersion.json'
 export const shared = defineConfig({
   title: 'Artalk',
 
-  // TODO: Uncomment after move default language to subfolder
-  // rewrites: {
-  //   'zh/:rest*': ':rest*',
-  // },
+  rewrites: {
+    'zh/:rest*': ':rest*',
+  },
 
   /* prettier-ignore */
   head: [

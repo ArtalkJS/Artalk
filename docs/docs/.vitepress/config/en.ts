@@ -27,7 +27,7 @@ export const en = defineConfig({
             { text: 'Comment Moderation', link: '/en/guide/backend/moderator.md' },
             { text: 'Captcha', link: '/en/guide/backend/captcha.md' },
             { text: 'Image Upload', link: '/en/guide/backend/img-upload.md' },
-            { text: 'Accounts and Multi-site', link: '/en/guide/backend/multi-site.md' },
+            { text: 'Admins and Multi-Site', link: '/en/guide/backend/multi-site.md' },
             { text: 'Resolve Relative Path', link: '/en/guide/backend/relative-path.md' },
           ],
         },
@@ -41,7 +41,7 @@ export const en = defineConfig({
             { text: 'Image Lightbox', link: '/en/guide/frontend/lightbox.md' },
             { text: 'Image Lazy Load', link: '/en/guide/frontend/img-lazy-load.md' },
             { text: 'IP Region', link: '/en/guide/frontend/ip-region.md' },
-            { text: 'Multi-language', link: '/en/guide/frontend/i18n.md' },
+            { text: 'Localization', link: '/en/guide/frontend/i18n.md' },
             { text: 'Development Documentation', link: '/en/develop/index.md' },
           ],
         },
@@ -56,23 +56,16 @@ export const en = defineConfig({
         },
         {
           text: 'Deployment Instructions',
-          collapsed: true,
+          collapsed: false,
           items: [
-            { text: 'Daemon', link: '/en/guide/backend/daemon.md' },
+            { text: 'Daemon Process', link: '/en/guide/backend/daemon.md' },
             { text: 'Reverse Proxy', link: '/en/guide/backend/reverse-proxy.md' },
-            { text: 'Build', link: '/en/develop/contributing.md' },
+            {
+              text: 'Compile Source',
+              link: 'https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md',
+            },
             { text: 'Program Upgrade', link: '/en/guide/backend/update.md' },
             { text: 'Docker', link: '/en/guide/backend/docker.md' },
-          ],
-        },
-        {
-          text: 'More Content',
-          collapsed: true,
-          items: [
-            { text: 'Security', link: '/en/guide/security.md' },
-            { text: 'Additional Reading', link: '/en/guide/extras.md' },
-            { text: 'Case Studies', link: '/en/guide/cases.md' },
-            { text: 'About Us', link: '/en/guide/about.md' },
           ],
         },
       ],
@@ -81,7 +74,11 @@ export const en = defineConfig({
           text: 'Development Documentation',
           items: [
             { text: 'Development Instructions', link: '/en/develop/index.md' },
-            { text: 'Contribution Guide', link: '/en/develop/contributing.md' },
+            {
+              text: 'Contribution Guide',
+              link: 'https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md',
+              target: '_blank',
+            },
             { text: 'Import to Blog', link: '/en/develop/import-blog.md' },
             { text: 'Import to Framework', link: '/en/develop/import-framework.md' },
             { text: 'Frontend API', link: '/en/develop/fe-api.md' },
@@ -115,21 +112,8 @@ export const en = defineConfig({
         link: '/en/guide/transfer',
       },
       {
-        text: 'Cases',
-        link: '/en/guide/cases',
-      },
-      {
         text: 'Development',
         link: '/en/develop/',
-      },
-      {
-        text: 'Links',
-        items: [
-          {
-            text: 'Code Repository',
-            link: 'https://github.com/ArtalkJS/Artalk',
-          },
-        ],
       },
     ],
 

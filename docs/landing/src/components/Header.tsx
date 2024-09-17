@@ -73,17 +73,13 @@ export const Header: React.FC<HeaderProps> = ({ darkModeHandler }) => {
         {!mobileShow && <div className="brand">Artalk</div>}
 
         <div className={['links', mobileShow ? 'mobile-show' : ''].join(' ')}>
-          <a className="link-item" href="https://artalk.js.org/guide/intro.html">
+          <a className="link-item" href={t('nav_docs_link')}>
             {t('docs')}
           </a>
-          <a
-            className="link-item"
-            href="https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md"
-            target="__blank"
-          >
+          <a className="link-item" href={t('nav_changelog_link')} target="__blank">
             {t('changelog')}
           </a>
-          <a className="link-item" href="https://github.com/ArtalkJS/Artalk" target="__blank">
+          <a className="link-item" href={t('github_link')} target="__blank">
             <AiFillGithub size="1.7em" />
           </a>
           <a className="link-item" onClick={() => darkModeHandler.toggle()}>

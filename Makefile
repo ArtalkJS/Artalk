@@ -59,7 +59,11 @@ update-conf:
 	go generate ./internal/config
 
 update-conf-docs:
-	go run ./internal/config/meta/gen --format markdown --locale zh-CN -o ./docs/docs/guide/env.md
+	go run ./internal/config/meta/gen --format markdown --locale en -o ./docs/docs/en/guide/env.md
+	go run ./internal/config/meta/gen --format markdown --locale zh-CN -o ./docs/docs/zh/guide/env.md
+
+update-docs-features:
+	pnpm -F docs-landing update:readme
 
 update-swagger:
 	go install github.com/swaggo/swag/cmd/swag@latest

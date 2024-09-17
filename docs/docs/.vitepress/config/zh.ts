@@ -1,61 +1,8 @@
 import { defineConfig } from 'vitepress'
-import iterator from 'markdown-it-for-inline'
-import * as Version from '../code/ArtalkVersion.json'
 
-export default defineConfig({
-  title: 'Artalk',
-  description: '一款简洁的自托管评论系统',
+export const zh = defineConfig({
   lang: 'zh-CN',
-
-  head: [
-    ['link', { rel: 'icon', href: '/favicon.png' }],
-    [
-      'meta',
-      {
-        name: 'viewport',
-        content:
-          'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi',
-      },
-    ],
-  ],
-
-  lastUpdated: true,
-
-  markdown: {
-    // @link https://github.com/shikijs/shiki
-    theme: {
-      light: 'github-light',
-      dark: 'github-dark',
-    },
-    config: (md) => {
-      md.use(iterator, 'artalk_version', 'text', function (tokens, idx) {
-        tokens[idx].content = tokens[idx].content.replace(
-          /:ArtalkVersion:/g,
-          Version.latest,
-        )
-      })
-      md.use(iterator, 'artalk_version_link', 'link_open', (tokens, idx) => {
-        const href = tokens[idx].attrGet('href')
-        tokens[idx].attrSet(
-          'href',
-          href.replace(/:ArtalkVersion:/g, Version.latest),
-        )
-      })
-    },
-  },
-
-  locales: {
-    root: {
-      label: '简体中文',
-      lang: 'zh',
-      link: 'https://artalk.js.org/',
-    },
-    en: {
-      label: 'English',
-      lang: 'en',
-      link: 'https://artalk-js-org.translate.goog/guide/intro?_x_tr_sl=auto&_x_tr_tl=en-US&_x_tr_hl=en-US&_x_tr_pto=wapp',
-    },
-  },
+  description: '由 Golang 驱动的自托管评论系统',
 
   themeConfig: {
     sidebar: {
@@ -176,47 +123,11 @@ export default defineConfig({
         text: '开发',
         link: '/develop/',
       },
-      // NavbarGroup
-      {
-        text: '传送',
-        items: [
-          {
-            text: '代码仓库',
-            link: 'https://github.com/ArtalkJS/Artalk',
-          },
-          // {
-          //   text: "文档镜像 (国内)",
-          //   link: "https://artalk-docs.qwqaq.com",
-          // },
-        ],
-      },
     ],
-
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/ArtalkJS/Artalk' },
-    ],
-
-    search: {
-      provider: 'algolia',
-      options: {
-        appId: '2WNJ32WVTY',
-        apiKey: '6c6ebc345a87b738264f19095b78c91c',
-        indexName: 'artalk-js',
-        searchParameters: {
-          facetFilters: ['lang:zh-CN'],
-        },
-      },
-    },
 
     editLink: {
       pattern: 'https://github.com/ArtalkJS/Artalk/edit/master/docs/docs/:path',
       text: '完善文档',
-    },
-  },
-
-  vite: {
-    server: {
-      open: '/guide/intro.html',
     },
   },
 })

@@ -90,9 +90,9 @@ captcha:
 
 图示：
 
-<img src="../../images/captcha/cf-turnstile-1.png" width="400px">
+<img src="/images/captcha/cf-turnstile-1.png" width="400px">
 
-<img src="../../images/captcha/cf-turnstile-2.png" width="400px">
+<img src="/images/captcha/cf-turnstile-2.png" width="400px">
 
 对应配置文件如下：
 

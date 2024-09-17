@@ -47,7 +47,7 @@ export const shared = defineConfig({
   },
 
   lastUpdated: true,
-  cleanUrls: true,
+  cleanUrls: false,
   metaChunk: true,
 
   themeConfig: {

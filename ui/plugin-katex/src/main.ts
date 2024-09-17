@@ -75,6 +75,13 @@ export const ArtalkKatexPlugin: ArtalkPlugin = (ctx) => {
       return
     }
 
+    if (typeof katex === 'undefined') {
+      console.error(
+        '[artalk-plugin-katex] katex not found, please make sure you have imported katex in your project',
+      )
+      return
+    }
+
     markedInstance.use({
       extensions: [blockMathExtension, inlineMathExtension],
     })

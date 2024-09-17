@@ -1,6 +1,6 @@
 {
   "name": "@artalk/plugin-katex",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "minAppVersion": "2.8.6",
   "license": "MIT",
   "description": "The katex plugin for artalk",

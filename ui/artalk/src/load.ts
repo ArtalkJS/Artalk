@@ -94,7 +94,7 @@ async function loadNetworkPlugins(scripts: string[], apiBase: string): Promise<S
       url = `${apiBase.replace(/\/$/, '')}/${url.replace(/^\//, '')}`
 
     tasks.push(
-      new Promise<void>((resolve, reject) => {
+      new Promise<void>((resolve) => {
         // check if loaded
         if (document.querySelector(`script[src="${url}"]`)) {
           resolve()
@@ -106,7 +106,10 @@ async function loadNetworkPlugins(scripts: string[], apiBase: string): Promise<S
         script.src = url
         document.head.appendChild(script)
         script.onload = () => resolve()
-        script.onerror = (err) => reject(err)
+        script.onerror = (err) => {
+          console.error('[artalk] Failed to load plugin', err)
+          resolve()
+        }
       }),
     )
   })

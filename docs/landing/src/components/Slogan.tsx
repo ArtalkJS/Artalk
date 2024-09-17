@@ -77,15 +77,10 @@ export const Slogan: React.FC = () => {
           <Reveal delay={400}>System</Reveal>
 
           <div className="btns">
-            <a className="blue btn" href="https://artalk.js.org/guide/intro.html">
+            <a className="blue btn" href={t('get_artalk_link')}>
               {t('get_artalk')}
             </a>
-            <a
-              className="btn"
-              href="https://github.com/ArtalkJS/Artalk"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a className="btn" href={t('github_link')} target="_blank" rel="noreferrer">
               GitHub <FaArrowRight size=".8em" />
             </a>
           </div>

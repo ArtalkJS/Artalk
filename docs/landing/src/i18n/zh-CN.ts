@@ -1,8 +1,12 @@
 import { MessageSchema } from '.'
 
 export const zhCN: MessageSchema = {
-  home_title: 'Artalk | 自托管评论系统',
+  home_title: 'Artalk | 由 Golang 驱动的自托管评论系统',
   get_artalk: '获取 Artalk',
+  get_artalk_link: 'https://artalk.js.org/guide/intro.html',
+  nav_docs_link: 'https://artalk.js.org/guide/intro.html',
+  nav_changelog_link: 'https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md',
+  github_link: 'https://github.com/ArtalkJS/Artalk',
   docs: '文档',
   changelog: '更新日志',
   feature_slight_title: '轻量',
@@ -14,8 +18,12 @@ export const zhCN: MessageSchema = {
   feature_swift_self_compile: '打算使用代码自编译？',
   deploy_bin: '二进制',
   deploy_bin_sub: '文件部署',
+  deploy_bin_link: 'https://artalk.js.org/guide/deploy.html#普通方式部署',
   deploy_docker: 'Docker',
   deploy_docker_sub: '镜像部署',
+  deploy_docker_link: 'https://artalk.js.org/guide/deploy.html#docker-部署',
+  docker_hub_link: 'https://hub.docker.com/r/artalk/artalk-go',
+  self_compile_guide_link: 'https://artalk.js.org/develop/contributing.html',
   learn_more: '了解更多',
   copy: '复制',
   copied: '已复制！',

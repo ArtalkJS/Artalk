@@ -48,21 +48,11 @@ export const QuickFeature: React.FC = () => {
       <div className="content">
         <main>
           <div className="deploy-links">
-            <a
-              className="item"
-              href="https://artalk.js.org/guide/deploy.html#普通方式部署"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a className="item" href={t('deploy_bin_link')} target="_blank" rel="noreferrer">
               <span className="bold">{t('deploy_bin')}</span> <span>{t('deploy_bin_sub')}</span>
               {ArrowIcon}
             </a>
-            <a
-              className="item"
-              href="https://artalk.js.org/guide/deploy.html#docker-部署"
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a className="item" href={t('deploy_docker_link')} target="_blank" rel="noreferrer">
               <span className="bold">{t('deploy_docker')}</span>{' '}
               <span>{t('deploy_docker_sub')}</span>
               {ArrowIcon}
@@ -115,12 +105,7 @@ export const QuickFeature: React.FC = () => {
               </FeatureDesc>
             </Reveal>
           </div>
-          <a
-            className="docker-url"
-            href="https://hub.docker.com/r/artalk/artalk-go"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a className="docker-url" href={t('docker_hub_link')} target="_blank" rel="noreferrer">
             <div className="content">docker pull artalk/artalk-go</div>
             <div
               className={['copy-btn', isCopied ? 'copied' : ''].join(' ')}
@@ -132,7 +117,7 @@ export const QuickFeature: React.FC = () => {
           <div className="self-compile">
             <LearnMoreLink
               prompt={t('feature_swift_self_compile')}
-              link="https://artalk.js.org/develop/contributing.html"
+              link={t('self_compile_guide_link')}
             />
           </div>
         </div>

@@ -43,8 +43,8 @@ function initArtalk(conf: any) {
   Artalk.use(ArtalkKatexPlugin)
   Artalk.use(ArtalkLightboxPlugin, {
     lightGallery: {
-      lib: async () => (await import('lightgallery')).default
-    }
+      lib: async () => (await import('lightgallery')).default,
+    },
   })
 
   artalk = Artalk.init({

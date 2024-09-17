@@ -53,7 +53,7 @@ export const Slogan: React.FC = () => {
         <div className="text">
           <Reveal>
             <span className="highlight">
-              Self-hosted
+              {t('slogan_line_1')}
               <svg
                 className="line-wrap"
                 width="361"
@@ -73,8 +73,8 @@ export const Slogan: React.FC = () => {
             </span>
             <br />
           </Reveal>
-          <Reveal delay={200}>Comment</Reveal>
-          <Reveal delay={400}>System</Reveal>
+          <Reveal delay={200}>{t('slogan_line_2')}</Reveal>
+          <Reveal delay={400}>{t('slogan_line_3')}</Reveal>
 
           <div className="btns">
             <a className="blue btn" href={t('get_artalk_link')}>

@@ -12,81 +12,81 @@
 [![Codecov](https://img.shields.io/codecov/c/gh/ArtalkJS/Artalk?style=flat-square)](https://codecov.io/gh/ArtalkJS/Artalk)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/artalk?style=flat-square)](https://bundlephobia.com/package/artalk)
 
-[English](./README.en.md) • [官方网站](https://artalk.js.org) • [最新版本](https://github.com/ArtalkJS/Artalk/releases) • [更新日志](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md)
+[Homepage](https://artalk.js.org) • [Documentation](https://artalk.js.org/en/guide/deploy.html) • [Latest Release](https://github.com/ArtalkJS/Artalk/releases) • [Changelog](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md) • [简体中文](./README.zh.md)
 
-Artalk 是一款简单易用但功能丰富的评论系统，你可以开箱即用地部署并置入任何博客、网站、Web 应用。
+Artalk is an intuitive yet feature-rich comment system, ready for immediate deployment into any blog, website, or web application.
 
-- 🍃 前端 ~40KB，纯天然 Vanilla JS
-- 🍱 后端 Golang，高效轻量跨平台
-- 🐳 通过 Docker 一键部署，方便快捷
-- 🌈 开源程序，自托管，隐私至上
+- 🍃 Client ~40KB, crafted with pure Vanilla JS, framework-agnostic
+- 🍱 Server powered by Golang, offering efficient and lightweight cross-platform performance
+- 🐳 One-click deployment via Docker, ensuring ease and speed
+- 🌈 Open-source software, self-hosted with privacy as a priority
 
-## 特性
+## Features
 
 <!-- prettier-ignore-start -->
 
 <!-- features -->
-* [侧边栏](https://artalk.js.org/guide/frontend/sidebar.html): 快速管理、直观浏览
-* [社交登录](https://artalk.js.org/guide/frontend/auth.html): 通过社交账号快速登录
-* [邮件通知](https://artalk.js.org/guide/backend/email.html): 多种发送方式、邮件模板
-* [多元推送](https://artalk.js.org/guide/backend/admin_notify.html): 多种推送方式、通知模版
-* [站内通知](https://artalk.js.org/guide/frontend/sidebar.html): 红点标记、提及列表
-* [验证码](https://artalk.js.org/guide/backend/captcha.html): 多种验证类型、频率限制
-* [评论审核](https://artalk.js.org/guide/backend/moderator.html): 内容检测、垃圾拦截
-* [图片上传](https://artalk.js.org/guide/backend/img-upload.html): 自定义上传、支持图床
-* [Markdown](https://artalk.js.org/guide/intro.html): 支持 Markdown 语法
-* [表情包](https://artalk.js.org/guide/frontend/emoticons.html): 兼容 OwO，快速集成
-* [多站点](https://artalk.js.org/guide/backend/multi-site.html): 站点隔离、集中管理
-* [管理员](https://artalk.js.org/guide/backend/multi-site.html): 密码验证、徽章标识
-* [页面管理](https://artalk.js.org/guide/frontend/sidebar.html): 快速查看、标题一键跳转
-* [浏览量统计](https://artalk.js.org/guide/frontend/pv.html): 轻松统计网页浏览量
-* [层级结构](https://artalk.js.org/guide/frontend/config.html#nestmax): 嵌套分页列表、滚动加载
-* [评论投票](https://artalk.js.org/guide/frontend/config.html#vote): 赞同或反对评论
-* [评论排序](https://artalk.js.org/guide/frontend/config.html#listsort): 多种排序方式，自由选择
-* [评论搜索](https://artalk.js.org/guide/frontend/sidebar.html): 快速搜索评论内容
-* [评论置顶](https://artalk.js.org/guide/frontend/sidebar.html): 重要消息置顶显示
-* [仅看作者](https://artalk.js.org/guide/frontend/config.html): 仅显示作者的评论
-* [评论跳转](https://artalk.js.org/guide/intro.html): 快速跳转到引用的评论
-* [自动保存](https://artalk.js.org/guide/frontend/config.html): 输入内容防丢功能
-* [IP 属地](https://artalk.js.org/guide/frontend/ip-region.html): 用户 IP 属地展示
-* [数据迁移](https://artalk.js.org/guide/transfer.html): 自由迁移、快速备份
-* [图片灯箱](https://artalk.js.org/guide/frontend/lightbox.html): 图片灯箱快速集成
-* [图片懒加载](https://artalk.js.org/guide/frontend/img-lazy-load.html): 延迟加载图片，优化体验
-* [Latex](https://artalk.js.org/guide/frontend/latex.html): Latex 公式解析集成
-* [夜间模式](https://artalk.js.org/guide/frontend/config.html#darkmode): 夜间模式切换
-* [扩展插件](https://artalk.js.org/develop/plugin.html): 创造更多可能性
-* [多语言](https://artalk.js.org/guide/frontend/i18n.html): 多国语言切换
-* [命令行](https://artalk.js.org/guide/backend/config.html): 命令行操作管理能力
-* [API 文档](https://artalk.js.org/http-api.html): 提供 OpenAPI 格式文档
-* [程序升级](https://artalk.js.org/guide/backend/update.html): 版本检测，一键升级
+* [Sidebar](https://artalk.js.org/guide/frontend/sidebar.html): Quick management, intuitive browsing
+* [Social Login](https://artalk.js.org/guide/frontend/auth.html): Fast login via social accounts
+* [Email Notification](https://artalk.js.org/guide/backend/email.html): Various sending methods, email templates
+* [Diverse Push](https://artalk.js.org/guide/backend/admin_notify.html): Multiple push methods, notification templates
+* [Site Notification](https://artalk.js.org/guide/frontend/sidebar.html): Red dot marks, mention list
+* [Captcha](https://artalk.js.org/guide/backend/captcha.html): Various verification types, frequency limits
+* [Comment Moderation](https://artalk.js.org/guide/backend/moderator.html): Content detection, spam interception
+* [Image Upload](https://artalk.js.org/guide/backend/img-upload.html): Custom upload, supports image hosting
+* [Markdown](https://artalk.js.org/guide/intro.html): Supports Markdown syntax
+* [Emoji Pack](https://artalk.js.org/guide/frontend/emoticons.html): Compatible with OwO, quick integration
+* [Multi-Site](https://artalk.js.org/guide/backend/multi-site.html): Site isolation, centralized management
+* [Admin](https://artalk.js.org/guide/backend/multi-site.html): Password verification, badge identification
+* [Page Management](https://artalk.js.org/guide/frontend/sidebar.html): Quick view, one-click title navigation
+* [Page View Statistics](https://artalk.js.org/guide/frontend/pv.html): Easily track page views
+* [Hierarchical Structure](https://artalk.js.org/guide/frontend/config.html#nestmax): Nested paginated list, infinite scroll
+* [Comment Voting](https://artalk.js.org/guide/frontend/config.html#vote): Upvote or downvote comments
+* [Comment Sorting](https://artalk.js.org/guide/frontend/config.html#listsort): Various sorting options, freely selectable
+* [Comment Search](https://artalk.js.org/guide/frontend/sidebar.html): Quick comment content search
+* [Comment Pinning](https://artalk.js.org/guide/frontend/sidebar.html): Pin important messages
+* [View Author Only](https://artalk.js.org/guide/frontend/config.html): Show only the author's comments
+* [Comment Jump](https://artalk.js.org/guide/intro.html): Quickly jump to quoted comment
+* [Auto Save](https://artalk.js.org/guide/frontend/config.html): Content loss prevention
+* [IP Region](https://artalk.js.org/guide/frontend/ip-region.html): Display user's IP region
+* [Data Migration](https://artalk.js.org/guide/transfer.html): Free migration, quick backup
+* [Image Lightbox](https://artalk.js.org/guide/frontend/lightbox.html): Quick integration of image lightbox
+* [Image Lazy Load](https://artalk.js.org/guide/frontend/img-lazy-load.html): Lazy load images, optimize experience
+* [Latex](https://artalk.js.org/guide/frontend/latex.html): Integrate Latex formula parsing
+* [Night Mode](https://artalk.js.org/guide/frontend/config.html#darkmode): Switch to night mode
+* [Extension Plugin](https://artalk.js.org/develop/plugin.html): Create more possibilities
+* [Multi-Language](https://artalk.js.org/guide/frontend/i18n.html): Switch between multiple languages
+* [Command Line](https://artalk.js.org/guide/backend/config.html): Command line operation management
+* [API Documentation](https://artalk.js.org/http-api.html): Provides OpenAPI format documentation
+* [Program Upgrade](https://artalk.js.org/guide/backend/update.html): Version check, one-click upgrade
 <!-- /features -->
 
 <!-- prettier-ignore-end -->
 
-## 安装
+## Installation
 
-通过 Docker 一键部署：
+Deploy with Docker in one step:
 
 ```bash
 docker run -d \
     --name artalk \
     -p 8080:23366 \
     -v $(pwd)/data:/data \
-    -e "TZ=Asia/Shanghai" \
-    -e "ATK_LOCALE=zh-CN" \
-    -e "ATK_SITE_DEFAULT=Artalk 的博客" \
+    -e "TZ=America/New_York" \
+    -e "ATK_LOCALE=en" \
+    -e "ATK_SITE_DEFAULT=Artalk Blog" \
     -e "ATK_SITE_URL=https://example.com" \
     artalk/artalk-go
 ```
 
-在网页中引入 Artalk:
+Integrate Artalk into your webpage:
 
 <!-- prettier-ignore-start -->
 
 ```ts
 Artalk.init({
   el:      '#Comments',
-  site:    'Artalk 的博客',
+  site:    'Artalk Blog',
   server:  'https://artalk.example.com',
   pageKey: '/2018/10/02/hello-world.html'
 })
@@ -94,7 +94,7 @@ Artalk.init({
 
 <!-- prettier-ignore-end -->
 
-[**了解更多 →**](https://artalk.js.org/guide/deploy.html)
+[**Learn More →**](https://artalk.js.org/guide/deploy.html)
 
 ## For Developers
 

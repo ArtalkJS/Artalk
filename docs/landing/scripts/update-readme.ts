@@ -26,5 +26,5 @@ const build = async (lang: string, filenames: string[]) => {
   console.log(`[DONE] locale "${lang}" finished.\n`)
 }
 
-await build('en', ['../../../README.en.md', '../../docs/en/guide/intro.md'])
-await build('zh-CN', ['../../../README.md', '../../docs/zh/guide/intro.md'])
+await build('en', ['../../../README.md', '../../docs/en/guide/intro.md'])
+await build('zh-CN', ['../../../README.zh.md', '../../docs/zh/guide/intro.md'])

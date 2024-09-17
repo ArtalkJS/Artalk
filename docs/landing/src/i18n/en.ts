@@ -1,7 +1,7 @@
 export const en = {
   home_title: 'Artalk - A Self-hosted Comment System',
   get_artalk: 'Get Artalk',
-  get_artalk_link: 'https://artalk.js.org/en/guide/intro.html',
+  get_artalk_link: 'https://artalk.js.org/en/guide/deploy.html',
   nav_docs_link: 'https://artalk.js.org/en/guide/intro.html',
   nav_changelog_link: 'https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md',
   github_link: 'https://github.com/ArtalkJS/Artalk',

@@ -1,20 +1,23 @@
 import React from 'react'
-import { Features, FeatureItem } from '../../Features'
+import { useTranslation } from 'react-i18next'
+import { getFeatures, FeatureItem } from '../../features.ts'
 
 export const FullFeatureList: React.FC = () => {
+  const { t } = useTranslation()
+
   // let func list item group by every two items
-  const FuncListGrouped = Features.reduce<FeatureItem[][]>((result, current, index) => {
+  const FuncListGrouped = getFeatures(t).reduce<FeatureItem[][]>((result, current, index) => {
     if (index % 3 === 0) result.push([current])
     else result[result.length - 1].push(current)
     return result
   }, [])
 
   return (
-    <div className='func-list'>
+    <div className="func-list">
       {FuncListGrouped.map((row, i) => (
-        <div key={i} className='row'>
+        <div key={i} className="row">
           {row.map((item, j) => (
-            <a key={j} className='item' href={item.link} target='_blank' rel="noreferrer">
+            <a key={j} className="item" href={item.link} target="_blank" rel="noreferrer">
               <div className="header">
                 <item.icon />
                 <span className="text">{item.name}</span>

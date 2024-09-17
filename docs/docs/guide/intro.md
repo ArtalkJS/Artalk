@@ -45,10 +45,10 @@ Artalk 的功能包括但不限于：
 * [图片懒加载](https://artalk.js.org/guide/frontend/img-lazy-load.html): 延迟加载图片，优化体验
 * [Latex](https://artalk.js.org/guide/frontend/latex.html): Latex 公式解析集成
 * [夜间模式](https://artalk.js.org/guide/frontend/config.html#darkmode): 夜间模式切换
-* [扩展插件](https://artalk.js.org/develop/): 创造更多可能性
+* [扩展插件](https://artalk.js.org/develop/plugin.html): 创造更多可能性
 * [多语言](https://artalk.js.org/guide/frontend/i18n.html): 多国语言切换
 * [命令行](https://artalk.js.org/guide/backend/config.html): 命令行操作管理能力
-* [API 文档](https://artalk.js.org/develop/): 提供 OpenAPI 格式文档
+* [API 文档](https://artalk.js.org/http-api.html): 提供 OpenAPI 格式文档
 * [程序升级](https://artalk.js.org/guide/backend/update.html): 版本检测，一键升级
 <!-- /features -->
 

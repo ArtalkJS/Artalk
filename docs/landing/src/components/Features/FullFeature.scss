@@ -5,7 +5,6 @@
     .row {
       display: flex;
       margin-bottom: 30px;
-      place-items: center;
       justify-items: stretch;
 
       &:nth-child(even) {
@@ -17,15 +16,15 @@
       }
 
       .item {
-        color: #000;
+        color: var(--color-font);
         margin: 0 15px;
         flex: 1;
         font-size: 25px;
         border-radius: 20px;
-        border: 3px solid #E1E4EC;
-        background: #fff;
+        border: 3px solid var(--color-border);
+        background: var(--color-bg);
         padding: 40px 50px;
-        transition: transform 200ms cubic-bezier(0.750, 0.250, 0.250, 0.750);
+        transition: transform 200ms cubic-bezier(0.75, 0.25, 0.25, 0.75);
 
         &:hover {
           transform: scale(1.05);
@@ -37,7 +36,7 @@
           margin-bottom: 20px;
 
           svg {
-            margin-right: .5em;
+            margin-right: 0.5em;
           }
 
           .text {
@@ -47,7 +46,7 @@
 
         .body {
           .desc {
-            color: #67757F;
+            color: var(--color-font-secondary);
             display: flex;
             place-items: center;
             min-height: 3em;
@@ -63,21 +62,22 @@
 
   .folder-icon.animate {
     @keyframes fileUpAnim {
-      50% { transform: translateY(-10%) }
+      50% {
+        transform: translateY(-10%);
+      }
     }
 
     .file-1 {
-      animation: fileUpAnim 1s cubic-bezier(0.860, 0.000, 0.070, 1.000) forwards;
+      animation: fileUpAnim 1s cubic-bezier(0.86, 0, 0.07, 1) forwards;
     }
 
-
     .file-2 {
-      animation: fileUpAnim 1s cubic-bezier(0.860, 0.000, 0.070, 1.000) forwards;
+      animation: fileUpAnim 1s cubic-bezier(0.86, 0, 0.07, 1) forwards;
       animation-delay: 500ms;
     }
 
     .file-3 {
-      animation: fileUpAnim 1s cubic-bezier(0.860, 0.000, 0.070, 1.000) forwards;
+      animation: fileUpAnim 1s cubic-bezier(0.86, 0, 0.07, 1) forwards;
       animation-delay: 1s;
     }
   }

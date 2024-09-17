@@ -9,12 +9,15 @@ interface RevelProps {
 }
 
 export const Reveal: React.FC<RevelProps> = (props) => {
-  props = {...{
-    // default config
-    threshold: 0.5,
-    duration: 1000,
-    delay: 0
-  }, ...props}
+  props = {
+    ...{
+      // default config
+      threshold: 0.5,
+      duration: 1000,
+      delay: 0,
+    },
+    ...props,
+  }
 
   const [isVisible, setIsVisible] = useState(false)
   const elementRef = useRef<HTMLDivElement>(null)
@@ -27,14 +30,17 @@ export const Reveal: React.FC<RevelProps> = (props) => {
       return
     }
 
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setIsVisible(true)
-        observerRefValue && observer.unobserve(observerRefValue)
-      }
-    }, {
-      threshold: props.threshold
-    })
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true)
+          observerRefValue && observer.unobserve(observerRefValue)
+        }
+      },
+      {
+        threshold: props.threshold,
+      },
+    )
 
     observerRefValue && observer.observe(observerRefValue)
 

@@ -2,21 +2,54 @@
   box-sizing: border-box;
 }
 
+:root {
+  --color-primary: #007bff;
+  --color-font: #333;
+  --color-font-secondary: #67757f;
+  --color-bg: #fff;
+  --color-bg-transparent: rgba(255, 255, 255, 0.9);
+  --color-bg-grey: #f6f8fa;
+  --color-border: #e1e4ec;
+}
+
 body {
-  font: 16px "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  font:
+    16px 'SF Pro Display',
+    'SF Pro Icons',
+    'Helvetica Neue',
+    'Helvetica',
+    'Arial',
+    sans-serif;
   overflow-x: hidden;
+  background-color: var(--color-bg);
+  color: var(--color-font);
 }
 
 .container {
   width: 100%;
   margin: 0 auto;
 
-  @media (min-width: 640px) { max-width: 640px; }
-  @media (min-width: 720px) { max-width: 720px; }
-  @media (min-width: 768px) { max-width: 768px; }
-  @media (min-width: 1024px) { max-width: 1024px; }
-  @media (min-width: 1280px) { max-width: 1280px; }
-  @media (min-width: 1536px) { max-width: 1536px; }
+  @media (min-width: 640px) {
+    max-width: 590px;
+  }
+  @media (min-width: 720px) {
+    max-width: 670px;
+  }
+  @media (min-width: 768px) {
+    max-width: 718px;
+  }
+  @media (min-width: 1024px) {
+    max-width: 974px;
+  }
+  @media (min-width: 1280px) {
+    max-width: 1230px;
+  }
+  @media (min-width: 1536px) {
+    max-width: 1446px;
+  }
+  @media (min-width: 1920px) {
+    max-width: 80%;
+  }
 }
 
 a {
@@ -24,7 +57,7 @@ a {
 }
 
 .anim-fade-in {
-  animation: fadeIn .8s ease-in-out;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
 @keyframes fadeIn {

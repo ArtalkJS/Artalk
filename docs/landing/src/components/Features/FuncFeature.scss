@@ -13,7 +13,7 @@
     }
 
     .wave {
-      animation: .5s linear WaveAnim infinite;
+      animation: 0.5s linear WaveAnim infinite;
     }
   }
 
@@ -30,13 +30,13 @@
         display: flex;
         place-items: center;
         justify-content: space-between;
-        color: #000;
+        color: var(--color-font);
         font-size: 27px;
         margin-bottom: 25px;
 
         &:hover {
           svg {
-            animation: .5s cubic-bezier(0.25, 1, 0.5, 1) funcGrpNameArrowAnim;
+            animation: 0.5s cubic-bezier(0.25, 1, 0.5, 1) funcGrpNameArrowAnim;
             opacity: 1;
           }
         }
@@ -51,7 +51,7 @@
         svg {
           margin: 0 20px;
           opacity: 0;
-          color: #67757F;
+          color: #67757f;
         }
       }
 
@@ -63,7 +63,7 @@
 
         .item {
           font-size: 20px;
-          background: #F8FAFC;
+          background: var(--color-bg-grey);
           border-radius: 20px;
           padding: 20px 0;
           text-align: center;

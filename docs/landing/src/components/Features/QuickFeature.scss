@@ -1,6 +1,6 @@
 .feature.quick {
   .deploy-links {
-    margin: 80px 30px;
+    margin: 80px 0;
     display: flex;
     flex-direction: column;
 
@@ -11,7 +11,7 @@
       flex-wrap: wrap;
       place-items: flex-end;
       font-size: 35px;
-      color: #000;
+      color: var(--color-font);
 
       &:not(:last-child) {
         margin-bottom: 1.8em;
@@ -31,7 +31,7 @@
 
       .bold {
         font-size: 1.5em;
-        margin-right: .2em;
+        margin-right: 0.2em;
       }
 
       span {
@@ -39,6 +39,7 @@
       }
 
       .arrow-icon {
+        margin-left: auto;
         position: relative;
         display: flex;
         flex-direction: row;
@@ -52,11 +53,11 @@
           top: 0;
           position: absolute;
           display: block;
-          background: #55ACEE;
+          background: #55acee;
           height: 2em;
-          width: .6em;
-          margin-right: .3em;
-          transition: width 500ms cubic-bezier(0.075, 0.820, 0.165, 1.000);
+          width: 0.6em;
+          margin-right: 0.3em;
+          transition: width 500ms cubic-bezier(0.075, 0.82, 0.165, 1);
         }
 
         svg {
@@ -77,7 +78,7 @@
 
   .airplane {
     opacity: 0;
-    transition: opacity .4s;
+    transition: opacity 0.4s;
   }
 
   &.visible {
@@ -89,7 +90,7 @@
 
     .airplane {
       opacity: 1;
-      animation: airplaneAnim 2s cubic-bezier(0.075, 0.820, 0.165, 1.000);
+      animation: airplaneAnim 2s cubic-bezier(0.075, 0.82, 0.165, 1);
     }
   }
 
@@ -117,8 +118,8 @@
       align-items: center;
       flex-direction: row;
       margin-bottom: 1.5em;
-      background: #f6f8fa;
-      color: #67757F;
+      background: var(--color-bg-grey);
+      color: #67757f;
 
       .content {
         padding: 0 30px;
@@ -130,7 +131,7 @@
         place-items: center;
         padding: 0 20px;
         height: 100%;
-        background: #00ACD7;
+        background: #00acd7;
         color: #fff;
         cursor: pointer;
 

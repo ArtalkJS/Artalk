@@ -21,6 +21,7 @@
     width: 35vw;
 
     .demo-video {
+      border-radius: 4px;
       width: 100%;
       height: auto;
       object-fit: contain;
@@ -36,7 +37,7 @@
     .highlight {
       overflow: hidden;
       position: relative;
-      color: rgba(0, 113, 227, 0.9);
+      color: var(--color-primary);
       white-space: nowrap;
 
       @keyframes wipe {
@@ -45,14 +46,14 @@
         }
 
         100% {
-          stroke: #BDCFFF
+          stroke: #bdcfff;
         }
       }
 
       .line-wrap {
         z-index: -1;
         position: absolute;
-        opacity: .7;
+        opacity: 0.7;
         bottom: -8.5px;
         left: 0;
 
@@ -81,23 +82,24 @@
       justify-content: center;
       place-items: center;
       cursor: pointer;
-      color: #000;
+      color: var(--color-font);
 
       &:not(:last-child) {
         margin-right: 15px;
       }
 
       &.blue {
-        background: #0071E3;
+        background: var(--color-primary);
         color: #fff;
 
         &:hover {
-          background: #0080ff;
+          opacity: 0.9;
+          background: var(--color-primary);
         }
       }
 
       &:hover {
-        background: #f4f4f4;
+        background: var(--color-bg-grey);
       }
 
       svg {

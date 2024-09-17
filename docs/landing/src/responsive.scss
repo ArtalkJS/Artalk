@@ -1,8 +1,14 @@
-@import "include-media";
+@import 'include-media';
 
-$breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
+$breakpoints: (
+  sm: 640px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+  xxl: 1536px,
+);
 
-@include media(">lg", "<xxl") {
+@include media('>lg', '<xxl') {
   .feature {
     .feature-title {
       padding: 0 40px;
@@ -21,21 +27,39 @@ $breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
   }
 }
 
-@include media("<=md") {
-  .slogan .slogan-inner {
-    padding: 0 40px;
-  }
-
+@include media('<=md') {
   .app-header {
     padding: 0 25px;
   }
 
-  .app-header .links .link-item:not(:last-child) {
-    margin-right: 24px
+  .app-header .menu-toggle-mobile {
+    display: block;
+  }
+
+  .app-header .links {
+    display: none;
+
+    &.mobile-show {
+      flex: 1;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .link-item:not(:last-child) {
+      margin-right: 0;
+    }
+
+    .link-item .language-toggle {
+      margin-left: 0;
+    }
+  }
+
+  .slogan .slogan-inner {
+    padding: 0 40px;
   }
 
   .slogan .text {
-    zoom: .8;
+    zoom: 0.8;
     width: 100%;
   }
 
@@ -77,7 +101,7 @@ $breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
         width: 100%;
 
         svg {
-          zoom: .8;
+          zoom: 0.8;
         }
       }
     }
@@ -91,6 +115,7 @@ $breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
     .item {
       width: 100%;
       padding: 30px 40px;
+      margin: 0;
       font-size: 21px;
 
       &:not(:last-child) {
@@ -111,7 +136,7 @@ $breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
 
   .feature.quick .extra-desc .golang-icon {
     margin-top: 50px;
-    zoom: .6;
+    zoom: 0.6;
   }
 
   .feature.quick .extra-desc .self-compile {
@@ -139,7 +164,7 @@ $breakpoints: (sm: 640px, md: 768px, lg: 1024px, xl: 1280px, xxl: 1536px);
   }
 
   .safe.feature .data-icon {
-    zoom: .5;
+    zoom: 0.5;
     margin-left: 0;
     margin-bottom: 0;
   }

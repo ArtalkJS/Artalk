@@ -9,11 +9,15 @@ interface FeatureBaseProps extends React.ComponentProps<'div'> {
 export const FeatureBase: React.FC<FeatureBaseProps> = (props) => {
   const { className, onVisibleChange, ...otherProps } = props
 
-
   const refElem = useRef<HTMLDivElement>(null)
   const isSlightFeatureVisible = useIsElementVisible(refElem)
 
-  const classNames = ['feature', 'container', isSlightFeatureVisible ? 'visible' : '', ...(className?.split(' ') || [])]
+  const classNames = [
+    'feature',
+    'container',
+    isSlightFeatureVisible ? 'visible' : '',
+    ...(className?.split(' ') || []),
+  ]
 
   useEffect(() => {
     onVisibleChange && onVisibleChange(isSlightFeatureVisible)

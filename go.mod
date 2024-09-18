@@ -1,6 +1,6 @@
 module github.com/artalkjs/artalk/v2
 
-go 1.22.6
+go 1.22.7
 
 require (
 	github.com/allegro/bigcache/v3 v3.1.0
@@ -124,7 +124,7 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_golang v1.20.3 // indirect
+	github.com/prometheus/client_golang v1.20.4 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.59.1 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect

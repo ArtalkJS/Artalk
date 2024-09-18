@@ -14,7 +14,7 @@ executors:
       - image: "cimg/node:20.17.0"
   go:
     docker:
-      - image: cimg/go:1.22.6
+      - image: cimg/go:1.22.7
 
 parameters:
   trigger-app:

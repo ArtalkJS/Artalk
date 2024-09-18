@@ -1,4 +1,44 @@
 
+## [v2.9.1](https://github.com/ArtalkJS/Artalk/compare/v2.9.0...v2.9.1) (2024-09-18)
+
+### Features
+
+* **go:** upgrade golang to v1.22.7 and some deps
+
+### Bug Fixes
+
+* **db:** sql error with custom table prefix ([#970](https://github.com/ArtalkJS/Artalk/issues/970))
+* **test:** separate test db to isolate concurrent test instances ([#975](https://github.com/ArtalkJS/Artalk/issues/975))
+* **transfer:** ensure consistent time format in artrans export
+* **ui/plugin:** prevent exceptions from blocking other plugins loading
+
+### Performance Improvements
+
+* **plugin_katex:** add error message for missing katex deps
+
+### Code Refactoring
+
+* **dao:** improve concurrent testing for `FindCreateAction` function
+* **go:** hardcode version and get commit_hash via runtime/debug
+* **go:** bump the module version and support go install ([#979](https://github.com/ArtalkJS/Artalk/issues/979))
+
+### Testing
+
+* **mutex:** add tests for keyed mutex
+
+### Documentation
+
+* refine deployment documentation
+* **i18n:** add English translations for docs ([#978](https://github.com/ArtalkJS/Artalk/issues/978))
+* **landing:** add multi-language and dark-mode for landing
+* **landing:** add demo video in landing page
+
+### BREAKING CHANGE
+
+
+The original Go module name was `github.com/ArtalkJS/Artalk`, which has now been modified to `github.com/artalkjs/artalk/v2` (all lowercase). This change may affect the CI pipeline or other areas if you are compiling the Artalk server and have specified the fixed Go module name. Regarding the original `-ldflags -X github.com/ArtalkJS/Artalk/internal/config.Version` and `CommitHash` definitions, please remove them, as they are now obsolete. The `Version` has been hardcoded into the Go code, and the `CommitHash` is now read from the Go build info via runtime/debug’s vcs.revision value. This change only affects the server developers and does not impact the frontend UI client.
+
+
 ## [v2.9.0](https://github.com/ArtalkJS/Artalk/compare/v2.8.7...v2.9.0) (2024-09-03)
 
 ### Features

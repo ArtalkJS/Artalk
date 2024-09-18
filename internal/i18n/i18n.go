@@ -1,8 +1,8 @@
 package i18n
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/utils"
 	"gopkg.in/yaml.v3"
 )
 

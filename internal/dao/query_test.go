@@ -3,8 +3,8 @@ package dao_test
 import (
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/test"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/test"
 	"github.com/stretchr/testify/assert"
 )
 

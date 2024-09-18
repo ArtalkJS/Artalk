@@ -12,7 +12,6 @@ on:
 
 env:
   GO_VERSION: 1.22.6
-  PKG_NAME: github.com/ArtalkJS/Artalk
   DOCKER_IMG: ghcr.io/goreleaser/goreleaser-cross
   CACHE_DIR: /tmp/cache/docker-image
 
@@ -78,8 +77,8 @@ jobs:
             --privileged \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v $(pwd)/sysroot:/sysroot \
-            -v $(pwd):/go/src/${PKG_NAME} \
-            -w /go/src/${PKG_NAME} \
+            -v $(pwd):/repo \
+            -w /repo \
             -e CGO_ENABLED=1 \
             --env-file local/.release-env \
             ghcr.io/goreleaser/goreleaser-cross:v${GO_VERSION} \

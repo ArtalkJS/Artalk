@@ -1,7 +1,7 @@
 package comments_get
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
 )
 
 // User Scope Query Tag

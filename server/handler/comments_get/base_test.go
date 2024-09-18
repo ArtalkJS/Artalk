@@ -3,8 +3,8 @@ package comments_get
 import (
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/test"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/test"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )

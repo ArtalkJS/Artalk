@@ -4,11 +4,11 @@ import (
 	"html"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/internal/notify_pusher/sender"
-	"github.com/ArtalkJS/Artalk/internal/template"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/i18n"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/notify_pusher/sender"
+	"github.com/ArtalkJS/Artalk/v2/internal/template"
 )
 
 func (pusher *NotifyPusher) multiPush(comment *entity.Comment, pComment *entity.Comment) {

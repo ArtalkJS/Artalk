@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/ArtalkJS/Artalk/internal/pkged"
+	"github.com/ArtalkJS/Artalk/v2/internal/pkged"
 )
 
 const CONF_TPL_DEFAULT_PATH = "conf/artalk.example.yml"

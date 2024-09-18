@@ -3,10 +3,10 @@ package notify_pusher
 import (
 	"context"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/config"
+	"github.com/ArtalkJS/Artalk/v2/internal/dao"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/dingding"
 	"github.com/nikoksr/notify/service/line"

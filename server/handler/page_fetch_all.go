@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/server/common"
+	"github.com/ArtalkJS/Artalk/v2/internal/core"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/i18n"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
 )
 

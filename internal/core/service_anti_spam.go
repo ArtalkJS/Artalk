@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/ArtalkJS/Artalk/internal/anti_spam"
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/anti_spam"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
 )
 
 var _ Service = (*AntiSpamService)(nil)

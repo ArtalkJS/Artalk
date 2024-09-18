@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
 )
 
 func (dao *Dao) NewSite(name string, urls string) entity.Site {

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/ArtalkJS/Artalk/v2/internal/core"
 	"github.com/spf13/cobra"
 )
 

@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/config"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
 	"github.com/samber/lo"
 )
 

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/core"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 )

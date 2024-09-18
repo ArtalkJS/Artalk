@@ -6,9 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/config"
+	"github.com/ArtalkJS/Artalk/v2/internal/core"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )

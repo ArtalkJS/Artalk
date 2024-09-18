@@ -3,10 +3,10 @@ package dao_test
 import (
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/cache"
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/db"
+	"github.com/ArtalkJS/Artalk/v2/internal/cache"
+	"github.com/ArtalkJS/Artalk/v2/internal/config"
+	"github.com/ArtalkJS/Artalk/v2/internal/dao"
+	"github.com/ArtalkJS/Artalk/v2/internal/db"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )

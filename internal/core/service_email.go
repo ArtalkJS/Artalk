@@ -3,10 +3,10 @@ package core
 import (
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/email"
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/internal/template"
+	"github.com/ArtalkJS/Artalk/v2/internal/email"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/template"
 )
 
 var _ Service = (*EmailService)(nil)

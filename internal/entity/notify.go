@@ -3,7 +3,7 @@ package entity
 import (
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/ArtalkJS/Artalk/v2/internal/utils"
 	"gorm.io/gorm"
 )
 

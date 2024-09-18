@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
 )
 
 type NotifyWebHookReqBody struct {

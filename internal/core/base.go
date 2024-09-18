@@ -7,14 +7,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/cache"
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/db"
-	"github.com/ArtalkJS/Artalk/internal/hook"
-	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/internal/pkged"
+	"github.com/ArtalkJS/Artalk/v2/internal/cache"
+	"github.com/ArtalkJS/Artalk/v2/internal/config"
+	"github.com/ArtalkJS/Artalk/v2/internal/dao"
+	"github.com/ArtalkJS/Artalk/v2/internal/db"
+	"github.com/ArtalkJS/Artalk/v2/internal/hook"
+	"github.com/ArtalkJS/Artalk/v2/internal/i18n"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/pkged"
 )
 
 type App struct {

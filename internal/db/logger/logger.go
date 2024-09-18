@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/log"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gorm.io/gorm"

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/artalkjs/artalk/v2/internal/dao"
+	"github.com/artalkjs/artalk/v2/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/utils"
 )
 
 func RegisterSocialUser(dao *dao.Dao, u SocialUser) (entity.AuthIdentity, error) {

@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/i18n"
 	"github.com/araddon/dateparse"
+	"github.com/artalkjs/artalk/v2/internal/i18n"
 )
 
 func readJsonFile(filename string) (string, error) {

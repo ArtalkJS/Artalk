@@ -1,7 +1,7 @@
 package captcha
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/config"
 )
 
 type Map = map[string]interface{}

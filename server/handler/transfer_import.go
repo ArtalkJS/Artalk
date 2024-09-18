@@ -5,9 +5,9 @@ import (
 	"html"
 	"sync"
 
-	"github.com/ArtalkJS/Artalk/internal/artransfer"
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/server/common"
+	"github.com/artalkjs/artalk/v2/internal/artransfer"
+	"github.com/artalkjs/artalk/v2/internal/core"
+	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
 )
 

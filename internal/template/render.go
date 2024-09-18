@@ -1,8 +1,8 @@
 package template
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/dao"
+	"github.com/artalkjs/artalk/v2/internal/entity"
 )
 
 type RenderType string

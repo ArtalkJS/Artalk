@@ -11,12 +11,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/internal/utils"
-	"github.com/ArtalkJS/Artalk/server/common"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/core"
+	"github.com/artalkjs/artalk/v2/internal/i18n"
+	"github.com/artalkjs/artalk/v2/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/utils"
+	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
 )
 

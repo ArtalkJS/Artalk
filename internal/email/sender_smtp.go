@@ -1,8 +1,8 @@
 package email
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/log"
 	"gopkg.in/gomail.v2"
 )
 

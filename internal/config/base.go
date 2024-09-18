@@ -9,9 +9,9 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/ArtalkJS/Artalk/internal/config/env_provider"
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/artalkjs/artalk/v2/internal/config/env_provider"
+	"github.com/artalkjs/artalk/v2/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/utils"
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/file"

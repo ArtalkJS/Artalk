@@ -3,8 +3,8 @@ package core
 import (
 	"strconv"
 
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/log"
 )
 
 func (app *App) syncFromConf() {

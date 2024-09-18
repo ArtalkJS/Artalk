@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/artalkjs/artalk/v2/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/utils"
 	"golang.org/x/sync/singleflight"
 )
 

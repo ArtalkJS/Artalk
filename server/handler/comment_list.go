@@ -3,12 +3,12 @@ package handler
 import (
 	"errors"
 
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/server/common"
-	cog "github.com/ArtalkJS/Artalk/server/handler/comments_get"
+	"github.com/artalkjs/artalk/v2/internal/core"
+	"github.com/artalkjs/artalk/v2/internal/dao"
+	"github.com/artalkjs/artalk/v2/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/log"
+	"github.com/artalkjs/artalk/v2/server/common"
+	cog "github.com/artalkjs/artalk/v2/server/handler/comments_get"
 	"github.com/gofiber/fiber/v2"
 	"github.com/samber/lo"
 )

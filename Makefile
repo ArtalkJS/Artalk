@@ -1,4 +1,4 @@
-PKG_NAME    := github.com/ArtalkJS/Artalk
+PKG_NAME    := github.com/artalkjs/artalk/v2
 BIN_NAME	:= ./bin/artalk
 VERSION     ?= $(shell git describe --tags --abbrev=0 --match 'v*')
 COMMIT_HASH ?= $(shell git rev-parse --short HEAD)

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/config/meta"
-	"github.com/ArtalkJS/Artalk/test"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/config/meta"
+	"github.com/artalkjs/artalk/v2/test"
 )
 
 func Test_GetOptionsMetaData(t *testing.T) {

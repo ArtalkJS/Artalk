@@ -4,8 +4,8 @@ import (
 	"embed"
 	"log"
 
-	"github.com/ArtalkJS/Artalk/cmd"
-	"github.com/ArtalkJS/Artalk/internal/pkged"
+	"github.com/artalkjs/artalk/v2/cmd"
+	"github.com/artalkjs/artalk/v2/internal/pkged"
 )
 
 //go:embed public/*

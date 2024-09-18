@@ -1,7 +1,7 @@
 package notify_pusher
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/entity"
 )
 
 // 通知发送 (from comment to parentComment)

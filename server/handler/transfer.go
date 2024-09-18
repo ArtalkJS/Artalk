@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/core"
+	"github.com/artalkjs/artalk/v2/internal/core"
 	"github.com/gofiber/fiber/v2"
 )
 

@@ -1,8 +1,8 @@
 package limiter
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/limiter"
+	"github.com/artalkjs/artalk/v2/internal/core"
+	"github.com/artalkjs/artalk/v2/internal/limiter"
 	"github.com/gofiber/fiber/v2"
 )
 

@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/log"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/apple"
 	"github.com/markbates/goth/providers/auth0"

@@ -3,7 +3,7 @@ package db
 import (
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 

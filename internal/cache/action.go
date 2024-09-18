@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/log"
 	"github.com/eko/gocache/lib/v4/store"
 	"golang.org/x/sync/singleflight"
 )

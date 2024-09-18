@@ -1,4 +1,4 @@
-module github.com/ArtalkJS/Artalk
+module github.com/artalkjs/artalk/v2
 
 go 1.22.6
 

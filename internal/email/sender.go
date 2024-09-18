@@ -3,8 +3,8 @@ package email
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/entity"
 )
 
 type Email struct {

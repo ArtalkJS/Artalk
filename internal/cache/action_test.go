@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/cache"
+	"github.com/artalkjs/artalk/v2/internal/cache"
 	"github.com/stretchr/testify/assert"
 )
 

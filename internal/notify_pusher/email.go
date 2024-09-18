@@ -1,8 +1,8 @@
 package notify_pusher
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/log"
 	"golang.org/x/exp/slices"
 )
 

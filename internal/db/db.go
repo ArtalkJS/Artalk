@@ -3,8 +3,8 @@ package db
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/db/logger"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/db/logger"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )

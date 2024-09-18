@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/artalkjs/artalk/v2/internal/utils"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/log"
 	"github.com/allegro/bigcache/v3"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/log"
 	"github.com/bradfitz/gomemcache/memcache"
 	lib_cache "github.com/eko/gocache/lib/v4/cache"
 	"github.com/eko/gocache/lib/v4/marshaler"

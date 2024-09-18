@@ -4,9 +4,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/server/common"
+	"github.com/artalkjs/artalk/v2/internal/core"
+	"github.com/artalkjs/artalk/v2/internal/log"
+	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
 )
 

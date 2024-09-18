@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/db"
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/dao"
+	"github.com/artalkjs/artalk/v2/internal/db"
+	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 

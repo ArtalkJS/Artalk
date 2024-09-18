@@ -3,7 +3,7 @@ package anti_spam
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/Artalk/internal/cloud/aliyun"
+	"github.com/artalkjs/artalk/v2/internal/cloud/aliyun"
 )
 
 var _ Checker = (*AliyunChecker)(nil)

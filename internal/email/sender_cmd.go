@@ -4,7 +4,7 @@ import (
 	"io"
 	"os/exec"
 
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/log"
 )
 
 // CmdSender implements Sender

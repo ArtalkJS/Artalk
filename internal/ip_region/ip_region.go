@@ -3,8 +3,8 @@ package ip_region
 import (
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/log"
 )
 
 type IPRegion struct {

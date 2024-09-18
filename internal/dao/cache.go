@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/cache"
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/cache"
+	"github.com/artalkjs/artalk/v2/internal/entity"
 	"golang.org/x/exp/slices"
 )
 

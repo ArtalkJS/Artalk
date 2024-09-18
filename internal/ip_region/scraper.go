@@ -3,7 +3,7 @@ package ip_region
 import (
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/config"
 )
 
 func ipScraper(ip string) string {

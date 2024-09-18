@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/artalkjs/artalk/v2/internal/utils"
 )
 
 var ErrStopPropagation = errors.New("event hook propagation stopped")

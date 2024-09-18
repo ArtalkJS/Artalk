@@ -36,8 +36,8 @@ builds:
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: &common_ldflags |
-      -X github.com/ArtalkJS/Artalk/internal/config.Version={{.Version}}
-      -X github.com/ArtalkJS/Artalk/internal/config.CommitHash={{ .ShortCommit }}
+      -X github.com/artalkjs/artalk/v2/internal/config.Version={{.Version}}
+      -X github.com/artalkjs/artalk/v2/internal/config.CommitHash={{ .ShortCommit }}
       -s -w
 
   # Linux (arm_64)

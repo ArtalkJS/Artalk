@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/i18n"
+	"github.com/artalkjs/artalk/v2/internal/log"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"

@@ -3,7 +3,7 @@ package config
 import (
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/artalkjs/artalk/v2/internal/utils"
 )
 
 // Get the hash function according to the frontend gravatar.params configuration

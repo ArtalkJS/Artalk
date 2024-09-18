@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/entity"
 )
 
 // TODO: consider refactor make all delete operations in a transaction

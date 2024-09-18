@@ -5,10 +5,10 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/utils"
-	"github.com/ArtalkJS/Artalk/server/middleware"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/core"
+	"github.com/artalkjs/artalk/v2/internal/utils"
+	"github.com/artalkjs/artalk/v2/server/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/samber/lo"
 )

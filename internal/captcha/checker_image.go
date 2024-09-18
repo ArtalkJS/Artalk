@@ -1,7 +1,7 @@
 package captcha
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/captcha/image_captcha"
+	"github.com/artalkjs/artalk/v2/internal/captcha/image_captcha"
 )
 
 var _ Checker = (*ImageChecker)(nil)

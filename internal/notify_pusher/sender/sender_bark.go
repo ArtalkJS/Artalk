@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/log"
 )
 
 // Bark 发送

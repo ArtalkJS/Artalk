@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/artalkjs/artalk/v2/internal/config"
 	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/artalkjs/artalk/v2/server/handler"
 	"github.com/artalkjs/artalk/v2/test"
@@ -22,9 +21,6 @@ func TestVersionApi(t *testing.T) {
 		fiberApp := fiber.New()
 		handler.Version(app.App, fiberApp)
 
-		config.Version = "v0.0.1"
-		config.CommitHash = "0000000"
-
 		req := httptest.NewRequest("GET", "/version", nil)
 		resp, _ := fiberApp.Test(req)
 		assert.Equal(t, 200, resp.StatusCode)
@@ -35,7 +31,6 @@ func TestVersionApi(t *testing.T) {
 		json.Unmarshal(body, &data)
 
 		assert.Equal(t, "artalk", data.App)
-		assert.Equal(t, "0.0.1", data.Version)
-		assert.Equal(t, "0000000", data.CommitHash)
+		assert.NotEmpty(t, data.Version)
 	})
 }

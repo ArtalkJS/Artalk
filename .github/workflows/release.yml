@@ -68,7 +68,10 @@ jobs:
           changelog=$(git-chglog --config .github/chglog/config.yml --next-tag "${VERSION}" "${VERSION}")
           echo -e "${changelog}\n" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
 
-          # modify the version of `package.json`
+          # modify the version for `internal/config/version.go`
+          perl -i -pe 's/const Version = ".*?"/const Version = "'${VERSION}'"/g' internal/config/version.go
+
+          # modify the version for `package.json`
           perl -i -pe 's/"version": ".*?"/"version": "'${VERSION#v}'"/g' ui/artalk/package.json
 
           # modify the version in docs

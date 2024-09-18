@@ -79,7 +79,6 @@ jobs:
             -v $(pwd)/sysroot:/sysroot \
             -v $(pwd):/repo \
             -w /repo \
-            -e CGO_ENABLED=1 \
             --env-file local/.release-env \
             ghcr.io/goreleaser/goreleaser-cross:v${GO_VERSION} \
             release --release-notes local/release-notes.md ${{ inputs.dry_run && '--skip=publish' || '' }}

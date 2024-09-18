@@ -71,6 +71,10 @@ function selectUser(username: string) {
   userSelector.value = null
   login(username)
 }
+
+const versionInfo = computed(() => {
+  return `v${version.value + (buildHash.value ? ' / ' + buildHash.value : '')}`
+})
 </script>
 
 <template>
@@ -92,7 +96,7 @@ function selectUser(username: string) {
     <div class="copyright">
       Powered by
       <a href="https://artalk.js.org" target="_blank">Artalk</a>
-      (v{{ version }} / {{ buildHash }})
+      ({{ versionInfo }})
     </div>
 
     <div v-if="userSelector" class="layer">

@@ -23,7 +23,7 @@ func GetApiVersionDataMap() ApiVersionData {
 	return ApiVersionData{
 		App:        "artalk",
 		Version:    strings.TrimPrefix(config.Version, "v"),
-		CommitHash: config.CommitHash,
+		CommitHash: config.CommitHash(),
 	}
 }
 

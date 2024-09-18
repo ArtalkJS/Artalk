@@ -1,11 +1,11 @@
 PKG_NAME    := github.com/artalkjs/artalk/v2
 BIN_NAME	:= ./bin/artalk
-VERSION     ?= $(shell git describe --tags --abbrev=0 --match 'v*')
-COMMIT_HASH ?= $(shell git rev-parse --short HEAD)
 
 HAS_RICHGO  := $(shell which richgo)
 GOTEST      ?= $(if $(HAS_RICHGO), richgo test, go test)
 ARGS        ?= server
+
+export CGO_ENABLED := 1
 
 all: install build
 
@@ -17,8 +17,7 @@ run: all
 
 build:
 	go build \
-    	-ldflags "-s -w -X $(PKG_NAME)/internal/config.Version=$(VERSION) \
-        -X $(PKG_NAME)/internal/config.CommitHash=$(COMMIT_HASH)" \
+    	-ldflags "-s -w" \
         -o $(BIN_NAME) \
     	$(PKG_NAME)
 
@@ -26,10 +25,8 @@ build-frontend:
 	./scripts/build-frontend.sh
 
 build-debug:
-	@echo "Building Artalk $(VERSION) for debugging..."
+	@echo "Building Artalk for debugging..."
 	@go build \
-		-ldflags "-X $(PKG_NAME)/internal/config.Version=$(VERSION) \
-		  -X $(PKG_NAME)/internal/config.CommitHash=$(COMMIT_HASH)" \
 		-gcflags "all=-N -l" \
 		-o $(BIN_NAME) \
 		$(PKG_NAME)
@@ -78,5 +75,6 @@ docker-push:
 
 .PHONY: all install run build build-frontend build-debug dev \
 	test test-coverage test-coverage-html test-frontend-e2e \
-	update-i18n update-conf update-conf-docs update-swagger \
+	update-i18n update-conf update-conf-docs \
+	update-docs-features update-swagger \
 	docker-build docker-push;

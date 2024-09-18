@@ -23,7 +23,7 @@ jobs:
       - name: Use pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9.9.0
+          version: 9.10.0
 
       - name: Setup node
         uses: actions/setup-node@v4

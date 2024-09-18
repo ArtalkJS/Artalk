@@ -1,6 +1,6 @@
 {
   "name": "@artalk/plugin-kit",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "The plugin kit for Artalk",
   "type": "module",
   "main": "dist/main.js",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "esbuild-plugin-raw": "^0.1.8",
-    "tsup": "^8.2.4"
+    "tsup": "^8.3.0"
   },
   "peerDependencies": {
     "artalk": "workspace:^",

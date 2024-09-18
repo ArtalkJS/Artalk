@@ -65,7 +65,7 @@ Artalk 是一款简单易用但功能丰富的评论系统，你可以开箱即�
 
 ## 安装
 
-通过 Docker 一键部署：
+通过 Docker 一键部署 Artalk 服务器：
 
 ```bash
 docker run -d \
@@ -79,7 +79,7 @@ docker run -d \
     artalk/artalk-go
 ```
 
-在网页中引入 Artalk:
+在你的网页中引入 Artalk 客户端:
 
 <!-- prettier-ignore-start -->
 
@@ -94,37 +94,39 @@ Artalk.init({
 
 <!-- prettier-ignore-end -->
 
+我们提供多种安装方法，包括二进制文件、`go install` 和通过 Linux 发行版的包管理器安装。
+
 [**了解更多 →**](https://artalk.js.org/zh/guide/deploy.html)
 
-## For Developers
+## 参与开发
 
-Pull requests are welcome!
+我们欢迎你的 Pull Request！
 
-See [Development](https://artalk.js.org/zh/develop/) and [Contributing](./CONTRIBUTING.md) for information on working with the codebase, getting a local development setup, and contributing changes.
+有关如何使用代码库、设置本地开发环境和贡献更改的信息，请参阅 [开发文档](https://artalk.js.org/zh/develop/) 和 [贡献指南](./CONTRIBUTING.md)。
 
-## Contributors
+## 贡献者们
 
-Your contributions enrich the open-source community, fostering learning, inspiration, and innovation. We deeply value your involvement. Thank you for being a vital part of our community! 🥰
+你的贡献丰富了开源社区，促进了学习、灵感和创新。我们非常重视你的参与。感谢你成为我们社区的重要一员！🥰
 
 [![](https://contrib.rocks/image?repo=ArtalkJS/Artalk)](https://github.com/ArtalkJS/Artalk/graphs/contributors)
 
-## Supporters
+## 支持者们
 
 [![Stargazers repo roster for @ArtalkJS/Artalk](https://reporoster.com/stars/ArtalkJS/Artalk)](https://github.com/ArtalkJS/Artalk/stargazers)
 
-## Repobeats Analytics
+## Repobeats 分析
 
 ![Alt](https://repobeats.axiom.co/api/embed/a9fc9191ac561bc5a8ee2cddc81e635ecaebafb6.svg 'Repobeats analytics image')
 
-## Stargazers over time
+## Star 趋势
 
 <a href="https://trendshift.io/repositories/6290" target="_blank"><img src="https://trendshift.io/api/badge/repositories/6290" alt="ArtalkJS%2FArtalk | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 [![Stargazers over time](https://starchart.cc/ArtalkJS/Artalk.svg)](https://starchart.cc/ArtalkJS/Artalk)
 
-## License
+## 开源许可协议
 
-[MIT](./LICENSE)
+[MIT](./LICENSE) (麻省理工学院许可证)
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FArtalkJS%2FArtalk?ref=badge_shield)
 

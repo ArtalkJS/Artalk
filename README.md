@@ -65,7 +65,7 @@ Artalk is an intuitive yet feature-rich comment system, ready for immediate depl
 
 ## Installation
 
-Deploy with Docker in one step:
+Deploy Artalk Server with Docker in one step:
 
 ```bash
 docker run -d \
@@ -79,7 +79,7 @@ docker run -d \
     artalk/artalk-go
 ```
 
-Integrate Artalk into your webpage:
+Integrate Artalk Client into your webpage:
 
 <!-- prettier-ignore-start -->
 
@@ -93,6 +93,8 @@ Artalk.init({
 ```
 
 <!-- prettier-ignore-end -->
+
+We offer various installation methods, including binary files, go install, and package managers for Linux distributions.
 
 [**Learn More →**](https://artalk.js.org/en/guide/deploy.html)
 

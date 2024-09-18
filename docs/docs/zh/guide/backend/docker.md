@@ -98,4 +98,4 @@ docker exec -it artalk bash
 
 ## 多平台兼容性
 
-Docker 镜像暂仅提供 x86、arm64 的镜像构建，如需更多平台架构版本，请下载 [二进制构建部署](../deploy.md#普通方式部署)。
+Docker 镜像暂仅提供 x86、arm64 的镜像构建，如需更多平台架构版本，请下载 [二进制构建部署](../deploy.md#二进制文件)。

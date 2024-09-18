@@ -98,4 +98,4 @@ docker exec -it artalk bash
 
 ## Multi-Platform Compatibility
 
-The Docker image currently only provides builds for x86 and arm64 architectures. For more platform architectures, please download the binary build and deploy it using the [Ordinary Deployment](../deploy.md#普通方式部署) method.
+The Docker image currently only provides builds for x86 and arm64 architectures. For more platform architectures, please download the binary build and deploy it using the [Binary Deployment](../deploy.md#binary) method.

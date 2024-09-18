@@ -1,8 +1,14 @@
 # 📦 程序部署
 
-## Docker 部署
+该指南将帮助你在服务器上部署 Artalk。之后，你可以将 Artalk 客户端集成到你的网站或博客中，让用户能够在你的网站上畅所欲言。
 
-推荐使用 Docker 部署，需预先安装 [Docker 引擎](https://docs.docker.com/engine/install/)，执行命令创建容器：
+## Docker
+
+以下是一个简单的 Artalk **服务器** 和 **客户端** 部署示例。
+
+### 启动服务器
+
+推荐使用 Docker 部署，预先安装 [Docker 引擎](https://docs.docker.com/engine/install/) 并创建一个工作目录，然后执行命令在后台启动容器：
 
 ```bash
 docker run -d \
@@ -16,6 +22,8 @@ docker run -d \
     artalk/artalk-go
 ```
 
+（注意：我们也提供了 [Docker Compose](#docker-compose) 的配置文件）。
+
 执行命令创建管理员账户：
 
 ```bash
@@ -23,6 +31,8 @@ docker exec -it artalk artalk admin
 ```
 
 浏览器输入 `http://artalk.example.com:8080` 进入 Artalk 后台登录界面。
+
+### 集成客户端
 
 在网页中引入 Artalk 程序内嵌的的前端 JS 和 CSS 资源并初始化 Artalk：
 
@@ -55,12 +65,12 @@ Artalk.init({
 
 🥳 你已成功完成 Artalk 部署！
 
-## 普通方式部署
+## 二进制文件
 
 1. [GitHub Release](https://github.com/ArtalkJS/Artalk/releases) 下载程序压缩包
 2. 解压 `tar -zxvf artalk_版本号_系统_架构.tar.gz`
 3. 运行 `./artalk server`
-4. 配置
+4. 在你的网页中配置和初始化 Artalk 客户端：
 
    ```js
    Artalk.init({ server: 'http://artalk.example.com:23366' })
@@ -72,47 +82,21 @@ Artalk.init({
 - [反向代理 (Caddy, Nginx, Apache)](./backend/reverse-proxy.md)
 - [自编译 (通过最新代码构建)](../develop/contributing.md)
 
-## Compose 部署
+## Go 模块
 
-**compose.yaml**
-
-```yaml
-version: '3.8'
-services:
-  artalk:
-    container_name: artalk
-    image: artalk/artalk-go
-    restart: unless-stopped
-    ports:
-      - 8080:23366
-    volumes:
-      - ./data:/data
-    environment:
-      - TZ=Asia/Shanghai
-      - ATK_LOCALE=zh-CN
-      - ATK_SITE_DEFAULT=Artalk 的博客
-      - ATK_SITE_URL=https://your_domain
-```
-
-创建容器：
+如果你已经安装了 Golang 工具链，可以运行以下命令来编译和安装最新版本的 Artalk：
 
 ```bash
-docker-compose up -d
+go install github.com/artalkjs/artalk/v2@latest
 ```
 
-::: details Compose 常用命令
+然后运行服务器：
 
 ```bash
-docker-compose restart  # 重启容器
-docker-compose stop     # 暂停容器
-docker-compose down     # 删除容器
-docker-compose pull     # 更新镜像
-docker-compose exec artalk bash # 进入容器
+artalk server
 ```
 
-:::
-
-参考文档：[Docker](./backend/docker.md) / [环境变量](./env.md)
+客户端集成步骤详见[此处](#集成客户端)。
 
 ## Linux 发行版
 
@@ -136,7 +120,77 @@ pkg install artalk
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/artalk.svg)](https://repology.org/project/artalk/versions)
 
-## CDN 资源
+## Docker Compose
+
+创建一个工作目录，并编辑 `docker-compose.yml` 文件：
+
+```yaml
+version: '3.8'
+services:
+  artalk:
+    container_name: artalk
+    image: artalk/artalk-go
+    restart: unless-stopped
+    ports:
+      - 8080:23366
+    volumes:
+      - ./data:/data
+    environment:
+      - TZ=Asia/Shanghai
+      - ATK_LOCALE=zh-CN
+      - ATK_SITE_DEFAULT=Artalk 的博客
+      - ATK_SITE_URL=https://your_domain
+```
+
+创建容器运行 Artalk 服务器：
+
+```bash
+docker-compose up -d
+```
+
+客户端集成步骤详见[此处](#集成客户端)。
+
+::: details Compose 常用命令
+
+```bash
+docker-compose restart  # 重启容器
+docker-compose stop     # 暂停容器
+docker-compose down     # 删除容器
+docker-compose pull     # 更新镜像
+docker-compose exec artalk bash # 进入容器
+```
+
+:::
+
+更多信息：[Docker](./backend/docker.md) / [环境变量](./env.md)
+
+## 前端项目 (Node.js)
+
+通过 NPM 安装 Artalk：
+
+```bash
+npm install artalk
+```
+
+在你的 Web 项目中引入 Artalk：
+
+```js
+import 'artalk/dist/Artalk.css'
+import Artalk from 'artalk'
+
+Artalk.init({
+  // ...
+})
+```
+
+更多参考：
+
+- [置入博客文档](../develop/import-blog.md)
+- [置入框架文档](../develop/import-framework.md)
+- [前端 API](../develop/fe-api.md)
+- [前端配置](./frontend/config.md)
+
+## 前端 CDN 资源
 
 ::: tip Artalk 最新版本
 
@@ -174,40 +228,14 @@ Artalk 后端程序内嵌了前端 JS、CSS 文件，使用公共 CDN 资源请�
 
 :::
 
-## Node 项目
-
-安装 Artalk：
-
-```bash
-npm install artalk
-```
-
-引入 Artalk：
-
-```js
-import 'artalk/dist/Artalk.css'
-import Artalk from 'artalk'
-
-Artalk.init({
-  // ...
-})
-```
-
-更多参考：
-
-- [置入博客文档](../develop/import-blog.md)
-- [置入框架文档](../develop/import-framework.md)
-- [前端配置](./frontend/config.md)
-- [前端 API](../develop/fe-api.md)
-
 ## 数据导入
 
-从其他评论系统导入数据：[数据迁移](./transfer.md)
+从其他评论系统导入数据：[数据迁移](./transfer.md)。
 
 ## ArtalkLite
 
-可选择精简版 [ArtalkLite](./frontend/artalk-lite.md)：体积更小、更简约。
+ArtalkLite 是一个轻量级的精简 Artalk 客户端，体积更小、更简约。查看：[ArtalkLite](./frontend/artalk-lite.md)。
 
 ## 开发环境
 
-可参考：[开发者指南](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)
+请参考：[开发者指南](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)。

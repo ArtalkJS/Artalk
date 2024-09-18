@@ -11,8 +11,8 @@ export const en = defineConfig({
           text: 'Quick Start',
           collapsed: false,
           items: [
-            { text: 'Project Introduction', link: '/en/guide/intro.md' },
-            { text: 'Program Deployment', link: '/en/guide/deploy.md' },
+            { text: 'Introduction', link: '/en/guide/intro.md' },
+            { text: 'Getting Started', link: '/en/guide/deploy.md' },
             { text: 'Data Migration', link: '/en/guide/transfer.md' },
           ],
         },

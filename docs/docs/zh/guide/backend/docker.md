@@ -14,7 +14,7 @@ docker pull artalk/artalk-go
 
 :::tip
 
-推荐使用 Docker Compose，可参考 [程序部署](/guide/deploy) 页面的步骤。
+推荐使用 Docker Compose，可参考 [程序部署](../deploy) 页面的步骤。
 
 :::
 
@@ -98,4 +98,4 @@ docker exec -it artalk bash
 
 ## 多平台兼容性
 
-Docker 镜像暂仅提供 x86、arm64 的镜像构建，如需更多平台架构版本，请下载 [二进制构建部署](/guide/deploy.md#普通方式部署)。
+Docker 镜像暂仅提供 x86、arm64 的镜像构建，如需更多平台架构版本，请下载 [二进制构建部署](../deploy.md#普通方式部署)。

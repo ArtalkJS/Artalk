@@ -94,13 +94,13 @@ Artalk.init({
 
 <!-- prettier-ignore-end -->
 
-[**了解更多 →**](https://artalk.js.org/guide/deploy.html)
+[**了解更多 →**](https://artalk.js.org/zh/guide/deploy.html)
 
 ## For Developers
 
 Pull requests are welcome!
 
-See [Development](https://artalk.js.org/develop/) and [Contributing](./CONTRIBUTING.md) for information on working with the codebase, getting a local development setup, and contributing changes.
+See [Development](https://artalk.js.org/zh/develop/) and [Contributing](./CONTRIBUTING.md) for information on working with the codebase, getting a local development setup, and contributing changes.
 
 ## Contributors
 

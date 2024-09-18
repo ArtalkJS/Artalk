@@ -2,7 +2,7 @@
 
 Artalk 提供图片上传功能，支持限制图片大小、上传频率等，你还能结合 UpGit 将图片上传到图床。
 
-你可以在 [控制中心](/guide/frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](/guide/backend/config.md#图片上传-img_upload) 或 [环境变量](/guide/env.md#图片上传) 进行配置。
+你可以在 [控制中心](../frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](./config.md#图片上传-img_upload) 或 [环境变量](../env.md#图片上传) 进行配置。
 
 ## 配置文件
 
@@ -61,7 +61,7 @@ docker run -d --name artalk -v /path/to/upgit:/usr/bin/upgit -v /path/to/artalk:
 
 频率限制跟随 `captcha` 验证码配置，当超出限制将弹出验证码。
 
-可参考：[后端 · 验证码](/guide/backend/captcha.md)
+可参考：[后端 · 验证码](./captcha.md)
 
 ## path
 

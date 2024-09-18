@@ -1,6 +1,6 @@
 # 界面配置
 
-可在「[控制中心](/guide/frontend/sidebar.md)」修改界面配置，而无需改动前端代码。另外也支持 [配置文件](/guide/backend/config.md#界面配置-frontend) 和 [环境变量](/guide/env.md#界面配置)。
+可在「[控制中心](./sidebar.md)」修改界面配置，而无需改动前端代码。另外也支持 [配置文件](../backend/config.md#界面配置-frontend) 和 [环境变量](../env.md#界面配置)。
 
 界面配置的优先级如下：
 
@@ -50,7 +50,7 @@ artalk.update({ ... })
 
 可以填写由博客系统生成的 `固定链接`，但建议使用相对路径以便日后切换域名。
 
-参考：[关于使用相对 / 绝对路径](/guide/backend/relative-path.md)
+参考：[关于使用相对 / 绝对路径](../backend/relative-path.md)
 
 ### pageTitle
 
@@ -147,7 +147,7 @@ Artalk.init({
 - 类型：`Object|Array|String|Boolean`
 - 默认值："[https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json](https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json)"
 
-详细内容：[前端 · 表情包](/guide/frontend/emoticons.md)
+详细内容：[前端 · 表情包](./emoticons.md)
 
 更新兼容 [OwO 格式](https://github.com/DIYgod/OwO)，支持 URL 动态加载。
 

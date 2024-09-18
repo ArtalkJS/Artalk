@@ -40,6 +40,6 @@ Artalk 拥有站内消息功能，在接收邮件通知的同时，也能在侧�
 
 ## 设置
 
-登录管理员账户进入“控制中心”的设置界面，可修改 [配置](/guide/backend/config.md) 和 [界面](/guide/frontend/config.md)，无需编辑复杂的配置文件。
+登录管理员账户进入“控制中心”的设置界面，可修改 [配置](../backend/config.md) 和 [界面](./config.md)，无需编辑复杂的配置文件。
 
 <img src="/images/sidebar/settings.png" width="700">

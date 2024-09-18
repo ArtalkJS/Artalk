@@ -1,0 +1,7 @@
+/guide/*   /zh/guide/:splat    302  Language=zh
+/guide/*   /en/guide/:splat    302  Language=en
+/guide/*   /en/guide/:splat    302
+
+/develop/* /zh/develop/:splat  302  Language=zh
+/develop/* /en/develop/:splat  302  Language=en
+/develop/* /en/develop/:splat  302

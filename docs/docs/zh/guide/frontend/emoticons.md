@@ -1,6 +1,6 @@
 # 表情包
 
-你可以在 [控制中心](/guide/frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](../backend/config.md#界面配置-frontend) 或 [环境变量](../env.md#界面配置) 进行配置。
+你可以在 [控制中心](./sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](../backend/config.md#界面配置-frontend) 或 [环境变量](../env.md#界面配置) 进行配置。
 
 在配置文件中，可在 `frontend.emoticons` 填入表情包列表 URL：
 

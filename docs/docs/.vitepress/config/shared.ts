@@ -5,14 +5,9 @@ import * as Version from '../../code/ArtalkVersion.json'
 export const shared = defineConfig({
   title: 'Artalk',
 
-  rewrites: {
-    'zh/:rest*': ':rest*',
-  },
-
   /* prettier-ignore */
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }],
-    ['meta', { name: 'theme-color', content: '#007bff' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'en' }],
     ['meta', { property: 'og:title', content: 'Artalk - A Self-hosted Comment System'}],
@@ -65,7 +60,7 @@ export const shared = defineConfig({
 
   vite: {
     server: {
-      open: '/guide/intro.html',
+      open: '/zh/guide/intro.html',
     },
   },
 })

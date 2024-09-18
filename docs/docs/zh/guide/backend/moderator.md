@@ -2,7 +2,7 @@
 
 Artalk 支持多种评论过滤方式以拦截垃圾评论，支持通过 Akismet、腾讯云内容安全、阿里云内容安全 等在线 API 实现垃圾评论识别和拦截，也可通过本地离线关键词词库过滤评论，结合[验证码](./captcha.md)功能进一步提高评论审核强度，让垃圾评论没有容身之地。
 
-你可以在 [控制中心](/guide/frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](/guide/backend/config.md#评论审核-moderator) 或 [环境变量](/guide/env.md#评论审核) 进行配置。
+你可以在 [控制中心](../frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](./config.md#评论审核-moderator) 或 [环境变量](../env.md#评论审核) 进行配置。
 
 ## 配置文件
 

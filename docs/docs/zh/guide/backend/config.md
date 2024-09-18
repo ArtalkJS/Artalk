@@ -2,7 +2,7 @@
 
 ## 轻松配置
 
-推荐在侧边栏 “[控制中心](/guide/frontend/sidebar.md)” 通过图形界面修改配置，无需手动编辑配置文件。
+推荐在侧边栏 “[控制中心](../frontend/sidebar.md)” 通过图形界面修改配置，无需手动编辑配置文件。
 
 ## 环境变量
 
@@ -114,7 +114,7 @@ http:
 
 Artalk 支持多站点，你可以创建多个管理员账户，为其分配站点，让你的朋友们共用同一个后端程序。
 
-详情参考：[管理员 × 多站点](/guide/backend/multi-site.md)
+详情参考：[管理员 × 多站点](./multi-site.md)
 
 ## 可信域名 `trusted_domains`
 
@@ -184,25 +184,25 @@ frontend:
 
 配置邮件通知，让回复通过邮件的形式通知目标用户，你可以自定义邮件发送者名称、标题、模版等。
 
-详情参考：[后端 · 邮件通知](/guide/backend/email.md)
+详情参考：[后端 · 邮件通知](./email.md)
 
 ## 多元推送 `admin_notify`
 
 你可以配置多种消息发送方式，例如飞书、Telegram 等，当收到新的评论时通知管理员。
 
-详情参考：[后端 · 多元推送](/guide/backend/admin_notify.md)
+详情参考：[后端 · 多元推送](./admin_notify.md)
 
 ## 评论审核 `moderator`
 
 配置评论审核来自动拦截垃圾评论。
 
-详情参考：[后端 · 评论审核](/guide/backend/moderator.md)
+详情参考：[后端 · 评论审核](./moderator.md)
 
 ## 验证码 `captcha`
 
 支持图片、滑动验证码，通过验证码对请求频率进行限制。
 
-详情参考：[后端 · 验证码](/guide/backend/captcha.md)
+详情参考：[后端 · 验证码](./captcha.md)
 
 ## 高速缓存 `cache`
 
@@ -356,5 +356,5 @@ test_file: ./data/artalk.log
 
 配置文件相关代码：[/internal/config/config.go](https://github.com/ArtalkJS/Artalk/blob/master/internal/config/config.go)
 
-前往：[前端配置](/guide/frontend/config.md)
+前往：[前端配置](../frontend/config.md)
 :::

@@ -6,7 +6,7 @@ Artalk 内置图片验证码功能，你可以配置操作频率限制，当超�
 
 目前 Artalk 支持：Turnstile、reCAPTCHA、hCaptcha、极验。
 
-你可以在 [控制中心](/guide/frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](/guide/backend/config.md#验证码-captcha) 或 [环境变量](/guide/env.md#验证码) 进行配置。
+你可以在 [控制中心](../frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](./config.md#验证码-captcha) 或 [环境变量](../env.md#验证码) 进行配置。
 
 ## 配置文件
 

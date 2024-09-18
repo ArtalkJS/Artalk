@@ -94,13 +94,13 @@ Artalk.init({
 
 <!-- prettier-ignore-end -->
 
-[**Learn More →**](https://artalk.js.org/guide/deploy.html)
+[**Learn More →**](https://artalk.js.org/en/guide/deploy.html)
 
 ## For Developers
 
 Pull requests are welcome!
 
-See [Development](https://artalk.js.org/develop/) and [Contributing](./CONTRIBUTING.md) for information on working with the codebase, getting a local development setup, and contributing changes.
+See [Development](https://artalk.js.org/en/develop/) and [Contributing](./CONTRIBUTING.md) for information on working with the codebase, getting a local development setup, and contributing changes.
 
 ## Contributors
 

@@ -66,7 +66,10 @@ function initArtalk(conf: any) {
 
 function getConfByPage() {
   return {
-    pageKey: `https://artalk.js.org/${router.route.path.replace(/^\//, '').replace(/\.html$/, '')}.html`,
+    pageKey: `https://artalk.js.org/${router.route.path
+      .replace(/^\/+/, '')
+      .replace(/^zh\//, '')
+      .replace(/\.html$/, '')}.html`,
     pageTitle: page.value.title,
     server: 'https://artalk.qwqaq.com',
     site: 'ArtalkDocs',

@@ -2,7 +2,7 @@
 
 Artalk 支持通过 SMTP 协议、阿里云邮件推送、调用系统 Sendmail 命令等方式向用户发送邮件通知。
 
-你可以在 [控制中心](/guide/frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](/guide/backend/config.md#邮件通知-email) 或 [环境变量](/guide/env.md#邮件通知) 进行配置。
+你可以在 [控制中心](../frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](./config.md#邮件通知-email) 或 [环境变量](../env.md#邮件通知) 进行配置。
 
 ## 配置文件
 

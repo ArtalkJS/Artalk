@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/cache/simple_cache"
+	"github.com/ArtalkJS/Artalk/v2/internal/cache/simple_cache"
 	"github.com/steambap/captcha"
 )
 

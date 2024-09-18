@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/captcha"
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/server/common"
+	"github.com/ArtalkJS/Artalk/v2/internal/captcha"
+	"github.com/ArtalkJS/Artalk/v2/internal/core"
+	"github.com/ArtalkJS/Artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
 )
 

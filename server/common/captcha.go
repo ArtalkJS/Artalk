@@ -3,10 +3,10 @@ package common
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/Artalk/internal/captcha"
-	"github.com/ArtalkJS/Artalk/internal/core"
-	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/server/middleware/limiter"
+	"github.com/ArtalkJS/Artalk/v2/internal/captcha"
+	"github.com/ArtalkJS/Artalk/v2/internal/core"
+	"github.com/ArtalkJS/Artalk/v2/internal/i18n"
+	"github.com/ArtalkJS/Artalk/v2/server/middleware/limiter"
 	"github.com/gofiber/fiber/v2"
 )
 

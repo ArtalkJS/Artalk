@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/v2/internal/config"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )

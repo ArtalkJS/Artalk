@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/dao"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )

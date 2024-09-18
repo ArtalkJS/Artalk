@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"github.com/ArtalkJS/Artalk/v2/internal/i18n"
 	"github.com/goccy/go-yaml"
 	"github.com/iancoleman/strcase"
 	"github.com/knadh/koanf/maps"

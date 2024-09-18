@@ -1,6 +1,6 @@
 package core
 
-import "github.com/ArtalkJS/Artalk/internal/config"
+import "github.com/ArtalkJS/Artalk/v2/internal/config"
 
 // -------------------------------------------------------------------
 // Event data

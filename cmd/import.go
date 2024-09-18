@@ -5,9 +5,9 @@ import (
 	"errors"
 	"os"
 
-	"github.com/ArtalkJS/Artalk/internal/artransfer"
-	"github.com/ArtalkJS/Artalk/internal/i18n"
-	"github.com/ArtalkJS/Artalk/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/artransfer"
+	"github.com/ArtalkJS/Artalk/v2/internal/i18n"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
 	"github.com/spf13/cobra"
 )
 

@@ -1,8 +1,8 @@
 package core
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/notify_pusher"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/notify_pusher"
 )
 
 var _ Service = (*NotifyService)(nil)

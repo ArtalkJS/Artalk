@@ -1,7 +1,7 @@
 package handler_test
 
 import (
-	"github.com/ArtalkJS/Artalk/test"
+	"github.com/ArtalkJS/Artalk/v2/test"
 	"github.com/gofiber/fiber/v2"
 )
 

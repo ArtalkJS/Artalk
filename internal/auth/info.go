@@ -3,7 +3,7 @@ package auth
 import (
 	"strings"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/v2/internal/config"
 	"github.com/markbates/goth"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"

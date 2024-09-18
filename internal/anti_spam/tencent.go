@@ -3,7 +3,7 @@ package anti_spam
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/Artalk/internal/cloud/qcloud"
+	"github.com/ArtalkJS/Artalk/v2/internal/cloud/qcloud"
 )
 
 var _ Checker = (*TencentChecker)(nil)

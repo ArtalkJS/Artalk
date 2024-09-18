@@ -1,7 +1,7 @@
 package template
 
 import (
-	"github.com/ArtalkJS/Artalk/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
 )
 
 var _ RenderStrategy = (*EmailRender)(nil)

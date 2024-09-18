@@ -3,9 +3,9 @@ package artransfer
 import (
 	"fmt"
 
-	"github.com/ArtalkJS/Artalk/internal/dao"
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/i18n"
+	"github.com/ArtalkJS/Artalk/v2/internal/dao"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/i18n"
 	"gorm.io/gorm"
 )
 

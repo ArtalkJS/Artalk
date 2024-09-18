@@ -6,10 +6,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/server/common"
-	"github.com/ArtalkJS/Artalk/server/handler"
-	"github.com/ArtalkJS/Artalk/test"
+	"github.com/ArtalkJS/Artalk/v2/internal/config"
+	"github.com/ArtalkJS/Artalk/v2/server/common"
+	"github.com/ArtalkJS/Artalk/v2/server/handler"
+	"github.com/ArtalkJS/Artalk/v2/test"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 )

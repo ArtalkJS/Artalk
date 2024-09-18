@@ -3,8 +3,8 @@ package artransfer
 import (
 	"encoding/json"
 
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/internal/utils"
 	"gorm.io/gorm"
 )
 

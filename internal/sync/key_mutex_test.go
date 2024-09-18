@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/sync"
+	"github.com/ArtalkJS/Artalk/v2/internal/sync"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
-	"github.com/ArtalkJS/Artalk/internal/config/meta"
-	"github.com/ArtalkJS/Artalk/test"
+	"github.com/ArtalkJS/Artalk/v2/internal/config"
+	"github.com/ArtalkJS/Artalk/v2/internal/config/meta"
+	"github.com/ArtalkJS/Artalk/v2/test"
 )
 
 func Test_GetEnvPathMapByModel(t *testing.T) {

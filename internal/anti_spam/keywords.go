@@ -7,8 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ArtalkJS/Artalk/internal/log"
-	"github.com/ArtalkJS/Artalk/internal/utils"
+	"github.com/ArtalkJS/Artalk/v2/internal/log"
+	"github.com/ArtalkJS/Artalk/v2/internal/utils"
 )
 
 var _ Checker = (*KeywordsChecker)(nil)

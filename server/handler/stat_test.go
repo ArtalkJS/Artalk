@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ArtalkJS/Artalk/internal/entity"
-	"github.com/ArtalkJS/Artalk/server/handler"
+	"github.com/ArtalkJS/Artalk/v2/internal/entity"
+	"github.com/ArtalkJS/Artalk/v2/server/handler"
 	"github.com/araddon/dateparse"
 	"github.com/stretchr/testify/assert"
 )

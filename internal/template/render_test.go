@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/template"
-	"github.com/ArtalkJS/Artalk/test"
+	"github.com/ArtalkJS/Artalk/v2/internal/template"
+	"github.com/ArtalkJS/Artalk/v2/test"
 	"github.com/stretchr/testify/assert"
 )
 

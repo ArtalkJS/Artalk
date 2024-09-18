@@ -3,7 +3,7 @@ package db
 import (
 	"testing"
 
-	"github.com/ArtalkJS/Artalk/internal/config"
+	"github.com/ArtalkJS/Artalk/v2/internal/config"
 )
 
 func TestGetDsnByConf(t *testing.T) {

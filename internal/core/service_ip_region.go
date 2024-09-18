@@ -1,6 +1,6 @@
 package core
 
-import "github.com/ArtalkJS/Artalk/internal/ip_region"
+import "github.com/ArtalkJS/Artalk/v2/internal/ip_region"
 
 var _ Service = (*IPRegionService)(nil)
 

@@ -8,6 +8,10 @@ ArtalkLite 是 Artalk 的精简版本，相较于普通版，有以下区别：
 
 ArtalkLite 随普通版一起发布，你可以将 CDN 地址文件名修改为 ArtalkLite 获取：
 
-> https://unpkg.com/artalk@2/dist/ArtalkLite.js
->
-> https://unpkg.com/artalk@2/dist/ArtalkLite.css
+```
+https://unpkg.com/artalk@:ArtalkVersion:/dist/ArtalkLite.js
+```
+
+```
+https://unpkg.com/artalk@:ArtalkVersion:/dist/ArtalkLite.css
+```

@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitepress'
-import iterator from 'markdown-it-for-inline'
 import * as Version from '../../code/ArtalkVersion.json'
 
 export const shared = defineConfig({
@@ -24,12 +23,18 @@ export const shared = defineConfig({
       dark: 'github-dark',
     },
     config: (md) => {
-      md.use(iterator, 'artalk_version', 'text', function (tokens, idx) {
-        tokens[idx].content = tokens[idx].content.replace(/:ArtalkVersion:/g, Version.latest)
-      })
-      md.use(iterator, 'artalk_version_link', 'link_open', (tokens, idx) => {
-        const href = tokens[idx].attrGet('href')
-        tokens[idx].attrSet('href', href.replace(/:ArtalkVersion:/g, Version.latest))
+      const renderVersion = (c: string) => String(c).replace(/:ArtalkVersion:/g, Version.latest)
+      md.core.ruler.push('artalk_version', (state) => {
+        state.tokens?.forEach((token) => {
+          if (token.type === 'inline') {
+            token.children?.forEach((child) => {
+              if (['text', 'link_open', 'code_inline'].includes(child.type))
+                child.content = renderVersion(child.content)
+            })
+          } else if (token.type === 'fence') {
+            token.content = renderVersion(token.content)
+          }
+        })
       })
     },
   },

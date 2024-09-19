@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Artalk from 'artalk'
-import 'artalk/dist/Artalk.css'
+import 'artalk/Artalk.css'
 
 const el = ref<HTMLElement>()
 const route = useRoute()

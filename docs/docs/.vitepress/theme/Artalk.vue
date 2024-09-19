@@ -10,7 +10,7 @@ import { ArtalkKatexPlugin } from '@artalk/plugin-katex'
 import { ArtalkLightboxPlugin } from '@artalk/plugin-lightbox'
 import 'lightgallery/css/lightgallery.css'
 import 'katex/dist/katex.min.css'
-import 'artalk/dist/Artalk.css'
+import 'artalk/Artalk.css'
 
 const el = ref<HTMLElement | null>(null)
 

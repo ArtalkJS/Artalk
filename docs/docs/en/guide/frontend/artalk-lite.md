@@ -8,6 +8,10 @@ ArtalkLite is a simplified version of Artalk, with the following differences com
 
 ArtalkLite is released alongside the standard version. You can obtain it by modifying the file name in the CDN address to ArtalkLite:
 
-> https://unpkg.com/artalk@2/dist/ArtalkLite.js
->
-> https://unpkg.com/artalk@2/dist/ArtalkLite.css
+```
+https://unpkg.com/artalk@:ArtalkVersion:/dist/ArtalkLite.js
+```
+
+```
+https://unpkg.com/artalk@:ArtalkVersion:/dist/ArtalkLite.css
+```

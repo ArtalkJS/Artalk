@@ -17,7 +17,7 @@ pnpm add artalk
 import Artalk from 'artalk'
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 
-import 'artalk/dist/Artalk.css'
+import 'artalk/Artalk.css'
 
 const el = ref<HTMLElement>()
 
@@ -50,7 +50,7 @@ import Artalk from 'artalk'
 import { onMounted, onBeforeUnmount, ref, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 
-import 'artalk/dist/Artalk.css'
+import 'artalk/Artalk.css'
 
 const el = ref<HTMLElement>()
 const router = useRouter()
@@ -100,7 +100,7 @@ onBeforeUnmount(() => {
 ```tsx [React Hooks]
 import React, { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import 'artalk/dist/Artalk.css'
+import 'artalk/Artalk.css'
 import Artalk from 'artalk'
 
 const ArtalkComment = () => {
@@ -133,7 +133,7 @@ export default ArtalkComment
 
 ```jsx [React Class]
 import React, { createRef } from 'react'
-import 'artalk/dist/Artalk.css'
+import 'artalk/Artalk.css'
 import Artalk from 'artalk'
 
 export default class Artalk extends React.Component {
@@ -168,7 +168,7 @@ export default class Artalk extends React.Component {
 ```tsx
 import { onCleanup, onMount } from 'solid-js'
 import Artalk from 'artalk'
-import 'artalk/dist/Artalk.css'
+import 'artalk/Artalk.css'
 
 const ArtalkComment = () => {
   let el: HTMLDivElement
@@ -200,7 +200,7 @@ const ArtalkComment = () => {
 import Artalk from 'artalk'
 import { onMount, onDestroy } from 'svelte'
 
-import 'artalk/dist/Artalk.css'
+import 'artalk/Artalk.css'
 
 let el
 let artalk

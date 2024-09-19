@@ -17,7 +17,7 @@ export const en = defineConfig({
           ],
         },
         {
-          text: 'Core Guide',
+          text: 'Basic Usage',
           collapsed: false,
           items: [
             { text: 'Sidebar', link: '/en/guide/frontend/sidebar.md' },
@@ -32,7 +32,7 @@ export const en = defineConfig({
           ],
         },
         {
-          text: 'Advanced Guide',
+          text: 'Extensions',
           collapsed: false,
           items: [
             { text: 'Emoticons', link: '/en/guide/frontend/emoticons.md' },
@@ -46,7 +46,7 @@ export const en = defineConfig({
           ],
         },
         {
-          text: 'Configuration Documentation',
+          text: 'Configurations',
           collapsed: false,
           items: [
             { text: 'Environment Variables', link: '/en/guide/env.md' },
@@ -55,7 +55,7 @@ export const en = defineConfig({
           ],
         },
         {
-          text: 'Deployment Instructions',
+          text: 'Deployment details',
           collapsed: false,
           items: [
             { text: 'Daemon Process', link: '/en/guide/backend/daemon.md' },
@@ -100,7 +100,7 @@ export const en = defineConfig({
         link: '/en/guide/intro',
       },
       {
-        text: 'Deployment',
+        text: 'Installation',
         link: '/en/guide/deploy',
       },
       {

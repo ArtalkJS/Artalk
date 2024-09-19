@@ -10,7 +10,7 @@
       flex-direction: row;
       flex-wrap: wrap;
       place-items: flex-end;
-      font-size: 35px;
+      font-size: 2rem;
       color: var(--color-font);
 
       &:not(:last-child) {
@@ -30,7 +30,7 @@
       }
 
       .bold {
-        font-size: 1.5em;
+        font-size: 3rem;
         margin-right: 0.2em;
       }
 
@@ -112,24 +112,24 @@
     .docker-url {
       overflow: hidden;
       border-radius: 5px;
-      font-size: 24px;
-      height: 55px;
+      font-size: 1.5rem;
       display: inline-flex;
       align-items: center;
       flex-direction: row;
       margin-bottom: 1.5em;
       background: var(--color-bg-grey);
       color: #67757f;
+      white-space: nowrap;
 
       .content {
-        padding: 0 30px;
+        padding: 15px 30px;
       }
 
       .copy-btn {
         display: flex;
         flex-direction: row;
         place-items: center;
-        padding: 0 20px;
+        padding: 15px 25px;
         height: 100%;
         background: #00acd7;
         color: #fff;

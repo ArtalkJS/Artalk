@@ -6,6 +6,7 @@ import './LearnMoreLink.scss'
 interface LearnMoreLinkProps {
   prompt: string
   link: string
+  linkText?: string
 }
 
 export const LearnMoreLink: React.FC<LearnMoreLinkProps> = (props) => {
@@ -15,7 +16,7 @@ export const LearnMoreLink: React.FC<LearnMoreLinkProps> = (props) => {
     <div className="app-learn-more-link">
       <span className="prompt">{props.prompt}</span>&nbsp;&nbsp;
       <a className="link-btn" href={props.link} target="_blank" rel="noreferrer">
-        {t('learn_more')}{' '}
+        {props.linkText || t('learn_more')}{' '}
         <span className="icon">
           <FaArrowRight size=".8em" />
         </span>

@@ -9,10 +9,18 @@
   --color-bg: #fff;
   --color-bg-transparent: rgba(255, 255, 255, 0.9);
   --color-bg-grey: #f6f8fa;
+  --color-bg-blue: #e5effe;
   --color-border: #e1e4ec;
 }
 
+html,
 body {
+  background-color: var(--color-bg);
+  overflow-x: hidden;
+}
+
+:host,
+html {
   font:
     16px 'SF Pro Display',
     'SF Pro Icons',
@@ -20,8 +28,6 @@ body {
     'Helvetica',
     'Arial',
     sans-serif;
-  overflow-x: hidden;
-  background-color: var(--color-bg);
   color: var(--color-font);
 }
 

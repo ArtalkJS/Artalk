@@ -42,6 +42,9 @@ export const en = {
     'Artalk includes a data migration tool to easily transfer your comment content.',
   feature_safe_desc_line_3:
     'At Artalk, we always prioritize security and continuously provide updates.',
+  feature_safe_report_audit_hint: 'Found a security issue?',
+  feature_safe_report_audit_btn: 'Report Now',
+  feature_safe_report_audit_link: 'https://github.com/ArtalkJS/Artalk/issues',
   func_social_login: 'Social Login',
   func_email: 'Email Sending',
   func_captcha: 'Captcha',

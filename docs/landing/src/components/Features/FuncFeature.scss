@@ -25,13 +25,14 @@
     .grp {
       margin-bottom: 40px;
       break-inside: avoid;
+      font-size: 1.3rem;
 
       .name {
         display: flex;
         place-items: center;
         justify-content: space-between;
         color: var(--color-font);
-        font-size: 27px;
+        font-size: 1.8rem;
         margin-bottom: 25px;
 
         &:hover {
@@ -62,10 +63,9 @@
         align-items: baseline;
 
         .item {
-          font-size: 20px;
           background: var(--color-bg-grey);
           border-radius: 20px;
-          padding: 20px 0;
+          padding: 20px 15px;
           text-align: center;
 
           &:not(:last-child) {

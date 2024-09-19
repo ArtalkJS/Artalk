@@ -27,7 +27,7 @@ $breakpoints: (
   }
 }
 
-@include media('<=md') {
+@include media('<=lg') {
   .app-header {
     padding: 0 25px;
   }
@@ -59,8 +59,13 @@ $breakpoints: (
   }
 
   .slogan .text {
-    zoom: 0.8;
+    font-size: 3em;
     width: 100%;
+  }
+
+  .slogan .text .highlight .line-wrap {
+    bottom: -15px;
+    zoom: 0.9;
   }
 
   .slogan .demos {
@@ -116,7 +121,7 @@ $breakpoints: (
       width: 100%;
       padding: 30px 40px;
       margin: 0;
-      font-size: 21px;
+      font-size: 1.3rem;
 
       &:not(:last-child) {
         margin-bottom: 40px;
@@ -139,12 +144,8 @@ $breakpoints: (
     zoom: 0.6;
   }
 
-  .feature.quick .extra-desc .self-compile {
-    text-align: center;
-  }
-
   .feature.quick .extra-desc .docker-url {
-    font-size: 20px;
+    font-size: 1rem;
   }
 
   .full.feature .folder-icon {
@@ -156,10 +157,12 @@ $breakpoints: (
   }
 
   .app-learn-more-link {
+    font-size: 1.25rem;
     flex-direction: column;
+    margin-bottom: 2em;
 
     .prompt {
-      margin-bottom: 20px;
+      margin-bottom: -1em;
     }
   }
 
@@ -179,15 +182,23 @@ $breakpoints: (
   }
 
   .feature.quick .deploy-links .item span {
-    font-size: 23px;
+    font-size: 1.6rem;
   }
 
   .feature.quick .deploy-links .item .bold {
-    font-size: 35px;
+    font-size: 2rem;
+  }
+
+  .func.feature .func-grps .grp .name {
+    font-size: 1.45rem;
+  }
+
+  .feature-title {
+    font-size: 2.5em;
   }
 
   .feature-desc {
     text-align: left;
-    font-size: 19px;
+    font-size: 1.5rem;
   }
 }

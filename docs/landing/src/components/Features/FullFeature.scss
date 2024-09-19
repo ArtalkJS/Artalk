@@ -19,7 +19,6 @@
         color: var(--color-font);
         margin: 0 15px;
         flex: 1;
-        font-size: 25px;
         border-radius: 20px;
         border: 3px solid var(--color-border);
         background: var(--color-bg);
@@ -31,6 +30,7 @@
         }
 
         .header {
+          font-size: 1.6rem;
           display: flex;
           place-items: center;
           margin-bottom: 20px;
@@ -45,6 +45,8 @@
         }
 
         .body {
+          font-size: 1.5rem;
+
           .desc {
             color: var(--color-font-secondary);
             display: flex;

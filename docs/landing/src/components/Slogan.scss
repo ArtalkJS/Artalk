@@ -19,9 +19,13 @@
   .demos {
     display: flex;
     width: 35vw;
+    border-radius: 20px;
+    overflow: hidden;
+
+    .img-wrap {
+    }
 
     .demo-video {
-      border-radius: 4px;
       width: 100%;
       height: auto;
       object-fit: contain;
@@ -30,8 +34,8 @@
 
   .text {
     margin-top: 50px;
-    line-height: 1.4;
-    font-size: 70px;
+    line-height: 1.5;
+    font-size: 4rem;
     font-weight: 700;
 
     .highlight {
@@ -70,17 +74,18 @@
     flex-direction: row;
 
     .btn {
-      width: 170px;
-      height: 48px;
-      line-height: 48px;
-      text-align: center;
-      border-radius: 5px;
-      font-size: 20px;
-      font-weight: bold;
       display: flex;
       flex-direction: row;
       justify-content: center;
       place-items: center;
+      min-width: 175px;
+      padding: 0 18px;
+      height: 60px;
+      text-align: center;
+      border-radius: 100px;
+      border: 3px solid transparent;
+      font-size: 1.3rem;
+      font-weight: bold;
       cursor: pointer;
       color: var(--color-font);
 
@@ -89,11 +94,12 @@
       }
 
       &.blue {
-        background: var(--color-primary);
-        color: #fff;
+        border-color: var(--color-primary);
+        color: var(--color-primary);
 
         &:hover {
           opacity: 0.9;
+          color: #fff;
           background: var(--color-primary);
         }
       }

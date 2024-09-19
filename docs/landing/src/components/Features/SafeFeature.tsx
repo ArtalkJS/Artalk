@@ -4,6 +4,7 @@ import './SafeFeature.scss'
 import { FeatureTitle } from '../FeatureTitle'
 import { FeatureDesc } from '../FeatureDesc'
 import { Reveal } from '../Reveal'
+import { LearnMoreLink } from '../LearnMoreLink'
 import { FeatureBase } from './FeatureBase'
 
 export const SafeFeature: React.FC = () => {
@@ -54,6 +55,13 @@ export const SafeFeature: React.FC = () => {
               <br />
             </Reveal>
             <Reveal delay={500}>{t('feature_safe_desc_line_3')}</Reveal>
+            <div className="report-audit">
+              <LearnMoreLink
+                prompt={t('feature_safe_report_audit_hint')}
+                link={t('feature_safe_report_audit_link')}
+                linkText={t('feature_safe_report_audit_btn')}
+              />
+            </div>
           </FeatureDesc>
         </main>
       </div>

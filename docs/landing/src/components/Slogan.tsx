@@ -87,7 +87,9 @@ export const Slogan: React.FC = () => {
         </div>
         <div className="demos">
           {videoState !== 'playing' && (
-            <img className="demo-video anim-fade-in" src="/images/demo-video-1-thumbnail.png" />
+            <div className="img-wrap">
+              <img className="demo-video anim-fade-in" src="/images/demo-video-1-thumbnail.png" />
+            </div>
           )}
           <video
             style={{ display: videoState !== 'playing' ? 'none' : '' }}

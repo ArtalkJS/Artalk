@@ -5,7 +5,7 @@ export const zhCN: MessageSchema = {
   get_artalk: '获取 Artalk',
   get_artalk_link: 'https://artalk.js.org/zh/guide/intro.html',
   slogan_line_1: 'Artalk 评论系统',
-  slogan_line_2: '重构互动疾速体验',
+  slogan_line_2: '重构互动极速体验',
   slogan_line_3: '',
   nav_docs_link: 'https://artalk.js.org/zh/guide/intro.html',
   nav_changelog_link: 'https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md',

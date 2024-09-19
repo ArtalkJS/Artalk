@@ -1,7 +1,17 @@
+/guide/frontend/import-blog.html      /develop/import-blog.html       301
+/guide/frontend/import-framework.html /develop/import-framework.html  301
+/guide/frontend/install.html          /guide/deploy.html              301
+/guide/backend/data.html              /guide/transfer.html            301
+/guide/backend/build.html             /develop/contributing.html      301
+/guide/backend/fe-control.html        /guide/frontend/config.html     301
+/guide/backend/install.html           /guide/deploy.html              301
+/develop/api.html                     /http-api.html                  301
+/develop/plugs.md                     /develop/plugin.html            301
+
+# Language redirect
 /guide/*   /zh/guide/:splat    302  Language=zh
 /guide/*   /en/guide/:splat    302  Language=en
 /guide/*   /en/guide/:splat    302
-
 /develop/* /zh/develop/:splat  302  Language=zh
 /develop/* /en/develop/:splat  302  Language=en
 /develop/* /en/develop/:splat  302

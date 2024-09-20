@@ -1,0 +1,457 @@
+# 伺服器地址
+host: "0.0.0.0"
+
+# 伺服器端口
+port: 23366
+
+# 加密密鑰
+app_key: ""
+
+# 偵錯模式
+debug: false
+
+# 語言 ["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru"]
+locale: zh-TW
+
+# 時區
+timezone: Asia/Taipei
+
+# 預設站點名稱
+site_default: 預設站點
+
+# 預設站點地址
+site_url: ""
+
+# 登入有效時長 (單位：秒)
+login_timeout: 259200
+
+# 資料庫
+db:
+  # 資料庫類型 ["sqlite", "mysql", "pgsql", "mssql"]
+  type: sqlite
+  # 資料庫文件 (僅 SQLite 資料庫需填寫)
+  file: ./data/artalk.db
+  # 資料庫名稱
+  name: artalk
+  # 資料庫地址
+  host: localhost
+  # 資料庫端口
+  port: 3306
+  # 資料庫帳號
+  user: root
+  # 資料庫密碼
+  password: ""
+  # 編碼格式
+  charset: utf8mb4
+  # 表前綴 (例如："atk_")
+  table_prefix: ""
+  # 啟用 SSL
+  ssl: false
+  # 預編譯語句
+  prepare_stmt: true
+
+# 伺服器
+http:
+  # 請求體大小限制 (單位：MB)
+  body_limit: 100
+  # 代理標頭名 (當使用 CDN 時填寫 `X-Forwarded-For` 獲取用戶真實 IP)
+  proxy_header: ""
+
+# 日誌
+log:
+  # 啟用日誌
+  enabled: true
+  # 日誌文件路徑
+  filename: ./data/artalk.log
+
+# 快取
+cache:
+  # 啟用快取
+  enabled: false
+  # 快取類型 ["redis", "memcache", "builtin"]
+  type: builtin
+  # 快取過期時間 (單位：分鐘)
+  expires: 30
+  # 快取啟動預熱 (程式啟動時預熱快取)
+  warm_up: false
+  # 快取伺服器地址 (例如："localhost:6379")
+  server: ""
+  # Redis 配置
+  redis:
+    # 連接方式 ["tcp", "unix"]
+    network: tcp
+    # 用戶名
+    username: ""
+    # 密碼
+    password: ""
+    # 資料庫編號 (例如使用零號資料庫填寫 0)
+    db: 0
+
+# 可信網域
+# -- 例如：["https://artalk.example.com:23366"] --
+trusted_domains: []
+
+# SSL
+ssl:
+  # 啟用 SSL
+  enabled: false
+  # 憑證文件路徑
+  cert_path: ""
+  # 密鑰文件路徑
+  key_path: ""
+
+# 管理員帳戶
+# --
+# - name: "admin"
+#   email: "admin@example.com"
+#   password: "" # 支持 bcrypt 或 md5 加密，如："(bcrypt)$2y$10$ti4vZYIrxVN8rLcYXVgXCO.GJND0dyI49r7IoF3xqIx8bBRmIBZRm"
+#   badge_name: "管理員"
+#   badge_color: "#0083FF"
+# --
+admin_users: []
+
+# 評論審核
+moderator:
+  # 預設待審 (發表新評論需要後台人工審核後才能顯示)
+  pending_default: false
+  # API 請求錯誤時攔截 (關閉此項當請求錯誤時讓評論放行)
+  api_fail_block: false
+  # Akismet Key
+  # (Akismet 反垃圾服務，https://akismet.com)
+  akismet_key: ""
+  # 騰訊雲文本內容安全
+  # (https://cloud.tencent.com/document/product/1124/64508)
+  tencent:
+    enabled: false
+    secret_id: ""
+    secret_key: ""
+    region: ap-guangzhou
+  # 阿里雲內容安全
+  # (https://help.aliyun.com/document_detail/28417.html)
+  aliyun:
+    enabled: false
+    access_key_id: ""
+    access_key_secret: ""
+    region: cn-shanghai
+  # 關鍵詞過濾 (本地離線詞庫)
+  keywords:
+    enabled: false
+    # 匹配成功設為待審狀態
+    pending: false
+    # 詞庫文件 (支持多個詞庫文件)
+    files:
+      - ./data/詞庫_1.txt
+    # 詞庫文件內容分割符 (例如填寫 "\n" 文件中一行一個關鍵詞)
+    file_sep: "\n"
+    # 替換字符
+    replace_to: x
+
+# 驗證碼
+captcha:
+  # 啟用驗證碼
+  enabled: true
+  # 總是需要驗證碼
+  always: false
+  # 驗證類型 ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
+  captcha_type: image
+  # 激活驗證碼所需操作次數
+  action_limit: 3
+  # 重置操作計數器超時 (單位：s, 設為 -1 不重置)
+  action_reset: 60
+  # Turnstile
+  # (https://www.cloudflare.com/products/turnstile/)
+  turnstile:
+    site_key: ""
+    secret_key: ""
+  # reCaptcha
+  # (https://www.google.com/recaptcha/about/)
+  recaptcha:
+    site_key: ""
+    secret_key: ""
+  # hCaptcha (https://www.hcaptcha.com/)
+  hcaptcha:
+    site_key: ""
+    secret_key: ""
+  # Geetest 極驗 (https://www.geetest.com)
+  geetest:
+    captcha_id: ""
+    captcha_key: ""
+
+# IP 屬地
+ip_region:
+  # 啟用 IP 屬地展示
+  enabled: false
+  # 數據文件路徑 (.xdb 格式)
+  db_path: ./data/ip2region.xdb
+  # 顯示精度 ["province", "city", "country"]
+  precision: province
+
+# 圖片上傳
+img_upload:
+  # 啟用圖片上傳
+  enabled: true
+  # 圖片存放路徑
+  path: ./data/artalk-img/
+  # 圖片大小限制 (單位：MB)
+  max_size: 5
+  # 圖片連結基礎路徑 (默認為 "/static/images/")
+  public_path: null
+  # Upgit 配置
+  # (使用 Upgit 將圖片上傳到 GitHub 或圖床：https://github.com/pluveto/upgit)
+  upgit:
+    # 啟用 Upgit
+    enabled: false
+    # 命令行參數
+    exec: upgit -c <upgit配置文件路徑> -t /artalk-img
+    # 上傳後刪除本地的圖片
+    del_local: true
+
+# 郵件通知
+email:
+  # 啟用郵件通知
+  enabled: false
+  # 發送方式 ["smtp", "ali_dm", "sendmail"]
+  send_type: smtp
+  # 發信人暱稱
+  send_name: "{{reply_nick}}"
+  # 發信人地址
+  send_addr: noreply@example.com
+  # 郵件標題
+  mail_subject: "[{{site_name}}] 您收到了來自 @{{reply_nick}} 的回覆"
+  # 郵件模板文件 (填入文件路徑使用自定義模板)
+  mail_tpl: default
+  # SMTP 發送 (啟用請將發送方式設為 "smtp")
+  smtp:
+    # 發件地址
+    host: smtp.qq.com
+    # 發件端口
+    port: 587
+    # 用戶名
+    username: example@qq.com
+    # 密碼
+    password: ""
+  # 阿里雲郵件推送
+  # (啟用請將發送方式設為 "ali_dm"；參考：https://help.aliyun.com/document_detail/29444.html)
+  ali_dm:
+    access_key_id: ""
+    access_key_secret: ""
+    account_name: noreply@example.com
+
+# 多元推送
+admin_notify:
+  # 通知模板 (填入文件路徑使用自定義模板)
+  notify_tpl: default
+  # 待審評論仍然發送通知 (當評論被攔截時仍然發送通知)
+  notify_pending: false
+  # 嘈雜模式
+  noise_mode: false
+  # 郵件通知管理員
+  email:
+    # 開啟 (當使用其他推送方式時，可以關閉管理員郵件通知)
+    enabled: true
+    # 郵件標題 (發送給管理員的郵件標題)
+    mail_subject: "[{{site_name}}] 您的文章「{{page_title}}」有新回覆"
+    # 管理員郵件模板文件 (填入文件路徑使用自定義模板)
+    mail_tpl: ""
+  # Telegram
+  telegram:
+    enabled: false
+    api_token: ""
+    receivers:
+      - 7777777
+  # Bark
+  bark:
+    enabled: false
+    server: http://day.app/xxxxxxx/
+  # 飛書
+  lark:
+    enabled: false
+    webhook_url: ""
+    # 消息類型 ["text", "card"]
+    msg_type: "text"
+  # WebHook
+  webhook:
+    enabled: false
+    url: ""
+  # 釘釘
+  ding_talk:
+    enabled: false
+    token: ""
+    secret: ""
+  # Slack
+  slack:
+    enabled: false
+    oauth_token: ""
+    receivers:
+      - CHANNEL_ID
+  # LINE
+  line:
+    enabled: false
+    channel_secret: ""
+    channel_access_token: ""
+    receivers:
+      - USER_ID_1
+      - GROUP_ID_1
+
+# 社交登錄
+auth:
+  # 啟用社交登錄
+  enabled: false
+  # 允許匿名評論 (允許跳過驗證，僅填寫匿名的暱稱和郵箱)
+  anonymous: false
+  # 回調地址 (https://example.com/api/v2/auth/{provider}/callback)
+  callback: "http://localhost:23366/api/v2/auth/{provider}/callback"
+  # Email
+  email:
+    # 啟用郵箱密碼登錄
+    enabled: true
+    # 郵箱驗證郵件標題
+    verify_subject: "您的驗證碼是 - {{code}}"
+    # 郵箱驗證郵件模板 (填入文件路徑使用自定義模板)
+    verify_tpl: default
+  # GitHub
+  github:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # GitLab
+  gitlab:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Gitea
+  gitea:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Google
+  google:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Mastodon
+  mastodon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Twitter
+  twitter:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Facebook
+  facebook:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Discord
+  discord:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Steam
+  steam:
+    enabled: false
+    api_key: ""
+  # Apple
+  apple:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Microsoft
+  microsoft:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # 微信
+  wechat:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Tiktok
+  tiktok:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Slack
+  slack:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Line
+  line:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Patreon
+  patreon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Auth0
+  auth0:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    domain: ""
+
+# 介面配置
+frontend:
+  # 評論框占位文字
+  placeholder: ""
+  # 無評論顯示文字
+  noComment: ""
+  # 發送按鈕文字
+  sendBtn: ""
+  # 評論框穿梭
+  editorTravel: true
+  # 表情包
+  emoticons: https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json
+  # 投票按鈕
+  vote: true
+  # 反對按鈕
+  voteDown: false
+  # 用戶 UA 徽章
+  uaBadge: false
+  # 評論排序功能
+  listSort: true
+  # 編輯器實時預覽功能
+  preview: true
+  # 平鋪模式 ["auto", true, false]
+  flatMode: auto
+  # 夜間模式 ["inherit", "auto"]
+  darkMode: inherit
+  # 最大嵌套層數
+  nestMax: 2
+  # 嵌套評論排序規則 ["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]
+  nestSort: DATE_ASC
+  # 頭像 Gravatar
+  gravatar:
+    # API 地址
+    mirror: https://weavatar.com/avatar/
+    # API 參數
+    params: sha256=1&d=mp&s=240
+  # 評論分頁
+  pagination:
+    # 每頁評論數
+    pageSize: 20
+    # 加載更多模式 (關閉則使用分頁條)
+    readMore: true
+    # 滾動加載
+    autoLoad: true
+  # 內容限高
+  heightLimit:
+    # 評論內容限高 (單位：px)
+    content: 300
+    # 子評論區域限高 (單位：px)
+    children: 400
+    # 滾動限高 (允許限高區域滾動)
+    scrollable: false
+  # 圖片懶加載 [false, "native", "data-src"]
+  imgLazyLoad: false
+  # 請求超時 (單位：毫秒)
+  reqTimeout: 15000
+  # 版本檢測
+  versionCheck: true
+  # 插件
+  pluginURLs: []

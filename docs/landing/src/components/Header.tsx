@@ -12,14 +12,13 @@ const LanguageList: React.FC = () => {
   const { i18n } = useTranslation()
 
   const languages = [
-    {
-      name: 'English',
-      code: 'en',
-    },
-    {
-      name: '简体中文',
-      code: 'zh',
-    },
+    { name: 'English', code: 'en' },
+    { name: '简体中文', code: 'zh' },
+    { name: '繁體中文', code: 'zh-TW' },
+    { name: 'Français', code: 'fr' },
+    { name: '日本語', code: 'ja' },
+    { name: '한국어', code: 'ko' },
+    { name: 'Русский', code: 'ru' },
   ]
 
   const changeLanguage = (lang: string) => {

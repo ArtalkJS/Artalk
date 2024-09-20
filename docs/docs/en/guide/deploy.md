@@ -79,7 +79,7 @@ Advanced operations:
 - [Reverse Proxy (Caddy, Nginx, Apache)](./backend/reverse-proxy.md)
 - [Self-compile (Build from the latest code)](https://github.com/ArtalkJS/Artalk/blob/master/CONTRIBUTING.md)
 
-## Go Module
+## Go Install
 
 If you have the Golang toolchain installed, you can run the following commands to compile and install the latest version of Artalk:
 

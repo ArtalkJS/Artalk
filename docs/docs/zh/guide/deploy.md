@@ -82,7 +82,7 @@ Artalk.init({
 - [反向代理 (Caddy, Nginx, Apache)](./backend/reverse-proxy.md)
 - [自编译 (通过最新代码构建)](../develop/contributing.md)
 
-## Go 模块
+## Go 安装
 
 如果你已经安装了 Golang 工具链，可以运行以下命令来编译和安装最新版本的 Artalk：
 

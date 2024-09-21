@@ -1,11 +1,8 @@
 import ActionBtn from '../components/action-btn'
 import type { ArtalkPlugin, ContextApi } from '@/types'
-import { Api } from '@/api'
 import $t from '@/i18n'
 
-export interface PageVoteOptions {
-  getApi(): Api
-
+interface PageVoteOptions {
   pageKey: string
   vote: boolean
   voteDown: boolean
@@ -15,8 +12,9 @@ export interface PageVoteOptions {
 
 export const PageVoteWidget: ArtalkPlugin = (ctx) => {
   ctx.watchConf(['pageKey', 'pageVote'], (conf) => {
+    if (!conf.pageVote) return
+
     const defaultOptions = {
-      getApi: () => ctx.getApi(),
       pageKey: conf.pageKey,
       vote: true,
       voteDown: false,
@@ -24,36 +22,44 @@ export const PageVoteWidget: ArtalkPlugin = (ctx) => {
       el: '.artalk-page-vote-count',
     }
 
-    if (!conf.pageVote) return
     const pageVoteConfig = typeof conf.pageVote === 'object' ? conf.pageVote : {}
     initPageVoteWidget(ctx, { ...defaultOptions, ...pageVoteConfig })
   })
 }
 
 function initPageVoteWidget(ctx: ContextApi, options: PageVoteOptions) {
-  if (!options.vote) return
-
   const btnContainer = document.querySelector(options.btnEl) as HTMLElement
   if (!btnContainer) throw Error(`page vote's config \`btnEl\` selector ${options.btnEl} not found`)
 
-  const api = options.getApi()
+  const api = ctx.getApi()
 
   ctx.on('list-fetched', ({ data }) => {
-    const voteUpBtn = new ActionBtn(() => `${$t('voteUp')}${data!.page.vote_up || 0}`).appendTo(btnContainer)
+    const voteUpBtn = new ActionBtn(() => `${$t('voteUp')} (${data!.page.vote_up || 0})`).appendTo(btnContainer)
     voteUpBtn.setClick(() => {
       api.votes.vote('page_up', data!.page.id, {
         ...api.getUserFields()
-      }).then(res => {
-        // todo: update vote count
-        console.log(res)
+      }).then(({ data: { up, down} }) => {
+        data!.page.vote_up = up
+        data!.page.vote_down = down
+        voteUpBtn.updateText()
+      }).catch((err) => {
+        voteUpBtn.setError($t('voteFail'))
+        console.error(err)
       })
     })
 
     if (options.voteDown) {
-      const voteDownBtn = new ActionBtn(() => `${$t('voteDown')}`).appendTo(btnContainer)
+      const voteDownBtn = new ActionBtn(() => `${$t('voteDown')} (${data!.page.vote_down || 0})`).appendTo(btnContainer)
       voteDownBtn.setClick(() => {
         api.votes.vote('page_down', data!.page.id, {
           ...api.getUserFields()
+        }).then(({ data: { up, down } }) => {
+          data!.page.vote_up = up
+          data!.page.vote_down = down
+          voteUpBtn.updateText()
+        }).catch((err) => {
+          voteDownBtn.setError($t('voteFail'))
+          console.error(err)
         })
       })
     }

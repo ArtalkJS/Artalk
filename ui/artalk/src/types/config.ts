@@ -73,6 +73,18 @@ export interface ArtalkConfig {
   /** 评论投票反对按钮 */
   voteDown: boolean
 
+  /** 页面投票按钮 */
+  pageVote?: {
+    /** 页面投票反对按钮 */
+    voteDown: boolean
+
+    /** 页面投票按钮绑定 Selector */
+    btnEl: string
+
+    /** 页面投票数绑定 Selector */
+    el: string
+  } | boolean
+
   /** 评论预览功能 */
   preview: boolean
 

@@ -10,7 +10,7 @@ interface PageVoteOptions {
 }
 
 export const PageVoteWidget: ArtalkPlugin = (ctx) => {
-  ctx.watchConf(['pageKey', 'pageVote'], (conf) => {
+  ctx.watchConf(['pageKey', 'pageVote', 'darkMode'], (conf) => {
     if (!conf.pageVote) return
 
     const defaultOptions = {
@@ -28,7 +28,9 @@ export const PageVoteWidget: ArtalkPlugin = (ctx) => {
 function initPageVoteWidget(ctx: ContextApi, options: PageVoteOptions) {
   const btnContainer = document.querySelector<HTMLElement>(options.btnEl)
   if (!btnContainer) return // throw Error(`page vote's config \`btnEl\` selector ${options.btnEl} not found`)
-  btnContainer.classList.add('atk-layer-wrap')
+  btnContainer.classList.add('atk-page-vote')
+  if (ctx.getConf().darkMode) btnContainer.classList.add('atk-dark-mode')
+  else btnContainer.classList.remove('atk-dark-mode')
 
   const api = ctx.getApi()
 

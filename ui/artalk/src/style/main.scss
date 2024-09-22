@@ -1,3 +1,4 @@
+@import 'action-btn';
 @import './_color.scss';
 @import './comment.scss';
 @import './list.scss';
@@ -542,6 +543,9 @@
 
 /* Common Action Btn */
 .atk-common-action-btn {
+
+  @extend %action-btn;
+
   &.atk-btn-confirm {
     color: var(--at-color-yellow) !important;
   }

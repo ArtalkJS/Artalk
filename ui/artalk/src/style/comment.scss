@@ -1,3 +1,5 @@
+@import 'action-btn';
+
 .atk-comment-wrap {
   overflow: hidden;
   position: relative;
@@ -263,25 +265,7 @@
         flex-wrap: wrap;
 
         & > span {
-          color: var(--at-color-meta);
-          font-size: 13px;
-          line-height: 25px;
-          display: inline-flex;
-          cursor: pointer;
-          user-select: none;
-
-          &.atk-error,
-          &.atk-error:hover {
-            color: var(--at-color-red);
-          }
-
-          &:not(:last-child):not(.atk-hide) {
-            margin-right: 16px;
-          }
-
-          &:hover {
-            color: var(--at-color-deep);
-          }
+          @extend %action-btn;
         }
       }
     }

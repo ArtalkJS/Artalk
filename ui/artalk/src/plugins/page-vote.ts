@@ -29,7 +29,8 @@ export const PageVoteWidget: ArtalkPlugin = (ctx) => {
 
 function initPageVoteWidget(ctx: ContextApi, options: PageVoteOptions) {
   const btnContainer = document.querySelector(options.btnEl) as HTMLElement
-  if (!btnContainer) throw Error(`page vote's config \`btnEl\` selector ${options.btnEl} not found`)
+  if (!btnContainer) return // throw Error(`page vote's config \`btnEl\` selector ${options.btnEl} not found`)
+  btnContainer.classList.add('atk-layer-wrap')
 
   const api = ctx.getApi()
 
@@ -38,7 +39,7 @@ function initPageVoteWidget(ctx: ContextApi, options: PageVoteOptions) {
     voteUpBtn.setClick(() => {
       api.votes.vote('page_up', data!.page.id, {
         ...api.getUserFields()
-      }).then(({ data: { up, down} }) => {
+      }).then(({ data: { up, down } }) => {
         data!.page.vote_up = up
         data!.page.vote_down = down
         voteUpBtn.updateText()

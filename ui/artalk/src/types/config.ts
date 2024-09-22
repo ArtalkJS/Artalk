@@ -79,10 +79,7 @@ export interface ArtalkConfig {
     voteDown: boolean
 
     /** 页面投票按钮绑定 Selector */
-    btnEl: string
-
-    /** 页面投票数绑定 Selector */
-    el: string
+    btnEl?: string
   } | boolean
 
   /** 评论预览功能 */

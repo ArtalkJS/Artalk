@@ -278,6 +278,15 @@ Artalk 统计组件查询评论数和浏览量时，会通过该属性名来查�
 
 为了便于主题适配，可根据需要自定义属性名，例如将其替换为 `data-path`，则 HTML 标签为 `<span data-path="/t/1.html"></span>`。
 
+### pageVote
+
+**页面投票**
+
+- 类型：`Boolean` | `{ voteDown: boolean, btnEl?: string }`
+- 默认值： `true`
+
+启用 / 禁用页面投票功能，设置为 `Falsy` 值则不启用该功能。 `voteDown` 设置是否启用反对投票按钮（默认隐藏）, `btnEl` 为投票按钮的容器选择器，默认为 `".artalk-page-vote"`。
+
 ### vote
 
 **投票按钮**

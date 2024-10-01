@@ -40,6 +40,7 @@ install -m 0755 -vd                     %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 install -p -D -m 0644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 install -d -m 0750 %{buildroot}%{_sharedstatedir}/artalk
+install -D -p -m 0644 ./conf/artalk.example.yml %{buildroot}%{_sysconfdir}/artalk/artalk.yml
 
 %pre
 %sysusers_create_compat %{SOURCE2}
@@ -49,6 +50,8 @@ install -d -m 0750 %{buildroot}%{_sharedstatedir}/artalk
 %license LICENSE
 %{_bindir}/artalk
 %{_sysusersdir}/%{name}.conf
+%dir %{_sysconfdir}/artalk
+%config(noreplace) %{_sysconfdir}/artalk/artalk.yml
 %attr(0750,artalk,artalk) %dir %{_sharedstatedir}/artalk
 
 

@@ -11,7 +11,9 @@ Source0:        %{gosource}
 Source1:        vendor-%{version}.tar.gz
 Source2:        artalk.sysusers
 Source3:        https://github.com/ArtalkJS/Artalk/releases/download/v%{version}/artalk_ui.tar.gz
+Source4:        artalk.service
 BuildRequires:  systemd-rpm-macros
+%{?systemd_requires}
 %{?sysusers_requires_compat}
 
 %description
@@ -41,9 +43,19 @@ install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 install -p -D -m 0644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
 install -d -m 0750 %{buildroot}%{_sharedstatedir}/artalk
 install -D -p -m 0644 ./conf/artalk.example.yml %{buildroot}%{_sysconfdir}/artalk/artalk.yml
+install -D -p -m 0644 %{SOURCE4} %{buildroot}%{_unitdir}/artalk.service
 
 %pre
 %sysusers_create_compat %{SOURCE2}
+
+%post
+%systemd_post artalk.service
+
+%preun
+%systemd_preun artalk.service
+
+%postun
+%systemd_postun_with_restart artalk.service
 
 %files
 %doc CONTRIBUTING.md README.md
@@ -53,6 +65,7 @@ install -D -p -m 0644 ./conf/artalk.example.yml %{buildroot}%{_sysconfdir}/artal
 %dir %{_sysconfdir}/artalk
 %config(noreplace) %{_sysconfdir}/artalk/artalk.yml
 %attr(0750,artalk,artalk) %dir %{_sharedstatedir}/artalk
+%{_unitdir}/artalk.service
 
 
 %gopkgfiles

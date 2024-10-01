@@ -9,6 +9,9 @@ License:        MIT
 URL:            https://artalk.js.org/
 Source0:        %{gosource}
 Source1:        vendor-%{version}.tar.gz
+Source2:        artalk.sysusers
+BuildRequires:  systemd-rpm-macros
+%{?sysusers_requires_compat}
 
 %description
 Artalk is an intuitive yet feature-rich comment system, ready for immediate deployment into any blog, website, or web application.
@@ -33,12 +36,18 @@ go build %{gobuildflags} -mod=vendor -o %{gobuilddir}/bin/artalk %{goipath}
 %gopkginstall
 install -m 0755 -vd                     %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
+install -p -D -m 0644 %{SOURCE2} %{buildroot}%{_sysusersdir}/%{name}.conf
+install -d -m 0750 %{buildroot}%{_sharedstatedir}/artalk
 
+%pre
+%sysusers_create_compat %{SOURCE2}
 
 %files
 %doc CONTRIBUTING.md README.md
 %license LICENSE
 %{_bindir}/artalk
+%{_sysusersdir}/%{name}.conf
+%attr(0750,artalk,artalk) %dir %{_sharedstatedir}/artalk
 
 
 %gopkgfiles

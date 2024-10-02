@@ -12,6 +12,7 @@ Source1:        vendor-tarball.sh
 Source2:        https://github.com/ArtalkJS/Artalk/releases/download/v%{version}/artalk_ui.tar.gz
 Source3:        artalk.sysusers
 Source4:        artalk.service
+Patch1:         0001-fix-go-test-ld-undefined-error-by-remove-clickhouse.patch
 BuildRequires:  systemd-rpm-macros
 %{?systemd_requires}
 %{?sysusers_requires_compat}
@@ -25,8 +26,9 @@ Artalk is an intuitive yet feature-rich comment system, ready for immediate depl
 
 
 %prep
-%goprep -k
+%autosetup -p1
 tar --strip-components=1 -xzf %{SOURCE2} --directory=public
+%goprep -k -e
 chmod -Rf a+rX,u+w,g-w,o-w .
 
 
@@ -52,6 +54,10 @@ install -D -p -m 0644 ./conf/artalk.example.yml %{buildroot}%{_sysconfdir}/artal
 
 # systemd units
 install -D -p -m 0644 %{SOURCE4} %{buildroot}%{_unitdir}/artalk.service
+
+
+%check
+%gocheck
 
 
 %pre

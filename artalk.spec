@@ -6,8 +6,9 @@ Release:        %autorelease
 Summary:        A Self-hosted Comment System
 License:        MIT
 URL:            https://artalk.js.org/
-Source0:        %{gosource}
-Source1:        vendor-%{version}.tar.gz
+Source0:        %{name}-%{version}-vendored.tar.gz
+# track this script
+Source1:        vendor-tarball.sh
 Source2:        https://github.com/ArtalkJS/Artalk/releases/download/v%{version}/artalk_ui.tar.gz
 Source3:        artalk.sysusers
 Source4:        artalk.service
@@ -24,11 +25,9 @@ Artalk is an intuitive yet feature-rich comment system, ready for immediate depl
 
 
 %prep
-%autosetup -c -T -a 1
-tar --strip-components=1 -xzf %{SOURCE0}
+%goprep -k
 tar --strip-components=1 -xzf %{SOURCE2} --directory=public
 chmod -Rf a+rX,u+w,g-w,o-w .
-%goprep -k -e
 
 
 %build

@@ -1,0 +1,24 @@
+From 79a66c91db582db6c740e343c707d4967117f762 Mon Sep 17 00:00:00 2001
+From: duli <duli4868@gmail.com>
+Date: Wed, 2 Oct 2024 18:46:32 +0800
+Subject: [PATCH] remove upgrade command
+
+---
+ cmd/base.go | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/cmd/base.go b/cmd/base.go
+index a3a3a34f..44a2e468 100644
+--- a/cmd/base.go
++++ b/cmd/base.go
+@@ -121,7 +121,6 @@ func (atk *ArtalkCmd) mountCommands() {
+ 	atk.addCommand(NewImportCommand(atk))
+ 	atk.addCommand(NewConfigCommand())
+ 	atk.addCommand(NewGenCommand())
+-	atk.addCommand(NewUpgradeCommand())
+ 	atk.addCommand(NewVersionCommand())
+ }
+ 
+-- 
+2.46.2
+

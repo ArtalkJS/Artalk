@@ -31,10 +31,7 @@ chmod -Rf a+rX,u+w,g-w,o-w .
 
 
 %build
-%undefine _auto_set_build_flags
-%global _dwz_low_mem_die_limit 0
-%{?gobuilddir:GOPATH="%{gobuilddir}:${GOPATH:+${GOPATH}:}%{?gopath}"} GO111MODULE=on\\
-go build %{gobuildflags} -mod=vendor -o %{gobuilddir}/bin/artalk %{goipath}
+%gobuild -o %{gobuilddir}/bin/artalk %{goipath}
 
 
 %install

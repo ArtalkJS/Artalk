@@ -11,3 +11,7 @@ func CheckFileExist(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
 }
+
+func CheckDirExist(path string) bool {
+	return CheckFileExist(path)
+}

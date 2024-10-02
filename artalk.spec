@@ -13,6 +13,7 @@ Source2:        https://github.com/ArtalkJS/Artalk/releases/download/v%{version}
 Source3:        artalk.sysusers
 Source4:        artalk.service
 Patch1:         0001-fix-go-test-ld-undefined-error-by-remove-clickhouse.patch
+Patch2:         0002-remove-upgrade-command.patch
 BuildRequires:  systemd-rpm-macros
 %{?systemd_requires}
 %{?sysusers_requires_compat}

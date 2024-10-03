@@ -1,0 +1,6 @@
+# result dir
+/result_artalk/
+/result_srpm/
+
+# source
+/*.gz

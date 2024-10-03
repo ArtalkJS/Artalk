@@ -12,13 +12,12 @@ set -euo pipefail
 version=${tag#v}
 echo "Using version: $version"
 
-rm -rf "$name-$version"
-
 # Clone the repository
+rm -rf "$name-$version"
 git -c advice.detachedHead=false clone --branch "$tag" --depth 1 https://github.com/artalkjs/artalk/ "$name-$version"
-pushd "$name-$version"
 
 # Vendor dependencies
+pushd "$name-$version"
 GOPROXY='https://proxy.golang.org,direct' go mod vendor
 popd
 

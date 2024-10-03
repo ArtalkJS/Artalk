@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# Copr need srpm in the outdir
 outdir=$1
 echo "Outdir: $outdir"
 
@@ -11,6 +12,7 @@ echo "Using tag: $tag"
 # Download source
 spectool -g artalk.spec
 
+# Create vendored source
 rm -rf "artalk-${tag#v}-vendored.tar.gz"
 ./vendor-tarball.sh $tag
 

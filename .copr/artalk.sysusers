@@ -1,3 +1,0 @@
-#Type Name    ID   GECOS            Home directory       Shell
-u     artalk  -    "Artalk server"  /var/lib/artalk      /sbin/nologin
-g     artalk  -    -                -                    -

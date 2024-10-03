@@ -1,0 +1,59 @@
+name: Test App
+
+on:
+  push:
+    branches: ["*", "!release/*", "!nightly"]
+    paths: ["cmd/**", "internal/**", "server/**", "test/**", "main.go", "go.mod", "go.sum"]
+    tags-ignore: ["v*"]
+  pull_request:
+    branches: ["*", "!release/*", "!nightly"]
+    paths: ["cmd/**", "internal/**", "server/**", "test/**", "main.go", "go.mod", "go.sum"]
+
+env:
+  REPORT_DIR: "/tmp/test-reports"
+
+jobs:
+  test_app:
+    name: Test App on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Print the Go version
+        run: go version
+
+      - name: Install tools
+        run: go install gotest.tools/gotestsum@latest
+
+      - name: Download Go modules
+        run: go mod download
+
+      - name: Run tests
+        run: |
+          mkdir -p $REPORT_DIR
+          gotestsum \
+            --junitfile $REPORT_DIR/unit-tests.xml \
+            --jsonfile $REPORT_DIR/unit-tests.json \
+            -- -coverprofile=$REPORT_DIR/coverage.out ./...
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Go-Test-Results
+          path: ${{ env.REPORT_DIR }}
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          flags: go
+          file: ${{ env.REPORT_DIR }}/coverage.out
+          token: ${{ secrets.CODECOV_TOKEN }}

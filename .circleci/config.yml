@@ -23,5 +23,6 @@ workflows:
             branches:
               ignore:
                 - gh-pages
-                - /release\/.+/
                 - nightly
+                - /release\/.+/
+                - /dist\/.+/

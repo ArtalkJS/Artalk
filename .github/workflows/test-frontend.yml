@@ -2,16 +2,17 @@ name: Test Frontend
 
 on:
   push:
-    branches: ["*", "!release/*", "!nightly"]
     paths: ["ui/**"]
+    branches-ignore: ["release/*", "nightly"]
     tags-ignore: ["v*"]
   pull_request:
     paths: ["ui/**"]
-    branches: ["*", "!release/*", "!nightly"]
+    branches-ignore: ["release/*", "nightly"]
 
 jobs:
   test_ui:
     strategy:
+      fail-fast: false
       matrix:
         node: [18, 20]
         os: [ubuntu-latest, windows-latest]

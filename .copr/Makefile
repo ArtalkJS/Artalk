@@ -6,5 +6,10 @@ srpm:
 	@echo $(tag)
 	spectool -g artalk.spec
 	./vendor-tarball.sh ${tag}
-	rpmautospec process-distgit artalk.spec artalk.spec
+	git stash					# make sure workspace is empty.
+	cp changelog artalk.spec ../
+	git add ../changelog ../artalk.spec && git commit -m "for rpmautospec [skip changelog]"
+	rpmautospec process-distgit ../artalk.spec artalk.spec
+	git stash pop				# pop it!
+	mkdir -p $(outdir)
 	rpkg srpm --spec artalk.spec --outdir=$(outdir)

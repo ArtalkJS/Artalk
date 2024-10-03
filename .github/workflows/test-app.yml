@@ -1,0 +1,72 @@
+name: Test App
+
+on:
+  push:
+    paths: ["cmd/**", "internal/**", "server/**", "test/**", "main.go", "go.mod", "go.sum"]
+    branches-ignore: ["release/*", "nightly"]
+    tags-ignore: ["v*"]
+  pull_request:
+    paths: ["cmd/**", "internal/**", "server/**", "test/**", "main.go", "go.mod", "go.sum"]
+    branches-ignore: ["release/*", "nightly"]
+
+env:
+  REPORT_DIR: "/tmp/test-reports"
+
+jobs:
+  test_app:
+    name: Test Go on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false # https://github.com/actions/setup-go/issues/483
+
+      - id: go-vars
+        name: Get Go variables for cache
+        run: |
+          echo "GOCACHE=$(go env GOCACHE)" >> "$GITHUB_OUTPUT"
+          echo "GOMODCACHE=$(go env GOMODCACHE)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.go-vars.outputs.GOCACHE }}
+            ${{ steps.go-vars.outputs.GOMODCACHE }}
+          key: go-test-${{ runner.os }}-${{ hashFiles('**/go.mod') }}
+          restore-keys: |
+            go-test-${{ runner.os }}
+
+      - name: Install tools
+        run: go install gotest.tools/gotestsum@latest
+
+      - name: Download Go modules
+        run: go mod download
+
+      - name: Run tests
+        run: |
+          mkdir -p $REPORT_DIR
+          gotestsum --junitfile $REPORT_DIR/unit-tests.xml --jsonfile $REPORT_DIR/unit-tests.json -- -coverprofile=$REPORT_DIR/coverage.out ./...
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Go-Test-Results-${{ runner.os }}
+          path: ${{ env.REPORT_DIR }}
+
+      - if: matrix.os == 'ubuntu-latest'
+        name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          flags: go
+          file: ${{ env.REPORT_DIR }}/coverage.out
+          token: ${{ secrets.CODECOV_TOKEN }}

@@ -1,3 +1,6 @@
+* Wed Oct 02 2024 duli <duli4868@gmail.com> - 2.9.1-11
+- improve vendor-tarball.sh to make it reproducible
+
 * Wed Oct 02 2024 duli <duli4868@gmail.com> - 2.9.1-10
 - remove upgrade command
 

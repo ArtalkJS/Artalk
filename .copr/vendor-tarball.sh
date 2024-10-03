@@ -36,7 +36,7 @@ TARFLAGS=(
   --mode=go+u,go-w
 )
 
-tar "${TARFLAGS[@]}" -czf "$name-$version-vendored.tar.gz" "$name-$version"
+tar "${TARFLAGS[@]}" -czvf "$name-$version-vendored.tar.gz" "$name-$version"
 
 # Clean up the temporary directory
 rm -rf "$name-$version"

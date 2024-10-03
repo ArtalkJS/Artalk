@@ -252,11 +252,11 @@ func (conf *Config) historyPatch() {
 //  3. XDG_CONFIG_HOME (~/.config/artalk.yml)
 //  4. /etc/artalk.yml (for linux packing version)
 func RetrieveConfigFile() string {
-	lookupDirs := []string{".", "./data", xdg.ConfigHome, "/etc"}
+	lookupDirs := []string{"", "data", xdg.ConfigHome, "/etc"}
 	paths := []string{}
 	for _, dir := range lookupDirs {
 		for _, name := range CONF_DEFAULT_FILENAMES {
-			if dir == "." || dir == "./data" {
+			if dir == "" || dir == "data" {
 				paths = append(paths, path.Join(dir, name))
 			} else {
 				paths = append(paths, path.Join(dir, "artalk", name))

@@ -1,7 +1,7 @@
 package config
 
 // 默认配置文件名
-var CONF_DEFAULT_FILENAMES = [...]string{
+var CONF_DEFAULT_FILENAMES = []string{
 	"artalk.yml",
 	"artalk-go.yml", // for 向下兼容
 	"config.yml",

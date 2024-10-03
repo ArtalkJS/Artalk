@@ -40,3 +40,19 @@ func TestCheckFileExist(t *testing.T) {
 	exists = CheckFileExist(nonExistingFile)
 	assert.False(t, exists, "Expected file to not exist, but it does")
 }
+
+func TestCheckDirExist(t *testing.T) {
+	// Test existing directory
+	existingDir := "test_dir_exist"
+	err := os.Mkdir(existingDir, 0700)
+	assert.NoError(t, err, "Error creating test directory")
+	defer os.Remove(existingDir)
+
+	exists := CheckDirExist(existingDir)
+	assert.True(t, exists, "Expected directory to exist, but it doesn't")
+
+	// Test non-existing directory
+	nonExistingDir := "non_existing"
+	exists = CheckDirExist(nonExistingDir)
+	assert.False(t, exists, "Expected directory to not exist, but it does")
+}

@@ -31,7 +31,7 @@ if git stash list | grep -q 'stash@'; then
 fi
 
 # Generate srpm
-mkdir -p $outdir
-rpkg srpm --spec artalk.spec --outdir=$outdir
-
+mkdir -p result_srpm
+rpkg srpm --spec artalk.spec --outdir=result_srpm
+cp -r result_srpm/artalk*.src.rpm $outdir
 popd

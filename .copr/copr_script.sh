@@ -16,6 +16,10 @@ spectool -g artalk.spec
 rm -rf "artalk-${tag#v}-vendored.tar.gz"
 ./vendor-tarball.sh $tag
 
+# fix for Please tell me who you are.
+git config --global user.email "nonexist@artalk.com"
+git config --global user.name "artalk"
+
 # Parse %autorelease and %autochangelog
 git stash
 cp changelog artalk.spec ../

@@ -56,6 +56,14 @@ install -D -p -m 0644 ./conf/artalk.example.yml %{buildroot}%{_sysconfdir}/artal
 # systemd units
 install -D -p -m 0644 %{SOURCE4} %{buildroot}%{_unitdir}/artalk.service
 
+# shell completions
+install -d -m 0755 %{buildroot}%{bash_completions_dir}
+%{gobuilddir}/bin/artalk completion bash > %{buildroot}%{bash_completions_dir}/artalk
+install -d -m 0755 %{buildroot}%{zsh_completions_dir}
+%{gobuilddir}/bin/artalk completion zsh > %{buildroot}%{zsh_completions_dir}/_artalk
+install -d -m 0755 %{buildroot}%{fish_completions_dir}
+%{gobuilddir}/bin/artalk completion fish > %{buildroot}%{fish_completions_dir}/artalk.fish
+
 
 %check
 %gocheck
@@ -86,6 +94,9 @@ install -D -p -m 0644 %{SOURCE4} %{buildroot}%{_unitdir}/artalk.service
 %dir %{_sysconfdir}/artalk
 %config(noreplace) %{_sysconfdir}/artalk/artalk.yml
 %attr(0750,artalk,artalk) %dir %{_sharedstatedir}/artalk
+%{bash_completions_dir}/artalk
+%{zsh_completions_dir}/_artalk
+%{fish_completions_dir}/artalk.fish
 
 
 %gopkgfiles

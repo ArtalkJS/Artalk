@@ -14,6 +14,7 @@ import pluginVue from 'eslint-plugin-vue'
 import globals from 'globals'
 import eslintTs from 'typescript-eslint'
 import vueParser from 'vue-eslint-parser'
+import pluginArtalk from 'eslint-plugin-artalk'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 const tsProjects = ['./tsconfig.base.json', './ui/*/tsconfig.json', './docs/*/tsconfig.json']
@@ -65,9 +66,11 @@ export default eslintTs.config(
     plugins: {
       '@typescript-eslint': pluginTS,
       'import-x': pluginImportX,
+      artalk: pluginArtalk,
     },
     rules: {
       ...pluginImportX.configs.recommended.rules,
+      ...pluginArtalk.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-unused-expressions': [

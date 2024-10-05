@@ -41,6 +41,9 @@ importers:
       eslint-import-resolver-typescript:
         specifier: 3.6.3
         version: 3.6.3(@typescript-eslint/parser@8.6.0(eslint@9.10.0)(typescript@5.6.2))(eslint-plugin-import-x@4.2.1(eslint@9.10.0)(typescript@5.6.2))(eslint-plugin-import@2.30.0)(eslint@9.10.0)
+      eslint-plugin-artalk:
+        specifier: workspace:^
+        version: link:ui/eslint-plugin-artalk
       eslint-plugin-compat:
         specifier: ^6.0.1
         version: 6.0.1(eslint@9.10.0)

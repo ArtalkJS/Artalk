@@ -117,11 +117,11 @@ importers:
   docs/docs:
     devDependencies:
       '@artalk/plugin-katex':
-        specifier: ^0.2.3
-        version: 0.2.3(@types/katex@0.16.7)(artalk@ui+artalk)(katex@0.16.11)
+        specifier: ^0.2.4
+        version: 0.2.4(@types/katex@0.16.7)(artalk@ui+artalk)(katex@0.16.11)
       '@artalk/plugin-lightbox':
-        specifier: ^0.2.3
-        version: 0.2.3(artalk@ui+artalk)(fancybox@3.0.1)(lightbox2@2.11.4)(lightgallery@2.7.2)(photoswipe@5.4.4)
+        specifier: ^0.2.4
+        version: 0.2.4(artalk@ui+artalk)(fancybox@3.0.1)(lightbox2@2.11.4)(lightgallery@2.7.2)(photoswipe@5.4.4)
       artalk:
         specifier: workspace:^
         version: link:../../ui/artalk
@@ -479,11 +479,11 @@ packages:
   '@antfu/utils@0.7.10':
     resolution: {integrity: sha512-+562v9k4aI80m1+VuMHehNJWLOFjBnXn3tdOitzD0il5b7smkSBal4+a3oKiQTbrwMmN/TBUMDvbdoWDehgOww==}
 
-  '@artalk/plugin-katex@0.2.3':
-    resolution: {integrity: sha512-Xu+f5JBWUTjIiuuyzjrM2p+KOTmy9P5L96fM9Dh+tTmlpVv0cJ/Z6zxkZFt+OooK2QO5syU2Pjw9OcqAtmRCIQ==}
+  '@artalk/plugin-katex@0.2.4':
+    resolution: {integrity: sha512-7kNsrg9R77Ly42wVwXdfuLwuwLtIIFYrrITZGrPzqDCqnrm1nYUx0btkyGjWY1/MQLTNZWqczOcjbQ2VN2+o0Q==}
     peerDependencies:
       '@types/katex': ^0.16.7
-      artalk: ^2.9.0
+      artalk: ^2.9.1
       katex: ^0.16.11
 
   '@artalk/plugin-kit@1.0.6':
@@ -493,10 +493,10 @@ packages:
       typescript: '*'
       vite: '*'
 
-  '@artalk/plugin-lightbox@0.2.3':
-    resolution: {integrity: sha512-avmW2pu5rrWnDjRrPj4CM9QrnGJQNMqaY/o5+nH1d/eo7HURlRPiy5/yZFAk7ccbvH6t5c/PtcygGLbRft2M2A==}
+  '@artalk/plugin-lightbox@0.2.4':
+    resolution: {integrity: sha512-cYewbb2rkwofDqWq51MrMO/idbN7mcYTrIicsi8xpoRJdr7hwLzqM6ODih9cnbiS25l8+3PVYPTIn3g5WeqkYg==}
     peerDependencies:
-      artalk: ^2.9.0
+      artalk: ^2.9.1
       fancybox: ^3.0.1
       lightbox2: ^2.11.4
       lightgallery: ^2.7.2
@@ -5057,7 +5057,7 @@ snapshots:
 
   '@antfu/utils@0.7.10': {}
 
-  '@artalk/plugin-katex@0.2.3(@types/katex@0.16.7)(artalk@ui+artalk)(katex@0.16.11)':
+  '@artalk/plugin-katex@0.2.4(@types/katex@0.16.7)(artalk@ui+artalk)(katex@0.16.11)':
     dependencies:
       '@types/katex': 0.16.7
       artalk: link:ui/artalk
@@ -5073,7 +5073,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@artalk/plugin-lightbox@0.2.3(artalk@ui+artalk)(fancybox@3.0.1)(lightbox2@2.11.4)(lightgallery@2.7.2)(photoswipe@5.4.4)':
+  '@artalk/plugin-lightbox@0.2.4(artalk@ui+artalk)(fancybox@3.0.1)(lightbox2@2.11.4)(lightgallery@2.7.2)(photoswipe@5.4.4)':
     dependencies:
       artalk: link:ui/artalk
     optionalDependencies:

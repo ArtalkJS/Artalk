@@ -2,7 +2,7 @@ import type { ApiOptions } from './api/options'
 import { mergeDeep } from './lib/merge-deep'
 import { createApiHandlers } from './api'
 import Defaults from './defaults'
-import type { ArtalkConfig, ContextApi } from '@/types'
+import type { ArtalkConfig, ArtalkConfigPartial, ContextApi } from '@/types'
 
 /**
  * Handle the custom config which is provided by the user
@@ -11,14 +11,11 @@ import type { ArtalkConfig, ContextApi } from '@/types'
  * @param full - If `full` is `true`, the return value will be the complete config for Artalk instance creation
  * @returns The config for Artalk instance creation
  */
-export function handelCustomConf(customConf: Partial<ArtalkConfig>, full: true): ArtalkConfig
-export function handelCustomConf(
-  customConf: Partial<ArtalkConfig>,
-  full?: false,
-): Partial<ArtalkConfig>
-export function handelCustomConf(customConf: Partial<ArtalkConfig>, full = false) {
+export function handelCustomConf(customConf: ArtalkConfigPartial, full: true): ArtalkConfig
+export function handelCustomConf(customConf: ArtalkConfigPartial, full?: false): ArtalkConfigPartial
+export function handelCustomConf(customConf: ArtalkConfigPartial, full = false) {
   // 合并默认配置
-  const conf: Partial<ArtalkConfig> = full ? mergeDeep(Defaults, customConf) : customConf
+  const conf: ArtalkConfigPartial = full ? mergeDeep(Defaults, customConf) : customConf
 
   // 绑定元素
   if (conf.el && typeof conf.el === 'string') {
@@ -59,7 +56,7 @@ export function handelCustomConf(customConf: Partial<ArtalkConfig>, full = false
  * @param conf - The Server response config for control the frontend of Artalk remotely
  * @returns The config for Artalk instance creation
  */
-export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
+export function handleConfFormServer(conf: ArtalkConfigPartial): ArtalkConfigPartial {
   const ExcludedKeys: (keyof ArtalkConfig)[] = [
     'el',
     'pageKey',
@@ -95,7 +92,7 @@ export function handleConfFormServer(conf: Partial<ArtalkConfig>) {
  * @param ctx - If `ctx` not provided, `checkAdmin` and `checkCaptcha` will be disabled
  * @returns ApiOptions for Api client instance creation
  */
-export function convertApiOptions(conf: Partial<ArtalkConfig>, ctx?: ContextApi): ApiOptions {
+export function convertApiOptions(conf: ArtalkConfigPartial, ctx?: ContextApi): ApiOptions {
   return {
     baseURL: `${conf.server}/api/v2`,
     siteName: conf.site || '',

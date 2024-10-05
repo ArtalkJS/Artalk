@@ -8,7 +8,7 @@ import * as Stat from './plugins/stat'
 import { Api } from './api'
 import type { TInjectedServices } from './service'
 import { GlobalPlugins, PluginOptions, load } from './load'
-import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '@/types'
+import type { ArtalkConfigPartial, EventPayloadMap, ArtalkPlugin, ContextApi } from '@/types'
 
 /**
  * Artalk
@@ -18,7 +18,7 @@ import type { ArtalkConfig, EventPayloadMap, ArtalkPlugin, ContextApi } from '@/
 export default class Artalk {
   public ctx!: ContextApi
 
-  constructor(conf: Partial<ArtalkConfig>) {
+  constructor(conf: ArtalkConfigPartial) {
     // Init Config
     const handledConf = handelCustomConf(conf, true)
 
@@ -49,7 +49,7 @@ export default class Artalk {
   }
 
   /** Update config of Artalk */
-  public update(conf: Partial<ArtalkConfig>) {
+  public update(conf: ArtalkConfigPartial) {
     this.ctx.updateConf(conf)
     return this
   }
@@ -92,7 +92,7 @@ export default class Artalk {
   // ===========================
 
   /** Init Artalk */
-  public static init(conf: Partial<ArtalkConfig>): Artalk {
+  public static init(conf: ArtalkConfigPartial): Artalk {
     return new Artalk(conf)
   }
 
@@ -103,7 +103,7 @@ export default class Artalk {
   }
 
   /** Load count widget */
-  public static loadCountWidget(c: Partial<ArtalkConfig>) {
+  public static loadCountWidget(c: ArtalkConfigPartial) {
     const conf = handelCustomConf(c, true)
 
     Stat.initCountWidget({

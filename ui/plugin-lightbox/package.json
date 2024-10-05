@@ -1,6 +1,6 @@
 {
   "name": "@artalk/plugin-lightbox",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "description": "The image lightbox plugin for artalk",
   "type": "module",
@@ -15,11 +15,8 @@
     "build": "vite build",
     "serve": "vite preview"
   },
-  "dependencies": {
-    "artalk": "workspace:^"
-  },
   "devDependencies": {
-    "@artalk/plugin-kit": "workspace:^",
+    "artalk": "workspace:^",
     "lightgallery": "^2.7.2",
     "lightbox2": "^2.11.4",
     "photoswipe": "^5.4.4",

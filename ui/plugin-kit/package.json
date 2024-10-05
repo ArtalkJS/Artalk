@@ -1,6 +1,6 @@
 {
   "name": "@artalk/plugin-kit",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "The plugin kit for Artalk",
   "type": "module",
   "main": "dist/main.js",
@@ -27,10 +27,10 @@
   "license": "MIT",
   "dependencies": {
     "@microsoft/api-extractor": "^7.47.9",
-    "artalk": "workspace:^",
     "picocolors": "^1.1.0"
   },
   "devDependencies": {
+    "artalk": "workspace:^",
     "esbuild-plugin-raw": "^0.1.8",
     "tsup": "^8.3.0"
   },

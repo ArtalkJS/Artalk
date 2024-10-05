@@ -45,8 +45,11 @@ jobs:
       - name: Package Build Test
         run: pnpm build:all
 
-      - name: Unit test
+      - name: Unit Test
         run: pnpm test
+
+      - name: Plugins Build Test
+        run: pnpm build:plugins
 
       - name: Lint
         run: pnpm eslint ui && pnpm prettier --check ui

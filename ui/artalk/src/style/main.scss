@@ -542,6 +542,22 @@
 
 /* Common Action Btn */
 .atk-common-action-btn {
+  color: var(--at-color-meta);
+  font-size: 13px;
+  line-height: 25px;
+  display: inline-flex;
+  cursor: pointer;
+  user-select: none;
+
+  &.atk-error,
+  &.atk-error:hover {
+    color: var(--at-color-red);
+  }
+
+  &:hover {
+    color: var(--at-color-deep);
+  }
+
   &.atk-btn-confirm {
     color: var(--at-color-yellow) !important;
   }

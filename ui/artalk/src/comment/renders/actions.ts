@@ -1,4 +1,3 @@
-import * as Utils from '../../lib/utils'
 import ActionBtn from '../../components/action-btn'
 import type Render from '../render'
 import $t from '@/i18n'
@@ -45,11 +44,11 @@ function renderVote(r: Render) {
 // 操作按钮 - 回复
 function renderReply(r: Render) {
   if (!r.data.is_allow_reply) return // 不允许回复
-
-  const replyBtn = Utils.createElement(`<span>${$t('reply')}</span>`)
-  r.$actions.append(replyBtn)
-  replyBtn.addEventListener('click', (e) => {
-    e.stopPropagation() // 防止穿透
+  const replyBtn = new ActionBtn({
+    text: $t('reply'),
+  })
+  replyBtn.appendTo(r.$actions)
+  replyBtn.setClick(() => {
     r.opts.replyComment(r.data, r.$el)
   })
 }

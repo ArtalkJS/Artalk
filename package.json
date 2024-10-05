@@ -24,7 +24,7 @@
     "test": "pnpm -F artalk test"
   },
   "devDependencies": {
-    "@artalk/plugin-kit": "^1.0.6",
+    "@artalk/plugin-kit": "^1.0.7",
     "@eslint/compat": "^1.1.1",
     "@eslint/js": "^9.10.0",
     "@playwright/test": "^1.47.1",

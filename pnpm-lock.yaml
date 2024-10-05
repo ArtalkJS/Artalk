@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@artalk/plugin-kit':
-        specifier: ^1.0.6
-        version: 1.0.6(@types/node@22.5.5)(artalk@2.9.1(marked@14.1.2))(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(sass@1.78.0)(terser@5.33.0))
+        specifier: ^1.0.7
+        version: 1.0.7(@types/node@22.5.5)(artalk@2.9.1(marked@14.1.2))(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(sass@1.78.0)(terser@5.33.0))
       '@eslint/compat':
         specifier: ^1.1.1
         version: 1.1.1
@@ -486,10 +486,10 @@ packages:
       artalk: ^2.9.1
       katex: ^0.16.11
 
-  '@artalk/plugin-kit@1.0.6':
-    resolution: {integrity: sha512-ejbzkYmlGFPrHS9kzbMDU612fDXPmx1iN+jzNyF5I44K5B50zr4LcGRD3RevB9ohtdLxPV7C2nMwex33ok0tfA==}
+  '@artalk/plugin-kit@1.0.7':
+    resolution: {integrity: sha512-3ggnD0SCQm7b+UpdqOQNzPZdXQjNm5UQLO1iknipSkJ57Nj9E/aLBNSOuW3y6K6djTFY95IKTTJ8wD4ssDV+aQ==}
     peerDependencies:
-      artalk: ^2.9.0
+      artalk: ^2.9.1
       typescript: '*'
       vite: '*'
 
@@ -5063,7 +5063,7 @@ snapshots:
       artalk: link:ui/artalk
       katex: 0.16.11
 
-  '@artalk/plugin-kit@1.0.6(@types/node@22.5.5)(artalk@2.9.1(marked@14.1.2))(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(sass@1.78.0)(terser@5.33.0))':
+  '@artalk/plugin-kit@1.0.7(@types/node@22.5.5)(artalk@2.9.1(marked@14.1.2))(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(sass@1.78.0)(terser@5.33.0))':
     dependencies:
       '@microsoft/api-extractor': 7.47.9(@types/node@22.5.5)
       artalk: 2.9.1(marked@14.1.2)

@@ -21,6 +21,7 @@
     "lint:prettier": "prettier --check .",
     "lint": "pnpm lint:eslint && pnpm lint:prettier",
     "lint:fix": "pnpm lint:eslint --fix && pnpm lint:prettier --write",
+    "check:publish": "node scripts/check-npm-publish.mjs",
     "test": "pnpm -F artalk test"
   },
   "devDependencies": {

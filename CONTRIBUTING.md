@@ -161,6 +161,28 @@ The compiled JavaScript and CSS files will be located in the `/public` directory
 
 For more details, refer to the `scripts/build-frontend.sh` script.
 
+### Publish Frontend
+
+The core artalk client code is automatically deployed to NPM by GitHub Actions. The deployment process is defined in the `.github/workflows/build-ui.yml` file.
+
+If you are writing a artalk plugin in monorepo, it would not be automatically deployed. You should publish it manually. To publish the plugin, first ensure your version number is updated in the `package.json` file. Then, run the following command:
+
+```sh
+pnpm publish --access public
+```
+
+#### Check Published Versions
+
+The `pnpm check:publish` script is designed to verify that all packages in the project have the latest versions published on npm. It skips private packages automatically and allows filtering to check specific packages using the `-F` option.
+
+Check all packages:
+
+```sh
+pnpm check:publish
+```
+
+This will initiate the process of checking all public packages in the repository to ensure they are up to date on npm.
+
 ## Docker Development
 
 ### Build Docker Image

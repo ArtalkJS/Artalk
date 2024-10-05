@@ -12,7 +12,7 @@
 git clone https://github.com/ArtalkJS/Artalk.git
 ```
 
-建议您先 fork 仓库，然后克隆 fork 后的仓库。
+建议你先 fork 仓库，然后克隆 fork 后的仓库。
 
 导航到目录：
 
@@ -53,13 +53,13 @@ cd Artalk
 
 4. **构建前端代码**：
 
-   - 当您对前端代码进行更改后，使用 `pnpm build:all` 构建完整的前端程序。
+   - 当你对前端代码进行更改后，使用 `pnpm build:all` 构建完整的前端程序。
    - JavaScript 和 CSS 代码将在 `ui/artalk/dist` 目录中找到。
    - 前端代码由 GitHub Actions 自动部署到 NPM。
 
 5. **构建后端代码**：
 
-   - 当您对后端代码进行更改后，注意后端程序会嵌入前端代码。
+   - 当你对后端代码进行更改后，注意后端程序会嵌入前端代码。
    - 在构建后端之前，运行 `make build-frontend`（它运行 `scripts/build-frontend.sh`）。这将把嵌入的前端主程序和侧边栏前端程序放入 `/public` 目录。
    - 然后，使用 `make build` 构建后端程序。
 
@@ -69,7 +69,7 @@ cd Artalk
   请参考 [Artalk 插件开发指南](https://artalk.js.org/develop/plugin.html)。
 
 - **Makefile**：
-  您可以探索 `Makefile` 中的过程和命令。
+  你可以探索 `Makefile` 中的过程和命令。
 
 - **GitHub 上的自动化 CI**：
   GitHub 上的自动化 CI 流水线位于 `.github/workflows` 目录中，负责构建前端、后端和 Docker 镜像，发布 Docker 镜像到 Docker Hub，处理 npm 包发布，并创建 GitHub Releases，同时测试前端和后端。
@@ -116,7 +116,7 @@ Artalk 是一个 monorepo 项目，这意味着所有源代码都在一个仓库
 
 `make dev` 命令会带有调试符号构建后端，这方便使用 GDB 进行调试。
 
-如果您使用 VSCode，可以使用 `F5` 键（或运行按钮）直接启动调试后端程序。
+如果你使用 VSCode，可以使用 `F5` 键（或运行按钮）直接启动调试后端程序。
 
 ### 构建后端
 
@@ -161,6 +161,28 @@ make build-frontend
 
 更多详细信息，请参考 `scripts/build-frontend.sh` 脚本。
 
+### 发布前端
+
+核心的 Artalk 客户端代码通过 GitHub Actions 自动部署到 NPM。部署过程在 `.github/workflows/build-ui.yml` 文件中定义。
+
+如果你在 monorepo 中编写 Artalk 插件，它不会被自动部署。你需要手动发布插件。要发布插件，请首先确保在 `package.json` 文件中更新版本号。然后，运行以下命令：
+
+```sh
+pnpm publish --access public
+```
+
+#### 检查已发布版本
+
+`pnpm check:publish` 脚本旨在验证项目中的所有包是否在 npm 上发布了最新版本。它会自动跳过私有包，并允许使用 `-F` 选项进行筛选以检查特定包。
+
+检查所有包：
+
+```sh
+pnpm check:publish
+```
+
+这将启动检查存储库中所有公共包的过程，以确保它们在 npm 上是最新的。
+
 ## Docker 开发
 
 ### 构建 Docker 镜像
@@ -175,7 +197,7 @@ docker build -t artalk:TAG .
 
 ### 跳过前端构建
 
-如果您已经在 Docker 容器外部构建了前端，可以跳过容器内的前端构建过程以加快构建速度。使用以下命令：
+如果你已经在 Docker 容器外部构建了前端，可以跳过容器内的前端构建过程以加快构建速度。使用以下命令：
 
 ```sh
 docker build --build-arg SKIP_FRONTEND_BUILD=true -t artalk:latest .
@@ -227,7 +249,7 @@ docker build --build-arg SKIP_FRONTEND_BUILD=true -t artalk:latest .
 
 在 `internal/config/config.go` 文件中，有一个名为 `Config` 的结构体定义，该结构体用于将 yml 文件解析为 Go 结构体。该结构体包含更精确的类型定义。如果需要添加、修改或删除配置项，必须同时修改 `/conf` 目录中的配置文件模板和 `Config` 结构体。
 
-当您修改配置文件后，请运行以下命令以更新配置数据缓存：
+当你修改配置文件后，请运行以下命令以更新配置数据缓存：
 
 ```sh
 make update-conf
@@ -281,18 +303,18 @@ Swagger 定义位于后端代码的 `/server` 目录中。修改 Swagger 定义�
 
 ## 翻译 (i18n)
 
-如果您编写了新功能或进行了修复/重构，请使用以下命令通过解析源代码中的 `i18n.T` 函数调用来增量生成翻译文件：
+如果你编写了新功能或进行了修复/重构，请使用以下命令通过解析源代码中的 `i18n.T` 函数调用来增量生成翻译文件：
 
 ```sh
 make update-i18n
 ```
 
-如果您不是程序员，但希望帮助改进翻译，可以直接编辑 `/i18n` 目录中的翻译文件，然后提交 pull 请求。
+如果你不是程序员，但希望帮助改进翻译，可以直接编辑 `/i18n` 目录中的翻译文件，然后提交 pull 请求。
 
 ## 结尾
 
-感谢您耐心阅读本指南，并感谢您对 Artalk 的兴趣和支持。我们深知，一个开源项目的成功依赖于每一位开发者的贡献。无论是通过代码、文档、测试还是反馈，您的参与是推动项目持续进步的动力。我们诚挚邀请您加入我们，共同改进和增强 Artalk。
+感谢你耐心阅读本指南，并感谢你对 Artalk 的兴趣和支持。我们深知，一个开源项目的成功依赖于每一位开发者的贡献。无论是通过代码、文档、测试还是反馈，你的参与是推动项目持续进步的动力。我们诚挚邀请你加入我们，共同改进和增强 Artalk。
 
-通过合作，我们可以创建一个更加健壮和多功能的平台，造福整个社区。您的独特见解和专业知识是无价的，只有共同努力，我们才能实现显著的进步。无论您是经验丰富的开发者，还是刚刚起步的新手，我们的项目中总有您可以贡献的一席之地。
+通过合作，我们可以创建一个更加健壮和多功能的平台，造福整个社区。你的独特见解和专业知识是无价的，只有共同努力，我们才能实现显著的进步。无论你是经验丰富的开发者，还是刚刚起步的新手，我们的项目中总有你可以贡献的一席之地。
 
-如果您有任何问题或需要帮助，请随时在我们的 GitHub 页面上的 issue 部分提问：<https://github.com/ArtalkJS/Artalk/issues>。再次感谢您的支持，我们期待与您合作。
+如果你有任何问题或需要帮助，请随时在我们的 GitHub 页面上的 issue 部分提问：<https://github.com/ArtalkJS/Artalk/issues>。再次感谢你的支持，我们期待与你合作。

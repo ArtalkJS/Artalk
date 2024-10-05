@@ -1,0 +1,38 @@
+{
+  "name": "eslint-plugin-artalk",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/ArtalkJS/Artalk/tree/master/ui/eslint-plugin-artalk",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/main.d.cjs",
+        "default": "./dist/main.cjs"
+      },
+      "default": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/main.js"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@typescript-eslint/rule-tester": "^8.8.0",
+    "tsup": "^8.3.0"
+  },
+  "peerDependencies": {
+    "@typescript-eslint/utils": ">=8",
+    "eslint": ">=9"
+  }
+}

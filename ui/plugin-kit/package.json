@@ -1,6 +1,6 @@
 {
   "name": "@artalk/plugin-kit",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "The plugin kit for Artalk",
   "type": "module",
   "main": "dist/main.js",

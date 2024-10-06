@@ -401,7 +401,7 @@ frontend:
   emoticons: https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json
   # Vote button
   vote: true
-  # Dislike button
+  # Vote down button
   voteDown: false
   # User UA badge
   uaBadge: false

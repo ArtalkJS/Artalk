@@ -51,7 +51,7 @@ export const en = defineConfig({
           items: [
             { text: 'Environment Variables', link: '/en/guide/env.md' },
             { text: 'Configuration File', link: '/en/guide/backend/config.md' },
-            { text: 'Interface Configuration', link: '/en/guide/frontend/config.md' },
+            { text: 'UI Configuration', link: '/en/guide/frontend/config.md' },
           ],
         },
         {

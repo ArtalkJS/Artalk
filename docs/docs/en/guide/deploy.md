@@ -223,7 +223,7 @@ For more references:
 - [Import to Blog Documentation](../develop/import-blog.md)
 - [Import to Frameworks Documentation](../develop/import-framework.md)
 - [Client API Reference](../develop/fe-api.md)
-- [Client Configuration](./frontend/config.md)
+- [UI (Client) Configuration](./frontend/config.md)
 
 ### Client CDN Resources
 

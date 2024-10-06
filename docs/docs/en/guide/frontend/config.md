@@ -1,8 +1,10 @@
-# Interface Configuration
+# UI Configuration
 
-You can modify the interface configuration in the "[Dashboard](./sidebar.md)" without changing the front-end code. Additionally, configuration files and environment variables are also supported.
+UI configuration also known as Client (Front-end) configuration, is the configuration of the Artalk interface.
 
-The priority of interface configuration is as follows:
+You can modify the UI configuration in the "[Dashboard](./sidebar.md#dashboard)" without changing the front-end code. Additionally, [Configuration files](../backend/config.md#frontend-configuration-frontend) and [Environment variables](../env.md#ui-settings) are also supported.
+
+The priority of UI configuration is as follows:
 
 ```
 Environment Variables > Configuration File = Dashboard > Front-end Code

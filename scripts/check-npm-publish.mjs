@@ -121,9 +121,7 @@ const findOutdatedProjects = async () => {
   } else {
     console.log('Projects with outdated versions:\n')
     outdatedProjects.forEach(({ packageName, localVersion, latestVersion }) => {
-      console.log(
-        `❌ ${packageName}: Local version ${localVersion}, NPM version ${latestVersion}`,
-      )
+      console.log(`❌ ${packageName}: Local version ${localVersion}, NPM version ${latestVersion}`)
     })
     process.exit(1)
   }

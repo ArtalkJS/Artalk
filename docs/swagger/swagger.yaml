@@ -574,7 +574,7 @@ definitions:
     - name
     - receive_email
     type: object
-  handler.ParamsVote:
+  handler.ParamsVoteCreate:
     properties:
       email:
         description: The user email
@@ -1255,10 +1255,16 @@ definitions:
     properties:
       down:
         type: integer
+      is_down:
+        type: boolean
+      is_up:
+        type: boolean
       up:
         type: integer
     required:
     - down
+    - is_down
+    - is_up
     - up
     type: object
 info:
@@ -3278,34 +3284,40 @@ paths:
       summary: Get Version Info
       tags:
       - System
-  /votes/{type}/{target_id}:
+  /votes/{target_name}/{target_id}/{choice}:
     post:
       consumes:
       - application/json
-      description: Vote for a specific comment or page
-      operationId: Vote
+      description: Create a new vote for a specific comment or page
+      operationId: CreateVote
       parameters:
-      - description: The type of vote target
+      - description: The name of vote target
         enum:
-        - comment_up
-        - comment_down
-        - page_up
-        - page_down
+        - comment
+        - page
         in: path
-        name: type
+        name: target_name
         required: true
         type: string
-      - description: Target comment or page ID you want to vote for
+      - description: The target comment or page ID
         in: path
         name: target_id
         required: true
         type: integer
+      - description: The vote choice
+        enum:
+        - up
+        - down
+        in: path
+        name: choice
+        required: true
+        type: string
       - description: The vote data
         in: body
         name: vote
         required: true
         schema:
-          $ref: '#/definitions/handler.ParamsVote'
+          $ref: '#/definitions/handler.ParamsVoteCreate'
       produces:
       - application/json
       responses:
@@ -3340,7 +3352,7 @@ paths:
                 msg:
                   type: string
               type: object
-      summary: Vote
+      summary: Create Vote
       tags:
       - Vote
   /votes/sync:

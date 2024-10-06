@@ -298,7 +298,7 @@ export interface HandlerParamsUserUpdate {
   receive_email: boolean
 }
 
-export interface HandlerParamsVote {
+export interface HandlerParamsVoteCreate {
   /** The user email */
   email?: string
   /** The username */
@@ -591,6 +591,8 @@ export interface HandlerResponseUserUpdate {
 
 export interface HandlerResponseVote {
   down: number
+  is_down: boolean
+  is_up: boolean
   up: number
 }
 
@@ -2533,12 +2535,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
- * @description Vote for a specific comment or page
+ * @description Create a new vote for a specific comment or page
  *
  * @tags Vote
- * @name Vote
- * @summary Vote
- * @request POST:/votes/{type}/{target_id}
+ * @name CreateVote
+ * @summary Create Vote
+ * @request POST:/votes/{target_name}/{target_id}/{choice}
  * @response `200` `HandlerResponseVote` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
@@ -2553,10 +2555,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    vote: (
-      type: 'comment_up' | 'comment_down' | 'page_up' | 'page_down',
+    createVote: (
+      targetName: 'comment' | 'page',
       targetId: number,
-      vote: HandlerParamsVote,
+      choice: 'up' | 'down',
+      vote: HandlerParamsVoteCreate,
       params: RequestParams = {},
     ) =>
       this.request<
@@ -2565,7 +2568,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           msg?: string
         }
       >({
-        path: `/votes/${type}/${targetId}`,
+        path: `/votes/${targetName}/${targetId}/${choice}`,
         method: 'POST',
         body: vote,
         type: ContentType.Json,

@@ -71,7 +71,7 @@ func Serve(app *core.App) (*fiber.App, error) {
 		h.CommentCreate(app, api)
 		h.CommentList(app, api)
 		h.CommentGet(app, api)
-		h.Vote(app, api)
+		h.VoteCreate(app, api)
 		h.PagePV(app, api)
 		h.Stat(app, api)
 		h.NotifyList(app, api)

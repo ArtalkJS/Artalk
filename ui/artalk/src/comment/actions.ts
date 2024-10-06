@@ -20,12 +20,12 @@ export default class CommentActions {
   }
 
   /** 投票操作 */
-  public vote(type: 'up' | 'down') {
+  public vote(choice: 'up' | 'down') {
     const actionBtn =
-      type === 'up' ? this.comment.getRender().voteBtnUp : this.comment.getRender().voteBtnDown
+      choice === 'up' ? this.comment.getRender().voteBtnUp : this.comment.getRender().voteBtnDown
 
     this.getApi()
-      .votes.vote(`comment_${type}`, this.data.id, {
+      .votes.createVote('comment', this.data.id, choice, {
         ...this.getApi().getUserFields(),
       })
       .then((res) => {

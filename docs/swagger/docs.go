@@ -3525,9 +3525,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/votes/{type}/{target_id}": {
+        "/votes/{target_name}/{target_id}/{choice}": {
             "post": {
-                "description": "Vote for a specific comment or page",
+                "description": "Create a new vote for a specific comment or page",
                 "consumes": [
                     "application/json"
                 ],
@@ -3537,26 +3537,35 @@ const docTemplate = `{
                 "tags": [
                     "Vote"
                 ],
-                "summary": "Vote",
-                "operationId": "Vote",
+                "summary": "Create Vote",
+                "operationId": "CreateVote",
                 "parameters": [
                     {
                         "enum": [
-                            "comment_up",
-                            "comment_down",
-                            "page_up",
-                            "page_down"
+                            "comment",
+                            "page"
                         ],
                         "type": "string",
-                        "description": "The type of vote target",
-                        "name": "type",
+                        "description": "The name of vote target",
+                        "name": "target_name",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Target comment or page ID you want to vote for",
+                        "description": "The target comment or page ID",
                         "name": "target_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "up",
+                            "down"
+                        ],
+                        "type": "string",
+                        "description": "The vote choice",
+                        "name": "choice",
                         "in": "path",
                         "required": true
                     },
@@ -3566,7 +3575,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.ParamsVote"
+                            "$ref": "#/definitions/handler.ParamsVoteCreate"
                         }
                     }
                 ],
@@ -4430,7 +4439,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.ParamsVote": {
+        "handler.ParamsVoteCreate": {
             "type": "object",
             "properties": {
                 "email": {
@@ -5405,11 +5414,19 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "down",
+                "is_down",
+                "is_up",
                 "up"
             ],
             "properties": {
                 "down": {
                     "type": "integer"
+                },
+                "is_down": {
+                    "type": "boolean"
+                },
+                "is_up": {
+                    "type": "boolean"
                 },
                 "up": {
                     "type": "integer"

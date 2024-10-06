@@ -222,11 +222,11 @@ func (dao *Dao) GetVoteNum(targetID uint, voteType string) int {
 	return int(num)
 }
 
-func (dao *Dao) GetVoteNumUpDown(targetID uint, voteTo string) (int, int) {
+func (dao *Dao) GetVoteNumUpDown(targetName string, targetID uint) (int, int) {
 	var up int64
 	var down int64
-	dao.DB().Model(&entity.Vote{}).Where("target_id = ? AND type = ?", targetID, voteTo+"_up").Count(&up)
-	dao.DB().Model(&entity.Vote{}).Where("target_id = ? AND type = ?", targetID, voteTo+"_down").Count(&down)
+	dao.DB().Model(&entity.Vote{}).Where("target_id = ? AND type = ?", targetID, targetName+"_up").Count(&up)
+	dao.DB().Model(&entity.Vote{}).Where("target_id = ? AND type = ?", targetID, targetName+"_down").Count(&down)
 	return int(up), int(down)
 }
 

@@ -5,10 +5,12 @@ package config
 import (
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"unicode"
 
+	"github.com/adrg/xdg"
 	"github.com/artalkjs/artalk/v2/internal/config/env_provider"
 	"github.com/artalkjs/artalk/v2/internal/log"
 	"github.com/artalkjs/artalk/v2/internal/utils"
@@ -242,11 +244,44 @@ func (conf *Config) historyPatch() {
 	}
 }
 
-// 尝试查找配置文件
+// Try to find the configuration file
+//
+// The order of the search is:
+//  1. Current directory (./artalk.yml)
+//  2. Current subdirectory (./data/artalk.yml)
+//  3. XDG_CONFIG_HOME (~/.config/artalk.yml)
+//  4. /etc/artalk.yml (for linux packing version)
 func RetrieveConfigFile() string {
-	for _, v := range CONF_DEFAULT_FILENAMES {
-		if utils.CheckFileExist(v) {
-			return v
+	lookupDirs := []string{"", "data", xdg.ConfigHome, "/etc"}
+	paths := []string{}
+	for _, dir := range lookupDirs {
+		for _, name := range CONF_DEFAULT_FILENAMES {
+			if dir == "" || dir == "data" {
+				paths = append(paths, path.Join(dir, name))
+			} else {
+				paths = append(paths, path.Join(dir, "artalk", name))
+			}
+		}
+	}
+	for _, path := range paths {
+		if utils.CheckFileExist(path) {
+			return path
+		}
+	}
+	return ""
+}
+
+// Try to find the data directory (work directory)
+//
+// The order of the search is:
+//  1. XDG_DATA_HOME (~/.local/share)
+//  2. /var/lib (for linux packing version)
+func RetrieveDataDir() string {
+	lookupDirs := []string{xdg.DataHome, "/var/lib"}
+	for _, dir := range lookupDirs {
+		dir = path.Join(dir, "artalk")
+		if utils.CheckDirExist(dir) {
+			return dir
 		}
 	}
 	return ""

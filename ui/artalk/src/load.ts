@@ -1,5 +1,5 @@
 import { DefaultPlugins } from './plugins'
-import type { ArtalkConfig, ArtalkPlugin, ContextApi } from '@/types'
+import type { ArtalkConfigPartial, ArtalkPlugin, ContextApi } from '@/types'
 import { handleConfFormServer } from '@/config'
 import { showErrorDialog } from '@/components/error-dialog'
 
@@ -37,7 +37,7 @@ export async function load(ctx: ContextApi) {
     })
 
   // Initial config
-  let conf: Partial<ArtalkConfig> = {
+  let conf: ArtalkConfigPartial = {
     apiVersion: data.version?.version, // version info
   }
 

@@ -4,48 +4,110 @@ import (
 	"strings"
 
 	"github.com/artalkjs/artalk/v2/internal/core"
+	"github.com/artalkjs/artalk/v2/internal/dao"
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/internal/i18n"
 	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
 )
 
-type ParamsVote struct {
-	Name  string `json:"name" validate:"optional"`  // The username
-	Email string `json:"email" validate:"optional"` // The user email
-}
-
 type ResponseVote struct {
-	Up   int `json:"up"`
-	Down int `json:"down"`
+	Up     int  `json:"up"`
+	Down   int  `json:"down"`
+	IsUp   bool `json:"is_up"`
+	IsDown bool `json:"is_down"`
 }
 
-// @Id           Vote
-// @Summary      Vote
-// @Description  Vote for a specific comment or page
+// @Id           GetVote
+// @Summary      Get Vote Status
+// @Description  Get vote status for a specific comment or page
 // @Tags         Vote
-// @Param        type       path  string      true  "The type of vote target"  Enums(comment_up, comment_down, page_up, page_down)
-// @Param        target_id  path  int         true  "Target comment or page ID you want to vote for"
-// @Param        vote       body  ParamsVote  true  "The vote data"
+// @Param        target_name  path  string  true  "The name of vote target"  Enums(comment, page)
+// @Param        target_id    path  int     true  "The target comment or page ID"
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  ResponseVote
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
-// @Router       /votes/{type}/{target_id}  [post]
-func Vote(app *core.App, router fiber.Router) {
-	router.Post("/votes/:type/:target_id", common.LimiterGuard(app, func(c *fiber.Ctx) error {
-		rawType := c.Params("type")
+// @Router       /votes/{target_name}/{target_id}  [get]
+func VoteGet(app *core.App, router fiber.Router) {
+	router.Get("/votes/:target_name/:target_id", func(c *fiber.Ctx) error {
+		targetName := c.Params("target_name")
 		targetID, _ := c.ParamsInt("target_id")
 
-		var p ParamsVote
+		var result ResponseVote
+		result.Up, result.Down = app.Dao().GetVoteNumUpDown(targetName, uint(targetID))
+		exitsVotes := getExistsVotesByIP(app.Dao(), c.IP(), targetName, uint(targetID))
+		if len(exitsVotes) > 0 {
+			choice := getVoteChoice(string(exitsVotes[0].Type))
+			result.IsUp = choice == "up"
+			result.IsDown = choice == "down"
+		}
+
+		return common.RespData(c, result)
+	})
+}
+
+type ParamsVoteCreate struct {
+	Name  string `json:"name" validate:"optional"`  // The username
+	Email string `json:"email" validate:"optional"` // The user email
+}
+
+// @Id           CreateVote
+// @Summary      Create Vote
+// @Description  Create a new vote for a specific comment or page
+// @Tags         Vote
+// @Param        target_name  path  string            true  "The name of vote target"  Enums(comment, page)
+// @Param        target_id    path  int               true  "The target comment or page ID"
+// @Param        choice       path  string            true  "The vote choice"          Enums(up, down)
+// @Param        vote         body  ParamsVoteCreate  true  "The vote data"
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  ResponseVote
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
+// @Router       /votes/{target_name}/{target_id}/{choice}  [post]
+func VoteCreate(app *core.App, router fiber.Router) {
+	router.Post("/votes/:target_name/:target_id/:choice", common.LimiterGuard(app, func(c *fiber.Ctx) error {
+		targetName := c.Params("target_name")
+		targetID, _ := c.ParamsInt("target_id")
+		choice := c.Params("choice")
+		ip := c.IP()
+
+		var p ParamsVoteCreate
 		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
 			return resp
 		}
 
-		// find user
-		var user entity.User
+		if choice != "up" && choice != "down" {
+			return common.RespError(c, 404, "unknown vote choice")
+		}
+
+		// Find the target model
+		var (
+			comment entity.Comment
+			page    entity.Page
+			user    entity.User
+		)
+
+		switch targetName {
+		case "comment":
+			comment = app.Dao().FindComment(uint(targetID))
+			if comment.IsEmpty() {
+				return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
+			}
+		case "page":
+			page = app.Dao().FindPageByID(uint(targetID))
+			if page.IsEmpty() {
+				return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
+			}
+		default:
+			return common.RespError(c, 404, "unknown vote target name")
+		}
+
+		// Find user
 		if p.Name != "" && p.Email != "" {
 			var err error
 			user, err = app.Dao().FindCreateUser(p.Name, p.Email, "")
@@ -54,90 +116,101 @@ func Vote(app *core.App, router fiber.Router) {
 			}
 		}
 
-		ip := c.IP()
+		// Sync target model field value
+		sync := func() (int, int) {
+			up, down := app.Dao().GetVoteNumUpDown(targetName, uint(targetID))
 
-		// check type
-		isVoteComment := strings.HasPrefix(rawType, "comment_")
-		isVotePage := strings.HasPrefix(rawType, "page_")
-		isUp := strings.HasSuffix(rawType, "_up")
-		isDown := strings.HasSuffix(rawType, "_down")
-		voteTo := strings.TrimSuffix(strings.TrimSuffix(rawType, "_up"), "_down")
-		voteType := strings.TrimPrefix(strings.TrimPrefix(rawType, "comment_"), "page_")
-
-		if !isUp && !isDown {
-			return common.RespError(c, 404, "unknown type")
-		}
-
-		var comment entity.Comment
-		var page entity.Page
-
-		switch {
-		case isVoteComment:
-			comment = app.Dao().FindComment(uint(targetID))
-			if comment.IsEmpty() {
-				return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
-			}
-		case isVotePage:
-			page = app.Dao().FindPageByID(uint(targetID))
-			if page.IsEmpty() {
-				return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
-			}
-		default:
-			return common.RespError(c, 404, "unknown type")
-		}
-
-		// sync target model field value
-		save := func(up int, down int) {
-			switch {
-			case isVoteComment:
+			switch targetName {
+			case "comment":
 				comment.VoteUp = up
 				comment.VoteDown = down
 				app.Dao().UpdateComment(&comment)
-			case isVotePage:
+			case "page":
 				page.VoteUp = up
 				page.VoteDown = down
 				app.Dao().UpdatePage(&page)
 			}
+
+			return up, down
 		}
 
-		createNew := func(t string) error {
-			// create new vote record
-			_, err := app.Dao().NewVote(uint(targetID), entity.VoteType(t), user.ID, string(c.Request().Header.UserAgent()), ip)
-
-			return err
-		}
-
-		// un-vote
-		var availableVotes []entity.Vote
-		app.Dao().DB().Where("target_id = ? AND type LIKE ? AND ip = ?", uint(targetID), voteTo+"%", ip).Find(&availableVotes)
-		if len(availableVotes) > 0 {
-			for _, v := range availableVotes {
-				app.Dao().DB().Unscoped().Delete(&v)
-			}
-
-			avaVoteType := strings.TrimPrefix(strings.TrimPrefix(string(availableVotes[0].Type), "comment_"), "page_")
-			if voteType != avaVoteType {
-				createNew(rawType)
-			}
-
-			up, down := app.Dao().GetVoteNumUpDown(uint(targetID), voteTo)
-			save(up, down)
-
-			return common.RespData(c, ResponseVote{
-				Up:   up,
-				Down: down,
+		// Create new vote record
+		create := func(choice string) error {
+			return createVote(app.Dao(), createNewVoteParams{
+				ip:         ip,
+				ua:         string(c.Request().Header.UserAgent()),
+				userID:     user.ID,
+				targetName: targetName,
+				targetID:   uint(targetID),
+				choice:     choice,
 			})
 		}
 
-		createNew(rawType)
+		exitsVotes := getExistsVotesByIP(app.Dao(), ip, targetName, uint(targetID))
+		if len(exitsVotes) == 0 {
+			// vote
+			create(choice)
+		} else {
+			exitsChoice := getVoteChoice(string(exitsVotes[0].Type))
+
+			// un-vote all if already exists
+			for _, v := range exitsVotes {
+				app.Dao().DB().Unscoped().Delete(&v)
+			}
+
+			if choice != exitsChoice {
+				// vote opposite choice
+				create(choice)
+			} else {
+				// if choice is same then only un-vote
+				// reset choice to initial state
+				choice = ""
+			}
+		}
 
 		// sync
-		up, down := app.Dao().GetVoteNumUpDown(uint(targetID), voteTo)
-		save(up, down)
+		up, down := sync()
 
 		return common.RespData(c, ResponseVote{
-			Up:   up,
-			Down: down,
+			Up:     up,
+			Down:   down,
+			IsUp:   choice == "up",
+			IsDown: choice == "down",
 		})
 	}))
+}
+
+// VoteChoice is `up` or `down`
+func getVoteChoice(voteType string) string {
+	choice := strings.TrimPrefix(strings.TrimPrefix(voteType, "comment_"), "page_")
+	if choice != "up" && choice != "down" {
+		return ""
+	}
+	return choice
+}
+
+// VoteTarget is `comment` or `page`
+func getVoteTargetName(voteType string) string {
+	return strings.TrimSuffix(strings.TrimSuffix(voteType, "_up"), "_down")
+}
+
+func getExistsVotesByIP(dao *dao.Dao, ip string, targetName string, targetID uint) []entity.Vote {
+	var existsVotes []entity.Vote
+	dao.DB().Where("type LIKE ? AND target_id = ? AND ip = ?", targetName+"%", uint(targetID), ip).Find(&existsVotes)
+	return existsVotes
+}
+
+type createNewVoteParams struct {
+	ip         string
+	ua         string
+	userID     uint
+	targetName string
+	targetID   uint
+	choice     string
+}
+
+// Create new vote record
+func createVote(dao *dao.Dao, opts createNewVoteParams) error {
+	_, err := dao.NewVote(opts.targetID, entity.VoteType(opts.targetName+"_"+opts.choice), opts.userID, opts.ua, opts.ip)
+	return err
 }

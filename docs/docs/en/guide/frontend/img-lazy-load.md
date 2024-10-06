@@ -1,6 +1,6 @@
 # Image Lazy Loading
 
-Artalk supports adding lazy loading functionality to images within comments to reduce page load times. This feature is disabled by default. You can find the "Image Lazy Load" configuration item (frontend.imgLazyLoad) in the Dashboard under "Settings - Interface Configuration":
+Artalk supports adding lazy loading functionality to images within comments to reduce page load times. This feature is disabled by default. You can find the "Image Lazy Load" configuration item (frontend.imgLazyLoad) in the Dashboard under "Settings - UI Configuration":
 
 | Configuration Value | Description |
 | --- | --- |

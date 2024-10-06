@@ -1,7 +1,6 @@
 {
   "name": "@artalk/plugin-katex",
-  "version": "0.2.3",
-  "minAppVersion": "2.8.6",
+  "version": "0.2.4",
   "license": "MIT",
   "description": "The katex plugin for artalk",
   "type": "module",
@@ -18,11 +17,10 @@
   },
   "dependencies": {
     "@types/katex": "^0.16.7",
-    "artalk": "workspace:^",
     "katex": "^0.16.11"
   },
   "devDependencies": {
-    "@artalk/plugin-kit": "workspace:^",
+    "artalk": "workspace:^",
     "marked": "^14.1.2"
   },
   "peerDependencies": {

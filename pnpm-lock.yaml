@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@artalk/plugin-kit':
+        specifier: ^1.0.7
+        version: 1.0.7(@types/node@22.5.5)(artalk@2.9.1(marked@14.1.2))(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(sass@1.78.0)(terser@5.33.0))
       '@eslint/compat':
         specifier: ^1.1.1
         version: 1.1.1
@@ -41,6 +44,9 @@ importers:
       eslint-import-resolver-typescript:
         specifier: 3.6.3
         version: 3.6.3(@typescript-eslint/parser@8.6.0(eslint@9.10.0)(typescript@5.6.2))(eslint-plugin-import-x@4.2.1(eslint@9.10.0)(typescript@5.6.2))(eslint-plugin-import@2.30.0)(eslint@9.10.0)
+      eslint-plugin-artalk:
+        specifier: ^1.0.1
+        version: 1.0.1(eslint@9.10.0)(typescript@5.6.2)
       eslint-plugin-compat:
         specifier: ^6.0.1
         version: 6.0.1(eslint@9.10.0)
@@ -109,47 +115,30 @@ importers:
         version: 9.4.3(eslint@9.10.0)
 
   docs/docs:
-    dependencies:
+    devDependencies:
       '@artalk/plugin-katex':
-        specifier: ^0.2.3
-        version: 0.2.3(@types/katex@0.16.7)(artalk@ui+artalk)(katex@0.16.11)
+        specifier: ^0.2.4
+        version: 0.2.4(@types/katex@0.16.7)(artalk@ui+artalk)(katex@0.16.11)
       '@artalk/plugin-lightbox':
-        specifier: ^0.2.3
-        version: 0.2.3(artalk@ui+artalk)(fancybox@3.0.1)(lightbox2@2.11.4)(lightgallery@2.7.2)(photoswipe@5.4.4)
+        specifier: ^0.2.4
+        version: 0.2.4(artalk@ui+artalk)(fancybox@3.0.1)(lightbox2@2.11.4)(lightgallery@2.7.2)(photoswipe@5.4.4)
+      artalk:
+        specifier: workspace:^
+        version: link:../../ui/artalk
       katex:
         specifier: ^0.16.11
         version: 0.16.11
       lightgallery:
         specifier: ^2.7.2
         version: 2.7.2
-      vue:
-        specifier: ^3.5.6
-        version: 3.5.6(typescript@5.6.2)
-    devDependencies:
-      artalk:
-        specifier: workspace:^
-        version: link:../../ui/artalk
       vitepress:
         specifier: 1.3.4
         version: 1.3.4(@algolia/client-search@5.4.3)(@types/node@22.5.5)(@types/react@18.3.7)(postcss@8.4.47)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.79.1)(search-insights@2.17.2)(terser@5.33.0)(typescript@5.6.2)
+      vue:
+        specifier: ^3.5.6
+        version: 3.5.6(typescript@5.6.2)
 
   docs/landing:
-    dependencies:
-      include-media:
-        specifier: ^2.0.0
-        version: 2.0.0
-      normalize.css:
-        specifier: ^8.0.1
-        version: 8.0.1
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      react-icons:
-        specifier: 5.3.0
-        version: 5.3.0(react@18.3.1)
     devDependencies:
       '@headlessui/react':
         specifier: ^2.1.8
@@ -169,9 +158,24 @@ importers:
       i18next-browser-languagedetector:
         specifier: ^8.0.0
         version: 8.0.0
+      include-media:
+        specifier: ^2.0.0
+        version: 2.0.0
+      normalize.css:
+        specifier: ^8.0.1
+        version: 8.0.1
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       react-i18next:
         specifier: ^15.0.2
         version: 15.0.2(i18next@23.15.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-icons:
+        specifier: 5.3.0
+        version: 5.3.0(react@18.3.1)
       usehooks-ts:
         specifier: ^3.1.0
         version: 3.1.0(react@18.3.1)
@@ -183,7 +187,7 @@ importers:
         version: 1.25.2(enzyme@3.11.0)
 
   test/lightbox:
-    dependencies:
+    devDependencies:
       '@artalk/plugin-lightbox':
         specifier: workspace:^
         version: link:../../ui/plugin-lightbox
@@ -207,16 +211,6 @@ importers:
         version: 5.4.4
 
   test/vue-test:
-    dependencies:
-      artalk:
-        specifier: workspace:*
-        version: link:../../ui/artalk
-      vue:
-        specifier: ^3.5.6
-        version: 3.5.6(typescript@5.6.2)
-      vue-router:
-        specifier: ^4.4.5
-        version: 4.4.5(vue@3.5.6(typescript@5.6.2))
     devDependencies:
       '@tsconfig/node18':
         specifier: ^18.2.4
@@ -230,6 +224,15 @@ importers:
       '@vue/tsconfig':
         specifier: ^0.5.1
         version: 0.5.1
+      artalk:
+        specifier: workspace:^
+        version: link:../../ui/artalk
+      vue:
+        specifier: ^3.5.6
+        version: 3.5.6(typescript@5.6.2)
+      vue-router:
+        specifier: ^4.4.5
+        version: 4.4.5(vue@3.5.6(typescript@5.6.2))
       vue-tsc:
         specifier: ^2.1.6
         version: 2.1.6(typescript@5.6.2)
@@ -292,15 +295,27 @@ importers:
         specifier: ^2.5.1
         version: 2.5.1
 
-  ui/plugin-auth:
+  ui/eslint-plugin-artalk:
     dependencies:
+      '@typescript-eslint/utils':
+        specifier: ^8.8.0
+        version: 8.8.0(eslint@9.10.0)(typescript@5.6.2)
+      eslint:
+        specifier: '>=9'
+        version: 9.10.0
+    devDependencies:
+      '@typescript-eslint/rule-tester':
+        specifier: ^8.8.0
+        version: 8.8.0(eslint@9.10.0)(typescript@5.6.2)
+      tsup:
+        specifier: ^8.3.0
+        version: 8.3.0(@microsoft/api-extractor@7.47.9(@types/node@22.5.5))(@swc/core@1.7.26(@swc/helpers@0.5.13))(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.1)
+
+  ui/plugin-auth:
+    devDependencies:
       artalk:
         specifier: workspace:^
         version: link:../artalk
-    devDependencies:
-      '@artalk/plugin-kit':
-        specifier: workspace:^
-        version: link:../plugin-kit
       solid-js:
         specifier: ^1.8.22
         version: 1.8.22
@@ -316,16 +331,13 @@ importers:
       '@types/katex':
         specifier: ^0.16.7
         version: 0.16.7
-      artalk:
-        specifier: workspace:^
-        version: link:../artalk
       katex:
         specifier: ^0.16.11
         version: 0.16.11
     devDependencies:
-      '@artalk/plugin-kit':
+      artalk:
         specifier: workspace:^
-        version: link:../plugin-kit
+        version: link:../artalk
       marked:
         specifier: ^14.1.2
         version: 14.1.2
@@ -335,9 +347,6 @@ importers:
       '@microsoft/api-extractor':
         specifier: ^7.47.9
         version: 7.47.9(@types/node@22.5.5)
-      artalk:
-        specifier: workspace:^
-        version: link:../artalk
       picocolors:
         specifier: ^1.1.0
         version: 1.1.0
@@ -348,6 +357,9 @@ importers:
         specifier: '*'
         version: 5.4.2(@types/node@22.5.5)(sass@1.79.1)(terser@5.33.0)
     devDependencies:
+      artalk:
+        specifier: workspace:^
+        version: link:../artalk
       esbuild-plugin-raw:
         specifier: ^0.1.8
         version: 0.1.8(esbuild@0.23.1)
@@ -356,14 +368,10 @@ importers:
         version: 8.3.0(@microsoft/api-extractor@7.47.9(@types/node@22.5.5))(@swc/core@1.7.26(@swc/helpers@0.5.13))(postcss@8.4.47)(tsx@4.19.1)(typescript@5.6.2)(yaml@2.5.1)
 
   ui/plugin-lightbox:
-    dependencies:
+    devDependencies:
       artalk:
         specifier: workspace:^
         version: link:../artalk
-    devDependencies:
-      '@artalk/plugin-kit':
-        specifier: workspace:^
-        version: link:../plugin-kit
       fancybox:
         specifier: ^3.0.1
         version: 3.0.1
@@ -471,17 +479,24 @@ packages:
   '@antfu/utils@0.7.10':
     resolution: {integrity: sha512-+562v9k4aI80m1+VuMHehNJWLOFjBnXn3tdOitzD0il5b7smkSBal4+a3oKiQTbrwMmN/TBUMDvbdoWDehgOww==}
 
-  '@artalk/plugin-katex@0.2.3':
-    resolution: {integrity: sha512-Xu+f5JBWUTjIiuuyzjrM2p+KOTmy9P5L96fM9Dh+tTmlpVv0cJ/Z6zxkZFt+OooK2QO5syU2Pjw9OcqAtmRCIQ==}
+  '@artalk/plugin-katex@0.2.4':
+    resolution: {integrity: sha512-7kNsrg9R77Ly42wVwXdfuLwuwLtIIFYrrITZGrPzqDCqnrm1nYUx0btkyGjWY1/MQLTNZWqczOcjbQ2VN2+o0Q==}
     peerDependencies:
       '@types/katex': ^0.16.7
-      artalk: ^2.9.0
+      artalk: ^2.9.1
       katex: ^0.16.11
 
-  '@artalk/plugin-lightbox@0.2.3':
-    resolution: {integrity: sha512-avmW2pu5rrWnDjRrPj4CM9QrnGJQNMqaY/o5+nH1d/eo7HURlRPiy5/yZFAk7ccbvH6t5c/PtcygGLbRft2M2A==}
+  '@artalk/plugin-kit@1.0.7':
+    resolution: {integrity: sha512-3ggnD0SCQm7b+UpdqOQNzPZdXQjNm5UQLO1iknipSkJ57Nj9E/aLBNSOuW3y6K6djTFY95IKTTJ8wD4ssDV+aQ==}
     peerDependencies:
-      artalk: ^2.9.0
+      artalk: ^2.9.1
+      typescript: '*'
+      vite: '*'
+
+  '@artalk/plugin-lightbox@0.2.4':
+    resolution: {integrity: sha512-cYewbb2rkwofDqWq51MrMO/idbN7mcYTrIicsi8xpoRJdr7hwLzqM6ODih9cnbiS25l8+3PVYPTIn3g5WeqkYg==}
+    peerDependencies:
+      artalk: ^2.9.1
       fancybox: ^3.0.1
       lightbox2: ^2.11.4
       lightgallery: ^2.7.2
@@ -1551,8 +1566,18 @@ packages:
       typescript:
         optional: true
 
+  '@typescript-eslint/rule-tester@8.8.0':
+    resolution: {integrity: sha512-Mz41m89RzbOQfdsQ5lYV7gYghL4yumlULV/VBsKSkhZwYckKfNYD/MgkBBMHCTwtFpcPQKUhxHF5q6feyXAKfQ==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
+
   '@typescript-eslint/scope-manager@8.6.0':
     resolution: {integrity: sha512-ZuoutoS5y9UOxKvpc/GkvF4cuEmpokda4wRg64JEia27wX+PysIE9q+lzDtlHHgblwUWwo5/Qn+/WyTUvDwBHw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/scope-manager@8.8.0':
+    resolution: {integrity: sha512-EL8eaGC6gx3jDd8GwEFEV091210U97J0jeEHrAYvIYosmEGet4wJ+g0SYmLu+oRiAwbSA5AVrt6DxLHfdd+bUg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@typescript-eslint/type-utils@8.6.0':
@@ -1568,8 +1593,21 @@ packages:
     resolution: {integrity: sha512-rojqFZGd4MQxw33SrOy09qIDS8WEldM8JWtKQLAjf/X5mGSeEFh5ixQlxssMNyPslVIk9yzWqXCsV2eFhYrYUw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@typescript-eslint/types@8.8.0':
+    resolution: {integrity: sha512-QJwc50hRCgBd/k12sTykOJbESe1RrzmX6COk8Y525C9l7oweZ+1lw9JiU56im7Amm8swlz00DRIlxMYLizr2Vw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
   '@typescript-eslint/typescript-estree@8.6.0':
     resolution: {integrity: sha512-MOVAzsKJIPIlLK239l5s06YXjNqpKTVhBVDnqUumQJja5+Y94V3+4VUFRA0G60y2jNnTVwRCkhyGQpavfsbq/g==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@typescript-eslint/typescript-estree@8.8.0':
+    resolution: {integrity: sha512-ZaMJwc/0ckLz5DaAZ+pNLmHv8AMVGtfWxZe/x2JVEkD5LnmhWiQMMcYT7IY7gkdJuzJ9P14fRy28lUrlDSWYdw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       typescript: '*'
@@ -1583,8 +1621,18 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
 
+  '@typescript-eslint/utils@8.8.0':
+    resolution: {integrity: sha512-QE2MgfOTem00qrlPgyByaCHay9yb1+9BjnMFnSFkUKQfu7adBXDTnCAivURnuPPAG/qiB+kzKkZKmKfaMT0zVg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
+
   '@typescript-eslint/visitor-keys@8.6.0':
     resolution: {integrity: sha512-wapVFfZg9H0qOYh4grNVQiMklJGluQrOUiOhYRrQWhx7BY/+I1IYb8BczWNbbUpO+pqy0rDciv3lQH5E1bCLrg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/visitor-keys@8.8.0':
+    resolution: {integrity: sha512-8mq51Lx6Hpmd7HnA2fcHQo3YgfX1qbccxQOgZcb4tvasu//zXRaA1j5ZRFeCw/VRAdFi4mRM9DnZw0Nu0Q2d1g==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@ungap/structured-clone@1.2.0':
@@ -1889,6 +1937,11 @@ packages:
   arraybuffer.prototype.slice@1.0.3:
     resolution: {integrity: sha512-bMxMKAjg13EBSVscxTaYA4mRc5t1UAXa2kXiGTNfZ079HIWXEkKmkgFrh/nJqamaLSrXO5H4WFFkPEaLJWbs3A==}
     engines: {node: '>= 0.4'}
+
+  artalk@2.9.1:
+    resolution: {integrity: sha512-IFo9XqWDalsHy8BsmMA5SSB9bozBa/sBhTm/+O5KwA6DnC95lFKv7C6ScMx/Xa4ue5qSQ7VV5vxRgCh/raohkQ==}
+    peerDependencies:
+      marked: ^14.1.0
 
   assertion-error@2.0.1:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
@@ -2414,6 +2467,11 @@ packages:
         optional: true
       eslint-import-resolver-webpack:
         optional: true
+
+  eslint-plugin-artalk@1.0.1:
+    resolution: {integrity: sha512-mEgJj6kqfgDqHHmHVH6O06s3bhINyBb6TItYkbsASsO3+2WCB8CGHqFxz7vqoyymFH5n6x1GwevfPWlbOg3Kgw==}
+    peerDependencies:
+      eslint: '>=9'
 
   eslint-plugin-compat@6.0.1:
     resolution: {integrity: sha512-0MeIEuoy8kWkOhW38kK8hU4vkb6l/VvyjpuYDymYOXmUY9NvTgyErF16lYuX+HPS5hkmym7lfA+XpYZiWYWmYA==}
@@ -4999,13 +5057,23 @@ snapshots:
 
   '@antfu/utils@0.7.10': {}
 
-  '@artalk/plugin-katex@0.2.3(@types/katex@0.16.7)(artalk@ui+artalk)(katex@0.16.11)':
+  '@artalk/plugin-katex@0.2.4(@types/katex@0.16.7)(artalk@ui+artalk)(katex@0.16.11)':
     dependencies:
       '@types/katex': 0.16.7
       artalk: link:ui/artalk
       katex: 0.16.11
 
-  '@artalk/plugin-lightbox@0.2.3(artalk@ui+artalk)(fancybox@3.0.1)(lightbox2@2.11.4)(lightgallery@2.7.2)(photoswipe@5.4.4)':
+  '@artalk/plugin-kit@1.0.7(@types/node@22.5.5)(artalk@2.9.1(marked@14.1.2))(typescript@5.6.2)(vite@5.4.6(@types/node@22.5.5)(sass@1.78.0)(terser@5.33.0))':
+    dependencies:
+      '@microsoft/api-extractor': 7.47.9(@types/node@22.5.5)
+      artalk: 2.9.1(marked@14.1.2)
+      picocolors: 1.1.0
+      typescript: 5.6.2
+      vite: 5.4.6(@types/node@22.5.5)(sass@1.78.0)(terser@5.33.0)
+    transitivePeerDependencies:
+      - '@types/node'
+
+  '@artalk/plugin-lightbox@0.2.4(artalk@ui+artalk)(fancybox@3.0.1)(lightbox2@2.11.4)(lightgallery@2.7.2)(photoswipe@5.4.4)':
     dependencies:
       artalk: link:ui/artalk
     optionalDependencies:
@@ -6026,10 +6094,28 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/rule-tester@8.8.0(eslint@9.10.0)(typescript@5.6.2)':
+    dependencies:
+      '@typescript-eslint/typescript-estree': 8.8.0(typescript@5.6.2)
+      '@typescript-eslint/utils': 8.8.0(eslint@9.10.0)(typescript@5.6.2)
+      ajv: 6.12.6
+      eslint: 9.10.0
+      json-stable-stringify-without-jsonify: 1.0.1
+      lodash.merge: 4.6.2
+      semver: 7.6.3
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
   '@typescript-eslint/scope-manager@8.6.0':
     dependencies:
       '@typescript-eslint/types': 8.6.0
       '@typescript-eslint/visitor-keys': 8.6.0
+
+  '@typescript-eslint/scope-manager@8.8.0':
+    dependencies:
+      '@typescript-eslint/types': 8.8.0
+      '@typescript-eslint/visitor-keys': 8.8.0
 
   '@typescript-eslint/type-utils@8.6.0(eslint@9.10.0)(typescript@5.6.2)':
     dependencies:
@@ -6045,10 +6131,27 @@ snapshots:
 
   '@typescript-eslint/types@8.6.0': {}
 
+  '@typescript-eslint/types@8.8.0': {}
+
   '@typescript-eslint/typescript-estree@8.6.0(typescript@5.6.2)':
     dependencies:
       '@typescript-eslint/types': 8.6.0
       '@typescript-eslint/visitor-keys': 8.6.0
+      debug: 4.3.7
+      fast-glob: 3.3.2
+      is-glob: 4.0.3
+      minimatch: 9.0.5
+      semver: 7.6.3
+      ts-api-utils: 1.3.0(typescript@5.6.2)
+    optionalDependencies:
+      typescript: 5.6.2
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/typescript-estree@8.8.0(typescript@5.6.2)':
+    dependencies:
+      '@typescript-eslint/types': 8.8.0
+      '@typescript-eslint/visitor-keys': 8.8.0
       debug: 4.3.7
       fast-glob: 3.3.2
       is-glob: 4.0.3
@@ -6071,9 +6174,25 @@ snapshots:
       - supports-color
       - typescript
 
+  '@typescript-eslint/utils@8.8.0(eslint@9.10.0)(typescript@5.6.2)':
+    dependencies:
+      '@eslint-community/eslint-utils': 4.4.0(eslint@9.10.0)
+      '@typescript-eslint/scope-manager': 8.8.0
+      '@typescript-eslint/types': 8.8.0
+      '@typescript-eslint/typescript-estree': 8.8.0(typescript@5.6.2)
+      eslint: 9.10.0
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
   '@typescript-eslint/visitor-keys@8.6.0':
     dependencies:
       '@typescript-eslint/types': 8.6.0
+      eslint-visitor-keys: 3.4.3
+
+  '@typescript-eslint/visitor-keys@8.8.0':
+    dependencies:
+      '@typescript-eslint/types': 8.8.0
       eslint-visitor-keys: 3.4.3
 
   '@ungap/structured-clone@1.2.0': {}
@@ -6476,6 +6595,10 @@ snapshots:
       get-intrinsic: 1.2.4
       is-array-buffer: 3.0.4
       is-shared-array-buffer: 1.0.3
+
+  artalk@2.9.1(marked@14.1.2):
+    dependencies:
+      marked: 14.1.2
 
   assertion-error@2.0.1: {}
 
@@ -7125,6 +7248,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  eslint-plugin-artalk@1.0.1(eslint@9.10.0)(typescript@5.6.2):
+    dependencies:
+      '@typescript-eslint/utils': 8.8.0(eslint@9.10.0)(typescript@5.6.2)
+      eslint: 9.10.0
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
   eslint-plugin-compat@6.0.1(eslint@9.10.0):
     dependencies:
       '@mdn/browser-compat-data': 5.6.0
@@ -7139,7 +7270,7 @@ snapshots:
 
   eslint-plugin-import-x@4.2.1(eslint@9.10.0)(typescript@5.6.2):
     dependencies:
-      '@typescript-eslint/utils': 8.6.0(eslint@9.10.0)(typescript@5.6.2)
+      '@typescript-eslint/utils': 8.8.0(eslint@9.10.0)(typescript@5.6.2)
       debug: 4.3.7
       doctrine: 3.0.0
       eslint: 9.10.0

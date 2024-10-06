@@ -1,8 +1,10 @@
-# Interface Configuration
+# UI Configuration
 
-You can modify the interface configuration in the "[Dashboard](./sidebar.md)" without changing the front-end code. Additionally, configuration files and environment variables are also supported.
+UI configuration also known as Client (Front-end) configuration, is the configuration of the Artalk interface.
 
-The priority of interface configuration is as follows:
+You can modify the UI configuration in the "[Dashboard](./sidebar.md#dashboard)" without changing the front-end code. Additionally, [Configuration files](../backend/config.md#frontend-configuration-frontend) and [Environment variables](../env.md#ui-settings) are also supported.
+
+The priority of UI configuration is as follows:
 
 ```
 Environment Variables > Configuration File = Dashboard > Front-end Code
@@ -282,10 +284,12 @@ To facilitate theme adaptation, you can customize the attribute name as needed, 
 
 **Page Voting Buttons**
 
-- Type: `Boolean` | `{ voteDown: boolean, btnEl?: string }`
+- Type: `Boolean | { upBtnEl: string; downBtnEl: string; upCountEl: string; downCountEl: string; activeClass: string }`
 - Default: `true`
 
-Enable / disable page voting feature, set to `falsy` value to disable. `voteDown` sets whether to enable the downvote button (hidden by default). `btnEl` is the selector of the vote button container, defaulting to `".artalk-page-vote"`.
+Enable the page voting feature (upvote / downvote).
+
+For details, see: [Page Voting](./voting.md#page-voting)
 
 ### vote
 

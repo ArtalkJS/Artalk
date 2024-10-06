@@ -4,164 +4,190 @@ import type { EditorApi } from './editor'
 import type { I18n } from '@/i18n'
 
 export interface ArtalkConfig {
-  /** 装载元素 */
+  /** Element selector or Element to mount the Artalk */
   el: string | HTMLElement
 
-  /** 页面唯一标识（完整 URL） */
+  /** Unique page identifier */
   pageKey: string
 
-  /** 页面标题 */
+  /** Title of the page */
   pageTitle: string
 
-  /** 服务器地址 */
+  /** Server address */
   server: string
 
-  /** 站点名 */
+  /** Site name */
   site: string
 
-  /** 评论框占位字符 */
+  /** Placeholder text for the comment input box */
   placeholder: string
 
-  /** 评论为空时显示字符 */
+  /** Text to display when there are no comments */
   noComment: string
 
-  /** 发送按钮文字 */
+  /** Text for the send button */
   sendBtn: string
 
-  /** 评论框穿梭（显示在待回复评论后面） */
+  /** Movable comment box (display below the comment to be replied) */
   editorTravel: boolean
 
-  /** 表情包 */
+  /** Emoticons settings */
   emoticons: object | any[] | string | false
 
-  /** Gravatar 头像 */
+  /** Gravatar avatar settings */
   gravatar: {
-    /** API 地址 */
+    /** API endpoint */
     mirror: string
-    /** API 参数 */
+    /** API parameters */
     params: string
   }
 
-  /** 头像链接生成器 */
+  /** Avatar URL generator function */
   avatarURLBuilder?: (comment: CommentData) => string
 
-  /** 分页配置 */
+  /** Pagination settings */
   pagination: {
-    /** 每次请求获取数量 */
+    /** Number of comments to fetch per request */
     pageSize: number
-    /** 阅读更多模式 */
+    /** "Read more" mode */
     readMore: boolean
-    /** 滚动到底部自动加载 */
+    /** Automatically load more comments when scrolled to the bottom */
     autoLoad: boolean
   }
 
-  /** 内容限高 */
+  /** Height limit configuration */
   heightLimit: {
-    /** 评论内容限高 */
+    /** Maximum height for comment content */
     content: number
 
-    /** 子评论区域限高 */
+    /** Maximum height for child comments */
     children: number
 
-    /** 滚动限高 */
+    /** Whether the content is scrollable */
     scrollable: boolean
   }
 
-  /** 评论投票按钮 */
+  /** Voting feature for comments */
   vote: boolean
 
-  /** 评论投票反对按钮 */
+  /** Downvote button for comments */
   voteDown: boolean
 
-  /** 页面投票按钮 */
-  pageVote?: {
-    /** 页面投票反对按钮 */
-    voteDown: boolean
+  /** Page Vote Widget */
+  pageVote:
+    | {
+        /** Up Vote Button Selector */
+        upBtnEl: string
 
-    /** 页面投票按钮绑定 Selector */
-    btnEl?: string
-  } | boolean
+        /** Down Vote Button Selector */
+        downBtnEl: string
 
-  /** 评论预览功能 */
+        /** Up Vote Count Selector */
+        upCountEl: string
+
+        /** Down Vote Count Selector */
+        downCountEl: string
+
+        /** Active class name if the vote is already cast */
+        activeClass: string
+      }
+    | boolean
+
+  /** Preview feature for comments */
   preview: boolean
 
-  /** 评论数绑定元素 Selector */
+  /** Selector for the element binding to the comment count */
   countEl: string
 
-  /** PV 数绑定元素 Selector */
+  /** Selector for the element binding to the page views (PV) count */
   pvEl: string
 
-  /** 统计组件 PageKey 属性名 */
+  /** Attribute name for the PageKey in statistics components */
   statPageKeyAttr: string
 
-  /** 夜间模式 */
+  /** Dark mode settings */
   darkMode: boolean | 'auto'
 
-  /** 请求超时（单位：秒） */
+  /** Request timeout (in seconds) */
   reqTimeout: number
 
-  /** 平铺模式 */
+  /** Flat mode for comment display */
   flatMode: boolean | 'auto'
 
-  /** 嵌套模式 · 最大层数 */
+  /** Maximum number of levels for nested comments */
   nestMax: number
 
-  /** 嵌套模式 · 排序方式 */
+  /** Sorting order for nested comments */
   nestSort: 'DATE_ASC' | 'DATE_DESC'
 
-  /** 显示 UA 徽标 */
+  /** Display UA badge (user agent badge) */
   uaBadge: boolean
 
-  /** 评论列表排序功能 (显示 Dropdown) */
+  /** Show sorting dropdown for comment list */
   listSort: boolean
 
-  /** 图片上传功能 */
+  /** Enable image upload feature */
   imgUpload: boolean
 
-  /** 图片上传器 */
+  /** Image uploader function */
   imgUploader?: (file: File) => Promise<string>
 
-  /** Image lazy load */
+  /** Image lazy load mode */
   imgLazyLoad?: 'native' | 'data-src'
 
-  /** 版本检测 */
+  /** Enable version check */
   versionCheck: boolean
 
-  /** 引用后端配置 */
+  /** Use backend configuration */
   useBackendConf: boolean
 
-  /** 语言本地化 */
+  /** Localization settings */
   locale: I18n | string
 
-  /** 后端版本 (系统数据，用户不允许更改) */
+  /** Backend API version (system data, not allowed for user modification) */
   apiVersion?: string
 
-  /** Plugin script urls */
+  /** URLs for plugin scripts */
   pluginURLs?: string[]
 
-  /** Replacer for marked */
+  /** Replacers for the marked (Markdown parser) */
   markedReplacers?: ((raw: string) => string)[]
 
-  /** Marked options */
+  /** Options for the marked (Markdown parser) */
   markedOptions?: MarkedOptions
 
-  /** 列表请求参数修改器 */
+  /** Modifier for list fetch request parameters */
   listFetchParamsModifier?: (params: any) => void
 
   /**
-   * Date formatter for custom date format
-   * @param date - Date object
+   * Custom date formatter
+   * @param date - The Date object to format
    * @returns Formatted date string
    */
   dateFormatter?: (date: Date) => string
 
-  // TODO consider merge list related config into one object, or flatten all to keep simple (keep consistency)
-  remoteConfModifier?: (conf: Partial<ArtalkConfig>) => void
+  /** Custom configuration modifier for remote configuration (referenced by artalk-sidebar) */
+  // TODO: Consider merging list-related configuration into a single object, or flatten everything for simplicity and consistency
+  remoteConfModifier?: (conf: DeepPartial<ArtalkConfig>) => void
+
+  /** List unread highlight (enable by default in artalk-sidebar) */
   listUnreadHighlight?: boolean
+
+  /** The relative element for scrolling (useful if artalk is in a scrollable container) */
   scrollRelativeTo?: () => HTMLElement
+
+  /** Page view increment when comment list is loaded */
   pvAdd?: boolean
+
+  /** Callback before submitting a comment */
   beforeSubmit?: (editor: EditorApi, next: () => void) => void
 }
+
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K]
+}
+
+export type ArtalkConfigPartial = DeepPartial<ArtalkConfig>
 
 /**
  * Local User Data (in localStorage)

@@ -298,7 +298,7 @@ export interface HandlerParamsUserUpdate {
   receive_email: boolean
 }
 
-export interface HandlerParamsVote {
+export interface HandlerParamsVoteCreate {
   /** The user email */
   email?: string
   /** The username */
@@ -591,6 +591,8 @@ export interface HandlerResponseUserUpdate {
 
 export interface HandlerResponseVote {
   down: number
+  is_down: boolean
+  is_up: boolean
   up: number
 }
 
@@ -2533,12 +2535,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
- * @description Vote for a specific comment or page
+ * @description Get vote status for a specific comment or page
  *
  * @tags Vote
- * @name Vote
- * @summary Vote
- * @request POST:/votes/{type}/{target_id}
+ * @name GetVote
+ * @summary Get Vote Status
+ * @request GET:/votes/{target_name}/{target_id}
  * @response `200` `HandlerResponseVote` OK
  * @response `403` `(HandlerMap & {
     msg?: string,
@@ -2553,10 +2555,46 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
 
 })` Internal Server Error
  */
-    vote: (
-      type: 'comment_up' | 'comment_down' | 'page_up' | 'page_down',
+    getVote: (targetName: 'comment' | 'page', targetId: number, params: RequestParams = {}) =>
+      this.request<
+        HandlerResponseVote,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
+        path: `/votes/${targetName}/${targetId}`,
+        method: 'GET',
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description Create a new vote for a specific comment or page
+ *
+ * @tags Vote
+ * @name CreateVote
+ * @summary Create Vote
+ * @request POST:/votes/{target_name}/{target_id}/{choice}
+ * @response `200` `HandlerResponseVote` OK
+ * @response `403` `(HandlerMap & {
+    msg?: string,
+
+})` Forbidden
+ * @response `404` `(HandlerMap & {
+    msg?: string,
+
+})` Not Found
+ * @response `500` `(HandlerMap & {
+    msg?: string,
+
+})` Internal Server Error
+ */
+    createVote: (
+      targetName: 'comment' | 'page',
       targetId: number,
-      vote: HandlerParamsVote,
+      choice: 'up' | 'down',
+      vote: HandlerParamsVoteCreate,
       params: RequestParams = {},
     ) =>
       this.request<
@@ -2565,7 +2603,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           msg?: string
         }
       >({
-        path: `/votes/${type}/${targetId}`,
+        path: `/votes/${targetName}/${targetId}/${choice}`,
         method: 'POST',
         body: vote,
         type: ContentType.Json,

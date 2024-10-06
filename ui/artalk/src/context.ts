@@ -15,6 +15,7 @@ import { watchConf } from './lib/watch-conf'
 
 import type {
   ArtalkConfig,
+  ArtalkConfigPartial,
   CommentData,
   ListFetchParams,
   ContextApi,
@@ -165,7 +166,7 @@ class Context implements ContextApi {
     this.updateConf({ darkMode })
   }
 
-  updateConf(nConf: Partial<ArtalkConfig>): void {
+  updateConf(nConf: ArtalkConfigPartial): void {
     this.conf = mergeDeep(this.conf, handelCustomConf(nConf, false))
     this.mounted && this.events.trigger('updated', this.conf)
   }

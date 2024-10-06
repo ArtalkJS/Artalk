@@ -40,6 +40,7 @@ export const zh = defineConfig({
             { text: 'LaTeX', link: '/zh/guide/frontend/latex.md' },
             { text: '图片灯箱', link: '/zh/guide/frontend/lightbox.md' },
             { text: '图片懒加载', link: '/zh/guide/frontend/img-lazy-load.md' },
+            { text: '投票功能', link: '/zh/guide/frontend/voting.md' },
             { text: 'IP 属地', link: '/zh/guide/frontend/ip-region.md' },
             { text: '多语言', link: '/zh/guide/frontend/i18n.md' },
             { text: '开发文档', link: '/zh/develop/index.md' },

@@ -1,6 +1,13 @@
 import type { ArtalkConfig } from '@/types'
 
-const defaults: ArtalkConfig = {
+type RequiredExcept<T, K extends keyof T> = Required<Omit<T, K>> & Pick<T, K>
+type FunctionKeys<T> = Exclude<
+  { [K in keyof T]: NonNullable<T[K]> extends (...args: any[]) => any ? K : never }[keyof T],
+  undefined
+>
+type ExcludedKeys = FunctionKeys<ArtalkConfig>
+
+const defaults: RequiredExcept<ArtalkConfig, ExcludedKeys> = {
   el: '',
   pageKey: '',
   pageTitle: '',
@@ -47,12 +54,19 @@ const defaults: ArtalkConfig = {
     scrollable: false,
   },
 
+  pvAdd: true,
   imgUpload: true,
+  imgLazyLoad: 'native',
   reqTimeout: 15000,
   versionCheck: true,
   useBackendConf: true,
+  listUnreadHighlight: false,
 
   locale: 'en',
+  apiVersion: '',
+  pluginURLs: [],
+  markedReplacers: [],
+  markedOptions: {},
 }
 
 if (ARTALK_LITE) {

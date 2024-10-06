@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 
+	"github.com/adrg/xdg"
 	"github.com/artalkjs/artalk/v2/internal/config"
 	"github.com/artalkjs/artalk/v2/internal/core"
 	"github.com/artalkjs/artalk/v2/internal/log"
+	"github.com/artalkjs/artalk/v2/internal/utils"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
@@ -64,11 +67,11 @@ func New() *ArtalkCmd {
 	// Parse base flags
 	cmd.eagerParseFlags()
 
-	// Change work directory
-	if cmd.workDir != "" {
-		if err := os.Chdir(cmd.workDir); err != nil {
-			log.Fatal("Working directory change error: ", err)
-		}
+	// Init data directory (work directory)
+	if workDir, err := initDataDir(cmd.workDir); err == nil {
+		cmd.workDir = workDir
+	} else {
+		log.Fatal("Data directory fail: ", err)
 	}
 
 	return cmd
@@ -167,16 +170,50 @@ func (atk *ArtalkCmd) Launch() error {
 	return nil
 }
 
+func initDataDir(workDir string) (string, error) {
+	// If work directory is not specified, try to find it
+	if workDir == "" {
+		// If `data` in current directory exists, not change work directory
+		if utils.CheckDirExist("./data") {
+			// log.Warn("[DEPRECATED] The `data` directory is deprecated, please move to `~/.local/share/artalk/data`")
+			return "", nil
+		}
+
+		// Retrieve data directory assuming it's already exists
+		workDir = config.RetrieveDataDir()
+	}
+
+	// Create new data directory if not exists
+	if workDir == "" {
+		// default data path is `~/.local/share/artalk`
+		workDir = path.Join(xdg.DataHome, "artalk")
+		if err := utils.EnsureDir(workDir); err != nil {
+			return "", fmt.Errorf("data directory creation error: %v", err)
+		}
+	}
+
+	// Change work directory
+	if workDir != "" {
+		if err := os.Chdir(workDir); err != nil {
+			return "", fmt.Errorf("working directory change error: %v", err)
+		}
+	}
+
+	return workDir, nil
+}
+
 // Create new config instance by specific config filename
 func getConfig(cfgFile string) (*config.Config, error) {
-	// Retrieve config file by default names when specific filename is empty
+	// If config file is not specified, try to find it
 	if cfgFile == "" {
+		// Retrieve config file assuming it's already exists
 		cfgFile = config.RetrieveConfigFile()
 	}
 
-	// Generate new config file when retrieve failed
+	// Generate new config file if not exists
 	if cfgFile == "" {
-		cfgFile = config.CONF_DEFAULT_FILENAMES[0]
+		// default config path is `~/.config/artalk/artalk.yml`
+		cfgFile = path.Join(xdg.ConfigHome, "artalk", config.CONF_DEFAULT_FILENAMES[0])
 		core.Gen("config", cfgFile, false)
 	}
 

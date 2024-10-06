@@ -2,7 +2,7 @@ import path from 'node:path'
 import fs from 'node:fs'
 import type { LibraryOptions, Plugin } from 'vite'
 import ts from 'typescript'
-import type { ArtalkConfig } from 'artalk'
+import type { ArtalkConfigPartial } from 'artalk'
 
 import { RUNTIME_PATH, getRuntimeCode, wrapVirtualPrefix } from './runtime-helper'
 import { getInjectHTMLTags, hijackIndexPage } from './dev-page'
@@ -20,7 +20,7 @@ export interface ViteArtalkPluginKitOptions {
   /**
    * The options for Artalk instance initialization in the dev page.
    */
-  artalkInitOptions?: Partial<ArtalkConfig>
+  artalkInitOptions?: ArtalkConfigPartial
 }
 
 export const ViteArtalkPluginKit = (opts: ViteArtalkPluginKitOptions = {}): Plugin => {

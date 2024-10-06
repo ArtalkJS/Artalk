@@ -2,6 +2,7 @@ import type { Marked } from 'marked'
 import type {
   SidebarShowPayload,
   EventPayloadMap,
+  ArtalkConfigPartial,
   ArtalkConfig,
   CommentData,
   DataManagerApi,
@@ -114,7 +115,7 @@ export interface ContextApi extends EventManagerFuncs<EventPayloadMap> {
   getEl(): HTMLElement
 
   /** 更新配置 */
-  updateConf(conf: Partial<ArtalkConfig>): void
+  updateConf(conf: ArtalkConfigPartial): void
 
   /** 监听配置更新 */
   watchConf<T extends (keyof ArtalkConfig)[]>(

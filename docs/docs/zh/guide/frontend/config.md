@@ -1,6 +1,6 @@
 # 界面配置
 
-可在「[控制中心](./sidebar.md)」修改界面配置，而无需改动前端代码。另外也支持 [配置文件](../backend/config.md#界面配置-frontend) 和 [环境变量](../env.md#界面配置)。
+界面配置，也称为客户端配置、前端配置。可在「[控制中心](./sidebar.md#控制中心)」修改界面配置，而无需改动前端代码。另外也支持 [配置文件](../backend/config.md#界面配置-frontend) 和 [环境变量](../env.md#界面配置)。
 
 界面配置的优先级如下：
 
@@ -282,10 +282,12 @@ Artalk 统计组件查询评论数和浏览量时，会通过该属性名来查�
 
 **页面投票**
 
-- 类型：`Boolean` | `{ voteDown: boolean, btnEl?: string }`
+- 类型：`Boolean | { upBtnEl: string; downBtnEl: string; upCountEl: string; downCountEl: string; activeClass: string }`
 - 默认值： `true`
 
-启用 / 禁用页面投票功能，设置为 `Falsy` 值则不启用该功能。 `voteDown` 设置是否启用反对投票按钮（默认隐藏）, `btnEl` 为投票按钮的容器选择器，默认为 `".artalk-page-vote"`。
+启用页面投票功能，用户可以为页面投票。
+
+详情参考：[页面投票](./voting.md#页面投票)
 
 ### vote
 

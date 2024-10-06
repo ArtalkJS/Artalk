@@ -1,5 +1,3 @@
-@import 'action-btn';
-
 .atk-comment-wrap {
   overflow: hidden;
   position: relative;
@@ -264,8 +262,8 @@
         align-items: center;
         flex-wrap: wrap;
 
-        & > span {
-          @extend %action-btn;
+        & > span:not(:last-child):not(.atk-hide) {
+          margin-right: 16px;
         }
       }
     }

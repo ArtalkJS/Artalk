@@ -1,8 +1,12 @@
 {
-  "name": "@artalk/plugin-kit",
-  "version": "1.0.8",
-  "description": "The plugin kit for Artalk",
+  "name": "eslint-plugin-artalk",
+  "version": "1.0.1",
   "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/ArtalkJS/Artalk/tree/master/ui/eslint-plugin-artalk",
+  "files": [
+    "dist"
+  ],
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "exports": {
@@ -15,28 +19,21 @@
         "types": "./dist/main.d.ts",
         "default": "./dist/main.js"
       }
-    },
-    "./client": "./client.d.ts"
+    }
   },
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup"
+    "build": "tsup",
+    "test": "vitest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
-    "@microsoft/api-extractor": "^7.47.9",
-    "picocolors": "^1.1.0"
+    "@typescript-eslint/utils": "^8.8.0"
   },
   "devDependencies": {
-    "artalk": "workspace:^",
-    "esbuild-plugin-raw": "^0.1.8",
+    "@typescript-eslint/rule-tester": "^8.8.0",
     "tsup": "^8.3.0"
   },
   "peerDependencies": {
-    "artalk": "workspace:^",
-    "typescript": "*",
-    "vite": "*"
+    "eslint": ">=9"
   }
 }

@@ -1,4 +1,3 @@
-@import 'action-btn';
 @import './_color.scss';
 @import './comment.scss';
 @import './list.scss';
@@ -543,8 +542,21 @@
 
 /* Common Action Btn */
 .atk-common-action-btn {
+  color: var(--at-color-meta);
+  font-size: 13px;
+  line-height: 25px;
+  display: inline-flex;
+  cursor: pointer;
+  user-select: none;
 
-  @extend %action-btn;
+  &.atk-error,
+  &.atk-error:hover {
+    color: var(--at-color-red);
+  }
+
+  &:hover {
+    color: var(--at-color-deep);
+  }
 
   &.atk-btn-confirm {
     color: var(--at-color-yellow) !important;

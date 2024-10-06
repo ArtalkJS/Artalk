@@ -2535,6 +2535,41 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
+ * @description Get vote status for a specific comment or page
+ *
+ * @tags Vote
+ * @name GetVote
+ * @summary Get Vote Status
+ * @request GET:/votes/{target_name}/{target_id}
+ * @response `200` `HandlerResponseVote` OK
+ * @response `403` `(HandlerMap & {
+    msg?: string,
+
+})` Forbidden
+ * @response `404` `(HandlerMap & {
+    msg?: string,
+
+})` Not Found
+ * @response `500` `(HandlerMap & {
+    msg?: string,
+
+})` Internal Server Error
+ */
+    getVote: (targetName: 'comment' | 'page', targetId: number, params: RequestParams = {}) =>
+      this.request<
+        HandlerResponseVote,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
+        path: `/votes/${targetName}/${targetId}`,
+        method: 'GET',
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
  * @description Create a new vote for a specific comment or page
  *
  * @tags Vote

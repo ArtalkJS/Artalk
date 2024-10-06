@@ -1,0 +1,51 @@
+# Comment 1000: 4 up, 2 down
+# Page    1001: 1 up, 2 down
+# The IP 127.0.0.1 had up-voted Comment 1000 and down-voted Page 1001.
+
+- id: 1000
+  target_id: 1000
+  type: comment_up
+  user_id: 1000
+  ip: 127.0.0.1
+
+- id: 1001
+  target_id: 1000
+  type: comment_up
+  user_id: 1001
+  ip: 192.168.1.11
+
+- id: 1002
+  target_id: 1000
+  type: comment_up
+  ip: 192.168.1.12
+
+- id: 1003
+  target_id: 1000
+  type: comment_up
+  ip: 192.168.1.13
+
+- id: 1004
+  target_id: 1000
+  type: comment_down
+  ip: 192.168.1.14
+
+- id: 1005
+  target_id: 1000
+  type: comment_down
+  ip: 192.168.1.15
+
+- id: 1006
+  target_id: 1001
+  type: page_down
+  user_id: 1000
+  ip: 127.0.0.1
+
+- id: 1007
+  target_id: 1001
+  type: page_up
+  ip: 192.168.1.17
+
+- id: 1008
+  target_id: 1001
+  type: page_down
+  ip: 192.168.1.18

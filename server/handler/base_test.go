@@ -7,6 +7,8 @@ import (
 
 func NewApiTestApp() (*test.TestApp, *fiber.App) {
 	app, _ := test.NewTestApp()
-	fiberApp := fiber.New()
+	fiberApp := fiber.New(fiber.Config{
+		ProxyHeader: "X-Forwarded-For",
+	})
 	return app, fiberApp
 }

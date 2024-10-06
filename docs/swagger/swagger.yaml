@@ -3284,6 +3284,63 @@ paths:
       summary: Get Version Info
       tags:
       - System
+  /votes/{target_name}/{target_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get vote status for a specific comment or page
+      operationId: GetVote
+      parameters:
+      - description: The name of vote target
+        enum:
+        - comment
+        - page
+        in: path
+        name: target_name
+        required: true
+        type: string
+      - description: The target comment or page ID
+        in: path
+        name: target_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseVote'
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: Get Vote Status
+      tags:
+      - Vote
   /votes/{target_name}/{target_id}/{choice}:
     post:
       consumes:

@@ -18,6 +18,37 @@ type ResponseVote struct {
 	IsDown bool `json:"is_down"`
 }
 
+// @Id           GetVote
+// @Summary      Get Vote Status
+// @Description  Get vote status for a specific comment or page
+// @Tags         Vote
+// @Param        target_name  path  string  true  "The name of vote target"  Enums(comment, page)
+// @Param        target_id    path  int     true  "The target comment or page ID"
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  ResponseVote
+// @Failure      403  {object}  Map{msg=string}
+// @Failure      404  {object}  Map{msg=string}
+// @Failure      500  {object}  Map{msg=string}
+// @Router       /votes/{target_name}/{target_id}  [get]
+func VoteGet(app *core.App, router fiber.Router) {
+	router.Get("/votes/:target_name/:target_id", func(c *fiber.Ctx) error {
+		targetName := c.Params("target_name")
+		targetID, _ := c.ParamsInt("target_id")
+
+		var result ResponseVote
+		result.Up, result.Down = app.Dao().GetVoteNumUpDown(targetName, uint(targetID))
+		exitsVotes := getExistsVotesByIP(app.Dao(), c.IP(), targetName, uint(targetID))
+		if len(exitsVotes) > 0 {
+			choice := getVoteChoice(string(exitsVotes[0].Type))
+			result.IsUp = choice == "up"
+			result.IsDown = choice == "down"
+		}
+
+		return common.RespData(c, result)
+	})
+}
+
 type ParamsVoteCreate struct {
 	Name  string `json:"name" validate:"optional"`  // The username
 	Email string `json:"email" validate:"optional"` // The user email

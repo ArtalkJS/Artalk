@@ -6,6 +6,7 @@ import { PvCountWidget } from './stat'
 import { VersionCheck } from './version-check'
 import { AdminOnlyElem } from './admin-only-elem'
 import { DarkMode } from './dark-mode'
+import { PageVoteWidget } from './page-vote'
 import type { ArtalkPlugin } from '@/types'
 
 export const DefaultPlugins: ArtalkPlugin[] = [
@@ -17,4 +18,5 @@ export const DefaultPlugins: ArtalkPlugin[] = [
   PvCountWidget,
   VersionCheck,
   DarkMode,
+  PageVoteWidget,
 ]

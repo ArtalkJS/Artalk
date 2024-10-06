@@ -66,6 +66,7 @@ export function handleConfFormServer(conf: ArtalkConfigPartial): ArtalkConfigPar
     'pvEl',
     'countEl',
     'statPageKeyAttr',
+    'pageVote',
   ]
   Object.keys(conf).forEach((k) => {
     if (ExcludedKeys.includes(k as any)) delete conf[k]

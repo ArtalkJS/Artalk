@@ -280,6 +280,17 @@ When querying comment counts and page views, Artalk's statistical component uses
 
 To facilitate theme adaptation, you can customize the attribute name as needed, for example, replacing it with `data-path`, the HTML tag would be `<span data-path="/t/1.html"></span>`.
 
+### pageVote
+
+**Page Voting Buttons**
+
+- Type: `Boolean | { upBtnEl: string; downBtnEl: string; upCountEl: string; downCountEl: string; activeClass: string }`
+- Default: `true`
+
+Enable the page voting feature (upvote / downvote).
+
+For details, see: [Page Voting](./voting.md#page-voting)
+
 ### vote
 
 **Voting Buttons**

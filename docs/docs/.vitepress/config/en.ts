@@ -40,6 +40,7 @@ export const en = defineConfig({
             { text: 'LaTeX', link: '/en/guide/frontend/latex.md' },
             { text: 'Image Lightbox', link: '/en/guide/frontend/lightbox.md' },
             { text: 'Image Lazy Load', link: '/en/guide/frontend/img-lazy-load.md' },
+            { text: 'Voting', link: '/zh/guide/frontend/voting.md' },
             { text: 'IP Region', link: '/en/guide/frontend/ip-region.md' },
             { text: 'Localization', link: '/en/guide/frontend/i18n.md' },
             { text: 'Development Documentation', link: '/en/develop/index.md' },

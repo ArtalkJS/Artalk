@@ -73,6 +73,26 @@ export interface ArtalkConfig {
   /** Downvote button for comments */
   voteDown: boolean
 
+  /** Page Vote Widget */
+  pageVote:
+    | {
+        /** Up Vote Button Selector */
+        upBtnEl: string
+
+        /** Down Vote Button Selector */
+        downBtnEl: string
+
+        /** Up Vote Count Selector */
+        upCountEl: string
+
+        /** Down Vote Count Selector */
+        downCountEl: string
+
+        /** Active class name if the vote is already cast */
+        activeClass: string
+      }
+    | boolean
+
   /** Preview feature for comments */
   preview: boolean
 

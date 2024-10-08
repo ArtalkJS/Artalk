@@ -278,6 +278,17 @@ Artalk 统计组件查询评论数和浏览量时，会通过该属性名来查�
 
 为了便于主题适配，可根据需要自定义属性名，例如将其替换为 `data-path`，则 HTML 标签为 `<span data-path="/t/1.html"></span>`。
 
+### pageVote
+
+**页面投票**
+
+- 类型：`Boolean | { upBtnEl: string; downBtnEl: string; upCountEl: string; downCountEl: string; activeClass: string }`
+- 默认值： `true`
+
+启用页面投票功能，用户可以为页面投票。
+
+详情参考：[页面投票](./voting.md#页面投票)
+
 ### vote
 
 **投票按钮**

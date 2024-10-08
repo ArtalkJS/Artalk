@@ -26,6 +26,8 @@ const defaults: RequiredExcept<ArtalkConfig, ExcludedKeys> = {
 
   emoticons: 'https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json',
 
+  pageVote: true,
+
   vote: true,
   voteDown: false,
   uaBadge: true,

@@ -183,6 +183,30 @@ pnpm check:publish
 
 This will initiate the process of checking all public packages in the repository to ensure they are up to date on npm.
 
+### Develop and Debug `@artalk/plugin-kit` and `eslint-plugin-artalk`
+
+The monorepo will default to installing the latest version of `@artalk/plugin-kit` and `eslint-plugin-artalk` from NPM published packages. To develop and debug these packages, run the following commands from the root of the repository:
+
+```sh
+pnpm link --global --dir ui/eslint-plugin-artalk
+pnpm link --global --dir ui/plugin-kit
+
+pnpm link eslint-plugin-artalk
+pnpm link @artalk/plugin-kit
+```
+
+After executing these commands, the `eslint-plugin-artalk` and `@artalk/plugin-kit` packages will be linked to the local development environment within the monorepo workspace. You can modify the source code located in the `ui/eslint-plugin-artalk` and `ui/plugin-kit` directories, and the changes will be automatically reflected in the monorepo workspace. If you wish to unlink the packages, run the following commands:
+
+```sh
+pnpm unlink eslint-plugin-artalk
+pnpm unlink @artalk/plugin-kit
+
+pnpm uninstall --global eslint-plugin-artalk
+pnpm uninstall --global @artalk/plugin-kit
+```
+
+For more details, refer to the [pnpm link documentation](https://pnpm.io/cli/link).
+
 ## Docker Development
 
 ### Build Docker Image

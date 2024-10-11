@@ -183,6 +183,30 @@ pnpm check:publish
 
 这将启动检查存储库中所有公共包的过程，以确保它们在 npm 上是最新的。
 
+### 开发和调试 `@artalk/plugin-kit` 和 `eslint-plugin-artalk`
+
+这个 monorepo 默认会从 NPM 安装最新版本的 `@artalk/plugin-kit` 和 `eslint-plugin-artalk` 发布包。要开发和调试这些包，请在仓库的根目录下运行以下命令：
+
+```sh
+pnpm link --global --dir ui/eslint-plugin-artalk
+pnpm link --global --dir ui/plugin-kit
+
+pnpm link eslint-plugin-artalk
+pnpm link @artalk/plugin-kit
+```
+
+执行这些命令后，`eslint-plugin-artalk` 和 `@artalk/plugin-kit` 包将链接到本地开发环境中的 monorepo 工作空间。你可以在 `ui/eslint-plugin-artalk` 和 `ui/plugin-kit` 目录中修改源代码，这些更改会自动反映在 monorepo 工作空间中。如果你希望取消链接这些包，请运行以下命令：
+
+```sh
+pnpm unlink eslint-plugin-artalk
+pnpm unlink @artalk/plugin-kit
+
+pnpm uninstall --global eslint-plugin-artalk
+pnpm uninstall --global @artalk/plugin-kit
+```
+
+更多详情请参考 [pnpm link 文档](https://pnpm.io/cli/link)。
+
 ## Docker 开发
 
 ### 构建 Docker 镜像

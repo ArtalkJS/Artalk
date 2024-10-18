@@ -1,7 +1,7 @@
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
 
-export default class HeaderLink extends EditorPlug {
+export default class HeaderLink extends EditorPlugin {
   constructor(kit: PlugKit) {
     super(kit)
 

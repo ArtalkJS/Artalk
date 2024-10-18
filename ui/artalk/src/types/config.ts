@@ -1,9 +1,10 @@
 import type { MarkedOptions } from 'marked'
 import type { CommentData } from './data'
-import type { EditorApi } from './editor'
+import type { Editor } from './editor'
+import type { Context } from './context'
 import type { I18n } from '@/i18n'
 
-export interface ArtalkConfig {
+export interface Config {
   /** Element selector or Element to mount the Artalk */
   el: string | HTMLElement
 
@@ -133,7 +134,7 @@ export interface ArtalkConfig {
   imgUploader?: (file: File) => Promise<string>
 
   /** Image lazy load mode */
-  imgLazyLoad?: 'native' | 'data-src'
+  imgLazyLoad: false | 'native' | 'data-src'
 
   /** Enable version check */
   versionCheck: boolean
@@ -145,7 +146,7 @@ export interface ArtalkConfig {
   locale: I18n | string
 
   /** Backend API version (system data, not allowed for user modification) */
-  apiVersion?: string
+  apiVersion: string
 
   /** URLs for plugin scripts */
   pluginURLs?: string[]
@@ -166,47 +167,33 @@ export interface ArtalkConfig {
    */
   dateFormatter?: (date: Date) => string
 
-  /** Custom configuration modifier for remote configuration (referenced by artalk-sidebar) */
-  // TODO: Consider merging list-related configuration into a single object, or flatten everything for simplicity and consistency
-  remoteConfModifier?: (conf: DeepPartial<ArtalkConfig>) => void
-
   /** List unread highlight (enable by default in artalk-sidebar) */
-  listUnreadHighlight?: boolean
+  listUnreadHighlight: boolean
 
   /** The relative element for scrolling (useful if artalk is in a scrollable container) */
   scrollRelativeTo?: () => HTMLElement
 
   /** Page view increment when comment list is loaded */
-  pvAdd?: boolean
+  pvAdd: boolean
+
+  /** Immediately fetch comments when Artalk instance is initialized */
+  fetchCommentsOnInit: boolean
 
   /** Callback before submitting a comment */
-  beforeSubmit?: (editor: EditorApi, next: () => void) => void
+  beforeSubmit?: (editor: Editor, next: () => void) => void
 }
 
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K]
 }
 
-export type ArtalkConfigPartial = DeepPartial<ArtalkConfig>
+export type ConfigPartial = DeepPartial<Config>
 
-/**
- * Local User Data (in localStorage)
- *
- * @note Keep flat for easy handling
- */
-export interface LocalUser {
-  /** Username (aka. Nickname) */
-  name: string
+// Alias for backward compatibility
+export type ArtalkConfig = Config
 
-  /** Email */
-  email: string
-
-  /** Link (aka. Website) */
-  link: string
-
-  /** Token (for authorization) */
-  token: string
-
-  /** Admin flag */
-  is_admin: boolean
+export interface ConfigManager {
+  watchConf: Context['watchConf']
+  get: () => Config
+  update: (conf: ConfigPartial) => void
 }

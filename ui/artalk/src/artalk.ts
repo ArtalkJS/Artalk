@@ -1,14 +1,19 @@
 import './style/main.scss'
 
-import type { EventHandler } from './lib/event-manager'
 import Context from './context'
-import { handelCustomConf, convertApiOptions } from './config'
-import Services from './service'
+import { handelCustomConf, convertApiOptions, getRootEl } from './config'
 import * as Stat from './plugins/stat'
 import { Api } from './api'
-import type { TInjectedServices } from './service'
-import { GlobalPlugins, PluginOptions, load } from './load'
-import type { ArtalkConfigPartial, EventPayloadMap, ArtalkPlugin, ContextApi } from '@/types'
+import { GlobalPlugins, PluginOptions, mount } from './mount'
+import { ConfigService } from './services/config'
+import { EventsService } from './services/events'
+import type {
+  ConfigPartial,
+  EventPayloadMap,
+  ArtalkPlugin,
+  Context as IContext,
+  EventHandler,
+} from '@/types'
 
 /**
  * Artalk
@@ -16,25 +21,45 @@ import type { ArtalkConfigPartial, EventPayloadMap, ArtalkPlugin, ContextApi } f
  * @see https://artalk.js.org
  */
 export default class Artalk {
-  public ctx!: ContextApi
+  public ctx: IContext
 
-  constructor(conf: ArtalkConfigPartial) {
-    // Init Config
-    const handledConf = handelCustomConf(conf, true)
+  constructor(conf: ConfigPartial) {
+    // Init Root Element
+    const $root = getRootEl(conf)
+    $root.classList.add('artalk')
+    $root.innerHTML = ''
+    conf.darkMode == true && $root.classList.add('atk-dark-mode')
 
     // Init Context
-    this.ctx = new Context(handledConf)
+    const ctx = (this.ctx = new Context($root))
 
-    // Init Services
-    Object.entries(Services).forEach(([name, initService]) => {
-      const obj = initService(this.ctx)
-      obj && this.ctx.inject(name as keyof TInjectedServices, obj) // auto inject deps to ctx
-    })
+    // Init required services
+    ;(() => {
+      // Init event manager
+      EventsService(ctx)
+
+      // Init config service
+      ConfigService(ctx)
+    })()
+
+    // Apply local conf first
+    ctx.updateConf(conf)
+
+    // Trigger created event
+    ctx.trigger('created')
+
+    // Load plugins and remote config, then mount Artalk
+    const mountArtalk = async () => {
+      await mount(conf, ctx)
+
+      // Trigger mounted event
+      ctx.trigger('mounted')
+    }
 
     if (import.meta.env.DEV && import.meta.env.VITEST) {
-      global.devLoadArtalk = () => load(this.ctx)
+      global.devMountArtalk = mountArtalk
     } else {
-      load(this.ctx)
+      mountArtalk()
     }
   }
 
@@ -45,13 +70,12 @@ export default class Artalk {
 
   /** Get the root element of Artalk */
   public getEl() {
-    return this.ctx.$root
+    return this.ctx.getEl()
   }
 
   /** Update config of Artalk */
-  public update(conf: ArtalkConfigPartial) {
+  public update(conf: ConfigPartial) {
     this.ctx.updateConf(conf)
-    return this
   }
 
   /** Reload comment list of Artalk */
@@ -61,10 +85,7 @@ export default class Artalk {
 
   /** Destroy instance of Artalk */
   public destroy() {
-    this.ctx.trigger('unmounted')
-    while (this.ctx.$root.firstChild) {
-      this.ctx.$root.removeChild(this.ctx.$root.firstChild)
-    }
+    this.ctx.destroy()
   }
 
   /** Add an event listener */
@@ -92,7 +113,7 @@ export default class Artalk {
   // ===========================
 
   /** Init Artalk */
-  public static init(conf: ArtalkConfigPartial): Artalk {
+  public static init(conf: ConfigPartial): Artalk {
     return new Artalk(conf)
   }
 
@@ -103,7 +124,7 @@ export default class Artalk {
   }
 
   /** Load count widget */
-  public static loadCountWidget(c: ArtalkConfigPartial) {
+  public static loadCountWidget(c: ConfigPartial) {
     const conf = handelCustomConf(c, true)
 
     Stat.initCountWidget({
@@ -119,14 +140,15 @@ export default class Artalk {
   // ===========================
   //         Deprecated
   // ===========================
-
   /** @deprecated Please use `getEl()` instead */
   public get $root() {
-    return this.ctx.$root
+    console.warn('`$root` is deprecated, please use `getEl()` instead')
+    return this.getEl()
   }
 
   /** @description Please use `getConf()` instead */
   public get conf() {
-    return this.ctx.getConf()
+    console.warn('`conf` is deprecated, please use `getConf()` instead')
+    return this.getConf()
   }
 }

@@ -1,3 +1,3 @@
-import { ContextApi } from './context'
+import { Context } from './context'
 
-export type ArtalkPlugin<T = any> = (ctx: ContextApi, options?: T) => void
+export type ArtalkPlugin<T = any> = (ctx: Context, options?: T) => void

@@ -1,0 +1,6 @@
+{
+  "out": "docs/docs/.vitepress/dist/typedoc",
+  "entryPoints": ["ui/artalk/src/main.ts"],
+  "tsconfig": "ui/artalk/tsconfig.json",
+  "logLevel": "Error"
+}

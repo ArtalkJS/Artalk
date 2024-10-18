@@ -7,3 +7,9 @@ export interface Layer {
   getAllowMaskClose(): boolean
   getEl: () => HTMLElement
 }
+
+export interface LayerManager {
+  create(name: string, el?: HTMLElement): Layer
+  destroy(): void
+  getEl(): HTMLElement
+}

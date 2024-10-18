@@ -1,9 +1,9 @@
 import { marked, Tokens } from 'marked'
 import { renderCode } from './highlight'
-import type { ArtalkConfig } from '@/types'
+import type { Config } from '@/types'
 
 export interface RendererOptions {
-  imgLazyLoad: ArtalkConfig['imgLazyLoad']
+  imgLazyLoad: Config['imgLazyLoad']
 }
 
 export function getRenderer(options: RendererOptions) {

@@ -1,11 +1,10 @@
 import './preview.scss'
 
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
-import * as marked from '@/lib/marked'
 import $t from '@/i18n'
 
-export default class Preview extends EditorPlug {
+export default class Preview extends EditorPlugin {
   private isPlugPanelShow = false
 
   constructor(kit: PlugKit) {

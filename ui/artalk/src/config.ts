@@ -1,8 +1,8 @@
 import type { ApiOptions } from './api/options'
 import { mergeDeep } from './lib/merge-deep'
-import { createApiHandlers } from './api'
-import Defaults from './defaults'
-import type { ArtalkConfig, ArtalkConfigPartial, ContextApi } from '@/types'
+import type { ApiHandlers } from './api'
+import { Defaults } from './defaults'
+import type { Config, ConfigPartial, UserManager } from '@/types'
 
 /**
  * Handle the custom config which is provided by the user
@@ -11,40 +11,28 @@ import type { ArtalkConfig, ArtalkConfigPartial, ContextApi } from '@/types'
  * @param full - If `full` is `true`, the return value will be the complete config for Artalk instance creation
  * @returns The config for Artalk instance creation
  */
-export function handelCustomConf(customConf: ArtalkConfigPartial, full: true): ArtalkConfig
-export function handelCustomConf(customConf: ArtalkConfigPartial, full?: false): ArtalkConfigPartial
-export function handelCustomConf(customConf: ArtalkConfigPartial, full = false) {
-  // 合并默认配置
-  const conf: ArtalkConfigPartial = full ? mergeDeep(Defaults, customConf) : customConf
+export function handelCustomConf(customConf: ConfigPartial, full: true): Config
+export function handelCustomConf(customConf: ConfigPartial, full?: false): ConfigPartial
+export function handelCustomConf(customConf: ConfigPartial, full = false) {
+  // Merge default config
+  const conf: ConfigPartial = full ? mergeDeep(Defaults, customConf) : customConf
 
-  // 绑定元素
-  if (conf.el && typeof conf.el === 'string') {
-    try {
-      const findEl = document.querySelector<HTMLElement>(conf.el)
-      if (!findEl) throw Error(`Target element "${conf.el}" was not found.`)
-      conf.el = findEl
-    } catch (e) {
-      console.error(e)
-      throw new Error('Please check your Artalk `el` config.')
-    }
-  }
+  // Default pageKey
+  if (conf.pageKey === '') conf.pageKey = `${window.location.pathname}` // @see http://bl.ocks.org/abernier/3070589
 
-  // 默认 pageKey
-  if (conf.pageKey === '') conf.pageKey = `${window.location.pathname}` // @link http://bl.ocks.org/abernier/3070589
-
-  // 默认 pageTitle
+  // Default pageTitle
   if (conf.pageTitle === '') conf.pageTitle = `${document.title}`
 
-  // 服务器配置
+  // Server
   if (conf.server) conf.server = conf.server.replace(/\/$/, '').replace(/\/api\/?$/, '')
 
-  // 自适应语言
+  // Language auto-detection
   if (conf.locale === 'auto') conf.locale = navigator.language
 
-  // 自动判断启用平铺模式
+  // Flat mode auto-detection
   if (conf.flatMode === 'auto') conf.flatMode = window.matchMedia('(max-width: 768px)').matches
 
-  // flatMode
+  // Change flatMode by nestMax
   if (typeof conf.nestMax === 'number' && Number(conf.nestMax) <= 1) conf.flatMode = true
 
   return conf
@@ -56,8 +44,8 @@ export function handelCustomConf(customConf: ArtalkConfigPartial, full = false) 
  * @param conf - The Server response config for control the frontend of Artalk remotely
  * @returns The config for Artalk instance creation
  */
-export function handleConfFormServer(conf: ArtalkConfigPartial): ArtalkConfigPartial {
-  const ExcludedKeys: (keyof ArtalkConfig)[] = [
+export function handleConfFormServer(conf: ConfigPartial): ConfigPartial {
+  const ExcludedKeys: (keyof Config)[] = [
     'el',
     'pageKey',
     'pageTitle',
@@ -87,34 +75,50 @@ export function handleConfFormServer(conf: ArtalkConfigPartial): ArtalkConfigPar
 }
 
 /**
+ * Get the root element of Artalk
+ *
+ * @param conf - Artalk config
+ * @returns The root element of Artalk
+ */
+export function getRootEl(conf: ConfigPartial): HTMLElement {
+  let $root: HTMLElement
+  if (typeof conf.el === 'string') {
+    const el = document.querySelector<HTMLElement>(conf.el)
+    if (!el) throw new Error(`Element "${conf.el}" not found.`)
+    $root = el
+  } else if (conf.el instanceof HTMLElement) {
+    $root = conf.el
+  } else {
+    throw new Error('Please provide a valid `el` config for Artalk.')
+  }
+  return $root
+}
+
+/**
  * Convert Artalk Config to ApiOptions for Api client
  *
  * @param conf - Artalk config
  * @param ctx - If `ctx` not provided, `checkAdmin` and `checkCaptcha` will be disabled
  * @returns ApiOptions for Api client instance creation
  */
-export function convertApiOptions(conf: ArtalkConfigPartial, ctx?: ContextApi): ApiOptions {
+export function convertApiOptions(
+  conf: ConfigPartial,
+  user?: UserManager,
+  handlers?: ApiHandlers,
+): ApiOptions {
   return {
     baseURL: `${conf.server}/api/v2`,
     siteName: conf.site || '',
     pageKey: conf.pageKey || '',
     pageTitle: conf.pageTitle || '',
     timeout: conf.reqTimeout,
-    getApiToken: () => ctx?.get('user').getData().token,
-    userInfo: ctx?.get('user').checkHasBasicUserInfo()
+    getApiToken: () => user?.getData().token,
+    userInfo: user?.checkHasBasicUserInfo()
       ? {
-          name: ctx?.get('user').getData().name,
-          email: ctx?.get('user').getData().email,
+          name: user?.getData().name,
+          email: user?.getData().email,
         }
       : undefined,
-    handlers: ctx?.getApiHandlers(),
+    handlers,
   }
-}
-
-export function createNewApiHandlers(ctx: ContextApi) {
-  const h = createApiHandlers()
-  h.add('need_captcha', (res) => ctx.checkCaptcha(res))
-  h.add('need_login', () => ctx.checkAdmin({}))
-
-  return h
 }

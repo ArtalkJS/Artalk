@@ -1,9 +1,9 @@
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
 import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
 
-export default class Closable extends EditorPlug {
+export default class Closable extends EditorPlugin {
   constructor(kit: PlugKit) {
     super(kit)
 

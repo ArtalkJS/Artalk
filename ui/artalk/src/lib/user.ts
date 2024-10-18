@@ -1,4 +1,4 @@
-import type { LocalUser } from '@/types'
+import type { LocalUser, UserManager as IUserManager } from '@/types'
 
 const LOCAL_USER_KEY = 'ArtalkUser'
 
@@ -6,7 +6,7 @@ interface UserOpts {
   onUserChanged?: (user: LocalUser) => void
 }
 
-class User {
+export class UserManager implements IUserManager {
   private data: LocalUser
 
   constructor(private opts: UserOpts) {
@@ -55,4 +55,4 @@ class User {
   }
 }
 
-export default User
+export default UserManager

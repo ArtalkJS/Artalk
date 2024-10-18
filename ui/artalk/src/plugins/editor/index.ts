@@ -1,4 +1,4 @@
-import type EditorPlug from './_plug'
+import type EditorPlugin from './_plug'
 import LocalStorage from './local-storage'
 import Textarea from './textarea'
 import SubmitBtn from './submit-btn'
@@ -13,10 +13,10 @@ import Mover from './mover'
 import Emoticons from './emoticons'
 import Upload from './upload'
 import Preview from './preview'
-import type { ArtalkConfig } from '@/types'
+import type { Config } from '@/types'
 
 /** The default enabled plugs */
-const EDITOR_PLUGS: (typeof EditorPlug)[] = [
+const EDITOR_PLUGS: (typeof EditorPlugin)[] = [
   // Core
   LocalStorage,
   HeaderEvent,
@@ -40,11 +40,11 @@ const EDITOR_PLUGS: (typeof EditorPlug)[] = [
  * Get the enabled plugs by config
  */
 export function getEnabledPlugs(
-  conf: Pick<ArtalkConfig, 'imgUpload' | 'emoticons' | 'preview' | 'editorTravel'>,
-): (typeof EditorPlug)[] {
+  conf: Pick<Config, 'imgUpload' | 'emoticons' | 'preview' | 'editorTravel'>,
+): (typeof EditorPlugin)[] {
   // The reference map of config and plugs
   // (for check if the plug is enabled)
-  const confRefs = new Map<typeof EditorPlug, any>()
+  const confRefs = new Map<typeof EditorPlugin, any>()
   confRefs.set(Upload, conf.imgUpload)
   confRefs.set(Emoticons, conf.emoticons)
   confRefs.set(Preview, conf.preview)

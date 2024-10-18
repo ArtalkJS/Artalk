@@ -3,12 +3,13 @@ import * as Utils from '@/lib/utils'
 
 /** List scroll to the first comment */
 export const GotoFirst: ArtalkPlugin = (ctx) => {
-  const handler = () => {
-    const list = ctx.get('list')
+  const list = ctx.inject('list')
+  const conf = ctx.inject('config')
 
-    const $relative = ctx.conf.scrollRelativeTo && ctx.conf.scrollRelativeTo()
+  const handler = () => {
+    const $relative = conf.get().scrollRelativeTo?.()
     ;($relative || window).scroll({
-      top: Utils.getOffset(list.$el, $relative).top,
+      top: Utils.getOffset(list.getEl(), $relative).top,
       left: 0,
     })
   }

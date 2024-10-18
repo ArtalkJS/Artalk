@@ -1,19 +1,11 @@
 import { getScrollbarHelper } from './scrollbar-helper'
 import { LayerWrap } from './wrap'
-import type { ContextApi } from '@/types'
+import type { LayerManager as ILayerManager } from '@/types'
 
-export class LayerManager {
-  private wrap: LayerWrap
+export class LayerManager implements ILayerManager {
+  private wrap = new LayerWrap()
 
-  constructor(ctx: ContextApi) {
-    this.wrap = new LayerWrap()
-    document.body.appendChild(this.wrap.getWrap())
-
-    ctx.on('unmounted', () => {
-      this.wrap.getWrap().remove()
-    })
-
-    // 记录页面原始 CSS 属性
+  constructor() {
     getScrollbarHelper().init()
   }
 
@@ -23,5 +15,9 @@ export class LayerManager {
 
   create(name: string, el?: HTMLElement) {
     return this.wrap.createItem(name, el)
+  }
+
+  destroy() {
+    this.wrap.getWrap().remove()
   }
 }

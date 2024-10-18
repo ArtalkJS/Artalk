@@ -1,5 +1,4 @@
 import type { Paginator, IPgHolderOpt } from '.'
-import type { ListFetchParams } from '@/types'
 import ReadMoreBtn from '@/components/read-more-btn'
 import $t from '@/i18n'
 
@@ -17,7 +16,7 @@ export default class ReadMorePaginator implements Paginator {
     this.instance = new ReadMoreBtn({
       pageSize: opt.pageSize,
       onClick: async (o) => {
-        opt.ctx.fetch({
+        opt.getData().fetchComments({
           offset: o,
         })
       },
@@ -27,10 +26,10 @@ export default class ReadMorePaginator implements Paginator {
     // 滚动到底部自动加载
     if (opt.readMoreAutoLoad) {
       this.onReachedBottom = () => {
-        if (!this.instance.hasMore || this.opt.ctx.getData().getLoading()) return
+        if (!this.instance.hasMore || this.opt.getData().getLoading()) return
         this.instance.click()
       }
-      this.opt.ctx.on('list-reach-bottom', this.onReachedBottom)
+      this.opt.getEvents().on('list-reach-bottom', this.onReachedBottom)
     }
 
     return this.instance.$el
@@ -61,7 +60,7 @@ export default class ReadMorePaginator implements Paginator {
   }
 
   dispose(): void {
-    this.onReachedBottom && this.opt.ctx.off('list-reach-bottom', this.onReachedBottom)
+    this.onReachedBottom && this.opt.getEvents().off('list-reach-bottom', this.onReachedBottom)
     this.instance.$el.remove()
   }
 }

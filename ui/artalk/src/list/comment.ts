@@ -1,48 +1,54 @@
-import type { ContextApi, CommentData } from '@/types'
+import type { ConfigManager, EventManager, CommentData, DataManager } from '@/types'
 import { CommentNode } from '@/comment'
+import type { Api } from '@/api'
 
 interface CreateCommentNodeOptions {
+  getApi: () => Api
+  getEvents: () => EventManager
+  getData: () => DataManager
+  getConf: () => ConfigManager
+  replyComment: (c: CommentData, $el: HTMLElement) => void
+  editComment: (c: CommentData, $el: HTMLElement) => void
   forceFlatMode?: boolean
 }
 
 export function createCommentNode(
-  ctx: ContextApi,
+  opts: CreateCommentNodeOptions,
   comment: CommentData,
   replyComment?: CommentData,
-  opts?: CreateCommentNodeOptions,
 ): CommentNode {
+  const conf = opts.getConf().get()
+
   const instance = new CommentNode(comment, {
     onAfterRender: () => {
-      ctx.trigger('comment-rendered', instance)
+      opts.getEvents().trigger('comment-rendered', instance)
     },
     onDelete: (c: CommentNode) => {
-      ctx.getData().deleteComment(c.getID())
+      opts.getData().deleteComment(c.getID())
     },
 
     replyTo: replyComment,
 
     // TODO simplify reference
     flatMode:
-      typeof opts?.forceFlatMode === 'boolean'
-        ? opts?.forceFlatMode
-        : (ctx.conf.flatMode as boolean),
-    gravatar: ctx.conf.gravatar,
-    nestMax: ctx.conf.nestMax,
-    heightLimit: ctx.conf.heightLimit,
-    avatarURLBuilder: ctx.conf.avatarURLBuilder,
-    scrollRelativeTo: ctx.conf.scrollRelativeTo,
-    vote: ctx.conf.vote,
-    voteDown: ctx.conf.voteDown,
-    uaBadge: ctx.conf.uaBadge,
-    dateFormatter: ctx.conf.dateFormatter,
+      typeof opts?.forceFlatMode === 'boolean' ? opts?.forceFlatMode : (conf.flatMode as boolean),
+    gravatar: conf.gravatar,
+    nestMax: conf.nestMax,
+    heightLimit: conf.heightLimit,
+    avatarURLBuilder: conf.avatarURLBuilder,
+    scrollRelativeTo: conf.scrollRelativeTo,
+    vote: conf.vote,
+    voteDown: conf.voteDown,
+    uaBadge: conf.uaBadge,
+    dateFormatter: conf.dateFormatter,
 
     // TODO: move to plugin folder and remove from core
-    getApi: () => ctx.getApi(),
-    replyComment: (c, $el) => ctx.replyComment(c, $el),
-    editComment: (c, $el) => ctx.editComment(c, $el),
+    getApi: opts.getApi,
+    replyComment: opts.replyComment,
+    editComment: opts.editComment,
   })
 
-  // 渲染元素
+  // Render comment
   instance.render()
 
   return instance

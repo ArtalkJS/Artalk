@@ -1,12 +1,12 @@
 import type PlugKit from './_kit'
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
 
 /** 允许的图片格式 */
 const AllowImgExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']
 
-export default class Upload extends EditorPlug {
+export default class Upload extends EditorPlugin {
   private $imgUploadInput?: HTMLInputElement
 
   constructor(kit: PlugKit) {

@@ -97,7 +97,7 @@ describe('Artalk instance', () => {
   it(
     'should can listen to events and the conf-remoter works (artalk.trigger, artalk.on, conf-remoter)',
     async () => {
-      global.devLoadArtalk()
+      global.devMountArtalk()
 
       const fn = vi.fn()
 

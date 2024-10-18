@@ -1,37 +1,15 @@
-export type EventHandler<T> = (payload: T) => void
-export interface Event<PayloadMap, K extends keyof PayloadMap = keyof PayloadMap>
-  extends EventOptions {
-  name: K
-  handler: EventHandler<PayloadMap[K]>
-}
-export interface EventOptions {
-  once?: boolean
-}
+import type { EventManager as IEventManager, Event, EventHandler, EventOptions } from '@/types'
 
-export interface EventManagerFuncs<PayloadMap> {
-  on<K extends keyof PayloadMap>(
-    name: K,
-    handler: EventHandler<PayloadMap[K]>,
-    opts?: EventOptions,
-  ): void
-  off<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>): void
-  trigger<K extends keyof PayloadMap>(name: K, payload?: PayloadMap[K]): void
-}
-
-export default class EventManager<PayloadMap> implements EventManagerFuncs<PayloadMap> {
-  private events: Event<PayloadMap>[] = []
+export class EventManager<T> implements IEventManager<T> {
+  private events: Event<T>[] = []
 
   /**
    * Add an event listener for a specific event name
    */
-  public on<K extends keyof PayloadMap>(
-    name: K,
-    handler: EventHandler<PayloadMap[K]>,
-    opts: EventOptions = {},
-  ) {
+  public on<K extends keyof T>(name: K, handler: EventHandler<T[K]>, opts: EventOptions = {}) {
     this.events.push({
       name,
-      handler: handler as EventHandler<PayloadMap[keyof PayloadMap]>,
+      handler: handler as EventHandler<T[keyof T]>,
       ...opts,
     })
   }
@@ -39,7 +17,7 @@ export default class EventManager<PayloadMap> implements EventManagerFuncs<Paylo
   /**
    * Remove an event listener for a specific event name and handler
    */
-  public off<K extends keyof PayloadMap>(name: K, handler: EventHandler<PayloadMap[K]>) {
+  public off<K extends keyof T>(name: K, handler: EventHandler<T[K]>) {
     if (!handler) return // not allow remove all events with same name
     this.events = this.events.filter((evt) => !(evt.name === name && evt.handler === handler))
   }
@@ -47,7 +25,7 @@ export default class EventManager<PayloadMap> implements EventManagerFuncs<Paylo
   /**
    * Trigger an event with an optional payload
    */
-  public trigger<K extends keyof PayloadMap>(name: K, payload?: PayloadMap[K]) {
+  public trigger<K extends keyof T>(name: K, payload?: T[K]) {
     this.events
       .slice(0) // make a copy, in case listeners are removed while iterating
       .filter((evt) => evt.name === name && typeof evt.handler === 'function')

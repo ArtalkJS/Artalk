@@ -3,8 +3,13 @@ import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
 
 export const Dropdown: ArtalkPlugin = (ctx) => {
+  const list = ctx.inject('list')
+  const conf = ctx.inject('config')
+
   const reloadUseParamsEditor = (func: (p: any) => void) => {
-    ctx.conf.listFetchParamsModifier = func
+    conf.update({
+      listFetchParamsModifier: func,
+    })
     ctx.reload()
   }
 
@@ -49,9 +54,7 @@ export const Dropdown: ArtalkPlugin = (ctx) => {
   }
 
   ctx.watchConf(['listSort', 'locale'], (conf) => {
-    const list = ctx.get('list')
-
-    const $count = list.$el.querySelector<HTMLElement>('.atk-comment-count')
+    const $count = list.getEl().querySelector<HTMLElement>('.atk-comment-count')
     if (!$count) return
 
     // 评论列表排序 Dropdown 下拉选择层

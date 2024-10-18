@@ -1,10 +1,12 @@
 import type { ArtalkPlugin } from '@/types'
 
 export const ReachBottom: ArtalkPlugin = (ctx) => {
+  const list = ctx.inject('list')
+  const conf = ctx.inject('config')
   let observer: IntersectionObserver | null = null
 
   const setupObserver = ($target: HTMLElement) => {
-    const scrollEvtAt = (ctx.conf.scrollRelativeTo && ctx.conf.scrollRelativeTo()) || null
+    const scrollEvtAt = conf.get().scrollRelativeTo?.() || null
 
     observer = new IntersectionObserver(
       ([entries]) => {
@@ -34,8 +36,6 @@ export const ReachBottom: ArtalkPlugin = (ctx) => {
 
   ctx.on('list-loaded', () => {
     clearObserver()
-
-    const list = ctx.get('list')
 
     // get the second last child
     const children = list.getCommentsWrapEl().childNodes

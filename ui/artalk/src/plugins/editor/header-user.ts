@@ -1,9 +1,9 @@
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
 import $t from '@/i18n'
 import type { UserInfoApiResponseData } from '@/types'
 
-export default class HeaderUser extends EditorPlug {
+export default class HeaderUser extends EditorPlugin {
   constructor(kit: PlugKit) {
     super(kit)
 
@@ -87,12 +87,12 @@ export default class HeaderUser extends EditorPlug {
     if (!data.is_login) this.kit.useUser().logout()
 
     // Update unread notifies
-    this.kit.useGlobalCtx().getData().updateNotifies(data.notifies)
+    this.kit.useData().updateNotifies(data.notifies)
 
     // If user is admin and not login,
     if (this.kit.useUser().checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {
       // then show login window
-      this.kit.useGlobalCtx().checkAdmin({
+      this.kit.useCheckers().checkAdmin({
         onSuccess: () => {},
       })
     }

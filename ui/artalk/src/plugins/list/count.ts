@@ -3,10 +3,10 @@ import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
 
 export const Count: ArtalkPlugin = (ctx) => {
-  const refreshCountNumEl = () => {
-    const list = ctx.get('list')
+  const list = ctx.inject('list')
 
-    const $count = list.$el.querySelector('.atk-comment-count .atk-text')
+  const refreshCountNumEl = () => {
+    const $count = list.getEl().querySelector('.atk-comment-count .atk-text')
     if (!$count) return
 
     const text = Utils.htmlEncode(

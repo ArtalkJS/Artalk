@@ -1,6 +1,5 @@
 import type { LayoutStrategyCreator, LayoutOptions } from '.'
 import type { CommentData } from '@/types'
-import * as Ui from '@/lib/ui'
 
 export const createFlatStrategy: LayoutStrategyCreator = (opts) => ({
   import: (comments) => {

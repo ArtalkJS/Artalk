@@ -2,47 +2,69 @@ import ListHTML from './list.html?raw'
 import { ListLayout } from './layout'
 import { createCommentNode } from './comment'
 import { initListPaginatorFunc } from './page'
-import type { ContextApi } from '@/types'
-import Component from '@/lib/component'
+import type { CommentData, EventManager, DataManager, ConfigManager, List as IList } from '@/types'
 import * as Utils from '@/lib/utils'
 import { CommentNode } from '@/comment'
+import type { Api } from '@/api'
 
-export default class List extends Component {
-  /** 列表评论集区域元素 */
-  $commentsWrap!: HTMLElement
-  public getCommentsWrapEl() {
+export interface ListOptions {
+  getApi: () => Api
+  getEvents: () => EventManager
+  getConf: () => ConfigManager
+  getData: () => DataManager
+
+  replyComment: (c: CommentData, $el: HTMLElement) => void
+  editComment: (c: CommentData, $el: HTMLElement) => void
+  resetEditorState: () => void
+  onListGotoFirst?: () => void
+}
+
+export class List implements IList {
+  private opts: ListOptions
+  private $el: HTMLElement
+  getEl() {
+    return this.$el
+  }
+
+  private $commentsWrap: HTMLElement
+  getCommentsWrapEl() {
     return this.$commentsWrap
   }
 
-  protected commentNodes: CommentNode[] = []
+  private commentNodes: CommentNode[] = []
   getCommentNodes() {
     return this.commentNodes
   }
 
-  constructor(ctx: ContextApi) {
-    super(ctx)
+  constructor(opts: ListOptions) {
+    this.opts = opts
 
     // Init base element
     this.$el = Utils.createElement(ListHTML)
     this.$commentsWrap = this.$el.querySelector('.atk-list-comments-wrap')!
 
     // Init paginator
-    initListPaginatorFunc(ctx)
+    initListPaginatorFunc({
+      getList: () => this,
+      ...opts,
+    })
 
     // Bind events
     this.initCrudEvents()
   }
 
-  getListLayout({ forceFlatMode }: { forceFlatMode?: boolean } = {}) {
+  getLayout({ forceFlatMode }: { forceFlatMode?: boolean } = {}) {
     return new ListLayout({
       $commentsWrap: this.$commentsWrap,
-      nestSortBy: this.ctx.conf.nestSort,
-      nestMax: this.ctx.conf.nestMax,
+      nestSortBy: this.opts.getConf().get().nestSort,
+      nestMax: this.opts.getConf().get().nestMax,
       flatMode:
-        typeof forceFlatMode === 'boolean' ? forceFlatMode : (this.ctx.conf.flatMode as boolean),
+        typeof forceFlatMode === 'boolean'
+          ? forceFlatMode
+          : (this.opts.getConf().get().flatMode as boolean),
       // flatMode must be boolean because it had been handled when Artalk.init
       createCommentNode: (d, r) => {
-        const node = createCommentNode(this.ctx, d, r, { forceFlatMode })
+        const node = createCommentNode({ forceFlatMode, ...this.opts }, d, r)
         this.commentNodes.push(node) // store node instance
         return node
       },
@@ -51,12 +73,12 @@ export default class List extends Component {
   }
 
   private initCrudEvents() {
-    this.ctx.on('list-load', (comments) => {
+    this.opts.getEvents().on('list-load', (comments) => {
       // 导入数据
-      this.getListLayout().import(comments)
+      this.getLayout().import(comments)
     })
 
-    this.ctx.on('list-loaded', (comments) => {
+    this.opts.getEvents().on('list-loaded', (comments) => {
       if (comments.length === 0) {
         this.commentNodes = []
         this.$commentsWrap.innerHTML = ''
@@ -64,15 +86,15 @@ export default class List extends Component {
     })
 
     // When comment insert
-    this.ctx.on('comment-inserted', (comment) => {
+    this.opts.getEvents().on('comment-inserted', (comment) => {
       const replyComment = comment.rid
         ? this.commentNodes.find((c) => c.getID() === comment.rid)?.getData()
         : undefined
-      this.getListLayout().insert(comment, replyComment)
+      this.getLayout().insert(comment, replyComment)
     })
 
     // When comment delete
-    this.ctx.on('comment-deleted', (comment) => {
+    this.opts.getEvents().on('comment-deleted', (comment) => {
       const node = this.commentNodes.find((c) => c.getID() === comment.id)
       if (!node) {
         console.error(`comment node id=${comment.id} not found`)
@@ -84,7 +106,7 @@ export default class List extends Component {
     })
 
     // When comment update
-    this.ctx.on('comment-updated', (comment) => {
+    this.opts.getEvents().on('comment-updated', (comment) => {
       const node = this.commentNodes.find((c) => c.getID() === comment.id)
       node && node.setData(comment)
     })

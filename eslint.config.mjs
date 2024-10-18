@@ -81,6 +81,7 @@ export default eslintTs.config(
       'import-x/no-named-as-default-member': 'off',
       'import-x/no-named-as-default': 'off',
       'import-x/default': 'off', // fix https://github.com/import-js/eslint-plugin-import/issues/1800
+      'import-x/namespace': 'off', // very slow, see https://github.com/import-js/eslint-plugin-import/issues/2340
       'import-x/order': 'warn',
     },
     settings: {

@@ -32,6 +32,50 @@ const invalid = [
     `,
     errorId: 'noEventInWatchConf',
   },
+  {
+    name: "should not allow 'inject' call in nested blocks",
+    code: `
+      import type { ArtalkPlugin } from 'artalk'
+
+      export const TestPlugin: ArtalkPlugin = (ctx) => {
+        const fn = () => {
+          const foo = ctx.inject('foo')
+        }
+      }
+    `,
+    errorId: 'noInjectInNestedBlocks',
+  },
+  {
+    name: "should not allow 'inject' call outside ArtalkPlugin",
+    code: `
+      function fn(ctx) {
+        const foo = ctx.inject('foo')
+      }
+    `,
+    errorId: 'noInjectOutsidePlugin',
+  },
+  {
+    name: 'should not allow circular dependency providing',
+    code: `
+      import type { ArtalkPlugin } from 'artalk'
+
+      export const TestPlugin: ArtalkPlugin = (ctx) => {
+        ctx.provide('foo', (foo) => {}, ['foo'])
+      }
+    `,
+    errorId: 'noCycleDeps',
+  },
+  {
+    name: 'should not allow multiple ArtalkPlugin in a single file',
+    code: `
+      import type { ArtalkPlugin } from 'artalk'
+
+      export const TestPlugin: ArtalkPlugin = (ctx) => {}
+
+      export const TestPlugin2: ArtalkPlugin = (ctx) => {}
+    `,
+    errorId: 'onePluginPerFile',
+  },
 ]
 
 for (const { name, code, errorId } of invalid) {

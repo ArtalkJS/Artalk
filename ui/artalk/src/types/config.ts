@@ -139,8 +139,29 @@ export interface Config {
   /** Enable version check */
   versionCheck: boolean
 
-  /** Use backend configuration */
+  /**
+   * Use remote configuration (from the backend server)
+   *
+   * @deprecated
+   * The `useBackendConf` is always `true` and planned to be removed in the future.
+   *
+   * Please use `preferRemoteConf` to control the priority of the remote and local configuration.
+   *
+   * @default true
+   */
   useBackendConf: boolean
+
+  /**
+   * Prefer to use the local configuration if available
+   *
+   * @note
+   * If `true`, the local config will be used as a fallback (remote config first).
+   *
+   * If `false`, the local config will override the remote config (local config first).
+   *
+   * @default false
+   */
+  preferRemoteConf: boolean
 
   /** Localization settings */
   locale: I18n | string

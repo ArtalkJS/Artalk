@@ -1,6 +1,6 @@
 {
   "name": "@artalk/plugin-auth",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "LGPL-3.0-only",
   "description": "Auth plugin for artalk",
   "type": "module",

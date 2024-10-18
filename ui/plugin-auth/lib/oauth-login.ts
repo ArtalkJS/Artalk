@@ -1,4 +1,4 @@
-import type { ContextApi } from 'artalk'
+import type { AuthContext } from '../types'
 
 let watchTimer: any = null
 let messageHandler: ((evt: MessageEvent) => void) | null = null
@@ -8,7 +8,7 @@ const clearListener = () => {
   messageHandler && window.removeEventListener('message', messageHandler)
 }
 
-export const startOAuthLogin = (ctx: ContextApi, url: string) => {
+export const startOAuthLogin = (ctx: AuthContext, url: string) => {
   clearListener()
 
   const width = 1020

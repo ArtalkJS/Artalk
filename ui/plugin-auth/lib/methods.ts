@@ -1,4 +1,4 @@
-import { ContextApi } from 'artalk'
+import type { Api } from 'artalk'
 
 export interface LoginMethod {
   name: string
@@ -8,8 +8,8 @@ export interface LoginMethod {
   onClick?: () => void
 }
 
-export const fetchMethods = async (ctx: ContextApi) => {
-  const { data } = await ctx.getApi().conf.getSocialLoginProviders()
+export const fetchMethods = async (api: Api) => {
+  const { data } = await api.conf.getSocialLoginProviders()
   return data.providers
     .map<LoginMethod>(({ name, label, icon, path }) => {
       return { name, label, icon, link: path }

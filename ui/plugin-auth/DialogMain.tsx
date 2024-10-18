@@ -1,5 +1,4 @@
-import type { ContextApi } from 'artalk'
-import { Show, createResource, createSignal, onMount } from 'solid-js'
+import { createResource, createSignal } from 'solid-js'
 import { Dialog } from './Dialog'
 import { DialogMethods } from './DialogMethods'
 import { DialogPageLogin } from './DialogPageLogin'
@@ -7,9 +6,10 @@ import { DialogPageRegister } from './DialogPageRegister'
 import { createLayer } from './lib/layer'
 import { DialogMerge } from './merge/DialogMerge'
 import { fetchMethods, LoginMethod } from './lib/methods'
+import type { AuthContext } from './types'
 
 interface DialogMainProps {
-  ctx: ContextApi
+  ctx: AuthContext
   onClose: () => void
   onSkip: () => void
 }
@@ -18,7 +18,7 @@ export const DialogMain = (props: DialogMainProps) => {
   const { ctx, onClose, onSkip, ...others } = props
 
   const [methods] = createResource(async () => {
-    return fetchMethods(ctx)
+    return fetchMethods(ctx.getApi())
       .then((m) =>
         m.map<LoginMethod>((mm) => {
           if (mm.name === 'email') mm.onClick = () => setPage('login')
@@ -43,7 +43,7 @@ export const DialogMain = (props: DialogMainProps) => {
   const onComplete = () => {
     onClose()
 
-    ctx.get('editor').getUI().$header.style.display = 'none'
+    ctx.getEditor().getUI().$header.style.display = 'none'
 
     // Check need to merge
     ctx

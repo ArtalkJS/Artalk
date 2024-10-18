@@ -1,8 +1,8 @@
-import type { ContextApi } from 'artalk'
 import { createSignal } from 'solid-js'
+import type { AuthContext } from './types'
 
 interface VerifyButtonProps {
-  ctx: ContextApi
+  ctx: AuthContext
   getEmail: () => string
   onSend?: () => void
 }

@@ -1,25 +1,26 @@
-import type { ContextApi, LocalUser } from 'artalk'
+import type { LocalUser } from 'artalk'
+import type { AuthContext } from '../types'
 
 interface ResponseLoginData {
   user: Omit<LocalUser, 'token'>
   token: string
 }
 
-export const loginByApiRes = (ctx: ContextApi, { user, token }: ResponseLoginData) => {
-  ctx.get('user').update({
+export const loginByApiRes = (ctx: AuthContext, { user, token }: ResponseLoginData) => {
+  ctx.getUser().update({
     ...user,
     token,
   })
 }
 
-export const loginByToken = (ctx: ContextApi, token: string) => {
-  ctx.get('user').update({ token })
+export const loginByToken = (ctx: AuthContext, token: string) => {
+  ctx.getUser().update({ token })
   ctx
     .getApi()
     .user.getUser()
     .then((res) => {
       const { user } = res.data
-      ctx.get('user').update({
+      ctx.getUser().update({
         name: user.name,
         email: user.email,
         link: user.link,

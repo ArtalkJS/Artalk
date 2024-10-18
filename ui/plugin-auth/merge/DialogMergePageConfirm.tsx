@@ -1,10 +1,10 @@
 import { createSignal } from 'solid-js'
-import type { ContextApi } from 'artalk'
 import { DialogFooter } from '../DialogFooter'
 import { loginByToken } from '../lib/token-login'
+import type { AuthContext } from '../types'
 
 interface DialogMergePageConfirmProps {
-  ctx: ContextApi
+  ctx: AuthContext
   usernames: string[]
   onClose: () => void
 }

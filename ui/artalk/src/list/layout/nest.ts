@@ -1,6 +1,5 @@
 import type { LayoutStrategyCreator } from '.'
 import type { CommentNode } from '@/comment'
-import * as Ui from '@/lib/ui'
 import * as ListNest from '@/list/nest'
 
 export const createNestStrategy: LayoutStrategyCreator = (opts) => ({

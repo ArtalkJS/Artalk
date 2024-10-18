@@ -40,6 +40,7 @@ interface PageVoteState {
 }
 
 export const PageVoteWidget: ArtalkPlugin = (ctx) => {
+  const conf = ctx.inject('config')
   let state: PageVoteState = initState()
   let cleanup: (() => void) | undefined
 
@@ -63,7 +64,7 @@ export const PageVoteWidget: ArtalkPlugin = (ctx) => {
   // List fetched handler
   let currPageId = 0
   function listFetchedHandler({ data }: ListFetchedArgs) {
-    if (!ctx.getConf().pageVote || !checkEls(state) || !data) return
+    if (!conf.get().pageVote || !checkEls(state) || !data) return
 
     if (currPageId !== data.page.id) {
       // Initialize vote status in a new page

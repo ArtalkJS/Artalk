@@ -1,9 +1,8 @@
 import Mover from '../plugins/editor/mover'
-import type Editor from './editor'
-import type { EditorState, CommentData } from '@/types'
+import type { EditorState, CommentData, Editor } from '@/types'
 import * as Ui from '@/lib/ui'
 
-export default class EditorStateManager {
+export class EditorStateManager {
   constructor(private editor: Editor) {}
 
   private stateCurt: EditorState = 'normal'
@@ -27,24 +26,23 @@ export default class EditorStateManager {
       this.stateUnmountFn = null
 
       // move editor back to the initial position
-      this.editor.getPlugs()?.get(Mover)?.back()
+      this.editor.getPlugins()?.get(Mover)?.back()
     }
 
     // invoke effect function and save unmount function
     if (state !== 'normal' && payload) {
       // move editor position
       let moveAfterEl = payload.$comment
-      if (!this.editor.conf.flatMode)
+      if (!this.editor.getOptions().getConf().get().flatMode)
         moveAfterEl = moveAfterEl.querySelector<HTMLElement>('.atk-footer')!
-      this.editor.getPlugs()?.get(Mover)?.move(moveAfterEl)
+      this.editor.getPlugins()?.get(Mover)?.move(moveAfterEl)
 
-      const $relative =
-        this.editor.ctx.conf.scrollRelativeTo && this.editor.ctx.conf.scrollRelativeTo()
+      const $relative = this.editor.getOptions().getConf().get().scrollRelativeTo?.()
       Ui.scrollIntoView(this.editor.getUI().$el, true, $relative)
 
       const plugin = this.editor
-        .getPlugs()
-        ?.getPlugs()
+        .getPlugins()
+        ?.getPlugins()
         .find((p) => p.editorStateEffectWhen === state)
       if (plugin && plugin.editorStateEffect) {
         this.stateUnmountFn = plugin.editorStateEffect(payload.comment)

@@ -6,7 +6,7 @@ import UADetect from '../lib/detect'
 import CommentUI from './render'
 import CommentActions from './actions'
 import $t from '@/i18n'
-import type { CommentData, ArtalkConfig, ContextApi } from '@/types'
+import type { CommentData, Config, Context } from '@/types'
 
 export interface CommentOptions {
   // Hooks
@@ -22,16 +22,16 @@ export interface CommentOptions {
   voteDown: boolean
   uaBadge: boolean
   nestMax: number
-  gravatar: ArtalkConfig['gravatar']
-  heightLimit: ArtalkConfig['heightLimit']
-  avatarURLBuilder: ArtalkConfig['avatarURLBuilder']
-  scrollRelativeTo: ArtalkConfig['scrollRelativeTo']
-  dateFormatter: ArtalkConfig['dateFormatter']
+  gravatar: Config['gravatar']
+  heightLimit: Config['heightLimit']
+  avatarURLBuilder: Config['avatarURLBuilder']
+  scrollRelativeTo: Config['scrollRelativeTo']
+  dateFormatter: Config['dateFormatter']
 
   // TODO: Move to plugin folder and remove from core
   getApi: () => Api
-  replyComment: ContextApi['replyComment']
-  editComment: ContextApi['editComment']
+  replyComment: Context['replyComment']
+  editComment: Context['editComment']
 }
 
 export default class CommentNode {

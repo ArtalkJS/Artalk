@@ -1,11 +1,11 @@
-import type { Layer as LayerApi } from '@/types/layer'
+import type { Layer as ILayer } from '@/types/layer'
 
 export interface LayerOptions {
   onShow: () => void
   onHide: () => void
 }
 
-export class Layer implements LayerApi {
+export class Layer implements ILayer {
   private allowMaskClose = true
   private onAfterHide?: () => void
 

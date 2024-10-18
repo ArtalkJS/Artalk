@@ -1,19 +1,19 @@
+import type { ListOptions } from './list'
 import { Paginator } from './paginator'
 import ReadMorePaginator from './paginator/read-more'
 import UpDownPaginator from './paginator/up-down'
 import $t from '@/i18n'
-import type { ArtalkConfig, ContextApi } from '@/types'
+import type { Config, List, ListLastFetchData } from '@/types'
 
-function createPaginatorByConf(conf: Pick<ArtalkConfig, 'pagination'>): Paginator {
+function createPaginatorByConf(conf: Pick<Config, 'pagination'>): Paginator {
   if (conf.pagination.readMore) return new ReadMorePaginator()
   return new UpDownPaginator()
 }
 
-function getPageDataByLastData(ctx: ContextApi): {
+function getPageDataByLastData(last: ListLastFetchData | undefined): {
   offset: number
   total: number
 } {
-  const last = ctx.getData().getListLastFetch()
   const r = { offset: 0, total: 0 }
   if (!last) return r
 
@@ -23,12 +23,17 @@ function getPageDataByLastData(ctx: ContextApi): {
   return r
 }
 
-export const initListPaginatorFunc = (ctx: ContextApi) => {
+export interface PaginatorInitOptions extends ListOptions {
+  getList: () => List
+}
+
+export const initListPaginatorFunc = (opts: PaginatorInitOptions) => {
   let paginator: Paginator | null = null
 
   // Init paginator when conf loaded
-  ctx.watchConf(['pagination', 'locale'], (conf) => {
-    const list = ctx.get('list')
+  opts.getConf().watchConf(['pagination', 'locale'], (conf) => {
+    const list = opts.getList()
+    const data = opts.getData()
 
     if (paginator) paginator.dispose() // if had been init, dispose it
 
@@ -36,47 +41,48 @@ export const initListPaginatorFunc = (ctx: ContextApi) => {
     paginator = createPaginatorByConf(conf)
 
     // create paginator dom
-    const { offset, total } = getPageDataByLastData(ctx)
+    const { offset, total } = getPageDataByLastData(data.getListLastFetch())
     const $paginator = paginator.create({
-      ctx,
       pageSize: conf.pagination.pageSize,
       total,
 
       readMoreAutoLoad: conf.pagination.autoLoad,
+
+      ...opts,
     })
 
     // mount paginator dom
-    list.$commentsWrap.after($paginator)
+    list.getCommentsWrapEl().after($paginator)
 
     // update paginator info
     paginator?.update(offset, total)
   })
 
   // When list loaded
-  ctx.on('list-loaded', (comments) => {
+  opts.getEvents().on('list-loaded', (comments) => {
     // update paginator info
-    const { offset, total } = getPageDataByLastData(ctx)
+    const { offset, total } = getPageDataByLastData(opts.getData().getListLastFetch())
     paginator?.update(offset, total)
   })
 
   // When list fetch
-  ctx.on('list-fetch', (params) => {
+  opts.getEvents().on('list-fetch', (params) => {
     // if clear comments when fetch new page data
-    if (ctx.getData().getComments().length > 0 && paginator?.getIsClearComments(params)) {
-      ctx.getData().clearComments()
+    if (opts.getData().getComments().length > 0 && paginator?.getIsClearComments(params)) {
+      opts.getData().clearComments()
     }
   })
 
   // When list error
-  ctx.on('list-failed', () => {
+  opts.getEvents().on('list-failed', () => {
     paginator?.showErr?.($t('loadFail'))
   })
 
   // loading
-  ctx.on('list-fetch', (params) => {
+  opts.getEvents().on('list-fetch', (params) => {
     paginator?.setLoading(true)
   })
-  ctx.on('list-fetched', ({ params }) => {
+  opts.getEvents().on('list-fetched', ({ params }) => {
     paginator?.setLoading(false)
   })
 }

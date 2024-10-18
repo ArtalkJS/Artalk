@@ -2,9 +2,11 @@ import type { ArtalkPlugin } from '@/types'
 import * as Utils from '@/lib/utils'
 
 export const Unread: ArtalkPlugin = (ctx) => {
+  const conf = ctx.inject('config')
+
   ctx.on('comment-rendered', (comment) => {
     // comment unread highlight
-    if (ctx.conf.listUnreadHighlight === true) {
+    if (conf.get().listUnreadHighlight) {
       const notifies = ctx.getData().getNotifies()
       const notify = notifies.find((o) => o.comment_id === comment.getID())
 

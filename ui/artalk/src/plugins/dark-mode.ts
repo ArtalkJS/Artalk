@@ -14,12 +14,15 @@ function updateClassnames($els: HTMLElement[], darkMode: boolean) {
 }
 
 export const DarkMode: ArtalkPlugin = (ctx) => {
+  const conf = ctx.inject('config')
+  const layers = ctx.inject('layers')
+
   // the handler bind to Artalk instance, don't forget to remove it when Artalk instance destroyed
   let darkModeAutoHandler: ((evt: MediaQueryListEvent) => void) | undefined
 
   const sync = (darkMode: boolean | 'auto') => {
     // the elements that classnames need to be updated when darkMode changed
-    const $els = [ctx.$root, ctx.get('layerManager').getEl()]
+    const $els = [ctx.getEl(), layers.getEl()]
 
     // init darkModeMedia if not exists, and only create once
     if (!darkModeMedia) {
@@ -49,7 +52,7 @@ export const DarkMode: ArtalkPlugin = (ctx) => {
   }
 
   ctx.watchConf(['darkMode'], (conf) => sync(conf.darkMode))
-  ctx.on('created', () => sync(ctx.conf.darkMode))
+  ctx.on('created', () => sync(conf.get().darkMode))
   ctx.on('unmounted', () => {
     // if handler exists, don't forget to remove it, or it will cause memory leak
     darkModeAutoHandler && darkModeMedia?.removeEventListener('change', darkModeAutoHandler)

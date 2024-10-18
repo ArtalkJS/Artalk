@@ -2,10 +2,10 @@ import type { ArtalkPlugin } from '@/types'
 import { version as ARTALK_VERSION } from '~/package.json'
 
 export const Copyright: ArtalkPlugin = (ctx) => {
-  ctx.on('mounted', () => {
-    const list = ctx.get('list')
+  const list = ctx.inject('list')
 
-    const $copyright = list.$el.querySelector<HTMLElement>('.atk-copyright')
+  ctx.on('mounted', () => {
+    const $copyright = list.getEl().querySelector<HTMLElement>('.atk-copyright')
     if (!$copyright) return
 
     $copyright.innerHTML =

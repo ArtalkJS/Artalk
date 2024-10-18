@@ -3,9 +3,8 @@ import AdminChecker from './admin'
 import type { Api } from '@/api'
 import Dialog from '@/components/dialog'
 import $t from '@/i18n'
-import type { ContextApi } from '@/types'
-import type User from '@/lib/user'
 import * as Utils from '@/lib/utils'
+import type { UserManager, CheckerManager as ICheckerManager, LayerManager } from '@/types'
 
 export interface CheckerCaptchaPayload extends CheckerPayload {
   img_data?: string
@@ -19,8 +18,9 @@ export interface CheckerPayload {
 }
 
 export interface CheckerLauncherOptions {
-  getCtx: () => ContextApi
   getApi: () => Api
+  getLayers: () => LayerManager
+  getUser: () => UserManager
   getCaptchaIframeURL: () => string
   onReload: () => void
 }
@@ -43,25 +43,25 @@ function wrapPromise<P extends CheckerPayload = CheckerPayload>(fn: (p: P) => vo
 }
 
 /**
- * Checker 发射台
+ * Checker Launcher
  */
-export default class CheckerLauncher {
+export class CheckerLauncher implements ICheckerManager {
   constructor(private opts: CheckerLauncherOptions) {}
 
   public checkCaptcha: (payload: CheckerCaptchaPayload) => Promise<void> = wrapPromise((p) => {
-    this.fire(CaptchaChecker, p, (ctx) => {
+    this.check(CaptchaChecker, p, (ctx) => {
       ctx.set('img_data', p.img_data)
       ctx.set('iframe', p.iframe)
     })
   })
 
   public checkAdmin: (payload: CheckerPayload) => Promise<void> = wrapPromise((p) => {
-    this.fire(AdminChecker, p)
+    this.check(AdminChecker, p)
   })
 
-  public fire(checker: Checker, payload: CheckerPayload, postFire?: (c: CheckerCtx) => void) {
+  public check(checker: Checker, payload: CheckerPayload, beforeCheck?: (c: CheckerCtx) => void) {
     // 显示层
-    const layer = this.opts.getCtx().get('layerManager').create(`checker-${new Date().getTime()}`)
+    const layer = this.opts.getLayers().create(`checker-${new Date().getTime()}`)
     layer.show()
 
     const close = () => {
@@ -77,7 +77,7 @@ export default class CheckerLauncher {
       },
       get: (key) => checkerStore[key],
       getOpts: () => this.opts,
-      getUser: () => this.opts.getCtx().get('user'),
+      getUser: () => this.opts.getUser(),
       getApi: () => this.opts.getApi(),
       hideInteractInput: () => {
         hideInteractInput = true
@@ -93,7 +93,7 @@ export default class CheckerLauncher {
       },
     }
 
-    if (postFire) postFire(checkerCtx)
+    if (beforeCheck) beforeCheck(checkerCtx)
 
     // 创建表单
     const formEl = Utils.createElement()
@@ -202,7 +202,7 @@ export interface CheckerCtx {
   set<K extends keyof CheckerStore>(key: K, val: CheckerStore[K]): void
   getOpts(): CheckerLauncherOptions
   getApi(): Api
-  getUser(): User
+  getUser(): UserManager
   hideInteractInput(): void
   triggerSuccess(): void
   cancel(): void

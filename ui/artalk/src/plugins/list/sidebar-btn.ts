@@ -2,11 +2,12 @@ import type { ArtalkPlugin } from '@/types'
 import $t from '@/i18n'
 
 export const SidebarBtn: ArtalkPlugin = (ctx) => {
+  const list = ctx.inject('list')
   let $openSidebarBtn: HTMLElement | null = null
 
   const syncByUser = () => {
     if (!$openSidebarBtn) return
-    const user = ctx.get('user').getData()
+    const user = ctx.inject('user').getData()
 
     // 已输入个人信息
     if (!!user.name && !!user.email) {
@@ -21,9 +22,7 @@ export const SidebarBtn: ArtalkPlugin = (ctx) => {
   }
 
   ctx.watchConf(['locale'], (conf) => {
-    const list = ctx.get('list')
-
-    $openSidebarBtn = list.$el.querySelector<HTMLElement>('[data-action="open-sidebar"]')
+    $openSidebarBtn = list.getEl().querySelector<HTMLElement>('[data-action="open-sidebar"]')
     if (!$openSidebarBtn) return
 
     $openSidebarBtn.onclick = () => {

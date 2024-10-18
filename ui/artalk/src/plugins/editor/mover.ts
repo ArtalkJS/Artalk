@@ -1,7 +1,7 @@
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import * as Utils from '@/lib/utils'
 
-export default class Mover extends EditorPlug {
+export default class Mover extends EditorPlugin {
   private isMoved = false
 
   move(afterEl: HTMLElement) {
@@ -24,8 +24,8 @@ export default class Mover extends EditorPlug {
     if (!this.isMoved) return
     this.isMoved = false
     this.kit
-      .useGlobalCtx()
-      .$root.querySelector('.atk-editor-travel-placeholder')
+      .useArtalkRootEl()
+      .querySelector('.atk-editor-travel-placeholder')
       ?.replaceWith(this.kit.useUI().$el)
     this.kit.useUI().$el.classList.remove('editor-traveling')
   }

@@ -1,6 +1,6 @@
 import './emoticons.scss'
 
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
 import type { EmoticonListData, EmoticonGrpData } from '@/types'
 import * as Utils from '@/lib/utils'
@@ -14,7 +14,7 @@ type OwOFormatType = {
   }
 }
 
-export default class Emoticons extends EditorPlug {
+export default class Emoticons extends EditorPlugin {
   private emoticons: EmoticonListData = []
   private loadingTask: Promise<void> | null = null
 

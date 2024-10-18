@@ -1,4 +1,4 @@
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
 import SubmitAddPreset from './submit-add'
 import $t from '@/i18n'
@@ -12,7 +12,7 @@ interface CustomSubmit {
   post?: (nComment: CommentData) => void
 }
 
-export default class Submit extends EditorPlug {
+export default class Submit extends EditorPlugin {
   private customs: CustomSubmit[] = []
   private defaultPreset: SubmitAddPreset
 
@@ -25,10 +25,10 @@ export default class Submit extends EditorPlug {
 
     this.kit.useMounted(() => {
       // invoke `do()` when event `editor-submit` is triggered
-      this.kit.useGlobalCtx().on('editor-submit', onEditorSubmit)
+      this.kit.useEvents().on('editor-submit', onEditorSubmit)
     })
     this.kit.useUnmounted(() => {
-      this.kit.useGlobalCtx().off('editor-submit', onEditorSubmit)
+      this.kit.useEvents().off('editor-submit', onEditorSubmit)
     })
   }
 
@@ -69,6 +69,6 @@ export default class Submit extends EditorPlug {
     }
 
     this.kit.useEditor().reset() // 复原编辑器
-    this.kit.useGlobalCtx().trigger('editor-submitted')
+    this.kit.useEvents().trigger('editor-submitted')
   }
 }

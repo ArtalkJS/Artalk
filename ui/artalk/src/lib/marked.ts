@@ -4,7 +4,7 @@ import type { MarkedOptions } from 'marked'
 import { sanitize } from './sanitizer'
 import { renderCode } from './highlight'
 import { getRenderer } from './marked-renderer'
-import type { ArtalkConfig } from '@/types'
+import type { Config } from '@/types'
 
 type Replacer = (raw: string) => string
 
@@ -27,8 +27,8 @@ export function setReplacers(arr: Replacer[]) {
 }
 
 export interface MarkedInitOptions {
-  markedOptions: ArtalkConfig['markedOptions']
-  imgLazyLoad: ArtalkConfig['imgLazyLoad']
+  markedOptions: Config['markedOptions']
+  imgLazyLoad: Config['imgLazyLoad']
 }
 
 /** 初始化 marked */

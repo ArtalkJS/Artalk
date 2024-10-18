@@ -5,7 +5,7 @@ import * as Utils from '@/lib/utils'
 /**
  * Editor 插件
  */
-class EditorPlug {
+export class EditorPlugin {
   $btn?: HTMLElement
   $panel?: HTMLElement
   contentTransformer?(rawContent: string): string
@@ -52,4 +52,4 @@ class EditorPlug {
   }
 }
 
-export default EditorPlug
+export default EditorPlugin

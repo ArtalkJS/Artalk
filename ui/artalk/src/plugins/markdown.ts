@@ -4,8 +4,8 @@ import * as marked from '@/lib/marked'
 export const Markdown: ArtalkPlugin = (ctx) => {
   ctx.watchConf(['imgLazyLoad', 'markedOptions'], (conf) => {
     marked.initMarked({
-      markedOptions: ctx.getConf().markedOptions,
-      imgLazyLoad: ctx.getConf().imgLazyLoad,
+      markedOptions: conf.markedOptions,
+      imgLazyLoad: conf.imgLazyLoad,
     })
   })
 

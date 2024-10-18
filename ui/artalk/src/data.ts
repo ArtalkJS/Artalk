@@ -1,22 +1,30 @@
-import EventManager from './lib/event-manager'
 import type {
   NotifyData,
   PageData,
   CommentData,
-  DataManagerApi,
+  DataManager as IDataManager,
   ListFetchParams,
   ListLastFetchData,
-  EventPayloadMap,
+  EventManager,
 } from '@/types'
 
-export class DataManager implements DataManagerApi {
+export class DataManager implements IDataManager {
+  /** Loading status */
   private loading: boolean = false
+
+  /** List last fetch data */
   private listLastFetch?: ListLastFetchData
-  private comments: CommentData[] = [] // Note: 无层级结构 + 无须排列
+
+  /** Comment list (Flatten list and unordered) */
+  private comments: CommentData[] = []
+
+  /** Notify list */
   private notifies: NotifyData[] = []
+
+  /** Page data */
   private page?: PageData
 
-  constructor(protected events: EventManager<EventPayloadMap>) {}
+  constructor(protected events: EventManager) {}
 
   getLoading() {
     return this.loading

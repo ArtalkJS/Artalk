@@ -33,6 +33,6 @@ export default class SubmitAddPreset {
 
   postSubmitAdd(commentNew: CommentData) {
     // insert the new comment to list
-    this.kit.useGlobalCtx().getData().insertComment(commentNew)
+    this.kit.useData().insertComment(commentNew)
   }
 }

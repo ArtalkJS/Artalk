@@ -1,4 +1,4 @@
-import type { ContextApi, ArtalkPlugin, ArtalkConfig } from '@/types'
+import type { Context, ArtalkPlugin } from '@/types'
 import { Api } from '@/api'
 
 type CountCache = { [pageKey: string]: number }
@@ -17,19 +17,22 @@ export interface CountOptions {
   pvAdd?: boolean
 }
 
-export const PvCountWidget: ArtalkPlugin = (ctx: ContextApi) => {
-  ctx.watchConf(['site', 'pageKey', 'pageTitle', 'countEl', 'pvEl', 'statPageKeyAttr'], (conf) => {
-    initCountWidget({
-      getApi: () => ctx.getApi(),
-      siteName: conf.site,
-      pageKey: conf.pageKey,
-      pageTitle: conf.pageTitle,
-      countEl: conf.countEl,
-      pvEl: conf.pvEl,
-      pageKeyAttr: conf.statPageKeyAttr,
-      pvAdd: typeof ctx.conf.pvAdd === 'boolean' ? ctx.conf.pvAdd : true,
-    })
-  })
+export const PvCountWidget: ArtalkPlugin = (ctx: Context) => {
+  ctx.watchConf(
+    ['site', 'pageKey', 'pageTitle', 'countEl', 'pvEl', 'statPageKeyAttr', 'pvAdd'],
+    (conf) => {
+      initCountWidget({
+        getApi: () => ctx.getApi(),
+        siteName: conf.site,
+        pageKey: conf.pageKey,
+        pageTitle: conf.pageTitle,
+        countEl: conf.countEl,
+        pvEl: conf.pvEl,
+        pageKeyAttr: conf.statPageKeyAttr,
+        pvAdd: conf.pvAdd,
+      })
+    },
+  )
 }
 
 /** Initialize count widgets */

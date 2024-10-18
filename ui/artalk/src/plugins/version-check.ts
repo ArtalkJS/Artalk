@@ -1,15 +1,13 @@
-import type { ArtalkPlugin } from '@/types'
+import type { ArtalkPlugin, List } from '@/types'
 import { version as ARTALK_VERSION } from '~/package.json'
-import type List from '~/src/list/list'
-import * as Ui from '@/lib/ui'
 import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
 
 let IgnoreVersionCheck = false
 
 export const VersionCheck: ArtalkPlugin = (ctx) => {
+  const list = ctx.inject('list')
   ctx.watchConf(['apiVersion', 'versionCheck'], (conf) => {
-    const list = ctx.get('list')
     if (conf.apiVersion && conf.versionCheck && !IgnoreVersionCheck)
       versionCheck(list, ARTALK_VERSION, conf.apiVersion)
   })
@@ -33,5 +31,5 @@ function versionCheck(list: List, feVer: string, beVer: string) {
     IgnoreVersionCheck = true
   }
   errEl.append(ignoreBtn)
-  list.$el.parentElement!.prepend(errEl)
+  list.getEl().parentElement!.prepend(errEl)
 }

@@ -1,8 +1,17 @@
 import { getEnabledPlugs } from './editor'
-import EditorPlug from './editor/_plug'
+import EditorPlugin from './editor/_plug'
 import PlugKit from './editor/_kit'
-import EventManager from '@/lib/event-manager'
-import type { EditorApi, ArtalkPlugin } from '@/types'
+import { EventManager } from '@/lib/event-manager'
+import type {
+  Editor,
+  ArtalkPlugin,
+  DataManager,
+  ConfigManager,
+  UserManager,
+  EditorPluginManager as IEditorPluginManager,
+  CheckerManager,
+} from '@/types'
+import type { Api } from '@/api'
 
 export interface EditorEventPayloadMap {
   mounted: undefined
@@ -10,44 +19,58 @@ export interface EditorEventPayloadMap {
   'header-input': { field: string; $input: HTMLInputElement }
   'header-change': { field: string; $input: HTMLInputElement }
   'content-updated': string
-  'panel-show': EditorPlug
-  'panel-hide': EditorPlug
+  'panel-show': EditorPlugin
+  'panel-hide': EditorPlugin
   'panel-close': undefined
 
   'editor-close': undefined
   'editor-open': undefined
+  'editor-submit': undefined
+  'editor-submitted': undefined
 }
 
 export const EditorKit: ArtalkPlugin = (ctx) => {
-  const editor = ctx.get('editor')
-
-  const editorPlugs = new PlugManager(editor)
-  ctx.inject('editorPlugs', editorPlugs)
+  ctx.provide(
+    'editorPlugs',
+    (editor, config, user, data, checkers, api) => {
+      const pluginManager = new PluginManager({
+        getArtalkRootEl: () => ctx.getEl(),
+        getEditor: () => editor,
+        getConf: () => config,
+        getUser: () => user,
+        getApi: () => api,
+        getData: () => data,
+        getCheckers: () => checkers,
+        onSubmitted: () => ctx.trigger('editor-submitted'),
+      })
+      editor.setPlugins(pluginManager)
+      return pluginManager
+    },
+    ['editor', 'config', 'user', 'data', 'checkers', 'api'] as const,
+  )
 }
 
-export class PlugManager {
-  private plugs: EditorPlug[] = []
-  private openedPlug: EditorPlug | null = null
+export interface PluginManagerOptions {
+  getArtalkRootEl: () => HTMLElement
+  getEditor: () => Editor
+  getConf: () => ConfigManager
+  getUser: () => UserManager
+  getApi: () => Api
+  getData: () => DataManager
+  getCheckers: () => CheckerManager
+  onSubmitted: () => void
+}
+
+export class PluginManager implements IEditorPluginManager {
+  private plugins: EditorPlugin[] = []
+  private openedPlug: EditorPlugin | null = null
   private events = new EventManager<EditorEventPayloadMap>()
 
-  getPlugs() {
-    return this.plugs
-  }
-  getEvents() {
-    return this.events
-  }
-
-  private clear() {
-    this.plugs = []
-    this.events = new EventManager()
-    if (this.openedPlug) this.closePlugPanel()
-  }
-
-  constructor(public editor: EditorApi) {
+  constructor(public opts: PluginManagerOptions) {
     let confLoaded = false // config not loaded at first time
-    this.editor.ctx.watchConf(
-      ['imgUpload', 'emoticons', 'preview', 'editorTravel', 'locale'],
-      (conf) => {
+    this.opts
+      .getConf()
+      .watchConf(['imgUpload', 'emoticons', 'preview', 'editorTravel', 'locale'], (conf) => {
         // trigger unmount event will call all plugs' unmount function
         // (this will only be called while conf reloaded, not be called at first time)
         confLoaded && this.getEvents().trigger('unmounted')
@@ -59,7 +82,7 @@ export class PlugManager {
         getEnabledPlugs(conf).forEach((Plug) => {
           // create the plug instance
           const kit = new PlugKit(this)
-          this.plugs.push(new Plug(kit))
+          this.plugins.push(new Plug(kit))
         })
 
         // trigger event for plug initialization
@@ -68,33 +91,56 @@ export class PlugManager {
 
         // refresh the plug UI
         this.loadPluginUI()
-      },
-    )
+      })
 
-    this.events.on('panel-close', () => this.closePlugPanel())
+    this.events.on('panel-close', () => this.closePluginPanel())
+    this.events.on('editor-submitted', () => opts.onSubmitted())
+  }
+
+  getPlugins() {
+    return this.plugins
+  }
+
+  getEvents() {
+    return this.events
+  }
+
+  getEditor() {
+    return this.opts.getEditor()
+  }
+
+  getOptions() {
+    return this.opts
+  }
+
+  private clear() {
+    this.plugins = []
+    this.events = new EventManager()
+    if (this.openedPlug) this.closePluginPanel()
   }
 
   private loadPluginUI() {
     // handle ui, clear and reset the plug btns and plug panels
-    this.editor.getUI().$plugPanelWrap.innerHTML = ''
-    this.editor.getUI().$plugPanelWrap.style.display = 'none'
-    this.editor.getUI().$plugBtnWrap.innerHTML = ''
+    this.getEditor().getUI().$plugPanelWrap.innerHTML = ''
+    this.getEditor().getUI().$plugPanelWrap.style.display = 'none'
+    this.getEditor().getUI().$plugBtnWrap.innerHTML = ''
 
     // load the plug UI
-    this.plugs.forEach((plug) => this.loadPluginItem(plug))
+    this.plugins.forEach((plug) => this.loadPluginItem(plug))
   }
 
   /** Load the plug btn and plug panel on editor ui */
-  private loadPluginItem(plug: EditorPlug) {
+  private loadPluginItem(plug: EditorPlugin) {
     const $btn = plug.$btn
     if (!$btn) return
-    this.editor.getUI().$plugBtnWrap.appendChild($btn)
+    this.getEditor().getUI().$plugBtnWrap.appendChild($btn)
 
     // bind the event when click plug btn
     !$btn.onclick &&
       ($btn.onclick = () => {
         // removing the active class from all the buttons
-        this.editor
+        this.opts
+          .getEditor()
           .getUI()
           .$plugBtnWrap.querySelectorAll('.active')
           .forEach((item) => item.classList.remove('active'))
@@ -102,13 +148,13 @@ export class PlugManager {
         // if the plug is not the same as the openedPlug,
         if (plug !== this.openedPlug) {
           // then open the plug current clicked plug panel
-          this.openPlugPanel(plug)
+          this.openPluginPanel(plug)
 
           // add active class for current plug panel
           $btn.classList.add('active')
         } else {
           // then close the plug
-          this.closePlugPanel()
+          this.closePluginPanel()
         }
       })
 
@@ -116,17 +162,17 @@ export class PlugManager {
     const $panel = plug.$panel
     if ($panel) {
       $panel.style.display = 'none'
-      this.editor.getUI().$plugPanelWrap.appendChild($panel)
+      this.getEditor().getUI().$plugPanelWrap.appendChild($panel)
     }
   }
 
-  get<T extends typeof EditorPlug>(plug: T) {
-    return this.plugs.find((p) => p instanceof plug) as InstanceType<T> | undefined
+  get<T extends typeof EditorPlugin>(plug: T) {
+    return this.plugins.find((p) => p instanceof plug) as InstanceType<T> | undefined
   }
 
   /** Open the editor plug panel */
-  openPlugPanel(plug: EditorPlug) {
-    this.plugs.forEach((aPlug) => {
+  openPluginPanel(plug: EditorPlugin) {
+    this.plugins.forEach((aPlug) => {
       const plugPanel = aPlug.$panel
       if (!plugPanel) return
 
@@ -139,15 +185,15 @@ export class PlugManager {
       }
     })
 
-    this.editor.getUI().$plugPanelWrap.style.display = ''
+    this.getEditor().getUI().$plugPanelWrap.style.display = ''
     this.openedPlug = plug
   }
 
-  /** Close the editor plug panel */
-  closePlugPanel() {
+  /** Close the editor plugin panel */
+  closePluginPanel() {
     if (!this.openedPlug) return
 
-    this.editor.getUI().$plugPanelWrap.style.display = 'none'
+    this.getEditor().getUI().$plugPanelWrap.style.display = 'none'
     this.events.trigger('panel-hide', this.openedPlug)
     this.openedPlug = null
   }
@@ -155,7 +201,7 @@ export class PlugManager {
   /** Get the content which is transformed by plugs */
   getTransformedContent(rawContent: string) {
     let result = rawContent
-    this.plugs.forEach((aPlug) => {
+    this.plugins.forEach((aPlug) => {
       if (!aPlug.contentTransformer) return
       result = aPlug.contentTransformer(result)
     })

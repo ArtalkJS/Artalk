@@ -1,13 +1,6 @@
-import type { ArtalkConfig } from '@/types'
+import type { Config } from '@/types'
 
-type RequiredExcept<T, K extends keyof T> = Required<Omit<T, K>> & Pick<T, K>
-type FunctionKeys<T> = Exclude<
-  { [K in keyof T]: NonNullable<T[K]> extends (...args: any[]) => any ? K : never }[keyof T],
-  undefined
->
-type ExcludedKeys = FunctionKeys<ArtalkConfig>
-
-const defaults: RequiredExcept<ArtalkConfig, ExcludedKeys> = {
+export const Defaults: Readonly<RequiredExcept<Config, ExcludedKeys>> = {
   el: '',
   pageKey: '',
   pageTitle: '',
@@ -24,15 +17,17 @@ const defaults: RequiredExcept<ArtalkConfig, ExcludedKeys> = {
   nestMax: 2,
   nestSort: 'DATE_ASC',
 
-  emoticons: 'https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json',
+  emoticons: ARTALK_LITE
+    ? false
+    : 'https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json',
 
   pageVote: true,
 
-  vote: true,
+  vote: ARTALK_LITE ? false : true,
   voteDown: false,
-  uaBadge: true,
+  uaBadge: ARTALK_LITE ? false : true,
   listSort: true,
-  preview: true,
+  preview: ARTALK_LITE ? false : true,
   countEl: '.artalk-comment-count',
   pvEl: '.artalk-pv-count',
   statPageKeyAttr: 'data-page-key',
@@ -54,13 +49,14 @@ const defaults: RequiredExcept<ArtalkConfig, ExcludedKeys> = {
     scrollable: false,
   },
 
-  pvAdd: true,
   imgUpload: true,
-  imgLazyLoad: 'native',
+  imgLazyLoad: false,
   reqTimeout: 15000,
   versionCheck: true,
   useBackendConf: true,
   listUnreadHighlight: false,
+  pvAdd: true,
+  fetchCommentsOnInit: true,
 
   locale: 'en',
   apiVersion: '',
@@ -69,11 +65,9 @@ const defaults: RequiredExcept<ArtalkConfig, ExcludedKeys> = {
   markedOptions: {},
 }
 
-if (ARTALK_LITE) {
-  defaults.vote = false
-  defaults.uaBadge = false
-  defaults.emoticons = false
-  defaults.preview = false
-}
-
-export default defaults
+type RequiredExcept<T, K extends keyof T> = Required<Omit<T, K>> & Pick<T, K>
+type FunctionKeys<T> = Exclude<
+  { [K in keyof T]: NonNullable<T[K]> extends (...args: any[]) => any ? K : never }[keyof T],
+  undefined
+>
+type ExcludedKeys = FunctionKeys<Config>

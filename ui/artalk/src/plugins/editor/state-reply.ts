@@ -1,13 +1,12 @@
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
 import Submit from './submit'
 import SubmitAddPreset from './submit-add'
 import type { CommentData } from '@/types'
 import * as Utils from '@/lib/utils'
-import * as Ui from '@/lib/ui'
 import $t from '@/i18n'
 
-export default class StateReply extends EditorPlug {
+export default class StateReply extends EditorPlugin {
   private comment?: CommentData
 
   constructor(kit: PlugKit) {

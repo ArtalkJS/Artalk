@@ -1,10 +1,10 @@
 import type PlugKit from './_kit'
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import $t from '@/i18n'
 
 const LocalStorageKey = 'ArtalkContent'
 
-export default class LocalStorage extends EditorPlug {
+export default class LocalStorage extends EditorPlugin {
   constructor(kit: PlugKit) {
     super(kit)
 

@@ -1,5 +1,12 @@
-import { CommentData, ListData, ListFetchParams, NotifyData, PageData } from './data'
-import { ArtalkConfig, LocalUser } from './config'
+import type {
+  CommentData,
+  ListData,
+  ListFetchParams,
+  NotifyData,
+  PageData,
+  LocalUser,
+  Config,
+} from '.'
 import type { CommentNode } from '@/comment'
 
 export interface ListErrorData {
@@ -17,7 +24,7 @@ export interface EventPayloadMap {
   // Basic lifecycle
   created: undefined
   mounted: undefined
-  updated: ArtalkConfig
+  updated: Config
   unmounted: undefined
 
   'list-fetch': Partial<ListFetchParams> // 评论列表请求时
@@ -42,4 +49,21 @@ export interface EventPayloadMap {
   'user-changed': LocalUser // 本地用户数据变更时
   'sidebar-show': undefined // 侧边栏显示
   'sidebar-hide': undefined // 侧边栏隐藏
+}
+
+export type EventHandler<T> = (payload: T) => void
+
+export interface Event<T, K extends keyof T = keyof T> extends EventOptions {
+  name: K
+  handler: EventHandler<T[K]>
+}
+
+export interface EventOptions {
+  once?: boolean
+}
+
+export interface EventManager<T = EventPayloadMap> {
+  on<K extends keyof T>(name: K, handler: EventHandler<T[K]>, opts?: EventOptions): void
+  off<K extends keyof T>(name: K, handler: EventHandler<T[K]>): void
+  trigger<K extends keyof T>(name: K, payload?: T[K]): void
 }

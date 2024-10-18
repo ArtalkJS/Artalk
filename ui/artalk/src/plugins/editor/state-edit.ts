@@ -1,11 +1,11 @@
 import type PlugKit from './_kit'
-import EditorPlug from './_plug'
+import EditorPlugin from './_plug'
 import Submit from './submit'
 import type { CommentData } from '@/types'
 import $t from '@/i18n'
 import * as Utils from '@/lib/utils'
 
-export default class StateEdit extends EditorPlug {
+export default class StateEdit extends EditorPlugin {
   private comment?: CommentData
 
   constructor(kit: PlugKit) {
@@ -42,7 +42,7 @@ export default class StateEdit extends EditorPlug {
           return nComment.data
         },
         post: (nComment: CommentData) => {
-          this.kit.useGlobalCtx().getData().updateComment(nComment)
+          this.kit.useData().updateComment(nComment)
         },
       })
     })

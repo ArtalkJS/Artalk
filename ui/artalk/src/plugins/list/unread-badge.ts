@@ -1,6 +1,7 @@
 import type { ArtalkPlugin } from '@/types'
 
 export const UnreadBadge: ArtalkPlugin = (ctx) => {
+  const list = ctx.inject('list')
   let $unreadBadge: HTMLElement | null = null
 
   const showUnreadBadge = (count: number) => {
@@ -15,9 +16,7 @@ export const UnreadBadge: ArtalkPlugin = (ctx) => {
   }
 
   ctx.on('mounted', () => {
-    const list = ctx.get('list')
-
-    $unreadBadge = list.$el.querySelector<HTMLElement>('.atk-unread-badge')
+    $unreadBadge = list.getEl().querySelector<HTMLElement>('.atk-unread-badge')
   })
 
   ctx.on('notifies-updated', (notifies) => {

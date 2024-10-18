@@ -219,7 +219,7 @@ export interface ListLastFetchData {
   data?: ListData
 }
 
-export interface DataManagerApi {
+export interface DataManager {
   getLoading(): boolean
   setLoading(val: boolean): void
 

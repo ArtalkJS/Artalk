@@ -1,18 +1,20 @@
 # UI Configuration
 
-UI configuration also known as Client (Front-end) configuration, is the configuration of the Artalk interface.
+UI configuration also known as Client (Frontend) configuration, is the configuration of the Artalk interface.
 
-You can modify the UI configuration in the "[Dashboard](./sidebar.md#dashboard)" without changing the front-end code. Additionally, [Configuration files](../backend/config.md#frontend-configuration-frontend) and [Environment variables](../env.md#ui-settings) are also supported.
+You can modify the UI configuration in the "[Dashboard](./sidebar.md#dashboard)" without changing the frontend code. Additionally, [Configuration files](../backend/config.md#frontend-configuration-frontend) and [Environment variables](../env.md#ui-settings) are also supported.
 
 The priority of UI configuration is as follows:
 
 ```
-Environment Variables > Configuration File = Dashboard > Front-end Code
+Frontend Code > Environment Variables > Dashboard = Configuration File
 ```
+
+If you have modified the UI configuration through environment variables, configuration files, or the Dashboard, but the changes are not taking effect, please consider the issue of UI configuration priority.
 
 ## Configuring the Interface via `Artalk.init`
 
-When initializing with `Artalk.init` on the front-end page, pass parameters to configure the interface. Below are all the available configuration options.
+When initializing with `Artalk.init` on the frontend page, pass parameters to configure the interface. Below are all the available configuration options.
 
 ```js
 const artalk = Artalk.init({
@@ -83,14 +85,20 @@ Deploy the backend and ensure that the backend address is accessible from the fr
 
 Artalk supports unified management of multiple sites, this item is used for site isolation.
 
-### useBackendConf
+### preferRemoteConf
 
-**Refer to Backend Configuration**
+**Prefer Remote Configuration**
 
 - Type: `Boolean`
-- Default: `true` (enabled by default)
+- Default: `false` (disabled by default)
 
-You can define the front-end configuration in the backend configuration file, so that the front-end configuration always refers to the backend.
+This config option is disabled by default, meaning Artalk will prioritize using local config. Local config refers to the settings passed through `Artalk.init` in the frontend code.
+
+When enabled, Artalk will prioritize using remote config. If the remote config does not exist, it will resort to using the local config. Remote config refers to the settings returned by the backend server program, allowing for dynamic config of the Artalk client. You can modify the user interface config in the "[Dashboard](./sidebar.md#dashboard)".
+
+::: warning Update Notice
+As of version v2.10.0, the `useBackendConf` configuration option has been deprecated and is always `true`. Please use `preferRemoteConf` instead.
+:::
 
 ## Internationalization (i18n)
 
@@ -530,4 +538,4 @@ Allow height limit area to scroll.
 - Type: `Boolean`
 - Default: `true`
 
-Display a warning prompt when the front-end and back-end versions are incompatible.
+Display a warning prompt when the frontend and backend versions are incompatible.

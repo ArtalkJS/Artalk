@@ -44,7 +44,7 @@ export async function mount(localConf: ConfigPartial, ctx: Context) {
   }
 
   const remoteConf = handleConfFormServer(data.frontend_conf || {})
-  conf = mergeDeep(conf, remoteConf)
+  conf = conf.preferRemoteConf ? mergeDeep(conf, remoteConf) : mergeDeep(remoteConf, conf)
 
   // Apply local + remote conf
   ctx.updateConf(conf)

@@ -54,6 +54,7 @@ export const Defaults: Readonly<RequiredExcept<Config, ExcludedKeys>> = {
   reqTimeout: 15000,
   versionCheck: true,
   useBackendConf: true,
+  preferRemoteConf: false,
   listUnreadHighlight: false,
   pvAdd: true,
   fetchCommentsOnInit: true,

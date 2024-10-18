@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import settings, { type OptionNode } from '../lib/settings'
+import type { OptionNode } from '../lib/settings'
 
 const props = defineProps<{
   node: OptionNode

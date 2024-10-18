@@ -59,7 +59,7 @@ const artalkLoader = () =>
   app.use(pinia)
 
   // user sync from artalk to sidebar
-  await syncArtalkUser(artalk, router)
+  await syncArtalkUser(artalk.ctx, router)
 
   app.mount('#app')
 })()

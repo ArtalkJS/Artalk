@@ -73,7 +73,7 @@ onMounted(() => {
 
   artalk!.reload()
 
-  const $el = artalk!.ctx.get('list')!.$el
+  const $el = artalk!.ctx.inject('list').getEl()
 
   $el.querySelector<HTMLElement>('.atk-list-header')!.style.display = 'none'
   $el.querySelector<HTMLElement>('.atk-list-footer')!.style.display = 'none'

@@ -20,10 +20,10 @@ export const useUserStore = defineStore('user', {
   actions: {
     logout() {
       this.$reset()
-      getArtalk()?.ctx.get('user').logout()
+      getArtalk()?.ctx.getUser().logout()
     },
     sync() {
-      const user = getArtalk()?.ctx.get('user')
+      const user = getArtalk()?.ctx.getUser()
       if (!user) throw new Error('Artalk is not initialized')
       if (!user.checkHasBasicUserInfo()) throw new Error('User is not logged in')
       this.$patch({ ...user.getData(), site: '' })

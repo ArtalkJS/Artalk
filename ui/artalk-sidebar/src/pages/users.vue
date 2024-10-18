@@ -2,7 +2,7 @@
 import type { ArtalkType } from 'artalk'
 import { storeToRefs } from 'pinia'
 import { useNavStore } from '../stores/nav'
-import { artalk, bootParams } from '../global'
+import { artalk } from '../global'
 import Pagination from '../components/Pagination.vue'
 
 const nav = useNavStore()

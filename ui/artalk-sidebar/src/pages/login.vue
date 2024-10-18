@@ -51,7 +51,7 @@ function login(username?: string) {
       password: userForm.value.password,
     })
     .then((res) => {
-      artalk.ctx.get('user').update({
+      artalk.ctx.getUser().update({
         ...res.data.user,
         token: res.data.token,
       })

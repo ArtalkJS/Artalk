@@ -1,9 +1,9 @@
-import type { ContextApi } from 'artalk'
 import { createStore } from 'solid-js/store'
 import { loginByApiRes } from './lib/token-login'
+import type { AuthContext } from './types'
 
 export interface DialogPageLoginProps {
-  ctx: ContextApi
+  ctx: AuthContext
   onRegisterNowClick: () => void
   changeTitle: (title: string) => void
   onComplete: () => void

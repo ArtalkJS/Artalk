@@ -1,11 +1,11 @@
 import { createEffect, createMemo, createSignal, For, Resource } from 'solid-js'
-import type { ContextApi } from 'artalk'
 import { startOAuthLogin } from './lib/oauth-login'
 import { loginByToken } from './lib/token-login'
 import { LoginMethod } from './lib/methods'
+import type { AuthContext } from './types'
 
 export interface DialogMethodsProps {
-  ctx: ContextApi
+  ctx: AuthContext
   methods: Resource<LoginMethod[]>
   changeTitle: (title: string) => void
   onComplete: () => void
@@ -23,7 +23,7 @@ export const DialogMethods = (props: DialogMethodsProps) => {
       (async () => {
         const url = /^(http|https):\/\//.test(m.link!)
           ? m.link!
-          : `${ctx.getConf().server}${m.link}`
+          : `${ctx.getConf().get().server}${m.link}`
         const { token } = await startOAuthLogin(ctx, url)
         loginByToken(ctx, token)
         props.onComplete()

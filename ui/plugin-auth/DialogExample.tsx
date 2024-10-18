@@ -1,9 +1,9 @@
-import type { ContextApi } from 'artalk'
 import { createSignal } from 'solid-js'
 import { Dialog } from './Dialog'
+import type { AuthContext } from './types'
 
 interface DialogExampleProps {
-  ctx: ContextApi
+  ctx: AuthContext
   onClose: () => void
 }
 

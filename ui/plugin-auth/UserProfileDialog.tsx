@@ -1,11 +1,12 @@
-import { ContextApi, LocalUser } from 'artalk'
+import { LocalUser } from 'artalk'
 import { createResource, createSignal, Resource, Show } from 'solid-js'
 import { createStore } from 'solid-js/store'
+import type { AuthContext } from './types'
 import { Dialog } from './Dialog'
 import { VerifyButton } from './VerifyButton'
 
 export interface UserProfileDialogProps {
-  ctx: ContextApi
+  ctx: AuthContext
   onClose: () => void
 }
 
@@ -17,7 +18,7 @@ export const UserProfileDialog = (props: UserProfileDialogProps) => {
   const [userInfo] = createResource<LocalUser>(async () => {
     const { data } = await ctx.getApi().user.getUser()
     if (!data.is_login) {
-      ctx.get('user').logout()
+      ctx.getUser().logout()
       onClose()
       throw new Error('No login')
     }
@@ -43,7 +44,7 @@ export const UserProfileDialog = (props: UserProfileDialogProps) => {
 }
 
 const UserBasicProfileForm = (
-  ctx: ContextApi,
+  ctx: AuthContext,
   onChangePassword: () => void,
   setTitle: (t: string) => void,
   user: Resource<LocalUser>,
@@ -69,7 +70,7 @@ const UserBasicProfileForm = (
         ...fields,
       })
       .then(({ data: { user } }) => {
-        ctx.get('user').update(user)
+        ctx.getUser().update(user)
         onClose()
       })
       .catch((e) => {
@@ -136,7 +137,7 @@ const UserBasicProfileForm = (
 }
 
 const UserChangePasswordForm = (
-  ctx: ContextApi,
+  ctx: AuthContext,
   setTitle: (t: string) => void,
   user: Resource<LocalUser>,
   onClose: () => void,
@@ -166,7 +167,7 @@ const UserChangePasswordForm = (
         code: fields.code,
       })
       .then((res) => {
-        ctx.get('user').logout()
+        ctx.getUser().logout()
         onClose()
       })
       .catch((err) => {

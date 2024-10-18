@@ -45,8 +45,8 @@ importers:
         specifier: 3.6.3
         version: 3.6.3(@typescript-eslint/parser@8.6.0(eslint@9.10.0)(typescript@5.6.2))(eslint-plugin-import-x@4.2.1(eslint@9.10.0)(typescript@5.6.2))(eslint-plugin-import@2.30.0)(eslint@9.10.0)
       eslint-plugin-artalk:
-        specifier: ^1.0.1
-        version: 1.0.1(eslint@9.10.0)(typescript@5.6.2)
+        specifier: ^1.0.2
+        version: 1.0.2(eslint@9.10.0)(typescript@5.6.2)
       eslint-plugin-compat:
         specifier: ^6.0.1
         version: 6.0.1(eslint@9.10.0)
@@ -2471,8 +2471,8 @@ packages:
       eslint-import-resolver-webpack:
         optional: true
 
-  eslint-plugin-artalk@1.0.1:
-    resolution: {integrity: sha512-mEgJj6kqfgDqHHmHVH6O06s3bhINyBb6TItYkbsASsO3+2WCB8CGHqFxz7vqoyymFH5n6x1GwevfPWlbOg3Kgw==}
+  eslint-plugin-artalk@1.0.2:
+    resolution: {integrity: sha512-NXWYEHzFMRDnykHsJWs0nWvYXINCqRZPnq5VbbMVmNbAT5rh/h4YfOeUUjCNW61y9bmuYbGvumsTsWw/U99DCQ==}
     peerDependencies:
       eslint: '>=9'
 
@@ -7275,7 +7275,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-artalk@1.0.1(eslint@9.10.0)(typescript@5.6.2):
+  eslint-plugin-artalk@1.0.2(eslint@9.10.0)(typescript@5.6.2):
     dependencies:
       '@typescript-eslint/utils': 8.8.0(eslint@9.10.0)(typescript@5.6.2)
       eslint: 9.10.0

@@ -1,5 +1,9 @@
 # Frontend API
 
+以下列出了一些主要的 Artalk 客户端 API，用于在前端代码中操作 Artalk 实例。
+
+更多详细 API 信息可以通过 [TypeDoc 文档](https://artalk.js.org/typedoc/) 浏览。
+
 ## 安装依赖
 
 用你喜欢的包管理器安装 Artalk：

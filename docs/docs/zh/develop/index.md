@@ -12,8 +12,9 @@
 
 - [置入博客](./import-blog.md)
 - [置入框架](./import-framework.md)
-- [前端 API 文档](./fe-api.md)
-- [前端 Event](./event.md)
+- [前端 API](./fe-api.md)
+- [前端 Events](./event.md)
+- [前端 Types](https://artalk.js.org/typedoc/)
 - [前端配置](../guide/frontend/config.md)
 
 **插件开发**

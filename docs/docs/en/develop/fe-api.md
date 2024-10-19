@@ -1,5 +1,9 @@
 # Frontend API
 
+Here are some of the main Artalk client APIs for operating the Artalk instance in frontend code.
+
+For more detailed API information, you can browse the [TypeDoc documentation](https://artalk.js.org/typedoc/).
+
 ## Install Dependencies
 
 Use your preferred package manager to install Artalk:

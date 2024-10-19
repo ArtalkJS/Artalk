@@ -12,8 +12,9 @@ Thank you for your interest and support of Artalk. We deeply understand that the
 
 - [Embed in Blog](./import-blog.md)
 - [Embed in Framework](./import-framework.md)
-- [Frontend API Documentation](./fe-api.md)
+- [Frontend API](./fe-api.md)
 - [Frontend Events](./event.md)
+- [Frontend Types](https://artalk.js.org/typedoc/)
 - [Frontend Configuration](../guide/frontend/config.md)
 
 **Plugin Development**

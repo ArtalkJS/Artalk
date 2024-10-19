@@ -83,7 +83,8 @@ export const en = defineConfig({
             { text: 'Import to Blog', link: '/en/develop/import-blog.md' },
             { text: 'Import to Framework', link: '/en/develop/import-framework.md' },
             { text: 'Frontend API', link: '/en/develop/fe-api.md' },
-            { text: 'Frontend Event', link: '/en/develop/event.md' },
+            { text: 'Frontend Events', link: '/en/develop/event.md' },
+            { text: 'Frontend Types', link: 'https://artalk.js.org/typedoc/' },
             { text: 'Plugin Development', link: '/en/develop/plugin.md' },
             { text: 'Compatibility', link: '/en/develop/compatibility.md' },
             {

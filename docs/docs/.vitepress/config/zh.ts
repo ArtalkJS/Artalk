@@ -86,7 +86,8 @@ export const zh = defineConfig({
             { text: '置入博客', link: '/zh/develop/import-blog.md' },
             { text: '置入框架', link: '/zh/develop/import-framework.md' },
             { text: '前端 API', link: '/zh/develop/fe-api.md' },
-            { text: '前端 Event', link: '/zh/develop/event.md' },
+            { text: '前端 Events', link: '/zh/develop/event.md' },
+            { text: '前端 Types', link: 'https://artalk.js.org/typedoc/' },
             { text: '插件开发', link: '/zh/develop/plugin.md' },
             { text: '兼容性', link: '/zh/develop/compatibility.md' },
             {

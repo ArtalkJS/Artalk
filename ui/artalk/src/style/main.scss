@@ -1,9 +1,9 @@
-@import './_color.scss';
-@import './comment.scss';
-@import './list.scss';
-@import './pagination.scss';
-@import './editor.scss';
-@import './sidebar-layer.scss';
+@import 'color';
+@import 'comment';
+@import 'list';
+@import 'pagination';
+@import 'editor';
+@import 'sidebar-layer';
 
 .artalk {
   position: relative;

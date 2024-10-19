@@ -7,5 +7,4 @@ export default defineWorkspace([
   // "./ui/plugin-lightbox/vite.config.ts",
   // "./ui/artalk-sidebar/vite.config.ts"
   // "./docs/landing/vite.config.ts",
-  // "./test/vue-test/vite.config.ts",
 ])

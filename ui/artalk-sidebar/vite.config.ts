@@ -61,7 +61,10 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "./src/style/_variables.scss";@import "./src/style/_extends.scss";`,
+        api: 'modern-compiler',
+        loadPaths: [resolve(__dirname, 'src/style')],
+        silenceDeprecations: ['import'], // https://sass-lang.com/documentation/breaking-changes/import/
+        additionalData: `@import "variables";@import "extends";`,
       },
     },
   },

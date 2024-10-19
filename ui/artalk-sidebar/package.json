@@ -1,6 +1,6 @@
 {
   "name": "@artalk/artalk-sidebar",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "MIT",
   "description": "The sidebar of artalk",
   "private": true,
@@ -15,15 +15,15 @@
     "@vitejs/plugin-vue": "^5.1.4",
     "artalk": "workspace:^",
     "crypto-js": "^4.2.0",
-    "pinia": "^2.2.2",
-    "typescript": "^5.6.2",
+    "pinia": "^2.2.4",
+    "typescript": "^5.6.3",
     "unplugin-auto-import": "^0.18.3",
     "unplugin-vue-components": "^0.27.4",
     "unplugin-vue-router": "^0.10.8",
-    "vue": "^3.5.6",
-    "vue-i18n": "^10.0.1",
+    "vue": "^3.5.12",
+    "vue-i18n": "^10.0.4",
     "vue-router": "^4.4.5",
     "vue-tsc": "^2.1.6",
-    "yaml": "^2.5.1"
+    "yaml": "^2.6.0"
   }
 }

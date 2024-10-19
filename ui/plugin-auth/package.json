@@ -1,6 +1,6 @@
 {
   "name": "@artalk/plugin-auth",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "LGPL-3.0-only",
   "description": "Auth plugin for artalk",
   "type": "module",
@@ -29,8 +29,8 @@
   },
   "devDependencies": {
     "artalk": "workspace:^",
-    "solid-js": "^1.8.22",
-    "vite-plugin-css-injected-by-js": "^3.5.1",
+    "solid-js": "^1.9.2",
+    "vite-plugin-css-injected-by-js": "^3.5.2",
     "vite-plugin-solid": "^2.10.2"
   },
   "peerDependencies": {

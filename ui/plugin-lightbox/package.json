@@ -1,6 +1,6 @@
 {
   "name": "@artalk/plugin-lightbox",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "license": "MIT",
   "description": "The image lightbox plugin for artalk",
   "type": "module",
@@ -17,17 +17,17 @@
   },
   "devDependencies": {
     "artalk": "workspace:^",
+    "fancybox": "^3.0.1",
+    "lightbox2": "^2.11.5",
     "lightgallery": "^2.7.2",
-    "lightbox2": "^2.11.4",
-    "photoswipe": "^5.4.4",
-    "fancybox": "^3.0.1"
+    "photoswipe": "^5.4.4"
   },
   "peerDependencies": {
-    "lightgallery": "^2.7.2",
-    "lightbox2": "^2.11.4",
-    "photoswipe": "^5.4.4",
+    "artalk": "workspace:^",
     "fancybox": "^3.0.1",
-    "artalk": "workspace:^"
+    "lightbox2": "^2.11.5",
+    "lightgallery": "^2.7.2",
+    "photoswipe": "^5.4.4"
   },
   "peerDependenciesMeta": {
     "lightgallery": {

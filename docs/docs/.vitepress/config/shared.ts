@@ -1,4 +1,8 @@
 import { defineConfig } from 'vitepress'
+import {
+  GitChangelog,
+  GitChangelogMarkdownSection,
+} from '@nolebase/vitepress-plugin-git-changelog/vite'
 import * as Version from '../../code/ArtalkVersion.json'
 
 export const shared = defineConfig({
@@ -67,5 +71,28 @@ export const shared = defineConfig({
     server: {
       open: '/zh/guide/intro.html',
     },
+    plugins: [
+      GitChangelog({
+        repoURL: () => 'https://github.com/ArtalkJS/Artalk',
+        mapAuthors: [
+          {
+            name: 'qwqcode',
+            username: 'qwqcode',
+            mapByEmailAliases: ['qwqcode@gmail.com', '22412567+qwqcode@users.noreply.github.com'],
+          },
+          {
+            name: 'pluveto',
+            username: 'pluveto',
+            mapByEmailAliases: ['i@pluvet.com', '50045289+pluveto@users.noreply.github.com'],
+          },
+          {
+            name: 'Mr.Hope',
+            username: 'Mister-Hope',
+            mapByEmailAliases: ['mister-hope@outlook.com'],
+          },
+        ],
+      }),
+      GitChangelogMarkdownSection(),
+    ],
   },
 })

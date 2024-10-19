@@ -2,7 +2,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "types": ["vite/client"],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler"
   },
-  "include": ["**/.vitepress/**/*"]
+  "include": ["**/.vitepress/**/*.ts", "**/.vitepress/**/*.mts", "**/.vitepress/**/*.vue"],
+  "exclude": ["node_modules"]
 }

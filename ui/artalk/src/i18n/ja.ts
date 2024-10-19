@@ -99,8 +99,8 @@ export default defineLocaleExternal(
     merge: '統合する',
 
     /* General */
-    frontend: 'フロントエンド',
-    backend: 'バックエンド',
+    client: 'クライアント',
+    server: 'サーバー',
     loading: '読み込み中',
     loadFail: '読み込みに失敗しました',
     editing: '編集中',

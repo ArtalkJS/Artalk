@@ -97,8 +97,8 @@ const zhCN: I18n = {
   merge: '合并',
 
   /* General */
-  frontend: '前端',
-  backend: '后端',
+  client: '客户端',
+  server: '服务器',
   loading: '加载中',
   loadFail: '加载失败',
   editing: '修改中',

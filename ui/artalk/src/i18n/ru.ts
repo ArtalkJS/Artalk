@@ -100,8 +100,8 @@ export default defineLocaleExternal(
     merge: 'Объединить',
 
     /* General */
-    frontend: 'Фронтенд',
-    backend: 'Бэкенд',
+    client: 'Клиент',
+    server: 'Сервер',
     loading: 'Загрузка',
     loadFail: 'Ошибка загрузки',
     editing: 'Редактирование',

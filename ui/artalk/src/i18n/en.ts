@@ -95,8 +95,8 @@ const en = {
   merge: 'Merge',
 
   /* General */
-  frontend: 'Frontend',
-  backend: 'Backend',
+  client: 'Client',
+  server: 'Server',
   loading: 'Loading',
   loadFail: 'Load Failed',
   editing: 'Editing',

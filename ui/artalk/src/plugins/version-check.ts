@@ -20,9 +20,9 @@ function versionCheck(list: List, feVer: string, beVer: string) {
 
   const errEl = Utils.createElement(
     `<div class="atk-version-check-notice">${$t('updateMsg', {
-      name: comp < 0 ? $t('frontend') : $t('backend'),
+      name: comp < 0 ? $t('client') : $t('server'),
     })} <span class="atk-info">` +
-      `${$t('currentVersion')}: ${$t('frontend')} ${feVer} / ${$t('backend')} ${beVer}` +
+      `${$t('currentVersion')}: ${$t('client')} ${feVer} / ${$t('server')} ${beVer}` +
       `</span></div>`,
   )
   const ignoreBtn = Utils.createElement(`<span class="atk-ignore-btn">${$t('ignore')}</span>`)

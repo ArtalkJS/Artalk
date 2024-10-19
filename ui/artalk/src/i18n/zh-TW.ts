@@ -97,8 +97,8 @@ export default defineLocaleExternal('zh-TW', {
   merge: '合併',
 
   /* General */
-  frontend: '前端',
-  backend: '後端',
+  client: '客戶端',
+  server: '伺服器',
   loading: '加載中',
   loadFail: '加載失敗',
   editing: '修改中',

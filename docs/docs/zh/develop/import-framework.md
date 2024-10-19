@@ -98,32 +98,37 @@ onBeforeUnmount(() => {
 ::: code-group
 
 ```tsx [React Hooks]
-import React, { useEffect, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import 'artalk/Artalk.css'
 import Artalk from 'artalk'
 
 const ArtalkComment = () => {
-  const container = useRef<HTMLDivElement>(null)
-  const location = useLocation()
+  const { pathname } = useLocation()
   const artalk = useRef<Artalk>()
 
-  useEffect(() => {
-    artalk.current = Artalk.init({
-      el: container.current!,
-      pageKey: location.pathname,
-      pageTitle: document.title,
-      server: 'http://localhost:8080',
-      site: 'Artalk 的博客',
-      // ...
-    })
+  const handleContainerInit = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) {
+        return
+      }
+      if (artalk.current) {
+        artalk.current.destroy()
+        artalk.current = undefined
+      }
+      artalk.current = Artalk.init({
+        el: node,
+        pageKey: pathname,
+        pageTitle: document.title,
+        server: 'http://localhost:8080',
+        site: 'Artalk 的博客',
+        // ...
+      })
+    },
+    [pathname],
+  )
 
-    return () => {
-      artalk.current?.destroy()
-    }
-  }, [container, location.pathname])
-
-  return <div ref={container}></div>
+  return <div ref={handleContainerInit}></div>
 }
 
 export default ArtalkComment

@@ -49,6 +49,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 __debug*
+vite.config.ts.timestamp-*
 
 # frontend
 node_modules

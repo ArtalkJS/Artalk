@@ -9,6 +9,7 @@ pnpm-lock.yaml
 **/auto-imports.d.ts
 **/components.d.ts
 **/typed-router.d.ts
+**/vite.config.ts.timestamp-*
 ui/artalk/src/api/v2.ts
 docs/swagger/swagger.json
 docs/swagger/swagger.yaml

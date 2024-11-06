@@ -102,7 +102,7 @@ export const FrameworksFeature: React.FC = () => {
           <a
             key={i}
             className={['icon', activeIndex == i ? 'active' : ''].join(' ')}
-            style={{ backgroundImage: `url('${tech.icon}')` }}
+            style={{ backgroundImage: `url('${tech.icon.replace(/'/g, '\\\'')}')` }}
             href={tech.link}
             target="_blank"
             rel="noopener noreferrer"

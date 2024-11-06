@@ -1,0 +1,80 @@
+.m1 {
+  background: #9fbef9;
+  color: #133995;
+}
+
+.m2 {
+}
+
+.safe-feature {
+  background: #fef5d8;
+
+  & > .content {
+    flex-direction: row;
+    justify-content: space-around;
+
+    & > main {
+      flex-basis: 50%;
+    }
+
+    .feature-desc {
+      margin-left: auto;
+      margin-top: 20px;
+      margin-bottom: 0;
+      font-size: 1.5rem;
+    }
+
+    .app-learn-more-link {
+      font-size: 1.5rem;
+    }
+  }
+
+  main {
+    margin-top: 20px;
+  }
+
+  .data-icon {
+    margin-left: 40px;
+    margin-top: 35px;
+  }
+
+  &.visible {
+    @keyframes dataIconTextAnim {
+      from {
+        transform: translateX(-40%);
+        opacity: 0;
+      }
+    }
+
+    @keyframes dataIconBgAnim {
+      from {
+        opacity: 0;
+        transform: translate(40%, -50%);
+      }
+    }
+
+    @keyframes dataIconFrameAnim {
+      from {
+        transform: translateX(20%);
+      }
+    }
+
+    .data-icon {
+      .bg {
+        animation: 1s cubic-bezier(0.25, 1, 0.5, 1) dataIconBgAnim;
+      }
+
+      .text {
+        animation: 1s cubic-bezier(0.25, 1, 0.5, 1) dataIconTextAnim;
+      }
+
+      .frame {
+        animation: 1s cubic-bezier(0.25, 1, 0.5, 1) dataIconFrameAnim;
+      }
+    }
+  }
+
+  .report-audit {
+    margin-top: 2em;
+  }
+}

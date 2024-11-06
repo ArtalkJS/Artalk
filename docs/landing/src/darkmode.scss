@@ -5,6 +5,22 @@
   --color-bg: #22272e;
   --color-bg-transparent: rgba(34, 39, 46, 0.9);
   --color-bg-grey: #2d333b;
+  --color-bg-grey-deep: #2d333b;
   --color-bg-blue: #aabcd7;
   --color-border: #444c56;
+  --color-border-light: #444c56;
+
+  .slogan .btns .btn {
+    background: var(--color-bg);
+    color: #fff;
+  }
+
+  .grey-cards-feature .window .text-row {
+    color: #000;
+    filter: invert(1);
+  }
+
+  .feature-block {
+    background-color: var(--color-bg-grey) !important;
+  }
 }

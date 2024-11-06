@@ -1,0 +1,101 @@
+.full-feature {
+  margin-top: 120px;
+  padding-top: 100px;
+  padding-bottom: 50px;
+  margin-bottom: 100px;
+
+  .func-list {
+    margin-top: 30px;
+
+    .row {
+      display: flex;
+      margin-bottom: 30px;
+      justify-items: stretch;
+
+      &:nth-child(even) {
+        transform: translateX(50px);
+      }
+
+      &:nth-child(odd) {
+        transform: translateX(-50px);
+      }
+
+      .item {
+        color: var(--color-font);
+        margin: 0 15px;
+        flex: 1;
+        border-radius: 20px;
+        background: var(--color-bg);
+        padding: 40px 50px;
+        transition: transform 200ms cubic-bezier(0.75, 0.25, 0.25, 0.75);
+
+        &:hover {
+          transform: scale(1.05);
+        }
+
+        .header {
+          font-size: 1.6rem;
+          display: flex;
+          place-items: center;
+          margin-bottom: 20px;
+
+          .icon-wrap {
+            display: flex;
+            place-items: center;
+            justify-content: center;
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.04);
+            margin-right: 25px;
+          }
+
+          svg {
+          }
+
+          .text {
+            flex: 1;
+            font-weight: bold;
+          }
+        }
+
+        .body {
+          font-size: 1.5rem;
+
+          .desc {
+            color: var(--color-font-secondary);
+            display: flex;
+            place-items: center;
+            min-height: 3em;
+          }
+        }
+      }
+    }
+  }
+
+  .folder-icon {
+    margin-top: -100px;
+  }
+
+  .folder-icon.animate {
+    @keyframes fileUpAnim {
+      50% {
+        transform: translateY(-10%);
+      }
+    }
+
+    .file-1 {
+      animation: fileUpAnim 1s cubic-bezier(0.86, 0, 0.07, 1) forwards;
+    }
+
+    .file-2 {
+      animation: fileUpAnim 1s cubic-bezier(0.86, 0, 0.07, 1) forwards;
+      animation-delay: 500ms;
+    }
+
+    .file-3 {
+      animation: fileUpAnim 1s cubic-bezier(0.86, 0, 0.07, 1) forwards;
+      animation-delay: 1s;
+    }
+  }
+}

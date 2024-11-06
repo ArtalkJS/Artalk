@@ -1,0 +1,45 @@
+.frameworks-feature {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  padding: 20px 0;
+  margin-bottom: 100px;
+
+  .title {
+    width: 300px;
+    font-size: 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 50px;
+    line-height: 1.8;
+
+    .text-row:first-child {
+      color: var(--color-font-secondary);
+    }
+  }
+
+  .methods {
+    padding: 0 50px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+
+    .icon {
+      height: 80px;
+      width: 80px;
+      background-position: center;
+      background-size: 50%;
+      background-repeat: no-repeat;
+      border-radius: 50%;
+      transition: all 0.2s ease-out;
+
+      &.active,
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+        box-shadow: 0 0 0 12px rgba(0, 0, 0, 0.04);
+      }
+    }
+  }
+}

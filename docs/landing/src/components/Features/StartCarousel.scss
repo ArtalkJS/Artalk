@@ -1,0 +1,147 @@
+.start-carousel {
+  $cardRadius: 24px;
+
+  .card {
+    box-shadow: 0px 0px 40px 0px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--color-border-light);
+    background: var(--color-bg);
+  }
+
+  .feature-cards {
+    display: flex;
+    flex-direction: column;
+
+    .feature-item {
+      color: var(--color-font-primary);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      border-radius: $cardRadius;
+      padding: 40px 50px;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease;
+
+      &.active {
+        @extend .card;
+      }
+
+      &:hover {
+        .action .arrow-btn {
+          transform: rotate(0);
+          background: var(--color-primary);
+          color: #fff;
+        }
+      }
+
+      .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 70px;
+        width: 70px;
+        border-radius: 50%;
+        background: #9fbef9;
+        color: #133995;
+        margin-right: 20px;
+        font-size: 32px;
+      }
+
+      .main {
+        flex: 1;
+
+        .title {
+          font-size: 32px;
+          font-weight: 500;
+        }
+
+        .desc {
+          margin-top: 10px;
+          font-size: 23px;
+          color: var(--color-font-secondary);
+        }
+      }
+
+      .action {
+        .arrow-btn {
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 40px;
+          width: 40px;
+          border-radius: 50%;
+          background: #ebf5fe;
+          color: #007bff;
+          transform: rotate(45deg);
+        }
+      }
+    }
+  }
+
+  .progress-indicator {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 30px;
+
+    .dots {
+      background: var(--color-bg-grey-deep);
+      padding: 10px 15px;
+      border-radius: 100px;
+      display: flex;
+      gap: 10px;
+
+      .dot {
+        overflow: hidden;
+        width: 10px;
+        height: 10px;
+        border-radius: 100px;
+        background: var(--color-border);
+        transition:
+          width 0.8s ease,
+          transform 0.3s ease;
+        cursor: pointer;
+
+        &.active {
+          width: 60px;
+        }
+
+        &:hover {
+          filter: opacity(0.8);
+          transform: scale(1.1);
+        }
+
+        .progress {
+          transition: all 0.2s ease;
+          height: 100%;
+          background: var(--color-font-secondary);
+        }
+      }
+    }
+  }
+
+  .screenshot-group {
+    @extend .card;
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0px 0px 40px 0px rgba(0, 0, 0, 0.06);
+    gap: 16px;
+    padding: 20px;
+    border-radius: $cardRadius;
+
+    .screenshot {
+      flex: 1;
+      min-height: 320px;
+
+      img {
+        border-radius: 11px;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+}

@@ -145,4 +145,31 @@ export const fr: MessageSchema = {
   feature_api_documentation_desc: 'Documentation au format OpenAPI',
   feature_program_upgrade_name: 'Mise à jour du programme',
   feature_program_upgrade_desc: 'Vérification des versions et mise à jour en un clic',
+  intro_stack_card_1_name: 'Alice',
+  intro_stack_card_1_text: 'Salut, comment ça va ?',
+  intro_stack_card_2_name: 'Bob',
+  intro_stack_card_2_text: 'Comment se passent les choses récemment ?',
+  intro_stack_card_3_name: 'Cook',
+  intro_stack_card_3_text: 'Bonjour',
+  concept_section_locales_title: 'Localisation multilingue',
+  concept_section_locales_desc:
+    "Prise en charge de plusieurs langues, telles que l'anglais, le chinois, le français, le japonais, le coréen et le russe.",
+  concept_section_docker_title: 'Installation avec Docker',
+  concept_section_docker_desc_line_1:
+    'Nous fournissons une image Docker pour une installation rapide en un seul clic.',
+  concept_section_docker_desc_line_2:
+    'Construit avec Golang, il est compatible avec les déploiements multi-plateformes, vous permettant de le lancer où que vous soyez.',
+  concept_section_open_source_title: 'Open Source',
+  concept_section_open_source_desc_line_1:
+    'Artalk est un logiciel libre et open source, axé sur la confidentialité et la sécurité des données.',
+  concept_section_open_source_desc_line_2:
+    "En maintenance continue depuis {{year}} ans, nous proposons des mises à jour régulières pour améliorer l'expérience utilisateur et garantir la stabilité.",
+  feature_community_title: 'Élargissez votre expérience',
+  feature_community_desc:
+    "Dans notre marketplace de plugins, vous trouverez une variété de plugins pour personnaliser votre propre version d'Artalk.",
+  use_artalk_with: 'Utilisez Artalk avec',
+  any_website_or_blog: "n'importe quel site web ou blog",
+  see_more_on_github: 'Voir plus sur GitHub',
+  star_proposal_line_1: "Si vous aimez Artalk, n'hésitez pas à lui donner une étoile 🌟",
+  star_proposal_line_2: 'Cela nous serait très utile !',
 }

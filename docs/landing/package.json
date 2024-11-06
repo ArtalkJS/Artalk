@@ -27,6 +27,7 @@
     "react-dom": "^18.3.1",
     "react-i18next": "^15.0.3",
     "react-icons": "5.3.0",
-    "usehooks-ts": "^3.1.0"
+    "usehooks-ts": "^3.1.0",
+    "vanilla-lazyload": "^19.1.3"
   }
 }

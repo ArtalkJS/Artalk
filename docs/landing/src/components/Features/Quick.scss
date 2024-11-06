@@ -1,0 +1,102 @@
+.quick-feature {
+  background-color: #f2f9ff;
+
+  .deploy-links {
+    margin: 80px 0;
+    display: flex;
+    flex-direction: column;
+
+    .item {
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      place-items: flex-end;
+      font-size: 1.5rem;
+      color: var(--color-font);
+
+      &:not(:last-child) {
+        margin-bottom: 1.8em;
+      }
+
+      &:hover {
+        .arrow-icon {
+          .block {
+            width: 100%;
+          }
+
+          svg {
+            stroke: #fff;
+          }
+        }
+      }
+
+      .bold {
+        font-size: 2.4rem;
+        margin-right: 0.2em;
+      }
+
+      span {
+        margin-right: 1.4em;
+      }
+
+      .arrow-icon {
+        font-size: 2rem;
+        margin-left: auto;
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        place-items: center;
+        margin-top: 10px;
+        height: 2em;
+        width: calc(2em + 30px);
+
+        .block {
+          left: 0;
+          top: 0;
+          position: absolute;
+          display: block;
+          background: #55acee;
+          height: 2em;
+          width: 0.6em;
+          margin-right: 0.3em;
+          transition: width 500ms cubic-bezier(0.075, 0.82, 0.165, 1);
+        }
+
+        svg {
+          padding-left: 30px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+    }
+  }
+
+  .feature-title {
+    margin-top: -20px;
+  }
+
+  .airplane-wrap {
+    margin-top: 40px;
+  }
+
+  .airplane {
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  &.visible {
+    @keyframes airplaneAnim {
+      from {
+        transform: translate(-50%, 50%);
+      }
+    }
+
+    .airplane {
+      opacity: 1;
+      animation: airplaneAnim 2s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+  }
+}

@@ -34,11 +34,12 @@
 
   .text {
     margin-top: 50px;
-    line-height: 1.5;
-    font-size: 4rem;
+    line-height: 1.7;
+    font-size: 2.6rem;
     font-weight: 700;
 
     .highlight {
+      font-size: 3.4rem;
       overflow: hidden;
       position: relative;
       color: var(--color-primary);
@@ -80,22 +81,23 @@
       place-items: center;
       min-width: 140px;
       padding: 0 25px;
-      height: 55px;
+      height: 50px;
       text-align: center;
       border-radius: 100px;
       border: 3px solid transparent;
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
-      color: var(--color-font);
+      background: #ebf5fe;
+      color: var(--color-primary);
 
       &:not(:last-child) {
         margin-right: 15px;
       }
 
       &.blue {
-        border-color: var(--color-primary);
-        color: var(--color-primary);
+        background: var(--color-primary);
+        color: #fff;
 
         &:hover {
           opacity: 0.9;

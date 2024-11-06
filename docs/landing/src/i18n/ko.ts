@@ -142,4 +142,31 @@ export const ko: MessageSchema = {
   feature_api_documentation_desc: 'OpenAPI 형식의 문서 제공',
   feature_program_upgrade_name: '프로그램 업그레이드',
   feature_program_upgrade_desc: '버전 확인 및 원클릭 업그레이드',
+  intro_stack_card_1_name: '앨리스',
+  intro_stack_card_1_text: '안녕하세요.',
+  intro_stack_card_2_name: '밥',
+  intro_stack_card_2_text: '요즘 어때요?',
+  intro_stack_card_3_name: '쿡',
+  intro_stack_card_3_text: '굿모닝.',
+  concept_section_locales_title: '다국어 현지화',
+  concept_section_locales_desc:
+    '영어, 중국어, 프랑스어, 일본어, 한국어, 러시아어 등 다양한 언어를 지원합니다.',
+  concept_section_docker_title: 'Docker 설치',
+  concept_section_docker_desc_line_1:
+    '저희는 Docker 이미지를 제공하여, 원클릭으로 빠른 설치를 지원합니다.',
+  concept_section_docker_desc_line_2:
+    'Golang으로 개발되었으며, 크로스 플랫폼 배포를 지원합니다. 언제 어디서나 쉽게 시작할 수 있습니다.',
+  concept_section_open_source_title: '오픈 소스',
+  concept_section_open_source_desc_line_1:
+    'Artalk는 오픈 소스 자유 소프트웨어로, 개인정보 보호와 데이터 보안을 중시합니다.',
+  concept_section_open_source_desc_line_2:
+    '{{year}}년 동안 꾸준히 유지 관리되고 있으며, 지속적인 업데이트와 개선을 통해 사용자 경험을 향상시키고 안정성을 보장합니다.',
+  feature_community_title: '당신의 경험을 확장하세요',
+  feature_community_desc:
+    '플러그인 마켓에서 다양한 플러그인을 찾아 자신의 Artalk를 맞춤설정할 수 있습니다.',
+  use_artalk_with: 'Use Artalk with',
+  any_website_or_blog: '모든 웹사이트 또는 블로그',
+  see_more_on_github: 'GitHub에서 더 보기',
+  star_proposal_line_1: 'Artalk을 좋아하신다면, 별을 주세요 🌟',
+  star_proposal_line_2: '감사합니다!',
 }

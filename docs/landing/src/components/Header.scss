@@ -1,6 +1,7 @@
 .app-header {
   z-index: 999;
-  position: sticky;
+  position: fixed;
+  width: 100%;
   top: 0;
   left: 0;
   transition: background 0.2s ease;
@@ -14,6 +15,7 @@
   }
 
   &.fixed {
+    backdrop-filter: saturate(1.8) blur(20px);
     border-bottom: 1px solid var(--color-border);
     background: var(--color-bg-transparent);
   }

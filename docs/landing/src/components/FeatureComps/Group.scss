@@ -1,0 +1,11 @@
+.feature-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  column-gap: 64px;
+  row-gap: 40px;
+
+  &:not(:last-child) {
+    margin-bottom: 64px;
+  }
+}

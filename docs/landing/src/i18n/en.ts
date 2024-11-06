@@ -143,4 +143,30 @@ export const en = {
   feature_api_documentation_desc: 'Provides OpenAPI format documentation',
   feature_program_upgrade_name: 'Program Upgrade',
   feature_program_upgrade_desc: 'Version check, one-click upgrade',
+  intro_stack_card_1_name: 'Alice',
+  intro_stack_card_1_text: 'Hello, how are you',
+  intro_stack_card_2_name: 'Bob',
+  intro_stack_card_2_text: "Hi, what's up?",
+  intro_stack_card_3_name: 'Cook',
+  intro_stack_card_3_text: 'Good morning',
+  concept_section_locales_title: 'Localized Multiple languages',
+  concept_section_locales_desc: 'English, Chinese, French, Japanese, Korean, Russian, and more.',
+  concept_section_docker_title: 'Docker installation',
+  concept_section_docker_desc_line_1:
+    'We provide a Docker Image for quick, one-click installation.',
+  concept_section_docker_desc_line_2:
+    'Built in Golang, supports cross-platform deployment, making it easy to set up anywhere.',
+  concept_section_open_source_title: 'Open Source',
+  concept_section_open_source_desc_line_1:
+    'Artalk is open-source, free software with a strong focus on privacy and data security.',
+  concept_section_open_source_desc_line_2:
+    'Maintained continuously for {{year}} years, we consistently update and iterate to improve the experience and ensure stability.',
+  feature_community_title: 'Enhance your experience',
+  feature_community_desc:
+    'In the plugin marketplace, you can find a wide variety of plugins to customize your own Artalk.',
+  use_artalk_with: 'Use Artalk with',
+  any_website_or_blog: 'any website or blog',
+  see_more_on_github: 'See more on GitHub',
+  star_proposal_line_1: 'If you like Artalk, please give it a STAR 🌟',
+  star_proposal_line_2: 'This would be very helpful to us!',
 }

@@ -1,0 +1,18 @@
+.feature {
+  min-height: 90vh;
+
+  & > .content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 30px;
+
+    main {
+      width: 40%;
+    }
+
+    aside {
+      display: flex;
+    }
+  }
+}

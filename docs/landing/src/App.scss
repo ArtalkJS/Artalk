@@ -9,14 +9,19 @@
   --color-bg: #fff;
   --color-bg-transparent: rgba(255, 255, 255, 0.9);
   --color-bg-grey: #f6f8fa;
+  --color-bg-grey-deep: #f2f2f5;
   --color-bg-blue: #e5effe;
   --color-border: #e1e4ec;
+  --color-border-light: #e4e4e4;
 }
 
 html,
 body {
   background-color: var(--color-bg);
-  overflow-x: hidden;
+}
+
+body {
+  padding-top: 70px;
 }
 
 :host,
@@ -73,4 +78,8 @@ a {
   to {
     opacity: 1;
   }
+}
+
+.app-grey-bg {
+  background: var(--color-bg-grey-deep);
 }

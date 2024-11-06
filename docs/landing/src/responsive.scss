@@ -14,7 +14,7 @@ $breakpoints: (
       padding: 0 40px;
     }
 
-    .content {
+    & > .content {
       padding: 0 75px;
 
       main {
@@ -45,6 +45,10 @@ $breakpoints: (
       justify-content: space-around;
     }
 
+    .link-item {
+      font-size: 14px;
+    }
+
     .link-item:not(:last-child) {
       margin-right: 0;
     }
@@ -54,18 +58,26 @@ $breakpoints: (
     }
   }
 
+  .slogan {
+    text-align: center;
+  }
+
   .slogan .slogan-inner {
     padding: 0 40px;
   }
 
   .slogan .text {
-    font-size: 3em;
+    font-size: 31px;
     width: 100%;
   }
 
-  .slogan .text .highlight .line-wrap {
-    bottom: -15px;
-    zoom: 0.9;
+  .slogan .text .highlight {
+    font-size: 40px;
+
+    .line-wrap {
+      bottom: -15px;
+      zoom: 0.9;
+    }
   }
 
   .slogan .demos {
@@ -74,11 +86,19 @@ $breakpoints: (
 
   .slogan .btns {
     display: flex;
+    justify-content: center;
     flex-direction: row;
 
     .btn:not(:last-child) {
       margin-right: 10px;
       margin-bottom: 20px;
+    }
+
+    .btn {
+      height: 44px;
+      min-width: 100px;
+      font-size: 15px;
+      padding: 0 20px;
     }
   }
 
@@ -90,7 +110,7 @@ $breakpoints: (
       max-height: 300px;
     }
 
-    .content {
+    & > .content {
       padding: 0;
       flex-direction: column;
 
@@ -112,19 +132,126 @@ $breakpoints: (
     }
   }
 
-  .full.feature .func-list .row {
-    display: flex;
+  .feature-group {
     flex-direction: column;
-    transform: translateX(0) !important;
+    padding: 0 25px;
 
-    .item {
+    .feature-block {
+      padding: 20px 30px;
+    }
+  }
+
+  .start-feature {
+    padding-bottom: 50px;
+    padding-left: 0;
+    padding-right: 0;
+
+    & > aside {
+      display: none;
+    }
+
+    & > main {
+      padding: 0 20px;
+    }
+  }
+
+  .start-carousel {
+    .feature-cards {
+      .feature-item {
+        padding: 35px 35px;
+
+        .icon {
+          height: 55px;
+          width: 55px;
+          margin-right: 0.4em;
+        }
+
+        .main .title {
+          font-size: 1.2rem;
+        }
+
+        .main .desc {
+          font-size: 1.1rem;
+        }
+
+        .action .arrow-btn {
+          display: none;
+          font-size: 15px;
+          height: 40px;
+          width: 40px;
+        }
+      }
+    }
+
+    .screenshot-group {
+      display: flex;
+      flex-direction: column;
+
+      .screenshot {
+        min-height: 200px;
+      }
+    }
+  }
+
+  .frameworks-feature {
+    flex-direction: column;
+
+    .title {
+      font-size: 24px;
+      margin-bottom: 50px;
+      margin-left: 0;
+    }
+
+    .methods {
       width: 100%;
-      padding: 30px 40px;
-      margin: 0;
-      font-size: 1.3rem;
+      place-items: center;
+      padding: 0 20px;
+      grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
 
-      &:not(:last-child) {
-        margin-bottom: 40px;
+      .icon {
+        height: 65px;
+        width: 65px;
+      }
+    }
+  }
+
+  .grey-cards-feature {
+    padding: 0 20px;
+    flex-direction: column;
+    margin-bottom: 50px;
+  }
+
+  .full-feature {
+    padding-bottom: 50px;
+  }
+
+  .full-feature .func-list {
+    .row {
+      display: flex;
+      flex-direction: column;
+      transform: translateX(0) !important;
+
+      .item {
+        width: 100%;
+        padding: 30px 40px;
+        margin: 0;
+        font-size: 1.3rem;
+
+        &:not(:last-child) {
+          margin-bottom: 40px;
+        }
+
+        .header {
+          font-size: 23px;
+
+          .icon-wrap {
+            margin-right: 24px;
+          }
+        }
+
+        .body {
+          font-size: 20px;
+        }
       }
     }
   }
@@ -148,11 +275,11 @@ $breakpoints: (
     font-size: 1rem;
   }
 
-  .full.feature .folder-icon {
+  .full-feature .folder-icon {
     margin-top: 0;
   }
 
-  .func.feature .content .ship-icon {
+  .funcs-feature .content .ship-icon {
     margin-top: 0;
   }
 
@@ -166,39 +293,129 @@ $breakpoints: (
     }
   }
 
-  .safe.feature .data-icon {
+  .safe-feature .data-icon {
     zoom: 0.5;
     margin-left: 0;
     margin-bottom: 0;
   }
 
-  .safe.feature main {
+  .safe-feature main {
     margin: 0;
   }
 
-  .func.feature .func-grps {
+  .funcs-feature .func-grps {
     padding: 0;
     column-count: 1;
   }
 
-  .feature.quick .deploy-links .item span {
-    font-size: 1.6rem;
+  .feature-block {
+    min-height: 300px;
   }
 
-  .feature.quick .deploy-links .item .bold {
-    font-size: 2rem;
+  .quick-feature .deploy-links {
+    margin: 20px 0;
+
+    .item {
+      span {
+        font-size: 20px;
+      }
+
+      .bold {
+        font-size: 28px;
+      }
+
+      .arrow-icon {
+        margin-left: 0;
+        height: 35px;
+        width: 70px;
+        font-size: 25px;
+
+        .block {
+          height: 1.5em;
+          width: 0.4em;
+        }
+
+        svg {
+          padding-left: 10px;
+        }
+      }
+    }
   }
 
-  .func.feature .func-grps .grp .name {
+  .funcs-feature .func-grps .grp .name {
     font-size: 1.45rem;
   }
 
   .feature-title {
-    font-size: 2.5em;
+    font-size: 28px;
+
+    svg {
+      zoom: 0.8;
+    }
+  }
+
+  .feature-block .feature-desc {
+    font-size: 20px;
+  }
+
+  .safe-feature {
+    text-align: center;
+
+    .data-icon {
+      width: 90px;
+      height: 90px;
+      margin-left: 0;
+      margin-top: 10px;
+      margin: 0 auto;
+    }
+
+    & > .content {
+      flex-direction: column;
+
+      .feature-desc {
+        font-size: 20px;
+      }
+
+      .app-learn-more-link {
+        font-size: 20px;
+      }
+    }
+
+    .report-audit {
+      text-align: center;
+
+      .app-learn-more-link {
+        margin-bottom: 15px;
+      }
+    }
+  }
+
+  .plugins-feature {
+    .left-right {
+      flex-direction: column;
+    }
+
+    .screenshot {
+      display: none;
+    }
+
+    .left-right .stamps {
+      svg {
+        height: 40px;
+        width: 40px;
+
+        &:not(:last-child) {
+          margin-right: 20px;
+        }
+      }
+    }
   }
 
   .feature-desc {
-    text-align: left;
-    font-size: 1.5rem;
+    font-size: 20px;
+  }
+
+  .app-footer {
+    font-size: 20px;
   }
 }

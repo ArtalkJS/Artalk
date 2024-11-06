@@ -1,14 +1,15 @@
 .app-footer {
-  margin: 80px auto;
-  padding-top: 50px;
+  margin: 0 auto;
+  margin-top: 80px;
+  padding-bottom: 80px;
+  padding-top: 100px;
   text-align: center;
-  border-top: 1px solid var(--color-border);
-  font-size: 1.5rem;
+  font-size: 20px;
 
   .brand {
-    color: var(--color-primary);
+    color: var(--color-font);
     font-weight: 700;
-    font-size: 1.5em;
+    font-size: 24px;
   }
 
   .copyright {
@@ -17,5 +18,49 @@
     .red {
       color: #dd2e44;
     }
+  }
+}
+
+.footer-see-more-link {
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 100px;
+  padding-top: 80px;
+
+  .link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-font);
+    background: var(--color-bg-grey-deep);
+    padding: 12px;
+    border-radius: 100px;
+    font-size: 18px;
+
+    .text {
+      padding: 0 20px;
+    }
+
+    .icon {
+      height: 35px;
+      width: 35px;
+      background-color: var(--color-primary);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      font-size: 20px;
+    }
+  }
+
+  .star-proposal {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 2;
   }
 }

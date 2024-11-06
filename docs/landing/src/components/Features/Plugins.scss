@@ -1,0 +1,91 @@
+.plugins-feature {
+  background-color: #174ea6;
+  position: relative;
+  overflow: hidden;
+  background-image: url(/images/plugins-bg.jpg);
+  background-size: cover;
+
+  @keyframes plugin-icon-anim {
+    0% {
+      opacity: 0;
+      transform: scale(0.5) translateZ(-100px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  .feature-desc {
+    color: #fff;
+  }
+
+  &.visible .left-right {
+    .stamps svg {
+      animation: plugin-icon-anim 0.5s ease forwards;
+    }
+  }
+
+  .left-right {
+    gap: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    main {
+      flex: 40%;
+    }
+
+    aside {
+      flex: 60%;
+    }
+
+    .stamps {
+      pointer-events: none;
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+
+      svg {
+        font-size: 36px;
+        color: #acccff;
+        opacity: 0;
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+
+        &:nth-child(1) {
+          animation-delay: 0.1s;
+        }
+
+        &:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+
+        &:nth-child(3) {
+          animation-delay: 0.3s;
+        }
+
+        &:nth-child(4) {
+          animation-delay: 0.4s;
+        }
+
+        &:not(:last-child) {
+          margin-right: 50px;
+        }
+      }
+
+      .row:not(:last-child) {
+        margin-bottom: 20px;
+      }
+
+      .row:nth-child(odd) {
+        margin-left: -50px;
+      }
+
+      .row:nth-child(even) {
+        margin-right: 50px;
+      }
+    }
+  }
+}

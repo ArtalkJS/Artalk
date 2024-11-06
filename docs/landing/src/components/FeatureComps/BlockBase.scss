@@ -1,0 +1,33 @@
+.feature-block {
+  min-height: 520px;
+  padding: 64px 76px;
+  border-radius: 32px;
+  background-color: #e8f0fe;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  & > .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    main {
+    }
+
+    aside {
+      display: flex;
+    }
+  }
+
+  .feature-title {
+    display: flex;
+    align-items: center;
+  }
+
+  .feature-desc {
+    margin: 20px 0;
+    font-size: 22px;
+    line-height: 1.5;
+  }
+}

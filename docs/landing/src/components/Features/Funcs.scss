@@ -1,0 +1,78 @@
+.funcs-feature {
+  .content .ship-icon {
+    margin: 0 80px;
+    margin-top: -70px;
+
+    @keyframes WaveAnim {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-24px);
+      }
+    }
+
+    .wave {
+      animation: 0.5s linear WaveAnim infinite;
+    }
+  }
+
+  .func-grps {
+    column-count: 4;
+    column-gap: 30px;
+    margin: 50px 0;
+
+    .grp {
+      margin-bottom: 40px;
+      break-inside: avoid;
+      font-size: 1.3rem;
+
+      .name {
+        display: flex;
+        place-items: center;
+        justify-content: space-between;
+        color: var(--color-font);
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+
+        &:hover {
+          svg {
+            animation: 0.5s cubic-bezier(0.25, 1, 0.5, 1) funcGrpNameArrowAnim;
+            opacity: 1;
+          }
+        }
+
+        @keyframes funcGrpNameArrowAnim {
+          from {
+            opacity: 0;
+            transform: translateX(-50%);
+          }
+        }
+
+        svg {
+          margin: 0 20px;
+          opacity: 0;
+          color: #67757f;
+        }
+      }
+
+      .items {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: baseline;
+
+        .item {
+          background: var(--color-bg-grey);
+          border-radius: 20px;
+          padding: 20px 15px;
+          text-align: center;
+
+          &:not(:last-child) {
+            margin-bottom: 10px;
+          }
+        }
+      }
+    }
+  }
+}

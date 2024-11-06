@@ -54,7 +54,7 @@ export const Slogan: React.FC = () => {
           <Reveal>
             <span className="highlight">
               {t('slogan_line_1')}
-              <svg
+              {/* <svg
                 className="line-wrap"
                 width="361"
                 height="55"
@@ -69,7 +69,7 @@ export const Slogan: React.FC = () => {
                   strokeWidth="12"
                   strokeLinecap="round"
                 />
-              </svg>
+              </svg> */}
             </span>
             <br />
           </Reveal>

@@ -1,0 +1,94 @@
+.slight-feature {
+  background-color: #f1f8e9;
+  overflow: hidden;
+
+  &:hover .screenshot {
+    transform: translateY(-20px) scale(1.02);
+  }
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  }
+
+  .progress-wrap {
+    width: 100%;
+
+    .progress {
+      position: relative;
+      height: 22px;
+      width: 100%;
+      background: var(--color-bg-transparent);
+      border-radius: 80px;
+      overflow: hidden;
+
+      .bar {
+        position: absolute;
+        height: 100%;
+        width: 0%;
+        background: #77b255;
+        transition: all 800ms cubic-bezier(0.23, 1, 0.32, 1);
+      }
+    }
+
+    .text {
+      margin-top: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      place-items: center;
+      padding: 0 5px;
+      font-size: 1.6rem;
+
+      .size {
+        color: #77b255;
+      }
+
+      .percent {
+        color: #67757f;
+      }
+    }
+  }
+
+  .screenshot {
+    display: flex;
+    justify-content: center;
+    margin-top: 65px;
+    margin-bottom: -200px;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+
+    img {
+      width: 100%;
+      max-width: 500px;
+    }
+  }
+
+  &.visible {
+    .leaf-wrap {
+      @keyframes windAnim {
+        from {
+          opacity: 0;
+          filter: blur(10px);
+          transform: translate(-40%, 35%) rotate(20deg);
+        }
+        to {
+        }
+      }
+      .wind {
+        animation: windAnim 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      @keyframes leafAnim {
+        0% {
+          transform: translate(-10%, -10%) rotate(10deg);
+        }
+      }
+
+      .leaf {
+        animation: leafAnim 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+    }
+  }
+}

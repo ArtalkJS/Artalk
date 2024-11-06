@@ -1,0 +1,13 @@
+.start-feature {
+  padding: 40px 0;
+  display: flex;
+  padding-bottom: 100px;
+
+  & > main {
+    flex: 70%;
+  }
+
+  & > aside {
+    flex: 30%;
+  }
+}

@@ -1,0 +1,173 @@
+.grey-cards-feature {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 140px;
+
+  & > .section {
+    flex: 1;
+    height: 560px;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-grey-deep);
+    padding: 40px;
+    overflow: hidden;
+
+    .section-title {
+      font-size: 22px;
+      margin-bottom: 25px;
+    }
+
+    .section-desc {
+      font-size: 20px;
+      color: #919191;
+      margin-bottom: 40px;
+    }
+
+    .section-learn-more {
+      color: #0066cc;
+      display: inline-flex;
+      gap: 10px;
+      font-size: 20px;
+      align-items: center;
+      cursor: pointer;
+      width: max-content;
+      border-radius: 100px;
+      transition: all 0.3s;
+      padding: 10px 0;
+
+      &:hover {
+        padding: 10px 18px;
+        background: var(--color-primary);
+        color: #fff;
+      }
+
+      svg {
+        font-size: 1.2em;
+        margin-right: -8px;
+      }
+    }
+  }
+
+  .window {
+    position: relative;
+    box-shadow: 0px 0px 40px 0px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--color-border-light);
+    background: var(--color-bg);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 12px;
+    width: 100%;
+
+    &.text-window {
+      width: calc(100% + 70px);
+    }
+
+    &.terminal-window {
+      width: calc(100% + 70px);
+      margin-top: 25px;
+    }
+
+    .text-row {
+      overflow: hidden;
+      padding: 12px 24px;
+      white-space: nowrap;
+      border-radius: 8px;
+      background: #efefef;
+      color: var(--color-font);
+
+      &:nth-child(2) {
+        background: #ecf2ff;
+        color: #053dcc;
+      }
+
+      &:nth-child(3) {
+        background: #fff5ee;
+        color: #f97709;
+      }
+
+      &:nth-child(4) {
+        background: #e9fbfa;
+        color: #108163;
+      }
+
+      &:nth-child(5) {
+        background: #feecf8;
+        color: #ba006b;
+      }
+    }
+
+    .menubar {
+      display: flex;
+      gap: 10px;
+      margin: 0 5px;
+
+      & > div {
+        display: block;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 1px solid transparent;
+
+        &:hover {
+          cursor: pointer;
+          opacity: 0.8;
+        }
+      }
+
+      .close {
+        background: #fb4646;
+        border-color: #ea383a;
+      }
+
+      .minimize {
+        background: #fdb125;
+        border-color: #e8a430;
+      }
+
+      .zoom {
+        background: #29c332;
+        border-color: #36b537;
+      }
+    }
+
+    .docker-icon {
+      position: absolute;
+      top: -70px;
+      right: 50px;
+      width: 120px;
+      height: 120px;
+
+      img {
+        user-select: none;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    .window-body {
+      padding: 10px 10px;
+
+      .cmd-row {
+        display: flex;
+        gap: 10px;
+        padding: 10px 0;
+        font-size: 18px;
+
+        .prompt {
+          user-select: none;
+          color: #919191;
+        }
+      }
+    }
+  }
+
+  .screenshot {
+    width: calc(100% + 100px);
+    border-radius: 16px;
+  }
+}

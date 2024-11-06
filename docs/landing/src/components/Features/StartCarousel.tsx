@@ -216,7 +216,7 @@ export const StartCarousel = () => {
       </div>
 
       <div className="screenshot-group">
-        {currentScreenshots.map((screenshot, i) => (
+        {currentScreenshots.map((screenshot) => (
           <div className="screenshot" key={screenshot}>
             <LazyImage src={screenshot} alt="screenshot" referrerPolicy="no-referrer" />
           </div>

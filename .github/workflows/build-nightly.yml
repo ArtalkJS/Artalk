@@ -84,13 +84,11 @@ jobs:
       - name: Pack UI
         id: pack
         run: |
-          SRC_FILE=$(pnpm pack -C ui/artalk --pack-destination ../.. | tail -n 1)
+          mkdir -p ./local/artalk_ui
+          cp -r ./public/dist ./public/sidebar ./local/artalk_ui
 
-          mkdir -p bin
-          PKG_FILE="bin/artalk_frontend_nigthly_$(date +'%Y%m%d').tar.gz"
-
-          mv $SRC_FILE $PKG_FILE
-          echo "pkg_file=$PKG_FILE" >> $GITHUB_OUTPUT
+          mkdir -p ./local/nightly_includes
+          tar -czf ./local/nightly_includes/artalk_ui_nightly.tar.gz -C ./local artalk_ui
 
       - name: Upload UI
         uses: actions/upload-artifact@v4
@@ -106,7 +104,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-ui-pkg
-          path: ${{ steps.pack.outputs.pkg_file }}
+          path: local/nightly_includes/artalk_ui_nightly.tar.gz
           retention-days: 1
 
   #

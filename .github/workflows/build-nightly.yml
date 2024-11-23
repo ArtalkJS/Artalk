@@ -78,19 +78,12 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build UI
+        id: build_ui
         run: |
           make build-frontend
+          echo "ui_tarball=$(make -s pack-frontend)" >> $GITHUB_OUTPUT
 
-      - name: Pack UI
-        id: pack
-        run: |
-          mkdir -p ./local/artalk_ui
-          cp -r ./public/dist ./public/sidebar ./local/artalk_ui
-
-          mkdir -p ./local/nightly_includes
-          tar -czf ./local/nightly_includes/artalk_ui_nightly.tar.gz -C ./local artalk_ui
-
-      - name: Upload UI
+      - name: Upload UI dist
         uses: actions/upload-artifact@v4
         with:
           name: ui-src
@@ -100,11 +93,12 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      - name: Upload UI package
+      - name: Upload UI tarball (included in release)
         uses: actions/upload-artifact@v4
         with:
-          name: build-ui-pkg
-          path: local/nightly_includes/artalk_ui_nightly.tar.gz
+          name: build-ui-tarball
+          path: ${{ steps.build_ui.outputs.ui_tarball }}
+          if-no-files-found: error
           retention-days: 1
 
   #

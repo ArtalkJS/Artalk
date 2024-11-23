@@ -17,6 +17,7 @@ before:
     # install dependencies
     - make install
     - make build-frontend
+    - make pack-frontend
 
 # build multi-platform
 builds:

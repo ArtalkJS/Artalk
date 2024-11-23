@@ -22,7 +22,10 @@ build:
     	$(PKG_NAME)
 
 build-frontend:
-	./scripts/build-frontend.sh
+	@./scripts/build-frontend.sh
+
+pack-frontend:
+	@./scripts/pack-frontend.sh
 
 build-debug:
 	@echo "Building Artalk for debugging..."
@@ -73,7 +76,7 @@ docker-build:
 docker-push:
 	./scripts/docker-build.sh --push
 
-.PHONY: all install run build build-frontend build-debug dev \
+.PHONY: all install run build build-frontend pack-frontend build-debug dev \
 	test test-coverage test-coverage-html test-frontend-e2e \
 	update-i18n update-conf update-conf-docs \
 	update-docs-features update-swagger \

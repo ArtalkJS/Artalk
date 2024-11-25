@@ -1,0 +1,25 @@
+name: Build RPM
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      dry_run:
+        required: true
+        type: boolean
+  workflow_dispatch:
+
+jobs:
+  build_rpm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
+
+      - name: Trigger Copr Build Webhook
+        run: curl -X POST ${{ secrets.COPR_BUILD_WEBHOOK_URL }}/artalk

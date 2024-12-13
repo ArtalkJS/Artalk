@@ -18,7 +18,9 @@ updates:
     open-pull-requests-limit: 15
 
   - package-ecosystem: npm
-    directory: /ui
+    # setup only for whole workspace to fix issues with package.lock,
+    # SEE https://github.com/dependabot/dependabot-core/issues/4993#issuecomment-1739296001
+    directory: /
     schedule:
       interval: monthly
     commit-message:
@@ -29,18 +31,7 @@ updates:
       dev-deps:
         dependency-type: development
     open-pull-requests-limit: 15
-
-  - package-ecosystem: npm
-    directory: /docs
-    schedule:
-      interval: monthly
-    commit-message:
-      prefix: "chore(deps/docs): "
-    groups:
-      deps:
-        patterns:
-          - "*"
-    open-pull-requests-limit: 15
+    versioning-strategy: increase
 
   - package-ecosystem: docker
     directory: /

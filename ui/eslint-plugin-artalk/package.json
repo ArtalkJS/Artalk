@@ -27,7 +27,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@typescript-eslint/utils": "^8.10.0"
+    "@typescript-eslint/utils": "^8.19.0"
   },
   "devDependencies": {
     "@typescript-eslint/rule-tester": "^8.10.0",

@@ -32,7 +32,7 @@
   "devDependencies": {
     "artalk": "workspace:^",
     "esbuild-plugin-raw": "^0.1.8",
-    "tsup": "^8.3.0"
+    "tsup": "^8.3.5"
   },
   "peerDependencies": {
     "artalk": "workspace:^",

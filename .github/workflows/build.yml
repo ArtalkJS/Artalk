@@ -71,6 +71,16 @@ jobs:
       dry_run: ${{ inputs.dry_run || false }}
     secrets: inherit
 
+  # Build RPM
+  rpm:
+    if: inputs.build_items == '' || contains(inputs.build_items, 'rpm')
+    needs: tagging
+    uses: ./.github/workflows/build-rpm.yml
+    with:
+      version: ${{ needs.tagging.outputs.version }}
+      dry_run: ${{ inputs.dry_run || false }}
+    secrets: inherit
+
   # All builds are complete
   done:
     needs: [tagging, ui, docker, app]

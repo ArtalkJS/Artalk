@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@types/katex": "^0.16.7",
-    "katex": "^0.16.11"
+    "katex": "^0.16.21"
   },
   "devDependencies": {
     "artalk": "workspace:^",
@@ -26,7 +26,7 @@
   "peerDependencies": {
     "@types/katex": "^0.16.7",
     "artalk": "workspace:^",
-    "katex": "^0.16.11"
+    "katex": "^0.16.21"
   },
   "exports": {
     ".": {

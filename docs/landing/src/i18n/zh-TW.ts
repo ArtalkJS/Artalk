@@ -5,7 +5,7 @@ export const zhTW: MessageSchema = {
   get_artalk: '取得 Artalk',
   get_artalk_link: 'https://artalk.js.org/guide/intro.html',
   slogan_line_1: 'Artalk 評論系統',
-  slogan_line_2: '即時評論，即時回應',
+  slogan_line_2: '即時評論，即刻回應',
   slogan_line_3: '',
   nav_docs_link: 'https://artalk.js.org/guide/intro.html',
   nav_changelog_link: 'https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md',

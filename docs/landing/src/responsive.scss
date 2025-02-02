@@ -203,10 +203,8 @@ $breakpoints: (
     }
 
     .methods {
-      width: 100%;
-      place-items: center;
-      padding: 0 20px;
-      grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+      padding: 0 40px;
+      gap: 15px;
 
       .icon {
         height: 65px;
@@ -223,6 +221,7 @@ $breakpoints: (
 
   .full-feature {
     padding-bottom: 50px;
+    padding-top: 50px;
   }
 
   .full-feature .func-list {

@@ -276,7 +276,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_FRONTEND_UABADGE** | `false` | User UA badge | frontend.uaBadge (UI Settings > User UA badge) |
 | **ATK_FRONTEND_VERSIONCHECK** | `true` | Version check | frontend.versionCheck (UI Settings > Version check) |
 | **ATK_FRONTEND_VOTE** | `true` | Vote button | frontend.vote (UI Settings > Vote button) |
-| **ATK_FRONTEND_VOTEDOWN** | `false` | Dislike button | frontend.voteDown (UI Settings > Dislike button) |
+| **ATK_FRONTEND_VOTEDOWN** | `false` | Vote down button | frontend.voteDown (UI Settings > Vote down button) |
 
 
 ## Web server

@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "artalk": "workspace:^",
-    "solid-js": "^1.9.2",
+    "solid-js": "^1.9.4",
     "vite-plugin-css-injected-by-js": "^3.5.2",
     "vite-plugin-solid": "^2.10.2"
   },

@@ -30,8 +30,8 @@
     "@typescript-eslint/utils": "^8.10.0"
   },
   "devDependencies": {
-    "@typescript-eslint/rule-tester": "^8.10.0",
-    "tsup": "^8.3.0"
+    "@typescript-eslint/rule-tester": "^8.25.0",
+    "tsup": "^8.4.0"
   },
   "peerDependencies": {
     "eslint": ">=9"

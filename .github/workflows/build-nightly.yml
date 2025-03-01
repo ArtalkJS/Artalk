@@ -140,7 +140,7 @@ jobs:
 
       - name: Setup docker on macos
         if: startsWith(matrix.os, 'macos')
-        uses: crazy-max/ghaction-setup-docker@v3
+        uses: crazy-max/ghaction-setup-docker@v4
 
       - name: Gen docker meta
         id: meta

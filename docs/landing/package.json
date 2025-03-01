@@ -15,19 +15,19 @@
     "update:readme": "npx tsx ./scripts/update-readme.ts"
   },
   "devDependencies": {
-    "@headlessui/react": "^2.1.10",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react-swc": "^3.7.1",
-    "i18next": "^23.16.0",
-    "i18next-browser-languagedetector": "^8.0.0",
+    "@headlessui/react": "^2.2.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react-swc": "^3.8.0",
+    "i18next": "^24.2.2",
+    "i18next-browser-languagedetector": "^8.0.4",
     "include-media": "^2.0.0",
     "normalize.css": "^8.0.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-i18next": "^15.0.3",
-    "react-icons": "5.3.0",
-    "usehooks-ts": "^3.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-i18next": "^15.4.1",
+    "react-icons": "5.5.0",
+    "usehooks-ts": "^3.1.1",
     "vanilla-lazyload": "^19.1.3"
   }
 }

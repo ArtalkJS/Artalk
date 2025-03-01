@@ -1,5 +1,5 @@
 ### build Artalk
-FROM golang:1.22.7-alpine3.20 AS builder
+FROM golang:1.24.0-alpine3.20 AS builder
 
 WORKDIR /source
 
@@ -40,7 +40,7 @@ RUN set -ex \
     && make build
 
 ### build final image
-FROM alpine:3.20
+FROM alpine:3.21
 
 # we set the timezone `Asia/Shanghai` by default, you can be modified
 # by `docker build --build-arg="TZ=Other_Timezone ..."`

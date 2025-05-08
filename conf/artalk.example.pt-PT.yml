@@ -271,6 +271,13 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  # Okta
+  okta:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    # Issuer URL (HTTPS, e.g. https://example.okta.com/oauth2/default)
+    issuer: ""
   # SSO (troca tokens de acesso OIDC externos por sessões Artalk após validação através do endpoint /userinfo do IdP)
   sso:
     enabled: false

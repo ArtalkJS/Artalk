@@ -164,6 +164,10 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_MICROSOFT_CLIENT_ID** | `""` | ClientId | auth.microsoft.client_id (社交登录 > Microsoft > ClientId) |
 | **ATK_AUTH_MICROSOFT_CLIENT_SECRET** | `""` | ClientSecret | auth.microsoft.client_secret (社交登录 > Microsoft > ClientSecret) |
 | **ATK_AUTH_MICROSOFT_ENABLED** | `false` | 启用 | auth.microsoft.enabled (社交登录 > Microsoft > Enabled) |
+| **ATK_AUTH_OKTA_CLIENT_ID** | `""` | ClientId | auth.okta.client_id (社交登录 > Okta > ClientId) |
+| **ATK_AUTH_OKTA_CLIENT_SECRET** | `""` | ClientSecret | auth.okta.client_secret (社交登录 > Okta > ClientSecret) |
+| **ATK_AUTH_OKTA_ENABLED** | `false` | 启用 | auth.okta.enabled (社交登录 > Okta > Enabled) |
+| **ATK_AUTH_OKTA_ISSUER** | `""` | 授权服务地址（HTTPS，例如 https://example.okta.com/oauth2/default） | auth.okta.issuer (社交登录 > Okta > 授权服务地址（HTTPS，例如 https://example.okta.com/oauth2/default）) |
 | **ATK_AUTH_PATREON_CLIENT_ID** | `""` | ClientId | auth.patreon.client_id (社交登录 > Patreon > ClientId) |
 | **ATK_AUTH_PATREON_CLIENT_SECRET** | `""` | ClientSecret | auth.patreon.client_secret (社交登录 > Patreon > ClientSecret) |
 | **ATK_AUTH_PATREON_ENABLED** | `false` | 启用 | auth.patreon.enabled (社交登录 > Patreon > Enabled) |

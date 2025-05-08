@@ -396,6 +396,13 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  # Okta
+  okta:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    # Issuer URL (HTTPS, e.g. https://example.okta.com/oauth2/default)
+    issuer: ""
   # SSO (Exchange external OIDC access tokens for Artalk login sessions, verified via the IdP's /userinfo endpoint)
   # -- Use this when the embedding app already runs OIDC and you want Artalk to inherit that session without its own popup login UI. --
   sso:

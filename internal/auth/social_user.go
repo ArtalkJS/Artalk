@@ -3,6 +3,7 @@ package auth
 import (
 	"strings"
 
+	"github.com/artalkjs/artalk/v2/internal/config"
 	"github.com/markbates/goth"
 )
 
@@ -12,14 +13,17 @@ type SocialUser struct {
 	Link      string
 }
 
-func GetSocialUser(u goth.User, giteaSiteURL string) (SocialUser, error) {
+func GetSocialUser(u goth.User, conf *config.AuthConf) (SocialUser, error) {
 	remoteUID := u.UserID
-	if u.Provider == "gitea" {
-		var err error
-		remoteUID, err = giteaRemoteUID(giteaSiteURL, u.UserID)
-		if err != nil {
-			return SocialUser{}, err
-		}
+	var err error
+	switch u.Provider {
+	case "gitea":
+		remoteUID, err = giteaRemoteUID(conf.Gitea.SiteURL, u.UserID)
+	case "okta":
+		remoteUID, err = oktaRemoteUID(conf.Okta.Issuer, u.UserID)
+	}
+	if err != nil {
+		return SocialUser{}, err
 	}
 	var link string
 	if u.Provider == "github" {

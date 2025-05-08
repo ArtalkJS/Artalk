@@ -130,6 +130,15 @@ func GetProviders(conf *config.Config) []goth.Provider {
 		providers = append(providers, auth0.New(auth0Conf.ClientID, auth0Conf.ClientSecret, callbackURL("auth0"),
 			auth0Conf.Domain, "openid", "profile", "email"))
 	}
+	// @see https://developer.okta.com/docs/api/
+	if oktaConf := conf.Auth.Okta; oktaConf.Enabled {
+		provider, err := newOktaProvider(oktaConf.Issuer, oktaConf.ClientID, oktaConf.ClientSecret, callbackURL("okta"))
+		if err != nil {
+			log.Error("[SocialLogin] ", err)
+		} else {
+			providers = append(providers, provider)
+		}
+	}
 
 	return providers
 }

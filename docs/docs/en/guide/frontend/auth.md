@@ -12,18 +12,11 @@ Currently, the following social login methods are supported:
 | Facebook     | [View](https://developers.facebook.com/docs/facebook-login/) | Twitter    | [View](https://developer.twitter.com/en/docs/basics/authentication/overview) | Discord | [View](https://discord.com/developers/docs/topics/oauth2) |
 | Slack        | [View](https://api.slack.com/authentication/oauth-v2) | GitHub     | [View](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/) | TikTok | [View](https://developers.tiktok.com/doc/login) |
 | Steam        | [View](https://partner.steamgames.com/doc/webapi_overview/auth) | WeChat     | [View](https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html) | Line | [View](https://developers.line.biz/en/docs/line-login/integrate-line-login/) |
-| GitLab       | [View](https://docs.gitlab.com/ee/api/oauth2.html) | Gitea      | [View](https://docs.gitea.io/en-us/oauth2-provider/) | Mastodon | [View](https://docs.joinmastodon.org/api/authentication/) |
-| Patreon      | [View](https://docs.patreon.com/#oauth) | Auth0      | [View](https://auth0.com/docs/connections/social/) | Email & Password | [View](#email-password-login) |
+| GitLab | [View](https://docs.gitlab.com/ee/api/oauth2.html) | Mastodon | [View](https://docs.joinmastodon.org/api/authentication/) | Patreon | [View](https://docs.patreon.com/#oauth) |
+| Email & Password | [View](#email-password-login) | | | | |
+| Auth0 | [View](#auth0) | Okta | [View](#okta) | Gitea | [View](#self-hosted-gitea) |
 
 To enable social login, simply find the "Social Login" option in the [Dashboard](./sidebar.md#settings), enable it, and fill in the corresponding configuration information. Alternatively, you can configure it through the [configuration file](../backend/config.md) or [environment variables](../env.md#social-login).
-
-## Self-hosted Gitea
-
-Set `auth.gitea.site_url` to your Gitea base URL, for example `https://git.example.com/gitea`. Leave it empty for `https://gitea.com`. You can use HTTP, HTTPS, ports, and paths such as `/gitea`.
-
-`ATK_AUTH_GITEA_SITE_URL` sets the same value. In Gitea, set the login return address to `<Artalk public origin>/api/v2/auth/gitea/callback`.
-
-Existing gitea.com accounts stay unchanged. Each custom server URL has separate accounts, even when names and emails match. If you switch to a different server or path, Artalk uses a separate account. Existing comments stay with the original account.
 
 ## Email & Password Login
 
@@ -131,6 +124,54 @@ The endpoint returns `404` when SSO is not enabled, `401` when the IdP rejects t
 Validation relies entirely on the issuer's `/userinfo` rejecting invalid or revoked tokens, and the user is matched by the `email` claim. Only enable this for an issuer you trust. Because an unverified email could impersonate an existing user or administrator, Artalk requires `email_verified: true`.
 
 :::
+
+## Auth0
+
+In Auth0, create a Regular Web Application. Add `<Artalk public origin>/api/v2/auth/auth0/callback` to Allowed Callback URLs. Copy the Domain, Client ID, and Client Secret from the application settings.
+
+```yaml
+auth:
+  enabled: true
+  callback: 'https://comments.example.com/api/v2/auth/{provider}/callback'
+  auth0:
+    enabled: true
+    client_id: 'YOUR_CLIENT_ID'
+    client_secret: 'YOUR_CLIENT_SECRET'
+    domain: 'YOUR_TENANT.auth0.com'
+```
+
+Replace `https://comments.example.com` with your public Artalk server address. Set `domain` to the Auth0 hostname, without `https://` or a path. Enable the login methods that you need in the Auth0 application. See [Auth0 application settings](https://auth0.com/docs/get-started/applications/application-settings).
+
+## Okta
+
+In Okta, create an OIDC Web Application with the Authorization Code grant. Assign the users or groups that can sign in. Set the sign-in redirect URI to `<Artalk public origin>/api/v2/auth/okta/callback`.
+
+```yaml
+auth:
+  enabled: true
+  callback: 'https://comments.example.com/api/v2/auth/{provider}/callback'
+  okta:
+    enabled: true
+    client_id: 'YOUR_CLIENT_ID'
+    client_secret: 'YOUR_CLIENT_SECRET'
+    issuer: 'https://example.okta.com'
+```
+
+Replace `https://comments.example.com` with your public Artalk server address.
+
+The issuer identifies your authorization server. Use `https://example.okta.com` for the org server, or `https://example.okta.com/oauth2/default` for the default custom server. Other custom servers use `https://example.okta.com/oauth2/<server-id>`. Set an access policy for a custom server. See [Okta authorization servers](https://developer.okta.com/docs/concepts/auth-servers/).
+
+Use HTTPS. Do not include `/v1/authorize` in the issuer. `ATK_AUTH_OKTA_ISSUER` sets the same value.
+
+Okta accounts stay separate from existing Artalk accounts, even when names and emails match. Changing the issuer creates separate accounts. Existing comments stay with their original accounts.
+
+## Self-hosted Gitea
+
+Set `auth.gitea.site_url` to your Gitea base URL, for example `https://git.example.com/gitea`. Leave it empty for `https://gitea.com`. You can use HTTP, HTTPS, ports, and paths such as `/gitea`.
+
+`ATK_AUTH_GITEA_SITE_URL` sets the same value. In Gitea, set the login return address to `<Artalk public origin>/api/v2/auth/gitea/callback`.
+
+Existing gitea.com accounts stay unchanged. Each custom server URL has separate accounts, even when names and emails match. If you switch to a different server or path, Artalk uses a separate account. Existing comments stay with the original account.
 
 ## Plugin Development
 

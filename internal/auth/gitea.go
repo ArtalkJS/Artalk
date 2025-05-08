@@ -3,7 +3,6 @@ package auth
 import (
 	"crypto/sha256"
 	"fmt"
-	"net/url"
 	"strings"
 )
 
@@ -14,20 +13,11 @@ func giteaSiteURL(raw string) (string, error) {
 	if raw == "" {
 		return defaultGiteaSiteURL, nil
 	}
-	u, err := url.Parse(raw)
-	if err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Hostname() == "" ||
-		u.User != nil || u.RawQuery != "" || u.ForceQuery || u.Fragment != "" {
-		return "", fmt.Errorf("auth.gitea.site_url must be an HTTP(S) URL without credentials, query or fragment")
+	siteURL, err := normalizeProviderURL(raw)
+	if err != nil {
+		return "", fmt.Errorf("auth.gitea.site_url %w", err)
 	}
-	u.Host = strings.ToLower(u.Host)
-	if u.Scheme == "https" && u.Port() == "443" {
-		u.Host = strings.TrimSuffix(u.Host, ":443")
-	} else if u.Scheme == "http" && u.Port() == "80" {
-		u.Host = strings.TrimSuffix(u.Host, ":80")
-	}
-	u.Path = strings.TrimRight(u.Path, "/")
-	u.RawPath = strings.TrimRight(u.RawPath, "/")
-	return u.String(), nil
+	return siteURL, nil
 }
 
 func giteaRemoteUID(rawSiteURL, userID string) (string, error) {

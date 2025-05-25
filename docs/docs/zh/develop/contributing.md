@@ -224,7 +224,7 @@ docker build -t artalk:TAG .
 如果你已经在 Docker 容器外部构建了前端，可以跳过容器内的前端构建过程以加快构建速度。使用以下命令：
 
 ```sh
-docker build --build-arg SKIP_FRONTEND_BUILD=true -t artalk:latest .
+docker build --build-arg SKIP_UI_BUILD=true -t artalk:latest .
 ```
 
 更多详细信息，请参考 `Dockerfile`。

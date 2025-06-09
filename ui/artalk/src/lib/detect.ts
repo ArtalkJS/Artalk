@@ -29,6 +29,7 @@ function Detect(userAgent?: string) {
     Edge: u.includes('Edge') || u.includes('Edg'),
     Firefox: u.includes('Firefox') || u.includes('FxiOS'),
     'Firefox Focus': u.includes('Focus'),
+    Servo: u.includes('Servo'),
     Chromium: u.includes('Chromium'),
     Opera: u.includes('Opera') || u.includes('OPR'),
     Vivaldi: u.includes('Vivaldi'),
@@ -45,8 +46,10 @@ function Detect(userAgent?: string) {
     '2345Explorer': u.includes('2345Explorer'),
     TheWorld: u.includes('TheWorld'),
     MIUI: u.includes('MiuiBrowser'),
+    HuaweiBrowser: u.includes('HuaweiBrowser'),
     Quark: u.includes('Quark'),
     Qiyu: u.includes('Qiyu'),
+    '360Browser': u.includes('360Browser'),
     Wechat: u.includes('MicroMessenger'),
     Taobao: u.includes('AliApp(TB'),
     Alipay: u.includes('AliApp(AP'),
@@ -70,13 +73,14 @@ function Detect(userAgent?: string) {
     MeeGo: u.includes('MeeGo'),
     Symbian: u.includes('Symbian'),
     iOS: u.includes('like Mac OS X'),
+    OpenHarmony: u.includes('OpenHarmony'),
     'Chrome OS': u.includes('CrOS'),
     WebOS: u.includes('hpwOS'),
   }
 
   // 设备
   const deviceMatch = {
-    Mobile: u.includes('Mobi') || u.includes('iPh') || u.includes('480'),
+    Mobile: u.includes('Mobi') || u.includes('iPh') || u.includes('480') || u.includes('Phone'),
     Tablet: u.includes('Tablet') || u.includes('Pad') || u.includes('Nexus 7')
   }
 
@@ -139,6 +143,7 @@ function Detect(userAgent?: string) {
     Debian: () => u.replace(/^.*Debian\/([\d.]+).*$/, '$1'),
     'Windows Phone': () => u.replace(/^.*Windows Phone( OS)? ([\d.]+);.*$/, '$2'),
     'macOS': () => u.replace(/^.*Mac OS X ([\d_]+).*$/, '$1').replace(/_/g, '.'),
+    OpenHarmony: () => u.replace(/^.*OpenHarmony ([\d.]+).*$/, '$1'),
     WebOS: () => u.replace(/^.*hpwOS\/([\d.]+);.*$/, '$1')
   }
 
@@ -158,6 +163,7 @@ function Detect(userAgent?: string) {
     Edge: () => u.replace(/^.*(Edge|Edg|Edg[A-Z]{1})\/([\d.]+).*$/, '$2'),
     Firefox: () => u.replace(/^.*Firefox\/([\d.]+).*$/, '$1').replace(/^.*FxiOS\/([\d.]+).*$/, '$1'),
     'Firefox Focus': () => u.replace(/^.*Focus\/([\d.]+).*$/, '$1'),
+    Servo: () => u.replace(/^.*Servo\/?([\d.]+).*$/, '$1'),
     Chromium: () => u.replace(/^.*Chromium\/([\d.]+).*$/, '$1'),
     Opera: () => u.replace(/^.*Opera\/([\d.]+).*$/, '$1').replace(/^.*OPR\/([\d.]+).*$/, '$1'),
     Vivaldi: () => u.replace(/^.*Vivaldi\/([\d.]+).*$/, '$1'),
@@ -172,8 +178,10 @@ function Detect(userAgent?: string) {
     '2345Explorer': () => u.replace(/^.*2345Explorer\/([\d.]+).*$/, '$1'),
     TheWorld: () => u.replace(/^.*TheWorld ([\d.]+).*$/, '$1'),
     MIUI: () => u.replace(/^.*MiuiBrowser\/([\d.]+).*$/, '$1'),
+    HuaweiBrowser: () => u.replace(/^.*HuaweiBrowser\/([\d.]+).*$/, '$1'),
     Quark: () => u.replace(/^.*Quark\/([\d.]+).*$/, '$1'),
     Qiyu: () => u.replace(/^.*Qiyu\/([\d.]+).*$/, '$1'),
+    '360Browser': () => u.replace(/^.*360Browser\/([\d.]+).*$/, '$1'),
     Wechat: () => u.replace(/^.*MicroMessenger\/([\d.]+).*$/, '$1'),
     Taobao: () => u.replace(/^.*AliApp\(TB\/([\d.]+).*$/, '$1'),
     Alipay: () => u.replace(/^.*AliApp\(AP\/([\d.]+).*$/, '$1'),

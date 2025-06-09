@@ -224,7 +224,7 @@ Replace `TAG` with the desired tag name (e.g., `latest`).
 If you have already built the frontend outside the Docker container, you can skip the frontend build process inside the container to speed up the build. Use the following command:
 
 ```sh
-docker build --build-arg SKIP_FRONTEND_BUILD=true -t artalk:latest .
+docker build --build-arg SKIP_UI_BUILD=true -t artalk:latest .
 ```
 
 For more details, refer to the `Dockerfile`.

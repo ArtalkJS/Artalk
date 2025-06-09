@@ -24,6 +24,7 @@ export const SensitiveConfigPaths = [
   'auth.line.client_secret',
   'auth.mastodon.client_secret',
   'auth.microsoft.client_secret',
+  'auth.okta.client_secret',
   'auth.patreon.client_secret',
   'auth.slack.client_secret',
   'auth.tiktok.client_secret',

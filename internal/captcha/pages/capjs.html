@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cap</title>
+    <script src="{{.api_endpoint}}/assets/widget.js"></script>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <cap-widget
+      data-cap-api-endpoint="{{.api_endpoint}}/{{.key_id}}/api/"
+    ></cap-widget>
+    <script>
+        const capWidget = document.querySelector('cap-widget');
+        capWidget.addEventListener('solve', function (event) {
+        console.log('验证成功', event.detail.token);
+
+        fetch('./verify', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ value: event.detail.token }),
+        })
+        .then((res) => {
+            if (!res.ok)
+            res.json().then((json) => {
+                alert('验证失败：' + res.status + ' ' + json.msg || '')
+            })
+        })
+        .catch((err) => {
+            console.error(err)
+            alert('后端 API 请求失败：' + err.message || '')
+        })
+        });
+        // capWidget.addEventListener('error', function (event) {
+        // alert('验证失败');
+        // });
+    </script>
+  </body>
+</html>

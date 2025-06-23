@@ -41,6 +41,8 @@ func NewCaptchaChecker(conf *CheckerConf) Checker {
 		return NewHCaptchaChecker(&conf.HCaptcha, &conf.User)
 	case config.TypeGeetest:
 		return NewGeetestChecker(&conf.Geetest, &conf.User)
+	case config.TypeCapJS:
+		return NewCapJSChecker(&conf.CapJS, &conf.User)
 	default:
 		panic("Unknown captcha type")
 	}

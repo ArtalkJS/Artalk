@@ -268,7 +268,9 @@ port: 23366
 
 Configuring the `host` listening address to `0.0.0.0` will expose the Artalk service to the entire network.
 
-If you want Artalk to be accessible only locally, configure `host` to `127.0.0.1`.
+Use `host: '::'` to listen on IPv6. Both bare IPv6 addresses and addresses in brackets, such as `[::1]`, are accepted. On systems that support both protocols, `0.0.0.0` and `::` accept IPv4 and IPv6 connections.
+
+For local access only, use `127.0.0.1` for IPv4 or `::1` for IPv6. These settings apply to both HTTP and HTTPS.
 
 When starting Artalk via the command line, you can specify the address and port using the `--host` and `--port` parameters, for example:
 

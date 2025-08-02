@@ -384,6 +384,12 @@ type AuthConf struct {
 		ClientID     string `koanf:"client_id" json:"client_id"`
 		ClientSecret string `koanf:"client_secret" json:"client_secret"`
 	} `koanf:"gitea" json:"gitea"`
+	Gitea-self struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+		Domain       string `koanf:"domain" json:"domain"`
+	} `koanf:"gitea" json:"gitea"`
 	Google struct {
 		Enabled      bool   `koanf:"enabled" json:"enabled"`
 		ClientID     string `koanf:"client_id" json:"client_id"`

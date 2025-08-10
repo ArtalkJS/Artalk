@@ -73,6 +73,10 @@ type DBConf struct {
 	Charset     string `koanf:"charset" json:"charset"`
 	SSL         bool   `koanf:"ssl" json:"ssl"`
 	PrepareStmt *bool  `koanf:"prepare_stmt" json:"prepare_stmt"`
+
+	ServerCaPath   string `koanf:"server_ca_path" json:"server_ca_path"`     // /path/to/server-ca.pem
+	ClientCertPath string `koanf:"client_cert_path" json:"client_cert_path"` // /path/to/client-cert.pem
+	ClientKeyPath  string `koanf:"client_key_path" json:"client_key_path"`   // /path/to/client-key.pem
 }
 
 type CacheConf struct {

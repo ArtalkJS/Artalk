@@ -214,22 +214,22 @@ var end = "<!-- /env-variables -->"
 // parseMarkdownEnv extracts the env.md to be:
 // - header: content before the env variables section
 // - body: the content between start and end markers
-//   - generalTableTitle: the first title (## ...) after the start marker
-//   - tableFields: the first table header row after the general table title
+//   - firstTableTitle: the first title (## ...) after the start marker
+//   - tableFields: the first table header row after the first table title
 // - footer: content after the env variables section
 //
 // For example, given a snippet from env.md:
 // ```md
-//   ...header...
-//   <!-- env-variables -->
-//   ## 通用配置
+// ...header...
+// <!-- env-variables -->
+// ## 通用配置
 //
-//   | 环境变量 | 默认值 | 描述 | 路径 |
-//   | --- | --- | --- | --- |
-//   | **ATK_ADMIN_USERS** | `[]` | 管理员账户 | admin_users (管理员账户) |
-//   ...more tables...
-//   <!-- /env-variables -->
-//   ...footer...
+// | 环境变量 | 默认值 | 描述 | 路径 |
+// | --- | --- | --- | --- |
+// | **ATK_ADMIN_USERS** | `[]` | 管理员账户 | admin_users (管理员账户) |
+// ...more tables...
+// <!-- /env-variables -->
+// ...footer...
 // ```
 // The function should return:
 //   header: "...header...\n"

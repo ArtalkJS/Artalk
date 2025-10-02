@@ -56,9 +56,9 @@ func GetProviders(conf *config.Config) []goth.Provider {
 	}
 	// self-hosted @see https://docs.gitea.io/en-us/oauth2-provider/
 	if giteaConf-self := conf.Auth.Gitea; giteaConf-self.Enabled {
-		authURL := "https://" + giteaConf-self.Domian + "/login/oauth/authorize"
-		tokenURL := "https://" + giteaConf-self.Domian + "/login/oauth/access_token"
-		profileURL := "https://" + giteaConf-self.Domian + "/api/v1/user"
+		authURL := giteaConf-self.FullUrl + "/login/oauth/authorize"
+		tokenURL := giteaConf-self.FullUrl + "/login/oauth/access_token"
+		profileURL := giteaConf-self.FullUrl + "/api/v1/user"
 		providers = append(providers, gitea.NewCustomisedURL(giteaConf-self.ClientID, giteaConf-self.ClientSecret, callbackURL("gitea"), authURL, tokenURL, profileURL
 			"read:user"))
 	}

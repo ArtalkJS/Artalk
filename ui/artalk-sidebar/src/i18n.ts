@@ -22,9 +22,15 @@ export function setupI18n() {
 export async function loadLocaleMessages(i18n: I18n, locale: Locale) {
   if (i18n.global.availableLocales.includes(locale)) return
 
+  let loadLocale = locale
+  if (locale === 'tr-TR') loadLocale = 'tr'
+  else if (locale === 'zh-CN') loadLocale = 'zh-CN'
+  else if (locale === 'zh-TW') loadLocale = 'zh-TW'
+  else loadLocale = locale.split('-')[0] // fallback to base language
+
   // Load locale messages with dynamic import
   // @see https://vitejs.dev/guide/features#dynamic-import
-  const messages = await import(`./i18n/${locale}.ts`)
+  const messages = await import(`./i18n/${loadLocale}.ts`)
     .then((r: any) => r.default || r)
     .catch(() => {
       console.error(`Failed to load locale messages for "${locale}"`)

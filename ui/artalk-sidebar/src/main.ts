@@ -36,7 +36,13 @@ const artalkLoader = () =>
     Artalk.use((ctx) => {
       // When artalk is ready, notify the loader and load the locale
       ctx.watchConf(['locale'], async (conf) => {
-        if (typeof conf.locale === 'string' && conf.locale !== 'auto') await setLocale(conf.locale) // update i18n locale
+        if (typeof conf.locale === 'string') {
+          let reqLocale = conf.locale
+          if (reqLocale === 'auto') {
+            reqLocale = navigator.language
+          }
+          await setLocale(reqLocale)
+        }
 
         if (!artalkLoaded) {
           artalkLoaded = true

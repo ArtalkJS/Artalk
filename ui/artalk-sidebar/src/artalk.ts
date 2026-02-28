@@ -15,6 +15,7 @@ export function setupArtalk() {
     server: '../',
     pageKey: bootParams.pageKey,
     site: bootParams.site,
+    locale: bootParams.locale || undefined,
     darkMode: bootParams.darkMode,
     pvAdd: false,
     noComment: `<div class="atk-sidebar-no-content"></div>`,

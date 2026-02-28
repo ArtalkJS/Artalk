@@ -54,6 +54,7 @@ function getBootParams() {
     view: p.get('view') || '',
     viewParams: <any>null,
     darkMode,
+    locale: p.get('locale') || '',
   }
 }
 

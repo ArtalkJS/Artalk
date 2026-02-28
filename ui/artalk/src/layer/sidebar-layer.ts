@@ -160,6 +160,7 @@ export class SidebarLayer implements ISidebarLayer {
       pageKey: this.opts.getConf().get().pageKey,
       site: this.opts.getConf().get().site || '',
       user: JSON.stringify(this.opts.getUser().getData()),
+      locale: this.opts.getConf().get().locale,
       time: +new Date(),
     }
 

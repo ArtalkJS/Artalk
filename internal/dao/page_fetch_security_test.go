@@ -162,3 +162,49 @@ func TestPageFetchDoesNotOverwriteConcurrentEdits(t *testing.T) {
 		})
 	}
 }
+
+func TestWildcardDoesNotAuthorizePageFetch(t *testing.T) {
+	app, err := test.NewTestApp()
+	require.NoError(t, err)
+	defer app.Cleanup()
+	var hits atomic.Int32
+	target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hits.Add(1)
+		_, _ = w.Write([]byte("<title>Explicitly trusted</title>"))
+	}))
+	defer target.Close()
+	// Match the local test server without making DNS or external network requests.
+	pattern := strings.Replace(target.URL, "127.0.0.1", "*.0.0.1", 1)
+	for _, source := range []string{"configuration", "site URL"} {
+		t.Run(source, func(t *testing.T) {
+			app.Conf().TrustedDomains = nil
+			siteURLs := "https://blog.example.test"
+			if source == "configuration" {
+				app.Conf().TrustedDomains = []string{pattern}
+			} else {
+				siteURLs += "," + pattern
+			}
+			require.NoError(t, app.Dao().DB().Model(&entity.Site{}).Where("id = ?", 1000).Update("urls", siteURLs).Error)
+			require.True(t, middleware.CheckOriginTrusted(app.App, target.URL))
+			page := app.Dao().FindCreatePage(target.URL+"/post", "", "Site A")
+			before := hits.Load()
+			require.ErrorContains(t, app.Dao().TryFetchPageFromURL(&page, app.Conf().TrustedDomains...), "not trusted")
+			require.ErrorContains(t, app.Dao().FetchPageFromURL(&page, app.Conf().TrustedDomains...), "not trusted")
+			// An explicitly trusted starting URL must not redirect into wildcard-only trust.
+			redirect := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, target.URL, http.StatusFound)
+			}))
+			defer redirect.Close()
+			origins := append(app.Dao().TrustedOrigins(app.Conf().TrustedDomains), redirect.URL)
+			_, err := dao.GetTitleByURL(redirect.URL, origins...)
+			require.ErrorContains(t, err, "not trusted")
+			require.Equal(t, before, hits.Load())
+			// Adding an exact origin restores fetching even when a wildcard is present.
+			require.NoError(t, app.Dao().FetchPageFromURL(&page, append(app.Conf().TrustedDomains, target.URL)...))
+			require.Equal(t, before+1, hits.Load())
+			require.Equal(t, "Explicitly trusted", app.Dao().FindPageByID(page.ID).Title)
+			relative := entity.Page{Key: "/article", SiteName: "Site A"}
+			require.Equal(t, "https://blog.example.test/article", app.Dao().GetPageAccessibleURL(&relative))
+		})
+	}
+}

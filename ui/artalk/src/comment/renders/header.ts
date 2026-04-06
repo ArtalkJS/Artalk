@@ -21,7 +21,7 @@ function renderNick(r: Render) {
 
   if (r.data.link) {
     const $nickA = Utils.createElement<HTMLLinkElement>(
-      '<a target="_blank" rel="noreferrer noopener nofollow"></a>',
+      '<a target="_blank" rel="noreferrer noopener nofollow ugc"></a>',
     )
     $nickA.innerText = r.data.nick
     $nickA.href = Utils.isValidURL(r.data.link) ? r.data.link : `https://${r.data.link}`

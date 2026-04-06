@@ -27,7 +27,7 @@ const markedLinkRenderer =
     const html = orgLinkRenderer.call(renderer, args)
     return html.replace(
       /^<a /,
-      `<a target="_blank" ${!isSameOriginLink ? `rel="noreferrer noopener nofollow"` : ''} `,
+      `<a target="_blank" ${!isSameOriginLink ? `rel="noreferrer noopener nofollow ugc"` : ''} `,
     )
   }
 

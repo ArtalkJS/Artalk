@@ -8,7 +8,6 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/core"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"golang.org/x/exp/slices"
 )
 
 func getCorsAllowOrigins(app *core.App) []string {
@@ -37,7 +36,60 @@ func getCorsAllowOrigins(app *core.App) []string {
 }
 
 func CheckOriginTrusted(app *core.App, origin string) bool {
-	return slices.Contains(getCorsAllowOrigins(app), origin)
+	for _, allowed := range getCorsAllowOrigins(app) {
+		if allowed == origin {
+			return true
+		}
+		// Support wildcard subdomain matching (e.g. "https://*.example.com")
+		if matchWildcardOrigin(allowed, origin) {
+			return true
+		}
+	}
+	return false
+}
+
+// matchWildcardOrigin checks if origin matches a wildcard pattern like "https://*.example.com".
+// The wildcard only matches a single subdomain level in the host part.
+func matchWildcardOrigin(pattern, origin string) bool {
+	// Pattern must contain "*." in the host part
+	schemeEnd := strings.Index(pattern, "://")
+	if schemeEnd == -1 {
+		return false
+	}
+	patternScheme := pattern[:schemeEnd]
+	patternHost := pattern[schemeEnd+3:]
+
+	if !strings.HasPrefix(patternHost, "*.") {
+		return false
+	}
+
+	// Parse the origin
+	originSchemeEnd := strings.Index(origin, "://")
+	if originSchemeEnd == -1 {
+		return false
+	}
+	originScheme := origin[:originSchemeEnd]
+	originHost := origin[originSchemeEnd+3:]
+
+	// Schemes must match
+	if patternScheme != originScheme {
+		return false
+	}
+
+	// The origin host must end with the wildcard's base domain
+	// e.g. pattern "*.example.com" should match "sub.example.com" but not "example.com" itself
+	baseDomain := patternHost[1:] // ".example.com"
+	if !strings.HasSuffix(originHost, baseDomain) {
+		return false
+	}
+
+	// The part before the base domain must not contain a dot (single level only)
+	subdomain := originHost[:len(originHost)-len(baseDomain)]
+	if subdomain == "" || strings.Contains(subdomain, ".") {
+		return false
+	}
+
+	return true
 }
 
 func CheckURLTrusted(app *core.App, targetUrl string) (trusted bool, origin string, err error) {

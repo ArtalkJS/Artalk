@@ -80,6 +80,10 @@ captcha:
   geetest:
     captcha_id: ""
     captcha_key: ""
+  capjs:
+    key_id: ""
+    secret_key: ""
+    api_endpoint: ""
 img_upload:
   enabled: true
   path: ./data/artalk-img/

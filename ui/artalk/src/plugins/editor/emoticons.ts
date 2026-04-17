@@ -241,6 +241,7 @@ export default class Emoticons extends EditorPlugin {
           const imgEl = document.createElement('img')
           imgEl.src = item.val
           imgEl.alt = item.key
+          imgEl.loading = 'lazy'
           $item.append(imgEl)
         } else {
           $item.innerText = item.val

@@ -152,7 +152,7 @@ captcha:
   enabled: true
   # 总是需要验证码
   always: false
-  # 验证类型 ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
+  # 验证类型 ["image", "turnstile", "recaptcha", "hcaptcha", "geetest", "capjs"]
   captcha_type: image
   # 激活验证码所需操作次数
   action_limit: 3
@@ -176,7 +176,11 @@ captcha:
   geetest:
     captcha_id: ""
     captcha_key: ""
-
+  # Cap (https://capjs.js.org/)
+  capjs:
+    key_id: ""
+    secret_key: ""
+    api_endpoint: ""
 # IP 属地
 ip_region:
   # 启用 IP 属地展示

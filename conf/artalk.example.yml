@@ -150,7 +150,7 @@ captcha:
   enabled: true
   # Captcha is required always
   always: false
-  # Captcha type ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
+  # Captcha type ["image", "turnstile", "recaptcha", "hcaptcha", "geetest", "capjs"]
   captcha_type: image
   # Action limit
   # (the number of actions required to activate captcha)
@@ -175,7 +175,11 @@ captcha:
   geetest:
     captcha_id: ""
     captcha_key: ""
-
+  # Cap (https://capjs.js.org/)
+  capjs:
+    key_id: ""
+    secret_key: ""
+    api_endpoint: ""
 # Upload
 img_upload:
   # Enable image upload

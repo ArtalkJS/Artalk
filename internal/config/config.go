@@ -162,6 +162,7 @@ type CaptchaConf struct {
 	ReCaptcha     ReCaptchaConf `koanf:"recaptcha" json:"recaptcha"`
 	HCaptcha      HCaptchaConf  `koanf:"hcaptcha" json:"hcaptcha"`
 	Geetest       GeetestConf   `koanf:"geetest" json:"geetest"`
+	CapJS         CapJSConf     `koanf:"capjs" json:"capjs"`
 }
 
 type CaptchaType string
@@ -172,6 +173,7 @@ const (
 	TypeReCaptcha CaptchaType = "recaptcha"
 	TypeHCaptcha  CaptchaType = "hcaptcha"
 	TypeGeetest   CaptchaType = "geetest"
+	TypeCapJS     CaptchaType = "capjs"
 )
 
 type TurnstileConf struct {
@@ -193,6 +195,12 @@ type GeetestConf struct {
 	Enabled    bool   `koanf:"enabled" json:"-"` // @deprecated 已废弃 (请使用 captcha.captcha_type)
 	CaptchaID  string `koanf:"captcha_id" json:"captcha_id"`
 	CaptchaKey string `koanf:"captcha_key" json:"captcha_key"`
+}
+
+type CapJSConf struct {
+	KeyID       string `koanf:"key_id" json:"key_id"`
+	SecretKey   string `koanf:"secret_key" json:"secret_key"`
+	APIEndpoint string `koanf:"api_endpoint" json:"api_endpoint"`
 }
 
 type EmailConf struct {

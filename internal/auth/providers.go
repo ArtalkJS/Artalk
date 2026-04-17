@@ -19,6 +19,7 @@ import (
 	"github.com/markbates/goth/providers/line"
 	"github.com/markbates/goth/providers/mastodon"
 	"github.com/markbates/goth/providers/microsoftonline"
+	"github.com/markbates/goth/providers/okta"
 	"github.com/markbates/goth/providers/patreon"
 	"github.com/markbates/goth/providers/slack"
 	"github.com/markbates/goth/providers/steam"
@@ -116,6 +117,11 @@ func GetProviders(conf *config.Config) []goth.Provider {
 	if auth0Conf := conf.Auth.Auth0; auth0Conf.Enabled {
 		providers = append(providers, auth0.New(auth0Conf.ClientID, auth0Conf.ClientSecret, callbackURL("auth0"),
 			auth0Conf.Domain, "openid", "profile", "email"))
+	}
+	// @see https://developer.okta.com/docs/api/
+	if oktaConf := conf.Auth.Okta; oktaConf.Enabled {
+		providers = append(providers, okta.New(oktaConf.ClientID, oktaConf.ClientSecret, oktaConf.Domain, callbackURL("okta"),
+			"openid", "profile", "email"))
 	}
 
 	return providers

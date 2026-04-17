@@ -158,6 +158,10 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_MICROSOFT_CLIENT_ID** | `""` | ClientId | auth.microsoft.client_id (Social Login > Microsoft > ClientId) |
 | **ATK_AUTH_MICROSOFT_CLIENT_SECRET** | `""` | ClientSecret | auth.microsoft.client_secret (Social Login > Microsoft > ClientSecret) |
 | **ATK_AUTH_MICROSOFT_ENABLED** | `false` | 启用 | auth.microsoft.enabled (Social Login > Microsoft > Enabled) |
+| **ATK_AUTH_OKTA_CLIENT_ID** | `""` | ClientId | auth.okta.client_id (Social Login > Okta > ClientId) |
+| **ATK_AUTH_OKTA_CLIENT_SECRET** | `""` | ClientSecret | auth.okta.client_secret (Social Login > Okta > ClientSecret) |
+| **ATK_AUTH_OKTA_DOMAIN** | `""` | Domain | auth.okta.domain (Social Login > Okta > Domain) |
+| **ATK_AUTH_OKTA_ENABLED** | `false` | 启用 | auth.okta.enabled (Social Login > Okta > Enabled) |
 | **ATK_AUTH_PATREON_CLIENT_ID** | `""` | ClientId | auth.patreon.client_id (Social Login > Patreon > ClientId) |
 | **ATK_AUTH_PATREON_CLIENT_SECRET** | `""` | ClientSecret | auth.patreon.client_secret (Social Login > Patreon > ClientSecret) |
 | **ATK_AUTH_PATREON_ENABLED** | `false` | 启用 | auth.patreon.enabled (Social Login > Patreon > Enabled) |

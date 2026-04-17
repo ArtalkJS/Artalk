@@ -386,6 +386,12 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  # Okta
+  okta:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    domain: ""
 
 # UI Settings
 frontend:

@@ -220,6 +220,11 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  okta:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    domain: ""
 frontend:
   placeholder: ""
   noComment: ""

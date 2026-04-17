@@ -14,6 +14,7 @@ Currently, the following social login methods are supported:
 | Steam        | [View](https://partner.steamgames.com/doc/webapi_overview/auth) | WeChat     | [View](https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html) | Line | [View](https://developers.line.biz/en/docs/line-login/integrate-line-login/) |
 | GitLab       | [View](https://docs.gitlab.com/ee/api/oauth2.html) | Gitea      | [View](https://docs.gitea.io/en-us/oauth2-provider/) | Mastodon | [View](https://docs.joinmastodon.org/api/authentication/) |
 | Patreon      | [View](https://docs.patreon.com/#oauth) | Auth0      | [View](https://auth0.com/docs/connections/social/) | Email & Password | [View](#email-password-login) |
+| Okta      | [View](https://developer.okta.com/docs/api/) 
 
 To enable social login, simply find the "Social Login" option in the [Dashboard](./sidebar.md#settings), enable it, and fill in the corresponding configuration information. Alternatively, you can configure it through the [configuration file](../backend/config.md) or [environment variables](../env.md#social-login).
 

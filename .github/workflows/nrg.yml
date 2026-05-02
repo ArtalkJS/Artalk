@@ -12,16 +12,18 @@ on:
       - 'README.zh.md'
       - '.github/workflows/nrg.yml'
 permissions:
-  contents: write
+  contents: read
 jobs:
   regenerate:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: nanolaba/nrg-action@v1
+      - uses: nanolaba/nrg-action@9fae0216ed0c828f520e555912776ca624d84fb5  # v1
         with:
           file: README.src.md
           nrg-version: '1.2'
@@ -43,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nanolaba/nrg-action@v1
+      - uses: nanolaba/nrg-action@9fae0216ed0c828f520e555912776ca624d84fb5  # v1
         with:
           file: README.src.md
           mode: check

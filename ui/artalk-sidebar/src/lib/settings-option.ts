@@ -14,10 +14,9 @@ export interface OptionNode {
 }
 
 function extractItemComment(item: Pair, index: number, parentPair?: Pair): string {
-  let comment = ''
-  if (index === 0 && parentPair) comment = parentPair?.value?.commentBefore || ''
-  else comment = item?.key?.commentBefore || ''
-  return comment
+  return index === 0 && parentPair
+    ? parentPair?.value?.commentBefore || ''
+    : item?.key?.commentBefore || ''
 }
 
 export function getTree(yamlObj: YAML.Document.Parsed): OptionNode {
@@ -120,14 +119,12 @@ function extractComment(name: string, comment: string) {
   // ignore comments begin and end with `--`
   comment = comment.replace(/--(.*?)--/gm, '')
 
-  let title = ''
-  let subTitle = ''
   let selector: string[] | undefined
 
   const stReg = /\(.*?\)/gm
-  title = comment.replace(stReg, '').trim()
+  let title = comment.replace(stReg, '').trim()
   const stFind = stReg.exec(comment)
-  subTitle = stFind ? stFind[0].substring(1, stFind[0].length - 1) : ''
+  const subTitle = stFind ? stFind[0].substring(1, stFind[0].length - 1) : ''
   if (!title) {
     title = snakeToCamel(name)
   }

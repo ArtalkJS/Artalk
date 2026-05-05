@@ -69,3 +69,6 @@ node_modules
 
 playwright-report
 test-results
+
+# TypeScript composite build declaration output
+.tsbuildinfo-dts/

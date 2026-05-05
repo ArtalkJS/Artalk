@@ -16,17 +16,18 @@
     "serve": "vite preview"
   },
   "devDependencies": {
+    "@artalk/plugin-kit": "workspace:^",
     "artalk": "workspace:^",
     "fancybox": "^3.0.1",
-    "lightbox2": "^2.11.5",
-    "lightgallery": "^2.7.2",
+    "lightbox2": "^2.12.0",
+    "lightgallery": "^2.9.0",
     "photoswipe": "^5.4.4"
   },
   "peerDependencies": {
     "artalk": "workspace:^",
     "fancybox": "^3.0.1",
-    "lightbox2": "^2.11.5",
-    "lightgallery": "^2.7.2",
+    "lightbox2": "^2.12.0",
+    "lightgallery": "^2.9.0",
     "photoswipe": "^5.4.4"
   },
   "peerDependenciesMeta": {
@@ -45,14 +46,9 @@
   },
   "exports": {
     ".": {
-      "require": {
-        "types": "./dist/artalk-plugin-lightbox.d.cts",
-        "default": "./dist/artalk-plugin-lightbox.cjs"
-      },
-      "default": {
-        "types": "./dist/artalk-plugin-lightbox.d.ts",
-        "default": "./dist/artalk-plugin-lightbox.mjs"
-      }
+      "types": "./dist/artalk-plugin-lightbox.d.ts",
+      "import": "./dist/artalk-plugin-lightbox.mjs",
+      "require": "./dist/artalk-plugin-lightbox.cjs"
     }
   }
 }

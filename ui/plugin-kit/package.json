@@ -3,36 +3,36 @@
   "version": "1.0.9",
   "description": "The plugin kit for Artalk",
   "type": "module",
-  "main": "dist/main.js",
-  "types": "dist/main.d.ts",
+  "main": "dist/main.cjs",
+  "types": "dist/main.d.cts",
   "exports": {
     ".": {
       "require": {
-        "types": "./dist/main.d.cjs",
+        "types": "./dist/main.d.cts",
         "default": "./dist/main.cjs"
       },
       "default": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/main.js"
+        "types": "./dist/main.d.mts",
+        "default": "./dist/main.mjs"
       }
     },
     "./client": "./client.d.ts"
   },
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup"
+    "dev": "tsdown --watch",
+    "build": "tsdown"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@microsoft/api-extractor": "^7.47.11",
+    "@microsoft/api-extractor": "^7.58.7",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
     "artalk": "workspace:^",
-    "esbuild-plugin-raw": "^0.1.8",
-    "tsup": "^8.3.0"
+    "tsdown": "^0.21.10",
+    "vite": "^8.0.10"
   },
   "peerDependencies": {
     "artalk": "workspace:^",

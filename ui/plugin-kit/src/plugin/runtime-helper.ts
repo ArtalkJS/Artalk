@@ -1,11 +1,12 @@
 import fs from 'fs'
-import { createRequire } from 'module'
+import { fileURLToPath } from 'url'
+import { dirname, resolve } from 'path'
 
-const _require = createRequire(import.meta.url)
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export const RUNTIME_PATH = '/@vite-plugin-artalk-plugin-kit-runtime'
 
 export const wrapVirtualPrefix = (id: `/${string}`): `virtual:${string}` => `virtual:${id.slice(1)}`
 
 export const getRuntimeCode = () =>
-  `${fs.readFileSync(_require.resolve('./@runtime/main.js'), 'utf-8')};`
+  `${fs.readFileSync(resolve(__dirname, './@runtime/main.mjs'), 'utf-8')};`

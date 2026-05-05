@@ -20,106 +20,106 @@
   "type": "module",
   "exports": {
     ".": {
+      "import": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/Artalk.mjs"
+      },
       "require": {
         "types": "./dist/main.d.cts",
         "default": "./dist/Artalk.cjs"
-      },
-      "default": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/Artalk.mjs"
       }
     },
     "./ArtalkLite": {
+      "import": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/ArtalkLite.mjs"
+      },
       "require": {
         "types": "./dist/main.d.cts",
         "default": "./dist/ArtalkLite.cjs"
-      },
-      "default": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/ArtalkLite.mjs"
       }
     },
     "./i18n/ja": {
+      "import": {
+        "types": "./dist/i18n/ja.d.ts",
+        "default": "./dist/i18n/ja.mjs"
+      },
       "require": {
         "types": "./dist/i18n/ja.d.cts",
         "default": "./dist/i18n/ja.cjs"
-      },
-      "default": {
-        "types": "./dist/i18n/ja.d.ts",
-        "default": "./dist/i18n/ja.mjs"
       }
     },
     "./i18n/zh-TW": {
+      "import": {
+        "types": "./dist/i18n/zh-TW.d.ts",
+        "default": "./dist/i18n/zh-TW.mjs"
+      },
       "require": {
         "types": "./dist/i18n/zh-TW.d.cts",
         "default": "./dist/i18n/zh-TW.cjs"
-      },
-      "default": {
-        "types": "./dist/i18n/zh-TW.d.ts",
-        "default": "./dist/i18n/zh-TW.mjs"
       }
     },
     "./i18n/fr": {
+      "import": {
+        "types": "./dist/i18n/fr.d.ts",
+        "default": "./dist/i18n/fr.mjs"
+      },
       "require": {
         "types": "./dist/i18n/fr.d.cts",
         "default": "./dist/i18n/fr.cjs"
-      },
-      "default": {
-        "types": "./dist/i18n/fr.d.ts",
-        "default": "./dist/i18n/fr.mjs"
       }
     },
     "./i18n/ko": {
+      "import": {
+        "types": "./dist/i18n/ko.d.ts",
+        "default": "./dist/i18n/ko.mjs"
+      },
       "require": {
         "types": "./dist/i18n/ko.d.cts",
         "default": "./dist/i18n/ko.cjs"
-      },
-      "default": {
-        "types": "./dist/i18n/ko.d.ts",
-        "default": "./dist/i18n/ko.mjs"
       }
     },
     "./i18n/ru": {
+      "import": {
+        "types": "./dist/i18n/ru.d.ts",
+        "default": "./dist/i18n/ru.mjs"
+      },
       "require": {
         "types": "./dist/i18n/ru.d.cts",
         "default": "./dist/i18n/ru.cjs"
-      },
-      "default": {
-        "types": "./dist/i18n/ru.d.ts",
-        "default": "./dist/i18n/ru.mjs"
       }
     },
     "./i18n/*": "./dist/i18n/*",
     "./Artalk.css": "./dist/Artalk.css",
     "./ArtalkLite.css": "./dist/ArtalkLite.css",
     "./dist/ArtalkLite": {
+      "import": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/ArtalkLite.mjs"
+      },
       "require": {
         "types": "./dist/main.d.cts",
         "default": "./dist/ArtalkLite.cjs"
-      },
-      "default": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/ArtalkLite.mjs"
       }
     },
     "./dist/i18n/ja": {
+      "import": {
+        "types": "./dist/i18n/ja.d.ts",
+        "default": "./dist/i18n/ja.mjs"
+      },
       "require": {
         "types": "./dist/i18n/ja.d.cts",
         "default": "./dist/i18n/ja.cjs"
-      },
-      "default": {
-        "types": "./dist/i18n/ja.d.ts",
-        "default": "./dist/i18n/ja.mjs"
       }
     },
     "./dist/i18n/zh-TW": {
+      "import": {
+        "types": "./dist/i18n/zh-TW.d.ts",
+        "default": "./dist/i18n/zh-TW.mjs"
+      },
       "require": {
         "types": "./dist/i18n/zh-TW.d.cts",
         "default": "./dist/i18n/zh-TW.cjs"
-      },
-      "default": {
-        "types": "./dist/i18n/zh-TW.d.ts",
-        "default": "./dist/i18n/zh-TW.mjs"
       }
     },
     "./dist/i18n/*": "./dist/i18n/*",
@@ -142,7 +142,7 @@
     "coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e-report": "playwright show-report",
-    "test:attw": "pnpx @arethetypeswrong/cli --pack .",
+    "test:attw": "pnpx @arethetypeswrong/cli --pack . --ignore-rules no-resolution",
     "lint": "eslint ."
   },
   "devDependencies": {
@@ -150,9 +150,9 @@
     "insane": "^2.6.2"
   },
   "dependencies": {
-    "marked": "^14.1.3"
+    "marked": "^18.0.3"
   },
   "peerDependencies": {
-    "marked": "^14.1.2"
+    "marked": "^18.0.3"
   }
 }

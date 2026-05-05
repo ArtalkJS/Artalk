@@ -13,7 +13,7 @@ export default function renderAvatar(r: Render) {
 
   if (r.data.link) {
     const $avatarA = Utils.createElement<HTMLLinkElement>(
-      '<a target="_blank" rel="noreferrer noopener nofollow"></a>',
+      '<a target="_blank" rel="noreferrer noopener nofollow ugc"></a>',
     )
     $avatarA.href = Utils.isValidURL(r.data.link) ? r.data.link : `https://${r.data.link}`
     $avatarA.append($avatarImg)

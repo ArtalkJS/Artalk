@@ -30,10 +30,21 @@ export const ViteArtalkPluginKit = (opts: ViteArtalkPluginKitOptions = {}): Plug
     name: 'vite-plugin-artalk-dev-kit',
     enforce: 'pre',
 
-    async config(_config) {
+    async config(config) {
+      const rootDir = path.resolve(config.root || process.cwd())
+      const pluginName = utils.getPluginNameFromPackageJson(path.resolve(rootDir, 'package.json'))
+      const userLib = config.build?.lib || {}
+
       return {
         // override vite user config
         build: {
+          lib: {
+            name: pluginName,
+            entry: path.resolve(rootDir, 'src/main.ts'),
+            formats: ['es', 'umd', 'cjs', 'iife'],
+            fileName: (format: string) => utils.getDistFileName(pluginName, format),
+            ...userLib,
+          },
           target: 'es2015',
           rollupOptions: {
             external: ['artalk'],
@@ -59,17 +70,10 @@ export const ViteArtalkPluginKit = (opts: ViteArtalkPluginKitOptions = {}): Plug
       ctx.entryExportName = `Artalk${utils.kababCaseToPascalCase(/plugin-(.*)/.exec(ctx.pluginName)![1])}Plugin`
 
       // entry
-      const _lib = config.build.lib || {}
-      config.build.lib = <LibraryOptions>{
-        name: ctx.pluginName,
-        entry: path.resolve(ctx.rootDir, 'src/main.ts'),
-        formats: ['es', 'umd', 'cjs', 'iife'],
-        fileName: (format) => utils.getDistFileName(ctx.pluginName, format),
-        ..._lib,
-      }
-      if (typeof config.build.lib.entry !== 'string')
+      const lib = config.build.lib as LibraryOptions | false
+      if (!lib || typeof lib.entry !== 'string')
         throw new Error('Only support single entry file now')
-      ctx.entryPath = path.resolve(ctx.rootDir, config.build.lib.entry)
+      ctx.entryPath = path.resolve(ctx.rootDir, lib.entry)
     },
 
     configureServer(_server) {
@@ -151,6 +155,7 @@ export const ViteArtalkPluginKit = (opts: ViteArtalkPluginKitOptions = {}): Plug
         skipLibCheck: true,
         preserveSymlinks: false,
         noEmitOnError: undefined,
+        composite: false,
         target: ts.ScriptTarget.ESNext,
         moduleResolution: ts.ModuleResolutionKind.Bundler,
         outDir: '.',

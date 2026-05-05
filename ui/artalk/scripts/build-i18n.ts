@@ -1,8 +1,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { build, LibraryOptions } from 'vite'
-import { getFileName } from '../vite.config'
+import { build, type LibraryOptions } from 'vite'
+
+function getFileName(name: string, format: string) {
+  if (format == 'umd') return `${name}.js`
+  else if (format == 'cjs') return `${name}.cjs`
+  else if (format == 'es') return `${name}.mjs`
+  return `${name}.${format}.js`
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const i18nPath = path.join(__dirname, '../src/i18n/')

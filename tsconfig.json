@@ -1,0 +1,28 @@
+{
+  // Root tsconfig used only by tooling (ESLint, IDE).
+  // Each workspace package has its own tsconfig that extends tsconfig.base.json.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true
+  },
+  "files": [
+    "eslint.config.mjs",
+    "vitest.workspace.ts",
+    "scripts/check-npm-publish.mjs",
+    "scripts/fetch-registry.mjs"
+  ],
+  "references": [
+    { "path": "./ui/artalk" },
+    { "path": "./ui/artalk-sidebar" },
+    { "path": "./ui/artalk-sidebar/tsconfig.node.json" },
+    { "path": "./ui/plugin-kit" },
+    { "path": "./ui/plugin-auth" },
+    { "path": "./ui/plugin-katex" },
+    { "path": "./ui/plugin-lightbox" },
+    { "path": "./ui/eslint-plugin-artalk" },
+    { "path": "./docs/landing" },
+    { "path": "./docs/landing/tsconfig.node.json" },
+    { "path": "./docs/docs" }
+  ]
+}

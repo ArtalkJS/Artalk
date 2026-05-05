@@ -7,31 +7,32 @@
   "files": [
     "dist"
   ],
-  "main": "dist/main.js",
-  "types": "dist/main.d.ts",
+  "main": "dist/main.cjs",
+  "types": "dist/main.d.cts",
   "exports": {
     ".": {
       "require": {
-        "types": "./dist/main.d.cjs",
+        "types": "./dist/main.d.cts",
         "default": "./dist/main.cjs"
       },
       "default": {
-        "types": "./dist/main.d.ts",
-        "default": "./dist/main.js"
+        "types": "./dist/main.d.mts",
+        "default": "./dist/main.mjs"
       }
     }
   },
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup",
+    "dev": "tsdown --watch",
+    "build": "tsdown",
     "test": "vitest"
   },
   "dependencies": {
-    "@typescript-eslint/utils": "^8.10.0"
+    "@typescript-eslint/utils": "^8.59.1"
   },
   "devDependencies": {
-    "@typescript-eslint/rule-tester": "^8.10.0",
-    "tsup": "^8.3.0"
+    "@typescript-eslint/rule-tester": "^8.59.1",
+    "eslint": "^10.3.0",
+    "tsdown": "^0.21.10"
   },
   "peerDependencies": {
     "eslint": ">=9"

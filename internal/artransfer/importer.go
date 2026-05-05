@@ -44,11 +44,11 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 	isTrue := func(val string) bool { return val == "true" || val == "1" }
 
 	if len(comments) == 0 {
-		return fmt.Errorf(i18n.T("No comment"))
+		return fmt.Errorf("%s", i18n.T("No comment"))
 	}
 
 	if params.TargetSiteURL != "" && !utils.ValidateURL(params.TargetSiteURL) {
-		return fmt.Errorf(i18n.T("Invalid {{name}}", map[string]interface{}{"name": i18n.T("Target Site") + " " + "URL"}))
+		return fmt.Errorf("%s", i18n.T("Invalid {{name}}", map[string]interface{}{"name": i18n.T("Target Site") + " " + "URL"}))
 	}
 
 	console.Println()

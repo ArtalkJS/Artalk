@@ -4,7 +4,7 @@ import url from 'node:url'
 import { fixupPluginRules } from '@eslint/compat'
 import pluginCompat from 'eslint-plugin-compat'
 import eslintJs from '@eslint/js'
-import pluginTS from '@typescript-eslint/eslint-plugin'
+import { defineConfig } from 'eslint/config'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import pluginImportX from 'eslint-plugin-import-x'
 import pluginReact from 'eslint-plugin-react'
@@ -17,13 +17,11 @@ import vueParser from 'vue-eslint-parser'
 import pluginArtalk from 'eslint-plugin-artalk'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
-const tsProjects = ['./tsconfig.base.json', './ui/*/tsconfig.json', './docs/*/tsconfig.json']
 
-export default eslintTs.config(
+export default defineConfig(
   eslintJs.configs.recommended,
-  ...eslintTs.configs.recommended,
-  // @ts-expect-error the type of `pluginVue` is not compatible with the latest `eslint` v9 package yet
-  ...pluginVue.configs['flat/recommended'],
+  eslintTs.configs.recommended,
+  pluginVue.configs['flat/recommended'],
   pluginCompat.configs['flat/recommended'],
 
   /* Global Ignores */
@@ -38,6 +36,7 @@ export default eslintTs.config(
       'local',
       'test',
       '**/.vitepress/cache',
+      '**/.vitepress/.temp',
       '**/*.config.js',
       '**/*.config.ts',
       '**/*.d.ts',
@@ -51,7 +50,7 @@ export default eslintTs.config(
       parser: vueParser,
       parserOptions: {
         parser: eslintTs.parser,
-        project: tsProjects,
+        projectService: true,
         tsconfigRootDir: __dirname,
         globals: {
           ...globals.browser,
@@ -64,7 +63,6 @@ export default eslintTs.config(
       },
     },
     plugins: {
-      '@typescript-eslint': pluginTS,
       'import-x': pluginImportX,
       artalk: pluginArtalk,
     },
@@ -90,7 +88,7 @@ export default eslintTs.config(
       },
       'import-x/resolver': {
         typescript: {
-          project: tsProjects,
+          project: './tsconfig.json',
         },
         node: true,
       },
@@ -146,14 +144,14 @@ export default eslintTs.config(
       ...pluginReact.configs['jsx-runtime'].rules,
       ...pluginReactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': 'warn',
+      'react-hooks/immutability': 'off',
+      'react-hooks/set-state-in-effect': 'off',
       'react/prop-types': 'off',
     },
-    languageOptions: {
-      ...pluginReact.configs.recommended.languageOptions,
-    },
+
     settings: {
       react: {
-        version: '18.3',
+        version: '19.2',
       },
     },
   },

@@ -15,29 +15,21 @@
     "build": "vite build",
     "serve": "vite preview"
   },
-  "dependencies": {
-    "@types/katex": "^0.16.7",
-    "katex": "^0.16.11"
-  },
   "devDependencies": {
+    "@artalk/plugin-kit": "workspace:^",
     "artalk": "workspace:^",
-    "marked": "^14.1.3"
+    "katex": "^0.16.45",
+    "marked": "^18.0.3"
   },
   "peerDependencies": {
-    "@types/katex": "^0.16.7",
     "artalk": "workspace:^",
-    "katex": "^0.16.11"
+    "katex": "^0.16.45"
   },
   "exports": {
     ".": {
-      "require": {
-        "types": "./dist/artalk-plugin-katex.d.cts",
-        "default": "./dist/artalk-plugin-katex.cjs"
-      },
-      "default": {
-        "types": "./dist/artalk-plugin-katex.d.ts",
-        "default": "./dist/artalk-plugin-katex.mjs"
-      }
+      "types": "./dist/artalk-plugin-katex.d.ts",
+      "import": "./dist/artalk-plugin-katex.mjs",
+      "require": "./dist/artalk-plugin-katex.cjs"
     }
   }
 }

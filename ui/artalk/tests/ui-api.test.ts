@@ -96,6 +96,9 @@ describe('Artalk instance', () => {
 
   it(
     'should can listen to events and the conf-remoter works (artalk.trigger, artalk.on, conf-remoter)',
+    {
+      timeout: 1000,
+    },
     async () => {
       global.devMountArtalk()
 
@@ -113,9 +116,6 @@ describe('Artalk instance', () => {
       const conf = artalk.getConf()
       expect(conf.darkMode, 'the darkMode is unmodifiable, should still false').toBe(true)
       expect(conf.gravatar, 'the gravatar should be modified').toEqual(RemoteConf.gravatar)
-    },
-    {
-      timeout: 1000,
     },
   )
 

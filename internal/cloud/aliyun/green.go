@@ -42,7 +42,7 @@ func GreenText(conf GreenTextConf) (bool, error) {
 	}
 
 	if data.Code != 200 {
-		return false, fmt.Errorf(data.Msg)
+		return false, fmt.Errorf("%s", data.Msg)
 	}
 	if len(data.Data) < 1 || len(data.Data[0].Results) < 1 {
 		return false, fmt.Errorf("not expected response: %s", string(body))

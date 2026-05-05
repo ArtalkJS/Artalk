@@ -11,7 +11,7 @@ on:
         type: boolean
 
 env:
-  GO_VERSION: 1.22.7
+  GO_VERSION: 1.26.2
   DOCKER_IMG: ghcr.io/goreleaser/goreleaser-cross
   CACHE_DIR: /tmp/cache/docker-image
 

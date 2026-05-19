@@ -386,6 +386,16 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  # SSO token exchange
+  # -- Allow the surrounding application to exchange an access token from
+  # -- an external OIDC IdP for an Artalk session JWT. The token is
+  # -- validated by calling the IdP's /userinfo endpoint; the email claim
+  # -- finds or creates the matching Artalk user. Use this when your app
+  # -- already runs OIDC and you want Artalk to inherit that session
+  # -- without showing Artalk's own popup login UI.
+  sso:
+    enabled: false
+    issuer: ""   # e.g. "tenant.auth0.com" or "https://tenant.auth0.com"
 
 # UI Settings
 frontend:

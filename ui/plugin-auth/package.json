@@ -12,14 +12,9 @@
   "types": "./dist/artalk-plugin-auth.d.ts",
   "exports": {
     ".": {
-      "require": {
-        "types": "./dist/artalk-plugin-auth.d.cts",
-        "default": "./dist/artalk-plugin-auth.cjs"
-      },
-      "default": {
-        "types": "./dist/artalk-plugin-auth.d.ts",
-        "default": "./dist/artalk-plugin-auth.mjs"
-      }
+      "types": "./dist/artalk-plugin-auth.d.ts",
+      "import": "./dist/artalk-plugin-auth.mjs",
+      "require": "./dist/artalk-plugin-auth.cjs"
     }
   },
   "scripts": {
@@ -28,10 +23,11 @@
     "serve": "vite preview"
   },
   "devDependencies": {
+    "@artalk/plugin-kit": "workspace:^",
     "artalk": "workspace:^",
-    "solid-js": "^1.9.2",
-    "vite-plugin-css-injected-by-js": "^3.5.2",
-    "vite-plugin-solid": "^2.10.2"
+    "solid-js": "^1.9.12",
+    "vite-plugin-css-injected-by-js": "^5.0.1",
+    "vite-plugin-solid": "^2.11.12"
   },
   "peerDependencies": {
     "artalk": "workspace:^"

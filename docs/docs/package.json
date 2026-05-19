@@ -15,13 +15,13 @@
     "serve:docs": "vitepress serve"
   },
   "devDependencies": {
-    "@artalk/plugin-katex": "^0.2.4",
-    "@artalk/plugin-lightbox": "^0.2.4",
-    "@nolebase/vitepress-plugin-git-changelog": "^2.6.1",
+    "@artalk/plugin-katex": "workspace:^",
+    "@artalk/plugin-lightbox": "workspace:^",
+    "@nolebase/vitepress-plugin-git-changelog": "^2.18.2",
     "artalk": "workspace:^",
-    "katex": "^0.16.11",
-    "lightgallery": "^2.7.2",
-    "vitepress": "1.4.1",
-    "vue": "^3.5.12"
+    "katex": "^0.16.45",
+    "lightgallery": "^2.9.0",
+    "vitepress": "1.6.4",
+    "vue": "^3.5.33"
   }
 }

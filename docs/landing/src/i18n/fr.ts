@@ -4,21 +4,21 @@ export const fr: MessageSchema = {
   home_title: 'Artalk | Système de commentaires auto-hébergé alimenté par Golang',
   get_artalk: 'Obtenir Artalk',
   get_artalk_link: 'https://artalk.js.org/guide/intro.html',
-  slogan_line_1: 'Auto-hébergé',
-  slogan_line_2: 'Commentaire',
-  slogan_line_3: 'Système',
+  slogan_line_1: 'Système de',
+  slogan_line_2: 'commentaires',
+  slogan_line_3: 'auto-hébergé',
   nav_docs_link: 'https://artalk.js.org/guide/intro.html',
   nav_changelog_link: 'https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md',
   github_link: 'https://github.com/ArtalkJS/Artalk',
   docs: 'Documentation',
   changelog: 'Journal des modifications',
   feature_slight_title: 'Léger',
-  feature_slight_desc_line_1: 'Programme frontal en JS natif, sans dépendance à un framework,',
+  feature_slight_desc_line_1: 'Programme frontal en JS natif, sans dépendance à un framework, ',
   feature_slight_desc_line_2:
     'taille compacte, chargement rapide et réponse instantanée à chaque interaction.',
   feature_swift_title: 'Rapide',
   feature_swift_desc_line_1:
-    'Artalk est écrit en Golang, offrant rapidité, multiplateforme et facilité de déploiement.',
+    'Artalk est écrit en Golang, offrant rapidité, compatibilité multiplateforme et facilité de déploiement.',
   feature_swift_desc_line_2:
     'Nous proposons également une image Docker pour un déploiement encore plus simple.',
   feature_swift_self_compile: 'Vous souhaitez compiler le code vous-même ?',
@@ -43,7 +43,7 @@ export const fr: MessageSchema = {
     'Artalk est un logiciel open-source, auto-hébergé et contrôlable en toute transparence.',
   feature_safe_desc_line_2:
     'Artalk inclut un outil de migration pour transférer facilement les commentaires.',
-  feature_safe_desc_line_3: 'Nous priorisons la sécurité et mettons à jour régulièrement.',
+  feature_safe_desc_line_3: 'Nous priorisons la sécurité et mettons le site à jour régulièrement.',
   feature_safe_report_audit_hint: 'Vous avez trouvé un problème de sécurité ?',
   feature_safe_report_audit_btn: 'Signaler maintenant',
   feature_safe_report_audit_link: 'https://github.com/ArtalkJS/Artalk/issues',
@@ -82,7 +82,7 @@ export const fr: MessageSchema = {
   feature_sidebar_name: 'Barre latérale',
   feature_sidebar_desc: 'Gestion rapide, navigation intuitive',
   feature_social_login_name: 'Connexion via réseaux sociaux',
-  feature_social_login_desc: 'Connexion rapide avec un compte réseau social',
+  feature_social_login_desc: 'Connexion rapide avec un compte de réseau social',
   feature_email_notification_name: 'Notification par e-mail',
   feature_email_notification_desc: "Plusieurs méthodes d'envoi et modèles d'e-mail",
   feature_diverse_push_name: 'Notifications diverses',
@@ -153,7 +153,7 @@ export const fr: MessageSchema = {
   intro_stack_card_3_text: 'Bonjour',
   concept_section_locales_title: 'Localisation multilingue',
   concept_section_locales_desc:
-    "Prise en charge de plusieurs langues, telles que l'anglais, le chinois, le français, le japonais, le coréen et le russe.",
+    "Nous prenons en charge plusieurs langues, telles que l'anglais, le chinois, le français, le japonais, le coréen et le russe.",
   concept_section_docker_title: 'Installation avec Docker',
   concept_section_docker_desc_line_1:
     'Nous fournissons une image Docker pour une installation rapide en un seul clic.',
@@ -161,7 +161,7 @@ export const fr: MessageSchema = {
     'Construit avec Golang, il est compatible avec les déploiements multi-plateformes, vous permettant de le lancer où que vous soyez.',
   concept_section_open_source_title: 'Open Source',
   concept_section_open_source_desc_line_1:
-    'Artalk est un logiciel libre et open source, axé sur la confidentialité et la sécurité des données.',
+    'Artalk est un logiciel gratuit et open source, axé sur la confidentialité et la sécurité des données.',
   concept_section_open_source_desc_line_2:
     "En maintenance continue depuis {{year}} ans, nous proposons des mises à jour régulières pour améliorer l'expérience utilisateur et garantir la stabilité.",
   feature_community_title: 'Élargissez votre expérience',
@@ -171,5 +171,5 @@ export const fr: MessageSchema = {
   any_website_or_blog: "n'importe quel site web ou blog",
   see_more_on_github: 'Voir plus sur GitHub',
   star_proposal_line_1: "Si vous aimez Artalk, n'hésitez pas à lui donner une étoile 🌟",
-  star_proposal_line_2: 'Cela nous serait très utile !',
+  star_proposal_line_2: 'Ça nous ferait vraiment plaisir !',
 }

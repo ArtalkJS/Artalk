@@ -16,7 +16,7 @@ import './lib/promise-polyfill'
 const { i18n, setLocale } = setupI18n()
 
 // Router
-// @see https://github.com/posva/unplugin-vue-router
+// @see https://router.vuejs.org/
 const router = createRouter({
   history: createWebHashHistory(),
   routes,

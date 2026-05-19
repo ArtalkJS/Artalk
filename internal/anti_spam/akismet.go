@@ -75,7 +75,7 @@ func (c *AkismetChecker) Check(p *CheckerParams) (bool, error) {
 		return true, nil
 	}
 
-	return false, fmt.Errorf(respStr)
+	return false, fmt.Errorf("%s", respStr)
 }
 
 type AkismetReqParams struct {

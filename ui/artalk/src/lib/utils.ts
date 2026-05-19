@@ -142,7 +142,7 @@ export async function getCorrectUserAgent() {
   // @link https://web.dev/migrate-to-ua-ch/
   // @link https://web.dev/user-agent-client-hints/
   const uaData = (navigator as any).userAgentData
-  let uaGot: any = null
+  let uaGot: any
   try {
     uaGot = await uaData.getHighEntropyValues(['platformVersion'])
   } catch (err) {

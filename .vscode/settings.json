@@ -1,6 +1,6 @@
 {
-  // Enable the ESlint flat config support
-  "eslint.experimental.useFlatConfig": true,
+  // Enable the ESLint flat config support (ESLint 9+ / extension v3+)
+  "eslint.useFlatConfig": true,
 
   // Disable the default formatter, use eslint instead
   // "prettier.enable": false,

@@ -13,12 +13,12 @@ import (
 
 func readJsonFile(filename string) (string, error) {
 	if _, err := os.Stat(filename); errors.Is(err, os.ErrNotExist) {
-		return "", fmt.Errorf(i18n.T("{{name}} not found", map[string]any{"name": i18n.T("File")}))
+		return "", fmt.Errorf("%s", i18n.T("{{name}} not found", map[string]any{"name": i18n.T("File")}))
 	}
 
 	buf, err := os.ReadFile(filename)
 	if err != nil {
-		return "", fmt.Errorf("file open failed" + ": " + err.Error())
+		return "", fmt.Errorf("file open failed: %w", err)
 	}
 
 	return string(buf), nil

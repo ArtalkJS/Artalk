@@ -18,12 +18,12 @@
   "devDependencies": {
     "@artalk/plugin-kit": "workspace:^",
     "artalk": "workspace:^",
-    "katex": "^0.16.45",
+    "katex": "^0.17.0",
     "marked": "^18.0.3"
   },
   "peerDependencies": {
     "artalk": "workspace:^",
-    "katex": "^0.16.45"
+    "katex": "^0.17.0"
   },
   "exports": {
     ".": {

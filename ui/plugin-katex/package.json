@@ -19,7 +19,7 @@
     "@artalk/plugin-kit": "workspace:^",
     "artalk": "workspace:^",
     "katex": "^0.16.45",
-    "marked": "^18.0.3"
+    "marked": "^18.0.4"
   },
   "peerDependencies": {
     "artalk": "workspace:^",

@@ -88,6 +88,7 @@
   //  Input box (textarea + plug panel + actions bar)
   // -------------------------------------------------------------------------
   .atk-input-box {
+    position: relative;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -97,13 +98,19 @@
     background: var(--at-color-bg);
     border: 2px solid var(--at-color-border);
     border-radius: $block-radius;
-    overflow: hidden;
+    // overflow stays visible so the floating plug panel can escape the box;
+    // .atk-textarea-wrap / .atk-bottom carry their own corner-radius to keep
+    // the rounded look intact.
+    overflow: visible;
     transition:
       height 0.2s ease-in-out,
       border-color 0.2s ease-in-out;
 
     & > .atk-textarea-wrap {
       position: relative;
+      border-top-left-radius: calc($block-radius - 2px);
+      border-top-right-radius: calc($block-radius - 2px);
+      overflow: hidden;
 
       & > .atk-textarea {
         display: block;
@@ -144,14 +151,114 @@
       }
     }
 
+    // -----------------------------------------------------------------------
+    //  Plug panel — WeChat-style floating panel.
+    //  - Anchored to .atk-input-box (position: relative).
+    //  - Direction (above/below the toolbar) is decided by JS via class:
+    //      .atk-panel-place-top    → bottom edge sticks to top of .atk-bottom
+    //      .atk-panel-place-bottom → top edge sticks to bottom of .atk-input-box
+    //  - .atk-input-box uses overflow: visible so this panel can escape its box.
+    // -----------------------------------------------------------------------
     & > .atk-plug-panel-wrap {
-      position: relative;
-      height: 180px;
-      width: 100%;
+      position: absolute;
+      left: -2px;
+      right: -2px;
+      // Stick to the top edge of .atk-bottom (which is 36px tall in editing
+      // state). This is the default — JS will flip to place-bottom if needed.
+      bottom: 36px;
+      z-index: 2000;
+      width: auto;
+      height: 240px;
+      max-height: 60vh;
+      box-sizing: border-box;
+      background: var(--at-color-bg);
+      border: 1px solid var(--at-color-border);
+      border-radius: $block-radius;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
       overflow: hidden;
-      border-top: 2px solid var(--at-color-border);
-      animation: 0.3s both atkFadeIn;
-      transition: 0.2s height ease-in-out;
+      animation: 0.18s cubic-bezier(0.16, 1, 0.3, 1) both atkFadeIn;
+
+      // Sticks above the toolbar (default)
+      &.atk-panel-place-top {
+        bottom: 36px;
+        top: auto;
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+      }
+
+      // Flipped: drops below the input box when there is no room above
+      &.atk-panel-place-bottom {
+        top: 100%;
+        bottom: auto;
+        margin-top: 6px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 -2px 6px rgba(0, 0, 0, 0.04);
+      }
+
+      // Stronger shadow under dark theme for visible elevation
+      @media (prefers-color-scheme: dark) {
+        background: var(--at-color-bg);
+        border-color: var(--at-color-border);
+        box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+
+        &.atk-panel-place-bottom {
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), 0 -2px 8px rgba(0, 0, 0, 0.3);
+        }
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    //  Markdown preview — break out of the floating-panel layer and flow
+    //  naturally BELOW .atk-bottom (toolbar). Height auto-fits the content,
+    //  no inner scrollbar; the page-level scrollbar is the only scroll.
+    // -----------------------------------------------------------------------
+    & > .atk-plug-panel-wrap:has(> .atk-editor-plug-preview) {
+      position: relative;
+      top: auto;
+      right: auto;
+      bottom: auto;
+      left: auto;
+      z-index: auto;
+      // .atk-input-box is `display: flex; flex-direction: column`, so a
+      // large order value reliably pushes the preview after .atk-bottom.
+      order: 99;
+      width: auto;
+      height: auto;
+      min-height: 100px;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      background: var(--at-color-bg);
+      border: none;
+      // subtle hairline to bridge the toolbar and the preview
+      border-top: 1px dashed var(--at-color-border);
+      border-radius: 0 0 calc($block-radius - 2px) calc($block-radius - 2px);
+      box-shadow: none;
+      overflow: visible;
+      animation: none;
+
+      // Cancel the floating-placement variants set by JS — we don't float.
+      &.atk-panel-place-top,
+      &.atk-panel-place-bottom {
+        position: relative;
+        top: auto;
+        bottom: auto;
+        margin-top: 0;
+        box-shadow: none;
+      }
+
+      // Kill the inner scrollbar / fixed height inherited from preview.scss
+      // so the content fully expands and merges into the page scroll.
+      & > .atk-editor-plug-preview {
+        height: auto;
+        max-height: none;
+        overflow: visible;
+      }
+    }
+
+    // When the preview is mounted directly below, drop the toolbar's
+    // bottom-corner radius so it joins seamlessly into the preview panel.
+    &:has(> .atk-plug-panel-wrap:has(> .atk-editor-plug-preview)) > .atk-bottom {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
 
     // ---- actions bar (collapsed by default, expands while editing) ----
@@ -164,6 +271,9 @@
       height: 0;
       padding: 0 5px;
       background: var(--at-color-bg-grey);
+      // carry its own bottom-corner radius since .atk-input-box no longer clips
+      border-bottom-left-radius: calc($block-radius - 2px);
+      border-bottom-right-radius: calc($block-radius - 2px);
       opacity: 0;
       visibility: hidden;
       overflow: hidden;

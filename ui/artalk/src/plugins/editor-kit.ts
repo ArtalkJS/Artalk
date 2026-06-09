@@ -185,15 +185,50 @@ export class PluginManager implements IEditorPluginManager {
       }
     })
 
-    this.getEditor().getUI().$plugPanelWrap.style.display = ''
+    const $wrap = this.getEditor().getUI().$plugPanelWrap
+    $wrap.style.display = ''
+
+    // Smart placement: flip above/below to avoid clipping by the viewport top.
+    this.updatePanelPlacement($wrap)
+
     this.openedPlug = plug
+  }
+
+  /**
+   * Decide whether the floating panel should sit above the toolbar
+   * (default, WeChat-style) or flip below the input box when the space
+   * above is not enough.
+   */
+  private updatePanelPlacement($wrap: HTMLElement) {
+    const $inputBox = $wrap.closest('.atk-input-box') as HTMLElement | null
+    if (!$inputBox) return
+
+    // Use measured height, falling back to the SCSS default (240px).
+    const panelHeight = $wrap.offsetHeight || 240
+    const boxRect = $inputBox.getBoundingClientRect()
+    const $bottom = $inputBox.querySelector(':scope > .atk-bottom') as HTMLElement | null
+    const toolbarHeight = $bottom ? $bottom.offsetHeight : 0
+
+    // The space we get when placing the panel above the toolbar equals
+    // the distance from the viewport top down to the toolbar's top edge.
+    const spaceAbove = boxRect.bottom - toolbarHeight
+    const SAFE_GAP = 8
+
+    $wrap.classList.remove('atk-panel-place-top', 'atk-panel-place-bottom')
+    if (spaceAbove >= panelHeight + SAFE_GAP) {
+      $wrap.classList.add('atk-panel-place-top')
+    } else {
+      $wrap.classList.add('atk-panel-place-bottom')
+    }
   }
 
   /** Close the editor plugin panel */
   closePluginPanel() {
     if (!this.openedPlug) return
 
-    this.getEditor().getUI().$plugPanelWrap.style.display = 'none'
+    const $wrap = this.getEditor().getUI().$plugPanelWrap
+    $wrap.style.display = 'none'
+    $wrap.classList.remove('atk-panel-place-top', 'atk-panel-place-bottom')
     this.events.trigger('panel-hide', this.openedPlug)
     this.openedPlug = null
   }

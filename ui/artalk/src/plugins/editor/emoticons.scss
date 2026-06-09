@@ -3,11 +3,15 @@
   width: 100%;
 
   & > .atk-grp-wrap {
-    @extend .atk-slim-scrollbar;
     overflow-y: scroll;
     overflow-x: hidden;
-    height: 100%; // calc(100% - 30px);
+    height: 100%;
     width: 100%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     & > .atk-grp {
       display: flex;

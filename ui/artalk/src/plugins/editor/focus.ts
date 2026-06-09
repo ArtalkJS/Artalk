@@ -13,17 +13,33 @@ export default class Focus extends EditorPlugin {
 
     const onFocus = () => this.onFocus()
     const onBlur = () => this.onBlur()
+    // Prevent toolbar / floating panel clicks from stealing focus away from the
+    // textarea. Without this the editor flickers out of `.atk-focus` whenever
+    // the user clicks the markdown preview / emoji / upload / send buttons.
+    // mousedown.preventDefault() suppresses the focus shift but still lets the
+    // click event fire, so the buttons keep working. Real inputs inside a
+    // panel (e.g. a search box) are skipped so they can still receive focus.
+    const onToolMouseDown = (e: MouseEvent) => {
+      const t = e.target as HTMLElement | null
+      if (!t) return
+      if (t.closest('input, textarea, [contenteditable="true"]')) return
+      e.preventDefault()
+    }
 
     this.kit.useMounted(() => {
-      const $textarea = this.kit.useUI().$textarea
-      $textarea.addEventListener('focus', onFocus)
-      $textarea.addEventListener('blur', onBlur)
+      const ui = this.kit.useUI()
+      ui.$textarea.addEventListener('focus', onFocus)
+      ui.$textarea.addEventListener('blur', onBlur)
+      ui.$bottom.addEventListener('mousedown', onToolMouseDown)
+      ui.$plugPanelWrap.addEventListener('mousedown', onToolMouseDown)
     })
 
     this.kit.useUnmounted(() => {
-      const $textarea = this.kit.useUI().$textarea
-      $textarea.removeEventListener('focus', onFocus)
-      $textarea.removeEventListener('blur', onBlur)
+      const ui = this.kit.useUI()
+      ui.$textarea.removeEventListener('focus', onFocus)
+      ui.$textarea.removeEventListener('blur', onBlur)
+      ui.$bottom.removeEventListener('mousedown', onToolMouseDown)
+      ui.$plugPanelWrap.removeEventListener('mousedown', onToolMouseDown)
     })
   }
 

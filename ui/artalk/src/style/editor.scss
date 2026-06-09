@@ -1,227 +1,412 @@
+// ===========================================================================
+//  Editor — iDisqus-style comment box
+//  Layout: [ avatar ] [ form( input-box + guest fields ) ]
+// ===========================================================================
+
 .atk-main-editor {
-  $editor-padding: 10px;
-  position: relative;
-  overflow: hidden;
-  background: var(--at-color-bg);
-  border: 1px solid var(--at-color-border);
-  border-radius: $block-radius;
-  margin-bottom: 10px;
+  // align with .atk-comment (which uses padding: 10px) so the editor avatar
+  // sits on the exact same vertical line as the comment-list avatars
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: 0 10px;
+  margin-bottom: 20px;
+  background: transparent;
+  border: none;
 
   @media only screen and (max-width: 768px) {
-    margin-bottom: 7px;
+    margin-bottom: 14px;
   }
 
   &.editor-traveling {
     margin-top: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+
+    & > .atk-editor-avatar {
+      width: 36px;
+      height: 36px;
+      margin-right: 8px;
+
+      .atk-editor-avatar-img {
+        width: 36px;
+        height: 36px;
+      }
+    }
+
+    & > .atk-editor-form {
+      width: calc(100% - 44px);
+    }
   }
 
-  & > .atk-header {
-    display: flex;
-    flex-direction: row;
-    padding: 10px 14px 0;
+  // -------------------------------------------------------------------------
+  //  Left: avatar
+  // -------------------------------------------------------------------------
+  & > .atk-editor-avatar {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
 
-    input {
-      flex: 1;
-      width: 100%;
-      font-size: 14px;
-      background: transparent;
-      border: 2px solid transparent;
-      border-radius: calc($block-radius / 2);
-      padding: 6px 5px;
-      resize: none;
-      outline: none;
+    .atk-editor-avatar-img {
+      width: 50px;
+      height: 50px;
+      // border-radius: 50%;
+      border-radius: 3px;
+      background: var(--at-color-bg-grey);
+      object-fit: cover;
+      display: block;
+    }
 
-      &:not(:last-child) {
-        margin-right: 2px;
+    @media only screen and (max-width: 768px) {
+      width: 36px;
+      height: 36px;
+      margin-right: 8px;
+
+      .atk-editor-avatar-img {
+        width: 36px;
+        height: 36px;
       }
     }
   }
 
-  & > .atk-textarea-wrap {
+  // -------------------------------------------------------------------------
+  //  Right: form body (vertical flex)
+  // -------------------------------------------------------------------------
+  & > .atk-editor-form {
     position: relative;
-
-    & > .atk-textarea {
-      display: block;
-      overflow: hidden;
-      color: var(--at-color-font);
-      font-size: 15px;
-      background-color: var(--at-color-bg);
-      border: 2px solid transparent;
-      border-radius: calc($block-radius / 2);
-      width: 100%;
-      min-height: 120px;
-      margin-top: 2px;
-      padding: 10px 20px;
-      resize: none;
-      word-wrap: break-word;
-      outline: none;
-    }
-
-    & > .atk-comment-closed {
-      pointer-events: none;
-      color: var(--at-color-meta);
-      font-size: 12px;
-      background-color: var(--at-color-bg);
-      border-top: 1px solid var(--at-color-border);
-      padding: 5px 15px;
-      margin-top: 10px;
-      // background: repeating-linear-gradient(145deg, #f2f2f2, #f2f2f2 15px, #fff 0, #fff 30px);
-    }
-  }
-
-  & > .atk-plug-panel-wrap {
-    position: relative;
-    height: 180px;
-    width: 100%;
-    overflow: hidden;
-    border-top: 1px solid var(--at-color-border);
-    animation: 0.3s both atkFadeIn;
-    transition: 0.2s height ease-in-out;
-  }
-
-  & > .atk-bottom {
     display: flex;
-    flex-direction: row;
-    row-gap: 5px;
-    justify-content: space-between;
-    padding: 5px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    width: calc(100% - 60px);
 
-    & > .atk-item {
+    @media only screen and (max-width: 768px) {
+      width: calc(100% - 44px);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  //  Input box (textarea + plug panel + actions bar)
+  // -------------------------------------------------------------------------
+  .atk-input-box {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    // collapsed total height equals the 48px avatar (44px content + 2*2px border)
+    height: 48px;
+    background: var(--at-color-bg);
+    border: 2px solid var(--at-color-border);
+    border-radius: $block-radius;
+    overflow: hidden;
+    transition:
+      height 0.2s ease-in-out,
+      border-color 0.2s ease-in-out;
+
+    & > .atk-textarea-wrap {
+      position: relative;
+
+      & > .atk-textarea {
+        display: block;
+        box-sizing: border-box;
+        overflow: hidden;
+        width: 100%;
+        // collapsed: single visual line, vertically centered via line-height,
+        // padding kept on the sides so caret never touches the border
+        height: 44px;
+        min-height: 0;
+        margin: 0;
+        padding: 0 14px;
+        color: var(--at-color-font);
+        font-size: 15px;
+        line-height: 44px;
+        background-color: var(--at-color-bg);
+        border: none;
+        border-radius: $block-radius;
+        resize: none;
+        word-wrap: break-word;
+        outline: none;
+        transition:
+          height 0.2s ease-in-out,
+          min-height 0.2s ease-in-out,
+          line-height 0.2s ease-in-out,
+          padding 0.2s ease-in-out,
+          font-size 0.2s ease-in-out;
+      }
+
+      & > .atk-comment-closed {
+        pointer-events: none;
+        color: var(--at-color-meta);
+        font-size: 12px;
+        background-color: var(--at-color-bg);
+        border-top: 1px solid var(--at-color-border);
+        padding: 5px 15px;
+        margin-top: 10px;
+      }
+    }
+
+    & > .atk-plug-panel-wrap {
+      position: relative;
+      height: 180px;
+      width: 100%;
+      overflow: hidden;
+      border-top: 2px solid var(--at-color-border);
+      animation: 0.3s both atkFadeIn;
+      transition: 0.2s height ease-in-out;
+    }
+
+    // ---- actions bar (collapsed by default, expands while editing) ----
+    & > .atk-bottom {
       display: flex;
       flex-direction: row;
+      justify-content: space-between;
       align-items: center;
-    }
+      flex-wrap: wrap;
+      height: 0;
+      padding: 0 5px;
+      background: var(--at-color-bg-grey);
+      opacity: 0;
+      visibility: hidden;
+      overflow: hidden;
+      transition:
+        height 0.2s ease-in-out,
+        opacity 0.2s linear,
+        padding 0.2s ease-in-out;
 
-    & > .atk-bottom-left {
-      & > .atk-state-wrap {
-        margin-right: 5px;
-      }
-
-      & > .atk-plug-btn-wrap {
+      & > .atk-item {
         display: flex;
         flex-direction: row;
         align-items: center;
-        flex-wrap: wrap;
-        row-gap: 5px;
-      }
-    }
-
-    .atk-plug-btn {
-      display: flex;
-      justify-content: center;
-      place-items: center;
-      padding: 0 10px;
-      line-height: 30px;
-      height: 30px;
-      cursor: pointer;
-      color: var(--at-color-grey);
-      font-size: $font-size;
-      user-select: none;
-      border-radius: calc($block-radius / 2);
-      word-break: keep-all;
-
-      &:not(:last-child) {
-        margin-right: 5px;
       }
 
-      &:hover {
-        background: var(--at-color-bg-grey);
-      }
+      & > .atk-bottom-left {
+        & > .atk-state-wrap {
+          margin-right: 5px;
+        }
 
-      &.active {
-        color: var(--at-color-main);
-
-        svg.markdown path {
-          fill: var(--at-color-main);
+        & > .atk-plug-btn-wrap {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          flex-wrap: wrap;
+          row-gap: 5px;
         }
       }
 
-      i {
+      .atk-plug-btn {
         display: flex;
         justify-content: center;
         place-items: center;
-        color: var(--at-color-grey);
-
-        &:not(:first-child) {
-          margin-left: 4px;
-        }
-      }
-    }
-
-    .atk-state-btn {
-      z-index: 2;
-      height: 30px;
-      padding: 0 0 0 10px;
-      font-size: 14px;
-      position: relative;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      place-items: center;
-      background: var(--at-color-bg-grey-transl);
-      cursor: pointer;
-      overflow: hidden;
-      border-radius: calc($block-radius / 2);
-
-      &:hover {
-        .atk-cancel {
-          background: rgba(0, 0, 0, 4%);
-        }
-      }
-
-      @media only screen and (max-width: 768px) {
         padding: 0;
+        line-height: 28px;
+        height: 28px;
+        width: 28px;
+        cursor: pointer;
+        color: var(--at-color-grey);
+        font-size: $font-size;
+        user-select: none;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        outline: none;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+          color: var(--at-color-tool-active);
+        }
+
+        &.active {
+          color: var(--at-color-tool-active);
+        }
+
+        i {
+          display: flex;
+          justify-content: center;
+          place-items: center;
+
+          &:not(:first-child) {
+            margin-left: 4px;
+          }
+        }
+      }
+
+      .atk-state-btn {
+        z-index: 2;
+        height: 26px;
+        padding: 0 0 0 10px;
+        font-size: 14px;
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        place-items: center;
+        background: var(--at-color-bg-grey-transl);
+        cursor: pointer;
+        overflow: hidden;
+        border-radius: calc($block-radius / 2);
+
+        &:hover {
+          .atk-cancel {
+            background: rgba(0, 0, 0, 4%);
+          }
+        }
+
+        @media only screen and (max-width: 768px) {
+          padding: 0;
+
+          .atk-text-wrap {
+            display: none;
+          }
+        }
 
         .atk-text-wrap {
-          display: none;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          padding: 0 8px 0 2px;
+          max-width: 8em;
+        }
+
+        .atk-cancel {
+          display: flex;
+          justify-content: center;
+          place-items: center;
+          padding: 0 10px;
+          font-weight: 700;
+          height: 100%;
+          background: rgba(0, 0, 0, 2%);
         }
       }
 
-      .atk-text-wrap {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        padding: 0 8px 0 2px;
-        max-width: 8em;
-      }
+      // ---- send button: bare icon (no background / border) ----
+      & > .atk-bottom-right {
+        .atk-send-btn {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          box-sizing: border-box;
+          width: 28px;
+          height: 28px;
+          padding: 0;
+          margin: 0;
+          color: var(--at-color-grey);
+          font-size: $font-size;
+          line-height: 1;
+          white-space: nowrap;
+          background: transparent;
+          border: none;
+          border-radius: 0;
+          cursor: pointer;
+          outline: none;
+          transition: color 0.2s ease-in-out;
 
-      .atk-cancel {
-        display: flex;
-        justify-content: center;
-        place-items: center;
-        padding: 0 10px;
-        font-weight: 700;
-        height: 100%;
-        background: rgba(0, 0, 0, 2%);
-      }
-    }
+          .atk-send-icon {
+            width: 18px;
+            height: 18px;
+            display: block;
+            fill: currentColor;
+          }
 
-    .atk-send-btn {
-      background: var(--at-color-main);
-      color: #fff;
-      font-size: $font-size;
-      border: none;
-      margin: 0;
-      height: 30px;
-      min-width: 7.3em;
-      cursor: pointer;
-      transition: opacity 0.3s ease-in-out;
-      outline: none;
-      border-radius: calc($block-radius / 2);
+          &:hover {
+            color: var(--at-color-tool-active);
+          }
 
-      @media only screen and (max-width: 768px) {
-        min-width: 6em;
-      }
-
-      &:active {
-        opacity: 0.9;
+          &:active {
+            opacity: 0.8;
+          }
+        }
       }
     }
   }
 
-  & > .atk-notify-wrap {
+  // -------------------------------------------------------------------------
+  //  Guest fields (name / email / link) — folded above, slides out on editing
+  // -------------------------------------------------------------------------
+  & > .atk-editor-form > .atk-editor-guest {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    height: 0;
+    margin-top: -40px;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.5s 0.2s;
+
+    input {
+      flex: 1 1 auto;
+      width: 30px;
+      min-width: 0;
+      height: 34px;
+      padding: 0 10px;
+      color: var(--at-color-font);
+      font-size: 14px;
+      line-height: 34px;
+      background: var(--at-color-bg);
+      border: 2px solid var(--at-color-border);
+      border-radius: calc($block-radius / 2);
+      outline: none;
+      transition: border-color 0.2s linear;
+
+      &:focus {
+        border-color: var(--atk-editor-focus-color);
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  //  State machine
+  // -------------------------------------------------------------------------
+
+  // .atk-focus — border highlight (textarea focused). Only the focused
+  // state should highlight; .atk-editing stays sticky for the expanded
+  // layout but must not keep the border lit after blur.
+  .atk-input-box.atk-focus {
+    border-color: var(--atk-editor-focus-color);
+
+    & > .atk-bottom {
+      border-top-color: var(--atk-editor-focus-color);
+    }
+  }
+
+  // .atk-editing — expanded edit state
+  .atk-input-box.atk-editing {
+    // grow back to a comfortable multi-line height when editing
+    height: auto;
+
+    & > .atk-textarea-wrap > .atk-textarea {
+      height: auto;
+      min-height: 74px;
+      padding: 10px 14px;
+      line-height: 1.5;
+    }
+
+    & > .atk-bottom {
+      height: 36px;
+      padding: 3px 5px;
+      opacity: 1;
+      visibility: visible;
+      border-top-width: 2px;
+      border-top-style: solid;
+      border-top-color: var(--at-color-border);
+    }
+
+    &.atk-focus > .atk-bottom {
+      border-top-color: var(--atk-editor-focus-color);
+    }
+
+    // reveal guest fields with negative-margin fold-out
+    & + .atk-editor-guest {
+      height: auto;
+      margin-top: 10px;
+      opacity: 1;
+      overflow: visible;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  //  Notify
+  // -------------------------------------------------------------------------
+  & > .atk-editor-form > .atk-notify-wrap {
     z-index: 3;
     position: absolute;
     right: -2px;

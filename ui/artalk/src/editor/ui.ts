@@ -2,6 +2,9 @@ import * as Utils from '../lib/utils'
 import EditorHTML from './editor.html?raw'
 
 const Sel = {
+  $avatar: '.atk-editor-avatar',
+  $avatarImg: '.atk-editor-avatar-img',
+  $inputBox: '.atk-input-box',
   $header: '.atk-header',
   $name: '.atk-header [name="name"]',
   $email: '.atk-header [name="email"]',
@@ -19,6 +22,7 @@ const Sel = {
 
 export interface EditorUI extends Record<keyof typeof Sel, HTMLElement> {
   $el: HTMLElement
+  $avatarImg: HTMLImageElement
   $name: HTMLInputElement
   $email: HTMLInputElement
   $link: HTMLInputElement

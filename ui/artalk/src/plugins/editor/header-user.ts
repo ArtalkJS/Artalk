@@ -1,6 +1,5 @@
 import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
-import $t from '@/i18n'
 import type { UserInfoApiResponseData } from '@/types'
 
 export default class HeaderUser extends EditorPlugin {
@@ -18,9 +17,9 @@ export default class HeaderUser extends EditorPlugin {
     }
 
     const placeholders = {
-      name: $t('nick'),
-      email: $t('email'),
-      link: $t('link'),
+      name: '名字（必填）',
+      email: '邮箱（必填）',
+      link: '网址（可选）',
     }
 
     this.kit.useMounted(() => {

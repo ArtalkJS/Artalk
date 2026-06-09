@@ -9,6 +9,8 @@ import Closable from './closable'
 import HeaderEvent from './header-event'
 import HeaderUser from './header-user'
 import HeaderLink from './header-link'
+import Avatar from './avatar'
+import Focus from './focus'
 import Mover from './mover'
 import Emoticons from './emoticons'
 import Upload from './upload'
@@ -22,6 +24,8 @@ const EDITOR_PLUGS: (typeof EditorPlugin)[] = [
   HeaderEvent,
   HeaderUser,
   HeaderLink,
+  Avatar,
+  Focus,
   Textarea,
   Submit,
   SubmitBtn,

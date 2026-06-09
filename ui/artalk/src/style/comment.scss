@@ -65,8 +65,8 @@
 
     & > .atk-header {
       line-height: 1.5;
-      font-size: 13px;
-      margin-bottom: 0.5em;
+      font-size: 16px;
+      margin-bottom: 0.2em;
       overflow: hidden;
       position: relative;
       display: flex;
@@ -86,7 +86,7 @@
 
         &.atk-nick,
         &.atk-nick a {
-          font-size: 14px;
+          font-size: 16px;
           color: var(--at-color-main);
           text-decoration: none;
         }
@@ -98,7 +98,7 @@
             content: '';
             vertical-align: middle;
             transform: rotate(90deg);
-            border-bottom: 4px solid var(--at-color-grey);
+            border-bottom: 4px solid var(--at-color-meta);
             border-left: 3px solid transparent;
             border-right: 3px solid transparent;
             display: inline-block;
@@ -253,6 +253,21 @@
         flex-wrap: wrap;
 
         & > span:not(:last-child):not(.atk-hide) {
+          margin-right: 1px;
+        }
+
+        .atk-item {
+          font-size: 12px;
+          color: var(--at-color-meta);
+        }
+
+        & > span.atk-item {
+          margin-right: 16px;
+        }
+
+        .atk-dot {
+          font-size: 12px;
+          color: var(--at-color-meta);
           margin-right: 16px;
         }
       }

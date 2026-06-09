@@ -1,21 +1,28 @@
 <div class="atk-main-editor">
-  <div class="atk-header">
-    <input name="name" class="atk-name" type="text" required="required" />
-    <input name="email" class="atk-email" type="email" required="required" />
-    <input name="link" class="atk-link" type="url" />
+  <div class="atk-editor-avatar">
+    <img class="atk-editor-avatar-img" alt="avatar" />
   </div>
-  <div class="atk-textarea-wrap">
-    <textarea class="atk-textarea"></textarea>
-  </div>
-  <div class="atk-plug-panel-wrap" style="display: none"></div>
-  <div class="atk-bottom">
-    <div class="atk-item atk-bottom-left">
-      <span class="atk-state-wrap"></span>
-      <span class="atk-plug-btn-wrap"></span>
+  <div class="atk-editor-form">
+    <div class="atk-input-box">
+      <div class="atk-textarea-wrap">
+        <textarea class="atk-textarea"></textarea>
+      </div>
+      <div class="atk-plug-panel-wrap" style="display: none"></div>
+      <div class="atk-bottom">
+        <div class="atk-item atk-bottom-left">
+          <span class="atk-state-wrap"></span>
+          <span class="atk-plug-btn-wrap"></span>
+        </div>
+        <div class="atk-item atk-bottom-right">
+          <button type="button" class="atk-send-btn"></button>
+        </div>
+      </div>
     </div>
-    <div class="atk-item">
-      <button type="button" class="atk-send-btn"></button>
+    <div class="atk-header atk-editor-guest">
+      <input name="name" class="atk-name" type="text" required="required" />
+      <input name="email" class="atk-email" type="email" required="required" />
+      <input name="link" class="atk-link" type="url" />
     </div>
+    <div class="atk-notify-wrap"></div>
   </div>
-  <div class="atk-notify-wrap"></div>
 </div>

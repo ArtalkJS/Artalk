@@ -139,8 +139,22 @@ export default class Emoticons extends EditorPlugin {
 
     this.solveNullKey(data)
     this.solveSameKey(data)
+    this.applyUrl(data)
 
     return data
+  }
+
+  /** 应用分组 Url，将相对 val 拼接为完整 URL */
+  private applyUrl(data: EmoticonGrpData[]) {
+    data.forEach((grp) => {
+      if (grp.type !== 'image' || !grp.url) return
+      const base = grp.url
+      grp.items.forEach((item) => {
+        if (!item.val) return
+        if (/^https?:\/\//i.test(item.val)) return
+        item.val = base + item.val
+      })
+    })
   }
 
   /** 远程加载 */

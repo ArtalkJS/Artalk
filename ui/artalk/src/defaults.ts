@@ -27,6 +27,7 @@ export const Defaults: Readonly<RequiredExcept<Config, ExcludedKeys>> = {
   voteDown: false,
   uaBadge: ARTALK_LITE ? false : true,
   listSort: true,
+  notifyCenter: true,
   preview: ARTALK_LITE ? false : true,
   countEl: '.artalk-comment-count',
   pvEl: '.artalk-pv-count',

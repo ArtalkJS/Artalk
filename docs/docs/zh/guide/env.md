@@ -266,6 +266,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_FRONTEND_NESTMAX** | `2` | 最大嵌套层数 | frontend.nestMax (界面配置 > 最大嵌套层数) |
 | **ATK_FRONTEND_NESTSORT** | `"DATE_ASC"` | 嵌套评论排序规则 (可选：`["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]`) | frontend.nestSort (界面配置 > 嵌套评论排序规则) |
 | **ATK_FRONTEND_NOCOMMENT** | `""` | 无评论显示文字 | frontend.noComment (界面配置 > 无评论显示文字) |
+| **ATK_FRONTEND_NOTIFYCENTER** | `true` | 通知中心 | frontend.notifyCenter (界面配置 > 通知中心) |
 | **ATK_FRONTEND_PAGINATION_AUTOLOAD** | `true` | 滚动加载 | frontend.pagination.autoLoad (界面配置 > 评论分页 > 滚动加载) |
 | **ATK_FRONTEND_PAGINATION_PAGESIZE** | `20` | 每页评论数 | frontend.pagination.pageSize (界面配置 > 评论分页 > 每页评论数) |
 | **ATK_FRONTEND_PAGINATION_READMORE** | `true` | 加载更多模式 (关闭则使用分页条) | frontend.pagination.readMore (界面配置 > 评论分页 > 加载更多模式) |

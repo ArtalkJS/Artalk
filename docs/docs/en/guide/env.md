@@ -265,6 +265,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_FRONTEND_NESTMAX** | `2` | Maximum nesting level | frontend.nestMax (UI Settings > Maximum nesting level) |
 | **ATK_FRONTEND_NESTSORT** | `"DATE_ASC"` | Nesting comment sorting rules (可选：`["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]`) | frontend.nestSort (UI Settings > Nesting comment sorting rules) |
 | **ATK_FRONTEND_NOCOMMENT** | `""` | Text to display when there is | frontend.noComment (UI Settings > Text to display when there is) |
+| **ATK_FRONTEND_NOTIFYCENTER** | `true` | Notification center | frontend.notifyCenter (UI Settings > Notification center) |
 | **ATK_FRONTEND_PAGINATION_AUTOLOAD** | `true` | Scroll loading | frontend.pagination.autoLoad (UI Settings > Comment pagination > Scroll loading) |
 | **ATK_FRONTEND_PAGINATION_PAGESIZE** | `20` | Number of comments per page | frontend.pagination.pageSize (UI Settings > Comment pagination > Number of comments per page) |
 | **ATK_FRONTEND_PAGINATION_READMORE** | `true` | Load more mode (disabled to use pagination bar) | frontend.pagination.readMore (UI Settings > Comment pagination > Load more mode) |

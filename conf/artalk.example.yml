@@ -407,6 +407,8 @@ frontend:
   uaBadge: false
   # Comment sorting
   listSort: true
+  # Notification center
+  notifyCenter: true
   # Editor real-time preview
   preview: true
   # Flatten mode ["auto", true, false]

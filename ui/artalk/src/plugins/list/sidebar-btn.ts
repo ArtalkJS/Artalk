@@ -3,14 +3,15 @@ import $t from '@/i18n'
 
 export const SidebarBtn: ArtalkPlugin = (ctx) => {
   const list = ctx.inject('list')
+  const conf = ctx.inject('config')
   let $openSidebarBtn: HTMLElement | null = null
 
   const syncByUser = () => {
     if (!$openSidebarBtn) return
     const user = ctx.inject('user').getData()
 
-    // 已输入个人信息
-    if (!!user.name && !!user.email) {
+    // 已输入个人信息 且 通知中心未关闭 (管理员始终保留控制中心入口)
+    if (!!user.name && !!user.email && (conf.get().notifyCenter || user.is_admin)) {
       $openSidebarBtn.classList.remove('atk-hide')
 
       // update button text (normal user or admin)
@@ -19,9 +20,20 @@ export const SidebarBtn: ArtalkPlugin = (ctx) => {
     } else {
       $openSidebarBtn.classList.add('atk-hide')
     }
+
+    syncHeaderVisibility(user.is_admin)
   }
 
-  ctx.watchConf(['locale'], (conf) => {
+  // 当评论排序与通知中心同时关闭，且非管理员时，隐藏整个 list-header 容器
+  const syncHeaderVisibility = (isAdmin: boolean) => {
+    const $header = list.getEl().querySelector<HTMLElement>('.atk-list-header')
+    if (!$header) return
+    const c = conf.get()
+    const shouldHide = !c.listSort && !c.notifyCenter && !isAdmin
+    $header.classList.toggle('atk-hide', shouldHide)
+  }
+
+  ctx.watchConf(['locale', 'notifyCenter', 'listSort'], (conf) => {
     $openSidebarBtn = list.getEl().querySelector<HTMLElement>('[data-action="open-sidebar"]')
     if (!$openSidebarBtn) return
 

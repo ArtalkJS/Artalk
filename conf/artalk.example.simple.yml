@@ -230,6 +230,7 @@ frontend:
   voteDown: false
   uaBadge: false
   listSort: true
+  notifyCenter: true
   preview: true
   flatMode: auto
   darkMode: inherit

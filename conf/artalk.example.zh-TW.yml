@@ -415,6 +415,8 @@ frontend:
   uaBadge: false
   # 評論排序功能
   listSort: true
+  # 通知中心
+  notifyCenter: true
   # 編輯器實時預覽功能
   preview: true
   # 平鋪模式 ["auto", true, false]

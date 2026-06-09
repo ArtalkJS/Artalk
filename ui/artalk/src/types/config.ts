@@ -127,6 +127,9 @@ export interface Config {
   /** Show sorting dropdown for comment list */
   listSort: boolean
 
+  /** Show notification center entry (sidebar button) */
+  notifyCenter: boolean
+
   /** Enable image upload feature */
   imgUpload: boolean
 

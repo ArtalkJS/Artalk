@@ -59,11 +59,13 @@ export const Dropdown: ArtalkPlugin = (ctx) => {
 
     // 评论列表排序 Dropdown 下拉选择层
     if (conf.listSort) {
+      $count.classList.remove('atk-hide')
       initDropdown($count)
     } else {
       removeDropdown({
         $dropdownWrap: $count,
       })
+      $count.classList.add('atk-hide')
     }
   })
 }

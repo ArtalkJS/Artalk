@@ -141,6 +141,7 @@ frontend:
   voteDown: false
   uaBadge: true
   listSort: true
+  notifyCenter: true
   preview: true
   flatMode: auto
   nestMax: 2

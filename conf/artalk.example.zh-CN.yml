@@ -415,6 +415,8 @@ frontend:
   uaBadge: false
   # 评论排序功能
   listSort: true
+  # 通知中心
+  notifyCenter: true
   # 编辑器实时预览功能
   preview: true
   # 平铺模式 ["auto", true, false]

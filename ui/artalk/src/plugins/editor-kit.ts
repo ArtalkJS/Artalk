@@ -93,8 +93,16 @@ export class PluginManager implements IEditorPluginManager {
         this.loadPluginUI()
       })
 
+    this.bindSystemEvents()
+  }
+
+  /**
+   * Bind system-level event listeners that must outlive plugin reloads.
+   * `clear()` recreates the EventManager, so these are re-bound there too.
+   */
+  private bindSystemEvents() {
     this.events.on('panel-close', () => this.closePluginPanel())
-    this.events.on('editor-submitted', () => opts.onSubmitted())
+    this.events.on('editor-submitted', () => this.opts.onSubmitted())
   }
 
   getPlugins() {
@@ -116,6 +124,7 @@ export class PluginManager implements IEditorPluginManager {
   private clear() {
     this.plugins = []
     this.events = new EventManager()
+    this.bindSystemEvents()
     if (this.openedPlug) this.closePluginPanel()
   }
 

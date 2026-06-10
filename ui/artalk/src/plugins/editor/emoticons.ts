@@ -252,6 +252,7 @@ export default class Emoticons extends EditorPlugin {
           } else {
             this.kit.useEditor().insertContent(item.val || '')
           }
+          this.kit.useEvents().trigger('panel-close')
         }
       })
     })

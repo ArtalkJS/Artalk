@@ -276,6 +276,14 @@ definitions:
   handler.Map:
     additionalProperties: true
     type: object
+  handler.ParamsAuthSSOExchange:
+    properties:
+      token:
+        description: External IdP access token (e.g. an Auth0 access token)
+        type: string
+    required:
+    - token
+    type: object
   handler.ParamsCaptchaVerify:
     properties:
       value:
@@ -2678,6 +2686,83 @@ paths:
       summary: Update Site
       tags:
       - Site
+  /sso/exchange:
+    post:
+      consumes:
+      - application/json
+      description: Validates a third-party OIDC access token (currently Auth0)
+      operationId: AuthSSOExchange
+      parameters:
+      - description: External SSO token
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsAuthSSOExchange'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseUserLogin'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "502":
+          description: Bad Gateway
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "503":
+          description: Service Unavailable
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: Exchange an external IdP access token for an Artalk JWT
+      tags:
+      - Auth
   /stats/{type}:
     get:
       consumes:

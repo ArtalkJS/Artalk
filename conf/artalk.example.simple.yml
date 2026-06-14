@@ -220,6 +220,9 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  sso:
+    enabled: false
+    issuer: ""
 frontend:
   placeholder: ""
   noComment: ""

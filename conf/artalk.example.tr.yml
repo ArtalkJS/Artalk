@@ -386,6 +386,13 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  # SSO (Harici OIDC erişim belirteçlerini Artalk oturumuyla değiştirir, IdP'nin /userinfo uç noktası ile doğrulanır)
+  # -- Gömülü uygulama zaten OIDC çalıştırıyorsa ve Artalk'ın kendi açılır giriş ekranını göstermeden bu oturumu devralmasını istiyorsanız kullanın. --
+  sso:
+    # SSO belirteç değişimini etkinleştir
+    enabled: false
+    # OIDC issuer URL'si (örn. "tenant.auth0.com" veya "https://tenant.auth0.com")
+    issuer: ""
 
 # Kullanıcı Arayüzü Ayarları
 frontend:

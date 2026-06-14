@@ -165,6 +165,8 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_SLACK_CLIENT_ID** | `""` | ClientId | auth.slack.client_id (社交登录 > Slack > ClientId) |
 | **ATK_AUTH_SLACK_CLIENT_SECRET** | `""` | ClientSecret | auth.slack.client_secret (社交登录 > Slack > ClientSecret) |
 | **ATK_AUTH_SLACK_ENABLED** | `false` | 启用 | auth.slack.enabled (社交登录 > Slack > Enabled) |
+| **ATK_AUTH_SSO_ENABLED** | `false` | 启用 SSO 令牌交换 | auth.sso.enabled (社交登录 > SSO > 启用 SSO 令牌交换) |
+| **ATK_AUTH_SSO_ISSUER** | `""` | OIDC issuer 地址 (如 "tenant.auth0.com" 或 "https://tenant.auth0.com") | auth.sso.issuer (社交登录 > SSO > OIDC issuer 地址) |
 | **ATK_AUTH_STEAM_API_KEY** | `""` | ApiKey | auth.steam.api_key (社交登录 > Steam > ApiKey) |
 | **ATK_AUTH_STEAM_ENABLED** | `false` | 启用 | auth.steam.enabled (社交登录 > Steam > Enabled) |
 | **ATK_AUTH_TIKTOK_CLIENT_ID** | `""` | ClientId | auth.tiktok.client_id (社交登录 > Tiktok > ClientId) |

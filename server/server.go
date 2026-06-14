@@ -95,6 +95,7 @@ func Serve(app *core.App) (*fiber.App, error) {
 		h.AuthMergeCheck(app, api)
 
 		h.AuthSocialLogin(app, api)
+		h.AuthSSOExchange(app, api)
 
 		// user
 		h.UserInfo(app, api)

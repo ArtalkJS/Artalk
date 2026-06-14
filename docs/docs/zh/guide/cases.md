@@ -36,6 +36,7 @@
 - [青空之蓝](https://blog.ixk.me/)
 - [Monstx](https://blog.monsterx.cn/)
 - [QWQAQ](https://qwqaq.com/)
+- [xaoxuu](https://xaoxuu.com)
 
 ::: tip
 

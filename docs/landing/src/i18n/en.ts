@@ -11,7 +11,7 @@ export const en = {
   docs: 'Docs',
   changelog: 'Changelog',
   feature_slight_title: 'SLIGHT',
-  feature_slight_desc_line_1: 'A native JS client, framework-agnostic,',
+  feature_slight_desc_line_1: 'A native JS client, framework-agnostic, ',
   feature_slight_desc_line_2:
     'compact in size, fast to load, and instantly responsive to every interaction.',
   feature_swift_title: 'SWIFT',

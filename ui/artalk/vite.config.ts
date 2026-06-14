@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import checker from 'vite-plugin-checker'
@@ -41,7 +40,7 @@ export default defineConfig({
               }
             : {},
         assetFileNames: (assetInfo) =>
-          /\.css$/.test(assetInfo.name || '') ? `${name}.css` : '[name].[ext]',
+          /\.css$/.test(assetInfo.names?.[0] ?? '') ? `${name}.css` : '[name].[ext]',
         // @see https://github.com/rollup/rollup/issues/587
         //  and https://github.com/rollup/rollup/pull/631/files
         exports: 'named',
@@ -51,7 +50,6 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        api: 'modern-compiler',
         loadPaths: [resolve(__dirname, 'src/style')],
         silenceDeprecations: ['import'], // https://sass-lang.com/documentation/breaking-changes/import/
         additionalData: `@import "variables";@import "extends";`,
@@ -59,6 +57,7 @@ export default defineConfig({
     },
   },
   resolve: {
+    tsconfigPaths: true,
     alias: {
       '@': resolve(__dirname, 'src'),
       '~': resolve(__dirname),
@@ -68,7 +67,6 @@ export default defineConfig({
     ARTALK_LITE: false,
   },
   plugins: [
-    tsconfigPaths(),
     {
       ...checker({
         typescript: true,
@@ -84,11 +82,18 @@ export default defineConfig({
       ? dts({
           include: ['src'],
           exclude: ['src/**/*.{spec,test}.ts', 'dist'],
-          rollupTypes: true,
+          bundleTypes: true,
+          compilerOptions: {
+            composite: false,
+          },
           afterBuild: () => {
             // @see https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/main/packages/cli
             // @fix https://github.com/arethetypeswrong/arethetypeswrong.github.io/blob/main/docs/problems/FalseESM.md#consequences
             copyFileSync('dist/main.d.ts', 'dist/main.d.cts')
+            // node10 resolution of `artalk/dist/ArtalkLite` finds dist/ArtalkLite.js via filesystem,
+            // but needs dist/ArtalkLite.d.ts alongside it for types
+            copyFileSync('dist/main.d.ts', 'dist/ArtalkLite.d.ts')
+            copyFileSync('dist/main.d.cts', 'dist/ArtalkLite.d.cts')
           },
         })
       : null,

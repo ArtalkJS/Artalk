@@ -23,7 +23,7 @@ func RunImportArtrans(dao *dao.Dao, params *ImportParams, outputFunc ...func(str
 	// Read JSON
 	if params.JsonData == "" {
 		if params.JsonFile == "" {
-			err := fmt.Errorf(i18n.T("{{name}} is required", map[string]any{"name": "json_file:<JSON file path>"}))
+			err := fmt.Errorf("%s", i18n.T("{{name}} is required", map[string]any{"name": "json_file:<JSON file path>"}))
 			console.Error(err)
 			return err
 		}

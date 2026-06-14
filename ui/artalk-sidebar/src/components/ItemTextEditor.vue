@@ -40,14 +40,8 @@ function onKeyUp(evt: KeyboardEvent) {
 async function submit(type: 'yes' | 'no') {
   if (type == 'yes' && inputInvalid.value) return
 
-  let isContinue: any = undefined
-
   const callback = emit(type as any, inputVal.value)
-  if (callback instanceof (async () => {}).constructor) {
-    isContinue = await callback
-  } else {
-    isContinue = callback
-  }
+  const isContinue = callback instanceof (async () => {}).constructor ? await callback : callback
 
   if (isContinue === undefined || isContinue === true) {
     emit('close')

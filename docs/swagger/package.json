@@ -10,11 +10,11 @@
   },
   "private": true,
   "scripts": {
-    "swagger:build": "npx @redocly/cli build-docs --output ./dist/http-api.html",
-    "swagger:serve": "npx @redocly/cli preview-docs",
+    "swagger:build": "redocly build-docs --output ./dist/http-api.html",
+    "swagger:serve": "redocly preview",
     "swagger:build-http-client": "npx swagger-typescript-api -n v2 -p ./swagger.json -o ../../ui/artalk/src/api --responses --sort-types"
   },
   "devDependencies": {
-    "@redocly/cli": "1.25.7"
+    "@redocly/cli": "2.30.3"
   }
 }

@@ -3,7 +3,6 @@
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "baseUrl": ".",
     "outDir": "dist",
     "types": ["@artalk/plugin-kit/client", "vite/client"]
   }

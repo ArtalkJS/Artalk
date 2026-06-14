@@ -3,15 +3,15 @@
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable", "ESNext.Promise"],
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "ES2024.Promise"],
     "skipLibCheck": true,
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": ".tsbuildinfo-dts",
     "jsx": "preserve",
 
     /* Linting */
@@ -21,7 +21,6 @@
     "noFallthroughCasesInSwitch": true,
 
     /* Alias */
-    "baseUrl": ".", // Must be set, otherwise the alias won't work
     "paths": {
       "@/*": ["./src/*"]
     }

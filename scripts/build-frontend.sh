@@ -11,8 +11,8 @@ then
     export VOLTA_HOME="${HOME}/.volta"
     export PATH="${VOLTA_HOME}/bin:${PATH}"
 
-    volta install node@20.17.0
-    volta install pnpm@9.10.0
+    volta install node@22.19.0
+    volta install pnpm@10.33.2
 fi
 
 # build

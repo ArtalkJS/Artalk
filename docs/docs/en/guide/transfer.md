@@ -136,13 +136,16 @@ Go to the [Disqus backend](https://disqus.com/admin), find "Moderation - Export"
 
 ### Commento
 
-You can export the data file in JSON format from the Commento backend, then use the [conversion tool](#conversion-tool) for conversion.
+Go to the Commento backend, click on "General - Export" in sequence, export the data file in JSON format, and then use the [conversion tool](#conversion-tool) for conversion.
 
-[Image, to be supplemented...]
+![](/images/transfer/commento.png)
 
 ### Twikoo
+[Twikoo](https://twikoo.js.org/) can obtain the JSON file through the "Export" section in the administrative panel where it is located, and then convert it using the [conversion tool](#conversion-tool).
 
-[Twikoo](https://twikoo.js.org/) is a comment system developed based on Tencent Cloud. Go to the [Tencent Cloud backend](https://console.cloud.tencent.com/tcb) to export the comment data file in JSON format, then use the [conversion tool](#conversion-tool) for conversion.
+![](/images/transfer/twikoo-control.png)
+
+In addition, for Twikoo tencent cloud deployment, you can travel to [Tencent Cloud Background](https://console.cloud.tencent.com/tcb) export comment JSON format data.
 
 <img src="/images/transfer/tencent-tcb.png" style="max-width: 480px;">
 

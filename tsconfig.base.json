@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "target": "esnext",
     "useDefineForClassFields": true,
     "module": "esnext",
@@ -7,12 +8,9 @@
     "moduleResolution": "bundler",
     "strict": true,
     "sourceMap": true,
-    "experimentalDecorators": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "noEmit": true,
     "noImplicitAny": false,
-    "allowSyntheticDefaultImports": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitReturns": true,

@@ -1,3 +1,4 @@
+import { TSESTree } from '@typescript-eslint/utils'
 import type { Context } from '../../artalk'
 import {
   isPluginName,
@@ -81,7 +82,7 @@ export const artalkPlugin = createRule({
 
       Identifier(node) {
         if (node.name === 'inject') {
-          checkInjectCallOutsideArtalkPlugin(checkerContext, node)
+          checkInjectCallOutsideArtalkPlugin(checkerContext, node as TSESTree.Identifier)
         }
       },
     }

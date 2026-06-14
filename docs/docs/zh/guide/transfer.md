@@ -138,15 +138,19 @@ typecho-20220424-202246.artrans
 
 ### Commento
 
-你可在 Commento 后台导出 JSON 格式的数据文件，然后使用[转换工具](#转换工具)进行转换。
+前往 Commento 后台，依次点击「General - Export」，导出 JSON 格式的数据文件，然后使用[转换工具](#转换工具)进行转换。
 
-【图示，待补充...】
+![](/images/transfer/commento.png)
 
 ### Twikoo
 
-[Twikoo](https://twikoo.js.org/) 是一款基于腾讯云开发的评论系统，可前往 [腾讯云后台](https://console.cloud.tencent.com/tcb) 导出 JSON 格式的评论数据，然后使用[转换工具](#转换工具)进行转换。
+[Twikoo](https://twikoo.js.org/) 可以通过所在管理面板中的「导出」板块获取JSON 文件，然后使用[转换工具](#转换工具)进行转换。
 
-<img src="/images/transfer/tencent-tcb.png" style="max-width: 480px;">
+![](/images/transfer/twikoo-control.png)
+
+除此之外，对于腾讯云一键部署的Twikoo，可前往 [腾讯云后台](https://console.cloud.tencent.com/tcb) 导出 JSON 格式的评论数据。
+
+![](/images/transfer/tencent-tcb.png)
 
 ### Artalk v1 (PHP 旧版后端)
 

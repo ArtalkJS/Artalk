@@ -1,4 +1,5 @@
-import { AST_NODE_TYPES, TSESLint, TSESTree } from '@typescript-eslint/utils'
+import type { Scope } from 'eslint'
+import { AST_NODE_TYPES, TSESTree } from '@typescript-eslint/utils'
 import type { ArtalkPluginCheckerContext, DepsData, DepsStore } from './artalk-plugin'
 import { tarjan } from './scc'
 
@@ -16,7 +17,7 @@ export function isPluginName(s: string) {
 /**
  * Get the references to Context in the top scope of the given scope
  */
-const getCtxRefNamesInTopScope = (ctxArgName: string, scope: TSESLint.Scope.Scope) => {
+const getCtxRefNamesInTopScope = (ctxArgName: string, scope: Scope.Scope) => {
   const ctxRefs = new Map<TSESTree.Node, string>()
 
   const getFullMethodName = (node: TSESTree.Node) => {
@@ -34,7 +35,7 @@ const getCtxRefNamesInTopScope = (ctxArgName: string, scope: TSESLint.Scope.Scop
   }
 
   scope.references.forEach((reference) => {
-    const identifier = reference.identifier
+    const identifier = reference.identifier as TSESTree.Identifier
     if (identifier.name !== ctxArgName) return
 
     const methodName = getFullMethodName(identifier.parent)
@@ -49,7 +50,7 @@ const getCtxRefNamesInTopScope = (ctxArgName: string, scope: TSESLint.Scope.Scop
  */
 const getCtxRefNamesInNestedScope = (
   ctxArgName: string,
-  parentScope: TSESLint.Scope.Scope,
+  parentScope: Scope.Scope,
   keepTop = true,
 ) => {
   const ctxRefs = new Map<TSESTree.Node, string>()
@@ -293,7 +294,7 @@ export const checkPluginFunction = (
   const ctxArgName = ctxArg.name
 
   // Visit the top-level scope of the ArtalkPlugin arrow-function
-  const pluginFnScope = ctx.eslint.sourceCode.getScope(pluginFn.body)
+  const pluginFnScope = ctx.eslint.sourceCode.getScope(pluginFn.body as any)
   const topLevelCtxRefs = getCtxRefNamesInTopScope(ctxArgName, pluginFnScope)
   checkTopLevelCtxRefs(ctx, topLevelCtxRefs)
 
@@ -323,7 +324,7 @@ export const checkPluginFunction = (
         return
 
       // Get the references to Context in the watchConf effect function top scope
-      const scope = ctx.eslint.sourceCode.getScope(watchConfEffectFn.body)
+      const scope = ctx.eslint.sourceCode.getScope(watchConfEffectFn.body as any)
       getCtxRefNamesInTopScope(ctxArgName, scope).forEach((v, k) => watchConfCalls.set(k, v))
     }
   })

@@ -59,7 +59,7 @@ export function iframeBody(checker: CheckerCtx) {
   ;(async function queryStatus() {
     await sleep(1000)
     if (stop) return
-    let isPass = false
+    let isPass: boolean
     try {
       const resp = await checker.getApi().captcha.getCaptchaStatus()
       isPass = resp.data.is_pass

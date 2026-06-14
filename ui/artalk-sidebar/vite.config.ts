@@ -2,8 +2,8 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
-import VueRouter from 'unplugin-vue-router/vite'
-import { VueRouterAutoImports } from 'unplugin-vue-router'
+import VueRouter from 'vue-router/vite'
+import { VueRouterAutoImports } from 'vue-router/unplugin'
 import Components from 'unplugin-vue-components/vite'
 import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
 import { fileURLToPath, URL } from 'node:url'
@@ -61,7 +61,6 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        api: 'modern-compiler',
         loadPaths: [resolve(__dirname, 'src/style')],
         silenceDeprecations: ['import'], // https://sass-lang.com/documentation/breaking-changes/import/
         additionalData: `@import "variables";@import "extends";`,

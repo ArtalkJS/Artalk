@@ -38,7 +38,7 @@ onMounted(() => {
 })
 
 function save() {
-  let yamlStr = ''
+  let yamlStr: string
   try {
     yamlStr = settings.get().getCustoms().value?.toString() || ''
   } catch (err) {

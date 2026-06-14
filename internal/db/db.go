@@ -36,7 +36,7 @@ func NewDB(conf config.DBConf) (*gorm.DB, error) {
 	case config.TypeSQLite:
 		return OpenSQLite(dsn, gormConfig)
 	case config.TypeMySql:
-		return OpenMySql(dsn, gormConfig)
+		return OpenMySql(dsn, gormConfig, &conf)
 	case config.TypePostgreSQL:
 		return OpenPostgreSQL(dsn, gormConfig)
 	case config.TypeMSSQL:

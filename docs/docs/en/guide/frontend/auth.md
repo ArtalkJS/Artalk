@@ -68,6 +68,62 @@ If only one login method is enabled, such as GitHub login, the GitHub authorizat
 
 For integrating GitHub login, refer to the documentation: [About Creating GitHub Apps](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app). After obtaining the Client ID and Client Secret, fill them in the "GitHub" option in the social login settings page of the Artalk Dashboard.
 
+## SSO Token Exchange
+
+If your site is embedded in an application that already authenticates users through an external OIDC identity provider (Auth0, Keycloak, Okta, etc.), you can let Artalk reuse that session instead of showing its own login UI. The surrounding application exchanges the IdP access token it already holds for an Artalk session token, so users who are already signed in to the parent app can comment without an extra click or popup.
+
+This feature is **disabled by default** and is opt-in only. Enable it through the [configuration file](../backend/config.md) or [environment variables](../env.md#social-login), filling in the OIDC issuer of your provider:
+
+```yaml
+auth:
+  enabled: true
+  sso:
+    enabled: true
+    issuer: "https://tenant.auth0.com" # e.g. "tenant.auth0.com" or "https://tenant.auth0.com"
+```
+
+Once enabled, the surrounding application posts the IdP access token to the exchange endpoint:
+
+```
+POST /api/v2/sso/exchange
+Content-Type: application/json
+
+{ "token": "<external IdP access token>" }
+```
+
+Artalk validates the token by calling the issuer's `/userinfo` endpoint (the standard OIDC way — the IdP verifies and signs the response server-side, so no key handling is required on Artalk's side), reads the `email` claim, finds or creates the matching user, and returns the same response shape as the other login endpoints:
+
+```json
+{
+  "token": "<Artalk session token>",
+  "user": { "name": "...", "email": "...", "is_admin": false }
+}
+```
+
+The frontend writes this into `localStorage["ArtalkUser"]` before `Artalk.init()` runs, and the widget then treats the user as fully logged in (no popup, and no admin password prompt for admin users):
+
+```js
+const res = await fetch('https://comments.example.com/api/v2/sso/exchange', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ token: idpAccessToken }), // the access token from your IdP
+})
+const { token, user } = await res.json()
+
+// Pre-populate the Artalk session before the widget mounts
+localStorage.setItem('ArtalkUser', JSON.stringify({ ...user, token }))
+
+Artalk.init({ el: '#Comments', server: 'https://comments.example.com', site: 'Blog' })
+```
+
+The endpoint returns `404` when SSO is not enabled, `401` when the IdP rejects the token, and `400` when the token carries no email claim.
+
+::: tip
+
+Validation relies entirely on the issuer's `/userinfo` rejecting invalid or revoked tokens, and the user is matched by the `email` claim. Only enable this for an issuer you trust, and make sure that issuer returns verified emails.
+
+:::
+
 ## Plugin Development
 
 The social login feature of Artalk is implemented through an independent plugin developed using Solid.js. The code can be found in [@ArtalkJS/Artalk:ui/plugin-auth](https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-auth).

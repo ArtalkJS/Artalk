@@ -43,6 +43,7 @@ type ssoUserinfo struct {
 // @Failure       401  {object}  Map{msg=string}
 // @Failure       404  {object}  Map{msg=string}
 // @Failure       500  {object}  Map{msg=string}
+// @Failure       502  {object}  Map{msg=string}
 // @Failure       503  {object}  Map{msg=string}
 // @Router        /sso/exchange  [post]
 func AuthSSOExchange(app *core.App, router fiber.Router) {

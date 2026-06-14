@@ -73,7 +73,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_APP_KEY** | `""` | App Key (for generation of JWT) | app_key (App Key) |
 | **ATK_DEBUG** | `false` | Debug mode | debug (Debug mode) |
 | **ATK_HOST** | `"0.0.0.0"` | Listen host | host (Listen host) |
-| **ATK_LOCALE** | `"en"` | Language (follow Unicode BCP 47) (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru"]`) | locale (Language) |
+| **ATK_LOCALE** | `"en"` | Language (follow Unicode BCP 47) (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr"]`) | locale (Language) |
 | **ATK_LOGIN_TIMEOUT** | `259200` | Login timeout (in seconds) | login_timeout (Login timeout) |
 | **ATK_PORT** | `23366` | Listen port | port (Listen port) |
 | **ATK_SITE_DEFAULT** | `"Default Site"` | Default site name (create when app is first launched) | site_default (Default site name) |
@@ -164,6 +164,8 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_SLACK_CLIENT_ID** | `""` | ClientId | auth.slack.client_id (Social Login > Slack > ClientId) |
 | **ATK_AUTH_SLACK_CLIENT_SECRET** | `""` | ClientSecret | auth.slack.client_secret (Social Login > Slack > ClientSecret) |
 | **ATK_AUTH_SLACK_ENABLED** | `false` | 启用 | auth.slack.enabled (Social Login > Slack > Enabled) |
+| **ATK_AUTH_SSO_ENABLED** | `false` | Enable SSO token exchange | auth.sso.enabled (Social Login > SSO > Enable SSO token exchange) |
+| **ATK_AUTH_SSO_ISSUER** | `""` | OIDC issuer URL (e.g. "tenant.auth0.com" or "https://tenant.auth0.com") | auth.sso.issuer (Social Login > SSO > OIDC issuer URL) |
 | **ATK_AUTH_STEAM_API_KEY** | `""` | ApiKey | auth.steam.api_key (Social Login > Steam > ApiKey) |
 | **ATK_AUTH_STEAM_ENABLED** | `false` | 启用 | auth.steam.enabled (Social Login > Steam > Enabled) |
 | **ATK_AUTH_TIKTOK_CLIENT_ID** | `""` | ClientId | auth.tiktok.client_id (Social Login > Tiktok > ClientId) |

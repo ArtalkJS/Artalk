@@ -394,6 +394,13 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  # SSO (用外部 OIDC 身份提供商的访问令牌换取 Artalk 登录会话，通过调用 IdP 的 /userinfo 端点校验)
+  # -- 当嵌入页面已运行 OIDC 且希望 Artalk 复用该登录态、不显示自身弹窗登录界面时使用。 --
+  sso:
+    # 启用 SSO 令牌交换
+    enabled: false
+    # OIDC issuer 地址 (如 "tenant.auth0.com" 或 "https://tenant.auth0.com")
+    issuer: ""
 
 # 界面配置
 frontend:

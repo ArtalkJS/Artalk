@@ -121,6 +121,11 @@ export interface EntityCookedUserForAdmin {
 
 export type HandlerMap = Record<string, any>
 
+export interface HandlerParamsAuthSSOExchange {
+  /** External IdP access token (e.g. an Auth0 access token) */
+  token: string
+}
+
 export interface HandlerParamsCaptchaVerify {
   /** The captcha value to check */
   value: string
@@ -1976,6 +1981,55 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/sites/${id}`,
         method: 'DELETE',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+  }
+  sso = {
+    /**
+ * @description Validates a third-party OIDC access token (currently Auth0)
+ *
+ * @tags Auth
+ * @name AuthSsoExchange
+ * @summary Exchange an external IdP access token for an Artalk JWT
+ * @request POST:/sso/exchange
+ * @response `200` `HandlerResponseUserLogin` OK
+ * @response `400` `(HandlerMap & {
+    msg?: string,
+
+})` Bad Request
+ * @response `401` `(HandlerMap & {
+    msg?: string,
+
+})` Unauthorized
+ * @response `404` `(HandlerMap & {
+    msg?: string,
+
+})` Not Found
+ * @response `500` `(HandlerMap & {
+    msg?: string,
+
+})` Internal Server Error
+ * @response `502` `(HandlerMap & {
+    msg?: string,
+
+})` Bad Gateway
+ * @response `503` `(HandlerMap & {
+    msg?: string,
+
+})` Service Unavailable
+ */
+    authSsoExchange: (body: HandlerParamsAuthSSOExchange, params: RequestParams = {}) =>
+      this.request<
+        HandlerResponseUserLogin,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
+        path: `/sso/exchange`,
+        method: 'POST',
+        body: body,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

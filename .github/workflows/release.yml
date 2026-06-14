@@ -77,6 +77,15 @@ jobs:
           # modify the version in docs
           perl -pi -e 's#"latest"(\W+)?:(\W+)?".*?"#"latest": "'${VERSION#v}'"#g' docs/docs/code/ArtalkVersion.json
 
+          # modify .copr/artalk.spec
+          perl -i -pe 's/Version:.*/Version:        '${VERSION#v}'/g' .copr/artalk.spec
+
+          # modify .copr/changelog
+          echo -e "* $(date +'%a %b %d %Y')" \
+            "github-actions[bot] <github-actions[bot]@users.noreply.github.com> -" \
+            "${VERSION#v}-1\n- Update to version ${VERSION#v}\n" \
+            | cat - .copr/changelog > temp && mv temp .copr/changelog
+
       - name: Print Git Diff
         run: git diff
 

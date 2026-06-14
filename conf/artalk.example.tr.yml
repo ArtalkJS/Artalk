@@ -1,0 +1,449 @@
+# Dinleme adresi
+host: "0.0.0.0"
+
+# Dinleme portu
+port: 23366
+
+# Uygulama Anahtarı (JWT üretimi için)
+app_key: ""
+
+# Hata ayıklama modu
+debug: false
+
+# Dil (Unicode BCP 47 formatında) ["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr"]
+# -- bkz. https://www.techonthenet.com/js/language_tags.php --
+locale: tr
+
+# Zaman dilimi (IANA Zaman Dilimi Veritabanı formatında)
+# -- bkz. https://en.wikipedia.org/wiki/List_of_tz_database_time_zones --
+timezone: Europe/Istanbul
+
+# Varsayılan site adı (uygulama ilk başlatıldığında oluşturulur)
+site_default: Varsayılan Site
+
+# Varsayılan site URL'si
+site_url: ""
+
+# Giriş zaman aşımı (saniye cinsinden)
+login_timeout: 259200
+
+# Veritabanı
+db:
+  # Veritabanı türü ["sqlite", "mysql", "pgsql", "mssql"]
+  type: sqlite
+  # Veritabanı dosyası (yalnızca SQLite için)
+  file: ./data/artalk.db
+  # Tablo öneki (örn. "atk_")
+  table_prefix: ""
+  # -- Aşağıdakiler SQLite için gerekli değildir --
+  # Veritabanı adı
+  name: artalk
+  # Ana makine adresi
+  host: localhost
+  # Ana makine portu
+  port: 3306
+  # Veritabanı kullanıcısı
+  user: root
+  # Veritabanı şifresi
+  password: ""
+  # Veritabanı karakter seti
+  charset: utf8mb4
+  # SSL modunu etkinleştir
+  ssl: false
+  # Hazır İfadeler (Prepared Statement)
+  prepare_stmt: true
+
+# Web sunucusu
+http:
+  # Gövde boyutu sınırı (birim: MB)
+  body_limit: 100
+  # Proxy Başlığı (güvenilir bir ters proxy veya CDN arkasındaysa kullanıcının gerçek IP'sini almak için `X-Forwarded-For` doldurun)
+  proxy_header: ""
+
+# Günlük Kaydı (Logging)
+log:
+  # Günlük kaydını etkinleştir
+  enabled: true
+  # Günlük dosyası yolu
+  filename: ./data/artalk.log
+
+# Önbellek (Cache)
+cache:
+  # Önbelleği etkinleştir
+  enabled: false
+  # Önbellek türü ["redis", "memcache", "builtin"]
+  type: builtin
+  # Önbellek geçerlilik süresi (dakika cinsinden)
+  expires: 30
+  # Önbellek ön yükleme (program başladığında önbelleği ısıtır)
+  warm_up: false
+  # -- Aşağıdakiler `builtin` (yerleşik) önbellek için gerekli değildir --
+  # Önbellek sunucu adresi (örn. "localhost:6379")
+  server: ""
+  # Redis yapılandırması
+  redis:
+    # Bağlantı türü ["tcp", "unix"]
+    network: tcp
+    # Redis kullanıcı adı
+    username: ""
+    # Redis şifresi
+    password: ""
+    # Redis veritabanı numarası (örn. 0)
+    db: 0
+
+# Güvenilir alan adları
+# -- örn. ["https://artalk.example.com:23366"] sitenizin URL'sini buraya ekleyin --
+trusted_domains: []
+
+# SSL
+ssl:
+  # SSL'i etkinleştir
+  enabled: false
+  # Sertifika dosyası yolu
+  # (örn. "/etc/letsencrypt/live/example.com/fullchain.pem")
+  cert_path: ""
+  # Anahtar dosyası yolu
+  # (örn. "/etc/letsencrypt/live/example.com/privkey.pem")
+  key_path: ""
+
+# Moderatör
+# -- Yorumların herkese açık olmadan önce incelenmesi --
+moderator:
+  # Varsayılan bekleme durumu (yeni yorumların yönetici tarafından onaylanması gerekir)
+  pending_default: false
+  # API isteği başarısız olduğunda engelle (API isteği başarısız olduğunda yorumların geçmesine izin vermek için false yapın)
+  api_fail_block: false
+  # Akismet Anahtarı
+  # (Akismet spam önleme servisi, https://akismet.com)
+  akismet_key: ""
+  # Tencent Bulut İçerik Güvenliği
+  # (Tencent Bulut İçerik Güvenliği ile yorumları otomatik inceleyin)
+  # -- bkz. https://cloud.tencent.com/document/product/1124/64508 --
+  tencent:
+    enabled: false
+    secret_id: ""
+    secret_key: ""
+    region: ap-guangzhou
+  # Aliyun İçerik Güvenliği
+  # (Aliyun İçerik Güvenliği ile yorumları otomatik inceleyin)
+  # -- bkz. https://help.aliyun.com/document_detail/28417.html --
+  aliyun:
+    enabled: false
+    access_key_id: ""
+    access_key_secret: ""
+    region: cn-shanghai
+  # Kelime filtresi (yerel çevrimdışı sözlük)
+  keywords:
+    # Kelime filtresini etkinleştir
+    enabled: false
+    # Eşleşme olduğunda beklemeye al
+    pending: false
+    # Sözlük dosyası (birden fazla sözlük dosyasını destekler)
+    files:
+      - ./data/keywords_1.txt
+    file_sep: "\n"
+    replace_to: x
+
+# Doğrulama (Captcha)
+captcha:
+  # Doğrulamayı etkinleştir
+  enabled: true
+  # Her zaman doğrulama gerekli
+  always: false
+  # Doğrulama türü ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
+  captcha_type: image
+  # İşlem sınırı
+  # (doğrulamayı etkinleştirmek için gereken işlem sayısı)
+  action_limit: 3
+  # Sıfırlama Zaman Aşımı (işlem sayacını sıfırlama süresi. birim: saniye, devre dışı bırakmak için -1 yapın)
+  action_reset: 60
+  # Turnstile
+  # (https://www.cloudflare.com/products/turnstile/)
+  turnstile:
+    site_key: ""
+    secret_key: ""
+  # reCaptcha
+  # (https://www.google.com/recaptcha/about/)
+  recaptcha:
+    site_key: ""
+    secret_key: ""
+  # hCaptcha (https://www.hcaptcha.com/)
+  hcaptcha:
+    site_key: ""
+    secret_key: ""
+  # Geetest (https://www.geetest.com)
+  geetest:
+    captcha_id: ""
+    captcha_key: ""
+
+# Yükleme
+img_upload:
+  # Resim yüklemeyi etkinleştir
+  enabled: true
+  # Resim depolama yolu
+  path: ./data/artalk-img/
+  # Resim boyutu sınırı (birim: MB)
+  max_size: 5
+  # Resim bağlantısı temel yolu (varsayılan: "/static/images/")
+  public_path: null
+  # Upgit yapılandırması
+  upgit:
+    # Upgit'i etkinleştir
+    enabled: false
+    # Komut satırı argümanları
+    exec: upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img
+    # Yükleme başarılı olduktan sonra yerel resmi sil
+    del_local: true
+
+# E-posta
+email:
+  # E-posta bildirimini etkinleştir
+  enabled: false
+  # Gönderim yöntemi ["smtp", "ali_dm", "sendmail"]
+  send_type: smtp
+  # Gönderen takma adı
+  send_name: "{{reply_nick}}"
+  # Gönderen e-posta adresi
+  send_addr: noreply@example.com
+  # E-posta konusu
+  mail_subject: "[{{site_name}}] @{{reply_nick}} tarafından bir yanıt aldınız"
+  # E-posta şablon dosyası (özel şablon kullanmak için dosya yolunu ayarlayın)
+  mail_tpl: default
+  # SMTP gönderimi (etkinleştirmek için gönderim yöntemini "smtp" yapın)
+  smtp:
+    # Gönderen e-posta sunucusu
+    host: smtp.qq.com
+    # E-posta portu
+    port: 587
+    # Kullanıcı adı
+    username: example@qq.com
+    # Şifre
+    password: ""
+  # Aliyun posta push
+  # (etkinleştirmek için gönderim yöntemini "ali_dm" yapın; bkz: https://help.aliyun.com/document_detail/29444.html)
+  ali_dm:
+    access_key_id: ""
+    access_key_secret: ""
+    account_name: noreply@example.com
+
+# Çoklu Push
+admin_notify:
+  # Bildirim şablonu (özel şablon kullanmak için dosya yolunu ayarlayın)
+  notify_tpl: default
+  # Bekleyen yorumlar için hala bildirim gönder (yorumlar engellendiğinde bile bildirimler gönderilir)
+  notify_pending: false
+  # Gürültü modu
+  # -- gürültü modu varsayılan olarak devre dışıdır. --
+  # -- Bu seçenek `false` olarak ayarlandığında, yalnızca yöneticiye gönderilen mesajlar bildirilir, --
+  # -- "kullanıcı A"nın "kullanıcı B"ye yanıt vermesi gibi iki kullanıcı arasındaki iletişim yöneticiye bildirilmez. --
+  noise_mode: false
+  # Yöneticiyi bildir
+  email:
+    # Etkinleştir (diğer push yöntemlerini kullanırken devre dışı bırakılabilir)
+    enabled: true
+    # E-posta konusu (yöneticiye gönderilen e-posta konusu)
+    mail_subject: '[{{site_name}}] "{{page_title}}" sayfası yeni bir yoruma sahip'
+    # Yönetici e-posta şablon dosyası (özel şablon kullanmak için dosya yolunu ayarlayın)
+    mail_tpl: ""
+  # Telegram
+  telegram:
+    enabled: false
+    api_token: ""
+    receivers:
+      - 7777777
+  # Bark
+  bark:
+    enabled: false
+    server: http://day.app/xxxxxxx/
+  # Lark
+  lark:
+    enabled: false
+    webhook_url: ""
+    # Mesaj türü ["text", "card"]
+    msg_type: "text"
+  # WebHook
+  webhook:
+    enabled: false
+    url: ""
+  # DingTalk
+  ding_talk:
+    enabled: false
+    token: ""
+    secret: ""
+  # Slack
+  slack:
+    enabled: false
+    oauth_token: ""
+    receivers:
+      - "CHANNEL_ID"
+  # LINE
+  line:
+    enabled: false
+    channel_secret: ""
+    channel_access_token: ""
+    receivers:
+      - USER_ID_1
+      - GROUP_ID_1
+
+# Sosyal Giriş
+auth:
+  # Sosyal Girişi Etkinleştir
+  enabled: false
+  # Anonim yorum yapmaya izin ver (Doğrulamayı atlamaya izin ver, yalnızca anonim bir takma ad ve e-posta doldurmak yeterlidir)
+  anonymous: false
+  # Geri dönüş URL'si (https://example.com/api/v2/auth/{provider}/callback)
+  callback: "http://localhost:23366/api/v2/auth/{provider}/callback"
+  # E-posta
+  email:
+    # E-posta şifre girişini etkinleştir
+    enabled: true
+    # Doğrulama e-postası konusu
+    verify_subject: "Kodunuz - {{code}}"
+    # Doğrulama e-postası şablonu (özel şablon kullanmak için dosya yolunu ayarlayın)
+    verify_tpl: default
+  # GitHub
+  github:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # GitLab
+  gitlab:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Gitea
+  gitea:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Google
+  google:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Mastodon
+  mastodon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Twitter
+  twitter:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Facebook
+  facebook:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Discord
+  discord:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Steam
+  steam:
+    enabled: false
+    api_key: ""
+  # Apple
+  apple:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Microsoft
+  microsoft:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # WeChat
+  wechat:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Tiktok
+  tiktok:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Slack
+  slack:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Line
+  line:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Patreon
+  patreon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  # Auth0
+  auth0:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    domain: ""
+
+# Kullanıcı Arayüzü Ayarları
+frontend:
+  # Yorum kutusu yer tutucu metni
+  placeholder: ""
+  # Yorum olmadığında görüntülenecek metin
+  noComment: ""
+  # Gönder düğmesi metni
+  sendBtn: ""
+  # Hareketli yorum kutusu
+  editorTravel: true
+  # İfadeler (Emoticonlar)
+  emoticons: https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json
+  # Oy verme düğmesi
+  vote: true
+  # Beğenmeme düğmesi
+  voteDown: false
+  # Kullanıcı UA rozeti
+  uaBadge: false
+  # Yorum sıralama
+  listSort: true
+  # Editör gerçek zamanlı önizleme
+  preview: true
+  # Düzleştirme modu ["auto", true, false]
+  flatMode: auto
+  # Karanlık mod ["inherit", "auto"]
+  darkMode: inherit
+  # Maksimum yuvalama seviyesi
+  nestMax: 2
+  # Yuvalama yorum sıralama kuralları ["DATE_ASC", "DATE_DESC", "VOTE_UP_DESC"]
+  nestSort: DATE_ASC
+  # Gravatar
+  gravatar:
+    # API URL'si
+    mirror: https://www.gravatar.com/avatar/
+    # API parametreleri
+    params: sha256=1&d=mp&s=240
+  # Yorum sayfalama
+  pagination:
+    # Sayfa başına yorum sayısı
+    pageSize: 20
+    # Daha fazla yükle modu (sayfalama çubuğunu kullanmak için devre dışı bırakın)
+    readMore: true
+    # Kaydırmalı yükleme
+    autoLoad: true
+  # İçerik yükseklik sınırı
+  heightLimit:
+    # Yorum içeriği yükseklik sınırı (birim: px)
+    content: 300
+    # Alt yorum alanı yükseklik sınırı (birim: px)
+    children: 400
+    # Kaydırılabilir (yükseklik sınırı alanı kaydırılabilir olsun)
+    scrollable: false
+  # Resim geç yükleme [false, "native", "data-src"]
+  imgLazyLoad: false
+  # İstek zaman aşımı (birim: ms)
+  reqTimeout: 15000
+  # Sürüm kontrolü
+  versionCheck: true
+  # Eklentiler
+  pluginURLs: []

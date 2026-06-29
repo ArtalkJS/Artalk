@@ -183,6 +183,7 @@ captcha:
     key_id: ""
     secret_key: ""
     api_endpoint: ""
+
 # Upload
 img_upload:
   # Enable image upload

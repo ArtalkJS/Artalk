@@ -30,6 +30,7 @@ export const SensitiveConfigPaths = [
   'auth.twitter.client_secret',
   'auth.wechat.client_secret',
   'auth.steam.api_key',
+  'captcha.capjs.secret_key',
   'captcha.geetest.captcha_key',
   'captcha.hcaptcha.secret_key',
   'captcha.recaptcha.secret_key',

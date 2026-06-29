@@ -116,6 +116,11 @@ captcha:
   geetest:
     captcha_id: ""
     captcha_key: ""
+  # Cap (https://capjs.js.org/)
+  capjs:
+    key_id: ""
+    secret_key: ""
+    api_endpoint: ""
 
 # Upload
 img_upload:

@@ -184,6 +184,7 @@ captcha:
     key_id: ""
     secret_key: ""
     api_endpoint: ""
+
 # IP 属地
 ip_region:
   # 启用 IP 属地展示

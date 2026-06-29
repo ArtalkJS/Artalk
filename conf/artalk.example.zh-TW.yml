@@ -155,7 +155,7 @@ captcha:
   enabled: true
   # 總是需要驗證碼
   always: false
-  # 驗證類型 ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
+  # 驗證類型 ["image", "turnstile", "recaptcha", "hcaptcha", "geetest", "capjs"]
   captcha_type: image
   # 激活驗證碼所需操作次數
   action_limit: 3
@@ -179,6 +179,11 @@ captcha:
   geetest:
     captcha_id: ""
     captcha_key: ""
+  # Cap (https://capjs.js.org/)
+  capjs:
+    key_id: ""
+    secret_key: ""
+    api_endpoint: ""
 
 # IP 屬地
 ip_region:

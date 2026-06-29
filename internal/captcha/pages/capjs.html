@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cap</title>
+    <script>window.CAP_CUSTOM_WASM_URL = "{{.api_endpoint}}/assets/cap_wasm_bg.wasm";</script>
     <script src="{{.api_endpoint}}/assets/widget.js"></script>
     <style>
       body,
@@ -22,7 +23,7 @@
   </head>
   <body>
     <cap-widget
-      data-cap-api-endpoint="{{.api_endpoint}}/{{.key_id}}/api/"
+      data-cap-api-endpoint="{{.api_endpoint}}/{{.key_id}}/"
     ></cap-widget>
     <script>
         const capWidget = document.querySelector('cap-widget');
@@ -48,9 +49,9 @@
             alert('后端 API 请求失败：' + err.message || '')
         })
         });
-        // capWidget.addEventListener('error', function (event) {
-        // alert('验证失败');
-        // });
+        capWidget.addEventListener('error', function (event) {
+          alert('验证失败：' + event.detail.message || '');
+        });
     </script>
   </body>
 </html>

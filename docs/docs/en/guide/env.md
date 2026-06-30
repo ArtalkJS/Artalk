@@ -76,7 +76,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_APP_KEY** | `""` | App Key (for generation of JWT) | app_key (App Key) |
 | **ATK_DEBUG** | `false` | Debug mode | debug (Debug mode) |
 | **ATK_HOST** | `"0.0.0.0"` | Listen host | host (Listen host) |
-| **ATK_LOCALE** | `"en"` | Language (follow Unicode BCP 47) (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr"]`) | locale (Language) |
+| **ATK_LOCALE** | `"en"` | Language (follow Unicode BCP 47) (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr", "pt-PT"]`) | locale (Language) |
 | **ATK_LOGIN_TIMEOUT** | `259200` | Login timeout (in seconds) | login_timeout (Login timeout) |
 | **ATK_PAGE_TITLE_AUTO_FETCH** | `false` | Auto-fetch page titles (Disabled by default for security; manual fetching remains available) | page_title_auto_fetch (Auto-fetch page titles) |
 | **ATK_PORT** | `23366` | Listen port | port (Listen port) |

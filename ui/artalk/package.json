@@ -99,6 +99,16 @@
         "default": "./dist/i18n/tr.cjs"
       }
     },
+    "./i18n/pt-PT": {
+      "import": {
+        "types": "./dist/i18n/pt-PT.d.ts",
+        "default": "./dist/i18n/pt-PT.mjs"
+      },
+      "require": {
+        "types": "./dist/i18n/pt-PT.d.cts",
+        "default": "./dist/i18n/pt-PT.cjs"
+      }
+    },
     "./i18n/*": "./dist/i18n/*",
     "./Artalk.css": "./dist/Artalk.css",
     "./ArtalkLite.css": "./dist/ArtalkLite.css",

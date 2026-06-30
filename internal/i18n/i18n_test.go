@@ -2,10 +2,50 @@ package i18n
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 )
+
+func TestLocaleCatalogKeys(t *testing.T) {
+	localeDir := filepath.Join("..", "..", "i18n")
+	expected := readLocaleKeys(t, filepath.Join(localeDir, "en.yml"))
+	localeFiles, err := filepath.Glob(filepath.Join(localeDir, "*.yml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, localeFile := range localeFiles {
+		t.Run(filepath.Base(localeFile), func(t *testing.T) {
+			assert.Equal(t, expected, readLocaleKeys(t, localeFile))
+		})
+	}
+}
+
+func readLocaleKeys(t *testing.T, filename string) []string {
+	t.Helper()
+
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	locale := map[string]string{}
+	if err := yaml.Unmarshal(data, &locale); err != nil {
+		t.Fatal(err)
+	}
+
+	keys := make([]string, 0, len(locale))
+	for key := range locale {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	return keys
+}
 
 func TestT(t *testing.T) {
 	t.Run("ValidTranslate", func(t *testing.T) {

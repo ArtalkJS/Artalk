@@ -10,7 +10,7 @@ app_key: ""
 # 偵錯模式
 debug: false
 
-# 語言 ["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru"]
+# 語言 ["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr", "pt-PT"]
 locale: zh-TW
 
 # 時區

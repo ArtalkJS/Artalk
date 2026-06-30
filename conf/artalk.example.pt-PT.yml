@@ -1,0 +1,295 @@
+# locale
+locale: pt-PT
+
+# Timezone
+timezone: Europe/Lisbon
+
+# Default site name
+site_default: "Default Site"
+
+# Default site url
+site_url: ""
+
+# App Key (for generation of JWT)
+app_key: ""
+
+# Listen host
+host: "0.0.0.0"
+
+# Listen port
+port: 23366
+
+# Debug mode
+debug: false
+
+# Login timeout (in seconds)
+login_timeout: 259200
+
+# Database
+db:
+  type: sqlite
+  file: ./data/artalk.db
+  table_prefix: ""
+  name: artalk
+  host: localhost
+  port: 3306
+  user: root
+  password: ""
+  charset: utf8mb4
+  ssl: false
+  prepare_stmt: true
+
+# Web server
+http:
+  body_limit: 100
+  proxy_header: ""
+
+# Logging
+log:
+  enabled: true
+  filename: ./data/artalk.log
+
+# Cache
+cache:
+  enabled: false
+  type: builtin
+  expires: 30
+  warm_up: false
+  server: ""
+  redis:
+    network: tcp
+    username: ""
+    password: ""
+    db: 0
+
+# Trusted domains
+trusted_domains: []
+
+# SSL
+ssl:
+  enabled: false
+  cert_path: ""
+  key_path: ""
+
+# Moderator
+moderator:
+  pending_default: false
+  api_fail_block: false
+  akismet_key: ""
+  tencent:
+    enabled: false
+    secret_id: ""
+    secret_key: ""
+    region: ap-guangzhou
+  aliyun:
+    enabled: false
+    access_key_id: ""
+    access_key_secret: ""
+    region: cn-shanghai
+  keywords:
+    enabled: false
+    pending: false
+    files:
+      - ./data/keywords_1.txt
+    file_sep: "\n"
+    replace_to: x
+
+# Captcha
+captcha:
+  enabled: true
+  always: false
+  captcha_type: image
+  action_limit: 3
+  action_reset: 60
+  turnstile:
+    site_key: ""
+    secret_key: ""
+  recaptcha:
+    site_key: ""
+    secret_key: ""
+  hcaptcha:
+    site_key: ""
+    secret_key: ""
+  geetest:
+    captcha_id: ""
+    captcha_key: ""
+
+# Upload
+img_upload:
+  enabled: true
+  path: ./data/artalk-img/
+  max_size: 5
+  public_path: null
+  upgit:
+    enabled: false
+    exec: upgit -c UPGIT_CONF_FILE_PATH -t /artalk-img
+    del_local: true
+
+# Email
+email:
+  enabled: false
+  send_type: smtp
+  send_name: "{{reply_nick}}"
+  send_addr: noreply@example.com
+  mail_subject: "[{{site_name}}] Recebeste uma resposta de @{{reply_nick}}"
+  mail_tpl: default
+  smtp:
+    host: smtp.qq.com
+    port: 587
+    username: example@qq.com
+    password: ""
+  ali_dm:
+    access_key_id: ""
+    access_key_secret: ""
+    account_name: noreply@example.com
+
+# Multi-Push
+admin_notify:
+  notify_tpl: default
+  notify_pending: false
+  noise_mode: false
+  email:
+    enabled: true
+    mail_subject: '[{{site_name}}] Publicação "{{page_title}}" tem um novo comentário'
+    mail_tpl: ""
+  telegram:
+    enabled: false
+    api_token: ""
+    receivers:
+      - 7777777
+  bark:
+    enabled: false
+    server: http://day.app/xxxxxxx/
+  lark:
+    enabled: false
+    webhook_url: ""
+    msg_type: "text"
+  webhook:
+    enabled: false
+    url: ""
+  ding_talk:
+    enabled: false
+    token: ""
+    secret: ""
+  slack:
+    enabled: false
+    oauth_token: ""
+    receivers:
+      - "CHANNEL_ID"
+  line:
+    enabled: false
+    channel_secret: ""
+    channel_access_token: ""
+    receivers:
+      - USER_ID_1
+      - GROUP_ID_1
+
+# Social Login
+auth:
+  enabled: false
+  anonymous: false
+  callback: "http://localhost:23366/api/v2/auth/{provider}/callback"
+  email:
+    enabled: true
+    verify_subject: "O teu código - {{code}}"
+    verify_tpl: default
+  github:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  gitlab:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  gitea:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  google:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  mastodon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  twitter:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  facebook:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  discord:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  steam:
+    enabled: false
+    api_key: ""
+  apple:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  microsoft:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  wechat:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  tiktok:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  slack:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  line:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  patreon:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+  auth0:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    domain: ""
+
+# UI Settings
+frontend:
+  placeholder: "Deixa o teu comentário"
+  noComment: "Sem comentários"
+  sendBtn: "Enviar"
+  editorTravel: true
+  emoticons: https://cdn.jsdelivr.net/gh/ArtalkJS/Emoticons/grps/default.json
+  vote: true
+  voteDown: false
+  uaBadge: false
+  listSort: true
+  preview: true
+  flatMode: auto
+  darkMode: inherit
+  nestMax: 2
+  nestSort: DATE_ASC
+  gravatar:
+    mirror: https://www.gravatar.com/avatar/
+    params: sha256=1&d=mp&s=240
+  pagination:
+    pageSize: 20
+    readMore: true
+    autoLoad: true
+  heightLimit:
+    content: 300
+    children: 400
+    scrollable: false
+  imgLazyLoad: false
+  reqTimeout: 15000
+  versionCheck: true
+  pluginURLs: []

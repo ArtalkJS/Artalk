@@ -22,10 +22,10 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
           cache: false # https://github.com/actions/setup-go/issues/483
@@ -37,7 +37,7 @@ jobs:
           echo "GOMODCACHE=$(go env GOMODCACHE)" >> "$GITHUB_OUTPUT"
 
       - name: Cache go modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ${{ steps.go-vars.outputs.GOCACHE }}
@@ -61,14 +61,14 @@ jobs:
           gotestsum --junitfile $REPORT_DIR/unit-tests.xml --jsonfile $REPORT_DIR/unit-tests.json -- -coverprofile=$REPORT_DIR/coverage.out ./...
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Go-Test-Results-${{ runner.os }}
           path: ${{ env.REPORT_DIR }}
 
       - if: matrix.os == 'ubuntu-latest'
         name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           flags: go
           file: ${{ env.REPORT_DIR }}/coverage.out

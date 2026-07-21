@@ -1,20 +1,15 @@
 #!/usr/bin/env node
 
-import { promises as fs } from 'fs'
+import { promises as fs, readFileSync } from 'fs'
 import path from 'path'
-import { execSync } from 'child_process'
+import { execFileSync } from 'child_process'
 import process from 'process'
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
 // Helper to run shell commands
-const runCommand = (command) => {
-  try {
-    return execSync(command, { encoding: 'utf-8' }).trim()
-  } catch (error) {
-    return null
-  }
-}
+const getPublishedVersion = (packageName) =>
+  execFileSync('pnpm', ['info', packageName, 'version'], { encoding: 'utf-8' }).trim()
 
 // Recursively find all directories containing package.json
 const findNodeProjects = async (dir) => {
@@ -52,7 +47,7 @@ const checkVersionMismatch = async (projectPath) => {
     const packageName = packageJson.name
 
     // Get the latest version from npm using pnpm info
-    const npmVersion = runCommand(`pnpm info ${packageName} version`)
+    const npmVersion = getPublishedVersion(packageName)
 
     if (localVersion === npmVersion) {
       console.log(`✅ ${packageName} is up to date (${npmVersion})`)
@@ -60,11 +55,11 @@ const checkVersionMismatch = async (projectPath) => {
       console.log(`❌ ${packageName} is outdated (local: ${localVersion}, npm: ${npmVersion})`)
     }
 
-    if (npmVersion && localVersion !== npmVersion) {
+    if (localVersion !== npmVersion) {
       return { packageName, localVersion, latestVersion: npmVersion }
     }
   } catch (error) {
-    console.error(`Failed to read package.json in ${projectPath}:`, error)
+    throw new Error(`Failed to check npm version for ${projectPath}`, { cause: error })
   }
 
   return null
@@ -95,7 +90,7 @@ const findOutdatedProjects = async () => {
   if (specifiedProject) {
     projects = projects.filter((projectPath) => {
       const packageJsonPath = path.join(projectPath, 'package.json')
-      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
+      const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'))
       return packageJson.name === specifiedProject
     })
 
@@ -127,4 +122,7 @@ const findOutdatedProjects = async () => {
   }
 }
 
-findOutdatedProjects()
+findOutdatedProjects().catch((error) => {
+  console.error(error)
+  process.exitCode = 1
+})

@@ -27,6 +27,7 @@ type ResponseVote struct {
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  ResponseVote
+// @Failure      400  {object}  Map{msg=string}
 // @Failure      403  {object}  Map{msg=string}
 // @Failure      404  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
@@ -34,7 +35,23 @@ type ResponseVote struct {
 func VoteGet(app *core.App, router fiber.Router) {
 	router.Get("/votes/:target_name/:target_id", func(c *fiber.Ctx) error {
 		targetName := c.Params("target_name")
-		targetID, _ := c.ParamsInt("target_id")
+		targetID, err := c.ParamsInt("target_id")
+		if err != nil || targetID <= 0 {
+			return common.RespError(c, 400, "invalid vote target id")
+		}
+
+		switch targetName {
+		case "comment":
+			if app.Dao().FindComment(uint(targetID)).IsEmpty() {
+				return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
+			}
+		case "page":
+			if app.Dao().FindPageByID(uint(targetID)).IsEmpty() {
+				return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
+			}
+		default:
+			return common.RespError(c, 404, "unknown vote target name")
+		}
 
 		var result ResponseVote
 		result.Up, result.Down = app.Dao().GetVoteNumUpDown(targetName, uint(targetID))

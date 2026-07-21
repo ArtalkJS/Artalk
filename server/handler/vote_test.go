@@ -65,6 +65,51 @@ func TestVote(t *testing.T) {
 			},
 		},
 		{
+			description:  "Reject malformed vote target ID",
+			method:       "GET",
+			url:          "/votes/comment/not-a-number",
+			expectedCode: 400,
+			expectedBody: func(t *testing.T, body string) {
+				assert.JSONEq(t, `{"msg":"invalid vote target id"}`, body)
+			},
+		},
+		{
+			description:  "Reject non-positive vote target ID",
+			method:       "GET",
+			url:          "/votes/comment/0",
+			expectedCode: 400,
+			expectedBody: func(t *testing.T, body string) {
+				assert.JSONEq(t, `{"msg":"invalid vote target id"}`, body)
+			},
+		},
+		{
+			description:  "Reject unknown vote target",
+			method:       "GET",
+			url:          "/votes/unknown/1000",
+			expectedCode: 404,
+			expectedBody: func(t *testing.T, body string) {
+				assert.JSONEq(t, `{"msg":"unknown vote target name"}`, body)
+			},
+		},
+		{
+			description:  "Return not found for missing comment",
+			method:       "GET",
+			url:          "/votes/comment/999999",
+			expectedCode: 404,
+			expectedBody: func(t *testing.T, body string) {
+				assert.Contains(t, body, "not found")
+			},
+		},
+		{
+			description:  "Return not found for missing page",
+			method:       "GET",
+			url:          "/votes/page/999999",
+			expectedCode: 404,
+			expectedBody: func(t *testing.T, body string) {
+				assert.Contains(t, body, "not found")
+			},
+		},
+		{
 			description:  "Create comment up vote (original null, set to up)",
 			method:       "POST",
 			url:          "/votes/comment/1000/up",

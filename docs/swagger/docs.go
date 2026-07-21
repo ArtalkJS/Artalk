@@ -3709,6 +3709,24 @@ const docTemplate = `{
                             "$ref": "#/definitions/handler.ResponseVote"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
                     "403": {
                         "description": "Forbidden",
                         "schema": {

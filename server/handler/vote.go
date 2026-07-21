@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/artalkjs/artalk/v2/internal/core"
@@ -9,6 +10,8 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/i18n"
 	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type ResponseVote struct {
@@ -133,67 +136,19 @@ func VoteCreate(app *core.App, router fiber.Router) {
 			}
 		}
 
-		// Sync target model field value
-		sync := func() (int, int) {
-			up, down := app.Dao().GetVoteNumUpDown(targetName, uint(targetID))
-
-			switch targetName {
-			case "comment":
-				comment.VoteUp = up
-				comment.VoteDown = down
-				app.Dao().UpdateComment(&comment)
-			case "page":
-				page.VoteUp = up
-				page.VoteDown = down
-				app.Dao().UpdatePage(&page)
-			}
-
-			return up, down
-		}
-
-		// Create new vote record
-		create := func(choice string) error {
-			return createVote(app.Dao(), createNewVoteParams{
-				ip:         ip,
-				ua:         string(c.Request().Header.UserAgent()),
-				userID:     user.ID,
-				targetName: targetName,
-				targetID:   uint(targetID),
-				choice:     choice,
-			})
-		}
-
-		exitsVotes := getExistsVotesByIP(app.Dao(), ip, targetName, uint(targetID))
-		if len(exitsVotes) == 0 {
-			// vote
-			create(choice)
-		} else {
-			exitsChoice := getVoteChoice(string(exitsVotes[0].Type))
-
-			// un-vote all if already exists
-			for _, v := range exitsVotes {
-				app.Dao().DB().Unscoped().Delete(&v)
-			}
-
-			if choice != exitsChoice {
-				// vote opposite choice
-				create(choice)
-			} else {
-				// if choice is same then only un-vote
-				// reset choice to initial state
-				choice = ""
-			}
-		}
-
-		// sync
-		up, down := sync()
-
-		return common.RespData(c, ResponseVote{
-			Up:     up,
-			Down:   down,
-			IsUp:   choice == "up",
-			IsDown: choice == "down",
+		result, err := updateVote(app.Dao(), createNewVoteParams{
+			ip:         ip,
+			ua:         string(c.Request().Header.UserAgent()),
+			userID:     user.ID,
+			targetName: targetName,
+			targetID:   uint(targetID),
+			choice:     choice,
 		})
+		if err != nil {
+			return common.RespError(c, 500, "Failed to update vote")
+		}
+
+		return common.RespData(c, result)
 	}))
 }
 
@@ -226,8 +181,101 @@ type createNewVoteParams struct {
 	choice     string
 }
 
-// Create new vote record
-func createVote(dao *dao.Dao, opts createNewVoteParams) error {
-	_, err := dao.NewVote(opts.targetID, entity.VoteType(opts.targetName+"_"+opts.choice), opts.userID, opts.ua, opts.ip)
-	return err
+func updateVote(d *dao.Dao, opts createNewVoteParams) (ResponseVote, error) {
+	var (
+		result  ResponseVote
+		comment entity.Comment
+		page    entity.Page
+	)
+
+	err := d.DB().Transaction(func(tx *gorm.DB) error {
+		switch opts.targetName {
+		case "comment":
+			if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&comment, opts.targetID).Error; err != nil {
+				return fmt.Errorf("lock vote comment: %w", err)
+			}
+		case "page":
+			if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&page, opts.targetID).Error; err != nil {
+				return fmt.Errorf("lock vote page: %w", err)
+			}
+		default:
+			return fmt.Errorf("unknown vote target %q", opts.targetName)
+		}
+
+		voteTypes := []entity.VoteType{
+			entity.VoteType(opts.targetName + "_up"),
+			entity.VoteType(opts.targetName + "_down"),
+		}
+		var existingVotes []entity.Vote
+		if err := tx.Where("type IN ? AND target_id = ? AND ip = ?", voteTypes, opts.targetID, opts.ip).Find(&existingVotes).Error; err != nil {
+			return fmt.Errorf("find existing votes: %w", err)
+		}
+
+		selectedChoice := opts.choice
+		if len(existingVotes) > 0 {
+			existingChoice := getVoteChoice(string(existingVotes[0].Type))
+			if err := tx.Unscoped().Delete(&existingVotes).Error; err != nil {
+				return fmt.Errorf("delete existing votes: %w", err)
+			}
+			if selectedChoice == existingChoice {
+				selectedChoice = ""
+			}
+		}
+
+		if selectedChoice != "" {
+			vote := entity.Vote{
+				TargetID: opts.targetID,
+				Type:     entity.VoteType(opts.targetName + "_" + selectedChoice),
+				UserID:   opts.userID,
+				UA:       opts.ua,
+				IP:       opts.ip,
+			}
+			if err := tx.Create(&vote).Error; err != nil {
+				return fmt.Errorf("create vote: %w", err)
+			}
+		}
+
+		var up, down int64
+		if err := tx.Model(&entity.Vote{}).Where("target_id = ? AND type = ?", opts.targetID, voteTypes[0]).Count(&up).Error; err != nil {
+			return fmt.Errorf("count up votes: %w", err)
+		}
+		if err := tx.Model(&entity.Vote{}).Where("target_id = ? AND type = ?", opts.targetID, voteTypes[1]).Count(&down).Error; err != nil {
+			return fmt.Errorf("count down votes: %w", err)
+		}
+
+		updates := map[string]any{"vote_up": int(up), "vote_down": int(down)}
+		switch opts.targetName {
+		case "comment":
+			comment.VoteUp, comment.VoteDown = int(up), int(down)
+			if err := tx.Model(&comment).Updates(updates).Error; err != nil {
+				return fmt.Errorf("update comment vote counts: %w", err)
+			}
+		case "page":
+			page.VoteUp, page.VoteDown = int(up), int(down)
+			if err := tx.Model(&page).Updates(updates).Error; err != nil {
+				return fmt.Errorf("update page vote counts: %w", err)
+			}
+		}
+
+		result = ResponseVote{
+			Up:     int(up),
+			Down:   int(down),
+			IsUp:   selectedChoice == "up",
+			IsDown: selectedChoice == "down",
+		}
+		return nil
+	})
+	if err != nil {
+		return ResponseVote{}, err
+	}
+
+	d.CacheAction(func(cache *dao.DaoCache) {
+		if opts.targetName == "comment" {
+			_ = cache.CommentCacheSave(&comment)
+		} else {
+			_ = cache.PageCacheSave(&page)
+		}
+	})
+
+	return result, nil
 }

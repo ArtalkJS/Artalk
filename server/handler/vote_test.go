@@ -2,12 +2,16 @@ package handler_test
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/server/handler"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
 
 func TestVote(t *testing.T) {
@@ -227,4 +231,39 @@ func TestVote(t *testing.T) {
 			tt.expectedBody(t, string(body))
 		})
 	}
+}
+
+func TestVoteTransactionRollback(t *testing.T) {
+	app, fiber := NewApiTestApp()
+	defer app.Cleanup()
+
+	handler.VoteCreate(app.App, fiber)
+
+	db := app.Dao().DB()
+	var originalComment entity.Comment
+	require.NoError(t, db.First(&originalComment, 1000).Error)
+
+	const callbackName = "test:fail_vote_count_update"
+	require.NoError(t, db.Callback().Update().Before("gorm:update").Register(callbackName, func(tx *gorm.DB) {
+		if tx.Statement.Table == "atk_comments" {
+			tx.AddError(errors.New("injected vote count update failure"))
+		}
+	}))
+	defer db.Callback().Update().Remove(callbackName)
+
+	req := httptest.NewRequest("POST", "/votes/comment/1000/up", bytes.NewReader([]byte("{}")))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Forwarded-For", "192.168.100.1")
+	resp, err := fiber.Test(req)
+	require.NoError(t, err)
+	assert.Equal(t, 500, resp.StatusCode)
+
+	var voteCount int64
+	require.NoError(t, db.Model(&entity.Vote{}).Where("target_id = ? AND ip = ?", 1000, "192.168.100.1").Count(&voteCount).Error)
+	assert.Zero(t, voteCount, "Vote insert should be rolled back")
+
+	var comment entity.Comment
+	require.NoError(t, db.First(&comment, 1000).Error)
+	assert.Equal(t, originalComment.VoteUp, comment.VoteUp, "Comment counters should remain unchanged")
+	assert.Equal(t, originalComment.VoteDown, comment.VoteDown, "Comment counters should remain unchanged")
 }

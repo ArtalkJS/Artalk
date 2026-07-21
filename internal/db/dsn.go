@@ -25,6 +25,10 @@ func getDsnByConf(conf config.DBConf) string {
 		)
 
 	case config.TypeMySql:
+		tlsMode := lo.If(conf.SSL, "true").Else("false")
+		if conf.ServerCaPath != "" && conf.ClientCertPath != "" && conf.ClientKeyPath != "" {
+			tlsMode = mysqlCloudSQLTLSConfigName
+		}
 		dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=True&loc=Local&tls=%s",
 			conf.User,
 			conf.Password,
@@ -32,7 +36,7 @@ func getDsnByConf(conf config.DBConf) string {
 			conf.Port,
 			conf.Name,
 			conf.Charset,
-			lo.If(conf.SSL, "true").Else("false"),
+			tlsMode,
 		)
 
 	case config.TypeMSSQL:

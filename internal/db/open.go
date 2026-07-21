@@ -3,7 +3,6 @@ package db
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -18,6 +17,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const mysqlCloudSQLTLSConfigName = "cloudsql"
+
 func OpenSQLite(filename string, gormConfig *gorm.Config) (*gorm.DB, error) {
 	if filename == "" {
 		return nil, fmt.Errorf("please set `db.file` option in config file to specify a sqlite database path")
@@ -29,55 +30,53 @@ func OpenSQLite(filename string, gormConfig *gorm.Config) (*gorm.DB, error) {
 }
 
 func OpenMySql(dsn string, gormConfig *gorm.Config, dbConf *config.DBConf) (*gorm.DB, error) {
-	var serverCertPool *x509.CertPool
-	var clientCert *tls.Certificate
-
-	if dbConf.ServerCaPath != "" {
-		serverCertPool = x509.NewCertPool()
-		pem, err := os.ReadFile(dbConf.ServerCaPath)
-		if err != nil {
-			return nil, fmt.Errorf("failed to read server CA file: %w", err)
-		}
-		if ok := serverCertPool.AppendCertsFromPEM(pem); !ok {
-			return nil, fmt.Errorf("unable to append root cert to pool")
-		}
+	tlsConfig, configured, err := loadMySQLTLSConfig(dbConf)
+	if err != nil {
+		return nil, err
 	}
-
-	if dbConf.ClientCertPath != "" && dbConf.ClientKeyPath != "" {
-		cert, err := tls.LoadX509KeyPair(dbConf.ClientCertPath, dbConf.ClientKeyPath)
-		if err != nil {
-			return nil, fmt.Errorf("failed to load client certificate/key: %w", err)
+	if configured {
+		if err := gomysql.RegisterTLSConfig(mysqlCloudSQLTLSConfigName, tlsConfig); err != nil {
+			return nil, fmt.Errorf("failed to register MySQL TLS config: %w", err)
 		}
-		clientCert = &cert
-	}
-
-	// Register custom TLS configurations
-
-	// Handle Google Cloud SQL:
-	// - https://cloud.google.com/sql/docs/mysql/samples/cloud-sql-mysql-databasesql-connect-tcp-sslcerts
-	// - https://cloud.google.com/sql/docs/mysql/configure-ssl-instance#enforcing-ssl
-	if serverCertPool != nil && clientCert != nil {
-		gomysql.RegisterTLSConfig("cloudsql", &tls.Config{
-			RootCAs:            serverCertPool,
-			Certificates:       []tls.Certificate{*clientCert},
-			InsecureSkipVerify: true,
-			VerifyPeerCertificate: func(rawCerts [][]byte, _ [][]*x509.Certificate) error {
-				if len(rawCerts) == 0 {
-					return errors.New("no certificates available to verify")
-				}
-				cert, err := x509.ParseCertificate(rawCerts[0])
-				if err != nil {
-					return err
-				}
-				opts := x509.VerifyOptions{Roots: serverCertPool}
-				if _, err = cert.Verify(opts); err != nil {
-					return err
-				}
-				return nil
-			},
-		})
 	}
 	return gorm.Open(mysql.Open(dsn), gormConfig)
+}
+
+func loadMySQLTLSConfig(dbConf *config.DBConf) (*tls.Config, bool, error) {
+	paths := []string{dbConf.ServerCaPath, dbConf.ClientCertPath, dbConf.ClientKeyPath}
+	configuredPaths := 0
+	for _, path := range paths {
+		if path != "" {
+			configuredPaths++
+		}
+	}
+	if configuredPaths == 0 {
+		return nil, false, nil
+	}
+	if configuredPaths != len(paths) {
+		return nil, false, fmt.Errorf("server CA, client certificate, and client key must be configured together")
+	}
+
+	serverCertPool := x509.NewCertPool()
+	pem, err := os.ReadFile(dbConf.ServerCaPath)
+	if err != nil {
+		return nil, false, fmt.Errorf("failed to read server CA file: %w", err)
+	}
+	if ok := serverCertPool.AppendCertsFromPEM(pem); !ok {
+		return nil, false, fmt.Errorf("unable to append root cert to pool")
+	}
+
+	clientCert, err := tls.LoadX509KeyPair(dbConf.ClientCertPath, dbConf.ClientKeyPath)
+	if err != nil {
+		return nil, false, fmt.Errorf("failed to load client certificate/key: %w", err)
+	}
+
+	return &tls.Config{
+		RootCAs:      serverCertPool,
+		Certificates: []tls.Certificate{clientCert},
+		ServerName:   dbConf.Host,
+		MinVersion:   tls.VersionTLS12,
+	}, true, nil
 }
 
 func OpenPostgreSQL(dsn string, gormConfig *gorm.Config) (*gorm.DB, error) {

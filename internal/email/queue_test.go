@@ -18,7 +18,7 @@ func TestQueue(t *testing.T) {
 	}
 
 	t.Run("Send", func(t *testing.T) {
-		sendSuccessHookTriggered := false
+		sendSuccess := make(chan Email, 1)
 
 		q := NewQueue(EmailConf{
 			EmailConf: config.EmailConf{},
@@ -26,37 +26,53 @@ func TestQueue(t *testing.T) {
 				SendResult: true,
 			},
 			OnSendSuccess: func(email *Email) {
-				assert.Equal(t, testEmail, *email)
-				sendSuccessHookTriggered = true
+				sendSuccess <- *email
 			},
 		})
+		defer q.Close()
 
 		q.Push(&testEmail)
 
-		time.Sleep(100 * time.Millisecond)
-
-		assert.True(t, sendSuccessHookTriggered, "Send success hook should be triggered")
+		select {
+		case email := <-sendSuccess:
+			assert.Equal(t, testEmail, email)
+		case <-time.After(time.Second):
+			t.Fatal("Send success hook should be triggered")
+		}
 	})
 
 	t.Run("Send failed", func(t *testing.T) {
-		sendSuccessHookTriggered := false
+		sendAttempted := make(chan Email, 1)
+		sendSuccess := make(chan Email, 1)
 
 		q := NewQueue(EmailConf{
 			EmailConf: config.EmailConf{},
 			Sender: &mockSender{
 				SendResult: false,
+				OnSend: func(email *Email) {
+					sendAttempted <- *email
+				},
 			},
 			OnSendSuccess: func(email *Email) {
-				assert.Equal(t, testEmail, email)
-				sendSuccessHookTriggered = true
+				sendSuccess <- *email
 			},
 		})
+		defer q.Close()
 
 		q.Push(&testEmail)
 
-		time.Sleep(100 * time.Millisecond)
+		select {
+		case email := <-sendAttempted:
+			assert.Equal(t, testEmail, email)
+		case <-time.After(time.Second):
+			t.Fatal("Email send should be attempted")
+		}
 
-		assert.False(t, sendSuccessHookTriggered, "Send success hook should not be triggered")
+		select {
+		case <-sendSuccess:
+			t.Fatal("Send success hook should not be triggered")
+		default:
+		}
 	})
 
 	t.Run("Close", func(t *testing.T) {
@@ -69,8 +85,6 @@ func TestQueue(t *testing.T) {
 
 		q.Close()
 
-		time.Sleep(100 * time.Millisecond)
-
 		assert.True(t, q.closed, "Queue should be closed")
 	})
 }
@@ -81,10 +95,14 @@ func TestQueue(t *testing.T) {
 
 type mockSender struct {
 	SendResult bool
+	OnSend     func(email *Email)
 }
 
 var _ Sender = (*mockSender)(nil)
 
 func (s *mockSender) Send(email *Email) bool {
+	if s.OnSend != nil {
+		s.OnSend(email)
+	}
 	return s.SendResult
 }

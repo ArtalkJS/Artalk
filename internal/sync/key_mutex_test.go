@@ -15,26 +15,34 @@ func TestKeyMutex_LockAndUnlock(t *testing.T) {
 	// Test that the same key is locked/unlocked correctly
 	key := 1
 	mutex := keyMutex.GetLock(key)
+	assert.Same(t, mutex, keyMutex.GetLock(key), "The same key should return the same mutex")
 	mutex.Lock()
 
-	unlocked := false
+	lockAttempted := make(chan struct{})
+	lockAcquired := make(chan struct{})
 
 	go func() {
+		close(lockAttempted)
 		mutex.Lock()
-		unlocked = true
+		close(lockAcquired)
 		mutex.Unlock()
 	}()
 
-	// Ensure the key is still locked
-	time.Sleep(100 * time.Millisecond)
-	assert.False(t, unlocked, "Key should be locked")
+	<-lockAttempted
+	select {
+	case <-lockAcquired:
+		t.Fatal("Key should remain locked")
+	case <-time.After(100 * time.Millisecond):
+	}
 
 	// Unlock the key
 	mutex.Unlock()
 
-	// Ensure the key is unlocked now
-	time.Sleep(100 * time.Millisecond)
-	assert.True(t, unlocked, "Key should be unlocked now")
+	select {
+	case <-lockAcquired:
+	case <-time.After(time.Second):
+		t.Fatal("Key should be acquired after it is unlocked")
+	}
 }
 
 func TestKeyMutex_ConcurrentAccess(t *testing.T) {

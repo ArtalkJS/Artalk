@@ -13,7 +13,7 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/pkged"
 	"github.com/artalkjs/artalk/v2/internal/utils"
 	"github.com/go-testfixtures/testfixtures/v3"
-	"gorm.io/driver/sqlite"
+	"github.com/libtnb/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )

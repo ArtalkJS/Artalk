@@ -5,7 +5,7 @@ HAS_RICHGO  := $(shell which richgo)
 GOTEST      ?= $(if $(HAS_RICHGO), richgo test, go test)
 ARGS        ?= server
 
-export CGO_ENABLED := 1
+export CGO_ENABLED := 0
 
 all: install build
 

@@ -11,6 +11,7 @@ on:
 
 env:
   REPORT_DIR: "/tmp/test-reports"
+  CGO_ENABLED: 0
 
 jobs:
   test_app:

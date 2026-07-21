@@ -6,11 +6,13 @@
 # https://goreleaser.com/customization/fury/
 # https://goreleaser.com/customization/announce/telegram/
 
+version: 2
+
 project_name: artalk
 
 env:
   - GO111MODULE=on
-  - CGO_ENABLED=1
+  - CGO_ENABLED=0
 
 before:
   hooks:
@@ -31,9 +33,6 @@ builds:
       - linux
     goarch:
       - amd64
-    env:
-      - CC=x86_64-linux-gnu-gcc
-      - CXX=x86_64-linux-gnu-g++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: &common_ldflags |
@@ -45,9 +44,6 @@ builds:
       - linux
     goarch:
       - arm64
-    env:
-      - CC=aarch64-linux-gnu-gcc
-      - CXX=aarch64-linux-gnu-g++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
@@ -60,9 +56,6 @@ builds:
       - arm
     goarm:
       - "7"
-    env:
-      - CC=arm-linux-gnueabihf-gcc
-      - CXX=arm-linux-gnueabihf-g++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
@@ -77,9 +70,6 @@ builds:
       - darwin
     goarch:
       - amd64
-    env:
-      - CC=o64-clang
-      - CXX=o64-clang++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
@@ -90,9 +80,6 @@ builds:
       - darwin
     goarch:
       - arm64
-    env:
-      - CC=oa64-clang
-      - CXX=oa64-clang++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
@@ -107,9 +94,6 @@ builds:
       - windows
     goarch:
       - amd64
-    env:
-      - CC=x86_64-w64-mingw32-gcc
-      - CXX=x86_64-w64-mingw32-g++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
@@ -125,9 +109,6 @@ builds:
       - windows
     goarch:
       - arm64
-    env:
-      - CC=/llvm-mingw/bin/aarch64-w64-mingw32-gcc
-      - CXX=/llvm-mingw/bin/aarch64-w64-mingw32-g++
     binary: "{{.ProjectName}}"
     main: ./main.go
     ldflags: *common_ldflags
@@ -135,7 +116,7 @@ builds:
 
 archives:
   - id: artalk
-    builds:
+    ids:
       - linux-amd64
       - darwin-amd64
       - windows-amd64
@@ -144,10 +125,12 @@ archives:
       - linux-arm64
       - darwin-arm64
     name_template: "{{.ProjectName}}_v{{.Version}}_{{.Os}}_{{.Arch}}{{.Arm}}"
-    format: tar.gz
+    formats:
+      - tar.gz
     format_overrides:
       - goos: windows
-        format: zip
+        formats:
+          - zip
     wrap_in_directory: true
     files:
       - README*
@@ -158,7 +141,7 @@ checksum:
   name_template: "checksums.txt"
 
 snapshot:
-  name_template: "{{.Version}}-SNAPSHOT-{{.ShortCommit}}"
+  version_template: "{{.Version}}-SNAPSHOT-{{.ShortCommit}}"
 
 # changelog:
 #   sort: asc

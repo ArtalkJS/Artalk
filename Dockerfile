@@ -5,7 +5,7 @@ WORKDIR /source
 
 # install tools
 RUN set -ex \
-    && apk add --no-cache make git gcc musl-dev bash
+    && apk add --no-cache make git bash
 
 # download go deps
 # (cache by separating the downloading of deps)

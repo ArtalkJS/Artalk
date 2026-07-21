@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"path/filepath"
 	"syscall"
 
 	"github.com/adrg/xdg"
@@ -67,6 +68,13 @@ func New() *ArtalkCmd {
 	// Parse base flags
 	cmd.eagerParseFlags()
 
+	// Resolve config from the invocation directory before an implicit data-dir chdir.
+	if cfgFile, err := resolveConfigFileBeforeDataDir(cmd.cfgFile, cmd.workDir); err == nil {
+		cmd.cfgFile = cfgFile
+	} else {
+		log.Fatal("Config path fail: ", err)
+	}
+
 	// Init data directory (work directory)
 	if workDir, err := initDataDir(cmd.workDir); err == nil {
 		cmd.workDir = workDir
@@ -75,6 +83,27 @@ func New() *ArtalkCmd {
 	}
 
 	return cmd
+}
+
+func resolveConfigFileBeforeDataDir(cfgFile string, workDir string) (string, error) {
+	// An explicit work directory keeps the historical behavior: relative config
+	// paths and default config discovery are resolved after changing to workDir.
+	if workDir != "" {
+		return cfgFile, nil
+	}
+
+	if cfgFile == "" {
+		cfgFile = config.RetrieveConfigFile()
+	}
+	if cfgFile == "" || filepath.IsAbs(cfgFile) {
+		return cfgFile, nil
+	}
+
+	absPath, err := filepath.Abs(cfgFile)
+	if err != nil {
+		return "", fmt.Errorf("resolve config file %q: %w", cfgFile, err)
+	}
+	return absPath, nil
 }
 
 // Parses the global app flags before calling atk.RootCmd.Execute().

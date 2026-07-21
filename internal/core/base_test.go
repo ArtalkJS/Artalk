@@ -1,10 +1,14 @@
 package core
 
 import (
+	"sync"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/artalkjs/artalk/v2/internal/config"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type MockService struct{}
@@ -21,6 +25,44 @@ func TestNewApp(t *testing.T) {
 	assert.NotNil(t, app)
 	assert.Equal(t, conf, app.conf)
 	assert.NotNil(t, app.service)
+}
+
+func TestTimezoneInitializer(t *testing.T) {
+	var initializer timezoneInitializer
+	var applyCount atomic.Int32
+	apply := func(location *time.Location) {
+		assert.Equal(t, time.UTC, location)
+		applyCount.Add(1)
+	}
+
+	const callers = 32
+	errs := make(chan error, callers)
+	var wg sync.WaitGroup
+	for range callers {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			errs <- initializer.init("UTC", apply)
+		}()
+	}
+	wg.Wait()
+	close(errs)
+	for err := range errs {
+		require.NoError(t, err)
+	}
+	assert.Equal(t, int32(1), applyCount.Load())
+
+	err := initializer.init("Asia/Shanghai", apply)
+	assert.ErrorContains(t, err, "restart the process")
+	assert.Equal(t, int32(1), applyCount.Load())
+
+	var invalid timezoneInitializer
+	err = invalid.init("Invalid/Timezone", apply)
+	assert.ErrorContains(t, err, "timezone load error")
+
+	var local timezoneInitializer
+	require.NoError(t, local.init("Local", apply))
+	assert.ErrorContains(t, local.init("UTC", apply), "restart the process")
 }
 
 func TestAppBootstrap(t *testing.T) {

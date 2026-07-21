@@ -58,6 +58,42 @@ func (app *App) registerDefaultHooks() {
 
 var mutex = sync.Mutex{}
 
+type timezoneInitializer struct {
+	once sync.Once
+	name string
+	err  error
+}
+
+func (i *timezoneInitializer) init(timezone string, apply func(*time.Location)) error {
+	if timezone == "" {
+		timezone = "Local"
+	}
+
+	i.once.Do(func() {
+		i.name = timezone
+		if timezone == "Local" {
+			return
+		}
+
+		local, err := time.LoadLocation(timezone)
+		if err != nil {
+			i.err = fmt.Errorf("timezone load error: %w (please check config or system env)", err)
+			return
+		}
+		apply(local)
+	})
+
+	if i.err != nil {
+		return i.err
+	}
+	if i.name != timezone {
+		return fmt.Errorf("timezone is already initialized as %q; restart the process to change it to %q", i.name, timezone)
+	}
+	return nil
+}
+
+var processTimezone timezoneInitializer
+
 // Bootstrap implements App.
 func (app *App) Bootstrap() error {
 	mutex.Lock()
@@ -67,14 +103,11 @@ func (app *App) Bootstrap() error {
 		return fmt.Errorf("app.conf cannot be nil while bootstrap")
 	}
 
-	// 时区设置
-	timezone := app.Conf().TimeZone
-	if timezone != "" {
-		if local, err := time.LoadLocation(timezone); err == nil {
-			time.Local = local
-		} else {
-			return fmt.Errorf("timezone load error: %w (please check config or system env)", err)
-		}
+	// time.Local is process-global and must not be mutated after services start.
+	if err := processTimezone.init(app.Conf().TimeZone, func(local *time.Location) {
+		time.Local = local
+	}); err != nil {
+		return err
 	}
 
 	// i18n

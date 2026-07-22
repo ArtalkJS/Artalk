@@ -15,7 +15,12 @@ onMounted(() => {
 function sync() {
   const value = settings.get().getCustom(props.node.path)
   disabled.value = !!settings.get().getEnvByPath(props.node.path)
-  if (typeof value === 'object' && 'toJSON' in value && typeof value.toJSON === 'function') {
+  if (
+    value &&
+    typeof value === 'object' &&
+    'toJSON' in value &&
+    typeof value.toJSON === 'function'
+  ) {
     customValue.value = value.toJSON()
   } else if (typeof value === 'string') {
     customValue.value = value.split(' ')

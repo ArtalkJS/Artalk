@@ -1,5 +1,5 @@
 name: Build Nightly
-run-name: Build Nightly
+run-name: Build Nightly ${{ inputs.dry_run && '(🧪 Dry-Run)' || '' }}
 
 on:
   schedule:
@@ -7,42 +7,45 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Dry run"
+        description: "Build without publishing"
         type: boolean
         default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-nightly
+  cancel-in-progress: false
 
 env:
   DIST_DIR: /tmp/builds
   DIGEST_DIR: /tmp/digests
   DOCKER_IMG: artalk/artalk-go
-  DOCKER_BUILD_ARGS: |-
-    SKIP_UI_BUILD=true
 
 jobs:
-  # Prepare check should run
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       skip: ${{ steps.check.outputs.skip }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
 
-      - name: Check should run
+      - name: Check whether the scheduled build should run
         id: check
         if: github.event_name == 'schedule'
         run: |
-          if [[ "$(git log --since='24 hours ago' | wc -l)" -eq 0 ]] || \
+          if [[ "$(git log --since='24 hours ago' --oneline | wc -l)" -eq 0 ]] || \
             [[ "$GITHUB_REPOSITORY" != "ArtalkJS/Artalk" ]]; then
-            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
 
-  # Bulid UI first
-  # (build ui outside of docker to speed up cross-platform builds)
   ui:
+    name: Build Nightly UI assets
     if: ${{ needs.prepare.outputs.skip != 'true' }}
     needs: prepare
-    runs-on: macos-14
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
@@ -54,25 +57,11 @@ jobs:
         with:
           version: 10.33.2
 
-      - name: Setup node
+      - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version: 22.x
-          registry-url: https://registry.npmjs.org/
-          cache: "pnpm"
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "PNPM_STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - uses: actions/cache@v6
-        name: Setup pnpm cache
-        with:
-          path: ${{ env.PNPM_STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -81,19 +70,19 @@ jobs:
         id: build_ui
         run: |
           make build-frontend
-          echo "ui_tarball=$(make -s pack-frontend)" >> $GITHUB_OUTPUT
+          echo "ui_tarball=$(make -s pack-frontend)" >> "$GITHUB_OUTPUT"
 
-      - name: Upload UI dist
+      - name: Upload UI assets
         uses: actions/upload-artifact@v7
         with:
-          name: ui-src
+          name: nightly-ui-src
           path: |
             public
             ui/artalk/dist
           if-no-files-found: error
           retention-days: 1
 
-      - name: Upload UI tarball (included in release)
+      - name: Upload UI tarball
         uses: actions/upload-artifact@v7
         with:
           name: build-ui-tarball
@@ -101,59 +90,168 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  #
-  # Build app on different platforms
-  #
   build:
+    name: Build Nightly (${{ matrix.platform }})
     needs: ui
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          # - macos-14
-          # :(
-          # native Apple m1 arm64 is not supported nested virtualization yet, so docker qemu is not working.
-          # https://github.com/actions/runner-images/issues/9460
-          # https://docs.veertu.com/anka/anka-virtualization-cli/nested-virtualization/
-          #
-          # wait for arm64 linux runner support on github actions.
-        platform:
-          - linux/amd64
-          - linux/arm64
-        # exclude:
-        #   # exclude build x86 on arm, and vice versa.
-        #   - { os: macos-14, platform: linux/amd64 }
-        #   - { os: ubuntu-latest, platform: linux/arm64 }
+        include:
+          - runner: ubuntu-24.04
+            platform: linux/amd64
+            platform_pair: linux_amd64
+          - runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            platform_pair: linux_arm64
 
     steps:
-      - name: Prepare
-        run: |
-          PF="${{ matrix.platform }}"
-          echo "PLATFORM_PAIR=${PF//\//_}" >> $GITHUB_ENV
-
       - name: Checkout Code
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - name: Setup docker on macos
-        if: startsWith(matrix.os, 'macos')
-        uses: crazy-max/ghaction-setup-docker@v5
+      - name: Download UI assets
+        uses: actions/download-artifact@v8
+        with:
+          name: nightly-ui-src
 
-      - name: Gen docker meta
+      - name: Generate Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.DOCKER_IMG }}
+          tags: type=raw,value=nightly-build-${{ matrix.platform_pair }}
+
+      - name: Login to DockerHub
+        if: ${{ github.event_name == 'schedule' || !inputs.dry_run }}
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build dry-run image
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: SKIP_UI_BUILD=true
+          outputs: type=docker,name=${{ steps.meta.outputs.tags }}
+          cache-from: type=gha,scope=nightly-${{ matrix.platform_pair }}
+          cache-to: type=gha,mode=max,scope=nightly-${{ matrix.platform_pair }}
+
+      - name: Build and push image by digest
+        if: ${{ github.event_name == 'schedule' || !inputs.dry_run }}
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: SKIP_UI_BUILD=true
+          outputs: |
+            type=docker,name=${{ steps.meta.outputs.tags }}
+            type=image,push=true,name=${{ env.DOCKER_IMG }},push-by-digest=true,name-canonical=true
+          cache-from: type=gha,scope=nightly-${{ matrix.platform_pair }}
+          cache-to: type=gha,mode=max,scope=nightly-${{ matrix.platform_pair }}
+
+      - name: Smoke test image
+        env:
+          IMAGE: ${{ steps.meta.outputs.tags }}
+        run: docker run --rm --entrypoint /artalk "$IMAGE" version
+
+      - name: Export digest
+        if: ${{ github.event_name == 'schedule' || !inputs.dry_run }}
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p "$DIGEST_DIR"
+          touch "$DIGEST_DIR/${DIGEST#sha256:}"
+
+      - name: Upload digest
+        if: ${{ github.event_name == 'schedule' || !inputs.dry_run }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: nightly-digest-${{ matrix.platform_pair }}
+          path: ${{ env.DIGEST_DIR }}/*
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Export Docker image
+        id: docker
+        env:
+          IMAGE: ${{ steps.meta.outputs.tags }}
+          PLATFORM_PAIR: ${{ matrix.platform_pair }}
+        run: |
+          image_file="artalk_docker_nigthly_$(date +'%Y%m%d')_${PLATFORM_PAIR}.tar.gz"
+          docker save "$IMAGE" | gzip > "$image_file"
+          echo "image_file=$image_file" >> "$GITHUB_OUTPUT"
+
+      - name: Pack app
+        id: app
+        env:
+          IMAGE: ${{ steps.meta.outputs.tags }}
+          PLATFORM_PAIR: ${{ matrix.platform_pair }}
+        run: |
+          base_dir="/tmp/app_pkg"
+          name="artalk_nigthly_$(date +'%Y%m%d')_${PLATFORM_PAIR}"
+          package_dir="$base_dir/$name"
+          package_file="$base_dir/$name.tar.gz"
+
+          mkdir -p "$package_dir"
+          docker run --rm --entrypoint cat "$IMAGE" /artalk > "$package_dir/artalk"
+          chmod +x "$package_dir/artalk"
+
+          cp conf/artalk.example.yml "$package_dir/artalk.yml"
+          cp README.md LICENSE CHANGELOG.md "$package_dir"
+
+          tar -czf "$package_file" -C "$base_dir" "$name"
+          echo "package_file=$package_file" >> "$GITHUB_OUTPUT"
+
+      - name: Collect build artifacts
+        env:
+          APP_PACKAGE: ${{ steps.app.outputs.package_file }}
+          DOCKER_IMAGE: ${{ steps.docker.outputs.image_file }}
+        run: |
+          mkdir -p "$DIST_DIR"
+          mv "$APP_PACKAGE" "$DIST_DIR"
+          mv "$DOCKER_IMAGE" "$DIST_DIR"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-${{ matrix.platform_pair }}
+          path: ${{ env.DIST_DIR }}/*
+          if-no-files-found: error
+          retention-days: 1
+
+  docker_merge:
+    name: Publish Nightly Docker manifest
+    if: ${{ github.event_name == 'schedule' || !inputs.dry_run }}
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v8
+        with:
+          path: ${{ env.DIGEST_DIR }}
+          pattern: nightly-digest-*
+          merge-multiple: true
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Generate Docker metadata
         id: meta
         uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_IMG }}
           tags: type=raw,value=nightly
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
 
       - name: Login to DockerHub
         uses: docker/login-action@v4
@@ -161,131 +259,47 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Download UI before build
-        uses: actions/download-artifact@v8
-        with:
-          name: ui-src
-
-      - name: Build and push by digest
-        uses: docker/build-push-action@v7
-        id: build
-        with:
-          context: .
-          platforms: ${{ matrix.platform }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ env.DOCKER_BUILD_ARGS }}
-          # The `type=image,push=true` must the last one,
-          # because the `build.outputs.digest` will output the last image's digest.
-          # The digests will be used in the merge step.
-          outputs: |
-            type=docker,name=${{ env.DOCKER_IMG }}
-            type=image,push=true,name=${{ env.DOCKER_IMG }},push-by-digest=true,name-canonical=true
-
-      - name: Export digest
+      - name: Create and push manifest
+        env:
+          METADATA: ${{ steps.meta.outputs.json }}
         run: |
-          mkdir -p $DIGEST_DIR
-          digest="${{ steps.build.outputs.digest }}"
-          touch "$DIGEST_DIR/${digest#sha256:}"
+          mapfile -t tags < <(jq -r '.tags[]' <<< "$METADATA")
+          tag_args=()
+          for tag in "${tags[@]}"; do
+            tag_args+=(--tag "$tag")
+          done
 
-      - name: Upload digest
-        uses: actions/upload-artifact@v7
-        with:
-          name: digests-${{ env.PLATFORM_PAIR }}
-          path: ${{ env.DIGEST_DIR }}/*
-          if-no-files-found: error
-          retention-days: 1
+          shopt -s nullglob
+          digest_files=("$DIGEST_DIR"/*)
+          if [[ "${#digest_files[@]}" -ne 2 ]]; then
+            echo "Expected 2 platform digests, found ${#digest_files[@]}."
+            exit 1
+          fi
 
-      # Export docker image
-      - name: Export Docker Image
-        id: docker
-        run: |
-          IMG_FILE="artalk_docker_nigthly_$(date +'%Y%m%d')_${PLATFORM_PAIR}.tar.gz"
-          docker save ${{ env.DOCKER_IMG }} | gzip > $IMG_FILE
-          echo "img_file=$IMG_FILE" >> $GITHUB_OUTPUT
+          sources=()
+          for digest_file in "${digest_files[@]}"; do
+            digest="$(basename "$digest_file")"
+            if [[ ! "$digest" =~ ^[0-9a-f]{64}$ ]]; then
+              echo "Invalid image digest: $digest"
+              exit 1
+            fi
+            sources+=("$DOCKER_IMG@sha256:$digest")
+          done
 
-      # App
-      - name: Pack app
-        id: app
-        run: |
-          BASE_DIR="/tmp/app_pkg"
-          NAME="artalk_nigthly_$(date +'%Y%m%d')_${PLATFORM_PAIR}"
-          SUB_DIR="$BASE_DIR/$NAME"
-          PKG_FILE="$BASE_DIR/$NAME.tar.gz"
-
-          # bin file
-          mkdir -p $SUB_DIR
-          docker run --rm --entrypoint cat ${{ env.DOCKER_IMG }} /artalk > "$SUB_DIR/artalk"
-          chmod +x "$SUB_DIR/artalk"
-
-          # doc file
-          cp conf/artalk.example.yml "$SUB_DIR/artalk.yml"
-          cp README.md LICENSE CHANGELOG.md "$SUB_DIR"
-
-          # create package file
-          tar -czf $PKG_FILE -C $BASE_DIR $NAME
-          echo "app_pkg_file=$PKG_FILE" >> $GITHUB_OUTPUT
-
-      # Move build artifacts
-      - name: Move build artifacts
-        run: |
-          mkdir -p $DIST_DIR
-          mv ${{ steps.app.outputs.app_pkg_file }} $DIST_DIR
-          mv ${{ steps.docker.outputs.img_file }} $DIST_DIR
-
-      # Upload build artifacts
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: build-${{ env.PLATFORM_PAIR }}
-          path: ${{ env.DIST_DIR }}/*
-          if-no-files-found: error
-          retention-days: 1
-
-  # Merge docker digests from different platforms
-  # Reference: https://docs.docker.com/build/ci/github-actions/multi-platform/#distribute-build-across-multiple-runners
-  docker_merge:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Download digests
-        uses: actions/download-artifact@v8
-        with:
-          path: ${{ env.DIGEST_DIR }}
-          pattern: digests-*
-          merge-multiple: true
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.DOCKER_IMG }}
-          tags: type=raw,value=nightly
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v4
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Create manifest list and push
-        working-directory: ${{ env.DIGEST_DIR }}
-        run: |
-          TAGS_ARG=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
-          MINIFEST_SRCS=$(printf '${{ env.DOCKER_IMG }}@sha256:%s ' *)
-
-          docker buildx imagetools create ${TAGS_ARG} ${MINIFEST_SRCS}
+          docker buildx imagetools create "${tag_args[@]}" "${sources[@]}"
 
       - name: Inspect image
-        run: |
-          docker buildx imagetools inspect ${{ env.DOCKER_IMG }}:${{ steps.meta.outputs.version }}
+        env:
+          IMAGE: ${{ env.DOCKER_IMG }}:${{ steps.meta.outputs.version }}
+        run: docker buildx imagetools inspect "$IMAGE"
 
-  # Release
   release:
-    runs-on: ubuntu-latest
-    needs: build
+    name: Publish Nightly GitHub release
+    if: ${{ github.event_name == 'schedule' || !inputs.dry_run }}
+    needs: [build, docker_merge]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
@@ -299,50 +313,52 @@ jobs:
           pattern: build-*
           merge-multiple: true
 
-      # Generate CHANGELOG
-      - name: Generate Changelog
-        run: |
-          # install git-chglog
-          curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
-              | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
+      - name: Setup Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: false
 
-          CHANGELOG=$(git-chglog --config .github/chglog/config.yml --next-tag nightly nightly)
-          MD_FILE="/tmp/changelog.md"
-          echo -e "$CHANGELOG" > $MD_FILE
-          echo -e "\n> [!NOTE]\n" \
-                  "> The Nightly version, automatically built based on the latest code, " \
-                  "is not yet released and may be unstable. Please use it with caution. " \
-                  "Docker user can run \`docker pull artalk/artalk-go:nightly\` to get " \
-                  "the nightly build." >> $MD_FILE
-
-      # checksums.txt
-      - name: Calculate checksums.txt
+      - name: Setup git-chglog
         run: |
-          cd $DIST_DIR
+          GOBIN="$RUNNER_TEMP/bin" go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.4
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/git-chglog" --version
+
+      - name: Generate changelog
+        run: |
+          git-chglog --config .github/chglog/config.yml --next-tag nightly nightly > /tmp/changelog.md
+          cat >> /tmp/changelog.md <<'EOF'
+
+          > [!NOTE]
+          > The Nightly version is automatically built from the latest code and may be unstable.
+          > Docker users can run `docker pull artalk/artalk-go:nightly` to get this build.
+          EOF
+
+      - name: Calculate checksums
+        run: |
+          cd "$DIST_DIR"
           sha256sum * > checksums.txt
-
-          # print checksums.txt
           cat checksums.txt
 
-          FILES=$(find ${DIST_DIR} -type f -exec readlink -f {} \;)
-          echo -e "RELEASE_FILES<<EOF" >> $GITHUB_ENV
-          echo -e "$FILES" >> $GITHUB_ENV
-          echo -e "EOF" >> $GITHUB_ENV
+          {
+            echo "RELEASE_FILES<<EOF"
+            find "$DIST_DIR" -type f -print | sort
+            echo "EOF"
+          } >> "$GITHUB_ENV"
 
-      - name: Create tag and push
+      - name: Move Nightly tag
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
-          gh release delete nightly --yes || true
-          git push origin :refs/tags/nightly || true
+          gh release delete nightly --yes --cleanup-tag || true
+          git tag --force nightly
+          git push --force origin refs/tags/nightly
 
-          git tag -f nightly
-          git push -f origin nightly
-
-      - name: Release
+      - name: Publish release
         uses: softprops/action-gh-release@v3
         with:
           prerelease: true

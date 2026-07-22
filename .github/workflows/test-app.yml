@@ -97,8 +97,11 @@ jobs:
 
       - name: Run tests
         run: |
-          mkdir -p $REPORT_DIR
-          gotestsum --junitfile $REPORT_DIR/unit-tests.xml --jsonfile $REPORT_DIR/unit-tests.json -- -coverprofile=$REPORT_DIR/coverage.out ./...
+          mkdir -p "$REPORT_DIR"
+          gotestsum \
+            --junitfile "$REPORT_DIR/unit-tests.xml" \
+            --jsonfile "$REPORT_DIR/unit-tests.json" \
+            -- -coverprofile="$REPORT_DIR/coverage.out" ./...
 
       - name: Upload test results
         if: ${{ !cancelled() }}

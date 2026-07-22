@@ -347,7 +347,7 @@ jobs:
       - name: Calculate checksums
         run: |
           cd "$DIST_DIR"
-          sha256sum * > checksums.txt
+          sha256sum -- * > checksums.txt
           cat checksums.txt
 
       - name: Move Nightly tag

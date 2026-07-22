@@ -25,6 +25,7 @@ services:
       - ./data:/data
     environment:
       - TZ=America/New_York
+      - ATK_TIMEZONE=America/New_York
       - ATK_LOCALE=en
       - ATK_SITE_DEFAULT=Artalk's Blog
       - ATK_SITE_URL=https://example.com
@@ -35,6 +36,8 @@ services:
       - ATK_ADMIN_USERS_0_BADGE_NAME=Administrator
       - ATK_ADMIN_USERS_0_BADGE_COLOR=#0083FF
 ```
+
+`TZ` controls the container or host process environment, while `ATK_TIMEZONE` controls the Artalk application timezone; the two values may differ. The Artalk timezone is applied only during process initialization, so fully restart the Artalk process or container after changing `ATK_TIMEZONE`.
 
 When the variable is an array, set array values using space-separated strings or numerical indices, for example:
 

@@ -2,7 +2,10 @@
 
 ## 更新变动
 
-突破性变动，例如更新需要修改原有配置等，请注意查看版本更新日志中的提示：[CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md)
+突破性变动，例如更新需要修改原有配置等，请注意查看版本更新日志中的提示：
+
+- [v2.10.0 变更日志与迁移指南](../releases/v2.10.0.md)
+- [完整 CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md)
 
 ## 命令行一键升级
 

@@ -25,6 +25,7 @@ services:
       - ./data:/data
     environment:
       - TZ=Asia/Shanghai
+      - ATK_TIMEZONE=Asia/Shanghai
       - ATK_LOCALE=zh-CN
       - ATK_SITE_DEFAULT=Artalk 的博客
       - ATK_SITE_URL=https://example.com
@@ -35,6 +36,8 @@ services:
       - ATK_ADMIN_USERS_0_BADGE_NAME=管理员
       - ATK_ADMIN_USERS_0_BADGE_COLOR=#0083FF
 ```
+
+`TZ` 设置容器或宿主进程环境的时区，`ATK_TIMEZONE` 设置 Artalk 应用时区；两者可以不同。Artalk 应用时区只在进程初始化时生效，修改 `ATK_TIMEZONE` 后必须完整重启 Artalk 进程或容器。
 
 当变量为数组，通过空格分隔的字符串或数字索引来设置数组值，例如：
 

@@ -283,6 +283,16 @@ timezone: Asia/Shanghai
 
 该值填写你所在地时区，对应 IANA 数据库时区名，参考：[Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) / [RFC-6557](https://www.rfc-editor.org/rfc/rfc6557.html)。
 
+`timezone` 设置的是 Artalk 应用使用的时区，可以与宿主系统或容器的 `TZ` 时区不同。也可以使用环境变量 `ATK_TIMEZONE` 设置相同配置：
+
+```bash
+ATK_TIMEZONE=Asia/Shanghai artalk server
+```
+
+::: warning 修改后需要重启
+应用时区是进程级固定值，只在 Artalk 进程初始化时设置。运行期间不支持动态切换；修改配置文件、环境变量或控制中心中的时区后，必须完整重启 Artalk 进程或容器才能生效。
+:::
+
 ```
 UTC+08:00   Asia/Shanghai
 UTC+09:00   Asia/Tokyo

@@ -283,6 +283,16 @@ timezone: Asia/Shanghai
 
 Fill in the time zone where you are located, corresponding to the IANA database time zone name, refer to: [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) / [RFC-6557](https://www.rfc-editor.org/rfc/rfc6557.html).
 
+`timezone` controls the timezone used by the Artalk application. It may differ from the host system or container `TZ` setting. The same configuration can be supplied through `ATK_TIMEZONE`:
+
+```bash
+ATK_TIMEZONE=America/New_York artalk server
+```
+
+::: warning Restart required
+The application timezone is a process-level fixed value and is set only when the Artalk process initializes. It cannot be changed dynamically at runtime. After changing it in the configuration file, environment, or Dashboard, fully restart the Artalk process or container for the new value to take effect.
+:::
+
 ```
 UTC+08:00   Asia/Shanghai
 UTC+09:00   Asia/Tokyo

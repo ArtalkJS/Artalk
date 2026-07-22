@@ -2,7 +2,10 @@
 
 ## Update Changes
 
-For significant changes, such as updates that require modifications to existing configurations, please refer to the version update log for relevant prompts: [CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md).
+For significant changes, such as updates that require modifications to existing configurations, refer to the release notes and migration instructions:
+
+- [v2.10.0 Release Notes and Migration Guide](../releases/v2.10.0.md)
+- [Complete CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md)
 
 ## One-Click Upgrade via Command Line
 

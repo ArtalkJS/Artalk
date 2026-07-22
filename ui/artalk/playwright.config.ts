@@ -1,8 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
-  // Look for test files in the "tests" directory, relative to this configuration file.
-  testDir: 'tests',
+  // Keep Playwright isolated from the Vitest suites in the parent tests directory.
+  testDir: 'tests/e2e',
 
   // Run all tests in parallel.
   fullyParallel: true,

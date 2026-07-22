@@ -51,7 +51,7 @@ export interface Context extends EventManager<EventPayloadMap>, DependencyContai
    *
    * @deprecated Use `getEl()` instead
    */
-  $root: HTMLElement
+  readonly $root: HTMLElement
 
   /** Get the root element */
   getEl(): HTMLElement
@@ -68,7 +68,7 @@ export interface Context extends EventManager<EventPayloadMap>, DependencyContai
    *
    * @deprecated Use `getConf()` and `updateConf()` instead
    */
-  conf: Config
+  readonly conf: Config
 
   /** Get the config */
   getConf(): Config

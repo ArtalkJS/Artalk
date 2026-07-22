@@ -127,14 +127,14 @@ class Context implements IContext {
   get conf() {
     return this.getConf()
   }
-  set conf(val) {
-    console.error('Cannot set config directly, please call updateConf()')
+  set conf(_val) {
+    throw new Error('Cannot replace ctx.conf directly; call ctx.updateConf() instead')
   }
   get $root() {
     return this.getEl()
   }
-  set $root(val) {
-    console.error('set $root is prohibited')
+  set $root(_val) {
+    throw new Error('Cannot replace ctx.$root; create a new Artalk instance instead')
   }
 
   // -------------------------------------------------------------------

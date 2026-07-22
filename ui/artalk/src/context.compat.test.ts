@@ -32,4 +32,16 @@ describe('deprecated Context service properties', () => {
     expect(ctx.sidebarLayer).toBe(services.sidebar)
     expect(ctx.editorPlugs).toBe(services.editorPlugs)
   })
+
+  it('rejects direct config and root replacement', () => {
+    const ctx = new Context(document.createElement('div'))
+
+    expect(() => Reflect.set(ctx, 'conf', {})).toThrow(
+      'Cannot replace ctx.conf directly; call ctx.updateConf() instead',
+    )
+
+    expect(() => Reflect.set(ctx, '$root', document.createElement('div'))).toThrow(
+      'Cannot replace ctx.$root; create a new Artalk instance instead',
+    )
+  })
 })

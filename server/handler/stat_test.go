@@ -13,6 +13,7 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/server/handler"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestStat(t *testing.T) {
@@ -225,4 +226,81 @@ func TestStat(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestStatExcludesPendingComments(t *testing.T) {
+	app, fiber := NewApiTestApp()
+	defer app.Cleanup()
+
+	handler.Stat(app.App, fiber)
+
+	const (
+		siteName = "Site A"
+		pageKey  = "/test/1000.html"
+	)
+
+	pendingComment := entity.Comment{
+		Content:   "pending stats comment must not leak",
+		PageKey:   pageKey,
+		SiteName:  siteName,
+		UserID:    1000,
+		IsPending: true,
+	}
+	require.NoError(t, app.Dao().DB().Create(&pendingComment).Error)
+
+	t.Run("comment lists", func(t *testing.T) {
+		for _, endpoint := range []string{"latest_comments", "rand_comments"} {
+			t.Run(endpoint, func(t *testing.T) {
+				req := httptest.NewRequest("GET", "/stats/"+endpoint+"?site_name=Site%20A&limit=100", nil)
+				resp, err := fiber.Test(req)
+				require.NoError(t, err)
+				require.Equal(t, http.StatusOK, resp.StatusCode)
+
+				var body struct {
+					Data []entity.CookedComment `json:"data"`
+				}
+				require.NoError(t, json.NewDecoder(resp.Body).Decode(&body))
+				require.NotEmpty(t, body.Data)
+
+				for _, comment := range body.Data {
+					assert.NotEqual(t, pendingComment.ID, comment.ID)
+					assert.False(t, comment.IsPending)
+				}
+			})
+		}
+	})
+
+	t.Run("comment counts", func(t *testing.T) {
+		var expectedPageCount int64
+		require.NoError(t, app.Dao().DB().Model(&entity.Comment{}).
+			Where("site_name = ? AND page_key = ? AND is_pending = ?", siteName, pageKey, false).
+			Count(&expectedPageCount).Error)
+
+		var expectedSiteCount int64
+		require.NoError(t, app.Dao().DB().Model(&entity.Comment{}).
+			Where("site_name = ? AND is_pending = ?", siteName, false).
+			Count(&expectedSiteCount).Error)
+
+		pageReq := httptest.NewRequest("GET", "/stats/page_comment?site_name=Site%20A&page_keys="+pageKey, nil)
+		pageResp, err := fiber.Test(pageReq)
+		require.NoError(t, err)
+		require.Equal(t, http.StatusOK, pageResp.StatusCode)
+
+		var pageBody struct {
+			Data map[string]int64 `json:"data"`
+		}
+		require.NoError(t, json.NewDecoder(pageResp.Body).Decode(&pageBody))
+		assert.Equal(t, expectedPageCount, pageBody.Data[pageKey])
+
+		siteReq := httptest.NewRequest("GET", "/stats/site_comment?site_name=Site%20A", nil)
+		siteResp, err := fiber.Test(siteReq)
+		require.NoError(t, err)
+		require.Equal(t, http.StatusOK, siteResp.StatusCode)
+
+		var siteBody struct {
+			Data int64 `json:"data"`
+		}
+		require.NoError(t, json.NewDecoder(siteResp.Body).Decode(&siteBody))
+		assert.Equal(t, expectedSiteCount, siteBody.Data)
+	})
 }

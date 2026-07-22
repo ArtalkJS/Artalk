@@ -60,7 +60,7 @@ func Stat(app *core.App, router fiber.Router) {
 		}
 		// Query Comments by `site_name` and `is_pending=false`
 		QueryComments := func(d *gorm.DB) *gorm.DB {
-			return d.Model(&entity.Comment{}).Where(&entity.Comment{SiteName: p.SiteName, IsPending: false})
+			return d.Model(&entity.Comment{}).Where("site_name = ? AND is_pending = ?", p.SiteName, false)
 		}
 		// Query Order by RAND()
 		QueryOrderRand := func(d *gorm.DB) *gorm.DB {

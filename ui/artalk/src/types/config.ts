@@ -204,9 +204,15 @@ export interface Config {
   beforeSubmit?: (editor: Editor, next: () => void) => void
 }
 
-type DeepPartial<T> = {
-  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K]
-}
+type DeepPartial<T> = T extends (...args: any[]) => unknown
+  ? T
+  : T extends Element | Date | RegExp
+    ? T
+    : T extends readonly unknown[]
+      ? { [K in keyof T]: DeepPartial<T[K]> }
+      : T extends object
+        ? { [K in keyof T]?: DeepPartial<T[K]> }
+        : T
 
 export type ConfigPartial = DeepPartial<Config>
 

@@ -36,6 +36,18 @@ describe('HTML sanitizer', () => {
     expect(html).not.toContain('onerror')
   })
 
+  it('keeps only explicitly allowlisted ARIA and data attributes', () => {
+    const html = sanitize(`
+      <a aria-label="permalink" aria-hidden="true" data-test="drop">link</a>
+      <img aria-label="preview" data-src="https://example.com/image.png" data-test="drop">
+    `)
+
+    expect(html).toContain('<a aria-label="permalink">link</a>')
+    expect(html).toContain('<img aria-label="preview" data-src="https://example.com/image.png">')
+    expect(html).not.toContain('aria-hidden')
+    expect(html).not.toContain('data-test')
+  })
+
   it('handles the former insane parser ReDoS payload', () => {
     const payload = `<b>foo</b><foo bar= ${' -=""'.repeat(50)}`
     expect(sanitize(payload)).toContain('<b>foo</b>')

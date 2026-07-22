@@ -1,1 +1,14 @@
 node_modules
+.git
+.github
+.DS_Store
+.vscode
+bin
+docs/docs/*
+!docs/docs/package.json
+!docs/docs/tsconfig.json
+local
+test
+ui/**/dist
+**/playwright-report
+**/test-results

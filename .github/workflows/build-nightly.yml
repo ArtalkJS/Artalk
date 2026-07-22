@@ -144,7 +144,9 @@ jobs:
           context: .
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: SKIP_UI_BUILD=true
+          build-args: |
+            APP_COMMIT_HASH=${{ github.sha }}
+            SKIP_UI_BUILD=true
           outputs: type=docker,name=${{ steps.meta.outputs.tags }}
           cache-from: type=gha,scope=nightly-${{ matrix.platform_pair }}
           cache-to: type=gha,mode=max,scope=nightly-${{ matrix.platform_pair }}
@@ -157,7 +159,9 @@ jobs:
           context: .
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: SKIP_UI_BUILD=true
+          build-args: |
+            APP_COMMIT_HASH=${{ github.sha }}
+            SKIP_UI_BUILD=true
           outputs: |
             type=docker,name=${{ steps.meta.outputs.tags }}
             type=image,push=true,name=${{ env.DOCKER_IMG }},push-by-digest=true,name-canonical=true

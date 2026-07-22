@@ -14,5 +14,9 @@ then
     done
 else
     # build
-    docker image build -t "${IMAGE_NAME}" .
+    docker image build \
+        --build-arg "APP_VERSION=${VERSION}" \
+        --build-arg "APP_COMMIT_HASH=$(git rev-parse HEAD)" \
+        -t "${IMAGE_NAME}" \
+        .
 fi

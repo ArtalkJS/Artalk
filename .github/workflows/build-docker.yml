@@ -119,6 +119,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
             APP_VERSION=${{ inputs.version }}
+            APP_COMMIT_HASH=${{ github.sha }}
             SKIP_UI_BUILD=true
           outputs: type=docker
           cache-from: type=gha,scope=release-${{ matrix.platform_pair }}
@@ -136,6 +137,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
             APP_VERSION=${{ inputs.version }}
+            APP_COMMIT_HASH=${{ github.sha }}
             SKIP_UI_BUILD=true
           outputs: type=image,push=true,name=${{ env.DOCKER_IMG }},push-by-digest=true,name-canonical=true
           cache-from: type=gha,scope=release-${{ matrix.platform_pair }}
@@ -147,15 +149,20 @@ jobs:
         if: ${{ inputs.dry_run }}
         env:
           IMAGE: ${{ steps.meta.outputs.tags }}
-        run: docker run --rm --entrypoint /artalk "$IMAGE" version
+          VERSION: ${{ inputs.version }}
+        run: |
+          output="$(docker run --rm --entrypoint /artalk "$IMAGE" version)"
+          grep --fixed-strings "Artalk ($VERSION/" <<< "$output"
 
       - name: Smoke test published image
         if: ${{ !inputs.dry_run }}
         env:
           IMAGE: ${{ env.DOCKER_IMG }}@${{ steps.build.outputs.digest }}
+          VERSION: ${{ inputs.version }}
         run: |
           docker pull "$IMAGE"
-          docker run --rm --entrypoint /artalk "$IMAGE" version
+          output="$(docker run --rm --entrypoint /artalk "$IMAGE" version)"
+          grep --fixed-strings "Artalk ($VERSION/" <<< "$output"
 
       - name: Export digest
         if: ${{ !inputs.dry_run }}

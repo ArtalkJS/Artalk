@@ -1,5 +1,14 @@
 PKG_NAME    := github.com/artalkjs/artalk/v2
 BIN_NAME	:= ./bin/artalk
+LDFLAGS     := -s -w
+
+ifneq ($(strip $(VERSION)),)
+LDFLAGS += -X '$(PKG_NAME)/internal/config.Version=$(VERSION)'
+endif
+
+ifneq ($(strip $(COMMIT_HASH)),)
+LDFLAGS += -X '$(PKG_NAME)/internal/config.buildCommitHash=$(COMMIT_HASH)'
+endif
 
 HAS_RICHGO  := $(shell which richgo)
 GOTEST      ?= $(if $(HAS_RICHGO), richgo test, go test)
@@ -17,7 +26,7 @@ run: all
 
 build:
 	go build \
-    	-ldflags "-s -w" \
+		-ldflags "$(LDFLAGS)" \
         -o $(BIN_NAME) \
     	$(PKG_NAME)
 

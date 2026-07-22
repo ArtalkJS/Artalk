@@ -99,7 +99,7 @@ jobs:
           mv "$temp_file" CHANGELOG.md
 
           # modify the version for `internal/config/version.go`
-          perl -i -pe 's/const Version = ".*?"/const Version = "'${VERSION}'"/g' internal/config/version.go
+          perl -i -pe 's/var Version = ".*?"/var Version = "'${VERSION}'"/g' internal/config/version.go
 
           # modify the version for `package.json`
           perl -i -pe 's/"version": ".*?"/"version": "'${VERSION#v}'"/g' ui/artalk/package.json

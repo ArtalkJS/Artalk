@@ -9,13 +9,24 @@ import (
 // The version of Artalk
 //
 // Which is automatically set by the CI release workflow
-const Version = "v2.9.1"
+var Version = "v2.9.1"
+
+// buildCommitHash is optionally set by build scripts when the VCS metadata is
+// not available in the build context (for example, inside a Docker build).
+var buildCommitHash string
 
 // The commit hash from which the binary was built (optional)
 //
 // This value is set by the build script:
 // `go build -ldflags "-X 'github.com/artalkjs/artalk/v2/internal/config.CommitHash=$(git rev-parse --short HEAD)'"`
 func CommitHash() string {
+	if buildCommitHash != "" {
+		if len(buildCommitHash) >= 7 {
+			return buildCommitHash[:7]
+		}
+		return buildCommitHash
+	}
+
 	info, ok := debug.ReadBuildInfo()
 	if !ok {
 		return ""

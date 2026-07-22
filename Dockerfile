@@ -35,8 +35,8 @@ ARG APP_VERSION=""
 ARG APP_COMMIT_HASH=""
 
 RUN set -ex \
-    && if [[ ! -z "$APP_VERSION" ]]; then export VERSION=$APP_VERSION ;fi \
-    && if [[ ! -z "$APP_COMMIT_HASH" ]]; then export COMMIT_HASH=$APP_COMMIT_HASH ;fi \
+    && if [[ -n "$APP_VERSION" ]]; then export VERSION="$APP_VERSION" ;fi \
+    && if [[ -n "$APP_COMMIT_HASH" ]]; then export COMMIT_HASH="$APP_COMMIT_HASH" ;fi \
     && make build
 
 ### build final image

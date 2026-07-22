@@ -16,17 +16,17 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ inputs.version }}
 
       - name: Use pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 10.33.2
 
       - name: Setup node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22.x
           registry-url: https://registry.npmjs.org/
@@ -46,7 +46,7 @@ jobs:
       # GitHub Packages
       #
       # Setup .npmrc file to publish to GitHub Packages
-      # - uses: actions/setup-node@v4
+      # - uses: actions/setup-node@v7
       #   with:
       #     registry-url: 'https://npm.pkg.github.com'
       # # Publish to GitHub Packages

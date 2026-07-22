@@ -22,29 +22,31 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.ref }}
+          persist-credentials: false
           # `go-releaser` will read the semver version from git tag name
           # `git-chglog` will diff the tag and generate changelog
           fetch-depth: 0
 
       - name: Setup Go
-        uses: actions/setup-go@v7
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: go.mod
-          cache: true
+          # Release inputs are verified from the lock files instead of shared caches.
+          cache: false
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
         with:
           version: 10.33.2
 
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22.x
-          cache: pnpm
+          package-manager-cache: false
 
       - name: Setup git-chglog
         run: |
@@ -83,11 +85,20 @@ jobs:
       - name: Print Release Notes
         run: cat local/release-notes.md
 
-      - name: Build and Release
-        uses: goreleaser/goreleaser-action@v7
+      - name: Validate release build
+        if: ${{ inputs.dry_run }}
+        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
         with:
           distribution: goreleaser
           version: v2.17.0
-          args: release --clean --release-notes local/release-notes.md ${{ inputs.dry_run && '--skip=publish' || '' }}
+          args: release --clean --release-notes local/release-notes.md --skip=publish
+
+      - name: Build and Release
+        if: ${{ !inputs.dry_run }}
+        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
+        with:
+          distribution: goreleaser
+          version: v2.17.0
+          args: release --clean --release-notes local/release-notes.md
         env:
-          GITHUB_TOKEN: ${{ inputs.dry_run && '' || github.token }}
+          GITHUB_TOKEN: ${{ github.token }}

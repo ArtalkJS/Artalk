@@ -21,52 +21,82 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+
+concurrency:
+  group: prepare-release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: master
           fetch-depth: 0
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: 22.x
-          registry-url: https://registry.npmjs.org/
-
-      - name: Setup semver
-        run: npm install -g semver
+          persist-credentials: false
 
       - name: Handle Version Number
+        env:
+          CUSTOM_VERSION: ${{ inputs.custom_version }}
+          SEMVER_INCREMENT: ${{ inputs.semver }}
         run: |
           PREV_VERSION="$(git describe --tags --abbrev=0 --match 'v*')"
-
-          if [ -n "${{ inputs.custom_version }}" ]; then
-            NEXT_VERSION="${{ inputs.custom_version }}"
-          else
-            NEXT_VERSION="v$(semver --increment ${{ inputs.semver }} ${PREV_VERSION})"
+          if [[ ! "$PREV_VERSION" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "Invalid previous version: $PREV_VERSION"
+            exit 1
           fi
 
-          echo "PREV_VERSION=${PREV_VERSION}" >> $GITHUB_ENV
-          echo "VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
+          if [[ -n "$CUSTOM_VERSION" ]]; then
+            NEXT_VERSION="$CUSTOM_VERSION"
+          else
+            major="${BASH_REMATCH[1]}"
+            minor="${BASH_REMATCH[2]}"
+            patch="${BASH_REMATCH[3]}"
+            case "$SEMVER_INCREMENT" in
+              major) NEXT_VERSION="v$((major + 1)).0.0" ;;
+              minor) NEXT_VERSION="v${major}.$((minor + 1)).0" ;;
+              patch) NEXT_VERSION="v${major}.${minor}.$((patch + 1))" ;;
+              *) echo "Invalid version increment: $SEMVER_INCREMENT"; exit 1 ;;
+            esac
+          fi
+
+          if [[ ! "$NEXT_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version: $NEXT_VERSION"
+            exit 1
+          fi
+
+          echo "PREV_VERSION=${PREV_VERSION}" >> "$GITHUB_ENV"
+          echo "VERSION=${NEXT_VERSION}" >> "$GITHUB_ENV"
 
       - name: Print Next Version
         run: echo "${VERSION}"
 
+      - name: Setup Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+
       - name: Setup git-chglog
         run: |
-          curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
-            | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
-          git-chglog --version
+          GOBIN="$RUNNER_TEMP/bin" go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.4
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/git-chglog" --version
 
       - name: Version Changelog
         run: |
           # prepend changelog
-          changelog=$(git-chglog --config .github/chglog/config.yml --next-tag "${VERSION}" "${VERSION}")
-          echo -e "${changelog}\n" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
+          changelog="$(git-chglog --config .github/chglog/config.yml --next-tag "$VERSION" "$VERSION")"
+          temp_file="$(mktemp CHANGELOG.md.XXXXXX)"
+          printf '%s\n\n' "$changelog" | cat - CHANGELOG.md > "$temp_file"
+          mv "$temp_file" CHANGELOG.md
 
           # modify the version for `internal/config/version.go`
           perl -i -pe 's/const Version = ".*?"/const Version = "'${VERSION}'"/g' internal/config/version.go
@@ -81,7 +111,7 @@ jobs:
         run: git diff
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         if: ${{ !inputs.dry_run }}
         with:
           branch: "release/${{ env.VERSION }}"

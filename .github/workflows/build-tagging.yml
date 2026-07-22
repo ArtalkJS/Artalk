@@ -44,20 +44,27 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Checkout Code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Create Tag
         if: ${{ !inputs.dry_run }}
         env:
+          GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           if ! git rev-parse --quiet --verify "refs/tags/$VERSION" > /dev/null; then
-            git config user.name github-actions[bot]
-            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-            git tag -a "$VERSION" -m "Release $VERSION"
-            git push origin "$VERSION"
+            tag_sha="$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/tags" \
+              -f tag="$VERSION" \
+              -f message="Release $VERSION" \
+              -f object="$GITHUB_SHA" \
+              -f type=commit \
+              --jq '.sha')"
+            gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
+              -f ref="refs/tags/$VERSION" \
+              -f sha="$tag_sha" > /dev/null
           else
             tag_commit="$(git rev-list -n 1 "$VERSION")"
             head_commit="$(git rev-parse HEAD)"

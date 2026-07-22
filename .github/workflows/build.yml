@@ -64,6 +64,7 @@ jobs:
       dry_run: ${{ inputs.dry_run || false }}
     permissions:
       contents: read
+      id-token: write
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 

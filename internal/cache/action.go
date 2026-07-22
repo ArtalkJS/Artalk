@@ -30,7 +30,7 @@ func QueryDBWithCache[T any](c *Cache, name string, queryDB func() (T, error)) (
 
 			// Store cache
 			if err := c.StoreCache(val, name); err != nil {
-				return nil, err
+				log.Warn("[Cache] failed to store database query result: ", err)
 			}
 
 			return val, nil

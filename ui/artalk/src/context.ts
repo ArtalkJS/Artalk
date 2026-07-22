@@ -43,6 +43,46 @@ class Context implements IContext {
   }
   get = this.inject
 
+  /** @deprecated Use `getData()` or `inject('data')` instead. */
+  get data() {
+    return this.inject('data')
+  }
+
+  /** @deprecated Use `getUser()` or `inject('user')` instead. */
+  get user() {
+    return this.inject('user')
+  }
+
+  /** @deprecated Use `inject('editor')` instead. */
+  get editor() {
+    return this.inject('editor')
+  }
+
+  /** @deprecated Use `inject('list')` instead. */
+  get list() {
+    return this.inject('list')
+  }
+
+  /** @deprecated Use `inject('layers')` instead. */
+  get layerManager() {
+    return this.inject('layers')
+  }
+
+  /** @deprecated Use `inject('checkers')` instead. */
+  get checkerLauncher() {
+    return this.inject('checkers')
+  }
+
+  /** @deprecated Use `inject('sidebar')` instead. */
+  get sidebarLayer() {
+    return this.inject('sidebar')
+  }
+
+  /** @deprecated Use `inject('editorPlugs')` instead. */
+  get editorPlugs() {
+    return this.inject('editorPlugs')
+  }
+
   // -------------------------------------------------------------------
   //  Event Manager
   // -------------------------------------------------------------------

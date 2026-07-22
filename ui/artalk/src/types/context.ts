@@ -22,6 +22,30 @@ import type { CommentNode } from '@/comment'
  * Artalk Context
  */
 export interface Context extends EventManager<EventPayloadMap>, DependencyContainer<Services> {
+  /** @deprecated Use `getData()` or `inject('data')` instead. */
+  readonly data: Services['data']
+
+  /** @deprecated Use `getUser()` or `inject('user')` instead. */
+  readonly user: Services['user']
+
+  /** @deprecated Use `inject('editor')` instead. */
+  readonly editor: Services['editor']
+
+  /** @deprecated Use `inject('list')` instead. */
+  readonly list: Services['list']
+
+  /** @deprecated Use `inject('layers')` instead. */
+  readonly layerManager: Services['layers']
+
+  /** @deprecated Use `inject('checkers')` instead. */
+  readonly checkerLauncher: Services['checkers']
+
+  /** @deprecated Use `inject('sidebar')` instead. */
+  readonly sidebarLayer: Services['sidebar']
+
+  /** @deprecated Use `inject('editorPlugs')` instead. */
+  readonly editorPlugs: Services['editorPlugs']
+
   /**
    * The root element of Artalk
    *

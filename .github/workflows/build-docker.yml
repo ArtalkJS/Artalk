@@ -6,77 +6,234 @@ on:
       version:
         required: true
         type: string
+      ref:
+        required: true
+        type: string
       dry_run:
         required: true
         type: boolean
-      target:
-        required: true
-        type: string
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: false
+      DOCKERHUB_TOKEN:
+        required: false
+
+permissions:
+  contents: read
 
 env:
+  DIGEST_DIR: /tmp/digests
   DOCKER_IMG: artalk/artalk-go
 
 jobs:
-  build_publish:
-    runs-on: ubuntu-latest
+  ui:
+    name: Build Docker UI assets
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.33.2
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build UI
+        run: make build-frontend
+
+      - name: Upload UI assets
+        uses: actions/upload-artifact@v7
+        with:
+          name: docker-ui-src
+          path: |
+            public
+            ui/artalk/dist
+          if-no-files-found: error
+          retention-days: 1
+
+  build:
+    name: Build Docker (${{ matrix.platform }})
+    needs: ui
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            platform: linux/amd64
+            platform_pair: linux_amd64
+          - runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            platform_pair: linux_arm64
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.version }}
+          ref: ${{ inputs.ref }}
 
-      # https://github.com/docker/metadata-action
-      - name: Gen docker meta
+      - name: Download UI assets
+        uses: actions/download-artifact@v8
+        with:
+          name: docker-ui-src
+
+      - name: Generate Docker metadata
         id: meta
         uses: docker/metadata-action@v6
         with:
-          context: git
-          images: |
-            ${{ env.DOCKER_IMG }}
+          images: ${{ env.DOCKER_IMG }}
+          tags: type=raw,value=build-${{ matrix.platform_pair }}
+
+      - name: Login to DockerHub
+        if: ${{ !inputs.dry_run }}
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build dry-run image
+        if: ${{ inputs.dry_run }}
+        id: build_dry_run
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            APP_VERSION=${{ inputs.version }}
+            SKIP_UI_BUILD=true
+          outputs: type=docker
+          cache-from: type=gha,scope=release-${{ matrix.platform_pair }}
+          cache-to: type=gha,mode=max,scope=release-${{ matrix.platform_pair }}
+
+      - name: Build and push image by digest
+        if: ${{ !inputs.dry_run }}
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            APP_VERSION=${{ inputs.version }}
+            SKIP_UI_BUILD=true
+          outputs: type=image,push=true,name=${{ env.DOCKER_IMG }},push-by-digest=true,name-canonical=true
+          cache-from: type=gha,scope=release-${{ matrix.platform_pair }}
+          cache-to: type=gha,mode=max,scope=release-${{ matrix.platform_pair }}
+          provenance: mode=max
+          sbom: true
+
+      - name: Smoke test dry-run image
+        if: ${{ inputs.dry_run }}
+        env:
+          IMAGE: ${{ steps.meta.outputs.tags }}
+        run: docker run --rm --entrypoint /artalk "$IMAGE" version
+
+      - name: Smoke test published image
+        if: ${{ !inputs.dry_run }}
+        env:
+          IMAGE: ${{ env.DOCKER_IMG }}@${{ steps.build.outputs.digest }}
+        run: |
+          docker pull "$IMAGE"
+          docker run --rm --entrypoint /artalk "$IMAGE" version
+
+      - name: Export digest
+        if: ${{ !inputs.dry_run }}
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p "$DIGEST_DIR"
+          touch "$DIGEST_DIR/${DIGEST#sha256:}"
+
+      - name: Upload digest
+        if: ${{ !inputs.dry_run }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-digest-${{ matrix.platform_pair }}
+          path: ${{ env.DIGEST_DIR }}/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    name: Publish Docker manifest
+    if: ${{ !inputs.dry_run }}
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v8
+        with:
+          path: ${{ env.DIGEST_DIR }}
+          pattern: release-digest-*
+          merge-multiple: true
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Generate Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.DOCKER_IMG }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{version}},value=${{ inputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
             type=sha
 
-      # https://github.com/docker/login-action
       - name: Login to DockerHub
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # https://github.com/docker/setup-qemu-action
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@v4
-        with:
-          platforms: ${{ inputs.target }}
-
-      # https://github.com/docker/setup-buildx-action
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      # Build UI outside of Docker to speed up cross-platform builds
-      - name: Build UI
+      - name: Create and push manifest
+        env:
+          METADATA: ${{ steps.meta.outputs.json }}
         run: |
-          make build-frontend
+          mapfile -t tags < <(jq -r '.tags[]' <<< "$METADATA")
+          tag_args=()
+          for tag in "${tags[@]}"; do
+            tag_args+=(--tag "$tag")
+          done
 
-      # https://github.com/docker/build-push-action
-      - name: Build and Push
-        id: build
-        uses: docker/build-push-action@v7
-        with:
-          push: ${{ !inputs.dry_run }}
-          context: .
-          file: ./Dockerfile
-          build-args: |
-            APP_VERSION=${{ inputs.version }}
-            SKIP_UI_BUILD=true
-          platforms: ${{ inputs.target }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          shopt -s nullglob
+          digest_files=("$DIGEST_DIR"/*)
+          if [[ "${#digest_files[@]}" -ne 2 ]]; then
+            echo "Expected 2 platform digests, found ${#digest_files[@]}."
+            exit 1
+          fi
 
-      - name: Print image digest
-        run: echo ${{ steps.build.outputs.digest }}
+          sources=()
+          for digest_file in "${digest_files[@]}"; do
+            digest="$(basename "$digest_file")"
+            if [[ ! "$digest" =~ ^[0-9a-f]{64}$ ]]; then
+              echo "Invalid image digest: $digest"
+              exit 1
+            fi
+            sources+=("$DOCKER_IMG@sha256:$digest")
+          done
+
+          docker buildx imagetools create "${tag_args[@]}" "${sources[@]}"
+
+      - name: Inspect image
+        env:
+          IMAGE: ${{ env.DOCKER_IMG }}:${{ steps.meta.outputs.version }}
+        run: docker buildx imagetools inspect "$IMAGE"

@@ -14,8 +14,23 @@ on:
         default: true
       build_items:
         description: "Build items"
-        type: string
+        type: choice
+        options:
+          - "ui,app,docker"
+          - "ui,app"
+          - "ui,docker"
+          - "app,docker"
+          - ui
+          - app
+          - docker
         default: "ui,app,docker"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 
 jobs:
   # Tag the release version code before building
@@ -26,57 +41,74 @@ jobs:
     # (which the branch name start with `relase/`)
     if: |
       github.event_name == 'workflow_dispatch' ||
-      (github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/'))
+      (github.event.pull_request.merged == true &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       startsWith(github.head_ref, 'release/'))
     uses: ./.github/workflows/build-tagging.yml
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     with:
       issue_number: ${{ github.event.pull_request.number || 0 }}
       dry_run: ${{ inputs.dry_run || false }}
-    secrets: inherit
 
   # Build the UI
   ui:
-    if: inputs.build_items == '' || contains(inputs.build_items, 'ui')
+    if: inputs.build_items == '' || contains(format(',{0},', inputs.build_items), ',ui,')
     needs: tagging
     uses: ./.github/workflows/build-ui.yml
     with:
       version: ${{ needs.tagging.outputs.version }}
+      ref: ${{ needs.tagging.outputs.ref }}
       dry_run: ${{ inputs.dry_run || false }}
-    secrets: inherit
+    permissions:
+      contents: read
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   # Build the Docker image
   docker:
-    if: inputs.build_items == '' || contains(inputs.build_items, 'docker')
+    if: inputs.build_items == '' || contains(format(',{0},', inputs.build_items), ',docker,')
     needs: tagging
     uses: ./.github/workflows/build-docker.yml
-    # Parallel build the multi-arch docker image
-    strategy:
-      matrix:
-        # since docker push actions will override the previous images,
-        # so need to build `linux/amd64` and push first,
-        # then build `linux/amd64` twice with other archs (build very slow so keep it last).
-        target: ["linux/amd64", "linux/amd64,linux/arm64"]
     with:
       version: ${{ needs.tagging.outputs.version }}
+      ref: ${{ needs.tagging.outputs.ref }}
       dry_run: ${{ inputs.dry_run || false }}
-      target: ${{ matrix.target }}
-    secrets: inherit
+    permissions:
+      contents: read
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   # Build the binary app
   app:
-    if: inputs.build_items == '' || contains(inputs.build_items, 'app')
+    if: inputs.build_items == '' || contains(format(',{0},', inputs.build_items), ',app,')
     needs: tagging
     uses: ./.github/workflows/build-app.yml
     with:
       version: ${{ needs.tagging.outputs.version }}
+      ref: ${{ needs.tagging.outputs.ref }}
       dry_run: ${{ inputs.dry_run || false }}
-    secrets: inherit
+    permissions:
+      contents: write
 
   # All builds are complete
   done:
     needs: [tagging, ui, docker, app]
+    if: |
+      always() &&
+      needs.tagging.result == 'success' &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
     uses: ./.github/workflows/build-done.yml
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
     with:
       version: ${{ needs.tagging.outputs.version }}
+      ref: ${{ needs.tagging.outputs.ref }}
       issue_number: ${{ github.event.pull_request.number || 0 }}
       dry_run: ${{ inputs.dry_run || false }}
-    secrets: inherit

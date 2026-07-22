@@ -6,9 +6,15 @@ on:
       version:
         required: true
         type: string
+      ref:
+        required: true
+        type: string
       dry_run:
         required: true
         type: boolean
+
+permissions:
+  contents: write
 
 jobs:
   build_publish:
@@ -18,7 +24,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.version }}
+          ref: ${{ inputs.ref }}
           # `go-releaser` will read the semver version from git tag name
           # `git-chglog` will diff the tag and generate changelog
           fetch-depth: 0
@@ -42,21 +48,39 @@ jobs:
 
       - name: Setup git-chglog
         run: |
-          curl -sL $(curl -s https://api.github.com/repos/git-chglog/git-chglog/releases/latest \
-            | grep -oP '"https://.+linux_amd64.tar.gz"' | tr -d \") | tar -C /usr/local/bin -xz git-chglog
-          git-chglog --version
+          GOBIN="$RUNNER_TEMP/bin" go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.4
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/git-chglog" --version
+
+      - name: Create local tag for dry run
+        if: ${{ inputs.dry_run }}
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if git rev-parse --quiet --verify "refs/tags/$VERSION" > /dev/null; then
+            tag_commit="$(git rev-list -n 1 "$VERSION")"
+            head_commit="$(git rev-parse HEAD)"
+            if [[ "$tag_commit" != "$head_commit" ]]; then
+              echo "Tag $VERSION already points to $tag_commit, expected $head_commit."
+              exit 1
+            fi
+          else
+            git tag "$VERSION"
+          fi
 
       - name: Pre Build
         run: |-
           mkdir -p local
 
           # changelog
-          git-chglog --config .github/chglog/config.yml ${{ inputs.version }} > local/release-notes.md
+          git-chglog --config .github/chglog/config.yml "$VERSION" > local/release-notes.md
 
           # copy config file
           cp conf/artalk.example.yml artalk.yml
+        env:
+          VERSION: ${{ inputs.version }}
 
-      - name: Print Relase Notes
+      - name: Print Release Notes
         run: cat local/release-notes.md
 
       - name: Build and Release
@@ -66,4 +90,4 @@ jobs:
           version: v2.17.0
           args: release --clean --release-notes local/release-notes.md ${{ inputs.dry_run && '--skip=publish' || '' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ inputs.dry_run && '' || github.token }}

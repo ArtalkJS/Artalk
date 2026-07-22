@@ -6,9 +6,18 @@ on:
       version:
         required: true
         type: string
+      ref:
+        required: true
+        type: string
       dry_run:
         required: true
         type: boolean
+    secrets:
+      NPM_TOKEN:
+        required: false
+
+permissions:
+  contents: read
 
 jobs:
   build_publish:
@@ -18,7 +27,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.version }}
+          ref: ${{ inputs.ref }}
 
       - name: Use pnpm
         uses: pnpm/action-setup@v6
@@ -38,8 +47,13 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Validate package
+        if: ${{ inputs.dry_run }}
+        run: pnpm publish -F artalk --no-git-checks --dry-run
+
       - name: Publish
-        run: pnpm publish -F artalk --no-git-checks ${{ inputs.dry_run && '--dry-run' || '' }}
+        if: ${{ !inputs.dry_run }}
+        run: pnpm publish -F artalk --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

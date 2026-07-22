@@ -6,12 +6,20 @@ on:
       version:
         required: true
         type: string
+      ref:
+        required: true
+        type: string
       dry_run:
         required: true
         type: boolean
       issue_number:
         required: true
         type: number
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   done:
@@ -20,11 +28,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.version }}
+          ref: ${{ inputs.ref }}
 
       - name: Comment done info
         uses: ./.github/actions/comment
-        if: ${{ inputs.issue_number != 0 }}
+        if: ${{ !inputs.dry_run && inputs.issue_number != 0 }}
         with:
           issue_number: ${{ inputs.issue_number }}
           content: |-

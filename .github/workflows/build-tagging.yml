@@ -13,12 +13,21 @@ on:
       version:
         description: "Version"
         value: ${{ jobs.tagging.outputs.version }}
+      ref:
+        description: "Git ref to build"
+        value: ${{ jobs.tagging.outputs.ref }}
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   tagging:
     runs-on: ubuntu-latest
     steps:
       - name: Get release version
+        id: version
         env:
           REF: ${{ github.head_ref || github.ref }}
         run: |
@@ -26,13 +35,13 @@ jobs:
           VERSION="${VERSION#refs/heads/}"
           VERSION="${VERSION#release/}"
 
-          echo "Version: $VERSION"
-          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-
           if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Invalid version format: $VERSION, please check git ref or tag."
             exit 1
           fi
+
+          echo "Version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Checkout Code
         uses: actions/checkout@v7
@@ -40,6 +49,9 @@ jobs:
           fetch-depth: 0
 
       - name: Create Tag
+        if: ${{ !inputs.dry_run }}
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           if ! git rev-parse --quiet --verify "refs/tags/$VERSION" > /dev/null; then
             git config user.name github-actions[bot]
@@ -47,15 +59,22 @@ jobs:
             git tag -a "$VERSION" -m "Release $VERSION"
             git push origin "$VERSION"
           else
-            echo "Skip creating tag $VERSION, already exists."
+            tag_commit="$(git rev-list -n 1 "$VERSION")"
+            head_commit="$(git rev-parse HEAD)"
+            if [[ "$tag_commit" != "$head_commit" ]]; then
+              echo "Tag $VERSION already points to $tag_commit, expected $head_commit."
+              exit 1
+            fi
+            echo "Skip creating tag $VERSION: it already points to this commit."
           fi
 
       - name: Comment tag info to PR
         uses: ./.github/actions/comment
-        if: ${{ inputs.issue_number != 0 }}
+        if: ${{ !inputs.dry_run && inputs.issue_number != 0 }}
         with:
           issue_number: ${{ inputs.issue_number }}
           content: |-
-            🔖 Tagged version [${{ env.VERSION }}](https://github.com/ArtalkJS/Artalk/tree/${{ env.VERSION }}) and updated the [CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md).
+            🔖 Tagged version [${{ steps.version.outputs.version }}](https://github.com/ArtalkJS/Artalk/tree/${{ steps.version.outputs.version }}) and updated the [CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md).
     outputs:
-      version: ${{ env.VERSION }}
+      version: ${{ steps.version.outputs.version }}
+      ref: ${{ inputs.dry_run && github.sha || steps.version.outputs.version }}

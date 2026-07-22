@@ -332,7 +332,7 @@ jobs:
         run: |
           GOBIN="$RUNNER_TEMP/bin" go install github.com/git-chglog/git-chglog/cmd/git-chglog@v0.15.4
           echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/bin/git-chglog" --version
+          go version -m "$RUNNER_TEMP/bin/git-chglog"
 
       - name: Generate changelog
         run: |

@@ -4,6 +4,7 @@ import https from 'node:https'
 import fs from 'node:fs'
 import process from 'node:process'
 import path from 'node:path'
+import { Buffer } from 'node:buffer'
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 

@@ -1,7 +1,6 @@
 package common
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -9,23 +8,23 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/core"
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // jwtCustomClaims are custom claims extending default ones.
 // See https://github.com/golang-jwt/jwt for more examples
 type jwtCustomClaims struct {
 	UserID uint `json:"user_id"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func LoginGetUserToken(user entity.User, key string, ttl int) (string, error) {
 	// Set custom claims
 	claims := &jwtCustomClaims{
 		UserID: user.ID,
-		StandardClaims: jwt.StandardClaims{
-			IssuedAt:  time.Now().Unix(),                                       // 签发时间
-			ExpiresAt: time.Now().Add(time.Second * time.Duration(ttl)).Unix(), // 过期时间
+		RegisteredClaims: jwt.RegisteredClaims{
+			IssuedAt:  jwt.NewNumericDate(time.Now()),                                       // 签发时间
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Second * time.Duration(ttl))), // 过期时间
 		},
 	}
 
@@ -62,21 +61,21 @@ func GetJwtDataByReq(app *core.App, c *fiber.Ctx) (jwtCustomClaims, error) {
 	if token == "" {
 		return jwtCustomClaims{}, ErrTokenNotProvided
 	}
+	return parseJWTToken(token, app.Conf().AppKey)
+}
 
-	jwt, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if t.Method.Alg() != "HS256" {
+func parseJWTToken(token, key string) (jwtCustomClaims, error) {
+	claims := jwtCustomClaims{}
+	_, err := jwt.ParseWithClaims(token, &claims, func(t *jwt.Token) (interface{}, error) {
+		if t.Method.Alg() != jwt.SigningMethodHS256.Alg() {
 			return nil, fmt.Errorf("unexpected jwt signing method=%v", t.Header["alg"])
 		}
 
-		return []byte(app.Conf().AppKey), nil // 密钥
-	})
+		return []byte(key), nil // 密钥
+	}, jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}))
 	if err != nil {
 		return jwtCustomClaims{}, err
 	}
-
-	claims := jwtCustomClaims{}
-	tmp, _ := json.Marshal(jwt.Claims)
-	_ = json.Unmarshal(tmp, &claims)
 
 	return claims, nil
 }
@@ -93,7 +92,11 @@ func GetUserByReq(app *core.App, c *fiber.Ctx) (entity.User, error) {
 	}
 
 	// check tokenValidFrom
-	if user.TokenValidFrom.Valid && claims.IssuedAt < user.TokenValidFrom.Time.Unix() {
+	issuedAt := int64(0)
+	if claims.IssuedAt != nil {
+		issuedAt = claims.IssuedAt.Unix()
+	}
+	if user.TokenValidFrom.Valid && issuedAt < user.TokenValidFrom.Time.Unix() {
 		return entity.User{}, ErrTokenInvalidFromDate
 	}
 

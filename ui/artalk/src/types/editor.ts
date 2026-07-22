@@ -121,6 +121,9 @@ export interface Editor {
   setPlugins(plugins: PluginManager): void
 }
 
+/** @deprecated Use `Editor` instead. */
+export type EditorApi = Editor
+
 export interface EditorPluginManager {
   getPlugins: () => EditorPlugin[]
   getEvents: () => EventManager<EditorEventPayloadMap>

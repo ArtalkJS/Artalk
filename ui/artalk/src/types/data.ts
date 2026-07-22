@@ -244,6 +244,9 @@ export interface DataManager {
   updatePage(pageData: PageData): void
 }
 
+/** @deprecated Use `DataManager` instead. */
+export type DataManagerApi = DataManager
+
 export type NotifyLevel = 'i' | 's' | 'w' | 'e'
 
 export interface UserInfoApiResponseData {

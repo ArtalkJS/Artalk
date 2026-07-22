@@ -139,3 +139,6 @@ export interface Context extends EventManager<EventPayloadMap>, DependencyContai
   /** Check admin */
   checkAdmin(payload: CheckerPayload): Promise<void>
 }
+
+/** @deprecated Use `Context` instead. */
+export type ContextApi = Context

@@ -28,12 +28,7 @@ type ssoUserinfo struct {
 
 // @Id            AuthSSOExchange
 // @Summary       Exchange an external IdP access token for an Artalk JWT
-// @Description   Validates a third-party OIDC access token (currently Auth0)
-//                by calling the issuer's /userinfo endpoint, then mints an
-//                Artalk session JWT for the user identified by the email
-//                claim. Use when the surrounding application already runs
-//                OIDC and you want Artalk comments to inherit that session
-//                without showing Artalk's own login UI.
+// @Description   Validates a third-party OIDC access token by calling the issuer's /userinfo endpoint, requires a verified email claim, then mints an Artalk session JWT. Use when the surrounding application already runs OIDC and you want Artalk comments to inherit that session without showing Artalk's own login UI.
 // @Tags          Auth
 // @Param         body  body  ParamsAuthSSOExchange  true  "External SSO token"
 // @Accept        json
@@ -92,6 +87,9 @@ func AuthSSOExchange(app *core.App, router fiber.Router) {
 		email := strings.ToLower(strings.TrimSpace(ui.Email))
 		if email == "" {
 			return common.RespError(c, 400, "No email claim on SSO token")
+		}
+		if !ui.EmailVerified {
+			return common.RespError(c, 401, "SSO email is not verified")
 		}
 
 		name := strings.TrimSpace(ui.Nickname)

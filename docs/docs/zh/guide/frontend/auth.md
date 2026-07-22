@@ -92,7 +92,7 @@ Content-Type: application/json
 { "token": "<外部 IdP 访问令牌>" }
 ```
 
-Artalk 通过调用 issuer 的 `/userinfo` 端点校验该令牌（OIDC 标准做法——由 IdP 在服务端验证并签名响应，因此 Artalk 侧无需处理密钥），读取其中的 `email` 声明，查找或创建对应用户，并返回与其它登录接口一致的响应结构：
+Artalk 通过调用 issuer 的 `/userinfo` 端点校验该令牌（OIDC 标准做法——由 IdP 在服务端验证并签名响应，因此 Artalk 侧无需处理密钥），读取其中的 `email` 声明。只有同时返回 `email_verified: true` 时，Artalk 才会查找或创建对应用户，并返回与其它登录接口一致的响应结构：
 
 ```json
 {
@@ -117,11 +117,11 @@ localStorage.setItem('ArtalkUser', JSON.stringify({ ...user, token }))
 Artalk.init({ el: '#Comments', server: 'https://comments.example.com', site: 'Blog' })
 ```
 
-当 SSO 未启用时接口返回 `404`，IdP 拒绝令牌时返回 `401`，令牌不含邮箱声明时返回 `400`。
+当 SSO 未启用时接口返回 `404`，IdP 拒绝令牌或邮箱未验证时返回 `401`，令牌不含邮箱声明时返回 `400`。Artalk 不提供跳过邮箱验证的开关。
 
 ::: tip
 
-校验完全依赖 issuer 的 `/userinfo` 拒绝无效或已吊销的令牌，且用户按 `email` 声明匹配。请仅对你信任的 issuer 启用此功能，并确保该 issuer 返回的是已验证的邮箱。
+校验完全依赖 issuer 的 `/userinfo` 拒绝无效或已吊销的令牌，且用户按 `email` 声明匹配。请仅对你信任的 issuer 启用此功能。未经验证的邮箱可能冒充现有用户甚至管理员，因此 Artalk 强制要求 `email_verified: true`。
 
 :::
 

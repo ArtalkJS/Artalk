@@ -91,7 +91,7 @@ Content-Type: application/json
 { "token": "<external IdP access token>" }
 ```
 
-Artalk validates the token by calling the issuer's `/userinfo` endpoint (the standard OIDC way — the IdP verifies and signs the response server-side, so no key handling is required on Artalk's side), reads the `email` claim, finds or creates the matching user, and returns the same response shape as the other login endpoints:
+Artalk validates the token by calling the issuer's `/userinfo` endpoint (the standard OIDC way — the IdP verifies and signs the response server-side, so no key handling is required on Artalk's side) and reads the `email` claim. Artalk only finds or creates the matching user when the response also contains `email_verified: true`, then returns the same response shape as the other login endpoints:
 
 ```json
 {
@@ -116,11 +116,11 @@ localStorage.setItem('ArtalkUser', JSON.stringify({ ...user, token }))
 Artalk.init({ el: '#Comments', server: 'https://comments.example.com', site: 'Blog' })
 ```
 
-The endpoint returns `404` when SSO is not enabled, `401` when the IdP rejects the token, and `400` when the token carries no email claim.
+The endpoint returns `404` when SSO is not enabled, `401` when the IdP rejects the token or the email is unverified, and `400` when the token carries no email claim. Artalk does not provide a switch to bypass email verification.
 
 ::: tip
 
-Validation relies entirely on the issuer's `/userinfo` rejecting invalid or revoked tokens, and the user is matched by the `email` claim. Only enable this for an issuer you trust, and make sure that issuer returns verified emails.
+Validation relies entirely on the issuer's `/userinfo` rejecting invalid or revoked tokens, and the user is matched by the `email` claim. Only enable this for an issuer you trust. Because an unverified email could impersonate an existing user or administrator, Artalk requires `email_verified: true`.
 
 :::
 

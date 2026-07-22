@@ -146,8 +146,8 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "hanabi": "^0.4.0",
-    "insane": "^2.6.2"
+    "dompurify": "^3.4.12",
+    "hanabi": "^0.4.0"
   },
   "dependencies": {
     "marked": "^18.0.7"

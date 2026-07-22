@@ -1,99 +1,130 @@
-import insane from 'insane'
+import DOMPurify from 'dompurify'
 
-const insaneOptions = {
-  allowedClasses: {},
-  // @refer CVE-2018-8495
-  // @link https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8495
-  // @link https://leucosite.com/Microsoft-Edge-RCE/
-  // @link https://medium.com/@knownsec404team/analysis-of-the-security-issues-of-url-scheme-in-pc-from-cve-2018-8495-934478a36756
-  allowedSchemes: [
-    'http',
-    'https',
-    'mailto',
-    'data', // for support base64 encoded image (安全性有待考虑)
-  ],
-  allowedTags: [
-    'a',
-    'abbr',
-    'article',
-    'b',
-    'blockquote',
-    'br',
-    'caption',
-    'code',
-    'del',
-    'details',
-    'div',
-    'em',
-    'h1',
-    'h2',
-    'h3',
-    'h4',
-    'h5',
-    'h6',
-    'hr',
-    'i',
-    'img',
-    'ins',
-    'kbd',
-    'li',
-    'main',
-    'mark',
-    'ol',
-    'p',
-    'pre',
-    'section',
-    'span',
-    'strike',
-    'strong',
-    'sub',
-    'summary',
-    'sup',
-    'table',
-    'tbody',
-    'td',
-    'th',
-    'thead',
-    'tr',
-    'u',
-    'ul',
-  ],
-  allowedAttributes: {
-    '*': ['title', 'accesskey'],
-    a: ['href', 'name', 'target', 'aria-label', 'rel'],
-    img: ['src', 'alt', 'title', 'atk-emoticon', 'aria-label', 'data-src', 'class', 'loading'],
-    // for code highlight
-    code: ['class'],
-    span: ['class', 'style'],
-  },
-  filter: (node) => {
-    // class whitelist
-    const allowed = [
-      ['code', /^hljs\W+language-(.*)$/],
-      ['span', /^(hljs-.*)$/],
-      ['img', /^lazyload$/],
-    ]
-    allowed.forEach(([tag, reg]) => {
-      if (node.tag === tag && !!node.attrs.class && !(reg as RegExp).test(node.attrs.class)) {
-        delete node.attrs.class
-      }
+const allowedTags = [
+  'a',
+  'abbr',
+  'article',
+  'b',
+  'blockquote',
+  'br',
+  'caption',
+  'code',
+  'del',
+  'details',
+  'div',
+  'em',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'hr',
+  'i',
+  'img',
+  'ins',
+  'kbd',
+  'li',
+  'main',
+  'mark',
+  'ol',
+  'p',
+  'pre',
+  'section',
+  'span',
+  'strike',
+  'strong',
+  'sub',
+  'summary',
+  'sup',
+  'table',
+  'tbody',
+  'td',
+  'th',
+  'thead',
+  'tr',
+  'u',
+  'ul',
+]
+
+const globalAttributes = new Set(['title', 'accesskey'])
+const tagAttributes: Record<string, Set<string>> = {
+  a: new Set(['href', 'name', 'target', 'aria-label', 'rel']),
+  img: new Set([
+    'src',
+    'alt',
+    'title',
+    'atk-emoticon',
+    'aria-label',
+    'data-src',
+    'class',
+    'loading',
+  ]),
+  code: new Set(['class']),
+  span: new Set(['class', 'style']),
+}
+const allowedAttributes = [
+  ...new Set([...globalAttributes, ...Object.values(tagAttributes).flatMap((v) => [...v])]),
+]
+const urlAttributes = new Set(['href', 'src', 'data-src'])
+const allowedSchemes = new Set(['http', 'https', 'mailto', 'data'])
+
+function hasAllowedScheme(value: string): boolean {
+  // Browsers ignore ASCII control characters inside a URL scheme. Remove them
+  // before checking so values such as "java\nscript:" cannot bypass the filter.
+  const normalized = [...value]
+    .filter((character) => {
+      const codePoint = character.codePointAt(0) || 0
+      return codePoint > 0x20 && (codePoint < 0x7f || codePoint > 0x9f)
     })
+    .join('')
+  const scheme = /^([a-z][a-z\d+.-]*):/i.exec(normalized)?.[1].toLowerCase()
+  return !scheme || allowedSchemes.has(scheme)
+}
 
-    // allow <span> set color sty
-    if (
-      node.tag === 'span' &&
-      !!node.attrs.style &&
-      !/^color:(\W+)?#[0-9a-f]{3,6};?$/i.test(node.attrs.style)
-    ) {
-      delete node.attrs.style
+function filterAttributes(root: HTMLTemplateElement): void {
+  root.content.querySelectorAll('*').forEach((element) => {
+    const tag = element.tagName.toLowerCase()
+    const tagAllowedAttributes = tagAttributes[tag]
+
+    for (const attribute of [...element.attributes]) {
+      if (!globalAttributes.has(attribute.name) && !tagAllowedAttributes?.has(attribute.name)) {
+        element.removeAttribute(attribute.name)
+        continue
+      }
+
+      if (urlAttributes.has(attribute.name) && !hasAllowedScheme(attribute.value)) {
+        element.removeAttribute(attribute.name)
+      }
     }
 
-    return true
-  },
+    const className = element.getAttribute('class')
+    const allowedClass =
+      (tag === 'code' && /^hljs\W+language-(.*)$/.test(className || '')) ||
+      (tag === 'span' && /^(hljs-.*)$/.test(className || '')) ||
+      (tag === 'img' && /^lazyload$/.test(className || ''))
+    if (className && !allowedClass) element.removeAttribute('class')
+
+    const style = element.getAttribute('style')
+    if (tag === 'span' && style && !/^color:(\W+)?#[0-9a-f]{3,6};?$/i.test(style)) {
+      element.removeAttribute('style')
+    }
+  })
 }
 
 export function sanitize(content: string): string {
-  // @link https://github.com/markedjs/marked/discussions/1232
-  // @link https://gist.github.com/lionel-rowe/bb384465ba4e4c81a9c8dada84167225
-  return insane(content, insaneOptions)
+  // Keep Artalk's existing HTML allowlist while using a maintained, non-regex
+  // parser. The second pass enforces the original per-tag attribute rules.
+  const sanitized = DOMPurify.sanitize(content, {
+    ALLOWED_TAGS: allowedTags,
+    ALLOWED_ATTR: allowedAttributes,
+    ALLOW_ARIA_ATTR: false,
+    ALLOW_DATA_ATTR: false,
+    ALLOW_UNKNOWN_PROTOCOLS: true,
+    ADD_DATA_URI_TAGS: ['a'],
+  })
+  const template = document.createElement('template')
+  template.innerHTML = sanitized
+  filterAttributes(template)
+  return template.innerHTML
 }

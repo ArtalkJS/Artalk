@@ -41,8 +41,14 @@ export const Fetch: ArtalkPlugin = (ctx) => {
         ...ctx.getApi().getUserFields(),
       })
       .then(({ data }) => {
-        if (!data.page) throw new Error('Page data is missing from comment list response')
-        const listData: ListData = { ...data, page: data.page }
+        const scope = (reqParams as { scope?: 'page' | 'user' | 'site' }).scope
+        if ((!scope || scope === 'page') && !data.page) {
+          throw new Error('Page data is missing from comment list response')
+        }
+
+        // Keep the public ListData contract for page-scoped consumers. Site and user scopes
+        // intentionally omit page data and are used by the sidebar and message center.
+        const listData = data as ListData
 
         // Must before all other function call and event trigger,
         // because it will depend on the lastData
@@ -54,7 +60,7 @@ export const Fetch: ArtalkPlugin = (ctx) => {
         ctx.getData().loadComments(listData.comments)
 
         // 更新页面数据
-        ctx.getData().updatePage(listData.page)
+        if (data.page) ctx.getData().updatePage(data.page)
 
         // trigger events when success
         params.onSuccess && params.onSuccess(listData)

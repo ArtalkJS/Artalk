@@ -12,6 +12,13 @@ export type EditorState = 'reply' | 'edit' | 'normal'
 
 export interface Editor {
   /**
+   * Get the editor element
+   *
+   * @deprecated Use `getEl()` instead.
+   */
+  readonly $el: HTMLElement
+
+  /**
    * Get editor options
    */
   getOptions(): EditorOptions
@@ -106,6 +113,13 @@ export interface Editor {
   setReplyComment(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
 
   /**
+   * Start replying to a comment
+   *
+   * @deprecated Use `setReplyComment()` instead.
+   */
+  setReply(commentData: CommentData, $comment: HTMLElement, scroll?: boolean): void
+
+  /**
    * Start editing a comment
    */
   setEditComment(commentData: CommentData, $comment: HTMLElement): void
@@ -114,6 +128,13 @@ export interface Editor {
    * Get plugin manager
    */
   getPlugins(): PluginManager | undefined
+
+  /**
+   * Get plugin manager
+   *
+   * @deprecated Use `getPlugins()` instead.
+   */
+  getPlugs(): PluginManager | undefined
 
   /**
    * Set plugin manager

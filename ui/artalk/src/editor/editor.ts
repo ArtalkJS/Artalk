@@ -12,7 +12,7 @@ export interface EditorOptions {
 
 export class Editor implements IEditor {
   private opts: EditorOptions
-  private $el: HTMLElement
+  private _$el: HTMLElement
   private ui: EditorUI
   private state: EditorStateManager
   private plugins?: PluginManager
@@ -22,7 +22,7 @@ export class Editor implements IEditor {
 
     // init editor ui
     this.ui = render()
-    this.$el = this.ui.$el
+    this._$el = this.ui.$el
 
     // init state manager
     this.state = new EditorStateManager(this)
@@ -33,7 +33,12 @@ export class Editor implements IEditor {
   }
 
   getEl() {
-    return this.$el
+    return this._$el
+  }
+
+  /** @deprecated Use `getEl()` instead. */
+  get $el() {
+    return this.getEl()
   }
 
   getUI() {
@@ -42,6 +47,11 @@ export class Editor implements IEditor {
 
   getPlugins() {
     return this.plugins
+  }
+
+  /** @deprecated Use `getPlugins()` instead. */
+  getPlugs() {
+    return this.getPlugins()
   }
 
   setPlugins(plugins: PluginManager) {
@@ -120,6 +130,11 @@ export class Editor implements IEditor {
 
   setReplyComment(comment: CommentData, $comment: HTMLElement) {
     this.state.switch('reply', { comment, $comment })
+  }
+
+  /** @deprecated Use `setReplyComment()` instead. */
+  setReply(comment: CommentData, $comment: HTMLElement, _scroll?: boolean) {
+    this.setReplyComment(comment, $comment)
   }
 
   setEditComment(comment: CommentData, $comment: HTMLElement) {

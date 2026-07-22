@@ -1,0 +1,86 @@
+name: Test End-to-End
+
+on:
+  push:
+    paths:
+      - ".github/workflows/test-e2e.yml"
+      - "cmd/**"
+      - "conf/**"
+      - "internal/**"
+      - "server/**"
+      - "ui/**"
+      - "go.mod"
+      - "go.sum"
+      - "package.json"
+      - "pnpm-lock.yaml"
+    branches-ignore: ["release/*", "nightly"]
+    tags-ignore: ["v*"]
+  pull_request:
+    paths:
+      - ".github/workflows/test-e2e.yml"
+      - "cmd/**"
+      - "conf/**"
+      - "internal/**"
+      - "server/**"
+      - "ui/**"
+      - "go.mod"
+      - "go.sum"
+      - "package.json"
+      - "pnpm-lock.yaml"
+    branches-ignore: ["release/*", "nightly"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-e2e-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CGO_ENABLED: 0
+
+jobs:
+  test_e2e:
+    name: Test browser UAT flow
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: true # zizmor: ignore[cache-poisoning] test-only cache
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        with:
+          version: 10.33.2
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22.x
+          cache: pnpm # zizmor: ignore[cache-poisoning] test-only cache
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run end-to-end tests
+        run: pnpm -F artalk test:e2e
+
+      - name: Upload Playwright report
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Playwright-Report
+          path: ui/artalk/playwright-report
+          if-no-files-found: ignore
+          retention-days: 7

@@ -142,7 +142,7 @@
     "coverage": "cross-env NODE_OPTIONS=--no-experimental-webstorage vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e-report": "playwright show-report",
-    "test:attw": "pnpx @arethetypeswrong/cli --pack . --ignore-rules no-resolution",
+    "test:attw": "pnpx @arethetypeswrong/cli@0.18.5 --pack . --ignore-rules no-resolution",
     "lint": "eslint ."
   },
   "devDependencies": {

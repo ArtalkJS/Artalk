@@ -105,7 +105,7 @@ import Artalk from 'artalk'
 
 const ArtalkComment = () => {
   const { pathname } = useLocation()
-  const artalk = useRef<Artalk>()
+  const artalk = useRef<Artalk | null>(null)
 
   const handleContainerInit = useCallback(
     (node: HTMLDivElement | null) => {
@@ -114,7 +114,7 @@ const ArtalkComment = () => {
       }
       if (artalk.current) {
         artalk.current.destroy()
-        artalk.current = undefined
+        artalk.current = null
       }
       artalk.current = Artalk.init({
         el: node,

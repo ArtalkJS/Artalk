@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -145,6 +146,13 @@ func VoteCreate(app *core.App, router fiber.Router) {
 			choice:     choice,
 		})
 		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				target := i18n.T("Comment")
+				if targetName == "page" {
+					target = i18n.T("Page")
+				}
+				return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": target}))
+			}
 			return common.RespError(c, 500, "Failed to update vote")
 		}
 

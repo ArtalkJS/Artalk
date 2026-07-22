@@ -267,3 +267,62 @@ func TestVoteTransactionRollback(t *testing.T) {
 	assert.Equal(t, originalComment.VoteUp, comment.VoteUp, "Comment counters should remain unchanged")
 	assert.Equal(t, originalComment.VoteDown, comment.VoteDown, "Comment counters should remain unchanged")
 }
+
+func TestVoteCreateReturnsNotFoundWhenTransactionTargetDisappears(t *testing.T) {
+	tests := []struct {
+		name         string
+		target       string
+		targetID     string
+		table        string
+		expectedBody string
+	}{
+		{
+			name:         "comment",
+			target:       "comment",
+			targetID:     "1000",
+			table:        "atk_comments",
+			expectedBody: `{"msg":"Comment not found"}`,
+		},
+		{
+			name:         "page",
+			target:       "page",
+			targetID:     "1001",
+			table:        "atk_pages",
+			expectedBody: `{"msg":"Page not found"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app, fiber := NewApiTestApp()
+			defer app.Cleanup()
+
+			handler.VoteCreate(app.App, fiber)
+
+			db := app.Dao().DB()
+			const callbackName = "test:missing_vote_target_lock"
+			injected := false
+			require.NoError(t, db.Callback().Query().Before("gorm:query").Register(callbackName, func(tx *gorm.DB) {
+				_, hasLock := tx.Statement.Clauses["FOR"]
+				if tx.Statement.Table == tt.table && hasLock {
+					injected = true
+					tx.AddError(gorm.ErrRecordNotFound)
+				}
+			}))
+			defer db.Callback().Query().Remove(callbackName)
+
+			url := "/votes/" + tt.target + "/" + tt.targetID + "/up"
+			req := httptest.NewRequest("POST", url, bytes.NewReader([]byte("{}")))
+			req.Header.Set("Content-Type", "application/json")
+			req.Header.Set("X-Forwarded-For", "192.168.100.2")
+			resp, err := fiber.Test(req)
+			require.NoError(t, err)
+			assert.True(t, injected, "The missing target error should be injected while locking the target")
+			assert.Equal(t, 404, resp.StatusCode)
+
+			body, err := io.ReadAll(resp.Body)
+			require.NoError(t, err)
+			assert.JSONEq(t, tt.expectedBody, string(body))
+		})
+	}
+}

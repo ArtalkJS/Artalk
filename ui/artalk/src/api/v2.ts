@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -29,9 +30,9 @@ export interface CommonConfData {
 
 export interface CommonJSONResult {
   /** Data */
-  data: any
+  data?: any
   /** Message */
-  msg: string
+  msg?: string
 }
 
 export type CommonMap = Record<string, any>
@@ -44,7 +45,7 @@ export interface EntityCookedComment {
   date: string
   email_encrypted: string
   id: number
-  ip_region: string
+  ip_region?: string
   is_allow_reply: boolean
   is_collapsed: boolean
   is_pending: boolean
@@ -374,7 +375,7 @@ export interface HandlerResponseCommentCreate {
   date: string
   email_encrypted: string
   id: number
-  ip_region: string
+  ip_region?: string
   is_allow_reply: boolean
   is_collapsed: boolean
   is_pending: boolean
@@ -403,7 +404,7 @@ export interface HandlerResponseCommentGet {
 export interface HandlerResponseCommentList {
   comments: EntityCookedComment[]
   count: number
-  page: EntityCookedPage
+  page?: EntityCookedPage
   roots_count: number
 }
 
@@ -415,7 +416,7 @@ export interface HandlerResponseCommentUpdate {
   date: string
   email_encrypted: string
   id: number
-  ip_region: string
+  ip_region?: string
   is_allow_reply: boolean
   is_collapsed: boolean
   is_pending: boolean
@@ -643,6 +644,7 @@ type CancelToken = Symbol | string | number
 
 export enum ContentType {
   Json = 'application/json',
+  JsonApi = 'application/vnd.api+json',
   FormData = 'multipart/form-data',
   UrlEncoded = 'application/x-www-form-urlencoded',
   Text = 'text/plain',
@@ -706,10 +708,18 @@ export class HttpClient<SecurityDataType = unknown> {
       input !== null && (typeof input === 'object' || typeof input === 'string')
         ? JSON.stringify(input)
         : input,
+    [ContentType.JsonApi]: (input: any) =>
+      input !== null && (typeof input === 'object' || typeof input === 'string')
+        ? JSON.stringify(input)
+        : input,
     [ContentType.Text]: (input: any) =>
       input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((formData, key) => {
+    [ContentType.FormData]: (input: any) => {
+      if (input instanceof FormData) {
+        return input
+      }
+
+      return Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key]
         formData.append(
           key,
@@ -720,7 +730,8 @@ export class HttpClient<SecurityDataType = unknown> {
               : `${property}`,
         )
         return formData
-      }, new FormData()),
+      }, new FormData())
+    },
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   }
 
@@ -793,13 +804,14 @@ export class HttpClient<SecurityDataType = unknown> {
         body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
       },
     ).then(async (response) => {
-      const r = response.clone() as HttpResponse<T, E>
+      const r = response as HttpResponse<T, E>
       r.data = null as unknown as T
       r.error = null as unknown as E
 
+      const responseToParse = responseFormat ? response.clone() : response
       const data = !responseFormat
         ? r
-        : await response[responseFormat]()
+        : await responseToParse[responseFormat]()
             .then((data) => {
               if (r.ok) {
                 r.data = data
@@ -1987,7 +1999,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   }
   sso = {
     /**
- * @description Validates a third-party OIDC access token (currently Auth0)
+ * @description Validates a third-party OIDC access token by calling the issuer's /userinfo endpoint, requires a verified email claim, then mints an Artalk session JWT. Use when the surrounding application already runs OIDC and you want Artalk comments to inherit that session without showing Artalk's own login UI.
  *
  * @tags Auth
  * @name AuthSsoExchange
@@ -2596,6 +2608,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
  * @summary Get Vote Status
  * @request GET:/votes/{target_name}/{target_id}
  * @response `200` `HandlerResponseVote` OK
+ * @response `400` `(HandlerMap & {
+    msg?: string,
+
+})` Bad Request
  * @response `403` `(HandlerMap & {
     msg?: string,
 

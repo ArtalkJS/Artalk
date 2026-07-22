@@ -1,4 +1,4 @@
-import type { ListFetchParams, ArtalkPlugin } from '@/types'
+import type { ListData, ListFetchParams, ArtalkPlugin } from '@/types'
 
 export const Fetch: ArtalkPlugin = (ctx) => {
   const conf = ctx.inject('config')
@@ -41,22 +41,25 @@ export const Fetch: ArtalkPlugin = (ctx) => {
         ...ctx.getApi().getUserFields(),
       })
       .then(({ data }) => {
+        if (!data.page) throw new Error('Page data is missing from comment list response')
+        const listData: ListData = { ...data, page: data.page }
+
         // Must before all other function call and event trigger,
         // because it will depend on the lastData
         // TODO: this is global variable, easy to use, but not good, consider to refactor.
         // refactor work is hard, because it is used in many places.
-        ctx.getData().setListLastFetch({ params, data })
+        ctx.getData().setListLastFetch({ params, data: listData })
 
         // 装置评论
-        ctx.getData().loadComments(data.comments)
+        ctx.getData().loadComments(listData.comments)
 
         // 更新页面数据
-        ctx.getData().updatePage(data.page)
+        ctx.getData().updatePage(listData.page)
 
         // trigger events when success
-        params.onSuccess && params.onSuccess(data)
+        params.onSuccess && params.onSuccess(listData)
 
-        ctx.trigger('list-fetched', { params, data })
+        ctx.trigger('list-fetched', { params, data: listData })
       })
       .catch((e) => {
         // 显示错误对话框

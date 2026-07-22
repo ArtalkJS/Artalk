@@ -45,9 +45,6 @@ definitions:
       msg:
         description: Message
         type: string
-    required:
-    - data
-    - msg
     type: object
   common.Map:
     additionalProperties: true
@@ -110,7 +107,6 @@ definitions:
     - date
     - email_encrypted
     - id
-    - ip_region
     - is_allow_reply
     - is_collapsed
     - is_pending
@@ -763,7 +759,6 @@ definitions:
     - date
     - email_encrypted
     - id
-    - ip_region
     - is_allow_reply
     - is_collapsed
     - is_pending
@@ -810,7 +805,6 @@ definitions:
     required:
     - comments
     - count
-    - page
     - roots_count
     type: object
   handler.ResponseCommentUpdate:
@@ -871,7 +865,6 @@ definitions:
     - date
     - email_encrypted
     - id
-    - ip_region
     - is_allow_reply
     - is_collapsed
     - is_pending
@@ -2690,7 +2683,11 @@ paths:
     post:
       consumes:
       - application/json
-      description: Validates a third-party OIDC access token (currently Auth0)
+      description: Validates a third-party OIDC access token by calling the issuer's
+        /userinfo endpoint, requires a verified email claim, then mints an Artalk
+        session JWT. Use when the surrounding application already runs OIDC and you
+        want Artalk comments to inherit that session without showing Artalk's own
+        login UI.
       operationId: AuthSSOExchange
       parameters:
       - description: External SSO token

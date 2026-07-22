@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import Artalk from '@/artalk'
+import type { ArtalkPlugin, Config } from '@/types'
 
 const InitConf = {
   pageTitle: 'Artalk DEMO',
@@ -12,11 +13,30 @@ const InitConf = {
 const RemoteConf = {
   darkMode: false, // simulate response `false`, but the final should still be `true`, cannot override this
   gravatar: { mirror: 'https://test.avatar.com/unit_test', params: 'test=123' },
+  pluginURLs: ['/plugin.js'],
 }
 
 const ContainerID = 'artalk-container'
+const pluginInitConf = vi.fn<(conf: Config) => void>()
+const pluginLifecycle: string[] = []
+const networkPluginInitConf = vi.fn<(conf: Config) => void>()
+const networkPluginLifecycle: string[] = []
+const createLifecyclePlugin = (init: (conf: Config) => void, lifecycle: string[]): ArtalkPlugin =>
+  function LifecyclePlugin(ctx) {
+    lifecycle.push('initialized')
+    init(ctx.getConf())
+    ctx.on('created', () => lifecycle.push('created'))
+    ctx.on('mounted', () => lifecycle.push('mounted'))
+  }
+const lifecyclePlugin = createLifecyclePlugin(pluginInitConf, pluginLifecycle)
+const networkLifecyclePlugin = createLifecyclePlugin(networkPluginInitConf, networkPluginLifecycle)
 
 beforeAll(() => {
+  const loadedPluginScript = document.createElement('script')
+  loadedPluginScript.src = 'http://localhost:3000/plugin.js'
+  document.head.appendChild(loadedPluginScript)
+  window.ArtalkPlugins = { lifecycle: networkLifecyclePlugin }
+
   // mock fetch
   global.fetch = vi.fn().mockImplementation((url: string, init: RequestInit) => {
     let resp: any = {}
@@ -74,6 +94,7 @@ describe('Artalk instance', () => {
     el.setAttribute('id', ContainerID)
     document.body.appendChild(el)
 
+    Artalk.use(lifecyclePlugin)
     artalk = Artalk.init({
       ...InitConf,
       el,
@@ -116,12 +137,21 @@ describe('Artalk instance', () => {
       const conf = artalk.getConf()
       expect(conf.darkMode, 'the darkMode is unmodifiable, should still false').toBe(true)
       expect(conf.gravatar, 'the gravatar should be modified').toEqual(RemoteConf.gravatar)
+      expect(pluginInitConf).toHaveBeenCalledTimes(1)
+      expect(pluginInitConf.mock.calls[0][0].darkMode).toBe(InitConf.darkMode)
+      expect(pluginInitConf.mock.calls[0][0].gravatar).toEqual(RemoteConf.gravatar)
+      expect(pluginLifecycle).toEqual(['initialized', 'created', 'mounted'])
+      expect(networkPluginInitConf).toHaveBeenCalledTimes(1)
+      expect(networkPluginInitConf.mock.calls[0][0].darkMode).toBe(InitConf.darkMode)
+      expect(networkPluginInitConf.mock.calls[0][0].gravatar).toEqual(RemoteConf.gravatar)
+      expect(networkPluginLifecycle).toEqual(['initialized', 'created', 'mounted'])
     },
   )
 
   it('should other config not changed after conf-remoter loaded (conf-remoter, artalk.update)', () => {
     const confNew = JSON.parse(JSON.stringify(artalk.getConf()))
     confCopy.gravatar = confNew.gravatar // exclude
+    confCopy.pluginURLs = confNew.pluginURLs // exclude
     expect(confCopy).toMatchObject(confNew)
   })
 

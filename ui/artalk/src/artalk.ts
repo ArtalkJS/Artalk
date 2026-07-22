@@ -45,12 +45,12 @@ export default class Artalk {
     // Apply local conf first
     ctx.updateConf(conf)
 
-    // Trigger created event
-    ctx.trigger('created')
-
     // Load plugins and remote config, then mount Artalk
     const mountArtalk = async () => {
       await mount(conf, ctx)
+
+      // Trigger created after all plugins have been initialized
+      ctx.trigger('created')
 
       // Trigger mounted event
       ctx.trigger('mounted')

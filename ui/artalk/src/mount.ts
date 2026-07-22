@@ -2,6 +2,7 @@ import { handleConfFormServer } from './config'
 import { DefaultPlugins } from './plugins'
 import { mergeDeep } from './lib/merge-deep'
 import { MountError } from './plugins/mount-error'
+import { Services } from './services'
 import type { ConfigPartial, ArtalkPlugin, Context } from '@/types'
 
 /**
@@ -25,8 +26,10 @@ export async function mount(localConf: ConfigPartial, ctx: Context) {
     })
   }
 
-  // Load local plugins
-  loadPlugins(GlobalPlugins)
+  // Register service providers required to retrieve the remote config. The
+  // providers are lazy, so feature and external plugins are still initialized
+  // only after the final config has been applied.
+  loadPlugins(Services)
 
   // Get conf from server
   const { data } = await ctx
@@ -49,15 +52,21 @@ export async function mount(localConf: ConfigPartial, ctx: Context) {
   // Apply local + remote conf
   ctx.updateConf(conf)
 
-  // Load remote plugins
-  conf.pluginURLs &&
-    (await loadNetworkPlugins(conf.pluginURLs, ctx.getConf().server)
-      .then((plugins) => {
-        loadPlugins(plugins)
-      })
-      .catch((err) => {
+  // Download remote plugin scripts before initialization so every plugin sees
+  // the same final local + remote config.
+  let networkPlugins = new Set<ArtalkPlugin>()
+  if (conf.pluginURLs) {
+    networkPlugins = await loadNetworkPlugins(conf.pluginURLs, ctx.getConf().server).catch(
+      (err) => {
         console.error('Failed to load plugin', err)
-      }))
+        return new Set<ArtalkPlugin>()
+      },
+    )
+  }
+
+  // Initialize built-in/local plugins first, followed by network plugins.
+  loadPlugins(GlobalPlugins)
+  loadPlugins(networkPlugins)
 }
 
 /**

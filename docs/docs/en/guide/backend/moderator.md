@@ -109,6 +109,7 @@ moderator:
 - **pending**: Whether to set the comment to pending review status upon successful match.
 - **files**: Keyword files. Multiple files are allowed, and Artalk will merge the keyword libraries upon startup.
 - **file_sep**: Keyword file content separator. For example, if each line in the file contains a keyword, set this item to `\n`.
+  The value cannot be empty. The dashboard displays line feeds, carriage returns, and tabs as `\n`, `\r`, and `\t`. Enter `\\n` when the separator must be the literal characters `\n`.
 - **replace_to**: Replacement character. For example, if this item is set to `x`, you can set `pending` to `false`, allowing the comment to pass review automatically, but the matched keywords will be replaced with `x`, resulting in `fxxk` or `xxxx`.
 
 Note: It is recommended not to use `*` asterisk as `replace_to` because it conflicts with the Markdown bold syntax.

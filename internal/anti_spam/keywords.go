@@ -1,6 +1,7 @@
 package anti_spam
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -87,6 +88,9 @@ func (c *KeywordsChecker) Check(p *CheckerParams) (bool, error) {
 func (c *KeywordsChecker) loadKeywords() error {
 	c.mux.Lock()
 	defer c.mux.Unlock()
+	if c.conf.FileSep == "" {
+		return errors.New("keywords file separator cannot be empty")
+	}
 
 	// 已加载过无需再次加载
 	if c.keywords != nil {

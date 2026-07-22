@@ -108,9 +108,23 @@ func TestNewKeywordsChecker(t *testing.T) {
 		assert.False(t, ok)
 	})
 
+	t.Run("ErrorEmptySeparator", func(t *testing.T) {
+		checker := NewKeywordsChecker(&KeywordsCheckerConf{
+			Files:   []string{kwFile1},
+			FileSep: "",
+			Mode:    KwCheckerModeBlock,
+		})
+		ok, err := checker.Check(&CheckerParams{
+			Content: "关键词A",
+		})
+		assert.ErrorContains(t, err, "separator cannot be empty")
+		assert.False(t, ok)
+	})
+
 	t.Run("ErrorUnknownMode", func(t *testing.T) {
 		checker := NewKeywordsChecker(&KeywordsCheckerConf{
-			Mode: 999,
+			FileSep: "\n",
+			Mode:    999,
 		})
 		ok, err := checker.Check(&CheckerParams{})
 		assert.ErrorContains(t, err, "unknown mode")

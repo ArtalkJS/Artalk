@@ -13,6 +13,8 @@ export interface OptionNode {
   items?: OptionNode[]
 }
 
+export const KEYWORD_FILE_SEPARATOR_PATH = 'moderator.keywords.file_sep'
+
 function extractItemComment(item: Pair, index: number, parentPair?: Pair): string {
   return index === 0 && parentPair
     ? parentPair?.value?.commentBefore || ''
@@ -166,7 +168,9 @@ export function patchOptionValue(value: any, node: OptionNode) {
       else if (value === 'false') value = false
       break
     case 'string':
-      if (!node.selector)
+      if (node.path === KEYWORD_FILE_SEPARATOR_PATH)
+        value = unescapeControlCharacters(String(value))
+      else if (!node.selector)
         // ignore option item
         value = String(value).trim()
       break
@@ -180,4 +184,41 @@ export function patchOptionValue(value: any, node: OptionNode) {
   }
 
   return value
+}
+
+/**
+ * Format an option value for editing in a single-line input.
+ *
+ * Keyword separators may contain control characters that HTML text inputs
+ * cannot represent directly, so display them using reversible escape sequences.
+ */
+export function formatOptionValue(value: any, node: OptionNode) {
+  if (node.path === KEYWORD_FILE_SEPARATOR_PATH && typeof value === 'string') {
+    return escapeControlCharacters(value)
+  }
+
+  return value
+}
+
+function escapeControlCharacters(value: string) {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/\r/g, '\\r')
+    .replace(/\n/g, '\\n')
+    .replace(/\t/g, '\\t')
+}
+
+function unescapeControlCharacters(value: string) {
+  return value.replace(/\\(\\|n|r|t)/g, (_, char: string) => {
+    switch (char) {
+      case 'n':
+        return '\n'
+      case 'r':
+        return '\r'
+      case 't':
+        return '\t'
+      default:
+        return '\\'
+    }
+  })
 }

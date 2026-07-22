@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import settings, { patchOptionValue, type OptionNode } from '../lib/settings'
+import settings, {
+  formatOptionValue,
+  KEYWORD_FILE_SEPARATOR_PATH,
+  patchOptionValue,
+  type OptionNode,
+} from '../lib/settings'
 import { isSensitiveConfigPath } from '@/lib/settings-sensitive'
 
 const props = defineProps<{
@@ -12,13 +17,24 @@ const sensitiveHidden = ref(true)
 
 const { t } = useI18n()
 
+const separatorSuggestions = ['\\n', '\\r\\n', '\\t', '|']
+const isKeywordFileSeparator = computed(() => props.node.path === KEYWORD_FILE_SEPARATOR_PATH)
+const separatorListId = computed(() =>
+  isKeywordFileSeparator.value ? 'atk-keyword-separator-options' : undefined,
+)
+
 onBeforeMount(() => {
   // initial value
-  value.value = settings.get().getCustom(props.node.path)
+  value.value = formatOptionValue(settings.get().getCustom(props.node.path), props.node)
   disabled.value = !!settings.get().getEnvByPath(props.node.path)
 })
 
-function onChange() {
+function onChange(event: Event) {
+  if (event.currentTarget instanceof HTMLInputElement && !event.currentTarget.checkValidity()) {
+    event.currentTarget.reportValidity()
+    return
+  }
+
   const v = patchOptionValue(value.value, props.node)
   settings.get().setCustom(props.node.path, v)
   // console.log('[SET]', props.node.path, v)
@@ -68,9 +84,14 @@ function toggleSensitiveHidden() {
         <input
           v-model="value"
           :type="!isSensitive || !sensitiveHidden ? 'text' : 'password'"
+          :list="separatorListId"
+          :required="isKeywordFileSeparator"
           :disabled="disabled"
           @change="onChange"
         />
+        <datalist v-if="separatorListId" :id="separatorListId">
+          <option v-for="item in separatorSuggestions" :key="item" :value="item" />
+        </datalist>
         <div v-if="isSensitive" class="input-suffix">
           <div class="hidden-switch" @click="toggleSensitiveHidden()">
             <i :class="['atk-icon', `atk-icon-eye-${sensitiveHidden ? 'off' : 'on'}`]" />

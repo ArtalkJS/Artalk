@@ -26,13 +26,13 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@microsoft/api-extractor": "^7.58.7",
+    "@microsoft/api-extractor": "^7.58.12",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
     "artalk": "workspace:^",
-    "tsdown": "^0.21.10",
-    "vite": "^8.0.10"
+    "tsdown": "^0.22.13",
+    "vite": "^8.1.5"
   },
   "peerDependencies": {
     "artalk": "workspace:^",

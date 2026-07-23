@@ -1,4 +1,103 @@
 
+## [v2.10.0](https://github.com/ArtalkJS/Artalk/compare/v2.9.1...v2.10.0) (2026-07-23)
+
+### Features
+
+* add 'ugc' to link rel attributes ([#1120](https://github.com/ArtalkJS/Artalk/issues/1120))
+* **api/vote:** add get vote status endpoint ([#998](https://github.com/ArtalkJS/Artalk/issues/998))
+* **auth:** add SSO token exchange endpoint ([#1134](https://github.com/ArtalkJS/Artalk/issues/1134))
+* **config:** enhance config file and data dir retrieval ([#992](https://github.com/ArtalkJS/Artalk/issues/992))
+* **db:** add TLS support for MySQL with Google Cloud SQL ([#1104](https://github.com/ArtalkJS/Artalk/issues/1104))
+* **go:** upgrade golang to v1.26.2 and some deps
+* **go:** upgrade golang to v1.26.5
+* **plugins:** add plugin registry fetch script
+* **ui:** add dependency injection container ([#1006](https://github.com/ArtalkJS/Artalk/issues/1006))
+* **ui:** add npm published version check script
+* **ui/conf:** add `preferRemoteConf` option ([#1000](https://github.com/ArtalkJS/Artalk/issues/1000)) ([#1011](https://github.com/ArtalkJS/Artalk/issues/1011))
+* **ui/eslint:** add eslint plugin for artalk ui development ([#995](https://github.com/ArtalkJS/Artalk/issues/995))
+* **ui/eslint:** update `eslint-plugin-artalk` to v1.0.2 ([#1010](https://github.com/ArtalkJS/Artalk/issues/1010))
+* **ui/page_vote:** add page voting feature ([#983](https://github.com/ArtalkJS/Artalk/issues/983))
+
+### Bug Fixes
+
+* **api:** validate vote status targets
+* **api:** make vote updates transactional
+* **api/stats:** exclude pending comments
+* **api/vote:** return not found for deleted targets
+* **auth:** require verified email for SSO exchange
+* **build:** propagate image version metadata
+* **cache:** return database results on store failure
+* **ci:** satisfy workflow shell checks
+* **ci:** harden release supply chain
+* **ci:** harden release tag handling
+* **ci:** preserve nightly tag during release refresh
+* **cmd:** preserve config lookup before data chdir
+* **config:** preserve keyword file separators
+* **core:** initialize process timezone once
+* **db:** enforce Cloud SQL TLS verification
+* **docs:** support React 19 useRef types
+* **email:** add Message-ID header
+* **scripts:** import Buffer explicitly
+* **scripts:** harden npm publish check
+* **ui:** preserve generated list response contract
+* **ui:** restore deprecated context services
+* **ui:** reject direct context replacement
+* **ui:** align plugin lifecycle with final config
+* **ui:** accept scoped comment lists without page data
+* **ui:** replace vulnerable HTML sanitizer
+* **ui/editor:** restore deprecated aliases
+* **ui/sidebar:** handle null array preferences
+* **ui/types:** preserve atomic config values
+* **ui/types:** restore deprecated public aliases
+* **ui/ua:** support OpenHarmony and more browsers ([#1087](https://github.com/ArtalkJS/Artalk/issues/1087))
+
+### Code Refactoring
+
+* **api/vote:** refactor vote http endpoint and logic ([#997](https://github.com/ArtalkJS/Artalk/issues/997))
+* **auth:** migrate JWT handling to v5
+* **ci:** accelerate nightly publishing
+* **ci:** optimize multi-architecture releases
+* **ui:** improve modularity, lifecycle, and types ([#1007](https://github.com/ArtalkJS/Artalk/issues/1007))
+* **ui/auth:** ensure compatibility with new client types ([#1009](https://github.com/ArtalkJS/Artalk/issues/1009))
+* **ui/comment:** update reply button to use component
+* **ui/conf:** introduce `DeepPartial` type for ui config ([#996](https://github.com/ArtalkJS/Artalk/issues/996))
+* **ui/sidebar:** ensure compatibility with new client types ([#1008](https://github.com/ArtalkJS/Artalk/issues/1008))
+
+### Testing
+
+* remove races from async tests
+* **ci:** expand release validation
+* **server:** verify plugin URL trust filtering
+* **ui:** update comment e2e flow
+* **ui:** isolate Playwright end-to-end specs
+* **ui:** cover Marked 18 integration
+* **ui:** cover sanitizer attribute allowlist
+* **ui:** isolate browser storage from Node
+
+### Documentation
+
+* document dependency and security updates
+* add v2.10.0 release notes
+* add Japanese README ([#1145](https://github.com/ArtalkJS/Artalk/issues/1145))
+* integrate git changelog plugin
+* **i18n:** add Turkish (tr-TR) language support ([#1119](https://github.com/ArtalkJS/Artalk/issues/1119))
+* **i18n:** add `zh-TW` translation for config template
+* **landing:** redesign landing page ([#1020](https://github.com/ArtalkJS/Artalk/issues/1020))
+* **landing:** add more translations
+* **landing:** optimize responsive font size
+
+### BREAKING CHANGE
+
+
+Beyond [#997](https://github.com/ArtalkJS/Artalk/issues/997), [#1007](https://github.com/ArtalkJS/Artalk/issues/1007), and [#1011](https://github.com/ArtalkJS/Artalk/issues/1011), v2.10.0 changes default config/data discovery and relative-path semantics; raises source builds to Go 1.26.5; replaces the CGO-backed SQLite driver with a pure-Go implementation; fixes application timezone at process initialization, requiring a full restart to change it; removes the useBackendConf opt-out and remoteConfModifier; changes DI registration, Context mutation, update() return value, and created timing; and requires marked 18 with modern package resolution. Migration guide: https://artalk.js.org/en/guide/releases/v2.10.0.html
+
+UI client now prioritizes local config in the latest version, whereas previously, the remote config would override it. (See [#1011](https://github.com/ArtalkJS/Artalk/issues/1011))
+
+This update changes the UI client's export Types. Although we aim to maintain backward compatibility, it may still affect downstream UI programs. Please refer to the [TypeDoc](https://artalk.js.org/typedoc/).
+
+Vote HTTP API endpoint have been updated. (See [#997](https://github.com/ArtalkJS/Artalk/issues/997))
+
+
 ## [v2.9.1](https://github.com/ArtalkJS/Artalk/compare/v2.9.0...v2.9.1) (2024-09-18)
 
 ### Features

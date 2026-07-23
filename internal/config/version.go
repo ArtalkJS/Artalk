@@ -9,7 +9,7 @@ import (
 // The version of Artalk
 //
 // Which is automatically set by the CI release workflow
-var Version = "v2.9.1"
+var Version = "v2.10.0"
 
 // buildCommitHash is optionally set by build scripts when the VCS metadata is
 // not available in the build context (for example, inside a Docker build).

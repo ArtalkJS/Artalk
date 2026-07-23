@@ -1,14 +1,14 @@
-#!/usr/bin/env sh
-tag=$1
-name=artalk
-
-if [[ -z $tag ]]; then
-    echo "This script requires the tag as an argument."
-    exit 1
-fi
+#!/usr/bin/env bash
 
 set -euo pipefail
 
+tag="${1:-}"
+if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "This script requires a stable release tag (vMAJOR.MINOR.PATCH)." >&2
+    exit 1
+fi
+
+name=artalk
 version=${tag#v}
 echo "Using version: $version"
 
@@ -17,9 +17,9 @@ rm -rf "$name-$version"
 git -c advice.detachedHead=false clone --branch "$tag" --depth 1 https://github.com/artalkjs/artalk/ "$name-$version"
 
 # Vendor dependencies
-pushd "$name-$version"
+pushd "$name-$version" > /dev/null
 GOPROXY='https://proxy.golang.org,direct' go mod vendor
-popd
+popd > /dev/null
 
 # More reproducible!
 TARFLAGS=(
@@ -35,7 +35,7 @@ TARFLAGS=(
   --mode=go+u,go-w
 )
 
-tar "${TARFLAGS[@]}" -czvf "$name-$version-vendored.tar.gz" "$name-$version"
+tar "${TARFLAGS[@]}" -czf "$name-$version-vendored.tar.gz" "$name-$version"
 
 # Clean up the temporary directory
 rm -rf "$name-$version"

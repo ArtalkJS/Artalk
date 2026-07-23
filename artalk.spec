@@ -1,5 +1,5 @@
 %global goipath github.com/artalkjs/artalk/v2
-Version:        2.9.1
+Version:        2.10.0
 %gometa -f
 Name:           artalk
 Release:        %autorelease

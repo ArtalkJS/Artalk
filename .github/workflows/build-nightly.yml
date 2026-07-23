@@ -354,7 +354,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete nightly --yes --cleanup-tag || true
           if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/nightly" > /dev/null 2>&1; then
             gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/nightly" \
               -f sha="$GITHUB_SHA" -F force=true > /dev/null
@@ -363,13 +362,20 @@ jobs:
               -f ref=refs/tags/nightly -f sha="$GITHUB_SHA" > /dev/null
           fi
 
+          tag_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/nightly" --jq '.object.sha')"
+          if [[ "$tag_sha" != "$GITHUB_SHA" ]]; then
+            echo "Nightly tag points to $tag_sha, expected $GITHUB_SHA."
+            exit 1
+          fi
+
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          gh release delete nightly --yes || true
           mapfile -d '' release_files < <(find "$DIST_DIR" -type f -print0)
           gh release create nightly "${release_files[@]}" \
             --title "🧪 Nightly Version" \
             --notes-file /tmp/changelog.md \
             --prerelease \
-            --verify-tag
+            --target "$GITHUB_SHA"

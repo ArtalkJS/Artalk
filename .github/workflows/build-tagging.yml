@@ -9,6 +9,10 @@ on:
       issue_number:
         required: true
         type: number
+      version:
+        required: false
+        type: string
+        default: ""
     outputs:
       version:
         description: "Version"
@@ -30,10 +34,15 @@ jobs:
         id: version
         env:
           REF: ${{ github.head_ref || github.ref }}
+          REQUESTED_VERSION: ${{ inputs.version }}
         run: |
-          VERSION="${REF#refs/tags/}"
-          VERSION="${VERSION#refs/heads/}"
-          VERSION="${VERSION#release/}"
+          if [[ -n "$REQUESTED_VERSION" ]]; then
+            VERSION="$REQUESTED_VERSION"
+          else
+            VERSION="${REF#refs/tags/}"
+            VERSION="${VERSION#refs/heads/}"
+            VERSION="${VERSION#release/}"
+          fi
 
           if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Invalid version format: $VERSION, please check git ref or tag."
@@ -55,25 +64,50 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          if ! git rev-parse --quiet --verify "refs/tags/$VERSION" > /dev/null; then
-            tag_sha="$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/tags" \
-              -f tag="$VERSION" \
-              -f message="Release $VERSION" \
-              -f object="$GITHUB_SHA" \
-              -f type=commit \
-              --jq '.sha')"
+          resolve_tag_commit() {
+            local object_type="$1"
+            local object_sha="$2"
+
+            if [[ "$object_type" == "tag" ]]; then
+              IFS=$'\t' read -r object_type object_sha < <(
+                gh api "repos/$GITHUB_REPOSITORY/git/tags/$object_sha" \
+                  --jq '.object | [.type, .sha] | @tsv'
+              )
+            fi
+
+            if [[ "$object_type" != "commit" ]]; then
+              echo "Tag $VERSION resolves to unsupported object type $object_type." >&2
+              return 1
+            fi
+
+            printf '%s\n' "$object_sha"
+          }
+
+          release_sha="$(git rev-parse HEAD)"
+          tag_ref="$(
+            gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/$VERSION" \
+              --jq ".[] | select(.ref == \"refs/tags/$VERSION\") | [.object.type, .object.sha] | @tsv"
+          )"
+
+          if [[ -z "$tag_ref" ]]; then
             gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
               -f ref="refs/tags/$VERSION" \
-              -f sha="$tag_sha" > /dev/null
-          else
-            tag_commit="$(git rev-list -n 1 "$VERSION")"
-            head_commit="$(git rev-parse HEAD)"
-            if [[ "$tag_commit" != "$head_commit" ]]; then
-              echo "Tag $VERSION already points to $tag_commit, expected $head_commit."
-              exit 1
-            fi
-            echo "Skip creating tag $VERSION: it already points to this commit."
+              -f sha="$release_sha" > /dev/null
+            tag_ref="$(
+              gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VERSION" \
+                --jq '.object | [.type, .sha] | @tsv'
+            )"
+            echo "Created tag $VERSION at $release_sha."
           fi
+
+          IFS=$'\t' read -r tag_type tag_sha <<< "$tag_ref"
+          tag_commit="$(resolve_tag_commit "$tag_type" "$tag_sha")"
+          if [[ "$tag_commit" != "$release_sha" ]]; then
+            echo "Tag $VERSION points to $tag_commit, expected $release_sha."
+            exit 1
+          fi
+
+          echo "Verified tag $VERSION at $release_sha."
 
       - name: Comment tag info to PR
         uses: ./.github/actions/comment

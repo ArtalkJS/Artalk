@@ -12,6 +12,10 @@ on:
         description: "Dry run"
         type: boolean
         default: true
+      version:
+        description: "Release version (for example, v2.10.0)"
+        type: string
+        required: false
       build_items:
         description: "Build items"
         type: choice
@@ -52,6 +56,7 @@ jobs:
     with:
       issue_number: ${{ github.event.pull_request.number || 0 }}
       dry_run: ${{ inputs.dry_run || false }}
+      version: ${{ inputs.version || '' }}
 
   # Build the UI
   ui:

@@ -1,89 +1,79 @@
-%global goipath github.com/artalkjs/artalk/v2
-Version:        2.9.1
-%gometa -f
+%global debug_package %{nil}
+
 Name:           artalk
-Release:        %autorelease
-Summary:        A Self-hosted Comment System
+Version:        2.10.1
+Release:        2%{?dist}
+Summary:        A self-hosted comment system
 License:        MIT
 URL:            https://artalk.js.org/
 Source0:        %{name}-%{version}-vendored.tar.gz
-# track this script
 Source1:        vendor-tarball.sh
 Source2:        https://github.com/ArtalkJS/Artalk/releases/download/v%{version}/artalk_ui.tar.gz
 Source3:        artalk.sysusers
 Source4:        artalk.service
-Patch1:         0001-fix-go-test-ld-undefined-error-by-remove-clickhouse.patch
-Patch2:         0002-remove-upgrade-command.patch
+Patch0:         0002-remove-upgrade-command.patch
+BuildRequires:  golang
 BuildRequires:  systemd-rpm-macros
 %{?systemd_requires}
 %{?sysusers_requires_compat}
 
-
 %description
-Artalk is an intuitive yet feature-rich comment system, ready for immediate deployment into any blog, website, or web application.
-
-
-%gopkg
-
+Artalk is a self-hosted comment system for websites.
 
 %prep
 %autosetup -p1
 tar --strip-components=1 -xzf %{SOURCE2} --directory=public
-%goprep -k -e
-chmod -Rf a+rX,u+w,g-w,o-w .
-
 
 %build
-%gobuild -o %{gobuilddir}/bin/artalk %{goipath}
-
+export CGO_ENABLED=0
+export GOPROXY=off
+export GOTOOLCHAIN=local
+go build -mod=vendor -trimpath -ldflags="-s -w" -o artalk .
 
 %install
-%gopkginstall
-
-# command
-install -m 0755 -vd                     %{buildroot}%{_bindir}
-install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
-
-# sysusers
-install -p -D -m 0644 %{SOURCE3} %{buildroot}%{_sysusersdir}/%{name}.conf
-
-# data directory (work dir)
+install -D -m 0755 artalk %{buildroot}%{_bindir}/artalk
+install -D -m 0644 %{SOURCE3} %{buildroot}%{_sysusersdir}/%{name}.conf
+install -D -m 0644 %{SOURCE4} %{buildroot}%{_unitdir}/artalk.service
 install -d -m 0750 %{buildroot}%{_sharedstatedir}/artalk
-
-# config
-install -D -p -m 0644 ./conf/artalk.example.yml %{buildroot}%{_sysconfdir}/artalk/artalk.yml
-
-# systemd units
-install -D -p -m 0644 %{SOURCE4} %{buildroot}%{_unitdir}/artalk.service
-
-# shell completions
-install -d -m 0755 %{buildroot}%{bash_completions_dir}
-%{gobuilddir}/bin/artalk completion bash > %{buildroot}%{bash_completions_dir}/artalk
-install -d -m 0755 %{buildroot}%{zsh_completions_dir}
-%{gobuilddir}/bin/artalk completion zsh > %{buildroot}%{zsh_completions_dir}/_artalk
-install -d -m 0755 %{buildroot}%{fish_completions_dir}
-%{gobuilddir}/bin/artalk completion fish > %{buildroot}%{fish_completions_dir}/artalk.fish
-
+install -D -m 0640 conf/artalk.example.yml %{buildroot}%{_sysconfdir}/artalk/artalk.yml
+install -d %{buildroot}%{_datadir}/{bash-completion/completions,zsh/site-functions,fish/vendor_completions.d}
+export XDG_DATA_HOME="$PWD/.artalk-build"
+./artalk completion bash > %{buildroot}%{_datadir}/bash-completion/completions/artalk
+./artalk completion zsh > %{buildroot}%{_datadir}/zsh/site-functions/_artalk
+./artalk completion fish > %{buildroot}%{_datadir}/fish/vendor_completions.d/artalk.fish
 
 %check
-%gocheck
-
+export CGO_ENABLED=0
+export GOPROXY=off
+export GOTOOLCHAIN=local
+export XDG_DATA_HOME="$PWD/.artalk-build"
+packages="$(go list -mod=vendor ./...)"
+# v2.10.1 has a fixture teardown race in this package (upstream PR #1205).
+# Keep its release sources unchanged; later versions run the full suite.
+if [ '%{version}' = '2.10.1' ]; then
+    packages="$(printf '%%s\n' "$packages" | grep -vx 'github.com/artalkjs/artalk/v2/server/handler')"
+fi
+go test -mod=vendor $packages
+./artalk version | grep -F 'v%{version}'
+test -s public/dist/Artalk.js
+test -s public/sidebar/index.html
 
 %pre
 %sysusers_create_compat %{SOURCE3}
 
-
 %post
+# RPM preserves the old config file, including its root ownership, on upgrade.
+if [ -f %{_sysconfdir}/artalk/artalk.yml ] && [ ! -L %{_sysconfdir}/artalk/artalk.yml ]; then
+    chown artalk:artalk %{_sysconfdir}/artalk/artalk.yml
+    chmod 0640 %{_sysconfdir}/artalk/artalk.yml
+fi
 %systemd_post artalk.service
-
 
 %preun
 %systemd_preun artalk.service
 
-
 %postun
 %systemd_postun_with_restart artalk.service
-
 
 %files
 %doc CONTRIBUTING.md README.md
@@ -91,16 +81,13 @@ install -d -m 0755 %{buildroot}%{fish_completions_dir}
 %{_bindir}/artalk
 %{_unitdir}/artalk.service
 %{_sysusersdir}/%{name}.conf
-%dir %{_sysconfdir}/artalk
-%config(noreplace) %{_sysconfdir}/artalk/artalk.yml
+%attr(0750,artalk,artalk) %dir %{_sysconfdir}/artalk
+%attr(0640,artalk,artalk) %config(noreplace) %{_sysconfdir}/artalk/artalk.yml
 %attr(0750,artalk,artalk) %dir %{_sharedstatedir}/artalk
-%{bash_completions_dir}/artalk
-%{zsh_completions_dir}/_artalk
-%{fish_completions_dir}/artalk.fish
-
-
-%gopkgfiles
-
+%{_datadir}/bash-completion/completions/artalk
+%{_datadir}/zsh/site-functions/_artalk
+%{_datadir}/fish/vendor_completions.d/artalk.fish
 
 %changelog
-%autochangelog
+* Fri Nov 06 2026 Artalk maintainers - 2.10.1-2
+- Build the requested release with vendored Go modules and release UI assets.

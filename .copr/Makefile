@@ -1,3 +1,3 @@
 srpm:
-	dnf -y install git rpmdevtools golang rpmautospec rpkg
-	.copr/copr_script.sh $(outdir)
+	.copr/copr_script.sh "$(outdir)" "$(version)"
+	rpmbuild -bs --define "_sourcedir $(abspath $(outdir))" --define "_srcrpmdir $(abspath $(outdir))" "$(outdir)/artalk.spec"

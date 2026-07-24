@@ -86,6 +86,7 @@ jobs:
     with:
       version: ${{ needs.tagging.outputs.version }}
       ref: ${{ needs.tagging.outputs.ref }}
+      commit: ${{ needs.tagging.outputs.commit }}
       dry_run: ${{ inputs.dry_run || false }}
     permissions:
       contents: read

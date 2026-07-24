@@ -75,8 +75,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   # Build the Docker image
   docker:

@@ -24,13 +24,16 @@ on:
         description: "Build items"
         type: choice
         options:
+          - "ui,app,docker,rpm"
           - "ui,app,docker"
           - "ui,app"
           - "ui,docker"
           - "app,docker"
+          - "app,rpm"
           - ui
           - app
           - docker
+          - rpm
         default: "ui,app,docker"
 
 permissions:
@@ -104,9 +107,25 @@ jobs:
     permissions:
       contents: write
 
+  # Build RPM
+  rpm:
+    if: |
+      always() &&
+      needs.tagging.result == 'success' &&
+      !contains(fromJSON('["failure", "cancelled"]'), needs.app.result) &&
+      (inputs.build_items == '' || contains(format(',{0},', inputs.build_items), ',rpm,'))
+    needs: [tagging, app]
+    uses: ./.github/workflows/build-rpm.yml
+    permissions: {}
+    with:
+      version: ${{ needs.tagging.outputs.version }}
+      dry_run: ${{ inputs.dry_run || false }}
+    secrets:
+      COPR_BUILD_WEBHOOK_URL: ${{ secrets.COPR_BUILD_WEBHOOK_URL }}
+
   # All builds are complete
   done:
-    needs: [tagging, ui, docker, app]
+    needs: [tagging, ui, docker, app, rpm]
     if: |
       always() &&
       needs.tagging.result == 'success' &&

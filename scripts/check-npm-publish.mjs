@@ -1,15 +1,34 @@
 #!/usr/bin/env node
 
-import { promises as fs, readFileSync } from 'fs'
-import path from 'path'
-import { execFileSync } from 'child_process'
-import process from 'process'
+import { promises as fs, readFileSync } from 'node:fs'
+import path from 'node:path'
+import process from 'node:process'
+import { fileURLToPath } from 'node:url'
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname)
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const REGISTRY_URL = 'https://registry.npmjs.org/'
+const REQUEST_TIMEOUT = 10_000
 
-// Helper to run shell commands
-const getPublishedVersion = (packageName) =>
-  execFileSync('pnpm', ['info', packageName, 'version'], { encoding: 'utf-8' }).trim()
+const getPublishedPackage = async (packageName) => {
+  const packageUrl = new URL(encodeURIComponent(packageName), REGISTRY_URL)
+  const response = await fetch(packageUrl, {
+    headers: { Accept: 'application/vnd.npm.install-v1+json' },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT),
+  })
+
+  if (response.status === 404) {
+    return { latestVersion: null, versions: new Set() }
+  }
+  if (!response.ok) {
+    throw new Error(`npm registry returned HTTP ${response.status} for ${packageName}`)
+  }
+
+  const packageMetadata = await response.json()
+  return {
+    latestVersion: packageMetadata['dist-tags']?.latest || null,
+    versions: new Set(Object.keys(packageMetadata.versions || {})),
+  }
+}
 
 // Recursively find all directories containing package.json
 const findNodeProjects = async (dir) => {
@@ -36,8 +55,8 @@ const findNodeProjects = async (dir) => {
   return projects
 }
 
-// Compare local version with the latest npm version
-const checkVersionMismatch = async (projectPath) => {
+// Check whether the exact local version has already been published to npm.
+const checkVersionPublished = async (projectPath) => {
   const packageJsonPath = path.join(projectPath, 'package.json')
 
   try {
@@ -46,23 +65,22 @@ const checkVersionMismatch = async (projectPath) => {
     const localVersion = packageJson.version
     const packageName = packageJson.name
 
-    // Get the latest version from npm using pnpm info
-    const npmVersion = getPublishedVersion(packageName)
+    const { latestVersion, versions } = await getPublishedPackage(packageName)
 
-    if (localVersion === npmVersion) {
-      console.log(`✅ ${packageName} is up to date (${npmVersion})`)
-    } else {
-      console.log(`❌ ${packageName} is outdated (local: ${localVersion}, npm: ${npmVersion})`)
+    if (versions.has(localVersion)) {
+      const latestSuffix =
+        localVersion === latestVersion ? '' : `; npm latest is ${latestVersion || 'unset'}`
+      console.log(`✅ ${packageName}@${localVersion} is published${latestSuffix}`)
+      return null
     }
 
-    if (localVersion !== npmVersion) {
-      return { packageName, localVersion, latestVersion: npmVersion }
-    }
+    console.log(
+      `❌ ${packageName}@${localVersion} is not published (npm latest: ${latestVersion || 'none'})`,
+    )
+    return { packageName, localVersion, latestVersion }
   } catch (error) {
     throw new Error(`Failed to check npm version for ${projectPath}`, { cause: error })
   }
-
-  return null
 }
 
 // Parse command-line arguments to get the project name if provided
@@ -79,8 +97,8 @@ const getArgs = () => {
   return specifiedProject
 }
 
-// Main function to find outdated packages
-const findOutdatedProjects = async () => {
+// Main function to find unpublished local package versions
+const findUnpublishedProjects = async () => {
   const specifiedProject = getArgs()
   let projects = await findNodeProjects(path.join(__dirname, '../ui'))
   console.log(`Found ${projects.length} projects under 'ui' directory.\n`)
@@ -100,29 +118,29 @@ const findOutdatedProjects = async () => {
     }
   }
 
-  const outdatedProjects = []
+  const unpublishedProjects = []
 
   for (const project of projects) {
-    const result = await checkVersionMismatch(project)
+    const result = await checkVersionPublished(project)
     if (result) {
-      outdatedProjects.push(result)
+      unpublishedProjects.push(result)
     }
   }
 
   console.log('\n==================================================\n')
 
-  if (outdatedProjects.length === 0) {
-    console.log('✅ All projects have the latest versions pushed to npm.')
+  if (unpublishedProjects.length === 0) {
+    console.log('✅ Every local package version is published to npm.')
   } else {
-    console.log('Projects with outdated versions:\n')
-    outdatedProjects.forEach(({ packageName, localVersion, latestVersion }) => {
-      console.log(`❌ ${packageName}: Local version ${localVersion}, NPM version ${latestVersion}`)
+    console.log('Local package versions not published to npm:\n')
+    unpublishedProjects.forEach(({ packageName, localVersion, latestVersion }) => {
+      console.log(`❌ ${packageName}: local ${localVersion}, npm latest ${latestVersion || 'none'}`)
     })
     process.exit(1)
   }
 }
 
-findOutdatedProjects().catch((error) => {
+findUnpublishedProjects().catch((error) => {
   console.error(error)
   process.exitCode = 1
 })

@@ -24,6 +24,7 @@ Artalk 离不开社区的支持与帮助，**是你们让 Artalk 走得更远！
 - [Artalk安装和搭配Message-Pusher实现企业微信评论通知](https://1900.live/artalk-message-pusher-wework-comment-notification/) (by 1900'Blog)
 - [分享一个魔改的 Artalk 评论系统邮件模版](https://blog.wenjing.xin/archives/79edfaac-103c-47e1-9248-34dda06a17e5) (by wenjing)
 - [Artalk评论嵌入Memos，完美接近朋友圈、微博！暨宝塔面板Docker部署artalk评论系统](https://laozhang.org/archives/3389.html) (by 老张博客)
+- [Vitepress添加Artalk备忘录](https://mwtjc.online:14001/to/d5ad344f00) (by mwtjc)
 
 ## Artalk v1
 

@@ -70,6 +70,14 @@ jobs:
         if: ${{ matrix.quality }}
         run: pnpm build:plugins
 
+      - name: Plugins Type Test
+        if: ${{ matrix.quality }}
+        run: pnpm test:plugins
+
+      - name: Plugins Package Test
+        if: ${{ matrix.quality }}
+        run: pnpm test:plugins:attw
+
       - name: Lint
         if: ${{ matrix.quality }}
         run: pnpm eslint ui && pnpm prettier --check ui

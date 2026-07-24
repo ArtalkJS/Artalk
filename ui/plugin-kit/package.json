@@ -2,6 +2,16 @@
   "name": "@artalk/plugin-kit",
   "version": "1.0.9",
   "description": "The plugin kit for Artalk",
+  "homepage": "https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-kit",
+  "bugs": "https://github.com/ArtalkJS/Artalk/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArtalkJS/Artalk.git",
+    "directory": "ui/plugin-kit"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "dist/main.cjs",
   "types": "dist/main.d.cts",
@@ -16,15 +26,32 @@
         "default": "./dist/main.mjs"
       }
     },
-    "./client": "./client.d.ts"
+    "./client": {
+      "import": {
+        "types": "./client.d.ts"
+      },
+      "require": {
+        "types": "./client.d.cts"
+      }
+    }
   },
   "scripts": {
     "dev": "tsdown --watch",
-    "build": "tsdown"
+    "build": "tsdown",
+    "test:attw": "pnpx @arethetypeswrong/cli@0.18.5 --pack ."
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "files": [
+    "dist/**/*.cjs",
+    "dist/**/*.mjs",
+    "dist/**/*.map",
+    "dist/**/*.d.cts",
+    "dist/**/*.d.mts",
+    "client.d.ts",
+    "client.d.cts"
+  ],
   "dependencies": {
     "@microsoft/api-extractor": "^7.58.12",
     "picocolors": "^1.1.1"
@@ -35,7 +62,7 @@
     "vite": "^8.1.5"
   },
   "peerDependencies": {
-    "artalk": "workspace:^",
+    "artalk": "^2.10.0",
     "typescript": "*",
     "vite": "*"
   }

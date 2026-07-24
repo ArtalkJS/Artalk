@@ -1,5 +1,4 @@
 interface Window {
-  lightGallery: (el: any, options: any) => any | undefined
   Fancybox?: any
   lightbox?: any
   PhotoSwipeLightbox?: any

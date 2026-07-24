@@ -4,6 +4,12 @@
   "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/ArtalkJS/Artalk/tree/master/ui/eslint-plugin-artalk",
+  "bugs": "https://github.com/ArtalkJS/Artalk/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArtalkJS/Artalk.git",
+    "directory": "ui/eslint-plugin-artalk"
+  },
   "files": [
     "dist"
   ],
@@ -24,7 +30,8 @@
   "scripts": {
     "dev": "tsdown --watch",
     "build": "tsdown",
-    "test": "vitest"
+    "test": "vitest",
+    "test:attw": "pnpx @arethetypeswrong/cli@0.18.5 --pack ."
   },
   "dependencies": {
     "@typescript-eslint/utils": "^8.65.0"

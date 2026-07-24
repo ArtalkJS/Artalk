@@ -40,6 +40,8 @@ export default defineConfig(
       '**/*.config.js',
       '**/*.config.ts',
       '**/*.d.ts',
+      '**/*.d.cts',
+      '**/*.d.mts',
     ],
   },
 

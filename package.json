@@ -19,6 +19,8 @@
     "build:auth": "pnpm -F @artalk/plugin-auth build",
     "build:plugin-kit": "pnpm -F @artalk/plugin-kit build",
     "build:eslint-plugin": "pnpm -F eslint-plugin-artalk build",
+    "test:plugins": "pnpm -F @artalk/plugin-* exec tsc --noEmit && pnpm -F eslint-plugin-artalk exec tsc --noEmit && pnpm -F eslint-plugin-artalk test --run",
+    "test:plugins:attw": "pnpm -F @artalk/plugin-* -F eslint-plugin-artalk test:attw",
     "build:typedoc": "pnpm typedoc",
     "build:docs": "pnpm build && pnpm build:plugins && pnpm -F=docs-landing build && pnpm -F=docs-swagger swagger:build && pnpm -F=docs build:docs && pnpm after:build-docs",
     "after:build-docs": "cp -rf docs/landing/dist/* docs/swagger/dist/* docs/docs/.vitepress/dist && pnpm build:typedoc && pnpm fetch:registry",

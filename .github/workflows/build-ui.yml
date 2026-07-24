@@ -12,9 +12,6 @@ on:
       dry_run:
         required: true
         type: boolean
-    secrets:
-      NPM_TOKEN:
-        required: false
 
 permissions:
   contents: read
@@ -39,8 +36,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 22.x
-          registry-url: https://registry.npmjs.org/
+          node-version: 24.x
           package-manager-cache: false
 
       - name: Install dependencies
@@ -49,15 +45,32 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Pack npm package
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          package_version="v$(node --print "require('./ui/artalk/package.json').version")"
+          if [[ "$package_version" != "$VERSION" ]]; then
+            echo "Package version $package_version does not match release version $VERSION."
+            exit 1
+          fi
+
+          pnpm --filter artalk pack --pack-destination "$RUNNER_TEMP"
+          package_file="$RUNNER_TEMP/artalk-${package_version#v}.tgz"
+          if [[ ! -f "$package_file" ]]; then
+            echo "Expected package tarball was not created: $package_file"
+            exit 1
+          fi
+          echo "PACKAGE_FILE=$package_file" >> "$GITHUB_ENV"
+
       - name: Validate package
         if: ${{ inputs.dry_run }}
-        run: pnpm publish -F artalk --no-git-checks --dry-run
+        run: npm publish "$PACKAGE_FILE" --dry-run --access public
 
       - name: Publish
         if: ${{ !inputs.dry_run }}
-        run: pnpm publish -F artalk --no-git-checks --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # npm validates build.yml, the calling workflow, for trusted publishing.
+        run: npm publish "$PACKAGE_FILE" --access public
 
       # GitHub Packages
       #

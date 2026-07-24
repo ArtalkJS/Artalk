@@ -1,5 +1,5 @@
 name: Build and Publish
-run-name: Build and Publish (${{ github.head_ref || github.ref }}) ${{ inputs.dry_run && '(🧪 Dry-Run)' || '' }}
+run-name: Build and Publish (${{ inputs.version || github.head_ref || github.ref }}) ${{ inputs.dry_run && '(🧪 Dry-Run)' || '' }}
 
 on:
   pull_request:
@@ -14,6 +14,10 @@ on:
         default: true
       version:
         description: "Release version (for example, v2.10.0)"
+        type: string
+        required: true
+      release_commit:
+        description: "Full release commit SHA (required when a production retry has no tag)"
         type: string
         required: false
       build_items:
@@ -57,6 +61,7 @@ jobs:
       issue_number: ${{ github.event.pull_request.number || 0 }}
       dry_run: ${{ inputs.dry_run || false }}
       version: ${{ inputs.version || '' }}
+      release_commit: ${{ github.event.pull_request.merge_commit_sha || inputs.release_commit || '' }}
 
   # Build the UI
   ui:

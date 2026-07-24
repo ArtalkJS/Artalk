@@ -45,11 +45,37 @@ jobs:
       - name: Handle Version Number
         env:
           CUSTOM_VERSION: ${{ inputs.custom_version }}
+          GH_TOKEN: ${{ github.token }}
           SEMVER_INCREMENT: ${{ inputs.semver }}
         run: |
           PREV_VERSION="$(git describe --tags --abbrev=0 --match 'v*')"
           if [[ ! "$PREV_VERSION" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
             echo "Invalid previous version: $PREV_VERSION"
+            exit 1
+          fi
+
+          if ! git merge-base --is-ancestor "$PREV_VERSION" HEAD; then
+            echo "Latest release tag $PREV_VERSION is not an ancestor of master."
+            exit 1
+          fi
+
+          CURRENT_APP_VERSION="$(
+            sed -n 's/^var Version = "\(v[0-9][0-9.]*\)"$/\1/p' internal/config/version.go
+          )"
+          CURRENT_UI_VERSION="$(jq -r '.version' ui/artalk/package.json)"
+          CURRENT_DOCS_VERSION="$(jq -r '.latest' docs/docs/code/ArtalkVersion.json)"
+          CURRENT_PACKAGE_VERSION="${CURRENT_APP_VERSION#v}"
+
+          if [[ -z "$CURRENT_APP_VERSION" ||
+                "$CURRENT_UI_VERSION" != "$CURRENT_PACKAGE_VERSION" ||
+                "$CURRENT_DOCS_VERSION" != "$CURRENT_PACKAGE_VERSION" ]]; then
+            echo "Release versions are inconsistent: app=$CURRENT_APP_VERSION ui=$CURRENT_UI_VERSION docs=$CURRENT_DOCS_VERSION."
+            exit 1
+          fi
+
+          if [[ "$CURRENT_APP_VERSION" != "$PREV_VERSION" ]]; then
+            echo "Source version $CURRENT_APP_VERSION does not match the latest release tag $PREV_VERSION."
+            echo "If the release PR was already merged, recover it with Build and Publish instead of preparing the release again."
             exit 1
           fi
 
@@ -69,6 +95,52 @@ jobs:
 
           if [[ ! "$NEXT_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Invalid version: $NEXT_VERSION"
+            exit 1
+          fi
+
+          version_is_greater() {
+            local next_version="${1#v}"
+            local previous_version="${2#v}"
+            local -a next_parts previous_parts
+            local index next_part previous_part
+
+            IFS='.' read -r -a next_parts <<< "$next_version"
+            IFS='.' read -r -a previous_parts <<< "$previous_version"
+            for index in 0 1 2; do
+              next_part=$((10#${next_parts[$index]}))
+              previous_part=$((10#${previous_parts[$index]}))
+              if (( next_part > previous_part )); then
+                return 0
+              fi
+              if (( next_part < previous_part )); then
+                return 1
+              fi
+            done
+            return 1
+          }
+
+          if ! version_is_greater "$NEXT_VERSION" "$PREV_VERSION"; then
+            echo "Release version $NEXT_VERSION must be greater than $PREV_VERSION."
+            exit 1
+          fi
+
+          if git show-ref --verify --quiet "refs/tags/$NEXT_VERSION"; then
+            echo "Release tag $NEXT_VERSION already exists."
+            exit 1
+          fi
+
+          release_branch="release/$NEXT_VERSION"
+          existing_pr="$(
+            gh pr list \
+              --repo "$GITHUB_REPOSITORY" \
+              --head "$release_branch" \
+              --base master \
+              --state open \
+              --json number,url \
+              --jq 'if length == 0 then "" else "#\(.[0].number) \(.[0].url)" end'
+          )"
+          if [[ -n "$existing_pr" ]]; then
+            echo "Release pull request $existing_pr already exists for $NEXT_VERSION."
             exit 1
           fi
 
@@ -109,6 +181,53 @@ jobs:
           # modify the version in docs
           PACKAGE_VERSION="$PACKAGE_VERSION" perl -pi -e \
             's#"latest"(\W+)?:(\W+)?".*?"#"latest": "$ENV{PACKAGE_VERSION}"#g' docs/docs/code/ArtalkVersion.json
+
+      - name: Validate Release Changes
+        run: |
+          PACKAGE_VERSION="${VERSION#v}"
+          APP_VERSION="$(
+            sed -n 's/^var Version = "\(v[0-9][0-9.]*\)"$/\1/p' internal/config/version.go
+          )"
+          UI_VERSION="$(jq -r '.version' ui/artalk/package.json)"
+          DOCS_VERSION="$(jq -r '.latest' docs/docs/code/ArtalkVersion.json)"
+
+          if [[ "$APP_VERSION" != "$VERSION" ||
+                "$UI_VERSION" != "$PACKAGE_VERSION" ||
+                "$DOCS_VERSION" != "$PACKAGE_VERSION" ]]; then
+            echo "Generated release versions are inconsistent: app=$APP_VERSION ui=$UI_VERSION docs=$DOCS_VERSION."
+            exit 1
+          fi
+
+          changelog_entries="$(grep -cF "## [$VERSION]" CHANGELOG.md || true)"
+          if [[ "$changelog_entries" != "1" ]]; then
+            echo "Expected one CHANGELOG entry for $VERSION, found $changelog_entries."
+            exit 1
+          fi
+
+          first_changelog_version="$(
+            sed -n 's/^## \[\(v[0-9][^]]*\)\].*/\1/p' CHANGELOG.md | head -n 1
+          )"
+          if [[ "$first_changelog_version" != "$VERSION" ]]; then
+            echo "The first CHANGELOG release is $first_changelog_version, expected $VERSION."
+            exit 1
+          fi
+
+          expected_changes="$(
+            printf '%s\n' \
+              CHANGELOG.md \
+              docs/docs/code/ArtalkVersion.json \
+              internal/config/version.go \
+              ui/artalk/package.json |
+              sort
+          )"
+          actual_changes="$(git diff --name-only | sort)"
+          if [[ "$actual_changes" != "$expected_changes" ]]; then
+            echo "Unexpected release file set:"
+            git diff --name-only
+            exit 1
+          fi
+
+          git diff --check
 
       - name: Print Git Diff
         run: git diff

@@ -13,6 +13,11 @@ on:
         required: false
         type: string
         default: ""
+      release_commit:
+        description: "Immutable commit to tag when the release tag does not exist"
+        required: false
+        type: string
+        default: ""
     outputs:
       version:
         description: "Version"
@@ -20,6 +25,9 @@ on:
       ref:
         description: "Git ref to build"
         value: ${{ jobs.tagging.outputs.ref }}
+      commit:
+        description: "Release source commit"
+        value: ${{ jobs.tagging.outputs.commit }}
 
 permissions:
   contents: write
@@ -52,28 +60,31 @@ jobs:
           echo "Version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Checkout Code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Create Tag
-        if: ${{ !inputs.dry_run }}
+      - name: Resolve release target
+        id: target
         env:
+          DEFAULT_COMMIT: ${{ github.sha }}
+          DRY_RUN: ${{ inputs.dry_run }}
           GH_TOKEN: ${{ github.token }}
+          REQUESTED_COMMIT: ${{ inputs.release_commit }}
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           resolve_tag_commit() {
             local object_type="$1"
             local object_sha="$2"
+            local depth=0
 
-            if [[ "$object_type" == "tag" ]]; then
+            while [[ "$object_type" == "tag" ]]; do
+              depth=$((depth + 1))
+              if (( depth > 8 )); then
+                echo "Tag $VERSION has too many nested tag objects." >&2
+                return 1
+              fi
               IFS=$'\t' read -r object_type object_sha < <(
                 gh api "repos/$GITHUB_REPOSITORY/git/tags/$object_sha" \
                   --jq '.object | [.type, .sha] | @tsv'
               )
-            fi
+            done
 
             if [[ "$object_type" != "commit" ]]; then
               echo "Tag $VERSION resolves to unsupported object type $object_type." >&2
@@ -83,31 +94,163 @@ jobs:
             printf '%s\n' "$object_sha"
           }
 
-          release_sha="$(git rev-parse HEAD)"
+          requested_commit="$(tr '[:upper:]' '[:lower:]' <<< "$REQUESTED_COMMIT")"
+          if [[ -n "$requested_commit" && ! "$requested_commit" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "release_commit must be a full 40-character commit SHA."
+            exit 1
+          fi
+
           tag_ref="$(
             gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/$VERSION" \
               --jq ".[] | select(.ref == \"refs/tags/$VERSION\") | [.object.type, .object.sha] | @tsv"
           )"
 
-          if [[ -z "$tag_ref" ]]; then
-            gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
-              -f ref="refs/tags/$VERSION" \
-              -f sha="$release_sha" > /dev/null
-            tag_ref="$(
-              gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VERSION" \
-                --jq '.object | [.type, .sha] | @tsv'
-            )"
-            echo "Created tag $VERSION at $release_sha."
-          fi
-
-          IFS=$'\t' read -r tag_type tag_sha <<< "$tag_ref"
-          tag_commit="$(resolve_tag_commit "$tag_type" "$tag_sha")"
-          if [[ "$tag_commit" != "$release_sha" ]]; then
-            echo "Tag $VERSION points to $tag_commit, expected $release_sha."
+          tag_exists=false
+          if [[ -n "$tag_ref" ]]; then
+            IFS=$'\t' read -r tag_type tag_sha <<< "$tag_ref"
+            release_commit="$(resolve_tag_commit "$tag_type" "$tag_sha")"
+            tag_exists=true
+            if [[ -n "$requested_commit" && "$release_commit" != "$requested_commit" ]]; then
+              echo "Tag $VERSION points to $release_commit, not requested commit $requested_commit."
+              exit 1
+            fi
+          elif [[ -n "$requested_commit" ]]; then
+            release_commit="$requested_commit"
+          elif [[ "$DRY_RUN" == "true" ]]; then
+            release_commit="$DEFAULT_COMMIT"
+          else
+            echo "Tag $VERSION does not exist and release_commit was not provided."
+            echo "Use the reviewed release pull request merge commit for a production retry."
             exit 1
           fi
 
-          echo "Verified tag $VERSION at $release_sha."
+          verified_commit="$(
+            gh api "repos/$GITHUB_REPOSITORY/git/commits/$release_commit" --jq '.sha'
+          )"
+          if [[ "$verified_commit" != "$release_commit" ]]; then
+            echo "Unable to verify release commit $release_commit."
+            exit 1
+          fi
+
+          echo "commit=$release_commit" >> "$GITHUB_OUTPUT"
+          echo "tag_exists=$tag_exists" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout Code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.target.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate release source
+        env:
+          RELEASE_COMMIT: ${{ steps.target.outputs.commit }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          checkout_commit="$(git rev-parse HEAD)"
+          if [[ "$checkout_commit" != "$RELEASE_COMMIT" ]]; then
+            echo "Checked out $checkout_commit, expected $RELEASE_COMMIT."
+            exit 1
+          fi
+
+          git fetch --no-tags origin \
+            "+refs/heads/master:refs/remotes/origin/master"
+          if ! git merge-base --is-ancestor "$RELEASE_COMMIT" origin/master; then
+            echo "Release commit $RELEASE_COMMIT is not reachable from master."
+            exit 1
+          fi
+
+          package_version="${VERSION#v}"
+          app_version="$(
+            sed -n 's/^var Version = "\(v[0-9][0-9.]*\)"$/\1/p' internal/config/version.go
+          )"
+          ui_version="$(jq -r '.version' ui/artalk/package.json)"
+          docs_version="$(jq -r '.latest' docs/docs/code/ArtalkVersion.json)"
+          if [[ "$app_version" != "$VERSION" ||
+                "$ui_version" != "$package_version" ||
+                "$docs_version" != "$package_version" ]]; then
+            echo "Release commit versions do not match $VERSION: app=$app_version ui=$ui_version docs=$docs_version."
+            exit 1
+          fi
+
+      - name: Create Tag
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_COMMIT: ${{ steps.target.outputs.commit }}
+          TAG_EXISTS: ${{ steps.target.outputs.tag_exists }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          resolve_tag_commit() {
+            local object_type="$1"
+            local object_sha="$2"
+            local depth=0
+
+            while [[ "$object_type" == "tag" ]]; do
+              depth=$((depth + 1))
+              if (( depth > 8 )); then
+                echo "Tag $VERSION has too many nested tag objects." >&2
+                return 1
+              fi
+              IFS=$'\t' read -r object_type object_sha < <(
+                gh api "repos/$GITHUB_REPOSITORY/git/tags/$object_sha" \
+                  --jq '.object | [.type, .sha] | @tsv'
+              )
+            done
+
+            if [[ "$object_type" != "commit" ]]; then
+              echo "Tag $VERSION resolves to unsupported object type $object_type." >&2
+              return 1
+            fi
+
+            printf '%s\n' "$object_sha"
+          }
+
+          get_tag_ref() {
+            gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/$VERSION" \
+              --jq ".[] | select(.ref == \"refs/tags/$VERSION\") | [.object.type, .object.sha] | @tsv"
+          }
+
+          if [[ "$TAG_EXISTS" != "true" ]]; then
+            tag_object_sha="$(
+              gh api --method POST "repos/$GITHUB_REPOSITORY/git/tags" \
+                -f tag="$VERSION" \
+                -f message="Release $VERSION" \
+                -f object="$RELEASE_COMMIT" \
+                -f type=commit \
+                --jq '.sha'
+            )"
+
+            if ! create_error="$(
+              gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
+                -f ref="refs/tags/$VERSION" \
+                -f sha="$tag_object_sha" 2>&1
+            )"; then
+              tag_ref="$(get_tag_ref)"
+              if [[ -z "$tag_ref" ]]; then
+                printf '%s\n' "$create_error" >&2
+                echo "GitHub rejected tag $VERSION. Check the active tag rulesets; tag targets must not require linear history." >&2
+                exit 1
+              fi
+              echo "Tag $VERSION was created concurrently; verifying it."
+            else
+              echo "Created annotated tag $VERSION at $RELEASE_COMMIT."
+            fi
+          fi
+
+          tag_ref="$(get_tag_ref)"
+          if [[ -z "$tag_ref" ]]; then
+            echo "Tag $VERSION is missing after creation."
+            exit 1
+          fi
+          IFS=$'\t' read -r tag_type tag_sha <<< "$tag_ref"
+          tag_commit="$(resolve_tag_commit "$tag_type" "$tag_sha")"
+          if [[ "$tag_commit" != "$RELEASE_COMMIT" ]]; then
+            echo "Tag $VERSION points to $tag_commit, expected $RELEASE_COMMIT."
+            exit 1
+          fi
+
+          echo "Verified tag $VERSION at $RELEASE_COMMIT."
 
       - name: Comment tag info to PR
         uses: ./.github/actions/comment
@@ -118,4 +261,5 @@ jobs:
             🔖 Tagged version [${{ steps.version.outputs.version }}](https://github.com/ArtalkJS/Artalk/tree/${{ steps.version.outputs.version }}) and updated the [CHANGELOG.md](https://github.com/ArtalkJS/Artalk/blob/master/CHANGELOG.md).
     outputs:
       version: ${{ steps.version.outputs.version }}
-      ref: ${{ inputs.dry_run && github.sha || steps.version.outputs.version }}
+      ref: ${{ inputs.dry_run && steps.target.outputs.commit || steps.version.outputs.version }}
+      commit: ${{ steps.target.outputs.commit }}

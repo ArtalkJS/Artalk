@@ -10,7 +10,7 @@ app_key: ""
 # Hata ayıklama modu
 debug: false
 
-# Dil (Unicode BCP 47 formatında) ["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr"]
+# Dil (Unicode BCP 47 formatında) ["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr", "pt-PT"]
 # -- bkz. https://www.techonthenet.com/js/language_tags.php --
 locale: tr
 

@@ -147,7 +147,6 @@ jobs:
           file: ./Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          tags: ${{ steps.meta.outputs.tags }}
           build-args: |
             APP_VERSION=${{ inputs.version }}
             APP_COMMIT_HASH=${{ inputs.commit }}

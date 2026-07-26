@@ -215,13 +215,13 @@ export default class CommentNode {
   }
 
   /** Get the parsed comment creation time. */
-  public getDate() {
+  public getCreatedAt() {
     return Utils.parseDate(this.data)
   }
 
   /** 获取格式化后的日期 */
   public getDateFormatted() {
-    const date = this.getDate()
+    const date = this.getCreatedAt()
     return this.opts.dateFormatter?.(date) || Utils.timeAgo(date, $t)
   }
 

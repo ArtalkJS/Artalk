@@ -1,4 +1,5 @@
 import type { CommentData } from '@/types'
+import { parseDate } from '@/lib/utils'
 
 export type CommentNode = {
   id: number
@@ -51,8 +52,8 @@ export function makeNestCommentNodeList(
   // 排序
   const sortFunc = (a: CommentNode, b: CommentNode): number => {
     let v = a.id - b.id
-    if (sortBy === 'DATE_ASC') v = +new Date(a.comment.date) - +new Date(b.comment.date)
-    else if (sortBy === 'DATE_DESC') v = +new Date(b.comment.date) - +new Date(a.comment.date)
+    if (sortBy === 'DATE_ASC') v = +parseDate(a.comment) - +parseDate(b.comment)
+    else if (sortBy === 'DATE_DESC') v = +parseDate(b.comment) - +parseDate(a.comment)
     else if (sortBy === 'SRC_INDEX') v = srcData.indexOf(a.comment) - srcData.indexOf(b.comment)
     else if (sortBy === 'VOTE_UP_DESC') v = b.comment.vote_up - a.comment.vote_up
     return v

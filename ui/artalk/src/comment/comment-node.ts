@@ -51,7 +51,7 @@ export default class CommentNode {
   constructor(data: CommentData, opts: CommentOptions) {
     this.opts = opts
     this.data = { ...data }
-    this.data.date = this.data.date.replace(/-/g, '/') // 解决 Safari 日期解析 NaN 问题
+    this.data.date = this.data.date.replace(/-/g, '/')
 
     this.parent = null
     this.nestCurt = 1 // 现在已嵌套 n 层
@@ -214,9 +214,14 @@ export default class CommentNode {
     return marked(this.data.content)
   }
 
+  /** Get the parsed comment creation time. */
+  public getDate() {
+    return Utils.parseDate(this.data)
+  }
+
   /** 获取格式化后的日期 */
   public getDateFormatted() {
-    const date = new Date(this.data.date)
+    const date = this.getDate()
     return this.opts.dateFormatter?.(date) || Utils.timeAgo(date, $t)
   }
 

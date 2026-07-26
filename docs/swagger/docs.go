@@ -3984,6 +3984,8 @@ const docTemplate = `{
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
+                "date_utc",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -4017,6 +4019,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "email_encrypted": {
@@ -4114,6 +4122,8 @@ const docTemplate = `{
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
+                "date_utc",
                 "id",
                 "key",
                 "pv",
@@ -4128,6 +4138,12 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "id": {
@@ -4897,6 +4913,8 @@ const docTemplate = `{
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
+                "date_utc",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -4930,6 +4948,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "email_encrypted": {
@@ -5049,6 +5073,8 @@ const docTemplate = `{
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
+                "date_utc",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -5082,6 +5108,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "email_encrypted": {
@@ -5201,6 +5233,8 @@ const docTemplate = `{
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
+                "date_utc",
                 "id",
                 "key",
                 "pv",
@@ -5215,6 +5249,12 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "id": {
@@ -5304,6 +5344,8 @@ const docTemplate = `{
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
+                "date_utc",
                 "id",
                 "key",
                 "pv",
@@ -5318,6 +5360,12 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "id": {

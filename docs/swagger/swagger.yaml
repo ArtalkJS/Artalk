@@ -61,6 +61,10 @@ definitions:
         type: string
       date:
         type: string
+      date_unix:
+        type: integer
+      date_utc:
+        type: string
       email_encrypted:
         type: string
       id:
@@ -105,6 +109,8 @@ definitions:
     - content
     - content_marked
     - date
+    - date_unix
+    - date_utc
     - email_encrypted
     - id
     - is_allow_reply
@@ -152,6 +158,10 @@ definitions:
         type: boolean
       date:
         type: string
+      date_unix:
+        type: integer
+      date_utc:
+        type: string
       id:
         type: integer
       key:
@@ -171,6 +181,8 @@ definitions:
     required:
     - admin_only
     - date
+    - date_unix
+    - date_utc
     - id
     - key
     - pv
@@ -713,6 +725,10 @@ definitions:
         type: string
       date:
         type: string
+      date_unix:
+        type: integer
+      date_utc:
+        type: string
       email_encrypted:
         type: string
       id:
@@ -757,6 +773,8 @@ definitions:
     - content
     - content_marked
     - date
+    - date_unix
+    - date_utc
     - email_encrypted
     - id
     - is_allow_reply
@@ -819,6 +837,10 @@ definitions:
         type: string
       date:
         type: string
+      date_unix:
+        type: integer
+      date_utc:
+        type: string
       email_encrypted:
         type: string
       id:
@@ -863,6 +885,8 @@ definitions:
     - content
     - content_marked
     - date
+    - date_unix
+    - date_utc
     - email_encrypted
     - id
     - is_allow_reply
@@ -924,6 +948,10 @@ definitions:
         type: boolean
       date:
         type: string
+      date_unix:
+        type: integer
+      date_utc:
+        type: string
       id:
         type: integer
       key:
@@ -943,6 +971,8 @@ definitions:
     required:
     - admin_only
     - date
+    - date_unix
+    - date_utc
     - id
     - key
     - pv
@@ -997,6 +1027,10 @@ definitions:
         type: boolean
       date:
         type: string
+      date_unix:
+        type: integer
+      date_utc:
+        type: string
       id:
         type: integer
       key:
@@ -1016,6 +1050,8 @@ definitions:
     required:
     - admin_only
     - date
+    - date_unix
+    - date_utc
     - id
     - key
     - pv

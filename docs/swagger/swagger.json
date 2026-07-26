@@ -3977,6 +3977,8 @@
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
+                "date_utc",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -4010,6 +4012,12 @@
                     "type": "string"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "email_encrypted": {
@@ -4107,6 +4115,8 @@
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
+                "date_utc",
                 "id",
                 "key",
                 "pv",
@@ -4121,6 +4131,12 @@
                     "type": "boolean"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "id": {
@@ -4890,6 +4906,8 @@
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
+                "date_utc",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -4923,6 +4941,12 @@
                     "type": "string"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "email_encrypted": {
@@ -5042,6 +5066,8 @@
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
+                "date_utc",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -5075,6 +5101,12 @@
                     "type": "string"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "email_encrypted": {
@@ -5194,6 +5226,8 @@
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
+                "date_utc",
                 "id",
                 "key",
                 "pv",
@@ -5208,6 +5242,12 @@
                     "type": "boolean"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "id": {
@@ -5297,6 +5337,8 @@
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
+                "date_utc",
                 "id",
                 "key",
                 "pv",
@@ -5311,6 +5353,12 @@
                     "type": "boolean"
                 },
                 "date": {
+                    "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
+                },
+                "date_utc": {
                     "type": "string"
                 },
                 "id": {

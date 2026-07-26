@@ -117,6 +117,8 @@ Variables follow the "Mustache" syntax, outputting a variable with `double brace
 {{comment.content_raw}}
 {{comment.date}}
 {{comment.datetime}}
+{{comment.date_unix}}
+{{comment.date_utc}}
 {{comment.email}}
 {{comment.email_encrypted}}
 {{comment.id}}
@@ -155,6 +157,8 @@ Variables follow the "Mustache" syntax, outputting a variable with `double brace
 {{parent_comment.content_raw}}
 {{parent_comment.date}}
 {{parent_comment.datetime}}
+{{parent_comment.date_unix}}
+{{parent_comment.date_utc}}
 {{parent_comment.email}}
 {{parent_comment.email_encrypted}}
 {{parent_comment.id}}
@@ -210,6 +214,8 @@ Variables follow the "Mustache" syntax, outputting a variable with `double brace
   "comment.content_raw": "Replier's content",
   "comment.date": "2021-11-22",
   "comment.datetime": "2021-11-22 22:22:42",
+  "comment.date_unix": 1637590962,
+  "comment.date_utc": "2021-11-22T14:22:42Z",
   "comment.email": "replyer@example.com",
   "comment.email_encrypted": "249898bd50e0febc5799485cf10b345a",
   "comment.id": 8100,
@@ -247,6 +253,8 @@ Variables follow the "Mustache" syntax, outputting a variable with `double brace
   "parent_comment.content_raw": "Test content",
   "parent_comment.date": "2021-11-22",
   "parent_comment.datetime": "2021-11-22 22:21:17",
+  "parent_comment.date_unix": 1637590877,
+  "parent_comment.date_utc": "2021-11-22T14:21:17Z",
   "parent_comment.email": "test@example.com",
   "parent_comment.email_encrypted": "55502f40dc8b7c769880b10874abc9d0",
   "parent_comment.id": 8099,

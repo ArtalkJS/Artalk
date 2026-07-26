@@ -64,10 +64,6 @@ export interface TimestampedDateInput {
   date_utc?: string
 }
 
-function isValidDate(date: Date) {
-  return !Number.isNaN(date.getTime())
-}
-
 /**
  * Parses timestamp fields returned by Artalk APIs.
  *
@@ -77,12 +73,12 @@ function isValidDate(date: Date) {
 export function parseDate(input: TimestampedDateInput) {
   if (typeof input.date_unix === 'number' && Number.isFinite(input.date_unix)) {
     const unixDate = new Date(input.date_unix * 1000)
-    if (isValidDate(unixDate)) return unixDate
+    if (!Number.isNaN(unixDate.getTime())) return unixDate
   }
 
   if (input.date_utc) {
     const utcDate = new Date(input.date_utc)
-    if (isValidDate(utcDate)) return utcDate
+    if (!Number.isNaN(utcDate.getTime())) return utcDate
   }
 
   return new Date((input.date || '').replace(/-/g, '/'))

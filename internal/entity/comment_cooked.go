@@ -10,6 +10,8 @@ type CookedComment struct {
 	Link           string `json:"link"`
 	UA             string `json:"ua"`
 	Date           string `json:"date"`
+	DateUnix       int64  `json:"date_unix"`
+	DateUTC        string `json:"date_utc"`
 	IsCollapsed    bool   `json:"is_collapsed"`
 	IsPending      bool   `json:"is_pending"`
 	IsPinned       bool   `json:"is_pinned"`

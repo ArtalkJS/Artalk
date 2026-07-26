@@ -11,4 +11,6 @@ type CookedPage struct {
 	VoteDown  int    `json:"vote_down"`
 	PV        int    `json:"pv"`
 	Date      string `json:"date"`
+	DateUnix  int64  `json:"date_unix"`
+	DateUTC   string `json:"date_utc"`
 }

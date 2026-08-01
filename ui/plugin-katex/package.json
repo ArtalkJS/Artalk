@@ -30,7 +30,7 @@
   "devDependencies": {
     "@artalk/plugin-kit": "workspace:^",
     "artalk": "workspace:^",
-    "katex": "^0.17.0",
+    "katex": "^0.18.1",
     "marked": "^18.0.7"
   },
   "peerDependencies": {

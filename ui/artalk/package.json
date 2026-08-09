@@ -146,7 +146,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "dompurify": "^3.4.12",
+    "dompurify": "^3.4.13",
     "hanabi": "^0.4.0"
   },
   "dependencies": {

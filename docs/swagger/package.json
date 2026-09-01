@@ -15,7 +15,7 @@
     "swagger:build-http-client": "swagger-typescript-api generate -n v2 -p ./swagger.json -o ../../ui/artalk/src/api --responses --sort-types && pnpm --dir ../.. exec prettier --write --ignore-path /dev/null --no-semi ui/artalk/src/api/v2.ts"
   },
   "devDependencies": {
-    "@redocly/cli": "2.40.0",
+    "@redocly/cli": "2.47.0",
     "swagger-typescript-api": "13.12.6"
   }
 }

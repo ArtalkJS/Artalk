@@ -37,9 +37,9 @@
     "@typescript-eslint/utils": "^8.65.0"
   },
   "devDependencies": {
-    "@typescript-eslint/rule-tester": "^8.65.0",
-    "eslint": "^10.7.0",
-    "tsdown": "^0.22.13"
+    "@typescript-eslint/rule-tester": "^8.68.0",
+    "eslint": "^10.9.1",
+    "tsdown": "^0.22.14"
   },
   "peerDependencies": {
     "eslint": ">=9"

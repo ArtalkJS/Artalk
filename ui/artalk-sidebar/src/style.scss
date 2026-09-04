@@ -9,6 +9,14 @@ body {
 .artalk,
 .atk-layer-wrap {
   font-family: $font-family;
+
+  &:lang(ja) {
+    font-family: $font-family-ja;
+  }
+
+  &:lang(ko) {
+    font-family: $font-family-ko;
+  }
 }
 
 .artalk {

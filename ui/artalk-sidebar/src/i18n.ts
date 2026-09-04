@@ -14,6 +14,8 @@ export function setupI18n() {
   const setLocale = async (value: string) => {
     await loadLocaleMessages(i18n, value)
     i18n.global.locale.value = value
+    // Let :lang() selectors (e.g. CJK font fallbacks) and screen readers know the language
+    document.documentElement.lang = value
   }
 
   return { i18n, setLocale }

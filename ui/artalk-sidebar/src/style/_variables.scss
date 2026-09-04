@@ -13,6 +13,44 @@ $font-family:
   sans-serif,
   'Segoe UI Emoji',
   'Segoe UI Symbol';
+// The default stack only lists Chinese fonts (PingFang SC, Microsoft YaHei), so on
+// systems without a matching UI font Japanese and Korean text falls back to Chinese
+// glyph shapes. These stacks are applied via :lang() when <html lang> is set.
+$font-family-ja:
+  ui-sans-serif,
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI Variable Display',
+  'Segoe UI',
+  Helvetica,
+  'Hiragino Sans',
+  'Hiragino Kaku Gothic ProN',
+  'Yu Gothic UI',
+  'Yu Gothic',
+  Meiryo,
+  'Noto Sans JP',
+  'Noto Sans CJK JP',
+  'Apple Color Emoji',
+  Arial,
+  sans-serif,
+  'Segoe UI Emoji',
+  'Segoe UI Symbol';
+$font-family-ko:
+  ui-sans-serif,
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI Variable Display',
+  'Segoe UI',
+  Helvetica,
+  'Apple SD Gothic Neo',
+  'Malgun Gothic',
+  'Noto Sans KR',
+  'Noto Sans CJK KR',
+  'Apple Color Emoji',
+  Arial,
+  sans-serif,
+  'Segoe UI Emoji',
+  'Segoe UI Symbol';
 $font-size: 14px;
 $line-height: 1.6em;
 $block-radius: 6px;

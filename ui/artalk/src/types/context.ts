@@ -112,6 +112,9 @@ export interface Context extends EventManager<EventPayloadMap>, DependencyContai
   /** Destroy */
   destroy(): void
 
+  /** Whether `destroy()` has been called */
+  isDestroyed(): boolean
+
   /** Goto the first comment of the list */
   listGotoFirst(): void
 

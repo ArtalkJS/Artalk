@@ -24,11 +24,22 @@ class Context implements IContext {
     return this._$root
   }
 
+  private _destroyed = false
+
   destroy(): void {
+    // The root element may already be reused by a new instance, so a repeated
+    // call must not clear it again.
+    if (this._destroyed) return
+    this._destroyed = true
+
     this.trigger('unmounted')
     while (this._$root.firstChild) {
       this._$root.removeChild(this._$root.firstChild)
     }
+  }
+
+  isDestroyed(): boolean {
+    return this._destroyed
   }
 
   // -------------------------------------------------------------------

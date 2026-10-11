@@ -15,7 +15,16 @@ export const GlobalPlugins: Set<ArtalkPlugin> = new Set([...DefaultPlugins])
  */
 export const PluginOptions: WeakMap<ArtalkPlugin, any> = new WeakMap()
 
+/**
+ * Load plugins and the remote config, then mount Artalk.
+ *
+ * Returns early without touching the root element when the instance is
+ * destroyed while the remote config or network plugins are still loading.
+ * The root may already be reused by a new instance at that point.
+ */
 export async function mount(localConf: ConfigPartial, ctx: Context) {
+  if (ctx.isDestroyed()) return
+
   const loaded = new Set<ArtalkPlugin>()
   const loadPlugins = (plugins: Set<ArtalkPlugin>) => {
     plugins.forEach((plugin) => {
@@ -32,13 +41,16 @@ export async function mount(localConf: ConfigPartial, ctx: Context) {
   loadPlugins(Services)
 
   // Get conf from server
-  const { data } = await ctx
+  const res = await ctx
     .getApi()
     .conf.conf()
     .catch((err) => {
+      if (ctx.isDestroyed()) return null
       MountError(ctx, { err, onRetry: () => mount(localConf, ctx) })
       throw err
     })
+  if (!res || ctx.isDestroyed()) return
+  const { data } = res
 
   // Merge remote and local config
   let conf: ConfigPartial = {
@@ -63,6 +75,8 @@ export async function mount(localConf: ConfigPartial, ctx: Context) {
       },
     )
   }
+
+  if (ctx.isDestroyed()) return
 
   // Initialize built-in/local plugins first, followed by network plugins.
   loadPlugins(GlobalPlugins)

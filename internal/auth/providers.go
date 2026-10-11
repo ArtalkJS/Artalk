@@ -28,11 +28,19 @@ import (
 	"github.com/samber/lo"
 )
 
+// CallbackOrigin is shared by provider registration and the popup handshake.
+func CallbackOrigin(conf *config.Config) string {
+	u, err := url.Parse(conf.Auth.Callback)
+	if err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Host == "" {
+		return ""
+	}
+	return u.Scheme + "://" + u.Host
+}
+
 func GetProviders(conf *config.Config) []goth.Provider {
 	providers := []goth.Provider{}
 
-	u, _ := url.Parse(conf.Auth.Callback)
-	origin := u.Scheme + "://" + u.Host
+	origin := CallbackOrigin(conf)
 
 	callbackURL := func(provider string) string {
 		log.Debug("[SocialLogin] Callback URL: ", fmt.Sprintf("%s/api/v2/auth/%s/callback", origin, provider))

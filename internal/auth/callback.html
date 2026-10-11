@@ -9,7 +9,7 @@
       // listen post message passed from parent window
       var callbackOrigin = ''
       window.addEventListener('message', function (e) {
-        if (e.data.type === 'ATK_LOGIN' && !callbackOrigin) {
+        if (e.source === window.opener && e.data && e.data.type === 'ATK_LOGIN' && !callbackOrigin) {
           callbackOrigin = e.origin
           checkAndCallback()
         }

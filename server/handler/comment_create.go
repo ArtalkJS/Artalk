@@ -131,6 +131,11 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			IsVerified:  isVerified,
 		}
 
+		// Bind only this newly created anonymous comment, never the whole user.
+		if !isVerified {
+			comment.GuestTokenHash = common.GuestTokenHash(c)
+		}
+
 		// Set the default pending status
 		// (if not admin and the `PendingDefault` is enabled)
 		if !isAdmin && app.Conf().Moderator.PendingDefault {

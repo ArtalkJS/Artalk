@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/artalkjs/artalk/v2/internal/dao"
@@ -40,6 +41,7 @@ func TestRunExportAndImportArtrans(t *testing.T) {
 		app, _ := test.NewTestApp()
 		defer app.Cleanup()
 
+		assert.NoError(t, app.Dao().DB().Model(&entity.Comment{}).Where("id = ?", 1001).Update("guest_token_hash", strings.Repeat("ab", 32)).Error)
 		idSnapshotBeforeImport = getRootIDSnapshot(app.Dao())
 
 		var err error
@@ -51,6 +53,8 @@ func TestRunExportAndImportArtrans(t *testing.T) {
 	})
 
 	assert.NotEmpty(t, artransJSON)
+	assert.NotContains(t, artransJSON, strings.Repeat("ab", 32))
+	assert.NotContains(t, artransJSON, "guest_token_hash")
 
 	t.Run("Import", func(t *testing.T) {
 		// init a new clean db without any records
@@ -62,6 +66,10 @@ func TestRunExportAndImportArtrans(t *testing.T) {
 			JsonData:  artransJSON,
 			Assumeyes: true,
 		})
+
+		var guestClaims int64
+		assert.NoError(t, ddb.Model(&entity.Comment{}).Where("guest_token_hash <> ?", "").Count(&guestClaims).Error)
+		assert.Zero(t, guestClaims, "content imports must not claim anonymous ownership")
 
 		// check equals
 		exported, err := RunExportArtrans(dao, &ExportParams{})

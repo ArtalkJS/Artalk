@@ -4,6 +4,7 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/core"
 	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
+	"time"
 )
 
 // Mark all notifies as read
@@ -14,32 +15,28 @@ type ParamsNotifyReadAll struct {
 
 // @Id           MarkAllNotifyRead
 // @Summary      Mark All Notifies as Read
-// @Description  Mark all notifies as read for user
+// @Description  Mark owned notifications as read using a login or anonymous comment credential
+// @Security     ApiKeyAuth
 // @Tags         Notify
 // @Param        options  body  ParamsNotifyReadAll  true  "The options"
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  Map{}
+// @Failure      401  {object}  Map{msg=string}
 // @Failure      400  {object}  Map{msg=string}
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /notifies/read  [post]
 func NotifyReadAll(app *core.App, router fiber.Router) {
 	router.Post("/notifies/read", func(c *fiber.Ctx) error {
-		var p ParamsNotifyReadAll
-		if isOK, resp := common.ParamsDecode(c, &p); !isOK {
-			return resp
+		user, _ := common.GetUserByReq(app, c)
+		if user.IsEmpty() && common.GuestTokenHash(c) == "" {
+			return common.RespError(c, 401, "Notification credential required")
 		}
-
-		user := app.Dao().FindUser(p.Name, p.Email)
-		if user.IsEmpty() {
-			return common.RespSuccess(c)
+		result := common.NotificationQuery(app, c).Where("is_read = ?", false).
+			Updates(map[string]any{"is_read": true, "read_at": time.Now()})
+		if result.Error != nil {
+			return common.RespError(c, 500, "Failed to update notifications")
 		}
-
-		err := app.Dao().UserNotifyMarkAllAsRead(user.ID)
-		if err != nil {
-			return common.RespError(c, 500, err.Error())
-		}
-
 		return common.RespSuccess(c)
 	})
 }

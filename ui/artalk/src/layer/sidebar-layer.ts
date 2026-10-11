@@ -167,7 +167,11 @@ export class SidebarLayer implements ISidebarLayer {
     query.darkMode = this.getDarkMode() ? '1' : '0'
 
     const urlParams = new URLSearchParams(query)
-    this.iframeLoad($iframe, `${baseURL}?${urlParams.toString()}`)
+    // Fragments are not sent to the server or in Referer headers. The sidebar
+    // consumes and removes this before starting its router, then persists it.
+    const guest = this.opts.getUser().getGuestToken?.(this.opts.getConf().get().server)
+    const fragment = guest ? `#guest_token=${guest}` : ''
+    this.iframeLoad($iframe, `${baseURL}?${urlParams.toString()}${fragment}`)
 
     return $iframe
   }

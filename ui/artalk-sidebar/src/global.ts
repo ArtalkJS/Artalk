@@ -20,11 +20,13 @@ export const bootParams = getBootParams()
 
 function getBootParams() {
   const p = new URLSearchParams(document.location.search)
+  const fragment = new URLSearchParams(document.location.hash.slice(1))
+  const guestToken = fragment.get('guest_token') || fragment.get('atk_guest') || ''
 
   // call history api to clear search params
   // on purpose to prevent the params (e.g. user token)
   // from being leaked like from the referrer header or the browser history
-  if (!!p.get('user') && window.history.replaceState) {
+  if ((!!p.get('user') || !!guestToken) && window.history.replaceState) {
     window.history.replaceState({}, '', window.location.pathname)
   }
 
@@ -49,6 +51,7 @@ function getBootParams() {
 
   return {
     user,
+    guestToken,
     pageKey: p.get('pageKey') || '',
     site: p.get('site') || '',
     view: p.get('view') || '',

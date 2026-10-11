@@ -12,6 +12,11 @@ type Comment struct {
 	PageKey  string `gorm:"index;size:255"`
 	SiteName string `gorm:"index;size:255"`
 
+	// SHA-256 of the decoded browser secret. Empty means no guest proof; never
+	// infer ownership for legacy/imported comments from their name or email.
+	// Internal persistence only: not part of the public comment/transfer format.
+	GuestTokenHash string `gorm:"index;size:64;not null;default:''" json:"-"`
+
 	UserID     uint `gorm:"index"`
 	IsVerified bool `gorm:"default:false"`
 	UA         string

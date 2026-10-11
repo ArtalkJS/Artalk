@@ -43,24 +43,32 @@ func UserInfo(app *core.App, router fiber.Router) {
 		isLogin := !user.IsEmpty()
 
 		// Anonymous
-		if errors.Is(err, common.ErrTokenNotProvided) {
+		if errors.Is(err, common.ErrTokenNotProvided) && p.Name != "" && p.Email != "" {
 			// If not login, find user by name and email
 			user = app.Dao().FindUser(p.Name, p.Email)
 		}
+
+		unreadNotifies := common.UnreadNotifications(app, c)
 
 		// If user not found
 		if user.IsEmpty() {
 			return common.RespData(c, ResponseUserInfo{
 				User:          nil,
 				IsLogin:       false,
-				Notifies:      []entity.CookedNotify{},
-				NotifiesCount: 0,
+				Notifies:      unreadNotifies,
+				NotifiesCount: len(unreadNotifies),
 			})
 		}
 
-		// unread notifies
-		unreadNotifies := app.Dao().CookAllNotifies(app.Dao().FindUnreadNotifies(user.ID))
-		cockedUser := app.Dao().CookUser(&user)
+		// Names and email addresses are not proof of identity. Keep only public
+		// profile fields for anonymous autocomplete and the admin login prompt.
+		cockedUser := entity.CookedUser{
+			ID: user.ID, Name: user.Name, Link: user.Link,
+			BadgeName: user.BadgeName, BadgeColor: user.BadgeColor, IsAdmin: user.IsAdmin,
+		}
+		if isLogin {
+			cockedUser = app.Dao().CookUser(&user)
+		}
 
 		return common.RespData(c, ResponseUserInfo{
 			User:          &cockedUser,

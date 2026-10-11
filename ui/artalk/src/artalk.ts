@@ -49,6 +49,9 @@ export default class Artalk {
     const mountArtalk = async () => {
       await mount(conf, ctx)
 
+      // Destroyed before mounting has finished
+      if (ctx.isDestroyed()) return
+
       // Trigger created after all plugins have been initialized
       ctx.trigger('created')
 

@@ -32,6 +32,8 @@ type Config struct {
 	Auth           AuthConf               `koanf:"auth" json:"auth"`                       // Social Login
 	Frontend       map[string]interface{} `koanf:"frontend" json:"frontend"`
 
+	AutoFetchTitle bool `koanf:"auto_fetch_title" json:"auto_fetch_title"` // 自动抓取页面标题（默认关闭）
+
 	// deprecated options
 	// (only for unmarshal, please not reference)
 	// ---------------------------

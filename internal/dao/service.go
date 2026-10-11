@@ -2,8 +2,6 @@ package dao
 
 import (
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
@@ -70,7 +68,7 @@ func (dao *Dao) GetPageAccessibleURL(p *entity.Page, s ...*entity.Site) string {
 	return p.AccessibleURL
 }
 
-func (dao *Dao) FetchPageFromURL(p *entity.Page) error {
+func (dao *Dao) FetchPageFromURL(p *entity.Page, trustedDomains ...string) error {
 	cookedPage := dao.CookPage(p)
 	url := cookedPage.URL
 
@@ -79,9 +77,12 @@ func (dao *Dao) FetchPageFromURL(p *entity.Page) error {
 	}
 
 	// 获取 URL 页面 title
-	title, err := GetTitleByURL(url)
+	title, err := GetTitleByURL(url, dao.TrustedOrigins(trustedDomains)...)
+	if err != nil {
+		return err
+	}
 
-	if err == nil && title != "" {
+	if title != "" {
 		p.Title = title
 	}
 
@@ -91,37 +92,6 @@ func (dao *Dao) FetchPageFromURL(p *entity.Page) error {
 	}
 
 	return nil
-}
-
-func GetTitleByURL(url string) (string, error) {
-	if !utils.ValidateURL(url) {
-		log.Error("Invalid URL: " + url)
-		return "", fmt.Errorf("invalid URL")
-	}
-
-	// Request the HTML page.
-	res, err := http.Get(url)
-	if err != nil {
-		log.Error(err)
-		return "", err
-	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		log.Error(fmt.Sprintf("status code error: %d '%s' '%s'", res.StatusCode, res.Status, url))
-		return "", fmt.Errorf("status code error")
-	}
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
-
-	data := pageExtractFromHTML(body)
-	if data.RedirectURL != "" {
-		return GetTitleByURL(data.RedirectURL)
-	}
-
-	return data.Title, nil
 }
 
 // the data extracted from a page html

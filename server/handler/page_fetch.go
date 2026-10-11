@@ -33,7 +33,7 @@ func PageFetch(app *core.App, router fiber.Router) {
 			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Page")}))
 		}
 
-		if err := app.Dao().FetchPageFromURL(&page); err != nil {
+		if err := app.Dao().FetchPageFromURL(&page, app.Conf().TrustedDomains...); err != nil {
 			return common.RespError(c, 500, i18n.T("Page fetch failed")+": "+err.Error())
 		}
 

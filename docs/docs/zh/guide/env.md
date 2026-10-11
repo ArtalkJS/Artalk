@@ -75,6 +75,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | --- | --- | --- | --- |
 | **ATK_ADMIN_USERS** | `[]` | 管理员账户 | admin_users (管理员账户) |
 | **ATK_APP_KEY** | `""` | 加密密钥 | app_key (加密密钥) |
+| **ATK_AUTO_FETCH_TITLE** | `false` | 自动抓取页面标题 (关闭可禁用标题自动抓取功能（可以手动抓取），提高安全性) | auto_fetch_title (自动抓取页面标题) |
 | **ATK_DEBUG** | `false` | 调试模式 | debug (调试模式) |
 | **ATK_HOST** | `"0.0.0.0"` | 服务器地址 | host (服务器地址) |
 | **ATK_LOCALE** | `"zh-CN"` | 语言 (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru"]`) | locale (语言) |

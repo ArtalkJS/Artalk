@@ -51,7 +51,7 @@ func PageFetchAll(app *core.App, router fiber.Router) {
 
 			allPageFetchTotal = len(pages)
 			for _, p := range pages {
-				if err := app.Dao().FetchPageFromURL(&p); err != nil {
+				if err := app.Dao().FetchPageFromURL(&p, app.Conf().TrustedDomains...); err != nil {
 					log.Error(c, "[api_admin_page_fetch] page fetch error: "+err.Error())
 				} else {
 					allPageFetchDone++

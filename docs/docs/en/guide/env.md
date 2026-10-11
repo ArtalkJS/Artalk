@@ -74,6 +74,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | Env | Default | Desc | Path |
 | --- | --- | --- | --- |
 | **ATK_APP_KEY** | `""` | App Key (for generation of JWT) | app_key (App Key) |
+| **ATK_AUTO_FETCH_TITLE** | `false` | Auto-fetch page titles (Disabled by default for security; manual fetching remains available) | auto_fetch_title (Auto-fetch page titles) |
 | **ATK_DEBUG** | `false` | Debug mode | debug (Debug mode) |
 | **ATK_HOST** | `"0.0.0.0"` | Listen host | host (Listen host) |
 | **ATK_LOCALE** | `"en"` | Language (follow Unicode BCP 47) (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr"]`) | locale (Language) |

@@ -246,10 +246,8 @@ type commentCreatedJobsArguments struct {
 //  2. AntiSpam Check
 //  3. Send Notify (email, webhook, telegram, etc.)
 func commentCreatedJobs(app *core.App, comment entity.Comment, parentComment entity.Comment, args commentCreatedJobsArguments) {
-	// Page Update (if the original page title is empty and the URL is given)
-	if app.Dao().CookPage(&args.Page).URL != "" && args.Page.Title == "" {
-		go app.Dao().FetchPageFromURL(&args.Page)
-	}
+	// Automatic discovery is optional; administrator-triggered fetching is separate.
+	go autoFetchPageTitle(app, &args.Page)
 
 	// AntiSpam Check
 	if !args.IsAdmin { // if the user is an admin, skip the anti-spam check
@@ -274,4 +272,12 @@ func commentCreatedJobs(app *core.App, comment entity.Comment, parentComment ent
 	} else {
 		log.Error("[NotifyService] err: ", err)
 	}
+}
+
+// Keep the opt-in at the automatic entry point so manual admin fetches still work.
+func autoFetchPageTitle(app *core.App, page *entity.Page) {
+	if !app.Conf().AutoFetchTitle || page.Title != "" || app.Dao().CookPage(page).URL == "" {
+		return
+	}
+	_ = app.Dao().TryFetchPageFromURL(page, app.Conf().TrustedDomains...)
 }

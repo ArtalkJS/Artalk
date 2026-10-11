@@ -135,13 +135,13 @@ export function versionCompare(a: string, b: string) {
 /** 获取修正后的 UserAgent */
 export async function getCorrectUserAgent() {
   const uaRaw = navigator.userAgent
-  if (!(navigator as any).userAgentData || !(navigator as any).userAgentData.getHighEntropyValues) {
+  const uaData = (navigator as any).userAgentData
+  if (typeof uaData?.getHighEntropyValues !== 'function') {
     return uaRaw
   }
 
   // @link https://web.dev/migrate-to-ua-ch/
   // @link https://web.dev/user-agent-client-hints/
-  const uaData = (navigator as any).userAgentData
   let uaGot: any
   try {
     uaGot = await uaData.getHighEntropyValues(['platformVersion'])
@@ -149,7 +149,13 @@ export async function getCorrectUserAgent() {
     console.error(err)
     return uaRaw
   }
-  const majorPlatformVersion = Number(uaGot.platformVersion.split('.')[0])
+  // Privacy extensions may omit or redact high-entropy hints. UA correction is
+  // optional and must not prevent a comment from being submitted.
+  const platformVersion = uaGot?.platformVersion
+  if (typeof platformVersion !== 'string' || !/^\d+(\.\d+)*$/.test(platformVersion)) {
+    return uaRaw
+  }
+  const majorPlatformVersion = Number(platformVersion.split('.')[0])
 
   if (uaData.platform === 'Windows') {
     if (majorPlatformVersion >= 13) {
@@ -167,7 +173,7 @@ export async function getCorrectUserAgent() {
       // (Arm Chip) macOS 样本："Mozilla/5.0 (Macintosh; ARM Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Safari/605.1.15"
       return uaRaw.replace(
         /(Mac OS X \d+_\d+_\d+|Mac OS X)/,
-        `Mac OS X ${uaGot.platformVersion.replace(/\./g, '_')}`,
+        `Mac OS X ${platformVersion.replace(/\./g, '_')}`,
       )
     }
   }

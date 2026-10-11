@@ -51,6 +51,8 @@ function getBootParams() {
     user,
     pageKey: p.get('pageKey') || '',
     site: p.get('site') || '',
+    // `null` if the URL has no params at all, e.g. reloaded after the params were cleared
+    locale: p.get('locale') ?? (p.toString() ? '' : null),
     view: p.get('view') || '',
     viewParams: <any>null,
     darkMode,

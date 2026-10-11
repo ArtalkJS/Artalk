@@ -3,6 +3,14 @@ import { en } from './i18n-en'
 
 export type MessageSchema = typeof en
 
+/** Locales which have messages, `en` is bundled and the others are loaded on demand */
+export const availableLocales = [
+  'en',
+  ...Object.keys(import.meta.glob('./i18n/*.ts')).map((path) =>
+    path.replace(/^\.\/i18n\/(.+)\.ts$/, '$1'),
+  ),
+]
+
 export function setupI18n() {
   const i18n = createI18n({
     legacy: false, // use i18n in Composition API

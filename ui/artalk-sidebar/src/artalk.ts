@@ -2,8 +2,12 @@ import Artalk, { type Context } from 'artalk'
 import { Router } from 'vue-router'
 import { bootParams } from './global'
 import { useUserStore } from './stores/user'
+import { getClientLocaleURLs } from './lib/forced-locale'
 
-export function setupArtalk() {
+/**
+ * @param locale - The locale forced by the parent page, its client locale set is loaded with the plugins
+ */
+export function setupArtalk(locale?: string) {
   // Create virtual element for Artalk
   const artalkEl = document.createElement('div')
   artalkEl.style.display = 'none'
@@ -16,6 +20,7 @@ export function setupArtalk() {
     pageKey: bootParams.pageKey,
     site: bootParams.site,
     darkMode: bootParams.darkMode,
+    pluginURLs: getClientLocaleURLs(locale || ''),
     pvAdd: false,
     noComment: `<div class="atk-sidebar-no-content"></div>`,
     flatMode: true,

@@ -95,6 +95,9 @@ cache:
 # -- e.g. ["https://artalk.example.com:23366"] add url of your site her --
 trusted_domains: []
 
+# Auto-fetch page titles (Disabled by default for security; manual fetching remains available)
+page_title_auto_fetch: false
+
 # SSL
 ssl:
   # Enable SSL

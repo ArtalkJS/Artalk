@@ -32,32 +32,35 @@ func PageFetchAll(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		// If the task is in progress
-		if allPageFetching {
+		// Reserve the task before starting the goroutine, so simultaneous requests
+		// cannot launch duplicate batches. Status readers share the same lock.
+		if !allPageFetch.start() {
 			return common.RespError(c, 400, i18n.T("Task in progress, please wait a moment"))
 		}
 
 		// Start the async task
 		go func() {
-			allPageFetching = true
-			allPageFetchDone = 0
-			allPageFetchTotal = 0
+			defer allPageFetch.finish()
 			var pages []entity.Page
 			db := app.Dao().DB().Model(&entity.Page{})
 			if p.SiteName != "" {
 				db = db.Where(&entity.Page{SiteName: p.SiteName})
 			}
-			db.Find(&pages)
+			if err := db.Find(&pages).Error; err != nil {
+				log.Error("[api_admin_page_fetch] failed to list pages: ", err)
+				return
+			}
 
-			allPageFetchTotal = len(pages)
+			done := 0
+			allPageFetch.progress(done, len(pages))
 			for _, p := range pages {
-				if err := app.Dao().FetchPageFromURL(&p); err != nil {
-					log.Error(c, "[api_admin_page_fetch] page fetch error: "+err.Error())
+				if err := app.Dao().FetchPageFromURL(&p, app.Conf().TrustedDomains...); err != nil {
+					log.Error("[api_admin_page_fetch] page fetch error: ", err)
 				} else {
-					allPageFetchDone++
+					done++
+					allPageFetch.progress(done, len(pages))
 				}
 			}
-			allPageFetching = false
 		}()
 
 		return common.RespSuccess(c)

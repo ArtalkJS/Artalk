@@ -95,6 +95,9 @@ cache:
 # -- örn. ["https://artalk.example.com:23366"] sitenizin URL'sini buraya ekleyin --
 trusted_domains: []
 
+# Sayfa başlıklarını otomatik al (Güvenlik için varsayılan olarak kapalıdır; elle alma kullanılabilir)
+page_title_auto_fetch: false
+
 # SSL
 ssl:
   # SSL'i etkinleştir

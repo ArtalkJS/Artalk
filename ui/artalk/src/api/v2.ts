@@ -437,6 +437,7 @@ export interface HandlerResponseCommentUpdate {
 
 export interface HandlerResponseConfAuthProviders {
   anonymous: boolean
+  callback_origin?: string
   providers: AuthAuthProviderInfo[]
 }
 
@@ -1432,12 +1433,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   }
   notifies = {
     /**
- * @description Get a list of notifies for user
+ * @description Get unread notifications owned by the authenticated user or anonymous comment credential
  *
  * @tags Notify
  * @name GetNotifies
  * @summary Get Notifies
  * @request GET:/notifies
+ * @secure
  * @response `200` `HandlerResponseNotifyList` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
@@ -1466,23 +1468,29 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/notifies`,
         method: 'GET',
         query: query,
+        secure: true,
         type: ContentType.Json,
         format: 'json',
         ...params,
       }),
 
     /**
- * @description Mark all notifies as read for user
+ * @description Mark owned notifications as read using a login or anonymous comment credential
  *
  * @tags Notify
  * @name MarkAllNotifyRead
  * @summary Mark All Notifies as Read
  * @request POST:/notifies/read
+ * @secure
  * @response `200` `HandlerMap` OK
  * @response `400` `(HandlerMap & {
     msg?: string,
 
 })` Bad Request
+ * @response `401` `(HandlerMap & {
+    msg?: string,
+
+})` Unauthorized
  * @response `500` `(HandlerMap & {
     msg?: string,
 
@@ -1498,6 +1506,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/notifies/read`,
         method: 'POST',
         body: options,
+        secure: true,
         type: ContentType.Json,
         format: 'json',
         ...params,

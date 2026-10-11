@@ -8,8 +8,9 @@ const clearListener = () => {
   messageHandler && window.removeEventListener('message', messageHandler)
 }
 
-export const startOAuthLogin = (ctx: AuthContext, url: string) => {
+export const startOAuthLogin = (ctx: AuthContext, url: string, expectedCallbackOrigin?: string) => {
   clearListener()
+  const callbackOrigin = new URL(expectedCallbackOrigin || url, window.location.href).origin
 
   const width = 1020
   const height = 618
@@ -23,17 +24,28 @@ export const startOAuthLogin = (ctx: AuthContext, url: string) => {
   )
 
   return new Promise<{ token: string }>((resolve, reject) => {
+    if (!handler) {
+      reject(new Error('Login popup blocked'))
+      return
+    }
     watchTimer = setInterval(() => {
       if (handler?.closed) {
         clearListener()
         reject(new Error('Login canceled'))
         return
       }
-      handler?.postMessage({ type: 'ATK_LOGIN' }, '*')
+      handler?.postMessage({ type: 'ATK_LOGIN' }, callbackOrigin)
     }, 1000)
 
-    messageHandler = ({ data }: MessageEvent): void => {
-      if (data.type === 'ATK_AUTH_CALLBACK' && data.payload) {
+    messageHandler = ({ data, origin, source }: MessageEvent): void => {
+      if (
+        handler &&
+        source === handler &&
+        origin === callbackOrigin &&
+        data?.type === 'ATK_AUTH_CALLBACK' &&
+        typeof data.payload === 'string' &&
+        data.payload.length > 0
+      ) {
         clearListener()
 
         handler?.close()

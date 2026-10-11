@@ -89,6 +89,16 @@
         "default": "./dist/i18n/ru.cjs"
       }
     },
+    "./i18n/tr": {
+      "import": {
+        "types": "./dist/i18n/tr.d.ts",
+        "default": "./dist/i18n/tr.mjs"
+      },
+      "require": {
+        "types": "./dist/i18n/tr.d.cts",
+        "default": "./dist/i18n/tr.cjs"
+      }
+    },
     "./i18n/*": "./dist/i18n/*",
     "./Artalk.css": "./dist/Artalk.css",
     "./ArtalkLite.css": "./dist/ArtalkLite.css",

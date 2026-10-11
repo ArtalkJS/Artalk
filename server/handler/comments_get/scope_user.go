@@ -2,6 +2,7 @@ package comments_get
 
 import (
 	"github.com/artalkjs/artalk/v2/internal/entity"
+	"gorm.io/gorm"
 )
 
 // User Scope Query Tag
@@ -19,13 +20,27 @@ type UserScopePayload struct {
 }
 
 type UserScopeOpts struct {
-	User            entity.User
-	GetUserComments func(userID uint) []uint
+	User             entity.User
+	GuestTokenHash   string
+	GetGuestComments func() *gorm.DB
+	GetUserComments  func(userID uint) []uint
 }
 
 // User Scope (for message center)
 func UserScopeQuery(payload UserScopePayload, opts UserScopeOpts) func(liteDB) liteDB {
 	return func(q liteDB) liteDB {
+		if opts.User.IsEmpty() && opts.GuestTokenHash != "" && opts.GetGuestComments != nil {
+			switch payload.Type {
+			case UserMine:
+				return q.Where("guest_token_hash = ?", opts.GuestTokenHash)
+			case UserPending:
+				return q.Where("guest_token_hash = ? AND is_pending = ?", opts.GuestTokenHash, true)
+			case UserMentions:
+				return q.Where("rid IN (?) AND guest_token_hash <> ?", opts.GetGuestComments(), opts.GuestTokenHash)
+			default:
+				return q.Where("guest_token_hash = ? OR rid IN (?)", opts.GuestTokenHash, opts.GetGuestComments())
+			}
+		}
 		// If user not found, return empty query
 		if opts.User.IsEmpty() {
 			return q.Where("1 = 0")

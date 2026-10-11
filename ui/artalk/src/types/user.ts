@@ -21,6 +21,8 @@ export interface LocalUser {
 }
 
 export interface UserManager {
+  getGuestToken?: (server: string, create?: boolean) => string | undefined
+  setGuestToken?: (server: string, token: string) => void
   getData: () => LocalUser
   update: (dta: Partial<LocalUser>) => void
   logout: () => void

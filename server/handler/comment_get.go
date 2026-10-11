@@ -27,10 +27,20 @@ type ResponseCommentGet struct {
 func CommentGet(app *core.App, router fiber.Router) {
 	router.Get("/comments/:id", func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
+		user, err := common.GetUserByReq(app, c)
+		if err != nil {
+			user = entity.User{}
+		}
+		guestHash := common.GuestTokenHash(c)
+		canRead := func(comment entity.Comment) bool {
+			return !comment.IsEmpty() && (!comment.IsPending || user.IsAdmin ||
+				(user.ID != 0 && user.ID == comment.UserID) ||
+				(guestHash != "" && guestHash == comment.GuestTokenHash))
+		}
 
 		// Find comment by id
 		comment := app.Dao().FindComment(uint(id))
-		if comment.IsEmpty() {
+		if !canRead(comment) {
 			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
 		}
 
@@ -38,7 +48,7 @@ func CommentGet(app *core.App, router fiber.Router) {
 		var replyComment *entity.CookedComment
 		if comment.Rid != 0 {
 			rComment := app.Dao().FindComment(uint(comment.Rid))
-			if !comment.IsEmpty() {
+			if canRead(rComment) {
 				rComment := app.Dao().CookComment(&rComment)
 				rComment.Visible = false
 				replyComment = &rComment

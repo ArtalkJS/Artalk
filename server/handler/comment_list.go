@@ -64,6 +64,11 @@ func CommentList(app *core.App, router fiber.Router) {
 		if p.Scope != "" {
 			scope = cog.Scope(p.Scope)
 		}
+		switch scope {
+		case cog.ScopePage, cog.ScopeUser, cog.ScopeSite:
+		default:
+			return common.RespError(c, 400, "Invalid comment scope")
+		}
 
 		// if query scope is page, check page exist
 		if scope == cog.ScopePage {

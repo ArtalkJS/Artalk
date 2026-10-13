@@ -58,6 +58,32 @@ export function padWithZeros(vNumber: number, width: number) {
   return numAsString
 }
 
+export interface TimestampedDateInput {
+  date?: string
+  date_unix?: number
+  date_utc?: string
+}
+
+/**
+ * Parses timestamp fields returned by Artalk APIs.
+ *
+ * `date_unix` and `date_utc` are timezone-safe and take precedence over the legacy
+ * timezone-less `date` field, which is only used for backward compatibility.
+ */
+export function parseDate(input: TimestampedDateInput) {
+  if (typeof input.date_unix === 'number' && Number.isFinite(input.date_unix)) {
+    const unixDate = new Date(input.date_unix * 1000)
+    if (!Number.isNaN(unixDate.getTime())) return unixDate
+  }
+
+  if (input.date_utc) {
+    const utcDate = new Date(input.date_utc)
+    if (!Number.isNaN(utcDate.getTime())) return utcDate
+  }
+
+  return new Date((input.date || '').replace(/-/g, '/'))
+}
+
 export function dateFormat(date: Date) {
   const vDay = padWithZeros(date.getDate(), 2)
   const vMonth = padWithZeros(date.getMonth() + 1, 2)

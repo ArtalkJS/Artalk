@@ -53,6 +53,8 @@ func Serve(app *core.App) (*fiber.App, error) {
 		BodyLimit:          app.Conf().HTTP.BodyLimit * 1024 * 1024, // MB
 		StreamRequestBody:  true,
 		EnableIPValidation: true,
+
+		Network: fiber.NetworkTCP,
 	})
 
 	reqID(fb)

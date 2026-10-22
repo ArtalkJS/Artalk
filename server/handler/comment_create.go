@@ -71,12 +71,9 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			isVerified = true // for display the verified badge
 		)
 
-		// Find or create page
-		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
-		if page.Key == "" {
-			log.Error("[CommentCreate] FindCreatePage error")
-			return common.RespError(c, 500, i18n.T("Comment failed"))
-		}
+		// Read page permissions before validating the request. Rejected requests
+		// must not create empty pages.
+		page := app.Dao().FindPage(p.PageKey, p.SiteName)
 
 		// Check the page and the user is allowed to comment (admin only check)
 		if isAllowed, resp := isAllowComment(app, c, p.Name, p.Email, page.AdminOnly); !isAllowed {
@@ -109,6 +106,11 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		} else if err != nil {
 			// Login user error
 			log.Error("[CommentCreate] Get user error: ", err)
+			return common.RespError(c, 500, i18n.T("Comment failed"))
+		}
+
+		page = app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
+		if page.IsEmpty() {
 			return common.RespError(c, 500, i18n.T("Comment failed"))
 		}
 

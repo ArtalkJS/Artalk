@@ -6,6 +6,7 @@ import (
 
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/internal/log"
+	"gorm.io/gorm"
 )
 
 // 更新评论
@@ -52,6 +53,21 @@ func (dao *Dao) UpdatePage(page *entity.Page) error {
 		cache.PageCacheSave(page)
 	})
 	return err
+}
+
+// IncrementPagePV does not write a potentially stale page snapshot back to the
+// database. Atomic increments also preserve views from other server instances.
+func (dao *Dao) IncrementPagePV(page *entity.Page) error {
+	result := dao.DB().Model(&entity.Page{}).Where("id = ?", page.ID).
+		Update("pv", gorm.Expr("COALESCE(pv, 0) + ?", 1))
+	dao.CacheAction(func(cache *DaoCache) { cache.PageCacheDel(page) })
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return dao.DB().First(page, page.ID).Error
 }
 
 func (dao *Dao) UserNotifyMarkAllAsRead(userID uint) error {

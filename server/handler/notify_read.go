@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"time"
+
 	"github.com/artalkjs/artalk/v2/internal/core"
 	"github.com/artalkjs/artalk/v2/internal/i18n"
+	"github.com/artalkjs/artalk/v2/internal/limiter"
 	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,7 +23,12 @@ import (
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /notifies/{comment_id}/{notify_key}  [post]
 func NotifyRead(app *core.App, router fiber.Router) {
+	// Bound guessing of legacy five-character keys without invalidating old email links.
+	readLimit := limiter.NewRateLimiter(60, 600, time.Minute)
 	router.Post("/notifies/:comment_id/:notify_key", func(c *fiber.Ctx) error {
+		if !readLimit.Allow(c.IP()) {
+			return common.RespError(c, 429, "Too many notification requests")
+		}
 		commentID, _ := c.ParamsInt("comment_id")
 		notifyKey := c.Params("notify_key")
 

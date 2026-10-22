@@ -1,8 +1,12 @@
 package handler
 
 import (
+	"hash/maphash"
+	"sync"
+	"time"
+
 	"github.com/artalkjs/artalk/v2/internal/core"
-	"github.com/artalkjs/artalk/v2/internal/sync"
+	"github.com/artalkjs/artalk/v2/internal/limiter"
 	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
 )
@@ -27,7 +31,10 @@ type ResponsePagePV struct {
 // @Success      200  {object}  ResponsePagePV
 // @Router       /pages/pv  [post]
 func PagePV(app *core.App, router fiber.Router) {
-	mutexMap := sync.NewKeyMutex[string]()
+	// Bound both creation work and lock memory when callers supply arbitrary keys.
+	creationLimit := limiter.NewRateLimiter(60, 600, time.Minute)
+	var locks [64]sync.Mutex
+	seed := maphash.MakeSeed()
 
 	router.Post("/pages/pv", func(c *fiber.Ctx) error {
 		var p ParamsPagePV
@@ -35,18 +42,29 @@ func PagePV(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		mutex := mutexMap.GetLock(p.PageKey + "_" + p.SiteName)
+		if _, ok, resp := common.CheckSiteExist(app, c, p.SiteName); !ok {
+			return resp
+		}
+
+		mutex := &locks[maphash.String(seed, p.SiteName+"\x00"+p.PageKey)%uint64(len(locks))]
 		mutex.Lock()
 		defer mutex.Unlock()
 
-		// find page
-		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
+		// Existing pages never consume creation quota, even after a limit is hit.
+		page := app.Dao().FindPage(p.PageKey, p.SiteName)
+		if page.IsEmpty() {
+			if !creationLimit.Allow(c.IP()) {
+				return common.RespData(c, ResponsePagePV{PV: 0})
+			}
+			page = app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
+			if page.IsEmpty() {
+				return common.RespError(c, 500, "Failed to create page")
+			}
+		}
 
-		// ip := c.RealIP()
-		// ua := c.Request().UserAgent()
-
-		page.PV++
-		app.Dao().UpdatePage(&page)
+		if err := app.Dao().IncrementPagePV(&page); err != nil {
+			return common.RespError(c, 500, "Failed to update page views")
+		}
 
 		return common.RespData(c, ResponsePagePV{
 			PV: page.PV,

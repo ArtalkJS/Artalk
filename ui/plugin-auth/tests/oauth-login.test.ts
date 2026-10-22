@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { startOAuthLogin } from '../../../plugin-auth/lib/oauth-login'
-import type { AuthContext } from '../../../plugin-auth/types'
+import { startOAuthLogin } from '../lib/oauth-login'
+import type { AuthContext } from '../types'
 
 describe('OAuth popup callback', () => {
   const origin = 'https://comments.example.com'

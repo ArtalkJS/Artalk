@@ -1503,6 +1503,12 @@ const docTemplate = `{
                 "operationId": "GetPages",
                 "parameters": [
                     {
+                        "type": "boolean",
+                        "description": "Only include pages with comments (including pending comments)",
+                        "name": "has_comments",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "The limit for pagination",
                         "name": "limit",

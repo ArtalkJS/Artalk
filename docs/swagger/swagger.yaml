@@ -2139,6 +2139,10 @@ paths:
       description: Get a list of pages by some conditions
       operationId: GetPages
       parameters:
+      - description: Only include pages with comments (including pending comments)
+        in: query
+        name: has_comments
+        type: boolean
       - description: The limit for pagination
         in: query
         name: limit

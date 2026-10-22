@@ -9,10 +9,11 @@ import (
 )
 
 type ParamsPageList struct {
-	SiteName string `query:"site_name" json:"site_name" validate:"optional"` // The site name of your content scope
-	Limit    int    `query:"limit" json:"limit" validate:"optional"`         // The limit for pagination
-	Offset   int    `query:"offset" json:"offset" validate:"optional"`       // The offset for pagination
-	Search   string `query:"search" json:"search" validate:"optional"`       // Search keywords
+	HasComments bool   `query:"has_comments" json:"has_comments" validate:"optional"` // Only include pages with comments (including pending comments)
+	SiteName    string `query:"site_name" json:"site_name" validate:"optional"`       // The site name of your content scope
+	Limit       int    `query:"limit" json:"limit" validate:"optional"`               // The limit for pagination
+	Offset      int    `query:"offset" json:"offset" validate:"optional"`             // The offset for pagination
+	Search      string `query:"search" json:"search" validate:"optional"`             // Search keywords
 }
 
 type ResponsePageList struct {
@@ -48,6 +49,16 @@ func PageList(app *core.App, router fiber.Router) {
 			q = q.Where("site_name = ?", p.SiteName)
 		}
 
+		// Filter before count and pagination. A page key is only unique within a site.
+		if p.HasComments {
+			pagesTable := app.Dao().GetTableName(&entity.Page{})
+			commentsTable := app.Dao().GetTableName(&entity.Comment{})
+			comments := app.Dao().DB().Model(&entity.Comment{}).Select("1").
+				Where(commentsTable + ".page_key = " + pagesTable + ".key").
+				Where(commentsTable + ".site_name = " + pagesTable + ".site_name")
+			q = q.Where("EXISTS (?)", comments)
+		}
+
 		// Search
 		if p.Search != "" {
 			q = q.Scopes(func(d *gorm.DB) *gorm.DB {
@@ -71,7 +82,7 @@ func PageList(app *core.App, router fiber.Router) {
 		var pages []entity.Page
 		q.Find(&pages)
 
-		var cookedPages []entity.CookedPage
+		cookedPages := make([]entity.CookedPage, 0, len(pages))
 		for _, p := range pages {
 			cookedPages = append(cookedPages, app.Dao().CookPage(&p))
 		}

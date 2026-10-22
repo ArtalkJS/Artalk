@@ -2,11 +2,11 @@ name: Test Docs
 
 on:
   push:
-    paths: ["docs/**"]
+    paths: [".github/workflows/test-docs.yml", "docs/**", "ui/**", "package.json", "pnpm-lock.yaml"]
     branches-ignore: ["release/*", "nightly"]
     tags-ignore: ["v*"]
   pull_request:
-    paths: ["docs/**"]
+    paths: [".github/workflows/test-docs.yml", "docs/**", "ui/**", "package.json", "pnpm-lock.yaml"]
     branches-ignore: ["release/*", "nightly"]
 
 permissions:

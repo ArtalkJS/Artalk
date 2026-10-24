@@ -99,6 +99,13 @@ We offer various installation methods, including binary files, go install, and p
 
 [**Learn More →**](https://artalk.js.org/en/guide/deploy.html)
 
+## One-Click Deploy
+
+<a href="https://repocloud.io/details/Artalk/"><img src="https://d16t0pc4846x52.cloudfront.net/deploylobe.svg" alt="Deploy on RepoCloud" height="36"></a>
+<a href="https://railway.com/deploy/artalk"><img src="https://railway.com/button.svg" alt="Deploy on Railway" height="36"></a>
+<a href="https://zeabur.com/templates/BL1Y7G"><img src="https://zeabur.com/button.svg" alt="Deploy on Zeabur" height="36"></a>
+<a href="https://template.sealos.io/deploy?templateName=artalk"><img src="https://raw.githubusercontent.com/labring-actions/templates/main/Deploy-on-Sealos.svg" alt="Deploy on Sealos" height="36"></a>
+
 ## For Developers
 
 Pull requests are welcome!

@@ -110,6 +110,40 @@ describe('anonymous comment credential', () => {
 })
 
 describe('sidebar capability handoff', () => {
+  it('keeps login credentials out of the iframe query while preserving the legacy profile', async () => {
+    const { SidebarLayer } = await import('@/layer/sidebar-layer')
+    const { UserManager } = await import('@/lib/user')
+    const user = new UserManager({})
+    user.update({
+      name: 'Admin',
+      email: 'admin@example.com',
+      token: 'header.payload.signature',
+      is_admin: true,
+    })
+    // Extra fields from integrations must not accidentally become URL parameters.
+    Object.assign(user.getData(), { password: 'must-not-be-serialized' })
+    const server = 'https://comments.example.com'
+    const guest = user.getGuestToken(server, true)!
+    const layer = new SidebarLayer({
+      getConf: () => ({ get: () => ({ server, site: 'Test', pageKey: '/test', darkMode: false }) }),
+      getUser: () => user,
+    } as never)
+    const frame = (layer as unknown as { createIframe(): HTMLIFrameElement }).createIframe()
+    const url = new URL(frame.src)
+    expect(JSON.parse(url.searchParams.get('user')!)).toEqual({
+      name: 'Admin',
+      email: 'admin@example.com',
+      link: '',
+      is_admin: true,
+    })
+    expect(url.search).not.toContain('header.payload.signature')
+    expect(url.search).not.toContain(guest)
+    expect(frame.src).not.toContain('must-not-be-serialized')
+    const fragment = new URLSearchParams(url.hash.slice(1))
+    expect(fragment.get('token')).toBe('header.payload.signature')
+    expect(fragment.get('guest_token')).toBe(guest)
+  })
+
   it('puts the guest secret only in the fragment, not the request query or user profile', async () => {
     const { SidebarLayer } = await import('@/layer/sidebar-layer')
     const { UserManager } = await import('@/lib/user')

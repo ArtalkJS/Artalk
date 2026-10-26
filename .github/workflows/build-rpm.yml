@@ -1,0 +1,72 @@
+name: Trigger RPM Build
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      dry_run:
+        required: true
+        type: boolean
+    secrets:
+      COPR_BUILD_WEBHOOK_URL:
+        required: false
+
+permissions: {}
+
+jobs:
+  trigger_copr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate release version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid release version: $VERSION"
+            exit 1
+          fi
+
+      - name: Print dry-run request
+        if: ${{ inputs.dry_run }}
+        env:
+          VERSION: ${{ inputs.version }}
+        run: echo "Would request the COPR build for $VERSION."
+
+      - name: Verify release assets
+        if: ${{ !inputs.dry_run }}
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          curl --fail --silent --show-error --location --head \
+            --proto '=https' --proto-redir '=https' \
+            --connect-timeout 15 --max-time 60 \
+            "https://github.com/$GITHUB_REPOSITORY/releases/download/$VERSION/artalk_ui.tar.gz"
+
+      - name: Trigger Copr Build Webhook
+        if: ${{ !inputs.dry_run }}
+        env:
+          COPR_BUILD_WEBHOOK_URL: ${{ secrets.COPR_BUILD_WEBHOOK_URL }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [[ -z "$COPR_BUILD_WEBHOOK_URL" ]]; then
+            echo "COPR_BUILD_WEBHOOK_URL is not configured."
+            exit 1
+          fi
+
+          payload="$(
+            jq -cn \
+              --arg repository "$GITHUB_REPOSITORY" \
+              --arg ref "refs/tags/$VERSION" \
+              --arg version "$VERSION" \
+              '{repository: $repository, ref: $ref, version: $version}'
+          )"
+          curl --fail-with-body --silent --show-error \
+            --proto '=https' \
+            --connect-timeout 15 --max-time 60 \
+            --header 'Content-Type: application/json' \
+            --request POST \
+            --data "$payload" \
+            "${COPR_BUILD_WEBHOOK_URL%/}/artalk/"

@@ -168,6 +168,10 @@ export class SidebarLayer implements ISidebarLayer {
     if (view) query.view = view
     query.darkMode = this.getDarkMode() ? '1' : '0'
 
+    // Let the sidebar follow the locale of the parent page
+    const { locale } = this.opts.getConf().get()
+    if (typeof locale === 'string' && locale) query.locale = locale
+
     const urlParams = new URLSearchParams(query)
     // Fragments are not sent to the server or in Referer headers. The sidebar
     // consumes and removes this before starting its router, then persists it.

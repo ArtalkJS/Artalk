@@ -190,7 +190,7 @@ func TestDatabaseCacheIsolationAndConcurrency(t *testing.T) {
 }
 
 func TestDatabaseCacheAndLoadRetry(t *testing.T) {
-	for _, extension := range []string{".xdb", ".ipdb"} {
+	for _, extension := range []string{".xdb", ".ipdb", ".IPDB"} {
 		for _, cached := range []bool{false, true} {
 			t.Run(fmt.Sprintf("%s/cache=%t", extension, cached), func(t *testing.T) {
 				path := filepath.Join(t.TempDir(), "test"+extension)
@@ -210,11 +210,26 @@ func TestDatabaseCacheAndLoadRetry(t *testing.T) {
 					t.Fatal(err)
 				}
 				want := ""
-				if cached {
+				if cached || extension != ".xdb" {
 					want = "福建"
 				}
 				if got := client.IP2Region("1.0.1.1"); got != want {
 					t.Errorf("cache behavior: got %q want %q", got, want)
+				}
+				replacement := ipdbFixture(t, []string{"country_name", "region_name", "city_name"},
+					[]string{"中国", "浙江省", "杭州市"}, map[string]int{"CN": 0})
+				if extension == ".xdb" {
+					replacement = xdbFixture("1.0.1.1", "中国|浙江省|杭州市|电信|CN", false)
+				}
+				writeDatabase(t, path, replacement)
+				if want == "" {
+					want = "浙江" // Uncached XDB continues to read the file on every query.
+				}
+				if got := client.IP2Region("1.0.1.1"); got != want {
+					t.Errorf("after replacement: got %q want %q", got, want)
+				}
+				if got := testClient(path, "province", cached).IP2Region("1.0.1.1"); got != "浙江" {
+					t.Errorf("new client should load replacement: %q", got)
 				}
 			})
 		}

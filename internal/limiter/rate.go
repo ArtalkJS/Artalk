@@ -1,6 +1,7 @@
 package limiter
 
 import (
+	"strings"
 	"sync"
 	"time"
 )
@@ -38,7 +39,8 @@ func (l *RateLimiter) Allow(key string) bool {
 	if l.total >= l.totalLimit || l.counts[key] >= l.perKeyLimit {
 		return false
 	}
-	l.counts[key]++
+	// Request strings may alias reusable buffers; retained keys must own their data.
+	l.counts[strings.Clone(key)]++
 	l.total++
 	return true
 }

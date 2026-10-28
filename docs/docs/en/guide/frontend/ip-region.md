@@ -8,17 +8,7 @@ This feature is disabled by default. You can enable the IP region display featur
 
 Artalk supports the following two database formats. Choose one; existing configurations and database files remain supported.
 
-### ip2region (`.xdb`)
-
-- [GitHub Download (IPv4)](https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region_v4.xdb) / [Mirror Download](https://gh-proxy.com/?q=https%3A%2F%2Fgithub.com%2Flionsoul2014%2Fip2region%2Fblob%2Fmaster%2Fdata%2Fip2region_v4.xdb) (recommended within China)
-
-After downloading, manually place it in the `./data/` directory, and name the file: `ip2region.xdb`.
-
-Artalk supports both the legacy (`country|area|province|city|ISP`) and current (`country|province|city|ISP|country code`) upstream ip2region data layouts. Existing databases do not need to be renamed or converted.
-
-ip2region provides separate IPv4 and [IPv6 databases](https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region_v6.xdb). Currently, `db_path` loads one file. To cover both address families with one file, use the standard IPDB below.
-
-### qqwry standard edition (`.ipdb`)
+### qqwry standard edition (`.ipdb`, recommended)
 
 The standard edition of [metowolf/qqwry.ipdb](https://github.com/metowolf/qqwry.ipdb) provides Chinese country, province, and city fields, with IPv4 and IPv6 support in one file.
 
@@ -26,7 +16,15 @@ The standard edition of [metowolf/qqwry.ipdb](https://github.com/metowolf/qqwry.
 
 Save the file as `./data/qqwry.ipdb` and set `ip_region.db_path` to that path. Keep the `.ipdb` extension: Artalk uses it to select the IPDB reader without an additional database type setting. Do not use the raw edition, `qqwry.raw.ipdb`, which lacks the separate, complete province and city fields required for precision settings.
 
-The IPDB reader loads the entire file into memory. Keep `cache.enabled: true` to reuse the loaded data; disabling caching reloads the file on every query. Restart Artalk after replacing a database file to refresh the cached data.
+The IPDB reader loads the entire file into memory on the first query and reuses it for subsequent queries, regardless of the `cache.enabled` setting. Restart Artalk after replacing an IPDB file to load the new data.
+
+### ip2region (`.xdb`)
+
+- [GitHub Download (IPv4)](https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region_v4.xdb) / [Mirror Download](https://gh-proxy.com/?q=https%3A%2F%2Fgithub.com%2Flionsoul2014%2Fip2region%2Fblob%2Fmaster%2Fdata%2Fip2region_v4.xdb) (recommended within China)
+
+After downloading, manually place it in the `./data/` directory, and name the file: `ip2region.xdb`.
+
+Artalk supports both the legacy (`country|area|province|city|ISP`) and current (`country|province|city|ISP|country code`) upstream ip2region data layouts. Existing databases do not need to be renamed or converted.
 
 ## Precision Settings
 
@@ -48,7 +46,7 @@ ip_region:
   # Enable IP region display
   enabled: false
   # Data file path (.xdb or standard .ipdb)
-  db_path: ./data/ip2region.xdb
+  db_path: ./data/qqwry.ipdb
   # Display precision ["province", "city", "country"]
   precision: province
 ```

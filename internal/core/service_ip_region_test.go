@@ -63,6 +63,10 @@ func TestIPRegionServiceConfigurationChanges(t *testing.T) {
 	writeIPDB(second, "广东省", "广州市")
 	check("广东广州")
 	writeIPDB(second, "四川省", "成都市")
+	check("广东广州") // IPDB stays loaded even when the global cache is disabled.
+	if err := service.Init(); err != nil {
+		t.Fatal(err)
+	}
 	check("四川成都")
 	updated = *app.Conf()
 	updated.Cache.Enabled = true

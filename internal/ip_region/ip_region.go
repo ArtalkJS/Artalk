@@ -61,14 +61,20 @@ func (ipRegion *IPRegion) search(ip string) (result region, err error) {
 	if err != nil {
 		return region{}, err
 	}
-	if !ipRegion.conf.CacheEnabled {
+	if !ipRegion.reuseSearcher() {
 		defer searcher.Close()
 	}
 	return searcher.Search(ip)
 }
 
+func (ipRegion *IPRegion) reuseSearcher() bool {
+	// IPDB always loads the whole file into memory; retain it regardless of the
+	// global cache setting. XDB keeps its existing memory/file mode selection.
+	return ipRegion.conf.CacheEnabled || isIPDBPath(ipRegion.conf.DBPath)
+}
+
 func (ipRegion *IPRegion) getSearcher() (regionSearcher, error) {
-	if !ipRegion.conf.CacheEnabled {
+	if !ipRegion.reuseSearcher() {
 		return newSearcher(ipRegion.conf.DBPath, false)
 	}
 	ipRegion.mu.Lock()

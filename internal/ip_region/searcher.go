@@ -14,11 +14,15 @@ type regionSearcher interface {
 }
 
 func newSearcher(dbPath string, useCache bool) (regionSearcher, error) {
-	if strings.EqualFold(filepath.Ext(dbPath), ".ipdb") {
+	if isIPDBPath(dbPath) {
 		return newIPDBSearcher(dbPath)
 	}
 	// Preserve existing XDB paths, including files without an extension.
 	return newXDBSearcher(dbPath, useCache)
+}
+
+func isIPDBPath(dbPath string) bool {
+	return strings.EqualFold(filepath.Ext(dbPath), ".ipdb")
 }
 
 type xdbSearcher struct {

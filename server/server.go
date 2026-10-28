@@ -1,9 +1,11 @@
 package server
 
 import (
-	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"strconv"
+	"strings"
 
 	_ "github.com/artalkjs/artalk/v2/docs/swagger"
 	"github.com/artalkjs/artalk/v2/internal/config"
@@ -53,6 +55,7 @@ func Serve(app *core.App) (*fiber.App, error) {
 		BodyLimit:          app.Conf().HTTP.BodyLimit * 1024 * 1024, // MB
 		StreamRequestBody:  true,
 		EnableIPValidation: true,
+		Network:            fiber.NetworkTCP,
 	})
 
 	reqID(fb)
@@ -118,7 +121,12 @@ func Serve(app *core.App) (*fiber.App, error) {
 	})
 
 	// listen serves HTTP requests
-	listenAddr := fmt.Sprintf("%s:%d", app.Conf().Host, app.Conf().Port)
+	host := app.Conf().Host
+	// Accept existing bracketed IPv6 hosts as well as bare addresses.
+	if strings.HasPrefix(host, "[") && strings.HasSuffix(host, "]") {
+		host = host[1 : len(host)-1]
+	}
+	listenAddr := net.JoinHostPort(host, strconv.Itoa(app.Conf().Port))
 	if app.Conf().SSL.Enabled {
 		return fb, fb.ListenTLS(listenAddr, app.Conf().SSL.CertPath, app.Conf().SSL.KeyPath)
 	} else {

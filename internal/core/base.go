@@ -23,6 +23,10 @@ type App struct {
 	cache   *cache.Cache
 	service *map[string]Service
 
+	backgroundMu      sync.Mutex
+	backgroundTasks   sync.WaitGroup
+	backgroundStopped bool
+
 	onTerminate   *hook.Hook[*TerminateEvent]
 	onConfUpdated *hook.Hook[*ConfUpdatedEvent]
 }
@@ -153,10 +157,31 @@ func (app *App) Bootstrap() error {
 		}
 	}
 
+	app.backgroundMu.Lock()
+	app.backgroundStopped = false
+	app.backgroundMu.Unlock()
 	return nil
 }
 
+// RunBackground tracks work that needs the app's database and services.
+// It returns false once cleanup starts. Bootstrap enables new work again.
+func (app *App) RunBackground(fn func()) bool {
+	app.backgroundMu.Lock()
+	defer app.backgroundMu.Unlock()
+	if app.backgroundStopped {
+		return false
+	}
+	app.backgroundTasks.Go(fn)
+	return true
+}
+
 func (app *App) ResetBootstrapState() error {
+	// Stop admission before waiting, so Add cannot race with a completed Wait.
+	app.backgroundMu.Lock()
+	app.backgroundStopped = true
+	app.backgroundMu.Unlock()
+	app.backgroundTasks.Wait()
+
 	// close database
 	if app.Dao() != nil {
 		sqlDB, _ := app.Dao().DB().DB()

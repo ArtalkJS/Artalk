@@ -9,6 +9,7 @@ func NewApiTestApp() (*test.TestApp, *fiber.App) {
 	app, _ := test.NewTestApp()
 	fiberApp := fiber.New(fiber.Config{
 		ProxyHeader: "X-Forwarded-For",
+		Immutable:   true, // Match production: request strings outlive the response in background jobs.
 	})
 	return app, fiberApp
 }

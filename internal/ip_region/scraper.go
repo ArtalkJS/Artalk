@@ -22,19 +22,16 @@ func ipScraper(ip string) string {
 	return ip
 }
 
-func regionScraper(raw string, precision config.IPRegionPrecision) string {
-	if precision == "" {
-		precision = config.IPRegionProvince
-	}
+type region struct {
+	country  string
+	province string
+	city     string
+}
 
+func parseXDBRegion(raw string) region {
 	sep := strings.Split(raw, "|")
 	if len(sep) < 5 {
-		return ""
-	}
-
-	country := sep[0]
-	if country == "" || country == "0" {
-		return ""
+		return region{}
 	}
 
 	// Legacy: country|area|province|city|isp.
@@ -46,6 +43,17 @@ func regionScraper(raw string, precision config.IPRegionPrecision) string {
 		if code, err := language.ParseRegion(sep[4]); err == nil && code.IsCountry() {
 			province, city = sep[1], sep[2]
 		}
+	}
+	return region{country: sep[0], province: province, city: city}
+}
+
+func (r region) format(precision config.IPRegionPrecision) string {
+	if precision == "" {
+		precision = config.IPRegionProvince
+	}
+	country, province, city := r.country, r.province, r.city
+	if country == "" || country == "0" {
+		return ""
 	}
 	if province == "0" {
 		province = ""

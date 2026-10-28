@@ -115,7 +115,8 @@ func Serve(app *core.App) (*fiber.App, error) {
 	static(fb)
 	uploadedStatic(app, fb)
 
-	app.OnTerminate().Add(func(e *core.TerminateEvent) error {
+	// Stop accepting requests before the app drains background jobs and closes its database.
+	app.OnTerminate().PreAdd(func(e *core.TerminateEvent) error {
 		_ = fb.Shutdown()
 		return nil
 	})

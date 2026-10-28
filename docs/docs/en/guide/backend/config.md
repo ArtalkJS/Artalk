@@ -148,7 +148,9 @@ Note that environment variables will override the settings in the configuration 
 
 Technical details: `trusted_domains` configuration controls cross-origin requests by setting the HTTP response header `Access-Control-Allow-Origin` (refer to: [W3C Cross-Origin Resource Sharing](https://fetch.spec.whatwg.org/#http-cors-protocol) / [OWASP Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)).
 
-Page-title fetching uses the same trusted list: `trusted_domains` and the site URLs configured in the dashboard. The initial request and every HTTP or HTML redirect must match a listed scheme, host, and port. Paths in configuration entries are ignored; `*` does not authorize arbitrary destinations. If your pages redirect to another origin, add that site's URL as well.
+Use `https://*.example.com` in either list to allow browser requests from one subdomain level, such as `https://blog.example.com`. It does not match `example.com` or `a.b.example.com`. The scheme and port must match. Only use a wildcard if you trust all matching subdomains. For relative page keys, keep a concrete URL first in the site URL list.
+
+Page-title fetching uses the same trusted list: `trusted_domains` and the site URLs configured in the dashboard. The initial request and every HTTP or HTML redirect must match a listed scheme, host, and port. Paths in configuration entries are ignored. Wildcards do not authorize title fetching. Add each destination URL explicitly. If your pages redirect to another origin, add that site's URL as well.
 
 Explicitly listed private-network sites and `localhost` remain supported, as do the server's `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` environment settings. Only add sites you trust Artalk to access: this list also authorizes outbound requests to those sites.
 

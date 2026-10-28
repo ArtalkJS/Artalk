@@ -148,7 +148,9 @@ ATK_TRUSTED_DOMAINS="https://a.com https://b.org" artalk server
 
 技术细节：`trusted_domains` 配置通过控制 HTTP 响应标头 `Access-Control-Allow-Origin` 来对跨域请求进行限制 (参考：[W3C Cross-Origin Resource Sharing](https://fetch.spec.whatwg.org/#http-cors-protocol) / [OWASP 安全备忘单](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)).
 
-页面标题抓取也使用这份可信名单，包括 `trusted_domains` 和后台配置的站点 URL。首次请求、HTTP 跳转及 HTML 跳转的目标都必须匹配名单中的协议、主机和端口；配置中的路径不参与匹配，不支持用 `*` 放行任意地址。跨域跳转到另一个自己的站点时，也需要加入该站点的 URL。
+两份列表都支持 `https://*.example.com`，允许 `https://blog.example.com` 等单层子域名的浏览器跨域请求，不匹配 `example.com` 或 `a.b.example.com`。协议和端口必须一致。仅在信任所有匹配的子域名时使用通配符。使用相对路径页面标识时，站点 URL 列表的第一项仍需保留具体地址。
+
+页面标题抓取也使用这份可信名单，包括 `trusted_domains` 和后台配置的站点 URL。首次请求、HTTP 跳转及 HTML 跳转的目标都必须匹配名单中的协议、主机和端口；配置中的路径不参与匹配。通配符不授予标题抓取权限，需要单独添加具体的目标 URL。跨域跳转到另一个自己的站点时，也需要加入该站点的 URL。
 
 明确加入名单的内网站点及 `localhost` 可以正常抓取，服务器上的 `HTTP_PROXY`、`HTTPS_PROXY`、`NO_PROXY` 配置仍然生效。请只加入你信任并允许 Artalk 访问的站点：这份名单同时授权服务器向这些站点发起请求。
 

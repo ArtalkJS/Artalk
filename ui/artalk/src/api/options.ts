@@ -6,6 +6,7 @@ export interface ApiOptions {
   pageKey: string
   pageTitle: string
   timeout?: number
+  getGuestToken?: (create?: boolean) => string | undefined
   getApiToken?: () => string | undefined
   userInfo?: {
     name: string

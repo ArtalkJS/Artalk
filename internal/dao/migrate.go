@@ -15,10 +15,28 @@ func (dao *Dao) MigrateModels() {
 		dao.MigrateRootID()
 	}
 
+	// Preserve anonymous ownership from earlier builds of the security branch.
+	if dao.DB().Migrator().HasColumn(&entity.Comment{}, "guest_key_hash") &&
+		!dao.DB().Migrator().HasColumn(&entity.Comment{}, "guest_token_hash") {
+		if err := dao.DB().Migrator().RenameColumn(&entity.Comment{}, "guest_key_hash", "guest_token_hash"); err != nil {
+			log.Fatal("[DB Migrator] Failed to rename guest token hash: ", err)
+		}
+		table := dao.GetTableName(&entity.Comment{})
+		oldIndex := dao.DB().NamingStrategy.IndexName(table, "guest_key_hash")
+		newIndex := dao.DB().NamingStrategy.IndexName(table, "guest_token_hash")
+		if dao.DB().Migrator().HasIndex(&entity.Comment{}, oldIndex) {
+			if err := dao.DB().Migrator().RenameIndex(&entity.Comment{}, oldIndex, newIndex); err != nil {
+				log.Fatal("[DB Migrator] Failed to rename guest token index: ", err)
+			}
+		}
+	}
+
 	// Migrate the schema
-	dao.DB().AutoMigrate(&entity.Site{}, &entity.Page{}, &entity.User{},
+	if err := dao.DB().AutoMigrate(&entity.Site{}, &entity.Page{}, &entity.User{},
 		&entity.AuthIdentity{}, &entity.UserEmailVerify{},
-		&entity.Comment{}, &entity.Notify{}, &entity.Vote{})
+		&entity.Comment{}, &entity.Notify{}, &entity.Vote{}); err != nil {
+		log.Fatal("[DB Migrator] Failed to migrate schema: ", err)
+	}
 
 	// Delete all foreign key constraints
 	// Leave relationship maintenance to the program and reduce the difficulty of database management.

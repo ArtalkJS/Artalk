@@ -31,7 +31,7 @@
     "lint:fix": "pnpm lint:eslint --fix && pnpm lint:prettier --write",
     "check:publish": "node scripts/check-npm-publish.mjs",
     "prepare": "pnpm build:plugin-kit && pnpm build:eslint-plugin",
-    "test": "pnpm -F artalk test"
+    "test": "cross-env NODE_OPTIONS=--no-experimental-webstorage vitest --config vitest.workspace.ts"
   },
   "devDependencies": {
     "@artalk/plugin-kit": "workspace:*",

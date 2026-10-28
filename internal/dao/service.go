@@ -2,15 +2,12 @@ package dao
 
 import (
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
 	"time"
 
 	"github.com/artalkjs/artalk/v2/internal/entity"
-	"github.com/artalkjs/artalk/v2/internal/log"
 	"github.com/artalkjs/artalk/v2/internal/utils"
 )
 
@@ -70,7 +67,11 @@ func (dao *Dao) GetPageAccessibleURL(p *entity.Page, s ...*entity.Site) string {
 	return p.AccessibleURL
 }
 
-func (dao *Dao) FetchPageFromURL(p *entity.Page) error {
+func (dao *Dao) FetchPageFromURL(p *entity.Page, trustedDomains ...string) error {
+	return dao.fetchPageFromURL(p, false, trustedDomains...)
+}
+
+func (dao *Dao) fetchPageFromURL(p *entity.Page, onlyMissing bool, trustedDomains ...string) error {
 	cookedPage := dao.CookPage(p)
 	url := cookedPage.URL
 
@@ -79,49 +80,32 @@ func (dao *Dao) FetchPageFromURL(p *entity.Page) error {
 	}
 
 	// 获取 URL 页面 title
-	title, err := GetTitleByURL(url)
-
-	if err == nil && title != "" {
-		p.Title = title
-	}
-
-	if err := dao.UpdatePage(p); err != nil {
-		log.Error("Failed to save in FetchPage")
+	title, err := GetTitleByURL(url, dao.TrustedOrigins(trustedDomains)...)
+	if err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func GetTitleByURL(url string) (string, error) {
-	if !utils.ValidateURL(url) {
-		log.Error("Invalid URL: " + url)
-		return "", fmt.Errorf("invalid URL")
+	if title == "" {
+		return nil
 	}
 
-	// Request the HTML page.
-	res, err := http.Get(url)
-	if err != nil {
-		log.Error(err)
-		return "", err
+	// Network requests can finish after PV updates, admin edits or deletion.
+	// Update only the title; Save would overwrite other fields or recreate a page.
+	q := dao.DB().Model(&entity.Page{}).Where("id = ?", p.ID)
+	if onlyMissing {
+		q = q.Where("title = ?", "")
 	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		log.Error(fmt.Sprintf("status code error: %d '%s' '%s'", res.StatusCode, res.Status, url))
-		return "", fmt.Errorf("status code error")
+	result := q.Update("title", title)
+	dao.CacheAction(func(cache *DaoCache) { cache.PageCacheDel(p) })
+	if result.Error != nil {
+		return result.Error
 	}
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return "", err
+	if result.RowsAffected == 0 && onlyMissing {
+		return nil
 	}
-
-	data := pageExtractFromHTML(body)
-	if data.RedirectURL != "" {
-		return GetTitleByURL(data.RedirectURL)
-	}
-
-	return data.Title, nil
+	// Reload for the manual endpoint's response, including when a database
+	// reports zero changed rows because the fetched title is already current.
+	return dao.DB().First(p, p.ID).Error
 }
 
 // the data extracted from a page html

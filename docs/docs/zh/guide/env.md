@@ -79,6 +79,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_HOST** | `"0.0.0.0"` | 服务器地址 | host (服务器地址) |
 | **ATK_LOCALE** | `"zh-CN"` | 语言 (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru"]`) | locale (语言) |
 | **ATK_LOGIN_TIMEOUT** | `259200` | 登录有效时长 (单位：秒) | login_timeout (登录有效时长) |
+| **ATK_PAGE_TITLE_AUTO_FETCH** | `false` | 自动抓取页面标题 (关闭可禁用标题自动抓取功能（可以手动抓取），提高安全性) | page_title_auto_fetch (自动抓取页面标题) |
 | **ATK_PORT** | `23366` | 服务器端口 | port (服务器端口) |
 | **ATK_SITE_DEFAULT** | `"默认站点"` | 默认站点名 | site_default (默认站点名) |
 | **ATK_SITE_URL** | `""` | 默认站点地址 | site_url (默认站点地址) |

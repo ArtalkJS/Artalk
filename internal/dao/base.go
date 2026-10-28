@@ -16,6 +16,8 @@ type Dao struct {
 	// As the cache could be nil.
 	// Therefore, it is necessary to check if the cache is not nil before referencing it.
 	cache *DaoCache
+
+	pageFetches pageFetchLimiter
 }
 
 // Create new dao instance

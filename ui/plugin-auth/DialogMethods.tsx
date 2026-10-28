@@ -24,7 +24,7 @@ export const DialogMethods = (props: DialogMethodsProps) => {
         const url = /^(http|https):\/\//.test(m.link!)
           ? m.link!
           : `${ctx.getConf().get().server}${m.link}`
-        const { token } = await startOAuthLogin(ctx, url)
+        const { token } = await startOAuthLogin(ctx, url, m.callbackOrigin)
         loginByToken(ctx, token)
         props.onComplete()
       })()

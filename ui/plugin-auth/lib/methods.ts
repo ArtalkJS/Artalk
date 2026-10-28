@@ -5,14 +5,20 @@ export interface LoginMethod {
   label: string
   icon: string
   link?: string
+  callbackOrigin?: string
   onClick?: () => void
 }
 
 export const fetchMethods = async (api: Api) => {
   const { data } = await api.conf.getSocialLoginProviders()
+  // Older backend/API types do not expose callback_origin.
+  const callbackOrigin =
+    'callback_origin' in data && typeof data.callback_origin === 'string'
+      ? data.callback_origin
+      : undefined
   return data.providers
     .map<LoginMethod>(({ name, label, icon, path }) => {
-      return { name, label, icon, link: path }
+      return { name, label, icon, link: path, callbackOrigin }
     })
     .sort((a, b) => {
       // email always on top

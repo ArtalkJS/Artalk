@@ -91,6 +91,9 @@ cache:
 # -- 例如：["https://artalk.example.com:23366"] --
 trusted_domains: []
 
+# 自動擷取頁面標題 (關閉可停用標題自動擷取功能（可以手動擷取），提高安全性)
+page_title_auto_fetch: false
+
 # SSL
 ssl:
   # 啟用 SSL

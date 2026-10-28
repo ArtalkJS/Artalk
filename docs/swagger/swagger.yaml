@@ -886,6 +886,8 @@ definitions:
     properties:
       anonymous:
         type: boolean
+      callback_origin:
+        type: string
       providers:
         items:
           $ref: '#/definitions/auth.AuthProviderInfo'
@@ -1981,7 +1983,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get a list of notifies for user
+      description: Get unread notifications owned by the authenticated user or anonymous
+        comment credential
       operationId: GetNotifies
       parameters:
       - description: The user name
@@ -2019,6 +2022,8 @@ paths:
                 msg:
                   type: string
               type: object
+      security:
+      - ApiKeyAuth: []
       summary: Get Notifies
       tags:
       - Notify
@@ -2078,7 +2083,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Mark all notifies as read for user
+      description: Mark owned notifications as read using a login or anonymous comment
+        credential
       operationId: MarkAllNotifyRead
       parameters:
       - description: The options
@@ -2103,6 +2109,15 @@ paths:
                 msg:
                   type: string
               type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -2112,6 +2127,8 @@ paths:
                 msg:
                   type: string
               type: object
+      security:
+      - ApiKeyAuth: []
       summary: Mark All Notifies as Read
       tags:
       - Notify
@@ -2122,6 +2139,10 @@ paths:
       description: Get a list of pages by some conditions
       operationId: GetPages
       parameters:
+      - description: Only include pages with comments (including pending comments)
+        in: query
+        name: has_comments
+        type: boolean
       - description: The limit for pagination
         in: query
         name: limit

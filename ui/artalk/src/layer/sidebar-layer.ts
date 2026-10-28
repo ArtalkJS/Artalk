@@ -156,10 +156,12 @@ export class SidebarLayer implements ISidebarLayer {
           path: '/sidebar/',
         })
 
+    const { name, email, link, is_admin, token } = this.opts.getUser().getData()
     const query: any = {
       pageKey: this.opts.getConf().get().pageKey,
       site: this.opts.getConf().get().site || '',
-      user: JSON.stringify(this.opts.getUser().getData()),
+      // Keep profile fields for older sidebars, but never put credentials here.
+      user: JSON.stringify({ name, email, link, is_admin }),
       time: +new Date(),
     }
 
@@ -167,7 +169,14 @@ export class SidebarLayer implements ISidebarLayer {
     query.darkMode = this.getDarkMode() ? '1' : '0'
 
     const urlParams = new URLSearchParams(query)
-    this.iframeLoad($iframe, `${baseURL}?${urlParams.toString()}`)
+    // Fragments are not sent to the server or in Referer headers. The sidebar
+    // consumes and removes this before starting its router, then persists it.
+    const credentials = new URLSearchParams()
+    if (token) credentials.set('token', token)
+    const guest = this.opts.getUser().getGuestToken?.(this.opts.getConf().get().server)
+    if (guest) credentials.set('guest_token', guest)
+    const fragment = credentials.size ? `#${credentials.toString()}` : ''
+    this.iframeLoad($iframe, `${baseURL}?${urlParams.toString()}${fragment}`)
 
     return $iframe
   }

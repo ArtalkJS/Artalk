@@ -71,12 +71,9 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			isVerified = true // for display the verified badge
 		)
 
-		// Find or create page
-		page := app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
-		if page.Key == "" {
-			log.Error("[CommentCreate] FindCreatePage error")
-			return common.RespError(c, 500, i18n.T("Comment failed"))
-		}
+		// Read page permissions before validating the request. Rejected requests
+		// must not create empty pages.
+		page := app.Dao().FindPage(p.PageKey, p.SiteName)
 
 		// Check the page and the user is allowed to comment (admin only check)
 		if isAllowed, resp := isAllowComment(app, c, p.Name, p.Email, page.AdminOnly); !isAllowed {
@@ -112,6 +109,11 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("Comment failed"))
 		}
 
+		page = app.Dao().FindCreatePage(p.PageKey, p.PageTitle, p.SiteName)
+		if page.IsEmpty() {
+			return common.RespError(c, 500, i18n.T("Comment failed"))
+		}
+
 		// Create new comment entity
 		comment := entity.Comment{
 			Content:  p.Content,
@@ -129,6 +131,11 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			IsCollapsed: false,
 			IsPinned:    false,
 			IsVerified:  isVerified,
+		}
+
+		// Bind only this newly created anonymous comment, never the whole user.
+		if !isVerified {
+			comment.GuestTokenHash = common.GuestTokenHash(c)
 		}
 
 		// Set the default pending status
@@ -241,10 +248,8 @@ type commentCreatedJobsArguments struct {
 //  2. AntiSpam Check
 //  3. Send Notify (email, webhook, telegram, etc.)
 func commentCreatedJobs(app *core.App, comment entity.Comment, parentComment entity.Comment, args commentCreatedJobsArguments) {
-	// Page Update (if the original page title is empty and the URL is given)
-	if app.Dao().CookPage(&args.Page).URL != "" && args.Page.Title == "" {
-		go app.Dao().FetchPageFromURL(&args.Page)
-	}
+	// Automatic discovery is optional; administrator-triggered fetching is separate.
+	go autoFetchPageTitle(app, &args.Page)
 
 	// AntiSpam Check
 	if !args.IsAdmin { // if the user is an admin, skip the anti-spam check
@@ -269,4 +274,12 @@ func commentCreatedJobs(app *core.App, comment entity.Comment, parentComment ent
 	} else {
 		log.Error("[NotifyService] err: ", err)
 	}
+}
+
+// Keep the opt-in at the automatic entry point so manual admin fetches still work.
+func autoFetchPageTitle(app *core.App, page *entity.Page) {
+	if !app.Conf().PageTitleAutoFetch || page.Title != "" || app.Dao().CookPage(page).URL == "" {
+		return
+	}
+	_ = app.Dao().TryFetchPageFromURL(page, app.Conf().TrustedDomains...)
 }

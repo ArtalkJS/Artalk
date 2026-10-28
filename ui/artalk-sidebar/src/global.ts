@@ -12,7 +12,7 @@ export function getArtalk() {
 }
 
 /**
- * Boot params from URL search params
+ * Boot params from URL search params and credential fragments
  *
  * TODO: Refactor to a singleton store
  */
@@ -20,21 +20,29 @@ export const bootParams = getBootParams()
 
 function getBootParams() {
   const p = new URLSearchParams(document.location.search)
+  const fragment = new URLSearchParams(document.location.hash.slice(1))
+  const guestToken = fragment.get('guest_token') || fragment.get('atk_guest') || ''
 
-  // call history api to clear search params
-  // on purpose to prevent the params (e.g. user token)
-  // from being leaked like from the referrer header or the browser history
-  if (!!p.get('user') && window.history.replaceState) {
+  // Consume credentials before routing. Old clients may still put their token
+  // in the user query; clearing it here cannot undo that initial HTTP request.
+  if ((p.has('user') || fragment.has('token') || !!guestToken) && window.history.replaceState) {
     window.history.replaceState({}, '', window.location.pathname)
   }
 
-  const userFromURL = JSON.parse(p.get('user') || '{}')
+  let userFromURL: Partial<LocalUser> = {}
+  try {
+    const parsed = JSON.parse(p.get('user') || '{}')
+    if (parsed && typeof parsed === 'object') userFromURL = parsed
+  } catch {
+    // A malformed legacy profile must not prevent credential cleanup or boot.
+  }
+  const legacyToken = typeof userFromURL.token === 'string' ? userFromURL.token : ''
   const user: LocalUser = {
-    name: userFromURL.name || '',
-    email: userFromURL.email || '',
-    link: userFromURL.link || '',
-    token: userFromURL.token || '',
-    is_admin: userFromURL.is_admin || false,
+    name: typeof userFromURL.name === 'string' ? userFromURL.name : '',
+    email: typeof userFromURL.email === 'string' ? userFromURL.email : '',
+    link: typeof userFromURL.link === 'string' ? userFromURL.link : '',
+    token: fragment.get('token') ?? legacyToken,
+    is_admin: userFromURL.is_admin === true,
   }
 
   let darkMode: boolean
@@ -49,6 +57,7 @@ function getBootParams() {
 
   return {
     user,
+    guestToken,
     pageKey: p.get('pageKey') || '',
     site: p.get('site') || '',
     view: p.get('view') || '',

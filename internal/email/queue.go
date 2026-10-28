@@ -1,7 +1,6 @@
 package email
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/artalkjs/artalk/v2/internal/config"
@@ -55,7 +54,8 @@ func NewQueue(conf EmailConf) *EmailQueue {
 }
 
 func (q *EmailQueue) handleEmail(email *Email) {
-	log.Debug(fmt.Sprintf("[Email] Sending an email %+v: ", email))
+	// Subjects and bodies may contain login codes or notification capabilities.
+	log.Debug("[Email] Sending an email")
 
 	if q.sender == nil {
 		log.Error("[Email] Email Sender is nil")

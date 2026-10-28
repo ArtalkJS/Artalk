@@ -1,3 +1,4 @@
+import { getGuestToken, setGuestToken } from './guest'
 import type { LocalUser, UserManager as IUserManager } from '@/types'
 
 const LOCAL_USER_KEY = 'ArtalkUser'
@@ -11,7 +12,12 @@ export class UserManager implements IUserManager {
 
   constructor(private opts: UserOpts) {
     // Import from localStorage
-    const localUser = JSON.parse(window.localStorage.getItem(LOCAL_USER_KEY) || '{}')
+    let localUser: Record<string, any> = {}
+    try {
+      localUser = JSON.parse(window.localStorage.getItem(LOCAL_USER_KEY) || '{}') || {}
+    } catch {
+      // Private browsing or a third-party iframe may disable persistent storage.
+    }
 
     // Initialize
     this.data = {
@@ -23,6 +29,9 @@ export class UserManager implements IUserManager {
     }
   }
 
+  getGuestToken = getGuestToken
+  setGuestToken = setGuestToken
+
   getData() {
     return this.data
   }
@@ -33,7 +42,11 @@ export class UserManager implements IUserManager {
       this.data[key] = value
     })
 
-    window.localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(this.data))
+    try {
+      window.localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(this.data))
+    } catch {
+      // Keep the in-memory user usable when persistence is unavailable.
+    }
     this.opts.onUserChanged && this.opts.onUserChanged(this.data)
   }
 

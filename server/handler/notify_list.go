@@ -19,7 +19,8 @@ type ResponseNotifyList struct {
 
 // @Id           GetNotifies
 // @Summary      Get Notifies
-// @Description  Get a list of notifies for user
+// @Description  Get unread notifications owned by the authenticated user or anonymous comment credential
+// @Security     ApiKeyAuth
 // @Tags         Notify
 // @Param        name   query  string  true  "The user name"
 // @Param        email  query  string  true  "The user email"
@@ -36,15 +37,7 @@ func NotifyList(app *core.App, router fiber.Router) {
 			return resp
 		}
 
-		var user entity.User
-		if p.Name != "" && p.Email != "" {
-			user = app.Dao().FindUser(p.Name, p.Email)
-		}
-
-		var notifies = []entity.CookedNotify{}
-		if !user.IsEmpty() {
-			notifies = app.Dao().CookAllNotifies(app.Dao().FindUnreadNotifies(user.ID))
-		}
+		notifies := common.UnreadNotifications(app, c)
 
 		return common.RespData(c, ResponseNotifyList{
 			Notifies: notifies,

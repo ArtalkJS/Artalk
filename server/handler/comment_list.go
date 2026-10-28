@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"errors"
-
 	"github.com/artalkjs/artalk/v2/internal/core"
 	"github.com/artalkjs/artalk/v2/internal/dao"
 	"github.com/artalkjs/artalk/v2/internal/entity"
@@ -58,21 +56,18 @@ func CommentList(app *core.App, router fiber.Router) {
 		}
 
 		// Get current user
-		user, err := common.GetUserByReq(app, c)
-		if errors.Is(err, common.ErrTokenNotProvided) {
-			// If not login, find user by name and email
-			user = app.Dao().FindUser(p.Name, p.Email)
-
-			// If user is admin, but not login yet, clear user
-			if user.IsAdmin {
-				user = entity.User{}
-			}
-		}
+		// A name/email pair is public metadata, not proof of authorship.
+		user, _ := common.GetUserByReq(app, c)
 
 		// Query scope
 		scope := cog.ScopePage
 		if p.Scope != "" {
 			scope = cog.Scope(p.Scope)
+		}
+		switch scope {
+		case cog.ScopePage, cog.ScopeUser, cog.ScopeSite:
+		default:
+			return common.RespError(c, 400, "Invalid comment scope")
 		}
 
 		// if query scope is page, check page exist
@@ -84,7 +79,8 @@ func CommentList(app *core.App, router fiber.Router) {
 
 		// Query options
 		queryOpts := cog.QueryOptions{
-			User: user,
+			User:           user,
+			GuestTokenHash: common.GuestTokenHash(c),
 
 			Scope: scope,
 

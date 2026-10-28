@@ -9,11 +9,15 @@ import (
 // Basic scope for all queries
 //
 // It will ignore pending comments for non-admin users
-func CommonScope(user entity.User) func(liteDB) liteDB {
+func CommonScope(user entity.User, guestHashes ...string) func(liteDB) liteDB {
 	return func(d liteDB) liteDB {
 		// Ignore pending comments
 		if !user.IsAdmin { // If not admin, ignore pending comments
-			d.Scopes(NoPending(user.ID))
+			if len(guestHashes) > 0 && guestHashes[0] != "" && user.IsEmpty() {
+				d.Where("is_pending = ? OR guest_token_hash = ?", false, guestHashes[0])
+			} else {
+				d.Scopes(NoPending(user.ID))
+			}
 		}
 
 		return d

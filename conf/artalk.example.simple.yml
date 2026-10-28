@@ -37,6 +37,9 @@ cache:
     password: ""
     db: 0
 trusted_domains: []
+
+# Auto-fetch page titles (Disabled by default for security; manual fetching remains available)
+page_title_auto_fetch: false
 ssl:
   enabled: false
   cert_path: ""

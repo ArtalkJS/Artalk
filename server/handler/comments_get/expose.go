@@ -20,7 +20,13 @@ func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) ([]entity.Coo
 	var scopes []func(*gorm.DB) *gorm.DB
 	scopes = append(scopes, ConvertGormScopes(GetQueryScopes(dao, opts))...)
 	scopes = append(scopes, func(d *gorm.DB) *gorm.DB {
-		return d.Preload("User").Preload("Page").Preload("Page.Site")
+		d = d.Preload("User")
+		// SQL Server cannot use GORM's multi-column IN for the Page relation.
+		// CookComment already resolves missing page/site relations through the DAO.
+		if d.Dialector.Name() == "sqlserver" {
+			return d
+		}
+		return d.Preload("Page").Preload("Page.Site")
 	})
 
 	// First query

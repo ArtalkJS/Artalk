@@ -148,6 +148,23 @@ ATK_TRUSTED_DOMAINS="https://a.com https://b.org" artalk server
 
 技术细节：`trusted_domains` 配置通过控制 HTTP 响应标头 `Access-Control-Allow-Origin` 来对跨域请求进行限制 (参考：[W3C Cross-Origin Resource Sharing](https://fetch.spec.whatwg.org/#http-cors-protocol) / [OWASP 安全备忘单](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)).
 
+页面标题抓取也使用这份可信名单，包括 `trusted_domains` 和后台配置的站点 URL。首次请求、HTTP 跳转及 HTML 跳转的目标都必须匹配名单中的协议、主机和端口；配置中的路径不参与匹配，不支持用 `*` 放行任意地址。跨域跳转到另一个自己的站点时，也需要加入该站点的 URL。
+
+明确加入名单的内网站点及 `localhost` 可以正常抓取，服务器上的 `HTTP_PROXY`、`HTTPS_PROXY`、`NO_PROXY` 配置仍然生效。请只加入你信任并允许 Artalk 访问的站点：这份名单同时授权服务器向这些站点发起请求。
+
+开启自动抓取后，评论触发的自动补标题每个 Artalk 实例每秒最多启动一个任务，最多同时执行四个，相同 URL 的进行中任务不会重复执行。繁忙时跳过本次自动补标题，不影响评论提交，后续评论或后台刷新可以重试。管理员手动、批量刷新不受自动任务频率限制，但仍检查可信名单。每个任务最多跟随 10 次跳转，总耗时最多 30 秒；只读取页面头部的前 2 MiB，大页面的正文不会导致已读取的标题失效。
+
+## 自动抓取页面标题 `page_title_auto_fetch`
+
+```yaml
+# 关闭可禁用标题自动抓取功能（可以手动抓取），提高安全性
+page_title_auto_fetch: false
+```
+
+默认关闭，旧配置省略此项也不会自动抓取。只有设为 `true` 后，提交评论才可能为缺少标题的页面触发自动抓取。客户端提交的页面标题仍正常保存，页面创建和 PV 统计不受影响。管理员仍可在后台手动更新单个页面或全部页面的标题，手动抓取仍受可信域名检查及抓取超时、大小和跳转限制约束。
+
+也可通过环境变量 `ATK_PAGE_TITLE_AUTO_FETCH=true` 开启。
+
 ## 默认站点 `site_default`
 
 如果你觉得大概是不会用到 Artalk 的多站点功能，可以直接将该项配置为你的站点名，例如：

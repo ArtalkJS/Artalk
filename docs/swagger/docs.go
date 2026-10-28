@@ -1218,7 +1218,12 @@ const docTemplate = `{
         },
         "/notifies": {
             "get": {
-                "description": "Get a list of notifies for user",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get unread notifications owned by the authenticated user or anonymous comment credential",
                 "consumes": [
                     "application/json"
                 ],
@@ -1294,7 +1299,12 @@ const docTemplate = `{
         },
         "/notifies/read": {
             "post": {
-                "description": "Mark all notifies as read for user",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mark owned notifications as read using a login or anonymous comment credential",
                 "consumes": [
                     "application/json"
                 ],
@@ -1326,6 +1336,24 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "allOf": [
                                 {
@@ -1474,6 +1502,12 @@ const docTemplate = `{
                 "summary": "Get Page List",
                 "operationId": "GetPages",
                 "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "Only include pages with comments (including pending comments)",
+                        "name": "has_comments",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "description": "The limit for pagination",
@@ -5152,6 +5186,9 @@ const docTemplate = `{
             "properties": {
                 "anonymous": {
                     "type": "boolean"
+                },
+                "callback_origin": {
+                    "type": "string"
                 },
                 "providers": {
                     "type": "array",

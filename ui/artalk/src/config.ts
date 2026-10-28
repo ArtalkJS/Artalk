@@ -113,6 +113,7 @@ export function convertApiOptions(
     pageTitle: conf.pageTitle || '',
     timeout: conf.reqTimeout,
     getApiToken: () => user?.getData().token,
+    getGuestToken: (create = false) => user?.getGuestToken?.(conf.server || '', create),
     userInfo: user?.checkHasBasicUserInfo()
       ? {
           name: user?.getData().name,

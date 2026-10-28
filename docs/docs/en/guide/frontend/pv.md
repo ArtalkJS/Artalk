@@ -79,3 +79,11 @@ In this case, the corresponding HTML code should be as follows:
 ```
 
 Thus, the value of the `data-path` attribute will be used to query the specified page.
+
+## Automatic page registration and abuse protection
+
+Pages are still registered automatically on their first visit and start accumulating views without manual setup. To limit database writes from random page keys, each server process allows PV requests to create up to 60 pages per IP and 600 pages in total per one-minute window, shared across sites. These quotas are independent of captcha settings.
+
+Once a quota is reached, that new-page registration is skipped and the request returns a PV of 0 without prompting for a captcha. A later visit can try again after the window resets; skipped views are not counted retroactively. Existing pages continue accumulating views, and comment submissions follow their existing validation flow. Behind a reverse proxy, configure trusted proxies correctly so the server can identify visitors' IP addresses.
+
+The control center page list shows only pages with comments, including pages with only pending comments. Filtering does not delete records or change page views, votes, or other statistics. The page list API keeps `has_comments` optional: omitting it still returns all pages for existing clients.

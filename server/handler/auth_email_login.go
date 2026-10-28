@@ -7,6 +7,7 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/log"
 	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/gofiber/fiber/v2"
+	"strings"
 )
 
 type RequestAuthEmailLogin struct {
@@ -36,6 +37,8 @@ func AuthEmailLogin(app *core.App, router fiber.Router) {
 		if ok, resp := common.ParamsDecode(c, &p); !ok {
 			return resp
 		}
+
+		p.Email = strings.ToLower(strings.TrimSpace(p.Email))
 
 		findUser := func(email string) (user entity.User) {
 			users := app.Dao().FindUsersByEmail(email)

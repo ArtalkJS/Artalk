@@ -81,6 +81,7 @@ function fetchPages(offset: number) {
       offset: offset,
       limit: pageSize.value,
       search: search.value,
+      has_comments: true,
     })
     .then((res) => {
       pageTotal.value = res.data.count

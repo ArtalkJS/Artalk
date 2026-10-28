@@ -184,7 +184,7 @@ captcha:
 ip_region:
   # 啟用 IP 屬地展示
   enabled: false
-  # 數據文件路徑 (.xdb 格式)
+  # 數據文件路徑 (.xdb 或標準版 .ipdb 格式)
   db_path: ./data/ip2region.xdb
   # 顯示精度 ["province", "city", "country"]
   precision: province

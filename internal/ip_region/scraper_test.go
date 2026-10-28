@@ -78,7 +78,7 @@ func TestRegionScraper(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := regionScraper(test.raw, test.precision)
+		result := parseXDBRegion(test.raw).format(test.precision)
 		if result != test.expected {
 			t.Errorf("For input '%s' and precision '%s', expected '%s' but got '%s'", test.raw, test.precision, test.expected, result)
 		}

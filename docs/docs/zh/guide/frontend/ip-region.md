@@ -8,9 +8,13 @@ Artalk 内置用户 IP 属地展示功能，并且你可以设置显示的精度
 
 在开启 IP 属地展示功能之前，你需要下载一个数据库文件：
 
-- [GitHub 下载](https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region.xdb) / [镜像站下载](https://gh-proxy.com/?q=https%3A%2F%2Fgithub.com%2Flionsoul2014%2Fip2region%2Fblob%2Fmaster%2Fdata%2Fip2region.xdb) (境内推荐)
+- [GitHub 下载（IPv4）](https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region_v4.xdb) / [镜像站下载](https://gh-proxy.com/?q=https%3A%2F%2Fgithub.com%2Flionsoul2014%2Fip2region%2Fblob%2Fmaster%2Fdata%2Fip2region_v4.xdb) (境内推荐)
 
 下载后请手动放置到 `./data/` 目录下，文件命名为：`ip2region.xdb`
+
+Artalk 兼容 ip2region 上游的旧版（`国家|区域|省份|城市|运营商`）和新版（`国家|省份|城市|运营商|国家代码`）数据。已有数据库无需改名或转换。
+
+当前只能通过 `db_path` 加载一个数据库。也可以使用上游的 [IPv6 数据库](https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region_v6.xdb)，但它不包含 IPv4 数据，不能替代 IPv4 数据库同时覆盖两种地址。
 
 ## 精度设置
 
@@ -21,6 +25,8 @@ Artalk 内置用户 IP 属地展示功能，并且你可以设置显示的精度
 | `province` | 精确到省（默认） | `四川`     |
 | `city`     | 精确到城市       | `四川成都` |
 | `country`  | 精确到国家、地区 | `中国`     |
+
+省份数据缺失时，`province` 精度回退到国家或地区，不显示更精确的城市。
 
 配置文件：
 

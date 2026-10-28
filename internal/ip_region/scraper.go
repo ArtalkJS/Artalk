@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/artalkjs/artalk/v2/internal/config"
+	"golang.org/x/text/language"
 )
 
 func ipScraper(ip string) string {
@@ -31,36 +32,48 @@ func regionScraper(raw string, precision config.IPRegionPrecision) string {
 		return ""
 	}
 
-	var (
-		country  = sep[0]
-		_        = sep[1] // Area
-		province = strings.TrimSuffix(strings.TrimSuffix(sep[2], "省"), "市")
-		city     = strings.TrimSuffix(sep[3], "市")
-		// isp      = sep[4]
-	)
-
-	if country == "0" {
+	country := sep[0]
+	if country == "" || country == "0" {
 		return ""
 	}
+
+	// Legacy: country|area|province|city|isp.
+	// Current: country|province|city|isp|ISO country code.
+	// Both have five fields. Validate the code rather than treating any
+	// two-letter ISP (e.g. "XL" in legacy data) as a country code.
+	province, city := sep[2], sep[3]
+	if len(sep[4]) == 2 {
+		if code, err := language.ParseRegion(sep[4]); err == nil && code.IsCountry() {
+			province, city = sep[1], sep[2]
+		}
+	}
+	if province == "0" {
+		province = ""
+	}
+	if city == "0" {
+		city = ""
+	}
+	province = strings.TrimSuffix(strings.TrimSuffix(province, "省"), "市")
+	city = strings.TrimSuffix(city, "市")
 
 	switch precision {
 	case config.IPRegionCountry:
 		return country
 
 	case config.IPRegionProvince:
-		if province == "0" {
+		if province == "" {
 			return country
 		}
 		return province
 
 	case config.IPRegionCity:
-		if province == "0" && city == "0" {
+		if province == "" && city == "" {
 			return country
 		}
 		if city == province { // e.g. 重庆重庆
 			return province
 		}
-		return strings.TrimSuffix(province+""+city, "0")
+		return province + city
 
 	default:
 		return ""

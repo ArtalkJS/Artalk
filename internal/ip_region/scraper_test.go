@@ -45,6 +45,36 @@ func TestRegionScraper(t *testing.T) {
 		{"中国|0|河北省|石家庄市|电信", config.IPRegionCity, "河北石家庄"},
 		{"中国|0|江苏省|南京市|电信", config.IPRegionCity, "江苏南京"},
 		{"美国|0|0|0|微软云", config.IPRegionCity, "美国"},
+		// Legacy databases keep an unused area column before the province.
+		{"中国|0|福建省|福州市|电信", "", "福建"},
+		{"中国|0|福建省|福州市|电信", config.IPRegionCountry, "中国"},
+		{"中国|0|福建省|福州市|电信", config.IPRegionProvince, "福建"},
+		{"中国|0|福建省|福州市|电信", config.IPRegionCity, "福建福州"},
+		{"印度尼西亚|0|大雅加达|雅加达|XL", config.IPRegionProvince, "大雅加达"},
+		// Current databases omit area and append an ISO country code instead.
+		{"中国|福建省|福州市|中国电信|CN", "", "福建"},
+		{"中国|福建省|福州市|中国电信|CN", config.IPRegionCountry, "中国"},
+		{"中国|福建省|福州市|中国电信|CN", config.IPRegionProvince, "福建"},
+		{"中国|福建省|福州市|中国电信|CN", config.IPRegionCity, "福建福州"},
+		{"中国|重庆市|重庆市|中国电信|CN", config.IPRegionCity, "重庆"},
+		{"中国|福建省|0|中国电信|CN", config.IPRegionCity, "福建"},
+		{"中国|0|0|阿里|CN", config.IPRegionProvince, "中国"},
+		{"中国|0|0|阿里|CN", config.IPRegionCity, "中国"},
+		{"United States|California|Los Angeles|0|US", config.IPRegionProvince, "California"},
+		{"Seychelles|0|0|0|SC", config.IPRegionCity, "Seychelles"},
+		{"Kosovo|Pristina|Pristina|0|XK", config.IPRegionProvince, "Pristina"},
+		// Missing provinces must not expose a city at province precision.
+		{"中国|0|福州市|中国电信|CN", config.IPRegionProvince, "中国"},
+		{"中国|0|福州市|中国电信|CN", config.IPRegionCity, "福州"},
+		{"中国|0|0|福州市|电信", config.IPRegionProvince, "中国"},
+		{"中国|0|0|福州市|电信", config.IPRegionCity, "福州"},
+		{"中国|||中国电信|CN", config.IPRegionProvince, "中国"},
+		{"中国|||中国电信|CN", config.IPRegionCity, "中国"},
+		{"中国|福建省|福州市|中国电信|CN|extra", config.IPRegionProvince, "福建"},
+		{"", config.IPRegionProvince, ""},
+		{"中国|福建省|福州市", config.IPRegionProvince, ""},
+		{"||||", config.IPRegionProvince, ""},
+		{"中国|福建省|福州市|中国电信|CN", "invalid", ""},
 	}
 
 	for _, test := range tests {

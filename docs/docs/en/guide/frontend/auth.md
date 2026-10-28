@@ -17,6 +17,14 @@ Currently, the following social login methods are supported:
 
 To enable social login, simply find the "Social Login" option in the [Dashboard](./sidebar.md#settings), enable it, and fill in the corresponding configuration information. Alternatively, you can configure it through the [configuration file](../backend/config.md) or [environment variables](../env.md#social-login).
 
+## Self-hosted Gitea
+
+Set `auth.gitea.site_url` to your Gitea base URL, for example `https://git.example.com/gitea`. Leave it empty for `https://gitea.com`. You can use HTTP, HTTPS, ports, and paths such as `/gitea`.
+
+`ATK_AUTH_GITEA_SITE_URL` sets the same value. In Gitea, set the login return address to `<Artalk public origin>/api/v2/auth/gitea/callback`.
+
+Existing gitea.com accounts stay unchanged. Each custom server URL has separate accounts, even when names and emails match. If you switch to a different server or path, Artalk uses a separate account. Existing comments stay with the original account.
+
 ## Email & Password Login
 
 ![Email Login](/images/auth/email_login.png)

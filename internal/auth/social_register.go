@@ -20,8 +20,15 @@ func RegisterSocialUser(dao *dao.Dao, u SocialUser) (entity.AuthIdentity, error)
 		return entity.AuthIdentity{}, fmt.Errorf("email is invalid which fetched from social identity provider")
 	}
 
-	// Create user if not exists
-	user, err := dao.FindCreateUser(u.Name, u.Email, u.Link)
+	var user entity.User
+	var err error
+	if u.Provider == "gitea" && u.RemoteUID != u.UserID {
+		// A self-hosted server's profile is not proof of ownership of an existing
+		// Artalk account, even when its name and email match.
+		user, err = dao.NewUser(u.Name, u.Email, u.Link)
+	} else {
+		user, err = dao.FindCreateUser(u.Name, u.Email, u.Link)
+	}
 	if err != nil {
 		return entity.AuthIdentity{}, err
 	}

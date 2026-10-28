@@ -389,13 +389,8 @@ type AuthConf struct {
 		Enabled      bool   `koanf:"enabled" json:"enabled"`
 		ClientID     string `koanf:"client_id" json:"client_id"`
 		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+		SiteURL      string `koanf:"site_url" json:"site_url"`
 	} `koanf:"gitea" json:"gitea"`
-	GiteaSelf struct {
-		Enabled      bool   `koanf:"enabled" json:"enabled"`
-		ClientID     string `koanf:"client_id" json:"client_id"`
-		ClientSecret string `koanf:"client_secret" json:"client_secret"`
-		FullUrl      string `koanf:"site_url" json:"site_url"`
-	} `koanf:"gitea_self" json:"gitea_self"`
 	Google struct {
 		Enabled      bool   `koanf:"enabled" json:"enabled"`
 		ClientID     string `koanf:"client_id" json:"client_id"`
@@ -476,7 +471,7 @@ type AuthConf struct {
 }
 
 type AuthSSOConf struct {
-	Enabled bool   `koanf:"enabled" json:"enabled"`
+	Enabled bool `koanf:"enabled" json:"enabled"`
 	// Issuer is the OIDC issuer URL — e.g. "tenant.auth0.com" or
 	// "https://tenant.auth0.com". /userinfo is called against this host.
 	Issuer string `koanf:"issuer" json:"issuer"`

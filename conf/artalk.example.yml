@@ -319,6 +319,8 @@ auth:
     enabled: false
     client_id: ""
     client_secret: ""
+    # Server URL (leave empty for https://gitea.com; supports ports and subpaths)
+    site_url: ""
   # Google
   google:
     enabled: false

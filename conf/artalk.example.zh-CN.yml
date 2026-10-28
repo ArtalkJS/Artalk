@@ -327,6 +327,8 @@ auth:
     enabled: false
     client_id: ""
     client_secret: ""
+    # 服务地址 (留空使用 https://gitea.com，支持端口和子路径)
+    site_url: ""
   # Google
   google:
     enabled: false

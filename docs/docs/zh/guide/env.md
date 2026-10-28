@@ -145,6 +145,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_GITEA_CLIENT_ID** | `""` | ClientId | auth.gitea.client_id (社交登录 > Gitea > ClientId) |
 | **ATK_AUTH_GITEA_CLIENT_SECRET** | `""` | ClientSecret | auth.gitea.client_secret (社交登录 > Gitea > ClientSecret) |
 | **ATK_AUTH_GITEA_ENABLED** | `false` | 启用 | auth.gitea.enabled (社交登录 > Gitea > Enabled) |
+| **ATK_AUTH_GITEA_SITE_URL** | `""` | Gitea 服务地址（留空使用 https://gitea.com） | auth.gitea.site_url (Social Login > Gitea > Server URL) |
 | **ATK_AUTH_GITHUB_CLIENT_ID** | `""` | ClientId | auth.github.client_id (社交登录 > GitHub > ClientId) |
 | **ATK_AUTH_GITHUB_CLIENT_SECRET** | `""` | ClientSecret | auth.github.client_secret (社交登录 > GitHub > ClientSecret) |
 | **ATK_AUTH_GITHUB_ENABLED** | `false` | 启用 | auth.github.enabled (社交登录 > GitHub > Enabled) |

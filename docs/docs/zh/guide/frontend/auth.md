@@ -18,6 +18,14 @@ Artalk 默认只需填写昵称和邮箱即可发表评论，无需验证邮箱�
 开启社交登录功能仅需在 [控制中心](./sidebar.md#设置) 找到「社交登录」启用该功能，然后填写对应的配置信息即可。也可以通过 [配置文件](../backend/config.md) 或 [环境变量](../env.md#社交登录) 进行配置。
 
 
+## 自建 Gitea
+
+将 `auth.gitea.site_url` 设为 Gitea 的基础 URL，例如 `https://git.example.com/gitea`。留空使用 `https://gitea.com`。支持 HTTP、HTTPS、端口和子路径。
+
+也可设置环境变量 `ATK_AUTH_GITEA_SITE_URL`。在 Gitea 中填写回调地址：`<Artalk 对外访问源站>/api/v2/auth/gitea/callback`。
+
+已有 gitea.com 账号不变。不同自建服务 URL 的账号相互独立，即使昵称和邮箱相同。切换到其他服务或子路径会产生独立账号，已有评论仍属于原账号。
+
 ## 邮箱密码登录
 
 ![邮箱登录](/images/auth/email_login.png)

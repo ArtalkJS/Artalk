@@ -311,7 +311,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 
 | 环境变量 | 默认值 | 描述 | 路径 |
 | --- | --- | --- | --- |
-| **ATK_IP_REGION_DB_PATH** | `"./data/ip2region.xdb"` | 数据文件路径 (.xdb 格式) | ip_region.db_path (IP 属地 > 数据文件路径) |
+| **ATK_IP_REGION_DB_PATH** | `"./data/ip2region.xdb"` | 数据文件路径 (.xdb 或标准版 .ipdb 格式) | ip_region.db_path (IP 属地 > 数据文件路径) |
 | **ATK_IP_REGION_ENABLED** | `false` | 启用 IP 属地展示 | ip_region.enabled (IP 属地 > 启用 IP 属地展示) |
 | **ATK_IP_REGION_PRECISION** | `"province"` | 显示精度 (可选：`["province", "city", "country"]`) | ip_region.precision (IP 属地 > 显示精度) |
 

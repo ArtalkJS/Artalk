@@ -12,7 +12,15 @@ type SocialUser struct {
 	Link      string
 }
 
-func GetSocialUser(u goth.User) SocialUser {
+func GetSocialUser(u goth.User, giteaSiteURL string) (SocialUser, error) {
+	remoteUID := u.UserID
+	if u.Provider == "gitea" {
+		var err error
+		remoteUID, err = giteaRemoteUID(giteaSiteURL, u.UserID)
+		if err != nil {
+			return SocialUser{}, err
+		}
+	}
 	var link string
 	if u.Provider == "github" {
 		if l, ok := u.RawData["blog"].(string); ok && l != "" {
@@ -39,7 +47,7 @@ func GetSocialUser(u goth.User) SocialUser {
 
 	return SocialUser{
 		User:      u,
-		RemoteUID: u.UserID,
+		RemoteUID: remoteUID,
 		Link:      link,
-	}
+	}, nil
 }

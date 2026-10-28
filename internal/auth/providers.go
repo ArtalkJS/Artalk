@@ -59,8 +59,13 @@ func GetProviders(conf *config.Config) []goth.Provider {
 	}
 	// @see https://docs.gitea.io/en-us/oauth2-provider/
 	if giteaConf := conf.Auth.Gitea; giteaConf.Enabled {
-		providers = append(providers, gitea.New(giteaConf.ClientID, giteaConf.ClientSecret, callbackURL("gitea"),
-			"read:user"))
+		siteURL, err := giteaSiteURL(giteaConf.SiteURL)
+		if err != nil {
+			log.Error("[SocialLogin] ", err)
+		} else {
+			providers = append(providers, gitea.NewCustomisedURL(giteaConf.ClientID, giteaConf.ClientSecret, callbackURL("gitea"),
+				siteURL+"/login/oauth/authorize", siteURL+"/login/oauth/access_token", siteURL+"/api/v1/user", "read:user"))
+		}
 	}
 	// @see https://developers.google.com/identity/protocols/oauth2
 	if googleConf := conf.Auth.Google; googleConf.Enabled {

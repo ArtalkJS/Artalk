@@ -58,6 +58,12 @@ export function padWithZeros(vNumber: number, width: number) {
   return numAsString
 }
 
+/** Parse API date, prefer timezone-safe `date_unix` over legacy `date` */
+export function parseDate({ date, date_unix }: { date?: string; date_unix?: number }) {
+  if (date_unix) return new Date(date_unix * 1000)
+  return new Date((date || '').replace(/-/g, '/')) // Safari can't parse `YYYY-MM-DD`
+}
+
 export function dateFormat(date: Date) {
   const vDay = padWithZeros(date.getDate(), 2)
   const vMonth = padWithZeros(date.getMonth() + 1, 2)

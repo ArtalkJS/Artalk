@@ -4011,6 +4011,7 @@
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -4045,6 +4046,9 @@
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "email_encrypted": {
                     "type": "string"
@@ -4141,6 +4145,7 @@
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
                 "id",
                 "key",
                 "pv",
@@ -4156,6 +4161,9 @@
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -4924,6 +4932,7 @@
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -4958,6 +4967,9 @@
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "email_encrypted": {
                     "type": "string"
@@ -5076,6 +5088,7 @@
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -5110,6 +5123,9 @@
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "email_encrypted": {
                     "type": "string"
@@ -5231,6 +5247,7 @@
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
                 "id",
                 "key",
                 "pv",
@@ -5246,6 +5263,9 @@
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -5334,6 +5354,7 @@
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
                 "id",
                 "key",
                 "pv",
@@ -5349,6 +5370,9 @@
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"

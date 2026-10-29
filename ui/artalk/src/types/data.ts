@@ -26,6 +26,9 @@ export interface CommentData {
   /** 评论日期 */
   date: string
 
+  /** 评论日期 Unix 秒级时间戳 */
+  date_unix?: number
+
   /** 是否折叠 */
   is_collapsed: boolean
 

@@ -58,7 +58,7 @@ function renderVerifyBadge(ctx: Render) {
 function renderDate(ctx: Render) {
   const $date = ctx.$el.querySelector<HTMLElement>('.atk-date')!
   $date.innerText = ctx.comment.getDateFormatted()
-  $date.setAttribute('data-atk-comment-date', String(+new Date(ctx.data.date)))
+  $date.setAttribute('data-atk-comment-date', String(+ctx.comment.getCreatedAt()))
 }
 
 function renderUABadge(ctx: Render) {

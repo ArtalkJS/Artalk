@@ -4018,6 +4018,7 @@ const docTemplate = `{
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -4052,6 +4053,9 @@ const docTemplate = `{
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "email_encrypted": {
                     "type": "string"
@@ -4148,6 +4152,7 @@ const docTemplate = `{
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
                 "id",
                 "key",
                 "pv",
@@ -4163,6 +4168,9 @@ const docTemplate = `{
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -4931,6 +4939,7 @@ const docTemplate = `{
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -4965,6 +4974,9 @@ const docTemplate = `{
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "email_encrypted": {
                     "type": "string"
@@ -5083,6 +5095,7 @@ const docTemplate = `{
                 "content",
                 "content_marked",
                 "date",
+                "date_unix",
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
@@ -5117,6 +5130,9 @@ const docTemplate = `{
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "email_encrypted": {
                     "type": "string"
@@ -5238,6 +5254,7 @@ const docTemplate = `{
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
                 "id",
                 "key",
                 "pv",
@@ -5253,6 +5270,9 @@ const docTemplate = `{
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -5341,6 +5361,7 @@ const docTemplate = `{
             "required": [
                 "admin_only",
                 "date",
+                "date_unix",
                 "id",
                 "key",
                 "pv",
@@ -5356,6 +5377,9 @@ const docTemplate = `{
                 },
                 "date": {
                     "type": "string"
+                },
+                "date_unix": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"

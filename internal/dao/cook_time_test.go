@@ -1,17 +1,16 @@
 package dao_test
 
 import (
-	"encoding/json"
 	"testing"
 	"time"
 
 	"github.com/artalkjs/artalk/v2/internal/dao"
 	"github.com/artalkjs/artalk/v2/internal/entity"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
 
-func TestCookedTimestampsAcrossTimezones(t *testing.T) {
+func TestCookedDateUnixAcrossTimezones(t *testing.T) {
 	originalLocal := time.Local
 	t.Cleanup(func() { time.Local = originalLocal })
 	instant := time.Date(2025, 1, 2, 3, 4, 5, 0, time.UTC)
@@ -27,21 +26,15 @@ func TestCookedTimestampsAcrossTimezones(t *testing.T) {
 			model := gorm.Model{CreatedAt: instant.In(zone)}
 			page := &entity.Page{Model: model, Key: "https://example.test/page"}
 			comment := &entity.Comment{Model: model, Page: page, User: &entity.User{}}
+			legacy := instant.In(zone).Format(dao.CommonDateTimeFormat)
 
-			for _, response := range []any{d.CookComment(comment), d.CookPage(page)} {
-				data, err := json.Marshal(response)
-				require.NoError(t, err)
-				var fields map[string]json.RawMessage
-				require.NoError(t, json.Unmarshal(data, &fields))
-				var unix int64
-				var utc, legacy string
-				require.NoError(t, json.Unmarshal(fields["date_unix"], &unix))
-				require.NoError(t, json.Unmarshal(fields["date_utc"], &utc))
-				require.NoError(t, json.Unmarshal(fields["date"], &legacy))
-				require.Equal(t, instant.Unix(), unix)
-				require.Equal(t, "2025-01-02T03:04:05Z", utc)
-				require.Equal(t, instant.In(zone).Format(dao.CommonDateTimeFormat), legacy)
-			}
+			cookedComment := d.CookComment(comment)
+			assert.Equal(t, instant.Unix(), cookedComment.DateUnix)
+			assert.Equal(t, legacy, cookedComment.Date)
+
+			cookedPage := d.CookPage(page)
+			assert.Equal(t, instant.Unix(), cookedPage.DateUnix)
+			assert.Equal(t, legacy, cookedPage.Date)
 		})
 	}
 }

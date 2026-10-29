@@ -51,7 +51,6 @@ export default class CommentNode {
   constructor(data: CommentData, opts: CommentOptions) {
     this.opts = opts
     this.data = { ...data }
-    this.data.date = this.data.date.replace(/-/g, '/')
 
     this.parent = null
     this.nestCurt = 1 // 现在已嵌套 n 层

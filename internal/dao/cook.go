@@ -4,7 +4,6 @@ package dao
 
 import (
 	"strings"
-	"time"
 
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/internal/utils"
@@ -12,20 +11,6 @@ import (
 )
 
 const CommonDateTimeFormat = "2006-01-02 15:04:05"
-
-type cookedTime struct {
-	Legacy string
-	Unix   int64
-	UTC    string
-}
-
-func cookTime(t time.Time) cookedTime {
-	return cookedTime{
-		Legacy: t.Local().Format(CommonDateTimeFormat),
-		Unix:   t.Unix(),
-		UTC:    t.UTC().Format(time.RFC3339),
-	}
-}
 
 // TODO: (refactor) remove this global variable
 var getCommentEmailHash = func(email string) string { return utils.GetMD5Hash(strings.ToLower(email)) }
@@ -57,7 +42,6 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 	}
 
 	markedContent, _ := utils.Marked(c.Content)
-	createdAt := cookTime(c.CreatedAt)
 
 	return entity.CookedComment{
 		ID:             c.ID,
@@ -68,9 +52,8 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		EmailEncrypted: getCommentEmailHash(user.Email),
 		Link:           user.Link,
 		UA:             c.UA,
-		Date:           createdAt.Legacy,
-		DateUnix:       createdAt.Unix,
-		DateUTC:        createdAt.UTC,
+		Date:           c.CreatedAt.Local().Format(CommonDateTimeFormat),
+		DateUnix:       c.CreatedAt.Unix(),
 		IsCollapsed:    c.IsCollapsed,
 		IsPending:      c.IsPending,
 		IsPinned:       c.IsPinned,
@@ -102,7 +85,6 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 	page := dao.FetchPageForComment(c)
 	site := dao.FetchSiteForComment(c)
 	content, _ := utils.Marked(c.Content)
-	createdAt := cookTime(c.CreatedAt)
 
 	return entity.CookedCommentForEmail{
 		Content:    content,
@@ -110,7 +92,7 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 		Nick:       user.Name,
 		Email:      user.Email,
 		IP:         c.IP,
-		Datetime:   createdAt.Legacy,
+		Datetime:   c.CreatedAt.Local().Format(CommonDateTimeFormat),
 		Date:       c.CreatedAt.Local().Format("2006-01-02"),
 		Time:       c.CreatedAt.Local().Format("15:04:05"),
 		PageKey:    c.PageKey,
@@ -123,8 +105,7 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 			EmailEncrypted: getCommentEmailHash(user.Email),
 			Link:           user.Link,
 			UA:             c.UA,
-			DateUnix:       createdAt.Unix,
-			DateUTC:        createdAt.UTC,
+			DateUnix:       c.CreatedAt.Unix(),
 			IsCollapsed:    c.IsCollapsed,
 			IsPending:      c.IsPending,
 			IsPinned:       c.IsPinned,
@@ -141,8 +122,6 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 // ===============
 
 func (dao *Dao) CookPage(p *entity.Page) entity.CookedPage {
-	createdAt := cookTime(p.CreatedAt)
-
 	return entity.CookedPage{
 		ID:        p.ID,
 		AdminOnly: p.AdminOnly,
@@ -153,9 +132,8 @@ func (dao *Dao) CookPage(p *entity.Page) entity.CookedPage {
 		VoteUp:    p.VoteUp,
 		VoteDown:  p.VoteDown,
 		PV:        p.PV,
-		Date:      createdAt.Legacy,
-		DateUnix:  createdAt.Unix,
-		DateUTC:   createdAt.UTC,
+		Date:      p.CreatedAt.Local().Format(CommonDateTimeFormat),
+		DateUnix:  p.CreatedAt.Unix(),
 	}
 }
 

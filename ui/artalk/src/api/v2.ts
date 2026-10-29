@@ -44,7 +44,6 @@ export interface EntityCookedComment {
   content_marked: string
   date: string
   date_unix: number
-  date_utc: string
   email_encrypted: string
   id: number
   ip_region?: string
@@ -79,7 +78,6 @@ export interface EntityCookedPage {
   admin_only: boolean
   date: string
   date_unix: number
-  date_utc: string
   id: number
   key: string
   pv: number
@@ -378,7 +376,6 @@ export interface HandlerResponseCommentCreate {
   content_marked: string
   date: string
   date_unix: number
-  date_utc: string
   email_encrypted: string
   id: number
   ip_region?: string
@@ -421,7 +418,6 @@ export interface HandlerResponseCommentUpdate {
   content_marked: string
   date: string
   date_unix: number
-  date_utc: string
   email_encrypted: string
   id: number
   ip_region?: string
@@ -465,7 +461,6 @@ export interface HandlerResponsePageFetch {
   admin_only: boolean
   date: string
   date_unix: number
-  date_utc: string
   id: number
   key: string
   pv: number
@@ -500,7 +495,6 @@ export interface HandlerResponsePageUpdate {
   admin_only: boolean
   date: string
   date_unix: number
-  date_utc: string
   id: number
   key: string
   pv: number

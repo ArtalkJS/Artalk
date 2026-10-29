@@ -12,5 +12,4 @@ type CookedPage struct {
 	PV        int    `json:"pv"`
 	Date      string `json:"date"`
 	DateUnix  int64  `json:"date_unix"`
-	DateUTC   string `json:"date_utc"`
 }

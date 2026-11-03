@@ -153,7 +153,7 @@ captcha:
   enabled: true
   # Her zaman doğrulama gerekli
   always: false
-  # Doğrulama türü ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
+  # Doğrulama türü ["image", "turnstile", "recaptcha", "hcaptcha", "geetest", "capjs"]
   captcha_type: image
   # İşlem sınırı
   # (doğrulamayı etkinleştirmek için gereken işlem sayısı)
@@ -178,6 +178,11 @@ captcha:
   geetest:
     captcha_id: ""
     captcha_key: ""
+  # Cap (https://capjs.js.org/)
+  capjs:
+    key_id: ""
+    secret_key: ""
+    api_endpoint: ""
 
 # Yükleme
 img_upload:

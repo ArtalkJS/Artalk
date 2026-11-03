@@ -144,7 +144,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_GITEA_CLIENT_ID** | `""` | ClientId | auth.gitea.client_id (Social Login > Gitea > ClientId) |
 | **ATK_AUTH_GITEA_CLIENT_SECRET** | `""` | ClientSecret | auth.gitea.client_secret (Social Login > Gitea > ClientSecret) |
 | **ATK_AUTH_GITEA_ENABLED** | `false` | 启用 | auth.gitea.enabled (Social Login > Gitea > Enabled) |
-| **ATK_AUTH_GITEA_SITE_URL** | `""` | Gitea server URL (empty uses https://gitea.com) | auth.gitea.site_url (Social Login > Gitea > Server URL) |
+| **ATK_AUTH_GITEA_SITE_URL** | `""` | Server URL (leave empty for https://gitea.com; supports ports and subpaths) | auth.gitea.site_url (Social Login > Gitea > Server URL) |
 | **ATK_AUTH_GITHUB_CLIENT_ID** | `""` | ClientId | auth.github.client_id (Social Login > GitHub > ClientId) |
 | **ATK_AUTH_GITHUB_CLIENT_SECRET** | `""` | ClientSecret | auth.github.client_secret (Social Login > GitHub > ClientSecret) |
 | **ATK_AUTH_GITHUB_ENABLED** | `false` | 启用 | auth.github.enabled (Social Login > GitHub > Enabled) |
@@ -206,7 +206,10 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_CAPTCHA_ACTION_LIMIT** | `3` | Action limit (the number of actions required to activate captcha) | captcha.action_limit (Captcha > Action limit) |
 | **ATK_CAPTCHA_ACTION_RESET** | `60` | Reset Timeout (timeout to reset action counter. unit: s, set to -1 to disable) | captcha.action_reset (Captcha > Reset Timeout) |
 | **ATK_CAPTCHA_ALWAYS** | `false` | Captcha is required always | captcha.always (Captcha > Captcha is required always) |
-| **ATK_CAPTCHA_CAPTCHA_TYPE** | `"image"` | Captcha type (可选：`["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]`) | captcha.captcha_type (Captcha > Captcha type) |
+| **ATK_CAPTCHA_CAPJS_API_ENDPOINT** | `""` | ApiEndpoint | captcha.capjs.api_endpoint (Captcha > Cap > ApiEndpoint) |
+| **ATK_CAPTCHA_CAPJS_KEY_ID** | `""` | KeyId | captcha.capjs.key_id (Captcha > Cap > KeyId) |
+| **ATK_CAPTCHA_CAPJS_SECRET_KEY** | `""` | SecretKey | captcha.capjs.secret_key (Captcha > Cap > SecretKey) |
+| **ATK_CAPTCHA_CAPTCHA_TYPE** | `"image"` | Captcha type (可选：`["image", "turnstile", "recaptcha", "hcaptcha", "geetest", "capjs"]`) | captcha.captcha_type (Captcha > Captcha type) |
 | **ATK_CAPTCHA_ENABLED** | `true` | Enable captcha | captcha.enabled (Captcha > Enable captcha) |
 | **ATK_CAPTCHA_GEETEST_CAPTCHA_ID** | `""` | CaptchaId | captcha.geetest.captcha_id (Captcha > Geetest > CaptchaId) |
 | **ATK_CAPTCHA_GEETEST_CAPTCHA_KEY** | `""` | CaptchaKey | captcha.geetest.captcha_key (Captcha > Geetest > CaptchaKey) |

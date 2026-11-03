@@ -41,6 +41,11 @@ func CaptchaVerify(app *core.App, router fiber.Router) {
 		// check user input
 		isPass, err := cap.Check(p.Value)
 
+		// A checker error must never grant verification.
+		if err != nil {
+			isPass = false
+		}
+
 		// trigger global event
 		if isPass {
 			// 验证码正确
@@ -65,9 +70,13 @@ func CaptchaVerify(app *core.App, router fiber.Router) {
 			}
 		case captcha.IFrame:
 			if !isPass {
-				log.Error("[Captcha] Failed to verify: ", err)
+				detail := "Verification failed"
+				if err != nil {
+					detail = err.Error()
+				}
+				log.Error("[Captcha] Failed to verify: ", detail)
 				return common.RespError(c, 403, i18n.T("Verification failed"), common.Map{
-					"detail": err.Error(),
+					"detail": detail,
 				})
 			}
 		}

@@ -4,7 +4,7 @@ Artalk comes with a built-in image captcha feature, allowing you to configure op
 
 Additionally, you can integrate various verification service providers to gain diversified verification functionality.
 
-Currently, Artalk supports: Turnstile, reCAPTCHA, hCaptcha, and Geetest.
+Currently, Artalk supports: Turnstile, reCAPTCHA, hCaptcha, Geetest, and Cap.
 
 You can modify these settings in the [Dashboard](../frontend/sidebar.md#Settings) or via the [configuration file](./config.md#captcha) or [environment variables](../env.md#captcha).
 
@@ -38,10 +38,15 @@ captcha:
   geetest:
     captcha_id: ''
     captcha_key: ''
+  # Cap (https://capjs.js.org/)
+  capjs:
+    key_id: ''
+    secret_key: ''
+    api_endpoint: ''
 ```
 
 - **always**: When set to `true`, captcha is always required.
-- **captcha_type**: Type of captcha, options include: `image`, `turnstile`, `recaptcha`, `hcaptcha`, `geetest`.
+- **captcha_type**: Type of captcha, options include: `image`, `turnstile`, `recaptcha`, `hcaptcha`, `geetest`, `capjs`.
 - **action_limit**: The number of actions required to activate the captcha.
 - **action_reset**: When the time exceeds this value, the action counter resets. Unit is seconds; set to `-1` to never reset.
 
@@ -157,3 +162,24 @@ captcha:
     captcha_id: ''
     captcha_key: ''
 ```
+
+## Cap
+
+[Cap](https://capjs.js.org/guide/standalone/) is a self-hosted verification service. Artalk connects to Cap Standalone and checks each token on the server.
+
+Deploy Cap Standalone with Redis or Valkey. Set `ENABLE_ASSETS_SERVER=true` so Cap serves the widget and WebAssembly files. Create a site key in the Cap dashboard, then set:
+
+```yaml
+captcha:
+  captcha_type: capjs
+  capjs:
+    key_id: 'YOUR_SITE_KEY_ID'
+    secret_key: 'YOUR_SITE_SECRET'
+    api_endpoint: 'https://cap.example.com'
+```
+
+Use the Cap server URL for `api_endpoint`, without the site key or `/siteverify` path. Both the browser and Artalk must reach this URL. Use HTTPS when Artalk uses HTTPS. Keep the secret key on the server. If you restrict origins in Cap, allow the Artalk server origin that hosts the verification frame.
+
+This integration was tested with Cap Standalone 3.1.13, widget 0.1.58, and WebAssembly 0.0.8. Set `WIDGET_VERSION=0.1.58` and `WASM_VERSION=0.0.8` in Cap to pin these assets. Cap downloads them on the server; the browser loads them from your Cap URL.
+
+Cap adds work for automated clients. It does not guarantee that a visitor is human. Keep Artalk's rate limits and moderation enabled as needed.

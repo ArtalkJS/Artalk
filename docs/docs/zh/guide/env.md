@@ -145,7 +145,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_GITEA_CLIENT_ID** | `""` | ClientId | auth.gitea.client_id (社交登录 > Gitea > ClientId) |
 | **ATK_AUTH_GITEA_CLIENT_SECRET** | `""` | ClientSecret | auth.gitea.client_secret (社交登录 > Gitea > ClientSecret) |
 | **ATK_AUTH_GITEA_ENABLED** | `false` | 启用 | auth.gitea.enabled (社交登录 > Gitea > Enabled) |
-| **ATK_AUTH_GITEA_SITE_URL** | `""` | Gitea 服务地址（留空使用 https://gitea.com） | auth.gitea.site_url (Social Login > Gitea > Server URL) |
+| **ATK_AUTH_GITEA_SITE_URL** | `""` | 服务地址 (留空使用 https://gitea.com，支持端口和子路径) | auth.gitea.site_url (社交登录 > Gitea > 服务地址) |
 | **ATK_AUTH_GITHUB_CLIENT_ID** | `""` | ClientId | auth.github.client_id (社交登录 > GitHub > ClientId) |
 | **ATK_AUTH_GITHUB_CLIENT_SECRET** | `""` | ClientSecret | auth.github.client_secret (社交登录 > GitHub > ClientSecret) |
 | **ATK_AUTH_GITHUB_ENABLED** | `false` | 启用 | auth.github.enabled (社交登录 > GitHub > Enabled) |
@@ -207,7 +207,10 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_CAPTCHA_ACTION_LIMIT** | `3` | 激活验证码所需操作次数 | captcha.action_limit (验证码 > 激活验证码所需操作次数) |
 | **ATK_CAPTCHA_ACTION_RESET** | `60` | 重置操作计数器超时 (单位：s, 设为 -1 不重置) | captcha.action_reset (验证码 > 重置操作计数器超时) |
 | **ATK_CAPTCHA_ALWAYS** | `false` | 总是需要验证码 | captcha.always (验证码 > 总是需要验证码) |
-| **ATK_CAPTCHA_CAPTCHA_TYPE** | `"image"` | 验证类型 (可选：`["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]`) | captcha.captcha_type (验证码 > 验证类型) |
+| **ATK_CAPTCHA_CAPJS_API_ENDPOINT** | `""` | ApiEndpoint | captcha.capjs.api_endpoint (验证码 > Cap > ApiEndpoint) |
+| **ATK_CAPTCHA_CAPJS_KEY_ID** | `""` | KeyId | captcha.capjs.key_id (验证码 > Cap > KeyId) |
+| **ATK_CAPTCHA_CAPJS_SECRET_KEY** | `""` | SecretKey | captcha.capjs.secret_key (验证码 > Cap > SecretKey) |
+| **ATK_CAPTCHA_CAPTCHA_TYPE** | `"image"` | 验证类型 (可选：`["image", "turnstile", "recaptcha", "hcaptcha", "geetest", "capjs"]`) | captcha.captcha_type (验证码 > 验证类型) |
 | **ATK_CAPTCHA_ENABLED** | `true` | 启用验证码 | captcha.enabled (验证码 > 启用验证码) |
 | **ATK_CAPTCHA_GEETEST_CAPTCHA_ID** | `""` | CaptchaId | captcha.geetest.captcha_id (验证码 > Geetest 极验 > CaptchaId) |
 | **ATK_CAPTCHA_GEETEST_CAPTCHA_KEY** | `""` | CaptchaKey | captcha.geetest.captcha_key (验证码 > Geetest 极验 > CaptchaKey) |

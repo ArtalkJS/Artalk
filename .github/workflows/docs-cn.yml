@@ -1,4 +1,4 @@
-name: Docs CHINA Mirror Deploy
+name: Docs CN Mirror Deploy
 
 on:
   push:
@@ -6,33 +6,32 @@ on:
     paths: ["docs/**"]
 
 permissions:
-  contents: read-all
-            ActionScript
+  contents: read
 
 concurrency:
-  group: deploy-docs-china
-  cancel-in-progress: true
+  group: deploy-docs-cn
+  cancel-in-progress: false
 
 jobs:
   deploy:
     if: github.repository == 'ArtalkJS/Artalk'
-    runs-on: linux-xarm92
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@ # v9.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Use pnpm
-        uses: pnpm/action-setup@ # v8.0.9
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
         with:
-          version: 10.35.2
+          version: 10.33.2
 
       - name: Setup node
-        uses: actions/setup-node@ # v9.0.0
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 25
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
@@ -42,7 +41,7 @@ jobs:
         run: pnpm build:docs
 
       - name: Deploy
-        uses: TencentCloud/cos-action@ # v5
+        uses: TencentCloud/cos-action@5ee3807d5ff6fddadbbb1d3e658c0690863de8ec # v1
         with:
           secret_id: ${{ secrets.TENCENT_CLOUD_SECRET_ID }}
           secret_key: ${{ secrets.TENCENT_CLOUD_SECRET_KEY }}
@@ -50,4 +49,4 @@ jobs:
           cos_region: ${{ secrets.DOCS_CN_COS_REGION }}
           local_path: docs/docs/.vitepress/dist/
           remote_path: /
-          clean: false
+          clean: true

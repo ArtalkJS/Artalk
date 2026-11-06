@@ -75,7 +75,7 @@ func TestGiteaOAuthWithSubpath(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "42", user.UserID)
 	require.Equal(t, []string{"/git/login/oauth/access_token", "/git/api/v1/user"}, requested)
-	social, err := GetSocialUser(user, conf.Auth.Gitea.SiteURL)
+	social, err := GetSocialUser(user, &conf.Auth)
 	require.NoError(t, err)
 	require.NotEqual(t, "42", social.RemoteUID)
 	conf.Auth.Gitea.Enabled = false
@@ -88,7 +88,7 @@ func TestGiteaIdentityCompatibility(t *testing.T) {
 	for _, site := range []string{"", "https://gitea.com/", "https://GITEA.COM:443", "https://git.example/a", "https://git.example/b", "https://other.example/a"} {
 		conf := &config.Config{}
 		conf.Auth.Gitea.SiteURL = site
-		social, err := GetSocialUser(user, conf.Auth.Gitea.SiteURL)
+		social, err := GetSocialUser(user, &conf.Auth)
 		require.NoError(t, err)
 		identities[site] = social.RemoteUID
 		require.LessOrEqual(t, len(social.RemoteUID), 255)
@@ -102,7 +102,7 @@ func TestGiteaIdentityCompatibility(t *testing.T) {
 	conf := &config.Config{}
 	for _, id := range []string{"", "0"} {
 		user.UserID = id
-		_, err := GetSocialUser(user, conf.Auth.Gitea.SiteURL)
+		_, err := GetSocialUser(user, &conf.Auth)
 		require.Error(t, err)
 	}
 }

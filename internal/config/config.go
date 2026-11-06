@@ -469,6 +469,12 @@ type AuthConf struct {
 		ClientSecret string `koanf:"client_secret" json:"client_secret"`
 		Domain       string `koanf:"domain" json:"domain"`
 	} `koanf:"auth0" json:"auth0"`
+	Okta struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+		Issuer       string `koanf:"issuer" json:"issuer"`
+	} `koanf:"okta" json:"okta"`
 
 	// Token exchange — accept an access token from an external OIDC IdP
 	// (verified via that IdP's /userinfo) and issue an Artalk JWT for the

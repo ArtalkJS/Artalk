@@ -20,7 +20,7 @@ func TestSelfHostedGiteaDoesNotClaimExistingAccount(t *testing.T) {
 	require.NoError(t, app.Dao().DB().Save(&existing).Error)
 	profile := goth.User{Provider: "gitea", UserID: "42", Name: existing.Name, Email: existing.Email}
 	conf := &config.Config{}
-	legacy, err := auth.GetSocialUser(profile, conf.Auth.Gitea.SiteURL)
+	legacy, err := auth.GetSocialUser(profile, &conf.Auth)
 	require.NoError(t, err)
 	oldIdentity, err := auth.RegisterSocialUser(app.Dao(), legacy)
 	require.NoError(t, err)
@@ -28,7 +28,7 @@ func TestSelfHostedGiteaDoesNotClaimExistingAccount(t *testing.T) {
 	previousID := existing.ID
 	for _, site := range []string{"https://git.example/a", "https://git.example/b"} {
 		conf.Auth.Gitea.SiteURL = site
-		user, err := auth.GetSocialUser(profile, conf.Auth.Gitea.SiteURL)
+		user, err := auth.GetSocialUser(profile, &conf.Auth)
 		require.NoError(t, err)
 		require.True(t, app.Dao().FindAuthIdentityByRemoteUID("gitea", user.RemoteUID).IsEmpty())
 		identity, err := auth.RegisterSocialUser(app.Dao(), user)

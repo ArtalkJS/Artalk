@@ -22,8 +22,8 @@ func RegisterSocialUser(dao *dao.Dao, u SocialUser) (entity.AuthIdentity, error)
 
 	var user entity.User
 	var err error
-	if u.Provider == "gitea" && u.RemoteUID != u.UserID {
-		// A self-hosted server's profile is not proof of ownership of an existing
+	if u.Provider == "okta" || (u.Provider == "gitea" && u.RemoteUID != u.UserID) {
+		// A tenant's profile is not proof of ownership of an existing
 		// Artalk account, even when its name and email match.
 		user, err = dao.NewUser(u.Name, u.Email, u.Link)
 	} else {

@@ -78,7 +78,7 @@ func AuthSocialLogin(app *core.App, router fiber.Router) {
 		}
 
 		// Convert to social user
-		socialUser, err := auth.GetSocialUser(gothUser, app.Conf().Auth.Gitea.SiteURL)
+		socialUser, err := auth.GetSocialUser(gothUser, &app.Conf().Auth)
 		if err != nil {
 			return common.RespError(c, 500, err.Error())
 		}

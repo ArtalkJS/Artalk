@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.repository == 'ArtalkJS/Artalk'
     runs-on: ubuntu-latest
 
     steps:

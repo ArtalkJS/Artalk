@@ -90,6 +90,16 @@ func TestAppBootstrap(t *testing.T) {
 	assert.NotNil(t, app.dao)
 	assert.NotNil(t, app.cache)
 	assert.NotNil(t, app.service)
+	require.NoError(t, app.ResetBootstrapState())
+	require.False(t, app.RunBackground(func() { t.Error("task started after cleanup") }))
+	require.NoError(t, app.Bootstrap())
+	ran := make(chan struct{})
+	require.True(t, app.RunBackground(func() { close(ran) }))
+	select {
+	case <-ran:
+	case <-time.After(time.Second):
+		t.Fatal("bootstrap did not enable background work")
+	}
 }
 
 func TestAppInjectAndService(t *testing.T) {

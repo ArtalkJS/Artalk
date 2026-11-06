@@ -11,7 +11,9 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/server/common"
@@ -224,4 +226,55 @@ func TestGuestHeaderCors(t *testing.T) {
 	defer resp.Body.Close()
 	require.Equal(t, 204, resp.StatusCode)
 	require.Contains(t, strings.ToLower(resp.Header.Get("Access-Control-Allow-Headers")), "x-artalk-guest")
+}
+
+func TestCommentCleanupWaitsForTitleFetch(t *testing.T) {
+	started, release := make(chan struct{}), make(chan struct{})
+	var once sync.Once
+	target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		close(started)
+		<-release
+		_, _ = w.Write([]byte("<title>Fetched before cleanup</title>"))
+	}))
+	defer target.Close()
+	defer once.Do(func() { close(release) })
+	app, router := NewApiTestApp()
+	app.Conf().Captcha.Enabled = false
+	app.Conf().Auth.Enabled = false
+	app.Conf().Email.Enabled = false
+	app.Conf().Moderator.PendingDefault = true
+	app.Conf().PageTitleAutoFetch = true
+	app.Conf().TrustedDomains = []string{target.URL}
+	handler.CommentCreate(app.App, router)
+	cleanupStarted := false
+	defer func() {
+		once.Do(func() { close(release) })
+		if !cleanupStarted {
+			require.NoError(t, app.Cleanup())
+		}
+	}()
+	response := guestRequest(t, router, "POST", "/comments", guestA, "", handler.ParamsCommentCreate{
+		Name: "guest", Email: "guest@example.com", Content: "cleanup test", SiteName: "Site A", PageKey: target.URL + "/post",
+	})
+	require.Equal(t, 200, response.StatusCode, "title fetching must not delay the response")
+	select {
+	case <-started:
+	case <-time.After(5 * time.Second):
+		t.Fatal("title fetch did not start")
+	}
+	cleanupStarted = true
+	cleaned := make(chan error, 1)
+	go func() { cleaned <- app.Cleanup() }()
+	select {
+	case err := <-cleaned:
+		t.Fatalf("cleanup completed while title fetch was blocked: %v", err)
+	case <-time.After(50 * time.Millisecond):
+	}
+	once.Do(func() { close(release) })
+	select {
+	case err := <-cleaned:
+		require.NoError(t, err)
+	case <-time.After(5 * time.Second):
+		t.Fatal("cleanup did not finish after title fetch")
+	}
 }

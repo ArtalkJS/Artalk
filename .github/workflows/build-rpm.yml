@@ -1,0 +1,34 @@
+name: Build RPM
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      dry_run:
+        required: true
+        type: boolean
+    secrets:
+      COPR_BUILD_WEBHOOK_URL:
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  copr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout workflow scripts
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build and verify RPM
+        env:
+          VERSION: ${{ inputs.version }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          COPR_BUILD_WEBHOOK_URL: ${{ secrets.COPR_BUILD_WEBHOOK_URL }}
+        run: bash .github/scripts/copr-build.sh

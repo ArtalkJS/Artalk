@@ -1,4 +1,26 @@
 
+## [v2.10.1](https://github.com/ArtalkJS/Artalk/compare/v2.10.0...v2.10.1) (2026-10-25)
+
+### Bug Fixes
+
+* **api:** reject unsupported comment query scopes
+* **auth:** protect email verification and OAuth callbacks
+* **ci:** publish npm package with trusted OIDC
+* **docker:** push release images by digest
+* **i18n:** improve Japanese text and CJK font fallbacks ([#1197](https://github.com/ArtalkJS/Artalk/issues/1197))
+* **plugins:** prepare unpublished packages for release
+* **scripts:** detect unpublished npm versions
+* **security:** restrict comment data URLs to raster images ([#1196](https://github.com/ArtalkJS/Artalk/issues/1196))
+* **security:** keep sidebar login tokens out of query strings
+* **security:** enforce comment and notification ownership
+* **security:** authorize page title fetches with trusted domains
+* **security:** limit page creation and preserve frontend builds
+* **ui:** tolerate missing user-agent client hints ([#1195](https://github.com/ArtalkJS/Artalk/issues/1195))
+* **ui:** prevent mounting destroyed instances ([#1190](https://github.com/ArtalkJS/Artalk/issues/1190))
+* **ui:** add img role to labelled editor plug button icons ([#1189](https://github.com/ArtalkJS/Artalk/issues/1189))
+* **ui:** export the Turkish locale as `artalk/i18n/tr` ([#1188](https://github.com/ArtalkJS/Artalk/issues/1188))
+
+
 ## [v2.10.0](https://github.com/ArtalkJS/Artalk/compare/v2.9.1...v2.10.0) (2026-07-23)
 
 ### Features

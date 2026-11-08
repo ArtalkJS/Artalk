@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cap</title>
+    <script>
+      window.CAP_CUSTOM_WASM_URL = '{{.api_endpoint}}/assets/cap_wasm_bg.wasm'
+      window.CAP_CUSTOM_HASHWX_URL = '{{.api_endpoint}}/assets/hashwx.wasm'
+    </script>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+      }
+      #error:empty {
+        display: none;
+      }
+      #error {
+        margin: 8px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <cap-widget data-cap-api-endpoint="{{.api_endpoint}}/{{.key_id}}/"></cap-widget>
+    <p id="error" role="alert"></p>
+    <script>
+      const widget = document.querySelector('cap-widget')
+      const error = document.getElementById('error')
+      widget.addEventListener('solve', async (event) => {
+        error.textContent = ''
+        try {
+          const response = await fetch(location.pathname.replace(/\/?$/, '/verify'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ value: event.detail.token }),
+          })
+          if (!response.ok) throw new Error('Verification failed. Please try again.')
+        } catch {
+          error.textContent = 'Verification failed. Please try again.'
+          widget.reset()
+        }
+      })
+      widget.addEventListener('error', () => {
+        error.textContent = 'The CAPTCHA could not load. Please try again.'
+      })
+    </script>
+    <script
+      src="{{.api_endpoint}}/assets/widget.js"
+      onerror="
+        document.getElementById('error').textContent =
+          'The CAPTCHA could not load. Please try again.'
+      "
+    ></script>
+  </body>
+</html>

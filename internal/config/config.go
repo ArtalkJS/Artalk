@@ -168,6 +168,7 @@ type CaptchaConf struct {
 	ReCaptcha     ReCaptchaConf `koanf:"recaptcha" json:"recaptcha"`
 	HCaptcha      HCaptchaConf  `koanf:"hcaptcha" json:"hcaptcha"`
 	Geetest       GeetestConf   `koanf:"geetest" json:"geetest"`
+	CapJS         CapJSConf     `koanf:"capjs" json:"capjs"`
 }
 
 type CaptchaType string
@@ -178,6 +179,7 @@ const (
 	TypeReCaptcha CaptchaType = "recaptcha"
 	TypeHCaptcha  CaptchaType = "hcaptcha"
 	TypeGeetest   CaptchaType = "geetest"
+	TypeCapJS     CaptchaType = "capjs"
 )
 
 type TurnstileConf struct {
@@ -199,6 +201,12 @@ type GeetestConf struct {
 	Enabled    bool   `koanf:"enabled" json:"-"` // @deprecated 已废弃 (请使用 captcha.captcha_type)
 	CaptchaID  string `koanf:"captcha_id" json:"captcha_id"`
 	CaptchaKey string `koanf:"captcha_key" json:"captcha_key"`
+}
+
+type CapJSConf struct {
+	KeyID       string `koanf:"key_id" json:"key_id"`
+	SecretKey   string `koanf:"secret_key" json:"secret_key"`
+	APIEndpoint string `koanf:"api_endpoint" json:"api_endpoint"`
 }
 
 type EmailConf struct {
@@ -389,6 +397,7 @@ type AuthConf struct {
 		Enabled      bool   `koanf:"enabled" json:"enabled"`
 		ClientID     string `koanf:"client_id" json:"client_id"`
 		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+		SiteURL      string `koanf:"site_url" json:"site_url"`
 	} `koanf:"gitea" json:"gitea"`
 	Google struct {
 		Enabled      bool   `koanf:"enabled" json:"enabled"`
@@ -460,6 +469,12 @@ type AuthConf struct {
 		ClientSecret string `koanf:"client_secret" json:"client_secret"`
 		Domain       string `koanf:"domain" json:"domain"`
 	} `koanf:"auth0" json:"auth0"`
+	Okta struct {
+		Enabled      bool   `koanf:"enabled" json:"enabled"`
+		ClientID     string `koanf:"client_id" json:"client_id"`
+		ClientSecret string `koanf:"client_secret" json:"client_secret"`
+		Issuer       string `koanf:"issuer" json:"issuer"`
+	} `koanf:"okta" json:"okta"`
 
 	// Token exchange — accept an access token from an external OIDC IdP
 	// (verified via that IdP's /userinfo) and issue an Artalk JWT for the
@@ -470,7 +485,7 @@ type AuthConf struct {
 }
 
 type AuthSSOConf struct {
-	Enabled bool   `koanf:"enabled" json:"enabled"`
+	Enabled bool `koanf:"enabled" json:"enabled"`
 	// Issuer is the OIDC issuer URL — e.g. "tenant.auth0.com" or
 	// "https://tenant.auth0.com". /userinfo is called against this host.
 	Issuer string `koanf:"issuer" json:"issuer"`

@@ -77,7 +77,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_APP_KEY** | `""` | 加密密钥 | app_key (加密密钥) |
 | **ATK_DEBUG** | `false` | 调试模式 | debug (调试模式) |
 | **ATK_HOST** | `"0.0.0.0"` | 服务器地址 | host (服务器地址) |
-| **ATK_LOCALE** | `"zh-CN"` | 语言 (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru"]`) | locale (语言) |
+| **ATK_LOCALE** | `"zh-CN"` | 语言 (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr", "pt-PT"]`) | locale (语言) |
 | **ATK_LOGIN_TIMEOUT** | `259200` | 登录有效时长 (单位：秒) | login_timeout (登录有效时长) |
 | **ATK_PAGE_TITLE_AUTO_FETCH** | `false` | 自动抓取页面标题 (关闭可禁用标题自动抓取功能（可以手动抓取），提高安全性) | page_title_auto_fetch (自动抓取页面标题) |
 | **ATK_PORT** | `23366` | 服务器端口 | port (服务器端口) |
@@ -145,6 +145,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_GITEA_CLIENT_ID** | `""` | ClientId | auth.gitea.client_id (社交登录 > Gitea > ClientId) |
 | **ATK_AUTH_GITEA_CLIENT_SECRET** | `""` | ClientSecret | auth.gitea.client_secret (社交登录 > Gitea > ClientSecret) |
 | **ATK_AUTH_GITEA_ENABLED** | `false` | 启用 | auth.gitea.enabled (社交登录 > Gitea > Enabled) |
+| **ATK_AUTH_GITEA_SITE_URL** | `""` | 服务地址 (留空使用 https://gitea.com，支持端口和子路径) | auth.gitea.site_url (社交登录 > Gitea > 服务地址) |
 | **ATK_AUTH_GITHUB_CLIENT_ID** | `""` | ClientId | auth.github.client_id (社交登录 > GitHub > ClientId) |
 | **ATK_AUTH_GITHUB_CLIENT_SECRET** | `""` | ClientSecret | auth.github.client_secret (社交登录 > GitHub > ClientSecret) |
 | **ATK_AUTH_GITHUB_ENABLED** | `false` | 启用 | auth.github.enabled (社交登录 > GitHub > Enabled) |
@@ -163,6 +164,10 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_MICROSOFT_CLIENT_ID** | `""` | ClientId | auth.microsoft.client_id (社交登录 > Microsoft > ClientId) |
 | **ATK_AUTH_MICROSOFT_CLIENT_SECRET** | `""` | ClientSecret | auth.microsoft.client_secret (社交登录 > Microsoft > ClientSecret) |
 | **ATK_AUTH_MICROSOFT_ENABLED** | `false` | 启用 | auth.microsoft.enabled (社交登录 > Microsoft > Enabled) |
+| **ATK_AUTH_OKTA_CLIENT_ID** | `""` | ClientId | auth.okta.client_id (社交登录 > Okta > ClientId) |
+| **ATK_AUTH_OKTA_CLIENT_SECRET** | `""` | ClientSecret | auth.okta.client_secret (社交登录 > Okta > ClientSecret) |
+| **ATK_AUTH_OKTA_ENABLED** | `false` | 启用 | auth.okta.enabled (社交登录 > Okta > Enabled) |
+| **ATK_AUTH_OKTA_ISSUER** | `""` | 授权服务地址（HTTPS，例如 https://example.okta.com/oauth2/default） | auth.okta.issuer (社交登录 > Okta > 授权服务地址（HTTPS，例如 https://example.okta.com/oauth2/default）) |
 | **ATK_AUTH_PATREON_CLIENT_ID** | `""` | ClientId | auth.patreon.client_id (社交登录 > Patreon > ClientId) |
 | **ATK_AUTH_PATREON_CLIENT_SECRET** | `""` | ClientSecret | auth.patreon.client_secret (社交登录 > Patreon > ClientSecret) |
 | **ATK_AUTH_PATREON_ENABLED** | `false` | 启用 | auth.patreon.enabled (社交登录 > Patreon > Enabled) |
@@ -206,7 +211,10 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_CAPTCHA_ACTION_LIMIT** | `3` | 激活验证码所需操作次数 | captcha.action_limit (验证码 > 激活验证码所需操作次数) |
 | **ATK_CAPTCHA_ACTION_RESET** | `60` | 重置操作计数器超时 (单位：s, 设为 -1 不重置) | captcha.action_reset (验证码 > 重置操作计数器超时) |
 | **ATK_CAPTCHA_ALWAYS** | `false` | 总是需要验证码 | captcha.always (验证码 > 总是需要验证码) |
-| **ATK_CAPTCHA_CAPTCHA_TYPE** | `"image"` | 验证类型 (可选：`["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]`) | captcha.captcha_type (验证码 > 验证类型) |
+| **ATK_CAPTCHA_CAPJS_API_ENDPOINT** | `""` | ApiEndpoint | captcha.capjs.api_endpoint (验证码 > Cap > ApiEndpoint) |
+| **ATK_CAPTCHA_CAPJS_KEY_ID** | `""` | KeyId | captcha.capjs.key_id (验证码 > Cap > KeyId) |
+| **ATK_CAPTCHA_CAPJS_SECRET_KEY** | `""` | SecretKey | captcha.capjs.secret_key (验证码 > Cap > SecretKey) |
+| **ATK_CAPTCHA_CAPTCHA_TYPE** | `"image"` | 验证类型 (可选：`["image", "turnstile", "recaptcha", "hcaptcha", "geetest", "capjs"]`) | captcha.captcha_type (验证码 > 验证类型) |
 | **ATK_CAPTCHA_ENABLED** | `true` | 启用验证码 | captcha.enabled (验证码 > 启用验证码) |
 | **ATK_CAPTCHA_GEETEST_CAPTCHA_ID** | `""` | CaptchaId | captcha.geetest.captcha_id (验证码 > Geetest 极验 > CaptchaId) |
 | **ATK_CAPTCHA_GEETEST_CAPTCHA_KEY** | `""` | CaptchaKey | captcha.geetest.captcha_key (验证码 > Geetest 极验 > CaptchaKey) |
@@ -311,7 +319,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 
 | 环境变量 | 默认值 | 描述 | 路径 |
 | --- | --- | --- | --- |
-| **ATK_IP_REGION_DB_PATH** | `"./data/ip2region.xdb"` | 数据文件路径 (.xdb 格式) | ip_region.db_path (IP 属地 > 数据文件路径) |
+| **ATK_IP_REGION_DB_PATH** | `"./data/ip2region.xdb"` | 数据文件路径 (.xdb 或标准版 .ipdb 格式) | ip_region.db_path (IP 属地 > 数据文件路径) |
 | **ATK_IP_REGION_ENABLED** | `false` | 启用 IP 属地展示 | ip_region.enabled (IP 属地 > 启用 IP 属地展示) |
 | **ATK_IP_REGION_PRECISION** | `"province"` | 显示精度 (可选：`["province", "city", "country"]`) | ip_region.precision (IP 属地 > 显示精度) |
 

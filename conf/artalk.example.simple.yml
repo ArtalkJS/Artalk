@@ -83,6 +83,10 @@ captcha:
   geetest:
     captcha_id: ""
     captcha_key: ""
+  capjs:
+    key_id: ""
+    secret_key: ""
+    api_endpoint: ""
 img_upload:
   enabled: true
   path: ./data/artalk-img/
@@ -167,6 +171,8 @@ auth:
     enabled: false
     client_id: ""
     client_secret: ""
+    # Server URL (leave empty for https://gitea.com; supports ports and subpaths)
+    site_url: ""
   google:
     enabled: false
     client_id: ""
@@ -223,6 +229,11 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  okta:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    issuer: ""
   sso:
     enabled: false
     issuer: ""

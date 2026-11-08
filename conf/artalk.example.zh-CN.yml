@@ -10,7 +10,7 @@ app_key: ""
 # 调试模式
 debug: false
 
-# 语言 ["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru"]
+# 语言 ["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr", "pt-PT"]
 locale: zh-CN
 
 # 时间区域
@@ -155,7 +155,7 @@ captcha:
   enabled: true
   # 总是需要验证码
   always: false
-  # 验证类型 ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
+  # 验证类型 ["image", "turnstile", "recaptcha", "hcaptcha", "geetest", "capjs"]
   captcha_type: image
   # 激活验证码所需操作次数
   action_limit: 3
@@ -179,12 +179,17 @@ captcha:
   geetest:
     captcha_id: ""
     captcha_key: ""
+  # Cap (https://capjs.js.org/)
+  capjs:
+    key_id: ""
+    secret_key: ""
+    api_endpoint: ""
 
 # IP 属地
 ip_region:
   # 启用 IP 属地展示
   enabled: false
-  # 数据文件路径 (.xdb 格式)
+  # 数据文件路径 (.xdb 或标准版 .ipdb 格式)
   db_path: ./data/ip2region.xdb
   # 显示精度 ["province", "city", "country"]
   precision: province
@@ -327,6 +332,8 @@ auth:
     enabled: false
     client_id: ""
     client_secret: ""
+    # 服务地址 (留空使用 https://gitea.com，支持端口和子路径)
+    site_url: ""
   # Google
   google:
     enabled: false
@@ -397,6 +404,13 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  # Okta
+  okta:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    # 授权服务地址（HTTPS，例如 https://example.okta.com/oauth2/default）
+    issuer: ""
   # SSO (用外部 OIDC 身份提供商的访问令牌换取 Artalk 登录会话，通过调用 IdP 的 /userinfo 端点校验)
   # -- 当嵌入页面已运行 OIDC 且希望 Artalk 复用该登录态、不显示自身弹窗登录界面时使用。 --
   sso:

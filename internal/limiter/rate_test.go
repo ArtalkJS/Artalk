@@ -7,8 +7,20 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gofiber/fiber/v2/utils"
 	"github.com/stretchr/testify/require"
 )
+
+func TestRateLimiterRetainsRequestKey(t *testing.T) {
+	l := NewRateLimiter(1, 10, time.Minute)
+	buffer := []byte("192.0.2.1")
+	// Fiber's request strings can point into buffers reused by later requests.
+	require.True(t, l.Allow(utils.UnsafeString(buffer)))
+	copy(buffer, "192.0.2.2")
+	require.True(t, l.Allow(utils.UnsafeString(buffer)))
+	require.False(t, l.Allow("192.0.2.1"), "reusing the request buffer must not reset the first IP's quota")
+	require.False(t, l.Allow("192.0.2.2"), "each IP must keep its own quota")
+}
 
 func TestRateLimiterWindowAndMemory(t *testing.T) {
 	now := time.Unix(100, 0)

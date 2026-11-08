@@ -10,7 +10,7 @@ app_key: ""
 # Hata ayıklama modu
 debug: false
 
-# Dil (Unicode BCP 47 formatında) ["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr"]
+# Dil (Unicode BCP 47 formatında) ["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr", "pt-PT"]
 # -- bkz. https://www.techonthenet.com/js/language_tags.php --
 locale: tr
 
@@ -153,7 +153,7 @@ captcha:
   enabled: true
   # Her zaman doğrulama gerekli
   always: false
-  # Doğrulama türü ["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]
+  # Doğrulama türü ["image", "turnstile", "recaptcha", "hcaptcha", "geetest", "capjs"]
   captcha_type: image
   # İşlem sınırı
   # (doğrulamayı etkinleştirmek için gereken işlem sayısı)
@@ -178,6 +178,11 @@ captcha:
   geetest:
     captcha_id: ""
     captcha_key: ""
+  # Cap (https://capjs.js.org/)
+  capjs:
+    key_id: ""
+    secret_key: ""
+    api_endpoint: ""
 
 # Yükleme
 img_upload:
@@ -319,6 +324,8 @@ auth:
     enabled: false
     client_id: ""
     client_secret: ""
+    # Server URL (leave empty for https://gitea.com; supports ports and subpaths)
+    site_url: ""
   # Google
   google:
     enabled: false
@@ -389,6 +396,13 @@ auth:
     client_id: ""
     client_secret: ""
     domain: ""
+  # Okta
+  okta:
+    enabled: false
+    client_id: ""
+    client_secret: ""
+    # Issuer URL (HTTPS, e.g. https://example.okta.com/oauth2/default)
+    issuer: ""
   # SSO (Harici OIDC erişim belirteçlerini Artalk oturumuyla değiştirir, IdP'nin /userinfo uç noktası ile doğrulanır)
   # -- Gömülü uygulama zaten OIDC çalıştırıyorsa ve Artalk'ın kendi açılır giriş ekranını göstermeden bu oturumu devralmasını istiyorsanız kullanın. --
   sso:

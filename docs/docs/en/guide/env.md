@@ -76,7 +76,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_APP_KEY** | `""` | App Key (for generation of JWT) | app_key (App Key) |
 | **ATK_DEBUG** | `false` | Debug mode | debug (Debug mode) |
 | **ATK_HOST** | `"0.0.0.0"` | Listen host | host (Listen host) |
-| **ATK_LOCALE** | `"en"` | Language (follow Unicode BCP 47) (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr"]`) | locale (Language) |
+| **ATK_LOCALE** | `"en"` | Language (follow Unicode BCP 47) (可选：`["en", "zh-CN", "zh-TW", "ja", "fr", "ko", "ru", "tr", "pt-PT"]`) | locale (Language) |
 | **ATK_LOGIN_TIMEOUT** | `259200` | Login timeout (in seconds) | login_timeout (Login timeout) |
 | **ATK_PAGE_TITLE_AUTO_FETCH** | `false` | Auto-fetch page titles (Disabled by default for security; manual fetching remains available) | page_title_auto_fetch (Auto-fetch page titles) |
 | **ATK_PORT** | `23366` | Listen port | port (Listen port) |
@@ -144,6 +144,7 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_GITEA_CLIENT_ID** | `""` | ClientId | auth.gitea.client_id (Social Login > Gitea > ClientId) |
 | **ATK_AUTH_GITEA_CLIENT_SECRET** | `""` | ClientSecret | auth.gitea.client_secret (Social Login > Gitea > ClientSecret) |
 | **ATK_AUTH_GITEA_ENABLED** | `false` | 启用 | auth.gitea.enabled (Social Login > Gitea > Enabled) |
+| **ATK_AUTH_GITEA_SITE_URL** | `""` | Server URL (leave empty for https://gitea.com; supports ports and subpaths) | auth.gitea.site_url (Social Login > Gitea > Server URL) |
 | **ATK_AUTH_GITHUB_CLIENT_ID** | `""` | ClientId | auth.github.client_id (Social Login > GitHub > ClientId) |
 | **ATK_AUTH_GITHUB_CLIENT_SECRET** | `""` | ClientSecret | auth.github.client_secret (Social Login > GitHub > ClientSecret) |
 | **ATK_AUTH_GITHUB_ENABLED** | `false` | 启用 | auth.github.enabled (Social Login > GitHub > Enabled) |
@@ -162,6 +163,10 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_AUTH_MICROSOFT_CLIENT_ID** | `""` | ClientId | auth.microsoft.client_id (Social Login > Microsoft > ClientId) |
 | **ATK_AUTH_MICROSOFT_CLIENT_SECRET** | `""` | ClientSecret | auth.microsoft.client_secret (Social Login > Microsoft > ClientSecret) |
 | **ATK_AUTH_MICROSOFT_ENABLED** | `false` | 启用 | auth.microsoft.enabled (Social Login > Microsoft > Enabled) |
+| **ATK_AUTH_OKTA_CLIENT_ID** | `""` | ClientId | auth.okta.client_id (Social Login > Okta > ClientId) |
+| **ATK_AUTH_OKTA_CLIENT_SECRET** | `""` | ClientSecret | auth.okta.client_secret (Social Login > Okta > ClientSecret) |
+| **ATK_AUTH_OKTA_ENABLED** | `false` | 启用 | auth.okta.enabled (Social Login > Okta > Enabled) |
+| **ATK_AUTH_OKTA_ISSUER** | `""` | Issuer URL (HTTPS, e.g. https://example.okta.com/oauth2/default) | auth.okta.issuer (Social Login > Okta > Issuer URL) |
 | **ATK_AUTH_PATREON_CLIENT_ID** | `""` | ClientId | auth.patreon.client_id (Social Login > Patreon > ClientId) |
 | **ATK_AUTH_PATREON_CLIENT_SECRET** | `""` | ClientSecret | auth.patreon.client_secret (Social Login > Patreon > ClientSecret) |
 | **ATK_AUTH_PATREON_ENABLED** | `false` | 启用 | auth.patreon.enabled (Social Login > Patreon > Enabled) |
@@ -205,7 +210,10 @@ ATK_TRUSTED_DOMAINS_0="https://a.com"
 | **ATK_CAPTCHA_ACTION_LIMIT** | `3` | Action limit (the number of actions required to activate captcha) | captcha.action_limit (Captcha > Action limit) |
 | **ATK_CAPTCHA_ACTION_RESET** | `60` | Reset Timeout (timeout to reset action counter. unit: s, set to -1 to disable) | captcha.action_reset (Captcha > Reset Timeout) |
 | **ATK_CAPTCHA_ALWAYS** | `false` | Captcha is required always | captcha.always (Captcha > Captcha is required always) |
-| **ATK_CAPTCHA_CAPTCHA_TYPE** | `"image"` | Captcha type (可选：`["image", "turnstile", "recaptcha", "hcaptcha", "geetest"]`) | captcha.captcha_type (Captcha > Captcha type) |
+| **ATK_CAPTCHA_CAPJS_API_ENDPOINT** | `""` | ApiEndpoint | captcha.capjs.api_endpoint (Captcha > Cap > ApiEndpoint) |
+| **ATK_CAPTCHA_CAPJS_KEY_ID** | `""` | KeyId | captcha.capjs.key_id (Captcha > Cap > KeyId) |
+| **ATK_CAPTCHA_CAPJS_SECRET_KEY** | `""` | SecretKey | captcha.capjs.secret_key (Captcha > Cap > SecretKey) |
+| **ATK_CAPTCHA_CAPTCHA_TYPE** | `"image"` | Captcha type (可选：`["image", "turnstile", "recaptcha", "hcaptcha", "geetest", "capjs"]`) | captcha.captcha_type (Captcha > Captcha type) |
 | **ATK_CAPTCHA_ENABLED** | `true` | Enable captcha | captcha.enabled (Captcha > Enable captcha) |
 | **ATK_CAPTCHA_GEETEST_CAPTCHA_ID** | `""` | CaptchaId | captcha.geetest.captcha_id (Captcha > Geetest > CaptchaId) |
 | **ATK_CAPTCHA_GEETEST_CAPTCHA_KEY** | `""` | CaptchaKey | captcha.geetest.captcha_key (Captcha > Geetest > CaptchaKey) |

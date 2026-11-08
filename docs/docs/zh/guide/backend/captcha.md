@@ -4,7 +4,7 @@ Artalk 内置图片验证码功能，你可以配置操作频率限制，当超�
 
 此外，你也可以接入各种验证服务提供商，获得多样化的验证功能。
 
-目前 Artalk 支持：Turnstile、reCAPTCHA、hCaptcha、极验。
+目前 Artalk 支持：Turnstile、reCAPTCHA、hCaptcha、极验、Cap。
 
 你可以在 [控制中心](../frontend/sidebar.md#设置) 的设置界面修改此配置，也可以通过 [配置文件](./config.md#验证码-captcha) 或 [环境变量](../env.md#验证码) 进行配置。
 
@@ -38,10 +38,15 @@ captcha:
   geetest:
     captcha_id: ''
     captcha_key: ''
+  # Cap (https://capjs.js.org/)
+  capjs:
+    key_id: ''
+    secret_key: ''
+    api_endpoint: ''
 ```
 
 - **always**：当该项为 `true` 时，总是需要输入验证码。
-- **captcha_type**：验证码类型，可选：`image`、`turnstile`、`recaptcha`、`hcaptcha`、`geetest`。
+- **captcha_type**：验证码类型，可选：`image`、`turnstile`、`recaptcha`、`hcaptcha`、`geetest`、`capjs`。
 - **action_limit**：激活评论所需的操作次数。
 - **action_reset**：当时间超过该值时会重置操作计数器，单位为秒，设为 `-1` 将永不重置。
 
@@ -157,3 +162,24 @@ captcha:
     captcha_id: ''
     captcha_key: ''
 ```
+
+## Cap
+
+[Cap](https://capjs.js.org/guide/standalone/) 是可自部署的验证服务。Artalk 对接 Cap Standalone，在服务端验证一次性 token。
+
+先部署 Cap Standalone 及 Redis 或 Valkey，设置 `ENABLE_ASSETS_SERVER=true`，启用组件及 WebAssembly 文件服务。在 Cap 控制台创建站点密钥，然后配置：
+
+```yaml
+captcha:
+  captcha_type: capjs
+  capjs:
+    key_id: 'YOUR_SITE_KEY_ID'
+    secret_key: 'YOUR_SITE_SECRET'
+    api_endpoint: 'https://cap.example.com'
+```
+
+`api_endpoint` 填写 Cap 服务地址，不包含站点密钥或 `/siteverify` 路径。浏览器和 Artalk 服务端都需要能访问它。Artalk 使用 HTTPS 时，Cap 也使用 HTTPS。密钥仅保存在服务端。如果在 Cap 限制来源，请允许承载验证框的 Artalk 服务端来源。
+
+已测试 Cap Standalone 3.1.13、组件 0.1.58 和 WebAssembly 0.0.8。可在 Cap 设置 `WIDGET_VERSION=0.1.58` 和 `WASM_VERSION=0.0.8` 固定资源版本。Cap 在服务端下载资源，浏览器从你的 Cap 地址加载。
+
+Cap 提高自动化请求的成本，但不能保证访问者是真人。请按需保留 Artalk 的限流和评论审核。

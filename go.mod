@@ -22,6 +22,7 @@ require (
 	github.com/gofiber/swagger v1.1.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/iancoleman/strcase v0.3.0
+	github.com/ipipdotnet/ipdb-go v1.3.4-0.20241009061153-a6a2f5d964c9
 	github.com/jedib0t/go-pretty/v6 v6.8.3
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/knadh/koanf v1.5.0

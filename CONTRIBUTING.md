@@ -69,6 +69,12 @@ More exploration:
 - **Automated CI on GitHub**:
   The automated CI pipeline on GitHub, located in the `.github/workflows` directory, builds the frontend, backend, and Docker images. It publishes Docker images to Docker Hub, handles npm package publishing, and creates GitHub Releases. And also testing the frontend and backend.
 
+### Fedora RPM releases
+
+The release workflow sends the release version to the `@artalk/artalk` COPR project and waits for the build result. COPR uses the scripts on the `dist/fedora` branch and the matching `artalk_ui.tar.gz` release asset. Set `COPR_BUILD_WEBHOOK_URL` to the project's Custom webhook base URL in GitHub Actions secrets.
+
+To build RPMs for an existing release, run **Build and Publish** with its version, select `rpm`, and turn off **Dry run**. This keeps the existing release tag and skips npm and Docker publishing. A dry run does not contact COPR. If a request times out, check COPR's build history before retrying.
+
 The following sections provide more detailed information on the development workflow.
 
 ## Project Structure

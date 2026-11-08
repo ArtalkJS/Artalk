@@ -1,4 +1,4 @@
-name: Build Pre Tagging
+name: Build Pre Artifact
 
 on:
   workflow_call:
@@ -36,7 +36,7 @@ permissions:
 
 jobs:
   tagging:
-    runs-on: ubuntu-latest
+    runs-on: linux-xarm92
     steps:
       - name: Get release version
         id: version
@@ -140,7 +140,7 @@ jobs:
         with:
           ref: ${{ steps.target.outputs.commit }}
           fetch-depth: 0
-          persist-credentials: false
+          persist-credentials: true
 
       - name: Validate release source
         env:
@@ -173,7 +173,7 @@ jobs:
             exit 1
           fi
 
-      - name: Create Tag
+      - name: Create Artifact
         if: ${{ !inputs.dry_run }}
         env:
           GH_TOKEN: ${{ github.token }}

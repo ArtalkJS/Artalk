@@ -55,7 +55,7 @@
     "eslint-plugin-vue": "^10.10.0",
     "globals": "^17.7.0",
     "jsdom": "^29.1.1",
-    "postcss": "8.5.22",
+    "postcss": "8.5.23",
     "prettier": "3.9.6",
     "sass": "1.101.3",
     "terser": "5.49.0",

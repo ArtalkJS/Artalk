@@ -42,9 +42,9 @@
   "devDependencies": {
     "@artalk/plugin-kit": "workspace:^",
     "artalk": "workspace:^",
-    "solid-js": "^1.9.14",
+    "solid-js": "^1.9.15",
     "vite-plugin-css-injected-by-js": "^5.0.2",
-    "vite-plugin-solid": "^2.11.13"
+    "vite-plugin-solid": "^2.11.14"
   },
   "peerDependencies": {
     "artalk": "^2.10.0"

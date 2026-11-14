@@ -122,17 +122,19 @@ export class SidebarLayer implements ISidebarLayer {
 
   private async authCheck(opts: { onSuccess: () => void }) {
     const scope = () => {
+      const { server, site, pageKey } = this.opts.getConf().get()
       const { name, email } = this.opts.getUser().getData()
-      return JSON.stringify([this.opts.getConf().get().server, name, email])
+      return JSON.stringify([server, site, pageKey, name, email])
     }
     const current = scope()
+    const token = this.opts.getUser().getData().token
     const active = () => !this.disposed && current === scope()
     const data = (
       await this.opts.getApi().user.getUserStatus({
         ...this.opts.getApi().getUserFields(),
       })
     ).data
-    if (!active() || !this.visible) return
+    if (!active() || !this.visible || token !== this.opts.getUser().getData().token) return
     if (data.is_admin && !data.is_login) {
       this.refreshWhenShow = true
 
@@ -141,8 +143,9 @@ export class SidebarLayer implements ISidebarLayer {
         .getCheckers()
         .checkAdmin({
           onSuccess: () => {
+            const token = this.opts.getUser().getData().token
             this.retryTimer = setTimeout(() => {
-              if (active()) opts.onSuccess()
+              if (active() && token === this.opts.getUser().getData().token) opts.onSuccess()
             }, 500)
           },
           onCancel: () => {

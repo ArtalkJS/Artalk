@@ -1,15 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { deferred } from './lib/api'
-import { CheckerLauncher } from '@/components/checker'
+import { CheckerLauncher, type CheckerPayload } from '@/components/checker'
 import { LayerManager } from '@/layer'
 import { UserManager } from '@/lib/user'
 import { EventManager } from '@/lib/event-manager'
 import Context from '@/context'
 import { EventsService } from '@/services/events'
 import { ConfigService } from '@/services/config'
+import { SidebarLayer } from '@/layer/sidebar-layer'
 
 const managers: LayerManager[] = []
-beforeEach(() => vi.useFakeTimers())
+beforeEach(() => {
+  localStorage.clear()
+  vi.useFakeTimers()
+})
 afterEach(() => {
   managers.splice(0).forEach((manager) => manager.destroy())
   document.body.replaceChildren()
@@ -38,6 +42,51 @@ function checker(getStatus: () => Promise<any>) {
 }
 
 describe('owned resources', () => {
+  it.each(['login', 'page', 'destroy', 'retry'] as const)(
+    'keeps sidebar status checks bound to the current page and login: %s',
+    async (change) => {
+      const pending = deferred<{ data: { is_admin: boolean; is_login: boolean } }>()
+      const user = new UserManager({})
+      user.update({ name: 'Admin', email: 'admin@example.com', token: 'expired' })
+      const conf = { server: 'https://example.com', site: 'Test', pageKey: '/', darkMode: false }
+      const checkAdmin = vi.fn(async (_payload: CheckerPayload) => {})
+      const getUserStatus = vi.fn(() => pending.promise)
+      const manager = layers()
+      const sidebar = new SidebarLayer({
+        getLayers: () => manager,
+        getUser: () => user,
+        getConf: () => ({ get: () => conf }),
+        getApi: () => ({
+          getUserFields: () => ({}),
+          user: { getUserStatus },
+        }),
+        getCheckers: () => ({ checkAdmin }),
+      } as never)
+      try {
+        await sidebar.show()
+        if (change === 'login') user.update({ token: 'fresh-login' })
+        else if (change === 'page') conf.pageKey = '/next'
+        else if (change === 'destroy') sidebar.dispose()
+        pending.resolve({ data: { is_admin: true, is_login: false } })
+        await vi.advanceTimersByTimeAsync(1000)
+        if (change === 'retry') {
+          expect(checkAdmin).toHaveBeenCalledTimes(1)
+          user.update({ token: 'fresh-login' })
+          getUserStatus.mockResolvedValue({ data: { is_admin: true, is_login: true } })
+          checkAdmin.mock.calls[0][0].onSuccess!()
+          await vi.advanceTimersByTimeAsync(600)
+          expect(getUserStatus).toHaveBeenCalledTimes(2)
+          expect(checkAdmin).toHaveBeenCalledTimes(1)
+          expect(document.body.style.overflow).toBe('hidden')
+        } else {
+          expect(checkAdmin).not.toHaveBeenCalled()
+        }
+      } finally {
+        sidebar.dispose()
+      }
+    },
+  )
+
   it('stops captcha polling before and after a request is in flight', async () => {
     const pending = deferred<{ data: { is_pass: boolean } }>()
     const status = vi.fn(() => pending.promise)

@@ -37,6 +37,8 @@ beforeEach(() => {
   api.getPageFetchStatus.mockResolvedValue({ data: { is_progress: false } })
 })
 afterEach(() => {
+  vi.clearAllTimers()
+  vi.useRealTimers()
   vi.clearAllMocks()
 })
 
@@ -58,6 +60,26 @@ describe('page list comment filter', () => {
       container.remove()
     }
   })
+
+  it.each([false, true])(
+    'stops title polling on unmount (response pending: %s)',
+    async (pending) => {
+      vi.useFakeTimers()
+      let release!: (value: any) => void
+      api.getPageFetchStatus.mockReturnValueOnce(new Promise((resolve) => (release = resolve)))
+      const container = document.createElement('div')
+      const app = createApp(Pages)
+      app.mount(container)
+      if (!pending) {
+        release({ data: { is_progress: true, msg: 'Fetching titles' } })
+        await vi.advanceTimersByTimeAsync(0)
+      }
+      app.unmount()
+      if (pending) release({ data: { is_progress: true, msg: 'Fetching titles' } })
+      await vi.advanceTimersByTimeAsync(3000)
+      expect(api.getPageFetchStatus).toHaveBeenCalledTimes(1)
+    },
+  )
 
   it('keeps the latest search result when an older request finishes last', async () => {
     let release!: (value: any) => void

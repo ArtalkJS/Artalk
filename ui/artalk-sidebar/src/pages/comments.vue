@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import type { EventPayloadMap } from 'artalk'
 import { artalk } from '../global'
 import { useNavStore } from '../stores/nav'
 import { useUserStore } from '../stores/user'
@@ -12,6 +13,17 @@ const { curtTab } = storeToRefs(nav)
 const { site: curtSite } = storeToRefs(user)
 
 const search = ref('')
+const { listFetchParamsModifier, scrollRelativeTo } = artalk!.getConf()
+const onCommentRendered = (comment: EventPayloadMap['comment-rendered']) => {
+  const pageURL = comment.getData().page_url
+  comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
+}
+
+onBeforeUnmount(() => {
+  artalk!.ctx.off('comment-rendered', onCommentRendered)
+  artalk!.ctx.editorResetState()
+  artalk!.update({ listFetchParamsModifier, scrollRelativeTo })
+})
 
 onMounted(() => {
   // 初始化导航条
@@ -46,10 +58,7 @@ onMounted(() => {
     artalk!.ctx.reload()
   })
 
-  artalk!.ctx.on('comment-rendered', (comment) => {
-    const pageURL = comment.getData().page_url
-    comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
-  })
+  artalk!.ctx.on('comment-rendered', onCommentRendered)
 
   artalk!.ctx.updateConf({
     listFetchParamsModifier: (params) => {

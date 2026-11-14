@@ -79,6 +79,9 @@ func SiteUpdate(app *core.App, router fiber.Router) {
 				app.Dao().UpdateComment(&comment)
 			}
 			for _, page := range pages {
+				app.Dao().CacheAction(func(cache *dao.DaoCache) {
+					cache.PageCacheDel(&page)
+				})
 				page.SiteName = p.Name
 				app.Dao().UpdatePage(&page)
 			}

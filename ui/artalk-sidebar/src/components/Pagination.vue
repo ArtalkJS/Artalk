@@ -24,12 +24,13 @@ const emit = defineEmits<{
 
 const curtPage = ref(1)
 const offset = computed(() => pageSize.value * (curtPage.value - 1))
-const maxPage = computed(() => Math.ceil(total.value / pageSize.value))
+const maxPage = computed(() => Math.max(1, Math.ceil(total.value / pageSize.value)))
 const prevDisabled = computed(() => curtPage.value - 1 < 1)
 const nextDisabled = computed(() => curtPage.value + 1 > maxPage.value)
 
 const inputValue = ref(String(curtPage.value))
 let inputTimer: number | undefined
+onUnmounted(() => window.clearTimeout(inputTimer))
 
 function changePage(page: number) {
   curtPage.value = page
@@ -62,6 +63,7 @@ function next() {
 }
 
 function reset() {
+  window.clearTimeout(inputTimer)
   curtPage.value = 1
   fillInput(1)
 }
@@ -88,11 +90,7 @@ function triggerInput(now: boolean = false) {
       return
     }
     let page = Number(value)
-    if (Number.isNaN(page)) {
-      revokeInput()
-      return
-    }
-    if (page < 1) {
+    if (!Number.isInteger(page) || page < 1) {
       revokeInput()
       return
     }

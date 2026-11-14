@@ -26,7 +26,7 @@ export default class Pagination {
     return this.pageSize * (this.page - 1)
   }
   get maxPage(): number {
-    return Math.ceil(this.total / this.pageSize)
+    return Math.max(1, Math.ceil(this.total / this.pageSize))
   }
 
   public constructor(total: number, opts: PaginationOptions) {
@@ -62,6 +62,7 @@ export default class Pagination {
   }
 
   public update(offset: number, total: number) {
+    window.clearTimeout(this.inputTimer)
     this.page = Math.ceil(offset / this.pageSize) + 1
     this.total = total
 
@@ -84,11 +85,7 @@ export default class Pagination {
         return
       }
       let page = Number(value)
-      if (Number.isNaN(page)) {
-        this.setInput(this.page)
-        return
-      }
-      if (page < 1) {
+      if (!Number.isInteger(page) || page < 1) {
         this.setInput(this.page)
         return
       }

@@ -8,28 +8,34 @@ export interface ErrorDialogOptions {
   errMsg: string
   errData?: any
   retryFn?: () => void
-
   onOpenSidebar?: () => void
 }
 
 export function showErrorDialog(opts: ErrorDialogOptions) {
-  const errEl = Utils.createElement(`<span><span class="error-message"></span><br/><br/></span>`)
-  errEl.querySelector<HTMLElement>('.error-message')!.innerText =
-    `${$t('listLoadFailMsg')}\n${opts.errMsg}`
+  const errEl = Utils.createElement(
+    `<span class="atk-error-dialog" role="alert">
+      <span class="atk-error-heading"></span>
+      <span class="error-message"></span>
+      <span class="atk-error-actions"></span>
+    </span>`,
+  )
+  errEl.querySelector<HTMLElement>('.atk-error-heading')!.textContent = $t('listLoadFailMsg')
+  errEl.querySelector<HTMLElement>('.error-message')!.textContent = opts.errMsg
+  const actions = errEl.querySelector<HTMLElement>('.atk-error-actions')!
 
   if (opts.retryFn) {
-    const $retryBtn = Utils.createElement(`<span style="cursor:pointer;">${$t('listRetry')}</span>`)
-    $retryBtn.onclick = () => opts.retryFn && opts.retryFn()
-    errEl.appendChild($retryBtn)
+    const $retryBtn = Utils.createElement('<button type="button" class="atk-error-retry"></button>')
+    $retryBtn.textContent = $t('listRetry')
+    $retryBtn.onclick = () => opts.retryFn?.()
+    actions.appendChild($retryBtn)
   }
 
   if (opts.onOpenSidebar) {
-    const $openSidebar = Utils.createElement(
-      `<span atk-only-admin-show> | <span style="cursor:pointer;">${$t('openName', { name: $t('ctrlCenter') })}</span></span>`,
-    )
-    errEl.appendChild($openSidebar)
-    $openSidebar.onclick = () => opts.onOpenSidebar && opts.onOpenSidebar()
+    const $openSidebar = Utils.createElement('<button type="button" atk-only-admin-show></button>')
+    $openSidebar.textContent = $t('openName', { name: $t('ctrlCenter') })
+    $openSidebar.onclick = () => opts.onOpenSidebar?.()
+    actions.appendChild($openSidebar)
   }
 
-  Ui.setError(opts.$err, errEl)
+  Ui.setError(opts.$err, errEl, '')
 }

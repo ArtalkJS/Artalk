@@ -26,7 +26,15 @@ test('Comment add, reply, sort, and reload', async ({ page }) => {
   await expect(page.locator('.atk-list').getByText(commentContent)).toBeVisible()
 
   const replyContent = '[A Reply From The Same Guest]'
-  await page.locator(`#atk-comment-${id} .atk-actions`).getByText('Reply', { exact: true }).click()
+  const actions = page.locator(`#atk-comment-${id} .atk-actions`)
+  const reply = actions.getByRole('button', { name: 'Reply', exact: true })
+  await actions.getByRole('button', { name: /^Up/ }).focus()
+  await page.keyboard.press('Tab')
+  await expect(reply).toBeFocused()
+  await expect(reply).toHaveCSS('outline-style', 'solid')
+  await expect(reply).toHaveCSS('font-size', '13px')
+  await expect(reply).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
+  await reply.press('Enter')
   await page.getByPlaceholder('Leave a comment').fill(replyContent)
   const [replied] = await Promise.all([
     page.waitForResponse(
@@ -55,6 +63,37 @@ test('Comment add, reply, sort, and reload', async ({ page }) => {
   ])
   expect(sorted.ok()).toBe(true)
   await expect(page.locator('.atk-list').getByText(replyContent)).toBeVisible()
+
+  await page.evaluate(() => {
+    const artalk = (window as any).artalk
+    artalk.update({ flatMode: true, pagination: { pageSize: 1, readMore: true } })
+    artalk.reload()
+  })
+  await expect(page.locator('.atk-list .atk-comment')).toHaveCount(1)
+  let failMore = true
+  await page.route('**/api/v2/comments?*', (route) => {
+    if (failMore && Number(new URL(route.request().url()).searchParams.get('offset')) > 0)
+      return route.abort('failed')
+    return route.continue()
+  })
+  const more = page.getByRole('button', { name: 'Load More', exact: true })
+  await more.press('Enter')
+  const retryMore = page.getByRole('button', { name: 'Load Failed · Retry', exact: true })
+  await expect(retryMore).toBeVisible()
+  await expect(page.locator('.atk-list .atk-comment')).toHaveCount(1)
+  await expect(page.locator('.atk-error-layer')).toHaveCount(0)
+  failMore = false
+  await retryMore.press('Space')
+  await expect(page.locator('.atk-list .atk-comment')).toHaveCount(2)
+
+  await page.evaluate(() => {
+    const artalk = (window as any).artalk
+    artalk.update({ apiVersion: '0.0.1' })
+    artalk.ctx.getUser().update({ is_admin: true })
+  })
+  await page.getByRole('button', { name: 'Ignore', exact: true }).press('Space')
+  await expect(page.locator('.atk-version-check-notice')).toHaveCount(0)
+  await page.evaluate(() => (window as any).artalk.ctx.getUser().update({ is_admin: false }))
 
   await page.evaluate(() => {
     const artalk = (window as any).artalk

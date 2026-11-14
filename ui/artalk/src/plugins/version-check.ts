@@ -31,7 +31,9 @@ function versionCheck(list: List, feVer: string, beVer: string, ignore: () => vo
       `${$t('currentVersion')}: ${$t('client')} ${feVer} / ${$t('server')} ${beVer}` +
       `</span></div>`,
   )
-  const ignoreBtn = Utils.createElement(`<span class="atk-ignore-btn">${$t('ignore')}</span>`)
+  const ignoreBtn = Utils.createElement(
+    `<button type="button" tabindex="0" class="atk-ignore-btn">${$t('ignore')}</button>`,
+  )
   ignoreBtn.onclick = () => {
     errEl.remove()
     ignore()

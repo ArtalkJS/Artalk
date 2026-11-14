@@ -457,6 +457,12 @@
   }
 
   .atk-ignore-btn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+    font: inherit;
+    color: inherit;
     cursor: pointer;
     float: right;
 
@@ -617,7 +623,13 @@
 }
 
 /* Common Action Btn */
-.atk-common-action-btn {
+.atk-common-action-btn,
+button.atk-common-action-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
   color: var(--at-color-meta);
   font-size: 13px;
   line-height: 25px;
@@ -648,6 +660,15 @@
 
   &.atk-btn-success {
     color: var(--at-color-green) !important;
+  }
+}
+
+.atk-common-action-btn,
+.atk-list-read-more-inner,
+.atk-ignore-btn {
+  &:focus-visible {
+    outline: 2px solid var(--at-color-main);
+    outline-offset: 2px;
   }
 }
 

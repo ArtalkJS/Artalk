@@ -36,10 +36,10 @@ export default class ReadMoreBtn {
 
     this.$el = Utils.createElement(
       `<div class="atk-list-read-more" style="display: none;">
-      <div class="atk-list-read-more-inner">
-        <div class="atk-loading-icon" style="display: none;"></div>
+      <button type="button" tabindex="0" class="atk-list-read-more-inner">
+        <span class="atk-loading-icon" style="display: none;"></span>
         <span class="atk-text">${this.origText}</span>
-      </div>
+      </button>
     </div>`,
     )
 
@@ -68,6 +68,9 @@ export default class ReadMoreBtn {
 
   /** 加载 */
   setLoading(isLoading: boolean) {
+    const button = this.$el.querySelector('button')!
+    button.disabled = isLoading
+    button.setAttribute('aria-busy', String(isLoading))
     if (isLoading) {
       this.$el.classList.remove('atk-err')
       this.$text.innerText = this.origText

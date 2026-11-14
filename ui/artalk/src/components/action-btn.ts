@@ -35,7 +35,9 @@ export default class ActionBtn {
 
   /** 构造函数 */
   constructor(opts: ActionBtnOptions | string | (() => string)) {
-    this.$el = Utils.createElement(`<span class="atk-common-action-btn"></span>`)
+    this.$el = Utils.createElement(
+      '<button type="button" tabindex="0" class="atk-common-action-btn"></button>',
+    )
 
     this.opts = typeof opts !== 'object' ? { text: opts } : opts
     this.$el.innerText = this.getText()
@@ -116,6 +118,8 @@ export default class ActionBtn {
   public setLoading(value: boolean, loadingText?: string) {
     if (this.isLoading === value) return
     this.isLoading = value
+    this.$el.setAttribute('aria-disabled', String(value))
+    this.$el.setAttribute('aria-busy', String(value))
     if (value) {
       this.$el.classList.add('atk-btn-loading')
       this.$el.innerText = loadingText || `${$t('loading')}...`

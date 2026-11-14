@@ -138,6 +138,9 @@ Stored logins are scoped to the server URL. Legacy profile fields still load, bu
 without a server binding require a new login. Guest credentials keep their existing storage keys.
 Use `ctx.getApi()` when starting a request so it uses the current server and user.
 
+Initialize plugins after the final config is loaded. Retrying a failed initialization must not
+register plugins or fire lifecycle events twice. Language settings are shared by the page.
+
 ### Run Frontend
 
 1. **Install Dependencies**:  

@@ -48,15 +48,6 @@ export default class Artalk {
     // Load plugins and remote config, then mount Artalk
     const mountArtalk = async () => {
       await mount(conf, ctx)
-
-      // Destroyed before mounting has finished
-      if (ctx.isDestroyed()) return
-
-      // Trigger created after all plugins have been initialized
-      ctx.trigger('created')
-
-      // Trigger mounted event
-      ctx.trigger('mounted')
     }
 
     if (import.meta.env.DEV && import.meta.env.VITEST) {

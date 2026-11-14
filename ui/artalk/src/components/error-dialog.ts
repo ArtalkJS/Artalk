@@ -12,6 +12,13 @@ export interface ErrorDialogOptions {
 }
 
 export function showErrorDialog(opts: ErrorDialogOptions) {
+  // Fetch uses different messages across browsers. Keep server messages unchanged.
+  const networkError =
+    !opts.errData &&
+    /^TypeError: (Failed to fetch|Load failed|NetworkError when attempting to fetch resource\.)$/.test(
+      opts.errMsg,
+    )
+  if (networkError) console.error(opts.errMsg)
   const errEl = Utils.createElement(
     `<span class="atk-error-dialog" role="alert">
       <span class="atk-error-heading"></span>
@@ -20,7 +27,9 @@ export function showErrorDialog(opts: ErrorDialogOptions) {
     </span>`,
   )
   errEl.querySelector<HTMLElement>('.atk-error-heading')!.textContent = $t('listLoadFailMsg')
-  errEl.querySelector<HTMLElement>('.error-message')!.textContent = opts.errMsg
+  errEl.querySelector<HTMLElement>('.error-message')!.textContent = networkError
+    ? $t('reqAborted')
+    : opts.errMsg
   const actions = errEl.querySelector<HTMLElement>('.atk-error-actions')!
 
   if (opts.retryFn) {

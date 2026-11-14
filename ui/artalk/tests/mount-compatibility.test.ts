@@ -464,6 +464,28 @@ describe('existing API and plugin compatibility', () => {
     },
   )
 
+  it.each(['Failed to fetch', 'Load failed', 'NetworkError when attempting to fetch resource.'])(
+    'shows a readable network error for "%s" and keeps diagnostics in the console',
+    async (message) => {
+      const api = mockApi()
+      const log = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const artalk = await initialize(api)
+      vi.mocked(api.comments.getComments).mockRejectedValueOnce(new TypeError(message))
+      await artalk.ctx.inject('comments').load()
+      expect(artalk.getEl().querySelector('.error-message')?.textContent).toBe($t('reqAborted'))
+      expect(log).toHaveBeenCalledWith(`TypeError: ${message}`)
+
+      vi.mocked(api.comments.getComments).mockRejectedValueOnce({
+        msg: 'Comments are closed on this page.',
+        data: { message: 'Comments are closed on this page.' },
+      })
+      await artalk.ctx.inject('comments').load()
+      expect(artalk.getEl().querySelector('.error-message')?.textContent).toBe(
+        'Comments are closed on this page.',
+      )
+    },
+  )
+
   it('keeps sorting through the original list parameter hook', async () => {
     const api = mockApi()
     const artalk = await initialize(api, { listSort: true })

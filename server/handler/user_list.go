@@ -15,8 +15,8 @@ type ParamsUserList struct {
 }
 
 type ResponseAdminUserList struct {
-	Total int64                       `json:"count"`
-	Users []entity.CookedUserForAdmin `json:"users"`
+	Total int64                 `json:"count"`
+	Users []entity.AdminUserDTO `json:"users"`
 }
 
 // @Id           GetUsers
@@ -69,13 +69,13 @@ func UserList(app *core.App, router fiber.Router) {
 		var users []entity.User
 		q.Find(&users)
 
-		var cookedUsers []entity.CookedUserForAdmin
+		var userDTOs []entity.AdminUserDTO
 		for _, u := range users {
-			cookedUsers = append(cookedUsers, app.Dao().UserToCookedForAdmin(&u))
+			userDTOs = append(userDTOs, app.Dao().BuildAdminUserDTO(&u))
 		}
 
 		return common.RespData(c, ResponseAdminUserList{
-			Users: cookedUsers,
+			Users: userDTOs,
 			Total: total,
 		})
 	}))

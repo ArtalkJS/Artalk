@@ -55,4 +55,33 @@ test('Comment add, reply, sort, and reload', async ({ page }) => {
   ])
   expect(sorted.ok()).toBe(true)
   await expect(page.locator('.atk-list').getByText(replyContent)).toBeVisible()
+
+  await page.evaluate(() => {
+    const artalk = (window as any).artalk
+    artalk.update({ flatMode: true, pagination: { pageSize: 1, readMore: false } })
+    artalk.reload()
+  })
+  const pageNumber = page.getByLabel('Enter the number of page')
+  await expect(pageNumber).toHaveValue('1')
+  await page.getByLabel('Next page').click()
+  await expect(pageNumber).toHaveValue('2')
+  await expect(page.locator('.atk-list .atk-comment')).toHaveCount(1)
+  await expect(page.locator('.atk-list')).toContainText(replyContent)
+  for (const value of ['1.5', 'Infinity', '-1', 'text', '']) {
+    await pageNumber.fill(value)
+    await pageNumber.press('Enter')
+    await expect(pageNumber).toHaveValue('2')
+    await expect(page.locator('.atk-list')).toContainText(replyContent)
+  }
+
+  await page.evaluate(() => {
+    const artalk = (window as any).artalk
+    artalk.update({ pageKey: `/empty-${crypto.randomUUID()}` })
+    artalk.reload()
+  })
+  await expect(page.locator('.atk-list .atk-comment')).toHaveCount(0)
+  await expect(pageNumber).toHaveValue('1')
+  await pageNumber.fill('99')
+  await pageNumber.press('Enter')
+  await expect(pageNumber).toHaveValue('1')
 })

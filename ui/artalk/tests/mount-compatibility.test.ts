@@ -388,6 +388,13 @@ describe('existing API and plugin compatibility', () => {
     await vi.waitFor(() => expect(artalk.ctx.getComments().map((item) => item.id)).toEqual([2]))
     expect(input.value).toBe('2')
 
+    for (const value of ['1.5', 'Infinity', '-1', 'text', '']) {
+      input.value = value
+      input.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 13 }))
+      expect(input.value).toBe('2')
+      expect(api.comments.getComments).toHaveBeenCalledTimes(2)
+    }
+
     input.value = '99'
     input.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 13 }))
     await vi.waitFor(() => expect(artalk.ctx.getComments().map((item) => item.id)).toEqual([3]))
@@ -397,6 +404,11 @@ describe('existing API and plugin compatibility', () => {
 
     vi.useFakeTimers()
     try {
+      input.value = '2'
+      input.dispatchEvent(new Event('input'))
+      artalk.ctx.getData().clearComments()
+      await vi.advanceTimersByTimeAsync(1000)
+      expect(api.comments.getComments).toHaveBeenCalledTimes(3)
       input.value = '1'
       input.dispatchEvent(new Event('input'))
       artalk.destroy()

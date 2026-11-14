@@ -252,7 +252,7 @@
         align-items: center;
         flex-wrap: wrap;
 
-        & > span:not(:last-child):not(.atk-hide) {
+        & > :is(span, button):not(:last-child):not(.atk-hide) {
           margin-right: 16px;
         }
       }

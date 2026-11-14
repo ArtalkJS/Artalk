@@ -180,6 +180,8 @@
   }
 
   .atk-list-read-more-inner {
+    appearance: none;
+    font: inherit;
     cursor: pointer;
     user-select: none;
     padding: 0 15px;
@@ -187,11 +189,13 @@
     border-radius: $block-radius;
     border: 1px solid transparent;
     display: flex;
-    height: 30px;
+    min-height: 30px;
     flex-direction: row;
     place-content: center;
     align-items: center;
-    width: 120px;
+    min-width: 120px;
+    max-width: 100%;
+    width: fit-content;
     margin: 0 auto;
     margin-top: -15px;
     background: var(--at-color-bg);

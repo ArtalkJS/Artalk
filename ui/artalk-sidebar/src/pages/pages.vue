@@ -21,11 +21,13 @@ const refreshBtn = ref({
   isRun: false,
   statusText: '',
 })
-
 let pageRequest: AbortController | undefined
+let refreshRequest: AbortController | undefined
+let refreshTimer: number | undefined
 
 onBeforeUnmount(() => {
   pageRequest?.abort()
+  cancelRefreshTask()
   nav.setPageLoading(false)
 })
 
@@ -53,13 +55,7 @@ onMounted(() => {
   fetchPages(0)
 
   // Refresh task status recovery
-  getRefreshTaskStatus().then((d) => {
-    if (d.is_progress === true) {
-      refreshBtn.value.isRun = true
-      refreshBtn.value.statusText = d.msg
-      startRefreshTaskWatchdog()
-    }
-  })
+  watchRefreshTask()
 })
 
 watch(curtSite, () => {
@@ -128,48 +124,56 @@ function onPageItemRemove(id: number) {
   pages.value.splice(index, 1)
 }
 
-async function getRefreshTaskStatus() {
-  return (await artalk!.ctx.getApi().pages.getPageFetchStatus()).data
+function cancelRefreshTask() {
+  refreshRequest?.abort()
+  window.clearTimeout(refreshTimer)
 }
 
-function startRefreshTaskWatchdog() {
-  // TODO: Not perfect polling update status
-  const timerID = window.setInterval(async () => {
-    const d = await getRefreshTaskStatus()
-
-    if (d.is_progress === false) {
-      clearInterval(timerID)
+async function watchRefreshTask() {
+  cancelRefreshTask()
+  const request = (refreshRequest = new AbortController())
+  try {
+    const { data } = await artalk!.ctx.getApi().pages.getPageFetchStatus({ signal: request.signal })
+    if (request.signal.aborted) return
+    if (data.is_progress) {
+      refreshBtn.value = { isRun: true, statusText: data.msg }
+      refreshTimer = window.setTimeout(watchRefreshTask, 1000)
+    } else if (refreshBtn.value.isRun) {
       setRefreshTaskDone()
-      return
     }
-
-    refreshBtn.value.statusText = d.msg
-  }, 1000)
+  } catch (err) {
+    if (request.signal.aborted) return
+    console.error(err)
+    setRefreshTaskDone(t('opFailed'))
+  }
 }
 
-function setRefreshTaskDone() {
-  refreshBtn.value.statusText = t('updateComplete')
-  window.setTimeout(() => {
+function setRefreshTaskDone(text = t('updateComplete')) {
+  refreshBtn.value.statusText = text
+  refreshTimer = window.setTimeout(() => {
     refreshBtn.value.isRun = false
   }, 1500)
 }
 
 async function refreshAllPages() {
   if (refreshBtn.value.isRun) return
+  cancelRefreshTask()
+  const request = (refreshRequest = new AbortController())
   refreshBtn.value.isRun = true
   refreshBtn.value.statusText = t('updateReady')
 
   try {
-    await artalk!.ctx.getApi().pages.fetchAllPages({
-      site_name: curtSite.value,
-    })
+    await artalk!.ctx
+      .getApi()
+      .pages.fetchAllPages({ site_name: curtSite.value }, { signal: request.signal })
   } catch (err: any) {
+    if (request.signal.aborted) return
     alert(err.msg)
-    setRefreshTaskDone()
+    setRefreshTaskDone(t('opFailed'))
     return
   }
 
-  startRefreshTaskWatchdog()
+  if (!request.signal.aborted) watchRefreshTask()
 }
 
 function cacheFlush() {

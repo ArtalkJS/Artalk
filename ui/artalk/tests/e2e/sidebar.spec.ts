@@ -146,7 +146,13 @@ test('the built sidebar supports login retry, moderation, refresh, and logout', 
     animations: 'disabled',
   })
 
+  let statusRequests = 0
+  await page.route(`${server}/api/v2/pages/fetch/status`, (route) => {
+    statusRequests++
+    return route.fulfill({ json: { is_progress: true, msg: 'Fetching titles' } })
+  })
   await page.locator('.sidebar-navigation').getByText('Page', { exact: true }).click()
+  await expect(page.locator('.atk-update-all-title-btn')).toContainText('Fetching titles')
   await expect(page.locator('.atk-page-list')).toContainText(`/admin-`)
   const pageNumber = page.getByLabel('Enter the number of page')
   await pageNumber.fill('1.5')
@@ -173,6 +179,10 @@ test('the built sidebar supports login retry, moderation, refresh, and logout', 
   releaseUsers()
   await finished
   await expect(page.locator('.user-list')).not.toContainText('reader@example.com')
+  const previous = statusRequests
+  // Two polling intervals must pass without requests from the route we left.
+  await page.waitForTimeout(2200)
+  expect(statusRequests).toBe(previous)
   await page.locator('.sidebar-navigation').getByText('Site', { exact: true }).click()
   await expect(page.locator('.main')).toContainText('ArtalkDocs')
   await page.locator('.sidebar-navigation').getByText('Comment', { exact: true }).click()

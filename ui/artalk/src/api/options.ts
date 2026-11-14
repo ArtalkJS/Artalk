@@ -1,6 +1,8 @@
 import type { ApiHandlers } from './handler'
 
 export interface ApiOptions {
+  /** @internal Guard requests and retries after the widget's destination changes. */
+  isActive?: () => boolean
   baseURL: string
   siteName: string
   pageKey: string

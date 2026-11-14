@@ -4,7 +4,7 @@ import { SidebarLayer } from '@/layer/sidebar-layer'
 export const SidebarService: ArtalkPlugin = (ctx) => {
   ctx.provide(
     'sidebar',
-    (events, data, editor, checkers, api, config, user, layers) => {
+    (events, data, editor, checkers, config, user, layers) => {
       const sidebarLayer = new SidebarLayer({
         onShow: () => {
           setTimeout(() => {
@@ -20,7 +20,7 @@ export const SidebarService: ArtalkPlugin = (ctx) => {
           events.trigger('sidebar-hide')
         },
         getCheckers: () => checkers,
-        getApi: () => api,
+        getApi: () => ctx.getApi(),
         getConf: () => config,
         getUser: () => user,
         getLayers: () => layers,
@@ -32,6 +32,6 @@ export const SidebarService: ArtalkPlugin = (ctx) => {
 
       return sidebarLayer
     },
-    ['events', 'data', 'editor', 'checkers', 'api', 'config', 'user', 'layers'] as const,
+    ['events', 'data', 'editor', 'checkers', 'config', 'user', 'layers'] as const,
   )
 }

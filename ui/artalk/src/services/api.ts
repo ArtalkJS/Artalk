@@ -6,7 +6,13 @@ export const ApiService: ArtalkPlugin = (ctx) => {
   ctx.provide('apiHandlers', () => createApiHandlers(), [] as const)
   ctx.provide(
     'api',
-    (user, config, apiHandlers) => new Api(convertApiOptions(config.get(), user, apiHandlers)),
+    (user, config, apiHandlers) => {
+      const conf = config.get()
+      return new Api({
+        ...convertApiOptions(conf, user, apiHandlers),
+        isActive: () => !ctx.isDestroyed() && config.get().server === conf.server,
+      })
+    },
     ['user', 'config', 'apiHandlers'] as const,
     {
       lifecycle: 'transient',

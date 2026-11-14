@@ -32,13 +32,13 @@ export interface EditorEventPayloadMap {
 export const EditorKit: ArtalkPlugin = (ctx) => {
   ctx.provide(
     'editorPlugs',
-    (editor, config, user, data, checkers, api) => {
+    (editor, config, user, data, checkers) => {
       const pluginManager = new PluginManager({
         getArtalkRootEl: () => ctx.getEl(),
         getEditor: () => editor,
         getConf: () => config,
         getUser: () => user,
-        getApi: () => api,
+        getApi: () => ctx.getApi(),
         getData: () => data,
         getCheckers: () => checkers,
         onSubmitted: () => ctx.trigger('editor-submitted'),
@@ -46,7 +46,7 @@ export const EditorKit: ArtalkPlugin = (ctx) => {
       editor.setPlugins(pluginManager)
       return pluginManager
     },
-    ['editor', 'config', 'user', 'data', 'checkers', 'api'] as const,
+    ['editor', 'config', 'user', 'data', 'checkers'] as const,
   )
 }
 

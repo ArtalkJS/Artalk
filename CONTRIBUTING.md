@@ -132,6 +132,12 @@ The built binary file will be located in the `./bin` directory.
 
 ## Frontend Development (UI)
 
+### Frontend State
+
+Stored logins are scoped to the server URL. Legacy profile fields still load, but old tokens
+without a server binding require a new login. Guest credentials keep their existing storage keys.
+Use `ctx.getApi()` when starting a request so it uses the current server and user.
+
 ### Run Frontend
 
 1. **Install Dependencies**:  

@@ -4,13 +4,17 @@ import { UserManager } from '@/lib/user'
 export const UserService: ArtalkPlugin = (ctx) => {
   ctx.provide(
     'user',
-    () => {
-      return new UserManager({
+    (config) => {
+      const user = new UserManager({
+        getServer: () => config.get().server,
         onUserChanged: (data) => {
           ctx.trigger('user-changed', data)
         },
       })
+      config.watchConf(['server'], () => user.getData())
+      ctx.on('unmounted', () => user.dispose())
+      return user
     },
-    [] as const,
+    ['config'] as const,
   )
 }

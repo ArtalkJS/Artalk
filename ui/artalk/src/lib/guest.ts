@@ -1,15 +1,12 @@
+import { storageKey } from './storage'
+
 // A browser capability, scoped to one backend. It never represents a user login.
 const memory = new Map<string, string>()
 const valid = (token: unknown): token is string =>
   typeof token === 'string' && /^[a-f0-9]{64}$/.test(token)
 
-function storageKey(server: string) {
-  const url = new URL(server, window.location.href)
-  return `ArtalkGuest:${url.origin}${url.pathname.replace(/\/+$/, '')}`
-}
-
 export function getGuestToken(server: string, create = false): string | undefined {
-  const key = storageKey(server)
+  const key = storageKey('ArtalkGuest', server)
   // Keep the credential stable for this document, including when a trusted
   // sidebar handoff cannot replace an older value in read-only storage.
   if (memory.has(key)) return memory.get(key)
@@ -31,7 +28,7 @@ export function getGuestToken(server: string, create = false): string | undefine
 
 export function setGuestToken(server: string, token: string) {
   if (!valid(token)) return
-  const key = storageKey(server)
+  const key = storageKey('ArtalkGuest', server)
   memory.set(key, token)
   try {
     window.localStorage.setItem(key, token)

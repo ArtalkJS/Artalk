@@ -4,9 +4,9 @@ import { List } from '@/list/list'
 export const ListService: ArtalkPlugin = (ctx) => {
   ctx.provide(
     'list',
-    (api, events, config, data, editor) => {
+    (events, config, data, editor) => {
       const list = new List({
-        getApi: () => api,
+        getApi: () => ctx.getApi(),
         getEvents: () => events,
         getConf: () => config,
         getData: () => data,
@@ -19,6 +19,6 @@ export const ListService: ArtalkPlugin = (ctx) => {
       ctx.getEl().appendChild(list.getEl())
       return list
     },
-    ['api', 'events', 'config', 'data', 'editor'] as const,
+    ['events', 'config', 'data', 'editor'] as const,
   )
 }

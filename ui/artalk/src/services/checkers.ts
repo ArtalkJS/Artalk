@@ -4,9 +4,9 @@ import { CheckerLauncher } from '@/components/checker'
 export const CheckersService: ArtalkPlugin = (ctx) => {
   ctx.provide(
     'checkers',
-    (api, apiHandlers, layers, user, config) => {
+    (apiHandlers, layers, user, config) => {
       const checkers = new CheckerLauncher({
-        getApi: () => api,
+        getApi: () => ctx.getApi(),
         getLayers: () => layers,
         getUser: () => user,
         onReload: () => ctx.reload(),
@@ -20,6 +20,6 @@ export const CheckersService: ArtalkPlugin = (ctx) => {
 
       return checkers
     },
-    ['api', 'apiHandlers', 'layers', 'user', 'config'] as const,
+    ['apiHandlers', 'layers', 'user', 'config'] as const,
   )
 }

@@ -21,7 +21,7 @@ export const PvCountWidget: ArtalkPlugin = (ctx: Context) => {
   ctx.watchConf(
     ['site', 'pageKey', 'pageTitle', 'countEl', 'pvEl', 'statPageKeyAttr', 'pvAdd'],
     (conf) => {
-      initCountWidget({
+      void initCountWidget({
         getApi: () => ctx.getApi(),
         siteName: conf.site,
         pageKey: conf.pageKey,
@@ -30,6 +30,8 @@ export const PvCountWidget: ArtalkPlugin = (ctx: Context) => {
         pvEl: conf.pvEl,
         pageKeyAttr: conf.statPageKeyAttr,
         pvAdd: conf.pvAdd,
+      }).catch((err) => {
+        if (!ctx.isDestroyed() && err?.name !== 'AbortError') console.error(err)
       })
     },
   )

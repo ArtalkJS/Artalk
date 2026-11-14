@@ -53,6 +53,7 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 		Link:           user.Link,
 		UA:             c.UA,
 		Date:           c.CreatedAt.Local().Format(CommonDateTimeFormat),
+		DateUnix:       c.CreatedAt.Unix(),
 		IsCollapsed:    c.IsCollapsed,
 		IsPending:      c.IsPending,
 		IsPinned:       c.IsPinned,
@@ -104,6 +105,7 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 			EmailEncrypted: getCommentEmailHash(user.Email),
 			Link:           user.Link,
 			UA:             c.UA,
+			DateUnix:       c.CreatedAt.Unix(),
 			IsCollapsed:    c.IsCollapsed,
 			IsPending:      c.IsPending,
 			IsPinned:       c.IsPinned,
@@ -131,6 +133,7 @@ func (dao *Dao) CookPage(p *entity.Page) entity.CookedPage {
 		VoteDown:  p.VoteDown,
 		PV:        p.PV,
 		Date:      p.CreatedAt.Local().Format(CommonDateTimeFormat),
+		DateUnix:  p.CreatedAt.Unix(),
 	}
 }
 

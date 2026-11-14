@@ -138,8 +138,11 @@ export default class Emoticons extends EditorPlugin {
     data = data.filter(
       (item: any) => typeof item === 'object' && !Array.isArray(item) && !!item && !!item.name,
     )
-
-    // console.log(data)
+    // Config merges can repeat inline packs. Keep the first group, as pushGrp does.
+    data = data.filter(
+      (group: EmoticonGrpData, index: number) =>
+        data.findIndex((item: EmoticonGrpData) => item.name === group.name) === index,
+    )
 
     this.solveNullKey(data)
     this.solveSameKey(data)

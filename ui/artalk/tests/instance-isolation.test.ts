@@ -94,4 +94,14 @@ describe('shared language and instance Markdown', () => {
     expect(instances[0].getEl().textContent).toContain(zhCN.listLoadFailMsg)
     expect($t('send')).toBe('发送')
   })
+
+  it('cancels emoticon preloads on destroy and leaves a sibling usable', async () => {
+    vi.useFakeTimers()
+    const first = await initialize({ emoticons: 'https://example.com/pack.json' })
+    const second = await initialize({ locale: 'en' })
+    first.destroy()
+    await vi.advanceTimersByTimeAsync(1500)
+    expect(fetch).not.toHaveBeenCalled()
+    expect(second.ctx.$t('send')).toBe('Send')
+  })
 })

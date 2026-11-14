@@ -46,7 +46,29 @@ function wrapPromise<P extends CheckerPayload = CheckerPayload>(fn: (p: P) => vo
  * Checker Launcher
  */
 export class CheckerLauncher implements ICheckerManager {
+  private cancellations = new Set<() => void>()
+  private disposed = false
+
   constructor(private opts: CheckerLauncherOptions) {}
+
+  /** @internal */
+  dispose() {
+    this.disposed = true
+    this.cancelAll()
+  }
+
+  /** @internal */
+  cancelAll() {
+    const errors: unknown[] = []
+    this.cancellations.forEach((cancel) => {
+      try {
+        cancel()
+      } catch (error) {
+        errors.push(error)
+      }
+    })
+    if (errors.length) throw errors[0]
+  }
 
   public checkCaptcha: (payload: CheckerCaptchaPayload) => Promise<void> = wrapPromise((p) => {
     this.check(CaptchaChecker, p, (ctx) => {
@@ -60,13 +82,29 @@ export class CheckerLauncher implements ICheckerManager {
   })
 
   public check(checker: Checker, payload: CheckerPayload, beforeCheck?: (c: CheckerCtx) => void) {
+    if (this.disposed) {
+      payload.onCancel?.()
+      return
+    }
     // 显示层
     const layer = this.opts.getLayers().create(`checker-${new Date().getTime()}`)
     layer.show()
 
+    let closed = false
+    const cleanup: (() => void)[] = []
     const close = () => {
+      if (closed) return false
+      closed = true
+      this.cancellations.delete(cancel)
+      cleanup.forEach((fn) => fn())
       layer.destroy()
+      return true
     }
+    const cancel = () => {
+      if (close()) payload.onCancel?.()
+    }
+    this.cancellations.add(cancel)
+    layer.setOnAfterHide(cancel)
 
     // 构建 Checker 的上下文
     const checkerStore: CheckerStore = {}
@@ -79,18 +117,17 @@ export class CheckerLauncher implements ICheckerManager {
       getOpts: () => this.opts,
       getUser: () => this.opts.getUser(),
       getApi: () => this.opts.getApi(),
+      onDispose: (fn) => cleanup.push(fn),
+      isDisposed: () => closed,
       hideInteractInput: () => {
         hideInteractInput = true
       },
       triggerSuccess: () => {
-        close()
+        if (!close()) return
         if (checker.onSuccess) checker.onSuccess(checkerCtx, '', '', formEl)
         if (payload.onSuccess) payload.onSuccess()
       },
-      cancel: () => {
-        close()
-        if (payload.onCancel) payload.onCancel()
-      },
+      cancel,
     }
 
     if (beforeCheck) beforeCheck(checkerCtx)
@@ -104,7 +141,12 @@ export class CheckerLauncher implements ICheckerManager {
       `<input id="check" type="${checker.inputType || 'text'}" autocomplete="off" required placeholder="">`,
     )
     formEl.appendChild($input)
-    setTimeout(() => $input.focus(), 80) // 延迟 Focus
+    const focusTimer = setTimeout(() => $input.focus(), 80)
+    let errorTimer: ReturnType<typeof setTimeout> | undefined
+    cleanup.push(() => {
+      clearTimeout(focusTimer)
+      clearTimeout(errorTimer)
+    })
 
     // 绑定键盘事件
     $input.onkeyup = (evt) => {
@@ -117,9 +159,12 @@ export class CheckerLauncher implements ICheckerManager {
 
     let btnTextOrg: string | undefined
     const dialog = new Dialog(formEl)
+    let requesting = false
 
     // 确认按钮
     dialog.setYes((btnEl) => {
+      if (closed || requesting) return false
+      requesting = true
       const inputVal = $input.value.trim()
 
       // 按钮操作
@@ -140,22 +185,25 @@ export class CheckerLauncher implements ICheckerManager {
         .request(checkerCtx, inputVal)
         .then((data) => {
           // 请求成功
-          close()
+          if (!close()) return
 
           if (checker.onSuccess) checker.onSuccess(checkerCtx, data, inputVal, formEl)
           if (payload.onSuccess) payload.onSuccess()
         })
         .catch((err) => {
+          if (closed) return
+          requesting = false
           // 请求失败
           btnTextSet(String(err.message || String(err)))
 
           if (checker.onError) checker.onError(checkerCtx, err, inputVal, formEl)
 
           // 错误显示 3s 后恢复按钮
-          const tf = setTimeout(() => btnTextRestore(), 3000)
+          clearTimeout(errorTimer)
+          errorTimer = setTimeout(() => btnTextRestore(), 3000)
           $input.onfocus = () => {
             btnTextRestore()
-            clearTimeout(tf)
+            clearTimeout(errorTimer)
           }
         })
 
@@ -164,8 +212,7 @@ export class CheckerLauncher implements ICheckerManager {
 
     // 取消按钮
     dialog.setNo(() => {
-      close()
-      if (payload.onCancel) payload.onCancel()
+      cancel()
       return false
     })
 
@@ -198,6 +245,10 @@ interface CheckerStore {
 }
 
 export interface CheckerCtx {
+  /** @internal */
+  onDispose?: (cleanup: () => void) => void
+  /** @internal */
+  isDisposed?: () => boolean
   get<K extends keyof CheckerStore>(key: K): CheckerStore[K]
   set<K extends keyof CheckerStore>(key: K, val: CheckerStore[K]): void
   getOpts(): CheckerLauncherOptions

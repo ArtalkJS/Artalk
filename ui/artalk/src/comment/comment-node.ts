@@ -45,6 +45,7 @@ export default class CommentNode {
 
   private parent: CommentNode | null
   private children: CommentNode[] = []
+  private removed = false
 
   private nestCurt: number // 当前嵌套层数
 
@@ -62,6 +63,7 @@ export default class CommentNode {
 
   /** 渲染 UI */
   public render() {
+    if (this.removed) return
     const newEl = this.renderInstance.render()
 
     if (this.$el) this.$el.replaceWith(newEl)
@@ -197,7 +199,14 @@ export default class CommentNode {
    * Remove the comment node
    */
   remove() {
+    this.removed = true
+    this.renderInstance.dispose()
     this.$el?.remove()
+  }
+
+  /** @internal */
+  isRemoved() {
+    return this.removed
   }
 
   /** 获取 Gravatar 头像 URL */

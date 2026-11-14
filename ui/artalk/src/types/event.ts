@@ -63,6 +63,8 @@ export interface EventOptions {
 }
 
 export interface EventManager<T = EventPayloadMap> {
+  /** @internal */
+  dispose?(): void
   on<K extends keyof T>(name: K, handler: EventHandler<T[K]>, opts?: EventOptions): void
   off<K extends keyof T>(name: K, handler: EventHandler<T[K]>): void
   trigger<K extends keyof T>(name: K, payload?: T[K]): void

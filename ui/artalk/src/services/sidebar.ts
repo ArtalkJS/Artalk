@@ -7,9 +7,9 @@ export const SidebarService: ArtalkPlugin = (ctx) => {
     (events, data, editor, checkers, config, user, layers) => {
       const sidebarLayer = new SidebarLayer({
         onShow: () => {
-          setTimeout(() => {
-            data.updateNotifies([])
-          }, 0)
+          queueMicrotask(() => {
+            if (!ctx.isDestroyed()) data.updateNotifies([])
+          })
 
           events.trigger('sidebar-show')
         },
@@ -26,6 +26,11 @@ export const SidebarService: ArtalkPlugin = (ctx) => {
         getLayers: () => layers,
       })
 
+      ctx.on('unmounted', () => sidebarLayer.dispose())
+      ctx.watchConf(['server', 'site', 'pageKey'], () => {
+        sidebarLayer.hide()
+        sidebarLayer.onUserChanged()
+      })
       ctx.on('user-changed', () => {
         sidebarLayer?.onUserChanged()
       })

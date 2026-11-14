@@ -10,7 +10,9 @@ export const ConfigService: ArtalkPlugin = (ctx) => {
     'config',
     (events) => {
       let mounted = false
+      let disposed = false
       events.on('mounted', () => (mounted = true))
+      events.on('unmounted', () => (disposed = true))
       const instance: ConfigManager = {
         watchConf: (keys, effect) => {
           watchConf({
@@ -22,6 +24,7 @@ export const ConfigService: ArtalkPlugin = (ctx) => {
         },
         get: () => conf,
         update: (config) => {
+          if (disposed) return
           conf = mergeDeep<Config>(conf, handelCustomConf(config, false))
           mounted && events.trigger('updated', conf)
         },

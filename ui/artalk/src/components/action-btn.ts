@@ -44,6 +44,14 @@ export default class ActionBtn {
     if (this.opts.adminOnly) this.$el.setAttribute('atk-only-admin-show', '')
   }
 
+  /** @internal */
+  public dispose() {
+    this.clearMsgRecTimer()
+    window.clearTimeout(this.confirmRecTimer)
+    this.$el.onclick = null
+    this.$el.remove()
+  }
+
   /** 将按钮装载到指定元素 */
   public appendTo(dom: HTMLElement) {
     dom.append(this.$el)

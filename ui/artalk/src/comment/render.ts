@@ -5,6 +5,7 @@ import * as Ui from '../lib/ui'
 import * as HeightLimit from './height-limit'
 import CommentHTML from './comment.html?raw'
 import loadRenders from './renders'
+import { disposeActions } from './renders/actions'
 import type { CommentNode } from '.'
 
 export default class Render {
@@ -29,6 +30,8 @@ export default class Render {
   public voteBtnUp?: ActionBtn
   public voteBtnDown?: ActionBtn
 
+  private flashTimer?: number
+
   public $replyTo?: HTMLElement // 回复评论内容 (平铺下显示)
   public $replyAt?: HTMLElement // 回复 AT（层级嵌套下显示）
 
@@ -46,6 +49,7 @@ export default class Render {
    * Please be aware of the memory leak caused by the event listener.
    */
   public render() {
+    this.dispose()
     // init ui elements
     this.$el = Utils.createElement(CommentHTML)
 
@@ -116,10 +120,17 @@ export default class Render {
   playFlashAnim() {
     // Make sure the class is removed
     this.$el.classList.remove('atk-flash-once')
-    window.setTimeout(() => {
+    window.clearTimeout(this.flashTimer)
+    this.flashTimer = window.setTimeout(() => {
       // Add the class to perform the animation
       this.$el.classList.add('atk-flash-once')
     }, 150)
+  }
+
+  /** @internal */
+  dispose() {
+    window.clearTimeout(this.flashTimer)
+    disposeActions(this)
   }
 
   /** 获取子评论 Wrap */

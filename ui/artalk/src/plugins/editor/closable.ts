@@ -1,7 +1,7 @@
 import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
-import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
+import * as Utils from '@/lib/utils'
 
 export default class Closable extends EditorPlugin {
   constructor(kit: PlugKit) {
@@ -27,7 +27,9 @@ export default class Closable extends EditorPlugin {
   }
 
   private close() {
-    if (!this.kit.useUI().$textareaWrap.querySelector('.atk-comment-closed'))
+    const message = this.kit.useUI().$textareaWrap.querySelector('.atk-comment-closed')
+    if (message) message.innerHTML = $t('onlyAdminCanReply')
+    else
       this.kit
         .useUI()
         .$textareaWrap.prepend(

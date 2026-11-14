@@ -44,6 +44,7 @@ export const EditorKit: ArtalkPlugin = (ctx) => {
         onSubmitted: () => ctx.trigger('editor-submitted'),
       })
       editor.setPlugins(pluginManager)
+      ctx.on('unmounted', () => pluginManager.dispose())
       return pluginManager
     },
     ['editor', 'config', 'user', 'data', 'checkers'] as const,
@@ -73,7 +74,7 @@ export class PluginManager implements IEditorPluginManager {
       .watchConf(['imgUpload', 'emoticons', 'preview', 'editorTravel', 'locale'], (conf) => {
         // trigger unmount event will call all plugs' unmount function
         // (this will only be called while conf reloaded, not be called at first time)
-        confLoaded && this.getEvents().trigger('unmounted')
+        if (confLoaded) this.dispose()
 
         // reset the plugs
         this.clear()
@@ -92,9 +93,6 @@ export class PluginManager implements IEditorPluginManager {
         // refresh the plug UI
         this.loadPluginUI()
       })
-
-    this.events.on('panel-close', () => this.closePluginPanel())
-    this.events.on('editor-submitted', () => opts.onSubmitted())
   }
 
   getPlugins() {
@@ -113,10 +111,27 @@ export class PluginManager implements IEditorPluginManager {
     return this.opts
   }
 
+  /** @internal */
+  dispose() {
+    try {
+      try {
+        this.getEditor().resetState()
+        this.closePluginPanel()
+      } finally {
+        this.events.trigger('unmounted')
+      }
+    } finally {
+      this.events.dispose()
+      this.plugins = []
+      this.openedPlug = null
+    }
+  }
+
   private clear() {
     this.plugins = []
     this.events = new EventManager()
-    if (this.openedPlug) this.closePluginPanel()
+    this.events.on('panel-close', () => this.closePluginPanel())
+    this.events.on('editor-submitted', () => this.opts.onSubmitted())
   }
 
   private loadPluginUI() {

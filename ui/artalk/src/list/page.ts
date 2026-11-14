@@ -29,6 +29,7 @@ export interface PaginatorInitOptions extends ListOptions {
 
 export const initListPaginatorFunc = (opts: PaginatorInitOptions) => {
   let paginator: Paginator | null = null
+  opts.getEvents().on('unmounted', () => paginator?.dispose())
 
   // Init paginator when conf loaded
   opts.getConf().watchConf(['pagination', 'locale'], (conf) => {

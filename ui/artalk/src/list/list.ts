@@ -49,6 +49,8 @@ export class List implements IList {
       ...opts,
     })
 
+    opts.getEvents().on('unmounted', () => this.clear())
+
     // Bind events
     this.initCrudEvents()
   }
@@ -72,6 +74,12 @@ export class List implements IList {
     })
   }
 
+  private clear() {
+    this.commentNodes.forEach((node) => node.remove())
+    this.commentNodes = []
+    this.$commentsWrap.replaceChildren()
+  }
+
   private initCrudEvents() {
     this.opts.getEvents().on('list-load', (comments) => {
       // 导入数据
@@ -80,8 +88,7 @@ export class List implements IList {
 
     this.opts.getEvents().on('list-loaded', (comments) => {
       if (comments.length === 0) {
-        this.commentNodes = []
-        this.$commentsWrap.innerHTML = ''
+        this.clear()
       }
     })
 

@@ -30,6 +30,7 @@ const defaults: PageVoteOptions = {
 type VoteBtnHandler = (evt: MouseEvent) => void
 
 interface PageVoteState {
+  isActive: () => boolean
   upBtnEl?: HTMLElement | null
   downBtnEl?: HTMLElement | null
   upCountEl?: HTMLElement | null
@@ -41,15 +42,26 @@ interface PageVoteState {
 
 export const PageVoteWidget: ArtalkPlugin = (ctx) => {
   const conf = ctx.inject('config')
-  let state: PageVoteState = initState()
+  let state: PageVoteState = { isActive: () => false }
   let cleanup: (() => void) | undefined
 
-  ctx.watchConf(['pageVote'], (conf) => {
+  ctx.watchConf(['pageVote', 'server', 'site', 'pageKey'], (conf) => {
     const options = { ...defaults, ...(typeof conf.pageVote === 'object' ? conf.pageVote : {}) }
 
     cleanup?.()
+    currPageId = 0
     if (conf.pageVote) {
       state = loadOptions(state, options, voteUpHandler, voteDownHandler)
+      const current = state
+      const server = ctx.getConf().server
+      const site = ctx.getConf().site
+      const pageKey = ctx.getConf().pageKey
+      state.isActive = () =>
+        !ctx.isDestroyed() &&
+        state === current &&
+        ctx.getConf().server === server &&
+        ctx.getConf().site === site &&
+        ctx.getConf().pageKey === pageKey
       cleanup = () => (state = resetState(state))
     }
   })
@@ -64,7 +76,7 @@ export const PageVoteWidget: ArtalkPlugin = (ctx) => {
   // List fetched handler
   let currPageId = 0
   function listFetchedHandler({ data }: ListFetchedArgs) {
-    if (!conf.get().pageVote || !checkEls(state) || !data) return
+    if (!conf.get().pageVote || !checkEls(state) || !data?.page) return
 
     if (currPageId !== data.page.id) {
       // Initialize vote status in a new page
@@ -81,7 +93,7 @@ export const PageVoteWidget: ArtalkPlugin = (ctx) => {
   const handlerOptions = () => ({
     state,
     pageId: ctx.getData().getPage()?.id || 0,
-    httpApi: ctx.getApi(),
+    api: ctx.getApi(),
   })
   const voteUpHandler = voteBtnHandler('up', handlerOptions)
   const voteDownHandler = voteBtnHandler('down', handlerOptions)
@@ -110,14 +122,10 @@ function checkEls(state: PageVoteState) {
   return state.upBtnEl || state.downBtnEl || state.upCountEl || state.downCountEl
 }
 
-function initState(): PageVoteState {
-  return {}
-}
-
 function resetState(state: PageVoteState): PageVoteState {
   state.voteUpHandler && state.upBtnEl?.removeEventListener('click', state.voteUpHandler)
   state.voteDownHandler && state.downBtnEl?.removeEventListener('click', state.voteDownHandler)
-  return initState()
+  return { isActive: () => false }
 }
 
 function updateVoteStatus(
@@ -127,6 +135,7 @@ function updateVoteStatus(
   isUp?: boolean,
   isDown?: boolean,
 ) {
+  if (!state.isActive()) return
   // Up vote count
   if (state.upCountEl) {
     state.upCountEl.innerText = String(up)
@@ -150,29 +159,28 @@ function updateVoteStatus(
 interface VoteBtnHandlerOptions {
   state: PageVoteState
   pageId: number
-  httpApi: Api
+  api: Api
 }
 
 const voteBtnHandler =
   (choice: 'up' | 'down', options: () => VoteBtnHandlerOptions) => (evt: MouseEvent) => {
     evt.preventDefault()
-    const { state, pageId, httpApi } = options()
+    const { state, pageId, api } = options()
     if (!pageId) return
-    httpApi.votes
-      .createVote('page', pageId, choice, {
-        ...httpApi.getUserFields(),
-      })
+    api.votes
+      .createVote('page', pageId, choice, { ...api.getUserFields() })
       .then(({ data }) => {
         updateVoteStatus(state, data.up, data.down, data.is_up, data.is_down)
       })
       .catch((err) => {
+        if (!state.isActive()) return
         window.alert($t('voteFail'))
         console.error('[ArtalkPageVote]', err)
       })
   }
 
-function fetchVoteStatus(state: PageVoteState, pageId: number, httpApi: Api) {
-  httpApi.votes
+function fetchVoteStatus(state: PageVoteState, pageId: number, api: Api) {
+  api.votes
     .getVote('page', pageId)
     .then(({ data }) => {
       updateVoteStatus(state, data.up, data.down, data.is_up, data.is_down)

@@ -29,11 +29,19 @@ export const Unread: ArtalkPlugin = (ctx) => {
   ctx.on('list-goto', (commentID) => {
     const notifyKey = Utils.getQueryParam('atk_notify_key')
     if (notifyKey) {
+      const scope = () => {
+        const { server, site, pageKey } = ctx.getConf()
+        const { name, email, token } = ctx.getUser().getData()
+        return JSON.stringify([server, site, pageKey, name, email, token])
+      }
+      const snapshot = scope()
+      const active = () => !ctx.isDestroyed() && scope() === snapshot
       // mark as read
       ctx
         .getApi()
         .notifies.markNotifyRead(commentID, notifyKey)
         .then(() => {
+          if (!active()) return
           // remove from unread list
           ctx.getData().updateNotifies(
             ctx
@@ -41,6 +49,9 @@ export const Unread: ArtalkPlugin = (ctx) => {
               .getNotifies()
               .filter((o) => o.comment_id !== commentID),
           )
+        })
+        .catch((error) => {
+          if (active()) console.error(error)
         })
     }
   })

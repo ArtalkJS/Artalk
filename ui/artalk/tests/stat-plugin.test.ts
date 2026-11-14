@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 
-import { exportedForTesting } from '@/plugins/stat'
+import { deferred, mockApi as createMockApi, response } from './lib/api'
+import { exportedForTesting, initCountWidget } from '@/plugins/stat'
 import type { CountOptions } from '@/plugins/stat'
 
 const {
@@ -59,6 +60,24 @@ describe('PvCountWidget', () => {
     await loadPvCount(mockOptions, { 'test-page-key': 100 })
     const el = document.querySelector<HTMLElement>('.pv-element')
     expect(el?.innerText).toBe('100')
+  })
+
+  it('does not write PV or update count elements after the destination changes', async () => {
+    document.body.innerHTML = '<div class="count-element" data-page-key="test-page-key"></div>'
+    const element = document.querySelector<HTMLElement>('.count-element')!
+    element.innerText = 'Current page'
+    const counts = deferred<Record<string, number>>()
+    let current = true
+    const api = createMockApi()
+    vi.mocked(api.stats.getStats).mockImplementation(async () =>
+      response({ data: await counts.promise }),
+    )
+    const loading = initCountWidget({ ...mockOptions, getApi: () => api, isCurrent: () => current })
+    current = false
+    counts.resolve({ 'test-page-key': 99 })
+    await loading
+    expect(element.innerText).toBe('Current page')
+    expect(api.pages.logPv).not.toHaveBeenCalled()
   })
 
   it('should retrieve elements based on selectors', () => {

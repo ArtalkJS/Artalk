@@ -3,6 +3,7 @@ import { CommentNode } from '@/comment'
 import type { Api } from '@/api'
 
 interface CreateCommentNodeOptions {
+  renderMarkdown?: (src: string) => string
   getApi: () => Api
   getEvents: () => EventManager
   getData: () => DataManager
@@ -28,6 +29,7 @@ export function createCommentNode(
     },
 
     replyTo: replyComment,
+    renderMarkdown: opts.renderMarkdown,
 
     // TODO simplify reference
     flatMode:

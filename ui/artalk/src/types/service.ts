@@ -14,6 +14,7 @@ import type {
 } from '@/types'
 
 import type { CommentService } from '@/services/comments'
+import type { createMarkdown } from '@/lib/marked'
 
 export interface Services {
   config: ConfigManager
@@ -23,6 +24,8 @@ export interface Services {
   apiHandlers: ApiHandlers
   /** @internal Comment request lifecycle. */
   comments: CommentService
+  /** @internal Instance-local Markdown renderer. */
+  markdown: ReturnType<typeof createMarkdown>
   editor: Editor
   editorPlugs: EditorPluginManager | undefined
   list: List

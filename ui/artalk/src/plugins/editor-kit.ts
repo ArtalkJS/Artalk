@@ -76,6 +76,9 @@ export class PluginManager implements IEditorPluginManager {
   private events = new EventManager<EditorEventPayloadMap>()
 
   constructor(public opts: PluginManagerOptions) {
+    opts.getConf().watchConf(['markedOptions', 'markedReplacers', 'imgLazyLoad'], () => {
+      this.events.trigger('content-updated', this.getEditor().getContentRaw())
+    })
     let confLoaded = false // config not loaded at first time
     let destination = ''
     this.opts

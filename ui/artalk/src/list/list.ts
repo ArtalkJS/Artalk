@@ -8,6 +8,8 @@ import { CommentNode } from '@/comment'
 import type { Api } from '@/api'
 
 export interface ListOptions {
+  /** @internal */
+  renderMarkdown?: (src: string) => string
   getApi: () => Api
   getEvents: () => EventManager
   getConf: () => ConfigManager
@@ -49,6 +51,9 @@ export class List implements IList {
       ...opts,
     })
 
+    opts.getConf().watchConf(['locale', 'markedOptions', 'markedReplacers', 'imgLazyLoad'], () => {
+      this.commentNodes.forEach((node) => node.render())
+    })
     opts.getEvents().on('unmounted', () => this.clear())
 
     // Bind events

@@ -1,7 +1,6 @@
 import type Render from '../render'
-import * as Utils from '@/lib/utils'
-import marked from '@/lib/marked'
 import $t from '@/i18n'
+import * as Utils from '@/lib/utils'
 
 /**
  * 关联评论显示 (被回复的评论)
@@ -24,7 +23,7 @@ export default function renderReplyTo(r: Render) {
   }
 
   // Comment content
-  let replyContent = marked(r.opts.replyTo.content)
+  let replyContent = r.comment.renderMarkdown(r.opts.replyTo.content)
   if (r.opts.replyTo.is_collapsed) replyContent = `[${$t('collapsed')}]`
   r.$replyTo.querySelector<HTMLElement>('.atk-content')!.innerHTML = replyContent
 

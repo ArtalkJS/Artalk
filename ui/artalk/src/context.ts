@@ -8,7 +8,6 @@ import type {
   Services,
 } from './types'
 import * as I18n from './i18n'
-import * as marked from './lib/marked'
 import { createInjectionContainer } from './lib/injection'
 import type { CheckerCaptchaPayload, CheckerPayload } from './components/checker'
 
@@ -132,7 +131,7 @@ class Context implements IContext {
   }
 
   getMarked() {
-    return marked.getInstance()
+    return this.inject('markdown').getInstance()
   }
 
   setDarkMode(darkMode: boolean | 'auto'): void {

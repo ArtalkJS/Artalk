@@ -9,6 +9,9 @@ import $t from '@/i18n'
 import type { CommentData, Config, Context } from '@/types'
 
 export interface CommentOptions {
+  /** @internal */
+  renderMarkdown?: (src: string) => string
+
   // Hooks
   onAfterRender?: () => void
   onDelete?: (c: CommentNode) => void
@@ -218,9 +221,12 @@ export default class CommentNode {
     })
   }
 
+  /** @internal */
+  renderMarkdown = (src: string) => (this.opts.renderMarkdown || marked)(src)
+
   /** 获取评论 markdown 解析后的内容 */
   public getContentMarked() {
-    return marked(this.data.content)
+    return this.renderMarkdown(this.data.content)
   }
 
   /** 获取格式化后的日期 */

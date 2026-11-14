@@ -8,66 +8,80 @@ import type { Config } from '@/types'
 
 type Replacer = (raw: string) => string
 
-let instance: Marked | undefined
-let replacers: Replacer[] = []
-
-const markedOptions: MarkedOptions = {
-  gfm: true,
-  breaks: true,
-  async: false,
-}
-
-/** Get Marked instance */
-export function getInstance() {
-  return instance
-}
-
-export function setReplacers(arr: Replacer[]) {
-  replacers = arr
-}
-
 export interface MarkedInitOptions {
-  markedOptions: Config['markedOptions']
+  markedOptions?: Config['markedOptions']
   imgLazyLoad: Config['imgLazyLoad']
 }
 
-/** 初始化 marked */
-export function initMarked(options: MarkedInitOptions) {
-  try {
-    if (!Marked.name) return
-  } catch {
-    return
+/** Each widget owns its parser. Standalone callers keep the legacy exports below. */
+export function createMarkdown(getReplacers: () => Replacer[] | undefined = () => []) {
+  let instance: Marked | undefined
+  let defaults: MarkedOptions
+  let configured: MarkedOptions = {}
+  const rendererOptions = { imgLazyLoad: false as Config['imgLazyLoad'] }
+
+  return {
+    getInstance: () => instance,
+    configure(options: MarkedInitOptions) {
+      // Artalk Lite can run without the optional external Marked library.
+      try {
+        if (!Marked.name) return
+      } catch {
+        return
+      }
+      rendererOptions.imgLazyLoad = options.imgLazyLoad
+      if (!instance) {
+        instance = new Marked()
+        instance.setOptions({
+          renderer: getRenderer(rendererOptions),
+          gfm: true,
+          breaks: true,
+          async: false,
+        })
+        defaults = { ...instance.defaults }
+      }
+      const next = options.markedOptions || {}
+      // Reset removed config options, without replacing plugin extensions or
+      // renderers when unrelated config changes.
+      for (const key of Object.keys(configured)) {
+        if (!(key in next)) instance.setOptions({ [key]: defaults[key] })
+      }
+      for (const key of Object.keys(next)) {
+        if (next[key] === configured[key]) continue
+        let value = next[key]
+        // Marked writes parser state to these objects. A config object may be
+        // reused by multiple widgets, so give each parser its own copy.
+        if (value && ['renderer', 'tokenizer', 'hooks'].includes(key)) {
+          value = Object.assign(Object.create(Object.getPrototypeOf(value)), value)
+        }
+        instance.setOptions({ [key]: value })
+      }
+      configured = next
+    },
+    render(src: string): string {
+      const html = instance?.parse(src) as string | undefined
+      let dest = sanitize(html || simpleMarked(src))
+      getReplacers()?.forEach((replace) => {
+        if (typeof replace === 'function') dest = replace(dest)
+      })
+      return dest
+    },
   }
-
-  // @see https://github.com/markedjs/marked/blob/4afb228d956a415624c4e5554bb8f25d047676fe/src/Tokenizer.js#L329
-  const marked = new Marked()
-  marked.setOptions({
-    renderer: getRenderer({
-      imgLazyLoad: options.imgLazyLoad,
-    }),
-    ...markedOptions,
-    ...options.markedOptions,
-  })
-
-  instance = marked
 }
 
-/** 解析 markdown */
+let replacers: Replacer[] = []
+let standalone = createMarkdown(() => replacers)
+
+export const getInstance = () => standalone.getInstance()
+export function setReplacers(arr: Replacer[]) {
+  replacers = arr
+}
+export function initMarked(options: MarkedInitOptions) {
+  standalone = createMarkdown(() => replacers)
+  standalone.configure(options)
+}
 export default function marked(src: string): string {
-  let markedContent = getInstance()?.parse(src) as string
-  if (!markedContent) {
-    // 无 Markdown 模式简单处理
-    markedContent = simpleMarked(src)
-  }
-
-  let dest = sanitize(markedContent)
-
-  // 内容替换器
-  replacers.forEach((replacer) => {
-    if (typeof replacer === 'function') dest = replacer(dest)
-  })
-
-  return dest
+  return standalone.render(src)
 }
 
 function simpleMarked(src: string) {

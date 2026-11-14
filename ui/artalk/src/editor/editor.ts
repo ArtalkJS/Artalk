@@ -6,6 +6,8 @@ import type { ConfigManager, CommentData, Editor as IEditor, EventManager } from
 import type { PluginManager } from '@/plugins/editor-kit'
 
 export interface EditorOptions {
+  /** @internal */
+  renderMarkdown?: (src: string) => string
   getEvents: () => EventManager
   getConf: () => ConfigManager
 }
@@ -86,7 +88,7 @@ export class Editor implements IEditor {
   }
 
   getContentMarked() {
-    return marked(this.getContentFinal())
+    return (this.opts.renderMarkdown || marked)(this.getContentFinal())
   }
 
   setContent(val: string) {

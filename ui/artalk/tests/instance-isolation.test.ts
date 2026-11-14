@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { Renderer } from 'marked'
 import { bindApi, mockApi, comment, deferred, list, response, version } from './lib/api'
 import Artalk from '@/artalk'
 import { GlobalPlugins, mount } from '@/mount'
@@ -68,7 +69,7 @@ async function initialize(options: ConfigPartial = {}, source = mockApi()) {
   return widget
 }
 
-describe('shared language and instance Markdown', () => {
+describe('widget initialization and editor', () => {
   it('applies the remote locale before initializing plugins', async () => {
     const translated: string[] = []
     const plugin: ArtalkPlugin = (ctx) => {
@@ -297,3 +298,140 @@ it.each(['link', 'token'] as const)(
     )
   },
 )
+
+describe('Markdown compatibility', () => {
+  it('updates UI and legacy plugin translations through the shared locale', async () => {
+    const source = mockApi()
+    vi.mocked(source.comments.getComments).mockResolvedValue(
+      response(list([{ ...comment(1), is_pending: true }])),
+    )
+    const widget = await initialize({ locale: 'zh-CN' }, source)
+    const send = (widget: Artalk) => widget.getEl().querySelector('.atk-send-btn')?.textContent
+    expect(send(widget)).toBe('发送')
+    const translated = widget.ctx.$t
+    expect(translated('reply')).toBe('回复') // Detached plugin callback.
+    expect($t('reply')).toBe('回复')
+    expect(widget.getEl().querySelector('.atk-actions')?.textContent).toContain('回复')
+
+    widget.update({ locale: 'en' })
+    expect(send(widget)).toBe('Send')
+    expect(translated('reply')).toBe('Reply')
+    expect($t('reply')).toBe('Reply')
+    widget.reload()
+    await vi.waitFor(() => expect(widget.ctx.getCommentNodes()).toHaveLength(1))
+    expect(widget.getEl().querySelector('.atk-actions')?.textContent).toContain('Reply')
+
+    defineLocaleExternal('test', { ...en, send: 'External send' })
+    widget.update({ locale: 'test' })
+    expect(send(widget)).toBe('External send')
+    expect($t('send')).toBe('External send')
+    widget.update({ locale: { ...en, send: 'Custom send', reply: 'Custom reply' } })
+    expect(send(widget)).toBe('Custom send')
+    expect(translated('send')).toBe('Custom send')
+    expect($t('send')).toBe('Custom send')
+    expect(widget.getEl().querySelector('.atk-actions')?.textContent).toContain('Custom reply')
+    expect(widget.getEl().querySelector('.atk-list-read-more')?.textContent).toContain('Load More')
+
+    const dialog = widget.ctx.checkAdmin({}).catch(() => {})
+    const layers = widget.ctx.inject('layers').getEl()
+    expect(layers.querySelector('[data-action="confirm"]')?.textContent).toBe('Confirm')
+    widget.destroy()
+    await dialog
+  })
+
+  it('uses the same private renderer for comments, replies, previews, and plugin extensions', async () => {
+    const source = () => {
+      const api = mockApi()
+      vi.mocked(api.comments.getComments).mockResolvedValue(
+        response(list([comment(1, 'sample\nnext'), { ...comment(2, 'reply'), rid: 1 }])),
+      )
+      return api
+    }
+    const first = await initialize(
+      {
+        flatMode: true,
+        markedOptions: { breaks: true },
+        markedReplacers: [(text) => text.replaceAll('sample', 'first')],
+      },
+      source(),
+    )
+    const second = await initialize(
+      {
+        flatMode: true,
+        markedOptions: { breaks: false },
+        markedReplacers: [(text) => text.replaceAll('sample', 'second')],
+      },
+      source(),
+    )
+    const content = (widget: Artalk) => widget.ctx.getCommentNodes()[0].getContentMarked()
+    expect(content(first)).toContain('first<br>')
+    expect(content(second)).toContain('second\nnext')
+    expect(first.getEl().querySelector('.atk-reply-to .atk-content')?.innerHTML).toContain(
+      'first<br>',
+    )
+    expect(second.getEl().querySelector('.atk-reply-to .atk-content')?.innerHTML).toContain(
+      'second\nnext',
+    )
+
+    const parser = first.ctx.getMarked()!
+    expect(parser).not.toBe(second.ctx.getMarked())
+    parser.use({
+      extensions: [
+        {
+          name: 'localFixture',
+          level: 'inline',
+          start: (src) => src.indexOf('@local@'),
+          tokenizer: (src) =>
+            src.startsWith('@local@')
+              ? { type: 'html', raw: '@local@', text: '<b>plugin</b>' }
+              : undefined,
+        },
+      ],
+    })
+    const editor = first.ctx.inject('editor')
+    editor.setContent('@local@ sample\nnext ![image](https://example.com/image.png)')
+    first.update({ imgLazyLoad: 'data-src', markedOptions: { breaks: false } })
+    expect(first.ctx.getMarked()).toBe(parser)
+    expect(editor.getContentMarked()).toContain('<b>plugin</b>')
+    expect(editor.getContentMarked()).toContain('data-src=')
+    const preview = editor.getPlugins()!.get(Preview)!
+    editor.getPlugins()!.openPluginPanel(preview)
+    expect(preview.$panel!.innerHTML).toContain('first\nnext')
+    second.ctx.inject('editor').setContent('@local@')
+    expect(second.ctx.inject('editor').getContentMarked()).toContain('@local@')
+
+    first.update({ markedReplacers: undefined, markedOptions: undefined })
+    expect(content(first)).toContain('sample<br>')
+    expect(content(second)).toContain('second\nnext')
+    expect(first.ctx.getMarked()).toBe(parser)
+    first.destroy()
+    expect(content(second)).toContain('second')
+  })
+
+  it('applies changed renderer callbacks without resetting other plugins', async () => {
+    const widget = await initialize({
+      markedOptions: { renderer: { paragraph: () => '<p>one</p>' } as any },
+    })
+    const editor = widget.ctx.inject('editor')
+    editor.setContent('text')
+    expect(editor.getContentMarked()).toContain('one')
+    widget.update({ markedOptions: { renderer: { paragraph: () => '<p>two</p>' } as any } })
+    expect(editor.getContentMarked()).toContain('two')
+  })
+
+  it('keeps plugin changes local when widgets share a renderer config object', async () => {
+    const renderer = new Renderer()
+    const options = { markedOptions: { renderer } }
+    const first = await initialize(options)
+    const second = await initialize(options)
+    first.ctx.getMarked()!.use({ renderer: { paragraph: () => '<p>plugin</p>' } })
+    first.ctx.inject('editor').setContent('**text**')
+    second.ctx.inject('editor').setContent('**text**')
+
+    expect(first.ctx.inject('editor').getContentMarked()).toContain('<p>plugin</p>')
+    expect(second.ctx.inject('editor').getContentMarked()).toContain('<strong>text</strong>')
+    first.update({ imgLazyLoad: 'data-src' })
+    expect(first.ctx.inject('editor').getContentMarked()).toContain('<p>plugin</p>')
+    expect(second.ctx.inject('editor').getContentMarked()).toContain('<strong>text</strong>')
+  })
+})

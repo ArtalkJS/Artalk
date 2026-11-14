@@ -4,14 +4,15 @@ import { Editor } from '@/editor/editor'
 export const EditorService: ArtalkPlugin = (ctx) => {
   ctx.provide(
     'editor',
-    (events, config) => {
+    (events, config, markdown) => {
       const editor = new Editor({
         getEvents: () => events,
         getConf: () => config,
+        renderMarkdown: markdown.render,
       })
       ctx.getEl().appendChild(editor.getEl())
       return editor
     },
-    ['events', 'config'] as const,
+    ['events', 'config', 'markdown'] as const,
   )
 }

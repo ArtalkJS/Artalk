@@ -151,6 +151,10 @@ Drafts are stored per server, site, and page. The old draft is imported on first
 Config updates must keep the current draft and reply or edit target. Navigation must clear the
 old target without deleting its saved draft. Login retries must not submit twice.
 
+Each widget owns its Markdown parser. Use `ctx.getMarked()` after `mounted` to add extensions.
+Config updates keep the parser and its plugin extensions. Comments, quotes, and previews use
+the same parser. Run `pnpm -F artalk test --run` to check these behaviors.
+
 ### Run Frontend
 
 1. **Install Dependencies**:  

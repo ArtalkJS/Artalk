@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { version as artalkVersion } from '../package.json'
 import { bindApi, comment, deferred, list, mockApi, response, version } from './lib/api'
 import Artalk from '@/artalk'
 import { GlobalPlugins, mount } from '@/mount'
@@ -514,6 +515,53 @@ describe('existing API and plugin compatibility', () => {
     pending.resolve(response(comment(1, 'After login')))
     await vi.waitFor(() => expect(artalk.ctx.getComments()).toHaveLength(1))
     expect(editor.getContentRaw()).toBe('')
+  })
+
+  it('shows version mismatches only to administrators and keeps ignore effective', async () => {
+    const api = mockApi()
+    vi.mocked(api.conf.conf).mockResolvedValue(
+      response({ frontend_conf: {}, version: { ...version, version: '2.10.0' } }),
+    )
+    const artalk = await initialize(api)
+    const notice = () => artalk.getEl().querySelector('.atk-version-check-notice')
+    expect(notice()).toBeNull()
+    artalk.ctx.getUser().update({ token: 'member-token', is_admin: false })
+    expect(notice()).toBeNull()
+
+    artalk.ctx.getUser().update({ token: 'admin-token', is_admin: true })
+    expect(notice()?.textContent).toContain('2.10.0')
+    artalk.ctx.getUser().logout()
+    expect(notice()).toBeNull()
+    artalk.ctx.getUser().update({ token: 'admin-token', is_admin: true })
+    expect(notice()).not.toBeNull()
+
+    artalk.update({ versionCheck: false })
+    expect(notice()).toBeNull()
+    artalk.update({ versionCheck: true, apiVersion: artalkVersion })
+    expect(notice()).toBeNull()
+    artalk.update({ apiVersion: '2.10.0', locale: 'zh-CN' })
+    expect(notice()?.textContent).toContain('请更新')
+    notice()!.querySelector<HTMLElement>('.atk-ignore-btn')!.click()
+    artalk.update({ locale: 'en' })
+    artalk.ctx.getUser().logout()
+    artalk.ctx.getUser().update({ token: 'admin-token', is_admin: true })
+    expect(notice()).toBeNull()
+  })
+
+  it('removes the version notice after logout or destroy when the list is relocated', async () => {
+    const artalk = await initialize()
+    const host = document.createElement('section')
+    document.body.append(host)
+    host.append(artalk.ctx.inject('list').getEl())
+    artalk.update({ apiVersion: '2.10.0' })
+    artalk.ctx.getUser().update({ token: 'admin-token', is_admin: true })
+    expect(host.querySelector('.atk-version-check-notice')).not.toBeNull()
+    artalk.ctx.getUser().logout()
+    expect(host.querySelector('.atk-version-check-notice')).toBeNull()
+    artalk.ctx.getUser().update({ token: 'admin-token', is_admin: true })
+    expect(host.querySelector('.atk-version-check-notice')).not.toBeNull()
+    artalk.destroy()
+    expect(host.querySelector('.atk-version-check-notice')).toBeNull()
   })
 
   it('keeps the legacy behavior of deprecated useBackendConf', async () => {

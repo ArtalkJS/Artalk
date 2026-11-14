@@ -7,11 +7,16 @@ export const VersionCheck: ArtalkPlugin = (ctx) => {
   const list = ctx.inject('list')
   let ignored = false
   let notice: HTMLElement | undefined
-  ctx.watchConf(['apiVersion', 'versionCheck', 'locale'], (conf) => {
+  const refresh = () => {
     notice?.remove()
-    if (conf.apiVersion && conf.versionCheck && !ignored)
+    notice = undefined
+    const conf = ctx.getConf()
+    if (ctx.getUser().getData().is_admin && conf.apiVersion && conf.versionCheck && !ignored)
       notice = versionCheck(list, ARTALK_VERSION, conf.apiVersion, () => (ignored = true))
-  })
+  }
+  ctx.watchConf(['apiVersion', 'versionCheck', 'locale'], refresh)
+  ctx.on('user-changed', refresh)
+  ctx.on('unmounted', () => notice?.remove())
 }
 
 function versionCheck(list: List, feVer: string, beVer: string, ignore: () => void) {

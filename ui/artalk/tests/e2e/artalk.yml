@@ -1,0 +1,23 @@
+host: 127.0.0.1
+port: 23366
+locale: en
+login_timeout: 3600
+site_default: ArtalkDocs
+trusted_domains:
+  - http://localhost:5173
+  - http://localhost:23366
+db:
+  type: sqlite
+  file: ./test.db
+log:
+  enabled: false
+captcha:
+  enabled: false
+img_upload:
+  enabled: true
+email:
+  enabled: false
+ip_region:
+  enabled: false
+frontend:
+  emoticons: false

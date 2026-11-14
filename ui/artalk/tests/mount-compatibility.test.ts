@@ -374,6 +374,39 @@ describe('existing API and plugin compatibility', () => {
     expect(params).toEqual({ sort_by: 'vote' })
   })
 
+  it('replaces numbered pages, bounds page input, and cancels pending input on destroy', async () => {
+    const api = mockApi()
+    vi.mocked(api.comments.getComments).mockImplementation(async ({ offset = 0 }) =>
+      response({ ...list([comment(offset + 1)]), count: 3, roots_count: 3 }),
+    )
+    const artalk = await initialize(api, { pagination: { pageSize: 1, readMore: false } })
+    const root = artalk.getEl()
+    const input = root.querySelector<HTMLInputElement>('.atk-pagination input')!
+    root.querySelector<HTMLElement>('.atk-btn-prev')!.click()
+    expect(api.comments.getComments).toHaveBeenCalledTimes(1)
+    root.querySelector<HTMLElement>('.atk-btn-next')!.click()
+    await vi.waitFor(() => expect(artalk.ctx.getComments().map((item) => item.id)).toEqual([2]))
+    expect(input.value).toBe('2')
+
+    input.value = '99'
+    input.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 13 }))
+    await vi.waitFor(() => expect(artalk.ctx.getComments().map((item) => item.id)).toEqual([3]))
+    expect(input.value).toBe('3')
+    root.querySelector<HTMLElement>('.atk-btn-next')!.click()
+    expect(api.comments.getComments).toHaveBeenCalledTimes(3)
+
+    vi.useFakeTimers()
+    try {
+      input.value = '1'
+      input.dispatchEvent(new Event('input'))
+      artalk.destroy()
+      await vi.advanceTimersByTimeAsync(1000)
+      expect(api.comments.getComments).toHaveBeenCalledTimes(3)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('inserts native and OwO emoticons without changing shared pack data', async () => {
     const packs = [
       { name: 'Emoji', type: 'emoji', items: [{ val: '🙂' }] },

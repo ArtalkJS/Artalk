@@ -1,4 +1,11 @@
 import { defineConfig, devices } from '@playwright/test'
+import { copyFileSync } from 'node:fs'
+
+// Build with `make build-frontend && make build-debug` before running test:e2e.
+copyFileSync(
+  new URL('./tests/e2e/index.html', import.meta.url),
+  new URL('./dist/index.html', import.meta.url),
+)
 
 export default defineConfig({
   // Keep Playwright isolated from the Vitest suites in the parent tests directory.
@@ -32,19 +39,22 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
   ],
-  // Run your local dev server before starting the tests.
+  // Serve the built package and an isolated backend with the built sidebar.
   webServer: [
     {
-      command: 'pnpm dev --port 5173',
+      command: 'pnpm exec vite preview --port 5173 --strictPort',
       url: 'http://localhost:5173',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
     },
     {
-      cwd: '../../',
-      command: 'make dev',
+      command: 'pnpm exec tsx tests/e2e/server.ts',
       url: 'http://localhost:23366',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
     },
   ],
 })

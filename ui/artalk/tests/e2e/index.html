@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Artalk browser test</title>
+    <link rel="stylesheet" href="/Artalk.css" />
+    <style>
+      body {
+        margin: 16px;
+        font-family: system-ui, sans-serif;
+      }
+      body:has(.atk-dark-mode) {
+        background: #1e2223;
+        color: #ddd;
+      }
+      #comments {
+        max-width: 700px;
+        margin: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="comments"></div>
+    <script src="/Artalk.js"></script>
+    <script>
+      // Keep reloads on the same page and test cases independent.
+      const pageKey = sessionStorage.getItem('test-page') || `/e2e/${crypto.randomUUID()}`
+      sessionStorage.setItem('test-page', pageKey)
+      window.artalk = Artalk.init({
+        el: '#comments',
+        server: 'http://localhost:23366',
+        site: 'ArtalkDocs',
+        pageKey,
+        pageTitle: 'Browser test',
+        locale: 'en',
+        emoticons: false,
+        listSort: true,
+      })
+    </script>
+  </body>
+</html>

@@ -73,6 +73,9 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Build backend
+        run: make build-debug
+
       - name: Run end-to-end tests
         run: pnpm -F artalk test:e2e
 

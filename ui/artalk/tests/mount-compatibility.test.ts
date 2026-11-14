@@ -217,6 +217,57 @@ describe('existing API and plugin compatibility', () => {
     expect(api.comments.deleteComment).toHaveBeenCalledExactlyOnceWith(1)
   })
 
+  it('waits for a vote before accepting another choice, including after a rerender', async () => {
+    const api = mockApi()
+    const pending = deferred<Awaited<ReturnType<typeof api.votes.createVote>>>()
+    vi.mocked(api.comments.getComments).mockResolvedValue(response(list([comment(1)])))
+    vi.mocked(api.votes.createVote).mockReturnValueOnce(pending.promise)
+    const artalk = await initialize(api, { voteDown: true })
+    const node = artalk.ctx.getCommentNodes()[0]
+    const up = node.getRender().voteBtnUp!
+    up.$el.click()
+    expect(up.isLoading).toBe(true)
+    expect(up.$el.textContent).toContain($t('loading'))
+    up.$el.click()
+    node.getRender().voteBtnDown!.$el.click()
+    artalk.update({ locale: 'zh-CN' })
+    node.getRender().voteBtnUp!.$el.click()
+    expect(api.votes.createVote).toHaveBeenCalledTimes(1)
+
+    pending.resolve(response({ up: 1, down: 0, is_up: true, is_down: false }))
+    await vi.waitFor(() => expect(node.getData().vote_up).toBe(1))
+    expect(node.getRender().voteBtnUp!.$el.textContent).toContain('(1)')
+    expect(node.getRender().voteBtnUp!.isLoading).toBe(false)
+    node.getRender().voteBtnDown!.$el.click()
+    expect(api.votes.createVote).toHaveBeenCalledTimes(2)
+    expect(api.votes.createVote).toHaveBeenLastCalledWith('comment', 1, 'down', expect.anything())
+  })
+
+  it('allows retrying a failed vote and ignores its response after the comment is removed', async () => {
+    const api = mockApi()
+    const pending = deferred<Awaited<ReturnType<typeof api.votes.createVote>>>()
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.mocked(api.comments.getComments).mockResolvedValue(response(list([comment(1)])))
+    vi.mocked(api.votes.createVote)
+      .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      .mockReturnValueOnce(pending.promise)
+    const artalk = await initialize(api)
+    const node = artalk.ctx.getCommentNodes()[0]
+    const up = node.getRender().voteBtnUp!
+    up.$el.click()
+    await vi.waitFor(() => expect(up.$el.textContent).toBe($t('voteFail')))
+    expect(up.isLoading).toBe(false)
+    up.$el.click() // Dismiss the inline message.
+    up.$el.click()
+    expect(api.votes.createVote).toHaveBeenCalledTimes(2)
+    artalk.update({ pageKey: '/next' })
+    pending.resolve(response({ up: 1, down: 0, is_up: true, is_down: false }))
+    await pending.promise
+    await Promise.resolve()
+    expect(node.getData().vote_up).toBe(0)
+    expect(artalk.ctx.getCommentNodes()).toHaveLength(0)
+  })
+
   it('ignores a moderation response after the comment is removed', async () => {
     const api = mockApi()
     const pending = deferred<Awaited<ReturnType<typeof api.comments.updateComment>>>()

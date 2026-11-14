@@ -232,6 +232,8 @@ export interface DataManager {
   fetchComments(params: Partial<ListFetchParams>): void
   loadComments(comments: CommentData[]): void
   clearComments(): void
+  /** @internal */
+  reset?(): void
 
   insertComment(comment: CommentData): void
   updateComment(comment: CommentData): void

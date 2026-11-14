@@ -6,7 +6,8 @@ export const Fetch = async (
   input: string | URL | Request,
   init?: RequestInit,
 ) => {
-  if (opts.isActive && !opts.isActive()) throw new DOMException('Request disposed', 'AbortError')
+  if (init?.signal?.aborted || (opts.isActive && !opts.isActive()))
+    throw new DOMException('Request disposed', 'AbortError')
   const apiToken = opts.getApiToken && opts.getApiToken()
 
   const headers = new Headers({
@@ -41,7 +42,11 @@ export const Fetch = async (
   if (!resp.ok) {
     // Deserialize response body (if it is JSON, otherwise returns `{}`)
     const json: any = (await resp.json().catch(() => {})) || {}
-    if ((opts.isActive && !opts.isActive()) || opts.getApiToken?.() !== apiToken)
+    if (
+      init?.signal?.aborted ||
+      (opts.isActive && !opts.isActive()) ||
+      opts.getApiToken?.() !== apiToken
+    )
       throw new DOMException('Request disposed', 'AbortError')
 
     let retry = false

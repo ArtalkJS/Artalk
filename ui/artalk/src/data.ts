@@ -24,7 +24,10 @@ export class DataManager implements IDataManager {
   /** Page data */
   private page?: PageData
 
-  constructor(protected events: EventManager) {}
+  constructor(
+    protected events: EventManager,
+    private onFetch?: (params: Partial<ListFetchParams>) => void,
+  ) {}
 
   getLoading() {
     return this.loading
@@ -50,7 +53,8 @@ export class DataManager implements IDataManager {
   }
 
   fetchComments(params: Partial<ListFetchParams>) {
-    this.events.trigger('list-fetch', params)
+    if (this.onFetch) this.onFetch(params)
+    else this.events.trigger('list-fetch', params)
   }
 
   findComment(id: number) {
@@ -60,6 +64,14 @@ export class DataManager implements IDataManager {
   clearComments() {
     this.comments = []
     this.events.trigger('list-loaded', this.comments)
+  }
+
+  /** @internal Clear data when the widget moves to another destination. */
+  reset() {
+    this.page = undefined
+    this.listLastFetch = undefined
+    this.updateNotifies([])
+    this.clearComments()
   }
 
   loadComments(partialComments: CommentData[]) {

@@ -89,6 +89,121 @@ describe('existing API and plugin compatibility', () => {
     }
   })
 
+  it('ignores a moderation response after the comment is removed', async () => {
+    const api = mockApi()
+    const pending = deferred<Awaited<ReturnType<typeof api.comments.updateComment>>>()
+    vi.mocked(api.comments.getComments).mockResolvedValue(response(list([comment(1)])))
+    vi.mocked(api.comments.updateComment).mockReturnValue(pending.promise)
+    const artalk = await initialize(api)
+    artalk.ctx.getUser().update({ is_admin: true, token: 'admin-token' })
+    const node = artalk.ctx.getCommentNodes()[0]
+    const pin = [...node.getEl().querySelectorAll<HTMLElement>('.atk-common-action-btn')].find(
+      (button) => button.innerText === $t('pin'),
+    )!
+    pin.click()
+    expect(api.comments.updateComment).toHaveBeenCalledTimes(1)
+    artalk.update({ pageKey: '/next' })
+    expect(node.isRemoved()).toBe(true)
+    const update = vi.spyOn(node, 'setData')
+    pending.resolve(response({ ...comment(1), is_pinned: true }))
+    await pending.promise
+    await Promise.resolve()
+    expect(update).not.toHaveBeenCalled()
+    expect(artalk.ctx.getCommentNodes()).toHaveLength(0)
+  })
+
+  it('keeps separate API calls and comments for each widget', async () => {
+    const firstApi = mockApi()
+    const secondApi = mockApi()
+    vi.mocked(firstApi.comments.getComments).mockResolvedValue(
+      response(list([comment(1, 'First widget')])),
+    )
+    vi.mocked(secondApi.comments.getComments).mockResolvedValue(
+      response(list([comment(2, 'Second widget')])),
+    )
+    const first = await initialize(firstApi)
+    const second = await initialize(secondApi)
+    expect(first.getEl().textContent).toContain('First widget')
+    expect(first.getEl().textContent).not.toContain('Second widget')
+    expect(second.getEl().textContent).toContain('Second widget')
+    first.reload()
+    await vi.waitFor(() => expect(firstApi.comments.getComments).toHaveBeenCalledTimes(2))
+    expect(secondApi.comments.getComments).toHaveBeenCalledTimes(1)
+  })
+
+  it('loads initial notifications and discards them after the destination changes', async () => {
+    const api = mockApi()
+    const initial = deferred<Awaited<ReturnType<typeof api.notifies.getNotifies>>>()
+    const stale = deferred<Awaited<ReturnType<typeof api.notifies.getNotifies>>>()
+    vi.mocked(api.notifies.getNotifies)
+      .mockReturnValueOnce(initial.promise)
+      .mockReturnValueOnce(stale.promise)
+    const artalk = await initialize(api)
+    const update = vi.spyOn(artalk.ctx.getData(), 'updateNotifies')
+    initial.resolve(response({ notifies: [], count: 0 }))
+    await vi.waitFor(() => expect(update).toHaveBeenCalledTimes(1))
+    update.mockClear()
+    artalk.reload()
+    artalk.update({ pageKey: '/next' })
+    expect(update).toHaveBeenCalledWith([])
+    update.mockClear()
+    stale.resolve(response({ notifies: [], count: 0 }))
+    await stale.promise
+    await Promise.resolve()
+    expect(update).not.toHaveBeenCalled()
+  })
+
+  it('clears old notifications without a request when profile fields are empty', async () => {
+    const api = mockApi()
+    const artalk = await initialize(api)
+    artalk.ctx.getData().updateNotifies([
+      {
+        id: 1,
+        comment_id: 1,
+        user_id: 1,
+        is_read: false,
+        is_emailed: false,
+        read_link: '/',
+      },
+    ])
+    artalk.ctx.getUser().update({ name: '', email: '' })
+    artalk.reload()
+    expect(artalk.ctx.getData().getNotifies()).toEqual([])
+    expect(api.notifies.getNotifies).toHaveBeenCalledTimes(1)
+  })
+
+  it.each(['account', 'destroy', 'website'] as const)(
+    'checks the notification scope after a %s change',
+    async (change) => {
+      const api = mockApi()
+      const pending = deferred<Awaited<ReturnType<typeof api.notifies.getNotifies>>>()
+      vi.mocked(api.notifies.getNotifies).mockReturnValue(pending.promise)
+      const artalk = await initialize(api)
+      const update = vi.spyOn(artalk.ctx.getData(), 'updateNotifies')
+      if (change === 'account') artalk.ctx.getUser().update({ token: 'another-viewer' })
+      else if (change === 'destroy') artalk.destroy()
+      else artalk.ctx.getUser().update({ link: 'https://example.com/about' })
+      pending.resolve(response({ notifies: [], count: 0 }))
+      await pending.promise
+      await Promise.resolve()
+      expect(update).toHaveBeenCalledTimes(change === 'website' ? 1 : 0)
+    },
+  )
+
+  it('appends more comments and replaces them on reload', async () => {
+    const api = mockApi()
+    vi.mocked(api.comments.getComments).mockImplementation(async ({ offset = 0 }) =>
+      response({ ...list([comment(offset + 1)]), count: 2, roots_count: 2 }),
+    )
+    const artalk = await initialize(api, { pagination: { pageSize: 1, readMore: true } })
+    await artalk.ctx.inject('comments').load({ offset: 1 })
+    expect(artalk.ctx.getComments().map((item) => item.id)).toEqual([1, 2])
+    expect(artalk.ctx.getCommentNodes()).toHaveLength(2)
+    await artalk.ctx.inject('comments').load()
+    expect(artalk.ctx.getComments().map((item) => item.id)).toEqual([1])
+    expect(artalk.ctx.getCommentNodes()).toHaveLength(1)
+  })
+
   it('keeps the legacy behavior of deprecated useBackendConf', async () => {
     const api = mockApi()
     vi.mocked(api.conf.conf).mockResolvedValue(

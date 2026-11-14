@@ -1,4 +1,5 @@
 import { ApiService } from './api'
+import { CommentsService } from './comments'
 import { UserService } from './user'
 import { CheckersService } from './checkers'
 import { EditorService } from './editor'
@@ -12,6 +13,7 @@ import { ArtalkPlugin } from '@/types'
 export const Services: Set<ArtalkPlugin> = new Set([
   DataService,
   ApiService,
+  CommentsService,
   I18nService,
   UserService,
   EditorService,

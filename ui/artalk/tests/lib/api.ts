@@ -1,6 +1,13 @@
 import { vi } from 'vitest'
+import Context from '@/context'
 import { Api } from '@/api'
 import type { EntityCookedComment, EntityCookedPage, HttpResponse } from '@/api/v2'
+import { EventsService } from '@/services/events'
+import { ConfigService } from '@/services/config'
+import { DataService } from '@/services/data'
+import { UserService } from '@/services/user'
+import { CommentsService } from '@/services/comments'
+import { Fetch } from '@/plugins/list/fetch'
 import type { Context as IContext } from '@/types'
 
 export const version = { app: 'Artalk', version: '2.10.1', commit_hash: 'test' }
@@ -125,6 +132,20 @@ export function bindApi(ctx: IContext, api: Api) {
     const { name, email } = ctx.getUser().getData()
     return name && email ? { name, email } : undefined
   })
+}
+
+export function setup(api = mockApi()) {
+  const ctx = new Context(document.createElement('div'))
+  EventsService(ctx)
+  ConfigService(ctx)
+  ctx.updateConf({ server: 'https://example.com', pageKey: '/', site: 'Test', flatMode: false })
+  UserService(ctx)
+  DataService(ctx)
+  bindApi(ctx, api)
+  CommentsService(ctx)
+  Fetch(ctx)
+  // eslint-disable-next-line artalk/artalk-plugin -- Test composition root.
+  return { ctx, data: ctx.getData(), service: ctx.inject('comments'), api }
 }
 
 export function deferred<T>() {

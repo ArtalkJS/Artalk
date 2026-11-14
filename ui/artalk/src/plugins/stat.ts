@@ -5,6 +5,8 @@ type CountCache = { [pageKey: string]: number }
 
 export interface CountOptions {
   getApi(): Api
+  /** @internal Ignore results after the widget moves to another page. */
+  isCurrent?: () => boolean
 
   siteName: string
   pageKey?: string
@@ -18,11 +20,17 @@ export interface CountOptions {
 }
 
 export const PvCountWidget: ArtalkPlugin = (ctx: Context) => {
+  let generation = 0
+  ctx.on('unmounted', () => {
+    generation++
+  })
   ctx.watchConf(
-    ['site', 'pageKey', 'pageTitle', 'countEl', 'pvEl', 'statPageKeyAttr', 'pvAdd'],
+    ['server', 'site', 'pageKey', 'pageTitle', 'countEl', 'pvEl', 'statPageKeyAttr', 'pvAdd'],
     (conf) => {
+      const current = ++generation
       void initCountWidget({
         getApi: () => ctx.getApi(),
+        isCurrent: () => current === generation && !ctx.isDestroyed(),
         siteName: conf.site,
         pageKey: conf.pageKey,
         pageTitle: conf.pageTitle,
@@ -31,7 +39,7 @@ export const PvCountWidget: ArtalkPlugin = (ctx: Context) => {
         pageKeyAttr: conf.statPageKeyAttr,
         pvAdd: conf.pvAdd,
       }).catch((err) => {
-        if (!ctx.isDestroyed() && err?.name !== 'AbortError') console.error(err)
+        if (current === generation && !ctx.isDestroyed()) console.error(err)
       })
     },
   )
@@ -41,9 +49,11 @@ export const PvCountWidget: ArtalkPlugin = (ctx: Context) => {
 export async function initCountWidget(opt: CountOptions) {
   // Load comment count
   await loadCommentCount(opt)
+  if (opt.isCurrent && !opt.isCurrent()) return
 
   // Increment PV count
   const cacheData = await incrementPvCount(opt)
+  if (opt.isCurrent && !opt.isCurrent()) return
 
   // Load PV count
   await loadPvCount(opt, cacheData)
@@ -53,16 +63,14 @@ export async function initCountWidget(opt: CountOptions) {
 async function incrementPvCount(opt: CountOptions) {
   if (!opt.pvAdd || !opt.pageKey) return undefined
 
-  const pvCount = (
-    await opt.getApi().pages.logPv({
-      page_key: opt.pageKey,
-      page_title: opt.pageTitle,
-      site_name: opt.siteName,
-    })
-  ).data.pv // pv+1 and get pv count
+  const { data } = await opt.getApi().pages.logPv({
+    page_key: opt.pageKey,
+    page_title: opt.pageTitle,
+    site_name: opt.siteName,
+  })
 
   return {
-    [opt.pageKey]: pvCount,
+    [opt.pageKey]: data.pv,
   }
 }
 
@@ -93,16 +101,14 @@ async function loadStatCount(args: {
 
   // Fetch count data from server
   if (pageKeys.length > 0) {
-    const res = (
-      await opt.getApi().stats.getStats(args.query, {
-        page_keys: pageKeys.join(','),
-        site_name: opt.siteName,
-      })
-    ).data.data as CountCache
-    cache = { ...cache, ...res }
+    const { data } = await opt.getApi().stats.getStats(args.query, {
+      page_keys: pageKeys.join(','),
+      site_name: opt.siteName,
+    })
+    cache = { ...cache, ...data.data }
   }
 
-  updateElementsText(els, cache, opt.pageKey)
+  if (!opt.isCurrent || opt.isCurrent()) updateElementsText(els, cache, opt.pageKey)
 }
 
 /** Retrieve elements based on selectors */

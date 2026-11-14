@@ -144,6 +144,9 @@ register plugins or fire lifecycle events twice. Language settings are shared by
 Release listeners, timers, and pending work on `unmounted`. Cleanup must continue if another
 plugin throws. A destroyed widget must not change the page or finish a login.
 
+Keep list loading and cancellation in `ui/artalk/src/services/comments.ts`, using the existing
+API. Check for stale results after `await`. Preserve v2 request fields and plugin events.
+
 ### Run Frontend
 
 1. **Install Dependencies**:  

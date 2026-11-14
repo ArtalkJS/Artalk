@@ -38,12 +38,14 @@ export default class HeaderUser extends EditorPlugin {
 
     this.kit.useUnmounted(() => {
       this.kit.useEvents().off('header-input', onInput)
+      if (this.query.timer) window.clearTimeout(this.query.timer)
+      this.query.controller?.abort()
     })
   }
 
   private query = {
     timer: <number | null>null,
-    abortFn: <(() => void) | null>null,
+    controller: <AbortController | null>null,
   }
 
   /**
@@ -53,26 +55,26 @@ export default class HeaderUser extends EditorPlugin {
     this.kit.useUser().logout() // clear login status
 
     if (this.query.timer) window.clearTimeout(this.query.timer) // clear the not executed timeout task
-    if (this.query.abortFn) this.query.abortFn() // abort the last request (if request is pending not finished)
+    this.query.controller?.abort()
 
     this.query.timer = window.setTimeout(() => {
       this.query.timer = null // clear the timer (clarify the timer is executing)
 
       const api = this.kit.useApi()
-      const CANCEL_TOKEN = 'getUserCancelToken'
-      this.query.abortFn = () => api.abortRequest(CANCEL_TOKEN)
-
+      const controller = (this.query.controller = new AbortController())
+      const identity = JSON.stringify(this.kit.useUser().getData())
       api.user
-        .getUser(
-          { ...api.getUserFields() },
-          {
-            cancelToken: CANCEL_TOKEN,
-          },
-        )
-        .then((res) => this.onUserInfoFetched(res.data))
-        .catch((err) => {})
+        .getUser({ ...api.getUserFields() }, { signal: controller.signal })
+        .then(({ data }) => {
+          if (
+            !controller.signal.aborted &&
+            identity === JSON.stringify(this.kit.useUser().getData())
+          )
+            this.onUserInfoFetched(data)
+        })
+        .catch(() => {})
         .finally(() => {
-          this.query.abortFn = null // clear the abort function (clarify the request is finished)
+          if (this.query.controller === controller) this.query.controller = null
         })
     }, 400) // delay to reduce request
   }
@@ -92,9 +94,10 @@ export default class HeaderUser extends EditorPlugin {
     // If user is admin and not login,
     if (this.kit.useUser().checkHasBasicUserInfo() && !data.is_login && data.user?.is_admin) {
       // then show login window
-      this.kit.useCheckers().checkAdmin({
-        onSuccess: () => {},
-      })
+      this.kit
+        .useCheckers()
+        .checkAdmin({})
+        .catch(() => {})
     }
 
     // Auto fill user link from server

@@ -374,6 +374,43 @@ describe('existing API and plugin compatibility', () => {
     expect(params).toEqual({ sort_by: 'vote' })
   })
 
+  it('inserts native and OwO emoticons without changing shared pack data', async () => {
+    const packs = [
+      { name: 'Emoji', type: 'emoji', items: [{ val: '🙂' }] },
+      {
+        Pictures: {
+          type: 'image',
+          container: [{ icon: '<img src="https://example.com/smile.png">', text: 'smile' }],
+        },
+      },
+    ]
+    const original = JSON.stringify(packs)
+    const artalk = await initialize(mockApi(), { emoticons: packs })
+    const root = artalk.getEl()
+    root.querySelector<HTMLElement>('[aria-label="Emoji"]')!.click()
+    await vi.waitFor(() =>
+      expect(
+        [...root.querySelectorAll('.atk-grp')].map((group) => group.getAttribute('data-grp-name')),
+      ).toEqual(['Emoji', 'Pictures']),
+    )
+    root.querySelector<HTMLElement>('.atk-grp[data-index="0"] .atk-item')!.click()
+    const editor = artalk.ctx.inject('editor')
+    expect(editor.getContentRaw()).toBe('🙂')
+    root.querySelector<HTMLElement>('.atk-grp-switcher [data-index="1"]')!.click()
+    expect(root.querySelector<HTMLElement>('.atk-grp[data-index="0"]')!.style.display).toBe('none')
+    root.querySelector<HTMLElement>('.atk-grp[data-index="1"] .atk-item')!.click()
+    expect(editor.getContentRaw()).toBe('🙂:[smile]')
+    root.querySelector<HTMLElement>('[aria-label="Preview"]')!.click()
+    await vi.waitFor(() =>
+      expect(root.querySelector('.atk-editor-plug-preview img')?.getAttribute('src')).toBe(
+        'https://example.com/smile.png',
+      ),
+    )
+    artalk.update({ locale: 'zh-CN' })
+    expect(editor.getContentRaw()).toBe('🙂:[smile]')
+    expect(JSON.stringify(packs)).toBe(original)
+  })
+
   it('does not submit twice while the first write is pending', async () => {
     const api = mockApi()
     const pending = deferred<Awaited<ReturnType<typeof api.comments.createComment>>>()

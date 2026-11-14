@@ -145,6 +145,39 @@ test('the built sidebar supports login retry, moderation, refresh, and logout', 
     fullPage: true,
     animations: 'disabled',
   })
+
+  await page.locator('.sidebar-navigation').getByText('Page', { exact: true }).click()
+  await expect(page.locator('.atk-page-list')).toContainText(`/admin-`)
+  const pageNumber = page.getByLabel('Enter the number of page')
+  await pageNumber.fill('1.5')
+  await pageNumber.press('Enter')
+  await expect(pageNumber).toHaveValue('1')
+  let releaseUsers!: () => void
+  let usersReady!: () => void
+  let usersFinished!: () => void
+  const usersGate = new Promise<void>((resolve) => (releaseUsers = resolve))
+  const ready = new Promise<void>((resolve) => (usersReady = resolve))
+  const finished = new Promise<void>((resolve) => (usersFinished = resolve))
+  await page.route(`${server}/api/v2/users/all?*`, async (route) => {
+    const response = await route.fetch()
+    usersReady()
+    await usersGate
+    await route.fulfill({ response })
+    usersFinished()
+  })
+  await page.locator('.sidebar-navigation').getByText('User', { exact: true }).click()
+  await ready
+  await page.locator('.top-tabbar').getByText('Admin', { exact: true }).click()
+  await expect(page.locator('.user-list')).toContainText(admin.email)
+  await expect(page.locator('.user-list')).not.toContainText('reader@example.com')
+  releaseUsers()
+  await finished
+  await expect(page.locator('.user-list')).not.toContainText('reader@example.com')
+  await page.locator('.sidebar-navigation').getByText('Site', { exact: true }).click()
+  await expect(page.locator('.main')).toContainText('ArtalkDocs')
+  await page.locator('.sidebar-navigation').getByText('Comment', { exact: true }).click()
+  await expect(comment).toContainText('Edited in the built sidebar')
+
   await comment.getByText('Delete', { exact: true }).click()
   await comment.getByText('Confirm', { exact: true }).click()
   await expect(comment).toHaveCount(0)

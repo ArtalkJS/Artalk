@@ -22,6 +22,13 @@ const refreshBtn = ref({
   statusText: '',
 })
 
+let pageRequest: AbortController | undefined
+
+onBeforeUnmount(() => {
+  pageRequest?.abort()
+  nav.setPageLoading(false)
+})
+
 onMounted(() => {
   nav.updateTabs(
     {
@@ -72,24 +79,33 @@ function editPage(page: ArtalkType.PageData) {
 }
 
 function fetchPages(offset: number) {
+  pageRequest?.abort()
+  const request = (pageRequest = new AbortController())
   if (offset === 0) pagination.value?.reset()
   nav.setPageLoading(true)
   artalk?.ctx
     .getApi()
-    .pages.getPages({
-      site_name: curtSite.value,
-      offset: offset,
-      limit: pageSize.value,
-      search: search.value,
-      has_comments: true,
-    })
+    .pages.getPages(
+      {
+        site_name: curtSite.value,
+        offset: offset,
+        limit: pageSize.value,
+        search: search.value,
+        has_comments: true,
+      },
+      { signal: request.signal },
+    )
     .then((res) => {
+      if (request.signal.aborted) return
       pageTotal.value = res.data.count
       pages.value = res.data.pages
       nav.scrollPageToTop()
     })
+    .catch((err) => {
+      if (!request.signal.aborted) alert(err.message || t('opFailed'))
+    })
     .finally(() => {
-      nav.setPageLoading(false)
+      if (!request.signal.aborted) nav.setPageLoading(false)
     })
 }
 

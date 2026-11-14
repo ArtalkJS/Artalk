@@ -46,6 +46,6 @@ export default class UpDownPaginator implements Paginator {
   }
 
   dispose(): void {
-    this.instance.$el.remove()
+    this.instance.dispose()
   }
 }

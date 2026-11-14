@@ -17,6 +17,7 @@ export default class ReadMoreBtn {
   public $el: HTMLElement
   private $loading: HTMLElement
   private $text: HTMLElement
+  private errorTimer?: number
   private offset: number = 0
   private total: number = 0
   private origText: string = 'Load More'
@@ -74,10 +75,18 @@ export default class ReadMoreBtn {
 
     this.$text.innerText = errMsg
     this.$el.classList.add('atk-err')
-    window.setTimeout(() => {
+    window.clearTimeout(this.errorTimer)
+    this.errorTimer = window.setTimeout(() => {
       this.$text.innerText = this.origText
       this.$el.classList.remove('atk-err')
     }, 2000) // 2s后错误提示复原
+  }
+
+  /** @internal */
+  dispose() {
+    window.clearTimeout(this.errorTimer)
+    this.$el.onclick = null
+    this.$el.remove()
   }
 
   /** 更新数据 */

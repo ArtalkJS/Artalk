@@ -1,27 +1,29 @@
 import * as Ui from '@/lib/ui'
 
-let bodyOrgOverflow: string
-let bodyOrgPaddingRight: string
+const owners = new Set<object>()
+let originalOverflow = ''
+let originalPadding = ''
 
 export function getScrollbarHelper() {
+  const owner = {}
   return {
-    init() {
-      bodyOrgOverflow = document.body.style.overflow
-      bodyOrgPaddingRight = document.body.style.paddingRight
-    },
-
+    // Kept for callers of the old helper. Styles are captured on the first lock.
+    init() {},
     unlock() {
-      document.body.style.overflow = bodyOrgOverflow
-      document.body.style.paddingRight = bodyOrgPaddingRight
+      if (!owners.delete(owner) || owners.size) return
+      document.body.style.overflow = originalOverflow
+      document.body.style.paddingRight = originalPadding
     },
-
     lock() {
-      document.body.style.overflow = 'hidden'
-      const barPaddingRight = parseInt(
-        window.getComputedStyle(document.body, null).getPropertyValue('padding-right'),
-        10,
-      )
-      document.body.style.paddingRight = `${Ui.getScrollBarWidth() + barPaddingRight || 0}px`
+      if (owners.has(owner)) return
+      if (!owners.size) {
+        originalOverflow = document.body.style.overflow
+        originalPadding = document.body.style.paddingRight
+        const padding = parseInt(window.getComputedStyle(document.body).paddingRight, 10) || 0
+        document.body.style.paddingRight = `${Ui.getScrollBarWidth() + padding}px`
+        document.body.style.overflow = 'hidden'
+      }
+      owners.add(owner)
     },
   }
 }

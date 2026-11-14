@@ -6,6 +6,7 @@ export default class Textarea extends EditorPlugin {
   constructor(kit: PlugKit) {
     super(kit)
 
+    let resizeTimer: number | undefined
     const onKeydown = (e: KeyboardEvent) => this.onKeydown(e)
     const onInput = () => this.onInput()
 
@@ -19,6 +20,7 @@ export default class Textarea extends EditorPlugin {
     })
 
     this.kit.useUnmounted(() => {
+      window.clearTimeout(resizeTimer)
       // unmount the event
       this.kit.useUI().$textarea.removeEventListener('keydown', onKeydown)
       this.kit.useUI().$textarea.removeEventListener('input', onInput)
@@ -26,7 +28,8 @@ export default class Textarea extends EditorPlugin {
 
     this.kit.useEvents().on('content-updated', () => {
       // delay 80ms to prevent invalid execution
-      window.setTimeout(() => {
+      window.clearTimeout(resizeTimer)
+      resizeTimer = window.setTimeout(() => {
         this.adaptiveHeightByContent()
       }, 80)
     })

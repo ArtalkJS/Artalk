@@ -3,17 +3,18 @@ import { version as ARTALK_VERSION } from '~/package.json'
 import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
 
-let IgnoreVersionCheck = false
-
 export const VersionCheck: ArtalkPlugin = (ctx) => {
   const list = ctx.inject('list')
-  ctx.watchConf(['apiVersion', 'versionCheck'], (conf) => {
-    if (conf.apiVersion && conf.versionCheck && !IgnoreVersionCheck)
-      versionCheck(list, ARTALK_VERSION, conf.apiVersion)
+  let ignored = false
+  let notice: HTMLElement | undefined
+  ctx.watchConf(['apiVersion', 'versionCheck', 'locale'], (conf) => {
+    notice?.remove()
+    if (conf.apiVersion && conf.versionCheck && !ignored)
+      notice = versionCheck(list, ARTALK_VERSION, conf.apiVersion, () => (ignored = true))
   })
 }
 
-function versionCheck(list: List, feVer: string, beVer: string) {
+function versionCheck(list: List, feVer: string, beVer: string, ignore: () => void) {
   const comp = Utils.versionCompare(feVer, beVer)
   const sameVer = comp === 0
   if (sameVer) return
@@ -28,8 +29,9 @@ function versionCheck(list: List, feVer: string, beVer: string) {
   const ignoreBtn = Utils.createElement(`<span class="atk-ignore-btn">${$t('ignore')}</span>`)
   ignoreBtn.onclick = () => {
     errEl.remove()
-    IgnoreVersionCheck = true
+    ignore()
   }
   errEl.append(ignoreBtn)
   list.getEl().parentElement!.prepend(errEl)
+  return errEl
 }

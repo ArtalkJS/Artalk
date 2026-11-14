@@ -24,6 +24,9 @@ export interface SidebarLayerOptions {
 }
 
 export class SidebarLayer implements ISidebarLayer {
+  private disposed = false
+  private visible = false
+  private retryTimer?: ReturnType<typeof setTimeout>
   private opts: SidebarLayerOptions
   public $el: HTMLElement
   public layer?: Layer
@@ -56,6 +59,9 @@ export class SidebarLayer implements ISidebarLayer {
 
   /** 显示 */
   public async show(conf: SidebarShowPayload = {}) {
+    if (this.disposed) return
+    this.visible = true
+    clearTimeout(this.animTimer)
     this.$el.style.transform = '' // 动画清除，防止二次打开失效
 
     // init layer
@@ -83,6 +89,8 @@ export class SidebarLayer implements ISidebarLayer {
     // 管理员身份验证 (若身份失效，弹出验证窗口)
     this.authCheck({
       onSuccess: () => this.show(conf), // retry show after auth check
+    }).catch((error) => {
+      if (!this.disposed) console.error('[ArtalkSidebar]', error)
     })
 
     // 执行滑动显示动画
@@ -96,31 +104,52 @@ export class SidebarLayer implements ISidebarLayer {
 
   /** 隐藏 */
   public hide() {
+    this.visible = false
     this.layer?.hide()
+  }
+
+  /** @internal */
+  public dispose() {
+    this.disposed = true
+    this.visible = false
+    clearTimeout(this.animTimer)
+    clearTimeout(this.retryTimer)
+    this.layer?.destroy()
+    this.$iframe?.remove()
   }
 
   // --------------------------------------------------
 
   private async authCheck(opts: { onSuccess: () => void }) {
+    const scope = () => {
+      const { name, email } = this.opts.getUser().getData()
+      return JSON.stringify([this.opts.getConf().get().server, name, email])
+    }
+    const current = scope()
+    const active = () => !this.disposed && current === scope()
     const data = (
       await this.opts.getApi().user.getUserStatus({
         ...this.opts.getApi().getUserFields(),
       })
     ).data
+    if (!active() || !this.visible) return
     if (data.is_admin && !data.is_login) {
       this.refreshWhenShow = true
 
       // show checker layer
-      this.opts.getCheckers().checkAdmin({
-        onSuccess: () => {
-          setTimeout(() => {
-            opts.onSuccess()
-          }, 500)
-        },
-        onCancel: () => {
-          this.hide()
-        },
-      })
+      this.opts
+        .getCheckers()
+        .checkAdmin({
+          onSuccess: () => {
+            this.retryTimer = setTimeout(() => {
+              if (active()) opts.onSuccess()
+            }, 500)
+          },
+          onCancel: () => {
+            this.hide()
+          },
+        })
+        .catch(() => {})
 
       // hide sidebar layer
       this.hide()
@@ -132,6 +161,7 @@ export class SidebarLayer implements ISidebarLayer {
 
     this.layer = this.opts.getLayers().create('sidebar', this.$el)
     this.layer.setOnAfterHide(() => {
+      this.visible = false
       // interrupt animation
       this.animTimer && clearTimeout(this.animTimer)
 

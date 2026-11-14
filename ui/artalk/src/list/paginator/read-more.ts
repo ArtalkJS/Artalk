@@ -61,6 +61,6 @@ export default class ReadMorePaginator implements Paginator {
 
   dispose(): void {
     this.onReachedBottom && this.opt.getEvents().off('list-reach-bottom', this.onReachedBottom)
-    this.instance.$el.remove()
+    this.instance.dispose()
   }
 }

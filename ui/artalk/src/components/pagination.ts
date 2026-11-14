@@ -170,6 +170,14 @@ export default class Pagination {
     }
   }
 
+  /** @internal */
+  dispose() {
+    window.clearTimeout(this.inputTimer)
+    this.$input.oninput = this.$input.onkeydown = null
+    this.$prevBtn.onclick = this.$nextBtn.onclick = null
+    this.$el.remove()
+  }
+
   /** 加载 */
   setLoading(isLoading: boolean) {
     if (isLoading) Ui.showLoading(this.$el)

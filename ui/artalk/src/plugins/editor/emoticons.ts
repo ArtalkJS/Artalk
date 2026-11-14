@@ -2,10 +2,10 @@ import './emoticons.scss'
 
 import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
+import $t from '@/i18n'
 import type { EmoticonListData, EmoticonGrpData } from '@/types'
 import * as Utils from '@/lib/utils'
 import * as Ui from '@/lib/ui'
-import $t from '@/i18n'
 
 type OwOFormatType = {
   [key: string]: {
@@ -16,6 +16,8 @@ type OwOFormatType = {
 
 export default class Emoticons extends EditorPlugin {
   private emoticons: EmoticonListData = []
+  private controller = new AbortController()
+  private preloadTimer?: number
   private loadingTask: Promise<void> | null = null
 
   private $grpWrap!: HTMLElement
@@ -30,31 +32,30 @@ export default class Emoticons extends EditorPlugin {
         `<i role="img" aria-label="${$t('emoticon')}"><svg fill="currentColor" aria-hidden="true" height="14" viewBox="0 0 14 14" width="14"><path d="m4.26829 5.29294c0-.94317.45893-1.7074 1.02439-1.7074.56547 0 1.02439.76423 1.02439 1.7074s-.45892 1.7074-1.02439 1.7074c-.56546 0-1.02439-.76423-1.02439-1.7074zm4.43903 1.7074c.56546 0 1.02439-.76423 1.02439-1.7074s-.45893-1.7074-1.02439-1.7074c-.56547 0-1.02439.76423-1.02439 1.7074s.45892 1.7074 1.02439 1.7074zm-1.70732 2.73184c-1.51883 0-2.06312-1.52095-2.08361-1.58173l-1.29551.43231c.03414.10244.868 2.51604 3.3798 2.51604 2.51181 0 3.34502-2.41291 3.37982-2.51604l-1.29484-.43573c-.02254.06488-.56683 1.58583-2.08498 1.58583zm7-2.73252c0 3.86004-3.1401 7.00034-7 7.00034s-7-3.1396-7-6.99966c0-3.86009 3.1401-7.00034 7-7.00034s7 3.14025 7 7.00034zm-1.3659 0c0-3.10679-2.5275-5.63442-5.6341-5.63442-3.10663 0-5.63415 2.52832-5.63415 5.6351 0 3.10676 2.52752 5.63446 5.63415 5.63446 3.1066 0 5.6341-2.5277 5.6341-5.63446z"/></svg></i>`,
       )
     })
-    this.kit.useUnmounted(() => {})
+    this.kit.useUnmounted(() => {
+      this.controller.abort()
+      window.clearTimeout(this.preloadTimer)
+    })
 
     this.useContentTransformer((raw) => this.transEmoticonImageText(raw))
     this.usePanelShow(() => {
       ;(async () => {
         await this.loadEmoticonsData()
+        if (this.controller.signal.aborted) return
 
         // 初始化元素
         if (!this.isImgLoaded) {
           this.initEmoticonsList()
           this.isImgLoaded = true
         }
-
-        // 延迟执行，防止无法读取高度
-        setTimeout(() => {
-          this.changeListHeight()
-        }, 30)
       })()
     })
     this.usePanelHide(() => {
-      this.$panel!.parentElement!.style.height = ''
+      if (this.$panel?.parentElement) this.$panel.parentElement.style.height = ''
     })
 
     // 表情包预加载
-    window.setTimeout(() => {
+    this.preloadTimer = window.setTimeout(() => {
       this.loadEmoticonsData()
     }, 1000) // 延迟 1s 加载
   }
@@ -63,7 +64,7 @@ export default class Emoticons extends EditorPlugin {
   private isImgLoaded = false
 
   public async loadEmoticonsData() {
-    if (this.isListLoaded) return
+    if (this.isListLoaded || this.controller.signal.aborted) return
     if (this.loadingTask !== null) {
       await this.loadingTask
       return
@@ -73,6 +74,7 @@ export default class Emoticons extends EditorPlugin {
     this.loadingTask = (async () => {
       Ui.showLoading(this.$panel!)
       this.emoticons = await this.handleData(this.kit.useConf().emoticons)
+      if (this.controller.signal.aborted) return
       Ui.hideLoading(this.$panel!)
       this.loadingTask = null
       this.isListLoaded = true
@@ -81,6 +83,8 @@ export default class Emoticons extends EditorPlugin {
   }
 
   private async handleData(data: any): Promise<any[]> {
+    // Emoticon packs are JSON data. Do not normalize a shared config object in place.
+    if (data && typeof data === 'object') data = JSON.parse(JSON.stringify(data))
     if (!Array.isArray(data) && ['object', 'string'].includes(typeof data)) {
       data = [data]
     }
@@ -148,10 +152,11 @@ export default class Emoticons extends EditorPlugin {
     if (!url) return []
 
     try {
-      const resp = await fetch(url)
+      const resp = await fetch(url, { signal: this.controller.signal })
       const json = await resp.json()
       return json
     } catch (err) {
+      if (this.controller.signal.aborted) return []
       Ui.hideLoading(this.$panel!)
       console.error('[Emoticons] Load Failed:', err)
       Ui.setError(this.$panel!, `[${$t('emoticon')}] ${$t('loadFail')}: ${String(err)}`)
@@ -288,13 +293,6 @@ export default class Emoticons extends EditorPlugin {
       ?.querySelectorAll('span.active')
       .forEach((item) => item.classList.remove('active'))
     this.$grpSwitcher?.querySelector(`span[data-index="${index}"]`)?.classList.add('active')
-
-    this.changeListHeight()
-  }
-
-  private changeListHeight() {
-    /* const listWrapHeight = Utils.getHeight(this.$grpWrapem)
-    this.editor.plugWrapEl.style.height = `${listWrapHeight > 150 ? listWrapHeight : 150}px` */
   }
 
   /** 处理评论 content 中的表情内容 */

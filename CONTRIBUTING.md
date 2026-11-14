@@ -141,6 +141,9 @@ Use `ctx.getApi()` when starting a request so it uses the current server and use
 Initialize plugins after the final config is loaded. Retrying a failed initialization must not
 register plugins or fire lifecycle events twice. Language settings are shared by the page.
 
+Release listeners, timers, and pending work on `unmounted`. Cleanup must continue if another
+plugin throws. A destroyed widget must not change the page or finish a login.
+
 ### Run Frontend
 
 1. **Install Dependencies**:  

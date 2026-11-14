@@ -134,9 +134,15 @@ describe('existing API and plugin compatibility', () => {
     }
     vi.mocked(api.comments.getComments).mockResolvedValue(response(list([original])))
     const artalk = await initialize(api)
-    const controls = () => [
-      ...artalk.getEl().querySelectorAll('.atk-comment [atk-only-admin-show]'),
-    ]
+    const listEl = artalk.ctx.inject('list').getEl()
+    // The sidebar moves this list outside the widget's original root.
+    const sidebar = document.createElement('section')
+    document.body.append(sidebar)
+    sidebar.append(listEl)
+    artalk.reload()
+    await vi.waitFor(() => expect(api.comments.getComments).toHaveBeenCalledTimes(2))
+    await vi.waitFor(() => expect(artalk.ctx.getData().getLoading()).toBe(false))
+    const controls = () => [...listEl.querySelectorAll('.atk-comment [atk-only-admin-show]')]
     expect(controls()).toHaveLength(5)
     expect(controls().every((el) => el.classList.contains('atk-hide'))).toBe(true)
     artalk.ctx.getUser().update({ is_admin: true, token: 'admin-token' })

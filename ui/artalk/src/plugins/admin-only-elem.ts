@@ -9,6 +9,7 @@ export const AdminOnlyElem: ArtalkPlugin = (ctx) => {
       user.getData().is_admin,
       getAdminOnlyEls({
         $root: ctx.getEl(),
+        $list: ctx.inject('list').getEl(),
         $layers: layers.getEl(),
       }),
     )
@@ -23,25 +24,18 @@ export const AdminOnlyElem: ArtalkPlugin = (ctx) => {
   })
 }
 
-function getAdminOnlyEls(opts: { $root: HTMLElement; $layers: HTMLElement }): HTMLElement[] {
-  const els: HTMLElement[] = []
-
-  // elements in $root
-  opts.$root
-    .querySelectorAll<HTMLElement>(`[atk-only-admin-show]`)
-    .forEach((item) => els.push(item))
-
-  // TODO: provide a Artalk.conf hook to set whitelist of admin-only elements,
-  // and move following code to that hook (move into @artalk/artalk-sidebar)
-
-  // elements in sidebar
-  const $sidebarEl = opts.$layers.querySelector<HTMLElement>('.atk-sidebar')
-  if ($sidebarEl)
-    $sidebarEl
-      .querySelectorAll<HTMLElement>(`[atk-only-admin-show]`)
-      .forEach((item) => els.push(item))
-
-  return els
+function getAdminOnlyEls(opts: {
+  $root: HTMLElement
+  $list: HTMLElement
+  $layers: HTMLElement
+}): HTMLElement[] {
+  const els = new Set<HTMLElement>()
+  // The sidebar can move the list outside the widget root. All three roots
+  // still belong to this instance, including editor controls inside layers.
+  for (const root of [opts.$root, opts.$list, opts.$layers]) {
+    root.querySelectorAll<HTMLElement>('[atk-only-admin-show]').forEach((el) => els.add(el))
+  }
+  return [...els]
 }
 
 function applyAdminOnlyEls(isAdmin: boolean, els: HTMLElement[]) {

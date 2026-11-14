@@ -4,6 +4,7 @@ import ActionBtn from '@/components/action-btn'
 
 export default class CommentActions {
   private comment: CommentNode
+  private voting = false
 
   private get data() {
     return this.comment.getData()
@@ -21,8 +22,11 @@ export default class CommentActions {
 
   /** 投票操作 */
   public vote(choice: 'up' | 'down') {
+    if (this.voting || this.comment.isRemoved()) return
+    this.voting = true
     const actionBtn =
       choice === 'up' ? this.comment.getRender().voteBtnUp : this.comment.getRender().voteBtnDown
+    actionBtn?.setLoading(true)
 
     const api = this.getApi()
     api.votes
@@ -36,8 +40,13 @@ export default class CommentActions {
       })
       .catch((err) => {
         if (this.comment.isRemoved()) return
-        actionBtn?.setError($t('voteFail'))
+        const render = this.comment.getRender()
+        const button = choice === 'up' ? render.voteBtnUp : render.voteBtnDown
+        button?.setError($t('voteFail'))
         console.error(err)
+      })
+      .finally(() => {
+        this.voting = false
       })
   }
 

@@ -28,8 +28,8 @@ export default defineLocaleExternal('zh-TW', {
   sortAuthor: '作者',
   openComment: '打開評論',
   closeComment: '關閉評論',
-  listLoadFailMsg: '無法獲取評論列表數據',
-  listRetry: '點擊重新獲取',
+  listLoadFailMsg: '評論載入失敗',
+  listRetry: '重試',
   loadMore: '加載更多',
 
   /* Comment */
@@ -106,7 +106,7 @@ export default defineLocaleExternal('zh-TW', {
   deleting: '刪除中',
   deleteFail: '刪除失敗',
   reqGot: '請求已接收',
-  reqAborted: '請求超時或意外終止',
+  reqAborted: '請求失敗，請稍後重試。',
   updateMsg: '請更新 Artalk {name} 以獲得更好的體驗！',
   currentVersion: '當前版本',
   ignore: '忽略',

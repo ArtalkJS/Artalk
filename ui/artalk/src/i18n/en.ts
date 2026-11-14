@@ -104,7 +104,7 @@ const en = {
   deleting: 'Deleting',
   deleteFail: 'Delete Failed',
   reqGot: 'Request got',
-  reqAborted: 'Request timed out or terminated unexpectedly',
+  reqAborted: 'The request failed. Please try again.',
   updateMsg: 'Please update Artalk {name} to get the best experience!',
   currentVersion: 'Current Version',
   ignore: 'Ignore',

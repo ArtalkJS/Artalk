@@ -28,8 +28,8 @@ const zhCN: I18n = {
   sortAuthor: '作者',
   openComment: '打开评论',
   closeComment: '关闭评论',
-  listLoadFailMsg: '无法获取评论列表数据',
-  listRetry: '点击重新获取',
+  listLoadFailMsg: '评论加载失败',
+  listRetry: '重试',
   loadMore: '加载更多',
 
   /* Comment */
@@ -106,7 +106,7 @@ const zhCN: I18n = {
   deleting: '删除中',
   deleteFail: '删除失败',
   reqGot: '请求响应',
-  reqAborted: '请求超时或意外终止',
+  reqAborted: '请求失败，请稍后重试。',
   updateMsg: '请更新 Artalk {name} 以获得更好的体验！',
   currentVersion: '当前版本',
   ignore: '忽略',

@@ -1,18 +1,23 @@
 import type PlugKit from './_kit'
 import EditorPlugin from './_plug'
-import * as Utils from '@/lib/utils'
 import $t from '@/i18n'
+import * as Utils from '@/lib/utils'
 
 /** 允许的图片格式 */
 const AllowImgExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']
 
 export default class Upload extends EditorPlugin {
+  private disposed = false
   private $imgUploadInput?: HTMLInputElement
 
   constructor(kit: PlugKit) {
     super(kit)
 
     this.kit.useMounted(() => this.init())
+    this.kit.useUnmounted(() => {
+      this.disposed = true
+      this.$imgUploadInput?.remove()
+    })
 
     this.initDragImg()
   }
@@ -96,6 +101,14 @@ export default class Upload extends EditorPlugin {
   }
 
   async uploadImg(file: File) {
+    if (this.disposed) return
+    const identity = () => {
+      const { name, email } = this.kit.useUser().getData()
+      return JSON.stringify([name, email])
+    }
+    const viewer = identity()
+    // Login verification may refresh this viewer's token while retrying upload.
+    const active = () => !this.disposed && viewer === identity()
     const fileExt = /[^.]+$/.exec(file.name)
     if (!fileExt || !AllowImgExts.includes(String(fileExt[0]).toLowerCase())) return
 
@@ -125,9 +138,11 @@ export default class Upload extends EditorPlugin {
         resp = { public_url: await customUploaderFn(file) }
       }
     } catch (err: any) {
+      if (!active()) return
       console.error(err)
       this.kit.useEditor().showNotify(`${$t('uploadFail')}: ${err.message}`, 'e')
     }
+    if (!active()) return
     if (!!resp && resp.public_url) {
       let imgURL = resp.public_url as string
 

@@ -2,12 +2,14 @@ import type { ArtalkPlugin } from '@/types'
 
 export const AdminOnlyElem: ArtalkPlugin = (ctx) => {
   const user = ctx.inject('user')
+  const layers = ctx.inject('layers')
 
   const scanApply = () => {
     applyAdminOnlyEls(
       user.getData().is_admin,
       getAdminOnlyEls({
         $root: ctx.getEl(),
+        $layers: layers.getEl(),
       }),
     )
   }
@@ -21,7 +23,7 @@ export const AdminOnlyElem: ArtalkPlugin = (ctx) => {
   })
 }
 
-function getAdminOnlyEls(opts: { $root: HTMLElement }): HTMLElement[] {
+function getAdminOnlyEls(opts: { $root: HTMLElement; $layers: HTMLElement }): HTMLElement[] {
   const els: HTMLElement[] = []
 
   // elements in $root
@@ -33,7 +35,7 @@ function getAdminOnlyEls(opts: { $root: HTMLElement }): HTMLElement[] {
   // and move following code to that hook (move into @artalk/artalk-sidebar)
 
   // elements in sidebar
-  const $sidebarEl = document.querySelector<HTMLElement>('.atk-sidebar')
+  const $sidebarEl = opts.$layers.querySelector<HTMLElement>('.atk-sidebar')
   if ($sidebarEl)
     $sidebarEl
       .querySelectorAll<HTMLElement>(`[atk-only-admin-show]`)

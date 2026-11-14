@@ -7,10 +7,15 @@ export class EditorStateManager {
 
   private stateCurt: EditorState = 'normal'
   private stateUnmountFn: (() => void) | null = null
+  private payload?: { $comment: HTMLElement; comment: CommentData }
 
   /** Get current state */
   get() {
     return this.stateCurt
+  }
+
+  getPayload() {
+    return this.payload
   }
 
   /**
@@ -51,5 +56,6 @@ export class EditorStateManager {
 
     // change current state
     this.stateCurt = state
+    this.payload = state === 'normal' ? undefined : payload
   }
 }

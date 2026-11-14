@@ -59,6 +59,7 @@ export const Dropdown: ArtalkPlugin = (ctx) => {
 
     // 评论列表排序 Dropdown 下拉选择层
     if (conf.listSort) {
+      removeDropdown({ $dropdownWrap: $count })
       initDropdown($count)
     } else {
       removeDropdown({

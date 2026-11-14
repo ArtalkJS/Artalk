@@ -69,6 +69,8 @@ export interface Editor {
    * Get editor current state
    */
   getState(): EditorState
+  /** @internal */
+  getStatePayload?(): { $comment: HTMLElement; comment: CommentData } | undefined
 
   /**
    * Focus editor

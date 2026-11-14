@@ -89,6 +89,127 @@ describe('existing API and plugin compatibility', () => {
     }
   })
 
+  it('submits and replies with the original fields and event bridge', async () => {
+    const api = mockApi()
+    const artalk = await initialize(api)
+    const submitted = vi.fn()
+    artalk.on('editor-submitted', submitted)
+    const editor = artalk.ctx.inject('editor')
+    editor.setContent('Hello')
+    editor.submit()
+    await vi.waitFor(() => expect(artalk.ctx.getComments()).toHaveLength(1))
+    expect(api.comments.createComment).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: 'Hello',
+        rid: 0,
+        name: 'Visitor',
+        email: 'visitor@example.com',
+        page_key: '/',
+        site_name: 'Test',
+      }),
+    )
+    expect(submitted).toHaveBeenCalledTimes(1)
+
+    artalk.update({ preview: false })
+    const first = artalk.ctx.getCommentNodes()[0]
+    artalk.ctx.replyComment(first.getData(), first.getEl())
+    editor.setContent('Reply')
+    editor.submit()
+    await vi.waitFor(() => expect(artalk.ctx.getComments()).toHaveLength(2))
+    expect(api.comments.createComment).toHaveBeenLastCalledWith(
+      expect.objectContaining({ content: 'Reply', rid: 1, page_key: '/', site_name: 'Test' }),
+    )
+    expect(submitted).toHaveBeenCalledTimes(2)
+  })
+
+  it('retains administrator controls and comment fields when editing', async () => {
+    const api = mockApi()
+    const original = {
+      ...comment(1),
+      nick: 'Author',
+      email: 'author@example.com',
+      link: 'https://author.example',
+      is_pending: true,
+      is_pinned: true,
+    }
+    vi.mocked(api.comments.getComments).mockResolvedValue(response(list([original])))
+    const artalk = await initialize(api)
+    const controls = () => [
+      ...artalk.getEl().querySelectorAll('.atk-comment [atk-only-admin-show]'),
+    ]
+    expect(controls()).toHaveLength(5)
+    expect(controls().every((el) => el.classList.contains('atk-hide'))).toBe(true)
+    artalk.ctx.getUser().update({ is_admin: true, token: 'admin-token' })
+    expect(controls().every((el) => !el.classList.contains('atk-hide'))).toBe(true)
+    artalk.ctx.editComment(original, artalk.ctx.getCommentNodes()[0].getEl())
+    const editor = artalk.ctx.inject('editor')
+    editor.setContent('Edited')
+    // Existing plugins can edit author fields through the editor UI.
+    editor.getUI().$name.value = 'Corrected author'
+    editor.submit()
+    await vi.waitFor(() => expect(artalk.ctx.getComments()[0].content).toBe('Edited'))
+    expect(api.comments.updateComment).toHaveBeenCalledWith(1, {
+      ...original,
+      content: 'Edited',
+      nick: 'Corrected author',
+    })
+    expect(editor.getUI().$header.style.display).toBe('')
+    expect(editor.getUI().$name.value).toBe('Visitor')
+    artalk.ctx.getUser().logout()
+    expect(controls().every((el) => el.classList.contains('atk-hide'))).toBe(true)
+  })
+
+  it('preserves actions added by plugins when the viewer changes', async () => {
+    const api = mockApi()
+    vi.mocked(api.comments.getComments).mockResolvedValue(response(list([comment(1)])))
+    const artalk = await initialize(api)
+    const actions = artalk.getEl().querySelector('.atk-actions')!
+    const button = document.createElement('button')
+    const clicked = vi.fn()
+    button.textContent = 'Plugin action'
+    button.addEventListener('click', clicked)
+    actions.append(button)
+    const count = actions.querySelectorAll('.atk-common-action-btn').length
+    artalk.ctx.getUser().update({ token: 'signed-in', is_admin: true })
+    expect(actions.contains(button)).toBe(true)
+    expect(actions.querySelectorAll('.atk-common-action-btn')).toHaveLength(count)
+    button.click()
+    expect(clicked).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps moderation fields, votes, and the delete confirmation', async () => {
+    const api = mockApi()
+    vi.mocked(api.comments.getComments).mockResolvedValue(
+      response(list([{ ...comment(1), is_pending: true, is_pinned: true }])),
+    )
+    const artalk = await initialize(api)
+    artalk.ctx.getUser().update({ is_admin: true, token: 'admin-token' })
+    const node = artalk.ctx.getCommentNodes()[0]
+    const action = (label: string) =>
+      [...node.getEl().querySelectorAll<HTMLElement>('.atk-common-action-btn')].find(
+        (button) => button.innerText === label,
+      )!
+    const original = { ...node.getData() }
+    action($t('pending')).click()
+    await vi.waitFor(() => expect(node.getData().is_pending).toBe(false))
+    expect(api.comments.updateComment).toHaveBeenCalledWith(1, { ...original, is_pending: false })
+    expect(node.getData().is_pinned).toBe(true)
+
+    node.getRender().voteBtnUp!.$el.click()
+    await vi.waitFor(() => expect(node.getData().vote_up).toBe(1))
+    expect(api.votes.createVote).toHaveBeenCalledWith('comment', 1, 'up', {
+      name: 'Visitor',
+      email: 'visitor@example.com',
+    })
+
+    const remove = action($t('delete'))
+    remove.click()
+    expect(api.comments.deleteComment).not.toHaveBeenCalled()
+    remove.click()
+    await vi.waitFor(() => expect(artalk.ctx.getCommentNodes()).toHaveLength(0))
+    expect(api.comments.deleteComment).toHaveBeenCalledExactlyOnceWith(1)
+  })
+
   it('ignores a moderation response after the comment is removed', async () => {
     const api = mockApi()
     const pending = deferred<Awaited<ReturnType<typeof api.comments.updateComment>>>()
@@ -110,6 +231,33 @@ describe('existing API and plugin compatibility', () => {
     await Promise.resolve()
     expect(update).not.toHaveBeenCalled()
     expect(artalk.ctx.getCommentNodes()).toHaveLength(0)
+  })
+
+  it('uses a custom uploader and returns to the API when it is removed', async () => {
+    const api = mockApi()
+    const artalk = await initialize(api, { imgUpload: true })
+    const editor = artalk.ctx.inject('editor')
+    const uploader = vi.fn(async () => 'https://example.com/image.png')
+    const file = new File(['image'], 'image.png', { type: 'image/png' })
+    const drop = () => {
+      const event = new Event('drop', { bubbles: true, cancelable: true })
+      Object.defineProperty(event, 'dataTransfer', { value: { files: [file] } })
+      editor.getUI().$textarea.dispatchEvent(event)
+    }
+    artalk.update({ imgUploader: uploader })
+    drop()
+    await vi.waitFor(() =>
+      expect(editor.getContentRaw()).toContain('![](https://example.com/image.png)'),
+    )
+    expect(uploader).toHaveBeenCalledWith(file)
+    expect(api.upload.upload).not.toHaveBeenCalled()
+    artalk.update({ imgUploader: undefined })
+    drop()
+    await vi.waitFor(() =>
+      expect(editor.getContentRaw()).toContain('![](https://example.com/upload.png)'),
+    )
+    expect(api.upload.upload).toHaveBeenCalledWith({ file })
+    expect(uploader).toHaveBeenCalledTimes(1)
   })
 
   it('keeps separate API calls and comments for each widget', async () => {
@@ -202,6 +350,82 @@ describe('existing API and plugin compatibility', () => {
     await artalk.ctx.inject('comments').load()
     expect(artalk.ctx.getComments().map((item) => item.id)).toEqual([1])
     expect(artalk.ctx.getCommentNodes()).toHaveLength(1)
+  })
+
+  it('keeps sorting through the original list parameter hook', async () => {
+    const api = mockApi()
+    const artalk = await initialize(api, { listSort: true })
+    artalk.update({ locale: 'zh-CN' })
+    expect(artalk.getEl().querySelectorAll('.atk-dropdown')).toHaveLength(1)
+    artalk.getEl().querySelectorAll<HTMLElement>('.atk-dropdown-item span')[1].click()
+    await vi.waitFor(() => expect(api.comments.getComments).toHaveBeenCalledTimes(2))
+    expect(api.comments.getComments).toHaveBeenLastCalledWith(
+      expect.objectContaining({ sort_by: 'vote' }),
+      expect.anything(),
+    )
+    const params = {}
+    artalk.getConf().listFetchParamsModifier!(params)
+    expect(params).toEqual({ sort_by: 'vote' })
+  })
+
+  it('does not submit twice while the first write is pending', async () => {
+    const api = mockApi()
+    const pending = deferred<Awaited<ReturnType<typeof api.comments.createComment>>>()
+    vi.mocked(api.comments.createComment).mockReturnValue(pending.promise)
+    const artalk = await initialize(api)
+    const editor = artalk.ctx.inject('editor')
+    editor.setContent('Once')
+    editor.submit()
+    editor.submit()
+    await vi.waitFor(() => expect(api.comments.createComment).toHaveBeenCalledTimes(1))
+    pending.resolve(response(comment(1, 'Once')))
+    await vi.waitFor(() => expect(artalk.ctx.getComments()).toHaveLength(1))
+  })
+
+  it.each(['page', 'account', 'destroy'] as const)(
+    'does not apply a completed write after %s changes',
+    async (change) => {
+      const api = mockApi()
+      const pending = deferred<Awaited<ReturnType<typeof api.comments.createComment>>>()
+      vi.mocked(api.comments.createComment).mockReturnValue(pending.promise)
+      const artalk = await initialize(api)
+      const editor = artalk.ctx.inject('editor')
+      const submitted = vi.fn()
+      artalk.on('editor-submitted', submitted)
+      editor.setContent('Original draft')
+      editor.submit()
+      await vi.waitFor(() => expect(api.comments.createComment).toHaveBeenCalledTimes(1))
+      if (change === 'page') artalk.update({ pageKey: '/next' })
+      else if (change === 'account')
+        artalk.ctx.getUser().update({ name: 'Bob', email: 'bob@example.com', token: 'bob-token' })
+      else artalk.destroy()
+      pending.resolve(response(comment(1, 'Original draft')))
+      await pending.promise
+      // Allow both reqAdd and Submit to handle the completed response.
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      expect(artalk.ctx.getComments()).toEqual([])
+      if (change === 'page') {
+        expect(editor.getContentRaw()).toBe('')
+        artalk.update({ pageKey: '/' })
+      }
+      expect(editor.getContentRaw()).toBe('Original draft')
+      expect(submitted).not.toHaveBeenCalled()
+    },
+  )
+
+  it('completes a submission when login refreshes the same viewer token', async () => {
+    const api = mockApi()
+    const pending = deferred<Awaited<ReturnType<typeof api.comments.createComment>>>()
+    vi.mocked(api.comments.createComment).mockReturnValue(pending.promise)
+    const artalk = await initialize(api)
+    const editor = artalk.ctx.inject('editor')
+    editor.setContent('After login')
+    editor.submit()
+    await vi.waitFor(() => expect(api.comments.createComment).toHaveBeenCalledTimes(1))
+    artalk.ctx.getUser().update({ token: 'authenticated-token', is_admin: true })
+    pending.resolve(response(comment(1, 'After login')))
+    await vi.waitFor(() => expect(artalk.ctx.getComments()).toHaveLength(1))
+    expect(editor.getContentRaw()).toBe('')
   })
 
   it('keeps the legacy behavior of deprecated useBackendConf', async () => {

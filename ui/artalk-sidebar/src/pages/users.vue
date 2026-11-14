@@ -20,6 +20,12 @@ const userEditorState = reactive({
   user: undefined as ArtalkType.UserDataForAdmin | undefined,
 })
 const search = ref('')
+let request: AbortController | undefined
+
+onBeforeUnmount(() => {
+  request?.abort()
+  nav.setPageLoading(false)
+})
 
 watch(curtTab, (tab) => {
   if (tab === 'create') {
@@ -63,22 +69,28 @@ watch(
 )
 
 function fetchUsers(offset: number) {
+  request?.abort()
+  const current = (request = new AbortController())
   if (offset === 0) pagination.value?.reset()
   nav.setPageLoading(true)
   artalk?.ctx
     .getApi()
-    .users.getUsers(curtType.value, {
-      offset,
-      limit: pageSize.value,
-      search: search.value,
-    })
+    .users.getUsers(
+      curtType.value,
+      { offset, limit: pageSize.value, search: search.value },
+      { signal: current.signal },
+    )
     .then((res) => {
+      if (current.signal.aborted) return
       pageTotal.value = res.data.count
       users.value = res.data.users
       nav.scrollPageToTop()
     })
+    .catch((err) => {
+      if (!current.signal.aborted) alert(err.message || t('opFailed'))
+    })
     .finally(() => {
-      nav.setPageLoading(false)
+      if (!current.signal.aborted) nav.setPageLoading(false)
     })
 }
 

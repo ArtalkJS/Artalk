@@ -82,6 +82,8 @@ export const useNavStore = defineStore('nav', () => {
 
   useRouter().beforeEach((to, from) => {
     isSearchEnabled.value = false
+    searchEvent.value = null
+    searchResetEvent.value = null
   })
 
   const isMobile = useMobileWidth()

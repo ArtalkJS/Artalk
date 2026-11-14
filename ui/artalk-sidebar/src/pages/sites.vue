@@ -9,6 +9,12 @@ const curtEditSite = ref<ArtalkType.SiteData | null>(null)
 const showSiteCreate = ref(false)
 const siteCreateInitVal = ref()
 const { t } = useI18n()
+const request = new AbortController()
+
+onBeforeUnmount(() => {
+  request.abort()
+  nav.setPageLoading(false)
+})
 
 onMounted(() => {
   nav.updateTabs({}, 'sites')
@@ -16,12 +22,16 @@ onMounted(() => {
   nav.setPageLoading(true)
   artalk?.ctx
     .getApi()
-    .sites.getSites()
+    .sites.getSites({ signal: request.signal })
     .then((res) => {
+      if (request.signal.aborted) return
       sites.value = res.data.sites
     })
+    .catch((err) => {
+      if (!request.signal.aborted) alert(err.message || t('opFailed'))
+    })
     .finally(() => {
-      nav.setPageLoading(false)
+      if (!request.signal.aborted) nav.setPageLoading(false)
     })
 
   // Open site create dialog by view params (from URL query)

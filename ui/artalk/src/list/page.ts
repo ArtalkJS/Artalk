@@ -29,12 +29,14 @@ export interface PaginatorInitOptions extends ListOptions {
 
 export const initListPaginatorFunc = (opts: PaginatorInitOptions) => {
   let paginator: Paginator | null = null
+  let pageData = getPageDataByLastData(opts.getData().getListLastFetch())
+  let failed = false
+  const showError = () => paginator?.showErr?.(`${$t('loadFail')} · ${$t('listRetry')}`)
   opts.getEvents().on('unmounted', () => paginator?.dispose())
 
   // Init paginator when conf loaded
   opts.getConf().watchConf(['pagination', 'locale'], (conf) => {
     const list = opts.getList()
-    const data = opts.getData()
 
     if (paginator) paginator.dispose() // if had been init, dispose it
 
@@ -42,7 +44,8 @@ export const initListPaginatorFunc = (opts: PaginatorInitOptions) => {
     paginator = createPaginatorByConf(conf)
 
     // create paginator dom
-    const { offset, total } = getPageDataByLastData(data.getListLastFetch())
+    // Keep the last loaded page when a locale change follows a failed request.
+    const { offset, total } = pageData
     const $paginator = paginator.create({
       pageSize: conf.pagination.pageSize,
       total,
@@ -57,17 +60,21 @@ export const initListPaginatorFunc = (opts: PaginatorInitOptions) => {
 
     // update paginator info
     paginator?.update(offset, total)
+    if (failed) showError()
   })
 
   // When list loaded
   opts.getEvents().on('list-loaded', (comments) => {
+    failed = false
     // update paginator info
-    const { offset, total } = getPageDataByLastData(opts.getData().getListLastFetch())
+    pageData = getPageDataByLastData(opts.getData().getListLastFetch())
+    const { offset, total } = pageData
     paginator?.update(offset, total)
   })
 
   // When list fetch
   opts.getEvents().on('list-fetch', (params) => {
+    failed = false
     // if clear comments when fetch new page data
     if (opts.getData().getComments().length > 0 && paginator?.getIsClearComments(params)) {
       opts.getData().clearComments()
@@ -76,7 +83,8 @@ export const initListPaginatorFunc = (opts: PaginatorInitOptions) => {
 
   // When list error
   opts.getEvents().on('list-failed', () => {
-    paginator?.showErr?.($t('loadFail'))
+    failed = true
+    showError()
   })
 
   // loading

@@ -26,7 +26,8 @@ export default class ReadMorePaginator implements Paginator {
     // 滚动到底部自动加载
     if (opt.readMoreAutoLoad) {
       this.onReachedBottom = () => {
-        if (!this.instance.hasMore || this.opt.getData().getLoading()) return
+        if (!this.instance.hasMore || this.instance.hasError || this.opt.getData().getLoading())
+          return
         this.instance.click()
       }
       this.opt.getEvents().on('list-reach-bottom', this.onReachedBottom)

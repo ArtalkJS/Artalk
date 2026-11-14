@@ -17,7 +17,6 @@ export default class ReadMoreBtn {
   public $el: HTMLElement
   private $loading: HTMLElement
   private $text: HTMLElement
-  private errorTimer?: number
   private offset: number = 0
   private total: number = 0
   private origText: string = 'Load More'
@@ -25,6 +24,10 @@ export default class ReadMoreBtn {
   /** 是否有更多内容 */
   get hasMore() {
     return this.total > this.offset + this.opts.pageSize
+  }
+
+  get hasError() {
+    return this.$el.classList.contains('atk-err')
   }
 
   public constructor(opts: ReadMoreBtnOptions) {
@@ -65,6 +68,10 @@ export default class ReadMoreBtn {
 
   /** 加载 */
   setLoading(isLoading: boolean) {
+    if (isLoading) {
+      this.$el.classList.remove('atk-err')
+      this.$text.innerText = this.origText
+    }
     this.$loading.style.display = isLoading ? '' : 'none'
     this.$text.style.display = isLoading ? 'none' : ''
   }
@@ -75,16 +82,10 @@ export default class ReadMoreBtn {
 
     this.$text.innerText = errMsg
     this.$el.classList.add('atk-err')
-    window.clearTimeout(this.errorTimer)
-    this.errorTimer = window.setTimeout(() => {
-      this.$text.innerText = this.origText
-      this.$el.classList.remove('atk-err')
-    }, 2000) // 2s后错误提示复原
   }
 
   /** @internal */
   dispose() {
-    window.clearTimeout(this.errorTimer)
     this.$el.onclick = null
     this.$el.remove()
   }

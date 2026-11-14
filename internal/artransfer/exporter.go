@@ -37,16 +37,20 @@ func exportArtrans(db *gorm.DB, params *ExportParams) (string, error) {
 	return string(jsonByte), nil
 }
 
+type exportPageKey struct {
+	site, key string
+}
+
 type exportCache struct {
 	Users map[uint]entity.User
-	Pages map[string]entity.Page
+	Pages map[exportPageKey]entity.Page
 	Sites map[string]entity.Site
 }
 
 func newExportCache() *exportCache {
 	return &exportCache{
 		Users: map[uint]entity.User{},
-		Pages: map[string]entity.Page{},
+		Pages: map[exportPageKey]entity.Page{},
 		Sites: map[string]entity.Site{},
 	}
 }
@@ -58,10 +62,11 @@ func commentToArtran(db *gorm.DB, c *entity.Comment, cache *exportCache) entity.
 		cache.Users[c.UserID] = user
 	}
 
-	page, pageHit := cache.Pages[c.PageKey]
+	pageKey := exportPageKey{site: c.SiteName, key: c.PageKey}
+	page, pageHit := cache.Pages[pageKey]
 	if !pageHit {
 		db.Where(&entity.Page{SiteName: c.SiteName, Key: c.PageKey}).First(&page)
-		cache.Pages[c.PageKey] = page
+		cache.Pages[pageKey] = page
 	}
 
 	site, siteHit := cache.Sites[c.SiteName]

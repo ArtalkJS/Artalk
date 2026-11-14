@@ -346,7 +346,7 @@
 /* Layer */
 .atk-error-layer {
   @extend .atk-full-layer;
-  background-color: var(--at-color-bg-transl);
+  background-color: var(--at-color-bg);
 
   .atk-error-title {
     color: var(--at-color-red);
@@ -375,6 +375,72 @@
 
     a {
       color: var(--at-color-meta);
+    }
+  }
+
+  .atk-error-dialog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 24px 0;
+    font-size: 14px;
+    line-height: 1.5;
+
+    .atk-error-heading {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .error-message {
+      color: var(--at-color-meta);
+      font-size: 13px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+
+      .atk-dark-mode & {
+        opacity: 0.7;
+      }
+    }
+
+    .atk-error-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+
+      &:empty {
+        display: none;
+      }
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      background: transparent;
+      margin: 0;
+      padding: 4px 8px;
+      font: inherit;
+      color: var(--at-color-meta);
+      cursor: pointer;
+
+      &.atk-error-retry {
+        color: var(--at-color-main);
+        font-weight: 500;
+      }
+
+      &:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--at-color-main);
+        outline-offset: 2px;
+      }
     }
   }
 }

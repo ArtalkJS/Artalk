@@ -15,10 +15,10 @@ type ParamsUserInfo struct {
 }
 
 type ResponseUserInfo struct {
-	User          *entity.CookedUser    `json:"user"`
-	IsLogin       bool                  `json:"is_login"`
-	Notifies      []entity.CookedNotify `json:"notifies"`
-	NotifiesCount int                   `json:"notifies_count"`
+	User          *entity.UserDTO    `json:"user"`
+	IsLogin       bool               `json:"is_login"`
+	Notifies      []entity.NotifyDTO `json:"notifies"`
+	NotifiesCount int                `json:"notifies_count"`
 }
 
 // @Id           GetUser
@@ -62,16 +62,16 @@ func UserInfo(app *core.App, router fiber.Router) {
 
 		// Names and email addresses are not proof of identity. Keep only public
 		// profile fields for anonymous autocomplete and the admin login prompt.
-		cockedUser := entity.CookedUser{
+		userDTO := entity.UserDTO{
 			ID: user.ID, Name: user.Name, Link: user.Link,
 			BadgeName: user.BadgeName, BadgeColor: user.BadgeColor, IsAdmin: user.IsAdmin,
 		}
 		if isLogin {
-			cockedUser = app.Dao().CookUser(&user)
+			userDTO = app.Dao().BuildUserDTO(&user)
 		}
 
 		return common.RespData(c, ResponseUserInfo{
-			User:          &cockedUser,
+			User:          &userDTO,
 			IsLogin:       isLogin,
 			Notifies:      unreadNotifies,
 			NotifiesCount: len(unreadNotifies),

@@ -13,8 +13,8 @@ type ParamsNotifyList struct {
 }
 
 type ResponseNotifyList struct {
-	Notifies []entity.CookedNotify `json:"notifies"`
-	Count    int                   `json:"count"`
+	Notifies []entity.NotifyDTO `json:"notifies"`
+	Count    int                `json:"count"`
 }
 
 // @Id           GetNotifies

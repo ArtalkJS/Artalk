@@ -49,7 +49,47 @@ definitions:
   common.Map:
     additionalProperties: true
     type: object
-  entity.CookedComment:
+  entity.AdminUserDTO:
+    properties:
+      badge_color:
+        type: string
+      badge_name:
+        type: string
+      comment_count:
+        type: integer
+      email:
+        type: string
+      id:
+        type: integer
+      is_admin:
+        type: boolean
+      is_in_conf:
+        type: boolean
+      last_ip:
+        type: string
+      last_ua:
+        type: string
+      link:
+        type: string
+      name:
+        type: string
+      receive_email:
+        type: boolean
+    required:
+    - badge_color
+    - badge_name
+    - comment_count
+    - email
+    - id
+    - is_admin
+    - is_in_conf
+    - last_ip
+    - last_ua
+    - link
+    - name
+    - receive_email
+    type: object
+  entity.CommentDTO:
     properties:
       badge_color:
         type: string
@@ -124,7 +164,7 @@ definitions:
     - vote_down
     - vote_up
     type: object
-  entity.CookedNotify:
+  entity.NotifyDTO:
     properties:
       comment_id:
         type: integer
@@ -146,7 +186,7 @@ definitions:
     - read_link
     - user_id
     type: object
-  entity.CookedPage:
+  entity.PageDTO:
     properties:
       admin_only:
         type: boolean
@@ -180,7 +220,7 @@ definitions:
     - vote_down
     - vote_up
     type: object
-  entity.CookedSite:
+  entity.SiteDTO:
     properties:
       first_url:
         type: string
@@ -201,7 +241,7 @@ definitions:
     - urls
     - urls_raw
     type: object
-  entity.CookedUser:
+  entity.UserDTO:
     properties:
       badge_color:
         type: string
@@ -225,46 +265,6 @@ definitions:
     - email
     - id
     - is_admin
-    - link
-    - name
-    - receive_email
-    type: object
-  entity.CookedUserForAdmin:
-    properties:
-      badge_color:
-        type: string
-      badge_name:
-        type: string
-      comment_count:
-        type: integer
-      email:
-        type: string
-      id:
-        type: integer
-      is_admin:
-        type: boolean
-      is_in_conf:
-        type: boolean
-      last_ip:
-        type: string
-      last_ua:
-        type: string
-      link:
-        type: string
-      name:
-        type: string
-      receive_email:
-        type: boolean
-    required:
-    - badge_color
-    - badge_name
-    - comment_count
-    - email
-    - id
-    - is_admin
-    - is_in_conf
-    - last_ip
-    - last_ua
     - link
     - name
     - receive_email
@@ -649,7 +649,7 @@ definitions:
         type: integer
       users:
         items:
-          $ref: '#/definitions/entity.CookedUserForAdmin'
+          $ref: '#/definitions/entity.AdminUserDTO'
         type: array
     required:
     - count
@@ -780,11 +780,11 @@ definitions:
     properties:
       comment:
         allOf:
-        - $ref: '#/definitions/entity.CookedComment'
+        - $ref: '#/definitions/entity.CommentDTO'
         description: The comment detail
       reply_comment:
         allOf:
-        - $ref: '#/definitions/entity.CookedComment'
+        - $ref: '#/definitions/entity.CommentDTO'
         description: The reply comment if exists (like reply)
     required:
     - comment
@@ -794,12 +794,12 @@ definitions:
     properties:
       comments:
         items:
-          $ref: '#/definitions/entity.CookedComment'
+          $ref: '#/definitions/entity.CommentDTO'
         type: array
       count:
         type: integer
       page:
-        $ref: '#/definitions/entity.CookedPage'
+        $ref: '#/definitions/entity.PageDTO'
       roots_count:
         type: integer
     required:
@@ -914,7 +914,7 @@ definitions:
         type: integer
       notifies:
         items:
-          $ref: '#/definitions/entity.CookedNotify'
+          $ref: '#/definitions/entity.NotifyDTO'
         type: array
     required:
     - count
@@ -980,7 +980,7 @@ definitions:
         type: integer
       pages:
         items:
-          $ref: '#/definitions/entity.CookedPage'
+          $ref: '#/definitions/entity.PageDTO'
         type: array
     required:
     - count
@@ -1073,7 +1073,7 @@ definitions:
         type: integer
       sites:
         items:
-          $ref: '#/definitions/entity.CookedSite'
+          $ref: '#/definitions/entity.SiteDTO'
         type: array
     required:
     - count
@@ -1175,12 +1175,12 @@ definitions:
         type: boolean
       notifies:
         items:
-          $ref: '#/definitions/entity.CookedNotify'
+          $ref: '#/definitions/entity.NotifyDTO'
         type: array
       notifies_count:
         type: integer
       user:
-        $ref: '#/definitions/entity.CookedUser'
+        $ref: '#/definitions/entity.UserDTO'
     required:
     - is_login
     - notifies
@@ -1190,7 +1190,7 @@ definitions:
   handler.ResponseUserInfoUpdate:
     properties:
       user:
-        $ref: '#/definitions/entity.CookedUser'
+        $ref: '#/definitions/entity.UserDTO'
     required:
     - user
     type: object
@@ -1199,7 +1199,7 @@ definitions:
       token:
         type: string
       user:
-        $ref: '#/definitions/entity.CookedUser'
+        $ref: '#/definitions/entity.UserDTO'
     required:
     - token
     - user

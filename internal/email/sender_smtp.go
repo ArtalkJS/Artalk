@@ -23,7 +23,7 @@ func NewSmtpSender(smtp config.SMTPConf) *SmtpSender {
 }
 
 func (s *SmtpSender) Send(email *Email) bool {
-	m := getCookedEmail(email)
+	m := buildMessage(email)
 
 	// 发送邮件
 	if err := s.dialer.DialAndSend(m); err != nil {

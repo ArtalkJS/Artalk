@@ -5,7 +5,7 @@ import "github.com/artalkjs/artalk/v2/internal/utils"
 // TrustedURLs combines configuration entries and administrator-managed site URLs.
 func (dao *Dao) TrustedURLs(trustedDomains []string) []string {
 	urls := append([]string{}, trustedDomains...)
-	for _, site := range dao.FindAllSitesCooked() {
+	for _, site := range dao.FindAllSiteDTOs() {
 		urls = append(urls, site.Urls...)
 	}
 	return urls

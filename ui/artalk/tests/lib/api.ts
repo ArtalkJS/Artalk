@@ -1,7 +1,7 @@
 import { vi } from 'vitest'
 import Context from '@/context'
 import { Api } from '@/api'
-import type { EntityCookedComment, EntityCookedPage, HttpResponse } from '@/api/v2'
+import type { EntityCommentDTO, EntityPageDTO, HttpResponse } from '@/api/v2'
 import { EventsService } from '@/services/events'
 import { ConfigService } from '@/services/config'
 import { DataService } from '@/services/data'
@@ -12,7 +12,7 @@ import type { Context as IContext } from '@/types'
 
 export const version = { app: 'Artalk', version: '2.10.1', commit_hash: 'test' }
 
-export const page: EntityCookedPage = {
+export const page: EntityPageDTO = {
   date: '2026-01-01 00:00:00',
   pv: 0,
   id: 1,
@@ -25,7 +25,7 @@ export const page: EntityCookedPage = {
   vote_down: 0,
 }
 
-export function comment(id: number, content = `Comment ${id}`): EntityCookedComment {
+export function comment(id: number, content = `Comment ${id}`): EntityCommentDTO {
   return {
     id,
     content,
@@ -53,7 +53,7 @@ export function comment(id: number, content = `Comment ${id}`): EntityCookedComm
   }
 }
 
-export function list(comments: EntityCookedComment[] = []) {
+export function list(comments: EntityCommentDTO[] = []) {
   return { comments, count: comments.length, roots_count: comments.length, page }
 }
 

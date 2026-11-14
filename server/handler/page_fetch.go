@@ -9,7 +9,7 @@ import (
 )
 
 type ResponsePageFetch struct {
-	entity.CookedPage
+	entity.PageDTO
 }
 
 // @Id           FetchPage
@@ -38,7 +38,7 @@ func PageFetch(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponsePageFetch{
-			CookedPage: app.Dao().CookPage(&page),
+			PageDTO: app.Dao().BuildPageDTO(&page),
 		})
 	}))
 }

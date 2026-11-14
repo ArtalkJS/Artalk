@@ -83,7 +83,7 @@ func Stat(app *core.App, router fiber.Router) {
 				Find(&comments)
 
 			return common.RespData(c, ResponseStat{
-				Data: app.Dao().CookAllComments(comments),
+				Data: app.Dao().BuildCommentDTOs(comments),
 			})
 
 		case "latest_pages":
@@ -97,7 +97,7 @@ func Stat(app *core.App, router fiber.Router) {
 				Find(&pages)
 
 			return common.RespData(c, ResponseStat{
-				Data: app.Dao().CookAllPages(pages),
+				Data: app.Dao().BuildPageDTOs(pages),
 			})
 
 		case "pv_most_pages":
@@ -111,7 +111,7 @@ func Stat(app *core.App, router fiber.Router) {
 				Find(&pages)
 
 			return common.RespData(c, ResponseStat{
-				Data: app.Dao().CookAllPages(pages),
+				Data: app.Dao().BuildPageDTOs(pages),
 			})
 
 		case "comment_most_pages":
@@ -129,7 +129,7 @@ func Stat(app *core.App, router fiber.Router) {
 			).Find(&pages)
 
 			return common.RespData(c, ResponseStat{
-				Data: app.Dao().CookAllPages(pages),
+				Data: app.Dao().BuildPageDTOs(pages),
 			})
 
 		case "page_pv":
@@ -200,7 +200,7 @@ func Stat(app *core.App, router fiber.Router) {
 				Find(&comments)
 
 			return common.RespData(c, ResponseStat{
-				Data: app.Dao().CookAllComments(comments),
+				Data: app.Dao().BuildCommentDTOs(comments),
 			})
 
 		case "rand_pages":
@@ -213,7 +213,7 @@ func Stat(app *core.App, router fiber.Router) {
 				Find(&pages)
 
 			return common.RespData(c, ResponseStat{
-				Data: app.Dao().CookAllPages(pages),
+				Data: app.Dao().BuildPageDTOs(pages),
 			})
 		}
 

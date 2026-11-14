@@ -44,6 +44,14 @@ export const EditorKit: ArtalkPlugin = (ctx) => {
         onSubmitted: () => ctx.trigger('editor-submitted'),
       })
       editor.setPlugins(pluginManager)
+      ctx.on('user-changed', () => {
+        if (editor.getState() === 'edit') return
+        const fields = user.getData()
+        Object.entries(editor.getHeaderInputEls()).forEach(([key, input]) => {
+          const value = fields[key] || ''
+          if (input.value.trim() !== value) input.value = value
+        })
+      })
       ctx.on('unmounted', () => pluginManager.dispose())
       return pluginManager
     },
@@ -69,30 +77,63 @@ export class PluginManager implements IEditorPluginManager {
 
   constructor(public opts: PluginManagerOptions) {
     let confLoaded = false // config not loaded at first time
+    let destination = ''
     this.opts
       .getConf()
-      .watchConf(['imgUpload', 'emoticons', 'preview', 'editorTravel', 'locale'], (conf) => {
-        // trigger unmount event will call all plugs' unmount function
-        // (this will only be called while conf reloaded, not be called at first time)
-        if (confLoaded) this.dispose()
+      .watchConf(
+        [
+          'imgUpload',
+          'imgUploader',
+          'emoticons',
+          'preview',
+          'editorTravel',
+          'locale',
+          'server',
+          'site',
+          'pageKey',
+        ],
+        (conf) => {
+          const current = JSON.stringify([conf.server, conf.site, conf.pageKey])
+          const samePage = destination === current
+          destination = current
+          const editor = this.getEditor()
+          const state = editor.getState()
+          const payload = samePage ? editor.getStatePayload?.() : undefined
+          const draft = editor.getContentRaw()
+          // trigger unmount event will call all plugs' unmount function
+          // (this will only be called while conf reloaded, not be called at first time)
+          if (confLoaded) this.dispose()
 
-        // reset the plugs
-        this.clear()
+          // reset the plugs
+          this.clear()
 
-        // init the all enabled plugs
-        getEnabledPlugs(conf).forEach((Plug) => {
-          // create the plug instance
-          const kit = new PlugKit(this)
-          this.plugins.push(new Plug(kit))
-        })
+          // init the all enabled plugs
+          getEnabledPlugs(conf).forEach((Plug) => {
+            // create the plug instance
+            const kit = new PlugKit(this)
+            this.plugins.push(new Plug(kit))
+          })
 
-        // trigger event for plug initialization
-        this.getEvents().trigger('mounted')
-        confLoaded = true
+          // trigger event for plug initialization
+          this.getEvents().trigger('mounted')
+          confLoaded = true
 
-        // refresh the plug UI
-        this.loadPluginUI()
-      })
+          // refresh the plug UI
+          this.loadPluginUI()
+          // Rebind reply/edit effects to the new plugins without losing the draft.
+          if (payload) {
+            // A locale update can also replace the comment DOM.
+            const element =
+              this.opts
+                .getArtalkRootEl()
+                .querySelector<HTMLElement>(`[id="atk-comment-${payload.comment.id}"]`) ||
+              payload.$comment
+            if (state === 'edit') editor.setEditComment(payload.comment, element)
+            if (state === 'reply') editor.setReplyComment(payload.comment, element)
+          }
+          if (samePage) editor.setContent(draft)
+        },
+      )
   }
 
   getPlugins() {
@@ -115,15 +156,20 @@ export class PluginManager implements IEditorPluginManager {
   dispose() {
     try {
       try {
-        this.getEditor().resetState()
         this.closePluginPanel()
       } finally {
         this.events.trigger('unmounted')
       }
     } finally {
       this.events.dispose()
-      this.plugins = []
-      this.openedPlug = null
+      try {
+        // Resetting edit mode changes content. Disposed listeners must not save
+        // that temporary empty value over the visitor's draft or start timers.
+        this.getEditor().resetState()
+      } finally {
+        this.plugins = []
+        this.openedPlug = null
+      }
     }
   }
 

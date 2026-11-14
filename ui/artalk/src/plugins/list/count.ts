@@ -1,6 +1,6 @@
+import $t from '@/i18n'
 import type { ArtalkPlugin } from '@/types'
 import * as Utils from '@/lib/utils'
-import $t from '@/i18n'
 
 export const Count: ArtalkPlugin = (ctx) => {
   const list = ctx.inject('list')
@@ -16,6 +16,8 @@ export const Count: ArtalkPlugin = (ctx) => {
     )
     $count.innerHTML = text.replace(/(\d+)/, '<span class="atk-comment-count-num">$1</span>')
   }
+
+  ctx.watchConf(['locale'], refreshCountNumEl)
 
   ctx.on('list-loaded', () => {
     refreshCountNumEl()

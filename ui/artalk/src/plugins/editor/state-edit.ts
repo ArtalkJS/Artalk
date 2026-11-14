@@ -1,8 +1,8 @@
 import type PlugKit from './_kit'
 import EditorPlugin from './_plug'
 import Submit from './submit'
-import type { CommentData } from '@/types'
 import $t from '@/i18n'
+import type { CommentData } from '@/types'
 import * as Utils from '@/lib/utils'
 
 export default class StateEdit extends EditorPlugin {
@@ -28,18 +28,16 @@ export default class StateEdit extends EditorPlugin {
       submitPlug.registerCustom({
         activeCond: () => !!this.comment, // active this custom submit when edit mode
         req: async () => {
-          const saveData = {
-            content: this.kit.useEditor().getContentFinal(),
-            nick: this.kit.useUI().$name.value,
-            email: this.kit.useUI().$email.value,
-            link: this.kit.useUI().$link.value,
-          }
           const comment = this.comment!
-          const nComment = await this.kit.useApi().comments.updateComment(comment.id, {
-            ...comment,
-            ...saveData,
-          })
-          return nComment.data
+          return (
+            await this.kit.useApi().comments.updateComment(comment.id, {
+              ...comment,
+              content: this.kit.useEditor().getContentFinal(),
+              nick: this.kit.useUI().$name.value,
+              email: this.kit.useUI().$email.value,
+              link: this.kit.useUI().$link.value,
+            })
+          ).data
         },
         post: (nComment: CommentData) => {
           this.kit.useData().updateComment(nComment)
@@ -99,7 +97,7 @@ export default class StateEdit extends EditorPlugin {
     this.kit.useEditor().setContent('')
     this.restoreSubmitBtnText()
 
-    ui.$header.style.display = '' // TODO: support modify header information
+    ui.$header.style.display = ''
   }
 
   // -------------------------------------------------------------------

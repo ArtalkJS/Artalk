@@ -1,24 +1,30 @@
 import type PlugKit from './_kit'
 import type { CommentData } from '@/types'
-import * as Utils from '@/lib/utils'
+import { getCorrectUserAgent } from '@/lib/utils'
 
 export default class SubmitAddPreset {
   constructor(private kit: PlugKit) {}
 
-  async reqAdd() {
-    const nComment = (
-      await this.kit.useApi().comments.createComment({
-        ...(await this.getSubmitAddParams()),
+  async reqAdd(replyTo?: CommentData) {
+    const api = this.kit.useApi()
+    const params = await this.getSubmitAddParams()
+    return (
+      await api.comments.createComment({
+        ...params,
+        ...(replyTo && {
+          rid: replyTo.id,
+          page_key: replyTo.page_key,
+          page_title: undefined,
+          site_name: replyTo.site_name,
+        }),
       })
     ).data
-    return nComment
   }
 
   async getSubmitAddParams() {
-    const { name, email, link } = this.kit.useUser().getData()
+    const { name, email, link, token } = this.kit.useUser().getData()
     const conf = this.kit.useConf()
-
-    return {
+    const params = {
       content: this.kit.useEditor().getContentFinal(),
       name,
       email,
@@ -27,12 +33,25 @@ export default class SubmitAddPreset {
       page_key: conf.pageKey,
       page_title: conf.pageTitle,
       site_name: conf.site,
-      ua: await Utils.getCorrectUserAgent(), // Get the corrected UA
+      ua: await getCorrectUserAgent(),
     }
+    // Client hints can finish after the viewer or destination has changed.
+    const currentUser = this.kit.useUser().getData()
+    const currentConf = this.kit.useConf()
+    if (
+      currentUser.token !== token ||
+      currentUser.name !== name ||
+      currentUser.email !== email ||
+      currentConf.server !== conf.server ||
+      currentConf.site !== conf.site ||
+      currentConf.pageKey !== conf.pageKey
+    ) {
+      throw new Error('Your account or page changed. Please submit the comment again.')
+    }
+    return params
   }
 
   postSubmitAdd(commentNew: CommentData) {
-    // insert the new comment to list
     this.kit.useData().insertComment(commentNew)
   }
 }

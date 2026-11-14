@@ -62,6 +62,11 @@ export class Editor implements IEditor {
     return this.state.get()
   }
 
+  /** @internal */
+  getStatePayload() {
+    return this.state.getPayload()
+  }
+
   getHeaderInputEls() {
     return { name: this.ui.$name, email: this.ui.$email, link: this.ui.$link }
   }
@@ -154,8 +159,18 @@ export class Editor implements IEditor {
   }
 
   submit() {
+    const events = this.getPlugins()?.getEvents()
+    const { server, site, pageKey } = this.opts.getConf().get()
     const next = () => {
-      this.getPlugins()?.getEvents().trigger('editor-submit')
+      const current = this.opts.getConf().get()
+      if (
+        events !== this.getPlugins()?.getEvents() ||
+        server !== current.server ||
+        site !== current.site ||
+        pageKey !== current.pageKey
+      )
+        return
+      events?.trigger('editor-submit')
       this.opts.getEvents().trigger('editor-submit')
     }
     const beforeSubmit = this.opts.getConf().get().beforeSubmit

@@ -147,6 +147,10 @@ plugin throws. A destroyed widget must not change the page or finish a login.
 Keep list loading and cancellation in `ui/artalk/src/services/comments.ts`, using the existing
 API. Check for stale results after `await`. Preserve v2 request fields and plugin events.
 
+Drafts are stored per server, site, and page. The old draft is imported on first use.
+Config updates must keep the current draft and reply or edit target. Navigation must clear the
+old target without deleting its saved draft. Login retries must not submit twice.
+
 ### Run Frontend
 
 1. **Install Dependencies**:  

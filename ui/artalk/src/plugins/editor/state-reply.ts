@@ -2,9 +2,9 @@ import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
 import Submit from './submit'
 import SubmitAddPreset from './submit-add'
+import $t from '@/i18n'
 import type { CommentData } from '@/types'
 import * as Utils from '@/lib/utils'
-import $t from '@/i18n'
 
 export default class StateReply extends EditorPlugin {
   private comment?: CommentData
@@ -33,17 +33,7 @@ export default class StateReply extends EditorPlugin {
         req: async () => {
           if (!this.comment) throw new Error('reply comment cannot be empty')
 
-          const nComment = (
-            await this.kit.useApi().comments.createComment({
-              ...(await defaultPreset.getSubmitAddParams()),
-              rid: this.comment.id,
-              page_key: this.comment.page_key,
-              page_title: undefined,
-              site_name: this.comment.site_name,
-            })
-          ).data
-
-          return nComment
+          return defaultPreset.reqAdd(this.comment)
         },
         post: (nComment: CommentData) => {
           // open another page when reply comment is not the same pageKey

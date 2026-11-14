@@ -530,6 +530,33 @@ describe('existing API and plugin compatibility', () => {
     expect(artalk.getConf().placeholder).toBe('Remote')
   })
 
+  it.each([false, true])(
+    'shares a pending plugin load (first widget destroyed: %s)',
+    async (destroyFirst) => {
+      const previous = window.ArtalkPlugins
+      const plugin = vi.fn()
+      const start = instances.length
+      const loading = [
+        initialize(mockApi(), { pluginURLs: ['/shared-plugin.js'] }),
+        initialize(mockApi(), { pluginURLs: ['/shared-plugin.js'] }),
+      ]
+      const selector = 'script[src="https://example.com/shared-plugin.js"]'
+      try {
+        await vi.waitFor(() => expect(document.querySelectorAll(selector)).toHaveLength(1))
+        if (destroyFirst) instances[start].destroy()
+        window.ArtalkPlugins = { smoke: plugin }
+        document.querySelector(selector)!.dispatchEvent(new Event('load'))
+        const [first, second] = await Promise.all(loading)
+        expect(plugin).toHaveBeenCalledTimes(destroyFirst ? 1 : 2)
+        expect(plugin).toHaveBeenCalledWith(second.ctx, undefined)
+        if (!destroyFirst) expect(plugin).toHaveBeenCalledWith(first.ctx, undefined)
+      } finally {
+        window.ArtalkPlugins = previous
+        document.querySelector(selector)?.remove()
+      }
+    },
+  )
+
   it('retries initialization without duplicate lifecycle events or requests', async () => {
     const el = document.createElement('div')
     document.body.append(el)
@@ -550,6 +577,29 @@ describe('existing API and plugin compatibility', () => {
     expect(mounted).toHaveBeenCalledTimes(1)
     expect(api.comments.getComments).toHaveBeenCalledTimes(1)
     expect(el.querySelectorAll('.atk-list')).toHaveLength(1)
+  })
+
+  it('allows a later widget to retry a failed plugin download', async () => {
+    const previous = window.ArtalkPlugins
+    const plugin = vi.fn()
+    const selector = 'script[src="https://example.com/retry-plugin.js"]'
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    try {
+      const first = initialize(mockApi(), { pluginURLs: ['/retry-plugin.js'] })
+      await vi.waitFor(() => expect(document.querySelector(selector)).not.toBeNull())
+      document.querySelector(selector)!.dispatchEvent(new Event('error'))
+      await first
+      expect(document.querySelector(selector)).toBeNull()
+      const retry = initialize(mockApi(), { pluginURLs: ['/retry-plugin.js'] })
+      await vi.waitFor(() => expect(document.querySelector(selector)).not.toBeNull())
+      window.ArtalkPlugins = { smoke: plugin }
+      document.querySelector(selector)!.dispatchEvent(new Event('load'))
+      const artalk = await retry
+      expect(plugin).toHaveBeenCalledExactlyOnceWith(artalk.ctx, undefined)
+    } finally {
+      window.ArtalkPlugins = previous
+      document.querySelector(selector)?.remove()
+    }
   })
 
   it('does not mount or start requests after a created listener destroys the instance', async () => {

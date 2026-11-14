@@ -29,7 +29,7 @@ type ParamsCommentUpdate struct {
 }
 
 type ResponseCommentUpdate struct {
-	entity.CookedComment
+	entity.CommentDTO
 }
 
 // @Id           UpdateComment
@@ -134,11 +134,11 @@ func CommentUpdate(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
 		}
 
-		cookedComment := app.Dao().CookComment(&comment)
-		cookedComment = fetchIPRegionForComment(app, cookedComment)
+		commentDTO := app.Dao().BuildCommentDTO(&comment)
+		commentDTO = fetchIPRegionForComment(app, commentDTO)
 
 		return common.RespData(c, ResponseCommentUpdate{
-			CookedComment: cookedComment,
+			CommentDTO: commentDTO,
 		})
 	}))
 }

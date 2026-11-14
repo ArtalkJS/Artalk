@@ -57,7 +57,7 @@ func (pusher *NotifyPusher) checkNeedSendEmailToAdmin(comment *entity.Comment, p
 
 	// 只发送给对应站点管理员
 	// TODO admin.SiteNames had removed, so temporarily disabled
-	// if admin.SiteNames != "" && !slices.Contains(pusher.dao.CookUser(admin).SiteNames, comment.SiteName) {
+	// if admin.SiteNames != "" && !slices.Contains(pusher.dao.BuildUserDTO(admin).SiteNames, comment.SiteName) {
 	// 	return false
 	// }
 

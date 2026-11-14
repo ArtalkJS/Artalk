@@ -1,6 +1,6 @@
 package entity
 
-type CookedUser struct {
+type UserDTO struct {
 	ID           uint   `json:"id"`
 	Name         string `json:"name"`
 	Email        string `json:"email"`

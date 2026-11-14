@@ -9,11 +9,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func CheckSiteExist(app *core.App, c *fiber.Ctx, siteName string) (entity.CookedSite, bool, error) {
+func CheckSiteExist(app *core.App, c *fiber.Ctx, siteName string) (entity.SiteDTO, bool, error) {
 	siteName = strings.TrimSpace(siteName)
 
 	if siteName == "" {
-		return entity.CookedSite{}, false, RespError(c,
+		return entity.SiteDTO{}, false, RespError(c,
 			400,
 			i18n.T("{{name}} cannot be empty", Map{"name": i18n.T("Site name")}),
 			Map{
@@ -24,7 +24,7 @@ func CheckSiteExist(app *core.App, c *fiber.Ctx, siteName string) (entity.Cooked
 
 	findSite := app.Dao().FindSite(siteName)
 	if findSite.IsEmpty() {
-		return entity.CookedSite{}, false, RespError(c,
+		return entity.SiteDTO{}, false, RespError(c,
 			404,
 			i18n.T("Site `{{name}}` not found. Please create it in control center.", map[string]interface{}{"name": siteName}),
 			Map{
@@ -33,5 +33,5 @@ func CheckSiteExist(app *core.App, c *fiber.Ctx, siteName string) (entity.Cooked
 		)
 	}
 
-	return app.Dao().CookSite(&findSite), true, nil
+	return app.Dao().BuildSiteDTO(&findSite), true, nil
 }

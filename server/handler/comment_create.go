@@ -29,7 +29,7 @@ type ParamsCommentCreate struct {
 }
 
 type ResponseCommentCreate struct {
-	entity.CookedComment
+	entity.CommentDTO
 }
 
 // @Id           CreateComment
@@ -156,17 +156,17 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		})
 
 		// Response the comment data
-		cookedComment := app.Dao().CookComment(&comment)
-		cookedComment = fetchIPRegionForComment(app, cookedComment)
+		commentDTO := app.Dao().BuildCommentDTO(&comment)
+		commentDTO = fetchIPRegionForComment(app, commentDTO)
 
 		return common.RespData(c, ResponseCommentCreate{
-			CookedComment: cookedComment,
+			CommentDTO: commentDTO,
 		})
 	}))
 }
 
 // Fetch IP Region for Comment
-func fetchIPRegionForComment(app *core.App, comment entity.CookedComment) entity.CookedComment {
+func fetchIPRegionForComment(app *core.App, comment entity.CommentDTO) entity.CommentDTO {
 	if app.Conf().IPRegion.Enabled {
 		if ipRegionService, err := core.AppService[*core.IPRegionService](app); err == nil {
 			comment.IPRegion = ipRegionService.Query(comment.IP)
@@ -278,7 +278,7 @@ func commentCreatedJobs(app *core.App, comment entity.Comment, parentComment ent
 
 // Keep the opt-in at the automatic entry point so manual admin fetches still work.
 func autoFetchPageTitle(app *core.App, page *entity.Page) {
-	if !app.Conf().PageTitleAutoFetch || page.Title != "" || app.Dao().CookPage(page).URL == "" {
+	if !app.Conf().PageTitleAutoFetch || page.Title != "" || app.Dao().BuildPageDTO(page).URL == "" {
 		return
 	}
 	_ = app.Dao().TryFetchPageFromURL(page, app.Conf().TrustedDomains...)

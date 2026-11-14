@@ -53,7 +53,7 @@ func (dao *Dao) GetPageAccessibleURL(p *entity.Page, s ...*entity.Site) string {
 			}
 
 			if site != nil {
-				u1, e1 := url.Parse(dao.CookSite(site).FirstUrl)
+				u1, e1 := url.Parse(dao.BuildSiteDTO(site).FirstUrl)
 				u2, e2 := url.Parse(p.Key)
 				if e1 == nil && e2 == nil {
 					acURL = u1.ResolveReference(u2).String()
@@ -72,8 +72,8 @@ func (dao *Dao) FetchPageFromURL(p *entity.Page, trustedDomains ...string) error
 }
 
 func (dao *Dao) fetchPageFromURL(p *entity.Page, onlyMissing bool, trustedDomains ...string) error {
-	cookedPage := dao.CookPage(p)
-	url := cookedPage.URL
+	pageDTO := dao.BuildPageDTO(p)
+	url := pageDTO.URL
 
 	if url == "" {
 		return fmt.Errorf("URL cannot be null")

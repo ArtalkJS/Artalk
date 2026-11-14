@@ -9,8 +9,8 @@ import (
 )
 
 type ResponseCommentGet struct {
-	Comment      entity.CookedComment  `json:"comment"`       // The comment detail
-	ReplyComment *entity.CookedComment `json:"reply_comment"` // The reply comment if exists (like reply)
+	Comment      entity.CommentDTO  `json:"comment"`       // The comment detail
+	ReplyComment *entity.CommentDTO `json:"reply_comment"` // The reply comment if exists (like reply)
 }
 
 // @Id           GetComment
@@ -45,21 +45,21 @@ func CommentGet(app *core.App, router fiber.Router) {
 		}
 
 		// Find linked comment by id
-		var replyComment *entity.CookedComment
+		var replyComment *entity.CommentDTO
 		if comment.Rid != 0 {
 			rComment := app.Dao().FindComment(uint(comment.Rid))
 			if canRead(rComment) {
-				rComment := app.Dao().CookComment(&rComment)
+				rComment := app.Dao().BuildCommentDTO(&rComment)
 				rComment.Visible = false
 				replyComment = &rComment
 			}
 		}
 
-		cookedComment := app.Dao().CookComment(&comment)
-		cookedComment = fetchIPRegionForComment(app, cookedComment)
+		commentDTO := app.Dao().BuildCommentDTO(&comment)
+		commentDTO = fetchIPRegionForComment(app, commentDTO)
 
 		return common.RespData(c, ResponseCommentGet{
-			Comment:      cookedComment,
+			Comment:      commentDTO,
 			ReplyComment: replyComment,
 		})
 	})

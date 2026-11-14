@@ -70,7 +70,7 @@ func (s *AntiSpamService) payload2CheckerParams(payload *AntiSpamCheckPayload) *
 
 	if payload.Comment.SiteName != "" {
 		site := s.app.dao.FindSite(payload.Comment.SiteName)
-		siteURL = s.app.dao.CookSite(&site).FirstUrl
+		siteURL = s.app.dao.BuildSiteDTO(&site).FirstUrl
 	}
 	if siteURL == "" {
 		// extract site url from referer

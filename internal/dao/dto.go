@@ -23,7 +23,7 @@ func (dao *Dao) SetCommentEmailHashFunc(fn func(string) string) {
 //  Comment
 // ===============
 
-func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
+func (dao *Dao) BuildCommentDTO(c *entity.Comment) entity.CommentDTO {
 	user := c.User
 	if user == nil {
 		u := dao.FetchUserForComment(c)
@@ -43,7 +43,7 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 
 	markedContent, _ := utils.Marked(c.Content)
 
-	return entity.CookedComment{
+	return entity.CommentDTO{
 		ID:             c.ID,
 		Content:        c.Content,
 		ContentMarked:  markedContent,
@@ -71,21 +71,21 @@ func (dao *Dao) CookComment(c *entity.Comment) entity.CookedComment {
 	}
 }
 
-func (dao *Dao) CookAllComments(comments []*entity.Comment) []entity.CookedComment {
-	cookedComments := []entity.CookedComment{}
+func (dao *Dao) BuildCommentDTOs(comments []*entity.Comment) []entity.CommentDTO {
+	commentDTOs := []entity.CommentDTO{}
 	for _, c := range comments {
-		cookedComments = append(cookedComments, dao.CookComment(c))
+		commentDTOs = append(commentDTOs, dao.BuildCommentDTO(c))
 	}
-	return cookedComments
+	return commentDTOs
 }
 
-func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEmail {
+func (dao *Dao) BuildEmailCommentDTO(c *entity.Comment) entity.EmailCommentDTO {
 	user := dao.FetchUserForComment(c)
 	page := dao.FetchPageForComment(c)
 	site := dao.FetchSiteForComment(c)
 	content, _ := utils.Marked(c.Content)
 
-	return entity.CookedCommentForEmail{
+	return entity.EmailCommentDTO{
 		Content:    content,
 		ContentRaw: c.Content,
 		Nick:       user.Name,
@@ -96,10 +96,10 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 		Time:       c.CreatedAt.Local().Format("15:04:05"),
 		PageKey:    c.PageKey,
 		PageTitle:  page.Title,
-		Page:       dao.CookPage(&page),
+		Page:       dao.BuildPageDTO(&page),
 		SiteName:   c.SiteName,
-		Site:       dao.CookSite(&site),
-		CookedComment: entity.CookedComment{
+		Site:       dao.BuildSiteDTO(&site),
+		CommentDTO: entity.CommentDTO{
 			ID:             c.ID,
 			EmailEncrypted: getCommentEmailHash(user.Email),
 			Link:           user.Link,
@@ -119,8 +119,8 @@ func (dao *Dao) CookCommentForEmail(c *entity.Comment) entity.CookedCommentForEm
 //  Page
 // ===============
 
-func (dao *Dao) CookPage(p *entity.Page) entity.CookedPage {
-	return entity.CookedPage{
+func (dao *Dao) BuildPageDTO(p *entity.Page) entity.PageDTO {
+	return entity.PageDTO{
 		ID:        p.ID,
 		AdminOnly: p.AdminOnly,
 		Key:       p.Key,
@@ -134,26 +134,26 @@ func (dao *Dao) CookPage(p *entity.Page) entity.CookedPage {
 	}
 }
 
-func (dao *Dao) CookAllPages(pages []entity.Page) []entity.CookedPage {
-	cookedPages := []entity.CookedPage{}
+func (dao *Dao) BuildPageDTOs(pages []entity.Page) []entity.PageDTO {
+	pageDTOs := []entity.PageDTO{}
 	for _, p := range pages {
-		cookedPages = append(cookedPages, dao.CookPage(&p))
+		pageDTOs = append(pageDTOs, dao.BuildPageDTO(&p))
 	}
-	return cookedPages
+	return pageDTOs
 }
 
 // ===============
 //  Site
 // ===============
 
-func (dao *Dao) CookSite(s *entity.Site) entity.CookedSite {
+func (dao *Dao) BuildSiteDTO(s *entity.Site) entity.SiteDTO {
 	splitUrls := utils.SplitAndTrimSpace(s.Urls, ",")
 	firstUrl := ""
 	if len(splitUrls) > 0 {
 		firstUrl = splitUrls[0]
 	}
 
-	return entity.CookedSite{
+	return entity.SiteDTO{
 		ID:       s.ID,
 		Name:     s.Name,
 		Urls:     splitUrls,
@@ -162,23 +162,23 @@ func (dao *Dao) CookSite(s *entity.Site) entity.CookedSite {
 	}
 }
 
-func (dao *Dao) FindAllSitesCooked() []entity.CookedSite {
+func (dao *Dao) FindAllSiteDTOs() []entity.SiteDTO {
 	sites := dao.FindAllSites()
 
-	var cookedSites []entity.CookedSite
+	var siteDTOs []entity.SiteDTO
 	for _, s := range sites {
-		cookedSites = append(cookedSites, dao.CookSite(&s))
+		siteDTOs = append(siteDTOs, dao.BuildSiteDTO(&s))
 	}
 
-	return cookedSites
+	return siteDTOs
 }
 
 // ===============
 //  User
 // ===============
 
-func (dao *Dao) CookUser(u *entity.User) entity.CookedUser {
-	return entity.CookedUser{
+func (dao *Dao) BuildUserDTO(u *entity.User) entity.UserDTO {
+	return entity.UserDTO{
 		ID:           u.ID,
 		Name:         u.Name,
 		Email:        u.Email,
@@ -190,13 +190,13 @@ func (dao *Dao) CookUser(u *entity.User) entity.CookedUser {
 	}
 }
 
-func (dao *Dao) UserToCookedForAdmin(u *entity.User) entity.CookedUserForAdmin {
-	cookedUser := dao.CookUser(u)
+func (dao *Dao) BuildAdminUserDTO(u *entity.User) entity.AdminUserDTO {
+	userDTO := dao.BuildUserDTO(u)
 	var commentCount int64
 	dao.DB().Model(&entity.Comment{}).Where("user_id = ?", u.ID).Count(&commentCount)
 
-	return entity.CookedUserForAdmin{
-		CookedUser:   cookedUser,
+	return entity.AdminUserDTO{
+		UserDTO:      userDTO,
 		LastIP:       u.LastIP,
 		LastUA:       u.LastUA,
 		IsInConf:     u.IsInConf,
@@ -208,8 +208,8 @@ func (dao *Dao) UserToCookedForAdmin(u *entity.User) entity.CookedUserForAdmin {
 //  Notify
 // ===============
 
-func (dao *Dao) CookNotify(n *entity.Notify) entity.CookedNotify {
-	return entity.CookedNotify{
+func (dao *Dao) BuildNotifyDTO(n *entity.Notify) entity.NotifyDTO {
+	return entity.NotifyDTO{
 		ID:        n.ID,
 		UserID:    n.UserID,
 		CommentID: n.CommentID,
@@ -219,10 +219,10 @@ func (dao *Dao) CookNotify(n *entity.Notify) entity.CookedNotify {
 	}
 }
 
-func (dao *Dao) CookAllNotifies(notifies []entity.Notify) []entity.CookedNotify {
-	cookedNotifies := []entity.CookedNotify{}
+func (dao *Dao) BuildNotifyDTOs(notifies []entity.Notify) []entity.NotifyDTO {
+	notifyDTOs := []entity.NotifyDTO{}
 	for _, n := range notifies {
-		cookedNotifies = append(cookedNotifies, dao.CookNotify(&n))
+		notifyDTOs = append(notifyDTOs, dao.BuildNotifyDTO(&n))
 	}
-	return cookedNotifies
+	return notifyDTOs
 }

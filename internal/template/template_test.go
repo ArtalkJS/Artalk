@@ -1,6 +1,30 @@
 package template
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/artalkjs/artalk/v2/internal/entity"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestCommentTemplateFields(t *testing.T) {
+	params := tplParams{
+		Comment: entity.EmailCommentDTO{
+			CommentDTO: entity.CommentDTO{ID: 42, Content: "original"},
+			Content:    "<p>Rendered</p>",
+			ContentRaw: "**original**",
+			Nick:       "Alice & Bob",
+			Page:       entity.PageDTO{Title: "Page title"},
+			Site:       entity.SiteDTO{Name: "Site name"},
+		},
+	}
+
+	result := renderCommon(
+		"{{comment.id}}|{{comment.content}}|{{comment.content_raw}}|{{comment.nick}}|{{comment.page.title}}|{{comment.site.name}}",
+		params,
+	)
+	assert.Equal(t, "42|<p>Rendered</p>|**original**|Alice &amp; Bob|Page title|Site name", result)
+}
 
 func TestHandleEmoticonsImgTagsForNotify(t *testing.T) {
 	tests := []struct {

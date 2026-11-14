@@ -73,15 +73,15 @@ func (pusher *NotifyPusher) getAdminNotifySubjectBody(comment *entity.Comment, t
 }
 
 func (pusher *NotifyPusher) sendWebhook(subject string, body string, comment *entity.Comment, pComment *entity.Comment) {
-	var pCommentCooked entity.CookedComment
+	var parentCommentDTO entity.CommentDTO
 	if pComment != nil && !pComment.IsEmpty() {
-		pCommentCooked = pusher.dao.CookComment(pComment)
+		parentCommentDTO = pusher.dao.BuildCommentDTO(pComment)
 	}
 
 	sender.SendWebHook(pusher.conf.WebHook.URL, &sender.NotifyWebHookReqBody{
 		NotifySubject: subject,
 		NotifyBody:    body,
-		Comment:       pusher.dao.CookComment(comment),
-		ParentComment: pCommentCooked,
+		Comment:       pusher.dao.BuildCommentDTO(comment),
+		ParentComment: parentCommentDTO,
 	})
 }

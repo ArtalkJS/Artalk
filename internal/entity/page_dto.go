@@ -1,6 +1,6 @@
 package entity
 
-type CookedPage struct {
+type PageDTO struct {
 	ID        uint   `json:"id"`
 	AdminOnly bool   `json:"admin_only"`
 	Key       string `json:"key"`

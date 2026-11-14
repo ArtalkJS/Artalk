@@ -11,6 +11,14 @@ export const ErrorDialog: ArtalkPlugin = (ctx) => {
   })
 
   ctx.on('list-failed', (err) => {
+    // The load-more button already reports failures without covering existing comments.
+    if (
+      ctx.getConf().pagination.readMore &&
+      ctx.getData().getListLastFetch()?.params.offset &&
+      list.getCommentNodes().length
+    )
+      return
+
     showErrorDialog({
       $err: list.getEl(),
       errMsg: err.msg,

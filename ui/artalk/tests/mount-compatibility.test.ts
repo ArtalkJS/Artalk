@@ -359,6 +359,60 @@ describe('existing API and plugin compatibility', () => {
     expect(artalk.ctx.getCommentNodes()).toHaveLength(1)
   })
 
+  it('keeps loaded comments after a load-more failure and retries the same page', async () => {
+    const api = mockApi()
+    vi.mocked(api.comments.getComments).mockImplementation(async ({ offset = 0 }) =>
+      response({ ...list([comment(offset + 1)]), count: 3, roots_count: 3 }),
+    )
+    const artalk = await initialize(api, {
+      pagination: { pageSize: 1, readMore: true, autoLoad: true },
+    })
+    let button = artalk.getEl().querySelector<HTMLElement>('.atk-list-read-more')!
+    vi.mocked(api.comments.getComments).mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    await artalk.ctx.inject('comments').load({ offset: 1 })
+    expect(artalk.ctx.getCommentNodes().map((node) => node.getID())).toEqual([1])
+    expect(artalk.getEl().querySelector('.atk-error-layer')).toBeNull()
+    expect(button.textContent).toContain($t('listRetry'))
+    expect(button.classList.contains('atk-err')).toBe(true)
+
+    artalk.update({ locale: 'zh-CN' })
+    button = artalk.getEl().querySelector<HTMLElement>('.atk-list-read-more')!
+    expect(button.style.display).toBe('')
+    expect(button.textContent).toContain($t('listRetry'))
+    artalk.ctx.trigger('list-reach-bottom')
+    expect(api.comments.getComments).toHaveBeenCalledTimes(2)
+    button.click()
+    await vi.waitFor(() => expect(artalk.ctx.getCommentNodes()).toHaveLength(2))
+    expect(api.comments.getComments).toHaveBeenLastCalledWith(
+      expect.objectContaining({ offset: 1 }),
+      expect.anything(),
+    )
+    expect(button.classList.contains('atk-err')).toBe(false)
+    expect(button.textContent).toContain($t('loadMore'))
+
+    artalk.ctx.trigger('list-reach-bottom')
+    await vi.waitFor(() => expect(artalk.ctx.getCommentNodes()).toHaveLength(3))
+  })
+
+  it.each([true, false])(
+    'keeps a retry dialog when no comments remain (readMore: %s)',
+    async (readMore) => {
+      const api = mockApi()
+      vi.mocked(api.comments.getComments).mockResolvedValue(
+        response({ ...list([comment(1)]), count: 2, roots_count: 2 }),
+      )
+      const artalk = await initialize(api, { pagination: { pageSize: 1, readMore } })
+      vi.mocked(api.comments.getComments).mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      await artalk.ctx.inject('comments').load({ offset: readMore ? 0 : 1 })
+      expect(artalk.ctx.getCommentNodes()).toHaveLength(0)
+      const retry = artalk.getEl().querySelector<HTMLElement>('.atk-error-retry')!
+      expect(retry).not.toBeNull()
+      retry.click()
+      await vi.waitFor(() => expect(artalk.ctx.getCommentNodes()).toHaveLength(1))
+      expect(artalk.getEl().querySelector('.atk-error-layer')).toBeNull()
+    },
+  )
+
   it('keeps sorting through the original list parameter hook', async () => {
     const api = mockApi()
     const artalk = await initialize(api, { listSort: true })

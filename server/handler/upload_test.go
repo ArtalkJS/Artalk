@@ -33,18 +33,7 @@ func TestImageUpload(t *testing.T) {
 	require.NoError(t, png.Encode(&img, image.NewRGBA(image.Rect(0, 0, 1, 1))))
 	post := func(content []byte, token string, status int) handler.ResponseUpload {
 		t.Helper()
-		var body bytes.Buffer
-		form := multipart.NewWriter(&body)
-		file, err := form.CreateFormFile("file", "test.png")
-		require.NoError(t, err)
-		_, err = file.Write(content)
-		require.NoError(t, err)
-		require.NoError(t, form.Close())
-		req := httptest.NewRequest(http.MethodPost, "/upload", &body)
-		req.Header.Set("Content-Type", form.FormDataContentType())
-		if token != "" {
-			req.Header.Set("Authorization", "Bearer "+token)
-		}
+		req := multipartUpload(t, "/upload", "test.png", content, token)
 		res, err := router.Test(req)
 		require.NoError(t, err)
 		defer res.Body.Close()
@@ -75,4 +64,21 @@ func TestImageUpload(t *testing.T) {
 	stored, err := os.ReadFile(filepath.Join(upload.Path, result.FileName))
 	require.NoError(t, err)
 	require.Equal(t, img.Bytes(), stored)
+}
+
+func multipartUpload(t *testing.T, path, filename string, content []byte, token string) *http.Request {
+	t.Helper()
+	var body bytes.Buffer
+	form := multipart.NewWriter(&body)
+	file, err := form.CreateFormFile("file", filename)
+	require.NoError(t, err)
+	_, err = file.Write(content)
+	require.NoError(t, err)
+	require.NoError(t, form.Close())
+	req := httptest.NewRequest(http.MethodPost, path, &body)
+	req.Header.Set("Content-Type", form.FormDataContentType())
+	if token != "" {
+		req.Header.Set("Authorization", "Bearer "+token)
+	}
+	return req
 }

@@ -35,22 +35,13 @@ func SettingApply(app *core.App, router fiber.Router) {
 		}
 
 		configFile := app.Conf().GetCfgFileLoaded()
-		f, err := os.Create(configFile)
-		if err != nil {
-			return common.RespError(c, 500, i18n.T("Config file read failed")+": "+err.Error())
-		}
-
-		defer f.Close()
-
-		_, err2 := f.WriteString(p.Yaml)
-		if err2 != nil {
-			return common.RespError(c, 500, i18n.T("Save failed")+": "+err2.Error())
-		}
-
-		// 应用新配置文件
-		conf, err := config.NewFromFile(configFile)
+		data := []byte(p.Yaml)
+		conf, err := config.NewFromYAML(configFile, data)
 		if err != nil {
 			return common.RespError(c, 500, "Config instance err: "+err.Error())
+		}
+		if err := os.WriteFile(configFile, data, 0600); err != nil {
+			return common.RespError(c, 500, i18n.T("Save failed")+": "+err.Error())
 		}
 
 		app.SetConf(conf)

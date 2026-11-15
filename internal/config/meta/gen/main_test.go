@@ -65,3 +65,19 @@ func TestGenerateConfigMetadata(t *testing.T) {
 		require.NotContains(t, string(data), "Old table")
 	})
 }
+
+func TestInvalidDocumentationMarkersLeaveFileUnchanged(t *testing.T) {
+	for _, body := range []string{"No markers", end + "\n" + start, start + "\nIncomplete document"} {
+		file := filepath.Join(t.TempDir(), "env.md")
+		require.NoError(t, os.WriteFile(file, []byte(body), 0600))
+		require.Panics(t, func() { parseMarkdownEnv(file) })
+		require.Panics(t, func() { writeMarkdown(file, "New table") })
+		contents, err := os.ReadFile(file)
+		require.NoError(t, err)
+		require.Equal(t, body, string(contents))
+	}
+	missing := filepath.Join(t.TempDir(), "missing.md")
+	require.Panics(t, func() { parseMarkdownEnv(missing) })
+	require.Panics(t, func() { writeMarkdown(missing, "New table") })
+	require.NoFileExists(t, missing)
+}

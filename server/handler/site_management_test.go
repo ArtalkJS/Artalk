@@ -52,6 +52,8 @@ func TestSiteManagementKeepsPagesAndCommentsInTheirSite(t *testing.T) {
 	require.NoError(t, json.Unmarshal(flowRequest(t, router, http.MethodPost, "/sites", create, admin, http.StatusOK), &site))
 	require.Equal(t, create.Urls, site.Urls)
 	flowRequest(t, router, http.MethodPost, "/sites", create, admin, http.StatusBadRequest)
+	flowRequest(t, router, http.MethodPut, fmt.Sprintf("/sites/%d", site.ID), map[string]any{"name": site.Name, "urls": nil}, admin, http.StatusOK)
+	require.Empty(t, app.Dao().FindSiteByID(site.ID).Urls)
 
 	const pageKey = "/shared"
 	page := app.Dao().FindCreatePage(pageKey, "", site.Name)

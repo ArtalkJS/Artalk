@@ -24,16 +24,16 @@ func ParamsDecode(c *fiber.Ctx, destParams interface{}) (isContinue bool, resp e
 
 	// parse query
 	if err := c.QueryParser(destParams); err != nil {
-		return false, err
+		return false, fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 	// parse path params
 	if err := c.ParamsParser(destParams); err != nil {
-		return false, err
+		return false, fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 	// parse body
 	if reqMethod == "POST" || reqMethod == "PUT" {
 		if err := c.BodyParser(destParams); err != nil {
-			return false, err
+			return false, fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	}
 

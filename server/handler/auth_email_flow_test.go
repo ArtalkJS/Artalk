@@ -61,3 +61,39 @@ func TestEmailRegistrationAndPasswordReset(t *testing.T) {
 	require.NoError(t, json.Unmarshal(flowRequest(t, router, http.MethodPost, "/user/access_token", login, "", http.StatusOK), &signedIn))
 	require.Equal(t, registered.User.ID, signedIn.User.ID)
 }
+
+func TestEmailRegistrationValidationPreservesChallenge(t *testing.T) {
+	app, router := NewApiTestApp()
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	app.Conf().Auth.Email.Enabled = true
+	app.Conf().Captcha.Enabled = false
+	handler.AuthEmailRegister(app.App, router)
+	handler.AuthEmailLogin(app.App, router)
+	challenge := entity.UserEmailVerify{Email: "validation@example.org", Code: "654321", ExpiresAt: time.Now().Add(time.Minute)}
+	require.NoError(t, app.Dao().DB().Create(&challenge).Error)
+	for _, tc := range []struct {
+		name string
+		edit func(*handler.RequestAuthEmailRegister)
+	}{
+		{"bad email", func(p *handler.RequestAuthEmailRegister) { p.Email = "invalid" }},
+		{"bad link", func(p *handler.RequestAuthEmailRegister) { p.Link = "invalid" }},
+		{"short password", func(p *handler.RequestAuthEmailRegister) { p.Password = "123" }},
+		{"unknown account reset", func(p *handler.RequestAuthEmailRegister) { p.Name = "" }},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			p := handler.RequestAuthEmailRegister{Name: "Reader", Email: challenge.Email, Password: "valid-password", Code: challenge.Code}
+			tc.edit(&p)
+			flowRequest(t, router, "POST", "/auth/email/register", p, "", 400)
+			var saved entity.UserEmailVerify
+			require.NoError(t, app.Dao().DB().First(&saved, challenge.ID).Error)
+			require.Equal(t, challenge.Code, saved.Code)
+			require.Zero(t, saved.Attempts)
+		})
+	}
+	flowRequest(t, router, "POST", "/auth/email/login", handler.RequestAuthEmailLogin{Email: challenge.Email}, "", 400)
+	flowRequest(t, router, "POST", "/auth/email/login", handler.RequestAuthEmailLogin{Email: challenge.Email, Password: "wrong"}, "", 401)
+	flowRequest(t, router, "POST", "/auth/email/login", handler.RequestAuthEmailLogin{Email: challenge.Email, Code: challenge.Code}, "", 401)
+	app.Conf().Auth.Email.Enabled = false
+	flowRequest(t, router, "POST", "/auth/email/register", map[string]any{}, "", 400)
+	flowRequest(t, router, "POST", "/auth/email/login", map[string]any{}, "", 400)
+}

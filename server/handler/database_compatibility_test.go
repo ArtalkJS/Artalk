@@ -36,8 +36,10 @@ type compatibilitySQLLogger struct {
 	failures atomic.Int32
 }
 
+var errCompatibilityNotify = errors.New("simulated notification failure")
+
 func (l *compatibilitySQLLogger) Trace(ctx context.Context, begin time.Time, query func() (string, int64), err error) {
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) && !errors.Is(err, errCompatibilityNotify) {
 		l.failures.Add(1)
 	}
 	l.Interface.Trace(ctx, begin, query, err)
@@ -94,6 +96,7 @@ func TestDatabaseCompatibility(t *testing.T) {
 	router := fiber.New()
 	handler.CommentGet(app, router)
 	handler.CommentList(app, router)
+	handler.CommentUpdate(app, router)
 	handler.NotifyList(app, router)
 	handler.NotifyReadAll(app, router)
 	handler.PageList(app, router)
@@ -196,6 +199,31 @@ func TestDatabaseCompatibility(t *testing.T) {
 		require.NoError(t, database.First(&adminCopy, adminCopy.ID).Error)
 		require.True(t, owned.IsRead)
 		require.False(t, adminCopy.IsRead)
+	})
+
+	t.Run("approval updates comment and notification", func(t *testing.T) {
+		require.NoError(t, database.Model(&reply).Update("is_pending", true).Error)
+		path := fmt.Sprintf("/comments/%d", reply.ID)
+		update := handler.ParamsCommentUpdate{
+			Content: reply.Content, PageKey: reply.PageKey, SiteName: reply.SiteName, Rid: reply.Rid,
+		}
+		require.NoError(t, database.Callback().Update().Before("gorm:update").Register("test:notify_failure", func(tx *gorm.DB) {
+			if tx.Statement.Table == prefix+"notifies" {
+				tx.AddError(errCompatibilityNotify)
+			}
+		}))
+		t.Cleanup(func() { database.Callback().Update().Remove("test:notify_failure") })
+		flowRequest(t, router, http.MethodPut, path, update, adminToken, http.StatusInternalServerError)
+		require.NoError(t, database.First(&reply, reply.ID).Error)
+		require.NoError(t, database.First(&owned, owned.ID).Error)
+		require.True(t, reply.IsPending)
+		require.True(t, owned.IsRead)
+		require.NoError(t, database.Callback().Update().Remove("test:notify_failure"))
+		flowRequest(t, router, http.MethodPut, path, update, adminToken, http.StatusOK)
+		require.NoError(t, database.First(&reply, reply.ID).Error)
+		require.NoError(t, database.First(&owned, owned.ID).Error)
+		require.False(t, reply.IsPending)
+		require.False(t, owned.IsRead)
 	})
 
 	t.Run("page filtering and atomic PV", func(t *testing.T) {

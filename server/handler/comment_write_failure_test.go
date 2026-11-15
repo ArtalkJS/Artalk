@@ -9,9 +9,112 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/artalkjs/artalk/v2/server/handler"
+	"github.com/artalkjs/artalk/v2/server/middleware/limiter"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )
+
+func TestCommentCreationWriteFailures(t *testing.T) {
+	for _, table := range []string{"atk_users", "atk_pages", "atk_comments"} {
+		t.Run(table, func(t *testing.T) {
+			app, router := NewApiTestApp()
+			t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+			app.Conf().Captcha.Enabled = false
+			router.Use(limiter.ActionLimitMiddleware(app.App, limiter.ActionLimitConf{}))
+			handler.CommentCreate(app.App, router)
+			storage := app.Dao().DB()
+			var before int64
+			require.NoError(t, storage.Model(&entity.Comment{}).Count(&before).Error)
+			require.NoError(t, storage.Callback().Create().Before("gorm:create").Register("test:write_failure", func(tx *gorm.DB) {
+				if tx.Statement.Table == table {
+					tx.AddError(errors.New("simulated storage failure"))
+				}
+			}))
+			t.Cleanup(func() { require.NoError(t, storage.Callback().Create().Remove("test:write_failure")) })
+			flowRequest(t, router, http.MethodPost, "/comments", handler.ParamsCommentCreate{
+				Name: "New visitor", Email: "new@example.org", Content: "Must not appear", PageKey: "/write-failure", SiteName: "Site A",
+			}, "", http.StatusInternalServerError)
+			var after int64
+			require.NoError(t, storage.Model(&entity.Comment{}).Count(&after).Error)
+			require.Equal(t, before, after)
+		})
+	}
+}
+
+func TestFailedApprovalDoesNotPublishOrNotify(t *testing.T) {
+	app, router := NewApiTestApp()
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	handler.CommentUpdate(app.App, router)
+	d := app.Dao()
+	parent := entity.Comment{Content: "Parent", UserID: 1001, SiteName: "Site A", PageKey: "/test/1000.html"}
+	require.NoError(t, d.CreateComment(&parent))
+	reply := entity.Comment{Content: "Pending reply", UserID: 1002, SiteName: parent.SiteName, PageKey: parent.PageKey, Rid: parent.ID, RootID: parent.ID, IsPending: true}
+	require.NoError(t, d.CreateComment(&reply))
+	admin, err := common.LoginGetUserToken(d.FindUserByID(1000), app.Conf().AppKey, 60)
+	require.NoError(t, err)
+	require.NoError(t, d.DB().Callback().Update().Before("gorm:update").Register("test:approval_failure", func(tx *gorm.DB) {
+		if tx.Statement.Table == "atk_comments" {
+			tx.AddError(errors.New("cannot save approval"))
+		}
+	}))
+	t.Cleanup(func() { require.NoError(t, d.DB().Callback().Update().Remove("test:approval_failure")) })
+	flowRequest(t, router, http.MethodPut, fmt.Sprintf("/comments/%d", reply.ID), handler.ParamsCommentUpdate{
+		Content: "Approved content", PageKey: reply.PageKey, SiteName: reply.SiteName, Rid: reply.Rid,
+	}, admin, http.StatusInternalServerError)
+	saved := d.FindComment(reply.ID)
+	require.True(t, saved.IsPending)
+	require.Equal(t, reply.Content, saved.Content)
+	require.True(t, d.FindNotify(parent.UserID, reply.ID).IsEmpty(), "failed approval must not notify the reader")
+}
+
+func TestApprovalRetriesAfterNotificationWriteFailure(t *testing.T) {
+	for _, existing := range []bool{false, true} {
+		t.Run(fmt.Sprintf("existing=%v", existing), func(t *testing.T) {
+			app, router := NewApiTestApp()
+			t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+			handler.CommentUpdate(app.App, router)
+			d := app.Dao()
+			parent := entity.Comment{Content: "Parent", UserID: 1001, SiteName: "Site A", PageKey: "/test/1000.html"}
+			require.NoError(t, d.CreateComment(&parent))
+			reply := entity.Comment{Content: "Pending reply", UserID: 1002, SiteName: parent.SiteName, PageKey: parent.PageKey, Rid: parent.ID, RootID: parent.ID, IsPending: true}
+			require.NoError(t, d.CreateComment(&reply))
+			if existing {
+				n := d.NewNotify(parent.UserID, reply.ID)
+				require.NoError(t, d.NotifySetRead(&n))
+			}
+			reject := func(tx *gorm.DB) {
+				if tx.Statement.Table == "atk_notifies" {
+					tx.AddError(errors.New("notification write failed"))
+				}
+			}
+			require.NoError(t, d.DB().Callback().Create().Before("gorm:create").Register("test:notify_failure", reject))
+			require.NoError(t, d.DB().Callback().Update().Before("gorm:update").Register("test:notify_failure", reject))
+			t.Cleanup(func() {
+				d.DB().Callback().Create().Remove("test:notify_failure")
+				d.DB().Callback().Update().Remove("test:notify_failure")
+			})
+			admin, err := common.LoginGetUserToken(d.FindUserByID(1000), app.Conf().AppKey, 60)
+			require.NoError(t, err)
+			path := fmt.Sprintf("/comments/%d", reply.ID)
+			update := handler.ParamsCommentUpdate{Content: reply.Content, PageKey: reply.PageKey, SiteName: reply.SiteName, Rid: reply.Rid}
+			flowRequest(t, router, http.MethodPut, path, update, admin, http.StatusInternalServerError)
+			require.True(t, d.FindComment(reply.ID).IsPending)
+			notify := d.FindNotify(parent.UserID, reply.ID)
+			if existing {
+				require.True(t, notify.IsRead)
+			} else {
+				require.True(t, notify.IsEmpty())
+			}
+			require.NoError(t, d.DB().Callback().Create().Remove("test:notify_failure"))
+			require.NoError(t, d.DB().Callback().Update().Remove("test:notify_failure"))
+			flowRequest(t, router, http.MethodPut, path, update, admin, http.StatusOK)
+			require.False(t, d.FindComment(reply.ID).IsPending)
+			notify = d.FindNotify(parent.UserID, reply.ID)
+			require.False(t, notify.IsEmpty())
+			require.False(t, notify.IsRead)
+		})
+	}
+}
 
 func TestCommentEditChecksRelatedWrites(t *testing.T) {
 	for _, tc := range []struct {

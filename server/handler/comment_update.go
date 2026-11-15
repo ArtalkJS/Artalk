@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/artalkjs/artalk/v2/internal/core"
+	"github.com/artalkjs/artalk/v2/internal/dao"
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/internal/i18n"
 	"github.com/artalkjs/artalk/v2/internal/log"
@@ -127,21 +128,38 @@ func CommentUpdate(app *core.App, router fiber.Router) {
 		comment.IsCollapsed = p.IsCollapsed
 		comment.IsPinned = p.IsPinned
 
-		if p.IsPending != comment.IsPending {
-			// 待审状态发生改变
-			comment.IsPending = p.IsPending
-
-			// 待审状态被修改为 false，则重新发送邮件通知
-			if !comment.IsPending {
-				if err := renotifyWhenPendingModified(app, &comment); err != nil {
-					log.Error("[RenotifyWhenPendingModified] error: ", err)
-					return common.RespError(c, 500, "Renotify Err: "+err.Error())
-				}
+		approved := comment.IsPending && !p.IsPending
+		comment.IsPending = p.IsPending
+		var notify *entity.Notify
+		var emailService *core.EmailService
+		var saveErr error
+		err := app.Dao().Transaction(func(tx *dao.Dao) error {
+			if saveErr = tx.UpdateComment(&comment); saveErr != nil {
+				return saveErr
 			}
+			if !approved {
+				return nil
+			}
+			var err error
+			notify, err = prepareApprovalNotification(tx, &comment)
+			if err != nil || notify == nil {
+				return err
+			}
+			emailService, err = core.AppService[*core.EmailService](app)
+			return err
+		})
+		if err != nil {
+			if saveErr != nil {
+				return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
+			}
+			log.Error("[RenotifyWhenPendingModified] error: ", err)
+			return common.RespError(c, 500, "Renotify Err: "+err.Error())
 		}
-
-		if err := app.Dao().UpdateComment(&comment); err != nil {
-			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
+		app.Dao().CacheAction(func(cache *dao.DaoCache) {
+			cache.CommentCacheSave(&comment)
+		})
+		if notify != nil {
+			emailService.AsyncSend(notify)
 		}
 
 		cookedComment := app.Dao().CookComment(&comment)
@@ -153,36 +171,28 @@ func CommentUpdate(app *core.App, router fiber.Router) {
 	}))
 }
 
-func renotifyWhenPendingModified(app *core.App, comment *entity.Comment) (err error) {
+func prepareApprovalNotification(d *dao.Dao, comment *entity.Comment) (*entity.Notify, error) {
 	if comment.Rid == 0 {
-		return // Root 评论不发送通知，因为这个评论已经被管理员看到了
+		return nil, nil // Root 评论不发送通知，因为这个评论已经被管理员看到了
 	}
 
-	pComment := app.Dao().FindComment(comment.Rid)
-	if app.Dao().FetchUserForComment(&pComment).IsAdmin {
-		return // 回复对象是管理员，则不再发送通知，因为已经看到了
+	pComment := d.FindComment(comment.Rid)
+	if d.FetchUserForComment(&pComment).IsAdmin {
+		return nil, nil // 回复对象是管理员，则不再发送通知，因为已经看到了
 	}
 
 	if comment.UserID == pComment.UserID {
-		return // 自己回复自己，不通知
+		return nil, nil // 自己回复自己，不通知
 	}
 
-	notify := app.Dao().FindCreateNotify(pComment.UserID, comment.ID)
+	notify := d.FindCreateNotify(pComment.UserID, comment.ID)
 	if notify.IsEmailed {
-		return // 邮件已经发送过，则不再重复发送
+		return nil, nil // 邮件已经发送过，则不再重复发送
 	}
 
 	// 设置通知为未读状态
-	if err := app.Dao().NotifySetInitial(&notify); err != nil {
-		return fmt.Errorf("func NotifySetInitial err: %w", err)
+	if err := d.NotifySetInitial(&notify); err != nil {
+		return nil, fmt.Errorf("func NotifySetInitial err: %w", err)
 	}
-
-	// 邮件通知
-	emailService, err := core.AppService[*core.EmailService](app)
-	if err != nil {
-		return err
-	}
-	emailService.AsyncSend(&notify)
-
-	return
+	return &notify, nil
 }

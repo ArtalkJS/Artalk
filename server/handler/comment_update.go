@@ -91,19 +91,27 @@ func CommentUpdate(app *core.App, router fiber.Router) {
 
 		// find or save new user
 		user, err := app.Dao().FindCreateUser(p.Nick, p.Email, p.Link)
-		if err == nil && user.ID != comment.UserID {
+		if err != nil {
+			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("User")}))
+		}
+		if user.ID != comment.UserID {
 			comment.UserID = user.ID
 		}
 
 		// user link update
 		if p.Link != "" && p.Link != user.Link {
 			user.Link = p.Link
-			app.Dao().UpdateUser(&user)
+			if err := app.Dao().UpdateUser(&user); err != nil {
+				return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("User")}))
+			}
 		}
 
 		// pageKey
 		if p.PageKey != "" && p.PageKey != comment.PageKey {
-			app.Dao().FindCreatePage(p.PageKey, "", p.SiteName)
+			page := app.Dao().FindCreatePage(p.PageKey, "", p.SiteName)
+			if page.IsEmpty() {
+				return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Page")}))
+			}
 			comment.PageKey = p.PageKey
 		}
 

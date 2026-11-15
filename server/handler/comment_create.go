@@ -90,6 +90,9 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			if parentComment.PageKey != p.PageKey {
 				return common.RespError(c, 400, "Inconsistent with the page_key of the parent comment")
 			}
+			if parentComment.SiteName != p.SiteName {
+				return common.RespError(c, 400, "Inconsistent with the site_name of the parent comment")
+			}
 			if !parentComment.IsAllowReply() {
 				return common.RespError(c, 400, i18n.T("Cannot reply to this comment"))
 			}

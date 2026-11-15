@@ -14,6 +14,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/artalkjs/artalk/v2/internal/cache"
 	"github.com/artalkjs/artalk/v2/internal/config"
 	"github.com/artalkjs/artalk/v2/internal/core"
 	"github.com/artalkjs/artalk/v2/internal/dao"
@@ -319,5 +320,24 @@ func TestDatabaseCompatibility(t *testing.T) {
 		var deleted entity.Page
 		require.NoError(t, database.Unscoped().First(&deleted, page.ID).Error)
 		require.True(t, deleted.DeletedAt.Valid)
+	})
+
+	t.Run("account merge updates cached comment ownership", func(t *testing.T) {
+		cached, err := cache.New(config.CacheConf{Type: config.CacheTypeBuiltin})
+		require.NoError(t, err)
+		d.SetCache(dao.NewCacheAdaptor(cached))
+		t.Cleanup(func() { d.SetCache(nil); cached.Close() })
+		handler.AuthMergeApply(app, router)
+		source, err := d.NewUser("Old profile", "merge@example.org", "")
+		require.NoError(t, err)
+		target, err := d.NewUser("New profile", source.Email, "")
+		require.NoError(t, err)
+		comment := entity.Comment{Content: "Moved comment", UserID: source.ID, SiteName: site.Name, PageKey: page.Key}
+		require.NoError(t, d.CreateComment(&comment))
+		require.Equal(t, source.ID, d.FindComment(comment.ID).UserID)
+		token, err := common.LoginGetUserToken(source, app.Conf().AppKey, 60)
+		require.NoError(t, err)
+		flowRequest(t, router, http.MethodPost, "/auth/merge", handler.RequestAuthDataMergeApply{UserName: target.Name}, token, http.StatusOK)
+		require.Equal(t, target.ID, d.FindComment(comment.ID).UserID)
 	})
 }

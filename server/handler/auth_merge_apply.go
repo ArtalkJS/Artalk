@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/artalkjs/artalk/v2/internal/core"
+	"github.com/artalkjs/artalk/v2/internal/dao"
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/internal/log"
 	"github.com/artalkjs/artalk/v2/internal/sync"
@@ -97,13 +98,24 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 			return " | " + getUsersInfo(otherUsers) + " -> " + getUserInfo(targetUser)
 		}
 
+		var affectedComments []entity.Comment
+		hasCache := false
+		app.Dao().CacheAction(func(*dao.DaoCache) { hasCache = true })
+
 		// Begin a transaction to Merge all user data to target user
 		if err := app.Dao().DB().Transaction(func(tx *gorm.DB) error {
 			// Merge all user data to target user
 			// @note Search code files under `./internal/entity` keyword 'UserID` to find all related tables
 			for _, u := range otherUsers {
 				// comments
-				if tx := app.Dao().DB().Model(&entity.Comment{}).
+				if hasCache {
+					var comments []entity.Comment
+					if err := tx.Select("id", "rid").Where("user_id = ?", u.ID).Find(&comments).Error; err != nil {
+						return err
+					}
+					affectedComments = append(affectedComments, comments...)
+				}
+				if tx := tx.Model(&entity.Comment{}).
 					Where("user_id = ?", u.ID).Update("user_id", targetUser.ID); tx.Error != nil {
 					return tx.Error // if error the whole transaction will be rollback
 				} else {
@@ -111,7 +123,7 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 				}
 
 				// notifies
-				if tx := app.Dao().DB().Model(&entity.Notify{}).
+				if tx := tx.Model(&entity.Notify{}).
 					Where("user_id = ?", u.ID).Update("user_id", targetUser.ID); tx.Error != nil {
 					return tx.Error
 				} else {
@@ -119,7 +131,7 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 				}
 
 				// votes
-				if tx := app.Dao().DB().Model(&entity.Vote{}).
+				if tx := tx.Model(&entity.Vote{}).
 					Where("user_id = ?", u.ID).Update("user_id", targetUser.ID); tx.Error != nil {
 					return tx.Error
 				} else {
@@ -127,7 +139,7 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 				}
 
 				// auth_identities
-				if tx := app.Dao().DB().Model(&entity.AuthIdentity{}).
+				if tx := tx.Model(&entity.AuthIdentity{}).
 					Where("user_id = ?", u.ID).Update("user_id", targetUser.ID); tx.Error != nil {
 					return tx.Error
 				}
@@ -138,6 +150,11 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 			log.Error("Failed to merge user data: ", err.Error(), getMergeLogSummary())
 			return common.RespError(c, 500, "Failed to merge data")
 		}
+		app.Dao().CacheAction(func(cache *dao.DaoCache) {
+			for i := range affectedComments {
+				cache.CommentCacheDel(&affectedComments[i])
+			}
+		})
 
 		// Delete other users except target user
 		for _, u := range otherUsers {

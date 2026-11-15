@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -18,8 +19,10 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/dao"
 	"github.com/artalkjs/artalk/v2/internal/db"
 	"github.com/artalkjs/artalk/v2/internal/entity"
+	"github.com/artalkjs/artalk/v2/internal/i18n"
 	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/artalkjs/artalk/v2/server/handler"
+	"github.com/artalkjs/artalk/v2/server/middleware/limiter"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
@@ -144,6 +147,26 @@ func TestDatabaseCompatibility(t *testing.T) {
 	adminCopy := entity.Notify{UserID: admin.ID, CommentID: reply.ID, Key: "admin"}
 	require.NoError(t, database.Create(&owned).Error)
 	require.NoError(t, database.Create(&adminCopy).Error)
+
+	t.Run("reply site matching follows database collation", func(t *testing.T) {
+		name := strings.ToLower(site.Name)
+		if d.FindSite(name).ID != site.ID {
+			t.Skip("database treats site names as case-sensitive")
+		}
+		r := fiber.New()
+		r.Use(limiter.ActionLimitMiddleware(app, limiter.ActionLimitConf{}))
+		handler.CommentCreate(app, r)
+		for _, pair := range [][2]string{{site.Name, name}, {name, site.Name}} {
+			require.NoError(t, database.Model(&parentA).Update("site_name", pair[0]).Error)
+			response := flowRequest(t, r, http.MethodPost, "/comments", handler.ParamsCommentCreate{
+				Name: "Reader", Email: "reader@example.org", Content: "Reply", PageKey: page.Key, SiteName: pair[1], Rid: parentA.ID,
+			}, "", http.StatusBadRequest)
+			var failure map[string]any
+			require.NoError(t, json.Unmarshal(response, &failure))
+			require.Equal(t, i18n.T("Cannot reply to this comment"), failure["msg"])
+		}
+		require.NoError(t, database.Model(&parentA).Update("site_name", site.Name).Error)
+	})
 
 	t.Run("guest ownership and notification updates", func(t *testing.T) {
 		path := fmt.Sprintf("/comments/%d", parentA.ID)

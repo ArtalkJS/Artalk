@@ -29,15 +29,16 @@ func TestRequestParameters(t *testing.T) {
 	for _, tc := range []struct {
 		name, method, path, contentType, body string
 		status                                int
+		want                                  params
 	}{
-		{"query", "GET", "/input?name=Reader&enabled=false&limit=3", "", "", 200},
-		{"JSON", "POST", "/input", "application/json", `{"name":"Reader","enabled":false,"limit":3}`, 200},
-		{"missing required", "GET", "/input?enabled=false", "", "", 400},
-		{"null required", "POST", "/input", "application/json", `{"name":null,"enabled":false}`, 400},
-		{"invalid query type", "GET", "/input?name=Reader&enabled=false&limit=no", "", "", 400},
-		{"invalid path type", "GET", "/input/no?name=Reader&enabled=false", "", "", 400},
-		{"invalid JSON type", "POST", "/input", "application/json", `{"name":"Reader","enabled":false,"limit":"no"}`, 400},
-		{"malformed JSON", "POST", "/input", "application/json", `{`, 400},
+		{"query", "GET", "/input?name=Reader&enabled=false&limit=3", "", "", 200, params{Name: "Reader", Limit: 3}},
+		{"JSON", "POST", "/input", "application/json", `{"name":"Reader","enabled":false,"limit":3}`, 200, params{Name: "Reader", Limit: 3}},
+		{"missing required", "GET", "/input?enabled=false", "", "", 400, params{}},
+		{"null required", "POST", "/input", "application/json", `{"name":null,"enabled":null}`, 200, params{}},
+		{"invalid query type", "GET", "/input?name=Reader&enabled=false&limit=no", "", "", 400, params{}},
+		{"invalid path type", "GET", "/input/no?name=Reader&enabled=false", "", "", 400, params{}},
+		{"invalid JSON type", "POST", "/input", "application/json", `{"name":"Reader","enabled":false,"limit":"no"}`, 400, params{}},
+		{"malformed JSON", "POST", "/input", "application/json", `{`, 400, params{}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			req := httptest.NewRequest(tc.method, tc.path, strings.NewReader(tc.body))
@@ -53,7 +54,7 @@ func TestRequestParameters(t *testing.T) {
 			if tc.status == 200 {
 				var parsed params
 				require.NoError(t, json.Unmarshal(data, &parsed))
-				require.Equal(t, params{Name: "Reader", Limit: 3}, parsed)
+				require.Equal(t, tc.want, parsed)
 			} else {
 				var failure map[string]any
 				require.NoError(t, json.Unmarshal(data, &failure))

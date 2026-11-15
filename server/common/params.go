@@ -81,7 +81,7 @@ func ValidateRequired(c *fiber.Ctx, destParams interface{}) (isContinue bool, re
 					log.Error("[Validator] "+reqPath+" field '"+k.Name+"' ", err)
 					return ""
 				}
-				if v, ok := destMap[paramKey]; ok && v != nil {
+				if v, ok := destMap[paramKey]; ok {
 					return fmt.Sprintf("%v", v)
 				}
 				return ""

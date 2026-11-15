@@ -14,7 +14,7 @@ func TestI18nPatch(t *testing.T) {
 	test := func(input string, expected string) {
 		t.Run("locale="+input, func(t *testing.T) {
 			config := &Config{Locale: input}
-			config.i18nPatch()
+			config.i18nPatch(nil)
 			assert.Equal(t, expected, config.Locale)
 		})
 	}

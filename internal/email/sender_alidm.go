@@ -43,6 +43,11 @@ func (s *AliDMSender) Send(email *Email) bool {
 		log.Error("[Email] ", "Email sending failed via Aliyun DM", err)
 		return false
 	}
+	// The SDK returns provider errors as decoded JSON, without a Go error.
+	if code, ok := resp["Code"].(string); ok && code != "" {
+		log.Error("[Email] Email rejected by Aliyun DM: ", code)
+		return false
+	}
 
 	log.Debug(resp)
 

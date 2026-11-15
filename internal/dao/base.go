@@ -37,6 +37,13 @@ func (dao *Dao) DB() *DB {
 	return dao.db
 }
 
+// Transaction avoids caching uncommitted changes. Callers invalidate caches after commit.
+func (dao *Dao) Transaction(fn func(*Dao) error) error {
+	return dao.db.Transaction(func(tx *gorm.DB) error {
+		return fn(&Dao{db: tx})
+	})
+}
+
 func (dao *Dao) SetCache(cache *DaoCache) {
 	dao.cache = cache
 }

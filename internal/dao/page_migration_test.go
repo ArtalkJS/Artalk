@@ -11,8 +11,8 @@ import (
 )
 
 func TestMergeLegacyPages(t *testing.T) {
-	for _, fail := range []bool{false, true} {
-		t.Run(map[bool]string{false: "preserve metadata", true: "rollback on write failure"}[fail], func(t *testing.T) {
+	for _, failure := range []string{"none", "pages", "votes", "delete"} {
+		t.Run(failure, func(t *testing.T) {
 			storage := newMigrationDB(t)
 			d := dao.NewDao(storage)
 			require.NoError(t, storage.Exec("ALTER TABLE "+d.GetTableName(&entity.Page{})+" ADD COLUMN accessible_url TEXT").Error)
@@ -22,14 +22,43 @@ func TestMergeLegacyPages(t *testing.T) {
 				{SiteName: "a", Key: "bc", Title: "Different site and key", PV: 11},
 			}
 			require.NoError(t, storage.Create(&pages).Error)
-			if fail {
-				require.NoError(t, storage.Callback().Create().Before("gorm:create").Register("test:merge_failure", func(tx *gorm.DB) {
-					tx.AddError(errors.New("cannot write merged pages"))
-				}))
-				require.ErrorContains(t, d.MergePages(), "cannot write merged pages")
+			deleted := entity.Page{SiteName: "Blog", Key: "/deleted", Title: "Keep deletion history"}
+			require.NoError(t, storage.Create(&deleted).Error)
+			require.NoError(t, storage.Delete(&deleted).Error)
+			votes := []entity.Vote{
+				{TargetID: pages[1].ID, Type: entity.VoteTypePageUp},
+				{TargetID: pages[1].ID, Type: entity.VoteTypePageDown},
+				{TargetID: pages[1].ID, Type: entity.VoteTypeCommentUp},
+			}
+			require.NoError(t, storage.Create(&votes).Error)
+			// Compare database snapshots to account for driver timestamp precision and time zones.
+			require.NoError(t, storage.Order("id").Find(&pages).Error)
+			require.NoError(t, storage.Unscoped().First(&deleted, deleted.ID).Error)
+			require.NoError(t, storage.Order("id").Find(&votes).Error)
+			if failure != "none" {
+				reject := func(tx *gorm.DB) {
+					tx.AddError(errors.New("cannot merge pages"))
+				}
+				if failure == "delete" {
+					require.NoError(t, storage.Callback().Delete().Before("gorm:delete").Register("test:merge_failure", reject))
+				} else {
+					require.NoError(t, storage.Callback().Update().Before("gorm:update").Register("test:merge_failure", func(tx *gorm.DB) {
+						model := any(&entity.Page{})
+						if failure == "votes" {
+							model = &entity.Vote{}
+						}
+						if tx.Statement.Table == d.GetTableName(model) {
+							reject(tx)
+						}
+					}))
+				}
+				require.ErrorContains(t, d.MergePages(), "cannot merge pages")
 				var saved []entity.Page
 				require.NoError(t, storage.Order("id").Find(&saved).Error)
 				require.Equal(t, pages, saved)
+				var savedVotes []entity.Vote
+				require.NoError(t, storage.Order("id").Find(&savedVotes).Error)
+				require.Equal(t, votes, savedVotes)
 				require.True(t, storage.Migrator().HasColumn(&entity.Page{}, "accessible_url"))
 				return
 			}
@@ -46,6 +75,14 @@ func TestMergeLegacyPages(t *testing.T) {
 				require.Equal(t, 4, saved[0].VoteDown)
 				require.Equal(t, pages[2], saved[1])
 				require.False(t, storage.Migrator().HasColumn(&entity.Page{}, "accessible_url"))
+				var kept entity.Page
+				require.NoError(t, storage.Unscoped().First(&kept, deleted.ID).Error)
+				require.Equal(t, deleted, kept)
+				var savedVotes []entity.Vote
+				require.NoError(t, storage.Order("id").Find(&savedVotes).Error)
+				expected := append([]entity.Vote(nil), votes...)
+				expected[0].TargetID, expected[1].TargetID = pages[0].ID, pages[0].ID
+				require.Equal(t, expected, savedVotes)
 			}
 		})
 	}

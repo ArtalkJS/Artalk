@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/artalkjs/artalk/v2/internal/artransfer"
@@ -59,4 +60,25 @@ func TestAdminTransferUploadImportAndExport(t *testing.T) {
 		}
 	}
 	t.Fatal("imported comment missing from the export")
+}
+
+func TestTransferUploadReportsMissingFilesAndUnavailableTempStorage(t *testing.T) {
+	app, router := NewApiTestApp()
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	handler.Transfer(app.App, router)
+	admin, err := common.LoginGetUserToken(app.Dao().FindUserByID(1000), app.Conf().AppKey, 60)
+	require.NoError(t, err)
+	flowRequest(t, router, "POST", "/transfer/upload", map[string]any{}, admin, 500)
+	blocked := filepath.Join(t.TempDir(), "not-a-directory")
+	require.NoError(t, os.WriteFile(blocked, []byte("keep"), 0600))
+	for _, variable := range []string{"TMPDIR", "TMP", "TEMP"} {
+		t.Setenv(variable, blocked)
+	}
+	response, err := router.Test(multipartUpload(t, "/transfer/upload", "test.artrans", []byte("[]"), admin))
+	require.NoError(t, err)
+	defer response.Body.Close()
+	require.Equal(t, 500, response.StatusCode)
+	contents, err := os.ReadFile(blocked)
+	require.NoError(t, err)
+	require.Equal(t, "keep", string(contents))
 }

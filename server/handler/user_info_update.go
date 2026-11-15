@@ -87,7 +87,7 @@ func UserInfoUpdate(app *core.App, router fiber.Router) {
 		if p.Link != "" {
 			// Check link format
 			if !utils.ValidateURL(p.Link) {
-				user.Link = "https://" + p.Link
+				p.Link = "https://" + p.Link
 			}
 
 			user.Link = p.Link

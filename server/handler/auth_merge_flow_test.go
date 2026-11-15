@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/artalkjs/artalk/v2/internal/cache"
@@ -36,6 +37,10 @@ func TestMergeMovesAccountDataToSelectedProfile(t *testing.T) {
 	require.NoError(t, err)
 	comment := entity.Comment{UserID: source.ID, Content: "Comment to keep", SiteName: "Site A", PageKey: "/test/1000.html"}
 	require.NoError(t, d.CreateComment(&comment))
+	unrelated := entity.Comment{UserID: 1001, Content: "Unrelated cache entry"}
+	require.NoError(t, d.CreateComment(&unrelated))
+	require.NoError(t, d.DB().Model(&unrelated).UpdateColumn("content", "Changed directly").Error)
+	require.Equal(t, "Unrelated cache entry", d.FindComment(unrelated.ID).Content)
 	notify := d.NewNotify(source.ID, comment.ID)
 	require.NotZero(t, notify.ID)
 	vote := entity.Vote{UserID: source.ID, TargetID: comment.ID, Type: entity.VoteTypeCommentUp}
@@ -61,6 +66,7 @@ func TestMergeMovesAccountDataToSelectedProfile(t *testing.T) {
 	require.NotEmpty(t, result.UserToken)
 
 	require.Equal(t, target.ID, d.FindComment(comment.ID).UserID)
+	require.Equal(t, "Unrelated cache entry", d.FindComment(unrelated.ID).Content)
 	require.Equal(t, notify.ID, d.FindNotify(target.ID, comment.ID).ID)
 	require.NoError(t, d.DB().First(&vote, vote.ID).Error)
 	require.Equal(t, target.ID, vote.UserID)
@@ -69,6 +75,29 @@ func TestMergeMovesAccountDataToSelectedProfile(t *testing.T) {
 	flowRequest(t, router, http.MethodGet, "/auth/merge", nil, oldToken, http.StatusUnauthorized)
 	require.NoError(t, json.Unmarshal(flowRequest(t, router, http.MethodGet, "/auth/merge", nil, result.UserToken, http.StatusOK), &check))
 	require.False(t, check.NeedMerge)
+}
+
+func TestAccountMergeWithoutCacheAvoidsFullCommentScan(t *testing.T) {
+	app, router := NewApiTestApp()
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	handler.AuthMergeApply(app.App, router)
+	d := app.Dao()
+	d.SetCache(nil)
+	source, err := d.NewUser("Source", "scan@example.org", "")
+	require.NoError(t, err)
+	target, err := d.NewUser("Target", source.Email, "")
+	require.NoError(t, err)
+	fullScan := false
+	require.NoError(t, d.DB().Callback().Query().After("gorm:query").Register("test:full_scan", func(tx *gorm.DB) {
+		if tx.Statement.Table == "atk_comments" && !strings.Contains(strings.ToLower(tx.Statement.SQL.String()), "user_id") {
+			fullScan = true
+		}
+	}))
+	t.Cleanup(func() { d.DB().Callback().Query().Remove("test:full_scan") })
+	token, err := common.LoginGetUserToken(source, app.Conf().AppKey, 60)
+	require.NoError(t, err)
+	flowRequest(t, router, http.MethodPost, "/auth/merge", handler.RequestAuthDataMergeApply{UserName: target.Name}, token, http.StatusOK)
+	require.False(t, fullScan)
 }
 
 func TestAccountMergeRollsBackFailedDataTransfers(t *testing.T) {

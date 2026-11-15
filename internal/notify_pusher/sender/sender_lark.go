@@ -22,7 +22,7 @@ func SendLark(webhookURL string, title string, content string, isCard bool) {
 	if isCard {
 		texts := strings.Split(strings.TrimSpace(content), "\n")
 		link := texts[len(texts)-1]
-		if utils.ValidateURL(link) {
+		if len(texts) > 1 && utils.ValidateURL(link) {
 			content = strings.Join(texts[1:len(texts)-1], "\n")
 		} else {
 			content = strings.Join(texts[1:], "\n")

@@ -73,6 +73,9 @@ func (q *EmailQueue) handleEmail(email *Email) {
 
 // Add an email to the sending queue
 func (q *EmailQueue) Push(email *Email) {
+	q.mux.Lock()
+	defer q.mux.Unlock()
+
 	if q.closed {
 		log.Error("[Email] Queue closed, dropping email")
 		return

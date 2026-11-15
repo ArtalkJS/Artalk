@@ -2,13 +2,10 @@ package dao_test
 
 import (
 	"errors"
-	"path/filepath"
 	"strings"
 	"testing"
 
-	"github.com/artalkjs/artalk/v2/internal/config"
 	"github.com/artalkjs/artalk/v2/internal/dao"
-	"github.com/artalkjs/artalk/v2/internal/db"
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
@@ -24,16 +21,14 @@ func TestMigrateRootIDsForExistingThreads(t *testing.T) {
 
 func testMigrateRootIDs(t *testing.T, fallback bool) {
 	t.Helper()
-	storage, err := db.NewDB(config.DBConf{Type: config.TypeSQLite, Dsn: filepath.Join(t.TempDir(), "legacy.db"), TablePrefix: "atk_"})
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, db.CloseDB(storage)) })
+	storage := newMigrationDB(t)
 
 	type oldComment struct {
 		gorm.Model
 		Rid     uint
 		Content string
 	}
-	const table = "atk_comments"
+	table := storage.NamingStrategy.TableName("Comment")
 	require.NoError(t, storage.Table(table).AutoMigrate(&oldComment{}))
 	records := []oldComment{
 		{Model: gorm.Model{ID: 1}, Content: "Thread A"},

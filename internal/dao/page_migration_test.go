@@ -2,12 +2,9 @@ package dao_test
 
 import (
 	"errors"
-	"path/filepath"
 	"testing"
 
-	"github.com/artalkjs/artalk/v2/internal/config"
 	"github.com/artalkjs/artalk/v2/internal/dao"
-	"github.com/artalkjs/artalk/v2/internal/db"
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
@@ -16,11 +13,9 @@ import (
 func TestMergeLegacyPages(t *testing.T) {
 	for _, fail := range []bool{false, true} {
 		t.Run(map[bool]string{false: "preserve metadata", true: "rollback on write failure"}[fail], func(t *testing.T) {
-			storage, err := db.NewDB(config.DBConf{Type: config.TypeSQLite, Dsn: filepath.Join(t.TempDir(), "pages.db"), TablePrefix: "atk_"})
-			require.NoError(t, err)
-			t.Cleanup(func() { require.NoError(t, db.CloseDB(storage)) })
+			storage := newMigrationDB(t)
 			d := dao.NewDao(storage)
-			require.NoError(t, storage.Exec("ALTER TABLE atk_pages ADD COLUMN accessible_url TEXT").Error)
+			require.NoError(t, storage.Exec("ALTER TABLE "+d.GetTableName(&entity.Page{})+" ADD COLUMN accessible_url TEXT").Error)
 			pages := []entity.Page{
 				{SiteName: "ab", Key: "c", Title: "Original", AdminOnly: true, PV: 3, VoteUp: 2},
 				{SiteName: "ab", Key: "c", Title: "Duplicate", PV: 7, VoteUp: 1, VoteDown: 4},

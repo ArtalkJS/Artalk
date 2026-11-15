@@ -103,7 +103,7 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 			// @note Search code files under `./internal/entity` keyword 'UserID` to find all related tables
 			for _, u := range otherUsers {
 				// comments
-				if tx := app.Dao().DB().Model(&entity.Comment{}).
+				if tx := tx.Model(&entity.Comment{}).
 					Where("user_id = ?", u.ID).Update("user_id", targetUser.ID); tx.Error != nil {
 					return tx.Error // if error the whole transaction will be rollback
 				} else {
@@ -111,7 +111,7 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 				}
 
 				// notifies
-				if tx := app.Dao().DB().Model(&entity.Notify{}).
+				if tx := tx.Model(&entity.Notify{}).
 					Where("user_id = ?", u.ID).Update("user_id", targetUser.ID); tx.Error != nil {
 					return tx.Error
 				} else {
@@ -119,7 +119,7 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 				}
 
 				// votes
-				if tx := app.Dao().DB().Model(&entity.Vote{}).
+				if tx := tx.Model(&entity.Vote{}).
 					Where("user_id = ?", u.ID).Update("user_id", targetUser.ID); tx.Error != nil {
 					return tx.Error
 				} else {
@@ -127,7 +127,7 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 				}
 
 				// auth_identities
-				if tx := app.Dao().DB().Model(&entity.AuthIdentity{}).
+				if tx := tx.Model(&entity.AuthIdentity{}).
 					Where("user_id = ?", u.ID).Update("user_id", targetUser.ID); tx.Error != nil {
 					return tx.Error
 				}
@@ -147,6 +147,9 @@ func AuthMergeApply(app *core.App, router fiber.Router) {
 				resp.DeletedUser++
 			}
 		}
+
+		// Bulk ownership updates bypass the DAO's per-record cache writes.
+		app.Dao().CacheFlushAll()
 
 		// Re-login
 		jwtToken, err := common.LoginGetUserToken(targetUser, app.Conf().AppKey, app.Conf().LoginTimeout)

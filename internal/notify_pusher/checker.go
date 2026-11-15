@@ -46,7 +46,7 @@ func (pusher *NotifyPusher) checkNeedSendEmailToAdmin(comment *entity.Comment, p
 
 	// 用户回复对象是该管理员，不提醒
 	// (避免当 NoiseModeOn = true 时，重复发送)
-	if parentComment.UserID == admin.ID {
+	if parentComment != nil && parentComment.UserID == admin.ID {
 		return false
 	}
 

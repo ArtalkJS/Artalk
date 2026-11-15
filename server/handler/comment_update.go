@@ -117,21 +117,18 @@ func CommentUpdate(app *core.App, router fiber.Router) {
 		comment.IsCollapsed = p.IsCollapsed
 		comment.IsPinned = p.IsPinned
 
-		if p.IsPending != comment.IsPending {
-			// 待审状态发生改变
-			comment.IsPending = p.IsPending
-
-			// 待审状态被修改为 false，则重新发送邮件通知
-			if !comment.IsPending {
-				if err := renotifyWhenPendingModified(app, &comment); err != nil {
-					log.Error("[RenotifyWhenPendingModified] error: ", err)
-					return common.RespError(c, 500, "Renotify Err: "+err.Error())
-				}
-			}
-		}
-
+		approved := comment.IsPending && !p.IsPending
+		comment.IsPending = p.IsPending
 		if err := app.Dao().UpdateComment(&comment); err != nil {
 			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("Comment")}))
+		}
+
+		// Notify only after the approval has been saved.
+		if approved {
+			if err := renotifyWhenPendingModified(app, &comment); err != nil {
+				log.Error("[RenotifyWhenPendingModified] error: ", err)
+				return common.RespError(c, 500, "Renotify Err: "+err.Error())
+			}
 		}
 
 		cookedComment := app.Dao().CookComment(&comment)

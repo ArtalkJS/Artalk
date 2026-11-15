@@ -75,10 +75,6 @@ func ValidateRequired(c *fiber.Ctx, destParams interface{}) (isContinue bool, re
 			case reqMethod == "GET" || reqMethod == "DELETE":
 				return c.Query(paramKey)
 			case reqMethod == "POST" || reqMethod == "PUT":
-				contentType := c.Get(fiber.HeaderContentType)
-				if strings.HasPrefix(contentType, fiber.MIMEApplicationForm) || strings.HasPrefix(contentType, fiber.MIMEMultipartForm) {
-					return c.FormValue(paramKey)
-				}
 				var destMap map[string]interface{}
 				err := c.BodyParser(&destMap)
 				if err != nil {

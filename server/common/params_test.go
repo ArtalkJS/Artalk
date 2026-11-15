@@ -14,9 +14,9 @@ import (
 func TestRequestParameters(t *testing.T) {
 	type params struct {
 		ID      int    `params:"id"`
-		Name    string `json:"name" form:"name" query:"name" validate:"required"`
-		Limit   int    `json:"limit" form:"limit" query:"limit" `
-		Enabled bool   `json:"enabled" form:"enabled" query:"enabled" validate:"required"`
+		Name    string `json:"name" query:"name" validate:"required"`
+		Limit   int    `json:"limit" query:"limit"`
+		Enabled bool   `json:"enabled" query:"enabled" validate:"required"`
 	}
 	router := fiber.New(fiber.Config{ErrorHandler: ErrorHandler})
 	router.All("/input/:id?", func(c *fiber.Ctx) error {
@@ -32,7 +32,6 @@ func TestRequestParameters(t *testing.T) {
 	}{
 		{"query", "GET", "/input?name=Reader&enabled=false&limit=3", "", "", 200},
 		{"JSON", "POST", "/input", "application/json", `{"name":"Reader","enabled":false,"limit":3}`, 200},
-		{"form", "POST", "/input", "application/x-www-form-urlencoded", "name=Reader&enabled=false&limit=3", 200},
 		{"missing required", "GET", "/input?enabled=false", "", "", 400},
 		{"null required", "POST", "/input", "application/json", `{"name":null,"enabled":false}`, 400},
 		{"invalid query type", "GET", "/input?name=Reader&enabled=false&limit=no", "", "", 400},

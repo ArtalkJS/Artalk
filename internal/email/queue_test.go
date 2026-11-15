@@ -1,6 +1,7 @@
 package email
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -105,4 +106,19 @@ func (s *mockSender) Send(email *Email) bool {
 		s.OnSend(email)
 	}
 	return s.SendResult
+}
+
+func TestQueueConcurrentCloseAndPush(t *testing.T) {
+	q := NewQueue(EmailConf{Sender: &mockSender{SendResult: true}})
+	start := make(chan struct{})
+	var workers sync.WaitGroup
+	for range 32 {
+		workers.Go(func() { <-start; q.Push(&Email{ToAddr: "reader@example.org"}) })
+	}
+	workers.Go(func() { <-start; q.Close() })
+	close(start)
+	workers.Wait()
+	q.Close()
+	q.Push(&Email{}) // Closed queues must reject new work without a panic.
+	assert.True(t, q.closed)
 }

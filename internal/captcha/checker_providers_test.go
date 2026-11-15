@@ -31,26 +31,26 @@ func TestRemoteCaptchaVerification(t *testing.T) {
 		{
 			name: "hCaptcha", endpoint: HCAPTCHA_API, input: userToken,
 			accepted: `{"success":true}`, rejected: `{"success":false,"error-codes":["invalid-input-response"]}`,
-			checker: NewHCaptchaChecker(&config.HCaptchaConf{SecretKey: secret}, user),
+			checker: NewCaptchaChecker(&CheckerConf{CaptchaConf: config.CaptchaConf{CaptchaType: config.TypeHCaptcha, HCaptcha: config.HCaptchaConf{SecretKey: secret}}, User: *user}),
 			fields:  url.Values{"secret": {secret}, "response": {userToken}, "remoteip": {user.IP}},
 		},
 		{
 			name: "reCAPTCHA", endpoint: RECAPTCHA_API, input: userToken,
 			accepted: `{"success":true}`, rejected: `{"success":false,"error-codes":["invalid-input-response"]}`,
-			checker: NewReCaptchaChecker(&config.ReCaptchaConf{SecretKey: secret}, user),
+			checker: NewCaptchaChecker(&CheckerConf{CaptchaConf: config.CaptchaConf{CaptchaType: config.TypeReCaptcha, ReCaptcha: config.ReCaptchaConf{SecretKey: secret}}, User: *user}),
 			fields:  url.Values{"secret": {secret}, "response": {userToken}, "remoteip": {user.IP}},
 		},
 		{
 			name: "Turnstile", endpoint: TURNSTILE_API, input: userToken,
 			accepted: `{"success":true}`, rejected: `{"success":false,"error-codes":["invalid-input-response"]}`,
-			checker: NewTurnstileChecker(&config.TurnstileConf{SecretKey: secret}, user),
+			checker: NewCaptchaChecker(&CheckerConf{CaptchaConf: config.CaptchaConf{CaptchaType: config.TypeTurnstile, Turnstile: config.TurnstileConf{SecretKey: secret}}, User: *user}),
 			fields:  url.Values{"secret": {secret}, "response": {userToken}, "remoteip": {user.IP}},
 		},
 		{
 			name: "Geetest", endpoint: GEETEST_API + "/validate?captcha_id=test-site",
 			input:    `{"lot_number":"test-lot","captcha_output":"fixture","pass_token":"issued-test-token","gen_time":"123"}`,
 			accepted: `{"result":"success"}`, rejected: `{"result":"fail","reason":"invalid result"}`,
-			checker: NewGeetestChecker(&config.GeetestConf{CaptchaID: "test-site", CaptchaKey: secret}, user),
+			checker: NewCaptchaChecker(&CheckerConf{CaptchaConf: config.CaptchaConf{CaptchaType: config.TypeGeetest, Geetest: config.GeetestConf{CaptchaID: "test-site", CaptchaKey: secret}}, User: *user}),
 			fields: url.Values{
 				"lot_number": {"test-lot"}, "captcha_output": {"fixture"}, "pass_token": {userToken},
 				"gen_time": {"123"}, "sign_token": {"c672b146a5a8d4a98569121df6a3c01dbca9ca6df46ba10ceaf74d3ac25b83c7"},

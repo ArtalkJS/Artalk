@@ -27,11 +27,15 @@ func NewUpgradeCommand() *cobra.Command {
 			if err != nil {
 				log.Fatal("Error occurred while detecting version: ", err)
 			}
+			if !found {
+				log.Info("No compatible release found")
+				return
+			}
 
 			ignoreVersionCheck, _ := cmd.Flags().GetBool("force")
 			if !ignoreVersionCheck {
 				v := semver.MustParse(strings.TrimPrefix(config.Version, "v"))
-				if !found || latest.Version.LTE(v) {
+				if latest.Version.LTE(v) {
 					log.Info(i18n.T("Current version is the latest") + " (v" + v.String() + ")")
 					return
 				}

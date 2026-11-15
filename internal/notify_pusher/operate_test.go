@@ -114,3 +114,53 @@ func TestAdminPushHonorsModerationSettings(t *testing.T) {
 	require.Equal(t, comment.Content, request.Comment.Content)
 	require.True(t, request.Comment.IsPending)
 }
+
+func TestAdminEmailRecipientRules(t *testing.T) {
+	app, err := test.NewTestApp()
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	d := app.Dao()
+	admin := d.FindUserByID(1000)
+	require.NoError(t, d.DB().Model(&entity.User{}).Where("id <> ?", admin.ID).Update("is_admin", false).Error)
+	duplicate := entity.User{Name: "Other admin profile", Email: admin.Email, IsAdmin: true, ReceiveEmail: true}
+	require.NoError(t, d.CreateUser(&duplicate))
+	for _, tc := range []struct {
+		name                                            string
+		author, parent                                  uint
+		pending, notifyPending, noise, disabled, optOut bool
+		want                                            []uint
+	}{
+		{name: "root comment", author: 1001, want: []uint{admin.ID}},
+		{name: "pending", author: 1001, pending: true},
+		{name: "notify pending", author: 1001, pending: true, notifyPending: true, want: []uint{admin.ID}},
+		{name: "administrator comment", author: admin.ID},
+		{name: "administrator replies", author: admin.ID, parent: admin.ID, noise: true},
+		{name: "reply to administrator", author: 1001, parent: admin.ID, noise: true, want: []uint{admin.ID}},
+		{name: "reader conversation", author: 1001, parent: 1002, want: []uint{1002}},
+		{name: "reader conversation with noise mode", author: 1001, parent: 1002, noise: true, want: []uint{1002, admin.ID}},
+		{name: "administrator opted out", author: 1001, optOut: true},
+		{name: "administrator email disabled", author: 1001, parent: admin.ID, disabled: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			admin.ReceiveEmail = !tc.optOut
+			require.NoError(t, d.UpdateUser(&admin))
+			var delivered []uint
+			pusher := notify_pusher.NewNotifyPusher(&notify_pusher.NotifyPusherConf{
+				Dao: d, AdminNotifyConf: config.AdminNotifyConf{Email: &config.AdminEmailConf{Enabled: !tc.disabled}, NoiseMode: tc.noise, NotifyPending: tc.notifyPending},
+				EmailPush: func(n *entity.Notify) error { delivered = append(delivered, n.UserID); return nil },
+			})
+			var parent *entity.Comment
+			if tc.parent != 0 {
+				parent = &entity.Comment{UserID: tc.parent, Content: "Parent"}
+				require.NoError(t, d.CreateComment(parent))
+			}
+			comment := entity.Comment{UserID: tc.author, Content: "Reply", IsPending: tc.pending}
+			if parent != nil {
+				comment.Rid = parent.ID
+			}
+			require.NoError(t, d.CreateComment(&comment))
+			pusher.Push(&comment, parent)
+			require.ElementsMatch(t, tc.want, delivered)
+		})
+	}
+}

@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"sync/atomic"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -69,4 +70,39 @@ func TestBarkNotificationEscapesPathSegments(t *testing.T) {
 	SendBark(server.URL+"/fixture/", "", "A / B?")
 	require.Len(t, paths, 1)
 	require.Equal(t, "/fixture/Artalk/A+%2F+B%3F", <-paths)
+}
+
+func TestNotificationProviderFailures(t *testing.T) {
+	var requests atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests.Add(1)
+		http.Error(w, "provider unavailable", 503)
+	}))
+	t.Cleanup(server.Close)
+	send := func() {
+		SendLark(server.URL, "", "A notification", true)
+		SendBark(server.URL, "Title", "Body")
+		SendWebHook(server.URL, &NotifyWebHookReqBody{NotifySubject: "Title"})
+	}
+	require.NotPanics(t, send)
+	require.EqualValues(t, 3, requests.Load())
+	server.Close()
+	require.NotPanics(t, send)
+}
+
+func TestLarkCardWithOnlyALink(t *testing.T) {
+	received := make(chan []byte, 1)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		data, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		received <- data
+	}))
+	t.Cleanup(server.Close)
+	SendLark(server.URL, "", "https://example.org", true)
+	data := <-received
+	require.True(t, json.Valid(data))
+	require.Contains(t, string(data), "https://example.org")
 }

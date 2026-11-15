@@ -5,6 +5,7 @@ import (
 	"errors"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/artalkjs/artalk/v2/internal/config"
 	"github.com/artalkjs/artalk/v2/internal/dao"
@@ -37,4 +38,33 @@ func TestImportRollsBackRelatedWrites(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestSkippedImportRowsPreserveReplyLinksAndDates(t *testing.T) {
+	storage, err := db.NewDB(config.DBConf{Type: config.TypeSQLite, Dsn: filepath.Join(t.TempDir(), "skip.db")})
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, db.CloseDB(storage)) })
+	d := dao.NewDao(storage)
+	rows := []entity.Artran{
+		{ID: "missing-site", PageKey: "/post", Content: "Skip"},
+		{ID: "missing-page", SiteName: "Blog", Content: "Skip"},
+		{ID: "parent", SiteName: "Blog", PageKey: "/post", Content: "Parent", Email: "invalid", Link: "reader.example.org", CreatedAt: "2024-03-04T05:06:07Z"},
+		{ID: "reply", Rid: "parent", SiteName: "Blog", PageKey: "/post", Content: "Reply", Nick: "Reader", Email: "reader@example.org", CreatedAt: "2024-03-05T05:06:07Z"},
+	}
+	data, err := json.Marshal(rows)
+	require.NoError(t, err)
+	require.NoError(t, RunImportArtrans(d, &ImportParams{JsonData: string(data), Assumeyes: true}, func(string) {}))
+	var saved []entity.Comment
+	require.NoError(t, storage.Order("id").Find(&saved).Error)
+	require.Len(t, saved, 2)
+	require.Zero(t, saved[0].Rid)
+	require.Equal(t, saved[0].ID, saved[1].Rid)
+	require.Equal(t, saved[0].ID, saved[1].RootID)
+	for i, comment := range saved {
+		require.Equal(t, rows[i+2].CreatedAt, comment.CreatedAt.UTC().Format(time.RFC3339))
+	}
+	user := d.FindUserByID(saved[0].UserID)
+	require.Equal(t, "Anonymous", user.Name)
+	require.Equal(t, "anonymous@example.org", user.Email)
+	require.Equal(t, "https://reader.example.org", user.Link)
 }

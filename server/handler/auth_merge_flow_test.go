@@ -2,6 +2,11 @@ package handler_test
 
 import (
 	"encoding/json"
+	"errors"
+	"github.com/artalkjs/artalk/v2/internal/cache"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/dao"
+	"gorm.io/gorm"
 	"net/http"
 	"testing"
 
@@ -20,6 +25,10 @@ func TestMergeMovesAccountDataToSelectedProfile(t *testing.T) {
 	handler.UserInfo(app.App, router)
 
 	d := app.Dao()
+	cached, err := cache.New(config.CacheConf{Type: config.CacheTypeBuiltin})
+	require.NoError(t, err)
+	t.Cleanup(cached.Close)
+	d.SetCache(dao.NewCacheAdaptor(cached))
 	const email = "merge@example.org"
 	source, err := d.NewUser("Old profile", email, "")
 	require.NoError(t, err)
@@ -60,4 +69,43 @@ func TestMergeMovesAccountDataToSelectedProfile(t *testing.T) {
 	flowRequest(t, router, http.MethodGet, "/auth/merge", nil, oldToken, http.StatusUnauthorized)
 	require.NoError(t, json.Unmarshal(flowRequest(t, router, http.MethodGet, "/auth/merge", nil, result.UserToken, http.StatusOK), &check))
 	require.False(t, check.NeedMerge)
+}
+
+func TestAccountMergeRollsBackFailedDataTransfers(t *testing.T) {
+	for _, table := range []string{"atk_comments", "atk_notifies", "atk_votes", "atk_auth_identities"} {
+		t.Run(table, func(t *testing.T) {
+			app, router := NewApiTestApp()
+			t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+			handler.AuthMergeApply(app.App, router)
+			d := app.Dao()
+			source, err := d.NewUser("Source", "rollback@example.org", "")
+			require.NoError(t, err)
+			target, err := d.NewUser("Target", source.Email, "")
+			require.NoError(t, err)
+			comment := entity.Comment{UserID: source.ID, Content: "Keep ownership"}
+			require.NoError(t, d.CreateComment(&comment))
+			notify := d.NewNotify(source.ID, comment.ID)
+			vote, err := d.NewVote(comment.ID, entity.VoteTypeCommentUp, source.ID, "", "")
+			require.NoError(t, err)
+			identity := entity.AuthIdentity{UserID: source.ID, Provider: "fixture", RemoteUID: "rollback"}
+			require.NoError(t, d.CreateAuthIdentity(&identity))
+			require.NoError(t, d.DB().Callback().Update().Before("gorm:update").Register("test:merge_failure", func(tx *gorm.DB) {
+				if tx.Statement.Table == table {
+					tx.AddError(errors.New("merge storage failure"))
+				}
+			}))
+			t.Cleanup(func() { require.NoError(t, d.DB().Callback().Update().Remove("test:merge_failure")) })
+			token, err := common.LoginGetUserToken(source, app.Conf().AppKey, 60)
+			require.NoError(t, err)
+			flowRequest(t, router, "POST", "/auth/merge", handler.RequestAuthDataMergeApply{UserName: target.Name}, token, 500)
+			for _, record := range []any{&comment, &notify, &vote, &identity} {
+				require.NoError(t, d.DB().First(record).Error)
+			}
+			require.Equal(t, source.ID, comment.UserID)
+			require.Equal(t, source.ID, notify.UserID)
+			require.Equal(t, source.ID, vote.UserID)
+			require.Equal(t, source.ID, identity.UserID)
+			require.False(t, d.FindUserByID(source.ID).IsEmpty())
+		})
+	}
 }

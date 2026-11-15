@@ -3,6 +3,9 @@ package handler_test
 import (
 	"bytes"
 	"errors"
+	"github.com/artalkjs/artalk/v2/internal/cache"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/dao"
 	"io"
 	"net/http/httptest"
 	"testing"
@@ -380,4 +383,22 @@ func TestVoteStorageFailuresPreservePreviousChoice(t *testing.T) {
 			require.Equal(t, page, app.Dao().FindPageByID(page.ID))
 		})
 	}
+}
+
+func TestVotingRefreshesCachedCounters(t *testing.T) {
+	app, router := NewApiTestApp()
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	cached, err := cache.New(config.CacheConf{Type: config.CacheTypeBuiltin})
+	require.NoError(t, err)
+	t.Cleanup(cached.Close)
+	app.Dao().SetCache(dao.NewCacheAdaptor(cached))
+	handler.VoteCreate(app.App, router)
+	comment := app.Dao().FindComment(1001)
+	page := app.Dao().FindPageByID(1002)
+	require.Zero(t, comment.VoteUp)
+	require.Zero(t, page.VoteUp)
+	flowRequest(t, router, "POST", "/votes/comment/1001/up", map[string]string{}, "", 200)
+	flowRequest(t, router, "POST", "/votes/page/1002/up", map[string]string{}, "", 200)
+	require.Equal(t, 1, app.Dao().FindComment(comment.ID).VoteUp)
+	require.Equal(t, 1, app.Dao().FindPageByID(page.ID).VoteUp)
 }

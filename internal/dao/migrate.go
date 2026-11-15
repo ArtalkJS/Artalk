@@ -5,6 +5,7 @@ import (
 
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/internal/log"
+	"gorm.io/gorm"
 )
 
 func (dao *Dao) MigrateModels() {
@@ -46,7 +47,10 @@ func (dao *Dao) MigrateModels() {
 
 	// Merge pages
 	if os.Getenv("ATK_DB_MIGRATOR_FUNC_MERGE_PAGES") == "1" {
-		dao.MergePages()
+		if err := dao.MergePages(); err != nil {
+			log.Fatal("Failed to merge pages: ", err)
+		}
+		os.Exit(0)
 	}
 }
 
@@ -128,46 +132,49 @@ func (dao *Dao) MigrateRootID() {
 	log.Info(TAG, "Root IDs generated successfully.")
 }
 
-func (dao *Dao) MergePages() {
-	// merge pages with same key and site_name, sum pv
-	pages := []*entity.Page{}
-
-	// load all pages
-	if err := dao.DB().Order("id ASC").Find(&pages).Error; err != nil {
-		log.Fatal("Failed to load pages. ", err.Error)
-	}
-	beforeLen := len(pages)
-
-	// merge pages
-	mergedPages := map[string]*entity.Page{}
-	for _, page := range pages {
-		key := page.SiteName + page.Key
-		if _, ok := mergedPages[key]; !ok {
-			mergedPages[key] = page
-		} else {
-			mergedPages[key].PV += page.PV
-			mergedPages[key].VoteUp += page.VoteUp
-			mergedPages[key].VoteDown += page.VoteDown
+// MergePages repairs duplicate records in databases created by older versions.
+func (dao *Dao) MergePages() error {
+	if err := dao.DB().Transaction(func(tx *gorm.DB) error {
+		var pages []*entity.Page
+		if err := tx.Order("id ASC").Find(&pages).Error; err != nil {
+			return err
 		}
-	}
 
-	// delete all pages
-	dao.DB().Where("1 = 1").Delete(&entity.Page{})
+		merged := map[[2]string]*entity.Page{}
+		for _, page := range pages {
+			key := [2]string{page.SiteName, page.Key}
+			first, exists := merged[key]
+			if !exists {
+				merged[key] = page
+				continue
+			}
 
-	// insert merged pages
-	pages = []*entity.Page{}
-	for _, page := range mergedPages {
-		pages = append(pages, page)
-	}
-	if err := dao.DB().CreateInBatches(pages, 1000); err.Error != nil {
-		log.Fatal("Failed to insert merged pages. ", err.Error)
-	}
+			first.PV += page.PV
+			first.VoteUp += page.VoteUp
+			first.VoteDown += page.VoteDown
+			if err := tx.Model(first).UpdateColumns(map[string]any{
+				"pv": first.PV, "vote_up": first.VoteUp, "vote_down": first.VoteDown,
+			}).Error; err != nil {
+				return err
+			}
+			if err := tx.Model(&entity.Vote{}).Where("target_id = ? AND type IN ?",
+				page.ID, []entity.VoteType{entity.VoteTypePageUp, entity.VoteTypePageDown},
+			).UpdateColumn("target_id", first.ID).Error; err != nil {
+				return err
+			}
+			if err := tx.Unscoped().Delete(page).Error; err != nil {
+				return err
+			}
+		}
 
-	// drop page AccessibleURL column
+		log.Info("Pages merged successfully. Before pages: ", len(pages), ", After pages: ", len(merged))
+		return nil
+	}); err != nil {
+		return err
+	}
+	// Some database drivers rebuild the table when removing a column.
 	if dao.DB().Migrator().HasColumn(&entity.Page{}, "accessible_url") {
-		dao.DB().Migrator().DropColumn(&entity.Page{}, "accessible_url")
+		return dao.DB().Migrator().DropColumn(&entity.Page{}, "accessible_url")
 	}
-
-	log.Info("Pages merged successfully. Before pages: ", beforeLen, ", After pages: ", len(mergedPages), ", Deleted pages: ", beforeLen-len(mergedPages))
-	os.Exit(0)
+	return nil
 }

@@ -58,7 +58,8 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			return common.RespError(c, 400, i18n.T("Invalid {{name}}", Map{"name": i18n.T("Link")}))
 		}
 
-		if _, ok, resp := common.CheckSiteExist(app, c, p.SiteName); !ok {
+		site, ok, resp := common.CheckSiteExist(app, c, p.SiteName)
+		if !ok {
 			return resp
 		}
 
@@ -90,7 +91,7 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			if parentComment.PageKey != p.PageKey {
 				return common.RespError(c, 400, "Inconsistent with the page_key of the parent comment")
 			}
-			if parentComment.SiteName != p.SiteName {
+			if parentComment.SiteName != site.Name && app.Dao().FindSite(parentComment.SiteName).ID != site.ID {
 				return common.RespError(c, 400, "Inconsistent with the site_name of the parent comment")
 			}
 			if !parentComment.IsAllowReply() {

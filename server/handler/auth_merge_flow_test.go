@@ -3,17 +3,17 @@ package handler_test
 import (
 	"encoding/json"
 	"errors"
-	"github.com/artalkjs/artalk/v2/internal/cache"
-	"github.com/artalkjs/artalk/v2/internal/config"
-	"github.com/artalkjs/artalk/v2/internal/dao"
-	"gorm.io/gorm"
 	"net/http"
 	"testing"
 
+	"github.com/artalkjs/artalk/v2/internal/cache"
+	"github.com/artalkjs/artalk/v2/internal/config"
+	"github.com/artalkjs/artalk/v2/internal/dao"
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/artalkjs/artalk/v2/server/handler"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
 
 func TestMergeMovesAccountDataToSelectedProfile(t *testing.T) {

@@ -1,13 +1,13 @@
 package db
 
 import (
-	"github.com/stretchr/testify/require"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/artalkjs/artalk/v2/internal/config"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewDB(t *testing.T) {

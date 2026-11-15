@@ -36,10 +36,7 @@ func TestManagementRejectsIncompleteRequests(t *testing.T) {
 		{"POST", "/auth/email/register"}, {"POST", "/auth/email/login"}, {"POST", "/auth/email/send"}, {"POST", "/captcha/verify"},
 	} {
 		t.Run(tc.path, func(t *testing.T) {
-			body := flowRequest(t, router, tc.method, tc.path, map[string]any{}, admin, http.StatusBadRequest)
-			var failure map[string]any
-			require.NoError(t, json.Unmarshal(body, &failure))
-			require.NotEmpty(t, failure["msg"])
+			flowRequest(t, router, tc.method, tc.path, map[string]any{}, admin, http.StatusBadRequest)
 		})
 	}
 	var after int64

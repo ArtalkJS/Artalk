@@ -102,6 +102,7 @@ func TestLarkCardWithOnlyALink(t *testing.T) {
 	}))
 	t.Cleanup(server.Close)
 	SendLark(server.URL, "", "https://example.org", true)
+	require.Len(t, received, 1)
 	data := <-received
 	require.True(t, json.Valid(data))
 	require.Contains(t, string(data), "https://example.org")

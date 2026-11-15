@@ -21,6 +21,7 @@ func TestSMTPDelivery(t *testing.T) {
 			listener, err := net.Listen("tcp", "127.0.0.1:0")
 			require.NoError(t, err)
 			t.Cleanup(func() { listener.Close() })
+			require.NoError(t, listener.(*net.TCPListener).SetDeadline(time.Now().Add(5*time.Second)))
 			delivered := make(chan string, 1)
 			done := make(chan error, 1)
 			go func() {

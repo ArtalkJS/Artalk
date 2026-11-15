@@ -89,12 +89,14 @@ func CommentUpdate(app *core.App, router fiber.Router) {
 			p.Email = originalUser.Email
 		}
 
-		// find or save new user
-		user, err := app.Dao().FindCreateUser(p.Nick, p.Email, p.Link)
-		if err != nil {
-			return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("User")}))
-		}
-		if user.ID != comment.UserID {
+		// Keep existing authors, including legacy profiles that no longer pass validation.
+		user := originalUser
+		if p.Nick != originalUser.Name || p.Email != originalUser.Email {
+			var err error
+			user, err = app.Dao().FindCreateUser(p.Nick, p.Email, p.Link)
+			if err != nil {
+				return common.RespError(c, 500, i18n.T("{{name}} save failed", Map{"name": i18n.T("User")}))
+			}
 			comment.UserID = user.ID
 		}
 

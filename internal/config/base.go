@@ -16,7 +16,7 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/utils"
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
-	"github.com/knadh/koanf/providers/file"
+	"github.com/knadh/koanf/providers/rawbytes"
 )
 
 func New() *Config {
@@ -27,10 +27,17 @@ func New() *Config {
 
 // 从文件中创建配置实例
 func NewFromFile(cfgFile string) (*Config, error) {
-	kf := koanf.New(".")
+	data, err := os.ReadFile(cfgFile)
+	if err != nil {
+		return nil, fmt.Errorf("config file read error: %w", err)
+	}
+	return NewFromYAML(cfgFile, data)
+}
 
-	// load yaml config
-	if err := kf.Load(file.Provider(cfgFile), yaml.Parser()); err != nil {
+// NewFromYAML loads the proposed contents of a configuration file.
+func NewFromYAML(cfgFile string, data []byte) (*Config, error) {
+	kf := koanf.New(".")
+	if err := kf.Load(rawbytes.Provider(data), yaml.Parser()); err != nil {
 		return nil, fmt.Errorf("config file read error: %w", err)
 	}
 
@@ -54,7 +61,7 @@ func NewFromFile(cfgFile string) (*Config, error) {
 	{
 		conf.historyPatch()
 		conf.normalPatch()
-		conf.i18nPatch()
+		conf.i18nPatch(data)
 		conf.ipRegionPatch()
 	}
 
@@ -149,22 +156,16 @@ func (conf *Config) normalPatch() {
 }
 
 // 多语言配置修补
-func (conf *Config) i18nPatch() {
+func (conf *Config) i18nPatch(confRaw []byte) {
 	if conf.Locale == "" {
 		conf.Locale = "en"
 
 		// zh-CN default patch (for 历史兼容)
 		// 判断配置文件中是否有中文，若有中文则将 locale 设置为 zh-CN
-		if confRaw, err := os.ReadFile(conf.GetCfgFileLoaded()); err == nil {
-			containsHan := false
-			for _, runeValue := range string(confRaw) {
-				if unicode.Is(unicode.Han, runeValue) {
-					containsHan = true
-					break
-				}
-			}
-			if containsHan {
+		for _, runeValue := range string(confRaw) {
+			if unicode.Is(unicode.Han, runeValue) {
 				conf.Locale = "zh-CN"
+				break
 			}
 		}
 

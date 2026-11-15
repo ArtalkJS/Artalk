@@ -99,3 +99,27 @@ func TestCaptchaRejectedWithoutError(t *testing.T) {
 	code, _ = captchaRequest(t, router, "POST", "/protected", "")
 	require.Equal(t, 403, code)
 }
+
+func TestImageCaptchaRejectsWrongAnswers(t *testing.T) {
+	router := captchaRouter(config.CaptchaConf{Enabled: true, Always: true, CaptchaType: config.TypeImage})
+	status, body := captchaRequest(t, router, "POST", "/protected", "")
+	require.Equal(t, 403, status)
+	var challenge struct {
+		Image string `json:"img_data"`
+	}
+	require.NoError(t, json.Unmarshal([]byte(body), &challenge))
+	require.Contains(t, challenge.Image, "data:image/png;base64,")
+	status, body = captchaRequest(t, router, "POST", "/captcha/verify", `{"value":"definitely-not-a-code"}`)
+	require.Equal(t, 403, status)
+	var retry struct {
+		Image string `json:"img_data"`
+	}
+	require.NoError(t, json.Unmarshal([]byte(body), &retry))
+	require.Contains(t, retry.Image, "data:image/png;base64,")
+	require.NotEqual(t, challenge.Image, retry.Image, "failure should issue a fresh challenge")
+	status, body = captchaRequest(t, router, "GET", "/captcha/status", "")
+	require.Equal(t, 200, status)
+	var state handler.ResponseCaptchaStatus
+	require.NoError(t, json.Unmarshal([]byte(body), &state))
+	require.False(t, state.IsPass)
+}

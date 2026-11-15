@@ -17,8 +17,10 @@ type EmailQueue struct {
 	conf   EmailConf
 	sender Sender
 	ch     chan *Email
+	done   chan struct{}
 	mux    sync.Mutex
 	closed bool
+	pushes sync.WaitGroup
 }
 
 // Initialize Email Queue
@@ -29,6 +31,7 @@ func NewQueue(conf EmailConf) *EmailQueue {
 
 	// init email queue
 	queue.ch = make(chan *Email, conf.Queue.BufferSize)
+	queue.done = make(chan struct{})
 
 	log.Debug("[Email] Email Queue initialize complete")
 
@@ -73,20 +76,34 @@ func (q *EmailQueue) handleEmail(email *Email) {
 
 // Add an email to the sending queue
 func (q *EmailQueue) Push(email *Email) {
+	q.mux.Lock()
 	if q.closed {
+		q.mux.Unlock()
 		log.Error("[Email] Queue closed, dropping email")
 		return
 	}
+	q.pushes.Add(1)
+	q.mux.Unlock()
+	defer q.pushes.Done()
 
-	q.ch <- email
+	select {
+	case q.ch <- email:
+	case <-q.done:
+		log.Error("[Email] Queue closed, dropping email")
+	}
 }
 
 func (q *EmailQueue) Close() {
 	q.mux.Lock()
-	defer q.mux.Unlock()
-
-	if !q.closed {
-		close(q.ch)
-		q.closed = true
+	if q.closed {
+		q.mux.Unlock()
+		return
 	}
+	q.closed = true
+	close(q.done)
+	q.mux.Unlock()
+
+	// Let blocked pushes stop before closing the channel; queued emails still drain.
+	q.pushes.Wait()
+	close(q.ch)
 }

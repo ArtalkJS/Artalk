@@ -3,10 +3,9 @@ package dao
 import (
 	"os"
 
-	"gorm.io/gorm"
-
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/internal/log"
+	"gorm.io/gorm"
 )
 
 func (dao *Dao) MigrateModels() {
@@ -144,24 +143,26 @@ func (dao *Dao) MergePages() error {
 		merged := map[[2]string]*entity.Page{}
 		for _, page := range pages {
 			key := [2]string{page.SiteName, page.Key}
-			if first, ok := merged[key]; ok {
-				first.PV += page.PV
-				first.VoteUp += page.VoteUp
-				first.VoteDown += page.VoteDown
-			} else {
+			first, exists := merged[key]
+			if !exists {
 				merged[key] = page
+				continue
 			}
-		}
 
-		if len(pages) != len(merged) {
-			if err := tx.Unscoped().Where("1 = 1").Delete(&entity.Page{}).Error; err != nil {
+			first.PV += page.PV
+			first.VoteUp += page.VoteUp
+			first.VoteDown += page.VoteDown
+			if err := tx.Model(first).UpdateColumns(map[string]any{
+				"pv": first.PV, "vote_up": first.VoteUp, "vote_down": first.VoteDown,
+			}).Error; err != nil {
 				return err
 			}
-			records := make([]*entity.Page, 0, len(merged))
-			for _, page := range merged {
-				records = append(records, page)
+			if err := tx.Model(&entity.Vote{}).Where("target_id = ? AND type IN ?",
+				page.ID, []entity.VoteType{entity.VoteTypePageUp, entity.VoteTypePageDown},
+			).UpdateColumn("target_id", first.ID).Error; err != nil {
+				return err
 			}
-			if err := tx.CreateInBatches(records, 1000).Error; err != nil {
+			if err := tx.Unscoped().Delete(page).Error; err != nil {
 				return err
 			}
 		}

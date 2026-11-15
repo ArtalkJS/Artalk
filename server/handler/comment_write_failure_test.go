@@ -67,6 +67,55 @@ func TestFailedApprovalDoesNotPublishOrNotify(t *testing.T) {
 	require.True(t, d.FindNotify(parent.UserID, reply.ID).IsEmpty(), "failed approval must not notify the reader")
 }
 
+func TestApprovalRetriesAfterNotificationWriteFailure(t *testing.T) {
+	for _, existing := range []bool{false, true} {
+		t.Run(fmt.Sprintf("existing=%v", existing), func(t *testing.T) {
+			app, router := NewApiTestApp()
+			t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+			handler.CommentUpdate(app.App, router)
+			d := app.Dao()
+			parent := entity.Comment{Content: "Parent", UserID: 1001, SiteName: "Site A", PageKey: "/test/1000.html"}
+			require.NoError(t, d.CreateComment(&parent))
+			reply := entity.Comment{Content: "Pending reply", UserID: 1002, SiteName: parent.SiteName, PageKey: parent.PageKey, Rid: parent.ID, RootID: parent.ID, IsPending: true}
+			require.NoError(t, d.CreateComment(&reply))
+			if existing {
+				n := d.NewNotify(parent.UserID, reply.ID)
+				require.NoError(t, d.NotifySetRead(&n))
+			}
+			reject := func(tx *gorm.DB) {
+				if tx.Statement.Table == "atk_notifies" {
+					tx.AddError(errors.New("notification write failed"))
+				}
+			}
+			require.NoError(t, d.DB().Callback().Create().Before("gorm:create").Register("test:notify_failure", reject))
+			require.NoError(t, d.DB().Callback().Update().Before("gorm:update").Register("test:notify_failure", reject))
+			t.Cleanup(func() {
+				d.DB().Callback().Create().Remove("test:notify_failure")
+				d.DB().Callback().Update().Remove("test:notify_failure")
+			})
+			admin, err := common.LoginGetUserToken(d.FindUserByID(1000), app.Conf().AppKey, 60)
+			require.NoError(t, err)
+			path := fmt.Sprintf("/comments/%d", reply.ID)
+			update := handler.ParamsCommentUpdate{Content: reply.Content, PageKey: reply.PageKey, SiteName: reply.SiteName, Rid: reply.Rid}
+			flowRequest(t, router, http.MethodPut, path, update, admin, http.StatusInternalServerError)
+			require.True(t, d.FindComment(reply.ID).IsPending)
+			notify := d.FindNotify(parent.UserID, reply.ID)
+			if existing {
+				require.True(t, notify.IsRead)
+			} else {
+				require.True(t, notify.IsEmpty())
+			}
+			require.NoError(t, d.DB().Callback().Create().Remove("test:notify_failure"))
+			require.NoError(t, d.DB().Callback().Update().Remove("test:notify_failure"))
+			flowRequest(t, router, http.MethodPut, path, update, admin, http.StatusOK)
+			require.False(t, d.FindComment(reply.ID).IsPending)
+			notify = d.FindNotify(parent.UserID, reply.ID)
+			require.False(t, notify.IsEmpty())
+			require.False(t, notify.IsRead)
+		})
+	}
+}
+
 func TestCommentEditChecksRelatedWrites(t *testing.T) {
 	for _, tc := range []struct {
 		name, table string

@@ -326,3 +326,58 @@ func TestVoteCreateReturnsNotFoundWhenTransactionTargetDisappears(t *testing.T) 
 		})
 	}
 }
+
+func TestVoteStorageFailuresPreservePreviousChoice(t *testing.T) {
+	for _, stage := range []string{"find", "delete", "create", "count_up", "count_down", "page_counter"} {
+		t.Run(stage, func(t *testing.T) {
+			app, router := NewApiTestApp()
+			t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+			handler.VoteCreate(app.App, router)
+			db := app.Dao().DB()
+			var before []entity.Vote
+			require.NoError(t, db.Order("id").Find(&before).Error)
+			comment := app.Dao().FindComment(1000)
+			page := app.Dao().FindPageByID(1001)
+			const callback = "test:vote_storage_failure"
+			fail := func(tx *gorm.DB) { tx.AddError(errors.New("vote storage unavailable")) }
+			var remove func() error
+			switch stage {
+			case "delete":
+				require.NoError(t, db.Callback().Delete().Before("gorm:delete").Register(callback, fail))
+				remove = func() error { return db.Callback().Delete().Remove(callback) }
+			case "create":
+				require.NoError(t, db.Callback().Create().Before("gorm:create").Register(callback, fail))
+				remove = func() error { return db.Callback().Create().Remove(callback) }
+			case "page_counter":
+				require.NoError(t, db.Callback().Update().Before("gorm:update").Register(callback, fail))
+				remove = func() error { return db.Callback().Update().Remove(callback) }
+			default:
+				query := 0
+				require.NoError(t, db.Callback().Query().Before("gorm:query").Register(callback, func(tx *gorm.DB) {
+					if tx.Statement.Table == "atk_votes" {
+						query++
+						if query == map[string]int{"find": 1, "count_up": 2, "count_down": 3}[stage] {
+							fail(tx)
+						}
+					}
+				}))
+				remove = func() error { return db.Callback().Query().Remove(callback) }
+			}
+			t.Cleanup(func() { require.NoError(t, remove()) })
+			url := "/votes/comment/1000/down"
+			if stage == "page_counter" {
+				url = "/votes/page/1001/up"
+			}
+			response, err := securityRequest(router, "POST", url, map[string]string{}, "", "127.0.0.1")
+			require.NoError(t, err)
+			response.Body.Close()
+			require.Equal(t, 500, response.StatusCode)
+			require.NoError(t, remove())
+			var after []entity.Vote
+			require.NoError(t, db.Order("id").Find(&after).Error)
+			require.Equal(t, before, after)
+			require.Equal(t, comment, app.Dao().FindComment(comment.ID))
+			require.Equal(t, page, app.Dao().FindPageByID(page.ID))
+		})
+	}
+}

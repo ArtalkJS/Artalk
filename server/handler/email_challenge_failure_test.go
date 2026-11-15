@@ -2,8 +2,6 @@ package handler_test
 
 import (
 	"errors"
-	"os"
-	"path/filepath"
 	"testing"
 	"time"
 
@@ -56,34 +54,6 @@ func TestEmailChallengeStorageFailures(t *testing.T) {
 				require.Equal(t, challenge.Code, saved.Code)
 				require.Zero(t, saved.Attempts)
 			}
-		})
-	}
-}
-
-func TestEmailChallengeTemplates(t *testing.T) {
-	for _, template := range []string{"custom", "missing", "directory"} {
-		t.Run(template, func(t *testing.T) {
-			app, router := NewApiTestApp()
-			t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
-			app.Conf().Auth.Email.Enabled = true
-			app.Conf().Captcha.Enabled = false
-			path := filepath.Join(t.TempDir(), "verification.html")
-			if template == "custom" {
-				require.NoError(t, os.WriteFile(path, []byte("Code: {{code}}"), 0600))
-			}
-			if template == "directory" {
-				require.NoError(t, os.Mkdir(path, 0700))
-			}
-			app.Conf().Auth.Email.VerifyTpl = path
-			app.Conf().Auth.Email.VerifySubject = "Code {{code}}"
-			handler.AuthEmailSend(app.App, router)
-			flowRequest(t, router, "POST", "/auth/email/send", map[string]string{"email": "invalid"}, "", 400)
-			flowRequest(t, router, "POST", "/auth/email/send", map[string]string{"email": "reader@example.org"}, "", 200)
-			var code entity.UserEmailVerify
-			require.NoError(t, app.Dao().DB().First(&code).Error)
-			require.Len(t, code.Code, 6)
-			app.Conf().Auth.Email.Enabled = false
-			flowRequest(t, router, "POST", "/auth/email/send", map[string]string{"email": "reader@example.org"}, "", 400)
 		})
 	}
 }

@@ -108,15 +108,15 @@ func TestSSOProviderFailuresAndNameFallbacks(t *testing.T) {
 	app.Conf().Auth.SSO.Issuer = issuer.URL
 	handler.AuthSSOExchange(app.App, router)
 	for _, tc := range []struct {
-		name, body           string
+		name, body, wantName string
 		providerStatus, want int
 	}{
-		{"provider rejects token", `{}`, 401, 401},
-		{"malformed response", `invalid`, 200, 502},
-		{"missing email", `{"email_verified":true}`, 200, 400},
-		{"given name", `{"email":"reader@example.org","email_verified":true,"given_name":"Given"}`, 200, 200},
-		{"full name", `{"email":"reader@example.org","email_verified":true,"name":"Full name"}`, 200, 200},
-		{"email fallback", `{"email":" Reader@Example.org ","email_verified":true}`, 200, 200},
+		{"provider rejects token", `{}`, "", 401, 401},
+		{"malformed response", `invalid`, "", 200, 502},
+		{"missing email", `{"email_verified":true}`, "", 200, 400},
+		{"given name", `{"email":"reader@example.org","email_verified":true,"given_name":"Given"}`, "Given", 200, 200},
+		{"full name", `{"email":"reader@example.org","email_verified":true,"name":"Full name"}`, "Full name", 200, 200},
+		{"email fallback", `{"email":" Reader@Example.org ","email_verified":true}`, "reader@example.org", 200, 200},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			status, response = tc.providerStatus, tc.body
@@ -126,6 +126,7 @@ func TestSSOProviderFailuresAndNameFallbacks(t *testing.T) {
 				require.NoError(t, json.Unmarshal(body, &result))
 				require.NotEmpty(t, result.Token)
 				require.Equal(t, "reader@example.org", result.User.Email)
+				require.Equal(t, tc.wantName, result.User.Name)
 				require.False(t, result.User.IsAdmin)
 			}
 		})

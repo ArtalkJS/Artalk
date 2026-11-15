@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/artalkjs/artalk/v2/server/common"
@@ -81,4 +82,64 @@ func multipartUpload(t *testing.T, path, filename string, content []byte, token 
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 	return req
+}
+
+func TestUpgitUploadCleansUpLocalFiles(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("the local Upgit fixture uses a POSIX shell")
+	}
+	app, router := NewApiTestApp()
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	app.Conf().Captcha.Enabled = false
+	upload := &app.Conf().ImgUpload
+	upload.Enabled = true
+	upload.Upgit.Enabled = true
+	upload.Upgit.Exec = "upgit --test"
+	router.Use(limiter.ActionLimitMiddleware(app.App, limiter.ActionLimitConf{}))
+	handler.Upload(app.App, router)
+
+	bin := t.TempDir()
+	t.Setenv("PATH", bin)
+	// Use a disposable Upgit stand-in with no external storage.
+	const script = `#!/bin/sh
+test "$1" = "--test" && test -s "$2" || exit 1
+case "$ARTALK_TEST_UPGIT" in
+    failed) exit 1 ;;
+    invalid) printf '%s\n' 'not a URL' ;;
+    *) printf '%s\n' 'https://files.example.org/image.png' ;;
+esac
+`
+	require.NoError(t, os.WriteFile(filepath.Join(bin, "upgit"), []byte(script), 0700))
+	var img bytes.Buffer
+	require.NoError(t, png.Encode(&img, image.NewRGBA(image.Rect(0, 0, 1, 1))))
+	for _, tc := range []struct {
+		name      string
+		delete    bool
+		remaining int
+		status    int
+	}{
+		{"keep", false, 1, http.StatusOK},
+		{"delete", true, 0, http.StatusOK},
+		{"invalid", false, 0, http.StatusInternalServerError},
+		{"failed", false, 0, http.StatusInternalServerError},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("ARTALK_TEST_UPGIT", tc.name)
+			upload.Path = t.TempDir()
+			upload.Upgit.DelLocal = tc.delete
+			req := multipartUpload(t, "/upload", "test.png", img.Bytes(), "")
+			resp, err := router.Test(req)
+			require.NoError(t, err)
+			defer resp.Body.Close()
+			require.Equal(t, tc.status, resp.StatusCode)
+			entries, err := os.ReadDir(upload.Path)
+			require.NoError(t, err)
+			require.Len(t, entries, tc.remaining)
+			if tc.status == http.StatusOK {
+				var result handler.ResponseUpload
+				require.NoError(t, json.NewDecoder(resp.Body).Decode(&result))
+				require.Equal(t, "https://files.example.org/image.png", result.PublicURL)
+			}
+		})
+	}
 }

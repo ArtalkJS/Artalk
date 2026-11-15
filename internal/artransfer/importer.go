@@ -78,8 +78,8 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 	//  Start importing
 	// ---------------------
 	importComments := []*entity.Comment{}
-	rawId2GenId := buildGenIdMap(comments)                           // Original ID => GenId (GenId is comment index +1)
-	rawRid2RootGenId := buildRid2RootGenIdMap(comments, rawId2GenId) // Original Rid => RootGenId
+	importSources := []*entity.Artran{}
+	importIndices := []int{} // Original positions, including rows skipped during validation.
 	createdDates := map[int]time.Time{}
 	updatedDates := map[int]time.Time{}
 
@@ -170,9 +170,6 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 		//  Create new comment
 		// ---------------------
 		nComment := entity.Comment{
-			Rid:    rawId2GenId[c.Rid], // [M_Step.1] Rid => GenId
-			RootID: rawRid2RootGenId[c.Rid],
-
 			Content: c.Content,
 
 			UA: c.UA,
@@ -200,6 +197,8 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 
 		// Append to importComments for batch insert
 		importComments = append(importComments, &nComment)
+		importSources = append(importSources, c)
+		importIndices = append(importIndices, i)
 	}
 
 	console.Println(i18n.T("Importing") + "...")
@@ -213,10 +212,12 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 		return fmt.Errorf("failed to batch insert comments, %w", err)
 	}
 
-	// GenId => DBRealId Mapping
+	// Build reply links only from rows that were actually imported.
+	rawId2GenId := buildGenIdMap(importSources)
+	rawRid2RootGenId := buildRid2RootGenIdMap(importSources, rawId2GenId)
 	genId2DBRealIdMap := map[uint]uint{}
 	for i, savedComment := range importComments {
-		genId2DBRealIdMap[uint(i+1)] = savedComment.ID // [M_Step.2] Create GenId => DBRealId Map
+		genId2DBRealIdMap[uint(i+1)] = savedComment.ID
 	}
 
 	// Progress bar
@@ -237,14 +238,14 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 		// savedComment.UpdatedAt = updatedDates[i]
 
 		updateData := map[string]interface{}{
-			"CreatedAt": createdDates[i],
-			"UpdatedAt": updatedDates[i],
+			"CreatedAt": createdDates[importIndices[i]],
+			"UpdatedAt": updatedDates[importIndices[i]],
 		}
 
 		// Rebuild Rid
-		if savedComment.Rid != 0 {
-			updateData["Rid"] = genId2DBRealIdMap[savedComment.Rid] // [M_Step.3] GenId => DBRealId
-			updateData["RootID"] = genId2DBRealIdMap[savedComment.RootID]
+		if rid := importSources[i].Rid; rid != "" && rid != "0" {
+			updateData["Rid"] = genId2DBRealIdMap[rawId2GenId[rid]]
+			updateData["RootID"] = genId2DBRealIdMap[rawRid2RootGenId[rid]]
 		}
 
 		// Perform update
@@ -382,7 +383,11 @@ func buildRid2RootGenIdMap(comments []*entity.Artran, genIdMap map[string]uint) 
 				return rootId
 			}
 
-			rootId = genIdMap[comment.Rid]
+			next := genIdMap[comment.Rid]
+			if next == 0 {
+				return rootId
+			}
+			rootId = next
 		}
 		return rootId
 	}

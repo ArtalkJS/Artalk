@@ -1,6 +1,8 @@
 package core
 
 import (
+	"errors"
+	"path/filepath"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -138,4 +140,34 @@ func TestApp_OnTerminate(t *testing.T) {
 
 	hook := app.OnTerminate()
 	assert.NotNil(t, hook)
+}
+
+type failingService struct{ initError, disposeError error }
+
+func (s *failingService) Init() error    { return s.initError }
+func (s *failingService) Dispose() error { return s.disposeError }
+
+func TestBootstrapReportsInitializationFailures(t *testing.T) {
+	require.ErrorContains(t, NewApp(nil).Bootstrap(), "conf cannot be nil")
+	for _, tc := range []struct {
+		name  string
+		setup func(*App)
+		want  string
+	}{
+		{"database", func(app *App) { app.conf.DB.Type = "unsupported" }, "db init err"},
+		{"cache", func(app *App) { app.conf.Cache.Enabled = true; app.conf.Cache.Type = "unsupported" }, "cache"},
+		{"service", func(app *App) { app.Inject("failing", &failingService{initError: errors.New("provider unavailable")}) }, "provider unavailable"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			app := NewApp(&config.Config{DB: config.DBConf{Type: config.TypeSQLite, Dsn: filepath.Join(t.TempDir(), "boot.db")}})
+			// Only the explicitly supplied service is needed for this startup check.
+			app.service = &map[string]Service{}
+			tc.setup(app)
+			require.ErrorContains(t, app.Bootstrap(), tc.want)
+			require.NoError(t, app.ResetBootstrapState())
+		})
+	}
+	app := NewApp(nil)
+	app.service = &map[string]Service{"failing": &failingService{disposeError: errors.New("cannot close service")}}
+	require.ErrorContains(t, app.Restart(), "cannot close service")
 }

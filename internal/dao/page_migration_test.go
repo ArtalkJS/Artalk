@@ -15,7 +15,9 @@ func TestMergeLegacyPages(t *testing.T) {
 		t.Run(failure, func(t *testing.T) {
 			storage := newMigrationDB(t)
 			d := dao.NewDao(storage)
-			require.NoError(t, storage.Exec("ALTER TABLE "+d.GetTableName(&entity.Page{})+" ADD COLUMN accessible_url TEXT").Error)
+			require.NoError(t, storage.Table(d.GetTableName(&entity.Page{})).Migrator().AddColumn(&struct {
+				AccessibleURL string
+			}{}, "accessible_url"))
 			pages := []entity.Page{
 				{SiteName: "ab", Key: "c", Title: "Original", AdminOnly: true, PV: 3, VoteUp: 2},
 				{SiteName: "ab", Key: "c", Title: "Duplicate", PV: 7, VoteUp: 1, VoteDown: 4},
@@ -32,8 +34,10 @@ func TestMergeLegacyPages(t *testing.T) {
 			}
 			require.NoError(t, storage.Create(&votes).Error)
 			// Compare database snapshots to account for driver timestamp precision and time zones.
-			require.NoError(t, storage.Order("id").Find(&pages).Error)
-			require.NoError(t, storage.Unscoped().First(&deleted, deleted.ID).Error)
+			// Select mapped fields because the migration removes a legacy column.
+			pageQuery := storage.Session(&gorm.Session{QueryFields: true})
+			require.NoError(t, pageQuery.Order("id").Find(&pages).Error)
+			require.NoError(t, pageQuery.Unscoped().First(&deleted, deleted.ID).Error)
 			require.NoError(t, storage.Order("id").Find(&votes).Error)
 			if failure != "none" {
 				reject := func(tx *gorm.DB) {
@@ -54,7 +58,7 @@ func TestMergeLegacyPages(t *testing.T) {
 				}
 				require.ErrorContains(t, d.MergePages(), "cannot merge pages")
 				var saved []entity.Page
-				require.NoError(t, storage.Order("id").Find(&saved).Error)
+				require.NoError(t, pageQuery.Order("id").Find(&saved).Error)
 				require.Equal(t, pages, saved)
 				var savedVotes []entity.Vote
 				require.NoError(t, storage.Order("id").Find(&savedVotes).Error)
@@ -65,7 +69,7 @@ func TestMergeLegacyPages(t *testing.T) {
 			for range 2 {
 				require.NoError(t, d.MergePages())
 				var saved []entity.Page
-				require.NoError(t, storage.Order("id").Find(&saved).Error)
+				require.NoError(t, pageQuery.Order("id").Find(&saved).Error)
 				require.Len(t, saved, 2)
 				require.Equal(t, pages[0].ID, saved[0].ID)
 				require.Equal(t, "Original", saved[0].Title)
@@ -76,7 +80,7 @@ func TestMergeLegacyPages(t *testing.T) {
 				require.Equal(t, pages[2], saved[1])
 				require.False(t, storage.Migrator().HasColumn(&entity.Page{}, "accessible_url"))
 				var kept entity.Page
-				require.NoError(t, storage.Unscoped().First(&kept, deleted.ID).Error)
+				require.NoError(t, pageQuery.Unscoped().First(&kept, deleted.ID).Error)
 				require.Equal(t, deleted, kept)
 				var savedVotes []entity.Vote
 				require.NoError(t, storage.Order("id").Find(&savedVotes).Error)

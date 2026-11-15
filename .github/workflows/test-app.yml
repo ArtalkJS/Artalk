@@ -83,19 +83,19 @@ jobs:
         env:
           ARTALK_TEST_DB_TYPE: pgsql
           ARTALK_TEST_DB_DSN: host=127.0.0.1 port=5432 user=postgres password=ArtalkTestOnly123 dbname=artalk_test sslmode=disable
-        run: go test ./server/handler -run '^TestDatabaseCompatibility$' -count=1 -v
+        run: go test ./internal/dao ./server/handler -run '^(TestDatabaseCompatibility|TestMigrateRootIDsForExistingThreads|TestMergeLegacyPages)$' -count=1 -v
       - name: MySQL
         if: ${{ !cancelled() }}
         env:
           ARTALK_TEST_DB_TYPE: mysql
           ARTALK_TEST_DB_DSN: root:ArtalkTestOnly123@tcp(127.0.0.1:3306)/artalk_test?charset=utf8mb4&parseTime=True&loc=UTC
-        run: go test ./server/handler -run '^TestDatabaseCompatibility$' -count=1 -v
+        run: go test ./internal/dao ./server/handler -run '^(TestDatabaseCompatibility|TestMigrateRootIDsForExistingThreads|TestMergeLegacyPages)$' -count=1 -v
       - name: SQL Server
         if: ${{ !cancelled() }}
         env:
           ARTALK_TEST_DB_TYPE: mssql
           ARTALK_TEST_DB_DSN: sqlserver://sa:ArtalkTestOnly123@127.0.0.1:1433?database=master&encrypt=disable
-        run: go test ./server/handler -run '^TestDatabaseCompatibility$' -count=1 -v
+        run: go test ./internal/dao ./server/handler -run '^(TestDatabaseCompatibility|TestMigrateRootIDsForExistingThreads|TestMergeLegacyPages)$' -count=1 -v
 
   test_app:
     name: Test Go (${{ matrix.name }})
@@ -161,7 +161,7 @@ jobs:
           gotestsum \
             --junitfile "$REPORT_DIR/unit-tests.xml" \
             --jsonfile "$REPORT_DIR/unit-tests.json" \
-            -- -coverprofile="$REPORT_DIR/coverage.out" ./...
+            -- -count=1 -coverpkg=./... -coverprofile="$REPORT_DIR/coverage.out" ./...
 
       - name: Upload test results
         if: ${{ !cancelled() }}

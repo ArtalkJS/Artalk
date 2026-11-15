@@ -2,12 +2,12 @@ package cache
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
 	"github.com/allegro/bigcache/v3"
 	"github.com/artalkjs/artalk/v2/internal/config"
-	"github.com/artalkjs/artalk/v2/internal/log"
 	"github.com/bradfitz/gomemcache/memcache"
 	lib_cache "github.com/eko/gocache/lib/v4/cache"
 	"github.com/eko/gocache/lib/v4/marshaler"
@@ -48,11 +48,12 @@ func New(conf config.CacheConf) (*Cache, error) {
 
 	case config.CacheTypeBuiltin:
 		// 内建缓存
-		bigcacheClient, err := bigcache.New(context.Background(), bigcache.DefaultConfig(
+		bigcacheClient, err := bigcache.New(ctx, bigcache.DefaultConfig(
 			// Tip: 内建缓存过期时间是一样的，只有 Redis/Memcache 才能设置单个 item 的
 			cache.ttl,
 		))
 		if err != nil {
+			cancel()
 			return nil, err
 		}
 		cacheStore = bigcache_store.NewBigcache(bigcacheClient) // No options provided (as second argument)
@@ -81,7 +82,8 @@ func New(conf config.CacheConf) (*Cache, error) {
 		)
 
 	default:
-		log.Fatal(`Invalid cache type "` + conf.Type + `", please check config option "cache.type"`)
+		cancel()
+		return nil, fmt.Errorf("invalid cache type %q, please check config option cache.type", conf.Type)
 
 	}
 

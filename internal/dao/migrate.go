@@ -119,7 +119,7 @@ func (dao *Dao) MigrateRootID() {
 
 		// update root_id
 		for _, comment := range comments {
-			if err := dao.DB().Model(&comment).Update("root_id", dao.FindCommentRootID(comment.ID)).Error; err != nil {
+			if err := dao.DB().Model(&comment).Update("root_id", dao.FindCommentRootID(comment.Rid)).Error; err != nil {
 				log.Error(TAG, "Failed to update root ID. ", err.Error, " ID=", comment.ID)
 			}
 		}

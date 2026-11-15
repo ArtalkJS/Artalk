@@ -402,3 +402,35 @@ func TestVotingRefreshesCachedCounters(t *testing.T) {
 	require.Equal(t, 1, app.Dao().FindComment(comment.ID).VoteUp)
 	require.Equal(t, 1, app.Dao().FindPageByID(page.ID).VoteUp)
 }
+
+func TestVoteValidationAndVoterStorageFailure(t *testing.T) {
+	app, router := NewApiTestApp()
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	handler.VoteCreate(app.App, router)
+	voter := handler.ParamsVoteCreate{Name: "New voter", Email: "voter@example.org"}
+	for _, url := range []string{
+		"/votes/comment/1001/unknown", "/votes/unknown/1001/up",
+		"/votes/comment/999999/up", "/votes/page/999999/up",
+	} {
+		flowRequest(t, router, "POST", url, voter, "", 404)
+	}
+	flowRequest(t, router, "POST", "/votes/comment/1001/up", map[string]any{"name": 42}, "", 400)
+	require.True(t, app.Dao().FindUser(voter.Name, voter.Email).IsEmpty())
+	const callback = "test:voter_storage_failure"
+	require.NoError(t, app.Dao().DB().Callback().Create().Before("gorm:create").Register(callback, func(tx *gorm.DB) {
+		if tx.Statement.Table == "atk_users" {
+			tx.AddError(errors.New("user storage unavailable"))
+		}
+	}))
+	t.Cleanup(func() { require.NoError(t, app.Dao().DB().Callback().Create().Remove(callback)) })
+	flowRequest(t, router, "POST", "/votes/comment/1001/up", voter, "", 500)
+	require.Zero(t, app.Dao().FindComment(1001).VoteUp)
+	require.True(t, app.Dao().FindUser(voter.Name, voter.Email).IsEmpty())
+	require.NoError(t, app.Dao().DB().Callback().Create().Remove(callback))
+	flowRequest(t, router, "POST", "/votes/comment/1001/up", voter, "", 200)
+	user := app.Dao().FindUser(voter.Name, voter.Email)
+	require.NotZero(t, user.ID)
+	var vote entity.Vote
+	require.NoError(t, app.Dao().DB().Where("target_id = ? AND type = ?", 1001, entity.VoteTypeCommentUp).First(&vote).Error)
+	require.Equal(t, user.ID, vote.UserID)
+}

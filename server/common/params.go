@@ -24,16 +24,16 @@ func ParamsDecode(c *fiber.Ctx, destParams interface{}) (isContinue bool, resp e
 
 	// parse query
 	if err := c.QueryParser(destParams); err != nil {
-		return false, err
+		return false, fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 	// parse path params
 	if err := c.ParamsParser(destParams); err != nil {
-		return false, err
+		return false, fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 	// parse body
 	if reqMethod == "POST" || reqMethod == "PUT" {
 		if err := c.BodyParser(destParams); err != nil {
-			return false, err
+			return false, fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	}
 
@@ -75,13 +75,17 @@ func ValidateRequired(c *fiber.Ctx, destParams interface{}) (isContinue bool, re
 			case reqMethod == "GET" || reqMethod == "DELETE":
 				return c.Query(paramKey)
 			case reqMethod == "POST" || reqMethod == "PUT":
+				contentType := c.Get(fiber.HeaderContentType)
+				if strings.HasPrefix(contentType, fiber.MIMEApplicationForm) || strings.HasPrefix(contentType, fiber.MIMEMultipartForm) {
+					return c.FormValue(paramKey)
+				}
 				var destMap map[string]interface{}
 				err := c.BodyParser(&destMap)
 				if err != nil {
 					log.Error("[Validator] "+reqPath+" field '"+k.Name+"' ", err)
 					return ""
 				}
-				if v, ok := destMap[paramKey]; ok {
+				if v, ok := destMap[paramKey]; ok && v != nil {
 					return fmt.Sprintf("%v", v)
 				}
 				return ""

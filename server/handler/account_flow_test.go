@@ -2,13 +2,17 @@ package handler_test
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/artalkjs/artalk/v2/internal/entity"
+	"github.com/artalkjs/artalk/v2/server/common"
 	"github.com/artalkjs/artalk/v2/server/handler"
 	"github.com/artalkjs/artalk/v2/server/middleware/limiter"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 )
 
 func TestPasswordLoginAndProfile(t *testing.T) {
@@ -66,4 +70,37 @@ func TestPasswordLoginAndProfile(t *testing.T) {
 		require.True(t, user.IsAdmin)
 		require.NotEqual(t, reader.ID, user.ID)
 	}
+}
+
+func TestProfileEmailChangeAndStorageFailure(t *testing.T) {
+	app, router := NewApiTestApp()
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	handler.UserInfoUpdate(app.App, router)
+	user := app.Dao().FindUserByID(1001)
+	token, err := common.LoginGetUserToken(user, app.Conf().AppKey, 60)
+	require.NoError(t, err)
+	profile := handler.RequestUserInfoUpdate{Name: user.Name, Email: "not-an-email"}
+	flowRequest(t, router, "POST", "/user", profile, token, 400)
+	profile.Email = app.Dao().FindUserByID(1002).Email
+	flowRequest(t, router, "POST", "/user", profile, token, 400)
+	profile.Name = app.Dao().FindUserByID(1002).Name
+	flowRequest(t, router, "POST", "/user", profile, token, 400)
+	require.Equal(t, user, app.Dao().FindUserByID(user.ID))
+
+	challenge := entity.UserEmailVerify{Email: "new-address@example.org", Code: "654321", ExpiresAt: time.Now().Add(time.Minute)}
+	require.NoError(t, app.Dao().DB().Create(&challenge).Error)
+	profile = handler.RequestUserInfoUpdate{Name: user.Name, Email: challenge.Email, Code: challenge.Code}
+	flowRequest(t, router, "POST", "/user", profile, token, 200)
+	require.Equal(t, challenge.Email, app.Dao().FindUserByID(user.ID).Email)
+	profile.Link = "reader.example.org"
+	flowRequest(t, router, "POST", "/user", profile, token, 200)
+	require.Equal(t, "https://reader.example.org", app.Dao().FindUserByID(user.ID).Link)
+	const callback = "test:profile_save_failure"
+	require.NoError(t, app.Dao().DB().Callback().Update().Before("gorm:update").Register(callback, func(tx *gorm.DB) {
+		tx.AddError(errors.New("profile storage unavailable"))
+	}))
+	t.Cleanup(func() { require.NoError(t, app.Dao().DB().Callback().Update().Remove(callback)) })
+	profile.Name = "Unsaved name"
+	flowRequest(t, router, "POST", "/user", profile, token, 500)
+	require.Equal(t, user.Name, app.Dao().FindUserByID(user.ID).Name)
 }

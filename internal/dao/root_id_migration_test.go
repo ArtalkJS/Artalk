@@ -1,7 +1,9 @@
 package dao_test
 
 import (
+	"errors"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/artalkjs/artalk/v2/internal/config"
@@ -13,6 +15,15 @@ import (
 )
 
 func TestMigrateRootIDsForExistingThreads(t *testing.T) {
+	for _, fallback := range []bool{false, true} {
+		t.Run(map[bool]string{false: "recursive SQL", true: "legacy fallback"}[fallback], func(t *testing.T) {
+			testMigrateRootIDs(t, fallback)
+		})
+	}
+}
+
+func testMigrateRootIDs(t *testing.T, fallback bool) {
+	t.Helper()
 	storage, err := db.NewDB(config.DBConf{Type: config.TypeSQLite, Dsn: filepath.Join(t.TempDir(), "legacy.db"), TablePrefix: "atk_"})
 	require.NoError(t, err)
 	t.Cleanup(func() { require.NoError(t, db.CloseDB(storage)) })
@@ -34,6 +45,13 @@ func TestMigrateRootIDsForExistingThreads(t *testing.T) {
 	require.NoError(t, storage.Table(table).Create(&records).Error)
 	require.False(t, storage.Migrator().HasColumn(table, "root_id"))
 
+	if fallback {
+		require.NoError(t, storage.Callback().Row().Before("gorm:row").Register("test:no_cte", func(tx *gorm.DB) {
+			if strings.HasPrefix(tx.Statement.SQL.String(), "WITH RECURSIVE") {
+				tx.AddError(errors.New("recursive CTE unavailable"))
+			}
+		}))
+	}
 	d := dao.NewDao(storage)
 	for _, pass := range []string{"first migration", "rerun"} {
 		t.Run(pass, func(t *testing.T) {

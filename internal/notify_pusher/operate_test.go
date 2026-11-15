@@ -1,6 +1,9 @@
 package notify_pusher_test
 
 import (
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/artalkjs/artalk/v2/internal/config"
@@ -66,4 +69,48 @@ func TestReplyNotificationsRespectRecipientPreferences(t *testing.T) {
 			require.False(t, saved.IsRead)
 		})
 	}
+}
+
+func TestAdminPushHonorsModerationSettings(t *testing.T) {
+	app, err := test.NewTestApp()
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	d := app.Dao()
+
+	type message struct {
+		Subject string               `json:"notify_subject"`
+		Comment entity.CookedComment `json:"comment"`
+	}
+	requests := make(chan message, 4)
+	callback := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var msg message
+		if err := json.NewDecoder(r.Body).Decode(&msg); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		requests <- msg
+		w.WriteHeader(http.StatusOK)
+	}))
+	t.Cleanup(callback.Close)
+	settings := config.AdminNotifyConf{
+		Email:         &config.AdminEmailConf{},
+		NotifySubject: "New comment",
+		WebHook:       config.NotifyWebHookConf{Enabled: true, URL: callback.URL},
+	}
+	comment := entity.Comment{Content: "Review me", UserID: 1001, SiteName: "Site A", PageKey: "/test/1000.html", IsPending: true}
+	require.NoError(t, d.CreateComment(&comment))
+
+	pusher := notify_pusher.NewNotifyPusher(&notify_pusher.NotifyPusherConf{Dao: d, AdminNotifyConf: settings})
+	pusher.Push(&comment, nil)
+	require.Empty(t, requests)
+
+	settings.NotifyPending = true
+	pusher = notify_pusher.NewNotifyPusher(&notify_pusher.NotifyPusherConf{Dao: d, AdminNotifyConf: settings})
+	pusher.Push(&comment, nil)
+	require.Len(t, requests, 1)
+	request := <-requests
+	require.Equal(t, settings.NotifySubject, request.Subject)
+	require.Equal(t, comment.ID, request.Comment.ID)
+	require.Equal(t, comment.Content, request.Comment.Content)
+	require.True(t, request.Comment.IsPending)
 }

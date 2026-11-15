@@ -143,3 +143,27 @@ esac
 		})
 	}
 }
+
+func TestUploadStorageFailures(t *testing.T) {
+	app, router := NewApiTestApp()
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	app.Conf().Captcha.Enabled = false
+	app.Conf().ImgUpload.Enabled = true
+	router.Use(limiter.ActionLimitMiddleware(app.App, limiter.ActionLimitConf{}))
+	handler.Upload(app.App, router)
+	var img bytes.Buffer
+	require.NoError(t, png.Encode(&img, image.NewRGBA(image.Rect(0, 0, 1, 1))))
+	blocked := filepath.Join(t.TempDir(), "occupied")
+	require.NoError(t, os.WriteFile(blocked, []byte("keep"), 0600))
+	for _, path := range []string{blocked, filepath.Join(blocked, "child")} {
+		app.Conf().ImgUpload.Path = path
+		response, err := router.Test(multipartUpload(t, "/upload", "test.png", img.Bytes(), ""))
+		require.NoError(t, err)
+		response.Body.Close()
+		require.Equal(t, 500, response.StatusCode)
+	}
+	contents, err := os.ReadFile(blocked)
+	require.NoError(t, err)
+	require.Equal(t, "keep", string(contents))
+	flowRequest(t, router, "POST", "/upload", map[string]any{}, "", 500)
+}

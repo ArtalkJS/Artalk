@@ -81,12 +81,10 @@ func (dao *Dao) UserNotifyMarkAllAsRead(userID uint) error {
 
 	nowTime := time.Now()
 
-	dao.DB().Model(&entity.Notify{}).Where("user_id = ?", userID).Updates(&entity.Notify{
+	return dao.DB().Model(&entity.Notify{}).Where("user_id = ?", userID).Updates(&entity.Notify{
 		IsRead: true,
 		ReadAt: &nowTime,
-	})
-
-	return nil
+	}).Error
 }
 
 func (dao *Dao) UpdateAuthIdentity(authIdentity *entity.AuthIdentity) error {

@@ -78,6 +78,7 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 	//  Start importing
 	// ---------------------
 	importComments := []*entity.Comment{}
+	importIndices := []int{}                                         // Original positions, including rows skipped during validation.
 	rawId2GenId := buildGenIdMap(comments)                           // Original ID => GenId (GenId is comment index +1)
 	rawRid2RootGenId := buildRid2RootGenIdMap(comments, rawId2GenId) // Original Rid => RootGenId
 	createdDates := map[int]time.Time{}
@@ -200,6 +201,7 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 
 		// Append to importComments for batch insert
 		importComments = append(importComments, &nComment)
+		importIndices = append(importIndices, i)
 	}
 
 	console.Println(i18n.T("Importing") + "...")
@@ -216,7 +218,7 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 	// GenId => DBRealId Mapping
 	genId2DBRealIdMap := map[uint]uint{}
 	for i, savedComment := range importComments {
-		genId2DBRealIdMap[uint(i+1)] = savedComment.ID // [M_Step.2] Create GenId => DBRealId Map
+		genId2DBRealIdMap[uint(importIndices[i]+1)] = savedComment.ID // [M_Step.2] Create GenId => DBRealId Map
 	}
 
 	// Progress bar
@@ -237,8 +239,8 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 		// savedComment.UpdatedAt = updatedDates[i]
 
 		updateData := map[string]interface{}{
-			"CreatedAt": createdDates[i],
-			"UpdatedAt": updatedDates[i],
+			"CreatedAt": createdDates[importIndices[i]],
+			"UpdatedAt": updatedDates[importIndices[i]],
 		}
 
 		// Rebuild Rid

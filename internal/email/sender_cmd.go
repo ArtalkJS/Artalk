@@ -1,66 +1,31 @@
 package email
 
 import (
-	"io"
 	"os/exec"
+	"strings"
 
 	"github.com/artalkjs/artalk/v2/internal/log"
 )
 
-// CmdSender implements Sender
-type CmdSender struct {
-}
+// CmdSender sends messages through the system sendmail command.
+type CmdSender struct{}
 
 var _ Sender = (*CmdSender)(nil)
 
-// NewCmdSender sendmail
-func NewCmdSender() *CmdSender {
-	return &CmdSender{}
-}
+func NewCmdSender() *CmdSender { return &CmdSender{} }
 
 func (s *CmdSender) Send(email *Email) bool {
-	LogTag := "[EMAIL] [sendmail] "
-	msg := getEmailMineTxt(email)
+	return sendEmailCommand(email, exec.Command("/usr/sbin/sendmail", "-t", "-oi"))
+}
 
-	// 调用系统 sendmail
-	sendmail := exec.Command("/usr/sbin/sendmail", "-t", "-oi")
-	stdin, err := sendmail.StdinPipe()
+func sendEmailCommand(email *Email, command *exec.Cmd) bool {
+	command.Stdin = strings.NewReader(getEmailMineTxt(email))
+	// CombinedOutput closes the pipes and waits for the process on all paths.
+	output, err := command.CombinedOutput()
 	if err != nil {
-		log.Error(LogTag, err)
+		log.Error("[Email] Email sending failed via sendmail: ", err)
 		return false
 	}
-
-	stdout, err := sendmail.StdoutPipe()
-	if err != nil {
-		log.Error(LogTag, err)
-		return false
-	}
-
-	if err := sendmail.Start(); err != nil {
-		log.Error(LogTag, err)
-		return false
-	}
-
-	if _, err := stdin.Write([]byte(msg)); err != nil {
-		log.Error(LogTag, err)
-		return false
-	}
-
-	if err := stdin.Close(); err != nil {
-		log.Error(LogTag, err)
-		return false
-	}
-
-	sentBytes, _ := io.ReadAll(stdout)
-	if err := sendmail.Wait(); err != nil {
-		log.Error(LogTag, err)
-		if exitError, ok := err.(*exec.ExitError); ok {
-			log.Errorf("["+LogTag+"] Exit code is %d", exitError.ExitCode())
-		}
-		return false
-	}
-
-	log.Debug(string(sentBytes))
-
+	log.Debug(string(output))
 	return true
 }

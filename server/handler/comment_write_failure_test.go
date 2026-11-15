@@ -126,3 +126,27 @@ func TestCommentEditChecksRelatedWrites(t *testing.T) {
 		})
 	}
 }
+
+func TestCommentEditKeepsLegacyAuthor(t *testing.T) {
+	for _, email := range []string{"", "invalid-email"} {
+		t.Run(email, func(t *testing.T) {
+			app, router := NewApiTestApp()
+			t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+			handler.CommentUpdate(app.App, router)
+			d := app.Dao()
+			author, err := d.NewUser("Legacy reader", email, "")
+			require.NoError(t, err)
+			comment := entity.Comment{Content: "Old comment", UserID: author.ID, SiteName: "Site A", PageKey: "/legacy", IsPending: true}
+			require.NoError(t, d.CreateComment(&comment))
+			admin, err := common.LoginGetUserToken(d.FindUserByID(1000), app.Conf().AppKey, 60)
+			require.NoError(t, err)
+			flowRequest(t, router, http.MethodPut, fmt.Sprintf("/comments/%d", comment.ID), handler.ParamsCommentUpdate{
+				Content: "Edited", PageKey: comment.PageKey, SiteName: comment.SiteName,
+			}, admin, http.StatusOK)
+			saved := d.FindComment(comment.ID)
+			require.Equal(t, author.ID, saved.UserID)
+			require.Equal(t, "Edited", saved.Content)
+			require.False(t, saved.IsPending)
+		})
+	}
+}

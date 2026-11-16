@@ -1,7 +1,7 @@
 package entity
 
-type AdminUserDTO struct {
-	UserDTO
+type CookedUserForAdmin struct {
+	CookedUser
 	LastIP       string `json:"last_ip"`
 	LastUA       string `json:"last_ua"`
 	IsInConf     bool   `json:"is_in_conf"`

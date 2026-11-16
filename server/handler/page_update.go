@@ -18,7 +18,7 @@ type ParamsPageUpdate struct {
 }
 
 type ResponsePageUpdate struct {
-	entity.PageDTO
+	entity.CookedPage
 }
 
 // @Id           UpdatePage
@@ -87,7 +87,7 @@ func PageUpdate(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponsePageUpdate{
-			PageDTO: app.Dao().BuildPageDTO(&page),
+			CookedPage: app.Dao().CookPage(&page),
 		})
 	}))
 }

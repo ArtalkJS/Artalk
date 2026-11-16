@@ -19,7 +19,7 @@ type RequestUserInfoUpdate struct {
 }
 
 type ResponseUserInfoUpdate struct {
-	User entity.UserDTO `json:"user"`
+	User entity.CookedUser `json:"user"`
 }
 
 // @Id           UpdateProfile
@@ -98,7 +98,7 @@ func UserInfoUpdate(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseUserInfoUpdate{
-			User: app.Dao().BuildUserDTO(&user),
+			User: app.Dao().CookUser(&user),
 		})
 	}))
 }

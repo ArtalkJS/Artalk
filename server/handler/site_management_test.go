@@ -48,7 +48,7 @@ func TestSiteManagementKeepsPagesAndCommentsInTheirSite(t *testing.T) {
 	create := handler.ParamsSiteCreate{Name: "Flow site", Urls: []string{"https://flow.example.org"}}
 	flowRequest(t, router, http.MethodPost, "/sites", create, reader, http.StatusForbidden)
 	require.True(t, app.Dao().FindSite(create.Name).IsEmpty())
-	var site entity.SiteDTO
+	var site entity.CookedSite
 	require.NoError(t, json.Unmarshal(flowRequest(t, router, http.MethodPost, "/sites", create, admin, http.StatusOK), &site))
 	require.Equal(t, create.Urls, site.Urls)
 	flowRequest(t, router, http.MethodPost, "/sites", create, admin, http.StatusBadRequest)

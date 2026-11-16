@@ -8,8 +8,8 @@ import (
 )
 
 type ResponseSiteList struct {
-	Sites []entity.SiteDTO `json:"sites"`
-	Count int              `json:"count"`
+	Sites []entity.CookedSite `json:"sites"`
+	Count int                 `json:"count"`
 }
 
 // @Id           GetSites
@@ -22,7 +22,7 @@ type ResponseSiteList struct {
 // @Router       /sites  [get]
 func SiteList(app *core.App, router fiber.Router) {
 	router.Get("/sites", common.AdminGuard(app, func(c *fiber.Ctx) error {
-		sites := app.Dao().FindAllSiteDTOs()
+		sites := app.Dao().FindAllSitesCooked()
 
 		return common.RespData(c, ResponseSiteList{
 			Sites: sites,

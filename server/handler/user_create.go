@@ -22,7 +22,7 @@ type ParamsUserCreate struct {
 }
 
 type ResponseUserCreate struct {
-	entity.AdminUserDTO
+	entity.CookedUserForAdmin
 }
 
 // @Id           CreateUser
@@ -79,7 +79,7 @@ func UserCreate(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseUserCreate{
-			AdminUserDTO: app.Dao().BuildAdminUserDTO(&user),
+			CookedUserForAdmin: app.Dao().UserToCookedForAdmin(&user),
 		})
 	}))
 }

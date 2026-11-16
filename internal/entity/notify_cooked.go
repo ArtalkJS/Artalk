@@ -1,6 +1,6 @@
 package entity
 
-type NotifyDTO struct {
+type CookedNotify struct {
 	ID        uint   `json:"id"`
 	UserID    uint   `json:"user_id"`
 	CommentID uint   `json:"comment_id"`

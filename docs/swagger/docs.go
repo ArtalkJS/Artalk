@@ -4010,62 +4010,7 @@ const docTemplate = `{
             "type": "object",
             "additionalProperties": true
         },
-        "entity.AdminUserDTO": {
-            "type": "object",
-            "required": [
-                "badge_color",
-                "badge_name",
-                "comment_count",
-                "email",
-                "id",
-                "is_admin",
-                "is_in_conf",
-                "last_ip",
-                "last_ua",
-                "link",
-                "name",
-                "receive_email"
-            ],
-            "properties": {
-                "badge_color": {
-                    "type": "string"
-                },
-                "badge_name": {
-                    "type": "string"
-                },
-                "comment_count": {
-                    "type": "integer"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_admin": {
-                    "type": "boolean"
-                },
-                "is_in_conf": {
-                    "type": "boolean"
-                },
-                "last_ip": {
-                    "type": "string"
-                },
-                "last_ua": {
-                    "type": "string"
-                },
-                "link": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "receive_email": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "entity.CommentDTO": {
+        "entity.CookedComment": {
             "type": "object",
             "required": [
                 "badge_color",
@@ -4167,7 +4112,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.NotifyDTO": {
+        "entity.CookedNotify": {
             "type": "object",
             "required": [
                 "comment_id",
@@ -4198,7 +4143,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.PageDTO": {
+        "entity.CookedPage": {
             "type": "object",
             "required": [
                 "admin_only",
@@ -4245,7 +4190,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.SiteDTO": {
+        "entity.CookedSite": {
             "type": "object",
             "required": [
                 "first_url",
@@ -4275,7 +4220,7 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.UserDTO": {
+        "entity.CookedUser": {
             "type": "object",
             "required": [
                 "badge_color",
@@ -4302,6 +4247,61 @@ const docTemplate = `{
                 },
                 "is_admin": {
                     "type": "boolean"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "receive_email": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "entity.CookedUserForAdmin": {
+            "type": "object",
+            "required": [
+                "badge_color",
+                "badge_name",
+                "comment_count",
+                "email",
+                "id",
+                "is_admin",
+                "is_in_conf",
+                "last_ip",
+                "last_ua",
+                "link",
+                "name",
+                "receive_email"
+            ],
+            "properties": {
+                "badge_color": {
+                    "type": "string"
+                },
+                "badge_name": {
+                    "type": "string"
+                },
+                "comment_count": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_admin": {
+                    "type": "boolean"
+                },
+                "is_in_conf": {
+                    "type": "boolean"
+                },
+                "last_ip": {
+                    "type": "string"
+                },
+                "last_ua": {
+                    "type": "string"
                 },
                 "link": {
                     "type": "string"
@@ -4850,7 +4850,7 @@ const docTemplate = `{
                 "users": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.AdminUserDTO"
+                        "$ref": "#/definitions/entity.CookedUserForAdmin"
                     }
                 }
             }
@@ -5036,7 +5036,7 @@ const docTemplate = `{
                     "description": "The comment detail",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/entity.CommentDTO"
+                            "$ref": "#/definitions/entity.CookedComment"
                         }
                     ]
                 },
@@ -5044,7 +5044,7 @@ const docTemplate = `{
                     "description": "The reply comment if exists (like reply)",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/entity.CommentDTO"
+                            "$ref": "#/definitions/entity.CookedComment"
                         }
                     ]
                 }
@@ -5061,14 +5061,14 @@ const docTemplate = `{
                 "comments": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.CommentDTO"
+                        "$ref": "#/definitions/entity.CookedComment"
                     }
                 },
                 "count": {
                     "type": "integer"
                 },
                 "page": {
-                    "$ref": "#/definitions/entity.PageDTO"
+                    "$ref": "#/definitions/entity.CookedPage"
                 },
                 "roots_count": {
                     "type": "integer"
@@ -5228,7 +5228,7 @@ const docTemplate = `{
                 "notifies": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.NotifyDTO"
+                        "$ref": "#/definitions/entity.CookedNotify"
                     }
                 }
             }
@@ -5320,7 +5320,7 @@ const docTemplate = `{
                 "pages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.PageDTO"
+                        "$ref": "#/definitions/entity.CookedPage"
                     }
                 }
             }
@@ -5455,7 +5455,7 @@ const docTemplate = `{
                 "sites": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.SiteDTO"
+                        "$ref": "#/definitions/entity.CookedSite"
                     }
                 }
             }
@@ -5603,14 +5603,14 @@ const docTemplate = `{
                 "notifies": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.NotifyDTO"
+                        "$ref": "#/definitions/entity.CookedNotify"
                     }
                 },
                 "notifies_count": {
                     "type": "integer"
                 },
                 "user": {
-                    "$ref": "#/definitions/entity.UserDTO"
+                    "$ref": "#/definitions/entity.CookedUser"
                 }
             }
         },
@@ -5621,7 +5621,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "user": {
-                    "$ref": "#/definitions/entity.UserDTO"
+                    "$ref": "#/definitions/entity.CookedUser"
                 }
             }
         },
@@ -5636,7 +5636,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/entity.UserDTO"
+                    "$ref": "#/definitions/entity.CookedUser"
                 }
             }
         },

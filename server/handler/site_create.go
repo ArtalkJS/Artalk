@@ -17,7 +17,7 @@ type ParamsSiteCreate struct {
 }
 
 type ResponseSiteCreate struct {
-	entity.SiteDTO
+	entity.CookedSite
 }
 
 // @Id           CreateSite
@@ -61,7 +61,7 @@ func SiteCreate(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseSiteCreate{
-			SiteDTO: app.Dao().BuildSiteDTO(&site),
+			CookedSite: app.Dao().CookSite(&site),
 		})
 	}))
 }

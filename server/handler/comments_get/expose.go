@@ -14,7 +14,7 @@ type FindOptions struct {
 }
 
 // Find comments by options
-func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) ([]entity.CommentDTO, int64, int64) {
+func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) ([]entity.CookedComment, int64, int64) {
 	// Shared scopes
 	// Generated where conditions by options
 	var scopes []func(*gorm.DB) *gorm.DB
@@ -22,7 +22,7 @@ func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) ([]entity.Com
 	scopes = append(scopes, func(d *gorm.DB) *gorm.DB {
 		d = d.Preload("User")
 		// SQL Server cannot use GORM's multi-column IN for the Page relation.
-		// BuildCommentDTO already resolves missing page/site relations through the DAO.
+		// CookComment already resolves missing page/site relations through the DAO.
 		if d.Dialector.Name() == "sqlserver" {
 			return d
 		}
@@ -45,11 +45,11 @@ func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) ([]entity.Com
 		Find(&comments)
 
 	// Subsequent query
-	commentDTOs := dao.BuildCommentDTOs(comments)
+	cooked := dao.CookAllComments(comments)
 	if pg.Nested {
-		commentDTOs = findNestedChildren(dao, commentDTOs, scopes)
+		cooked = findNestedChildren(dao, cooked, scopes)
 	} else {
-		commentDTOs = findFlatLinkedComments(dao, commentDTOs, scopes)
+		cooked = findFlatLinkedComments(dao, cooked, scopes)
 	}
 
 	// Get count
@@ -60,5 +60,5 @@ func FindComments(dao *dao.Dao, opts QueryOptions, pg FindOptions) ([]entity.Com
 		dao.DB().Model(&entity.Comment{}).Scopes(scopes...).Scopes(OnlyRoot()).Count(&rootsCount)
 	}
 
-	return commentDTOs, count, rootsCount
+	return cooked, count, rootsCount
 }

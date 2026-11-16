@@ -78,8 +78,8 @@ func TestAdminPushHonorsModerationSettings(t *testing.T) {
 	d := app.Dao()
 
 	type message struct {
-		Subject string            `json:"notify_subject"`
-		Comment entity.CommentDTO `json:"comment"`
+		Subject string               `json:"notify_subject"`
+		Comment entity.CookedComment `json:"comment"`
 	}
 	requests := make(chan message, 4)
 	callback := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

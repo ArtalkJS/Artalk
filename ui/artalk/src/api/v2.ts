@@ -37,22 +37,7 @@ export interface CommonJSONResult {
 
 export type CommonMap = Record<string, any>
 
-export interface EntityAdminUserDTO {
-  badge_color: string
-  badge_name: string
-  comment_count: number
-  email: string
-  id: number
-  is_admin: boolean
-  is_in_conf: boolean
-  last_ip: string
-  last_ua: string
-  link: string
-  name: string
-  receive_email: boolean
-}
-
-export interface EntityCommentDTO {
+export interface EntityCookedComment {
   badge_color: string
   badge_name: string
   content: string
@@ -79,7 +64,7 @@ export interface EntityCommentDTO {
   vote_up: number
 }
 
-export interface EntityNotifyDTO {
+export interface EntityCookedNotify {
   comment_id: number
   id: number
   is_emailed: boolean
@@ -88,7 +73,7 @@ export interface EntityNotifyDTO {
   user_id: number
 }
 
-export interface EntityPageDTO {
+export interface EntityCookedPage {
   admin_only: boolean
   date: string
   id: number
@@ -101,7 +86,7 @@ export interface EntityPageDTO {
   vote_up: number
 }
 
-export interface EntitySiteDTO {
+export interface EntityCookedSite {
   first_url: string
   id: number
   name: string
@@ -109,12 +94,27 @@ export interface EntitySiteDTO {
   urls_raw: string
 }
 
-export interface EntityUserDTO {
+export interface EntityCookedUser {
   badge_color: string
   badge_name: string
   email: string
   id: number
   is_admin: boolean
+  link: string
+  name: string
+  receive_email: boolean
+}
+
+export interface EntityCookedUserForAdmin {
+  badge_color: string
+  badge_name: string
+  comment_count: number
+  email: string
+  id: number
+  is_admin: boolean
+  is_in_conf: boolean
+  last_ip: string
+  last_ua: string
   link: string
   name: string
   receive_email: boolean
@@ -342,7 +342,7 @@ export interface HandlerRequestUserInfoUpdate {
 
 export interface HandlerResponseAdminUserList {
   count: number
-  users: EntityAdminUserDTO[]
+  users: EntityCookedUserForAdmin[]
 }
 
 export interface HandlerResponseAuthDataMergeApply {
@@ -396,15 +396,15 @@ export interface HandlerResponseCommentCreate {
 
 export interface HandlerResponseCommentGet {
   /** The comment detail */
-  comment: EntityCommentDTO
+  comment: EntityCookedComment
   /** The reply comment if exists (like reply) */
-  reply_comment: EntityCommentDTO
+  reply_comment: EntityCookedComment
 }
 
 export interface HandlerResponseCommentList {
-  comments: EntityCommentDTO[]
+  comments: EntityCookedComment[]
   count: number
-  page?: EntityPageDTO
+  page?: EntityCookedPage
   roots_count: number
 }
 
@@ -450,7 +450,7 @@ export interface HandlerResponseConfDomain {
 
 export interface HandlerResponseNotifyList {
   count: number
-  notifies: EntityNotifyDTO[]
+  notifies: EntityCookedNotify[]
 }
 
 export interface HandlerResponsePageFetch {
@@ -479,7 +479,7 @@ export interface HandlerResponsePageFetchStatus {
 
 export interface HandlerResponsePageList {
   count: number
-  pages: EntityPageDTO[]
+  pages: EntityCookedPage[]
 }
 
 export interface HandlerResponsePagePV {
@@ -518,7 +518,7 @@ export interface HandlerResponseSiteCreate {
 
 export interface HandlerResponseSiteList {
   count: number
-  sites: EntitySiteDTO[]
+  sites: EntityCookedSite[]
 }
 
 export interface HandlerResponseSiteUpdate {
@@ -562,18 +562,18 @@ export interface HandlerResponseUserCreate {
 
 export interface HandlerResponseUserInfo {
   is_login: boolean
-  notifies: EntityNotifyDTO[]
+  notifies: EntityCookedNotify[]
   notifies_count: number
-  user: EntityUserDTO
+  user: EntityCookedUser
 }
 
 export interface HandlerResponseUserInfoUpdate {
-  user: EntityUserDTO
+  user: EntityCookedUser
 }
 
 export interface HandlerResponseUserLogin {
   token: string
-  user: EntityUserDTO
+  user: EntityCookedUser
 }
 
 export interface HandlerResponseUserStatus {

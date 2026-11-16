@@ -30,7 +30,7 @@ type ParamsCommentUpdate struct {
 }
 
 type ResponseCommentUpdate struct {
-	entity.CommentDTO
+	entity.CookedComment
 }
 
 // @Id           UpdateComment
@@ -162,11 +162,11 @@ func CommentUpdate(app *core.App, router fiber.Router) {
 			emailService.AsyncSend(notify)
 		}
 
-		commentDTO := app.Dao().BuildCommentDTO(&comment)
-		commentDTO = fetchIPRegionForComment(app, commentDTO)
+		cookedComment := app.Dao().CookComment(&comment)
+		cookedComment = fetchIPRegionForComment(app, cookedComment)
 
 		return common.RespData(c, ResponseCommentUpdate{
-			CommentDTO: commentDTO,
+			CookedComment: cookedComment,
 		})
 	}))
 }

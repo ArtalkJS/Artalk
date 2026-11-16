@@ -9,7 +9,7 @@ func ContainsComment(comments []Comment, targetID uint) bool {
 	return false
 }
 
-func ContainsCommentDTO(comments []CommentDTO, targetID uint) bool {
+func ContainsCookedComment(comments []CookedComment, targetID uint) bool {
 	for _, c := range comments {
 		if c.ID == targetID {
 			return true

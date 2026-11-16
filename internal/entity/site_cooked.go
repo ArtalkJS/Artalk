@@ -1,6 +1,6 @@
 package entity
 
-type SiteDTO struct {
+type CookedSite struct {
 	ID       uint     `json:"id"`
 	Name     string   `json:"name"`
 	Urls     []string `json:"urls"`

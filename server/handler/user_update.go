@@ -22,7 +22,7 @@ type ParamsUserUpdate struct {
 }
 
 type ResponseUserUpdate struct {
-	entity.AdminUserDTO
+	entity.CookedUserForAdmin
 }
 
 // @Id           UpdateUser
@@ -92,7 +92,7 @@ func UserUpdate(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespData(c, ResponseUserUpdate{
-			AdminUserDTO: app.Dao().BuildAdminUserDTO(&user),
+			CookedUserForAdmin: app.Dao().UserToCookedForAdmin(&user),
 		})
 	}))
 }

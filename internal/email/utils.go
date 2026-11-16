@@ -11,7 +11,7 @@ import (
 
 const fallbackMessageIDDomain = "artalk.local"
 
-func getCookedEmail(email *Email) *gomail.Message {
+func buildMessage(email *Email) *gomail.Message {
 	m := gomail.NewMessage()
 
 	// 发送人
@@ -45,6 +45,6 @@ func newMessageID(fromAddr string) string {
 
 func getEmailMineTxt(email *Email) string {
 	emailBuffer := bytes.NewBuffer([]byte{})
-	getCookedEmail(email).WriteTo(emailBuffer)
+	buildMessage(email).WriteTo(emailBuffer)
 	return string(emailBuffer.Bytes()[:])
 }

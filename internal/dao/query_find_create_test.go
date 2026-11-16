@@ -27,7 +27,7 @@ func TestFindCreateSite(t *testing.T) {
 
 		findSite := app.Dao().FindSite(siteName)
 		assert.False(t, findSite.IsEmpty(), "找不到创建后的站点")
-		assert.Equal(t, app.Dao().CookSite(&result), app.Dao().CookSite(&findSite), "创建后的站点数据有问题")
+		assert.Equal(t, app.Dao().BuildSiteDTO(&result), app.Dao().BuildSiteDTO(&findSite), "创建后的站点数据有问题")
 	})
 
 	t.Run("Find Existed Site", func(t *testing.T) {
@@ -56,14 +56,14 @@ func TestFindCreatePage(t *testing.T) {
 
 		findPage := app.Dao().FindPage(pageKey, siteName)
 		assert.False(t, findPage.IsEmpty(), "找不到创建后的页面")
-		assert.Equal(t, app.Dao().CookPage(&result), app.Dao().CookPage(&findPage), "创建后的页面数据有问题")
+		assert.Equal(t, app.Dao().BuildPageDTO(&result), app.Dao().BuildPageDTO(&findPage), "创建后的页面数据有问题")
 	})
 
 	t.Run("Find Existed Page", func(t *testing.T) {
 		result := app.Dao().FindCreatePage("/test/1000.html", "", "Site A")
 		assert.False(t, result.IsEmpty())
 		findPage := app.Dao().FindPage("/test/1000.html", "Site A")
-		assert.Equal(t, app.Dao().CookPage(&findPage), app.Dao().CookPage(&result))
+		assert.Equal(t, app.Dao().BuildPageDTO(&findPage), app.Dao().BuildPageDTO(&result))
 	})
 
 	t.Run("Concurrent FindCreatePage", func(t *testing.T) {
@@ -126,7 +126,7 @@ func TestFindCreateUser(t *testing.T) {
 
 		findUser := app.Dao().FindUser(userName, userEmail)
 		assert.False(t, findUser.IsEmpty(), "找不到创建后的用户")
-		assert.Equal(t, app.Dao().CookUser(&result), app.Dao().CookUser(&findUser), "创建后的用户数据有问题")
+		assert.Equal(t, app.Dao().BuildUserDTO(&result), app.Dao().BuildUserDTO(&findUser), "创建后的用户数据有问题")
 	})
 
 	t.Run("Valid User Values", func(t *testing.T) {

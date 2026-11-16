@@ -16,10 +16,10 @@ import (
 // -------------------------------------------------------------------
 
 type tplParams struct {
-	From          entity.CookedCommentForEmail `json:"from"`
-	To            entity.CookedCommentForEmail `json:"to"`
-	Comment       entity.CookedCommentForEmail `json:"comment"`
-	ParentComment entity.CookedCommentForEmail `json:"parent_comment"`
+	From          entity.EmailCommentDTO `json:"from"`
+	To            entity.EmailCommentDTO `json:"to"`
+	Comment       entity.EmailCommentDTO `json:"comment"`
+	ParentComment entity.EmailCommentDTO `json:"parent_comment"`
 
 	Nick         string `json:"nick"`
 	Content      string `json:"content"`
@@ -35,7 +35,7 @@ type tplParams struct {
 }
 
 type notifyExtraData struct {
-	from, to entity.CookedCommentForEmail
+	from, to entity.EmailCommentDTO
 	toUser   entity.User
 }
 
@@ -44,8 +44,8 @@ func getNotifyExtraData(dao *dao.Dao, notify *entity.Notify) (data notifyExtraDa
 	fromComment := dao.FetchCommentForNotify(notify)
 	toComment := dao.FindNotifyParentComment(notify)
 
-	data.from = dao.CookCommentForEmail(&fromComment)
-	data.to = dao.CookCommentForEmail(&toComment)
+	data.from = dao.BuildEmailCommentDTO(&fromComment)
+	data.to = dao.BuildEmailCommentDTO(&toComment)
 
 	data.toUser = dao.FetchUserForNotify(notify) // email receiver
 
@@ -87,7 +87,7 @@ func getPurifiedValue(k string, v interface{}) string {
 	// whitelist
 	ignoreEscapeKeys := []string{"reply_content", "content", "link_to_reply"}
 	if utils.ContainsStr(ignoreEscapeKeys, k) ||
-		strings.HasSuffix(k, ".content") || // exclude `entity.CookedComment.content`
+		strings.HasSuffix(k, ".content") || // exclude `entity.CommentDTO.content`
 		strings.HasSuffix(k, ".content_raw") {
 		return val
 	}

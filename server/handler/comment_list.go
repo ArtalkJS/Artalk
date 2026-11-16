@@ -31,10 +31,10 @@ type ParamsCommentList struct {
 }
 
 type ResponseCommentList struct {
-	Comments   []entity.CookedComment `json:"comments"`
-	Count      int64                  `json:"count"`
-	RootsCount int64                  `json:"roots_count"`
-	Page       *entity.CookedPage     `json:"page,omitempty"`
+	Comments   []entity.CommentDTO `json:"comments"`
+	Count      int64               `json:"count"`
+	RootsCount int64               `json:"roots_count"`
+	Page       *entity.PageDTO     `json:"page,omitempty"`
 }
 
 // @Id           GetComments
@@ -129,7 +129,7 @@ func CommentList(app *core.App, router fiber.Router) {
 	})
 }
 
-func findPageData(dao *dao.Dao, pageKey string, siteName string) *entity.CookedPage {
+func findPageData(dao *dao.Dao, pageKey string, siteName string) *entity.PageDTO {
 	page := dao.FindPage(pageKey, siteName)
 	if page.IsEmpty() {
 		// If page not found, create a new one but not save it
@@ -138,12 +138,12 @@ func findPageData(dao *dao.Dao, pageKey string, siteName string) *entity.CookedP
 			SiteName: siteName,
 		}
 	}
-	cooked := dao.CookPage(&page)
-	return &cooked
+	pageDTO := dao.BuildPageDTO(&page)
+	return &pageDTO
 }
 
 // Find the IP region of each comment
-func findIPRegionForComments(app *core.App, comments []entity.CookedComment) []entity.CookedComment {
+func findIPRegionForComments(app *core.App, comments []entity.CommentDTO) []entity.CommentDTO {
 	if !app.Conf().IPRegion.Enabled {
 		return comments
 	}

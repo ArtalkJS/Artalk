@@ -17,8 +17,8 @@ type ParamsPageList struct {
 }
 
 type ResponsePageList struct {
-	Total int64               `json:"count"`
-	Pages []entity.CookedPage `json:"pages"`
+	Total int64            `json:"count"`
+	Pages []entity.PageDTO `json:"pages"`
 }
 
 // @Id           GetPages
@@ -82,13 +82,13 @@ func PageList(app *core.App, router fiber.Router) {
 			return common.RespError(c, 500, "Failed to list pages")
 		}
 
-		cookedPages := make([]entity.CookedPage, 0, len(pages))
+		pageDTOs := make([]entity.PageDTO, 0, len(pages))
 		for _, p := range pages {
-			cookedPages = append(cookedPages, app.Dao().CookPage(&p))
+			pageDTOs = append(pageDTOs, app.Dao().BuildPageDTO(&p))
 		}
 
 		return common.RespData(c, ResponsePageList{
-			Pages: cookedPages,
+			Pages: pageDTOs,
 			Total: total,
 		})
 	}))

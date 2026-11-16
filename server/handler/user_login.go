@@ -17,8 +17,8 @@ type ParamsUserLogin struct {
 }
 
 type ResponseUserLogin struct {
-	Token string            `json:"token"`
-	User  entity.CookedUser `json:"user"`
+	Token string         `json:"token"`
+	User  entity.UserDTO `json:"user"`
 }
 
 // @Id           Login
@@ -85,7 +85,7 @@ func UserLogin(app *core.App, router fiber.Router) {
 
 		return common.RespData(c, ResponseUserLogin{
 			Token: jwtToken,
-			User:  app.Dao().CookUser(&user),
+			User:  app.Dao().BuildUserDTO(&user),
 		})
 	}))
 }

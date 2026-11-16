@@ -1,6 +1,6 @@
 package entity
 
-type CookedComment struct {
+type CommentDTO struct {
 	ID             uint   `json:"id"`
 	Content        string `json:"content"`
 	ContentMarked  string `json:"content_marked"`

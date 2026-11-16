@@ -23,10 +23,10 @@ func TestStat(t *testing.T) {
 	handler.Stat(app.App, fiber)
 
 	type dataComments struct {
-		Data []entity.CookedComment `json:"data"`
+		Data []entity.CommentDTO `json:"data"`
 	}
 	type dataPages struct {
-		Data []entity.CookedPage `json:"data"`
+		Data []entity.PageDTO `json:"data"`
 	}
 	type dataCounts struct {
 		Data map[string]int `json:"data"`
@@ -257,7 +257,7 @@ func TestStatExcludesPendingComments(t *testing.T) {
 				require.Equal(t, http.StatusOK, resp.StatusCode)
 
 				var body struct {
-					Data []entity.CookedComment `json:"data"`
+					Data []entity.CommentDTO `json:"data"`
 				}
 				require.NoError(t, json.NewDecoder(resp.Body).Decode(&body))
 				require.NotEmpty(t, body.Data)

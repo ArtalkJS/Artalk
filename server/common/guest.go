@@ -53,10 +53,10 @@ func NotificationQuery(app *core.App, c *fiber.Ctx) *gorm.DB {
 	return query.Where("EXISTS (?)", visibleRepliesToOwnedComments)
 }
 
-func UnreadNotifications(app *core.App, c *fiber.Ctx) []entity.CookedNotify {
+func UnreadNotifications(app *core.App, c *fiber.Ctx) []entity.NotifyDTO {
 	var notices []entity.Notify
 	if err := NotificationQuery(app, c).Where("is_read = ?", false).Find(&notices).Error; err != nil {
-		return []entity.CookedNotify{}
+		return []entity.NotifyDTO{}
 	}
-	return app.Dao().CookAllNotifies(notices)
+	return app.Dao().BuildNotifyDTOs(notices)
 }

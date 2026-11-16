@@ -1,0 +1,32 @@
+name: Repo Dispatch
+run-name: Dispatch event `${{ inputs.event }}` manually by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      event_type:
+        type: string
+        description: Event
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: linux-xarm92
+    steps:
+      - name: Validate event
+        env:
+          EVENT_TYPE: ${{ inputs.event }}
+        run: |
+          if [[ ! "$EVENT" =~ ^[A-Za-z0-9_.-]{1,100}$ ]]; then
+            echo "Invalid repository dispatch event type."
+            exit 1
+          fi
+
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@ # v6.8.9
+        with:
+          event-type: ${{ inputs.event }}

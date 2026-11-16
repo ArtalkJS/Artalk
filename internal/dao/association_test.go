@@ -16,7 +16,7 @@ func TestFetchUserForComment(t *testing.T) {
 	realUser := app.Dao().FindUserByID(1001)
 
 	assert.False(t, associatedUser.IsEmpty(), "评论关联用户找不到")
-	assert.Equal(t, app.Dao().CookUser(&realUser), app.Dao().CookUser(&associatedUser), "评论关联用户数据不一致")
+	assert.Equal(t, app.Dao().BuildUserDTO(&realUser), app.Dao().BuildUserDTO(&associatedUser), "评论关联用户数据不一致")
 }
 
 func TestFetchPageForComment(t *testing.T) {
@@ -28,7 +28,7 @@ func TestFetchPageForComment(t *testing.T) {
 	associatedPage := app.Dao().FetchPageForComment(&comment)
 
 	assert.False(t, associatedPage.IsEmpty(), "评论关联页面找不到")
-	assert.Equal(t, app.Dao().CookPage(&realPage), app.Dao().CookPage(&associatedPage), "评论关联页面数据不一致")
+	assert.Equal(t, app.Dao().BuildPageDTO(&realPage), app.Dao().BuildPageDTO(&associatedPage), "评论关联页面数据不一致")
 }
 
 func TestFetchSiteForComment(t *testing.T) {
@@ -40,7 +40,7 @@ func TestFetchSiteForComment(t *testing.T) {
 	associatedSite := app.Dao().FetchSiteForComment(&comment)
 
 	assert.False(t, associatedSite.IsEmpty(), "评论关联站点找不到")
-	assert.Equal(t, app.Dao().CookSite(&realSite), app.Dao().CookSite(&associatedSite), "评论关联站点数据不一致")
+	assert.Equal(t, app.Dao().BuildSiteDTO(&realSite), app.Dao().BuildSiteDTO(&associatedSite), "评论关联站点数据不一致")
 }
 
 func TestFetchSiteForPage(t *testing.T) {
@@ -52,7 +52,7 @@ func TestFetchSiteForPage(t *testing.T) {
 	associatedSite := app.Dao().FetchSiteForPage(&page)
 
 	assert.False(t, associatedSite.IsEmpty(), "页面关联站点找不到")
-	assert.Equal(t, app.Dao().CookSite(&realSite), app.Dao().CookSite(&associatedSite), "页面关联站点数据不一致")
+	assert.Equal(t, app.Dao().BuildSiteDTO(&realSite), app.Dao().BuildSiteDTO(&associatedSite), "页面关联站点数据不一致")
 }
 
 func TestFetchCommentForNotify(t *testing.T) {
@@ -64,7 +64,7 @@ func TestFetchCommentForNotify(t *testing.T) {
 	associatedComment := app.Dao().FetchCommentForNotify(&notify)
 
 	assert.False(t, associatedComment.IsEmpty(), "通知关联评论找不到")
-	assert.Equal(t, app.Dao().CookComment(&realComment), app.Dao().CookComment(&associatedComment), "通知关联评论数据不一致")
+	assert.Equal(t, app.Dao().BuildCommentDTO(&realComment), app.Dao().BuildCommentDTO(&associatedComment), "通知关联评论数据不一致")
 }
 
 func TestFetchUserForNotify(t *testing.T) {
@@ -76,5 +76,5 @@ func TestFetchUserForNotify(t *testing.T) {
 	associatedUser := app.Dao().FetchUserForNotify(&notify)
 
 	assert.False(t, associatedUser.IsEmpty(), "通知关联用户找不到")
-	assert.Equal(t, app.Dao().CookUser(&realUser), app.Dao().CookUser(&associatedUser), "通知关联用户数据不一致")
+	assert.Equal(t, app.Dao().BuildUserDTO(&realUser), app.Dao().BuildUserDTO(&associatedUser), "通知关联用户数据不一致")
 }

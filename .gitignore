@@ -54,6 +54,7 @@ vite.config.ts.timestamp-*
 # frontend
 node_modules
 /ui/**/dist
+/coverage
 
 # backend
 /artalk.yml

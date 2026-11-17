@@ -2,11 +2,24 @@ name: Test Frontend
 
 on:
   push:
-    paths: [".github/workflows/test-frontend.yml", "ui/**", "package.json", "pnpm-lock.yaml"]
-    branches-ignore: ["release/*", "nightly"]
-    tags-ignore: ["v*"]
+    paths:
+      - ".github/workflows/test-frontend.yml"
+      - "ui/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "vitest.workspace.ts"
+      - "codecov.yml"
+    branches: [master]
   pull_request:
-    paths: [".github/workflows/test-frontend.yml", "ui/**", "package.json", "pnpm-lock.yaml"]
+    paths:
+      - ".github/workflows/test-frontend.yml"
+      - "ui/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "vitest.workspace.ts"
+      - "codecov.yml"
     branches-ignore: ["release/*", "nightly"]
 
 permissions:
@@ -64,7 +77,17 @@ jobs:
         run: pnpm build:all
 
       - name: Unit Test
-        run: pnpm test
+        run: pnpm test --run --coverage.enabled=${{ matrix.quality }}
+
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.quality }}
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        with:
+          flags: artalk
+          files: coverage/artalk/lcov.info
+          disable_search: true
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Plugins Build Test
         if: ${{ matrix.quality }}

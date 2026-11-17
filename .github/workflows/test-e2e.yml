@@ -13,8 +13,7 @@ on:
       - "go.sum"
       - "package.json"
       - "pnpm-lock.yaml"
-    branches-ignore: ["release/*", "nightly"]
-    tags-ignore: ["v*"]
+    branches: [master]
   pull_request:
     paths:
       - ".github/workflows/test-e2e.yml"

@@ -34,7 +34,7 @@
     "test:attw": "pnpx @arethetypeswrong/cli@0.18.5 --pack ."
   },
   "dependencies": {
-    "@typescript-eslint/utils": "^8.65.0"
+    "@typescript-eslint/utils": "^8.68.0"
   },
   "devDependencies": {
     "@typescript-eslint/rule-tester": "^8.65.0",

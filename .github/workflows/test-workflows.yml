@@ -3,8 +3,7 @@ name: Test Workflows
 on:
   push:
     paths: [".github/**"]
-    branches-ignore: ["release/*", "nightly"]
-    tags-ignore: ["v*"]
+    branches: [master]
   pull_request:
     paths: [".github/**"]
     branches-ignore: ["release/*", "nightly"]

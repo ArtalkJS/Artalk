@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/test-app.yml"
+      - "codecov.yml"
       - "cmd/**"
       - "internal/**"
       - "server/**"
@@ -11,11 +12,11 @@ on:
       - "main.go"
       - "go.mod"
       - "go.sum"
-    branches-ignore: ["release/*", "nightly"]
-    tags-ignore: ["v*"]
+    branches: [master]
   pull_request:
     paths:
       - ".github/workflows/test-app.yml"
+      - "codecov.yml"
       - "cmd/**"
       - "internal/**"
       - "server/**"
@@ -98,25 +99,18 @@ jobs:
         run: go test ./internal/dao ./server/handler -run '^(TestDatabaseCompatibility|TestMigrateRootIDsForExistingThreads|TestMergeLegacyPages)$' -count=1 -v
 
   test_app:
-    name: Test Go (${{ matrix.name }})
+    name: Test Go (${{ matrix.runner }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: Linux AMD64
-            runner: ubuntu-24.04
-            artifact: linux-amd64
-            coverage: true
-          - name: Linux ARM64
-            runner: ubuntu-24.04-arm
-            artifact: linux-arm64
-            coverage: false
-          - name: macOS
-            runner: macos-latest
-            artifact: macos
-            coverage: false
+        runner: [ubuntu-24.04, ubuntu-24.04-arm, macos-latest]
+        is_master:
+          - ${{ github.ref == 'refs/heads/master' }}
+        exclude:
+          - runner: macos-latest
+            is_master: false
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -167,13 +161,15 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: Go-Test-Results-${{ matrix.artifact }}
+          name: Go-Test-Results-${{ matrix.runner }}
           path: ${{ env.REPORT_DIR }}
 
-      - if: ${{ matrix.coverage && !cancelled() }}
+      - if: ${{ matrix.runner == 'ubuntu-24.04' && !cancelled() }}
         name: Upload coverage to Codecov
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         with:
           flags: go
-          file: ${{ env.REPORT_DIR }}/coverage.out
+          files: ${{ env.REPORT_DIR }}/coverage.out
+          disable_search: true
+          fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}

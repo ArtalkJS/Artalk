@@ -1,2 +1,10 @@
 ignore:
   - "docs/*"
+
+# Frontend and backend workflows run only when their paths change.
+flag_management:
+  default_rules:
+    carryforward: true
+    statuses:
+      - type: project
+        target: auto

@@ -291,6 +291,47 @@ describe('existing API and plugin compatibility', () => {
     expect(artalk.ctx.getCommentNodes()).toHaveLength(0)
   })
 
+  it('keeps the draft until every image upload has settled', async () => {
+    const api = mockApi()
+    const first = deferred<string>()
+    const second = deferred<string>()
+    const artalk = await initialize(api, {
+      imgUpload: true,
+      imgUploader: (file) => (file.name === 'one.png' ? first.promise : second.promise),
+    })
+    const editor = artalk.ctx.inject('editor')
+    editor.setContent('My photos')
+    const drop = new Event('drop', { cancelable: true })
+    Object.defineProperty(drop, 'dataTransfer', {
+      value: { files: [new File(['1'], 'one.png'), new File(['2'], 'two.png')] },
+    })
+    editor.getUI().$textarea.dispatchEvent(drop)
+    editor.submit()
+    expect(editor.getUI().$notifyWrap.textContent).toContain(
+      'Please wait for the image upload to finish.',
+    )
+
+    const url = 'https://example.com/one.png'
+    first.resolve(url)
+    await vi.waitFor(() => expect(editor.getContentRaw()).toContain(url))
+    editor.submit()
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    second.reject(new Error('Upload failed'))
+    await vi.waitFor(() => expect(editor.getContentRaw()).not.toContain('Uploading'))
+    expect(api.comments.createComment).not.toHaveBeenCalled()
+
+    const draft = editor.getContentRaw()
+    expect(draft).toContain('My photos')
+    expect(draft).toContain(`![](${url})`)
+    editor.submit()
+    await vi.waitFor(() =>
+      expect(api.comments.createComment).toHaveBeenCalledWith(
+        expect.objectContaining({ content: draft }),
+      ),
+    )
+    expect(api.comments.createComment).toHaveBeenCalledTimes(1)
+  })
+
   it('uses a custom uploader and returns to the API when it is removed', async () => {
     const api = mockApi()
     const artalk = await initialize(api, { imgUpload: true })

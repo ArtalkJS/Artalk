@@ -17,6 +17,7 @@ export default defineLocaleExternal(
     preview: 'プレビュー',
     uploadImage: '画像をアップロード',
     uploadFail: 'アップロードに失敗しました',
+    uploadPending: '画像のアップロードが完了するまでお待ちください。',
     commentFail: 'コメントに失敗しました',
     restoredMsg: '内容が自動的に復元されました',
     onlyAdminCanReply: '管理者のみがコメントできます',

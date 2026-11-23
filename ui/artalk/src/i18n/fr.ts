@@ -17,6 +17,7 @@ export default defineLocaleExternal(
     preview: 'Aperçu',
     uploadImage: 'Télécharger une image',
     uploadFail: 'Échec du téléchargement',
+    uploadPending: 'Veuillez attendre la fin de l’envoi des images.',
     commentFail: 'Échec du commentaire',
     restoredMsg: 'Le contenu a été restauré',
     onlyAdminCanReply: 'Seul l’administrateur peut répondre',

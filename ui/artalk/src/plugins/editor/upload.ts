@@ -7,6 +7,7 @@ import * as Utils from '@/lib/utils'
 const AllowImgExts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp']
 
 export default class Upload extends EditorPlugin {
+  pendingUploads = 0
   private disposed = false
   private $imgUploadInput?: HTMLInputElement
 
@@ -124,11 +125,11 @@ export default class Upload extends EditorPlugin {
 
     // 插入占位加载文字
     const uploadPlaceholderTxt = `${insertPrefix}![](Uploading ${file.name}...)`
-    this.kit.useEditor().insertContent(uploadPlaceholderTxt)
-
     // 上传图片
     let resp: { public_url: string } | undefined
+    this.pendingUploads++
     try {
+      this.kit.useEditor().insertContent(uploadPlaceholderTxt)
       const customUploaderFn = this.kit.useConf().imgUploader
       if (!customUploaderFn) {
         // 使用 Artalk 进行图片上传
@@ -141,6 +142,8 @@ export default class Upload extends EditorPlugin {
       if (!active()) return
       console.error(err)
       this.kit.useEditor().showNotify(`${$t('uploadFail')}: ${err.message}`, 'e')
+    } finally {
+      this.pendingUploads--
     }
     if (!active()) return
     if (!!resp && resp.public_url) {

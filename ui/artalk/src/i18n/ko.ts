@@ -17,6 +17,7 @@ export default defineLocaleExternal(
     preview: '미리보기',
     uploadImage: '이미지 업로드',
     uploadFail: '업로드 실패',
+    uploadPending: '이미지 업로드가 끝날 때까지 기다려 주세요.',
     commentFail: '댓글 실패',
     restoredMsg: '내용이 복원되었습니다',
     onlyAdminCanReply: '관리자만 답글을 달 수 있습니다',

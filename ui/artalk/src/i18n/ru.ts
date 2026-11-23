@@ -17,6 +17,7 @@ export default defineLocaleExternal(
     preview: 'Предпросмотр',
     uploadImage: 'Загрузить изображение',
     uploadFail: 'Ошибка загрузки',
+    uploadPending: 'Дождитесь окончания загрузки изображений.',
     commentFail: 'Не удалось оставить комментарий',
     restoredMsg: 'Содержимое было восстановлено',
     onlyAdminCanReply: 'Только администратор может ответить',

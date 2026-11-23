@@ -15,6 +15,7 @@ const zhCN: I18n = {
   preview: '预览',
   uploadImage: '上传图片',
   uploadFail: '上传失败',
+  uploadPending: '图片上传中，请稍后再发送。',
   commentFail: '评论失败',
   restoredMsg: '内容已自动恢复',
   onlyAdminCanReply: '仅管理员可评论',

@@ -1,6 +1,7 @@
 import EditorPlugin from './_plug'
 import type PlugKit from './_kit'
 import SubmitAddPreset from './submit-add'
+import Upload from './upload'
 import $t from '@/i18n'
 import type { CommentData } from '@/types'
 
@@ -43,6 +44,10 @@ export default class Submit extends EditorPlugin {
 
   private async do() {
     if (this.submitting || !this.mounted) return
+    if (this.kit.useDeps(Upload)?.pendingUploads) {
+      this.kit.useEditor().showNotify($t('uploadPending'), 'w')
+      return
+    }
     if (this.kit.useEditor().getContentFinal().trim() === '') {
       this.kit.useEditor().focus()
       return

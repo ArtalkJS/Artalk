@@ -15,6 +15,7 @@ export default defineLocaleExternal('zh-TW', {
   preview: '預覽',
   uploadImage: '上傳圖片',
   uploadFail: '上傳失敗',
+  uploadPending: '圖片上傳中，請稍後再送出。',
   commentFail: '評論失敗',
   restoredMsg: '內容已自動恢復',
   onlyAdminCanReply: '僅管理員可評論',

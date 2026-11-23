@@ -12,6 +12,7 @@ const en = {
   emoticon: 'Emoji',
   preview: 'Preview',
   uploadImage: 'Upload Image',
+  uploadPending: 'Please wait for the image upload to finish.',
   uploadFail: 'Upload Failed',
   commentFail: 'Failed to comment',
   restoredMsg: 'Content has been restored',

@@ -17,6 +17,7 @@ export default defineLocaleExternal(
     preview: 'Önizleme',
     uploadImage: 'Görsel Yükle',
     uploadFail: 'Yükleme Başarısız',
+    uploadPending: 'Lütfen görsellerin yüklenmesini bekleyin.',
     commentFail: 'Yorum yapma başarısız',
     restoredMsg: 'İçerik geri yüklendi',
     onlyAdminCanReply: 'Sadece yönetici yanıtlayabilir',

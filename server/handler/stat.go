@@ -124,7 +124,7 @@ func Stat(app *core.App, router fiber.Router) {
 			var pages []entity.Page
 			app.Dao().DB().Raw(
 				"SELECT * FROM "+tbPages+" p WHERE p.site_name = ? ORDER BY ("+
-					"SELECT COUNT(*) FROM "+tbComments+" c WHERE c.page_key = p.key AND c.is_pending = ?) DESC LIMIT ?",
+					"SELECT COUNT(*) FROM "+tbComments+" c WHERE c.site_name = p.site_name AND c.page_key = p.key AND c.is_pending = ?) DESC LIMIT ?",
 				p.SiteName, false, p.Limit,
 			).Find(&pages)
 

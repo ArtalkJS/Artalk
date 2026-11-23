@@ -11,6 +11,39 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestMostCommentedPagesCountOnlyVisibleCommentsFromTheSameSite(t *testing.T) {
+	app, router := NewApiTestApp()
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+	handler.Stat(app.App, router)
+
+	dao := app.Dao()
+	for _, page := range []entity.Page{
+		{SiteName: "blog", Key: "/shared"},
+		{SiteName: "blog", Key: "/local"},
+		{SiteName: "wiki", Key: "/shared"},
+	} {
+		require.NoError(t, dao.CreatePage(&page))
+	}
+	for _, comment := range []entity.Comment{
+		{SiteName: "blog", PageKey: "/local"},
+		{SiteName: "blog", PageKey: "/shared", IsPending: true},
+		{SiteName: "blog", PageKey: "/shared", IsPending: true},
+		{SiteName: "wiki", PageKey: "/shared"},
+		{SiteName: "wiki", PageKey: "/shared"},
+	} {
+		require.NoError(t, dao.CreateComment(&comment))
+	}
+
+	var result struct {
+		Data []entity.PageDTO `json:"data"`
+	}
+	body := flowRequest(t, router, http.MethodGet, "/stats/comment_most_pages?site_name=blog&limit=1", nil, "", http.StatusOK)
+	require.NoError(t, json.Unmarshal(body, &result))
+	require.Len(t, result.Data, 1)
+	require.Equal(t, "blog", result.Data[0].SiteName)
+	require.Equal(t, "/local", result.Data[0].Key)
+}
+
 func TestPageStatisticsReflectWritesWithinEachSite(t *testing.T) {
 	app, router := NewApiTestApp()
 	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })

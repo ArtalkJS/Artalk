@@ -70,6 +70,18 @@ async function initialize(options: ConfigPartial = {}, source = mockApi()) {
 }
 
 describe('widget initialization and editor', () => {
+  it('uses English for omitted entries in a custom locale', async () => {
+    const source = mockApi()
+    vi.mocked(source.comments.getComments).mockResolvedValue(response(list([comment(1)])))
+    const widget = await initialize({ locale: { voteUp: 'Like', reply: '' } }, source)
+
+    const actions = widget.getEl().querySelector('.atk-actions')!
+    expect(actions.textContent).toContain('Like (0)')
+    expect(actions.textContent).toContain('reply')
+    expect(widget.getEl().querySelector('.atk-send-btn')?.textContent).toBe('Send')
+    expect(widget.ctx.$t('counter', { count: '3' })).toBe('3 Comments')
+  })
+
   it('applies the remote locale before initializing plugins', async () => {
     const translated: string[] = []
     const plugin: ArtalkPlugin = (ctx) => {

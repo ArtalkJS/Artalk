@@ -58,10 +58,12 @@ export function setLocale(locale: I18n | string) {
  * Get an i18n message by key
  */
 export function t(key: I18nKeys, args: { [key: string]: string } = {}) {
-  let str = LocaleDict?.[key] || key
-  str = str.replace(/\{\s*(\w+?)\s*\}/g, (_, token) => args[token] || '')
-
-  return Utils.htmlEncode(str)
+  let value = LocaleDict?.[key]
+  if (LocaleConf && typeof LocaleConf === 'object' && !(key in LocaleConf)) {
+    value = en[key]
+  }
+  const str = typeof value === 'string' && value ? value : key
+  return Utils.htmlEncode(str.replace(/\{\s*(\w+?)\s*\}/g, (_, token) => args[token] || ''))
 }
 
 export default t

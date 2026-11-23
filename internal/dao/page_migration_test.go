@@ -10,6 +10,40 @@ import (
 	"gorm.io/gorm"
 )
 
+func TestMergePagesRepairsMissingSQLitePrimaryKey(t *testing.T) {
+	t.Setenv("ARTALK_TEST_DB_TYPE", "")
+	storage := newMigrationDB(t)
+	require.NoError(t, storage.Exec("CREATE TABLE atk_pages (id INTEGER, key TEXT, site_name TEXT, pv INTEGER)").Error)
+	require.NoError(t, storage.Exec("CREATE INDEX legacy_page_key ON atk_pages(key)").Error)
+	// The first NULL would take ID 1 if SQLite assigned IDs in insertion order.
+	require.NoError(t, storage.Exec(`INSERT INTO atk_pages (id, key, site_name, pv) VALUES
+		(NULL, '/post', 'blog', 3), (1, '/post', 'blog', 7), (NULL, '/post', 'wiki', 9)`).Error)
+	d := dao.NewDao(storage)
+	vote := entity.Vote{TargetID: 1, Type: entity.VoteTypePageUp}
+	require.NoError(t, storage.Create(&vote).Error)
+
+	for range 2 {
+		require.NoError(t, d.MergePages())
+		var pages []entity.Page
+		require.NoError(t, storage.Order("id").Find(&pages).Error)
+		require.Len(t, pages, 2)
+		require.EqualValues(t, 1, pages[0].ID)
+		require.Equal(t, "blog", pages[0].SiteName)
+		require.Equal(t, 10, pages[0].PV)
+		require.Greater(t, pages[1].ID, pages[0].ID)
+		require.Equal(t, "wiki", pages[1].SiteName)
+		require.Equal(t, 9, pages[1].PV)
+	}
+	var savedVote entity.Vote
+	require.NoError(t, storage.First(&savedVote, vote.ID).Error)
+	require.Equal(t, vote.TargetID, savedVote.TargetID)
+	require.True(t, storage.Migrator().HasIndex(&entity.Page{}, "legacy_page_key"))
+
+	page := d.FindCreatePage("/new", "", "blog")
+	require.NotZero(t, page.ID)
+	require.Equal(t, page.ID, d.FindCreatePage("/new", "", "blog").ID)
+}
+
 func TestMergeLegacyPages(t *testing.T) {
 	for _, failure := range []string{"none", "pages", "votes", "delete"} {
 		t.Run(failure, func(t *testing.T) {

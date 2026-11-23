@@ -6,6 +6,7 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/artalkjs/artalk/v2/internal/log"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func (dao *Dao) MigrateModels() {
@@ -132,8 +133,36 @@ func (dao *Dao) MigrateRootID() {
 	log.Info(TAG, "Root IDs generated successfully.")
 }
 
+// Some legacy SQLite databases have an ordinary integer column for the page ID.
+func (dao *Dao) repairSQLitePagePrimaryKey() error {
+	db := dao.DB()
+	if db.Dialector.Name() != "sqlite" {
+		return nil
+	}
+	table := clause.Table{Name: dao.GetTableName(&entity.Page{})}
+	var needsRepair bool
+	if err := db.Raw("SELECT EXISTS (SELECT 1 FROM pragma_table_info(?) WHERE name = 'id' AND pk = 0)", table.Name).
+		Scan(&needsRepair).Error; err != nil || !needsRepair {
+		return err
+	}
+
+	// Assign missing IDs above the existing ones before SQLite copies the rows.
+	// Both steps can be retried if the repair is interrupted.
+	if err := db.Exec(`WITH missing AS MATERIALIZED (
+		SELECT rowid, (SELECT COALESCE(MAX(id), 0) FROM ?) + ROW_NUMBER() OVER (ORDER BY rowid) AS new_id
+		FROM ? WHERE id IS NULL
+	)
+	UPDATE ? AS p SET id = missing.new_id FROM missing WHERE p.rowid = missing.rowid`, table, table, table).Error; err != nil {
+		return err
+	}
+	return db.Migrator().AlterColumn(&entity.Page{}, "ID")
+}
+
 // MergePages repairs duplicate records in databases created by older versions.
 func (dao *Dao) MergePages() error {
+	if err := dao.repairSQLitePagePrimaryKey(); err != nil {
+		return err
+	}
 	if err := dao.DB().Transaction(func(tx *gorm.DB) error {
 		var pages []*entity.Page
 		if err := tx.Order("id ASC").Find(&pages).Error; err != nil {

@@ -3,17 +3,21 @@ import { createPinia } from 'pinia'
 import Artalk from 'artalk'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { routes } from 'vue-router/auto-routes'
-import { setupI18n } from './i18n'
+import { availableLocales, setupI18n } from './i18n'
 import 'artalk/Artalk.css'
 import './style.scss'
 import App from './App.vue'
-import { setArtalk } from './global'
+import { bootParams, setArtalk } from './global'
 import { setupArtalk, syncArtalkUser } from './artalk'
+import { applyForcedLocale, resolveForcedLocale } from './lib/forced-locale'
 import './lib/promise-polyfill'
 
 // I18n
 // @see https://vue-i18n.intlify.dev
 const { i18n, setLocale } = setupI18n()
+
+// The locale passed by the parent page takes precedence over the backend locale
+const forcedLocale = resolveForcedLocale(bootParams.locale, availableLocales)
 
 // Router
 // @see https://router.vuejs.org/
@@ -34,6 +38,10 @@ const artalkLoader = () =>
     let artalk: Artalk | null = null
 
     Artalk.use((ctx) => {
+      // The network plugins, including the client locale set of the forced locale,
+      // are loaded by now. If the set failed to load, the backend locale is kept.
+      applyForcedLocale(ctx, forcedLocale)
+
       // When artalk is ready, notify the loader and load the locale
       ctx.watchConf(['locale'], async (conf) => {
         if (typeof conf.locale === 'string' && conf.locale !== 'auto') await setLocale(conf.locale) // update i18n locale
@@ -45,7 +53,7 @@ const artalkLoader = () =>
       })
     })
 
-    artalk = setupArtalk()
+    artalk = setupArtalk(forcedLocale)
   })
 
 // Mount Vue app

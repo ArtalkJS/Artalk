@@ -37,7 +37,7 @@
     "@artalk/plugin-kit": "workspace:*",
     "@eslint/compat": "^2.1.0",
     "@eslint/js": "^10.0.1",
-    "@microsoft/api-extractor": "7.58.12",
+    "@microsoft/api-extractor": "7.59.0",
     "@playwright/test": "^1.61.1",
     "@types/node": "25.9.5",
     "@vitest/coverage-v8": "^4.1.10",

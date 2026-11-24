@@ -169,4 +169,5 @@ export const ja: MessageSchema = {
   see_more_on_github: 'GitHub で詳しく見る',
   star_proposal_line_1: 'Artalk を気に入ったら、ぜひスターをつけてください 🌟',
   star_proposal_line_2: 'これは私たちにとって非常に役立ちます！',
+  advertisement: '広告',
 }

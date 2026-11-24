@@ -11,6 +11,7 @@ export const shared = defineConfig({
   /* prettier-ignore */
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }],
+    ['meta', { name: 'google-adsense-account', content: 'ca-pub-1544931065505375' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:locale', content: 'en' }],
     ['meta', { property: 'og:title', content: 'Artalk - A Self-hosted Comment System'}],

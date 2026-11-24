@@ -1,5 +1,5 @@
 <template>
-  <div ref="el" style="margin-top: 20px"></div>
+  <div ref="el" data-clarity-mask="true" style="margin-top: 20px"></div>
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { loadClarity } from '../../shared/clarity'
 import App from './App.tsx'
 import { initI18n } from './i18n'
 import './responsive.scss'
@@ -11,3 +12,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <App />
   </React.StrictMode>,
 )
+
+loadClarity()

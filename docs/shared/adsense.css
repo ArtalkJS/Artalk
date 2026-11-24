@@ -1,0 +1,33 @@
+.site-ad {
+  width: 100%;
+  max-width: 970px;
+  margin-inline: auto;
+  text-align: start;
+  padding-block: 20px;
+}
+
+.site-ad::before {
+  content: attr(data-label);
+  display: block;
+  margin-bottom: 6px;
+  color: var(--vp-c-text-2, var(--color-font-secondary));
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.site-ad > ins {
+  display: block;
+  width: 100%;
+  height: 90px;
+}
+
+@media (max-width: 600px) {
+  .site-ad > ins {
+    height: 100px;
+  }
+}
+
+.site-ad:empty,
+.site-ad:has(> ins[data-ad-status='unfilled']) {
+  display: none;
+}

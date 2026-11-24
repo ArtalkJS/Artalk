@@ -169,4 +169,5 @@ export const ko: MessageSchema = {
   see_more_on_github: 'GitHub에서 더 보기',
   star_proposal_line_1: 'Artalk을 좋아하신다면, 별을 주세요 🌟',
   star_proposal_line_2: '감사합니다!',
+  advertisement: '광고',
 }

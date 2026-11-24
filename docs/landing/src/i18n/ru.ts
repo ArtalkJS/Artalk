@@ -172,4 +172,5 @@ export const ru: MessageSchema = {
   see_more_on_github: 'Подробнее на GitHub',
   star_proposal_line_1: 'Если вам нравится Artalk, пожалуйста, поставьте звезду 🌟',
   star_proposal_line_2: 'Это поможет нам стать лучше.',
+  advertisement: 'Реклама',
 }

@@ -69,6 +69,11 @@ export const en = defineConfig({
             { text: 'Docker', link: '/en/guide/backend/docker.md' },
           ],
         },
+        {
+          text: 'More',
+          collapsed: true,
+          items: [{ text: 'Privacy and cookies', link: '/en/privacy.md' }],
+        },
       ],
       '/en/develop/': [
         {

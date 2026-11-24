@@ -1,11 +1,17 @@
 {
   "compilerOptions": {
     "composite": true,
+    "rootDir": "..",
     "types": ["vite/client"],
     "resolveJsonModule": true,
     "module": "ESNext",
     "moduleResolution": "Bundler"
   },
-  "include": ["**/.vitepress/**/*.ts", "**/.vitepress/**/*.mts", "**/.vitepress/**/*.vue"],
+  "include": [
+    "**/.vitepress/**/*.ts",
+    "**/.vitepress/**/*.mts",
+    "**/.vitepress/**/*.vue",
+    "../shared"
+  ],
   "exclude": ["node_modules"]
 }

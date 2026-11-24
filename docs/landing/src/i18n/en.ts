@@ -169,4 +169,5 @@ export const en = {
   see_more_on_github: 'See more on GitHub',
   star_proposal_line_1: 'If you like Artalk, please give it a STAR 🌟',
   star_proposal_line_2: 'This would be very helpful to us!',
+  advertisement: 'Advertisements',
 }

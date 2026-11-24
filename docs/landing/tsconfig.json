@@ -14,6 +14,7 @@
     "isolatedModules": true,
     "composite": true,
     "emitDeclarationOnly": true,
+    "rootDir": "..",
     "declarationDir": ".tsbuildinfo-dts",
     "jsx": "react-jsx",
 
@@ -23,6 +24,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "scripts"],
+  "include": ["src", "scripts", "../shared"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

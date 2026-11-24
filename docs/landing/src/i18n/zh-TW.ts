@@ -162,4 +162,5 @@ export const zhTW: MessageSchema = {
   see_more_on_github: '在 GitHub 上查看',
   star_proposal_line_1: '開源不易，如果您喜歡 Artalk',
   star_proposal_line_2: '請給它點一個 STAR 🌟 這對我們很有幫助！',
+  advertisement: '廣告',
 }

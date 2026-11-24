@@ -162,4 +162,5 @@ export const zhCN: MessageSchema = {
   see_more_on_github: '在 GitHub 上查看',
   star_proposal_line_1: '开源不易，如果你喜欢 Artalk',
   star_proposal_line_2: '请给它点一个 STAR 🌟 这会对我们很有帮助！',
+  advertisement: '广告',
 }

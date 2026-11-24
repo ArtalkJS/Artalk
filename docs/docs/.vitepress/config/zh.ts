@@ -74,6 +74,7 @@ export const zh = defineConfig({
             { text: '扩展阅读', link: '/zh/guide/extras.md' },
             { text: '案例展示', link: '/zh/guide/cases.md' },
             { text: '关于我们', link: '/zh/guide/about.md' },
+            { text: '隐私与 Cookie', link: '/zh/privacy.md' },
           ],
         },
       ],

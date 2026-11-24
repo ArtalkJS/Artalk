@@ -2,12 +2,14 @@ import React from 'react'
 import './Footer.scss'
 import { RiArrowRightSLine } from 'react-icons/ri'
 import { useTranslation } from 'react-i18next'
+import { showDisplayAd } from '../../../shared/adsense'
 
 export const Footer: React.FC = () => {
   const { t } = useTranslation()
 
   return (
     <>
+      <div className="site-ad landing-ad" data-label={t('advertisement')} ref={showDisplayAd} />
       <div className="footer-see-more-link container">
         <a
           className="link"

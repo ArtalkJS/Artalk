@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/artalkjs/artalk/v2/internal/core"
 	"github.com/artalkjs/artalk/v2/internal/entity"
@@ -155,9 +156,13 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		}
 
 		// Async jobs after comment created
-		go commentCreatedJobs(app, comment, parentComment, commentCreatedJobsArguments{
-			ip, ua, referer, isAdmin, isVerified, page,
-		})
+		if !app.RunBackground(func() {
+			commentCreatedJobs(app, comment, parentComment, commentCreatedJobsArguments{
+				ip, ua, referer, isAdmin, isVerified, page,
+			})
+		}) {
+			log.Warn("[CommentCreate] App is stopping; background jobs were not started")
+		}
 
 		// Response the comment data
 		commentDTO := app.Dao().BuildCommentDTO(&comment)
@@ -253,7 +258,9 @@ type commentCreatedJobsArguments struct {
 //  3. Send Notify (email, webhook, telegram, etc.)
 func commentCreatedJobs(app *core.App, comment entity.Comment, parentComment entity.Comment, args commentCreatedJobsArguments) {
 	// Automatic discovery is optional; administrator-triggered fetching is separate.
-	go autoFetchPageTitle(app, &args.Page)
+	var titleTask sync.WaitGroup
+	titleTask.Go(func() { autoFetchPageTitle(app, &args.Page) })
+	defer titleTask.Wait()
 
 	// AntiSpam Check
 	if !args.IsAdmin { // if the user is an admin, skip the anti-spam check

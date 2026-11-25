@@ -26,7 +26,7 @@ export const Fetch = async (
     !headers.has('Authorization') &&
     url.origin === base.origin &&
     url.pathname.startsWith(`${base.pathname.replace(/\/$/, '')}/`) &&
-    /^(\/comments(?:\/\d+)?|\/notifies(?:\/read)?|\/user)$/.test(path)
+    /^(\/comments(?:\/\d+)?(?:\/anchor)?|\/notifies(?:\/read)?|\/user)$/.test(path)
   ) {
     const create = path === '/comments' && init?.method?.toUpperCase() === 'POST'
     const guest = opts.getGuestToken?.(create)

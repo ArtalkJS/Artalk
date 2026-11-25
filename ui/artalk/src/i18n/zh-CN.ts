@@ -113,6 +113,24 @@ const zhCN: I18n = {
   ignore: '忽略',
   open: '打开',
   openName: '打开{name}',
+
+  /* Annotation */
+  annotationPanelTitle: '划线批注',
+  annotationCreate: '批注',
+  annotationReply: '回复',
+  annotationResolve: '已解决',
+  annotationReopen: '重新打开',
+  annotationOrphan: '原文已变更',
+  annotationRelocate: '重新定位',
+  annotationEmpty: '还没有划线批注',
+  annotationDeleteConfirm: '删除这条划线批注及其所有回复？',
+  annotationQuote: '引用原文',
+  annotationResolved: '已解决',
+  annotationFilterAll: '全部',
+  annotationFilterMine: '我的',
+  annotationFilterResolved: '已解决',
+  annotationFilterPending: '待审核',
+  annotationSearchPlaceholder: '搜索划线批注',
 }
 
 export default zhCN

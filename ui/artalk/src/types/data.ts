@@ -2,6 +2,9 @@ export interface CommentData {
   /** 评论 ID */
   id: number
 
+  /** 用户 ID */
+  user_id?: number
+
   /** 评论正文 */
   content: string
 
@@ -67,6 +70,19 @@ export interface CommentData {
 
   /** 反对数 */
   vote_down: number
+
+  /** 划线锚点（仅划线批注） */
+  anchor?: {
+    quote: { type: string; exact: string; prefix?: string; suffix?: string }
+    position?: { start: number; end: number }
+    section?: string
+  }
+
+  /** 是否为划线根评论 */
+  is_annotation?: boolean
+
+  /** 划线是否已解决 */
+  anchor_resolved?: boolean
 }
 
 export interface ListData {

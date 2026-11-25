@@ -21,8 +21,13 @@
     </style>
   </head>
   <body>
+    <article id="article">
+      <h2>Annotation test</h2>
+      <p>Artalk annotations make long documents easier to discuss.</p>
+    </article>
     <div id="comments"></div>
     <script src="/Artalk.js"></script>
+    <script src="/plugins/artalk-plugin-annotation.js"></script>
     <script>
       // Keep reloads on the same page and test cases independent.
       const pageKey = sessionStorage.getItem('test-page') || `/e2e/${crypto.randomUUID()}`
@@ -36,6 +41,12 @@
         locale: 'en',
         emoticons: false,
         listSort: true,
+        annotation: {
+          enabled: true,
+          root: '#article',
+          hideInList: true,
+          allowGuest: true,
+        },
       })
     </script>
   </body>

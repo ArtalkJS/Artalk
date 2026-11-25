@@ -1,10 +1,15 @@
 import { defineConfig, devices } from '@playwright/test'
-import { copyFileSync } from 'node:fs'
+import { copyFileSync, mkdirSync } from 'node:fs'
 
 // Build with `make build-frontend && make build-debug` before running test:e2e.
 copyFileSync(
   new URL('./tests/e2e/index.html', import.meta.url),
   new URL('./dist/index.html', import.meta.url),
+)
+mkdirSync(new URL('./dist/plugins', import.meta.url), { recursive: true })
+copyFileSync(
+  new URL('../plugin-annotation/dist/artalk-plugin-annotation.iife.js', import.meta.url),
+  new URL('./dist/plugins/artalk-plugin-annotation.js', import.meta.url),
 )
 
 export default defineConfig({

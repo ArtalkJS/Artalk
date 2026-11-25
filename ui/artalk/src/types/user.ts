@@ -4,6 +4,9 @@
  * @note Keep flat for easy handling
  */
 export interface LocalUser {
+  /** User ID */
+  id?: number
+
   /** Username (aka. Nickname) */
   name: string
 

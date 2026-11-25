@@ -43,6 +43,7 @@ export const en = defineConfig({
             { text: 'Voting', link: '/en/guide/frontend/voting.md' },
             { text: 'IP Region', link: '/en/guide/frontend/ip-region.md' },
             { text: 'Localization', link: '/en/guide/frontend/i18n.md' },
+            { text: 'Annotations', link: '/en/guide/frontend/annotation.md' },
             { text: 'Development Documentation', link: '/en/develop/index.md' },
           ],
         },

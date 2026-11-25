@@ -68,6 +68,10 @@ func (dao *Dao) BuildCommentDTO(c *entity.Comment) entity.CommentDTO {
 		PageKey:        c.PageKey,
 		PageURL:        dao.GetPageAccessibleURL(page, site),
 		SiteName:       c.SiteName,
+
+		Anchor:         c.AnchorDTO(),
+		IsAnnotation:   c.AnchorExact != "",
+		AnchorResolved: c.AnchorResolved,
 	}
 }
 

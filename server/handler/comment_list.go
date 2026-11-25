@@ -24,6 +24,8 @@ type ParamsCommentList struct {
 
 	Search string `query:"search" json:"search" validate:"optional"` // Search keywords
 
+	HasAnchor string `query:"has_anchor" json:"has_anchor" enums:"true,false" validate:"optional"` // Filter annotation threads
+
 	Type  string `query:"type" json:"type" enums:"all,mentions,mine,pending" validate:"optional"` // Message center show type
 	Scope string `query:"scope" json:"scope" enums:"page,user,site" validate:"optional"`          // The scope of comments
 	Name  string `query:"name" json:"name" validate:"optional"`                                   // The username
@@ -78,6 +80,19 @@ func CommentList(app *core.App, router fiber.Router) {
 		}
 
 		// Query options
+		var hasAnchor *bool
+		switch p.HasAnchor {
+		case "":
+		case "true":
+			v := true
+			hasAnchor = &v
+		case "false":
+			v := false
+			hasAnchor = &v
+		default:
+			return common.RespError(c, 400, "Invalid has_anchor")
+		}
+
 		queryOpts := cog.QueryOptions{
 			User:           user,
 			GuestTokenHash: common.GuestTokenHash(c),
@@ -101,6 +116,8 @@ func CommentList(app *core.App, router fiber.Router) {
 
 			SortBy: cog.SortRule(p.SortBy),
 			Search: p.Search,
+
+			HasAnchor: hasAnchor,
 		}
 
 		// Generate query by options

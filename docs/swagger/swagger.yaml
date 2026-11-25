@@ -89,8 +89,23 @@ definitions:
     - name
     - receive_email
     type: object
+  entity.AnchorDTO:
+    properties:
+      position:
+        $ref: '#/definitions/entity.TextPositionDTO'
+      quote:
+        $ref: '#/definitions/entity.QuoteSelectorDTO'
+      section:
+        type: string
+    required:
+    - quote
+    type: object
   entity.CommentDTO:
     properties:
+      anchor:
+        $ref: '#/definitions/entity.AnchorDTO'
+      anchor_resolved:
+        type: boolean
       badge_color:
         type: string
       badge_name:
@@ -108,6 +123,8 @@ definitions:
       ip_region:
         type: string
       is_allow_reply:
+        type: boolean
+      is_annotation:
         type: boolean
       is_collapsed:
         type: boolean
@@ -140,6 +157,7 @@ definitions:
       vote_up:
         type: integer
     required:
+    - anchor_resolved
     - badge_color
     - badge_name
     - content
@@ -148,6 +166,7 @@ definitions:
     - email_encrypted
     - id
     - is_allow_reply
+    - is_annotation
     - is_collapsed
     - is_pending
     - is_pinned
@@ -220,6 +239,21 @@ definitions:
     - vote_down
     - vote_up
     type: object
+  entity.QuoteSelectorDTO:
+    properties:
+      exact:
+        type: string
+      prefix:
+        type: string
+      suffix:
+        type: string
+      type:
+        description: '"TextQuoteSelector"'
+        type: string
+    required:
+    - exact
+    - type
+    type: object
   entity.SiteDTO:
     properties:
       first_url:
@@ -240,6 +274,16 @@ definitions:
     - name
     - urls
     - urls_raw
+    type: object
+  entity.TextPositionDTO:
+    properties:
+      end:
+        type: integer
+      start:
+        type: integer
+    required:
+    - end
+    - start
     type: object
   entity.UserDTO:
     properties:
@@ -288,8 +332,22 @@ definitions:
     required:
     - value
     type: object
+  handler.ParamsCommentAnchorUpdate:
+    properties:
+      anchor:
+        allOf:
+        - $ref: '#/definitions/entity.AnchorDTO'
+        description: The annotation anchor
+      resolved:
+        description: The annotation resolved status
+        type: boolean
+    type: object
   handler.ParamsCommentCreate:
     properties:
+      anchor:
+        allOf:
+        - $ref: '#/definitions/entity.AnchorDTO'
+        description: The annotation anchor
       content:
         description: The comment content
         type: string
@@ -701,8 +759,12 @@ definitions:
     required:
     - is_pass
     type: object
-  handler.ResponseCommentCreate:
+  handler.ResponseCommentAnchorUpdate:
     properties:
+      anchor:
+        $ref: '#/definitions/entity.AnchorDTO'
+      anchor_resolved:
+        type: boolean
       badge_color:
         type: string
       badge_name:
@@ -720,6 +782,8 @@ definitions:
       ip_region:
         type: string
       is_allow_reply:
+        type: boolean
+      is_annotation:
         type: boolean
       is_collapsed:
         type: boolean
@@ -752,6 +816,7 @@ definitions:
       vote_up:
         type: integer
     required:
+    - anchor_resolved
     - badge_color
     - badge_name
     - content
@@ -760,6 +825,90 @@ definitions:
     - email_encrypted
     - id
     - is_allow_reply
+    - is_annotation
+    - is_collapsed
+    - is_pending
+    - is_pinned
+    - is_verified
+    - link
+    - nick
+    - page_key
+    - page_url
+    - rid
+    - site_name
+    - ua
+    - user_id
+    - visible
+    - vote_down
+    - vote_up
+    type: object
+  handler.ResponseCommentCreate:
+    properties:
+      anchor:
+        $ref: '#/definitions/entity.AnchorDTO'
+      anchor_resolved:
+        type: boolean
+      badge_color:
+        type: string
+      badge_name:
+        type: string
+      content:
+        type: string
+      content_marked:
+        type: string
+      date:
+        type: string
+      email_encrypted:
+        type: string
+      id:
+        type: integer
+      ip_region:
+        type: string
+      is_allow_reply:
+        type: boolean
+      is_annotation:
+        type: boolean
+      is_collapsed:
+        type: boolean
+      is_pending:
+        type: boolean
+      is_pinned:
+        type: boolean
+      is_verified:
+        type: boolean
+      link:
+        type: string
+      nick:
+        type: string
+      page_key:
+        type: string
+      page_url:
+        type: string
+      rid:
+        type: integer
+      site_name:
+        type: string
+      ua:
+        type: string
+      user_id:
+        type: integer
+      visible:
+        type: boolean
+      vote_down:
+        type: integer
+      vote_up:
+        type: integer
+    required:
+    - anchor_resolved
+    - badge_color
+    - badge_name
+    - content
+    - content_marked
+    - date
+    - email_encrypted
+    - id
+    - is_allow_reply
+    - is_annotation
     - is_collapsed
     - is_pending
     - is_pinned
@@ -809,6 +958,10 @@ definitions:
     type: object
   handler.ResponseCommentUpdate:
     properties:
+      anchor:
+        $ref: '#/definitions/entity.AnchorDTO'
+      anchor_resolved:
+        type: boolean
       badge_color:
         type: string
       badge_name:
@@ -826,6 +979,8 @@ definitions:
       ip_region:
         type: string
       is_allow_reply:
+        type: boolean
+      is_annotation:
         type: boolean
       is_collapsed:
         type: boolean
@@ -858,6 +1013,7 @@ definitions:
       vote_up:
         type: integer
     required:
+    - anchor_resolved
     - badge_color
     - badge_name
     - content
@@ -866,6 +1022,7 @@ definitions:
     - email_encrypted
     - id
     - is_allow_reply
+    - is_annotation
     - is_collapsed
     - is_pending
     - is_pinned
@@ -1653,6 +1810,13 @@ paths:
         in: query
         name: flat_mode
         type: boolean
+      - description: Filter annotation threads
+        enum:
+        - "true"
+        - "false"
+        in: query
+        name: has_anchor
+        type: string
       - description: The limit for pagination
         in: query
         name: limit
@@ -1921,6 +2085,72 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Update Comment
+      tags:
+      - Comment
+  /comments/{id}/anchor:
+    put:
+      consumes:
+      - application/json
+      description: Update the annotation anchor or resolved status of a comment
+      operationId: UpdateCommentAnchor
+      parameters:
+      - description: The comment ID you want to update
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: The anchor update
+        in: body
+        name: anchor
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ParamsCommentAnchorUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ResponseCommentAnchorUpdate'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Map'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update Comment Anchor
       tags:
       - Comment
   /conf:

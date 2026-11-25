@@ -37,4 +37,9 @@ type Artran struct {
 	// site
 	SiteName string `json:"site_name"`
 	SiteURLs string `json:"site_urls"`
+
+	// annotation
+	AnchorJSON         string `json:"anchor_json"`
+	IsAnnotationThread string `json:"is_annotation_thread"`
+	AnchorResolved     string `json:"anchor_resolved"`
 }

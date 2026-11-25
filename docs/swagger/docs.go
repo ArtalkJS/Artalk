@@ -675,6 +675,16 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "enum": [
+                            "true",
+                            "false"
+                        ],
+                        "type": "string",
+                        "description": "Filter annotation threads",
+                        "name": "has_anchor",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "The limit for pagination",
                         "name": "limit",
@@ -1068,6 +1078,125 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handler.Map"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/comments/{id}/anchor": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update the annotation anchor or resolved status of a comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Update Comment Anchor",
+                "operationId": "UpdateCommentAnchor",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "The comment ID you want to update",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "The anchor update",
+                        "name": "anchor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.ParamsCommentAnchorUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseCommentAnchorUpdate"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Map"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "403": {
@@ -4065,9 +4194,27 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.AnchorDTO": {
+            "type": "object",
+            "required": [
+                "quote"
+            ],
+            "properties": {
+                "position": {
+                    "$ref": "#/definitions/entity.TextPositionDTO"
+                },
+                "quote": {
+                    "$ref": "#/definitions/entity.QuoteSelectorDTO"
+                },
+                "section": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.CommentDTO": {
             "type": "object",
             "required": [
+                "anchor_resolved",
                 "badge_color",
                 "badge_name",
                 "content",
@@ -4076,6 +4223,7 @@ const docTemplate = `{
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
+                "is_annotation",
                 "is_collapsed",
                 "is_pending",
                 "is_pinned",
@@ -4093,6 +4241,12 @@ const docTemplate = `{
                 "vote_up"
             ],
             "properties": {
+                "anchor": {
+                    "$ref": "#/definitions/entity.AnchorDTO"
+                },
+                "anchor_resolved": {
+                    "type": "boolean"
+                },
                 "badge_color": {
                     "type": "string"
                 },
@@ -4118,6 +4272,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "is_allow_reply": {
+                    "type": "boolean"
+                },
+                "is_annotation": {
                     "type": "boolean"
                 },
                 "is_collapsed": {
@@ -4245,6 +4402,28 @@ const docTemplate = `{
                 }
             }
         },
+        "entity.QuoteSelectorDTO": {
+            "type": "object",
+            "required": [
+                "exact",
+                "type"
+            ],
+            "properties": {
+                "exact": {
+                    "type": "string"
+                },
+                "prefix": {
+                    "type": "string"
+                },
+                "suffix": {
+                    "type": "string"
+                },
+                "type": {
+                    "description": "\"TextQuoteSelector\"",
+                    "type": "string"
+                }
+            }
+        },
         "entity.SiteDTO": {
             "type": "object",
             "required": [
@@ -4272,6 +4451,21 @@ const docTemplate = `{
                 },
                 "urls_raw": {
                     "type": "string"
+                }
+            }
+        },
+        "entity.TextPositionDTO": {
+            "type": "object",
+            "required": [
+                "end",
+                "start"
+            ],
+            "properties": {
+                "end": {
+                    "type": "integer"
+                },
+                "start": {
+                    "type": "integer"
                 }
             }
         },
@@ -4342,6 +4536,23 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.ParamsCommentAnchorUpdate": {
+            "type": "object",
+            "properties": {
+                "anchor": {
+                    "description": "The annotation anchor",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.AnchorDTO"
+                        }
+                    ]
+                },
+                "resolved": {
+                    "description": "The annotation resolved status",
+                    "type": "boolean"
+                }
+            }
+        },
         "handler.ParamsCommentCreate": {
             "type": "object",
             "required": [
@@ -4352,6 +4563,14 @@ const docTemplate = `{
                 "site_name"
             ],
             "properties": {
+                "anchor": {
+                    "description": "The annotation anchor",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/entity.AnchorDTO"
+                        }
+                    ]
+                },
                 "content": {
                     "description": "The comment content",
                     "type": "string"
@@ -4923,9 +5142,10 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.ResponseCommentCreate": {
+        "handler.ResponseCommentAnchorUpdate": {
             "type": "object",
             "required": [
+                "anchor_resolved",
                 "badge_color",
                 "badge_name",
                 "content",
@@ -4934,6 +5154,7 @@ const docTemplate = `{
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
+                "is_annotation",
                 "is_collapsed",
                 "is_pending",
                 "is_pinned",
@@ -4951,6 +5172,12 @@ const docTemplate = `{
                 "vote_up"
             ],
             "properties": {
+                "anchor": {
+                    "$ref": "#/definitions/entity.AnchorDTO"
+                },
+                "anchor_resolved": {
+                    "type": "boolean"
+                },
                 "badge_color": {
                     "type": "string"
                 },
@@ -4976,6 +5203,122 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "is_allow_reply": {
+                    "type": "boolean"
+                },
+                "is_annotation": {
+                    "type": "boolean"
+                },
+                "is_collapsed": {
+                    "type": "boolean"
+                },
+                "is_pending": {
+                    "type": "boolean"
+                },
+                "is_pinned": {
+                    "type": "boolean"
+                },
+                "is_verified": {
+                    "type": "boolean"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "nick": {
+                    "type": "string"
+                },
+                "page_key": {
+                    "type": "string"
+                },
+                "page_url": {
+                    "type": "string"
+                },
+                "rid": {
+                    "type": "integer"
+                },
+                "site_name": {
+                    "type": "string"
+                },
+                "ua": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "visible": {
+                    "type": "boolean"
+                },
+                "vote_down": {
+                    "type": "integer"
+                },
+                "vote_up": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.ResponseCommentCreate": {
+            "type": "object",
+            "required": [
+                "anchor_resolved",
+                "badge_color",
+                "badge_name",
+                "content",
+                "content_marked",
+                "date",
+                "email_encrypted",
+                "id",
+                "is_allow_reply",
+                "is_annotation",
+                "is_collapsed",
+                "is_pending",
+                "is_pinned",
+                "is_verified",
+                "link",
+                "nick",
+                "page_key",
+                "page_url",
+                "rid",
+                "site_name",
+                "ua",
+                "user_id",
+                "visible",
+                "vote_down",
+                "vote_up"
+            ],
+            "properties": {
+                "anchor": {
+                    "$ref": "#/definitions/entity.AnchorDTO"
+                },
+                "anchor_resolved": {
+                    "type": "boolean"
+                },
+                "badge_color": {
+                    "type": "string"
+                },
+                "badge_name": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "content_marked": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "email_encrypted": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ip_region": {
+                    "type": "string"
+                },
+                "is_allow_reply": {
+                    "type": "boolean"
+                },
+                "is_annotation": {
                     "type": "boolean"
                 },
                 "is_collapsed": {
@@ -5078,6 +5421,7 @@ const docTemplate = `{
         "handler.ResponseCommentUpdate": {
             "type": "object",
             "required": [
+                "anchor_resolved",
                 "badge_color",
                 "badge_name",
                 "content",
@@ -5086,6 +5430,7 @@ const docTemplate = `{
                 "email_encrypted",
                 "id",
                 "is_allow_reply",
+                "is_annotation",
                 "is_collapsed",
                 "is_pending",
                 "is_pinned",
@@ -5103,6 +5448,12 @@ const docTemplate = `{
                 "vote_up"
             ],
             "properties": {
+                "anchor": {
+                    "$ref": "#/definitions/entity.AnchorDTO"
+                },
+                "anchor_resolved": {
+                    "type": "boolean"
+                },
                 "badge_color": {
                     "type": "string"
                 },
@@ -5128,6 +5479,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "is_allow_reply": {
+                    "type": "boolean"
+                },
+                "is_annotation": {
                     "type": "boolean"
                 },
                 "is_collapsed": {

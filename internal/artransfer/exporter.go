@@ -98,5 +98,21 @@ func commentToArtran(db *gorm.DB, c *entity.Comment, cache *exportCache) entity.
 		PageAdminOnly: utils.ToString(page.AdminOnly),
 		SiteName:      site.Name,
 		SiteURLs:      site.Urls,
+
+		AnchorJSON:         anchorJSON(c),
+		IsAnnotationThread: utils.ToString(c.IsAnnotationThread),
+		AnchorResolved:     utils.ToString(c.AnchorResolved),
 	}
+}
+
+func anchorJSON(c *entity.Comment) string {
+	a := c.AnchorDTO()
+	if a == nil {
+		return ""
+	}
+	b, err := json.Marshal(a)
+	if err != nil {
+		return ""
+	}
+	return string(b)
 }

@@ -30,6 +30,10 @@ type QueryOptions struct {
 	SortBy SortRule
 
 	Search string
+
+	// HasAnchor filters annotation threads when non-nil.
+	// true = only annotation threads, false = exclude annotation threads.
+	HasAnchor *bool
 }
 
 // Get query scope by params
@@ -45,6 +49,9 @@ func GetQueryScopes(dao *dao.Dao, opts QueryOptions) func(liteDB) liteDB {
 	return func(q liteDB) liteDB {
 		// Basic scope
 		q.Scopes(CommonScope(opts.User, opts.GuestTokenHash))
+
+		// Annotation thread filter
+		q.Scopes(AnnotationThreadScope(opts.HasAnchor))
 
 		// Search function
 		if opts.Search != "" {

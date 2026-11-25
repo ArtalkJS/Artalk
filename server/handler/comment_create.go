@@ -4,6 +4,8 @@ import (
 	"cmp"
 	"errors"
 	"fmt"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/artalkjs/artalk/v2/internal/core"
 	"github.com/artalkjs/artalk/v2/internal/entity"
@@ -26,6 +28,8 @@ type ParamsCommentCreate struct {
 	PageTitle string `json:"page_title" validate:"optional"` // The comment page_title
 
 	SiteName string `json:"site_name" validate:"required"` // The site name of your content scope
+
+	Anchor *entity.AnchorDTO `json:"anchor" validate:"optional"` // The annotation anchor
 }
 
 type ResponseCommentCreate struct {
@@ -99,6 +103,16 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			}
 		}
 
+		// Validate annotation anchor
+		if p.Anchor != nil {
+			if p.Rid != 0 {
+				return common.RespError(c, 400, "Annotation cannot be a reply")
+			}
+			if err := validateAnchor(p.Anchor); err != nil {
+				return common.RespError(c, 400, err.Error())
+			}
+		}
+
 		// Get the user data
 		user, err := common.GetUserByReq(app, c) // if token is provided and a login user
 		if errors.Is(err, common.ErrTokenNotProvided) {
@@ -119,6 +133,7 @@ func CommentCreate(app *core.App, router fiber.Router) {
 		}
 
 		// Create new comment entity
+		isAnnotationThread := p.Anchor != nil || (p.Rid != 0 && parentComment.IsAnnotationThread)
 		comment := entity.Comment{
 			Content:  p.Content,
 			PageKey:  page.Key,
@@ -135,6 +150,19 @@ func CommentCreate(app *core.App, router fiber.Router) {
 			IsCollapsed: false,
 			IsPinned:    false,
 			IsVerified:  isVerified,
+
+			IsAnnotationThread: isAnnotationThread,
+		}
+
+		if p.Anchor != nil {
+			comment.AnchorExact = strings.TrimSpace(p.Anchor.Quote.Exact)
+			comment.AnchorPrefix = p.Anchor.Quote.Prefix
+			comment.AnchorSuffix = p.Anchor.Quote.Suffix
+			comment.AnchorSection = p.Anchor.Section
+			if p.Anchor.Position != nil {
+				comment.AnchorStart = p.Anchor.Position.Start
+				comment.AnchorEnd = p.Anchor.Position.End
+			}
 		}
 
 		// Bind only this newly created anonymous comment, never the whole user.
@@ -286,4 +314,25 @@ func autoFetchPageTitle(app *core.App, page *entity.Page) {
 		return
 	}
 	_ = app.Dao().TryFetchPageFromURL(page, app.Conf().TrustedDomains...)
+}
+
+func validateAnchor(a *entity.AnchorDTO) error {
+	if a == nil {
+		return nil
+	}
+
+	exact := strings.TrimSpace(a.Quote.Exact)
+	if n := utf8.RuneCountInString(exact); n < 1 || n > 2000 {
+		return fmt.Errorf("anchor text must be 1-2000 characters")
+	}
+	if utf8.RuneCountInString(a.Quote.Prefix) > 500 || utf8.RuneCountInString(a.Quote.Suffix) > 500 {
+		return fmt.Errorf("anchor context is too long")
+	}
+	if utf8.RuneCountInString(a.Section) > 200 {
+		return fmt.Errorf("anchor section is too long")
+	}
+	if a.Position != nil && (a.Position.Start < 0 || a.Position.End < a.Position.Start) {
+		return fmt.Errorf("invalid anchor position")
+	}
+	return nil
 }

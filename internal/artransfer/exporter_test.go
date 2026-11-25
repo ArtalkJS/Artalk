@@ -36,3 +36,51 @@ func TestExportPreservesPageMetadataAcrossSites(t *testing.T) {
 	}
 	require.Equal(t, map[string]string{"Site A": "Page on Site A", "Site B": "Page on Site B"}, titles)
 }
+
+func TestExportPreservesAnnotationAnchor(t *testing.T) {
+	app, err := test.NewTestApp()
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, app.Cleanup()) })
+
+	comment := entity.Comment{
+		Content:            "annotation export",
+		PageKey:            "/test/1000.html",
+		SiteName:           "Site A",
+		UserID:             1001,
+		AnchorExact:        "Hello Artalk",
+		AnchorPrefix:       "pre",
+		AnchorSuffix:       "suf",
+		AnchorStart:        1,
+		AnchorEnd:          13,
+		AnchorSection:      "Intro",
+		IsAnnotationThread: true,
+	}
+	require.NoError(t, app.Dao().DB().Create(&comment).Error)
+
+	exported, err := RunExportArtrans(app.Dao(), &ExportParams{})
+	require.NoError(t, err)
+	var comments []entity.Artran
+	require.NoError(t, json.Unmarshal([]byte(exported), &comments))
+
+	var found *entity.Artran
+	for i := range comments {
+		if comments[i].Content == "annotation export" {
+			found = &comments[i]
+			break
+		}
+	}
+	require.NotNil(t, found)
+	require.Equal(t, "true", found.IsAnnotationThread)
+	require.Equal(t, "false", found.AnchorResolved)
+	require.NotEmpty(t, found.AnchorJSON)
+
+	var anchor entity.AnchorDTO
+	require.NoError(t, json.Unmarshal([]byte(found.AnchorJSON), &anchor))
+	require.Equal(t, "Hello Artalk", anchor.Quote.Exact)
+	require.Equal(t, "pre", anchor.Quote.Prefix)
+	require.Equal(t, "suf", anchor.Quote.Suffix)
+	require.Equal(t, "Intro", anchor.Section)
+	require.NotNil(t, anchor.Position)
+	require.Equal(t, 1, anchor.Position.Start)
+	require.Equal(t, 13, anchor.Position.End)
+}

@@ -111,6 +111,24 @@ const en = {
   ignore: 'Ignore',
   open: 'Open',
   openName: 'Open {name}',
+
+  /* Annotation */
+  annotationPanelTitle: 'Annotations',
+  annotationCreate: 'Annotate',
+  annotationReply: 'Reply',
+  annotationResolve: 'Resolve',
+  annotationReopen: 'Reopen',
+  annotationOrphan: 'Original text changed',
+  annotationRelocate: 'Relocate',
+  annotationEmpty: 'No annotations yet',
+  annotationDeleteConfirm: 'Delete this annotation and all replies?',
+  annotationQuote: 'Quoted text',
+  annotationResolved: 'Resolved',
+  annotationFilterAll: 'All',
+  annotationFilterMine: 'Mine',
+  annotationFilterResolved: 'Resolved',
+  annotationFilterPending: 'Pending',
+  annotationSearchPlaceholder: 'Search annotations',
 }
 
 export type I18n = typeof en

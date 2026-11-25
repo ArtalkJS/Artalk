@@ -59,9 +59,7 @@ export function setLocale(locale: I18n | string) {
  */
 export function t(key: I18nKeys, args: { [key: string]: string } = {}) {
   let value = LocaleDict?.[key]
-  if (LocaleConf && typeof LocaleConf === 'object' && !(key in LocaleConf)) {
-    value = en[key]
-  }
+  if (!(key in LocaleDict)) value = en[key]
   const str = typeof value === 'string' && value ? value : key
   return Utils.htmlEncode(str.replace(/\{\s*(\w+?)\s*\}/g, (_, token) => args[token] || ''))
 }

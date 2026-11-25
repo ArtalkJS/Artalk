@@ -1,5 +1,23 @@
 package entity
 
+type QuoteSelectorDTO struct {
+	Type   string `json:"type"`             // "TextQuoteSelector"
+	Exact  string `json:"exact"`
+	Prefix string `json:"prefix,omitempty"`
+	Suffix string `json:"suffix,omitempty"`
+}
+
+type TextPositionDTO struct {
+	Start int `json:"start"`
+	End   int `json:"end"`
+}
+
+type AnchorDTO struct {
+	Quote    QuoteSelectorDTO `json:"quote"`
+	Position *TextPositionDTO `json:"position,omitempty"`
+	Section  string           `json:"section,omitempty"`
+}
+
 type CommentDTO struct {
 	ID             uint   `json:"id"`
 	Content        string `json:"content"`
@@ -26,4 +44,8 @@ type CommentDTO struct {
 	PageKey        string `json:"page_key"`
 	PageURL        string `json:"page_url"`
 	SiteName       string `json:"site_name"`
+
+	Anchor         *AnchorDTO `json:"anchor,omitempty"`
+	IsAnnotation   bool       `json:"is_annotation"`
+	AnchorResolved bool       `json:"anchor_resolved"`
 }

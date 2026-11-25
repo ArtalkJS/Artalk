@@ -33,6 +33,20 @@ type Comment struct {
 
 	RootID uint `gorm:"index"` // Root Node ID (can be derived from `Rid`)
 
+	// Annotation anchor (W3C TextQuoteSelector). Empty means a normal page comment.
+	AnchorExact    string `gorm:"type:text;not null;default:''"`
+	AnchorPrefix   string `gorm:"type:text;not null;default:''"`
+	AnchorSuffix   string `gorm:"type:text;not null;default:''"`
+	AnchorStart    int    `gorm:"not null;default:-1"`
+	AnchorEnd      int    `gorm:"not null;default:-1"`
+	AnchorSection  string `gorm:"size:255;not null;default:''"`
+	AnchorResolved bool   `gorm:"not null;default:false"`
+
+	// IsAnnotationThread is true for annotation roots and all their replies.
+	// It lets the normal comment list exclude annotation threads with one
+	// indexed condition, keeping counts and pagination consistent.
+	IsAnnotationThread bool `gorm:"index;not null;default:false"`
+
 	// Associated Page
 	//
 	// Use Composite Foreign Keys for multiple-site support.
@@ -48,4 +62,29 @@ func (c Comment) IsEmpty() bool {
 
 func (c Comment) IsAllowReply() bool {
 	return !c.IsCollapsed && !c.IsPending
+}
+
+func (c Comment) HasAnchor() bool {
+	return c.AnchorExact != ""
+}
+
+// AnchorDTO builds the API anchor representation from the stored columns.
+func (c Comment) AnchorDTO() *AnchorDTO {
+	if c.AnchorExact == "" {
+		return nil
+	}
+
+	a := &AnchorDTO{
+		Quote: QuoteSelectorDTO{
+			Type:   "TextQuoteSelector",
+			Exact:  c.AnchorExact,
+			Prefix: c.AnchorPrefix,
+			Suffix: c.AnchorSuffix,
+		},
+		Section: c.AnchorSection,
+	}
+	if c.AnchorStart >= 0 && c.AnchorEnd >= c.AnchorStart {
+		a.Position = &TextPositionDTO{Start: c.AnchorStart, End: c.AnchorEnd}
+	}
+	return a
 }

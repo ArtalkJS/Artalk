@@ -42,6 +42,17 @@ func NoPending(allowUserID ...uint) func(db liteDB) liteDB {
 	}
 }
 
+// AnnotationThreadScope filters annotation roots and all their replies.
+// A nil value keeps the query unchanged for backward compatibility.
+func AnnotationThreadScope(hasAnchor *bool) func(db liteDB) liteDB {
+	return func(d liteDB) liteDB {
+		if hasAnchor == nil {
+			return d
+		}
+		return d.Where("is_annotation_thread = ?", *hasAnchor)
+	}
+}
+
 // Filter by search keywords
 func SearchScope(dao *dao.Dao, keywords string) func(d liteDB) liteDB {
 	var userIds []uint

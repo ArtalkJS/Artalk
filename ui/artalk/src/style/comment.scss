@@ -349,3 +349,30 @@
     }
   }
 }
+
+.atk-annotation-quote {
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--at-color-main);
+  border-radius: 0 6px 6px 0;
+  background: var(--at-color-bg-grey);
+  color: var(--at-color-font);
+  font-size: 13px;
+  line-height: 1.6;
+
+  .atk-annotation-quote-label {
+    margin-right: 6px;
+    font-weight: 600;
+    color: var(--at-color-main);
+  }
+
+  .atk-annotation-quote-text {
+    white-space: pre-wrap;
+  }
+
+  .atk-annotation-resolved {
+    margin-left: 8px;
+    color: var(--at-color-main);
+    font-size: 12px;
+  }
+}

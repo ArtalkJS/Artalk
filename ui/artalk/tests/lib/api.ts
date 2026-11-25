@@ -45,6 +45,8 @@ export function comment(id: number, content = `Comment ${id}`): EntityCommentDTO
     is_pinned: false,
     is_verified: false,
     is_allow_reply: true,
+    is_annotation: false,
+    anchor_resolved: false,
     page_key: '/',
     site_name: 'Test',
     visible: true,

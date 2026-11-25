@@ -82,6 +82,22 @@ describe('widget initialization and editor', () => {
     expect(widget.ctx.$t('counter', { count: '3' })).toBe('3 Comments')
   })
 
+  it('renders the annotation quote in the comment body', async () => {
+    const source = mockApi()
+    const annotation = {
+      ...comment(1),
+      is_annotation: true,
+      anchor: { quote: { type: 'TextQuoteSelector', exact: 'quoted text' } },
+      anchor_resolved: true,
+    }
+    vi.mocked(source.comments.getComments).mockResolvedValue(response(list([annotation])))
+    const widget = await initialize({}, source)
+
+    const quote = widget.getEl().querySelector('.atk-annotation-quote')
+    expect(quote?.textContent).toContain('quoted text')
+    expect(quote?.textContent).toContain('Resolved')
+  })
+
   it('applies the remote locale before initializing plugins', async () => {
     const translated: string[] = []
     const plugin: ArtalkPlugin = (ctx) => {

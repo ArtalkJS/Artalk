@@ -15,8 +15,12 @@ const { site: curtSite } = storeToRefs(user)
 const search = ref('')
 const { listFetchParamsModifier, scrollRelativeTo } = artalk!.getConf()
 const onCommentRendered = (comment: EventPayloadMap['comment-rendered']) => {
-  const pageURL = comment.getData().page_url
-  comment.getRender().setOpenURL(`${pageURL}#atk-comment-${comment.getID()}`)
+  const data = comment.getData()
+  const pageURL = data.page_url
+  const hash = data.is_annotation
+    ? `#atk-annotation-${comment.getID()}`
+    : `#atk-comment-${comment.getID()}`
+  comment.getRender().setOpenURL(`${pageURL}${hash}`)
 }
 
 onBeforeUnmount(() => {

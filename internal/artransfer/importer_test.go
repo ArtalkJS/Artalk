@@ -9,6 +9,7 @@ import (
 	"github.com/artalkjs/artalk/v2/internal/db"
 	"github.com/artalkjs/artalk/v2/internal/entity"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_importArtrans(t *testing.T) {
@@ -227,4 +228,36 @@ func Test_buildRid2RootGenIdMap(t *testing.T) {
 
 	expected := map[string]uint{"": 0, "0": 0, "a": 1, "b": 1, "c": 1, "d": 1, "g": 7}
 	assert.Equal(t, expected, rootIdMap)
+}
+
+func TestImportPreservesAnnotationAnchor(t *testing.T) {
+	ddb, _ := db.NewTestDB()
+	defer db.CloseDB(ddb)
+	d := dao.NewDao(ddb)
+
+	anchorJSON := `{"quote":{"type":"TextQuoteSelector","exact":"Hello","prefix":"pre","suffix":"suf"},"position":{"start":1,"end":6},"section":"Intro"}`
+	err := importArtrans(d.DB(), &ImportParams{Assumeyes: true}, []*entity.Artran{
+		{
+			Content:            "annotation import",
+			SiteName:           "Site A",
+			PageKey:            "/test/1000.html",
+			Nick:               "userA",
+			Email:              "user_a@qwqaq.com",
+			AnchorJSON:         anchorJSON,
+			IsAnnotationThread: "true",
+			AnchorResolved:     "true",
+		},
+	})
+	require.NoError(t, err)
+
+	var comment entity.Comment
+	require.NoError(t, d.DB().Where("content = ?", "annotation import").First(&comment).Error)
+	require.True(t, comment.IsAnnotationThread)
+	require.True(t, comment.AnchorResolved)
+	require.Equal(t, "Hello", comment.AnchorExact)
+	require.Equal(t, "pre", comment.AnchorPrefix)
+	require.Equal(t, "suf", comment.AnchorSuffix)
+	require.Equal(t, "Intro", comment.AnchorSection)
+	require.Equal(t, 1, comment.AnchorStart)
+	require.Equal(t, 6, comment.AnchorEnd)
 }

@@ -20,6 +20,7 @@
     { "path": "./ui/plugin-auth" },
     { "path": "./ui/plugin-katex" },
     { "path": "./ui/plugin-lightbox" },
+    { "path": "./ui/plugin-annotation" },
     { "path": "./ui/eslint-plugin-artalk" },
     { "path": "./docs/landing" },
     { "path": "./docs/landing/tsconfig.node.json" },

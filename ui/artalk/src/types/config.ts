@@ -4,6 +4,20 @@ import type { Editor } from './editor'
 import type { Context } from './context'
 import type { I18n } from '@/i18n'
 
+export interface AnnotationConfig {
+  /** Enable highlight annotations */
+  enabled: boolean
+
+  /** Selector or element that allows text selection */
+  root: string | HTMLElement
+
+  /** Hide annotation roots from the normal comment list */
+  hideInList: boolean
+
+  /** Allow guests to create annotations */
+  allowGuest: boolean
+}
+
 export interface Config {
   /** Element selector or Element to mount the Artalk */
   el: string | HTMLElement
@@ -202,6 +216,9 @@ export interface Config {
 
   /** Callback before submitting a comment */
   beforeSubmit?: (editor: Editor, next: () => void) => void
+
+  /** Highlight annotation settings */
+  annotation: AnnotationConfig
 }
 
 type DeepPartial<T> = T extends (...args: any[]) => unknown

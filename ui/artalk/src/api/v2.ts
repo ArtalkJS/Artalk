@@ -52,7 +52,15 @@ export interface EntityAdminUserDTO {
   receive_email: boolean
 }
 
+export interface EntityAnchorDTO {
+  position?: EntityTextPositionDTO
+  quote: EntityQuoteSelectorDTO
+  section?: string
+}
+
 export interface EntityCommentDTO {
+  anchor?: EntityAnchorDTO
+  anchor_resolved: boolean
   badge_color: string
   badge_name: string
   content: string
@@ -62,6 +70,7 @@ export interface EntityCommentDTO {
   id: number
   ip_region?: string
   is_allow_reply: boolean
+  is_annotation: boolean
   is_collapsed: boolean
   is_pending: boolean
   is_pinned: boolean
@@ -101,12 +110,25 @@ export interface EntityPageDTO {
   vote_up: number
 }
 
+export interface EntityQuoteSelectorDTO {
+  exact: string
+  prefix?: string
+  suffix?: string
+  /** "TextQuoteSelector" */
+  type: string
+}
+
 export interface EntitySiteDTO {
   first_url: string
   id: number
   name: string
   urls: string[]
   urls_raw: string
+}
+
+export interface EntityTextPositionDTO {
+  end: number
+  start: number
 }
 
 export interface EntityUserDTO {
@@ -132,7 +154,16 @@ export interface HandlerParamsCaptchaVerify {
   value: string
 }
 
+export interface HandlerParamsCommentAnchorUpdate {
+  /** The annotation anchor */
+  anchor?: EntityAnchorDTO
+  /** The annotation resolved status */
+  resolved?: boolean
+}
+
 export interface HandlerParamsCommentCreate {
+  /** The annotation anchor */
+  anchor?: EntityAnchorDTO
   /** The comment content */
   content: string
   /** The comment email */
@@ -367,7 +398,9 @@ export interface HandlerResponseCaptchaStatus {
   is_pass: boolean
 }
 
-export interface HandlerResponseCommentCreate {
+export interface HandlerResponseCommentAnchorUpdate {
+  anchor?: EntityAnchorDTO
+  anchor_resolved: boolean
   badge_color: string
   badge_name: string
   content: string
@@ -377,6 +410,37 @@ export interface HandlerResponseCommentCreate {
   id: number
   ip_region?: string
   is_allow_reply: boolean
+  is_annotation: boolean
+  is_collapsed: boolean
+  is_pending: boolean
+  is_pinned: boolean
+  is_verified: boolean
+  link: string
+  nick: string
+  page_key: string
+  page_url: string
+  rid: number
+  site_name: string
+  ua: string
+  user_id: number
+  visible: boolean
+  vote_down: number
+  vote_up: number
+}
+
+export interface HandlerResponseCommentCreate {
+  anchor?: EntityAnchorDTO
+  anchor_resolved: boolean
+  badge_color: string
+  badge_name: string
+  content: string
+  content_marked: string
+  date: string
+  email_encrypted: string
+  id: number
+  ip_region?: string
+  is_allow_reply: boolean
+  is_annotation: boolean
   is_collapsed: boolean
   is_pending: boolean
   is_pinned: boolean
@@ -409,6 +473,8 @@ export interface HandlerResponseCommentList {
 }
 
 export interface HandlerResponseCommentUpdate {
+  anchor?: EntityAnchorDTO
+  anchor_resolved: boolean
   badge_color: string
   badge_name: string
   content: string
@@ -418,6 +484,7 @@ export interface HandlerResponseCommentUpdate {
   id: number
   ip_region?: string
   is_allow_reply: boolean
+  is_annotation: boolean
   is_collapsed: boolean
   is_pending: boolean
   is_pinned: boolean
@@ -1182,6 +1249,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         email?: string
         /** Enable flat_mode */
         flat_mode?: boolean
+        /** Filter annotation threads */
+        has_anchor?: 'true' | 'false'
         /** The limit for pagination */
         limit?: number
         /** The username */
@@ -1359,6 +1428,52 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/comments/${id}`,
         method: 'DELETE',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description Update the annotation anchor or resolved status of a comment
+ *
+ * @tags Comment
+ * @name UpdateCommentAnchor
+ * @summary Update Comment Anchor
+ * @request PUT:/comments/{id}/anchor
+ * @secure
+ * @response `200` `HandlerResponseCommentAnchorUpdate` OK
+ * @response `400` `(HandlerMap & {
+    msg?: string,
+
+})` Bad Request
+ * @response `403` `(HandlerMap & {
+    msg?: string,
+
+})` Forbidden
+ * @response `404` `(HandlerMap & {
+    msg?: string,
+
+})` Not Found
+ * @response `500` `(HandlerMap & {
+    msg?: string,
+
+})` Internal Server Error
+ */
+    updateCommentAnchor: (
+      id: number,
+      anchor: HandlerParamsCommentAnchorUpdate,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        HandlerResponseCommentAnchorUpdate,
+        HandlerMap & {
+          msg?: string
+        }
+      >({
+        path: `/comments/${id}/anchor`,
+        method: 'PUT',
+        body: anchor,
+        secure: true,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

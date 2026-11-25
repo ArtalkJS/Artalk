@@ -2,6 +2,7 @@ package artransfer
 
 import (
 	"cmp"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -185,6 +186,25 @@ func importArtrans(tx *gorm.DB, params *ImportParams, comments []*entity.Artran)
 			UserID:   user.ID,
 			PageKey:  page.Key,
 			SiteName: site.Name,
+		}
+
+		// Restore annotation anchor
+		nComment.IsAnnotationThread = isTrue(c.IsAnnotationThread)
+		nComment.AnchorResolved = isTrue(c.AnchorResolved)
+		if c.AnchorJSON != "" {
+			var anchor entity.AnchorDTO
+			if err := json.Unmarshal([]byte(c.AnchorJSON), &anchor); err == nil {
+				nComment.AnchorExact = strings.TrimSpace(anchor.Quote.Exact)
+				nComment.AnchorPrefix = anchor.Quote.Prefix
+				nComment.AnchorSuffix = anchor.Quote.Suffix
+				nComment.AnchorSection = anchor.Section
+				nComment.AnchorStart = -1
+				nComment.AnchorEnd = -1
+				if anchor.Position != nil {
+					nComment.AnchorStart = anchor.Position.Start
+					nComment.AnchorEnd = anchor.Position.End
+				}
+			}
 		}
 
 		// Prepare slices for restoring CreatedAt and UpdatedAt

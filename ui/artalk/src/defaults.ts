@@ -59,6 +59,13 @@ export const Defaults: Readonly<RequiredExcept<Config, ExcludedKeys>> = {
   pvAdd: true,
   fetchCommentsOnInit: true,
 
+  annotation: {
+    enabled: false,
+    root: 'article',
+    hideInList: true,
+    allowGuest: true,
+  },
+
   locale: 'en',
   apiVersion: '',
   pluginURLs: [],

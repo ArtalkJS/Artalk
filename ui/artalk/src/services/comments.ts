@@ -85,6 +85,10 @@ export class CommentService {
         site_name: conf.site,
       }
       params.paramsModifier?.(reqParams)
+      const scope = (reqParams as { scope?: string }).scope
+      if ((!scope || scope === 'page') && conf.annotation?.enabled && conf.annotation.hideInList) {
+        ;(reqParams as { has_anchor?: boolean }).has_anchor = false
+      }
       if (!active()) return
       const api = this.ctx.getApi()
       const { data: result } = await api.comments.getComments(
@@ -92,7 +96,6 @@ export class CommentService {
         { signal: request.signal },
       )
       if (!active()) return
-      const scope = (reqParams as { scope?: string }).scope
       if ((!scope || scope === 'page') && !result.page) {
         throw new Error('Page data is missing from comment list response')
       }

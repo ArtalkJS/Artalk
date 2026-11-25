@@ -100,6 +100,11 @@ export default class HeaderUser extends EditorPlugin {
         .catch(() => {})
     }
 
+    // Keep the user ID for ownership checks (e.g. annotation filters)
+    if (data.user) {
+      this.kit.useUser().update({ id: data.user.id })
+    }
+
     // Auto fill user link from server
     if (data.user && data.user.link) {
       this.kit.useUI().$link.value = data.user.link

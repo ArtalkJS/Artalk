@@ -20,13 +20,16 @@ import (
 // @Failure      500  {object}  Map{msg=string}
 // @Router       /comments/{id}  [delete]
 func CommentDelete(app *core.App, router fiber.Router) {
-	router.Delete("/comments/:id", common.AdminGuard(app, func(c *fiber.Ctx) error {
+	router.Delete("/comments/:id", func(c *fiber.Ctx) error {
 		id, _ := c.ParamsInt("id")
 
 		// find comment
 		comment := app.Dao().FindComment(uint(id))
 		if comment.IsEmpty() {
 			return common.RespError(c, 404, i18n.T("{{name}} not found", Map{"name": i18n.T("Comment")}))
+		}
+		if !canMutateAnnotationComment(app, c, &comment) {
+			return common.RespError(c, 403, i18n.T("Admin access required"), Map{"need_login": true})
 		}
 
 		// 删除主评论
@@ -40,5 +43,5 @@ func CommentDelete(app *core.App, router fiber.Router) {
 		}
 
 		return common.RespSuccess(c)
-	}))
+	})
 }

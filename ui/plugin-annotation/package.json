@@ -1,0 +1,59 @@
+{
+  "name": "@artalk/plugin-annotation",
+  "version": "0.1.0",
+  "minAppVersion": "2.11.0",
+  "license": "MIT",
+  "description": "Highlight annotation plugin for Artalk",
+  "homepage": "https://github.com/ArtalkJS/Artalk/tree/master/ui/plugin-annotation",
+  "bugs": "https://github.com/ArtalkJS/Artalk/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArtalkJS/Artalk.git",
+    "directory": "ui/plugin-annotation"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "./dist/artalk-plugin-annotation.js",
+  "module": "./dist/artalk-plugin-annotation.mjs",
+  "types": "./dist/artalk-plugin-annotation.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "test": "vitest run",
+    "test:attw": "pnpx @arethetypeswrong/cli@0.18.5 --pack ."
+  },
+  "dependencies": {
+    "@apache-annotator/dom": "^0.2.0",
+    "@apache-annotator/selector": "^0.2.0",
+    "dom-anchor-text-quote": "^4.0.2"
+  },
+  "devDependencies": {
+    "@artalk/plugin-kit": "workspace:^",
+    "artalk": "workspace:^",
+    "jsdom": "^29.1.1",
+    "typescript": "6.0.3",
+    "vite": "8.1.5",
+    "vitest": "^4.1.10"
+  },
+  "peerDependencies": {
+    "artalk": ">=2.11.0 <3.0.0"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/artalk-plugin-annotation.d.ts",
+        "default": "./dist/artalk-plugin-annotation.mjs"
+      },
+      "require": {
+        "types": "./dist/artalk-plugin-annotation.d.cts",
+        "default": "./dist/artalk-plugin-annotation.cjs"
+      }
+    }
+  }
+}

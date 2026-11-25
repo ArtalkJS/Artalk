@@ -37,6 +37,7 @@ export class UserManager implements IUserManager {
 
     // Initialize
     return {
+      id: localUser.id || undefined,
       name: localUser.name || localUser.nick || '', // nick is deprecated (for historical compatibility)
       email: localUser.email || '',
       link: localUser.link || '',

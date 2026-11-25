@@ -19,6 +19,7 @@ fi
 pnpm install --frozen-lockfile
 pnpm build:all
 pnpm build:auth
+pnpm -F @artalk/plugin-annotation build
 
 ## dist folders
 DIST_DIR="./public/dist"

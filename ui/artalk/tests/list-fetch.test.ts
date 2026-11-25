@@ -72,4 +72,24 @@ describe('v2 list compatibility', () => {
       expect.anything(),
     )
   })
+
+  it('excludes annotation threads when annotations are enabled and hidden from the list', async () => {
+    const { ctx, service, api, query } = setupFetch()
+    ctx.updateConf({ annotation: { enabled: true, hideInList: true } })
+    await service.load(query)
+    expect(api.comments.getComments).toHaveBeenCalledWith(
+      expect.objectContaining({ has_anchor: false }),
+      expect.anything(),
+    )
+  })
+
+  it('does not filter annotations for user or site scopes', async () => {
+    const { ctx, service, api, query } = setupFetch('user', false)
+    ctx.updateConf({ annotation: { enabled: true, hideInList: true } })
+    await service.load(query)
+    expect(api.comments.getComments).toHaveBeenCalledWith(
+      expect.not.objectContaining({ has_anchor: false }),
+      expect.anything(),
+    )
+  })
 })
